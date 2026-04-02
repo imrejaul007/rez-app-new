@@ -60,7 +60,7 @@ export function transformVideoToUGC(video: Video, currentUserId?: string): UGCVi
       description: video.description || '',
       hashtags: video.hashtags || [],
       productCount: video.products?.length || 0,
-      category: video.category,
+      category: video.category as any,
       contentType: determineContentType(video), // Use contentType from backend
       isLiked: currentUserId ? (video.engagement?.likes || []).includes(currentUserId) : false,
       products: transformedProducts,

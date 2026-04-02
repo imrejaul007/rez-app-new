@@ -50,7 +50,7 @@ interface TimeSlot {
 function ConsultationBookingScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { storeId } = useLocalSearchParams<{ storeId: string }>();
+  const { storeId } = useLocalSearchParams<any>();
 
   // ETHAN: crash guard — storeId from route params could be undefined
   if (!storeId) {
@@ -112,7 +112,7 @@ function ConsultationBookingScreen() {
           if (!isMounted()) return;
           setError(response.error || 'Failed to load clinic details');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to connect to server');
       } finally {

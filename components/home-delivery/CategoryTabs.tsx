@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   countTextActive: {
     fontSize: 10,
     fontWeight: '800',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
   },
 });

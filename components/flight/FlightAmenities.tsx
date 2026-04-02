@@ -30,7 +30,7 @@ const FlightAmenities: React.FC<FlightAmenitiesProps> = ({ amenities }) => {
         {amenities.map((amenity, index) => (
           <View key={index} style={styles.amenityItem}>
             <Ionicons
-              name={amenityIcons[amenity] || 'checkmark-circle-outline'}
+              name={(amenityIcons[amenity] || 'checkmark-circle-outline') as any}
               size={24}
               color={colors.infoScale[400]}
             />

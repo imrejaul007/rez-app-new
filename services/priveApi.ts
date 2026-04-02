@@ -442,7 +442,7 @@ class PriveApi {
    * Get detailed pillar breakdown
    */
   async getPillars(): Promise<ApiResponse<{ pillars: PillarScore[]; factors: any }>> {
-    return apiClient.get(ENDPOINTS.PILLARS);
+    return apiClient.get<any>(ENDPOINTS.PILLARS);
   }
 
   /**
@@ -467,7 +467,7 @@ class PriveApi {
     lowestPillar: PillarScore;
     highestPillar: PillarScore;
   }>> {
-    return apiClient.get(ENDPOINTS.TIPS);
+    return apiClient.get<any>(ENDPOINTS.TIPS);
   }
 
   /**
@@ -481,7 +481,7 @@ class PriveApi {
    * Get daily habit loops with progress
    */
   async getHabitLoops(): Promise<ApiResponse<{ loops: HabitLoop[]; weeklyEarnings: number }>> {
-    return apiClient.get(ENDPOINTS.HABIT_LOOPS);
+    return apiClient.get<any>(ENDPOINTS.HABIT_LOOPS);
   }
 
   /**
@@ -508,14 +508,14 @@ class PriveApi {
       pages: number;
     };
   }>> {
-    return apiClient.get(ENDPOINTS.OFFERS, params);
+    return apiClient.get<any>(ENDPOINTS.OFFERS, params);
   }
 
   /**
    * Get single offer by ID
    */
   async getOfferById(id: string): Promise<ApiResponse<PriveOffer>> {
-    return apiClient.get(`${ENDPOINTS.OFFERS}/${id}`);
+    return apiClient.get<any>(`${ENDPOINTS.OFFERS}/${id}`);
   }
 
   /**
@@ -529,7 +529,7 @@ class PriveApi {
    * Track offer click for analytics
    */
   async trackOfferClick(offerId: string): Promise<ApiResponse<void>> {
-    return apiClient.post(`${ENDPOINTS.OFFERS}/${offerId}/click`);
+    return apiClient.post<any>(`${ENDPOINTS.OFFERS}/${offerId}/click`);
   }
 
   /**
@@ -554,7 +554,7 @@ class PriveApi {
       nextCursor?: string;
     };
   }>> {
-    return apiClient.get(ENDPOINTS.EARNINGS, params);
+    return apiClient.get<any>(ENDPOINTS.EARNINGS, params);
   }
 
   /**
@@ -577,7 +577,7 @@ class PriveApi {
       nextCursor?: string;
     };
   }>> {
-    return apiClient.get(ENDPOINTS.TRANSACTIONS, params);
+    return apiClient.get<any>(ENDPOINTS.TRANSACTIONS, params);
   }
 
   /**
@@ -622,14 +622,14 @@ class PriveApi {
       pages: number;
     };
   }>> {
-    return apiClient.get(ENDPOINTS.VOUCHERS, params);
+    return apiClient.get<any>(ENDPOINTS.VOUCHERS, params);
   }
 
   /**
    * Get single voucher details
    */
   async getVoucherById(id: string): Promise<ApiResponse<Voucher>> {
-    return apiClient.get(`${ENDPOINTS.VOUCHERS}/${id}`);
+    return apiClient.get<any>(`${ENDPOINTS.VOUCHERS}/${id}`);
   }
 
   /**
@@ -641,7 +641,7 @@ class PriveApi {
     status: string;
     usedAt: string;
   }>> {
-    return apiClient.post(`${ENDPOINTS.VOUCHERS}/${id}/use`);
+    return apiClient.post<any>(`${ENDPOINTS.VOUCHERS}/${id}/use`);
   }
 
   // ─── Smart Spend ──────────────────────────────────────────────────────────
@@ -664,21 +664,21 @@ class PriveApi {
       totalPages: number;
     };
   }>> {
-    return apiClient.get(ENDPOINTS.SMART_SPEND, params);
+    return apiClient.get<any>(ENDPOINTS.SMART_SPEND, params as any);
   }
 
   /**
    * Get single Smart Spend item detail
    */
   async getSmartSpendItem(id: string): Promise<ApiResponse<SmartSpendItem>> {
-    return apiClient.get(`${ENDPOINTS.SMART_SPEND}/${id}`);
+    return apiClient.get<any>(`${ENDPOINTS.SMART_SPEND}/${id}`);
   }
 
   /**
    * Track Smart Spend item click (fire-and-forget)
    */
   async trackSmartSpendClick(id: string): Promise<ApiResponse<void>> {
-    return apiClient.post(`${ENDPOINTS.SMART_SPEND}/${id}/click`);
+    return apiClient.post<any>(`${ENDPOINTS.SMART_SPEND}/${id}/click`);
   }
 
   // ─── Review Dashboard ──────────────────────────────────────────────────────
@@ -690,59 +690,59 @@ class PriveApi {
     page?: number;
     limit?: number;
   }): Promise<ApiResponse<PriveReviewDashboard>> {
-    return apiClient.get<PriveReviewDashboard>(ENDPOINTS.REVIEW_DASHBOARD, params);
+    return apiClient.get<PriveReviewDashboard>(ENDPOINTS.REVIEW_DASHBOARD, params as any);
   }
 
   // ─── Next Best Actions ──────────────────────────────────────────────────
 
   async getNextActions(): Promise<ApiResponse<any>> {
-    return apiClient.get(ENDPOINTS.NEXT_ACTIONS);
+    return apiClient.get<any>(ENDPOINTS.NEXT_ACTIONS);
   }
 
   // ─── Missions ──────────────────────────────────────────────────────────
 
   async getMissions(): Promise<ApiResponse<{ missions: any[] }>> {
-    return apiClient.get(ENDPOINTS.MISSIONS);
+    return apiClient.get<any>(ENDPOINTS.MISSIONS);
   }
 
   async getActiveMissions(): Promise<ApiResponse<{ missions: any[] }>> {
-    return apiClient.get(`${ENDPOINTS.MISSIONS}/active`);
+    return apiClient.get<any>(`${ENDPOINTS.MISSIONS}/active`);
   }
 
   async getCompletedMissions(): Promise<ApiResponse<{ missions: any[] }>> {
-    return apiClient.get(`${ENDPOINTS.MISSIONS}/completed`);
+    return apiClient.get<any>(`${ENDPOINTS.MISSIONS}/completed`);
   }
 
   async claimMission(id: string): Promise<ApiResponse<any>> {
-    return apiClient.post(`${ENDPOINTS.MISSIONS}/${id}/claim`);
+    return apiClient.post<any>(`${ENDPOINTS.MISSIONS}/${id}/claim`);
   }
 
   async completeMission(id: string): Promise<ApiResponse<any>> {
-    return apiClient.post(`${ENDPOINTS.MISSIONS}/${id}/complete`);
+    return apiClient.post<any>(`${ENDPOINTS.MISSIONS}/${id}/complete`);
   }
 
   // ─── Tier Comparison ──────────────────────────────────────────────────
 
   async getTierComparison(): Promise<ApiResponse<any>> {
-    return apiClient.get(ENDPOINTS.TIER_COMPARISON);
+    return apiClient.get<any>(ENDPOINTS.TIER_COMPARISON);
   }
 
   // ─── Analytics ────────────────────────────────────────────────────────
 
   async getAnalytics(period?: number): Promise<ApiResponse<any>> {
-    return apiClient.get(ENDPOINTS.ANALYTICS, period ? { period } : undefined);
+    return apiClient.get<any>(ENDPOINTS.ANALYTICS, period ? { period } : undefined);
   }
 
   // ─── Notifications ────────────────────────────────────────────────────
 
   async getNotifications(): Promise<ApiResponse<any>> {
-    return apiClient.get(ENDPOINTS.NOTIFICATIONS);
+    return apiClient.get<any>(ENDPOINTS.NOTIFICATIONS);
   }
 
   // ─── Program Config ───────────────────────────────────────────────────
 
   async getProgramConfig(): Promise<ApiResponse<any>> {
-    return apiClient.get(ENDPOINTS.PROGRAM_CONFIG);
+    return apiClient.get<any>(ENDPOINTS.PROGRAM_CONFIG);
   }
 
   // ─── Concierge ────────────────────────────────────────────────────────
@@ -752,15 +752,15 @@ class PriveApi {
     category?: string;
     message: string;
   }): Promise<ApiResponse<any>> {
-    return apiClient.post(ENDPOINTS.CONCIERGE, data);
+    return apiClient.post<any>(ENDPOINTS.CONCIERGE, data as any);
   }
 
   async getConciergeTickets(): Promise<ApiResponse<any>> {
-    return apiClient.get(ENDPOINTS.CONCIERGE);
+    return apiClient.get<any>(ENDPOINTS.CONCIERGE);
   }
 
   async addConciergeMessage(ticketId: string, message: string): Promise<ApiResponse<any>> {
-    return apiClient.post(`${ENDPOINTS.CONCIERGE}/${ticketId}/message`, { message });
+    return apiClient.post<any>(`${ENDPOINTS.CONCIERGE}/${ticketId}/message`, { message });
   }
 
   // ─── Campaigns ────────────────────────────────────────────────────────────
@@ -781,21 +781,21 @@ class PriveApi {
       pages: number;
     };
   }>> {
-    return apiClient.get(ENDPOINTS.CAMPAIGNS, params);
+    return apiClient.get<any>(ENDPOINTS.CAMPAIGNS, params);
   }
 
   /**
    * Get campaign details by ID
    */
   async getCampaignById(id: string): Promise<ApiResponse<CampaignDetail>> {
-    return apiClient.get(`${ENDPOINTS.CAMPAIGNS}/${id}`);
+    return apiClient.get<any>(`${ENDPOINTS.CAMPAIGNS}/${id}`);
   }
 
   /**
    * Join a campaign
    */
   async joinCampaign(id: string): Promise<ApiResponse<{ message: string; joinedAt: string }>> {
-    return apiClient.post(`${ENDPOINTS.CAMPAIGNS}/${id}/join`);
+    return apiClient.post<any>(`${ENDPOINTS.CAMPAIGNS}/${id}/join`);
   }
 
   /**
@@ -806,14 +806,14 @@ class PriveApi {
     postUrl: string;
     screenshotUrl?: string;
   }): Promise<ApiResponse<{ submissionId: string; status: string }>> {
-    return apiClient.post(`${ENDPOINTS.CAMPAIGNS}/${id}/submit`, data);
+    return apiClient.post<any>(`${ENDPOINTS.CAMPAIGNS}/${id}/submit`, data as any);
   }
 
   /**
    * Get submission status for a campaign
    */
   async getCampaignSubmissionStatus(id: string): Promise<ApiResponse<CampaignStatus>> {
-    return apiClient.get(`${ENDPOINTS.CAMPAIGNS}/${id}/status`);
+    return apiClient.get<any>(`${ENDPOINTS.CAMPAIGNS}/${id}/status`);
   }
 }
 

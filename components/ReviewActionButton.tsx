@@ -20,7 +20,7 @@ const ReviewActionButton: React.FC<ReviewActionButtonProps> = ({
 }) => {
   return (
     <Pressable
-      style={[styles.container, disabled && styles.disabled]}
+      style={[styles.container, disabled ? styles.disabled : null]}
       onPress={onPress}
       disabled={disabled || loading}
      
@@ -38,7 +38,7 @@ const ReviewActionButton: React.FC<ReviewActionButtonProps> = ({
             color={disabled ? colors.neutral[500] : colors.background.primary}
             style={styles.icon}
           />
-          <ThemedText style={[styles.text, disabled && styles.disabledText]}>
+          <ThemedText style={[styles.text, disabled ? styles.disabledText : null]}>
             {loading ? 'Loading...' : hasReviewed ? 'You have already reviewed this store' : 'Write a review & earn'}
           </ThemedText>
           <Ionicons

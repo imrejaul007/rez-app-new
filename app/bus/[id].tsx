@@ -384,7 +384,7 @@ function BusDetailsPage() {
 
       if (!isMounted()) return;
       setBus(busDetails);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load bus details. Please try again.');
     } finally {
@@ -432,7 +432,7 @@ function BusDetailsPage() {
       } else {
         await addToWishlist(bus.id as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -515,7 +515,10 @@ function BusDetailsPage() {
           {bus.images.length > 1 && (
             <View style={styles.imageIndicators}>
               {bus.images.map((_, index) => (
-                <View key={index} style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]} />
+                <View
+                  key={index}
+                  style={[styles.indicator, selectedImageIndex === index ? styles.indicatorActive : null]}
+                />
               ))}
             </View>
           )}

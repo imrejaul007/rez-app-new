@@ -55,7 +55,7 @@ function ProductCard({
   });
 
   // Memoize product ID
-  const productId = useMemo(() => product._id || product.id, [product._id, product.id]);
+  const productId = useMemo(() => (product as any)._id || product.id, [(product as any)._id, product.id]);
 
   // Check if product is in cart and get quantity
   const { cartItem, quantityInCart, isInCart } = useMemo(() => {
@@ -72,8 +72,8 @@ function ProductCard({
 
   // Get currency from product data (supports both price.currency and pricing.currency)
   const productCurrency = useMemo(() => {
-    return product.price?.currency || product.pricing?.currency || 'INR';
-  }, [product.price?.currency, product.pricing?.currency]);
+    return product.price?.currency || (product as any).pricing?.currency || 'INR';
+  }, [product.price?.currency, (product as any).pricing?.currency]);
 
   // Memoize formatPrice function - uses product's currency
   const formatPrice = useCallback((price: number) => {
@@ -118,17 +118,17 @@ function ProductCard({
             productId,
             productName: product.name,
             productImage: product.image,
-            price: price.current,
-            originalPrice: price.original,
+            price: Number(price.current),
+            originalPrice: Number(price.original),
             discount: priceData.discount,
-            rating: product.rating?.value || 0,
-            reviewCount: product.rating?.count || 0,
+            rating: Number(product.rating?.value || 0),
+            reviewCount: Number(product.rating?.count || 0),
             brand: product.brand,
             category: product.category || 'General',
             availability: isOutOfStock ? 'OUT_OF_STOCK' : isLowStock ? 'LIMITED' : 'IN_STOCK',
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -177,7 +177,7 @@ function ProductCard({
           await cartActions.removeItem(cartItem!.id);
           showSuccess(`${product.name} removed from cart`);
         }
-      } catch (error) {
+      } catch (error: any) {
         showError(`Failed to update ${product.name}`);
       }
     },
@@ -194,7 +194,7 @@ function ProductCard({
         } else {
           showError(`Maximum quantity reached for ${product.name}`);
         }
-      } catch (error) {
+      } catch (error: any) {
         showError(`Failed to update ${product.name}`);
       }
     },
@@ -208,7 +208,7 @@ function ProductCard({
         try {
           await onAddToCart(product);
           showSuccess(`${product.name} added to cart`);
-        } catch (error) {
+        } catch (error: any) {
           showError(`Failed to add ${product.name} to cart`);
         }
       }
@@ -302,8 +302,8 @@ function ProductCard({
 // Memoize the component
 const MemoizedProductCard = memo(ProductCard, (prevProps, nextProps) => {
   if (
-    (prevProps.product._id || prevProps.product.id) !==
-    (nextProps.product._id || nextProps.product.id)
+    ((prevProps.product as any)._id || prevProps.product.id) !==
+    ((nextProps.product as any)._id || nextProps.product.id)
   ) {
     return false;
   }

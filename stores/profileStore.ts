@@ -13,7 +13,7 @@ import profileApi from '@/services/profileApi';
 
 interface ProfileStoreState extends ProfileContextType {}
 
-export const useProfileStore = create<ProfileStoreState>(
+export const useProfileStore = create<ProfileStoreState>()(
   persist(
     (set, get) => ({
       user: null,

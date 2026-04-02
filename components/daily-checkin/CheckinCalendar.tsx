@@ -84,7 +84,7 @@ export const CheckinCalendar = React.memo(function CheckinCalendar({
       </View>
 
       {bonusDays.map((reward) => (
-        <View key={reward.day} style={[styles.bonusDay, reward.claimed && styles.bonusDayClaimed]}>
+        <View key={reward.day} style={[styles.bonusDay, reward.claimed ? styles.bonusDayClaimed : null]}>
           <Text style={styles.calendarDayLabel}>Day {reward.day}</Text>
           <View style={styles.calendarCoinContainer}>
             <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 14, height: 14 }} contentFit="contain" />

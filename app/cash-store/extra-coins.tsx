@@ -290,7 +290,7 @@ function ExtraCoinsPage() {
         if (!isMounted()) return;
         setError('Unable to load data. Please try again.');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
     }
@@ -305,7 +305,7 @@ function ExtraCoinsPage() {
     setIsRefreshing(true);
     try {
       await fetchData();
-    } catch (err) {
+    } catch (err: any) {
       // Error already handled in fetchData
     } finally {
       if (!isMounted()) return;
@@ -321,14 +321,14 @@ function ExtraCoinsPage() {
       if (result.success && result.data) {
         setStreak((prev) =>
           prev
-            ? { ...prev, hasCheckedInToday: true, currentStreak: result.data.streak || prev.currentStreak + 1 }
+            ? { ...prev, hasCheckedInToday: true, currentStreak: (result.data as any).streak || prev.currentStreak + 1 }
             : prev,
         );
-        if (result.data.coinsEarned) {
-          setCoinBalance((prev) => prev + result.data.coinsEarned + (result.data.bonusEarned || 0));
+        if ((result.data as any).coinsEarned) {
+          setCoinBalance((prev) => prev + (result.data as any).coinsEarned + ((result.data as any).bonusEarned || 0));
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -484,7 +484,7 @@ function ExtraCoinsPage() {
                 </Text>
               </View>
               <Pressable
-                style={[styles.checkInBtn, streak.hasCheckedInToday && styles.checkInBtnDone]}
+                style={[styles.checkInBtn, streak.hasCheckedInToday ? styles.checkInBtnDone : null]}
                 onPress={handleCheckIn}
                 disabled={streak.hasCheckedInToday || isCheckingIn}
               >
@@ -503,7 +503,7 @@ function ExtraCoinsPage() {
                     size={16}
                     color={streak.hasCheckedInToday ? colors.text.inverse : '#0F172A'}
                   />
-                  <Text style={[styles.checkInText, streak.hasCheckedInToday && styles.checkInTextDone]}>
+                  <Text style={[styles.checkInText, streak.hasCheckedInToday ? styles.checkInTextDone : null]}>
                     {isCheckingIn ? '...' : streak.hasCheckedInToday ? 'Checked In' : 'Daily Check-In'}
                   </Text>
                 </LinearGradient>
@@ -575,7 +575,7 @@ function ExtraCoinsPage() {
                             <Text style={styles.boostMultiplierNum}>{campaign.multiplier}</Text>
                             <Text style={styles.boostMultiplierX}>X</Text>
                           </View>
-                          <View style={[styles.boostTimePill, isEnded && styles.boostTimePillEnded]}>
+                          <View style={[styles.boostTimePill, isEnded ? styles.boostTimePillEnded : null]}>
                             <Ionicons
                               name="time-outline"
                               size={11}

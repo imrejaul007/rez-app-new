@@ -191,7 +191,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       setIsLoadingStores(true);
       setStoresError(null);
 
-      const response = await storesApi.getFeaturedStores(10);
+      const response: any = await storesApi.getFeaturedStores(10);
 
       if (response.success && response.data) {
         const filteredStores = Array.isArray(response.data)
@@ -213,7 +213,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
         devLog.log(`[${slug.toUpperCase()}] Found ${filteredStores.length} featured stores`);
         setFeaturedStores(filteredStores);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error(`[${slug.toUpperCase()}] Error fetching featured stores:`, error);
       setStoresError(error as Error);
     } finally {
@@ -231,9 +231,9 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       setIsLoadingStores(true);
       setStoresError(null);
 
-      const response = await storesApi.getStores({
+      const response: any = await storesApi.getStores({
         limit: 20,
-        sortBy: 'rating'
+        sort: 'rating'
       });
 
       if (response.success && response.data) {
@@ -249,7 +249,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
         devLog.log(`[${slug.toUpperCase()}] Found ${filteredStores.length} category stores`);
         setCategoryStores(filteredStores);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error(`[${slug.toUpperCase()}] Error fetching category stores:`, error);
       setStoresError(error as Error);
     } finally {
@@ -268,7 +268,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       setProductsError(null);
 
       devLog.log(`[${slug.toUpperCase()}] Fetching featured products...`);
-      const response = await productsApi.getFeaturedProducts(20);
+      const response: any = await productsApi.getFeaturedProducts(20);
 
       if (response.success && response.data) {
         devLog.log(`[${slug.toUpperCase()}] Total products received: ${response.data.length}`);
@@ -313,7 +313,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       } else {
         devLog.log(`[${slug.toUpperCase()}] No products data in response`);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error(`[${slug.toUpperCase()}] Error fetching featured products:`, error);
       setProductsError(error as Error);
     } finally {
@@ -332,7 +332,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       setCategoriesError(null);
 
       devLog.log(`[${slug.toUpperCase()}] Fetching categories...`);
-      const response = await categoriesApi.getCategories();
+      const response: any = await categoriesApi.getCategories();
 
       if (response.success && response.data) {
         devLog.log(`[${slug.toUpperCase()}] Received ${response.data.length} total categories`);
@@ -371,7 +371,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
         devLog.log(`[${slug.toUpperCase()}] No categories data in response`);
         setSubcategories([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error(`[${slug.toUpperCase()}] Error fetching categories:`, error);
       setCategoriesError(error as Error);
       setSubcategories([]);

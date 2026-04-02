@@ -65,7 +65,7 @@ function ConversationList({
 
     return (
       <Pressable
-        style={[styles.conversationItem, isUnread && styles.conversationItemUnread]}
+        style={[styles.conversationItem, isUnread ? styles.conversationItemUnread : null]}
         onPress={() => handleConversationPress(item)}
        
       >
@@ -99,7 +99,7 @@ function ConversationList({
         {/* Conversation Content */}
         <View style={styles.conversationContent}>
           <View style={styles.conversationHeader}>
-            <ThemedText style={[styles.storeName, isUnread && styles.storeNameUnread]}>
+            <ThemedText style={[styles.storeName, isUnread ? styles.storeNameUnread : null]}>
               {item.storeName}
             </ThemedText>
             {lastMessage && (
@@ -121,7 +121,7 @@ function ConversationList({
                 />
               )}
               <ThemedText
-                style={[styles.lastMessage, isUnread && styles.lastMessageUnread]}
+                style={[styles.lastMessage, isUnread ? styles.lastMessageUnread : null]}
                 numberOfLines={1}
               >
                 {lastMessage.type === 'image' && '📷 Photo'}

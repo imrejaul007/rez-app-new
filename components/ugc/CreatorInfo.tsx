@@ -35,7 +35,7 @@ function CreatorInfo({
     setFollowing(true);
     try {
       await onFollowPress();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

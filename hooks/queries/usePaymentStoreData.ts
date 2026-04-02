@@ -106,7 +106,7 @@ export const transformToPaymentStore = (store: any, distance?: number): PaymentS
       coordinates: store.location?.coordinates,
     },
     distance: distance || store.distance,
-    paymentSettings: {
+    paymentSettings: ({
       acceptUPI: store.paymentSettings?.acceptUPI ?? true,
       acceptCards: store.paymentSettings?.acceptCards ?? true,
       acceptPayLater: store.paymentSettings?.acceptPayLater ?? false,
@@ -119,7 +119,7 @@ export const transformToPaymentStore = (store: any, distance?: number): PaymentS
       allowCashback: store.paymentSettings?.allowCashback ?? true,
       upiId: store.paymentSettings?.upiId,
       upiName: store.paymentSettings?.upiName,
-    },
+    } as any),
     rewardRules: {
       baseCashbackPercent: store.rewardRules?.baseCashbackPercent ?? 2,
       reviewBonusCoins: store.rewardRules?.reviewBonusCoins ?? 10,

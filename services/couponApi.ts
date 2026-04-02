@@ -177,7 +177,7 @@ class CouponService {
     filters?: GetCouponsFilters
   ): Promise<ApiResponse<GetCouponsResponse>> {
 
-    return apiClient.get('/coupons', filters);
+    return apiClient.get<any>('/coupons', filters as any);
   }
 
   /**
@@ -185,7 +185,7 @@ class CouponService {
    */
   async getFeaturedCoupons(): Promise<ApiResponse<GetCouponsResponse>> {
 
-    return apiClient.get('/coupons/featured');
+    return apiClient.get<any>('/coupons/featured');
   }
 
   /**
@@ -195,13 +195,13 @@ class CouponService {
     filters?: GetMyCouponsFilters
   ): Promise<ApiResponse<GetMyCouponsResponse>> {
     try {
-      const response = await apiClient.get<GetMyCouponsResponse>('/coupons/my-coupons', filters);
+      const response = await apiClient.get<GetMyCouponsResponse>('/coupons/my-coupons', filters as any);
 
       if (response.data) {
         // Process response data if needed
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -212,7 +212,7 @@ class CouponService {
    */
   async claimCoupon(couponId: string): Promise<ApiResponse<{ userCoupon: UserCoupon }>> {
 
-    return apiClient.post(`/coupons/${couponId}/claim`);
+    return apiClient.post<any>(`/coupons/${couponId}/claim`);
   }
 
   /**
@@ -224,8 +224,8 @@ class CouponService {
   ): Promise<ApiResponse<ValidateCouponResponse>> {
 
     try {
-      const response = await apiClient.post('/coupons/validate', { couponCode, cartData });
-      return response;
+      const response = await apiClient.post<any>('/coupons/validate', { couponCode, cartData });
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -240,7 +240,7 @@ class CouponService {
   ): Promise<ApiResponse<ValidateCouponResponse>> {
 
     // Vouchers are treated as fixed-amount coupons
-    return apiClient.post('/coupons/validate', {
+    return apiClient.post<any>('/coupons/validate', {
       couponCode: voucherCode,
       cartData
     });
@@ -253,7 +253,7 @@ class CouponService {
     cartData: CartData
   ): Promise<ApiResponse<BestOfferResponse | null>> {
 
-    return apiClient.post('/coupons/best-offer', { cartData });
+    return apiClient.post<any>('/coupons/best-offer', { cartData });
   }
 
   /**
@@ -261,7 +261,7 @@ class CouponService {
    */
   async removeCoupon(couponId: string): Promise<ApiResponse<{ message: string }>> {
 
-    return apiClient.delete(`/coupons/${couponId}`);
+    return apiClient.delete<any>(`/coupons/${couponId}`);
   }
 
   /**
@@ -271,7 +271,7 @@ class CouponService {
     filters: SearchCouponsFilters
   ): Promise<ApiResponse<SearchCouponsResponse>> {
 
-    return apiClient.get('/coupons/search', filters);
+    return apiClient.get<any>('/coupons/search', filters as any);
   }
 
   /**
@@ -279,7 +279,7 @@ class CouponService {
    */
   async getCouponDetails(couponId: string): Promise<ApiResponse<Coupon>> {
 
-    return apiClient.get(`/coupons/${couponId}`);
+    return apiClient.get<any>(`/coupons/${couponId}`);
   }
 }
 

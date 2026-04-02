@@ -159,7 +159,7 @@ function WalletSkeleton() {
       <View style={styles.breakdownCard}>
         <PriveSkeletonBlock width={120} height={14} style={{ marginBottom: PRIVE_SPACING.lg }} />
         {[1, 2, 3].map((i) => (
-          <View key={i} style={[styles.coinRow, i === 3 && styles.coinRowLast]}>
+          <View key={i} style={[styles.coinRow, i === 3 ? styles.coinRowLast : null]}>
             <PriveSkeletonBlock width={10} height={10} borderRadius={5} style={{ marginRight: PRIVE_SPACING.md }} />
             <PriveSkeletonBlock width={90} height={14} style={{ flex: 1 }} />
             <PriveSkeletonBlock width={50} height={16} />
@@ -183,7 +183,7 @@ function WalletSkeleton() {
       <View style={styles.transactionsCard}>
         <PriveSkeletonBlock width={140} height={14} style={{ marginBottom: PRIVE_SPACING.lg }} />
         {[1, 2, 3, 4, 5].map((i) => (
-          <View key={i} style={[styles.transactionRow, i === 5 && styles.transactionRowLast]}>
+          <View key={i} style={[styles.transactionRow, i === 5 ? styles.transactionRowLast : null]}>
             <PriveSkeletonBlock width={36} height={36} borderRadius={18} style={{ marginRight: PRIVE_SPACING.md }} />
             <View style={styles.skeletonFlex1}>
               <PriveSkeletonBlock width={140} height={13} style={{ marginBottom: 4 }} />
@@ -523,7 +523,11 @@ function PriveWalletScreen() {
             {/* Quick Actions */}
             <View style={styles.quickActions}>
               <Pressable
-                style={[styles.actionButton, styles.actionButtonGold, redeemDisabled && styles.actionButtonDisabled]}
+                style={[
+                  styles.actionButton,
+                  styles.actionButtonGold,
+                  redeemDisabled ? styles.actionButtonDisabled : null,
+                ]}
                 onPress={() => router.push('/prive/redeem' as any)}
                 disabled={redeemDisabled}
               >

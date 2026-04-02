@@ -227,7 +227,7 @@ export default memo(function ProductDisplay({
       });
       try {
         Linking.openURL(url);
-      } catch (e) {
+      } catch (e: any) {
         catchAndWarn(e, 'ProductDisplay/openURL');
       }
     }
@@ -240,7 +240,7 @@ export default memo(function ProductDisplay({
     } else if (phoneNumber) {
       try {
         Linking.openURL(`tel:${phoneNumber}`);
-      } catch (e) {
+      } catch (e: any) {
         catchAndWarn(e, 'ProductDisplay/openURL');
       }
     }

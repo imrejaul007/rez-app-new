@@ -83,7 +83,7 @@ class UserLoyaltyApiService {
     categoryTotalCoins?: number;
   }>> {
     const params = category ? { category } : undefined;
-    return apiClient.get(this.baseUrl, params);
+    return apiClient.get<any>(this.baseUrl, params);
   }
 
   /**
@@ -97,7 +97,7 @@ class UserLoyaltyApiService {
     message: string;
   }>> {
     const params = category ? `?category=${category}` : '';
-    return apiClient.post(`${this.baseUrl}/checkin${params}`);
+    return apiClient.post<any>(`${this.baseUrl}/checkin${params}`);
   }
 
   /**
@@ -105,7 +105,7 @@ class UserLoyaltyApiService {
    */
   async completeMission(missionId: string, category?: string): Promise<ApiResponse<{ loyalty: UserLoyalty; reward: number; message: string }>> {
     const params = category ? `?category=${category}` : '';
-    return apiClient.post(`${this.baseUrl}/missions/${missionId}/complete${params}`);
+    return apiClient.post<any>(`${this.baseUrl}/missions/${missionId}/complete${params}`);
   }
 
   /**
@@ -119,14 +119,14 @@ class UserLoyaltyApiService {
     categoryBalance?: CategoryBalance;
   }>> {
     const params = category ? { category } : undefined;
-    return apiClient.get(`${this.baseUrl}/coins`, params);
+    return apiClient.get<any>(`${this.baseUrl}/coins`, params);
   }
 
   /**
    * Sync brand loyalty from order history
    */
   async syncBrandLoyalty(): Promise<ApiResponse<{ brandLoyalty: BrandLoyalty[]; count: number }>> {
-    return apiClient.post(`${this.baseUrl}/sync-brands`);
+    return apiClient.post<any>(`${this.baseUrl}/sync-brands`);
   }
 }
 

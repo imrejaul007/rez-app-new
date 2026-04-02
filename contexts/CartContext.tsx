@@ -30,7 +30,7 @@ const estimateStringSize = (str: string): number => {
   if (Platform.OS === 'web' && typeof Blob !== 'undefined') {
     try {
       return new Blob([str]).size;
-    } catch (e) {
+    } catch (e: any) {
       // Fallback to byte calculation
     }
   }
@@ -93,7 +93,7 @@ export interface CartCardOffer {
 }
 
 // Extended cart item with quantity and selected state
-interface CartItemWithQuantity extends CartItemType {
+type CartItemWithQuantity = Omit<CartItemType, 'metadata'> & {
   quantity: number;
   selected: boolean;
   addedAt: string;
@@ -494,7 +494,7 @@ export function CartProvider({ children }: CartProviderProps) {
             serviceBookingDetails?: CartItemWithQuantity['serviceBookingDetails'];
             metadata?: CartItemMetadata | null;
           }
-          const cartItems: CartItemWithQuantity[] = (mappedCart.items as MappedCartItemShape[]).map((item) => {
+          const cartItems: CartItemWithQuantity[] = ((mappedCart.items as MappedCartItemShape[]).map((item) => {
 
             return {
               id: item.id,
@@ -510,7 +510,7 @@ export function CartProvider({ children }: CartProviderProps) {
               selected: true,
               addedAt: item.addedAt,
               store: item.store,
-              variant: item.variant,
+              variant: (item.variant as any),
               subtotal: item.subtotal,
               savings: item.savings,
               // Item type and service/event details
@@ -518,7 +518,7 @@ export function CartProvider({ children }: CartProviderProps) {
               serviceBookingDetails: item.serviceBookingDetails || null,
               metadata: item.metadata || null,
             };
-          });
+          }) as any[]) as CartItemWithQuantity[];
 
           // Save to AsyncStorage as cache (optimized)
           // Note: optimizeCartForStorage is defined later, but we'll save directly here
@@ -546,7 +546,7 @@ export function CartProvider({ children }: CartProviderProps) {
       const cartItems: CartItemWithQuantity[] = savedCart ? JSON.parse(savedCart) : [];
 
       dispatch({ type: 'CART_LOADED', payload: cartItems });
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to load cart:', error);
       dispatch({
         type: 'CART_ERROR',
@@ -589,8 +589,8 @@ export function CartProvider({ children }: CartProviderProps) {
         time: item.metadata.time,
       } : undefined,
       // Remove large fields like full store objects, variant objects, etc.
-      store: item.store ? (typeof item.store === 'string' ? item.store : item.store.id || item.store.name) : undefined,
-      variant: item.variant ? (typeof item.variant === 'string' ? item.variant : item.variant.id || item.variant.name) : undefined,
+      store: (item as any).store ? (typeof (item as any).store === 'string' ? (item as any).store : (item as any).store.id || (item as any).store.name) : undefined,
+      variant: (item.variant as any) ? (typeof item.variant === 'string' ? item.variant : (item.variant as any)?.id || (item.variant as any)?.name) : undefined,
     }));
   }, []);
 
@@ -883,7 +883,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
         const response = await cartService.removeCartItem(
           productIdToRemove,
-          item.variant
+          item.variant as any
         );
         if (response.success) {
 
@@ -899,7 +899,7 @@ export function CartProvider({ children }: CartProviderProps) {
         // Revert optimistic update by reloading cart from backend
         await loadCart();
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to remove item:', error);
       dispatch({
         type: 'CART_ERROR',
@@ -934,7 +934,7 @@ export function CartProvider({ children }: CartProviderProps) {
           const response = await cartService.updateCartItem(
             productId,
             { quantity },
-            item.variant
+            item.variant as any
           );
           if (response.success) {
 
@@ -954,7 +954,7 @@ export function CartProvider({ children }: CartProviderProps) {
         // Revert optimistic update by reloading cart from backend
         await loadCart();
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to update quantity:', error);
       dispatch({
         type: 'CART_ERROR',
@@ -993,7 +993,7 @@ export function CartProvider({ children }: CartProviderProps) {
       } catch (apiError) {
         devLog.error('🛒 [CartContext] API clear failed:', apiError);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to clear cart:', error);
       dispatch({
         type: 'CART_ERROR',
@@ -1029,7 +1029,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
         await loadCart(); // Reload to get updated totals
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to apply coupon:', error);
       dispatch({
         type: 'CART_ERROR',
@@ -1048,7 +1048,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
         await loadCart(); // Reload to get updated totals
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to remove coupon:', error);
       dispatch({
         type: 'CART_ERROR',
@@ -1064,9 +1064,9 @@ export function CartProvider({ children }: CartProviderProps) {
       
       // If offer has a code, apply it as coupon
       if (offer.code && typeof applyCoupon === 'function') {
-        await applyCoupon(offer.code);
+        await applyCoupon(offer.code as string);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🛒 [CartContext] Failed to set card offer:', error);
       throw error;
     }
@@ -1103,7 +1103,7 @@ export function CartProvider({ children }: CartProviderProps) {
           payload: `Failed to sync ${result.failed} operations`
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('🔄 [CartContext] Sync error:', error);
       dispatch({
         type: 'CART_ERROR',

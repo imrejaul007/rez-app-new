@@ -60,7 +60,7 @@ function CategorySectionCard({
   const handlePress = useCallback(() => {
     try {
       onPress(category);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onPress, category]);

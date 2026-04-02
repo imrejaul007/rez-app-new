@@ -120,7 +120,7 @@ class AchievementApiService {
           data: response.data || [],
         };
       }
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -158,7 +158,7 @@ class AchievementApiService {
           data: response.data.filter(a => a.unlocked),
         };
       }
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -253,7 +253,7 @@ class AchievementApiService {
           const achievements: Achievement[] = (response.data || []).map(mapAchievement);
           const result: ApiResponse<Achievement[]> = { success: true, data: achievements };
           recalcState.cachedResult = result;
-          return result;
+          return result as any;
         }
 
         const emptyResult: ApiResponse<Achievement[]> = { success: true, data: [] };

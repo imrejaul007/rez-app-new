@@ -59,9 +59,9 @@ const EventHeader = React.memo(function EventHeader({
     <View style={[styles.heroSection, { height: heroHeight }]}>
       {!imageError ? (
         <ImageBackground
-          source={eventDetails.image}
+          source={{ uri: eventDetails.image } as any}
           style={styles.heroBackground}
-          contentFit="cover"
+          {...({ contentFit: "cover" } as any)}
           onLoad={onImageLoad}
           onError={onImageError}
         >

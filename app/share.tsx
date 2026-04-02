@@ -67,9 +67,9 @@ function SharePage() {
       });
 
       if (!result.canceled && result.assets) {
-        const newImages = result.assets.map(asset => asset.uri);
+        const newImages = result.assets.map((asset) => asset.uri);
         if (!isMounted()) return;
-        setSelectedImages(prev => [...prev, ...newImages].slice(0, 5));
+        setSelectedImages((prev) => [...prev, ...newImages].slice(0, 5));
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to pick images. Please try again.');
@@ -77,7 +77,7 @@ function SharePage() {
   };
 
   const handleRemoveImage = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleShare = async () => {
@@ -89,7 +89,7 @@ function SharePage() {
     setIsSharing(true);
     try {
       const shareText = `Check out my experience!${rating > 0 ? `\nRating: ${rating}/5` : ''}\n\n${caption || 'Great experience!'}`;
-      
+
       if (Platform.OS === 'web') {
         // On web, use Web Share API if available
         if (navigator.share) {
@@ -110,12 +110,12 @@ function SharePage() {
           message: shareText,
           title: 'My Experience',
         });
-        
+
         if (result.action === Share.sharedAction) {
           platformAlertSimple('Success', 'Your experience has been shared!');
         }
       }
-      
+
       // Navigate back after successful share
       setTimeout(() => {
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
@@ -137,13 +137,16 @@ function SharePage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle}>Share Your Experience</Text>
-        <Pressable 
-          onPress={handleShare} 
-          style={[styles.shareButton, isSharing && styles.shareButtonDisabled]}
+        <Pressable
+          onPress={handleShare}
+          style={[styles.shareButton, isSharing ? styles.shareButtonDisabled : null]}
           disabled={isSharing}
         >
           {isSharing ? (
@@ -300,9 +303,9 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   shareButtonText: {
+    ...Typography.body,
     color: COLORS.white,
     fontWeight: '600',
-    ...Typography.body,
   },
   shareButtonDisabled: {
     opacity: 0.6,

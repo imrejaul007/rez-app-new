@@ -142,7 +142,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({
             </View>
 
             {/* Rating (if available) */}
-            {product.rating > 0 && (
+            {(product.rating ?? 0) > 0 && (
               <View style={styles.ratingContainer}>
                 <Ionicons
                   name="star"
@@ -151,7 +151,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({
                   style={styles.ratingIcon}
                 />
                 <ThemedText style={styles.ratingText}>
-                  {product.rating.toFixed(1)}
+                  {product.rating?.toFixed(1)}
                 </ThemedText>
               </View>
             )}

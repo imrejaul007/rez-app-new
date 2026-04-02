@@ -164,7 +164,7 @@ class ImageCacheService {
           const downloadResult = await FileSystem.downloadAsync(uri, localPath);
 
           if (downloadResult.status === 200) {
-            const size = (await FileSystem.getInfoAsync(localPath)).size || 0;
+            const size = ((await FileSystem.getInfoAsync(localPath)) as any).size || 0;
 
             // Create cache entry
             const entry: CacheEntry = {
@@ -389,7 +389,7 @@ class ImageCacheService {
 
       if (lruUri && lruEntry) {
         this.memoryCache.delete(lruUri);
-        this.stats.memorySize -= lruEntry.size;
+        this.stats.memorySize -= (lruEntry as any).size;
         this.stats.evictions++;
       } else {
         break;

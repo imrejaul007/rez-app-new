@@ -120,7 +120,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
         timestamp: Date.now(),
       };
       await AsyncStorage.setItem(UPLOAD_STATE_KEY, JSON.stringify(state));
-    } catch (err) {
+    } catch (err: any) {
       devLog.error('Failed to save upload state:', err);
     }
   }, [uploadState, currentAttempt, error]);
@@ -139,7 +139,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
       await AsyncStorage.setItem(FORM_DATA_KEY, JSON.stringify(data));
       setFormData(data);
       devLog.log('📝 [BILL UPLOAD] Form data saved to storage');
-    } catch (err) {
+    } catch (err: any) {
       devLog.error('Failed to save form data:', err);
     }
   }, []);
@@ -166,7 +166,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
         devLog.log('📂 [BILL UPLOAD] Form data loaded from storage');
         return parsed;
       }
-    } catch (err) {
+    } catch (err: any) {
       devLog.error('Failed to load form data:', err);
     }
     return null;
@@ -187,7 +187,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
       await AsyncStorage.removeItem(UPLOAD_STATE_KEY);
       setFormData(null);
       devLog.log('🗑️ [BILL UPLOAD] Form data cleared');
-    } catch (err) {
+    } catch (err: any) {
       devLog.error('Failed to clear form data:', err);
     }
   }, []);
@@ -255,7 +255,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
 
           return false;
         }
-      } catch (err) {
+      } catch (err: any) {
         devLog.error('❌ [BILL UPLOAD] Exception during upload:', err);
         const uploadError: UploadError = {
           code: 'UNKNOWN_ERROR',

@@ -37,7 +37,7 @@ const CashStoreHeroBanner: React.FC<CashStoreHeroBannerProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlashList<HeroBannerType>>(null);
-  const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
+  const autoScrollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeIndexRef = useRef(0); // Ref to track current index without re-running effects
   const fadeAnim = useSharedValue(0);
   const scaleAnim = useSharedValue(0.95);
@@ -141,7 +141,7 @@ const CashStoreHeroBanner: React.FC<CashStoreHeroBannerProps> = ({
           ]}
         >
           <LinearGradient
-            colors={item.gradientColors || [colors.linen, colors.background.primary, colors.background.primary]}
+            colors={(item.gradientColors || [colors.linen, colors.background.primary, colors.background.primary]) as [string, string, ...string[]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.bannerCard}

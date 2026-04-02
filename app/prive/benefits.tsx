@@ -146,11 +146,11 @@ function BenefitsScreen() {
           return (
             <View
               key={tier.tier}
-              style={[styles.tierCard, isCurrent && { borderColor: tier.color }, isLocked && styles.tierLocked]}
+              style={[styles.tierCard, isCurrent && { borderColor: tier.color }, isLocked ? styles.tierLocked : null]}
             >
               <View style={styles.tierHeader}>
                 <View style={[styles.tierDot, { backgroundColor: tier.color }]} />
-                <Text style={[styles.tierName, isLocked && styles.lockedText]}>{tier.displayName}</Text>
+                <Text style={[styles.tierName, isLocked ? styles.lockedText : null]}>{tier.displayName}</Text>
                 <Text style={[styles.tierMultiplier, { color: tier.color }]}>{tier.coinMultiplier}x coins</Text>
                 {isCurrent && (
                   <View style={[styles.currentBadge, { backgroundColor: `${tier.color}30` }]}>
@@ -162,13 +162,13 @@ function BenefitsScreen() {
               <View style={styles.benefitsList}>
                 {(tier.benefits || []).map((b: string, i: number) => (
                   <View key={i} style={styles.benefitRow}>
-                    <Text style={[styles.checkIcon, isLocked && styles.lockedText]}>{isLocked ? '○' : '✓'}</Text>
-                    <Text style={[styles.benefitText, isLocked && styles.lockedText]}>{b}</Text>
+                    <Text style={[styles.checkIcon, isLocked ? styles.lockedText : null]}>{isLocked ? '○' : '✓'}</Text>
+                    <Text style={[styles.benefitText, isLocked ? styles.lockedText : null]}>{b}</Text>
                   </View>
                 ))}
               </View>
               {tier.threshold && (
-                <Text style={[styles.thresholdText, isLocked && styles.lockedText]}>
+                <Text style={[styles.thresholdText, isLocked ? styles.lockedText : null]}>
                   Requires score: {tier.threshold}+
                 </Text>
               )}

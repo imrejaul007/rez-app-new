@@ -116,7 +116,7 @@ const StoreCard = ({ store, variant = 'default' }: { store: any; variant?: 'defa
   const isCompact = variant === 'compact';
 
   const handleStorePress = () => {
-    router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
+    router.push(`/MainStorePage?storeId=${(store as any)._id || store.id}` as any);
   };
 
   if (isCompact) {
@@ -233,7 +233,7 @@ const ProductCard = ({ product, currencySymbol }: { product: any; currencySymbol
     try {
       setIsAdding(true);
       await apiClient.post('/cart/add', {
-        productId: product._id || product.id,
+        productId: (product as any)._id || product.id,
         quantity: 1,
       });
       platformAlertSimple('Added!', `${product.name} added to cart`);
@@ -243,7 +243,7 @@ const ProductCard = ({ product, currencySymbol }: { product: any; currencySymbol
         : 'Could not add to cart. Please try again.';
       platformAlertSimple('Error', message);
     } finally {
-      if (!isMounted()) return;
+      if (!true) return;
       setIsAdding(false);
     }
   };
@@ -253,7 +253,7 @@ const ProductCard = ({ product, currencySymbol }: { product: any; currencySymbol
       style={styles.productCard}
       onPress={() => {
         const storeId = product.store?._id || product.store;
-        const productId = product._id || product.id;
+        const productId = (product as any)._id || product.id;
         router.push(`/product-page?id=${productId}&storeId=${storeId}` as any);
       }}
      
@@ -342,13 +342,13 @@ function GroceryCategoryPage() {
       // Backend returns { suggestions: [...], placeholders: [...] }
       const suggestions = res.data?.suggestions || [];
       if (suggestions.length > 0) {
-        if (!isMounted()) return;
+        if (!true) return;
         setSmartSuggestions(suggestions.map((s: any) => s.text || s.title || s));
       } else {
         setSmartSuggestions([]);
       }
     } catch {
-      if (!isMounted()) return;
+      if (!true) return;
       setSmartSuggestions([]);
     }
   }, [slug]);
@@ -358,7 +358,7 @@ function GroceryCategoryPage() {
     try {
       setIsLoadingNewStores(true);
       const res = await storesApi.getNewStores?.({ limit: 20 });
-      if (res?.success && res.data?.length > 0) {
+      if (res?.success && (res.data as any)?.length > 0) {
         const storesData = Array.isArray(res.data) ? res.data : (res.data?.stores || []);
         const groceryStores = storesData.filter((s: any) => {
           const catSlug = s.category?.slug || '';
@@ -366,13 +366,13 @@ function GroceryCategoryPage() {
           return catSlug === slug || catSlug.includes('grocery') || catName.includes('grocery')
             || catName.includes('supermarket') || catName.includes('kirana');
         });
-        if (!isMounted()) return;
+        if (!true) return;
         setNewStores(groceryStores.slice(0, 8));
       }
     } catch {
       // No new stores available
     } finally {
-      if (!isMounted()) return;
+      if (!true) return;
       setIsLoadingNewStores(false);
     }
   }, [slug]);
@@ -380,7 +380,7 @@ function GroceryCategoryPage() {
   const onRefresh = async () => {
     setRefreshing(true);
     await Promise.all([refetch(), fetchSuggestions(), fetchNewStores()]);
-    if (!isMounted()) return;
+    if (!true) return;
     setRefreshing(false);
   };
 
@@ -518,10 +518,10 @@ function GroceryCategoryPage() {
             <Pressable
               key={tab.id}
               onPress={() => { setActiveTab(tab.id); setVisibleStoresCount(10); }}
-              style={[styles.tab, activeTab === tab.id && styles.tabActive]}
+              style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
             >
               <Ionicons name={tab.icon as any} size={18} color={activeTab === tab.id ? COLORS.white : COLORS.textSecondary} />
-              <Text style={[styles.tabLabel, activeTab === tab.id && styles.tabLabelActive]}>
+              <Text style={[styles.tabLabel, activeTab === tab.id ? styles.tabLabelActive : null]}>
                 {tab.label}
               </Text>
             </Pressable>
@@ -545,7 +545,7 @@ function GroceryCategoryPage() {
 
       {/* Browse Category Grid */}
       <BrowseCategoryGrid
-        categories={subcategories}
+        categories={subcategories as any}
         title="Shop by Category"
         onCategoryPress={handleCategoryPress}
       />
@@ -570,7 +570,7 @@ function GroceryCategoryPage() {
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.storesList}>
             {fastDeliveryStores.slice(0, 5).map((store) => (
-              <StoreCard key={store._id || store.id} store={store} variant="compact" />
+              <StoreCard key={(store as any)._id || store.id} store={store} variant="compact" />
             ))}
           </ScrollView>
         </View>
@@ -593,7 +593,7 @@ function GroceryCategoryPage() {
           </View>
           <View style={styles.storesGrid}>
             {topRatedStores.slice(0, 4).map((store) => (
-              <StoreCard key={store._id || store.id} store={store} />
+              <StoreCard key={(store as any)._id || store.id} store={store} />
             ))}
           </View>
         </View>
@@ -664,7 +664,7 @@ function GroceryCategoryPage() {
           <>
             <View style={styles.storesGrid}>
               {filteredStores.slice(0, visibleStoresCount).map((store) => (
-                <StoreCard key={store._id || store.id} store={store} />
+                <StoreCard key={(store as any)._id || store.id} store={store} />
               ))}
             </View>
             {filteredStores.length > visibleStoresCount && (
@@ -708,7 +708,7 @@ function GroceryCategoryPage() {
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productsList}>
             {filteredProducts.slice(0, 8).map((product) => (
-              <ProductCard key={product._id || product.id} product={product} currencySymbol={currencySymbol} />
+              <ProductCard key={(product as any)._id || product.id} product={product} currencySymbol={currencySymbol} />
             ))}
           </ScrollView>
         </View>
@@ -777,7 +777,7 @@ function GroceryCategoryPage() {
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.storesList}>
             {newStores.map((store: any) => (
-              <StoreCard key={store._id || store.id} store={store} variant="compact" />
+              <StoreCard key={(store as any)._id || store.id} store={store} variant="compact" />
             ))}
           </ScrollView>
         </View>

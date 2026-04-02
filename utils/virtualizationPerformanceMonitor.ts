@@ -58,7 +58,7 @@ class VirtualizationPerformanceMonitor {
   private appStartTime = Date.now();
   private interactiveTime?: number;
   private isMonitoring = false;
-  private fpsInterval?: NodeJS.Timeout;
+  private fpsInterval?: ReturnType<typeof setTimeout>;
   private lastFrameTime = Date.now();
   private frameCount = 0;
 

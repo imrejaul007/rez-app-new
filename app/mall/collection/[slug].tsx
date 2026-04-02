@@ -7,13 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, ActivityIndicator, Text } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -29,7 +23,7 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 function CollectionBrandsPage() {
-  const params = useLocalSearchParams<{ slug: string }>();
+  const params = useLocalSearchParams<any>();
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   const isMounted = useIsMounted();
 
@@ -47,40 +41,40 @@ function CollectionBrandsPage() {
 
   const LIMIT = 20;
 
-  const fetchCollectionBrands = useCallback(async (
-    pageNum: number = 1,
-    append: boolean = false
-  ) => {
-    if (!slug) return;
+  const fetchCollectionBrands = useCallback(
+    async (pageNum: number = 1, append: boolean = false) => {
+      if (!slug) return;
 
-    try {
-      setError(null);
-      const result = await mallApi.getBrandsByCollection(slug, pageNum, LIMIT);
+      try {
+        setError(null);
+        const result = await mallApi.getBrandsByCollection(slug, pageNum, LIMIT);
 
-      if (!isMounted()) return;
-      setCollection(result.collection);
-      if (!isMounted()) return;
-      setTotal(result.total);
-
-      if (append) {
         if (!isMounted()) return;
-        setBrands(prev => [...prev, ...result.brands]);
-      } else {
+        setCollection(result.collection);
         if (!isMounted()) return;
-        setBrands(result.brands);
+        setTotal(result.total);
+
+        if (append) {
+          if (!isMounted()) return;
+          setBrands((prev) => [...prev, ...result.brands]);
+        } else {
+          if (!isMounted()) return;
+          setBrands(result.brands);
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err.message || 'Failed to load collection');
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
+        if (!isMounted()) return;
+        setIsLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load collection');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-      if (!isMounted()) return;
-      setIsLoadingMore(false);
-    }
-  }, [slug]);
+    },
+    [slug],
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -105,16 +99,19 @@ function CollectionBrandsPage() {
     fetchCollectionBrands(nextPage, true);
   }, [page, total, isLoadingMore, fetchCollectionBrands]);
 
-  const handleBrandPress = useCallback((brand: MallBrand) => {
-    router.push(`/mall/brand/${brand.id || brand._id}` as any);
-  }, [router]);
+  const handleBrandPress = useCallback(
+    (brand: MallBrand) => {
+      router.push(`/mall/brand/${brand.id || brand._id}` as any);
+    },
+    [router],
+  );
 
-  const renderItem = useCallback(({ item }: { item: MallBrand }) => (
-    <BrandFullWidthCard brand={item} onPress={handleBrandPress} />
-  ), [handleBrandPress]);
+  const renderItem = useCallback(
+    ({ item }: { item: MallBrand }) => <BrandFullWidthCard brand={item} onPress={handleBrandPress} />,
+    [handleBrandPress],
+  );
 
-  const keyExtractor = useCallback((item: MallBrand) =>
-    item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id, []);
 
   const getCollectionTypeLabel = (type: string) => {
     switch (type) {
@@ -131,42 +128,34 @@ function CollectionBrandsPage() {
     }
   };
 
-  const ListHeader = useCallback(() => (
-    <View>
-      {collection && (
-        <View style={styles.header}>
-          {collection.image && (
-            <CachedImage
-              source={collection.image}
-              style={styles.headerImage}
-              contentFit="cover"
-            />
-          )}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.headerOverlay}
-          />
-          <View style={styles.headerContent}>
-            <View style={styles.typeBadge}>
-              <Text style={styles.typeBadgeText}>
-                {getCollectionTypeLabel(collection.type)}
-              </Text>
-            </View>
-            <Text style={styles.headerTitle}>{collection.name}</Text>
-            {collection.description && (
-              <Text style={styles.headerDescription}>{collection.description}</Text>
+  const ListHeader = useCallback(
+    () => (
+      <View>
+        {collection && (
+          <View style={styles.header}>
+            {collection.image && (
+              <CachedImage source={collection.image} style={styles.headerImage} contentFit="cover" />
             )}
-            <Text style={styles.brandCount}>{brands.length} brands</Text>
+            <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.headerOverlay} />
+            <View style={styles.headerContent}>
+              <View style={styles.typeBadge}>
+                <Text style={styles.typeBadgeText}>{getCollectionTypeLabel(collection.type)}</Text>
+              </View>
+              <Text style={styles.headerTitle}>{collection.name}</Text>
+              {collection.description && <Text style={styles.headerDescription}>{collection.description}</Text>}
+              <Text style={styles.brandCount}>{brands.length} brands</Text>
+            </View>
           </View>
+        )}
+        <View style={styles.listHeader}>
+          <Text style={styles.resultCount}>
+            {brands.length} of {total} brands
+          </Text>
         </View>
-      )}
-      <View style={styles.listHeader}>
-        <Text style={styles.resultCount}>
-          {brands.length} of {total} brands
-        </Text>
       </View>
-    </View>
-  ), [collection, brands.length, total]);
+    ),
+    [collection, brands.length, total],
+  );
 
   const ListFooter = useCallback(() => {
     if (isLoadingMore) {
@@ -317,16 +306,16 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
   },
   listContent: {
-    paddingBottom: Spacing.xl,
-  paddingBottom: 120, },
+    paddingBottom: 120,
+  },
   listHeader: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
   },
   resultCount: {
     ...Typography.bodySmall,
-    fontWeight: '500',
     color: colors.text.tertiary,
+    fontWeight: '500',
   },
   loadingMore: {
     paddingVertical: Spacing.lg,

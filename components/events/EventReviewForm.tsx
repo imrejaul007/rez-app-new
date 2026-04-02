@@ -80,7 +80,7 @@ const EventReviewForm: React.FC<EventReviewFormProps> = ({
         title: title.trim(),
         review: review.trim(),
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -142,7 +142,7 @@ const EventReviewForm: React.FC<EventReviewFormProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Review Title *</Text>
           <TextInput
-            style={[styles.input, errors.title && styles.inputError]}
+            style={[styles.input, errors.title ? styles.inputError : null]}
             placeholder="Summarize your experience"
             placeholderTextColor={EVENT_COLORS.textLight}
             value={title}
@@ -166,7 +166,7 @@ const EventReviewForm: React.FC<EventReviewFormProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Your Review *</Text>
           <TextInput
-            style={[styles.textArea, errors.review && styles.inputError]}
+            style={[styles.textArea, errors.review ? styles.inputError : null]}
             placeholder="Tell others about your experience. What did you like? What could be improved?"
             placeholderTextColor={EVENT_COLORS.textLight}
             value={review}
@@ -191,7 +191,7 @@ const EventReviewForm: React.FC<EventReviewFormProps> = ({
 
         {/* Submit Button */}
         <Pressable
-          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          style={[styles.submitButton, isSubmitting ? styles.submitButtonDisabled : null]}
           onPress={handleSubmit}
           disabled={isSubmitting}
          

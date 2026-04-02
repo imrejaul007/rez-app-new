@@ -21,11 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { DetailPageSkeleton } from '@/components/skeletons';
-import supportService, {
-  PublicSupportConfig,
-  CallbackResponse,
-  SupportCategory,
-} from '@/services/supportApi';
+import supportService, { PublicSupportConfig, CallbackResponse, SupportCategory } from '@/services/supportApi';
 import { useAuthUser } from '@/stores/selectors';
 import analyticsService from '@/services/analyticsService';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -75,7 +71,7 @@ function CallSupportPage() {
         if (!isMounted()) return;
         setPageState('error');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setConfigError('Unable to connect. Please check your connection and try again.');
       if (!isMounted()) return;
@@ -94,7 +90,7 @@ function CallSupportPage() {
     if (userPhone) {
       // Try to parse country code prefix
       const prefixes = ['+971', '+91', '+1', '+44', '+966', '+968', '+965', '+973', '+974'];
-      const matched = prefixes.find(p => userPhone.startsWith(p));
+      const matched = prefixes.find((p) => userPhone.startsWith(p));
       if (matched) {
         setCountryCode(matched);
         setPhoneNumber(userPhone.slice(matched.length));
@@ -124,7 +120,7 @@ function CallSupportPage() {
   };
 
   const markTouched = (field: string) => {
-    setTouchedFields(prev => ({ ...prev, [field]: true }));
+    setTouchedFields((prev) => ({ ...prev, [field]: true }));
   };
 
   // Derive availability
@@ -144,18 +140,21 @@ function CallSupportPage() {
   const getScheduleDisplay = () => {
     if (!config) return [];
     const schedule = config.supportHours.schedule;
-    const weekdays = schedule.filter(s => s.dayOfWeek >= 1 && s.dayOfWeek <= 5);
-    const saturday = schedule.find(s => s.dayOfWeek === 6);
-    const sunday = schedule.find(s => s.dayOfWeek === 0);
+    const weekdays = schedule.filter((s) => s.dayOfWeek >= 1 && s.dayOfWeek <= 5);
+    const saturday = schedule.find((s) => s.dayOfWeek === 6);
+    const sunday = schedule.find((s) => s.dayOfWeek === 0);
 
     const rows: { label: string; value: string }[] = [];
 
     // Check if all weekdays are the same
-    const allWeekdaysSame = weekdays.length > 0 && weekdays.every(
-      d => d.isOpen === weekdays[0].isOpen &&
-           d.openTime === weekdays[0].openTime &&
-           d.closeTime === weekdays[0].closeTime
-    );
+    const allWeekdaysSame =
+      weekdays.length > 0 &&
+      weekdays.every(
+        (d) =>
+          d.isOpen === weekdays[0].isOpen &&
+          d.openTime === weekdays[0].openTime &&
+          d.closeTime === weekdays[0].closeTime,
+      );
 
     if (allWeekdaysSame && weekdays[0]) {
       rows.push({
@@ -165,7 +164,7 @@ function CallSupportPage() {
           : 'Closed',
       });
     } else {
-      weekdays.forEach(d => {
+      weekdays.forEach((d) => {
         rows.push({
           label: d.dayName,
           value: d.isOpen ? `${formatTime(d.openTime)} - ${formatTime(d.closeTime)}` : 'Closed',
@@ -174,15 +173,16 @@ function CallSupportPage() {
     }
 
     // Saturday + Sunday together if same
-    if (saturday && sunday &&
-        saturday.isOpen === sunday.isOpen &&
-        saturday.openTime === sunday.openTime &&
-        saturday.closeTime === sunday.closeTime) {
+    if (
+      saturday &&
+      sunday &&
+      saturday.isOpen === sunday.isOpen &&
+      saturday.openTime === sunday.openTime &&
+      saturday.closeTime === sunday.closeTime
+    ) {
       rows.push({
         label: 'Saturday - Sunday',
-        value: saturday.isOpen
-          ? `${formatTime(saturday.openTime)} - ${formatTime(saturday.closeTime)}`
-          : 'Closed',
+        value: saturday.isOpen ? `${formatTime(saturday.openTime)} - ${formatTime(saturday.closeTime)}` : 'Closed',
       });
     } else {
       if (saturday) {
@@ -274,7 +274,7 @@ function CallSupportPage() {
       <View style={styles.headerContent}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
@@ -337,7 +337,9 @@ function CallSupportPage() {
           </View>
           <ThemedText style={styles.successTitle}>Callback Requested!</ThemedText>
           <ThemedText style={styles.successText}>
-            Our support team will call you at{'\n'}{countryCode} {phoneNumber}{'\n'}within the next {callbackResult.estimatedWaitMinutes} minutes
+            Our support team will call you at{'\n'}
+            {countryCode} {phoneNumber}
+            {'\n'}within the next {callbackResult.estimatedWaitMinutes} minutes
           </ThemedText>
           <View style={styles.successCard}>
             <View style={styles.ticketNumberRow}>
@@ -370,7 +372,7 @@ function CallSupportPage() {
           </Pressable>
           <Pressable
             style={styles.doneButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Done"
             accessibilityRole="button"
           >
@@ -391,10 +393,7 @@ function CallSupportPage() {
       <StatusBar barStyle="light-content" translucent />
       {renderHeader()}
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           style={styles.content}
           contentContainerStyle={styles.scrollContent}
@@ -408,7 +407,7 @@ function CallSupportPage() {
             </View>
           ) : (
             <View style={[styles.statusBanner, isOpen ? styles.statusOpen : styles.statusClosed]}>
-              <View style={[styles.statusDot, isOpen && styles.statusDotOpen]} />
+              <View style={[styles.statusDot, isOpen ? styles.statusDotOpen : null]} />
               <ThemedText style={styles.statusText}>
                 {isOpen
                   ? isHighWait
@@ -471,13 +470,10 @@ function CallSupportPage() {
               {/* Category Selection */}
               <ThemedText style={styles.inputLabel}>What do you need help with?</ThemedText>
               <View style={styles.categoriesGrid}>
-                {categories.map(category => (
+                {categories.map((category) => (
                   <Pressable
                     key={category.id}
-                    style={[
-                      styles.categoryCard,
-                      selectedCategory === category.id && styles.categoryCardSelected,
-                    ]}
+                    style={[styles.categoryCard, selectedCategory === category.id && styles.categoryCardSelected]}
                     onPress={() => {
                       setSelectedCategory(category.id);
                       markTouched('category');
@@ -491,10 +487,9 @@ function CallSupportPage() {
                       size={24}
                       color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
                     />
-                    <ThemedText style={[
-                      styles.categoryLabel,
-                      selectedCategory === category.id && styles.categoryLabelSelected,
-                    ]}>
+                    <ThemedText
+                      style={[styles.categoryLabel, selectedCategory === category.id && styles.categoryLabelSelected]}
+                    >
                       {category.name}
                     </ThemedText>
                   </Pressable>
@@ -530,9 +525,7 @@ function CallSupportPage() {
                   accessibilityLabel="Phone number"
                 />
               </View>
-              {getFieldError('phone') && (
-                <ThemedText style={styles.fieldError}>{getFieldError('phone')}</ThemedText>
-              )}
+              {getFieldError('phone') && <ThemedText style={styles.fieldError}>{getFieldError('phone')}</ThemedText>}
 
               {/* Notes */}
               <View style={styles.notesHeader}>
@@ -555,10 +548,7 @@ function CallSupportPage() {
           {/* Request Button */}
           {config?.callbackEnabled !== false && (
             <Pressable
-              style={[
-                styles.requestButton,
-                (!formValid || loading) && styles.requestButtonDisabled,
-              ]}
+              style={[styles.requestButton, (!formValid || loading) && styles.requestButtonDisabled]}
               onPress={handleRequestCallback}
               disabled={loading}
               accessibilityLabel="Request callback"
@@ -581,8 +571,7 @@ function CallSupportPage() {
           <View style={styles.infoCard}>
             <Ionicons name="information-circle-outline" size={20} color={Colors.info} />
             <ThemedText style={styles.infoText}>
-              Callbacks are available during support hours. If you request outside hours,
-              we'll call you when we open.
+              Callbacks are available during support hours. If you request outside hours, we'll call you when we open.
             </ThemedText>
           </View>
         </ScrollView>

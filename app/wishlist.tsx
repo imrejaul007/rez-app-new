@@ -63,7 +63,7 @@ const getDaysUntilExpiry = (validUntil?: string): number | null => {
 };
 
 // Helper to format discount value - note: currencySymbol must be passed as parameter
-const formatDiscountValue = (snapshot?: DiscountSnapshot, currencySymbol: string): string => {
+const formatDiscountValue = (snapshot: DiscountSnapshot | undefined, currencySymbol: string): string => {
   if (!snapshot) return '';
   if (snapshot.type === 'percentage') {
     return `${snapshot.value}% OFF`;
@@ -335,7 +335,7 @@ function WishlistPage() {
 
       if (!isMounted()) return;
       setWishlists(filteredWishlists);
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch wishlists';
       if (!errorMessage.includes('401') && !errorMessage.includes('Access token')) {
         setError(errorMessage);
@@ -399,7 +399,7 @@ function WishlistPage() {
       setShowCreateModal(false);
       showAlert('Success', 'Wishlist created successfully!', undefined, 'success');
       await fetchWishlists();
-    } catch (err) {
+    } catch (err: any) {
       showAlert('Error', 'Failed to create wishlist. Please try again.', undefined, 'error');
     } finally {
       if (!isMounted()) return;
@@ -456,7 +456,7 @@ function WishlistPage() {
                 // Sync with global wishlist context so product pages update
                 await refreshWishlist();
                 showAlert('Success', 'Item removed from wishlist', undefined, 'success');
-              } catch (err) {
+              } catch (err: any) {
                 showAlert('Error', 'Failed to remove item. Please try again.', undefined, 'error');
                 await fetchWishlists();
               }
@@ -486,7 +486,7 @@ function WishlistPage() {
                 // Sync with global wishlist context so product pages update
                 await refreshWishlist();
                 showAlert('Success', 'Wishlist deleted', undefined, 'success');
-              } catch (err) {
+              } catch (err: any) {
                 showAlert('Error', 'Failed to delete wishlist.', undefined, 'error');
                 await fetchWishlists();
               }
@@ -506,17 +506,20 @@ function WishlistPage() {
     const isExpired = isDealExpired(snapshot?.validUntil);
 
     return (
-      <Pressable style={[styles.dealCard, isExpired && styles.dealCardExpired]} onPress={() => handleItemPress(item)}>
+      <Pressable
+        style={[styles.dealCard, isExpired ? styles.dealCardExpired : null]}
+        onPress={() => handleItemPress(item)}
+      >
         {/* Discount Badge */}
-        <View style={[styles.discountBadge, isExpired && styles.discountBadgeExpired]}>
+        <View style={[styles.discountBadge, isExpired ? styles.discountBadgeExpired : null]}>
           <Ionicons name="pricetag" size={14} color={isExpired ? Colors.error : Colors.primary[500]} />
-          <ThemedText style={[styles.discountBadgeText, isExpired && styles.discountBadgeTextExpired]}>
+          <ThemedText style={[styles.discountBadgeText, isExpired ? styles.discountBadgeTextExpired : null]}>
             {formatDiscountValue(snapshot, currencySymbol)}
           </ThemedText>
         </View>
 
         {/* Deal Info */}
-        <ThemedText style={[styles.dealName, isExpired && styles.dealNameExpired]} numberOfLines={2}>
+        <ThemedText style={[styles.dealName, isExpired ? styles.dealNameExpired : null]} numberOfLines={2}>
           {item.name}
         </ThemedText>
 
@@ -542,13 +545,13 @@ function WishlistPage() {
               <ThemedText style={styles.expiredText}>Expired</ThemedText>
             </View>
           ) : daysLeft !== null && daysLeft <= 7 ? (
-            <View style={[styles.expiryBadge, daysLeft <= 3 && styles.expiryBadgeUrgent]}>
+            <View style={[styles.expiryBadge, daysLeft <= 3 ? styles.expiryBadgeUrgent : null]}>
               <Ionicons
                 name="time-outline"
                 size={12}
                 color={daysLeft <= 3 ? colors.warningScale[400] : Colors.primary[500]}
               />
-              <ThemedText style={[styles.expiryText, daysLeft <= 3 && styles.expiryTextUrgent]}>
+              <ThemedText style={[styles.expiryText, daysLeft <= 3 ? styles.expiryTextUrgent : null]}>
                 {daysLeft <= 0 ? 'Today' : `${daysLeft}d left`}
               </ThemedText>
             </View>
@@ -1366,13 +1369,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 40,
   },
-  emptyTitle: {
-    fontSize: Typography.h2.fontSize,
-    fontWeight: '700',
-    color: colors.text.primary,
-    marginTop: Spacing.base,
-    marginBottom: Spacing.sm,
-  },
   emptyDesc: {
     fontSize: 15,
     color: colors.text.secondary,
@@ -1528,10 +1524,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xl * 2,
   },
   emptyTitle: {
-    ...Typography.h4,
-    fontWeight: '700',
     marginTop: Spacing.md,
     color: colors.text.primary,
+    ...Typography.h4,
+    fontWeight: '700' as const,
   },
   emptySubtitle: {
     ...Typography.body,

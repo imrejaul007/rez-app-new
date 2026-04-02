@@ -235,7 +235,7 @@ class OfflineSyncService extends EventEmitter {
       this.isSyncing = false;
     }
 
-    return result;
+    return result as any;
   }
 
   /**

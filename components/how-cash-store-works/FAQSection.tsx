@@ -68,13 +68,13 @@ const FAQItem: React.FC<{
   onToggle: () => void;
 }> = ({ faq, isExpanded, onToggle }) => (
   <Pressable
-    style={[styles.faqItem, isExpanded && styles.faqItemExpanded]}
+    style={[styles.faqItem, isExpanded ? styles.faqItemExpanded : null]}
     onPress={onToggle}
    
   >
     <View style={styles.questionRow}>
       <Text style={styles.question}>{faq.question}</Text>
-      <View style={[styles.iconContainer, isExpanded && styles.iconContainerExpanded]}>
+      <View style={[styles.iconContainer, isExpanded ? styles.iconContainerExpanded : null]}>
         <Ionicons
           name={isExpanded ? 'chevron-up' : 'chevron-down'}
           size={18}

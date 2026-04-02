@@ -73,11 +73,7 @@ function generateIdempotencyKey(): string {
 
 function CreateTicketPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{
-    category?: string;
-    subject?: string;
-    relatedOrderId?: string;
-  }>();
+  const params = useLocalSearchParams<any>();
 
   const [subject, setSubject] = useState(params.subject || '');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(params.category || null);
@@ -118,7 +114,7 @@ function CreateTicketPage() {
       } else {
         platformAlertSimple('Error', 'Failed to create ticket. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Something went wrong. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -177,7 +173,7 @@ function CreateTicketPage() {
               {CATEGORIES.map((cat) => (
                 <Pressable
                   key={cat.id}
-                  style={[styles.categoryCard, selectedCategory === cat.id && styles.categoryCardSelected]}
+                  style={[styles.categoryCard, selectedCategory === cat.id ? styles.categoryCardSelected : null]}
                   onPress={() => {
                     setSelectedCategory(cat.id);
                     setSelectedLabel(cat.label);
@@ -195,7 +191,7 @@ function CreateTicketPage() {
                     color={selectedCategory === cat.id ? Colors.secondary[600] : Colors.gray[500]}
                   />
                   <ThemedText
-                    style={[styles.categoryLabel, selectedCategory === cat.id && styles.categoryLabelSelected]}
+                    style={[styles.categoryLabel, selectedCategory === cat.id ? styles.categoryLabelSelected : null]}
                   >
                     {cat.label}
                   </ThemedText>
@@ -275,7 +271,7 @@ function CreateTicketPage() {
 
           {/* Submit Button */}
           <Pressable
-            style={[styles.submitButton, !isValid && styles.submitButtonDisabled]}
+            style={[styles.submitButton, !isValid ? styles.submitButtonDisabled : null]}
             onPress={handleSubmit}
             disabled={!isValid || submitting}
           >
@@ -407,7 +403,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors.text as any)?.primary || Colors.text,
     ...Shadows.subtle,
   },
   textArea: {
@@ -415,7 +411,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors.text as any)?.primary || Colors.text,
     minHeight: 140,
     ...Shadows.subtle,
   },

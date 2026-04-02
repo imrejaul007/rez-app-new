@@ -19,7 +19,7 @@ export function useCheckinStatus() {
   return useQuery<CheckinStatus>({
     queryKey: queryKeys.gamification.streak(),
     queryFn: async () => {
-      const response = await gamificationApi.getStreakStatus();
+      const response: any = await gamificationApi.getStreakStatus();
       if (response.success && response.data) {
         const d = response.data;
         return {

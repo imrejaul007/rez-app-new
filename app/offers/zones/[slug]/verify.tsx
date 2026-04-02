@@ -7,7 +7,17 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Platform, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TextInput,
+  Platform,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -60,13 +70,16 @@ interface VerificationFormData {
   serviceNumber?: string;
 }
 
-const ZONE_CONFIG: Record<string, {
-  icon: keyof typeof Ionicons.glyphMap;
-  gradient: [string, string, string];
-  documentTypes: { value: string; label: string }[];
-  fields: string[];
-  instructions: string;
-}> = {
+const ZONE_CONFIG: Record<
+  string,
+  {
+    icon: keyof typeof Ionicons.glyphMap;
+    gradient: [string, string, string];
+    documentTypes: { value: string; label: string }[];
+    fields: string[];
+    instructions: string;
+  }
+> = {
   student: {
     icon: 'school-outline',
     gradient: [colors.infoScale[400], Colors.info, '#1D4ED8'],
@@ -76,7 +89,8 @@ const ZONE_CONFIG: Record<string, {
       { value: 'enrollment_letter', label: 'Enrollment Letter' },
     ],
     fields: ['documentType', 'instituteName', 'email'],
-    instructions: 'Please provide your student verification details. You can verify using your student ID, educational email, or enrollment letter.',
+    instructions:
+      'Please provide your student verification details. You can verify using your student ID, educational email, or enrollment letter.',
   },
   corporate: {
     icon: 'briefcase-outline',
@@ -86,7 +100,8 @@ const ZONE_CONFIG: Record<string, {
       { value: 'employee_id', label: 'Employee ID' },
     ],
     fields: ['documentType', 'companyName', 'email'],
-    instructions: 'Verify your corporate status using your official work email or employee ID to unlock exclusive corporate deals.',
+    instructions:
+      'Verify your corporate status using your official work email or employee ID to unlock exclusive corporate deals.',
   },
   defence: {
     icon: 'shield-outline',
@@ -111,7 +126,7 @@ const ZONE_CONFIG: Record<string, {
 };
 
 function ZoneVerifyScreen() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const isMounted = useIsMounted();
   const router = useRouter();
   const user = useAuthUser();
@@ -174,10 +189,13 @@ function ZoneVerifyScreen() {
       setSubmitting(true);
       setError(null);
 
-      const response = await apiClient.post<any>(`/zones/${slug}/verify`, formData);
+      const response = await apiClient.post<any>(`/zones/${slug}/verify`, formData as any);
 
       if (response.success) {
-        platformAlertSimple('Verification Submitted', 'Your verification request has been submitted. You will be notified once it is reviewed.');
+        platformAlertSimple(
+          'Verification Submitted',
+          'Your verification request has been submitted. You will be notified once it is reviewed.',
+        );
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       } else {
         if (!isMounted()) return;
@@ -212,16 +230,14 @@ function ZoneVerifyScreen() {
         <View style={styles.authContainer}>
           <Ionicons name="lock-closed-outline" size={64} color={COLORS.textMuted} />
           <Text style={styles.authTitle}>Login Required</Text>
-          <Text style={styles.authSubtitle}>
-            Please login to verify your eligibility for this exclusive zone
-          </Text>
-          <Pressable
-            style={styles.loginButton}
-            onPress={() => router.push('/sign-in' as any)}
-          >
+          <Text style={styles.authSubtitle}>Please login to verify your eligibility for this exclusive zone</Text>
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
             <Text style={styles.loginButtonText}>Login</Text>
           </Pressable>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.backButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -240,10 +256,13 @@ function ZoneVerifyScreen() {
           </View>
           <Text style={styles.statusTitle}>Verification Pending</Text>
           <Text style={styles.statusSubtitle}>
-            Your verification request for {eligibility.zone.name} is being reviewed.
-            You will be notified once it is approved.
+            Your verification request for {eligibility.zone.name} is being reviewed. You will be notified once it is
+            approved.
           </Text>
-          <Pressable style={styles.primaryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.primaryButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.primaryButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -262,8 +281,7 @@ function ZoneVerifyScreen() {
           </View>
           <Text style={styles.statusTitle}>Verification Rejected</Text>
           <Text style={styles.statusSubtitle}>
-            Unfortunately, your verification request was not approved.
-            Please try again with valid documents.
+            Unfortunately, your verification request was not approved. Please try again with valid documents.
           </Text>
           <Pressable
             style={styles.primaryButton}
@@ -271,7 +289,10 @@ function ZoneVerifyScreen() {
           >
             <Text style={styles.primaryButtonText}>Try Again</Text>
           </Pressable>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.backButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -283,13 +304,13 @@ function ZoneVerifyScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable style={styles.headerBackButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.headerBackButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.textDark} />
           </Pressable>
           <Text style={styles.headerTitle}>Verify Your Status</Text>
@@ -313,9 +334,7 @@ function ZoneVerifyScreen() {
                 <Ionicons name={zoneConfig.icon} size={32} color={COLORS.white} />
               </View>
               <Text style={styles.zoneName}>{eligibility?.zone.name || slug}</Text>
-              <Text style={styles.zoneDescription}>
-                {eligibility?.zone.description || zoneConfig.instructions}
-              </Text>
+              <Text style={styles.zoneDescription}>{eligibility?.zone.description || zoneConfig.instructions}</Text>
             </LinearGradient>
           )}
 
@@ -399,17 +418,15 @@ function ZoneVerifyScreen() {
             {/* Email */}
             {zoneConfig?.fields.includes('email') && (
               <View style={styles.fieldContainer}>
-                <Text style={styles.fieldLabel}>
-                  {slug === 'corporate' ? 'Corporate Email' : 'Email Address'}
-                </Text>
+                <Text style={styles.fieldLabel}>{slug === 'corporate' ? 'Corporate Email' : 'Email Address'}</Text>
                 <TextInput
                   style={styles.textInput}
                   placeholder={
                     slug === 'corporate'
                       ? 'your.name@company.com'
                       : slug === 'student'
-                      ? 'your.name@university.edu'
-                      : 'Enter your email'
+                        ? 'your.name@university.edu'
+                        : 'Enter your email'
                   }
                   placeholderTextColor={COLORS.textMuted}
                   value={formData.email}
@@ -437,7 +454,7 @@ function ZoneVerifyScreen() {
 
           {/* Submit Button */}
           <Pressable
-            style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+            style={[styles.submitButton, submitting ? styles.submitButtonDisabled : null]}
             onPress={handleSubmit}
             disabled={submitting}
           >
@@ -453,8 +470,8 @@ function ZoneVerifyScreen() {
 
           {/* Note */}
           <Text style={styles.noteText}>
-            Your information is securely stored and only used for verification purposes.
-            Verification typically takes 24-48 hours.
+            Your information is securely stored and only used for verification purposes. Verification typically takes
+            24-48 hours.
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

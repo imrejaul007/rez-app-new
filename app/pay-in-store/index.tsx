@@ -8,15 +8,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, TextInput } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,7 +27,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function PayInStoreScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<PayInStoreParams & { bonusCampaignSlug?: string }>();
+  const params = useLocalSearchParams<any>();
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const searchInputRef = useRef<TextInput>(null);
@@ -61,7 +53,7 @@ function PayInStoreScreen() {
     hasMore,
     loadMore,
     isLoadingMore,
-  } = usePaymentStoreSearch();
+  } = usePaymentStoreSearch() as any;
 
   // Handle QR code or storeId from params
   useEffect(() => {
@@ -132,7 +124,9 @@ function PayInStoreScreen() {
     ? searchResults
     : activeTab === 'all' && searchResults.length > 0
       ? searchResults
-      : (nearbyStores.length > 0 ? nearbyStores : popularStores);
+      : nearbyStores.length > 0
+        ? nearbyStores
+        : popularStores;
   const displayStores = getFilteredStores(baseStores);
 
   // Show loading while auth state is being loaded
@@ -155,13 +149,8 @@ function PayInStoreScreen() {
             <Ionicons name="lock-closed-outline" size={48} color={Colors.gold} />
           </View>
           <Text style={styles.authTitle}>Sign in Required</Text>
-          <Text style={styles.authSubtitle}>
-            Please sign in to pay at stores and earn rewards
-          </Text>
-          <Pressable
-            style={styles.signInButton}
-            onPress={() => router.push('/sign-in')}
-          >
+          <Text style={styles.authSubtitle}>Please sign in to pay at stores and earn rewards</Text>
+          <Pressable style={styles.signInButton} onPress={() => router.push('/sign-in')}>
             <Text style={styles.signInButtonText}>Sign In</Text>
           </Pressable>
         </View>
@@ -170,20 +159,17 @@ function PayInStoreScreen() {
   }
 
   if (showScanner) {
-    return (
-      <QRScanner
-        onScan={handleQRScan}
-        onClose={() => setShowScanner(false)}
-        onManualEntry={handleManualEntry}
-      />
-    );
+    return <QRScanner onScan={handleQRScan} onClose={() => setShowScanner(false)} onManualEntry={handleManualEntry} />;
   }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={styles.headerTextContainer}>
@@ -205,10 +191,7 @@ function PayInStoreScreen() {
         <ScannerPlaceholder onPress={() => setShowScanner(true)} />
 
         {/* Can't scan? Find store manually button */}
-        <Pressable
-          style={styles.manualSearchButton}
-          onPress={scrollToSearch}
-        >
+        <Pressable style={styles.manualSearchButton} onPress={scrollToSearch}>
           <Ionicons name="search-outline" size={20} color={Colors.gold} />
           <Text style={styles.manualSearchText}>Can't scan? Find store manually</Text>
         </Pressable>
@@ -255,29 +238,21 @@ function PayInStoreScreen() {
 
           {/* Filter Chips */}
           <View style={styles.filterChipsContainer}>
-            <FilterChips
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
+            <FilterChips filters={filters} onFilterChange={handleFilterChange} />
           </View>
 
           {/* Store Tabs */}
-          <StoreTabs
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
+          <StoreTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
           {/* Store List */}
           {isInitialLoading || isSearching ? (
             <View style={styles.loadingCard}>
               <ActivityIndicator size="small" color={Colors.gold} />
-              <Text style={styles.loadingText}>
-                {isSearching ? 'Searching stores...' : 'Finding stores...'}
-              </Text>
+              <Text style={styles.loadingText}>{isSearching ? 'Searching stores...' : 'Finding stores...'}</Text>
             </View>
           ) : displayStores.length > 0 ? (
             <View style={styles.storeList}>
-              {displayStores.map((store, index) => (
+              {displayStores.map((store: any, index: number) => (
                 <PaymentStoreCard
                   key={store._id}
                   store={store}
@@ -307,9 +282,7 @@ function PayInStoreScreen() {
               <Ionicons name="storefront-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No stores found</Text>
               <Text style={styles.emptySubtext}>
-                {searchQuery
-                  ? 'Try adjusting your search or filters'
-                  : 'No partner stores available in your area'}
+                {searchQuery ? 'Try adjusting your search or filters' : 'No partner stores available in your area'}
               </Text>
             </View>
           )}
@@ -342,7 +315,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.goldLight,
+    backgroundColor: '#FFF3CD',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.lg,
@@ -369,7 +342,7 @@ const styles = StyleSheet.create({
   signInButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.nileBlue,  // Nile Blue for contrast on Mustard
+    color: colors.nileBlue, // Nile Blue for contrast on Mustard
   },
   header: {
     flexDirection: 'row',
@@ -451,7 +424,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.errorLight,
+    backgroundColor: '#FDEDED',
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginHorizontal: Spacing.base,

@@ -55,7 +55,7 @@ function DeliveryMap({ locationUpdate, deliveryAddress, storeLocation }: Deliver
     if (locationUpdate?.deliveryPartner.phone) {
       try {
         Linking.openURL(`tel:${locationUpdate.deliveryPartner.phone}`);
-      } catch (e) { catchAndWarn(e, 'DeliveryMap/handleCallDriver'); }
+      } catch (e: any) { catchAndWarn(e, 'DeliveryMap/handleCallDriver'); }
     }
   };
 
@@ -73,7 +73,7 @@ function DeliveryMap({ locationUpdate, deliveryAddress, storeLocation }: Deliver
         const url = `https://www.google.com/maps/dir/?api=1&destination=${deliveryAddress.latitude},${deliveryAddress.longitude}`;
         Linking.openURL(url).catch(() => {});
       }
-    } catch (e) { catchAndWarn(e, 'DeliveryMap/openInMaps'); }
+    } catch (e: any) { catchAndWarn(e, 'DeliveryMap/openInMaps'); }
   };
 
   // Build static map URL for web fallback

@@ -1,11 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -13,7 +8,8 @@ import Animated, {
   withSpring,
   withTiming,
   withDelay,
-  Easing} from 'react-native-reanimated';
+  Easing,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,10 +20,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 function SurveyCompletePage() {
   const router = useRouter();
-  const { coinsEarned, timeSpent } = useLocalSearchParams<{
-    coinsEarned: string;
-    timeSpent: string;
-  }>();
+  const { coinsEarned, timeSpent } = useLocalSearchParams<any>();
 
   // Animation values
   const scaleAnim = useSharedValue(0);
@@ -65,7 +58,7 @@ function SurveyCompletePage() {
   const coins = parseInt(coinsEarned || '0', 10);
   const time = parseInt(timeSpent || '0', 10);
 
-  const coinRotation = interpolate(coinRotateAnim.value, [0, 1], ['0deg', '360deg']);
+  const coinRotation = interpolate(coinRotateAnim.value, [0, 1], [0, 360]) + 'deg';
 
   return (
     <>
@@ -73,16 +66,8 @@ function SurveyCompletePage() {
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <View style={styles.content}>
           {/* Success Icon */}
-          <Animated.View
-            style={[
-              styles.successIconContainer,
-              { transform: [{ scale: scaleAnim }] },
-            ]}
-          >
-            <LinearGradient
-              colors={[Colors.gold, colors.nileBlue]}
-              style={styles.successIconGradient}
-            >
+          <Animated.View style={[styles.successIconContainer, { transform: [{ scale: scaleAnim }] }]}>
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.successIconGradient}>
               <Ionicons name="checkmark" size={64} color={colors.text.inverse} />
             </LinearGradient>
           </Animated.View>
@@ -90,9 +75,7 @@ function SurveyCompletePage() {
           {/* Title */}
           <Animated.View style={{ opacity: fadeAnim }}>
             <Text style={styles.title}>Survey Completed!</Text>
-            <Text style={styles.subtitle}>
-              Thank you for your valuable feedback
-            </Text>
+            <Text style={styles.subtitle}>Thank you for your valuable feedback</Text>
           </Animated.View>
 
           {/* Coins Earned */}
@@ -100,38 +83,23 @@ function SurveyCompletePage() {
             style={[
               styles.coinsContainer,
               {
-                transform: [
-                  { scale: coinScaleAnim },
-                  { rotate: coinRotation },
-                ] },
+                transform: [{ scale: coinScaleAnim }, { rotate: coinRotation }],
+              } as any,
             ]}
           >
-            <LinearGradient
-              colors={[colors.brand.goldBright, '#FFA500']}
-              style={styles.coinsGradient}
-            >
+            <LinearGradient colors={[colors.brand.goldBright, '#FFA500']} style={styles.coinsGradient}>
               <Ionicons name="wallet" size={32} color={colors.text.inverse} />
             </LinearGradient>
           </Animated.View>
 
-          <Animated.View
-            style={[
-              styles.coinsTextContainer,
-              { transform: [{ scale: coinScaleAnim }] },
-            ]}
-          >
+          <Animated.View style={[styles.coinsTextContainer, { transform: [{ scale: coinScaleAnim }] }]}>
             <Text style={styles.coinsLabel}>You earned</Text>
             <Text style={styles.coinsValue}>+{coins}</Text>
             <Text style={styles.coinsUnit}>{BRAND.COIN_NAME}</Text>
           </Animated.View>
 
           {/* Stats */}
-          <Animated.View
-            style={[
-              styles.statsContainer,
-              { transform: [{ translateY: statsSlideAnim }] },
-            ]}
-          >
+          <Animated.View style={[styles.statsContainer, { transform: [{ translateY: statsSlideAnim }] }]}>
             <View style={styles.statCard}>
               <Ionicons name="time-outline" size={24} color={Colors.info} />
               <Text style={styles.statValue}>{formatTime(time)}</Text>
@@ -146,35 +114,20 @@ function SurveyCompletePage() {
           </Animated.View>
 
           {/* Message */}
-          <Animated.View
-            style={[
-              styles.messageContainer,
-              { transform: [{ translateY: statsSlideAnim }] },
-            ]}
-          >
+          <Animated.View style={[styles.messageContainer, { transform: [{ translateY: statsSlideAnim }] }]}>
             <LinearGradient
               colors={['rgba(255, 205, 87, 0.1)', 'rgba(26, 58, 82, 0.1)']}
               style={styles.messageGradient}
             >
               <Ionicons name="gift-outline" size={20} color={Colors.gold} />
-              <Text style={styles.messageText}>
-                Your coins have been added to your wallet!
-              </Text>
+              <Text style={styles.messageText}>Your coins have been added to your wallet!</Text>
             </LinearGradient>
           </Animated.View>
         </View>
 
         {/* Bottom Buttons */}
-        <Animated.View
-          style={[
-            styles.bottomContainer,
-            { transform: [{ translateY: buttonSlideAnim }] },
-          ]}
-        >
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => router.replace('/surveys')}
-          >
+        <Animated.View style={[styles.bottomContainer, { transform: [{ translateY: buttonSlideAnim }] }]}>
+          <Pressable style={styles.primaryButton} onPress={() => router.replace('/surveys')}>
             <LinearGradient
               colors={[Colors.info, Colors.brand.purple]}
               start={{ x: 0, y: 0 }}
@@ -186,10 +139,7 @@ function SurveyCompletePage() {
             </LinearGradient>
           </Pressable>
 
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={() => router.replace('/(tabs)')}
-          >
+          <Pressable style={styles.secondaryButton} onPress={() => router.replace('/(tabs)')}>
             <Text style={styles.secondaryButtonText}>Go to Home</Text>
           </Pressable>
         </Animated.View>
@@ -201,14 +151,17 @@ function SurveyCompletePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.xl },
+    paddingHorizontal: Spacing.xl,
+  },
   successIconContainer: {
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   successIconGradient: {
     width: 120,
     height: 120,
@@ -220,22 +173,29 @@ const styles = StyleSheet.create({
         shadowColor: Colors.gold,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.4,
-        shadowRadius: 16 },
+        shadowRadius: 16,
+      },
       android: {
-        elevation: 12 } }) },
+        elevation: 12,
+      },
+    }),
+  },
   title: {
     fontSize: Typography.h1.fontSize,
     fontWeight: '700',
     color: colors.deepNavy,
     textAlign: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   subtitle: {
     fontSize: Typography.bodyLarge.fontSize,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: Spacing['2xl'] },
+    marginBottom: Spacing['2xl'],
+  },
   coinsContainer: {
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   coinsGradient: {
     width: 72,
     height: 72,
@@ -247,24 +207,32 @@ const styles = StyleSheet.create({
         shadowColor: colors.brand.goldBright,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.4,
-        shadowRadius: 12 },
+        shadowRadius: 12,
+      },
       android: {
-        elevation: 8 } }) },
+        elevation: 8,
+      },
+    }),
+  },
   coinsTextContainer: {
     alignItems: 'center',
-    marginBottom: Spacing['2xl'] },
+    marginBottom: Spacing['2xl'],
+  },
   coinsLabel: {
     fontSize: Typography.body.fontSize,
     color: colors.text.tertiary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   coinsValue: {
     fontSize: 48,
     fontWeight: '800',
-    color: Colors.gold },
+    color: Colors.gold,
+  },
   coinsUnit: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   statsContainer: {
     flexDirection: 'row',
     backgroundColor: colors.background.primary,
@@ -279,26 +247,35 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
-        shadowRadius: 12 },
+        shadowRadius: 12,
+      },
       android: {
-        elevation: 4 } }) },
+        elevation: 4,
+      },
+    }),
+  },
   statCard: {
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg },
+    paddingHorizontal: Spacing.lg,
+  },
   statDivider: {
     width: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)' },
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+  },
   statValue: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
     color: colors.deepNavy,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   statLabel: {
     fontSize: Typography.bodySmall.fontSize,
     color: colors.text.tertiary,
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
   messageContainer: {
-    width: '100%' },
+    width: '100%',
+  },
   messageGradient: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -308,34 +285,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.2)' },
+    borderColor: 'rgba(255, 205, 87, 0.2)',
+  },
   messageText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '500',
-    color: Colors.gold },
+    color: Colors.gold,
+  },
   bottomContainer: {
     paddingHorizontal: Spacing.xl,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 24 },
+    paddingBottom: Platform.OS === 'ios' ? 20 : 24,
+  },
   primaryButton: {
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   primaryButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 18,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   primaryButtonText: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   secondaryButton: {
     alignItems: 'center',
-    paddingVertical: Spacing.base },
+    paddingVertical: Spacing.base,
+  },
   secondaryButtonText: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: colors.text.tertiary } });
+    color: colors.text.tertiary,
+  },
+});
 
 export default withErrorBoundary(SurveyCompletePage, 'SurveyIdComplete');

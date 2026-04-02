@@ -248,7 +248,7 @@ class OfflineQueueService {
     this.syncCallbacks.forEach(callback => callback(result.success));
     this.syncCallbacks = [];
 
-    return result;
+    return result as any;
   }
 
   /**

@@ -192,7 +192,7 @@ export function useAddressSearch() {
     try {
       const address = await reverseGeocode(coordinates);
       return address;
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   }, [reverseGeocode]);
@@ -243,7 +243,7 @@ export function useLocationFeatures() {
       // For now, return empty array
       setNearbyStores([]);
       return [];
-    } catch (error) {
+    } catch (error: any) {
       return [];
     } finally {
       setIsLoadingStores(false);
@@ -300,7 +300,7 @@ export function useLocationInit() {
 
       setInitStep('complete');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     } finally {
       setIsInitializing(false);

@@ -4,23 +4,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Fetches real data from backend API
  */
 
-import React, { useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Dimensions
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -94,18 +87,17 @@ function CorporateZonePage() {
   }));
   const bottomPadding = 80 + 70 + insets.bottom;
 
-  const isVerified = user?.verifications?.corporate?.verified === true || zoneInfo?.userEligible === true;
+  const isVerified = (user as any)?.verifications?.corporate?.verified === true || zoneInfo?.userEligible === true;
 
   useEffect(() => {
     fetchZoneData();
     shimmerAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
+      withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
+      -1,
     );
-    return () => { shimmerAnim.value = 0; };
+    return () => {
+      shimmerAnim.value = 0;
+    };
   }, []);
 
   const fetchZoneData = async () => {
@@ -128,7 +120,8 @@ function CorporateZonePage() {
             offersCount: zone.offersCount || 0,
             verificationRequired: zone.verificationRequired,
             eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible });
+            userEligible: zone.userEligible,
+          });
         }
       }
 
@@ -138,7 +131,7 @@ function CorporateZonePage() {
         if (!isMounted()) return;
         setOffers(Array.isArray(offersData) ? offersData : []);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load offers. Please try again.');
     } finally {
@@ -154,15 +147,13 @@ function CorporateZonePage() {
   const handleVerify = () => {
     router.push({
       pathname: '/profile/verification',
-      params: { zone: 'corporate' }
+      params: { zone: 'corporate' },
     } as any);
   };
 
   const renderSkeletonCard = () => (
     <View style={styles.dealCard}>
-      <Animated.View
-        style={[styles.skeletonImage, shimmerOpacityStyle]}
-      />
+      <Animated.View style={[styles.skeletonImage, shimmerOpacityStyle]} />
       <View style={styles.dealContent}>
         <View style={[styles.skeletonText, { width: '40%', marginBottom: 8 }]} />
         <View style={[styles.skeletonText, { width: '80%', marginBottom: 8 }]} />
@@ -172,15 +163,8 @@ function CorporateZonePage() {
   );
 
   const renderDealCard = (deal: ZoneOffer) => (
-    <Pressable
-      key={deal._id}
-      style={styles.dealCard}
-      onPress={() => handleDealPress(deal)}
-     
-    >
-      {deal.image && (
-        <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />
-      )}
+    <Pressable key={deal._id} style={styles.dealCard} onPress={() => handleDealPress(deal)}>
+      {deal.image && <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />}
       <View style={styles.dealContent}>
         <View style={styles.dealHeader}>
           <View style={styles.dealInfo}>
@@ -232,14 +216,15 @@ function CorporateZonePage() {
       >
         <SafeAreaView edges={['top']} style={styles.safeHeader}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
 
             <View style={styles.headerTitleContainer}>
-              <ThemedText style={styles.headerTitle}>
-                {zoneInfo?.name || 'Corporate Perks'}
-              </ThemedText>
+              <ThemedText style={styles.headerTitle}>{zoneInfo?.name || 'Corporate Perks'}</ThemedText>
               <ThemedText style={styles.headerSubtitle}>Office hour specials & team deals</ThemedText>
             </View>
 
@@ -252,7 +237,7 @@ function CorporateZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -312,12 +297,13 @@ function CorporateZonePage() {
             {TIME_SLOTS.map((slot) => (
               <Pressable
                 key={slot.id}
-                style={[styles.timeSlot, selectedTime === slot.id && styles.timeSlotActive]}
+                style={[styles.timeSlot, selectedTime === slot.id ? styles.timeSlotActive : null]}
                 onPress={() => setSelectedTime(slot.id)}
-               
               >
                 <ThemedText style={styles.timeSlotIcon}>{slot.icon}</ThemedText>
-                <ThemedText style={[styles.timeSlotLabel, selectedTime === slot.id && styles.timeSlotLabelActive]}>
+                <ThemedText
+                  style={[styles.timeSlotLabel, selectedTime === slot.id ? styles.timeSlotLabelActive : null]}
+                >
                   {slot.label}
                 </ThemedText>
               </Pressable>
@@ -328,10 +314,7 @@ function CorporateZonePage() {
         {/* Quick Access Categories */}
         <View style={styles.quickCategories}>
           {QUICK_CATEGORIES.map((cat, i) => (
-            <Pressable
-              key={i}
-              style={[styles.quickCategory, { backgroundColor: `${cat.color}15` }]}
-            >
+            <Pressable key={i} style={[styles.quickCategory, { backgroundColor: `${cat.color}15` }]}>
               <Ionicons name={cat.icon as any} size={24} color={cat.color} />
               <ThemedText style={styles.quickCategoryLabel}>{cat.label}</ThemedText>
             </Pressable>
@@ -368,9 +351,7 @@ function CorporateZonePage() {
             <ThemedText style={styles.teamOrdersIcon}>👥</ThemedText>
             <View style={styles.teamOrdersContent}>
               <ThemedText style={styles.teamOrdersTitle}>Team Orders</ThemedText>
-              <ThemedText style={styles.teamOrdersSubtitle}>
-                Order for your team & get extra discounts
-              </ThemedText>
+              <ThemedText style={styles.teamOrdersSubtitle}>Order for your team & get extra discounts</ThemedText>
             </View>
             <Pressable style={styles.teamOrdersButton}>
               <ThemedText style={styles.teamOrdersButtonText}>Explore</ThemedText>
@@ -382,7 +363,12 @@ function CorporateZonePage() {
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
         <Pressable style={styles.ctaButton} onPress={isVerified ? () => {} : handleVerify}>
-          <LinearGradient colors={Gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaGradient}>
+          <LinearGradient
+            colors={Gradients.primary}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.ctaGradient}
+          >
             <ThemedText style={styles.ctaButtonText}>
               {isVerified ? 'Browse All Corporate Deals' : 'Connect Work Email for More Deals'}
             </ThemedText>
@@ -396,12 +382,28 @@ function CorporateZonePage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  errorText: { ...Typography.body, color: colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
-  retryButton: { backgroundColor: Colors.primary[600], paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: BorderRadius.md },
+  errorText: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  retryButton: {
+    backgroundColor: Colors.primary[600],
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: { ...Typography.button, color: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
   safeHeader: { paddingBottom: Spacing.base },
-  headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+  },
   backButton: { padding: Spacing.sm, marginRight: Spacing.sm },
   headerTitleContainer: { flex: 1, alignItems: 'center' },
   headerTitle: { ...Typography.h3, color: colors.background.primary, fontWeight: '700' },
@@ -411,30 +413,68 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: { paddingBottom: 150 },
   heroBanner: { margin: Spacing.base, borderRadius: BorderRadius['2xl'], overflow: 'hidden', ...Shadows.medium },
-  heroGradient: { padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(71, 85, 105, 0.2)', borderRadius: BorderRadius['2xl'] },
+  heroGradient: {
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(71, 85, 105, 0.2)',
+    borderRadius: BorderRadius['2xl'],
+  },
   heroContent: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.base },
-  heroIconContainer: { width: 64, height: 64, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(148, 163, 184, 0.3)', alignItems: 'center', justifyContent: 'center', marginRight: Spacing.base },
+  heroIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(148, 163, 184, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.base,
+  },
   heroTextContainer: { flex: 1 },
   heroTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: 4 },
   heroSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
-  verificationCard: { marginTop: Spacing.base, padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.05)' },
+  verificationCard: {
+    marginTop: Spacing.base,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
   verifiedStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   verifiedLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   verifiedText: { ...Typography.label, color: Colors.success },
-  activeBadge: { backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  activeBadge: {
+    backgroundColor: Colors.success,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   activeBadgeText: { ...Typography.caption, color: colors.background.primary, fontWeight: '600' },
   unverifiedStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   unverifiedLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   unverifiedText: { ...Typography.body, color: colors.warningScale[400] },
-  verifyButton: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
+  verifyButton: {
+    backgroundColor: colors.warningScale[400],
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
   verifyButtonText: { ...Typography.labelSmall, color: colors.background.primary, fontWeight: '600' },
   timeFilterSection: { marginBottom: Spacing.lg },
   sectionHeader: { paddingHorizontal: Spacing.base, marginBottom: Spacing.md },
   sectionTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: 4 },
   sectionSubtitle: { ...Typography.bodySmall, color: colors.text.tertiary },
   timeScroll: { paddingHorizontal: Spacing.base, gap: Spacing.sm },
-  timeSlot: { alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: Colors.gray[100], minWidth: 90 },
-  timeSlotActive: { backgroundColor: 'rgba(71, 85, 105, 0.3)', borderWidth: 1, borderColor: 'rgba(148, 163, 184, 0.5)' },
+  timeSlot: {
+    alignItems: 'center',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.gray[100],
+    minWidth: 90,
+  },
+  timeSlotActive: {
+    backgroundColor: 'rgba(71, 85, 105, 0.3)',
+    borderWidth: 1,
+    borderColor: 'rgba(148, 163, 184, 0.5)',
+  },
   timeSlotIcon: { fontSize: 24, marginBottom: 4 },
   timeSlotLabel: { ...Typography.labelSmall, color: colors.text.secondary },
   timeSlotLabelActive: { color: colors.background.primary },
@@ -442,34 +482,83 @@ const styles = StyleSheet.create({
   quickCategory: { flex: 1, alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.lg, gap: Spacing.xs },
   quickCategoryLabel: { ...Typography.caption, color: colors.text.secondary },
   dealsSection: { paddingHorizontal: Spacing.base },
-  dealCard: { flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.md, ...Shadows.subtle },
+  dealCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.md,
+    ...Shadows.subtle,
+  },
   dealImage: { width: 96, height: 96 },
   dealContent: { flex: 1, padding: Spacing.base },
-  dealHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.xs },
+  dealHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.xs,
+  },
   dealInfo: { flex: 1, marginRight: Spacing.sm },
   dealStore: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: 2 },
   dealTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600' },
-  discountBadge: { backgroundColor: 'rgba(71, 85, 105, 0.15)', paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  discountBadge: {
+    backgroundColor: 'rgba(71, 85, 105, 0.15)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   discountText: { ...Typography.labelSmall, color: '#94A3B8', fontWeight: '700' },
   dealDescription: { ...Typography.bodySmall, color: colors.text.secondary, marginBottom: Spacing.sm },
   dealTags: { flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap' },
-  tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.gray[100], paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm, gap: 4 },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.gray[100],
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+    gap: 4,
+  },
   tagText: { ...Typography.caption, color: colors.text.secondary },
   skeletonImage: { width: 96, height: 96, backgroundColor: Colors.gray[200] },
   skeletonText: { height: 12, borderRadius: 6, backgroundColor: Colors.gray[200] },
   emptyState: { alignItems: 'center', padding: Spacing.xl },
   emptyStateText: { ...Typography.body, color: colors.text.tertiary, marginTop: Spacing.md },
   teamOrdersCard: { margin: Spacing.base, borderRadius: BorderRadius.lg, overflow: 'hidden', ...Shadows.medium },
-  teamOrdersGradient: { flexDirection: 'row', alignItems: 'center', padding: Spacing.base, borderWidth: 1, borderColor: 'rgba(139, 92, 246, 0.2)', borderRadius: BorderRadius.lg, gap: Spacing.md },
+  teamOrdersGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: 'rgba(139, 92, 246, 0.2)',
+    borderRadius: BorderRadius.lg,
+    gap: Spacing.md,
+  },
   teamOrdersIcon: { fontSize: 32 },
   teamOrdersContent: { flex: 1 },
   teamOrdersTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
   teamOrdersSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
-  teamOrdersButton: { backgroundColor: Colors.primary[600], paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
+  teamOrdersButton: {
+    backgroundColor: Colors.primary[600],
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
   teamOrdersButtonText: { ...Typography.labelSmall, color: colors.background.primary, fontWeight: '600' },
-  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.light, ...Shadows.medium },
+  fixedCTA: {
+    position: 'absolute',
+    bottom: 70,
+    left: 0,
+    right: 0,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    ...Shadows.medium,
+  },
   ctaButton: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
   ctaGradient: { paddingVertical: Spacing.base, alignItems: 'center', justifyContent: 'center' },
-  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' } });
+  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' },
+});
 
 export default withErrorBoundary(CorporateZonePage, 'OffersZonesCorporate');

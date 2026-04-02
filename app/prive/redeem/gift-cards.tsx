@@ -171,7 +171,7 @@ function GiftCardsScreen() {
                   disabled={!canAfford}
                 >
                   <Text style={styles.cardLogo}>{card.logo}</Text>
-                  <Text style={[styles.cardName, !canAfford && styles.cardNameDisabled]}>{card.name}</Text>
+                  <Text style={[styles.cardName, !canAfford ? styles.cardNameDisabled : null]}>{card.name}</Text>
                   <Text style={styles.cardMin}>
                     {canAfford ? `Min ${card.minCoins}` : `Need ${card.minCoins - availableCoins} more`}
                   </Text>
@@ -200,7 +200,7 @@ function GiftCardsScreen() {
                       onPress={() => canAfford && handleSelectDenomination(amount)}
                       disabled={!canAfford}
                     >
-                      <Text style={[styles.denomCoins, !canAfford && styles.denomCoinsDisabled]}>
+                      <Text style={[styles.denomCoins, !canAfford ? styles.denomCoinsDisabled : null]}>
                         {amount.toLocaleString()}
                       </Text>
                       <Text style={styles.denomLabel}>coins</Text>
@@ -219,7 +219,7 @@ function GiftCardsScreen() {
           {/* Redeem Button */}
           {selectedCard && selectedDenomination && (
             <Pressable
-              style={[styles.redeemButton, isRedeeming && styles.redeemButtonDisabled]}
+              style={[styles.redeemButton, isRedeeming ? styles.redeemButtonDisabled : null]}
               onPress={handleRedeem}
               disabled={isRedeeming}
             >

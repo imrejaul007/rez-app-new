@@ -21,7 +21,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import { apiClient } from './apiClient';
+import apiClient from './apiClient';
 
 // ============================================================================
 // Type Definitions
@@ -125,7 +125,7 @@ const isBrowser = typeof window !== 'undefined';
 class TelemetryService {
   private config: TelemetryConfig = DEFAULT_CONFIG;
   private queue: EventBatch[] = [];
-  private flushTimer: NodeJS.Timeout | null = null;
+  private flushTimer: ReturnType<typeof setTimeout> | null = null;
   private isSending: boolean = false;
   private isOnline: boolean = true;
   private isInitialized: boolean = false;
@@ -502,7 +502,7 @@ class TelemetryService {
         await this.sleep(delay);
       }
 
-      const response = await apiClient.post(this.config.endpoint, {
+      const response = await apiClient.post<any>(this.config.endpoint, {
         batchId: batch.id,
         events: batch.events,
         timestamp: batch.timestamp,

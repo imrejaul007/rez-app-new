@@ -319,7 +319,7 @@ export interface DeviceBinding {
   biometricEnabled: boolean;
 }
 
-// Session Timeout Configuration
+// Session ReturnType<typeof setTimeout> Configuration
 export interface SessionTimeoutConfig {
   idleTimeout: number; // seconds
   absoluteTimeout: number; // seconds

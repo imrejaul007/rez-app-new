@@ -119,7 +119,7 @@ export const OffersTabs: React.FC<OffersTabsProps> = ({
         return (
           <Pressable
             key={tab.id}
-            style={[styles.tab, isActive && styles.tabActive]}
+            style={[styles.tab, isActive ? styles.tabActive : null]}
             onPress={() => onTabChange(tab.id)}
            
           >

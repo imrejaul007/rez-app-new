@@ -37,18 +37,18 @@ export default function LazyLoadWrapper({
   const isMounted = useIsMounted();
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
 
     const loadComponent = async () => {
       try {
         const module = await importFn();
-        if (isMounted) {
+        if (mounted) {
           if (!isMounted()) return;
           setComponent(() => module.default);
           setIsLoading(false);
         }
-      } catch (error) {
-        if (isMounted) {
+      } catch (error: any) {
+        if (mounted) {
           if (!isMounted()) return;
           setIsLoading(false);
         }
@@ -58,7 +58,7 @@ export default function LazyLoadWrapper({
     loadComponent();
 
     return () => {
-      isMounted = false;
+      mounted = false;
     };
   }, [importFn]);
 

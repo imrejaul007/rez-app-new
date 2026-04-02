@@ -105,7 +105,7 @@ const NearbyEarnPage = () => {
           if (!isMounted()) return;
           setLoading(false);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setLocationPermission(false);
         if (!isMounted()) return;
@@ -123,39 +123,42 @@ const NearbyEarnPage = () => {
     fetchStores();
   }, [location]);
 
-  const fetchStores = useCallback(async (isRefresh = false) => {
-    if (!location) return;
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchStores = useCallback(
+    async (isRefresh = false) => {
+      if (!location) return;
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      const res = await nearbyEarnApi.getStores({
-        lat: location.lat,
-        lng: location.lng,
-        radius: 10,
-      });
+        const res = await nearbyEarnApi.getStores({
+          lat: location.lat,
+          lng: location.lng,
+          radius: 10,
+        });
 
-      if (res.success && res.data) {
+        if (res.success && res.data) {
+          if (!isMounted()) return;
+          setStores(res.data);
+        } else {
+          if (!isMounted()) return;
+          setError(res.error || 'Failed to load nearby stores');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setStores(res.data);
-      } else {
+        setError(err.message || 'Something went wrong');
+      } finally {
         if (!isMounted()) return;
-        setError(res.error || 'Failed to load nearby stores');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [location]);
+    },
+    [location],
+  );
 
   const onRefresh = useCallback(() => {
     fetchStores(true);
@@ -172,7 +175,7 @@ const NearbyEarnPage = () => {
         if (!isMounted()) return;
         setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -190,11 +193,7 @@ const NearbyEarnPage = () => {
       <Text style={styles.noLocationSubtitle}>
         We need your location to show stores with earning opportunities near you
       </Text>
-      <Pressable
-        style={styles.enableLocationBtn}
-        onPress={handleRetryLocation}
-       
-      >
+      <Pressable style={styles.enableLocationBtn} onPress={handleRetryLocation}>
         <LinearGradient
           colors={[colors.lightMustard, colors.warningScale[400]]}
           start={{ x: 0, y: 0 }}
@@ -221,9 +220,7 @@ const NearbyEarnPage = () => {
         <Ionicons name="storefront-outline" size={56} color={colors.neutral[400]} />
       </View>
       <Text style={styles.emptyTitle}>No Stores Nearby</Text>
-      <Text style={styles.emptySubtitle}>
-        We're expanding! Check back soon for stores in your area.
-      </Text>
+      <Text style={styles.emptySubtitle}>We're expanding! Check back soon for stores in your area.</Text>
     </View>
   );
 
@@ -243,37 +240,30 @@ const NearbyEarnPage = () => {
     const color = markerColors[index % markerColors.length];
 
     return (
-      <Pressable
-        key={store._id}
-        style={styles.storeCard}
-        onPress={() => router.push(`/store/${store._id}` as any)}
-       
-      >
+      <Pressable key={store._id} style={styles.storeCard} onPress={() => router.push(`/store/${store._id}` as any)}>
         {/* Store Logo / Placeholder */}
         <View style={styles.storeCardLeft}>
           {store.logo ? (
             <CachedImage source={store.logo} style={styles.storeLogo} />
           ) : (
             <View style={[styles.storePlaceholder, { backgroundColor: color.bg }]}>
-              <Text style={styles.storePlaceholderText}>
-                {store.name?.charAt(0)?.toUpperCase() || 'S'}
-              </Text>
+              <Text style={styles.storePlaceholderText}>{store.name?.charAt(0)?.toUpperCase() || 'S'}</Text>
             </View>
           )}
 
           {/* Cashback badge overlay */}
           {store.totalCashbackPercent > 0 && (
             <View style={styles.cashbackBadge}>
-              <Text style={styles.cashbackBadgeText}>
-                {store.totalCashbackPercent}%
-              </Text>
+              <Text style={styles.cashbackBadgeText}>{store.totalCashbackPercent}%</Text>
             </View>
           )}
         </View>
 
         {/* Store Info */}
         <View style={styles.storeCardInfo}>
-          <Text style={styles.storeCardName} numberOfLines={1}>{store.name}</Text>
+          <Text style={styles.storeCardName} numberOfLines={1}>
+            {store.name}
+          </Text>
 
           <View style={styles.storeCardMeta}>
             <View style={styles.metaItem}>
@@ -299,10 +289,7 @@ const NearbyEarnPage = () => {
               {store.earningOpportunities.map((opp, i) => {
                 const chipColor = getChipColor(opp.type);
                 return (
-                  <View
-                    key={`${store._id}-opp-${i}`}
-                    style={[styles.chip, { backgroundColor: chipColor.bg }]}
-                  >
+                  <View key={`${store._id}-opp-${i}`} style={[styles.chip, { backgroundColor: chipColor.bg }]}>
                     <Text style={[styles.chipText, { color: chipColor.text }]} numberOfLines={1}>
                       {opp.title}
                     </Text>
@@ -355,21 +342,15 @@ const NearbyEarnPage = () => {
             return (
               <Pressable
                 key={store._id}
-                style={[
-                  styles.mapMarker,
-                  { left: `${pos.left}%` as any, top: `${pos.top}%` as any },
-                ]}
+                style={[styles.mapMarker, { left: `${pos.left}%` as any, top: `${pos.top}%` as any }]}
                 onPress={() => router.push(`/store/${store._id}` as any)}
-               
               >
                 {/* Pulse */}
                 <View style={[styles.markerPulse, { backgroundColor: color.shadow }]} />
 
                 {/* Pin */}
                 <View style={[styles.markerPin, { backgroundColor: color.bg }]}>
-                  <Text style={styles.markerInitial}>
-                    {store.name?.charAt(0)?.toUpperCase() || 'S'}
-                  </Text>
+                  <Text style={styles.markerInitial}>{store.name?.charAt(0)?.toUpperCase() || 'S'}</Text>
                 </View>
                 <View style={[styles.markerTail, { borderTopColor: color.bg }]} />
 
@@ -395,10 +376,7 @@ const NearbyEarnPage = () => {
 
           {/* Floating Info Card */}
           <View style={styles.mapInfoCardContainer}>
-            <LinearGradient
-              colors={[colors.background.primary, colors.tint.coolGray]}
-              style={styles.mapInfoCard}
-            >
+            <LinearGradient colors={[colors.background.primary, colors.tint.coolGray]} style={styles.mapInfoCard}>
               <View style={styles.mapInfoLeft}>
                 <View style={styles.mapInfoIconWrap}>
                   <Ionicons name="navigate" size={14} color={colors.background.primary} />
@@ -418,12 +396,7 @@ const NearbyEarnPage = () => {
           {/* Compass */}
           <View style={styles.compass}>
             <Text style={styles.compassN}>N</Text>
-            <Ionicons
-              name="navigate"
-              size={14}
-              color={colors.error}
-              style={{ transform: [{ rotate: '-45deg' }] }}
-            />
+            <Ionicons name="navigate" size={14} color={colors.error} style={{ transform: [{ rotate: '-45deg' }] }} />
           </View>
         </View>
       </View>
@@ -448,22 +421,19 @@ const NearbyEarnPage = () => {
               key={store._id}
               style={styles.mapStoreItem}
               onPress={() => router.push(`/store/${store._id}` as any)}
-             
             >
               <View style={[styles.mapStoreIcon, { backgroundColor: color.bg }]}>
-                <Text style={styles.mapStoreIconText}>
-                  {store.name?.charAt(0)?.toUpperCase() || 'S'}
-                </Text>
+                <Text style={styles.mapStoreIconText}>{store.name?.charAt(0)?.toUpperCase() || 'S'}</Text>
               </View>
               <View style={styles.mapStoreInfo}>
-                <Text style={styles.mapStoreName} numberOfLines={1}>{store.name}</Text>
+                <Text style={styles.mapStoreName} numberOfLines={1}>
+                  {store.name}
+                </Text>
                 <Text style={styles.mapStoreDist}>{formatDistance(store.distance)}</Text>
               </View>
               {store.totalCashbackPercent > 0 && (
                 <View style={styles.mapStoreCashback}>
-                  <Text style={styles.mapStoreCashbackText}>
-                    {store.totalCashbackPercent}%
-                  </Text>
+                  <Text style={styles.mapStoreCashbackText}>{store.totalCashbackPercent}%</Text>
                 </View>
               )}
             </Pressable>
@@ -490,9 +460,7 @@ const NearbyEarnPage = () => {
       }
     >
       {/* Loading State */}
-      {loading && !refreshing && (
-        <MapViewSkeleton />
-      )}
+      {loading && !refreshing && <MapViewSkeleton />}
 
       {/* Error State */}
       {error && !loading && renderError()}
@@ -521,7 +489,10 @@ const NearbyEarnPage = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>Earn Near You</Text>
@@ -535,34 +506,24 @@ const NearbyEarnPage = () => {
             <Pressable
               style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}
               onPress={() => setViewMode('list')}
-             
             >
               <Ionicons
                 name="list"
                 size={16}
                 color={viewMode === 'list' ? colors.background.primary : colors.neutral[500]}
               />
-              <Text
-                style={[styles.toggleText, viewMode === 'list' && styles.toggleTextActive]}
-              >
-                List
-              </Text>
+              <Text style={[styles.toggleText, viewMode === 'list' && styles.toggleTextActive]}>List</Text>
             </Pressable>
             <Pressable
               style={[styles.toggleBtn, viewMode === 'map' && styles.toggleBtnActive]}
               onPress={() => setViewMode('map')}
-             
             >
               <Ionicons
                 name="map"
                 size={16}
                 color={viewMode === 'map' ? colors.background.primary : colors.neutral[500]}
               />
-              <Text
-                style={[styles.toggleText, viewMode === 'map' && styles.toggleTextActive]}
-              >
-                Map
-              </Text>
+              <Text style={[styles.toggleText, viewMode === 'map' && styles.toggleTextActive]}>Map</Text>
             </Pressable>
           </View>
         </View>

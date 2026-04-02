@@ -144,12 +144,11 @@ function CategoryHeader({
               }
             }}
            
-            delayPressIn={Platform.OS === 'ios' ? 50 : 0}
             accessibilityLabel="Open profile menu"
             accessibilityRole="button"
             accessibilityHint="Double tap to open profile and settings menu"
           >
-            <ThemedText style={styles.profileText}>{user?.initials || 'R'}</ThemedText>
+            <ThemedText style={styles.profileText}>{(user as any)?.initials || 'R'}</ThemedText>
           </Pressable>
         </View>
       </View>
@@ -206,7 +205,7 @@ function CategoryHeader({
             {/* Filter Button */}
             {onFilterPress && (
               <Pressable
-                style={[styles.filterButton, showFilterBadge && styles.filterButtonActive]}
+                style={[styles.filterButton, showFilterBadge ? styles.filterButtonActive : null]}
                 onPress={onFilterPress}
                
                 accessibilityLabel="Open filters"

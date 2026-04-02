@@ -115,7 +115,7 @@ function TechStoriesPage() {
       combined.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       if (!isMounted()) return;
       setItems(combined);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -244,10 +244,10 @@ function TechStoriesPage() {
         {FILTERS.map(f => (
           <Pressable
             key={f.id}
-            style={[styles.filterChip, activeFilter === f.id && styles.filterChipActive]}
+            style={[styles.filterChip, activeFilter === f.id ? styles.filterChipActive : null]}
             onPress={() => setActiveFilter(f.id)}
           >
-            <Text style={[styles.filterText, activeFilter === f.id && styles.filterTextActive]}>
+            <Text style={[styles.filterText, activeFilter === f.id ? styles.filterTextActive : null]}>
               {f.label}
             </Text>
           </Pressable>

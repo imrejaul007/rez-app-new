@@ -75,7 +75,7 @@ const StoreReviews: React.FC<StoreReviewsProps> = ({
         setHasMore(response.data.pagination.hasNextPage);
         setPage(pageNum);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load reviews. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -101,7 +101,7 @@ const StoreReviews: React.FC<StoreReviewsProps> = ({
             : review
         ));
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to mark review as helpful.');
     }
   };

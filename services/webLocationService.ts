@@ -143,7 +143,7 @@ class WebLocationService {
         timestamp: Date.now(),
       };
 
-      return result;
+      return result as any;
 
     } catch (error) {
       return null;

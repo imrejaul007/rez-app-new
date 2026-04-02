@@ -127,7 +127,7 @@ function ExperienceDetailPage() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.pink} />
+          <ActivityIndicator size="large" color={(COLORS as any).pink} />
           <Text style={styles.loadingText}>Loading experience...</Text>
         </View>
       </SafeAreaView>
@@ -180,7 +180,7 @@ function ExperienceDetailPage() {
             />
           ) : (
             <View style={[styles.heroImage, styles.heroPlaceholder]}>
-              <Ionicons name="sparkles" size={48} color={COLORS.pink} />
+              <Ionicons name="sparkles" size={48} color={(COLORS as any).pink} />
             </View>
           )}
           <LinearGradient
@@ -273,7 +273,7 @@ function ExperienceDetailPage() {
                 {experience.whatsIncluded.map((item, index) => (
                   <View key={index} style={styles.includedItem}>
                     <View style={styles.includedIcon}>
-                      <Ionicons name="checkmark" size={14} color={COLORS.pink} />
+                      <Ionicons name="checkmark" size={14} color={(COLORS as any).pink} />
                     </View>
                     <Text style={styles.includedText}>{item}</Text>
                   </View>
@@ -289,7 +289,7 @@ function ExperienceDetailPage() {
               <View style={styles.highlightsList}>
                 {experience.highlights.map((item, index) => (
                   <View key={index} style={styles.highlightChip}>
-                    <Ionicons name="sparkles" size={12} color={COLORS.pink} />
+                    <Ionicons name="sparkles" size={12} color={(COLORS as any).pink} />
                     <Text style={styles.highlightText}>{item}</Text>
                   </View>
                 ))}
@@ -322,7 +322,7 @@ function ExperienceDetailPage() {
                     />
                   ) : (
                     <View style={[styles.salonImage, styles.salonImagePlaceholder]}>
-                      <Ionicons name="flower" size={20} color={COLORS.pink} />
+                      <Ionicons name="flower" size={20} color={(COLORS as any).pink} />
                     </View>
                   )}
                 </View>
@@ -355,7 +355,7 @@ function ExperienceDetailPage() {
           {/* Availability Note */}
           {experience.availability && (
             <View style={styles.availabilityNote}>
-              <Ionicons name="information-circle" size={16} color={COLORS.pink} />
+              <Ionicons name="information-circle" size={16} color={(COLORS as any).pink} />
               <Text style={styles.availabilityText}>{experience.availability}</Text>
             </View>
           )}
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: COLORS.pink,
+    backgroundColor: (COLORS as any).pink,
   },
   retryButtonText: { fontSize: 14, fontWeight: '600', color: COLORS.white },
 
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   // Price
   priceSection: { marginBottom: 16 },
   priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
-  price: { fontSize: 24, fontWeight: '700', color: COLORS.pink },
+  price: { fontSize: 24, fontWeight: '700', color: (COLORS as any).pink },
   originalPrice: {
     fontSize: 16,
     color: COLORS.textSecondary,
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
     }),
   },
   ctaLeft: {},
-  ctaPrice: { fontSize: 20, fontWeight: '700', color: COLORS.pink },
+  ctaPrice: { fontSize: 20, fontWeight: '700', color: (COLORS as any).pink },
   ctaDuration: { fontSize: 12, color: COLORS.textSecondary, marginTop: 1 },
   ctaButton: { borderRadius: 14, overflow: 'hidden' },
   ctaGradient: {

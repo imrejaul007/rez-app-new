@@ -375,7 +375,7 @@ export default function RezScoreScreen() {
 
             {/* Share button */}
             <Pressable
-              style={({ pressed }) => [styles.shareBtn, pressed && styles.shareBtnPressed]}
+              style={({ pressed }) => [styles.shareBtn, pressed ? styles.shareBtnPressed : null]}
               onPress={handleShare}
             >
               <Ionicons name="share-social-outline" size={18} color={colors.background.dark} />

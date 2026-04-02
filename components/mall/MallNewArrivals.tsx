@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import MallNewArrivalCard from './cards/MallNewArrivalCard';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 interface MallNewArrivalsProps {
@@ -182,17 +183,13 @@ const MallNewArrivals: React.FC<MallNewArrivalsProps> = ({
         </View>
 
         {/* Brands List */}
-        <FlashList
+        <AnyFlashList
           data={brands}
           renderItem={renderBrand}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-          removeClippedSubviews={Platform.OS !== 'web'}
-          maxToRenderPerBatch={4}
-          windowSize={4}
-          initialNumToRender={2}
+          contentContainerStyle={styles.listContent as any}
           estimatedItemSize={180}
         />
       </LinearGradient>

@@ -48,7 +48,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
   const [totalPages, setTotalPages] = useState(1);
   const [hasMoreTransactions, setHasMoreTransactions] = useState(true);
 
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Track mounted state to prevent state updates after unmount
   const isMountedRef = useRef(true);
 
@@ -60,7 +60,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
       }
       setError(null);
 
-      const response = await pointsApi.getBalance();
+      const response: any = await pointsApi.getBalance();
 
       if (!isMountedRef.current) return;
 
@@ -85,7 +85,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
     try {
       setError(null);
 
-      const response = await pointsApi.getStats();
+      const response: any = await pointsApi.getStats();
 
       if (!isMountedRef.current) return;
 
@@ -109,7 +109,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
         }
         setError(null);
 
-        const response = await pointsApi.getTransactions(page, 20);
+        const response: any = await pointsApi.getTransactions(page, 20);
 
         if (!isMountedRef.current) return;
 
@@ -148,7 +148,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
       try {
         setError(null);
 
-        const response = await pointsApi.earnPoints(data);
+        const response: any = await pointsApi.earnPoints(data);
 
         if (response.success && response.data) {
 
@@ -174,7 +174,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
       try {
         setError(null);
 
-        const response = await pointsApi.spendPoints(data);
+        const response: any = await pointsApi.spendPoints(data);
 
         if (response.success && response.data) {
 
@@ -209,7 +209,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
     try {
       setError(null);
 
-      const response = await pointsApi.claimPendingPoints();
+      const response: any = await pointsApi.claimPendingPoints();
 
       if (response.success && response.data) {
 

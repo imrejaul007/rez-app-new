@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   SafeAreaView,
+  ScrollView,
   StatusBar,
   Platform,
 } from 'react-native';
@@ -247,7 +248,7 @@ function MyReviewsPage() {
             <Text style={styles.actionButtonText}>View Store</Text>
           </Pressable>
           <Pressable
-            style={[styles.actionButton, !isPending && styles.actionButtonDisabled]}
+            style={[styles.actionButton, !isPending ? styles.actionButtonDisabled : null]}
             disabled={!isPending}
             onPress={() => {
               if (!isPending) return;
@@ -302,11 +303,11 @@ function MyReviewsPage() {
             return (
               <Pressable
                 key={tab.key}
-                style={[styles.filterTab, isActive && styles.filterTabActive]}
+                style={[styles.filterTab, isActive ? styles.filterTabActive : null]}
                 onPress={() => setActiveFilter(tab.key)}
                 accessibilityRole="button"
               >
-                <Text style={[styles.filterTabText, isActive && styles.filterTabTextActive]}>
+                <Text style={[styles.filterTabText, isActive ? styles.filterTabTextActive : null]}>
                   {tab.label} ({count})
                 </Text>
               </Pressable>

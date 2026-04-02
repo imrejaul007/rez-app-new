@@ -112,7 +112,7 @@ function GridTrialCard({ item, onPress }: { item: TrialCard; onPress: () => void
       )}
 
       {/* Slots badge — top-right */}
-      <View style={[styles.slotsBadge, isLimited && styles.slotsBadgeRed]}>
+      <View style={[styles.slotsBadge, isLimited ? styles.slotsBadgeRed : null]}>
         <Text style={styles.slotsBadgeText}>{item.slotsRemaining} left</Text>
       </View>
 
@@ -224,7 +224,7 @@ function SectionHeader({
 }) {
   return (
     <View style={styles.sectionHeader}>
-      <Text style={[styles.sectionTitle, accent && styles.sectionTitleAccent]}>
+      <Text style={[styles.sectionTitle, accent ? styles.sectionTitleAccent : null]}>
         {emoji} {title}
       </Text>
       {onSeeAll && (
@@ -239,7 +239,7 @@ function SectionHeader({
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export default function TryHomeScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ category?: string }>();
+  const params = useLocalSearchParams<any>();
 
   // Data state
   const [allTrials, setAllTrials] = useState<TrialCard[]>([]);
@@ -309,8 +309,8 @@ export default function TryHomeScreen() {
         if (scoreData.status === 'fulfilled') {
           setExplorerScore({
             score: scoreData.value.score,
-            tier: scoreData.value.currentTier,
-            streak: scoreData.value.dayStreak,
+            tier: (scoreData.value as any).currentTier ?? scoreData.value.tier,
+            streak: (scoreData.value as any).dayStreak ?? scoreData.value.stats?.currentStreak,
           });
         }
       } finally {
@@ -432,10 +432,10 @@ export default function TryHomeScreen() {
             {CATEGORIES.map((cat) => (
               <Pressable
                 key={cat.key}
-                style={[styles.chip, activeCat === cat.key && styles.chipActive]}
+                style={[styles.chip, activeCat === cat.key ? styles.chipActive : null]}
                 onPress={() => handleCatSelect(cat.key)}
               >
-                <Text style={[styles.chipText, activeCat === cat.key && styles.chipTextActive]}>
+                <Text style={[styles.chipText, activeCat === cat.key ? styles.chipTextActive : null]}>
                   {cat.emoji} {cat.label}
                 </Text>
               </Pressable>

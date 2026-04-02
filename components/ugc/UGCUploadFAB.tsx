@@ -51,7 +51,7 @@ function UGCUploadFAB({
   const handlePress = () => {
     // Haptic feedback
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {}); } catch (e) { catchSilent(e, 'UGCUploadFAB/haptics'); }
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {}); } catch (e: any) { catchSilent(e, 'UGCUploadFAB/haptics'); }
     }
 
     // Scale animation on press

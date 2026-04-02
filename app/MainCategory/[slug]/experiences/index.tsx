@@ -7,7 +7,7 @@ import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 
 function ExperiencesIndex() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
 
   if (slug === 'beauty-wellness') {
     const BeautyExperiences = require('@/components/action-pages/experiences/BeautyExperiencesIndex').default;

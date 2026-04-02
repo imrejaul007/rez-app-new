@@ -1,14 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  Pressable,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, SafeAreaView, StatusBar, Pressable } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -23,7 +16,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 // Section metadata
 const SECTION_CONFIG = {
-  'featured': {
+  featured: {
     title: 'Featured Products',
     subtitle: 'Handpicked for you',
     filterKey: 'isFeatured',
@@ -38,7 +31,7 @@ const SECTION_CONFIG = {
 function SectionDetailPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { sectionId } = useLocalSearchParams<{ sectionId: string }>();
+  const { sectionId } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -81,14 +74,17 @@ function SectionDetailPage() {
       const response = await productsApi.getProducts({ page: 1, limit: 100 });
 
       if (response.success && response.data) {
-        const rawProducts = Array.isArray(response.data) ? response.data : (response.data.products || []);
+        const rawProducts = Array.isArray(response.data) ? response.data : response.data.products || [];
 
         // Map backend products to HomeDeliveryProduct format
         const mappedProducts = rawProducts.map((product: any) => {
           const stock = product.inventory?.stock || 0;
           let availabilityStatus: 'in_stock' | 'low_stock' | 'out_of_stock' = 'out_of_stock';
           if (product.availabilityStatus) {
-            availabilityStatus = product.availabilityStatus.replace(/-/g, '_') as 'in_stock' | 'low_stock' | 'out_of_stock';
+            availabilityStatus = product.availabilityStatus.replace(/-/g, '_') as
+              | 'in_stock'
+              | 'low_stock'
+              | 'out_of_stock';
           } else if (stock > 10) {
             availabilityStatus = 'in_stock';
           } else if (stock > 0) {
@@ -133,10 +129,12 @@ function SectionDetailPage() {
               estimatedDays: deliveryTime,
               freeShippingEligible: (product.price?.current || 0) > 500,
             },
-            rating: product.rating ? {
-              value: product.rating.value || 0,
-              count: product.rating.count || 0,
-            } : undefined,
+            rating: product.rating
+              ? {
+                  value: product.rating.value || 0,
+                  count: product.rating.count || 0,
+                }
+              : undefined,
             deliveryTime,
             isNew: product.isNew || product.isNewArrival || false,
             isFeatured: product.isFeatured || product.isRecommended || false,
@@ -155,11 +153,9 @@ function SectionDetailPage() {
         // Filter products based on section
         let sectionProducts = mappedProducts;
         if (sectionConfig.filterKey === 'isFeatured') {
-          sectionProducts = mappedProducts.filter(p => p.isFeatured);
-
+          sectionProducts = mappedProducts.filter((p) => p.isFeatured);
         } else if (sectionConfig.filterKey === 'isNew') {
-          sectionProducts = mappedProducts.filter(p => p.isNew);
-
+          sectionProducts = mappedProducts.filter((p) => p.isNew);
         }
 
         if (!isMounted()) return;
@@ -170,7 +166,7 @@ function SectionDetailPage() {
 
       if (!isMounted()) return;
       setLoading(false);
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load products');
       if (!isMounted()) return;
@@ -183,18 +179,17 @@ function SectionDetailPage() {
 
     // Apply filters
     if (filters.shipping.length > 0) {
-      result = result.filter(p => filters.shipping.includes(p.shipping.type));
+      result = result.filter((p) => filters.shipping.includes(p.shipping.type));
     }
     if (filters.ratings.length > 0) {
-      result = result.filter(p => p.rating && filters.ratings.some(r => p.rating!.value >= r));
+      result = result.filter((p) => p.rating && filters.ratings.some((r) => p.rating!.value >= r));
     }
     if (filters.deliveryTime.length > 0) {
-      result = result.filter(p => filters.deliveryTime.includes(p.deliveryTime));
+      result = result.filter((p) => filters.deliveryTime.includes(p.deliveryTime));
     }
     if (filters.priceRange.min > 0 || filters.priceRange.max < Infinity) {
-      result = result.filter(p =>
-        p.price.current >= filters.priceRange.min &&
-        p.price.current <= filters.priceRange.max
+      result = result.filter(
+        (p) => p.price.current >= filters.priceRange.min && p.price.current <= filters.priceRange.max,
       );
     }
 
@@ -228,8 +223,8 @@ function SectionDetailPage() {
       params: {
         cardId: product.id,
         cardType: 'product',
-        cardData: JSON.stringify(product)
-      }
+        cardData: JSON.stringify(product),
+      },
     } as any);
   };
 
@@ -249,9 +244,9 @@ function SectionDetailPage() {
 
   // Active filters for FilterChips
   const activeFilters = [
-    ...filters.shipping.map(s => `shipping_${s}`),
-    ...filters.ratings.map(r => `rating_${r}`),
-    ...filters.deliveryTime.map(d => `delivery_${d}`),
+    ...filters.shipping.map((s) => `shipping_${s}`),
+    ...filters.ratings.map((r) => `rating_${r}`),
+    ...filters.deliveryTime.map((d) => `delivery_${d}`),
   ];
 
   return (
@@ -261,36 +256,22 @@ function SectionDetailPage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={handleBack}
-         
-        >
+        <Pressable style={styles.backButton} onPress={handleBack}>
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
 
         <View style={styles.headerContent}>
-          <ThemedText style={styles.headerTitle}>
-            {sectionConfig.title}
-          </ThemedText>
-          <ThemedText style={styles.headerSubtitle}>
-            {sectionConfig.subtitle}
-          </ThemedText>
+          <ThemedText style={styles.headerTitle}>{sectionConfig.title}</ThemedText>
+          <ThemedText style={styles.headerSubtitle}>{sectionConfig.subtitle}</ThemedText>
         </View>
 
         <View style={styles.headerRight}>
-          <ThemedText style={styles.countBadge}>
-            {filteredProducts.length}
-          </ThemedText>
+          <ThemedText style={styles.countBadge}>{filteredProducts.length}</ThemedText>
         </View>
       </View>
 
       {/* Filter Chips */}
-      <FilterChips
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        activeFilters={activeFilters}
-      />
+      <FilterChips filters={filters} onFilterChange={handleFilterChange} activeFilters={activeFilters} />
 
       {/* Products Grid */}
       <ScrollView
@@ -308,7 +289,7 @@ function SectionDetailPage() {
         />
       </ScrollView>
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({

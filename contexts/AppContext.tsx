@@ -223,7 +223,7 @@ export function AppProvider({ children }: AppProviderProps) {
 
   // Use ref to prevent duplicate loading
   const isLoadingRef = useRef(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Actions - Memoized with useCallback
   const loadSettings = useCallback(async () => {
@@ -254,7 +254,7 @@ export function AppProvider({ children }: AppProviderProps) {
 
       dispatch({ type: 'SET_FIRST_LAUNCH', payload: isFirstLaunch });
       dispatch({ type: 'APP_LOADED', payload: settings });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to load settings'
@@ -272,7 +272,7 @@ export function AppProvider({ children }: AppProviderProps) {
         window.localStorage.setItem(STORAGE_KEYS.APP_SETTINGS, serialized);
       }
       await AsyncStorage.setItem(STORAGE_KEYS.APP_SETTINGS, serialized);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [state.settings]);
@@ -280,7 +280,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const updateSettings = useCallback(async (settings: Partial<AppSettings>) => {
     try {
       dispatch({ type: 'UPDATE_SETTINGS', payload: settings });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update settings'
@@ -291,7 +291,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const setColorScheme = useCallback(async (scheme: ColorScheme) => {
     try {
       dispatch({ type: 'SET_COLOR_SCHEME', payload: scheme });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update color scheme'
@@ -302,7 +302,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const setLanguage = useCallback(async (language: Language) => {
     try {
       dispatch({ type: 'SET_LANGUAGE', payload: language });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update language'
@@ -313,7 +313,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const updateNotifications = useCallback(async (notifications: Partial<AppSettings['notifications']>) => {
     try {
       dispatch({ type: 'UPDATE_NOTIFICATIONS', payload: notifications });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update notifications'
@@ -324,7 +324,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const updatePrivacy = useCallback(async (privacy: Partial<AppSettings['privacy']>) => {
     try {
       dispatch({ type: 'UPDATE_PRIVACY', payload: privacy });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update privacy settings'
@@ -335,7 +335,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const updatePreferences = useCallback(async (preferences: Partial<AppSettings['preferences']>) => {
     try {
       dispatch({ type: 'UPDATE_PREFERENCES', payload: preferences });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update preferences'
@@ -347,7 +347,7 @@ export function AppProvider({ children }: AppProviderProps) {
     try {
       dispatch({ type: 'RESET_SETTINGS' });
       await AsyncStorage.removeItem(STORAGE_KEYS.APP_SETTINGS);
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'APP_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to reset settings'
@@ -366,7 +366,7 @@ export function AppProvider({ children }: AppProviderProps) {
       }
       await AsyncStorage.setItem(STORAGE_KEYS.FIRST_LAUNCH, 'false');
       dispatch({ type: 'SET_FIRST_LAUNCH', payload: false });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []);

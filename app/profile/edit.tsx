@@ -168,10 +168,10 @@ function ProfileEditPage() {
       platformAlertDestructive(
         'Unsaved Changes',
         'You have unsaved changes. Are you sure you want to leave?',
-        'Leave',
         () => {
           goBack('/profile' as any);
         },
+        'Leave',
       );
     } else {
       goBack('/profile' as any);
@@ -262,7 +262,7 @@ function ProfileEditPage() {
           );
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         error instanceof Error ? error.message : 'An error occurred while uploading the image',
@@ -346,7 +346,7 @@ function ProfileEditPage() {
       setTimeout(() => {
         if (isMounted()) goBack('/profile' as any);
       }, 500);
-    } catch (error) {
+    } catch (error: any) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       platformAlertError('Save Failed', message);
     } finally {
@@ -388,7 +388,7 @@ function ProfileEditPage() {
         )}
       </View>
       <TextInput
-        style={[styles.textInput, multiline && styles.multilineInput, readonly && styles.readonlyInput]}
+        style={[styles.textInput, multiline && styles.multilineInput, readonly ? styles.readonlyInput : null]}
         value={formData[field] as string}
         onChangeText={readonly ? undefined : (value) => handleInputChange(field, value)}
         placeholder={placeholder}
@@ -411,7 +411,7 @@ function ProfileEditPage() {
   const renderGenderOption = useCallback(
     ({ item }: { item: { value: string; label: string } }) => (
       <Pressable
-        style={[styles.genderOption, formData.gender === item.value && styles.selectedGenderOption]}
+        style={[styles.genderOption, formData.gender === item.value ? styles.selectedGenderOption : null]}
         onPress={() => handleGenderSelect(item.value)}
         accessibilityLabel={`Select ${item.label} as your gender`}
         accessibilityRole="button"
@@ -419,7 +419,7 @@ function ProfileEditPage() {
         accessibilityState={{ selected: formData.gender === item.value }}
       >
         <ThemedText
-          style={[styles.genderOptionText, formData.gender === item.value && styles.selectedGenderOptionText]}
+          style={[styles.genderOptionText, formData.gender === item.value ? styles.selectedGenderOptionText : null]}
         >
           {item.label}
         </ThemedText>
@@ -565,7 +565,7 @@ function ProfileEditPage() {
                 accessibilityRole="button"
                 accessibilityHint="Double tap to select your gender"
               >
-                <ThemedText style={[styles.genderText, !formData.gender && styles.placeholderText]}>
+                <ThemedText style={[styles.genderText, !formData.gender ? styles.placeholderText : null]}>
                   {formData.gender
                     ? genderOptions.find((opt) => opt.value === formData.gender)?.label
                     : 'Select gender'}
@@ -677,10 +677,10 @@ function ProfileEditPage() {
                 platformAlertDestructive(
                   'Delete Account',
                   'Are you sure you want to delete your account? This action cannot be undone.',
-                  'Delete',
                   () => {
                     platformAlertSimple('Account Deleted', 'Your account has been scheduled for deletion.');
                   },
+                  'Delete',
                 );
               }}
               accessibilityLabel="Delete Account"

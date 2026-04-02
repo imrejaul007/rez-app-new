@@ -157,7 +157,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
             lastUpdated: new Date().toISOString(),
           },
         }));
-      } catch (error) {
+      } catch (error: any) {
         set((s) => ({
           state: {
             ...s.state,

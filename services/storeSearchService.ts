@@ -297,7 +297,7 @@ class StoreSearchService {
 
     // If category is a MongoDB ObjectId, use the category endpoint
     if (this.isMongoObjectId(category)) {
-      return this.getStoresByCategoryId({ categoryId: category, page, limit, sortBy });
+      return this.getStoresByCategoryId({ categoryId: category, page, limit, sortBy: sortBy as any });
     }
 
     // If category is a delivery category type (fastDelivery, premium, etc.), use search-by-category
@@ -315,7 +315,7 @@ class StoreSearchService {
         return emptySearchResponse(category, page, limit);
       }
 
-      return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+      return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
     }
 
     // Otherwise, treat it as a category slug (food-dining, fashion, etc.)
@@ -340,7 +340,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch stores by category');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
   }
 
   /**
@@ -362,7 +362,7 @@ class StoreSearchService {
       return emptySearchResponse(slug, page, limit);
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
   }
 
   /**
@@ -388,7 +388,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to search stores by delivery time');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
   }
 
   /**
@@ -401,7 +401,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch store categories');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreCategoriesResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreCategoriesResponse;
   }
 
   /**
@@ -414,7 +414,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch store');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: Store; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: Store; message: string };
   }
 
   /**
@@ -437,7 +437,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch nearby stores');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
   }
 
   /**
@@ -460,7 +460,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch featured stores');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
   }
 
   /**
@@ -531,7 +531,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to search stores');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as StoreSearchResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as StoreSearchResponse;
   }
 
   /**
@@ -563,7 +563,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch reviews');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ReviewsResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ReviewsResponse;
   }
 
   /**
@@ -587,7 +587,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to create review');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { review: Review }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { review: Review }; message: string };
   }
 
   /**
@@ -605,7 +605,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to check review eligibility');
     }
 
-    return { success: true, data: response.data } as { success: boolean; data: { canReview: boolean; hasReviewed: boolean } };
+    return { success: true, data: response.data } as unknown as { success: boolean; data: { canReview: boolean; hasReviewed: boolean } };
   }
 
   /**
@@ -620,7 +620,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to mark review as helpful');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { helpful: number }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { helpful: number }; message: string };
   }
 
   /**
@@ -635,7 +635,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to add to favorites');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { favorite: Favorite }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { favorite: Favorite }; message: string };
   }
 
   /**
@@ -650,7 +650,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to remove from favorites');
     }
 
-    return { success: true, message: response.message || '' } as { success: boolean; message: string };
+    return { success: true, message: response.message || '' } as unknown as { success: boolean; message: string };
   }
 
   /**
@@ -665,7 +665,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to toggle favorite');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { isFavorited: boolean; favorite?: Favorite }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { isFavorited: boolean; favorite?: Favorite }; message: string };
   }
 
   /**
@@ -683,7 +683,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to check favorite status');
     }
 
-    return { success: true, data: response.data } as { success: boolean; data: { isFavorited: boolean } };
+    return { success: true, data: response.data } as unknown as { success: boolean; data: { isFavorited: boolean } };
   }
 
   /**
@@ -703,7 +703,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch favorites');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as FavoritesResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as FavoritesResponse;
   }
 
   /**
@@ -716,7 +716,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch favorite statuses');
     }
 
-    return { success: true, data: response.data } as { success: boolean; data: { statuses: { [key: string]: boolean } } };
+    return { success: true, data: response.data } as unknown as { success: boolean; data: { statuses: { [key: string]: boolean } } };
   }
 
   /**
@@ -731,7 +731,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to clear favorites');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { deletedCount: number }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { deletedCount: number }; message: string };
   }
 
   /**
@@ -747,7 +747,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to create comparison');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ComparisonResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ComparisonResponse;
   }
 
   /**
@@ -767,7 +767,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch comparisons');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ComparisonsResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ComparisonsResponse;
   }
 
   /**
@@ -781,7 +781,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch comparison');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ComparisonResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ComparisonResponse;
   }
 
   /**
@@ -803,7 +803,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to update comparison');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ComparisonResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ComparisonResponse;
   }
 
   /**
@@ -816,7 +816,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to delete comparison');
     }
 
-    return { success: true, message: response.message || '' } as { success: boolean; message: string };
+    return { success: true, message: response.message || '' } as unknown as { success: boolean; message: string };
   }
 
   /**
@@ -837,7 +837,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to add store to comparison');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ComparisonResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ComparisonResponse;
   }
 
   /**
@@ -857,7 +857,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to remove store from comparison');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as ComparisonResponse;
+    return { success: true, data: response.data, message: response.message || '' } as unknown as ComparisonResponse;
   }
 
   /**
@@ -872,7 +872,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to clear comparisons');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { deletedCount: number }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { deletedCount: number }; message: string };
   }
 
   /**
@@ -901,7 +901,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to track event');
     }
 
-    return { success: true, data: response.data, message: response.message || '' } as { success: boolean; data: { analyticsId: string }; message: string };
+    return { success: true, data: response.data, message: response.message || '' } as unknown as { success: boolean; data: { analyticsId: string }; message: string };
   }
 
   /**
@@ -929,7 +929,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch store analytics');
     }
 
-    return { success: true, data: response.data } as { success: boolean; data: any };
+    return { success: true, data: response.data } as unknown as { success: boolean; data: any };
   }
 
   /**
@@ -955,7 +955,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch popular stores');
     }
 
-    return { success: true, data: response.data } as { success: boolean; data: any };
+    return { success: true, data: response.data } as unknown as { success: boolean; data: any };
   }
 
   /**
@@ -980,7 +980,7 @@ class StoreSearchService {
       throw new Error(response.error || 'Failed to fetch user analytics');
     }
 
-    return { success: true, data: response.data } as { success: boolean; data: any };
+    return { success: true, data: response.data } as unknown as { success: boolean; data: any };
   }
 
   /**

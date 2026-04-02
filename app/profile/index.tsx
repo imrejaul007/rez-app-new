@@ -251,7 +251,7 @@ function ProfilePage() {
           if (stats) setReferralCount(stats.totalReferrals);
         }),
       ]);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -309,7 +309,7 @@ function ProfilePage() {
         }
       } else {
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         error instanceof Error ? error.message : 'An error occurred while uploading the image',
@@ -466,7 +466,7 @@ function ProfilePage() {
         <View style={styles.menuItemRight}>
           {badgeValue && (
             <View style={[styles.menuBadge, item.isNew ? styles.newBadge : styles.numericBadge]}>
-              <ThemedText style={[styles.menuBadgeText, item.isNew && styles.newBadgeText]}>
+              <ThemedText style={[styles.menuBadgeText, item.isNew ? styles.newBadgeText : null]}>
                 {item.isNew ? 'New' : badgeValue}
               </ThemedText>
             </View>

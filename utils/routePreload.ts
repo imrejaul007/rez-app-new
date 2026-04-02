@@ -326,7 +326,7 @@ export function preloadOnIdle(
   components: any[],
   idleTime: number = 3000
 ): () => void {
-  let timeoutId: NodeJS.Timeout;
+  let timeoutId: ReturnType<typeof setTimeout>;
 
   const schedulePreload = () => {
     timeoutId = setTimeout(() => {

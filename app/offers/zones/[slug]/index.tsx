@@ -230,7 +230,7 @@ function resolveIonicon(
 // ---------------------------------------------------------------------------
 
 function ExclusiveZonePage() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const isMounted = useIsMounted();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -482,7 +482,7 @@ function ExclusiveZonePage() {
       {/* ---- Scrollable content ---- */}
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Zone Banner */}

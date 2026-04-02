@@ -60,7 +60,7 @@ class CartValidationService {
       } else {
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -87,7 +87,7 @@ class CartValidationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -110,7 +110,7 @@ class CartValidationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -130,13 +130,13 @@ class CartValidationService {
   }>> {
     try {
 
-      const response = await apiClient.get('/cart/validate/summary');
+      const response = await apiClient.get<any>('/cart/validate/summary');
 
       if (response.success) {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -157,13 +157,13 @@ class CartValidationService {
   }>> {
     try {
 
-      const response = await apiClient.post('/cart/validate/auto-fix');
+      const response = await apiClient.post<any>('/cart/validate/auto-fix');
 
       if (response.success) {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }

@@ -36,7 +36,7 @@ function TaskCard({
       disabled={isCompleted || isPending}
     >
       <View style={styles.taskInfo}>
-        <View style={[styles.iconContainer, isCompleted && styles.completedIcon]}>
+        <View style={[styles.iconContainer, isCompleted ? styles.completedIcon : null]}>
           <Ionicons 
             name={isCompleted ? "checkmark-circle" : icon} 
             size={24} 
@@ -44,10 +44,10 @@ function TaskCard({
           />
         </View>
         <View style={styles.taskDetails}>
-          <ThemedText style={[styles.taskTitle, isCompleted && styles.completedText]}>
+          <ThemedText style={[styles.taskTitle, isCompleted ? styles.completedText : null]}>
             {title}
           </ThemedText>
-          <ThemedText style={[styles.taskDescription, isCompleted && styles.completedDescription]}>
+          <ThemedText style={[styles.taskDescription, isCompleted ? styles.completedDescription : null]}>
             {description}
           </ThemedText>
         </View>

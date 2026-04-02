@@ -59,7 +59,7 @@ function ScratchCardGame({
   const checkEligibility = async () => {
     try {
       setEligibilityLoading(true);
-      const response = await gamificationAPI.canCreateScratchCard();
+      const response = await (gamificationAPI as any).canCreateScratchCard();
 
       if (response.success && response.data) {
         if (!isMounted()) return;
@@ -84,7 +84,7 @@ function ScratchCardGame({
 
     try {
       setIsLoading(true);
-      const response = await gamificationAPI.createScratchCard();
+      const response = await (gamificationAPI as any).createScratchCard();
 
       if (response.success && response.data) {
         if (!isMounted()) return;
@@ -120,7 +120,7 @@ function ScratchCardGame({
       setIsScratched(true);
 
       // Scratch card on backend
-      const response = await gamificationAPI.scratchCard(cardId);
+      const response = await (gamificationAPI as any).scratchCard(cardId);
 
       if (response.success && response.data) {
         const { coinsAdded } = response.data;

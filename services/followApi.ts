@@ -46,7 +46,7 @@ export async function followUser(userId: string): Promise<ApiResponse<FollowStat
   try {
 
     const response = await apiClient.post<FollowStatus>(`${API_PREFIX}/users/${userId}/follow`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to follow user');
   }
@@ -59,7 +59,7 @@ export async function unfollowUser(userId: string): Promise<ApiResponse<FollowSt
   try {
 
     const response = await apiClient.post<FollowStatus>(`${API_PREFIX}/users/${userId}/unfollow`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to unfollow user');
   }
@@ -72,7 +72,7 @@ export async function toggleFollow(userId: string): Promise<ApiResponse<FollowSt
   try {
 
     const response = await apiClient.post<FollowStatus>(`${API_PREFIX}/users/${userId}/follow`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to toggle follow');
   }
@@ -107,7 +107,7 @@ export async function getFollowers(
       page,
       limit,
     });
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch followers');
   }
@@ -142,7 +142,7 @@ export async function getFollowing(
       page,
       limit,
     });
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch following list');
   }
@@ -161,7 +161,7 @@ export async function getFollowSuggestions(limit: number = 10): Promise<ApiRespo
     }>(`${API_PREFIX}/suggested-users`, {
       limit,
     });
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch suggestions');
   }
@@ -181,7 +181,7 @@ export async function checkFollowStatus(userId: string): Promise<ApiResponse<{
       isFollower: boolean;
       isMutual: boolean;
     }>(`${API_PREFIX}/users/${userId}/is-following`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to check follow status');
   }
@@ -193,7 +193,7 @@ export async function checkFollowStatus(userId: string): Promise<ApiResponse<{
 export async function getFollowCounts(userId: string): Promise<ApiResponse<FollowCounts>> {
   try {
     const response = await apiClient.get<FollowCounts>(`${API_PREFIX}/users/${userId}/follow-counts`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch follow counts');
   }
@@ -209,7 +209,7 @@ export async function getPendingFollowRequests(): Promise<ApiResponse<{
     const response = await apiClient.get<{
       requests: FollowRequest[];
     }>(`${API_PREFIX}/follow-requests/pending`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch follow requests');
   }
@@ -226,7 +226,7 @@ export async function acceptFollowRequest(requestId: string): Promise<ApiRespons
     const response = await apiClient.post<{
       request: FollowRequest;
     }>(`${API_PREFIX}/follow-requests/${requestId}/accept`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to accept follow request');
   }
@@ -243,7 +243,7 @@ export async function rejectFollowRequest(requestId: string): Promise<ApiRespons
     const response = await apiClient.post<{
       request: FollowRequest;
     }>(`${API_PREFIX}/follow-requests/${requestId}/reject`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to reject follow request');
   }
@@ -278,7 +278,7 @@ export async function getMutualFollowers(
       page,
       limit,
     });
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch mutual followers');
   }
@@ -314,7 +314,7 @@ export async function searchUsers(
       page,
       limit,
     });
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to search users');
   }
@@ -331,7 +331,7 @@ export async function removeFollower(userId: string): Promise<ApiResponse<{
     const response = await apiClient.delete<{
       success: boolean;
     }>(`${API_PREFIX}/followers/${userId}`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to remove follower');
   }
@@ -348,7 +348,7 @@ export async function blockUser(userId: string): Promise<ApiResponse<{
     const response = await apiClient.post<{
       success: boolean;
     }>(`${API_PREFIX}/users/${userId}/block`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to block user');
   }
@@ -365,7 +365,7 @@ export async function unblockUser(userId: string): Promise<ApiResponse<{
     const response = await apiClient.post<{
       success: boolean;
     }>(`${API_PREFIX}/users/${userId}/unblock`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to unblock user');
   }
@@ -381,7 +381,7 @@ export async function getBlockedUsers(): Promise<ApiResponse<{
     const response = await apiClient.get<{
       blocked: FollowUser[];
     }>(`${API_PREFIX}/blocked-users`);
-    return response;
+    return response as any;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to fetch blocked users');
   }

@@ -3,13 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Showcase all benefits and usage tips for current subscription tier
 
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  StatusBar,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -68,15 +62,15 @@ function BenefitsPage() {
         title: 'Personal Shopper',
         description: 'Dedicated assistant for your shopping needs',
         tip: 'Book appointments via the profile section',
-        color: colors.brand.pink,
+        color: colors.brand.pink as any,
       },
       {
         icon: 'calendar',
         title: 'Premium Events',
         description: 'Exclusive access to VIP shopping events',
         tip: 'Get early access to sales and product launches',
-        color: colors.brand.indigo,
-      }
+        color: (colors.brand as any).indigo || '#8B5CF6',
+      },
     );
   }
 
@@ -106,7 +100,10 @@ function BenefitsPage() {
       {/* Header */}
       <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContainer}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Your Benefits</ThemedText>
@@ -114,7 +111,11 @@ function BenefitsPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         {/* Current Tier Badge */}
         <View style={styles.tierBadgeContainer}>
           <LinearGradient colors={tierGradient as any} style={styles.tierBadge}>
@@ -131,7 +132,10 @@ function BenefitsPage() {
         {currentTier !== 'free' && state.currentSubscription?.usage && (
           <View style={styles.savingsCard}>
             <ThemedText style={styles.savingsTitle}>Your Total Savings</ThemedText>
-            <ThemedText style={styles.savingsAmount}>{currencySymbol}{state.currentSubscription.usage.totalSavings || 0}</ThemedText>
+            <ThemedText style={styles.savingsAmount}>
+              {currencySymbol}
+              {state.currentSubscription.usage.totalSavings || 0}
+            </ThemedText>
             <ThemedText style={styles.savingsSubtitle}>
               {state.currentSubscription.usage.ordersAllTime || 0} orders with subscription benefits
             </ThemedText>
@@ -178,10 +182,7 @@ function BenefitsPage() {
         {currentTier !== 'vip' && (
           <View style={styles.upgradeSection}>
             <ThemedText style={styles.upgradeSectionTitle}>Want Even More Benefits?</ThemedText>
-            <Pressable
-              style={styles.upgradeButton}
-              onPress={() => router.push('/subscription/plans')}
-            >
+            <Pressable style={styles.upgradeButton} onPress={() => router.push('/subscription/plans')}>
               <LinearGradient colors={[Colors.warning, colors.warningScale[700]]} style={styles.upgradeButtonGradient}>
                 <ThemedText style={styles.upgradeButtonText}>
                   {currentTier === 'free' ? 'Upgrade to Premium' : 'Upgrade to VIP'}

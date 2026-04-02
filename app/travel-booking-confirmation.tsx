@@ -4,21 +4,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows booking success, travel details, cashback status, and next actions
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Share
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Share } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming} from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -100,8 +93,9 @@ function TravelBookingConfirmationPage() {
       const routeText = route ? `${route.from} → ${route.to}` : '';
       await Share.share({
         message: `Travel Booking Confirmed! ${routeText}\nBooking #${booking.bookingNumber}\nDate: ${new Date(booking.bookingDate).toLocaleDateString()}\n\nBooked via ReZ App`,
-        title: 'Travel Booking Confirmation' });
-    } catch (error) {
+        title: 'Travel Booking Confirmation',
+      });
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -124,13 +118,20 @@ function TravelBookingConfirmationPage() {
   const getCategoryIcon = (): string => {
     const slug = booking?.serviceCategory?.slug || '';
     switch (slug) {
-      case 'flights': return 'airplane';
-      case 'hotels': return 'bed';
-      case 'trains': return 'train';
-      case 'bus': return 'bus';
-      case 'cab': return 'car';
-      case 'packages': return 'briefcase';
-      default: return 'airplane';
+      case 'flights':
+        return 'airplane';
+      case 'hotels':
+        return 'bed';
+      case 'trains':
+        return 'train';
+      case 'bus':
+        return 'bus';
+      case 'cab':
+        return 'car';
+      case 'packages':
+        return 'briefcase';
+      default:
+        return 'airplane';
     }
   };
 
@@ -147,10 +148,7 @@ function TravelBookingConfirmationPage() {
       <ThemedView style={styles.errorContainer}>
         <Ionicons name="alert-circle" size={48} color={Colors.error} />
         <ThemedText style={styles.errorText}>{error || 'Booking not found'}</ThemedText>
-        <Pressable
-          style={styles.retryButton}
-          onPress={() => router.replace('/my-bookings' as any)}
-        >
+        <Pressable style={styles.retryButton} onPress={() => router.replace('/my-bookings' as any)}>
           <ThemedText style={styles.retryButtonText}>Go to My Bookings</ThemedText>
         </Pressable>
       </ThemedView>
@@ -166,7 +164,6 @@ function TravelBookingConfirmationPage() {
     <ThemedView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
         {/* Success Header */}
         <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
           <Animated.View style={[styles.successIconContainer, successStyle]}>
@@ -181,7 +178,6 @@ function TravelBookingConfirmationPage() {
         </LinearGradient>
 
         <Animated.View style={[styles.content, contentStyle]}>
-
           {/* Booking Number Card */}
           <View style={styles.card}>
             <View style={styles.bookingNumberRow}>
@@ -209,9 +205,7 @@ function TravelBookingConfirmationPage() {
                 <View style={styles.routePoint}>
                   <View style={styles.routeDot} />
                   <ThemedText style={styles.routeCity}>{route.from}</ThemedText>
-                  {route.fromCode && (
-                    <ThemedText style={styles.routeCode}>{route.fromCode}</ThemedText>
-                  )}
+                  {route.fromCode && <ThemedText style={styles.routeCode}>{route.fromCode}</ThemedText>}
                 </View>
                 <View style={styles.routeLine}>
                   <Ionicons name="airplane" size={18} color={colors.nileBlue} />
@@ -219,9 +213,7 @@ function TravelBookingConfirmationPage() {
                 <View style={styles.routePoint}>
                   <View style={[styles.routeDot, { backgroundColor: Colors.success }]} />
                   <ThemedText style={styles.routeCity}>{route.to}</ThemedText>
-                  {route.toCode && (
-                    <ThemedText style={styles.routeCode}>{route.toCode}</ThemedText>
-                  )}
+                  {route.toCode && <ThemedText style={styles.routeCode}>{route.toCode}</ThemedText>}
                 </View>
               </View>
             </View>
@@ -236,7 +228,10 @@ function TravelBookingConfirmationPage() {
                 <ThemedText style={styles.detailLabel}>Date</ThemedText>
                 <ThemedText style={styles.detailValue}>
                   {new Date(booking.bookingDate).toLocaleDateString('en-IN', {
-                    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
                   })}
                 </ThemedText>
               </View>
@@ -253,7 +248,9 @@ function TravelBookingConfirmationPage() {
                   <ThemedText style={styles.detailLabel}>Passengers</ThemedText>
                   <ThemedText style={styles.detailValue}>
                     {passengers.adults} Adult{passengers.adults !== 1 ? 's' : ''}
-                    {passengers.children > 0 ? `, ${passengers.children} Child${passengers.children !== 1 ? 'ren' : ''}` : ''}
+                    {passengers.children > 0
+                      ? `, ${passengers.children} Child${passengers.children !== 1 ? 'ren' : ''}`
+                      : ''}
                   </ThemedText>
                 </View>
               )}
@@ -274,17 +271,26 @@ function TravelBookingConfirmationPage() {
             <ThemedText style={styles.cardTitle}>Price Breakdown</ThemedText>
             <View style={styles.priceRow}>
               <ThemedText style={styles.priceLabel}>Base Price</ThemedText>
-              <ThemedText style={styles.priceValue}>{currencySymbol}{booking.pricing.basePrice?.toLocaleString()}</ThemedText>
+              <ThemedText style={styles.priceValue}>
+                {currencySymbol}
+                {booking.pricing.basePrice?.toLocaleString()}
+              </ThemedText>
             </View>
             {booking.pricing.taxes > 0 && (
               <View style={styles.priceRow}>
                 <ThemedText style={styles.priceLabel}>Taxes & Fees</ThemedText>
-                <ThemedText style={styles.priceValue}>{currencySymbol}{booking.pricing.taxes?.toLocaleString()}</ThemedText>
+                <ThemedText style={styles.priceValue}>
+                  {currencySymbol}
+                  {booking.pricing.taxes?.toLocaleString()}
+                </ThemedText>
               </View>
             )}
             <View style={[styles.priceRow, styles.totalRow]}>
               <ThemedText style={styles.totalLabel}>Total Paid</ThemedText>
-              <ThemedText style={styles.totalValue}>{currencySymbol}{booking.pricing.total?.toLocaleString()}</ThemedText>
+              <ThemedText style={styles.totalValue}>
+                {currencySymbol}
+                {booking.pricing.total?.toLocaleString()}
+              </ThemedText>
             </View>
           </View>
 
@@ -296,7 +302,10 @@ function TravelBookingConfirmationPage() {
                   <Ionicons name="gift" size={24} color={Colors.success} />
                   <View>
                     <ThemedText style={styles.cashbackTitle}>Cashback Earned</ThemedText>
-                    <ThemedText style={styles.cashbackAmount}>{currencySymbol}{cashbackAmount.toLocaleString()}</ThemedText>
+                    <ThemedText style={styles.cashbackAmount}>
+                      {currencySymbol}
+                      {cashbackAmount.toLocaleString()}
+                    </ThemedText>
                   </View>
                 </View>
                 <View style={[styles.cashbackBadge, { backgroundColor: `${cashbackInfo.color}15` }]}>
@@ -314,10 +323,7 @@ function TravelBookingConfirmationPage() {
 
           {/* Action Buttons */}
           <View style={styles.actions}>
-            <Pressable
-              style={styles.primaryButton}
-              onPress={() => router.replace('/my-bookings' as any)}
-            >
+            <Pressable style={styles.primaryButton} onPress={() => router.replace('/my-bookings' as any)}>
               <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.primaryButtonGradient}>
                 <Ionicons name="list" size={20} color={colors.text.inverse} />
                 <ThemedText style={styles.primaryButtonText}>View My Bookings</ThemedText>
@@ -329,10 +335,7 @@ function TravelBookingConfirmationPage() {
               <ThemedText style={styles.secondaryButtonText}>Share Booking</ThemedText>
             </Pressable>
 
-            <Pressable
-              style={styles.secondaryButton}
-              onPress={() => router.replace('/travel' as any)}
-            >
+            <Pressable style={styles.secondaryButton} onPress={() => router.replace('/travel' as any)}>
               <Ionicons name="airplane-outline" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.secondaryButtonText}>Browse More Travel</ThemedText>
             </Pressable>
@@ -351,18 +354,29 @@ const styles = StyleSheet.create({
   loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   errorText: { marginTop: Spacing.md, ...Typography.bodyLarge, color: Colors.error, textAlign: 'center' },
-  retryButton: { marginTop: Spacing.lg, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, backgroundColor: colors.nileBlue, borderRadius: BorderRadius.md },
+  retryButton: {
+    marginTop: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    backgroundColor: colors.nileBlue,
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: { color: colors.text.inverse, ...Typography.bodyLarge, fontWeight: '600' },
   scrollContent: { paddingBottom: 120 },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     paddingBottom: 40,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   successIconContainer: { marginBottom: 16 },
   successCircle: {
-    width: 80, height: 80, borderRadius: 40,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: Colors.success,
-    justifyContent: 'center', alignItems: 'center' },
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   successTitle: { ...Typography.h2, color: colors.text.inverse, marginBottom: Spacing.sm },
   successSubtitle: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', paddingHorizontal: 40 },
   content: { padding: Spacing.base, marginTop: -20 },
@@ -371,14 +385,19 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   bookingNumberRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardLabel: { ...Typography.caption, color: colors.text.tertiary, marginBottom: Spacing.xs },
   bookingNumber: { ...Typography.h3, color: colors.nileBlue, letterSpacing: 1 },
   categoryBadge: {
-    width: 44, height: 44, borderRadius: 22,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: Colors.infoScale[200],
-    justifyContent: 'center', alignItems: 'center' },
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   pnrRow: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.background.secondary },
   pnrValue: { ...Typography.h4, color: colors.nileBlue, letterSpacing: 2 },
   cardTitle: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.base },
@@ -395,7 +414,12 @@ const styles = StyleSheet.create({
   priceRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.sm },
   priceLabel: { ...Typography.body, color: colors.text.tertiary },
   priceValue: { ...Typography.body, fontWeight: '500', color: colors.text.primary },
-  totalRow: { borderTopWidth: 1, borderTopColor: colors.background.secondary, marginTop: Spacing.sm, paddingTop: Spacing.md },
+  totalRow: {
+    borderTopWidth: 1,
+    borderTopColor: colors.background.secondary,
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.md,
+  },
   totalLabel: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary },
   totalValue: { ...Typography.h4, color: colors.nileBlue },
   cashbackCard: { borderLeftWidth: 4, borderLeftColor: Colors.success },
@@ -403,17 +427,38 @@ const styles = StyleSheet.create({
   cashbackLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   cashbackTitle: { ...Typography.bodySmall, color: colors.text.tertiary },
   cashbackAmount: { ...Typography.h3, color: Colors.success },
-  cashbackBadge: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
+  cashbackBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+  },
   cashbackStatus: { ...Typography.caption, fontWeight: '600' },
   cashbackNote: { ...Typography.caption, color: colors.text.tertiary, marginTop: Spacing.md },
   actions: { marginTop: Spacing.sm, gap: 10 },
   primaryButton: { borderRadius: BorderRadius.md, overflow: 'hidden' },
-  primaryButtonGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingVertical: Spacing.base },
+  primaryButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.base,
+  },
   primaryButtonText: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.inverse },
   secondaryButton: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm,
-    paddingVertical: 14, borderRadius: BorderRadius.md, borderWidth: 1.5, borderColor: colors.nileBlue,
-    backgroundColor: colors.background.primary },
-  secondaryButtonText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue } });
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1.5,
+    borderColor: colors.nileBlue,
+    backgroundColor: colors.background.primary,
+  },
+  secondaryButtonText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
+});
 
 export default withErrorBoundary(TravelBookingConfirmationPage, 'TravelBookingConfirmation');

@@ -44,7 +44,7 @@ const defaults: WalletStoreData = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const useWalletStore = create<WalletStoreState>(
+export const useWalletStore = create<WalletStoreState>()(
   persist(
     (set) => ({
       ...defaults,

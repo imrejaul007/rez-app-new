@@ -65,7 +65,7 @@ interface BookingModalState {
 
 function TrialDetailScreen() {
   const router = useRouter();
-  const { trialId } = useLocalSearchParams<{ trialId: string }>();
+  const { trialId } = useLocalSearchParams<any>();
   const [trial, setTrial] = useState<TrialDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [coinBalance, setCoinBalance] = useState(0);
@@ -83,12 +83,12 @@ function TrialDetailScreen() {
 
         // Fetch trial details from API
         const trialDetails = await tryApi.getTrialDetails(trialId);
-        setTrial(trialDetails);
+        setTrial(trialDetails as any);
 
         // Fetch coin balance
         const coinsData = await tryApi.getCoins();
         setCoinBalance(coinsData.totalBalance);
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to load trial details:', err);
       } finally {
         setLoading(false);
@@ -174,7 +174,7 @@ function TrialDetailScreen() {
           error: 'Booking confirmed but something went wrong. Check My Bookings.',
         }));
       }
-    } catch (err) {
+    } catch (err: any) {
       setBookingModal((prev) => ({
         ...prev,
         loading: false,
@@ -247,7 +247,7 @@ function TrialDetailScreen() {
               {trial.images.map((_, idx) => (
                 <View
                   key={idx}
-                  style={[styles.paginationDot, idx === currentImageIndex && styles.paginationDotActive]}
+                  style={[styles.paginationDot, idx === currentImageIndex ? styles.paginationDotActive : null]}
                 />
               ))}
             </View>
@@ -435,7 +435,7 @@ function TrialDetailScreen() {
                 <Text style={styles.disclaimerText}>💳 Commitment fee is non-refundable</Text>
 
                 <Pressable
-                  style={[styles.modalButton, bookingModal.loading && styles.modalButtonDisabled]}
+                  style={[styles.modalButton, bookingModal.loading ? styles.modalButtonDisabled : null]}
                   onPress={handleConfirmBooking}
                   disabled={bookingModal.loading}
                 >

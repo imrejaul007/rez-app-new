@@ -58,7 +58,7 @@ export function useEventSearch(): UseEventSearchReturn {
         suggestions: result.suggestions || [],
         loading: false
       }));
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to search events';
       
       setState(prev => ({
@@ -92,7 +92,7 @@ export function useEventSearch(): UseEventSearchReturn {
       }));
 
       setOffset(newOffset);
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load more events';
       
       setState(prev => ({
@@ -147,7 +147,7 @@ export function useEventSearch(): UseEventSearchReturn {
           hasMore: result.hasMore,
           loading: false
         }));
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to refresh events';
         setState(prev => ({
           ...prev,

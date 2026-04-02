@@ -103,9 +103,7 @@ const questionsApi = {
 
       const { page = 1, limit = 10, sortBy = 'recent' } = params;
 
-      const response = await apiClient.get(`/products/${productId}/questions`, {
-        params: { page, limit, sortBy },
-      });
+      const response = await apiClient.get<any>(`/products/${productId}/questions`, { page, limit, sortBy });
 
       devLog.log('✅ [QuestionsAPI] Questions retrieved:', response.data);
       return response.data;
@@ -129,7 +127,7 @@ const questionsApi = {
     try {
       devLog.log('❓ [QuestionsAPI] Asking question:', params);
 
-      const response = await apiClient.post(`/products/${params.productId}/questions`, {
+      const response = await apiClient.post<any>(`/products/${params.productId}/questions`, {
         question: params.question,
       });
 
@@ -148,7 +146,7 @@ const questionsApi = {
     try {
       devLog.log('💬 [QuestionsAPI] Answering question:', params);
 
-      const response = await apiClient.post(`/questions/${params.questionId}/answers`, {
+      const response = await apiClient.post<any>(`/questions/${params.questionId}/answers`, {
         answer: params.answer,
       });
 
@@ -167,7 +165,7 @@ const questionsApi = {
     try {
       devLog.log(`👍 [QuestionsAPI] Marking answer as helpful: ${answerId}`);
 
-      const response = await apiClient.post(
+      const response = await apiClient.post<any>(
         `/questions/${questionId}/answers/${answerId}/helpful`
       );
 
@@ -188,9 +186,7 @@ const questionsApi = {
 
       const { page = 1, limit = 10 } = params;
 
-      const response = await apiClient.get('/users/me/questions', {
-        params: { page, limit },
-      });
+      const response = await apiClient.get<any>('/users/me/questions', { page, limit });
 
       devLog.log('✅ [QuestionsAPI] User questions retrieved:', response.data);
       return response.data;
@@ -214,7 +210,7 @@ const questionsApi = {
     try {
       devLog.log(`🗑️ [QuestionsAPI] Deleting question: ${questionId}`);
 
-      const response = await apiClient.delete(`/questions/${questionId}`);
+      const response = await apiClient.delete<any>(`/questions/${questionId}`);
 
       devLog.log('✅ [QuestionsAPI] Question deleted:', response.data);
       return response.data;
@@ -231,7 +227,7 @@ const questionsApi = {
     try {
       devLog.log(`🚩 [QuestionsAPI] Reporting question: ${questionId}`);
 
-      const response = await apiClient.post(`/questions/${questionId}/report`, {
+      const response = await apiClient.post<any>(`/questions/${questionId}/report`, {
         reason,
       });
 

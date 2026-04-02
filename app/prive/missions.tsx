@@ -60,7 +60,7 @@ function MissionsScreen() {
     try {
       const res = await priveApi.claimMission(id);
       if (res.success) await fetchData();
-    } catch (e) {
+    } catch (e: any) {
       catchAndReport(e, setError, 'Missions/claimMission');
     } finally {
       setClaiming(null);
@@ -72,7 +72,7 @@ function MissionsScreen() {
     try {
       const res = await priveApi.completeMission(id);
       if (res.success) await fetchData();
-    } catch (e) {
+    } catch (e: any) {
       catchAndReport(e, setError, 'Missions/completeMission');
     } finally {
       setCompleting(null);
@@ -154,10 +154,10 @@ function MissionsScreen() {
         {tabs.map((tab) => (
           <Pressable
             key={tab.key}
-            style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+            style={[styles.tab, activeTab === tab.key ? styles.tabActive : null]}
             onPress={() => setActiveTab(tab.key)}
           >
-            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
+            <Text style={[styles.tabText, activeTab === tab.key ? styles.tabTextActive : null]}>
               {tab.label} ({tab.count})
             </Text>
           </Pressable>

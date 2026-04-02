@@ -119,7 +119,7 @@ const BrandCard = ({ store, index, onPress }: { store: FashionStore; index: numb
 
     // Handle address - backend sends it in 'address' field, not 'location'
     const storeAddress = store.address || store.location;
-    const addressStr = storeAddress?.street || storeAddress?.address || '';
+    const addressStr = (storeAddress as any)?.street || (storeAddress as any)?.address || '';
     const cityStr = storeAddress?.city || '';
     const address = addressStr && cityStr
       ? `${addressStr}, ${cityStr}`

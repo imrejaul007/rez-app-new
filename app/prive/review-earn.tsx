@@ -111,7 +111,7 @@ function PriveReviewEarnPage() {
     (item: PriveReviewableItem) => {
       try {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-      } catch (e) {
+      } catch (e: any) {
         catchSilent(e, 'ReviewEarn/haptics');
       }
       router.push({
@@ -163,10 +163,10 @@ function PriveReviewEarnPage() {
         {(['all', 'store', 'product'] as const).map((tab) => (
           <Pressable
             key={tab}
-            style={[styles.filterTab, filter === tab && styles.filterTabActive]}
+            style={[styles.filterTab, filter === tab ? styles.filterTabActive : null]}
             onPress={() => setFilter(tab)}
           >
-            <Text style={[styles.filterTabText, filter === tab && styles.filterTabTextActive]}>
+            <Text style={[styles.filterTabText, filter === tab ? styles.filterTabTextActive : null]}>
               {tab === 'all' ? 'All' : tab === 'store' ? 'Stores' : 'Products'}
             </Text>
           </Pressable>
@@ -286,7 +286,7 @@ function PriveReviewEarnPage() {
         renderItem={renderItem}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }]}
+        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }] as any}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

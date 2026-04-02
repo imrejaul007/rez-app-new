@@ -1,27 +1,16 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState,  useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Pressable, StyleSheet, Modal } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import { ThemedText } from '@/components/ThemedText';
 import wishlistApi, { DiscountSnapshot } from '@/services/wishlistApi';
 import { useAuthUser, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  IconSize,
-  Timing } from '@/constants/DesignSystem';
+import { Colors, Spacing, Shadows, BorderRadius, Typography, IconSize, Timing } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 // Modal types
@@ -93,12 +82,16 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
     type: null,
     title: '',
     message: '',
-    showViewButton: false });
+    showViewButton: false,
+  });
 
   // Animation refs
   const buttonScaleAnim = useSharedValue(1);
   const buttonScaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: buttonScaleAnim.value }] }));
-  const modalAnimStyle = useAnimatedStyle(() => ({ opacity: modalOpacityAnim.value, transform: [{ scale: modalScaleAnim.value }] }));
+  const modalAnimStyle = useAnimatedStyle(() => ({
+    opacity: modalOpacityAnim.value,
+    transform: [{ scale: modalScaleAnim.value }],
+  }));
   const modalScaleAnim = useSharedValue(0.8);
   const modalOpacityAnim = useSharedValue(0);
 
@@ -131,7 +124,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
           setIsSaved(true);
           return; // Found it, no need to check further
         }
-      } catch (error) {
+      } catch (error: any) {
         // Silently fail - continue to check product type
       }
     }
@@ -145,7 +138,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
           setIsSaved(true);
           return;
         }
-      } catch (error) {
+      } catch (error: any) {
         // Silently fail - just don't show saved state
       }
     }
@@ -169,7 +162,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
   useFocusEffect(
     useCallback(() => {
       checkSavedStatus();
-    }, [checkSavedStatus])
+    }, [checkSavedStatus]),
   );
 
   // Animation helper
@@ -214,7 +207,8 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
           storeId: discountData.storeId || storeInfo?._id || storeInfo?.id,
           storeName: discountData.storeName || storeInfo?.name,
           productId: discountData.productId,
-          productName: discountData.productName };
+          productName: discountData.productName,
+        };
 
         // Check if already saved
         const checkResponse = await wishlistApi.checkWishlistStatus('discount', discountId);
@@ -230,7 +224,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
           itemId: discountId,
           notes: `${discountData.name} - ${discountData.type === 'percentage' ? `${discountData.value}% off` : `${currencySymbol}${discountData.value} off`}`,
           priority: 'medium',
-          discountSnapshot
+          discountSnapshot,
         });
 
         if (response.success) {
@@ -262,7 +256,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
           itemType: 'product',
           itemId: productId,
           notes: `Saved at ${currencySymbol}${dynamicData?.price || dynamicData?.pricing?.selling || 0}`,
-          priority: 'medium'
+          priority: 'medium',
         });
 
         if (response.success) {
@@ -270,13 +264,18 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
           setIsSaved(true);
           triggerNotification('Success');
           await refreshWishlist(); // Sync with header
-          showModal('success', 'Saved!', `${dynamicData?.title || dynamicData?.name || 'This item'} has been saved`, true);
+          showModal(
+            'success',
+            'Saved!',
+            `${dynamicData?.title || dynamicData?.name || 'This item'} has been saved`,
+            true,
+          );
         } else {
           triggerNotification('Error');
           showModal('error', 'Error', response.message || 'Failed to save item');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       triggerNotification('Error');
       showModal('error', 'Error', 'Unable to save deal. Please try again.');
     } finally {
@@ -327,40 +326,28 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
   const iconInfo = getModalIcon();
 
   return (
-    <View
-      style={styles.container}
-      accessibilityRole="summary"
-      accessibilityLabel="Save deal action"
-    >
+    <View style={styles.container} accessibilityRole="summary" accessibilityLabel="Save deal action">
       <Animated.View style={buttonScaleStyle}>
         <Pressable
-         
-          style={[
-            styles.button,
-            isSaving && styles.buttonDisabled,
-            isSaved && styles.buttonSaved
-          ]}
+          style={[styles.button, isSaving && styles.buttonDisabled, isSaved && styles.buttonSaved]}
           onPress={handleSaveDeal}
           onPressIn={() => animateScale(buttonScaleAnim, 0.96)}
           onPressOut={() => animateScale(buttonScaleAnim, 1)}
           disabled={isSaving}
           accessibilityRole="button"
-          accessibilityLabel={isSaved
-            ? 'Deal already saved to wishlist'
-            : isSaving
-              ? 'Saving deal to wishlist'
-              : `Save ${discountData?.name || dynamicData?.title || dynamicData?.name || 'this deal'} for later`
+          accessibilityLabel={
+            isSaved
+              ? 'Deal already saved to wishlist'
+              : isSaving
+                ? 'Saving deal to wishlist'
+                : `Save ${discountData?.name || dynamicData?.title || dynamicData?.name || 'this deal'} for later`
           }
-          accessibilityHint={isSaved
-            ? 'This deal is already in your saved list'
-            : 'Double tap to save this deal to your wishlist'
+          accessibilityHint={
+            isSaved ? 'This deal is already in your saved list' : 'Double tap to save this deal to your wishlist'
           }
           accessibilityState={{ disabled: isSaving, busy: isSaving, selected: isSaved }}
         >
-          <View
-            style={[styles.iconContainer, isSaved && styles.iconContainerSaved]}
-            accessibilityElementsHidden
-          >
+          <View style={[styles.iconContainer, isSaved ? styles.iconContainerSaved : null]} accessibilityElementsHidden>
             <Ionicons
               name={getIconName()}
               size={IconSize.lg}
@@ -368,12 +355,8 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
             />
           </View>
           <View style={styles.textContainer}>
-            <ThemedText style={[styles.title, isSaved && styles.titleSaved]}>
-              {getButtonText()}
-            </ThemedText>
-            <ThemedText style={styles.subtitle}>
-              {getSubtitleText()}
-            </ThemedText>
+            <ThemedText style={[styles.title, isSaved ? styles.titleSaved : null]}>{getButtonText()}</ThemedText>
+            <ThemedText style={styles.subtitle}>{getSubtitleText()}</ThemedText>
           </View>
           {isSaved && (
             <View style={styles.savedBadge}>
@@ -384,17 +367,9 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
       </Animated.View>
 
       {/* Custom Modal */}
-      <Modal
-        visible={modal.visible}
-        transparent
-        statusBarTranslucent
-        animationType="none"
-        onRequestClose={hideModal}
-      >
+      <Modal visible={modal.visible} transparent statusBarTranslucent animationType="none" onRequestClose={hideModal}>
         <Pressable style={styles.modalOverlay} onPress={hideModal}>
-          <Animated.View
-            style={[styles.modalContent, modalAnimStyle]}
-          >
+          <Animated.View style={[styles.modalContent, modalAnimStyle]}>
             <Pressable onPress={(e) => e.stopPropagation()}>
               {/* Icon */}
               <View style={[styles.modalIconContainer, { backgroundColor: `${iconInfo.color}15` }]}>
@@ -443,22 +418,26 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing['2xl'] - 4,
     paddingVertical: Spacing.base,
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
 
   // Modern Button with Purple Tint
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.purpleLight,
+    backgroundColor: '#F5F3FF',
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   buttonDisabled: {
-    opacity: 0.6 },
+    opacity: 0.6,
+  },
   buttonSaved: {
     backgroundColor: Colors.successScale[50],
     borderWidth: 1,
-    borderColor: Colors.successScale[100] },
+    borderColor: Colors.successScale[100],
+  },
 
   // Modern Icon Container
   iconContainer: {
@@ -468,28 +447,35 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary[50],
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   iconContainerSaved: {
-    backgroundColor: Colors.successScale[100] },
+    backgroundColor: Colors.successScale[100],
+  },
 
   textContainer: {
-    flex: 1 },
+    flex: 1,
+  },
 
   // Modern Typography
   title: {
     ...Typography.h4,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: Spacing.xs - 1 },
+    marginBottom: Spacing.xs - 1,
+  },
   titleSaved: {
-    color: Colors.successScale[700] },
+    color: Colors.successScale[700],
+  },
   subtitle: {
     ...Typography.body,
-    color: Colors.gray[600] },
+    color: Colors.gray[600],
+  },
 
   // Saved badge
   savedBadge: {
-    marginLeft: Spacing.sm },
+    marginLeft: Spacing.sm,
+  },
 
   // Modal Styles
   modalOverlay: {
@@ -497,7 +483,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24 },
+    padding: 24,
+  },
   modalContent: {
     backgroundColor: colors.background.primary,
     borderRadius: 24,
@@ -509,41 +496,48 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.25,
     shadowRadius: 20,
-    elevation: 10 },
+    elevation: 10,
+  },
   modalIconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16 },
+    marginBottom: 16,
+  },
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: colors.neutral[800],
     marginBottom: 8,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   modalMessage: {
     fontSize: 15,
     color: colors.neutral[500],
     textAlign: 'center',
     lineHeight: 22,
-    marginBottom: 24 },
+    marginBottom: 24,
+  },
   modalButtons: {
     flexDirection: 'row',
     gap: 12,
-    width: '100%' },
+    width: '100%',
+  },
   modalButtonPrimary: {
     flex: 1,
     backgroundColor: colors.lightMustard,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   modalButtonPrimaryText: {
     color: colors.background.primary,
     fontSize: 16,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   modalButtonSecondary: {
     flex: 1,
     backgroundColor: 'rgba(255, 205, 87, 0.1)',
@@ -552,8 +546,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: 6 },
+    gap: 6,
+  },
   modalButtonSecondaryText: {
     color: colors.lightMustard,
     fontSize: 16,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});

@@ -101,7 +101,7 @@ export class NavigationErrorBoundary extends Component<Props, State> {
       try {
         const { router } = require('expo-router');
         router.replace(this.props.fallbackRoute);
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     }

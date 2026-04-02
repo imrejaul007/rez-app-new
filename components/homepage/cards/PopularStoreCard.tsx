@@ -100,7 +100,7 @@ function PopularStoreCard({ store, onPress, width = 170 }: PopularStoreCardProps
   const handlePress = useCallback(() => {
     try {
       onPress(store);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onPress, store]);
@@ -124,8 +124,8 @@ function PopularStoreCard({ store, onPress, width = 170 }: PopularStoreCardProps
       accessibilityLabel={storeA11yLabel}
       accessibilityRole="button"
       accessibilityHint="Double tap to view store details and products"
-      delayPressIn={0}
-      delayPressOut={0}
+      
+      
     >
       <ThemedView style={styles.card}>
         {/* Logo and Info Row */}

@@ -76,7 +76,7 @@ function KYCUploadModal({
           setBackImage(imageUri);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to pick image');
     }
   };
@@ -103,9 +103,8 @@ function KYCUploadModal({
 
       if (response.success) {
         onSuccess();
-        platformAlertSimple('Documents Uploaded', 'Your documents have been submitted for verification. We\'ll notify you once the review is complete (typically 24-48 hours).',
-          [{ text: 'OK', onPress: onClose }]
-        );
+        platformAlertSimple('Documents Uploaded', 'Your documents have been submitted for verification. We\'ll notify you once the review is complete (typically 24-48 hours).');
+        onClose();
       } else {
         throw new Error(response.error || 'Upload failed');
       }

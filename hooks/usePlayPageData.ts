@@ -50,7 +50,7 @@ export function usePlayPageData(): UsePlayPageData {
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const abortControllerRef = useRef<AbortController | null>(null);
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
   // Track mounted state
@@ -88,7 +88,7 @@ export function usePlayPageData(): UsePlayPageData {
       devLog.log(`📹 [PlayPage] Fetching videos for category: ${category || 'all'}, page: ${page}`);
 
       // Fetch videos from real backend API with abort signal
-      const response = await realVideosApi.getVideosByCategory(
+      const response: any = await realVideosApi.getVideosByCategory(
         category || 'trending_me',
         {
           page,
@@ -182,7 +182,7 @@ export function usePlayPageData(): UsePlayPageData {
       devLog.log('🔄 [PlayPage] Refreshing videos...');
 
       // Fetch fresh data from backend API with abort signal
-      const response = await realVideosApi.getVideosByCategory(
+      const response: any = await realVideosApi.getVideosByCategory(
         state.activeCategory || 'trending_me',
         {
           page: 1,
@@ -277,7 +277,7 @@ export function usePlayPageData(): UsePlayPageData {
 
       await fetchVideos(state.activeCategory, nextPage);
 
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [PlayPage] Failed to load more videos:', error);
     }
   }, [state.hasMoreVideos, state.loading, state.activeCategory, state.currentPage, fetchVideos]);
@@ -336,7 +336,7 @@ export function usePlayPageData(): UsePlayPageData {
     try {
       devLog.log(`❤️ [PlayPage] Toggling like for video: ${videoId}`);
 
-      const response = await realVideosApi.toggleVideoLike(videoId);
+      const response: any = await realVideosApi.toggleVideoLike(videoId);
 
       if (response.success) {
         const isLiked = response.data.isLiked !== undefined ? response.data.isLiked : true;
@@ -366,7 +366,7 @@ export function usePlayPageData(): UsePlayPageData {
       }
 
       return response.success;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [PlayPage] Failed to like video:', error);
       return false;
     }
@@ -403,7 +403,7 @@ export function usePlayPageData(): UsePlayPageData {
 
         devLog.log('✅ [PlayPage] Video shared successfully');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [PlayPage] Failed to share video:', error);
       platformAlertSimple('Share Failed', 'Unable to share video. Please try again.');
     }

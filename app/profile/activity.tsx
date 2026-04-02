@@ -196,11 +196,11 @@ function ActivityFeedPage() {
           {ACTIVITY_TYPE_FILTERS.map((filter) => (
             <Pressable
               key={filter.value}
-              style={[styles.filterPill, selectedFilter === filter.value && styles.filterPillActive]}
+              style={[styles.filterPill, selectedFilter === filter.value ? styles.filterPillActive : null]}
               onPress={() => handleFilterChange(filter.value)}
             >
               <ThemedText
-                style={[styles.filterPillText, selectedFilter === filter.value && styles.filterPillTextActive]}
+                style={[styles.filterPillText, selectedFilter === filter.value ? styles.filterPillTextActive : null]}
               >
                 {filter.label}
               </ThemedText>

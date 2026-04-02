@@ -278,7 +278,7 @@ const isUserBlocked = async (): Promise<{ blocked: boolean; until?: number; reas
     const data = await AsyncStorage.getItem(FRAUD_CONFIG.STORAGE_KEY_BLOCKED_UNTIL);
     if (!data) return { blocked: false };
 
-    const blockInfo = safeJsonParse(data, null);
+    const blockInfo = safeJsonParse(data, null) as any;
     if (!blockInfo) return { blocked: false };
     const now = Date.now();
 
@@ -345,7 +345,7 @@ export const checkDuplicateUrl = async (url: string): Promise<DuplicateCheckResu
 
     // Check with backend
 
-    const response = await apiClient.post('/social-media/check-duplicate', {
+    const response = await apiClient.post<any>('/social-media/check-duplicate', {
       url,
       postId,
     });

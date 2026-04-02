@@ -97,7 +97,7 @@ class LoyaltyApiService {
    */
   async getPoints(): Promise<ApiResponse<LoyaltyPoints>> {
 
-    return apiClient.get(`${this.baseUrl}/points`);
+    return apiClient.get<any>(`${this.baseUrl}/points`);
   }
 
   /**
@@ -105,7 +105,7 @@ class LoyaltyApiService {
    */
   async getStats(): Promise<ApiResponse<LoyaltyStats>> {
 
-    return apiClient.get(`${this.baseUrl}/stats`);
+    return apiClient.get<any>(`${this.baseUrl}/stats`);
   }
 
   /**
@@ -113,7 +113,7 @@ class LoyaltyApiService {
    */
   async getRewards(category?: string): Promise<ApiResponse<{ rewards: Reward[]; total: number }>> {
 
-    return apiClient.get(`${this.baseUrl}/rewards`, category ? { category } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/rewards`, category ? { category } : undefined);
   }
 
   /**
@@ -121,7 +121,7 @@ class LoyaltyApiService {
    */
   async getRewardById(rewardId: string): Promise<ApiResponse<{ reward: Reward }>> {
 
-    return apiClient.get(`${this.baseUrl}/rewards/${rewardId}`);
+    return apiClient.get<any>(`${this.baseUrl}/rewards/${rewardId}`);
   }
 
   /**
@@ -129,7 +129,7 @@ class LoyaltyApiService {
    */
   async redeemReward(data: RedeemRewardRequest): Promise<ApiResponse<RedeemRewardResponse>> {
 
-    return apiClient.post(`${this.baseUrl}/redeem`, data);
+    return apiClient.post<any>(`${this.baseUrl}/redeem`, data as any);
   }
 
   /**
@@ -141,7 +141,7 @@ class LoyaltyApiService {
     offset?: number;
   }): Promise<ApiResponse<{ transactions: PointsTransaction[]; total: number; hasMore: boolean }>> {
 
-    return apiClient.get(`${this.baseUrl}/transactions`, filters);
+    return apiClient.get<any>(`${this.baseUrl}/transactions`, filters);
   }
 
   /**
@@ -155,7 +155,7 @@ class LoyaltyApiService {
     nextTierBenefits: string[];
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/tier`);
+    return apiClient.get<any>(`${this.baseUrl}/tier`);
   }
 
   /**
@@ -172,7 +172,7 @@ class LoyaltyApiService {
     }>;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/earn-points`);
+    return apiClient.get<any>(`${this.baseUrl}/earn-points`);
   }
 
   /**
@@ -184,7 +184,7 @@ class LoyaltyApiService {
     pointsNeeded?: number;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/rewards/${rewardId}/can-redeem`);
+    return apiClient.get<any>(`${this.baseUrl}/rewards/${rewardId}/can-redeem`);
   }
 
   /**
@@ -204,7 +204,7 @@ class LoyaltyApiService {
     total: number;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/my-rewards`, status ? { status } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/my-rewards`, status ? { status } : undefined);
   }
 
   /**
@@ -216,7 +216,7 @@ class LoyaltyApiService {
     if (latitude !== undefined) params.latitude = latitude;
     if (longitude !== undefined) params.longitude = longitude;
 
-    return apiClient.get(`${this.baseUrl}/homepage-summary`, Object.keys(params).length > 0 ? params : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/homepage-summary`, Object.keys(params).length > 0 ? params : undefined);
   }
 }
 

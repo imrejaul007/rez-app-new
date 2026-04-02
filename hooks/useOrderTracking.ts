@@ -146,7 +146,7 @@ export function useOrderTracking(
 
     try {
       setTrackingState(prev => ({ ...prev, loading: true, error: null }));
-      const response = await ordersService.getOrderById(orderId);
+      const response: any = await ordersService.getOrderById(orderId);
 
       if (response.success && response.data) {
         setTrackingState(prev => ({
@@ -156,7 +156,7 @@ export function useOrderTracking(
           loading: false,
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       setTrackingState(prev => ({
         ...prev,
         loading: false,

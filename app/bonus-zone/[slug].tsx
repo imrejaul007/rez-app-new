@@ -1,24 +1,11 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  ActivityIndicator,
-  Pressable,
-  Share,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, Pressable, Share } from 'react-native';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import bonusZoneApi, {
-  BonusZoneCampaignDetail,
-  UserCampaignState,
-  BonusCampaignType,
-} from '@/services/bonusZoneApi';
+import bonusZoneApi, { BonusZoneCampaignDetail, UserCampaignState, BonusCampaignType } from '@/services/bonusZoneApi';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -60,17 +47,25 @@ function getTimeRemaining(endTime: string) {
 // STATE BADGE CONFIG
 // ============================================================================
 
-const STATE_BADGE_CONFIG: Record<
-  UserCampaignState,
-  { label: string; bg: string; color: string; icon: string } | null
-> = {
-  eligible: { label: 'You\'re Eligible', bg: colors.tint.green, color: colors.successScale[700], icon: 'checkmark-circle' },
-  claimed: { label: 'You\'ve Claimed This', bg: colors.tint.blueLight, color: '#1D4ED8', icon: 'checkmark-done-circle' },
-  limit_reached: { label: 'Limit Reached', bg: colors.tint.blueLight, color: '#1D4ED8', icon: 'alert-circle' },
-  not_eligible: { label: 'Not Eligible', bg: colors.neutral[100], color: colors.neutral[500], icon: 'close-circle' },
-  budget_exhausted: { label: 'Sold Out', bg: colors.errorScale[100], color: colors.error, icon: 'ban' },
-  expired: { label: 'Expired', bg: colors.neutral[100], color: colors.neutral[500], icon: 'time' },
-};
+const STATE_BADGE_CONFIG: Record<UserCampaignState, { label: string; bg: string; color: string; icon: string } | null> =
+  {
+    eligible: {
+      label: "You're Eligible",
+      bg: colors.tint.green,
+      color: colors.successScale[700],
+      icon: 'checkmark-circle',
+    },
+    claimed: {
+      label: "You've Claimed This",
+      bg: colors.tint.blueLight,
+      color: '#1D4ED8',
+      icon: 'checkmark-done-circle',
+    },
+    limit_reached: { label: 'Limit Reached', bg: colors.tint.blueLight, color: '#1D4ED8', icon: 'alert-circle' },
+    not_eligible: { label: 'Not Eligible', bg: colors.neutral[100], color: colors.neutral[500], icon: 'close-circle' },
+    budget_exhausted: { label: 'Sold Out', bg: colors.errorScale[100], color: colors.error, icon: 'ban' },
+    expired: { label: 'Expired', bg: colors.neutral[100], color: colors.neutral[500], icon: 'time' },
+  };
 
 // ============================================================================
 // CAMPAIGN TYPE CONFIG
@@ -176,7 +171,7 @@ function getRewardDescription(type: string, value: number): string {
 
 function CampaignDetailPage() {
   const isMounted = useIsMounted();
-  const { slug, claimSuccess } = useLocalSearchParams<{ slug: string; claimSuccess?: string }>();
+  const { slug, claimSuccess } = useLocalSearchParams<any>();
   const router = useRouter();
   const refreshWallet = useRefreshWallet();
   const [showClaimSuccess, setShowClaimSuccess] = useState(false);
@@ -298,7 +293,7 @@ function CampaignDetailPage() {
         message: `Check out "${campaign.title}" on ${BRAND.APP_NAME}! ${campaign.subtitle || ''}`,
         title: campaign.title,
       });
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   }, [campaign]);
@@ -309,11 +304,12 @@ function CampaignDetailPage() {
 
     switch (campaign.userState) {
       case 'eligible': {
-        const screenName = campaign.deepLink.screen
-          ?.split('/')
-          .pop()
-          ?.replace(/-/g, ' ')
-          ?.replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'App';
+        const screenName =
+          campaign.deepLink.screen
+            ?.split('/')
+            .pop()
+            ?.replace(/-/g, ' ')
+            ?.replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'App';
         return { text: `Go to ${screenName}`, disabled: false };
       }
       case 'claimed':
@@ -334,7 +330,11 @@ function CampaignDetailPage() {
   // ==== RENDER ====
 
   const typeConfig = campaign
-    ? CAMPAIGN_TYPE_LABELS[campaign.campaignType] || { label: 'Bonus', color: colors.warningScale[700], bg: colors.tint.amberLight }
+    ? CAMPAIGN_TYPE_LABELS[campaign.campaignType] || {
+        label: 'Bonus',
+        color: colors.warningScale[700],
+        bg: colors.tint.amberLight,
+      }
     : null;
 
   const stateBadge = campaign ? STATE_BADGE_CONFIG[campaign.userState] : null;
@@ -374,11 +374,7 @@ function CampaignDetailPage() {
         >
           {/* ===== BANNER IMAGE ===== */}
           {campaign.display.bannerImage && (
-            <CachedImage
-              source={campaign.display.bannerImage}
-              style={styles.bannerImage}
-              contentFit="cover"
-            />
+            <CachedImage source={campaign.display.bannerImage} style={styles.bannerImage} contentFit="cover" />
           )}
 
           {/* ===== HEADER SECTION ===== */}
@@ -387,7 +383,6 @@ function CampaignDetailPage() {
             <Pressable
               style={styles.shareButton}
               onPress={handleShare}
-             
               accessibilityLabel="Share campaign"
               accessibilityRole="button"
             >
@@ -395,13 +390,14 @@ function CampaignDetailPage() {
             </Pressable>
 
             {/* Icon / Partner Logo */}
-            <View style={[styles.heroIcon, campaign.display.backgroundColor ? { backgroundColor: campaign.display.backgroundColor } : null]}>
+            <View
+              style={[
+                styles.heroIcon,
+                campaign.display.backgroundColor ? { backgroundColor: campaign.display.backgroundColor } : null,
+              ]}
+            >
               {hasPartnerLogo ? (
-                <CachedImage
-                  source={hasPartnerLogo}
-                  style={styles.heroPartnerLogo}
-                  contentFit="contain"
-                />
+                <CachedImage source={hasPartnerLogo} style={styles.heroPartnerLogo} contentFit="contain" />
               ) : (
                 <Text style={styles.heroEmoji}>{campaign.display.icon || '🎁'}</Text>
               )}
@@ -414,9 +410,7 @@ function CampaignDetailPage() {
             {/* Campaign Type Badge */}
             {typeConfig && (
               <View style={[styles.typeBadge, { backgroundColor: typeConfig.bg }]}>
-                <Text style={[styles.typeBadgeText, { color: typeConfig.color }]}>
-                  {typeConfig.label}
-                </Text>
+                <Text style={[styles.typeBadgeText, { color: typeConfig.color }]}>{typeConfig.label}</Text>
               </View>
             )}
 
@@ -430,9 +424,7 @@ function CampaignDetailPage() {
                     contentFit="contain"
                   />
                 )}
-                <Text style={styles.partnerText}>
-                  Powered by {campaign.fundingSource.partnerName}
-                </Text>
+                <Text style={styles.partnerText}>Powered by {campaign.fundingSource.partnerName}</Text>
               </View>
             )}
           </View>
@@ -447,12 +439,7 @@ function CampaignDetailPage() {
               />
               <View style={styles.timerContent}>
                 <Text style={styles.timerLabel}>Ends in</Text>
-                <Text
-                  style={[
-                    styles.timerValue,
-                    timeRemaining.urgent && styles.timerUrgent,
-                  ]}
-                >
+                <Text style={[styles.timerValue, timeRemaining.urgent && styles.timerUrgent]}>
                   {timeRemaining.text}
                 </Text>
               </View>
@@ -463,9 +450,7 @@ function CampaignDetailPage() {
           {stateBadge && (
             <View style={[styles.stateBadgeCard, { backgroundColor: stateBadge.bg }]}>
               <Ionicons name={stateBadge.icon as any} size={20} color={stateBadge.color} />
-              <Text style={[styles.stateBadgeLabel, { color: stateBadge.color }]}>
-                {stateBadge.label}
-              </Text>
+              <Text style={[styles.stateBadgeLabel, { color: stateBadge.color }]}>{stateBadge.label}</Text>
             </View>
           )}
 
@@ -508,9 +493,7 @@ function CampaignDetailPage() {
 
             {/* Main reward value */}
             <View style={styles.rewardHighlight}>
-              <Text style={styles.rewardValue}>
-                {getRewardLabel(campaign.reward.type, campaign.reward.value)}
-              </Text>
+              <Text style={styles.rewardValue}>{getRewardLabel(campaign.reward.type, campaign.reward.value)}</Text>
               <Text style={styles.rewardDescription}>
                 {getRewardDescription(campaign.reward.type, campaign.reward.value)}
               </Text>
@@ -529,24 +512,21 @@ function CampaignDetailPage() {
                   <Ionicons name="information-circle-outline" size={14} color={colors.brand.purple} />
                   <Text style={styles.brandedCoinNoteText}>
                     Branded coins are partner-sponsored rewards that can only be redeemed at{' '}
-                    {campaign.fundingSource?.partnerName || 'the sponsoring brand'}. They are separate from your regular {BRAND.APP_NAME} coin balance.
+                    {campaign.fundingSource?.partnerName || 'the sponsoring brand'}. They are separate from your regular{' '}
+                    {BRAND.APP_NAME} coin balance.
                   </Text>
                 </View>
               )}
               {campaign.reward.capPerUser > 0 && (
                 <View style={styles.rewardDetailRow}>
                   <Text style={styles.rewardDetailLabel}>Max per User</Text>
-                  <Text style={styles.rewardDetailValue}>
-                    {campaign.reward.capPerUser} coins
-                  </Text>
+                  <Text style={styles.rewardDetailValue}>{campaign.reward.capPerUser} coins</Text>
                 </View>
               )}
               {campaign.reward.capPerTransaction > 0 && (
                 <View style={styles.rewardDetailRow}>
                   <Text style={styles.rewardDetailLabel}>Max per Transaction</Text>
-                  <Text style={styles.rewardDetailValue}>
-                    {campaign.reward.capPerTransaction} coins
-                  </Text>
+                  <Text style={styles.rewardDetailValue}>{campaign.reward.capPerTransaction} coins</Text>
                 </View>
               )}
             </View>
@@ -565,10 +545,7 @@ function CampaignDetailPage() {
                     style={[
                       styles.progressBarFill,
                       {
-                        width: `${Math.min(
-                          (campaign.userClaimCount / campaign.maxClaimsPerUser) * 100,
-                          100
-                        )}%`,
+                        width: `${Math.min((campaign.userClaimCount / campaign.maxClaimsPerUser) * 100, 100)}%`,
                       },
                     ]}
                   />
@@ -577,9 +554,7 @@ function CampaignDetailPage() {
                   {campaign.userClaimCount} of {campaign.maxClaimsPerUser} claims used
                 </Text>
                 {campaign.userTotalReward > 0 && (
-                  <Text style={styles.progressSubtext}>
-                    Total earned: {campaign.userTotalReward} coins
-                  </Text>
+                  <Text style={styles.progressSubtext}>Total earned: {campaign.userTotalReward} coins</Text>
                 )}
               </View>
             </View>
@@ -603,9 +578,12 @@ function CampaignDetailPage() {
                       {
                         width: `${Math.min(
                           ((userState.dailyClaimCount || 0) / userState.maxClaimsPerUserPerDay) * 100,
-                          100
+                          100,
                         )}%`,
-                        backgroundColor: (userState.dailyClaimCount || 0) >= userState.maxClaimsPerUserPerDay ? colors.error : colors.brand.orange,
+                        backgroundColor:
+                          (userState.dailyClaimCount || 0) >= userState.maxClaimsPerUserPerDay
+                            ? colors.error
+                            : colors.brand.orange,
                       },
                     ]}
                   />
@@ -619,13 +597,23 @@ function CampaignDetailPage() {
 
           {/* ===== SCARCITY INDICATOR ===== */}
           {campaign.globalClaimsRemaining != null && campaign.globalClaimsRemaining > 0 && (
-            <View style={[styles.stateBadgeCard, { backgroundColor: campaign.globalClaimsRemaining <= 50 ? colors.errorScale[50] : colors.tint.orange }]}>
+            <View
+              style={[
+                styles.stateBadgeCard,
+                { backgroundColor: campaign.globalClaimsRemaining <= 50 ? colors.errorScale[50] : colors.tint.orange },
+              ]}
+            >
               <Ionicons
                 name="flame"
                 size={20}
                 color={campaign.globalClaimsRemaining <= 50 ? colors.error : colors.brand.orange}
               />
-              <Text style={[styles.stateBadgeLabel, { color: campaign.globalClaimsRemaining <= 50 ? colors.error : colors.brand.orange }]}>
+              <Text
+                style={[
+                  styles.stateBadgeLabel,
+                  { color: campaign.globalClaimsRemaining <= 50 ? colors.error : colors.brand.orange },
+                ]}
+              >
                 Only {campaign.globalClaimsRemaining} claims remaining!
               </Text>
             </View>
@@ -686,9 +674,7 @@ function CampaignDetailPage() {
               {campaign.eligibility.firstTransactionOnly && (
                 <View style={styles.eligibilityRow}>
                   <Ionicons name="star-outline" size={16} color={colors.neutral[500]} />
-                  <Text style={styles.eligibilityText}>
-                    First transaction only
-                  </Text>
+                  <Text style={styles.eligibilityText}>First transaction only</Text>
                 </View>
               )}
 
@@ -751,17 +737,14 @@ function CampaignDetailPage() {
           {/* ===== CTA BUTTON ===== */}
           <View style={styles.ctaContainer}>
             <Pressable
-              style={[styles.ctaButton, ctaConfig.disabled && styles.ctaButtonDisabled]}
+              style={[styles.ctaButton, ctaConfig.disabled ? styles.ctaButtonDisabled : null]}
               onPress={handleCTA}
-             
               disabled={ctaConfig.disabled}
             >
-              <Text style={[styles.ctaButtonText, ctaConfig.disabled && styles.ctaButtonTextDisabled]}>
+              <Text style={[styles.ctaButtonText, ctaConfig.disabled ? styles.ctaButtonTextDisabled : null]}>
                 {ctaConfig.text}
               </Text>
-              {!ctaConfig.disabled && (
-                <Ionicons name="arrow-forward" size={18} color={colors.background.primary} />
-              )}
+              {!ctaConfig.disabled && <Ionicons name="arrow-forward" size={18} color={colors.background.primary} />}
             </Pressable>
           </View>
         </ScrollView>

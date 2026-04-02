@@ -14,14 +14,9 @@ import {
   UIManager,
   LayoutAnimation,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -185,23 +180,28 @@ const FAQ_ITEMS_STATIC: FAQItem[] = [
   },
   {
     question: 'How are coins spent?',
-    answer: 'When you make a purchase, coins are automatically applied in priority order: Promo Coins first (since they expire soonest), then Branded Coins (if applicable to the store), then Priv\u00e9 Coins, and finally ReZ Coins. Within each type, the lowest-expiry coins are used first.',
+    answer:
+      'When you make a purchase, coins are automatically applied in priority order: Promo Coins first (since they expire soonest), then Branded Coins (if applicable to the store), then Priv\u00e9 Coins, and finally ReZ Coins. Within each type, the lowest-expiry coins are used first.',
   },
   {
     question: 'Can I transfer coins to someone else?',
-    answer: 'No, coins are personal and tied to your account. They cannot be transferred to another user. However, you can gift coins through the Gift Coins feature in your wallet, which sends new coins from a special gifting pool.',
+    answer:
+      'No, coins are personal and tied to your account. They cannot be transferred to another user. However, you can gift coins through the Gift Coins feature in your wallet, which sends new coins from a special gifting pool.',
   },
   {
     question: 'Where can I see my balance?',
-    answer: 'You can view your complete coin balance breakdown on the Wallet page. Each coin type is displayed separately with its current balance, expiry information, and recent transactions. You can also see a summary on the Play & Earn page.',
+    answer:
+      'You can view your complete coin balance breakdown on the Wallet page. Each coin type is displayed separately with its current balance, expiry information, and recent transactions. You can also see a summary on the Play & Earn page.',
   },
   {
     question: 'What is the spending priority?',
-    answer: 'The system automatically prioritizes spending in this order: Promo Coins (campaign-based, expire first) > Branded Coins (store-specific) > Priv\u00e9 Coins (premium tier) > ReZ Coins (universal, never expire). This ensures you use expiring coins before permanent ones.',
+    answer:
+      'The system automatically prioritizes spending in this order: Promo Coins (campaign-based, expire first) > Branded Coins (store-specific) > Priv\u00e9 Coins (premium tier) > ReZ Coins (universal, never expire). This ensures you use expiring coins before permanent ones.',
   },
   {
     question: 'How much is 1 coin worth?',
-    answer: 'The value of 1 coin depends on the type. ReZ Coins and Promo Coins have a standard value set by the platform. Priv\u00e9 Coins typically have a higher redemption value. Branded Coins have values set by the issuing store. Check each coin\'s details in your Wallet for exact values.',
+    answer:
+      "The value of 1 coin depends on the type. ReZ Coins and Promo Coins have a standard value set by the platform. Priv\u00e9 Coins typically have a higher redemption value. Branded Coins have values set by the issuing store. Check each coin's details in your Wallet for exact values.",
   },
 ];
 
@@ -211,8 +211,18 @@ const FAQ_ITEMS_STATIC: FAQItem[] = [
 
 const SPENDING_PRIORITY = [
   { name: 'Promo Coins', color: colors.warningScale[700], icon: 'gift' as keyof typeof Ionicons.glyphMap, priority: 1 },
-  { name: 'Branded Coins', color: colors.brand.blue, icon: 'storefront' as keyof typeof Ionicons.glyphMap, priority: 2 },
-  { name: 'Priv\u00e9 Coins', color: colors.brand.amberDeep, icon: 'diamond-outline' as keyof typeof Ionicons.glyphMap, priority: 3 },
+  {
+    name: 'Branded Coins',
+    color: colors.brand.blue,
+    icon: 'storefront' as keyof typeof Ionicons.glyphMap,
+    priority: 2,
+  },
+  {
+    name: 'Priv\u00e9 Coins',
+    color: colors.brand.amberDeep,
+    icon: 'diamond-outline' as keyof typeof Ionicons.glyphMap,
+    priority: 3,
+  },
   { name: 'ReZ Coins', color: colors.brand.greenDark, icon: 'diamond' as keyof typeof Ionicons.glyphMap, priority: 4 },
 ];
 
@@ -220,8 +230,16 @@ const SPENDING_PRIORITY = [
 // COMPONENT
 // ============================================
 
-const FAQItemComponent = ({ faq, index, isExpanded, onToggle }: {
-  faq: FAQItem; index: number; isExpanded: boolean; onToggle: (index: number) => void;
+const FAQItemComponent = ({
+  faq,
+  index,
+  isExpanded,
+  onToggle,
+}: {
+  faq: FAQItem;
+  index: number;
+  isExpanded: boolean;
+  onToggle: (index: number) => void;
 }) => {
   const chevronAnim = useSharedValue(0);
   const chevronStyle = useAnimatedStyle(() => ({
@@ -247,7 +265,7 @@ const FAQItemComponent = ({ faq, index, isExpanded, onToggle }: {
         </Animated.View>
       </Pressable>
       {isExpanded && (
-        <View style={styles.faqAnswer}>
+        <View style={styles.faqAnswerContainer}>
           <Text style={styles.faqAnswerText}>{faq.answer}</Text>
         </View>
       )}
@@ -261,16 +279,24 @@ const CoinSystemPage = () => {
   const loadingWallet = useWalletLoading();
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const isMounted = useIsMounted();
-  const [liveExpiryConfig, setLiveExpiryConfig] = useState<Record<string, { expiryDays: number; maxUsagePct: number }> | null>(null);
+  const [liveExpiryConfig, setLiveExpiryConfig] = useState<Record<
+    string,
+    { expiryDays: number; maxUsagePct: number }
+  > | null>(null);
 
   // Fetch live coin expiry config from admin settings
   useEffect(() => {
-    walletApi.getCoinRules().then((res: any) => {
-      if (!isMounted()) return;
-      if (res?.success && res.data?.coinExpiryConfig) {
-        setLiveExpiryConfig(res.data.coinExpiryConfig);
-      }
-    }).catch(() => {/* use defaults */});
+    walletApi
+      .getCoinRules()
+      .then((res: any) => {
+        if (!isMounted()) return;
+        if (res?.success && res.data?.coinExpiryConfig) {
+          setLiveExpiryConfig(res.data.coinExpiryConfig);
+        }
+      })
+      .catch(() => {
+        /* use defaults */
+      });
   }, []);
 
   // Convert expiryDays to user-friendly string
@@ -286,30 +312,36 @@ const CoinSystemPage = () => {
   };
 
   // Build FAQ with dynamic expiry answer
-  const FAQ_ITEMS: FAQItem[] = FAQ_ITEMS_STATIC.map(item =>
+  const FAQ_ITEMS: FAQItem[] = FAQ_ITEMS_STATIC.map((item) =>
     item.answer === '__DYNAMIC_EXPIRY__'
-      ? { ...item, answer: `It depends on the coin type. ReZ Coins: ${getExpiryText('rez', 'Never expires')}. Privé Coins: ${getExpiryText('prive', '12 months')}. Branded Coins: ${getExpiryText('branded', 'Set by merchant')}. Promo Coins expire based on the specific campaign end date. Check expiry in your Wallet.` }
-      : item
+      ? {
+          ...item,
+          answer: `It depends on the coin type. ReZ Coins: ${getExpiryText('rez', 'Never expires')}. Privé Coins: ${getExpiryText('prive', '12 months')}. Branded Coins: ${getExpiryText('branded', 'Set by merchant')}. Promo Coins expire based on the specific campaign end date. Check expiry in your Wallet.`,
+        }
+      : item,
   );
 
   // Build COIN_TYPES with dynamic expiry from admin config
-  const COIN_TYPES: CoinTypeInfo[] = COIN_TYPE_TEMPLATES.map(t => ({
+  const COIN_TYPES: CoinTypeInfo[] = COIN_TYPE_TEMPLATES.map((t) => ({
     name: t.name,
     color: t.color,
     backgroundColor: t.backgroundColor,
     gradientColors: t.gradientColors,
     icon: t.icon,
     description: t.description,
-    expiry: t.key === 'promo'
-      ? (getExpiryText(t.key, t.defaultExpiry) === 'Never expires' ? 'Per campaign' : getExpiryText(t.key, t.defaultExpiry))
-      : getExpiryText(t.key, t.defaultExpiry),
+    expiry:
+      t.key === 'promo'
+        ? getExpiryText(t.key, t.defaultExpiry) === 'Never expires'
+          ? 'Per campaign'
+          : getExpiryText(t.key, t.defaultExpiry)
+        : getExpiryText(t.key, t.defaultExpiry),
     earnedFrom: t.earnedFrom,
     usableAt: t.usableAt,
   }));
 
   const toggleFAQ = (index: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedFAQ(prev => prev === index ? null : index);
+    setExpandedFAQ((prev) => (prev === index ? null : index));
   };
 
   // ============================================
@@ -379,9 +411,7 @@ const CoinSystemPage = () => {
       ))}
       <View style={styles.priorityNote}>
         <Ionicons name="information-circle" size={16} color={colors.text.tertiary} />
-        <Text style={styles.priorityNoteText}>
-          Coins with the nearest expiry are used first within each type
-        </Text>
+        <Text style={styles.priorityNoteText}>Coins with the nearest expiry are used first within each type</Text>
       </View>
     </View>
   );
@@ -394,14 +424,8 @@ const CoinSystemPage = () => {
         <Text style={[styles.expiryTableCell, styles.expiryTableHeaderText, { flex: 1.2 }]}>Scope</Text>
       </View>
       {COIN_TYPES.map((coin, index) => (
-        <View
-          key={index}
-          style={[
-            styles.expiryTableRow,
-            index % 2 === 0 ? styles.expiryTableRowEven : null,
-          ]}
-        >
-          <View style={[styles.expiryTableCell, { flex: 1.5, flexDirection: 'row', alignItems: 'center', gap: 6 }]}>
+        <View key={index} style={[styles.expiryTableRow, index % 2 === 0 ? styles.expiryTableRowEven : null]}>
+          <View style={{ flex: 1.5, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <View style={[styles.expiryDot, { backgroundColor: coin.color }]} />
             <Text style={styles.expiryTableText}>{coin.name}</Text>
           </View>
@@ -413,13 +437,7 @@ const CoinSystemPage = () => {
   );
 
   const renderFAQItem = (faq: FAQItem, index: number) => (
-    <FAQItemComponent
-      key={index}
-      faq={faq}
-      index={index}
-      isExpanded={expandedFAQ === index}
-      onToggle={toggleFAQ}
-    />
+    <FAQItemComponent key={index} faq={faq} index={index} isExpanded={expandedFAQ === index} onToggle={toggleFAQ} />
   );
 
   return (
@@ -427,14 +445,11 @@ const CoinSystemPage = () => {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[colors.nileBlue, '#2d5a7b'] as const}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
@@ -446,9 +461,7 @@ const CoinSystemPage = () => {
         {walletBalance !== null && (
           <View style={styles.headerBalance}>
             <Ionicons name="diamond" size={16} color={Colors.gold} />
-            <Text style={styles.headerBalanceText}>
-              Your Balance: RC {walletBalance}
-            </Text>
+            <Text style={styles.headerBalanceText}>Your Balance: RC {walletBalance}</Text>
           </View>
         )}
       </LinearGradient>
@@ -487,9 +500,7 @@ const CoinSystemPage = () => {
             <Ionicons name="trending-up" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>How to Earn</Text>
           </View>
-          <View style={styles.earningList}>
-            {EARNING_METHODS.map(renderEarningMethod)}
-          </View>
+          <View style={styles.earningList}>{EARNING_METHODS.map(renderEarningMethod)}</View>
         </View>
 
         {/* Section: Spending Priority */}
@@ -510,9 +521,7 @@ const CoinSystemPage = () => {
             <Ionicons name="time" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>Expiry Rules</Text>
           </View>
-          <Text style={styles.sectionSubtitle}>
-            Quick reference for coin expiry policies
-          </Text>
+          <Text style={styles.sectionSubtitle}>Quick reference for coin expiry policies</Text>
           {renderExpiryTable()}
         </View>
 
@@ -522,9 +531,7 @@ const CoinSystemPage = () => {
             <Ionicons name="help-circle" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           </View>
-          <View style={styles.faqList}>
-            {FAQ_ITEMS.map(renderFAQItem)}
-          </View>
+          <View style={styles.faqList}>{FAQ_ITEMS.map(renderFAQItem)}</View>
         </View>
 
         {/* CTA: View My Wallet */}
@@ -532,7 +539,6 @@ const CoinSystemPage = () => {
           <Pressable
             style={styles.ctaButton}
             onPress={() => router.push('/wallet')}
-           
             accessibilityLabel="View My Wallet"
             accessibilityRole="button"
           >

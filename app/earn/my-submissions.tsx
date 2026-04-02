@@ -72,14 +72,14 @@ const TYPE_CONFIG = {
   reel: {
     icon: 'videocam' as const,
     label: 'Reel',
-    color: COLORS.purple,
+    color: (COLORS as any).purple,
     bg: COLORS.purpleLight,
     gradient: ['#AF52DE', '#FF2D55'] as [string, string],
   },
   comment: {
     icon: 'chatbubble-ellipses' as const,
     label: 'Comment',
-    color: COLORS.teal,
+    color: (COLORS as any).teal,
     bg: COLORS.tealLight,
     gradient: ['#5AC8FA', '#34AADC'] as [string, string],
   },
@@ -193,7 +193,7 @@ function MySubmissionsPage() {
       setSubmissions(items);
       if (!isMounted()) return;
       setTotals({ photos: photoCount, reels: reelCount, comments: commentCount, votes: voteCount, totalCoins });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -336,7 +336,7 @@ function MySubmissionsPage() {
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
-      <LinearGradient colors={[COLORS.navy, COLORS.navyLight]} style={styles.header}>
+      <LinearGradient colors={[(COLORS as any).navy, COLORS.navyLight]} style={styles.header}>
         {/* Nav bar */}
         <View style={styles.navBar}>
           <Pressable
@@ -397,7 +397,7 @@ function MySubmissionsPage() {
             return (
               <Pressable
                 key={f.key}
-                style={[styles.filterTab, isActive && styles.filterTabActive]}
+                style={[styles.filterTab, isActive ? styles.filterTabActive : null]}
                 onPress={() => setFilter(f.key)}
               >
                 <Ionicons
@@ -406,9 +406,11 @@ function MySubmissionsPage() {
                   color={isActive ? COLORS.white : COLORS.gray500}
                   style={{ marginRight: 5 }}
                 />
-                <Text style={[styles.filterTabText, isActive && styles.filterTabTextActive]}>{f.label}</Text>
-                <View style={[styles.filterCount, isActive && styles.filterCountActive]}>
-                  <Text style={[styles.filterCountText, isActive && styles.filterCountTextActive]}>{f.count}</Text>
+                <Text style={[styles.filterTabText, isActive ? styles.filterTabTextActive : null]}>{f.label}</Text>
+                <View style={[styles.filterCount, isActive ? styles.filterCountActive : null]}>
+                  <Text style={[styles.filterCountText, isActive ? styles.filterCountTextActive : null]}>
+                    {f.count}
+                  </Text>
                 </View>
               </Pressable>
             );
@@ -542,7 +544,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   filterTabActive: {
-    backgroundColor: COLORS.navy,
+    backgroundColor: (COLORS as any).navy,
   },
   filterTabText: {
     ...Typography.bodySmall,
@@ -651,7 +653,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     lineHeight: 19,
     marginBottom: 2,
   },
@@ -723,7 +725,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
@@ -737,7 +739,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: COLORS.navy,
+    backgroundColor: (COLORS as any).navy,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,

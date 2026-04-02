@@ -44,7 +44,7 @@ export function useVideoReport() {
       }
 
       // Make API call
-      const response = await realVideosApi.reportVideo(videoId, reason, details);
+      const response: any = await realVideosApi.reportVideo(videoId, reason, details);
 
       if (!response.success) {
         throw new Error(response.message || 'Failed to submit report');

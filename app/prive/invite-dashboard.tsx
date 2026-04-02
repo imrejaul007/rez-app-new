@@ -64,7 +64,7 @@ function PriveInviteDashboard() {
         if (!isMounted()) return;
         setMyRank(data?.myRank || null);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

@@ -170,7 +170,7 @@ export default function MainStorePageExample({ route }: MainStorePageExampleProp
 
       setQuestions((prev) => [newQuestion, ...prev]);
       platformAlertSimple('Success', 'Your question has been posted!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to post question. Please try again.');
       throw error; // Re-throw to show loading state in component
     }
@@ -210,7 +210,7 @@ export default function MainStorePageExample({ route }: MainStorePageExampleProp
       );
 
       platformAlertSimple('Success', 'Your answer has been posted!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to post answer. Please try again.');
       throw error;
     }
@@ -251,7 +251,7 @@ export default function MainStorePageExample({ route }: MainStorePageExampleProp
           )
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -300,7 +300,7 @@ export default function MainStorePageExample({ route }: MainStorePageExampleProp
 
       setPhotos((prev) => [uploadedPhoto, ...prev]);
       platformAlertSimple('Success', 'Photo uploaded successfully!');
-    } catch (error) {
+    } catch (error: any) {
       throw error; // Re-throw to show error in component
     }
   };
@@ -319,7 +319,7 @@ export default function MainStorePageExample({ route }: MainStorePageExampleProp
           p.id === photoId ? { ...p, helpful: p.helpful + 1 } : p
         )
       );
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

@@ -269,14 +269,14 @@ class OrdersService {
         idempotencyKey ||
         `order-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-      const response = await apiClient.post<Order>('/orders', data, {
+      const response = await apiClient.post<Order>('/orders', data as any, {
         headers: { 'Idempotency-Key': key },
       });
 
       if (!response.success) {
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -289,8 +289,8 @@ class OrdersService {
   // Get user orders with filtering
   async getOrders(query: OrdersQuery = {}): Promise<ApiResponse<OrdersResponse>> {
     try {
-      const response = await apiClient.get<OrdersResponse>('/orders', query);
-      return response;
+      const response = await apiClient.get<OrdersResponse>('/orders', query as any);
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -304,7 +304,7 @@ class OrdersService {
   async getOrderCounts(): Promise<ApiResponse<OrderCounts>> {
     try {
       const response = await apiClient.get<OrderCounts>('/orders/counts');
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -318,7 +318,7 @@ class OrdersService {
   async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
     try {
       const response = await apiClient.get<Order>(`/orders/${orderId}`);
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -331,8 +331,8 @@ class OrdersService {
   // Get order tracking
   async getOrderTracking(orderId: string): Promise<ApiResponse<any>> {
     try {
-      const response = await apiClient.get(`/orders/${orderId}/tracking`);
-      return response;
+      const response = await apiClient.get<any>(`/orders/${orderId}/tracking`);
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -349,7 +349,7 @@ class OrdersService {
   ): Promise<ApiResponse<Order>> {
     try {
       const response = await apiClient.patch<Order>(`/orders/${orderId}/cancel`, { reason });
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -376,7 +376,7 @@ class OrdersService {
       }
 
       const response = await apiClient.post<Order>(`/orders/${orderId}/rate`, { rating, review });
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -389,8 +389,8 @@ class OrdersService {
   // Get order statistics
   async getOrderStats(): Promise<ApiResponse<any>> {
     try {
-      const response = await apiClient.get('/orders/stats');
-      return response;
+      const response = await apiClient.get<any>('/orders/stats');
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -422,7 +422,7 @@ class OrdersService {
         trackingInfo
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,

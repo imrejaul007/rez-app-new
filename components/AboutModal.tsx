@@ -298,10 +298,10 @@ function AboutModal({ visible, onClose, storeData }: AboutModalProps) {
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <LinearGradient
-                  colors={[COLORS.gold, COLORS.goldDark]}
+                  colors={[COLORS.gold, (COLORS as any).goldDark]}
                   style={styles.sectionIconBg}
                 >
-                  <Ionicons name="call" size={16} color={COLORS.navy} />
+                  <Ionicons name="call" size={16} color={(COLORS as any).navy} />
                 </LinearGradient>
                 <ThemedText style={styles.sectionTitle}>Contact</ThemedText>
               </View>
@@ -391,10 +391,10 @@ function AboutModal({ visible, onClose, storeData }: AboutModalProps) {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <LinearGradient
-                colors={[COLORS.gold, COLORS.goldDark]}
+                colors={[COLORS.gold, (COLORS as any).goldDark]}
                 style={styles.sectionIconBg}
               >
-                <Ionicons name="pricetag" size={16} color={COLORS.navy} />
+                <Ionicons name="pricetag" size={16} color={(COLORS as any).navy} />
               </LinearGradient>
               <ThemedText style={styles.sectionTitle}>Products</ThemedText>
             </View>
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     borderColor: GLASS.lightBorder,
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.navy,
+        shadowColor: (COLORS as any).navy,
         shadowOffset: { width: 0, height: -8 },
         shadowOpacity: 0.15,
         shadowRadius: 24,

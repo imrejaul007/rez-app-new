@@ -123,7 +123,7 @@ function CouponsPage() {
       } else {
         await loadMyCoupons('expired');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load coupons. Please try again.');
     } finally {
@@ -138,7 +138,7 @@ function CouponsPage() {
       if (response.success && response.data) {
         setAvailableCoupons(response.data.coupons);
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to load available coupons'),
         { context: 'CouponsPage.loadAvailableCoupons' },
@@ -153,7 +153,7 @@ function CouponsPage() {
       if (response.success && response.data) {
         setFeaturedCoupons(response.data.coupons);
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to load featured coupons'),
         { context: 'CouponsPage.loadFeaturedCoupons' },
@@ -169,7 +169,7 @@ function CouponsPage() {
         setMyCoupons(response.data.coupons);
         setCouponSummary(response.data.summary);
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to load my coupons'),
         { context: 'CouponsPage.loadMyCoupons' },
@@ -204,7 +204,7 @@ function CouponsPage() {
         if (!isMounted()) return;
         setSearchResults([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to search coupons'),
         { context: 'CouponsPage.handleSearchCode' },
@@ -245,7 +245,7 @@ function CouponsPage() {
         platformAlertSimple('Oops', response.error || 'You may have already claimed this coupon.');
         await loadAvailableCoupons();
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to claim coupon'),
         { context: 'CouponsPage.handleClaimCoupon' },
@@ -270,7 +270,7 @@ function CouponsPage() {
           setMyCoupons(prev);
           platformAlertSimple('Error', response.error || 'Failed to remove');
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to remove coupon'),
           { context: 'CouponsPage.handleRemoveCoupon' },

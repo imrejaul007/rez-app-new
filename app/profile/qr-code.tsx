@@ -44,7 +44,7 @@ const QRCodePage = () => {
         message,
         title: activeTab === 'profile' ? 'My Profile' : 'My Wallet',
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

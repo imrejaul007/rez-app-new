@@ -31,14 +31,14 @@ const learningApi = {
    * Get all published learning content (with user progress if authenticated)
    */
   getContent: async (): Promise<ApiResponse<{ content: LearningContent[] }>> => {
-    return apiClient.get('/learning');
+    return apiClient.get<any>('/learning');
   },
 
   /**
    * Get a single content item by slug
    */
   getContentBySlug: async (slug: string): Promise<ApiResponse<{ content: LearningContent }>> => {
-    return apiClient.get(`/learning/${slug}`);
+    return apiClient.get<any>(`/learning/${slug}`);
   },
 
   /**
@@ -48,7 +48,7 @@ const learningApi = {
     contentId: string,
     timeSpentSeconds: number
   ): Promise<ApiResponse<CompleteContentResult>> => {
-    return apiClient.post(`/learning/${contentId}/complete`, { timeSpentSeconds });
+    return apiClient.post<any>(`/learning/${contentId}/complete`, { timeSpentSeconds });
   },
 };
 

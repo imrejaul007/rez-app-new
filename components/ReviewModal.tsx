@@ -326,10 +326,10 @@ function ReviewModal({
           ) : ugcContent.length === 0 ? (
             <View style={styles.emptyState}>
               <LinearGradient
-                colors={[COLORS.gold, COLORS.goldDark]}
+                colors={[COLORS.gold, (COLORS as any).goldDark]}
                 style={styles.emptyIconContainer}
               >
-                <Ionicons name="images-outline" size={32} color={COLORS.navy} />
+                <Ionicons name="images-outline" size={32} color={(COLORS as any).navy} />
               </LinearGradient>
               <ThemedText style={styles.emptyStateTitle}>No content yet</ThemedText>
               <ThemedText style={styles.emptyStateText}>
@@ -425,7 +425,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       borderColor: GLASS.lightBorder,
       ...Platform.select({
         ios: {
-          shadowColor: COLORS.navy,
+          shadowColor: (COLORS as any).navy,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
@@ -508,7 +508,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       borderColor: GLASS.lightBorder,
       ...Platform.select({
         ios: {
-          shadowColor: COLORS.navy,
+          shadowColor: (COLORS as any).navy,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.06,
           shadowRadius: 8,
@@ -617,7 +617,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       overflow: 'hidden',
       ...Platform.select({
         ios: {
-          shadowColor: COLORS.navy,
+          shadowColor: (COLORS as any).navy,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.06,
           shadowRadius: 8,

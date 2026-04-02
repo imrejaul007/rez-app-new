@@ -59,7 +59,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
   const isEmptyState = thisMonthSaved === 0 && totalSaved === 0;
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.wrapper, pressed && styles.pressed]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.wrapper, pressed ? styles.pressed : null]}>
       {isEmptyState ? (
         /* Empty / first-time state */
         <View style={styles.emptyContainer}>

@@ -208,7 +208,7 @@ function BookingPage() {
         if (cancelled) return;
         const raw: Array<{ time: string; available: boolean }> = Array.isArray(res.data)
           ? res.data
-          : res.data?.slots || [];
+          : (res as any).data?.slots || [];
         if (raw.length > 0) {
           const mapped: TimeSlot[] = raw.map((s) => {
             const [h, m] = s.time.split(':').map(Number);

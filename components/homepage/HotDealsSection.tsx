@@ -200,18 +200,16 @@ function HotDealsSection({
           </Pressable>
         </View>
       ) : (
-        <FlashList
-          data={products}
-          renderItem={renderProduct}
-          keyExtractor={keyExtractor}
-          numColumns={2}
-          scrollEnabled={false}
-          contentContainerStyle={styles.listContent as any}
-          estimatedItemSize={220}
-          initialNumToRender={6}
-          maxToRenderPerBatch={8}
-          ItemSeparatorComponent={() => <View style={styles.rowSeparator} />}
-        />
+        React.createElement(FlashList as any, {
+          data: products,
+          renderItem: renderProduct,
+          keyExtractor,
+          numColumns: 2,
+          scrollEnabled: false,
+          contentContainerStyle: styles.listContent,
+          estimatedItemSize: 220,
+          ItemSeparatorComponent: () => <View style={styles.rowSeparator} />,
+        })
       )}
     </View>
   );

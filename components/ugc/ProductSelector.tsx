@@ -340,10 +340,6 @@ function ProductSelector({
                 onEndReachedThreshold={0.5}
                 ListEmptyComponent={renderEmptyState}
                 ListFooterComponent={renderFooter}
-                removeClippedSubviews={Platform.OS === 'android'}
-                maxToRenderPerBatch={10}
-                updateCellsBatchingPeriod={50}
-                windowSize={10}
                 estimatedItemSize={70}
               />
             </View>

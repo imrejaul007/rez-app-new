@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-  ActivityIndicator,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, SafeAreaView, Platform, StatusBar, ActivityIndicator, Pressable } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -36,40 +28,47 @@ function GoingOutSectionPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { goBack } = useSafeNavigation();
-  const { sectionId } = useLocalSearchParams<{ sectionId: string }>();
+  const { sectionId } = useLocalSearchParams<any>();
   const [products, setProducts] = useState<SectionProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchProducts = useCallback(async (pageNum: number, append = false) => {
-    try {
-      if (pageNum === 1) setLoading(true);
-      else setLoadingMore(true);
+  const fetchProducts = useCallback(
+    async (pageNum: number, append = false) => {
+      try {
+        if (pageNum === 1) setLoading(true);
+        else setLoadingMore(true);
 
-      const response = await productsApi.getProducts({
-        page: pageNum,
-        limit: 20,
-        category: sectionId,
-      });
+        const response = await productsApi.getProducts({
+          page: pageNum,
+          limit: 20,
+          category: sectionId,
+        });
 
-      if (response.success && response.data) {
-        const newProducts = response.data.products || response.data || [];
+        if (response.success && response.data) {
+          const newProducts = response.data.products || response.data || [];
+          if (!isMounted()) return;
+          setProducts((_prev: SectionProduct[]) =>
+            append
+              ? [..._prev, ...(newProducts as unknown as SectionProduct[])]
+              : (newProducts as unknown as SectionProduct[]),
+          );
+          if (!isMounted()) return;
+          setHasMore(newProducts.length >= 20);
+        }
+      } catch (error: any) {
+        // silently handle
+      } finally {
         if (!isMounted()) return;
-        setProducts(prev => append ? [...prev, ...newProducts] : newProducts);
+        setLoading(false);
         if (!isMounted()) return;
-        setHasMore(newProducts.length >= 20);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [sectionId]);
+    },
+    [sectionId],
+  );
 
   useEffect(() => {
     if (sectionId) fetchProducts(1);
@@ -85,40 +84,46 @@ function GoingOutSectionPage() {
 
   const getPrice = (item: SectionProduct): string => {
     const price = item.pricing?.selling || (typeof item.price === 'number' ? item.price : item.price?.current) || 0;
-    const currency = item.pricing?.currency || (typeof item.price === 'object' ? item.price?.currency : undefined) || 'AED';
+    const currency =
+      item.pricing?.currency || (typeof item.price === 'object' ? item.price?.currency : undefined) || 'AED';
     return `${currency} ${price.toFixed(2)}`;
   };
 
-  const handleProductPress = useCallback((item: SectionProduct) => {
-    router.push(`/product-page?cardId=${item._id}` as any);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (item: SectionProduct) => {
+      router.push(`/product-page?cardId=${item._id}` as any);
+    },
+    [router],
+  );
 
-  const renderProduct = useCallback(({ item }: { item: SectionProduct }) => (
-    <Pressable style={styles.productCard} onPress={() => handleProductPress(item)}>
-      <CachedImage
-        source={item.images?.[0] || undefined}
-        style={styles.productImage}
-      />
-      {item.cashbackPercentage ? (
-        <View style={styles.cashbackBadge}>
-          <ThemedText style={styles.cashbackText}>{item.cashbackPercentage}% Cashback</ThemedText>
-        </View>
-      ) : null}
-      <View style={styles.productInfo}>
-        <ThemedText style={styles.productName} numberOfLines={2}>{item.name}</ThemedText>
-        {item.store?.name ? (
-          <ThemedText style={styles.storeName}>{item.store.name}</ThemedText>
-        ) : null}
-        <ThemedText style={styles.productPrice}>{getPrice(item)}</ThemedText>
-        {item.ratings?.average ? (
-          <View style={styles.ratingRow}>
-            <Ionicons name="star" size={12} color={colors.warningScale[400]} />
-            <ThemedText style={styles.ratingText}>{item.ratings.average.toFixed(1)} ({item.ratings.count})</ThemedText>
+  const renderProduct = useCallback(
+    ({ item }: { item: SectionProduct }) => (
+      <Pressable style={styles.productCard} onPress={() => handleProductPress(item)}>
+        <CachedImage source={item.images?.[0] || ''} style={styles.productImage} />
+        {item.cashbackPercentage ? (
+          <View style={styles.cashbackBadge}>
+            <ThemedText style={styles.cashbackText}>{item.cashbackPercentage}% Cashback</ThemedText>
           </View>
         ) : null}
-      </View>
-    </Pressable>
-  ), [handleProductPress]);
+        <View style={styles.productInfo}>
+          <ThemedText style={styles.productName} numberOfLines={2}>
+            {item.name}
+          </ThemedText>
+          {item.store?.name ? <ThemedText style={styles.storeName}>{item.store.name}</ThemedText> : null}
+          <ThemedText style={styles.productPrice}>{getPrice(item)}</ThemedText>
+          {item.ratings?.average ? (
+            <View style={styles.ratingRow}>
+              <Ionicons name="star" size={12} color={colors.warningScale[400]} />
+              <ThemedText style={styles.ratingText}>
+                {item.ratings.average.toFixed(1)} ({item.ratings.count})
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
+      </Pressable>
+    ),
+    [handleProductPress],
+  );
 
   if (loading) {
     return (
@@ -138,7 +143,7 @@ function GoingOutSectionPage() {
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>
-          {(sectionId || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          {(sectionId || '').replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
         </ThemedText>
         <View style={{ width: 40 }} />
       </View>
@@ -147,7 +152,7 @@ function GoingOutSectionPage() {
         data={products}
         renderItem={renderProduct}
         keyExtractor={(item) => item._id}
-          estimatedItemSize={220}
+        estimatedItemSize={220}
         numColumns={2}
         contentContainerStyle={styles.listContent}
         onEndReached={handleLoadMore}
@@ -158,7 +163,9 @@ function GoingOutSectionPage() {
             <ThemedText style={styles.emptyText}>No products in this section yet</ThemedText>
           </View>
         }
-        ListFooterComponent={loadingMore ? <ActivityIndicator size="small" color={colors.nileBlue} style={{ padding: 16 }} /> : null}
+        ListFooterComponent={
+          loadingMore ? <ActivityIndicator size="small" color={colors.nileBlue} style={{ padding: 16 }} /> : null
+        }
       />
     </SafeAreaView>
   );

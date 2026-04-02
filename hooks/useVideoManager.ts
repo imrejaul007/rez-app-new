@@ -13,7 +13,7 @@ class VideoManager {
   private activeVideos: Map<string, VideoInstance> = new Map();
   private maxSimultaneousVideos = Platform.OS === 'ios' ? 2 : 4; // iOS limitation
   private currentlyPlaying: string[] = [];
-  private cleanupTimers: Map<string, NodeJS.Timeout> = new Map();
+  private cleanupTimers: Map<string, ReturnType<typeof setTimeout>> = new Map();
 
   registerVideo(id: string, ref: any): void {
     // Clear any existing cleanup timer for this video
@@ -63,7 +63,7 @@ class VideoManager {
       this.currentlyPlaying.push(id);
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   }

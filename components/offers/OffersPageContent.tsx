@@ -150,7 +150,7 @@ export const OffersPageContent: React.FC<OffersPageContentProps> = ({
       } else {
         router.push(path as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // If route doesn't exist, just log it
     }
   }, [router]);

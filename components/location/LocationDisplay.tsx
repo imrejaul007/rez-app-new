@@ -142,7 +142,7 @@ function LocationDisplay({
         }
 
         return location;
-      } catch (error) {
+      } catch (error: any) {
         if (!isMounted()) return;
         setWebError(`Location error: ${(error as any)?.message || 'Unknown error'}`);
         return null;
@@ -268,7 +268,7 @@ function LocationDisplay({
       setIsRefreshing(true);
       try {
         await refreshLocation();
-      } catch (error) {
+      } catch (error: any) {
         showAlert(
           'Location Error',
           'Failed to get your current location. Please try again.',

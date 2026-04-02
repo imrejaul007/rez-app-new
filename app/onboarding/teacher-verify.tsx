@@ -132,7 +132,7 @@ function TeacherVerifyPage() {
                     setError('');
                   }}
                 >
-                  <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
+                  <ThemedText style={[styles.chipText, documentType === d.value ? styles.chipTextActive : null]}>
                     {d.label}
                   </ThemedText>
                 </Pressable>
@@ -153,7 +153,7 @@ function TeacherVerifyPage() {
           <Pressable
             onPress={handleVerify}
             disabled={loading}
-            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+            style={[styles.verifyButton, loading ? styles.verifyButtonDisabled : null]}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />

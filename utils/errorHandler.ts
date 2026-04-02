@@ -2,7 +2,17 @@
 // Centralized error handling for the entire app
 
 import { platformAlert } from '@/utils/platformAlert';
-import { ApiError } from './apiClient';
+// ApiError class for API-specific errors
+class ApiError extends Error {
+  code?: string;
+  details?: any;
+  constructor(message: string, code?: string, details?: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.details = details;
+  }
+}
 
 // Error types
 export interface AppError {

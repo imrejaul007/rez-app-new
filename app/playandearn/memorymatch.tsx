@@ -137,7 +137,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
           { width: cardSize - 4, height: cardSize - 4, opacity: frontOpacity, transform: [{ scale: scaleAnim }] },
         ]}
       >
-        <View style={[styles.cardFrontInner, isMatched && styles.cardFrontMatched]}>
+        <View style={[styles.cardFrontInner, isMatched ? styles.cardFrontMatched : null]}>
           <Text style={styles.cardEmoji}>{card.emoji}</Text>
         </View>
       </Animated.View>
@@ -219,7 +219,7 @@ const MemoryMatch = () => {
           setMaxPlays(memoryLimits.limit);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load game data. Please try again.');
     } finally {
@@ -284,7 +284,7 @@ const MemoryMatch = () => {
       if (response.data?.sessionId) {
         setSessionId(response.data.sessionId);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setGameState('start');
       if (!isMounted()) return;
@@ -326,7 +326,7 @@ const MemoryMatch = () => {
         }
         // IMPORTANT: Sync global GamificationContext to update coin balance across the app
         await gamificationActions.syncCoinsFromWallet();
-      } catch (error) {
+      } catch (error: any) {
         // Fallback: increment locally if API fails
         if (!isMounted()) return;
         setTodayPlays(todayPlays + 1);
@@ -364,7 +364,7 @@ const MemoryMatch = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="chevron-back" size={24} color={COLORS.navy} />
+          <Ionicons name="chevron-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -376,9 +376,9 @@ const MemoryMatch = () => {
         </View>
 
         {gameState === 'playing' ? (
-          <View style={[styles.timerBadge, timeLeft <= 10 && styles.timerBadgeWarning]}>
+          <View style={[styles.timerBadge, timeLeft <= 10 ? styles.timerBadgeWarning : null]}>
             <Ionicons name="time-outline" size={16} color={timeLeft <= 10 ? colors.error : COLORS.primary} />
-            <Text style={[styles.timerText, timeLeft <= 10 && styles.timerTextWarning]}>{timeLeft}s</Text>
+            <Text style={[styles.timerText, timeLeft <= 10 ? styles.timerTextWarning : null]}>{timeLeft}s</Text>
           </View>
         ) : (
           <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
@@ -600,7 +600,9 @@ const MemoryMatch = () => {
                 <Animated.View style={[styles.progressFill, progressAnimatedStyle]}>
                   <LinearGradient
                     colors={
-                      timeLeft <= 10 ? [Colors.error, Colors.errorScale[700]] : [COLORS.primary, COLORS.primaryLight]
+                      timeLeft <= 10
+                        ? [Colors.error, Colors.errorScale[700]]
+                        : [COLORS.primary, (COLORS as any).primaryLight]
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
@@ -670,7 +672,7 @@ const MemoryMatch = () => {
                 <Text
                   style={[
                     styles.resultTitle,
-                    { color: matched.length === cardEmojis.length ? colors.background.primary : COLORS.navy },
+                    { color: matched.length === cardEmojis.length ? colors.background.primary : (COLORS as any).navy },
                   ]}
                 >
                   {getPerformanceRating().text}
@@ -824,7 +826,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -867,7 +869,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   coinsText: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.goldDark,
+    color: (COLORS as any).goldDark,
   },
 
   scrollView: {
@@ -979,7 +981,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   howToPlayTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   stepsContainer: {
     gap: 14,
@@ -1006,7 +1008,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   stepTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   stepDesc: {
@@ -1068,7 +1070,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   gameStatValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   gameStatTotal: {
     fontSize: 14,
@@ -1282,7 +1284,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   statLabel: {

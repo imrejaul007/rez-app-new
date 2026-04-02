@@ -57,7 +57,7 @@ const CategoryChip: React.FC<ChipProps> = memo(({ category, onPress }) => {
 
   return (
     <Pressable
-      style={({ pressed }) => [styles.chip, pressed && styles.chipPressed]}
+      style={({ pressed }) => [styles.chip, pressed ? styles.chipPressed : null]}
       onPress={handlePress}
       accessibilityRole="button"
       accessibilityLabel={`Browse ${category.label}`}

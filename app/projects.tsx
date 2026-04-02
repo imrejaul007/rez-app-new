@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Platform,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -17,7 +17,8 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
-  type SharedValue} from 'react-native-reanimated';
+  type SharedValue,
+} from 'react-native-reanimated';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { useRouter, useNavigation, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -94,20 +95,21 @@ function AllProjectsPage() {
   // Hide the default navigation header
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: false});
+      headerShown: false,
+    });
   }, [navigation]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<string | null>(params.filterStatus as string || null);
+  const [filterStatus, setFilterStatus] = useState<string | null>((params.filterStatus as string) || null);
   const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'trending'>('newest');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchFocused, setSearchFocused] = useState(false);
-  
+
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(30);
   const searchScaleAnim = useSharedValue(1);
@@ -117,7 +119,12 @@ function AllProjectsPage() {
   const categories = [
     { label: 'All', value: null, icon: 'grid', gradient: [colors.primary[300], colors.primary[400]] },
     { label: 'Review', value: 'review', icon: 'star', gradient: [colors.warningScale[400], colors.brand.orange] },
-    { label: 'Social Share', value: 'social_share', icon: 'share-social', gradient: [colors.infoScale[400], colors.brand.indigo] },
+    {
+      label: 'Social Share',
+      value: 'social_share',
+      icon: 'share-social',
+      gradient: [colors.infoScale[400], colors.brand.indigo],
+    },
     { label: 'UGC Content', value: 'ugc_content', icon: 'videocam', gradient: [colors.brand.pink, '#F472B6'] },
     { label: 'Store Visit', value: 'store_visit', icon: 'storefront', gradient: [Colors.gold, colors.nileBlue] },
     { label: 'Survey', value: 'survey', icon: 'clipboard', gradient: [colors.nileBlue, colors.nileBlue] },
@@ -132,132 +139,137 @@ function AllProjectsPage() {
     { label: 'Hard', value: 'hard', color: Colors.error },
   ];
 
-  const loadProjects = useCallback(async (pageNum = 1, reset = false) => {
-    try {
-      if (reset) {
-        setLoading(true);
-        setError(null);
-      }
-
-      let response: any;
-      let endpoint = '/projects';
-      const params: any = {
-        page: pageNum,
-        limit: 20,
-        sortBy};
-
-      // Handle status filtering based on user submissions
-      if (filterStatus === 'in-review' || filterStatus === 'completed') {
-        // Use my-submissions endpoint for user's submissions
-        endpoint = '/projects/my-submissions';
-        if (filterStatus === 'in-review') {
-          params.status = 'pending'; // Will match pending and under_review
-        } else if (filterStatus === 'completed') {
-          params.status = 'approved';
-        }
-      } else if (filterStatus === 'complete-now') {
-        // Show active projects user hasn't started
-        params.status = 'active';
-        params.excludeUserSubmissions = true; // Custom param to exclude projects with user submissions
-      } else {
-        // Default: show all active projects
-        params.status = 'active';
-      }
-
-      if (selectedCategory) {
-        params.category = selectedCategory;
-      }
-
-      if (selectedDifficulty) {
-        params.difficulty = selectedDifficulty;
-      }
-
-      if (searchQuery.trim()) {
-        params.search = searchQuery.trim();
-      }
-
-      if (endpoint === '/projects/my-submissions') {
-        // Handle my-submissions response format
-        const submissionsResponse = await apiClient.get<{
-          submissions: any[];
-          pagination: any;
-        }>('/projects/my-submissions', params);
-        
-        if (submissionsResponse.success && submissionsResponse.data) {
-          // Transform submissions to projects format
-          const transformedProjects = submissionsResponse.data.submissions.map((sub: any) => ({
-            _id: sub.project._id,
-            title: sub.project.title,
-            description: sub.project.description,
-            shortDescription: sub.project.shortDescription,
-            category: sub.project.category,
-            type: sub.project.type || 'text',
-            reward: sub.project.reward || { amount: 0, currency: currencySymbol, type: 'fixed' },
-            difficulty: sub.project.difficulty || 'easy',
-            estimatedTime: sub.project.estimatedTime || 0,
-            status: sub.project.status || 'active',
-            tags: sub.project.tags || [],
-            analytics: sub.project.analytics || {},
-            createdAt: sub.project.createdAt || sub.submittedAt,
-            submissionStatus: sub.status,
-            submissionId: sub._id}));
-
-          response = {
-            success: true,
-            data: {
-              projects: transformedProjects,
-              pagination: submissionsResponse.data.pagination
-            }
-          };
-        } else {
-          throw new Error('Failed to load submissions');
-        }
-      } else {
-        // Regular projects endpoint
-        response = await apiClient.get<ProjectsResponse>('/projects', params);
-      }
-
-      if (response.success && response.data) {
-        const newProjects = response.data.projects || [];
-        
+  const loadProjects = useCallback(
+    async (pageNum = 1, reset = false) => {
+      try {
         if (reset) {
-          if (!isMounted()) return;
-          setProjects(newProjects);
-          // Animate cards in
-          newProjects.forEach((project) => {
-            if (!cardAnims[project._id]) {
-              cardAnims[project._id] = { value: 0 };
-            }
-            cardAnims[project._id].value = 1;
-          });
+          setLoading(true);
+          setError(null);
+        }
+
+        let response: any;
+        let endpoint = '/projects';
+        const params: any = {
+          page: pageNum,
+          limit: 20,
+          sortBy,
+        };
+
+        // Handle status filtering based on user submissions
+        if (filterStatus === 'in-review' || filterStatus === 'completed') {
+          // Use my-submissions endpoint for user's submissions
+          endpoint = '/projects/my-submissions';
+          if (filterStatus === 'in-review') {
+            params.status = 'pending'; // Will match pending and under_review
+          } else if (filterStatus === 'completed') {
+            params.status = 'approved';
+          }
+        } else if (filterStatus === 'complete-now') {
+          // Show active projects user hasn't started
+          params.status = 'active';
+          params.excludeUserSubmissions = true; // Custom param to exclude projects with user submissions
         } else {
+          // Default: show all active projects
+          params.status = 'active';
+        }
+
+        if (selectedCategory) {
+          params.category = selectedCategory;
+        }
+
+        if (selectedDifficulty) {
+          params.difficulty = selectedDifficulty;
+        }
+
+        if (searchQuery.trim()) {
+          params.search = searchQuery.trim();
+        }
+
+        if (endpoint === '/projects/my-submissions') {
+          // Handle my-submissions response format
+          const submissionsResponse = await apiClient.get<{
+            submissions: any[];
+            pagination: any;
+          }>('/projects/my-submissions', params);
+
+          if (submissionsResponse.success && submissionsResponse.data) {
+            // Transform submissions to projects format
+            const transformedProjects = submissionsResponse.data.submissions.map((sub: any) => ({
+              _id: sub.project._id,
+              title: sub.project.title,
+              description: sub.project.description,
+              shortDescription: sub.project.shortDescription,
+              category: sub.project.category,
+              type: sub.project.type || 'text',
+              reward: sub.project.reward || { amount: 0, currency: currencySymbol, type: 'fixed' },
+              difficulty: sub.project.difficulty || 'easy',
+              estimatedTime: sub.project.estimatedTime || 0,
+              status: sub.project.status || 'active',
+              tags: sub.project.tags || [],
+              analytics: sub.project.analytics || {},
+              createdAt: sub.project.createdAt || sub.submittedAt,
+              submissionStatus: sub.status,
+              submissionId: sub._id,
+            }));
+
+            response = {
+              success: true,
+              data: {
+                projects: transformedProjects,
+                pagination: submissionsResponse.data.pagination,
+              },
+            };
+          } else {
+            throw new Error('Failed to load submissions');
+          }
+        } else {
+          // Regular projects endpoint
+          response = await apiClient.get<ProjectsResponse>('/projects', params);
+        }
+
+        if (response.success && response.data) {
+          const newProjects = response.data.projects || [];
+
+          if (reset) {
+            if (!isMounted()) return;
+            setProjects(newProjects);
+            // Animate cards in
+            newProjects.forEach((project: any) => {
+              if (!cardAnims[project._id]) {
+                cardAnims[project._id] = { value: 0 };
+              }
+              cardAnims[project._id].value = 1;
+            });
+          } else {
+            if (!isMounted()) return;
+            setProjects((prev) => [...prev, ...newProjects]);
+          }
+
           if (!isMounted()) return;
-          setProjects(prev => [...prev, ...newProjects]);
-        }
+          setHasMore(response.data.pagination?.hasNext || false);
+          if (!isMounted()) return;
+          setPage(pageNum);
 
-        if (!isMounted()) return;
-        setHasMore(response.data.pagination?.hasNext || false);
-        if (!isMounted()) return;
-        setPage(pageNum);
-
-        // Animate in
-        if (reset) {
-          fadeAnim.value = withTiming(1, { duration: 500 });
-          slideAnim.value = withTiming(0, { duration: 500 });
+          // Animate in
+          if (reset) {
+            fadeAnim.value = withTiming(1, { duration: 500 });
+            slideAnim.value = withTiming(0, { duration: 500 });
+          }
+        } else {
+          throw new Error('Failed to load projects');
         }
-      } else {
-        throw new Error('Failed to load projects');
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err instanceof Error ? err.message : 'Failed to load projects');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError(err instanceof Error ? err.message : 'Failed to load projects');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [selectedCategory, selectedDifficulty, searchQuery, sortBy, filterStatus, user, fadeAnim, slideAnim, cardAnims]);
+    },
+    [selectedCategory, selectedDifficulty, searchQuery, sortBy, filterStatus, user, fadeAnim, slideAnim, cardAnims],
+  );
 
   useEffect(() => {
     loadProjects(1, true);
@@ -282,11 +294,15 @@ function AllProjectsPage() {
     loadProjects(1, true);
   }, [loadProjects]);
 
-  const handleProjectPress = useCallback((project: Project) => {
-    router.push({
-      pathname: '/project-detail',
-      params: { projectId: project._id }} as any);
-  }, [router]);
+  const handleProjectPress = useCallback(
+    (project: Project) => {
+      router.push({
+        pathname: '/project-detail',
+        params: { projectId: project._id },
+      } as any);
+    },
+    [router],
+  );
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -323,169 +339,160 @@ function AllProjectsPage() {
   };
 
   const getCategoryGradient = (category: string) => {
-    const cat = categories.find(c => c.value === category);
+    const cat = categories.find((c) => c.value === category);
     return cat?.gradient || [colors.primary[300], colors.primary[400]];
   };
 
   // Project Card Component
-  const ProjectCard = React.memo(({ project, cardAnim, onPress, getCategoryGradient, getDifficultyColor, getCategoryIcon }: {
-    project: Project;
-    cardAnim: SharedValue<number>;
-    onPress: () => void;
-    getCategoryGradient: (category: string) => string[];
-    getDifficultyColor: (difficulty: string) => string;
-    getCategoryIcon: (category: string) => string;
-  }) => {
-    const pressAnim = useSharedValue(1);
+  const ProjectCard = React.memo(
+    ({
+      project,
+      cardAnim,
+      onPress,
+      getCategoryGradient,
+      getDifficultyColor,
+      getCategoryIcon,
+    }: {
+      project: Project;
+      cardAnim: SharedValue<number>;
+      onPress: () => void;
+      getCategoryGradient: (category: string) => string[];
+      getDifficultyColor: (difficulty: string) => string;
+      getCategoryIcon: (category: string) => string;
+    }) => {
+      const pressAnim = useSharedValue(1);
 
-    const handlePressIn = () => {
-      pressAnim.value = withSpring(0.96, { damping: 10, stiffness: 300 });
-    };
+      const handlePressIn = () => {
+        pressAnim.value = withSpring(0.96, { damping: 10, stiffness: 300 });
+      };
 
-    const handlePressOut = () => {
-      pressAnim.value = withSpring(1, { damping: 10, stiffness: 300 });
-    };
+      const handlePressOut = () => {
+        pressAnim.value = withSpring(1, { damping: 10, stiffness: 300 });
+      };
 
-    const cardStyle = useAnimatedStyle(() => ({
-      opacity: cardAnim.value,
-      transform: [
-        { translateY: interpolate(cardAnim.value, [0, 1], [30, 0]) },
-        { scale: pressAnim.value },
-      ],
-    }));
+      const cardStyle = useAnimatedStyle(() => ({
+        opacity: cardAnim.value,
+        transform: [{ translateY: interpolate(cardAnim.value, [0, 1], [30, 0]) }, { scale: pressAnim.value }],
+      }));
 
-    const categoryGradient = getCategoryGradient(project.category);
-    const difficultyColor = getDifficultyColor(project.difficulty);
+      const categoryGradient = getCategoryGradient(project.category);
+      const difficultyColor = getDifficultyColor(project.difficulty);
 
-    return (
-      <Animated.View style={cardStyle}>
-        <Pressable
-          style={styles.projectCard}
-          onPress={onPress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-         
-        >
-          <LinearGradient
-            colors={[colors.background.primary, '#FAFBFC']}
-            style={styles.cardGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            {/* Decorative Background Elements */}
-            <View style={styles.decorativeCircle1} />
-            <View style={styles.decorativeCircle2} />
+      return (
+        <Animated.View style={cardStyle}>
+          <Pressable style={styles.projectCard} onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+            <LinearGradient
+              colors={[colors.background.primary, '#FAFBFC']}
+              style={styles.cardGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              {/* Decorative Background Elements */}
+              <View style={styles.decorativeCircle1} />
+              <View style={styles.decorativeCircle2} />
 
-            {/* Featured Badge */}
-            {project.isFeatured && (
-              <View style={styles.featuredBadgeContainer}>
-                <LinearGradient
-                  colors={[colors.warningScale[400], colors.warningScale[700]]}
-                  style={styles.featuredBadge}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  <Ionicons name="star" size={12} color={colors.text.inverse} />
-                  <ThemedText style={styles.featuredText}>Featured</ThemedText>
-                </LinearGradient>
-              </View>
-            )}
-
-            {/* Card Header */}
-            <View style={styles.cardHeader}>
-              <View style={styles.cardHeaderLeft}>
-                <LinearGradient
-                  colors={categoryGradient}
-                  style={styles.categoryIconContainer}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  <Ionicons
-                    name={getCategoryIcon(project.category) as any}
-                    size={22}
-                    color={colors.text.inverse}
-                  />
-                </LinearGradient>
-                <View style={styles.cardTitleContainer}>
-                  <ThemedText style={styles.cardTitle} numberOfLines={1}>
-                    {project.title}
-                  </ThemedText>
-                </View>
-              </View>
-              <LinearGradient
-                colors={[`${difficultyColor}20`, `${difficultyColor}10`]}
-                style={styles.difficultyBadge}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-              >
-                <ThemedText
-                  style={[styles.difficultyText, { color: difficultyColor }]}
-                >
-                  {project.difficulty}
-                </ThemedText>
-              </LinearGradient>
-            </View>
-
-            {/* Card Description */}
-            <ThemedText style={styles.cardDescription} numberOfLines={2}>
-              {project.shortDescription || project.description}
-            </ThemedText>
-
-            {/* Card Footer */}
-            <View style={styles.cardFooter}>
-              <LinearGradient
-                colors={[colors.lightMustard, colors.nileBlue]}
-                style={styles.rewardContainer}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-              >
-                <Ionicons name="cash" size={18} color={colors.text.inverse} />
-                <ThemedText style={styles.rewardAmount}>
-                  {currencySymbol}{project.reward?.amount || 0}
-                </ThemedText>
-              </LinearGradient>
-              <View style={styles.timeContainer}>
-                <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-                <ThemedText style={styles.timeText}>
-                  {project.estimatedTime || 0} min
-                </ThemedText>
-              </View>
-              {project.analytics && (
-                <View style={styles.statsContainer}>
-                  <Ionicons name="eye-outline" size={16} color={colors.text.tertiary} />
-                  <ThemedText style={styles.statsText}>
-                    {project.analytics.totalViews || 0}
-                  </ThemedText>
-                </View>
-              )}
-            </View>
-
-            {/* Tags */}
-            {project.tags && project.tags.length > 0 && (
-              <View style={styles.tagsContainer}>
-                {project.tags.slice(0, 3).map((tag, tagIndex) => (
+              {/* Featured Badge */}
+              {project.isFeatured && (
+                <View style={styles.featuredBadgeContainer}>
                   <LinearGradient
-                    key={tagIndex}
-                    colors={[colors.indigoMist, '#E0E7FF']}
-                    style={styles.tag}
+                    colors={[colors.warningScale[400], colors.warningScale[700]]}
+                    style={styles.featuredBadge}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                   >
-                    <ThemedText style={styles.tagText}>{tag}</ThemedText>
+                    <Ionicons name="star" size={12} color={colors.text.inverse} />
+                    <ThemedText style={styles.featuredText}>Featured</ThemedText>
                   </LinearGradient>
-                ))}
-              </View>
-            )}
+                </View>
+              )}
 
-            {/* Arrow Indicator */}
-            <View style={styles.arrowContainer}>
-              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-            </View>
-          </LinearGradient>
-        </Pressable>
-      </Animated.View>
-    );
-  });
+              {/* Card Header */}
+              <View style={styles.cardHeader}>
+                <View style={styles.cardHeaderLeft}>
+                  <LinearGradient
+                    colors={categoryGradient as [string, string]}
+                    style={styles.categoryIconContainer}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Ionicons name={getCategoryIcon(project.category) as any} size={22} color={colors.text.inverse} />
+                  </LinearGradient>
+                  <View style={styles.cardTitleContainer}>
+                    <ThemedText style={styles.cardTitle} numberOfLines={1}>
+                      {project.title}
+                    </ThemedText>
+                  </View>
+                </View>
+                <LinearGradient
+                  colors={[`${difficultyColor}20`, `${difficultyColor}10`]}
+                  style={styles.difficultyBadge}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <ThemedText style={[styles.difficultyText, { color: difficultyColor }]}>
+                    {project.difficulty}
+                  </ThemedText>
+                </LinearGradient>
+              </View>
+
+              {/* Card Description */}
+              <ThemedText style={styles.cardDescription} numberOfLines={2}>
+                {project.shortDescription || project.description}
+              </ThemedText>
+
+              {/* Card Footer */}
+              <View style={styles.cardFooter}>
+                <LinearGradient
+                  colors={[colors.lightMustard, colors.nileBlue]}
+                  style={styles.rewardContainer}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Ionicons name="cash" size={18} color={colors.text.inverse} />
+                  <ThemedText style={styles.rewardAmount}>
+                    {currencySymbol}
+                    {project.reward?.amount || 0}
+                  </ThemedText>
+                </LinearGradient>
+                <View style={styles.timeContainer}>
+                  <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
+                  <ThemedText style={styles.timeText}>{project.estimatedTime || 0} min</ThemedText>
+                </View>
+                {project.analytics && (
+                  <View style={styles.statsContainer}>
+                    <Ionicons name="eye-outline" size={16} color={colors.text.tertiary} />
+                    <ThemedText style={styles.statsText}>{project.analytics.totalViews || 0}</ThemedText>
+                  </View>
+                )}
+              </View>
+
+              {/* Tags */}
+              {project.tags && project.tags.length > 0 && (
+                <View style={styles.tagsContainer}>
+                  {project.tags.slice(0, 3).map((tag, tagIndex) => (
+                    <LinearGradient
+                      key={tagIndex}
+                      colors={[colors.indigoMist, '#E0E7FF']}
+                      style={styles.tag}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                    >
+                      <ThemedText style={styles.tagText}>{tag}</ThemedText>
+                    </LinearGradient>
+                  ))}
+                </View>
+              )}
+
+              {/* Arrow Indicator */}
+              <View style={styles.arrowContainer}>
+                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+              </View>
+            </LinearGradient>
+          </Pressable>
+        </Animated.View>
+      );
+    },
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -494,7 +501,8 @@ function AllProjectsPage() {
           styles.content,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]},
+            transform: [{ translateY: slideAnim }],
+          },
         ]}
       >
         {/* Modern Header with Gradient */}
@@ -506,8 +514,7 @@ function AllProjectsPage() {
         >
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-           
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
@@ -526,7 +533,8 @@ function AllProjectsPage() {
             style={[
               styles.searchBarWrapper,
               {
-                transform: [{ scale: searchScaleAnim }]},
+                transform: [{ scale: searchScaleAnim }],
+              },
             ]}
           >
             <LinearGradient
@@ -576,29 +584,21 @@ function AllProjectsPage() {
             {categories.map((cat) => {
               const isActive = selectedCategory === cat.value;
               return (
-                <Pressable
-                  key={cat.value || 'all'}
-                  onPress={() => setSelectedCategory(cat.value)}
-                 
-                >
+                <Pressable key={cat.value || 'all'} onPress={() => setSelectedCategory(cat.value)}>
                   {isActive ? (
                     <LinearGradient
-                      colors={cat.gradient}
+                      colors={cat.gradient as [string, string]}
                       style={styles.filterChipActive}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                     >
                       <Ionicons name={cat.icon as any} size={16} color={colors.text.inverse} />
-                      <ThemedText style={styles.filterChipTextActive}>
-                        {cat.label}
-                      </ThemedText>
+                      <ThemedText style={styles.filterChipTextActive}>{cat.label}</ThemedText>
                     </LinearGradient>
                   ) : (
                     <View style={styles.filterChip}>
                       <Ionicons name={cat.icon as any} size={16} color={colors.text.tertiary} />
-                      <ThemedText style={styles.filterChipText}>
-                        {cat.label}
-                      </ThemedText>
+                      <ThemedText style={styles.filterChipText}>{cat.label}</ThemedText>
                     </View>
                   )}
                 </Pressable>
@@ -617,11 +617,7 @@ function AllProjectsPage() {
               {difficulties.map((diff) => {
                 const isActive = selectedDifficulty === diff.value;
                 return (
-                  <Pressable
-                    key={diff.value || 'all'}
-                    onPress={() => setSelectedDifficulty(diff.value)}
-                   
-                  >
+                  <Pressable key={diff.value || 'all'} onPress={() => setSelectedDifficulty(diff.value)}>
                     {isActive && diff.value ? (
                       <LinearGradient
                         colors={[`${diff.color}20`, `${diff.color}10`]}
@@ -629,17 +625,13 @@ function AllProjectsPage() {
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                       >
-                        <ThemedText
-                          style={[styles.difficultyChipTextActive, { color: diff.color }]}
-                        >
+                        <ThemedText style={[styles.difficultyChipTextActive, { color: diff.color }]}>
                           {diff.label}
                         </ThemedText>
                       </LinearGradient>
                     ) : (
                       <View style={styles.difficultyChip}>
-                        <ThemedText style={styles.difficultyChipText}>
-                          {diff.label}
-                        </ThemedText>
+                        <ThemedText style={styles.difficultyChipText}>{diff.label}</ThemedText>
                       </View>
                     )}
                   </Pressable>
@@ -656,7 +648,6 @@ function AllProjectsPage() {
                 const nextIndex = (currentIndex + 1) % options.length;
                 setSortBy(options[nextIndex] as any);
               }}
-             
             >
               <LinearGradient
                 colors={[colors.neutral[100], colors.neutral[200]]}
@@ -687,10 +678,7 @@ function AllProjectsPage() {
               <Ionicons name="alert-circle" size={48} color={Colors.error} />
             </LinearGradient>
             <ThemedText style={styles.errorText}>{error}</ThemedText>
-            <Pressable
-              style={styles.retryButton}
-              onPress={() => loadProjects(1, true)}
-            >
+            <Pressable style={styles.retryButton} onPress={() => loadProjects(1, true)}>
               <LinearGradient
                 colors={[colors.primary[500], colors.primary[700]]}
                 style={styles.retryButtonGradient}
@@ -712,9 +700,7 @@ function AllProjectsPage() {
               <Ionicons name="briefcase-outline" size={64} color={colors.nileBlue} />
             </LinearGradient>
             <ThemedText style={styles.emptyText}>No projects found</ThemedText>
-            <ThemedText style={styles.emptySubtext}>
-              Try adjusting your filters or search query
-            </ThemedText>
+            <ThemedText style={styles.emptySubtext}>Try adjusting your filters or search query</ThemedText>
           </View>
         ) : (
           <ScrollView
@@ -726,10 +712,7 @@ function AllProjectsPage() {
             onScroll={({ nativeEvent }) => {
               const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
               const paddingToBottom = 20;
-              if (
-                layoutMeasurement.height + contentOffset.y >=
-                contentSize.height - paddingToBottom
-              ) {
+              if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
                 handleLoadMore();
               }
             }}
@@ -744,7 +727,7 @@ function AllProjectsPage() {
                 <ProjectCard
                   key={project._id}
                   project={project}
-                  cardAnim={cardAnims[project._id]}
+                  cardAnim={cardAnims[project._id] as any}
                   onPress={() => handleProjectPress(project)}
                   getCategoryGradient={getCategoryGradient}
                   getDifficultyColor={getDifficultyColor}
@@ -769,9 +752,11 @@ function AllProjectsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary},
+    backgroundColor: colors.background.secondary,
+  },
   content: {
-    flex: 1},
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -779,7 +764,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     paddingTop: Platform.OS === 'ios' ? Spacing.xl : Spacing.lg,
-    ...Shadows.strong},
+    ...Shadows.strong,
+  },
   backButton: {
     width: 44,
     height: 44,
@@ -788,33 +774,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)'},
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
   headerCenter: {
     flex: 1,
     alignItems: 'center',
-    marginHorizontal: Spacing.md},
+    marginHorizontal: Spacing.md,
+  },
   headerTitle: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.text.inverse,
     letterSpacing: -0.5,
-    marginBottom: 2},
+    marginBottom: 2,
+  },
   headerSubtitle: {
     fontSize: 13,
     fontWeight: '500',
     color: 'rgba(255, 255, 255, 0.9)',
-    letterSpacing: 0.2},
+    letterSpacing: 0.2,
+  },
   headerRight: {
-    width: 44},
+    width: 44,
+  },
   searchContainer: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
     backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.default},
+    borderBottomColor: colors.border.default,
+  },
   searchBarWrapper: {
     ...Shadows.medium,
-    borderRadius: BorderRadius.lg},
+    borderRadius: BorderRadius.lg,
+  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -822,28 +815,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     height: 56,
     borderWidth: 2,
-    borderColor: colors.border.default},
+    borderColor: colors.border.default,
+  },
   searchIconContainer: {
-    marginRight: Spacing.md},
+    marginRight: Spacing.md,
+  },
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
     fontWeight: '500',
     color: colors.text.primary,
-    paddingVertical: 0},
+    paddingVertical: 0,
+  },
   clearButton: {
     marginLeft: Spacing.sm,
-    padding: Spacing.xs},
+    padding: Spacing.xs,
+  },
   filtersSection: {
     backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: colors.border.default,
-    paddingVertical: Spacing.base},
+    paddingVertical: Spacing.base,
+  },
   filterScrollView: {
-    marginBottom: Spacing.md},
+    marginBottom: Spacing.md,
+  },
   filterContent: {
     paddingHorizontal: Spacing.lg,
-    gap: 10},
+    gap: 10,
+  },
   filterChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -854,7 +854,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     gap: Spacing.sm,
     borderWidth: 1.5,
-    borderColor: 'transparent'},
+    borderColor: 'transparent',
+  },
   filterChipActive: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -863,26 +864,32 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius['2xl'],
     marginRight: 10,
     gap: Spacing.sm,
-    ...Shadows.medium},
+    ...Shadows.medium,
+  },
   filterChipText: {
     ...Typography.body,
     fontWeight: '700',
     color: colors.text.tertiary,
-    letterSpacing: 0.2},
+    letterSpacing: 0.2,
+  },
   filterChipTextActive: {
     ...Typography.body,
     fontWeight: '700',
     color: colors.text.inverse,
-    letterSpacing: 0.2},
+    letterSpacing: 0.2,
+  },
   filterRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    gap: Spacing.md},
+    gap: Spacing.md,
+  },
   difficultyScrollView: {
-    flex: 1},
+    flex: 1,
+  },
   difficultyContent: {
-    gap: Spacing.sm},
+    gap: Spacing.sm,
+  },
   difficultyChip: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
@@ -890,54 +897,65 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     borderWidth: 1.5,
-    borderColor: 'transparent'},
+    borderColor: 'transparent',
+  },
   difficultyChipActive: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
     marginRight: Spacing.sm,
-    borderWidth: 1.5},
+    borderWidth: 1.5,
+  },
   difficultyChipText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   difficultyChipTextActive: {
     fontSize: 13,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   sortButton: {
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    ...Shadows.subtle},
+    ...Shadows.subtle,
+  },
   sortButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    gap: 6},
+    gap: 6,
+  },
   sortText: {
     fontSize: 13,
     fontWeight: '700',
     color: colors.nileBlue,
-    letterSpacing: 0.2},
+    letterSpacing: 0.2,
+  },
   projectsList: {
-    flex: 1},
+    flex: 1,
+  },
   projectsListContent: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.lg,
-    paddingBottom: 100},
+    paddingBottom: 100,
+  },
   projectCard: {
     marginBottom: Spacing.lg,
     borderRadius: BorderRadius['2xl'],
     overflow: 'hidden',
-    ...Shadows.strong},
+    ...Shadows.strong,
+  },
   cardGradient: {
     padding: Spacing.lg,
     borderRadius: BorderRadius['2xl'],
     position: 'relative',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)'},
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+  },
   decorativeCircle1: {
     position: 'absolute',
     width: 120,
@@ -945,7 +963,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
     backgroundColor: 'rgba(139, 92, 246, 0.05)',
     top: -40,
-    right: -40},
+    right: -40,
+  },
   decorativeCircle2: {
     position: 'absolute',
     width: 80,
@@ -953,7 +972,8 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: 'rgba(139, 92, 246, 0.03)',
     bottom: -20,
-    left: -20},
+    left: -20,
+  },
   featuredBadgeContainer: {
     position: 'absolute',
     top: Spacing.base,
@@ -961,30 +981,35 @@ const styles = StyleSheet.create({
     zIndex: 10,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    ...Shadows.medium},
+    ...Shadows.medium,
+  },
   featuredBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    gap: 6},
+    gap: 6,
+  },
   featuredText: {
     fontSize: 11,
     fontWeight: '800',
     color: colors.text.inverse,
-    letterSpacing: 0.3},
+    letterSpacing: 0.3,
+  },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 14,
-    zIndex: 5},
+    zIndex: 5,
+  },
   cardHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: Spacing.md},
+    marginRight: Spacing.md,
+  },
   categoryIconContainer: {
     width: 48,
     height: 48,
@@ -992,38 +1017,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
-    ...Shadows.medium},
+    ...Shadows.medium,
+  },
   cardTitleContainer: {
-    flex: 1},
+    flex: 1,
+  },
   cardTitle: {
     ...Typography.h3,
     fontWeight: '800',
     color: colors.text.primary,
     letterSpacing: -0.5,
-    lineHeight: 26},
+    lineHeight: 26,
+  },
   difficultyBadge: {
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.lg,
-    borderWidth: 1.5},
+    borderWidth: 1.5,
+  },
   difficultyText: {
     ...Typography.bodySmall,
     fontWeight: '800',
     textTransform: 'capitalize',
-    letterSpacing: 0.3},
+    letterSpacing: 0.3,
+  },
   cardDescription: {
     fontSize: 15,
     color: colors.text.tertiary,
     lineHeight: 22,
     marginBottom: Spacing.base,
     zIndex: 5,
-    fontWeight: '500'},
+    fontWeight: '500',
+  },
   cardFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 14,
     zIndex: 5,
-    gap: Spacing.md},
+    gap: Spacing.md,
+  },
   rewardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1035,12 +1067,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    elevation: 6},
+    elevation: 6,
+  },
   rewardAmount: {
     fontSize: 16,
     fontWeight: '800',
     color: colors.text.inverse,
-    letterSpacing: 0.2},
+    letterSpacing: 0.2,
+  },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1048,11 +1082,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: BorderRadius.md,
     backgroundColor: colors.background.secondary,
-    gap: 6},
+    gap: 6,
+  },
   timeText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   statsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1060,28 +1096,33 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: BorderRadius.md,
     backgroundColor: colors.background.secondary,
-    gap: 6},
+    gap: 6,
+  },
   statsText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: Spacing.xs,
     gap: Spacing.sm,
-    zIndex: 5},
+    zIndex: 5,
+  },
   tag: {
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(139, 92, 246, 0.2)'},
+    borderColor: 'rgba(139, 92, 246, 0.2)',
+  },
   tagText: {
     fontSize: 11,
     fontWeight: '700',
     color: colors.nileBlue,
-    letterSpacing: 0.2},
+    letterSpacing: 0.2,
+  },
   arrowContainer: {
     position: 'absolute',
     bottom: Spacing.lg,
@@ -1092,17 +1133,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 5},
+    zIndex: 5,
+  },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing['3xl']},
+    paddingHorizontal: Spacing['3xl'],
+  },
   loadingText: {
     marginTop: Spacing.lg,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   errorIconContainer: {
     width: 96,
     height: 96,
@@ -1110,13 +1154,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.lg,
-    ...Shadows.medium},
+    ...Shadows.medium,
+  },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.h4,
     fontWeight: '700',
     color: Colors.error,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   retryButton: {
     marginTop: 28,
     borderRadius: BorderRadius.lg,
@@ -1125,16 +1171,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 6},
+    elevation: 6,
+  },
   retryButtonGradient: {
     paddingHorizontal: Spacing['2xl'],
     paddingVertical: 14,
-    borderRadius: BorderRadius.lg},
+    borderRadius: BorderRadius.lg,
+  },
   retryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '800',
     color: colors.text.inverse,
-    letterSpacing: 0.3},
+    letterSpacing: 0.3,
+  },
   emptyIconContainer: {
     width: 120,
     height: 120,
@@ -1142,29 +1191,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.xl,
-    ...Shadows.strong},
+    ...Shadows.strong,
+  },
   emptyText: {
     marginTop: Spacing.base,
     ...Typography.h2,
     fontWeight: '800',
     color: colors.text.primary,
-    letterSpacing: -0.5},
+    letterSpacing: -0.5,
+  },
   emptySubtext: {
     marginTop: Spacing.md,
     fontSize: 15,
     fontWeight: '500',
     color: colors.text.tertiary,
     textAlign: 'center',
-    lineHeight: 22},
+    lineHeight: 22,
+  },
   loadMoreContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing.xl,
-    gap: Spacing.md},
+    gap: Spacing.md,
+  },
   loadMoreText: {
     ...Typography.body,
     fontWeight: '600',
-    color: colors.text.tertiary}});
+    color: colors.text.tertiary,
+  },
+});
 
 export default withErrorBoundary(AllProjectsPage, 'Projects');

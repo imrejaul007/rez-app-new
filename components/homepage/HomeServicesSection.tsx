@@ -48,7 +48,7 @@ const HomeServicesSection: React.FC = () => {
         if (!isMounted()) return;
         setCategories(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   repairTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   repairSubtitle: {
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   bottomTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 });
 

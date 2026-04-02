@@ -61,7 +61,7 @@ function GamificationDashboard() {
 
       // Refresh wallet balance via context
       await refreshWallet();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -724,8 +724,8 @@ const styles = StyleSheet.create({
   },
   viewAllText: {
     color: colors.background.primary,
-    fontWeight: 'bold',
     ...Typography.bodyLarge,
+    fontWeight: 'bold' as const,
   },
 });
 

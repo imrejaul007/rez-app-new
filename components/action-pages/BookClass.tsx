@@ -124,7 +124,7 @@ function BookClassPage() {
         if (!isMounted()) return;
         setSalons(bookable.length > 0 ? bookable : allStores.slice(0, 20));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -158,7 +158,7 @@ function BookClassPage() {
         const firstAvailable = serviceSlots.find(s => s.available);
         if (firstAvailable) setSelectedTime(firstAvailable.time);
       }
-    } catch (err) {
+    } catch (err: any) {
       const fallback: TimeSlot[] = [
         '06:00', '06:30', '07:00', '07:30', '08:00', '08:30',
         '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
@@ -230,8 +230,8 @@ function BookClassPage() {
 
       if (res.success) {
         if (!isMounted()) return;
-        setBookingId(res.data?.id || res.data?._id || null);
-        setBookingNumber(res.data?.appointmentNumber || res.data?.bookingNumber || null);
+        setBookingId(res.data?.id || (res.data as any)?._id || null);
+        setBookingNumber((res.data as any)?.appointmentNumber || (res.data as any)?.bookingNumber || null);
         setStep('confirm');
       } else {
         platformAlertSimple('Booking Failed', res.message || 'Could not create booking. Please try again.');
@@ -295,7 +295,7 @@ function BookClassPage() {
             <Text style={styles.storeCuisine} numberOfLines={1}>{getServiceTags(store)}</Text>
             <View style={styles.storeMetaRow}>
               <View style={styles.storeRating}>
-                <Ionicons name="star" size={12} color={COLORS.goldDark} />
+                <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
                 <Text style={styles.storeRatingText}>{rating}</Text>
                 <Text style={styles.storeReviewCount}>({reviewCount})</Text>
               </View>
@@ -346,7 +346,7 @@ function BookClassPage() {
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.orange} />
+            <ActivityIndicator size="large" color={(COLORS as any).orange} />
             <Text style={styles.loadingText}>Finding gyms & studios...</Text>
           </View>
         ) : filteredSalons.length === 0 ? (
@@ -383,7 +383,7 @@ function BookClassPage() {
               colors={[COLORS.orangeLight, '#FFEDD5']}
               style={styles.confirmIconGradient}
             >
-              <Ionicons name="checkmark-circle" size={64} color={COLORS.orange} />
+              <Ionicons name="checkmark-circle" size={64} color={(COLORS as any).orange} />
             </LinearGradient>
           </View>
           <Text style={styles.confirmTitle}>Class Booked!</Text>
@@ -400,7 +400,7 @@ function BookClassPage() {
           <View style={styles.confirmCard}>
             <View style={styles.confirmRow}>
               <View style={[styles.confirmRowIcon, { backgroundColor: 'rgba(249,115,22,0.1)' }]}>
-                <Ionicons name="barbell" size={16} color={COLORS.orange} />
+                <Ionicons name="barbell" size={16} color={(COLORS as any).orange} />
               </View>
               <View>
                 <Text style={styles.confirmRowLabel}>Gym / Studio</Text>
@@ -430,7 +430,7 @@ function BookClassPage() {
           </View>
 
           <View style={styles.confirmNote}>
-            <Ionicons name="information-circle" size={16} color={COLORS.orange} />
+            <Ionicons name="information-circle" size={16} color={(COLORS as any).orange} />
             <Text style={styles.confirmNoteText}>
               No pre-payment required. Earn bonus coins when you check in at the gym!
             </Text>
@@ -480,7 +480,7 @@ function BookClassPage() {
         {selectedStore?.name && (
           <View style={styles.storePreview}>
             <LinearGradient
-              colors={[COLORS.orange, COLORS.orangeDark]}
+              colors={[(COLORS as any).orange, COLORS.orangeDark]}
               style={styles.storePreviewGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -513,14 +513,14 @@ function BookClassPage() {
             return (
               <Pressable
                 key={service.id}
-                style={[styles.serviceChip, isSelected && styles.serviceChipActive]}
+                style={[styles.serviceChip, isSelected ? styles.serviceChipActive : null]}
                 onPress={() => setSelectedService(service.id)}
               >
                 <Text style={styles.serviceEmoji}>{service.icon}</Text>
-                <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelActive]}>
+                <Text style={[styles.serviceLabel, isSelected ? styles.serviceLabelActive : null]}>
                   {service.label}
                 </Text>
-                <Text style={[styles.serviceDuration, isSelected && styles.serviceDurationActive]}>
+                <Text style={[styles.serviceDuration, isSelected ? styles.serviceDurationActive : null]}>
                   {service.duration}
                 </Text>
               </Pressable>
@@ -537,16 +537,16 @@ function BookClassPage() {
             return (
               <Pressable
                 key={i}
-                style={[styles.dateChip, isSelected && styles.dateChipActive]}
+                style={[styles.dateChip, isSelected ? styles.dateChipActive : null]}
                 onPress={() => setSelectedDate(date)}
               >
-                <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>
                   {isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}
                 </Text>
-                <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>
+                <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>
                   {date.getDate()}
                 </Text>
-                <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>
                   {date.toLocaleDateString(undefined, { month: 'short' })}
                 </Text>
               </Pressable>
@@ -558,7 +558,7 @@ function BookClassPage() {
         <View style={styles.formLabelRow}>
           <Text style={styles.formLabel}>Select Time</Text>
           {isLoadingAvailability ? (
-            <ActivityIndicator size="small" color={COLORS.orange} />
+            <ActivityIndicator size="small" color={(COLORS as any).orange} />
           ) : (
             <Text style={styles.availableLabel}>
               {availableCount} slots available
@@ -568,7 +568,7 @@ function BookClassPage() {
 
         {isLoadingAvailability ? (
           <View style={styles.timeLoadingWrap}>
-            <ActivityIndicator size="small" color={COLORS.orange} />
+            <ActivityIndicator size="small" color={(COLORS as any).orange} />
             <Text style={styles.timeLoadingText}>Checking availability...</Text>
           </View>
         ) : (
@@ -682,7 +682,7 @@ function BookClassPage() {
 
         <View style={styles.bonusNote}>
           <View style={styles.bonusIconWrap}>
-            <Ionicons name="wallet-outline" size={14} color={COLORS.orange} />
+            <Ionicons name="wallet-outline" size={14} color={(COLORS as any).orange} />
           </View>
           <Text style={styles.bonusText}>
             No pre-payment required. Earn bonus coins when you check in at the gym!
@@ -728,14 +728,14 @@ const styles = StyleSheet.create({
   storeImgPlaceholder: { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' },
   storeCashbackBadge: {
     position: 'absolute', bottom: -4, right: -4,
-    backgroundColor: COLORS.orange, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
+    backgroundColor: (COLORS as any).orange, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
   },
   storeCashbackText: { fontSize: 9, fontWeight: '700', color: COLORS.white },
   storeInfo: { flex: 1 },
   storeNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   storeName: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary, flex: 1 },
   verifiedBadge: { backgroundColor: COLORS.orangeLight, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: COLORS.orange },
+  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: (COLORS as any).orange },
   storeCuisine: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   storeMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6 },
   storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
@@ -766,19 +766,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 12, borderRadius: 12,
     backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border,
   },
-  serviceChipActive: { backgroundColor: COLORS.orangeLight, borderColor: COLORS.orange },
+  serviceChipActive: { backgroundColor: COLORS.orangeLight, borderColor: (COLORS as any).orange },
   serviceEmoji: { fontSize: 20 },
   serviceLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, flex: 1 },
   serviceLabelActive: { color: COLORS.orangeDark, fontWeight: '600' },
   serviceDuration: { fontSize: 10, color: COLORS.textSecondary },
-  serviceDurationActive: { color: COLORS.orange },
+  serviceDurationActive: { color: (COLORS as any).orange },
   dateScroll: { marginBottom: 4 },
   dateChip: {
     width: 64, height: 78, borderRadius: 14, backgroundColor: COLORS.white,
     justifyContent: 'center', alignItems: 'center', marginRight: 8,
     borderWidth: 1, borderColor: 'transparent',
   },
-  dateChipActive: { backgroundColor: COLORS.orange, borderColor: COLORS.orange },
+  dateChipActive: { backgroundColor: (COLORS as any).orange, borderColor: (COLORS as any).orange },
   dateDay: { fontSize: 10, color: COLORS.textSecondary, marginBottom: 2, fontWeight: '500' },
   dateDayActive: { color: 'rgba(255,255,255,0.7)' },
   dateNum: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
@@ -795,7 +795,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white, minWidth: 70, alignItems: 'center',
     borderWidth: 1, borderColor: 'transparent',
   },
-  timeChipActive: { backgroundColor: COLORS.orange, borderColor: COLORS.orange },
+  timeChipActive: { backgroundColor: (COLORS as any).orange, borderColor: (COLORS as any).orange },
   timeChipUnavailable: { backgroundColor: colors.neutral[100], borderColor: colors.neutral[200] },
   timeText: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary },
   timeTextActive: { color: COLORS.white },
@@ -828,7 +828,7 @@ const styles = StyleSheet.create({
   summaryLabel: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary },
   submitBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    backgroundColor: COLORS.orange, borderRadius: 16, paddingVertical: 16, marginTop: 20,
+    backgroundColor: (COLORS as any).orange, borderRadius: 16, paddingVertical: 16, marginTop: 20,
   },
   submitBtnDisabled: { opacity: 0.5 },
   submitBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
@@ -876,11 +876,11 @@ const styles = StyleSheet.create({
   },
   confirmNoteText: { flex: 1, fontSize: 13, color: COLORS.orangeDark, lineHeight: 18 },
   doneBtn: {
-    width: '100%', paddingVertical: 16, backgroundColor: COLORS.orange, borderRadius: 16, alignItems: 'center',
+    width: '100%', paddingVertical: 16, backgroundColor: (COLORS as any).orange, borderRadius: 16, alignItems: 'center',
   },
   doneBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
   viewBookingsBtn: { marginTop: 12, paddingVertical: 12, alignItems: 'center' },
-  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: COLORS.orange },
+  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: (COLORS as any).orange },
 });
 
 export default React.memo(BookClassPage);

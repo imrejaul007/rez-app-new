@@ -144,7 +144,7 @@ function MyVisitsPage() {
               } else {
                 showAlert('Error', response.message || 'Failed to cancel visit', undefined, 'error');
               }
-            } catch (error) {
+            } catch (error: any) {
               showAlert('Error', 'Unable to cancel visit. Please try again.', undefined, 'error');
             }
           },
@@ -235,7 +235,7 @@ function MyVisitsPage() {
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
           <Text style={styles.headerTitle}>My Visits</Text>
-          <Pressable onPress={loadVisits} style={styles.refreshButton}>
+          <Pressable onPress={() => loadVisits()} style={styles.refreshButton}>
             <Ionicons name="refresh" size={22} color="white" />
           </Pressable>
         </LinearGradient>

@@ -431,7 +431,7 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
 
 function SharedCategoryPage() {
   const isMounted = useIsMounted();
-  const { subcategory, slug } = useLocalSearchParams<{ subcategory: string; slug: string }>();
+  const { subcategory, slug } = useLocalSearchParams<any>();
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -451,10 +451,7 @@ function SharedCategoryPage() {
   const meta = SUBCATEGORY_META[subcategory || ''] || {
     title:
       getCategoryConfig(slug || '')?.subcategories?.find((s) => s.slug === subcategory)?.name ||
-      subcategory
-        ?.split('-')
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ') ||
+      (subcategory?.split('-') || []).map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') ||
       categoryTheme.name,
     description: '',
     icon:
@@ -476,10 +473,7 @@ function SharedCategoryPage() {
     // Fallback: check our local meta
     if (SUBCATEGORY_META[subcategory]) return SUBCATEGORY_META[subcategory].title;
     // Last fallback: convert slug to title
-    return subcategory
-      .split('-')
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
+    return (subcategory.split('-') as string[]).map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }, [subcategory, slug]);
 
   const fetchStores = useCallback(
@@ -514,7 +508,7 @@ function SharedCategoryPage() {
           if (!isMounted()) return;
           setHasMore(storesData.length >= 20);
         }
-      } catch (err) {
+      } catch (err: any) {
         // BUG-025: surface the error to the user instead of silently swallowing it
         if (!isMounted()) return;
         setFetchError('Unable to load stores. Please check your connection and try again.');
@@ -676,7 +670,7 @@ function SharedCategoryPage() {
           {SORT_OPTIONS.map((sort) => (
             <Pressable
               key={sort.id}
-              style={[styles.sortChip, activeSort === sort.id && styles.sortChipActive]}
+              style={[styles.sortChip, activeSort === sort.id ? styles.sortChipActive : null]}
               onPress={() => setActiveSort(sort.id)}
             >
               <Ionicons
@@ -684,7 +678,7 @@ function SharedCategoryPage() {
                 size={14}
                 color={activeSort === sort.id ? SHARED_COLORS.white : SHARED_COLORS.textSecondary}
               />
-              <Text style={[styles.sortChipText, activeSort === sort.id && styles.sortChipTextActive]}>
+              <Text style={[styles.sortChipText, activeSort === sort.id ? styles.sortChipTextActive : null]}>
                 {sort.label}
               </Text>
             </Pressable>
@@ -698,11 +692,11 @@ function SharedCategoryPage() {
           {FILTER_CHIPS.map((filter) => (
             <Pressable
               key={filter.id}
-              style={[styles.filterChip, activeFilter === filter.id && styles.filterChipActive]}
+              style={[styles.filterChip, activeFilter === filter.id ? styles.filterChipActive : null]}
               onPress={() => setActiveFilter(filter.id)}
             >
               {filter.icon && <Text style={styles.filterChipIcon}>{filter.icon}</Text>}
-              <Text style={[styles.filterChipText, activeFilter === filter.id && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, activeFilter === filter.id ? styles.filterChipTextActive : null]}>
                 {filter.label}
               </Text>
             </Pressable>

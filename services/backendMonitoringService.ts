@@ -19,7 +19,7 @@ const devLog = {
 };
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 
 // ============================================================================
 // Types
@@ -96,8 +96,8 @@ class BackendMonitoringService {
   private cacheMetrics: CacheOperationMetric[] = [];
   private alerts: PerformanceAlert[] = [];
   private isEnabled = __DEV__;
-  private healthCheckInterval?: NodeJS.Timeout;
-  private saveDebounceTimer: NodeJS.Timeout | null = null;
+  private healthCheckInterval?: ReturnType<typeof setTimeout>;
+  private saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     // Initialization deferred to setEnabled() or first use

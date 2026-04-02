@@ -32,7 +32,7 @@ const HorizontalScrollSection = React.memo(function HorizontalScrollSection({
       setRefreshing(true);
       try {
         await onRefresh();
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -84,25 +84,20 @@ const HorizontalScrollSection = React.memo(function HorizontalScrollSection({
       </ThemedView>
 
       {/* Horizontal Scroll Content - Optimized FlatList for all platforms */}
-      <FlashList
-        data={section.items}
-        horizontal
-        nestedScrollEnabled={true}
-        showsHorizontalScrollIndicator={showIndicator}
-        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: spacing }]}
-        style={Platform.OS === 'web' ? styles.webFlatListContainer : undefined}
-        // Performance optimizations
-        removeClippedSubviews={Platform.OS !== 'web'} // Enable on native for better performance
-        maxToRenderPerBatch={5} // Render 5 items per batch
-        updateCellsBatchingPeriod={50} // Update every 50ms
-        initialNumToRender={4} // Only render 4 items initially
-        windowSize={5} // Keep 5 screens worth of items in memory
-        scrollEventThrottle={16}
-        decelerationRate="normal"
-        estimatedItemSize={150}
-        keyExtractor={(item, index) => item?.id || item?._id || `item-${index}`}
-        renderItem={renderSectionCard}
-      />
+      {React.createElement(FlashList as any, {
+        data: section.items,
+        horizontal: true,
+        nestedScrollEnabled: true,
+        showsHorizontalScrollIndicator: showIndicator,
+        contentContainerStyle: [styles.scrollContent, { paddingHorizontal: spacing }],
+        style: Platform.OS === 'web' ? styles.webFlatListContainer : undefined,
+        removeClippedSubviews: Platform.OS !== 'web',
+        scrollEventThrottle: 16,
+        decelerationRate: 'normal',
+        estimatedItemSize: 150,
+        keyExtractor: (item: any, index: number) => item?.id || item?._id || `item-${index}`,
+        renderItem: renderSectionCard,
+      })}
 
       {/* Optional iOS Always-visible Scroll Indicator */}
       {Platform.OS === 'ios' && showIndicator && (
@@ -118,8 +113,8 @@ const HorizontalScrollSection = React.memo(function HorizontalScrollSection({
   if (prevProps.isLoading !== nextProps.isLoading) return false;
 
   // Check if item IDs changed
-  const prevIds = prevProps.section.items.map((item, i) => item?.id || item?._id || i).join(',');
-  const nextIds = nextProps.section.items.map((item, i) => item?.id || item?._id || i).join(',');
+  const prevIds = prevProps.section.items.map((item, i) => (item as any)?.id || (item as any)?._id || i).join(',');
+  const nextIds = nextProps.section.items.map((item, i) => (item as any)?.id || (item as any)?._id || i).join(',');
   if (prevIds !== nextIds) return false;
 
   // Check if other props changed

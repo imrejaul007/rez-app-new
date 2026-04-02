@@ -100,7 +100,7 @@ const FinancialPage: React.FC = () => {
           image: service.images?.[0] || undefined,
         }));
         if (!isMounted()) return;
-        setFeaturedServices(transformed);
+        setFeaturedServices(transformed as any);
         trackEvent('financial_featured_loaded', {
           count: transformed.length,
         });
@@ -229,9 +229,11 @@ const FinancialPage: React.FC = () => {
                   <View style={[styles.categoryIcon, { backgroundColor: `${category.color || cat.color}20` }]}>
                     <Text style={styles.categoryEmoji}>{category.icon || cat.icon}</Text>
                   </View>
-                  <Text style={styles.categoryTitle}>{category.name || cat.title}</Text>
+                  <Text style={styles.categoryTitle}>{(category as any).name || (cat as any).title}</Text>
                   <Text style={styles.categoryCount}>
-                    {category.serviceCount ? `${category.serviceCount}+ services` : cat.count}
+                    {(category as any).serviceCount
+                      ? `${(category as any).serviceCount}+ services`
+                      : (cat as any).count}
                   </Text>
                 </Pressable>
               );

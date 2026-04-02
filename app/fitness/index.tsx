@@ -123,7 +123,7 @@ const FitnessPage: React.FC = () => {
         maxCashback: maxCashback || 35,
         coinsMultiplier: '3X',
       });
-    } catch (error) {
+    } catch (error: any) {
       // Set fallback data
       if (!isMounted()) return;
       setCategories([
@@ -278,7 +278,7 @@ const FitnessPage: React.FC = () => {
                   accessibilityRole="button"
                   accessibilityLabel={`${gym.name}, ${gym.location?.city || 'Bangalore'}, rating ${gym.ratings?.average?.toFixed(1) || '4.5'}`}
                 >
-                  <CachedImage source={gym.banner?.[0] || gym.logo || undefined} style={styles.gymImage} />
+                  <CachedImage source={gym.banner?.[0] || gym.logo || ''} style={styles.gymImage} />
                   <View style={styles.cashbackBadge}>
                     <Text style={styles.cashbackText}>{gym.offers?.cashback || 15}%</Text>
                   </View>

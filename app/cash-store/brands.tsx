@@ -13,7 +13,7 @@ import {
   Linking,
   Modal,
   StatusBar,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -85,10 +85,10 @@ function transformToCashStoreBrand(brand: any): CashStoreBrand {
 function CashStoreBrandsPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { filter } = useLocalSearchParams<{ filter?: string }>();
+  const { filter } = useLocalSearchParams<any>();
   const insets = useSafeAreaInsets();
   const isFirstSearch = useRef(true);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clickingRef = useRef(false);
   const [searchFocused, setSearchFocused] = useState(false);
 
@@ -122,7 +122,9 @@ function CashStoreBrandsPage() {
     }
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => setDebouncedSearch(searchQuery), 300);
-    return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
   }, [searchQuery]);
 
   // ─── Fetch Categories ─────────────────────────────────────
@@ -136,48 +138,51 @@ function CashStoreBrandsPage() {
   }, []);
 
   // ─── Fetch Brands ─────────────────────────────────────────
-  const fetchBrands = useCallback(async (pageNum: number, append: boolean) => {
-    try {
-      setError(null);
-      let data: any[] = [];
-      let total = 0;
+  const fetchBrands = useCallback(
+    async (pageNum: number, append: boolean) => {
+      try {
+        setError(null);
+        let data: any[] = [];
+        let total = 0;
 
-      if (debouncedSearch.length >= 2) {
-        const result = await cashStoreApi.searchBrands(debouncedSearch, PAGE_SIZE);
-        data = result.brands;
-        total = result.total;
-      } else {
-        const params: any = { limit: PAGE_SIZE, page: pageNum, sort: sortBy };
-        if (selectedCategory === 'most-popular') {
-          params.filter = 'popular';
-        } else if (selectedCategory === 'high-cashback') {
-          params.filter = 'high-cashback';
-        } else if (selectedCategory !== 'all') {
-          params.category = selectedCategory;
+        if (debouncedSearch.length >= 2) {
+          const result = await cashStoreApi.searchBrands(debouncedSearch, PAGE_SIZE);
+          data = result.brands;
+          total = result.total;
+        } else {
+          const params: any = { limit: PAGE_SIZE, page: pageNum, sort: sortBy };
+          if (selectedCategory === 'most-popular') {
+            params.filter = 'popular';
+          } else if (selectedCategory === 'high-cashback') {
+            params.filter = 'high-cashback';
+          } else if (selectedCategory !== 'all') {
+            params.category = selectedCategory;
+          }
+          const result = await cashStoreApi.getBrands(params);
+          data = result.brands;
+          total = result.total;
         }
-        const result = await cashStoreApi.getBrands(params);
-        data = result.brands;
-        total = result.total;
-      }
 
-      const mapped = data.map(transformToCashStoreBrand);
-      if (append) {
-        setBrands(prev => [...prev, ...mapped]);
-      } else {
+        const mapped = data.map(transformToCashStoreBrand);
+        if (append) {
+          setBrands((prev) => [...prev, ...mapped]);
+        } else {
+          if (!isMounted()) return;
+          setBrands(mapped);
+        }
         if (!isMounted()) return;
-        setBrands(mapped);
-      }
-      if (!isMounted()) return;
-      setTotalBrands(total);
-      if (!isMounted()) return;
-      setHasMore(mapped.length >= PAGE_SIZE);
-    } catch (err) {
-      if (!append) {
+        setTotalBrands(total);
         if (!isMounted()) return;
-        setError('Unable to load brands. Pull down to retry.');
+        setHasMore(mapped.length >= PAGE_SIZE);
+      } catch (err: any) {
+        if (!append) {
+          if (!isMounted()) return;
+          setError('Unable to load brands. Pull down to retry.');
+        }
       }
-    }
-  }, [debouncedSearch, selectedCategory, sortBy]);
+    },
+    [debouncedSearch, selectedCategory, sortBy],
+  );
 
   // Trigger fetch on filter changes
   useEffect(() => {
@@ -203,48 +208,59 @@ function CashStoreBrandsPage() {
     fetchBrands(nextPage, true).finally(() => setIsLoadingMore(false));
   }, [isLoadingMore, hasMore, page, fetchBrands, debouncedSearch]);
 
-  const handleBrandPress = useCallback(async (brand: CashStoreBrand) => {
-    if (clickingRef.current) return;
-    clickingRef.current = true;
+  const handleBrandPress = useCallback(
+    async (brand: CashStoreBrand) => {
+      if (clickingRef.current) return;
+      clickingRef.current = true;
 
-    try {
-      if (brand.externalUrl) {
-        // Retry up to 2 times for tracking
-        let trackingUrl: string | undefined;
-        for (let attempt = 0; attempt <= 2; attempt++) {
-          try {
-            const result = await cashStoreApi.trackAffiliateClick(brand._id);
-            trackingUrl = result?.trackingUrl || brand.externalUrl;
-            break;
-          } catch (err) {
-            if (attempt === 2) throw err;
-            await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 500));
+      try {
+        if (brand.externalUrl) {
+          // Retry up to 2 times for tracking
+          let trackingUrl: string | undefined;
+          for (let attempt = 0; attempt <= 2; attempt++) {
+            try {
+              const result = await cashStoreApi.trackAffiliateClick(brand._id);
+              trackingUrl = result?.trackingUrl || brand.externalUrl;
+              break;
+            } catch (err: any) {
+              if (attempt === 2) throw err;
+              await new Promise((r) => setTimeout(r, Math.pow(2, attempt) * 500));
+            }
           }
+
+          const url = trackingUrl || brand.externalUrl;
+          if (!url) throw new Error('No URL available');
+
+          await WebBrowser.openBrowserAsync(url, {
+            toolbarColor: colors.nileBlue,
+            controlsColor: colors.background.primary,
+          });
+        } else if (brand.storeId) {
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as any);
         }
-
-        const url = trackingUrl || brand.externalUrl;
-        if (!url) throw new Error('No URL available');
-
-        await WebBrowser.openBrowserAsync(url, {
-          toolbarColor: colors.nileBlue,
-          controlsColor: colors.background.primary,
-        });
-      } else if (brand.storeId) {
-        router.push(`/MainStorePage?storeId=${brand.storeId}` as any);
+      } catch (error: any) {
+        if (brand.externalUrl) {
+          platformAlertConfirm(
+            'Tracking Issue',
+            'Your cashback may not be tracked. Open anyway?',
+            () => {
+              try {
+                Linking.openURL(brand.externalUrl!);
+              } catch (e: any) {
+                catchAndWarn(e, 'CashStoreBrands/openURL');
+              }
+            },
+            'Open Anyway',
+          );
+        }
+      } finally {
+        setTimeout(() => {
+          clickingRef.current = false;
+        }, 1000);
       }
-    } catch (error) {
-      if (brand.externalUrl) {
-        platformAlertConfirm(
-          'Tracking Issue',
-          'Your cashback may not be tracked. Open anyway?',
-          () => { try { Linking.openURL(brand.externalUrl!); } catch (e) { catchAndWarn(e, 'CashStoreBrands/openURL'); } },
-          'Open Anyway'
-        );
-      }
-    } finally {
-      setTimeout(() => { clickingRef.current = false; }, 1000);
-    }
-  }, [router]);
+    },
+    [router],
+  );
 
   const handleCategorySelect = useCallback((slug: string) => {
     setSelectedCategory(slug);
@@ -259,94 +275,89 @@ function CashStoreBrandsPage() {
   }, []);
 
   const currentSortLabel = useMemo(() => {
-    return SORT_OPTIONS.find(s => s.key === sortBy)?.label || 'Best Match';
+    return SORT_OPTIONS.find((s) => s.key === sortBy)?.label || 'Best Match';
   }, [sortBy]);
 
   // ─── Render Brand Card ────────────────────────────────────
-  const renderBrandCard = useCallback(({ item, index }: { item: CashStoreBrand; index: number }) => (
-    <CashStoreBrandCard brand={item} index={index} onPress={handleBrandPress} />
-  ), [handleBrandPress]);
+  const renderBrandCard = useCallback(
+    ({ item, index }: { item: CashStoreBrand; index: number }) => (
+      <CashStoreBrandCard brand={item} index={index} onPress={handleBrandPress} />
+    ),
+    [handleBrandPress],
+  );
 
   const keyExtractor = useCallback((item: CashStoreBrand) => item._id, []);
 
   // ─── List Header (scrolls with content) ─────────────────
-  const ListHeader = useMemo(() => (
-    <View>
-      {/* Category Filter Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chipsContent}
-        style={styles.chipsScroll}
-      >
-        {categories.map((cat) => {
-          const isActive = selectedCategory === cat.slug;
-          return (
-            <Pressable
-              key={cat._id}
-              onPress={() => handleCategorySelect(cat.slug)}
-             
-              style={styles.chipTouchable}
-            >
-              {isActive ? (
-                <LinearGradient
-                  colors={[colors.nileBlue, colors.brand.nileBlueLight]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={[styles.chip, styles.chipActive]}
-                >
-                  {cat.icon ? (
-                    <Ionicons name={cat.icon as any} size={12} color={colors.text.inverse} />
-                  ) : null}
-                  <Text style={[styles.chipText, styles.chipTextActive]}>
-                    {cat.name}
-                  </Text>
-                </LinearGradient>
-              ) : (
-                <View style={styles.chip}>
-                  {cat.icon ? (
-                    <Ionicons name={cat.icon as any} size={12} color="#7C8A97" />
-                  ) : null}
-                  <Text style={styles.chipText}>
-                    {cat.name}
-                  </Text>
-                </View>
-              )}
-            </Pressable>
-          );
-        })}
-      </ScrollView>
-
-      {/* Sort + Results Count */}
-      <View style={styles.sortRow}>
-        <View style={styles.resultsWrap}>
-          <Text style={styles.resultsText}>
-            {debouncedSearch.length >= 2
-              ? `${brands.length} result${brands.length !== 1 ? 's' : ''}`
-              : `${totalBrands > 0 ? totalBrands : '—'} brands`
-            }
-          </Text>
-          {selectedCategory !== 'all' && (
-            <Pressable
-              onPress={() => handleCategorySelect('all')}
-              style={styles.clearFilterBtn}
-            >
-              <Ionicons name="close-circle" size={12} color={colors.text.tertiary} />
-              <Text style={styles.clearFilterText}>Clear</Text>
-            </Pressable>
-          )}
-        </View>
-        <Pressable
-          onPress={() => setShowSortModal(true)}
-          style={styles.sortBtn}
+  const ListHeader = useMemo(
+    () => (
+      <View>
+        {/* Category Filter Chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsContent}
+          style={styles.chipsScroll}
         >
-          <Ionicons name="swap-vertical" size={13} color={colors.nileBlue} />
-          <Text style={styles.sortBtnText}>{currentSortLabel}</Text>
-          <Ionicons name="chevron-down" size={11} color="#B0B8C1" />
-        </Pressable>
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat.slug;
+            return (
+              <Pressable key={cat._id} onPress={() => handleCategorySelect(cat.slug)} style={styles.chipTouchable}>
+                {isActive ? (
+                  <LinearGradient
+                    colors={[colors.nileBlue, colors.brand.nileBlueLight]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[styles.chip, styles.chipActive]}
+                  >
+                    {cat.icon ? <Ionicons name={cat.icon as any} size={12} color={colors.text.inverse} /> : null}
+                    <Text style={[styles.chipText, styles.chipTextActive]}>{cat.name}</Text>
+                  </LinearGradient>
+                ) : (
+                  <View style={styles.chip}>
+                    {cat.icon ? <Ionicons name={cat.icon as any} size={12} color="#7C8A97" /> : null}
+                    <Text style={styles.chipText}>{cat.name}</Text>
+                  </View>
+                )}
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* Sort + Results Count */}
+        <View style={styles.sortRow}>
+          <View style={styles.resultsWrap}>
+            <Text style={styles.resultsText}>
+              {debouncedSearch.length >= 2
+                ? `${brands.length} result${brands.length !== 1 ? 's' : ''}`
+                : `${totalBrands > 0 ? totalBrands : '—'} brands`}
+            </Text>
+            {selectedCategory !== 'all' && (
+              <Pressable onPress={() => handleCategorySelect('all')} style={styles.clearFilterBtn}>
+                <Ionicons name="close-circle" size={12} color={colors.text.tertiary} />
+                <Text style={styles.clearFilterText}>Clear</Text>
+              </Pressable>
+            )}
+          </View>
+          <Pressable onPress={() => setShowSortModal(true)} style={styles.sortBtn}>
+            <Ionicons name="swap-vertical" size={13} color={colors.nileBlue} />
+            <Text style={styles.sortBtnText}>{currentSortLabel}</Text>
+            <Ionicons name="chevron-down" size={11} color="#B0B8C1" />
+          </Pressable>
+        </View>
       </View>
-    </View>
-  ), [categories, selectedCategory, sortBy, currentSortLabel, brands.length, debouncedSearch, totalBrands, handleCategorySelect]);
+    ),
+    [
+      categories,
+      selectedCategory,
+      sortBy,
+      currentSortLabel,
+      brands.length,
+      debouncedSearch,
+      totalBrands,
+      handleCategorySelect,
+    ],
+  );
 
   // ─── List Footer ──────────────────────────────────────────
   const ListFooter = useMemo(() => {
@@ -386,10 +397,7 @@ function CashStoreBrandsPage() {
           </View>
           <Text style={styles.emptyTitle}>Something went wrong</Text>
           <Text style={styles.emptySubtitle}>{error}</Text>
-          <Pressable
-            onPress={handleRefresh}
-            style={styles.emptyResetBtn}
-          >
+          <Pressable onPress={handleRefresh} style={styles.emptyResetBtn}>
             <Text style={styles.emptyResetText}>Try Again</Text>
           </Pressable>
         </View>
@@ -405,14 +413,9 @@ function CashStoreBrandsPage() {
             color="#C4956A"
           />
         </View>
-        <Text style={styles.emptyTitle}>
-          {debouncedSearch.length >= 2 ? 'No brands found' : 'No brands yet'}
-        </Text>
+        <Text style={styles.emptyTitle}>{debouncedSearch.length >= 2 ? 'No brands found' : 'No brands yet'}</Text>
         <Text style={styles.emptySubtitle}>
-          {debouncedSearch.length >= 2
-            ? `Try a different search term`
-            : 'Brands will appear here soon.'
-          }
+          {debouncedSearch.length >= 2 ? `Try a different search term` : 'Brands will appear here soon.'}
         </Text>
         {(debouncedSearch.length >= 2 || selectedCategory !== 'all') && (
           <Pressable
@@ -439,7 +442,10 @@ function CashStoreBrandsPage() {
         <StatusBar barStyle="dark-content" />
         <View style={[styles.stickyHeader, { paddingTop: skeletonTop }]}>
           <View style={styles.headerRow}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backBtn}
+            >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Brands</Text>
@@ -473,29 +479,27 @@ function CashStoreBrandsPage() {
       {/* Sticky Header */}
       <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
         <View style={styles.headerRow}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
             <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerTitleWrap}>
             <Text style={styles.headerTitle}>Brands</Text>
             {totalBrands > 0 && (
               <View style={styles.countBadge}>
-                <Text style={styles.countText}>
-                  {totalBrands >= 1000 ? '1K+' : totalBrands}
-                </Text>
+                <Text style={styles.countText}>{totalBrands >= 1000 ? '1K+' : totalBrands}</Text>
               </View>
             )}
           </View>
-          <Pressable
-            onPress={() => setShowSortModal(true)}
-            style={styles.headerSortBtn}
-          >
+          <Pressable onPress={() => setShowSortModal(true)} style={styles.headerSortBtn}>
             <Ionicons name="options-outline" size={18} color={colors.nileBlue} />
           </Pressable>
         </View>
 
         {/* Search */}
-        <View style={[styles.searchBar, searchFocused && styles.searchBarFocused]}>
+        <View style={[styles.searchBar, searchFocused ? styles.searchBarFocused : null]}>
           <Ionicons name="search" size={16} color={searchFocused ? colors.nileBlue : '#94A3B8'} />
           <TextInput
             style={styles.searchInput}
@@ -548,25 +552,13 @@ function CashStoreBrandsPage() {
       />
 
       {/* Sort Modal — Premium Bottom Sheet */}
-      <Modal
-        visible={showSortModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowSortModal(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-         
-          onPress={() => setShowSortModal(false)}
-        >
+      <Modal visible={showSortModal} transparent animationType="slide" onRequestClose={() => setShowSortModal(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setShowSortModal(false)}>
           <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
             <View style={styles.modalHandle} />
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Sort By</Text>
-              <Pressable
-                onPress={() => setShowSortModal(false)}
-                style={styles.modalCloseBtn}
-              >
+              <Pressable onPress={() => setShowSortModal(false)} style={styles.modalCloseBtn}>
                 <Ionicons name="close" size={18} color={colors.text.tertiary} />
               </Pressable>
             </View>
@@ -576,16 +568,16 @@ function CashStoreBrandsPage() {
                 <Pressable
                   key={option.key}
                   onPress={() => handleSortSelect(option.key)}
-                  style={[styles.modalOption, isActive && styles.modalOptionActive]}
+                  style={[styles.modalOption, isActive ? styles.modalOptionActive : null]}
                 >
-                  <View style={[styles.modalOptionIcon, isActive && styles.modalOptionIconActive]}>
+                  <View style={[styles.modalOptionIcon, isActive ? styles.modalOptionIconActive : null]}>
                     <Ionicons
                       name={option.icon as any}
                       size={16}
                       color={isActive ? colors.background.primary : colors.neutral[400]}
                     />
                   </View>
-                  <Text style={[styles.modalOptionText, isActive && styles.modalOptionTextActive]}>
+                  <Text style={[styles.modalOptionText, isActive ? styles.modalOptionTextActive : null]}>
                     {option.label}
                   </Text>
                   {isActive && (
@@ -608,13 +600,7 @@ const SkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
-    );
+    shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
   }, [index]);
 
   const animatedStyle = useAnimatedStyle(() => ({

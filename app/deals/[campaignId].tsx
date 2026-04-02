@@ -235,7 +235,7 @@ const CampaignDetailPage: React.FC = () => {
             <CachedImage source={campaign.bannerImage} style={styles.bannerImage} />
           ) : (
             <LinearGradient
-              colors={campaign.gradientColors || [colors.success, colors.tealGreen]}
+              colors={(campaign.gradientColors || [colors.success, colors.tealGreen]) as [string, string, ...string[]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.bannerGradient}
@@ -273,7 +273,7 @@ const CampaignDetailPage: React.FC = () => {
             </View>
             {campaign.badge && (
               <View style={[styles.heroBadge, { backgroundColor: campaign.badgeBg || COLORS.gold }]}>
-                <Text style={[styles.heroBadgeText, { color: campaign.badgeColor || COLORS.navy }]}>
+                <Text style={[styles.heroBadgeText, { color: campaign.badgeColor || (COLORS as any).navy }]}>
                   {campaign.badge}
                 </Text>
               </View>
@@ -284,7 +284,7 @@ const CampaignDetailPage: React.FC = () => {
         {/* Premium Stats Card */}
         <View style={styles.statsCardContainer}>
           <LinearGradient
-            colors={[COLORS.navy, COLORS.navyLight]}
+            colors={[(COLORS as any).navy, COLORS.navyLight]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.statsCard}
@@ -307,7 +307,7 @@ const CampaignDetailPage: React.FC = () => {
                 >
                   <Ionicons name="hourglass" size={20} color={isExpiringSoon ? COLORS.red500 : COLORS.blue500} />
                 </View>
-                <Text style={[styles.statValue, isExpiringSoon && styles.statValueUrgent]}>{daysRemaining}</Text>
+                <Text style={[styles.statValue, isExpiringSoon ? styles.statValueUrgent : null]}>{daysRemaining}</Text>
                 <Text style={styles.statLabel}>Days Left</Text>
               </View>
               <View style={styles.statDivider} />
@@ -336,8 +336,8 @@ const CampaignDetailPage: React.FC = () => {
               <Text style={styles.sectionHeaderTitle}>Time Remaining</Text>
             </View>
             <View style={styles.countdownGrid}>
-              <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>
+              <View style={[styles.countdownItem, isExpiringSoon ? styles.countdownItemUrgent : null]}>
+                <Text style={[styles.countdownNumber, isExpiringSoon ? styles.countdownNumberUrgent : null]}>
                   {daysRemaining}
                 </Text>
                 <Text style={styles.countdownLabel}>Days</Text>
@@ -345,8 +345,8 @@ const CampaignDetailPage: React.FC = () => {
               <View style={styles.countdownSeparator}>
                 <Text style={styles.countdownColon}>:</Text>
               </View>
-              <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>
+              <View style={[styles.countdownItem, isExpiringSoon ? styles.countdownItemUrgent : null]}>
+                <Text style={[styles.countdownNumber, isExpiringSoon ? styles.countdownNumberUrgent : null]}>
                   {hoursRemaining}
                 </Text>
                 <Text style={styles.countdownLabel}>Hours</Text>
@@ -354,8 +354,8 @@ const CampaignDetailPage: React.FC = () => {
               <View style={styles.countdownSeparator}>
                 <Text style={styles.countdownColon}>:</Text>
               </View>
-              <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>00</Text>
+              <View style={[styles.countdownItem, isExpiringSoon ? styles.countdownItemUrgent : null]}>
+                <Text style={[styles.countdownNumber, isExpiringSoon ? styles.countdownNumberUrgent : null]}>00</Text>
                 <Text style={styles.countdownLabel}>Mins</Text>
               </View>
             </View>
@@ -614,7 +614,7 @@ const CampaignDetailPage: React.FC = () => {
                 </View>
                 <View style={styles.stepContent}>
                   <View style={styles.stepIconContainer}>
-                    <Ionicons name={item.icon as any} size={20} color={COLORS.navy} />
+                    <Ionicons name={item.icon as any} size={20} color={(COLORS as any).navy} />
                   </View>
                   <View style={styles.stepTextContainer}>
                     <Text style={styles.stepTitle}>{item.title}</Text>
@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   errorText: {
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
   errorButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.navy,
+    backgroundColor: (COLORS as any).navy,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
@@ -915,7 +915,7 @@ const styles = StyleSheet.create({
   countdownNumber: {
     fontSize: 28,
     fontWeight: '800',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   countdownNumberUrgent: {
     color: COLORS.red500,
@@ -962,7 +962,7 @@ const styles = StyleSheet.create({
   sectionHeaderTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     flex: 1,
   },
 
@@ -991,7 +991,7 @@ const styles = StyleSheet.create({
   highlightLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     flex: 1,
   },
 
@@ -1031,7 +1031,7 @@ const styles = StyleSheet.create({
   offerDetailValue: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   offerDetailLabel: {
@@ -1102,7 +1102,7 @@ const styles = StyleSheet.create({
   validityValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginTop: 2,
   },
   validityArrow: {
@@ -1206,7 +1206,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     left: 8,
-    backgroundColor: COLORS.navy,
+    backgroundColor: (COLORS as any).navy,
     padding: 5,
     borderRadius: 6,
   },
@@ -1225,7 +1225,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 6,
   },
   dealValueRow: {
@@ -1324,7 +1324,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   stepDesc: {

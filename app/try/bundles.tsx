@@ -66,7 +66,7 @@ export default function BundlesScreen() {
       const [bundlesData, activeBundlesData] = await Promise.all([tryApi.getBundles(), tryApi.getMyBundles()]);
       setBundles(bundlesData);
       setActiveBundles(activeBundlesData);
-    } catch (err) {
+    } catch (err: any) {
       if (__DEV__) console.error('Failed to load bundles:', err);
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export default function BundlesScreen() {
         bundleId: purchaseModal.bundle.id,
         amount: purchaseModal.bundle.price,
       });
-      const order = orderResp.data || orderResp;
+      const order = (orderResp as any).data || orderResp;
 
       // Open Razorpay checkout
       try {
@@ -289,7 +289,7 @@ export default function BundlesScreen() {
                   renderItem={renderActiveBundle}
                   keyExtractor={(item) => item.id}
                   scrollEnabled={false}
-                  gap={spacing.md}
+                  ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
                 />
               </View>
             )}

@@ -58,11 +58,21 @@ interface LeaderboardEntry {
 
 const getDifficultyStyle = (difficulty: string) => {
   switch (difficulty) {
-    case 'easy': return { bg: 'rgba(0, 192, 106, 0.15)', color: colors.primary[500], label: 'Easy', icon: 'leaf' as const };
-    case 'medium': return { bg: 'rgba(59, 130, 246, 0.15)', color: colors.infoScale[500], label: 'Medium', icon: 'flame' as const };
-    case 'hard': return { bg: 'rgba(139, 92, 246, 0.15)', color: THEME.purple500, label: 'Hard', icon: 'rocket' as const };
-    case 'legendary': return { bg: 'rgba(245, 158, 11, 0.15)', color: colors.warningScale[500], label: 'Legendary', icon: 'trophy' as const };
-    default: return { bg: colors.neutral[200], color: colors.neutral[600], label: difficulty, icon: 'flag' as const };
+    case 'easy':
+      return { bg: 'rgba(0, 192, 106, 0.15)', color: colors.primary[500], label: 'Easy', icon: 'leaf' as const };
+    case 'medium':
+      return { bg: 'rgba(59, 130, 246, 0.15)', color: colors.infoScale[500], label: 'Medium', icon: 'flame' as const };
+    case 'hard':
+      return { bg: 'rgba(139, 92, 246, 0.15)', color: THEME.purple500, label: 'Hard', icon: 'rocket' as const };
+    case 'legendary':
+      return {
+        bg: 'rgba(245, 158, 11, 0.15)',
+        color: colors.warningScale[500],
+        label: 'Legendary',
+        icon: 'trophy' as const,
+      };
+    default:
+      return { bg: colors.neutral[200], color: colors.neutral[600], label: difficulty, icon: 'flag' as const };
   }
 };
 
@@ -112,7 +122,7 @@ const ProgressCircle: React.FC<{ progress: number; size?: number; strokeWidth?: 
 const MissionDetailScreen: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<{ id: string; progressId: string }>();
+  const params = useLocalSearchParams<any>();
   const { id: challengeId, progressId } = params;
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -125,56 +135,59 @@ const MissionDetailScreen: React.FC = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = useCallback(async (isRefresh = false) => {
-    if (!challengeId) {
-      setError('No challenge ID provided');
-      setLoading(false);
-      return;
-    }
+  const fetchData = useCallback(
+    async (isRefresh = false) => {
+      if (!challengeId) {
+        setError('No challenge ID provided');
+        setLoading(false);
+        return;
+      }
 
-    try {
-      if (!isRefresh) setLoading(true);
-      setError(null);
+      try {
+        if (!isRefresh) setLoading(true);
+        setError(null);
 
-      // Fetch challenge progress and leaderboard in parallel
-      const [progressResponse, leaderboardResponse] = await Promise.all([
-        challengesApi.getMyProgress(),
-        challengesApi.getChallengeLeaderboard(challengeId, 10),
-      ]);
+        // Fetch challenge progress and leaderboard in parallel
+        const [progressResponse, leaderboardResponse] = await Promise.all([
+          challengesApi.getMyProgress(),
+          challengesApi.getChallengeLeaderboard(challengeId, 10),
+        ]);
 
-      if (progressResponse.success && progressResponse.data) {
-        // Find the specific challenge progress
-        const challengeProgress = progressResponse.data.find(
-          (cp: ChallengeProgress) => cp.challenge._id === challengeId
-        );
-        if (challengeProgress) {
-          if (!isMounted()) return;
-          setProgress(challengeProgress);
-          if (!isMounted()) return;
-          setChallenge(challengeProgress.challenge);
+        if (progressResponse.success && progressResponse.data) {
+          // Find the specific challenge progress
+          const challengeProgress = progressResponse.data.find(
+            (cp: ChallengeProgress) => cp.challenge._id === challengeId,
+          );
+          if (challengeProgress) {
+            if (!isMounted()) return;
+            setProgress(challengeProgress);
+            if (!isMounted()) return;
+            setChallenge(challengeProgress.challenge);
+          } else {
+            if (!isMounted()) return;
+            setError('Challenge not found');
+          }
         } else {
           if (!isMounted()) return;
-          setError('Challenge not found');
+          setError(progressResponse.error || 'Failed to load challenge');
         }
-      } else {
-        if (!isMounted()) return;
-        setError(progressResponse.error || 'Failed to load challenge');
-      }
 
-      if (leaderboardResponse.success && leaderboardResponse.data) {
+        if (leaderboardResponse.success && leaderboardResponse.data) {
+          if (!isMounted()) return;
+          setLeaderboard(leaderboardResponse.data);
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setLeaderboard(leaderboardResponse.data);
+        setError(err.message || 'Failed to load challenge details');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        if (isRefresh) setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load challenge details');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      if (isRefresh) setRefreshing(false);
-    }
-  }, [challengeId]);
+    },
+    [challengeId],
+  );
 
   useEffect(() => {
     fetchData();
@@ -189,7 +202,7 @@ const MissionDetailScreen: React.FC = () => {
         return;
       }
       fetchData(true);
-    }, [fetchData])
+    }, [fetchData]),
   );
 
   const handleRefresh = useCallback(() => {
@@ -211,7 +224,7 @@ const MissionDetailScreen: React.FC = () => {
       const response = await challengesApi.claimReward(progressId);
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setProgress(prev => prev ? { ...prev, rewardsClaimed: true } : null);
+        setProgress((prev) => (prev ? { ...prev, rewardsClaimed: true } : null));
         platformAlertSimple('Rewards Claimed!', `+${response.data.coinsEarned} coins added to your wallet!`);
       } else {
         platformAlertSimple('Error', response.error || 'Failed to claim rewards');
@@ -239,7 +252,10 @@ const MissionDetailScreen: React.FC = () => {
         <Stack.Screen options={{ headerShown: false }} />
         <SafeAreaView style={styles.container}>
           <LinearGradient colors={[THEME.purple600, THEME.indigo600]} style={styles.header}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={20} color={colors.background.primary} />
             </Pressable>
             <Text style={styles.headerTitle}>Mission Details</Text>
@@ -269,7 +285,10 @@ const MissionDetailScreen: React.FC = () => {
       <SafeAreaView style={styles.container} edges={['top']}>
         {/* Header */}
         <LinearGradient colors={[THEME.purple600, THEME.indigo600]} style={styles.header}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={20} color={colors.background.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Mission Details</Text>
@@ -301,9 +320,7 @@ const MissionDetailScreen: React.FC = () => {
               <View style={styles.titleContent}>
                 <Text style={styles.challengeTitle}>{challenge.title}</Text>
                 <View style={[styles.difficultyBadge, { backgroundColor: diffStyle.bg }]}>
-                  <Text style={[styles.difficultyText, { color: diffStyle.color }]}>
-                    {diffStyle.label}
-                  </Text>
+                  <Text style={[styles.difficultyText, { color: diffStyle.color }]}>{diffStyle.label}</Text>
                 </View>
               </View>
             </View>
@@ -344,25 +361,31 @@ const MissionDetailScreen: React.FC = () => {
             </View>
 
             {/* Status Badge */}
-            <View style={[
-              styles.statusBadge,
-              progress.completed
-                ? progress.rewardsClaimed
-                  ? styles.statusClaimed
-                  : styles.statusCompleted
-                : styles.statusInProgress
-            ]}>
+            <View
+              style={[
+                styles.statusBadge,
+                progress.completed
+                  ? progress.rewardsClaimed
+                    ? styles.statusClaimed
+                    : styles.statusCompleted
+                  : styles.statusInProgress,
+              ]}
+            >
               <Ionicons
                 name={progress.completed ? 'checkmark-circle' : 'hourglass'}
                 size={16}
                 color={progress.completed ? colors.successScale[500] : colors.infoScale[500]}
               />
-              <Text style={[
-                styles.statusText,
-                { color: progress.completed ? colors.successScale[600] : colors.infoScale[600] }
-              ]}>
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: progress.completed ? colors.successScale[600] : colors.infoScale[600] },
+                ]}
+              >
                 {progress.completed
-                  ? progress.rewardsClaimed ? 'Rewards Claimed' : 'Completed - Claim Rewards!'
+                  ? progress.rewardsClaimed
+                    ? 'Rewards Claimed'
+                    : 'Completed - Claim Rewards!'
                   : 'In Progress'}
               </Text>
             </View>
@@ -407,12 +430,7 @@ const MissionDetailScreen: React.FC = () => {
 
             {/* Claim Button */}
             {isClaimable && (
-              <Pressable
-               
-                style={styles.claimButtonWrapper}
-                onPress={handleClaimReward}
-                disabled={claiming}
-              >
+              <Pressable style={styles.claimButtonWrapper} onPress={handleClaimReward} disabled={claiming}>
                 <LinearGradient
                   colors={[colors.primary[500], colors.successScale[500]]}
                   start={{ x: 0, y: 0 }}
@@ -439,21 +457,30 @@ const MissionDetailScreen: React.FC = () => {
               <View style={styles.requirementItem}>
                 <Ionicons name="checkmark-circle" size={20} color={colors.primary[500]} />
                 <Text style={styles.requirementText}>
-                  {challenge.requirements.action === 'visit_stores' && `Visit ${challenge.requirements.count} stores`}
-                  {challenge.requirements.action === 'upload_bills' && `Upload ${challenge.requirements.count} bills`}
-                  {challenge.requirements.action === 'order_count' && `Place ${challenge.requirements.count} orders`}
-                  {challenge.requirements.action === 'refer_friends' && `Refer ${challenge.requirements.count} friends`}
-                  {challenge.requirements.action === 'review_count' && `Write ${challenge.requirements.count} reviews`}
-                  {challenge.requirements.action === 'spend_amount' && `Spend ${currencySymbol}${challenge.requirements.count}`}
-                  {challenge.requirements.action === 'login_streak' && `Maintain ${challenge.requirements.count} day login streak`}
-                  {challenge.requirements.action === 'share_deals' && `Share ${challenge.requirements.count} deals`}
+                  {challenge.requirements.action === 'visit_stores' &&
+                    `Visit ${(challenge.requirements as any).count} stores`}
+                  {challenge.requirements.action === 'upload_bills' &&
+                    `Upload ${(challenge.requirements as any).count} bills`}
+                  {challenge.requirements.action === 'order_count' &&
+                    `Place ${(challenge.requirements as any).count} orders`}
+                  {challenge.requirements.action === 'refer_friends' &&
+                    `Refer ${(challenge.requirements as any).count} friends`}
+                  {challenge.requirements.action === 'review_count' &&
+                    `Write ${(challenge.requirements as any).count} reviews`}
+                  {challenge.requirements.action === 'spend_amount' &&
+                    `Spend ${currencySymbol}${(challenge.requirements as any).count}`}
+                  {challenge.requirements.action === 'login_streak' &&
+                    `Maintain ${(challenge.requirements as any).count} day login streak`}
+                  {challenge.requirements.action === 'share_deals' &&
+                    `Share ${(challenge.requirements as any).count} deals`}
                 </Text>
               </View>
               {challenge.requirements.minAmount && (
                 <View style={styles.requirementItem}>
                   <Ionicons name="cash-outline" size={20} color={colors.secondary[500]} />
                   <Text style={styles.requirementText}>
-                    Minimum {currencySymbol}{challenge.requirements.minAmount} per transaction
+                    Minimum {currencySymbol}
+                    {challenge.requirements.minAmount} per transaction
                   </Text>
                 </View>
               )}
@@ -465,24 +492,19 @@ const MissionDetailScreen: React.FC = () => {
             <View style={styles.leaderboardCard}>
               <View style={styles.leaderboardHeader}>
                 <Text style={styles.sectionTitle}>Leaderboard</Text>
-                <Text style={styles.participantCount}>
-                  {challenge.participantCount ?? 0} participants
-                </Text>
+                <Text style={styles.participantCount}>{challenge.participantCount ?? 0} participants</Text>
               </View>
               {leaderboard.slice(0, 5).map((entry, index) => (
                 <View key={entry.user._id} style={styles.leaderboardItem}>
-                  <View style={[
-                    styles.rankBadge,
-                    index === 0 && styles.rankGold,
-                    index === 1 && styles.rankSilver,
-                    index === 2 && styles.rankBronze,
-                  ]}>
-                    <Text style={[
-                      styles.rankText,
-                      index < 3 && styles.rankTextTop
-                    ]}>
-                      {entry.rank}
-                    </Text>
+                  <View
+                    style={[
+                      styles.rankBadge,
+                      index === 0 && styles.rankGold,
+                      index === 1 && styles.rankSilver,
+                      index === 2 && styles.rankBronze,
+                    ]}
+                  >
+                    <Text style={[styles.rankText, index < 3 && styles.rankTextTop]}>{entry.rank}</Text>
                   </View>
                   <View style={styles.userAvatar}>
                     <Ionicons name="person" size={18} color={colors.neutral[400]} />
@@ -493,9 +515,7 @@ const MissionDetailScreen: React.FC = () => {
                       {entry.progress}/{progress.target} {entry.completed && '(Completed)'}
                     </Text>
                   </View>
-                  {entry.completed && (
-                    <Ionicons name="checkmark-circle" size={20} color={colors.successScale[500]} />
-                  )}
+                  {entry.completed && <Ionicons name="checkmark-circle" size={20} color={colors.successScale[500]} />}
                 </View>
               ))}
             </View>
@@ -508,7 +528,7 @@ const MissionDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (StyleSheet.create as any)({
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -556,10 +576,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...Platform.select({
-      ios: shadows.md,
+    ...(Platform.select({
+      ios: shadows.md as any,
       android: { elevation: 4 },
-    }),
+    }) || {}),
   },
   titleRow: {
     flexDirection: 'row',
@@ -628,10 +648,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...Platform.select({
-      ios: shadows.md,
+    ...(Platform.select({
+      ios: shadows.md as any,
       android: { elevation: 4 },
-    }),
+    }) || {}),
   },
   sectionTitle: {
     fontSize: typography.body.fontSize,
@@ -707,10 +727,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...Platform.select({
-      ios: shadows.md,
+    ...(Platform.select({
+      ios: shadows.md as any,
       android: { elevation: 4 },
-    }),
+    }) || {}),
   },
   rewardsList: {
     flexDirection: 'row',
@@ -776,10 +796,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...Platform.select({
-      ios: shadows.md,
+    ...(Platform.select({
+      ios: shadows.md as any,
       android: { elevation: 4 },
-    }),
+    }) || {}),
   },
   requirementItem: {
     flexDirection: 'row',
@@ -797,10 +817,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...Platform.select({
-      ios: shadows.md,
+    ...(Platform.select({
+      ios: shadows.md as any,
       android: { elevation: 4 },
-    }),
+    }) || {}),
   },
   leaderboardHeader: {
     flexDirection: 'row',

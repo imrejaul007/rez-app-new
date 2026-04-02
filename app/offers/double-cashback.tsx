@@ -64,7 +64,9 @@ function getTimeLeft(endTime: string) {
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch { return ''; }
+  } catch {
+    return '';
+  }
 }
 
 function getGradient(bg?: string): [string, string] {
@@ -81,10 +83,18 @@ function getGradient(bg?: string): [string, string] {
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
-  'food': 'restaurant', 'food-dining': 'restaurant', 'dining': 'restaurant',
-  'shopping': 'bag', 'fashion': 'shirt', 'electronics': 'phone-portrait',
-  'travel': 'airplane', 'entertainment': 'film', 'health': 'fitness',
-  'beauty': 'color-palette', 'groceries': 'cart', 'default': 'storefront',
+  food: 'restaurant',
+  'food-dining': 'restaurant',
+  dining: 'restaurant',
+  shopping: 'bag',
+  fashion: 'shirt',
+  electronics: 'phone-portrait',
+  travel: 'airplane',
+  entertainment: 'film',
+  health: 'fitness',
+  beauty: 'color-palette',
+  groceries: 'cart',
+  default: 'storefront',
 };
 
 function getCategoryIcon(cat: string): string {
@@ -107,7 +117,7 @@ function DoubleCashbackPage() {
 
   // Countdown timer — re-render every second
   useEffect(() => {
-    const interval = setInterval(() => setTick(t => t + 1), 1000);
+    const interval = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -124,7 +134,7 @@ function DoubleCashbackPage() {
       });
       if (!isMounted()) return;
       setCampaigns(active);
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load campaigns');
     } finally {
@@ -135,9 +145,14 @@ function DoubleCashbackPage() {
     }
   }, []);
 
-  useEffect(() => { fetchCampaigns(); }, []);
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
 
-  const handleRefresh = () => { setRefreshing(true); fetchCampaigns(); };
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchCampaigns();
+  };
 
   const handleShare = async (campaign: Campaign) => {
     try {
@@ -155,7 +170,10 @@ function DoubleCashbackPage() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[colors.nileBlue, '#0f2536']} style={styles.loadingContainer}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <CardGridSkeleton />
@@ -170,7 +188,10 @@ function DoubleCashbackPage() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[colors.nileBlue, '#0f2536']} style={styles.loadingContainer}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.emptyState}>
@@ -200,13 +221,18 @@ function DoubleCashbackPage() {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={{ flex: 1 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.background.primary} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.background.primary} />
+        }
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Campaign */}
         <LinearGradient colors={heroGradient} style={styles.hero}>
           <View style={styles.heroHeader}>
-            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backBtn}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.heroHeaderTitle}>Double Cashback</Text>
@@ -266,7 +292,8 @@ function DoubleCashbackPage() {
           <View style={styles.infoBanner}>
             <Ionicons name="information-circle" size={18} color={Colors.info} />
             <Text style={styles.infoText}>
-              {heroCampaign.description || `Get ${heroCampaign.multiplier}X cashback on all eligible purchases during this campaign.`}
+              {heroCampaign.description ||
+                `Get ${heroCampaign.multiplier}X cashback on all eligible purchases during this campaign.`}
             </Text>
           </View>
 
@@ -278,7 +305,10 @@ function DoubleCashbackPage() {
                   <Ionicons name="cart-outline" size={18} color={colors.nileBlue} />
                 </View>
                 <Text style={styles.statValue}>Min. Order</Text>
-                <Text style={styles.statLabel}>{currencySymbol}{heroCampaign.minOrderValue}</Text>
+                <Text style={styles.statLabel}>
+                  {currencySymbol}
+                  {heroCampaign.minOrderValue}
+                </Text>
               </View>
             ) : null}
             {heroCampaign.maxCashback ? (
@@ -287,7 +317,10 @@ function DoubleCashbackPage() {
                   <Ionicons name="wallet-outline" size={18} color={colors.nileBlue} />
                 </View>
                 <Text style={styles.statValue}>Max Cashback</Text>
-                <Text style={styles.statLabel}>{currencySymbol}{heroCampaign.maxCashback}</Text>
+                <Text style={styles.statLabel}>
+                  {currencySymbol}
+                  {heroCampaign.maxCashback}
+                </Text>
               </View>
             ) : null}
             <View style={styles.statCard}>
@@ -301,15 +334,12 @@ function DoubleCashbackPage() {
 
           {/* Browse Stores CTA */}
           <Pressable onPress={() => router.push('/explore' as any)}>
-            <LinearGradient
-              colors={heroGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.ctaBanner}
-            >
+            <LinearGradient colors={heroGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaBanner}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ctaTitle}>Start Shopping Now</Text>
-                <Text style={styles.ctaSubtitle}>Browse participating stores & earn {heroCampaign.multiplier}X cashback</Text>
+                <Text style={styles.ctaSubtitle}>
+                  Browse participating stores & earn {heroCampaign.multiplier}X cashback
+                </Text>
               </View>
               <View style={styles.ctaArrow}>
                 <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
@@ -351,7 +381,9 @@ function DoubleCashbackPage() {
                     <View style={styles.storeIconWrap}>
                       <Ionicons name="storefront-outline" size={20} color={Colors.info} />
                     </View>
-                    <Text style={styles.storeName} numberOfLines={1}>{name}</Text>
+                    <Text style={styles.storeName} numberOfLines={1}>
+                      {name}
+                    </Text>
                     <View style={styles.storeMultiplierBadge}>
                       <Text style={styles.storeMultiplierText}>{heroCampaign.multiplier}X</Text>
                     </View>
@@ -369,11 +401,26 @@ function DoubleCashbackPage() {
             </View>
             <View style={styles.howItWorksCard}>
               {[
-                { num: '1', icon: 'storefront', title: 'Shop at Participating Stores', desc: 'Browse eligible stores and shop normally' },
-                { num: '2', icon: 'flash', title: `Get ${heroCampaign.multiplier}X Cashback`, desc: 'Cashback is automatically multiplied — no coupon needed' },
-                { num: '3', icon: 'wallet', title: 'Coins Credited to Wallet', desc: 'Cashback coins are added to your wallet within 24 hours' },
+                {
+                  num: '1',
+                  icon: 'storefront',
+                  title: 'Shop at Participating Stores',
+                  desc: 'Browse eligible stores and shop normally',
+                },
+                {
+                  num: '2',
+                  icon: 'flash',
+                  title: `Get ${heroCampaign.multiplier}X Cashback`,
+                  desc: 'Cashback is automatically multiplied — no coupon needed',
+                },
+                {
+                  num: '3',
+                  icon: 'wallet',
+                  title: 'Coins Credited to Wallet',
+                  desc: 'Cashback coins are added to your wallet within 24 hours',
+                },
               ].map((step, idx) => (
-                <View key={idx} style={[styles.stepRow, idx < 2 && styles.stepBorder]}>
+                <View key={idx} style={[styles.stepRow, idx < 2 ? styles.stepBorder : null]}>
                   <View style={styles.stepNum}>
                     <Text style={styles.stepNumText}>{step.num}</Text>
                   </View>
@@ -425,7 +472,8 @@ function DoubleCashbackPage() {
                         <Text style={styles.otherSubtitle}>{c.subtitle}</Text>
                         {!tl.expired && (
                           <Text style={styles.otherTimer}>
-                            {tl.days > 0 ? `${tl.days}d ` : ''}{tl.hours}h {tl.minutes}m left
+                            {tl.days > 0 ? `${tl.days}d ` : ''}
+                            {tl.hours}h {tl.minutes}m left
                           </Text>
                         )}
                       </View>
@@ -452,49 +500,150 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, paddingHorizontal: Spacing.lg },
   loadingText: { color: 'rgba(255,255,255,0.7)', ...Typography.body, textAlign: 'center', marginTop: Spacing.base },
   emptyState: { alignItems: 'center', marginTop: 80 },
-  emptyIconWrap: { width: 80, height: 80, borderRadius: BorderRadius.full, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.base },
+  emptyIconWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.full,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.base,
+  },
   emptyTitle: { color: colors.text.inverse, ...Typography.h4, fontWeight: '700', marginBottom: Spacing.sm },
   emptySubtext: { color: 'rgba(255,255,255,0.6)', ...Typography.body, textAlign: 'center', maxWidth: 260 },
-  refreshBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.15)', paddingHorizontal: Spacing.lg, paddingVertical: 10, borderRadius: BorderRadius.xl, marginTop: Spacing.xl },
-  refreshBtnText: { color: colors.text.inverse, fontWeight: '600', ...Typography.body },
+  refreshBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.xl,
+    marginTop: Spacing.xl,
+  },
+  refreshBtnText: { color: colors.text.inverse, ...Typography.body, fontWeight: '600' },
 
   // Hero
   hero: { paddingBottom: 24 },
-  heroHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.sm, paddingBottom: Spacing.md },
+  heroHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.md,
+  },
   heroHeaderTitle: { color: colors.text.inverse, fontSize: 16, fontWeight: '700' },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' }, // circular
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }, // circular
   heroCenter: { alignItems: 'center', paddingVertical: Spacing.md },
-  multiplierGlow: { width: 100, height: 100, borderRadius: BorderRadius.full, backgroundColor: 'rgba(255,255,255,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
-  multiplierCircle: { width: 80, height: 80, borderRadius: BorderRadius.full, backgroundColor: colors.background.primary, justifyContent: 'center', alignItems: 'center' },
+  multiplierGlow: {
+    width: 100,
+    height: 100,
+    borderRadius: BorderRadius.full,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  multiplierCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.full,
+    backgroundColor: colors.background.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   multiplierValue: { fontSize: 28, fontWeight: '800', color: colors.nileBlue },
   heroLabel: { ...Typography.h4, fontWeight: '800', color: colors.text.inverse, letterSpacing: 4, marginBottom: 6 },
-  heroTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse, textAlign: 'center', marginBottom: Spacing.xs },
-  heroSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)', textAlign: 'center', paddingHorizontal: Spacing.lg },
+  heroTitle: {
+    ...Typography.h4,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    textAlign: 'center',
+    marginBottom: Spacing.xs,
+  },
+  heroSubtitle: {
+    ...Typography.bodySmall,
+    color: 'rgba(255,255,255,0.8)',
+    textAlign: 'center',
+    paddingHorizontal: Spacing.lg,
+  },
 
   // Timer
-  timerWrap: { alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.15)', marginHorizontal: Spacing.lg, borderRadius: 12, padding: 14 },
+  timerWrap: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    marginHorizontal: Spacing.lg,
+    borderRadius: 12,
+    padding: 14,
+  },
   timerLabel: { color: 'rgba(255,255,255,0.7)', ...Typography.bodySmall, fontWeight: '600', marginBottom: Spacing.sm },
   timerBoxes: { flexDirection: 'row', alignItems: 'center' },
-  timerBox: { alignItems: 'center', backgroundColor: colors.background.primary, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 6, minWidth: 54 },
+  timerBox: {
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    minWidth: 54,
+  },
   timerValue: { ...Typography.h3, fontWeight: '800', color: colors.nileBlue },
   timerUnit: { ...Typography.overline, color: colors.text.tertiary, fontWeight: '600', marginTop: 1 },
   timerSep: { ...Typography.h3, fontWeight: '800', color: colors.text.inverse, marginHorizontal: 6 },
 
   // Content
   content: { padding: Spacing.base },
-  infoBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: Colors.infoScale[50], borderRadius: BorderRadius.md, padding: 14, marginBottom: Spacing.base },
+  infoBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: Colors.infoScale[50],
+    borderRadius: BorderRadius.md,
+    padding: 14,
+    marginBottom: Spacing.base,
+  },
   infoText: { flex: 1, ...Typography.bodySmall, color: colors.text.secondary, lineHeight: 20 },
 
   // CTA
   ctaBanner: { flexDirection: 'row', alignItems: 'center', padding: 18, borderRadius: 12, marginBottom: Spacing.lg },
   ctaTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse, marginBottom: 2 },
   ctaSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
-  ctaArrow: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  ctaArrow: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: Spacing.base },
-  statCard: { flex: 1, backgroundColor: colors.background.primary, borderRadius: 12, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: colors.background.secondary },
-  statIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' }, // circular
+  statCard: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+    borderRadius: 12,
+    padding: 14,
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: colors.background.secondary,
+  },
+  statIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.infoScale[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+  }, // circular
   statValue: { ...Typography.caption, color: colors.text.tertiary, fontWeight: '600' },
   statLabel: { ...Typography.body, color: colors.nileBlue, fontWeight: '700' },
 
@@ -505,30 +654,93 @@ const styles = StyleSheet.create({
 
   // Category Grid
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  categoryCard: { width: (width - 32 - 20) / 3, backgroundColor: colors.background.primary, borderRadius: 12, padding: Spacing.md, alignItems: 'center', borderWidth: 1, borderColor: colors.background.secondary },
-  categoryIconWrap: { width: 44, height: 44, borderRadius: BorderRadius.full, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
-  categoryName: { ...Typography.caption, fontWeight: '600', color: colors.text.secondary, textAlign: 'center', marginBottom: Spacing.xs },
+  categoryCard: {
+    width: (width - 32 - 20) / 3,
+    backgroundColor: colors.background.primary,
+    borderRadius: 12,
+    padding: Spacing.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.background.secondary,
+  },
+  categoryIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.infoScale[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  categoryName: {
+    ...Typography.caption,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: Spacing.xs,
+  },
   categoryMultiplier: { ...Typography.body, fontWeight: '800', color: Colors.success },
 
   // Store Grid
   storeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  storeCard: { width: (width - 32 - 10) / 2, backgroundColor: colors.background.primary, borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: colors.background.secondary },
-  storeIconWrap: { width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' },
+  storeCard: {
+    width: (width - 32 - 10) / 2,
+    backgroundColor: colors.background.primary,
+    borderRadius: 12,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: colors.background.secondary,
+  },
+  storeIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.infoScale[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   storeName: { flex: 1, ...Typography.bodySmall, fontWeight: '600', color: colors.text.primary },
-  storeMultiplierBadge: { backgroundColor: Colors.successScale[50], paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.sm },
+  storeMultiplierBadge: {
+    backgroundColor: Colors.successScale[50],
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sm,
+  },
   storeMultiplierText: { ...Typography.caption, fontWeight: '800', color: Colors.success },
 
   // How It Works
-  howItWorksCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1, borderColor: colors.background.secondary },
+  howItWorksCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: colors.background.secondary,
+  },
   stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md, paddingVertical: Spacing.md },
   stepBorder: { borderBottomWidth: 1, borderBottomColor: colors.background.secondary },
-  stepNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.nileBlue, justifyContent: 'center', alignItems: 'center' },
+  stepNum: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.nileBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   stepNumText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   stepTitle: { ...Typography.body, fontWeight: '600', color: colors.text.primary, marginBottom: 2 },
   stepDesc: { ...Typography.bodySmall, color: colors.text.tertiary, lineHeight: 18 },
 
   // Terms
-  termsCard: { backgroundColor: colors.background.primary, borderRadius: 14, padding: Spacing.base, borderWidth: 1, borderColor: colors.background.secondary },
+  termsCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: 14,
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: colors.background.secondary,
+  },
   termRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.sm },
   termBullet: { ...Typography.bodySmall, color: colors.text.tertiary, fontWeight: '600', width: 20 },
   termText: { flex: 1, ...Typography.bodySmall, color: colors.text.tertiary, lineHeight: 19 },
@@ -536,7 +748,14 @@ const styles = StyleSheet.create({
   // Other Campaigns
   otherCard: { borderRadius: 14, overflow: 'hidden', marginBottom: 10 },
   otherGradient: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
-  otherMultiplier: { width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  otherMultiplier: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   otherMultiplierText: { ...Typography.h4, fontWeight: '800', color: colors.text.inverse },
   otherTitle: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
   otherSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },

@@ -25,7 +25,7 @@ function TierCard({ tier, selectedCycle, isSelected, isCurrent, currencySymbol, 
 
   return (
     <Pressable
-      style={[styles.card, isSelected && styles.cardSelected]}
+      style={[styles.card, isSelected ? styles.cardSelected : null]}
       onPress={() => onSelect(tier)}
     >
       {/* Header: Name + Current badge | Price */}

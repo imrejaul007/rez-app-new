@@ -8,23 +8,12 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import specialProgramApi, {
-  EligibilityResult,
-  SpecialProgramSlug,
-} from '@/services/specialProgramApi';
+import specialProgramApi, { EligibilityResult, SpecialProgramSlug } from '@/services/specialProgramApi';
 import { platformAlert } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from '@/constants/DesignSystem';
 import { DetailPageSkeleton } from '@/components/skeletons';
@@ -40,16 +29,14 @@ const PROGRAM_ICONS: Record<string, { name: string; color: string; bgColor: stri
 };
 
 function ProgramDetailScreen() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState(false);
   const [eligibility, setEligibility] = useState<EligibilityResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const programSlug = VALID_SLUGS.includes(slug as SpecialProgramSlug)
-    ? (slug as SpecialProgramSlug)
-    : null;
+  const programSlug = VALID_SLUGS.includes(slug as SpecialProgramSlug) ? (slug as SpecialProgramSlug) : null;
 
   const iconConfig = programSlug ? PROGRAM_ICONS[programSlug] : PROGRAM_ICONS.student_zone;
   const isPrive = programSlug === 'nuqta_prive';
@@ -105,8 +92,12 @@ function ProgramDetailScreen() {
   };
 
   const handleVerify = () => {
-    const zone = eligibility?.program.slug === 'student_zone' ? 'student'
-      : eligibility?.program.slug === 'corporate_perks' ? 'corporate' : null;
+    const zone =
+      eligibility?.program.slug === 'student_zone'
+        ? 'student'
+        : eligibility?.program.slug === 'corporate_perks'
+          ? 'corporate'
+          : null;
     if (zone) {
       router.push({ pathname: '/profile/verification', params: { zone } } as any);
     }
@@ -119,7 +110,10 @@ function ProgramDetailScreen() {
         <View style={styles.centerContent}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <Text style={styles.errorText}>Invalid program</Text>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.backButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -140,10 +134,7 @@ function ProgramDetailScreen() {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <View style={styles.statusBanner}>
-          <LinearGradient
-            colors={[iconConfig.color + '20', iconConfig.color + '10']}
-            style={styles.statusGradient}
-          >
+          <LinearGradient colors={[iconConfig.color + '20', iconConfig.color + '10']} style={styles.statusGradient}>
             <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
             <Text style={styles.statusText}>Active Member</Text>
           </LinearGradient>
@@ -166,9 +157,7 @@ function ProgramDetailScreen() {
           <View style={styles.card}>
             <View style={styles.multiplierRow}>
               <View style={[styles.multiplierBadge, { backgroundColor: iconConfig.color + '20' }]}>
-                <Text style={[styles.multiplierText, { color: iconConfig.color }]}>
-                  {membership.multiplier}x
-                </Text>
+                <Text style={[styles.multiplierText, { color: iconConfig.color }]}>{membership.multiplier}x</Text>
               </View>
               <View>
                 <Text style={styles.cardTitle}>Active Multiplier</Text>
@@ -258,7 +247,6 @@ function ProgramDetailScreen() {
         style={[styles.activateButton, { backgroundColor: iconConfig.color }]}
         onPress={handleActivate}
         disabled={activating}
-       
       >
         {activating ? (
           <ActivityIndicator color={colors.background.primary} />
@@ -288,9 +276,7 @@ function ProgramDetailScreen() {
               size={20}
               color={req.met ? Colors.success : colors.text.tertiary}
             />
-            <Text style={[styles.requirementText, req.met && styles.requirementMet]}>
-              {req.label}
-            </Text>
+            <Text style={[styles.requirementText, req.met ? styles.requirementMet : null]}>{req.label}</Text>
           </View>
         ))}
       </View>
@@ -308,12 +294,8 @@ function ProgramDetailScreen() {
         ))}
       </View>
 
-      {!isPrive && eligibility!.requirements.some(r => !r.met && r.type === 'verification') && (
-        <Pressable
-          style={[styles.activateButton, { backgroundColor: iconConfig.color }]}
-          onPress={handleVerify}
-         
-        >
+      {!isPrive && eligibility!.requirements.some((r) => !r.met && r.type === 'verification') && (
+        <Pressable style={[styles.activateButton, { backgroundColor: iconConfig.color }]} onPress={handleVerify}>
           <Text style={styles.activateButtonText}>Verify Now</Text>
         </Pressable>
       )}
@@ -356,15 +338,17 @@ function ProgramDetailScreen() {
         color={eligibility!.state === 'suspended' ? colors.warningScale[400] : Colors.error}
       />
       <Text style={styles.inactiveTitle}>
-        {eligibility!.state === 'suspended' ? 'Membership Suspended' :
-         eligibility!.state === 'expired' ? 'Membership Expired' : 'Membership Revoked'}
+        {eligibility!.state === 'suspended'
+          ? 'Membership Suspended'
+          : eligibility!.state === 'expired'
+            ? 'Membership Expired'
+            : 'Membership Revoked'}
       </Text>
       <Text style={styles.inactiveSubtitle}>{eligibility!.message}</Text>
       {eligibility!.state === 'expired' && !isPrive && (
         <Pressable
           style={[styles.activateButton, { backgroundColor: iconConfig.color, marginTop: Spacing.lg }]}
           onPress={handleVerify}
-         
         >
           <Text style={styles.activateButtonText}>Re-verify</Text>
         </Pressable>
@@ -410,15 +394,19 @@ function ProgramDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, isPrive && styles.containerDark]}>
+    <SafeAreaView style={[styles.container, isPrive ? styles.containerDark : null]}>
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerButton} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.headerButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Ionicons name="arrow-back" size={24} color={isPrive ? colors.background.primary : colors.text.primary} />
         </Pressable>
-        <Text style={[styles.headerTitle, isPrive && styles.headerTitleDark]}>
+        <Text style={[styles.headerTitle, isPrive ? styles.headerTitleDark : null]}>
           {eligibility?.program.name || 'Program Details'}
         </Text>
         <View style={{ width: 40 }} />

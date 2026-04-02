@@ -92,7 +92,7 @@ function asExtendedCartItem(item: CartItemType): ExtendedCartItem {
 function CartPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<{ offerRedemptionCode?: string }>();
+  const params = useLocalSearchParams<any>();
   const insets = useSafeAreaInsets();
   const cartState = useCartStore((s) => s.state);
   const cartActions = useCartStore((s) => s.actions);
@@ -302,7 +302,7 @@ function CartPage() {
         });
         setLockedProducts(formattedLockedItems);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []);
@@ -369,7 +369,7 @@ function CartPage() {
         } else {
           platformAlertSimple('Error', response.message || response.error || 'Failed to unlock item');
         }
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
       }
     },
@@ -391,7 +391,7 @@ function CartPage() {
         } else {
           platformAlertSimple('Error', response.message || 'Failed to move item to cart');
         }
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Unable to move item to cart. Please try again.');
       }
     },
@@ -512,7 +512,7 @@ function CartPage() {
         return (
           <View style={styles.cardWrapper}>
             <LockedItem
-              item={item as unknown as LockedProduct}
+              item={item as any}
               onMoveToCart={handleMoveToCart}
               onUnlock={handleUnlockItem}
               showAnimation={true}
@@ -642,29 +642,24 @@ function CartPage() {
           </View>
         ) : (
           <FlashList
-            data={currentItems}
-            renderItem={renderCartItem}
-            keyExtractor={(item) => `${item.id}`}
-            // ROHAN: Removed index from keyExtractor — indexes change on reorder/delete, breaking React key stability and list reconciliation
-            contentContainerStyle={listContentContainerStyle}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            ListEmptyComponent={renderEmptyState}
-            ListFooterComponent={
-              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
-                <CardOffersSection
-                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
-                  orderValue={overallTotal}
-                  onOfferApplied={handleCardOfferApplied}
-                />
-              ) : null
-            }
-            estimatedItemSize={144}
-            maxToRenderPerBatch={8}
-            updateCellsBatchingPeriod={50}
-            initialNumToRender={4}
-            windowSize={4}
-            removeClippedSubviews={true}
+            {...({
+              data: currentItems as any[],
+              renderItem: renderCartItem,
+              keyExtractor: (item: any) => `${item.id}`,
+              contentContainerStyle: listContentContainerStyle as any,
+              showsVerticalScrollIndicator: false,
+              keyboardShouldPersistTaps: 'handled',
+              ListEmptyComponent: renderEmptyState,
+              ListFooterComponent:
+                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+                  <CardOffersSection
+                    storeId={productItems[0]?.store?.id || productItems[0]?.productId}
+                    orderValue={overallTotal}
+                    onOfferApplied={handleCardOfferApplied}
+                  />
+                ) : null,
+              estimatedItemSize: 144,
+            } as any)}
           />
         )}
       </View>

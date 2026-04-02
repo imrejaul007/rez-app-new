@@ -57,7 +57,7 @@ function GroupCreationModal({
         message: message.trim() || undefined,
       });
       handleClose();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -232,7 +232,7 @@ function GroupCreationModal({
           {/* Create Button */}
           <View style={styles.footer}>
             <Pressable
-              style={[styles.createButton, loading && styles.createButtonDisabled]}
+              style={[styles.createButton, loading ? styles.createButtonDisabled : null]}
               onPress={handleSubmit}
               disabled={loading}
             >

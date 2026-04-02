@@ -10,7 +10,7 @@ import {
   Platform,
   Linking,
   StatusBar,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -136,9 +136,9 @@ async function withRetry<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> {
   for (let i = 0; i <= maxRetries; i++) {
     try {
       return await fn();
-    } catch (err) {
+    } catch (err: any) {
       if (i === maxRetries) throw err;
-      await new Promise(r => setTimeout(r, Math.pow(2, i) * 500));
+      await new Promise((r) => setTimeout(r, Math.pow(2, i) * 500));
     }
   }
   throw new Error('Retry exhausted');
@@ -177,9 +177,7 @@ function TrendingOffersPage() {
       const result = await cashStoreApi.getTrending();
 
       // Filter out expired offers
-      const offers = (result.activeOffers || [])
-        .map(transformOffer)
-        .filter(o => !isExpired(o.validUntil));
+      const offers = (result.activeOffers || []).map(transformOffer).filter((o) => !isExpired(o.validUntil));
 
       if (!isMounted()) return;
       setActiveOffers(offers);
@@ -187,7 +185,7 @@ function TrendingOffersPage() {
       setPopularBrands((result.popularBrands || []).map(transformBrand));
       if (!isMounted()) return;
       setHighCashbackBrands((result.highCashbackBrands || []).map(transformBrand));
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to load trending offers. Pull down to retry.');
     }
@@ -206,98 +204,111 @@ function TrendingOffersPage() {
   }, [fetchData]);
 
   // ─── Click Handler with Deduplication + Retry ─────────────
-  const handleBrandPress = useCallback(async (brand: TransformedBrand) => {
-    if (clickingRef.current) return;
-    clickingRef.current = true;
+  const handleBrandPress = useCallback(
+    async (brand: TransformedBrand) => {
+      if (clickingRef.current) return;
+      clickingRef.current = true;
 
-    try {
-      setTrackingBrandId(brand._id);
+      try {
+        setTrackingBrandId(brand._id);
 
-      if (brand.externalUrl) {
-        const result = await withRetry(
-          () => cashStoreApi.trackAffiliateClick(brand._id),
-          2
-        );
-        const url = result?.trackingUrl || brand.externalUrl;
-        if (!url) throw new Error('No URL available');
+        if (brand.externalUrl) {
+          const result = await withRetry(() => cashStoreApi.trackAffiliateClick(brand._id), 2);
+          const url = result?.trackingUrl || brand.externalUrl;
+          if (!url) throw new Error('No URL available');
 
-        await WebBrowser.openBrowserAsync(url, {
-          toolbarColor: colors.nileBlue,
-          controlsColor: colors.background.primary,
-        });
-      } else if (brand.storeId) {
-        router.push(`/MainStorePage?storeId=${brand.storeId}` as any);
+          await WebBrowser.openBrowserAsync(url, {
+            toolbarColor: colors.nileBlue,
+            controlsColor: colors.background.primary,
+          });
+        } else if (brand.storeId) {
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as any);
+        }
+      } catch (err: any) {
+        if (brand.externalUrl) {
+          platformAlertConfirm(
+            'Tracking Issue',
+            'Your cashback may not be tracked. Open anyway?',
+            () => {
+              try {
+                Linking.openURL(brand.externalUrl!);
+              } catch (e: any) {
+                catchAndWarn(e, 'CashStoreTrending/openURL');
+              }
+            },
+            'Open Anyway',
+          );
+        }
+      } finally {
+        if (!isMounted()) return;
+        setTrackingBrandId(null);
+        setTimeout(() => {
+          clickingRef.current = false;
+        }, 1000);
       }
-    } catch (err) {
-      if (brand.externalUrl) {
-        platformAlertConfirm(
-          'Tracking Issue',
-          'Your cashback may not be tracked. Open anyway?',
-          () => { try { Linking.openURL(brand.externalUrl!); } catch (e) { catchAndWarn(e, 'CashStoreTrending/openURL'); } },
-          'Open Anyway'
-        );
+    },
+    [router],
+  );
+
+  const handleOfferPress = useCallback(
+    async (offer: TransformedOffer) => {
+      if (clickingRef.current) return;
+      if (isExpired(offer.validUntil)) return;
+      clickingRef.current = true;
+
+      try {
+        setTrackingBrandId(offer.brand._id);
+
+        if (offer.externalUrl) {
+          const result = await withRetry(() => cashStoreApi.trackAffiliateClick(offer.brand._id), 2);
+          const url = result?.trackingUrl || offer.externalUrl;
+          if (!url) throw new Error('No URL available');
+
+          await WebBrowser.openBrowserAsync(url, {
+            toolbarColor: colors.nileBlue,
+            controlsColor: colors.background.primary,
+          });
+        } else if (offer.storeId) {
+          router.push(`/MainStorePage?storeId=${offer.storeId}` as any);
+        }
+      } catch (err: any) {
+        if (offer.externalUrl) {
+          platformAlertConfirm(
+            'Tracking Issue',
+            'Your cashback may not be tracked. Open anyway?',
+            () => {
+              try {
+                Linking.openURL(offer.externalUrl!);
+              } catch (e: any) {
+                catchAndWarn(e, 'CashStoreTrending/openURL');
+              }
+            },
+            'Open Anyway',
+          );
+        }
+      } finally {
+        if (!isMounted()) return;
+        setTrackingBrandId(null);
+        setTimeout(() => {
+          clickingRef.current = false;
+        }, 1000);
       }
-    } finally {
-      if (!isMounted()) return;
-      setTrackingBrandId(null);
-      setTimeout(() => { clickingRef.current = false; }, 1000);
-    }
-  }, [router]);
-
-  const handleOfferPress = useCallback(async (offer: TransformedOffer) => {
-    if (clickingRef.current) return;
-    if (isExpired(offer.validUntil)) return;
-    clickingRef.current = true;
-
-    try {
-      setTrackingBrandId(offer.brand._id);
-
-      if (offer.externalUrl) {
-        const result = await withRetry(
-          () => cashStoreApi.trackAffiliateClick(offer.brand._id),
-          2
-        );
-        const url = result?.trackingUrl || offer.externalUrl;
-        if (!url) throw new Error('No URL available');
-
-        await WebBrowser.openBrowserAsync(url, {
-          toolbarColor: colors.nileBlue,
-          controlsColor: colors.background.primary,
-        });
-      } else if (offer.storeId) {
-        router.push(`/MainStorePage?storeId=${offer.storeId}` as any);
-      }
-    } catch (err) {
-      if (offer.externalUrl) {
-        platformAlertConfirm(
-          'Tracking Issue',
-          'Your cashback may not be tracked. Open anyway?',
-          () => { try { Linking.openURL(offer.externalUrl!); } catch (e) { catchAndWarn(e, 'CashStoreTrending/openURL'); } },
-          'Open Anyway'
-        );
-      }
-    } finally {
-      if (!isMounted()) return;
-      setTrackingBrandId(null);
-      setTimeout(() => { clickingRef.current = false; }, 1000);
-    }
-  }, [router]);
+    },
+    [router],
+  );
 
   // ─── Computed ──────────────────────────────────────────────
   const hasNoData =
-    !isLoading &&
-    activeOffers.length === 0 &&
-    popularBrands.length === 0 &&
-    highCashbackBrands.length === 0;
+    !isLoading && activeOffers.length === 0 && popularBrands.length === 0 && highCashbackBrands.length === 0;
 
   const hasError = error && hasNoData;
   const headerTop = Platform.OS === 'web' ? 0 : insets.top;
 
   const totalBrands = popularBrands.length + highCashbackBrands.length;
   const maxCashback = Math.max(
-    ...popularBrands.map(b => b.cashbackRate),
-    ...highCashbackBrands.map(b => b.cashbackRate),
-    0
+    ...popularBrands.map((b) => b.cashbackRate),
+    ...highCashbackBrands.map((b) => b.cashbackRate),
+    0,
   );
 
   // ─── Loading Skeleton ────────────────────────────────────
@@ -307,7 +318,10 @@ function TrendingOffersPage() {
         <StatusBar barStyle="dark-content" />
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backBtn}
+            >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Trending Offers</Text>
@@ -357,7 +371,10 @@ function TrendingOffersPage() {
         <StatusBar barStyle="dark-content" />
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backBtn}
+            >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Trending Offers</Text>
@@ -384,17 +401,12 @@ function TrendingOffersPage() {
                 color={hasError ? '#E8744F' : colors.nileBlue}
               />
             </View>
-            <Text style={styles.emptyTitle}>
-              {hasError ? 'Something went wrong' : 'No trending offers yet'}
-            </Text>
+            <Text style={styles.emptyTitle}>{hasError ? 'Something went wrong' : 'No trending offers yet'}</Text>
             <Text style={styles.emptySubtitle}>
               {hasError ? error : 'Trending deals refresh daily — check back soon!'}
             </Text>
             {hasError && (
-              <Pressable
-                onPress={handleRefresh}
-                style={styles.retryBtn}
-              >
+              <Pressable onPress={handleRefresh} style={styles.retryBtn}>
                 <Ionicons name="refresh" size={14} color={colors.text.inverse} />
                 <Text style={styles.retryBtnText}>Try Again</Text>
               </Pressable>
@@ -405,14 +417,17 @@ function TrendingOffersPage() {
     );
   }
 
-  const renderOfferItem = useCallback(({ item, index }: { item: TransformedOffer; index: number }) => (
-    <OfferCard
-      offer={item}
-      index={index}
-      onPress={() => handleOfferPress(item)}
-      isTracking={trackingBrandId === item.brand._id}
-    />
-  ), [handleOfferPress, trackingBrandId]);
+  const renderOfferItem = useCallback(
+    ({ item, index }: { item: TransformedOffer; index: number }) => (
+      <OfferCard
+        offer={item}
+        index={index}
+        onPress={() => handleOfferPress(item)}
+        isTracking={trackingBrandId === item.brand._id}
+      />
+    ),
+    [handleOfferPress, trackingBrandId],
+  );
 
   // ─── Main Render ──────────────────────────────────────────
   return (
@@ -422,7 +437,10 @@ function TrendingOffersPage() {
       {/* Sticky Header */}
       <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
         <View style={styles.headerRow}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
             <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerTitleWrap}>
@@ -475,10 +493,7 @@ function TrendingOffersPage() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionTitleRow}>
-                <LinearGradient
-                  colors={['#E8744F', colors.error]}
-                  style={styles.sectionIconWrap}
-                >
+                <LinearGradient colors={['#E8744F', colors.error]} style={styles.sectionIconWrap}>
                   <Ionicons name="flash" size={14} color={colors.text.inverse} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Limited Time Offers</Text>
@@ -505,10 +520,7 @@ function TrendingOffersPage() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionTitleRow}>
-                <LinearGradient
-                  colors={[colors.nileBlue, colors.brand.nileBlueLight]}
-                  style={styles.sectionIconWrap}
-                >
+                <LinearGradient colors={[colors.nileBlue, colors.brand.nileBlueLight]} style={styles.sectionIconWrap}>
                   <Ionicons name="trending-up" size={14} color={Colors.gold} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Most Popular</Text>
@@ -578,288 +590,268 @@ function TrendingOffersPage() {
 }
 
 // ─── Offer Card (Horizontal) ────────────────────────────────
-const OfferCard = React.memo(({
-  offer,
-  index,
-  onPress,
-  isTracking,
-}: {
-  offer: TransformedOffer;
-  index: number;
-  onPress: () => void;
-  isTracking: boolean;
-}) => {
-  const fadeAnim = useSharedValue(0);
-  const scaleAnim = useSharedValue(1);
-  const [logoError, setLogoError] = useState(false);
+const OfferCard = React.memo(
+  ({
+    offer,
+    index,
+    onPress,
+    isTracking,
+  }: {
+    offer: TransformedOffer;
+    index: number;
+    onPress: () => void;
+    isTracking: boolean;
+  }) => {
+    const fadeAnim = useSharedValue(0);
+    const scaleAnim = useSharedValue(1);
+    const [logoError, setLogoError] = useState(false);
 
-  useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: 350 });
-  }, [index]);
+    useEffect(() => {
+      fadeAnim.value = withTiming(1, { duration: 350 });
+    }, [index]);
 
-  const handlePressIn = () => {
-    scaleAnim.value = withSpring(0.96);
-  };
+    const handlePressIn = () => {
+      scaleAnim.value = withSpring(0.96);
+    };
 
-  const handlePressOut = () => {
-    scaleAnim.value = withSpring(1);
-  };
+    const handlePressOut = () => {
+      scaleAnim.value = withSpring(1);
+    };
 
-  const offerCardStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-    transform: [
-      { scale: scaleAnim.value },
-      { translateY: interpolate(fadeAnim.value, [0, 1], [10, 0]) },
-    ],
-  }));
+    const offerCardStyle = useAnimatedStyle(() => ({
+      opacity: fadeAnim.value,
+      transform: [{ scale: scaleAnim.value }, { translateY: interpolate(fadeAnim.value, [0, 1], [10, 0]) }],
+    }));
 
-  const urgent = isUrgent(offer.validUntil);
-  const timeLeft = formatTimeLeft(offer.validUntil);
-  const ended = timeLeft === 'Ended';
-  const badgeInfo = offer.badge ? BADGE_CONFIG[offer.badge] : null;
-  const isHot = offer.cashbackRate >= 10;
+    const urgent = isUrgent(offer.validUntil);
+    const timeLeft = formatTimeLeft(offer.validUntil);
+    const ended = timeLeft === 'Ended';
+    const badgeInfo = offer.badge ? BADGE_CONFIG[offer.badge] : null;
+    const isHot = offer.cashbackRate >= 10;
 
-  return (
-    <Animated.View
-      style={[
-        styles.offerCardWrapper,
-        offerCardStyle,
-      ]}
-    >
-      <Pressable
-        style={[styles.offerCard, urgent && !ended && styles.offerCardUrgent, ended && styles.offerCardEnded]}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-       
-        disabled={ended || isTracking}
-      >
-        {/* Badge */}
-        {badgeInfo && (
-          <View style={[styles.offerBadge, { backgroundColor: badgeInfo.bg }]}>
-            <Ionicons name={badgeInfo.icon as any} size={8} color={badgeInfo.text} />
-            <Text style={[styles.offerBadgeText, { color: badgeInfo.text }]}>
-              {badgeInfo.label}
-            </Text>
-          </View>
-        )}
-
-        {/* Brand Logo */}
-        <View style={styles.offerLogoArea}>
-          {offer.brand.logo?.startsWith('http') && !logoError ? (
-            <CachedImage
-              source={offer.brand.logo}
-              style={styles.offerLogo}
-              contentFit="contain"
-              onError={() => setLogoError(true)}
-            />
-          ) : (
-            <LinearGradient colors={[colors.nileBlue, colors.brand.nileBlueLight]} style={styles.offerLogoPlaceholder}>
-              <Text style={styles.offerLogoInitial}>
-                {offer.brand.name.charAt(0).toUpperCase()}
-              </Text>
-            </LinearGradient>
-          )}
-        </View>
-
-        {/* Title */}
-        <Text style={styles.offerTitle} numberOfLines={1}>
-          {offer.title || offer.brand.name}
-        </Text>
-
-        {/* Cashback Badge */}
-        <View style={[styles.offerCashbackPill, isHot && styles.offerCashbackPillHot]}>
-          <Text style={[styles.offerCashbackValue, isHot && styles.offerCashbackValueHot]}>
-            {offer.cashbackRate}%
-          </Text>
-          <Text style={[styles.offerCashbackLabel, isHot && styles.offerCashbackLabelHot]}>
-            cashback
-          </Text>
-        </View>
-
-        {/* Timer */}
-        {offer.validUntil ? (
-          <View style={[styles.offerTimerWrap, urgent && !ended && styles.offerTimerUrgent]}>
-            <Ionicons
-              name={ended ? 'close-circle' : 'time-outline'}
-              size={10}
-              color={ended ? colors.neutral[400] : urgent ? colors.error : '#7C8A97'}
-            />
-            <Text
-              style={[
-                styles.offerTimerText,
-                ended && styles.offerTimerEnded,
-                urgent && !ended && styles.offerTimerTextUrgent,
-              ]}
-            >
-              {timeLeft}
-            </Text>
-          </View>
-        ) : null}
-
-        {/* Tracking Overlay */}
-        {isTracking && (
-          <View style={styles.trackingOverlay}>
-            <Text style={styles.trackingText}>Tracking...</Text>
-          </View>
-        )}
-
-        {/* Ended Overlay */}
-        {ended && (
-          <View style={styles.endedOverlay}>
-            <Text style={styles.endedText}>Expired</Text>
-          </View>
-        )}
-      </Pressable>
-    </Animated.View>
-  );
-});
-
-// ─── Brand Card (Full-Width Vertical) ────────────────────────
-const BrandCard = React.memo(({
-  brand,
-  index,
-  onPress,
-  showHotTag = false,
-  isTracking = false,
-}: {
-  brand: TransformedBrand;
-  index: number;
-  onPress: () => void;
-  showHotTag?: boolean;
-  isTracking?: boolean;
-}) => {
-  const fadeAnim = useSharedValue(0);
-  const pressAnim = useSharedValue(1);
-  const [logoError, setLogoError] = useState(false);
-
-  useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: 350 });
-  }, [index]);
-
-  const handlePressIn = () => {
-    pressAnim.value = withSpring(0.975);
-  };
-
-  const handlePressOut = () => {
-    pressAnim.value = withSpring(1);
-  };
-
-  const brandCardStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-    transform: [
-      { scale: pressAnim.value },
-      { translateY: interpolate(fadeAnim.value, [0, 1], [12, 0]) },
-    ],
-  }));
-
-  const isHot = showHotTag || brand.cashbackRate >= 10;
-  const cashbackColor = isHot ? colors.successScale[700] : colors.nileBlue;
-  const cashbackBg = isHot ? colors.tint.greenLight : '#F0F4F8';
-
-  return (
-    <Animated.View
-      style={[
-        styles.brandCardWrapper,
-        brandCardStyle,
-      ]}
-    >
-      <Pressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-       
-        style={styles.brandCard}
-        disabled={isTracking}
-      >
-        {/* Hot accent bar */}
-        {isHot && <View style={styles.hotAccent} />}
-
-        {/* Logo */}
-        <View style={[styles.brandLogoArea, isHot && styles.brandLogoAreaHot]}>
-          {brand.logo?.startsWith('http') && !logoError ? (
-            <CachedImage
-              source={brand.logo}
-              style={styles.brandLogo}
-              contentFit="contain"
-              onError={() => setLogoError(true)}
-            />
-          ) : (
-            <LinearGradient colors={[colors.nileBlue, colors.brand.nileBlueLight]} style={styles.brandLogoPlaceholder}>
-              <Text style={styles.brandLogoInitial}>{brand.name.charAt(0).toUpperCase()}</Text>
-            </LinearGradient>
-          )}
-        </View>
-
-        {/* Info */}
-        <View style={styles.brandInfoContainer}>
-          <View style={styles.brandNameRow}>
-            <Text style={styles.brandName} numberOfLines={1}>
-              {brand.name}
-            </Text>
-            {brand.isFeatured && (
-              <Ionicons name="checkmark-circle" size={13} color={colors.infoScale[400]} />
-            )}
-          </View>
-
-          <View style={styles.brandMetaRow}>
-            {brand.category ? (
-              <View style={styles.categoryChip}>
-                <Text style={styles.categoryChipText}>{brand.category}</Text>
-              </View>
-            ) : null}
-            {brand.rating ? (
-              <View style={styles.ratingPill}>
-                <Ionicons name="star" size={9} color={colors.warningScale[400]} />
-                <Text style={styles.ratingText}>{brand.rating.toFixed(1)}</Text>
-                {brand.ratingCount ? (
-                  <Text style={styles.ratingCount}>
-                    ({brand.ratingCount > 999 ? `${(brand.ratingCount / 1000).toFixed(0)}K` : brand.ratingCount})
-                  </Text>
-                ) : null}
-              </View>
-            ) : null}
-          </View>
-
-          {isHot && (
-            <View style={styles.hotTag}>
-              <Ionicons name="flame" size={10} color={colors.text.inverse} />
-              <Text style={styles.hotTagText}>Hot Deal</Text>
+    return (
+      <Animated.View style={[styles.offerCardWrapper, offerCardStyle]}>
+        <Pressable
+          style={[styles.offerCard, urgent && !ended && styles.offerCardUrgent, ended ? styles.offerCardEnded : null]}
+          onPress={onPress}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          disabled={ended || isTracking}
+        >
+          {/* Badge */}
+          {badgeInfo && (
+            <View style={[styles.offerBadge, { backgroundColor: badgeInfo.bg }]}>
+              <Ionicons name={badgeInfo.icon as any} size={8} color={badgeInfo.text} />
+              <Text style={[styles.offerBadgeText, { color: badgeInfo.text }]}>{badgeInfo.label}</Text>
             </View>
           )}
-        </View>
 
-        {/* Cashback Badge */}
-        <View style={styles.cashbackOuter}>
-          <View style={[styles.cashbackBadge, { backgroundColor: cashbackBg }]}>
-            <Text style={[styles.cashbackRate, { color: cashbackColor }]}>{brand.cashbackRate}%</Text>
-            <Text style={[styles.cashbackLabel, { color: isHot ? colors.successScale[700] : colors.neutral[500] }]}>cashback</Text>
-          </View>
-          <View style={styles.arrowCircle}>
-            {isTracking ? (
-              <Ionicons name="hourglass" size={11} color={colors.nileBlue} />
+          {/* Brand Logo */}
+          <View style={styles.offerLogoArea}>
+            {offer.brand.logo?.startsWith('http') && !logoError ? (
+              <CachedImage
+                source={offer.brand.logo}
+                style={styles.offerLogo}
+                contentFit="contain"
+                onError={() => setLogoError(true)}
+              />
             ) : (
-              <Ionicons name="arrow-forward" size={12} color={colors.nileBlue} />
+              <LinearGradient
+                colors={[colors.nileBlue, colors.brand.nileBlueLight]}
+                style={styles.offerLogoPlaceholder}
+              >
+                <Text style={styles.offerLogoInitial}>{offer.brand.name.charAt(0).toUpperCase()}</Text>
+              </LinearGradient>
             )}
           </View>
-        </View>
-      </Pressable>
-    </Animated.View>
-  );
-});
+
+          {/* Title */}
+          <Text style={styles.offerTitle} numberOfLines={1}>
+            {offer.title || offer.brand.name}
+          </Text>
+
+          {/* Cashback Badge */}
+          <View style={[styles.offerCashbackPill, isHot ? styles.offerCashbackPillHot : null]}>
+            <Text style={[styles.offerCashbackValue, isHot ? styles.offerCashbackValueHot : null]}>
+              {offer.cashbackRate}%
+            </Text>
+            <Text style={[styles.offerCashbackLabel, isHot ? styles.offerCashbackLabelHot : null]}>cashback</Text>
+          </View>
+
+          {/* Timer */}
+          {offer.validUntil ? (
+            <View style={[styles.offerTimerWrap, urgent && !ended ? styles.offerTimerUrgent : null]}>
+              <Ionicons
+                name={ended ? 'close-circle' : 'time-outline'}
+                size={10}
+                color={ended ? colors.neutral[400] : urgent ? colors.error : '#7C8A97'}
+              />
+              <Text
+                style={[
+                  styles.offerTimerText,
+                  ended && styles.offerTimerEnded,
+                  urgent && !ended && styles.offerTimerTextUrgent,
+                ]}
+              >
+                {timeLeft}
+              </Text>
+            </View>
+          ) : null}
+
+          {/* Tracking Overlay */}
+          {isTracking && (
+            <View style={styles.trackingOverlay}>
+              <Text style={styles.trackingText}>Tracking...</Text>
+            </View>
+          )}
+
+          {/* Ended Overlay */}
+          {ended && (
+            <View style={styles.endedOverlay}>
+              <Text style={styles.endedText}>Expired</Text>
+            </View>
+          )}
+        </Pressable>
+      </Animated.View>
+    );
+  },
+);
+
+// ─── Brand Card (Full-Width Vertical) ────────────────────────
+const BrandCard = React.memo(
+  ({
+    brand,
+    index,
+    onPress,
+    showHotTag = false,
+    isTracking = false,
+  }: {
+    brand: TransformedBrand;
+    index: number;
+    onPress: () => void;
+    showHotTag?: boolean;
+    isTracking?: boolean;
+  }) => {
+    const fadeAnim = useSharedValue(0);
+    const pressAnim = useSharedValue(1);
+    const [logoError, setLogoError] = useState(false);
+
+    useEffect(() => {
+      fadeAnim.value = withTiming(1, { duration: 350 });
+    }, [index]);
+
+    const handlePressIn = () => {
+      pressAnim.value = withSpring(0.975);
+    };
+
+    const handlePressOut = () => {
+      pressAnim.value = withSpring(1);
+    };
+
+    const brandCardStyle = useAnimatedStyle(() => ({
+      opacity: fadeAnim.value,
+      transform: [{ scale: pressAnim.value }, { translateY: interpolate(fadeAnim.value, [0, 1], [12, 0]) }],
+    }));
+
+    const isHot = showHotTag || brand.cashbackRate >= 10;
+    const cashbackColor = isHot ? colors.successScale[700] : colors.nileBlue;
+    const cashbackBg = isHot ? colors.tint.greenLight : '#F0F4F8';
+
+    return (
+      <Animated.View style={[styles.brandCardWrapper, brandCardStyle]}>
+        <Pressable
+          onPress={onPress}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={styles.brandCard}
+          disabled={isTracking}
+        >
+          {/* Hot accent bar */}
+          {isHot && <View style={styles.hotAccent} />}
+
+          {/* Logo */}
+          <View style={[styles.brandLogoArea, isHot ? styles.brandLogoAreaHot : null]}>
+            {brand.logo?.startsWith('http') && !logoError ? (
+              <CachedImage
+                source={brand.logo}
+                style={styles.brandLogo}
+                contentFit="contain"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <LinearGradient
+                colors={[colors.nileBlue, colors.brand.nileBlueLight]}
+                style={styles.brandLogoPlaceholder}
+              >
+                <Text style={styles.brandLogoInitial}>{brand.name.charAt(0).toUpperCase()}</Text>
+              </LinearGradient>
+            )}
+          </View>
+
+          {/* Info */}
+          <View style={styles.brandInfoContainer}>
+            <View style={styles.brandNameRow}>
+              <Text style={styles.brandName} numberOfLines={1}>
+                {brand.name}
+              </Text>
+              {brand.isFeatured && <Ionicons name="checkmark-circle" size={13} color={colors.infoScale[400]} />}
+            </View>
+
+            <View style={styles.brandMetaRow}>
+              {brand.category ? (
+                <View style={styles.categoryChip}>
+                  <Text style={styles.categoryChipText}>{brand.category}</Text>
+                </View>
+              ) : null}
+              {brand.rating ? (
+                <View style={styles.ratingPill}>
+                  <Ionicons name="star" size={9} color={colors.warningScale[400]} />
+                  <Text style={styles.ratingText}>{brand.rating.toFixed(1)}</Text>
+                  {brand.ratingCount ? (
+                    <Text style={styles.ratingCount}>
+                      ({brand.ratingCount > 999 ? `${(brand.ratingCount / 1000).toFixed(0)}K` : brand.ratingCount})
+                    </Text>
+                  ) : null}
+                </View>
+              ) : null}
+            </View>
+
+            {isHot && (
+              <View style={styles.hotTag}>
+                <Ionicons name="flame" size={10} color={colors.text.inverse} />
+                <Text style={styles.hotTagText}>Hot Deal</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Cashback Badge */}
+          <View style={styles.cashbackOuter}>
+            <View style={[styles.cashbackBadge, { backgroundColor: cashbackBg }]}>
+              <Text style={[styles.cashbackRate, { color: cashbackColor }]}>{brand.cashbackRate}%</Text>
+              <Text style={[styles.cashbackLabel, { color: isHot ? colors.successScale[700] : colors.neutral[500] }]}>
+                cashback
+              </Text>
+            </View>
+            <View style={styles.arrowCircle}>
+              {isTracking ? (
+                <Ionicons name="hourglass" size={11} color={colors.nileBlue} />
+              ) : (
+                <Ionicons name="arrow-forward" size={12} color={colors.nileBlue} />
+              )}
+            </View>
+          </View>
+        </Pressable>
+      </Animated.View>
+    );
+  },
+);
 
 // ─── Skeleton: Offer Card ───────────────────────────────────
 const OfferSkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
-    );
+    shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
   }, [index]);
 
   const offerSkeletonStyle = useAnimatedStyle(() => ({
@@ -883,13 +875,7 @@ const BrandSkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
-    );
+    shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
   }, [index]);
 
   const brandSkeletonStyle = useAnimatedStyle(() => ({
@@ -1084,7 +1070,12 @@ const styles = StyleSheet.create({
     borderColor: '#F0EBE4',
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: colors.nileBlue, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.08, shadowRadius: 10 },
+      ios: {
+        shadowColor: colors.nileBlue,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
+      },
       android: { elevation: 3 },
       web: { boxShadow: '0 3px 10px rgba(26,58,82,0.08)' },
     }),
@@ -1257,7 +1248,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F0EBE4',
     ...Platform.select({
-      ios: { shadowColor: colors.nileBlue, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 10 },
+      ios: {
+        shadowColor: colors.nileBlue,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+      },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 10px rgba(26,58,82,0.06)' },
     }),

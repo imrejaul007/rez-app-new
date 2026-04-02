@@ -111,7 +111,7 @@ const CHALLENGES: Challenge[] = [
 const getDifficultyColor = (difficulty: Challenge['difficulty']): string => {
   switch (difficulty) {
     case 'Easy': return COLORS.green;
-    case 'Medium': return COLORS.orange;
+    case 'Medium': return (COLORS as any).orange;
     case 'Hard': return COLORS.red;
     default: return COLORS.textSecondary;
   }
@@ -172,7 +172,7 @@ function ChallengesPage() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.orange]} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[(COLORS as any).orange]} />
         }
       >
         {/* Featured Challenge */}
@@ -312,7 +312,7 @@ function ChallengesPage() {
                     colors={
                       joinedChallenges.has(challenge.id)
                         ? [colors.neutral[400], colors.neutral[500]]
-                        : [COLORS.orange, COLORS.orangeDark]
+                        : [(COLORS as any).orange, COLORS.orangeDark]
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.orangeLight,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.orange + '30',
+    borderColor: (COLORS as any).orange + '30',
   },
   bottomNoteText: {
     flex: 1,

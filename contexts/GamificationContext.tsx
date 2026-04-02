@@ -281,7 +281,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
         [STORAGE_KEYS.LAST_LOGIN, s.lastLoginDate || ''],
         [STORAGE_KEYS.CACHE_TIME, Date.now().toString()],
       ]);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []); // Empty deps — reads from ref
@@ -296,7 +296,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       if (operation) {
         try {
           await operation();
-        } catch (error) {
+        } catch (error: any) {
           // silently handle
         }
       }
@@ -311,7 +311,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
         try {
           await operation();
           resolve();
-        } catch (error) {
+        } catch (error: any) {
           reject(error);
         }
       });
@@ -343,7 +343,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       };
 
       dispatch({ type: 'COINS_LOADED', payload: coinBalance });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [refreshSharedWallet, availableBalance]);
@@ -431,7 +431,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       }
 
       dispatch({ type: 'GAMIFICATION_LOADING', payload: false });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'GAMIFICATION_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to load gamification data',
@@ -475,7 +475,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       }
 
       return [];
-    } catch (error) {
+    } catch (error: any) {
       return [];
     }
   }, [state.featureFlags.ENABLE_ACHIEVEMENTS, state.achievements]);
@@ -505,7 +505,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
         } else {
           throw new Error(syncResult.error || 'Failed to sync coins to wallet');
         }
-      } catch (error) {
+      } catch (error: any) {
         throw error;
       }
     });
@@ -535,7 +535,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
         } else {
           throw new Error(syncResult.error || 'Failed to sync coin spending to wallet');
         }
-      } catch (error) {
+      } catch (error: any) {
         throw error;
       }
     });
@@ -589,7 +589,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
         // Silently handle check-in API errors (endpoint may not exist yet)
         // silently handle - check-in endpoint may not exist yet
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [state.lastLoginDate, triggerAchievementCheck]);

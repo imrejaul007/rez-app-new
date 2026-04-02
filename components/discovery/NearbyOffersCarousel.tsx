@@ -87,7 +87,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, showUrgencyTags }
 
   return (
     <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`Save Rs.${offer.savings} at ${offer.merchantName}, ${offer.distance} away`}
@@ -150,7 +150,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, showUrgencyTags }
 
 const SeeAllCard: React.FC<{ onPress: () => void; count: number }> = ({ onPress, count }) => (
   <Pressable
-    style={({ pressed }) => [styles.seeAllCard, pressed && styles.cardPressed]}
+    style={({ pressed }) => [styles.seeAllCard, pressed ? styles.cardPressed : null]}
     onPress={onPress}
     accessibilityRole="button"
     accessibilityLabel={`See all ${count} nearby offers`}

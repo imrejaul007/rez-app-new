@@ -29,21 +29,21 @@ class BankOffersApiService {
    * Get all active bank offers
    */
   async getOffers(params?: GetBankOffersParams): Promise<ApiResponse<{ offers: BankOffer[] }>> {
-    return apiClient.get(this.baseUrl, params);
+    return apiClient.get<any>(this.baseUrl, params as any);
   }
 
   /**
    * Get bank offer by ID
    */
   async getOfferById(id: string): Promise<ApiResponse<{ offer: BankOffer }>> {
-    return apiClient.get(`${this.baseUrl}/${id}`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Get bank offers for a specific category
    */
   async getOffersByCategory(categorySlug: string, limit: number = 10): Promise<ApiResponse<{ offers: BankOffer[] }>> {
-    return apiClient.get(this.baseUrl, { category: categorySlug, limit });
+    return apiClient.get<any>(this.baseUrl, { category: categorySlug, limit });
   }
 }
 

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@/components/common/CrossPlatformSlider';
+const AnySlider = Slider as any;
 import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
@@ -82,7 +83,7 @@ function PointsSlider({
       </View>
 
       <View style={styles.sliderContainer}>
-        <Slider
+        <AnySlider
           style={styles.slider}
           minimumValue={0}
           maximumValue={maxUsablePoints}
@@ -92,16 +93,13 @@ function PointsSlider({
           minimumTrackTintColor={colors.brand.purpleLight}
           maximumTrackTintColor={colors.neutral[200]}
           thumbTintColor={colors.brand.purpleLight}
-          accessible={true}
-          accessibilityLabel="Points slider"
-          accessibilityHint={`Adjust to use between 0 and ${maxUsablePoints} points. Currently using ${selectedPoints} points for ${discount.toFixed(2)} rupees discount.`}
-          accessibilityValue={{
-            min: 0,
-            max: maxUsablePoints,
-            now: selectedPoints,
-            text: `${selectedPoints} points, ${discount.toFixed(2)} rupees discount`
-          }}
-          accessibilityRole="adjustable"
+          {...({
+            accessible: true,
+            accessibilityLabel: "Points slider",
+            accessibilityHint: `Adjust to use between 0 and ${maxUsablePoints} points. Currently using ${selectedPoints} points for ${discount.toFixed(2)} rupees discount.`,
+            accessibilityValue: { min: 0, max: maxUsablePoints, now: selectedPoints, text: `${selectedPoints} points, ${discount.toFixed(2)} rupees discount` },
+            accessibilityRole: "adjustable",
+          } as any)}
         />
       </View>
 

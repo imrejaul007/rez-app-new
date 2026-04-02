@@ -124,7 +124,7 @@ function EnrollClassPage() {
         if (!isMounted()) return;
         setSalons(bookable.length > 0 ? bookable : allStores.slice(0, 20));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -156,7 +156,7 @@ function EnrollClassPage() {
         const firstAvailable = serviceSlots.find(s => s.available);
         if (firstAvailable) setSelectedTime(firstAvailable.time);
       }
-    } catch (err) {
+    } catch (err: any) {
       const fallback: TimeSlot[] = [
         '07:00', '07:30', '08:00', '08:30', '09:00', '09:30',
         '10:00', '10:30', '11:00', '11:30', '12:00', '13:00',
@@ -219,8 +219,8 @@ function EnrollClassPage() {
 
       if (res.success) {
         if (!isMounted()) return;
-        setBookingId(res.data?.id || res.data?._id || null);
-        setBookingNumber(res.data?.appointmentNumber || res.data?.bookingNumber || null);
+        setBookingId(res.data?.id || (res.data as any)?._id || null);
+        setBookingNumber((res.data as any)?.appointmentNumber || (res.data as any)?.bookingNumber || null);
         setStep('confirm');
       } else {
         platformAlertSimple('Enrollment Failed', res.message || 'Could not create enrollment. Please try again.');
@@ -276,7 +276,7 @@ function EnrollClassPage() {
             <Text style={styles.storeCuisine} numberOfLines={1}>{getServiceTags(store)}</Text>
             <View style={styles.storeMetaRow}>
               <View style={styles.storeRating}>
-                <Ionicons name="star" size={12} color={COLORS.goldDark} />
+                <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
                 <Text style={styles.storeRatingText}>{rating}</Text>
                 <Text style={styles.storeReviewCount}>({reviewCount})</Text>
               </View>
@@ -325,7 +325,7 @@ function EnrollClassPage() {
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.indigo} />
+            <ActivityIndicator size="large" color={(COLORS as any).indigo} />
             <Text style={styles.loadingText}>Finding institutes & tutors...</Text>
           </View>
         ) : filteredSalons.length === 0 ? (
@@ -355,7 +355,7 @@ function EnrollClassPage() {
         <ScrollView contentContainerStyle={styles.confirmContent}>
           <View style={styles.confirmIconWrap}>
             <LinearGradient colors={[COLORS.indigoLight, '#E0E7FF']} style={styles.confirmIconGradient}>
-              <Ionicons name="checkmark-circle" size={64} color={COLORS.indigo} />
+              <Ionicons name="checkmark-circle" size={64} color={(COLORS as any).indigo} />
             </LinearGradient>
           </View>
           <Text style={styles.confirmTitle}>Class Enrolled!</Text>
@@ -370,7 +370,7 @@ function EnrollClassPage() {
           <View style={styles.confirmCard}>
             <View style={styles.confirmRow}>
               <View style={[styles.confirmRowIcon, { backgroundColor: 'rgba(99,102,241,0.1)' }]}>
-                <Ionicons name="school" size={16} color={COLORS.indigo} />
+                <Ionicons name="school" size={16} color={(COLORS as any).indigo} />
               </View>
               <View>
                 <Text style={styles.confirmRowLabel}>Institute</Text>
@@ -400,7 +400,7 @@ function EnrollClassPage() {
           </View>
 
           <View style={styles.confirmNote}>
-            <Ionicons name="information-circle" size={16} color={COLORS.indigo} />
+            <Ionicons name="information-circle" size={16} color={(COLORS as any).indigo} />
             <Text style={styles.confirmNoteText}>
               No pre-payment required. Earn bonus coins when you attend the class!
             </Text>
@@ -436,7 +436,7 @@ function EnrollClassPage() {
       <ScrollView contentContainerStyle={styles.formContent} showsVerticalScrollIndicator={false}>
         {selectedStore?.name && (
           <View style={styles.storePreview}>
-            <LinearGradient colors={[COLORS.indigo, COLORS.indigoDark]} style={styles.storePreviewGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+            <LinearGradient colors={[(COLORS as any).indigo, COLORS.indigoDark]} style={styles.storePreviewGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <View style={styles.storePreviewIcon}><Ionicons name="school" size={20} color={COLORS.white} /></View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.storePreviewName} numberOfLines={1}>{selectedStore.name}</Text>
@@ -455,10 +455,10 @@ function EnrollClassPage() {
           {SUBJECT_TYPES.map(service => {
             const isSelected = selectedService === service.id;
             return (
-              <Pressable key={service.id} style={[styles.serviceChip, isSelected && styles.serviceChipActive]} onPress={() => setSelectedService(service.id)}>
+              <Pressable key={service.id} style={[styles.serviceChip, isSelected ? styles.serviceChipActive : null]} onPress={() => setSelectedService(service.id)}>
                 <Text style={styles.serviceEmoji}>{service.icon}</Text>
-                <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelActive]}>{service.label}</Text>
-                <Text style={[styles.serviceDuration, isSelected && styles.serviceDurationActive]}>{service.duration}</Text>
+                <Text style={[styles.serviceLabel, isSelected ? styles.serviceLabelActive : null]}>{service.label}</Text>
+                <Text style={[styles.serviceDuration, isSelected ? styles.serviceDurationActive : null]}>{service.duration}</Text>
               </Pressable>
             );
           })}
@@ -471,10 +471,10 @@ function EnrollClassPage() {
             const isSelected = date.toDateString() === selectedDate.toDateString();
             const isToday = i === 0;
             return (
-              <Pressable key={i} style={[styles.dateChip, isSelected && styles.dateChipActive]} onPress={() => setSelectedDate(date)}>
-                <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>{isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}</Text>
-                <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>{date.getDate()}</Text>
-                <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>{date.toLocaleDateString(undefined, { month: 'short' })}</Text>
+              <Pressable key={i} style={[styles.dateChip, isSelected ? styles.dateChipActive : null]} onPress={() => setSelectedDate(date)}>
+                <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>{isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}</Text>
+                <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>{date.getDate()}</Text>
+                <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>{date.toLocaleDateString(undefined, { month: 'short' })}</Text>
               </Pressable>
             );
           })}
@@ -484,7 +484,7 @@ function EnrollClassPage() {
         <View style={styles.formLabelRow}>
           <Text style={styles.formLabel}>Select Time</Text>
           {isLoadingAvailability ? (
-            <ActivityIndicator size="small" color={COLORS.indigo} />
+            <ActivityIndicator size="small" color={(COLORS as any).indigo} />
           ) : (
             <Text style={styles.availableLabel}>{availableCount} slots available</Text>
           )}
@@ -492,7 +492,7 @@ function EnrollClassPage() {
 
         {isLoadingAvailability ? (
           <View style={styles.timeLoadingWrap}>
-            <ActivityIndicator size="small" color={COLORS.indigo} />
+            <ActivityIndicator size="small" color={(COLORS as any).indigo} />
             <Text style={styles.timeLoadingText}>Checking availability...</Text>
           </View>
         ) : (
@@ -503,14 +503,14 @@ function EnrollClassPage() {
               return (
                 <Pressable
                   key={slot.time}
-                  style={[styles.timeChip, isSelected && styles.timeChipActive, isUnavailable && styles.timeChipUnavailable]}
+                  style={[styles.timeChip, isSelected && styles.timeChipActive, isUnavailable ? styles.timeChipUnavailable : null]}
                   onPress={() => {
                     if (isUnavailable) { platformAlertSimple('Unavailable', 'This time slot is fully booked.'); return; }
                     setSelectedTime(slot.time);
                   }}
                  
                 >
-                  <Text style={[styles.timeText, isSelected && styles.timeTextActive, isUnavailable && styles.timeTextUnavailable]}>{slot.time}</Text>
+                  <Text style={[styles.timeText, isSelected && styles.timeTextActive, isUnavailable ? styles.timeTextUnavailable : null]}>{slot.time}</Text>
                   {isUnavailable && <Text style={styles.timeFullText}>Full</Text>}
                 </Pressable>
               );
@@ -567,7 +567,7 @@ function EnrollClassPage() {
         </Pressable>
 
         <View style={styles.bonusNote}>
-          <View style={styles.bonusIconWrap}><Ionicons name="wallet-outline" size={14} color={COLORS.indigo} /></View>
+          <View style={styles.bonusIconWrap}><Ionicons name="wallet-outline" size={14} color={(COLORS as any).indigo} /></View>
           <Text style={styles.bonusText}>No pre-payment required. Earn bonus coins when you attend the class!</Text>
         </View>
       </ScrollView>
@@ -610,14 +610,14 @@ const styles = StyleSheet.create({
   storeImgPlaceholder: { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' },
   storeCashbackBadge: {
     position: 'absolute', bottom: -4, right: -4,
-    backgroundColor: COLORS.indigo, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
+    backgroundColor: (COLORS as any).indigo, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
   },
   storeCashbackText: { fontSize: 9, fontWeight: '700', color: COLORS.white },
   storeInfo: { flex: 1 },
   storeNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   storeName: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary, flex: 1 },
   verifiedBadge: { backgroundColor: COLORS.indigoLight, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: COLORS.indigo },
+  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: (COLORS as any).indigo },
   storeCuisine: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   storeMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6 },
   storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
@@ -642,19 +642,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 12, borderRadius: 12,
     backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border,
   },
-  serviceChipActive: { backgroundColor: COLORS.indigoLight, borderColor: COLORS.indigo },
+  serviceChipActive: { backgroundColor: COLORS.indigoLight, borderColor: (COLORS as any).indigo },
   serviceEmoji: { fontSize: 20 },
   serviceLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, flex: 1 },
   serviceLabelActive: { color: COLORS.indigoDark, fontWeight: '600' },
   serviceDuration: { fontSize: 10, color: COLORS.textSecondary },
-  serviceDurationActive: { color: COLORS.indigo },
+  serviceDurationActive: { color: (COLORS as any).indigo },
   dateScroll: { marginBottom: 4 },
   dateChip: {
     width: 64, height: 78, borderRadius: 14, backgroundColor: COLORS.white,
     justifyContent: 'center', alignItems: 'center', marginRight: 8,
     borderWidth: 1, borderColor: 'transparent',
   },
-  dateChipActive: { backgroundColor: COLORS.indigo, borderColor: COLORS.indigo },
+  dateChipActive: { backgroundColor: (COLORS as any).indigo, borderColor: (COLORS as any).indigo },
   dateDay: { fontSize: 10, color: COLORS.textSecondary, marginBottom: 2, fontWeight: '500' },
   dateDayActive: { color: 'rgba(255,255,255,0.7)' },
   dateNum: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white, minWidth: 70, alignItems: 'center',
     borderWidth: 1, borderColor: 'transparent',
   },
-  timeChipActive: { backgroundColor: COLORS.indigo, borderColor: COLORS.indigo },
+  timeChipActive: { backgroundColor: (COLORS as any).indigo, borderColor: (COLORS as any).indigo },
   timeChipUnavailable: { backgroundColor: colors.neutral[100], borderColor: colors.neutral[200] },
   timeText: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary },
   timeTextActive: { color: COLORS.white },
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
   summaryLabel: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary },
   submitBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    backgroundColor: COLORS.indigo, borderRadius: 16, paddingVertical: 16, marginTop: 20,
+    backgroundColor: (COLORS as any).indigo, borderRadius: 16, paddingVertical: 16, marginTop: 20,
   },
   submitBtnDisabled: { opacity: 0.5 },
   submitBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
@@ -740,10 +740,10 @@ const styles = StyleSheet.create({
     padding: 16, backgroundColor: COLORS.indigoLight, borderRadius: 14, marginBottom: 24, width: '100%',
   },
   confirmNoteText: { flex: 1, fontSize: 13, color: COLORS.indigoDark, lineHeight: 18 },
-  doneBtn: { width: '100%', paddingVertical: 16, backgroundColor: COLORS.indigo, borderRadius: 16, alignItems: 'center' },
+  doneBtn: { width: '100%', paddingVertical: 16, backgroundColor: (COLORS as any).indigo, borderRadius: 16, alignItems: 'center' },
   doneBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
   viewBookingsBtn: { marginTop: 12, paddingVertical: 12, alignItems: 'center' },
-  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: COLORS.indigo },
+  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: (COLORS as any).indigo },
 });
 
 export default React.memo(EnrollClassPage);

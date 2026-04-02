@@ -53,7 +53,7 @@ const RelatedHotelsSection: React.FC<RelatedHotelsSectionProps> = ({ currentHote
         if (!isMounted()) return;
         setRelatedHotels(filtered);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

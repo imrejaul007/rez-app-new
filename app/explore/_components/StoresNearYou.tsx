@@ -1,13 +1,6 @@
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
@@ -63,7 +56,9 @@ const StoresNearYou = () => {
               tagColors: item.tagColors || [],
               rating: item.rating || item.ratings?.average || null,
               distance: item.distance
-                ? (typeof item.distance === 'number' ? `${item.distance.toFixed(1)} km` : String(item.distance))
+                ? typeof item.distance === 'number'
+                  ? `${item.distance.toFixed(1)} km`
+                  : String(item.distance)
                 : null,
               deliveryTime: item.deliveryTime || item.operationalInfo?.deliveryTime || null,
               cashback: item.cashback || (item.offers?.cashback ? `${item.offers.cashback}%` : null),
@@ -74,7 +69,7 @@ const StoresNearYou = () => {
             setStores(transformed);
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load nearby stores');
       } finally {
@@ -104,18 +99,14 @@ const StoresNearYou = () => {
   // Toggle store favorite
   const handleToggleFavorite = async (storeId: string) => {
     // Optimistic update
-    setStores(prev => prev.map(s =>
-      s.id === storeId ? { ...s, isFavorite: !s.isFavorite } : s
-    ));
+    setStores((prev) => prev.map((s) => (s.id === storeId ? { ...s, isFavorite: !s.isFavorite } : s)));
 
     try {
       await apiClient.post(`/favorites/store/${storeId}/toggle`);
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
       if (!isMounted()) return;
-      setStores(prev => prev.map(s =>
-        s.id === storeId ? { ...s, isFavorite: !s.isFavorite } : s
-      ));
+      setStores((prev) => prev.map((s) => (s.id === storeId ? { ...s, isFavorite: !s.isFavorite } : s)));
     }
   };
 
@@ -150,95 +141,89 @@ const StoresNearYou = () => {
 
   return (
     <FeatureErrorBoundary featureName="Stores Near You" compact={true}>
-    <View style={styles.container}>
-      {/* Section Header */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Stores Near You</Text>
-        <Text style={styles.storeCount}>{stores.length} stores</Text>
-      </View>
+      <View style={styles.container}>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Stores Near You</Text>
+          <Text style={styles.storeCount}>{stores.length} stores</Text>
+        </View>
 
-      {/* Store List */}
-      <View style={styles.storeList}>
-        {stores.map((store) => (
-          <Pressable
-            key={store.id}
-            style={styles.storeCard}
-            onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-          >
-            {/* Store Image */}
-            <CachedImage source={store.image} style={styles.storeImage} />
-
-            {/* Store Info */}
-            <View style={styles.storeInfo}>
-              <View style={styles.storeNameRow}>
-                <Text style={styles.storeName}>{store.name}</Text>
-              </View>
-
-              {/* Tags Row */}
-              <View style={styles.tagsRow}>
-                {store.tags.map((tag, index) => (
-                  <View
-                    key={tag}
-                    style={[styles.tag, { backgroundColor: store.tagColors[index] + '20' }]}
-                  >
-                    <Text style={[styles.tagText, { color: store.tagColors[index] }]}>{tag}</Text>
-                  </View>
-                ))}
-                {store.hasQuickDelivery && (
-                  <View style={styles.quickDeliveryTag}>
-                    <Ionicons name="flash" size={10} color={colors.brand.orange} />
-                    <Text style={styles.quickDeliveryText}>60min</Text>
-                  </View>
-                )}
-              </View>
-
-              {/* Details Row */}
-              <View style={styles.detailsRow}>
-                <View style={styles.detailItem}>
-                  <Ionicons name="star" size={14} color={Colors.warning} />
-                  <Text style={styles.detailText}>{store.rating}</Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
-                  <Text style={styles.detailText}>{store.distance}</Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-                  <Text style={styles.detailText}>{store.deliveryTime}</Text>
-                </View>
-              </View>
-
-              {/* Cashback */}
-              <Text style={styles.cashbackText}>{store.cashback} cashback</Text>
-            </View>
-
-            {/* Favorite Button */}
+        {/* Store List */}
+        <View style={styles.storeList}>
+          {stores.map((store) => (
             <Pressable
-              style={styles.favoriteButton}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleToggleFavorite(store.id);
-              }}
+              key={store.id}
+              style={styles.storeCard}
+              onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
             >
-              <Ionicons
-                name={store.isFavorite ? 'heart' : 'heart-outline'}
-                size={22}
-                color={store.isFavorite ? Colors.error : colors.text.tertiary}
-              />
-            </Pressable>
-          </Pressable>
-        ))}
-      </View>
+              {/* Store Image */}
+              <CachedImage source={store.image} style={styles.storeImage} />
 
-      {/* View All Button */}
-      <Pressable
-        style={styles.viewAllButton}
-        onPress={() => navigateTo('/explore/stores')}
-      >
-        <Text style={styles.viewAllText}>View All Stores</Text>
-        <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
-      </Pressable>
-    </View>
+              {/* Store Info */}
+              <View style={styles.storeInfo}>
+                <View style={styles.storeNameRow}>
+                  <Text style={styles.storeName}>{store.name}</Text>
+                </View>
+
+                {/* Tags Row */}
+                <View style={styles.tagsRow}>
+                  {store.tags.map((tag: string, index: number) => (
+                    <View key={tag} style={[styles.tag, { backgroundColor: store.tagColors[index] + '20' }]}>
+                      <Text style={[styles.tagText, { color: store.tagColors[index] }]}>{tag}</Text>
+                    </View>
+                  ))}
+                  {store.hasQuickDelivery && (
+                    <View style={styles.quickDeliveryTag}>
+                      <Ionicons name="flash" size={10} color={colors.brand.orange} />
+                      <Text style={styles.quickDeliveryText}>60min</Text>
+                    </View>
+                  )}
+                </View>
+
+                {/* Details Row */}
+                <View style={styles.detailsRow}>
+                  <View style={styles.detailItem}>
+                    <Ionicons name="star" size={14} color={Colors.warning} />
+                    <Text style={styles.detailText}>{store.rating}</Text>
+                  </View>
+                  <View style={styles.detailItem}>
+                    <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
+                    <Text style={styles.detailText}>{store.distance}</Text>
+                  </View>
+                  <View style={styles.detailItem}>
+                    <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
+                    <Text style={styles.detailText}>{store.deliveryTime}</Text>
+                  </View>
+                </View>
+
+                {/* Cashback */}
+                <Text style={styles.cashbackText}>{store.cashback} cashback</Text>
+              </View>
+
+              {/* Favorite Button */}
+              <Pressable
+                style={styles.favoriteButton}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleToggleFavorite(store.id);
+                }}
+              >
+                <Ionicons
+                  name={store.isFavorite ? 'heart' : 'heart-outline'}
+                  size={22}
+                  color={store.isFavorite ? Colors.error : colors.text.tertiary}
+                />
+              </Pressable>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* View All Button */}
+        <Pressable style={styles.viewAllButton} onPress={() => navigateTo('/explore/stores')}>
+          <Text style={styles.viewAllText}>View All Stores</Text>
+          <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
+        </Pressable>
+      </View>
     </FeatureErrorBoundary>
   );
 };

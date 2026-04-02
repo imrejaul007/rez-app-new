@@ -71,9 +71,9 @@ interface CategoryTabBarProps {
 
 // Memoized category tab item for web to prevent image flickering
 interface WebCategoryTabItemProps {
-  category: typeof CATEGORIES[0];
+  category: (typeof CATEGORIES)[number];
   isActive: boolean;
-  onPress: (category: typeof CATEGORIES[0]) => void;
+  onPress: (category: (typeof CATEGORIES)[number]) => void;
   themeColor: string;
 }
 
@@ -153,7 +153,7 @@ const WebCategoryTabBar: React.FC<CategoryTabBarProps> = memo(({ style, activeTh
   }, []);
 
   // Memoize the click handler to prevent recreation
-  const handleCategoryClick = useCallback((category: typeof CATEGORIES[0]) => {
+  const handleCategoryClick = useCallback((category: (typeof CATEGORIES)[number]) => {
     if (category.route) {
       router.push(category.route as any);
     }
@@ -237,9 +237,9 @@ const webStyles = StyleSheet.create({
 
 // Memoized category tab item for native to prevent image flickering
 interface NativeCategoryTabItemProps {
-  category: typeof CATEGORIES[0];
+  category: (typeof CATEGORIES)[number];
   isActive: boolean;
-  onPress: (category: typeof CATEGORIES[0]) => void;
+  onPress: (category: (typeof CATEGORIES)[number]) => void;
   themeColor: string;
 }
 
@@ -313,7 +313,7 @@ const NativeCategoryTabBar: React.FC<CategoryTabBarProps> = memo(({ style, isSti
   }, []);
 
   // Memoize the press handler to prevent recreation
-  const handleCategoryPress = useCallback((category: typeof CATEGORIES[0]) => {
+  const handleCategoryPress = useCallback((category: (typeof CATEGORIES)[number]) => {
     if (category.route) {
       router.push(category.route as any);
     }

@@ -185,14 +185,14 @@ export const PriveHabitLoops: React.FC<PriveHabitLoopsProps> = ({
     <View style={styles.container}>
       {/* Daily Check-In Card */}
       <Pressable
-        style={[styles.checkInCard, isCheckedIn && styles.checkInCardDone]}
+        style={[styles.checkInCard, isCheckedIn ? styles.checkInCardDone : null]}
         onPress={onCheckIn}
         disabled={isCheckedIn}
        
       >
         <View style={styles.checkInContent}>
           <View style={styles.checkInLeft}>
-            <View style={[styles.checkInIcon, isCheckedIn && styles.checkInIconDone]}>
+            <View style={[styles.checkInIcon, isCheckedIn ? styles.checkInIconDone : null]}>
               <Text style={styles.checkInEmoji}>{isCheckedIn ? '✓' : '☀️'}</Text>
             </View>
             <View>
@@ -230,7 +230,7 @@ export const PriveHabitLoops: React.FC<PriveHabitLoopsProps> = ({
           {loops.map((loop) => (
             <Pressable
               key={loop.id}
-              style={[styles.loopItem, loop.completed && styles.loopItemCompleted]}
+              style={[styles.loopItem, loop.completed ? styles.loopItemCompleted : null]}
               onPress={() => onLoopPress?.(loop.id)}
              
               accessibilityLabel={`${loop.name}, ${loop.completed ? 'completed' : loop.description || ''}`}

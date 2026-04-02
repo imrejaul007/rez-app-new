@@ -239,7 +239,7 @@ function RechargePage() {
       const isSelected = selectedOperator?.code === item.code;
       return (
         <Pressable
-          style={[styles.operatorCard, isSelected && styles.operatorCardActive]}
+          style={[styles.operatorCard, isSelected ? styles.operatorCardActive : null]}
           onPress={() => setSelectedOperator(isSelected ? null : item)}
         >
           {item.logo ? (
@@ -261,7 +261,7 @@ function RechargePage() {
       const isSelected = selectedPlan?._id === item._id;
       return (
         <Pressable
-          style={[styles.planCard, isSelected && styles.planCardActive]}
+          style={[styles.planCard, isSelected ? styles.planCardActive : null]}
           onPress={() => {
             setSelectedPlan(item);
             setAmount(item.amount.toString());
@@ -403,13 +403,13 @@ function RechargePage() {
               {quickAmounts.map((amt) => (
                 <Pressable
                   key={amt}
-                  style={[styles.amountCard, amount === amt && styles.amountCardActive]}
+                  style={[styles.amountCard, amount === amt ? styles.amountCardActive : null]}
                   onPress={() => {
                     setAmount(amt);
                     setSelectedPlan(null);
                   }}
                 >
-                  <Text style={[styles.amountText, amount === amt && styles.amountTextActive]}>
+                  <Text style={[styles.amountText, amount === amt ? styles.amountTextActive : null]}>
                     {currencySymbol}
                     {amt}
                   </Text>
@@ -649,7 +649,7 @@ function RechargePage() {
             </Text>
           </View>
           <Pressable
-            style={[styles.proceedButton, !canProceed && styles.proceedButtonDisabled]}
+            style={[styles.proceedButton, !canProceed ? styles.proceedButtonDisabled : null]}
             onPress={handleProceed}
             disabled={!canProceed || submitting}
           >

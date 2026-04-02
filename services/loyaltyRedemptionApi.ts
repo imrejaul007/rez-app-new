@@ -40,7 +40,7 @@ class LoyaltyRedemptionApiService {
    */
   async getRewardsCatalog(filters?: CatalogFilters): Promise<ApiResponse<RewardCatalog>> {
 
-    return apiClient.get(`${this.baseUrl}/catalog`, filters);
+    return apiClient.get<any>(`${this.baseUrl}/catalog`, filters as any);
   }
 
   /**
@@ -48,7 +48,7 @@ class LoyaltyRedemptionApiService {
    */
   async getFeaturedRewards(): Promise<ApiResponse<{ rewards: RewardItem[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/rewards/featured`);
+    return apiClient.get<any>(`${this.baseUrl}/rewards/featured`);
   }
 
   /**
@@ -56,7 +56,7 @@ class LoyaltyRedemptionApiService {
    */
   async getRewardById(rewardId: string): Promise<ApiResponse<{ reward: RewardItem }>> {
 
-    return apiClient.get(`${this.baseUrl}/rewards/${rewardId}`);
+    return apiClient.get<any>(`${this.baseUrl}/rewards/${rewardId}`);
   }
 
   /**
@@ -64,7 +64,7 @@ class LoyaltyRedemptionApiService {
    */
   async searchRewards(query: string): Promise<ApiResponse<{ rewards: RewardItem[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/rewards/search`, { q: query });
+    return apiClient.get<any>(`${this.baseUrl}/rewards/search`, { q: query });
   }
 
   // ==================== Point Balance ====================
@@ -74,7 +74,7 @@ class LoyaltyRedemptionApiService {
    */
   async getPointBalance(): Promise<ApiResponse<PointBalance>> {
 
-    return apiClient.get(`${this.baseUrl}/points/balance`);
+    return apiClient.get<any>(`${this.baseUrl}/points/balance`);
   }
 
   /**
@@ -86,7 +86,7 @@ class LoyaltyRedemptionApiService {
     offset?: number;
   }): Promise<ApiResponse<{ transactions: PointTransaction[]; total: number; hasMore: boolean }>> {
 
-    return apiClient.get(`${this.baseUrl}/points/history`, filters);
+    return apiClient.get<any>(`${this.baseUrl}/points/history`, filters);
   }
 
   /**
@@ -94,7 +94,7 @@ class LoyaltyRedemptionApiService {
    */
   async getPointForecast(): Promise<ApiResponse<PointForecast>> {
 
-    return apiClient.get(`${this.baseUrl}/points/forecast`);
+    return apiClient.get<any>(`${this.baseUrl}/points/forecast`);
   }
 
   /**
@@ -102,7 +102,7 @@ class LoyaltyRedemptionApiService {
    */
   async getExpiringPoints(): Promise<ApiResponse<PointExpiryNotification>> {
 
-    return apiClient.get(`${this.baseUrl}/points/expiring`);
+    return apiClient.get<any>(`${this.baseUrl}/points/expiring`);
   }
 
   // ==================== Redemption ====================
@@ -112,7 +112,7 @@ class LoyaltyRedemptionApiService {
    */
   async redeemReward(data: RedemptionRequest): Promise<ApiResponse<RedemptionResponse>> {
 
-    return apiClient.post(`${this.baseUrl}/redeem`, data);
+    return apiClient.post<any>(`${this.baseUrl}/redeem`, data as any);
   }
 
   /**
@@ -120,7 +120,7 @@ class LoyaltyRedemptionApiService {
    */
   async reserveReward(data: RedemptionRequest): Promise<ApiResponse<RewardReservation>> {
 
-    return apiClient.post(`${this.baseUrl}/reserve`, data);
+    return apiClient.post<any>(`${this.baseUrl}/reserve`, data as any);
   }
 
   /**
@@ -128,7 +128,7 @@ class LoyaltyRedemptionApiService {
    */
   async cancelReservation(reservationId: string): Promise<ApiResponse<{ success: boolean }>> {
 
-    return apiClient.delete(`${this.baseUrl}/reserve/${reservationId}`);
+    return apiClient.delete<any>(`${this.baseUrl}/reserve/${reservationId}`);
   }
 
   /**
@@ -140,7 +140,7 @@ class LoyaltyRedemptionApiService {
     offset?: number;
   }): Promise<ApiResponse<RedemptionHistory>> {
 
-    return apiClient.get(`${this.baseUrl}/redemptions`, filters);
+    return apiClient.get<any>(`${this.baseUrl}/redemptions`, filters);
   }
 
   /**
@@ -148,7 +148,7 @@ class LoyaltyRedemptionApiService {
    */
   async getActiveRewards(): Promise<ApiResponse<{ rewards: any[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/my-rewards`, { status: 'active' });
+    return apiClient.get<any>(`${this.baseUrl}/my-rewards`, { status: 'active' });
   }
 
   /**
@@ -156,7 +156,7 @@ class LoyaltyRedemptionApiService {
    */
   async useVoucher(voucherId: string, orderId?: string): Promise<ApiResponse<{ success: boolean }>> {
 
-    return apiClient.post(`${this.baseUrl}/vouchers/${voucherId}/use`, { orderId });
+    return apiClient.post<any>(`${this.baseUrl}/vouchers/${voucherId}/use`, { orderId });
   }
 
   // ==================== Tier Benefits ====================
@@ -166,7 +166,7 @@ class LoyaltyRedemptionApiService {
    */
   async getTierInfo(): Promise<ApiResponse<TierConfig>> {
 
-    return apiClient.get(`${this.baseUrl}/tier`);
+    return apiClient.get<any>(`${this.baseUrl}/tier`);
   }
 
   /**
@@ -174,7 +174,7 @@ class LoyaltyRedemptionApiService {
    */
   async getAllTiers(): Promise<ApiResponse<{ tiers: TierConfig[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/tiers`);
+    return apiClient.get<any>(`${this.baseUrl}/tiers`);
   }
 
   /**
@@ -186,7 +186,7 @@ class LoyaltyRedemptionApiService {
     tier: string;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/tier/discount`, { orderAmount });
+    return apiClient.post<any>(`${this.baseUrl}/tier/discount`, { orderAmount });
   }
 
   /**
@@ -197,7 +197,7 @@ class LoyaltyRedemptionApiService {
     nextTierBenefits: any[];
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/tier/benefits`);
+    return apiClient.get<any>(`${this.baseUrl}/tier/benefits`);
   }
 
   // ==================== Smart Features ====================
@@ -207,7 +207,7 @@ class LoyaltyRedemptionApiService {
    */
   async getPointOptimization(targetAmount?: number): Promise<ApiResponse<PointOptimization>> {
 
-    return apiClient.post(`${this.baseUrl}/optimize`, { targetAmount });
+    return apiClient.post<any>(`${this.baseUrl}/optimize`, { targetAmount });
   }
 
   /**
@@ -218,7 +218,7 @@ class LoyaltyRedemptionApiService {
     storeId?: string
   ): Promise<ApiResponse<AutoApplyRecommendation>> {
 
-    return apiClient.post(`${this.baseUrl}/auto-apply`, { orderAmount, storeId });
+    return apiClient.post<any>(`${this.baseUrl}/auto-apply`, { orderAmount, storeId });
   }
 
   /**
@@ -229,7 +229,7 @@ class LoyaltyRedemptionApiService {
     totalDiscount: number;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/orders/${orderId}/auto-apply`);
+    return apiClient.post<any>(`${this.baseUrl}/orders/${orderId}/auto-apply`);
   }
 
   // ==================== Goals & Challenges ====================
@@ -239,7 +239,7 @@ class LoyaltyRedemptionApiService {
    */
   async getPointGoals(): Promise<ApiResponse<{ goals: PointGoal[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/goals`);
+    return apiClient.get<any>(`${this.baseUrl}/goals`);
   }
 
   /**
@@ -251,7 +251,7 @@ class LoyaltyRedemptionApiService {
     deadline?: string;
   }): Promise<ApiResponse<PointGoal>> {
 
-    return apiClient.post(`${this.baseUrl}/goals`, data);
+    return apiClient.post<any>(`${this.baseUrl}/goals`, data as any);
   }
 
   /**
@@ -259,7 +259,7 @@ class LoyaltyRedemptionApiService {
    */
   async getChallenges(): Promise<ApiResponse<{ challenges: PointChallenge[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/challenges`);
+    return apiClient.get<any>(`${this.baseUrl}/challenges`);
   }
 
   /**
@@ -270,7 +270,7 @@ class LoyaltyRedemptionApiService {
     reward?: RewardItem;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/challenges/${challengeId}/claim`);
+    return apiClient.post<any>(`${this.baseUrl}/challenges/${challengeId}/claim`);
   }
 
   // ==================== Gamification ====================
@@ -283,7 +283,7 @@ class LoyaltyRedemptionApiService {
     newBalance: number;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/games/spin-wheel`);
+    return apiClient.post<any>(`${this.baseUrl}/games/spin-wheel`);
   }
 
   /**
@@ -294,7 +294,7 @@ class LoyaltyRedemptionApiService {
     newBalance: number;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/games/scratch-card/${cardId}/reveal`);
+    return apiClient.post<any>(`${this.baseUrl}/games/scratch-card/${cardId}/reveal`);
   }
 
   /**
@@ -307,7 +307,7 @@ class LoyaltyRedemptionApiService {
     bonus?: any;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/games/check-in`);
+    return apiClient.post<any>(`${this.baseUrl}/games/check-in`);
   }
 
   /**
@@ -319,7 +319,7 @@ class LoyaltyRedemptionApiService {
     canCheckIn: boolean;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/games/check-in/status`);
+    return apiClient.get<any>(`${this.baseUrl}/games/check-in/status`);
   }
 
   /**
@@ -327,7 +327,7 @@ class LoyaltyRedemptionApiService {
    */
   async getScratchCards(): Promise<ApiResponse<{ cards: any[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/games/scratch-cards`);
+    return apiClient.get<any>(`${this.baseUrl}/games/scratch-cards`);
   }
 
   // ==================== Point Transfer & Pooling ====================
@@ -341,7 +341,7 @@ class LoyaltyRedemptionApiService {
     message?: string;
   }): Promise<ApiResponse<PointTransfer>> {
 
-    return apiClient.post(`${this.baseUrl}/transfer`, data);
+    return apiClient.post<any>(`${this.baseUrl}/transfer`, data as any);
   }
 
   /**
@@ -349,7 +349,7 @@ class LoyaltyRedemptionApiService {
    */
   async getTransferHistory(): Promise<ApiResponse<{ transfers: PointTransfer[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/transfers`);
+    return apiClient.get<any>(`${this.baseUrl}/transfers`);
   }
 
   /**
@@ -360,7 +360,7 @@ class LoyaltyRedemptionApiService {
     memberIds: string[];
   }): Promise<ApiResponse<FamilyPool>> {
 
-    return apiClient.post(`${this.baseUrl}/family-pool`, data);
+    return apiClient.post<any>(`${this.baseUrl}/family-pool`, data as any);
   }
 
   /**
@@ -368,7 +368,7 @@ class LoyaltyRedemptionApiService {
    */
   async getFamilyPool(): Promise<ApiResponse<FamilyPool>> {
 
-    return apiClient.get(`${this.baseUrl}/family-pool`);
+    return apiClient.get<any>(`${this.baseUrl}/family-pool`);
   }
 
   /**
@@ -376,7 +376,7 @@ class LoyaltyRedemptionApiService {
    */
   async contributeToPool(points: number): Promise<ApiResponse<{ success: boolean }>> {
 
-    return apiClient.post(`${this.baseUrl}/family-pool/contribute`, { points });
+    return apiClient.post<any>(`${this.baseUrl}/family-pool/contribute`, { points });
   }
 
   // ==================== Milestones ====================
@@ -386,7 +386,7 @@ class LoyaltyRedemptionApiService {
    */
   async getMilestones(): Promise<ApiResponse<{ milestones: MilestoneReward[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/milestones`);
+    return apiClient.get<any>(`${this.baseUrl}/milestones`);
   }
 
   /**
@@ -397,7 +397,7 @@ class LoyaltyRedemptionApiService {
     bonus: any;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/milestones/${milestoneId}/claim`);
+    return apiClient.post<any>(`${this.baseUrl}/milestones/${milestoneId}/claim`);
   }
 
   // ==================== Special Events ====================
@@ -407,7 +407,7 @@ class LoyaltyRedemptionApiService {
    */
   async getMultiplierEvents(): Promise<ApiResponse<{ events: any[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/events/multipliers`);
+    return apiClient.get<any>(`${this.baseUrl}/events/multipliers`);
   }
 
   /**
@@ -419,7 +419,7 @@ class LoyaltyRedemptionApiService {
     claimed?: boolean;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/birthday-bonus`);
+    return apiClient.get<any>(`${this.baseUrl}/birthday-bonus`);
   }
 
   /**
@@ -427,7 +427,7 @@ class LoyaltyRedemptionApiService {
    */
   async claimBirthdayBonus(): Promise<ApiResponse<{ points: number }>> {
 
-    return apiClient.post(`${this.baseUrl}/birthday-bonus/claim`);
+    return apiClient.post<any>(`${this.baseUrl}/birthday-bonus/claim`);
   }
 
   // ==================== Referral Points ====================
@@ -441,7 +441,7 @@ class LoyaltyRedemptionApiService {
     pendingPoints: number;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/referral-points`);
+    return apiClient.get<any>(`${this.baseUrl}/referral-points`);
   }
 
   // ==================== Charity ====================
@@ -454,7 +454,7 @@ class LoyaltyRedemptionApiService {
     points: number;
   }): Promise<ApiResponse<{ success: boolean; receiptId: string }>> {
 
-    return apiClient.post(`${this.baseUrl}/donate`, data);
+    return apiClient.post<any>(`${this.baseUrl}/donate`, data as any);
   }
 
   /**
@@ -462,7 +462,7 @@ class LoyaltyRedemptionApiService {
    */
   async getCharities(): Promise<ApiResponse<{ charities: any[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/charities`);
+    return apiClient.get<any>(`${this.baseUrl}/charities`);
   }
 
   // ==================== Analytics ====================
@@ -477,7 +477,7 @@ class LoyaltyRedemptionApiService {
     savingsOverTime: any[];
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/analytics/redemptions`, { period });
+    return apiClient.get<any>(`${this.baseUrl}/analytics/redemptions`, { period });
   }
 
   /**
@@ -489,7 +489,7 @@ class LoyaltyRedemptionApiService {
     trend: any[];
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/analytics/earnings`, { period });
+    return apiClient.get<any>(`${this.baseUrl}/analytics/earnings`, { period });
   }
 }
 

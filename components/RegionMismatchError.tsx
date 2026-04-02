@@ -18,7 +18,7 @@ import type { RegionId } from '@/stores/regionStore';
 import { colors } from '@/constants/theme';
 
 // Region data with flags
-const REGION_DATA: Record<RegionId, { name: string; flag: string; description: string }> = {
+const REGION_DATA: Record<string, { name: string; flag: string; description: string }> = {
   bangalore: { name: 'Bangalore', flag: '\uD83C\uDDEE\uD83C\uDDF3', description: 'India' },
   dubai: { name: 'Dubai', flag: '\uD83C\uDDE6\uD83C\uDDEA', description: 'UAE' },
   china: { name: 'China', flag: '\uD83C\uDDE8\uD83C\uDDF3', description: 'Mainland China' },

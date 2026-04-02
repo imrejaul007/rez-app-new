@@ -63,7 +63,7 @@ function SubscriptionPlansPage() {
   };
   const getTierFeatures = (tier: string, fallback: string[]): string[] => {
     const config = state.availableTiers?.find((t: any) => t.tier === tier);
-    return config?.features?.length > 0 ? config.features : fallback;
+    return (config?.features?.length ?? 0) > 0 ? (config as any)?.features : fallback;
   };
 
   const [selectedBilling, setSelectedBilling] = useState<BillingCycle>('monthly');
@@ -111,7 +111,7 @@ function SubscriptionPlansPage() {
       } else {
         router.replace('/');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (router) {
         router.replace('/');
       }
@@ -266,14 +266,14 @@ function SubscriptionPlansPage() {
   // Render feature item
   const renderFeature = (feature: string, included: boolean) => (
     <View style={styles.featureRow} key={feature}>
-      <View style={[styles.featureIcon, included && styles.featureIconActive]}>
+      <View style={[styles.featureIcon, included ? styles.featureIconActive : null]}>
         <Ionicons
           name={included ? 'checkmark' : 'close'}
           size={14}
           color={included ? colors.background.primary : colors.text.tertiary}
         />
       </View>
-      <ThemedText style={[styles.featureText, !included && styles.featureTextDisabled]}>{feature}</ThemedText>
+      <ThemedText style={[styles.featureText, !included ? styles.featureTextDisabled : null]}>{feature}</ThemedText>
     </View>
   );
 
@@ -298,7 +298,7 @@ function SubscriptionPlansPage() {
       <Animated.View style={[styles.planCardWrapper, contentAnimStyle]}>
         {popular && (
           <LinearGradient
-            colors={[Colors.gold, Colors.goldDark]}
+            colors={[Colors.gold, Colors.primaryDark]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.popularBadge}
@@ -308,7 +308,7 @@ function SubscriptionPlansPage() {
           </LinearGradient>
         )}
 
-        <View style={[styles.planCard, popular && styles.planCardPopular]}>
+        <View style={[styles.planCard, popular ? styles.planCardPopular : null]}>
           {/* Card Shine Effect */}
           <View style={styles.cardShine} />
 
@@ -378,7 +378,7 @@ function SubscriptionPlansPage() {
                 accessibilityState={{ disabled: isSubscribing }}
               >
                 <LinearGradient
-                  colors={isVIP ? [Colors.gold, Colors.goldDark] : [Colors.gold, colors.nileBlue]}
+                  colors={isVIP ? [Colors.gold, Colors.primaryDark] : [Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.upgradeButton}
@@ -387,7 +387,7 @@ function SubscriptionPlansPage() {
                     <ActivityIndicator color={isVIP ? colors.nileBlue : colors.background.primary} />
                   ) : (
                     <>
-                      <ThemedText style={[styles.upgradeButtonText, isVIP && styles.vipButtonText]}>
+                      <ThemedText style={[styles.upgradeButtonText, isVIP ? styles.vipButtonText : null]}>
                         {isUpgrade ? 'Upgrade Now' : 'Downgrade'}
                       </ThemedText>
                       <Ionicons
@@ -607,7 +607,7 @@ function SubscriptionPlansPage() {
               'Early flash sale access (1 hour)',
               'All Premium benefits',
             ]),
-            [Colors.gold, Colors.goldDark],
+            [Colors.gold, Colors.primaryDark],
             'diamond',
           )}
         </View>
@@ -633,7 +633,7 @@ function SubscriptionPlansPage() {
               { name: 'Priority Support', values: [false, true, true] },
               { name: 'Personal Shopper', values: [false, false, true] },
             ].map((row, index) => (
-              <View key={row.name} style={[styles.comparisonRow, index % 2 === 0 && styles.comparisonRowAlt]}>
+              <View key={row.name} style={[styles.comparisonRow, index % 2 === 0 ? styles.comparisonRowAlt : null]}>
                 <ThemedText style={styles.comparisonFeature}>{row.name}</ThemedText>
                 {row.values.map((value, i) => (
                   <View key={i} style={styles.comparisonCell}>
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
   orbPrimary: {
     width: 300,
     height: 300,
-    backgroundColor: Colors.goldGlow,
+    backgroundColor: 'rgba(255, 205, 87, 0.15)',
     top: -100,
     right: -100,
   },
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.goldLight,
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -1015,7 +1015,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     marginBottom: Spacing.base,
-    backgroundColor: Colors.goldLight,
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
@@ -1075,7 +1075,7 @@ const styles = StyleSheet.create({
   },
   activeButton: {
     flexDirection: 'row',
-    backgroundColor: Colors.goldLight,
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
     paddingVertical: Spacing.base,
     borderRadius: 14,
     alignItems: 'center',
@@ -1144,7 +1144,7 @@ const styles = StyleSheet.create({
   },
   comparisonTableHeader: {
     flexDirection: 'row',
-    backgroundColor: Colors.goldLight,
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.sm,
   },

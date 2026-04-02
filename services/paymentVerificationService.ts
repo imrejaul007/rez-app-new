@@ -59,11 +59,11 @@ class PaymentVerificationService {
   ): Promise<ApiResponse<CardVerificationResponse>> {
 
     try {
-      const response = await apiClient.post<CardVerificationResponse>(`${this.baseUrl}/card/initiate`, request);
+      const response = await apiClient.post<CardVerificationResponse>(`${this.baseUrl}/card/initiate`, request as any);
 
       if (response.success && response.data) {
 
-        return response;
+        return response as any;
       }
 
       // Fallback to gateway-specific verification
@@ -124,7 +124,7 @@ class PaymentVerificationService {
         authenticationData,
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] 3DS completion failed:', error);
       return {
@@ -163,11 +163,11 @@ class PaymentVerificationService {
   ): Promise<ApiResponse<BankVerificationResponse>> {
 
     try {
-      const response = await apiClient.post<BankVerificationResponse>(`${this.baseUrl}/bank/initiate`, request);
+      const response = await apiClient.post<BankVerificationResponse>(`${this.baseUrl}/bank/initiate`, request as any);
 
       if (response.success && response.data) {
 
-        return response;
+        return response as any;
       }
 
       // Fallback to mock only in development
@@ -204,7 +204,7 @@ class PaymentVerificationService {
         ...deposits,
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Micro-deposit verification failed:', error);
       return {
@@ -247,11 +247,11 @@ class PaymentVerificationService {
   ): Promise<ApiResponse<UPIVerificationResponse>> {
 
     try {
-      const response = await apiClient.post<UPIVerificationResponse>(`${this.baseUrl}/upi/initiate`, request);
+      const response = await apiClient.post<UPIVerificationResponse>(`${this.baseUrl}/upi/initiate`, request as any);
 
       if (response.success && response.data) {
 
-        return response;
+        return response as any;
       }
 
       // Fallback to mock only in development
@@ -315,11 +315,11 @@ class PaymentVerificationService {
   ): Promise<ApiResponse<KYCVerificationResponse>> {
 
     try {
-      const response = await apiClient.post<KYCVerificationResponse>(`${this.baseUrl}/kyc/upload`, request);
+      const response = await apiClient.post<KYCVerificationResponse>(`${this.baseUrl}/kyc/upload`, request as any);
 
       if (response.success && response.data) {
 
-        return response;
+        return response as any;
       }
 
       // Fallback to mock only in development
@@ -371,11 +371,11 @@ class PaymentVerificationService {
   async sendOTP(request: OTPVerificationRequest): Promise<ApiResponse<OTPVerificationResponse>> {
 
     try {
-      const response = await apiClient.post<OTPVerificationResponse>(`${this.baseUrl}/otp/send`, request);
+      const response = await apiClient.post<OTPVerificationResponse>(`${this.baseUrl}/otp/send`, request as any);
 
       if (response.success && response.data) {
 
-        return response;
+        return response as any;
       }
 
       // Fallback to mock only in development
@@ -404,9 +404,9 @@ class PaymentVerificationService {
   async validateOTP(request: OTPValidationRequest): Promise<ApiResponse<OTPValidationResponse>> {
 
     try {
-      const response = await apiClient.post<OTPValidationResponse>(`${this.baseUrl}/otp/validate`, request);
+      const response = await apiClient.post<OTPValidationResponse>(`${this.baseUrl}/otp/validate`, request as any);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] OTP validation failed:', error);
       return {
@@ -537,7 +537,7 @@ class PaymentVerificationService {
       const response = await apiClient.get<PaymentMethodVerificationStatus>(`${this.baseUrl}/status/${paymentMethodId}`);
 
       if (response.success && response.data) {
-        return response;
+        return response as any;
       }
 
       // Fallback to mock only in development
@@ -574,7 +574,7 @@ class PaymentVerificationService {
 
       const response = await apiClient.get<VerificationHistoryItem[]>(url);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] History fetch failed:', error);
       return {
@@ -594,7 +594,7 @@ class PaymentVerificationService {
     try {
       const response = await apiClient.get<VerificationRequirements>(`${this.baseUrl}/requirements/${paymentMethodId}`);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Requirements fetch failed:', error);
       return {
@@ -612,9 +612,9 @@ class PaymentVerificationService {
   ): Promise<ApiResponse<PaymentMethodVerificationStatus>> {
 
     try {
-      const response = await apiClient.post<PaymentMethodVerificationStatus>(`${this.baseUrl}/reverify`, request);
+      const response = await apiClient.post<PaymentMethodVerificationStatus>(`${this.baseUrl}/reverify`, request as any);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Re-verification request failed:', error);
       return {
@@ -663,7 +663,7 @@ class PaymentVerificationService {
     try {
       const response = await apiClient.get<FraudDetectionSignals>(`${this.baseUrl}/fraud-signals/${paymentMethodId}`);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Fraud signals fetch failed:', error);
       return {
@@ -687,7 +687,7 @@ class PaymentVerificationService {
         transactionAmount,
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Risk decision failed:', error);
       return {
@@ -707,9 +707,9 @@ class PaymentVerificationService {
   async bindDevice(deviceInfo: Partial<DeviceBinding>): Promise<ApiResponse<DeviceBinding>> {
 
     try {
-      const response = await apiClient.post<DeviceBinding>(`${this.baseUrl}/device/bind`, deviceInfo);
+      const response = await apiClient.post<DeviceBinding>(`${this.baseUrl}/device/bind`, deviceInfo as any);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Device binding failed:', error);
       return {
@@ -727,7 +727,7 @@ class PaymentVerificationService {
     try {
       const response = await apiClient.get<DeviceBinding[]>(`${this.baseUrl}/device/list`);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Failed to get devices:', error);
       return {
@@ -751,7 +751,7 @@ class PaymentVerificationService {
         paymentMethodId,
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [VERIFICATION] Session creation failed:', error);
       return {

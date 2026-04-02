@@ -142,7 +142,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       .get(`/stores/${d.currentStoreId}/page-extras`)
       .then((res) => {
         if (cancelled) return;
-        const payload = res.data?.data;
+        const payload = (res as any).data?.data;
         if (payload?.upcomingDrop) setUpcomingDrop(payload.upcomingDrop);
         if (Array.isArray(payload?.activeCampaigns)) setActiveCampaigns(payload.activeCampaigns);
       })
@@ -214,7 +214,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
             scrollY.value = y;
             setShowStickyTabs(tabsPositionMeasured.current && y > tabsPositionY.current);
           }}
-          contentContainerStyle={[styles.scrollContent, isWeb && styles.webScrollContent]}
+          contentContainerStyle={[styles.scrollContent, isWeb ? styles.webScrollContent : null] as any}
           refreshControl={
             <RefreshControl
               refreshing={d.refreshing}

@@ -63,7 +63,7 @@ function RelatedProducts({
       } else {
         throw new Error(response.message || 'Failed to fetch related products');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load related products';
       if (!isMounted()) return;
       setError(errorMessage);
@@ -201,13 +201,6 @@ function RelatedProducts({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
-          snapToInterval={CARD_WIDTH + CARD_SPACING}
-          decelerationRate="fast"
-          snapToAlignment="start"
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={5}
-          initialNumToRender={3}
-          windowSize={5}
           estimatedItemSize={220}
         />
       )}

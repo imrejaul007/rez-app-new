@@ -18,7 +18,7 @@ export function useWithdrawFunds() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { amount: number; bankDetails: any }) =>
-      walletApi.withdraw(data),
+      walletApi.withdraw({ amount: data.amount, method: 'bank', accountDetails: data.bankDetails } as any),
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.wallet.all });
@@ -30,7 +30,7 @@ export function useInitiateTransfer() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { recipientId: string; amount: number; message?: string }) =>
-      walletApi.initiateTransfer(data),
+      walletApi.initiateTransfer(data as any),
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.wallet.all });
@@ -42,7 +42,7 @@ export function useSendGift() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { recipientPhone: string; amount: number; message?: string }) =>
-      walletApi.sendGift(data),
+      walletApi.sendGift(data as any),
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.wallet.all });

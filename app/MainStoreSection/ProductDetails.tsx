@@ -4,13 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { triggerImpact } from '@/utils/haptics';
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Typography,
-  Gradients,
-} from '@/constants/DesignSystem';
+import { Colors, Spacing, BorderRadius, Typography, Gradients } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 // Enable LayoutAnimation for Android
@@ -92,7 +86,7 @@ export default memo(function ProductDetails({
   const toggleExpanded = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     triggerImpact('Light');
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   }, []);
 
   // Get today's hours text
@@ -103,16 +97,14 @@ export default memo(function ProductDetails({
     return (
       <View style={[styles.container, styles.errorContainer]}>
         <Ionicons name="alert-circle-outline" size={24} color={colors.nileBlue} />
-        <ThemedText style={styles.errorText}>
-          Product information unavailable
-        </ThemedText>
+        <ThemedText style={styles.errorText}>Product information unavailable</ThemedText>
       </View>
     );
   }
 
   return (
     <View
-      style={[styles.container, isSmall && styles.containerCompact]}
+      style={[styles.container, isSmall ? styles.containerCompact : null]}
       accessibilityRole="summary"
       accessibilityLabel={`Product details. ${title}. ${distance} away in ${location}. ${isOpen ? 'Open now' : 'Currently closed'}`}
     >
@@ -120,7 +112,7 @@ export default memo(function ProductDetails({
       <View style={styles.rowTop}>
         <View style={styles.titleContainer}>
           <ThemedText
-            style={[styles.title, isSmall && styles.titleSmall]}
+            style={[styles.title, isSmall ? styles.titleSmall : null]}
             numberOfLines={2}
             accessibilityRole="header"
           >
@@ -137,25 +129,15 @@ export default memo(function ProductDetails({
       {/* Description with See More/Less */}
       <View style={styles.descriptionContainer}>
         <ThemedText
-          style={[styles.description, isSmall && styles.descriptionSmall]}
+          style={[styles.description, isSmall ? styles.descriptionSmall : null]}
           numberOfLines={isExpanded ? undefined : 3}
         >
           {description}
         </ThemedText>
         {description.length > 120 && (
-          <Pressable
-            onPress={toggleExpanded}
-           
-            style={styles.seeMoreButton}
-          >
-            <ThemedText style={styles.seeMoreText}>
-              {isExpanded ? 'See less' : 'See more'}
-            </ThemedText>
-            <Ionicons
-              name={isExpanded ? 'chevron-up' : 'chevron-down'}
-              size={14}
-              color={Colors.primary[700]}
-            />
+          <Pressable onPress={toggleExpanded} style={styles.seeMoreButton}>
+            <ThemedText style={styles.seeMoreText}>{isExpanded ? 'See less' : 'See more'}</ThemedText>
+            <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={14} color={Colors.primary[700]} />
           </Pressable>
         )}
       </View>
@@ -172,7 +154,6 @@ export default memo(function ProductDetails({
       <View style={styles.rowBottom}>
         {(distance || location) && (
           <Pressable
-           
             onPress={onOpenMap}
             style={styles.locationPill}
             accessibilityRole="button"
@@ -180,11 +161,7 @@ export default memo(function ProductDetails({
             accessibilityHint="Double tap to open map"
           >
             <Ionicons name="location-outline" size={16} color={Colors.primary[700]} style={{ flexShrink: 0 }} />
-            <ThemedText
-              style={styles.locationText}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
+            <ThemedText style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
               {distance && location ? `${distance} • ${location}` : distance || location || 'Location not available'}
             </ThemedText>
           </Pressable>
@@ -212,7 +189,6 @@ export default memo(function ProductDetails({
             triggerImpact('Medium');
             onGetDirections();
           }}
-         
         >
           <LinearGradient
             colors={Gradients.primary}
@@ -226,7 +202,7 @@ export default memo(function ProductDetails({
         </Pressable>
       )}
     </View>
-);
+  );
 });
 
 const styles = StyleSheet.create({

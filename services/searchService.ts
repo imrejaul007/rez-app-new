@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 
 // Types
 export interface SearchQuery {
@@ -129,7 +129,7 @@ class SearchService {
       const result: SearchResult<T> = {
         ...response.data,
         took: Date.now() - startTime,
-      };
+      } as unknown as SearchResult<T>;
 
       // Cache the result
       if (useCache) {
@@ -147,7 +147,7 @@ class SearchService {
         });
       }
 
-      return result;
+      return result as any;
     } catch (error) {
       throw new Error('Search failed. Please try again.');
     }
@@ -191,9 +191,9 @@ class SearchService {
         limit,
       });
 
-      return response.data;
+      return response.data || [];
     } catch (error) {
-      
+
       // Fallback to local suggestions
       return this.getLocalSuggestions(query, limit);
     }
@@ -207,7 +207,7 @@ class SearchService {
         limit,
       });
 
-      return response.data;
+      return response.data || [];
     } catch (error) {
       return [];
     }
@@ -223,7 +223,7 @@ class SearchService {
         name: 'search_image.jpg',
       } as any);
 
-      const response = await apiClient.upload<SearchResult>(
+      const response = await (apiClient as any).upload(
         '/search/image',
         formData
       );
@@ -236,9 +236,12 @@ class SearchService {
   // Voice search (not yet available — returns empty result gracefully)
   async searchByVoice(_audioUri: string): Promise<SearchResult> {
     return {
-      results: [],
+      items: [],
       total: 0,
-      message: 'Voice search will be available soon. Please type your search.',
+      page: 1,
+      totalPages: 0,
+      hasMore: false,
+      took: 0,
     };
   }
 
@@ -407,7 +410,7 @@ class SearchService {
     try {
       // Try to load from API first
       const response = await apiClient.get<PopularSearch[]>('/search/popular');
-      this.popularSearches = response.data;
+      this.popularSearches = response.data || [];
     } catch (error) {
       
       // Fallback to stored data

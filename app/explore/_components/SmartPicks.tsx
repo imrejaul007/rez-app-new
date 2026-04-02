@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -48,7 +40,7 @@ const SmartPicks = () => {
       setError(null);
       // Fetch products for smart picks
       const response = await exploreApi.getProducts({ limit: 12 });
-      const productsData = response.data?.products || (Array.isArray(response.data) ? response.data : []);
+      const productsData = (response.data as any)?.products || (Array.isArray(response.data) ? response.data : []);
       if (response.success && productsData.length > 0) {
         // Group products into categories
         const products = productsData;
@@ -66,7 +58,7 @@ const SmartPicks = () => {
               store: product.store || 'Store',
               storeId: product.storeId,
               price: product.price || 0,
-              cashback: product.cashbackPercentage ? `${product.cashbackPercentage}%` : (product.offer || null),
+              cashback: product.cashbackPercentage ? `${product.cashbackPercentage}%` : product.offer || null,
               distance: product.distance || null,
               buyers: product.buyers || null,
               trending: product.rating && product.rating >= 4,
@@ -75,12 +67,12 @@ const SmartPicks = () => {
         });
 
         // Only set if we have at least one category with items
-        const validCategories = transformed.filter(cat => cat.items.length > 0);
+        const validCategories = transformed.filter((cat) => cat.items.length > 0);
         if (validCategories.length > 0) {
           setSmartPicks(validCategories);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load smart picks');
     } finally {
@@ -132,95 +124,91 @@ const SmartPicks = () => {
 
   return (
     <FeatureErrorBoundary featureName="Smart Picks" compact={true}>
-    <View style={styles.container}>
-      <View style={styles.sectionHeader}>
-        <View>
-          <View style={styles.titleRow}>
-            <Text style={styles.sectionTitle}>Smart Picks by ${BRAND.APP_NAME}</Text>
-            <View style={styles.aiTag}>
-              <Ionicons name="sparkles" size={12} color={colors.text.inverse} />
-              <Text style={styles.aiTagText}>AI</Text>
-            </View>
-          </View>
-          <Text style={styles.sectionSubtitle}>Personalized just for you</Text>
-        </View>
-      </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.picksContainer}
-      >
-        {smartPicks.map((category) => (
-          <View key={category.id} style={styles.pickCard}>
-            {/* Category Header */}
-            <View style={styles.pickHeader}>
-              <View style={[styles.iconBadge, { backgroundColor: category.color + '20' }]}>
-                <Ionicons name={category.icon as any} size={20} color={category.color} />
+      <View style={styles.container}>
+        <View style={styles.sectionHeader}>
+          <View>
+            <View style={styles.titleRow}>
+              <Text style={styles.sectionTitle}>Smart Picks by ${BRAND.APP_NAME}</Text>
+              <View style={styles.aiTag}>
+                <Ionicons name="sparkles" size={12} color={colors.text.inverse} />
+                <Text style={styles.aiTagText}>AI</Text>
               </View>
-              <Text style={styles.pickTitle}>{category.title}</Text>
             </View>
+            <Text style={styles.sectionSubtitle}>Personalized just for you</Text>
+          </View>
+        </View>
 
-            {/* Items */}
-            {category.items.map((item, index) => (
-              <Pressable
-                key={item.id}
-                style={[
-                  styles.itemRow,
-                  index < category.items.length - 1 && styles.itemBorder,
-                ]}
-                onPress={() => navigateTo(`/MainStorePage?storeId=${item.storeId || item.id}`)}
-              >
-                <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <View style={styles.itemMeta}>
-                    <Text style={styles.itemStore}>{item.store}</Text>
-                    {item.distance && (
-                      <>
-                        <View style={styles.dot} />
-                        <Ionicons name="location" size={10} color={colors.text.tertiary} />
-                        <Text style={styles.itemDistance}>{item.distance}</Text>
-                      </>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.picksContainer}>
+          {smartPicks.map((category) => (
+            <View key={category.id} style={styles.pickCard}>
+              {/* Category Header */}
+              <View style={styles.pickHeader}>
+                <View style={[styles.iconBadge, { backgroundColor: category.color + '20' }]}>
+                  <Ionicons name={category.icon as any} size={20} color={category.color} />
+                </View>
+                <Text style={styles.pickTitle}>{category.title}</Text>
+              </View>
+
+              {/* Items */}
+              {category.items.map((item: any, index: number) => (
+                <Pressable
+                  key={item.id}
+                  style={[styles.itemRow, index < category.items.length - 1 && styles.itemBorder]}
+                  onPress={() => navigateTo(`/MainStorePage?storeId=${item.storeId || item.id}`)}
+                >
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <View style={styles.itemMeta}>
+                      <Text style={styles.itemStore}>{item.store}</Text>
+                      {item.distance && (
+                        <>
+                          <View style={styles.dot} />
+                          <Ionicons name="location" size={10} color={colors.text.tertiary} />
+                          <Text style={styles.itemDistance}>{item.distance}</Text>
+                        </>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.itemRight}>
+                    {item.price > 0 && (
+                      <Text style={styles.itemPrice}>
+                        {currencySymbol}
+                        {item.price}
+                      </Text>
+                    )}
+                    {item.cashback && (
+                      <View style={styles.cashbackBadge}>
+                        <Text style={styles.cashbackText}>{item.cashback}</Text>
+                      </View>
+                    )}
+                    {item.buyers && (
+                      <View style={styles.buyersRow}>
+                        <Ionicons name="people" size={10} color={colors.text.tertiary} />
+                        <Text style={styles.buyersText}>{item.buyers} bought</Text>
+                      </View>
+                    )}
+                    {item.trending && (
+                      <View style={styles.trendingRow}>
+                        <Ionicons name="trending-up" size={10} color={Colors.error} />
+                        <Text style={styles.trendingText}>Trending</Text>
+                      </View>
                     )}
                   </View>
-                </View>
-                <View style={styles.itemRight}>
-                  {item.price > 0 && (
-                    <Text style={styles.itemPrice}>{currencySymbol}{item.price}</Text>
-                  )}
-                  {item.cashback && (
-                    <View style={styles.cashbackBadge}>
-                      <Text style={styles.cashbackText}>{item.cashback}</Text>
-                    </View>
-                  )}
-                  {item.buyers && (
-                    <View style={styles.buyersRow}>
-                      <Ionicons name="people" size={10} color={colors.text.tertiary} />
-                      <Text style={styles.buyersText}>{item.buyers} bought</Text>
-                    </View>
-                  )}
-                  {item.trending && (
-                    <View style={styles.trendingRow}>
-                      <Ionicons name="trending-up" size={10} color={Colors.error} />
-                      <Text style={styles.trendingText}>Trending</Text>
-                    </View>
-                  )}
-                </View>
-              </Pressable>
-            ))}
+                </Pressable>
+              ))}
 
-            {/* View More */}
-            <Pressable
-              style={styles.viewMoreButton}
-              onPress={() => navigateTo(`/explore/search?q=${encodeURIComponent(category.title)}`)}
-            >
-              <Text style={styles.viewMoreText}>See more like this</Text>
-              <Ionicons name="arrow-forward" size={14} color={Colors.gold} />
-            </Pressable>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+              {/* View More */}
+              <Pressable
+                style={styles.viewMoreButton}
+                onPress={() => navigateTo(`/explore/search?q=${encodeURIComponent(category.title)}`)}
+              >
+                <Text style={styles.viewMoreText}>See more like this</Text>
+                <Ionicons name="arrow-forward" size={14} color={Colors.gold} />
+              </Pressable>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
     </FeatureErrorBoundary>
   );
 };

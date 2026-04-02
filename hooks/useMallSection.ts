@@ -105,13 +105,12 @@ function transformStoreToMallBrand(store: any): MallBrand {
       average: store.ratings?.average || 0,
       count: store.ratings?.count || 0,
       successRate: store.ratings?.successRate || Math.min(Math.round((store.ratings?.average || 0) / 5 * 100), 100),
-      distribution: store.ratings?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+      // distribution omitted (not in type)
     },
     isFeatured: store.isFeatured || false,
     isActive: store.isActive !== false,
     isNewArrival,
     isLuxury: store.deliveryCategories?.premium || false,
-    isVerified: store.isVerified || false,
     tags: store.tags || [],
     collections: [],
     createdAt: store.createdAt,
@@ -251,7 +250,7 @@ export function useMallSection(options: UseMallSectionOptions = {}): UseMallSect
           setIsInitialLoad(false);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (isMountedRef.current) {
         setError(err instanceof Error ? err.message : 'Failed to load mall data');
       }
@@ -428,7 +427,7 @@ export function useMallCategory(categorySlug: string) {
 
       setHasMore(result.brands.length === 20);
       setPage(pageNum);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load brands');
     } finally {
       setIsLoading(false);
@@ -474,7 +473,7 @@ export function useMallCollection(collectionSlug: string) {
 
       setHasMore(result.brands.length === 20);
       setPage(pageNum);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load brands');
     } finally {
       setIsLoading(false);
@@ -501,7 +500,7 @@ export function useMallSearch() {
   const [results, setResults] = useState<MallBrand[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const isMountedRef = useRef(true);
 
   // Cleanup debounce timeout on unmount
@@ -511,7 +510,7 @@ export function useMallSearch() {
       isMountedRef.current = false;
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);
-        debounceRef.current = undefined;
+        debounceRef.current = undefined as any;
       }
     };
   }, []);
@@ -536,7 +535,7 @@ export function useMallSearch() {
         if (isMountedRef.current) {
           setResults(brands);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (isMountedRef.current) {
           setError(err instanceof Error ? err.message : 'Search failed');
         }

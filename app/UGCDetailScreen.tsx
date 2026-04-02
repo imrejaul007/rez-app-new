@@ -108,7 +108,7 @@ function UGCDetailScreen() {
         setVideo(parsedItem as any);
         setLoading(false);
         return;
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     }
@@ -143,7 +143,7 @@ function UGCDetailScreen() {
           if (!isMounted()) return;
           setError('Video not found');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load video');
       } finally {
@@ -253,7 +253,7 @@ function UGCDetailScreen() {
           if (!isMounted()) return;
           setIsPlaying(true);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Silently handle playback errors
       }
     };
@@ -284,7 +284,7 @@ function UGCDetailScreen() {
             }
           }
           return false;
-        } catch (e) {
+        } catch (e: any) {
           return false;
         }
       };
@@ -297,7 +297,7 @@ function UGCDetailScreen() {
 
     // Step 2: Apply object-fit styles for horizontal videos
     if (videoAspectRatio === 'horizontal') {
-      let intervalId: NodeJS.Timeout;
+      let intervalId: ReturnType<typeof setTimeout>;
       let attempts = 0;
       const maxAttempts = 50;
 
@@ -333,7 +333,7 @@ function UGCDetailScreen() {
           if (attempts >= maxAttempts && intervalId) {
             clearInterval(intervalId);
           }
-        } catch (e) {
+        } catch (e: any) {
           // Silently handle errors
         }
       };
@@ -397,7 +397,7 @@ function UGCDetailScreen() {
             if (!isMounted()) return;
             setIsPlaying(true);
           }
-        } catch (err) {
+        } catch (err: any) {
           // Silently handle toggle errors
         }
       }
@@ -447,7 +447,7 @@ function UGCDetailScreen() {
           await videoRef.current.setPositionAsync(0);
           await videoRef.current.playAsync();
         }
-      } catch (err) {
+      } catch (err: any) {
         // Silently handle replay errors
       }
 
@@ -486,7 +486,7 @@ function UGCDetailScreen() {
         setIsLiked(response.data.isLiked ?? response.data.liked);
         setLikesCount(response.data.totalLikes ?? response.data.likeCount);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setIsLiked(!isLiked);
       if (!isMounted()) return;
@@ -521,7 +521,7 @@ function UGCDetailScreen() {
         setIsBookmarked(response.data.isBookmarked);
       }
       // If API fails silently, keep the optimistic update
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setIsBookmarked(isBookmarked);
@@ -554,7 +554,7 @@ function UGCDetailScreen() {
         }
       } else {
         // Follow - use wishlistApi (backend supports this)
-        const creatorName = video?.creator?.name || video?.creator?.username || 'this creator';
+        const creatorName = (video?.creator as any)?.name || (video?.creator as any)?.username || 'this creator';
         const response = await wishlistApi.addToWishlist({
           itemType: 'store',
           itemId: storeIdToFollow,
@@ -565,7 +565,7 @@ function UGCDetailScreen() {
           throw new Error(response.message || 'Failed to follow');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setIsFollowing(wasFollowing);
@@ -600,7 +600,7 @@ function UGCDetailScreen() {
           await recordView(video._id);
           if (!isMounted()) return;
           setViewsCount((prev) => prev + 1);
-        } catch (error) {
+        } catch (error: any) {
           // Silently handle view tracking errors
         }
       }
@@ -621,12 +621,14 @@ function UGCDetailScreen() {
     if (video?.creator?.profile) {
       return `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim() || 'User';
     }
-    return video?.creator?.name || video?.creator?.username || video?.stores?.name || 'User';
-  }, [video?.creator, video?.stores?.name]);
+    return (
+      (video?.creator as any)?.name || (video?.creator as any)?.username || (video?.stores as any)?.[0]?.name || 'User'
+    );
+  }, [video?.creator, (video?.stores as any)?.[0]?.name]);
 
   const creatorAvatar = useMemo(() => {
     const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(creatorName)}&background=8B5CF6&color=fff&size=100`;
-    return video?.creator?.profile?.avatar || video?.creator?.avatar || defaultAvatarUrl;
+    return video?.creator?.profile?.avatar || (video?.creator as any)?.avatar || defaultAvatarUrl;
   }, [video?.creator, creatorName]);
 
   // Deep-link parameter validation guard: requires either item (JSON) or id
@@ -736,7 +738,7 @@ function UGCDetailScreen() {
                 await videoRef.current.playAsync();
                 if (!isMounted()) return;
                 setIsPlaying(true);
-              } catch (e) {
+              } catch (e: any) {
                 // Silently handle play errors
               }
             }

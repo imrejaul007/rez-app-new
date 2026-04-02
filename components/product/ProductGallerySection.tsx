@@ -171,7 +171,7 @@ function ProductGallerySection({ productId, variantId }: ProductGallerySectionPr
       const cats = await productGalleryApi.getCategories(productId);
       if (!isMounted()) return;
       setCategories(cats);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

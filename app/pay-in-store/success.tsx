@@ -34,7 +34,7 @@ import { borderRadius, colors, shadows, spacing, typography } from '@/constants/
 
 function PaymentSuccessScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<SuccessScreenParams>();
+  const params = useLocalSearchParams<any>();
   const { paymentId, storeId, storeName, storeLogo, amount, coinsUsed, rewards: rewardsParam } = params;
   const { showCoinsEarned, showCashbackEarned, showRewardPopup } = useRewardPopup();
   const getCurrencySymbol = useGetCurrencySymbol();
@@ -103,7 +103,7 @@ function PaymentSuccessScreen() {
     if (Platform.OS !== 'web') {
       try {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      } catch (e) {
+      } catch (e: any) {
         catchSilent(e, 'PayInStoreSuccess/haptics');
       }
     }

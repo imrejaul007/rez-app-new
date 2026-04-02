@@ -140,7 +140,7 @@ function ScratchCardPage() {
         try {
           await refreshWallet();
           await gamificationActions.loadGamificationData(true);
-        } catch (e) {
+        } catch (e: any) {
           // Non-blocking — balance will refresh on next navigation
         }
       }
@@ -158,7 +158,7 @@ function ScratchCardPage() {
       try {
         await refreshWallet();
         await gamificationActions.loadGamificationData(true);
-      } catch (e) {
+      } catch (e: any) {
         /* non-blocking */
       }
     } else {
@@ -382,7 +382,7 @@ function ScratchCardPage() {
                     <Ionicons name={getPrizeIcon(prize.type) as any} size={40} color={colors.text.inverse} />
                   </View>
                   <ThemedText style={styles.prizeTitle}>
-                    {prize.type === 'coins' || prize.type === 'coin'
+                    {prize.type === 'coins' || (prize.type as string) === 'coin'
                       ? `${prize.value} ${BRAND.COIN_NAME}!`
                       : prize.description}
                   </ThemedText>
@@ -454,7 +454,7 @@ function ScratchCardPage() {
                     <ThemedText style={styles.actionButtonText}>Done</ThemedText>
                   </Pressable>
                 )}
-                {(prize?.type === 'coins' || prize?.type === 'coin') && (
+                {(prize?.type === 'coins' || (prize?.type as string) === 'coin') && (
                   <Pressable
                     style={[styles.actionButton, { backgroundColor: Colors.success, marginTop: Spacing.md }]}
                     onPress={() => router.push('/wallet-screen')}
@@ -482,7 +482,7 @@ function ScratchCardPage() {
           )}
 
           {/* Error display */}
-          {error && cardState !== 'claimFailed' && (
+          {error && (cardState as string) !== 'claimFailed' && (
             <View style={styles.errorContainer}>
               <ThemedText style={styles.errorText}>{error}</ThemedText>
             </View>

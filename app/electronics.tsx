@@ -247,7 +247,7 @@ const ElectronicsPage: React.FC = () => {
           }
 
           // Determine hasMore from pagination meta or item count
-          const totalPages = res.meta?.pagination?.pages || res.meta?.pagination?.totalPages;
+          const totalPages = res.meta?.pagination?.pages || (res.meta?.pagination as any)?.totalPages;
           if (totalPages) {
             setHasMore(pageNum < totalPages);
           } else {
@@ -298,9 +298,9 @@ const ElectronicsPage: React.FC = () => {
     ({ item: filter }: { item: FilterType }) => (
       <Pressable
         onPress={() => setSelectedFilter(filter)}
-        style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}
+        style={[styles.filterChip, selectedFilter === filter ? styles.filterChipActive : null]}
       >
-        <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
+        <Text style={[styles.filterChipText, selectedFilter === filter ? styles.filterChipTextActive : null]}>
           {filter === 'all' ? 'All' : filter}
         </Text>
       </Pressable>
@@ -452,13 +452,12 @@ const ElectronicsPage: React.FC = () => {
             </View>
           ) : (
             <FlashList
-              contentContainerStyle={{ paddingBottom: 120 }}
+              contentContainerStyle={{ paddingBottom: 120, paddingRight: 8 }}
               data={stores}
               renderItem={renderStoreItem}
               keyExtractor={(item) => item._id}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingRight: 8 }}
               estimatedItemSize={110}
             />
           )}

@@ -94,7 +94,7 @@ function IdentitySelectPage() {
     setIdentity({ statedIdentity: identity.id });
     identityApi.setStatedIdentity(identity.id).catch(() => {});
 
-    if (identity.id === 'general' || identity.next === '/(tabs)') {
+    if (identity.id === 'general' || (identity.next as string) === '/(tabs)') {
       // Only complete onboarding when going directly to home.
       // Do NOT call completeOnboarding when going to verification screens —
       // setting isOnboarded=true triggers a redirect to /(tabs) from other screens.

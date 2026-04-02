@@ -5,15 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Platform } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -118,7 +110,9 @@ const QuickDeliveryPage: React.FC = () => {
           ...product,
           id: product._id || product.id,
           image: Array.isArray(product.images)
-            ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)
+            ? typeof product.images[0] === 'string'
+              ? product.images[0]
+              : product.images[0]?.url
             : product.image,
           pricing: {
             basePrice: product.pricing?.original || product.pricing?.basePrice || 0,
@@ -138,7 +132,7 @@ const QuickDeliveryPage: React.FC = () => {
         if (!isMounted()) return;
         setQuickProducts(getFallbackProducts());
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setQuickStores(getFallbackQuickStores());
       if (!isMounted()) return;
@@ -164,15 +158,15 @@ const QuickDeliveryPage: React.FC = () => {
   const handleAddToCart = async (product: any) => {
     try {
       const productId = product.id || product._id;
-      await cartApi.addToCart(productId, 1);
-    } catch (err) {
+      await cartApi.addToCart({ productId, quantity: 1 });
+    } catch (err: any) {
       // silently handle
     }
   };
 
   // Filter products by selected store
   const filteredProducts = selectedStore
-    ? quickProducts.filter(p => (p.store?.id || p.store?._id) === selectedStore)
+    ? quickProducts.filter((p) => (p.store?.id || p.store?._id) === selectedStore)
     : quickProducts;
 
   if (loading) {
@@ -189,7 +183,10 @@ const QuickDeliveryPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -225,29 +222,19 @@ const QuickDeliveryPage: React.FC = () => {
         <Text style={styles.storesLabel}>Delivering now</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <Pressable
-            style={[styles.storePill, !selectedStore && styles.storePillActive]}
+            style={[styles.storePill, !selectedStore ? styles.storePillActive : null]}
             onPress={() => setSelectedStore(null)}
           >
-            <Text style={[styles.storePillText, !selectedStore && styles.storePillTextActive]}>
-              All Stores
-            </Text>
+            <Text style={[styles.storePillText, !selectedStore ? styles.storePillTextActive : null]}>All Stores</Text>
           </Pressable>
           {quickStores.map((store) => (
             <Pressable
               key={store.id}
-              style={[
-                styles.storePill,
-                selectedStore === store.id && styles.storePillActive,
-              ]}
+              style={[styles.storePill, selectedStore === store.id && styles.storePillActive]}
               onPress={() => setSelectedStore(store.id === selectedStore ? null : store.id)}
             >
               <CachedImage source={store.logo} style={styles.storePillLogo} />
-              <Text
-                style={[
-                  styles.storePillText,
-                  selectedStore === store.id && styles.storePillTextActive,
-                ]}
-              >
+              <Text style={[styles.storePillText, selectedStore === store.id && styles.storePillTextActive]}>
                 {store.name}
               </Text>
               <View style={styles.storePillDelivery}>
@@ -264,19 +251,11 @@ const QuickDeliveryPage: React.FC = () => {
           {quickCategories.map((cat) => (
             <Pressable
               key={cat.key}
-              style={[
-                styles.categoryChip,
-                selectedCategory === cat.key && styles.categoryChipActive,
-              ]}
+              style={[styles.categoryChip, selectedCategory === cat.key && styles.categoryChipActive]}
               onPress={() => setSelectedCategory(cat.key)}
             >
               <Text style={styles.categoryIcon}>{cat.icon}</Text>
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === cat.key && styles.categoryTextActive,
-                ]}
-              >
+              <Text style={[styles.categoryText, selectedCategory === cat.key && styles.categoryTextActive]}>
                 {cat.label}
               </Text>
             </Pressable>
@@ -305,11 +284,7 @@ const QuickDeliveryPage: React.FC = () => {
               <Text style={styles.seeAllText}>See All</Text>
             </Pressable>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.storesScroll}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.storesScroll}>
             {quickStores.map((store) => (
               <Pressable
                 key={store.id}
@@ -321,7 +296,9 @@ const QuickDeliveryPage: React.FC = () => {
                   <Text style={styles.quickStoreBadgeText}>{store.deliveryTime}</Text>
                 </View>
                 <CachedImage source={store.logo} style={styles.quickStoreLogo} />
-                <Text style={styles.quickStoreName} numberOfLines={1}>{store.name}</Text>
+                <Text style={styles.quickStoreName} numberOfLines={1}>
+                  {store.name}
+                </Text>
                 <View style={styles.quickStoreMeta}>
                   <Ionicons name="star" size={10} color={Colors.warning} />
                   <Text style={styles.quickStoreRating}>{store.rating.toFixed(1)}</Text>
@@ -336,7 +313,7 @@ const QuickDeliveryPage: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
             {selectedStore
-              ? `Products from ${quickStores.find(s => s.id === selectedStore)?.name || 'Store'}`
+              ? `Products from ${quickStores.find((s) => s.id === selectedStore)?.name || 'Store'}`
               : 'Quick Delivery Products'}
           </Text>
           {filteredProducts.length === 0 ? (
@@ -372,7 +349,6 @@ function getFallbackQuickStores(): QuickStore[] {
 function getFallbackProducts(): any[] {
   return []; // G-01: No fake product data
 }
-
 
 const styles = StyleSheet.create({
   container: {

@@ -97,14 +97,14 @@ const BankOffersSection: React.FC<BankOffersSectionProps> = ({
         const response = await bankOffersApi.getOffers(
           categorySlug ? { category: categorySlug, limit: 10 } : { limit: 10 }
         );
-        if (response.success && response.data?.offers?.length > 0) {
+        if (response.success && response.data?.offers?.length && response.data.offers.length > 0) {
           if (!isMounted()) return;
-          setApiOffers(response.data.offers);
+          setApiOffers(response.data?.offers ?? []);
         } else {
           // Fallback to dummy data if API returns empty
           setApiOffers(bankOffersData as any);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Fallback to dummy data on error
         if (!isMounted()) return;
         setApiOffers(bankOffersData as any);

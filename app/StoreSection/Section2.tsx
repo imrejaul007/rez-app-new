@@ -1,24 +1,15 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState } from "react";
-import { View, Pressable, StyleSheet, ViewStyle, TextStyle, Linking, Platform} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  withSpring} from 'react-native-reanimated';
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
-import { platformAlert } from "@/utils/platformAlert";
-import ContactModal from "@/components/store/ContactModal";
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  IconSize,
-  Timing } from "@/constants/DesignSystem";
+import React, { useState } from 'react';
+import { View, Pressable, StyleSheet, ViewStyle, TextStyle, Linking, Platform } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
+import { platformAlert } from '@/utils/platformAlert';
+import ContactModal from '@/components/store/ContactModal';
+import { Colors, Spacing, Shadows, BorderRadius, Typography, IconSize, Timing } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 interface ActionButtonProps {
@@ -51,12 +42,12 @@ interface Section2Props {
 }
 
 const actions: ActionButtonProps[] = [
-  { label: "Call", icon: "call-outline" },
-  { label: "Product", icon: "cube-outline" },
-  { label: "Location", icon: "location-outline" },
+  { label: 'Call', icon: 'call-outline' },
+  { label: 'Product', icon: 'cube-outline' },
+  { label: 'Location', icon: 'location-outline' },
 ];
 
-function Section2({ dynamicData, cardType }: Section2Props){
+function Section2({ dynamicData, cardType }: Section2Props) {
   const isMounted = useIsMounted();
   const router = useRouter();
   const [showContactModal, setShowContactModal] = useState(false);
@@ -74,30 +65,31 @@ function Section2({ dynamicData, cardType }: Section2Props){
   // Get animation ref by index
   const getAnimRef = (index: number) => {
     switch (index) {
-      case 0: return button1ScaleAnim;
-      case 1: return button2ScaleAnim;
-      case 2: return button3ScaleAnim;
-      default: return button1ScaleAnim;
+      case 0:
+        return button1ScaleAnim;
+      case 1:
+        return button2ScaleAnim;
+      case 2:
+        return button3ScaleAnim;
+      default:
+        return button1ScaleAnim;
     }
   };
 
   const handleCall = () => {
     // Haptic feedback
     triggerImpact('Medium');
-    
+
     // Get contact info from multiple possible locations
-    const phone = dynamicData?.store?.phone || 
-                  dynamicData?.store?.contact || 
-                  dynamicData?.contact?.phone;
-    const email = dynamicData?.store?.email || 
-                  dynamicData?.contact?.email;
+    const phone = dynamicData?.store?.phone || dynamicData?.store?.contact || dynamicData?.contact?.phone;
+    const email = dynamicData?.store?.email || dynamicData?.contact?.email;
     const storeName = dynamicData?.name || dynamicData?.title;
-    
+
     if (!phone && !email) {
       platformAlert('No Contact Info', 'Store contact information is not available');
       return;
     }
-    
+
     // Show beautiful contact modal instead of directly calling
     setShowContactModal(true);
   };
@@ -110,7 +102,7 @@ function Section2({ dynamicData, cardType }: Section2Props){
       // Get storeId from dynamicData
       const storeId = dynamicData?.id || dynamicData?._id;
       const storeName = dynamicData?.name || dynamicData?.title;
-      
+
       if (!storeId) {
         platformAlert('Error', 'Store information not available');
         return;
@@ -121,9 +113,10 @@ function Section2({ dynamicData, cardType }: Section2Props){
         pathname: '/StoreProductsPage',
         params: {
           storeId: storeId,
-          storeName: storeName }
+          storeName: storeName,
+        },
       } as any);
-    } catch (error) {
+    } catch (error: any) {
       platformAlert('Error', 'Unable to view store products');
     }
   };
@@ -167,12 +160,13 @@ function Section2({ dynamicData, cardType }: Section2Props){
         await Linking.openURL(url);
       } else {
         // Universal fallback to Google Maps web (works on all platforms)
-        const mapsUrl = lat && lng
-          ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
-          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`;
+        const mapsUrl =
+          lat && lng
+            ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`;
         await Linking.openURL(mapsUrl);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlert('Error', 'Unable to open location');
     }
   };
@@ -191,33 +185,20 @@ function Section2({ dynamicData, cardType }: Section2Props){
   };
 
   // Get contact info for modal
-  const phone = dynamicData?.store?.phone || 
-                dynamicData?.store?.contact || 
-                dynamicData?.contact?.phone;
-  const email = dynamicData?.store?.email || 
-                dynamicData?.contact?.email;
+  const phone = dynamicData?.store?.phone || dynamicData?.store?.contact || dynamicData?.contact?.phone;
+  const email = dynamicData?.store?.email || dynamicData?.contact?.email;
   const storeName = dynamicData?.name || dynamicData?.title;
 
   return (
     <>
-      <View
-        style={styles.container}
-        accessibilityLabel="Store action buttons"
-      >
+      <View style={styles.container} accessibilityLabel="Store action buttons">
         <View style={styles.buttonRow}>
           {actions.map((action, index) => {
             const scaleAnim = getAnimRef(index);
             return (
-              <Animated.View
-                key={index}
-                style={[
-                  styles.buttonWrapper,
-                  { transform: [{ scale: scaleAnim }] }
-                ]}
-              >
+              <Animated.View key={index} style={[styles.buttonWrapper, { transform: [{ scale: scaleAnim }] }]}>
                 <Pressable
                   style={styles.button}
-                 
                   onPress={getHandler(action.label)}
                   onPressIn={() => animateScale(scaleAnim, 0.95)}
                   onPressOut={() => animateScale(scaleAnim, 1)}
@@ -231,9 +212,7 @@ function Section2({ dynamicData, cardType }: Section2Props){
                     color={Colors.primary[600]}
                     style={styles.buttonIcon}
                   />
-                  <ThemedText style={styles.buttonText}>
-                    {action.label}
-                  </ThemedText>
+                  <ThemedText style={styles.buttonText}>{action.label}</ThemedText>
                 </Pressable>
               </Animated.View>
             );
@@ -258,7 +237,7 @@ interface Styles {
   buttonRow: ViewStyle;
   buttonWrapper: ViewStyle;
   button: ViewStyle;
-  buttonIcon: ViewStyle;
+  buttonIcon: TextStyle;
   buttonText: TextStyle;
 }
 
@@ -267,16 +246,19 @@ const styles = StyleSheet.create<Styles>({
   container: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
 
   // Modern Button Row
   buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: Spacing.md - 2 },
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.md - 2,
+  },
 
   buttonWrapper: {
-    flex: 1 },
+    flex: 1,
+  },
 
   // Modern Button with Purple Border
   button: {
@@ -285,21 +267,25 @@ const styles = StyleSheet.create<Styles>({
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md - 2,
     paddingHorizontal: Spacing.sm,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.background.primary,
     ...Shadows.purpleSubtle,
-    flexDirection: "column",
-    gap: Spacing.xs },
+    flexDirection: 'column',
+    gap: Spacing.xs,
+  },
 
   buttonIcon: {
-    marginBottom: 2 },
+    marginBottom: 2,
+  },
 
   // Modern Typography
   buttonText: {
     ...Typography.caption,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.primary[600],
-    textAlign: "center" } });
+    textAlign: 'center',
+  },
+});
 
 export default withErrorBoundary(Section2, 'StoreSectionSection2');

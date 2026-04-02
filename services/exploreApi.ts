@@ -167,7 +167,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -206,7 +206,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -261,7 +261,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -299,7 +299,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -329,7 +329,7 @@ class ExploreApiService {
         return { success: true, data: categories };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -357,7 +357,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -403,7 +403,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -449,7 +449,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -493,7 +493,7 @@ class ExploreApiService {
         return { success: true, data: stores };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -540,7 +540,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -578,7 +578,7 @@ class ExploreApiService {
         return { success: true, data: products };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -604,7 +604,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -634,7 +634,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -658,7 +658,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -695,7 +695,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -717,7 +717,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -741,7 +741,7 @@ class ExploreApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }

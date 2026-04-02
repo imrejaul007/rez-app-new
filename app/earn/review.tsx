@@ -77,7 +77,7 @@ function ReviewToEarnPage() {
         if (!isMounted()) return;
         setPotentialEarnings(response.data.potentialEarnings || 0);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

@@ -21,6 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallOffer } from '../../types/mall.types';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 interface MallDealsOfDayProps {
@@ -285,19 +286,15 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
         </View>
 
         {/* Offers List */}
-        <FlashList
+        <AnyFlashList
           data={offers}
           renderItem={renderOffer}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           snapToInterval={200}
           decelerationRate="fast"
-          removeClippedSubviews={Platform.OS !== 'web'}
-          maxToRenderPerBatch={4}
-          windowSize={4}
-          initialNumToRender={2}
           estimatedItemSize={150}
         />
       </LinearGradient>
@@ -588,6 +585,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.neutral[500],
     fontWeight: '500',
+  },
+  emptyStateContainer: {
+    alignItems: 'center' as const,
+    paddingVertical: 24,
+    gap: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: colors.neutral[500],
   },
 });
 

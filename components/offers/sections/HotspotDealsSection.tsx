@@ -91,7 +91,7 @@ export const HotspotDealsSection: React.FC<HotspotDealsSectionProps> = ({
           return (
             <Pressable
               key={hotspot.id}
-              style={[styles.card, isSelected && styles.cardSelected]}
+              style={[styles.card, isSelected ? styles.cardSelected : null]}
               onPress={() => onHotspotPress(hotspot)}
              
             >

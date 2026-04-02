@@ -54,7 +54,7 @@ export function useReorder(): UseReorderReturn {
       setValidating(true);
       setError(null);
 
-      const response = await reorderService.validateReorder(orderId, itemIds);
+      const response: any = await reorderService.validateReorder(orderId, itemIds);
 
       if (response.success && response.data) {
         setValidation(response.data);
@@ -63,7 +63,7 @@ export function useReorder(): UseReorderReturn {
       } else {
         throw new Error(response.message || 'Failed to validate reorder');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to validate reorder';
       setError(errorMessage);
       return false;
@@ -77,7 +77,7 @@ export function useReorder(): UseReorderReturn {
       setReordering(true);
       setError(null);
 
-      const response = await reorderService.reorderFullOrder(orderId);
+      const response: any = await reorderService.reorderFullOrder(orderId);
 
       if (response.success && response.data) {
         const result = response.data;
@@ -92,7 +92,7 @@ export function useReorder(): UseReorderReturn {
       } else {
         throw new Error(response.message || 'Failed to reorder');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reorder';
       setError(errorMessage);
       return false;
@@ -109,7 +109,7 @@ export function useReorder(): UseReorderReturn {
       setReordering(true);
       setError(null);
 
-      const response = await reorderService.reorderSelectedItems(orderId, itemIds);
+      const response: any = await reorderService.reorderSelectedItems(orderId, itemIds);
 
       if (response.success && response.data) {
         const result = response.data;
@@ -124,7 +124,7 @@ export function useReorder(): UseReorderReturn {
       } else {
         throw new Error(response.message || 'Failed to reorder selected items');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reorder selected items';
       setError(errorMessage);
       return false;
@@ -160,7 +160,7 @@ export function useFrequentlyOrdered(limit: number = 10): UseFrequentlyOrderedRe
       setLoading(true);
       setError(null);
 
-      const response = await reorderService.getFrequentlyOrdered(limit);
+      const response: any = await reorderService.getFrequentlyOrdered(limit);
 
       if (response.success && response.data) {
         setItems(response.data);
@@ -168,7 +168,7 @@ export function useFrequentlyOrdered(limit: number = 10): UseFrequentlyOrderedRe
       } else {
         throw new Error(response.message || 'Failed to load frequently ordered items');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load frequently ordered items';
       setError(errorMessage);
     } finally {
@@ -194,7 +194,7 @@ export function useReorderSuggestions(): UseReorderSuggestionsReturn {
       setLoading(true);
       setError(null);
 
-      const response = await reorderService.getReorderSuggestions();
+      const response: any = await reorderService.getReorderSuggestions();
 
       if (response.success && response.data) {
         setSuggestions(response.data);
@@ -202,7 +202,7 @@ export function useReorderSuggestions(): UseReorderSuggestionsReturn {
       } else {
         throw new Error(response.message || 'Failed to load reorder suggestions');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load reorder suggestions';
       setError(errorMessage);
     } finally {

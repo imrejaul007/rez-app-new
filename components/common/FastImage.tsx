@@ -82,7 +82,7 @@ const FastImage = memo(({
       <ExpoImage
         source={imageUri}
         style={[StyleSheet.absoluteFill, style]}
-        contentFit={resizeMode}
+        contentFit={resizeMode as any}
         cachePolicy="memory-disk"
         transition={fadeDuration}
         onLoadStart={handleLoadStart}

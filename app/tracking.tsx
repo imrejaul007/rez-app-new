@@ -111,8 +111,8 @@ const mapOrderToTracking = (order: Order): TrackingOrder => {
     : 'Address not available';
 
   // Get store info - use top-level store field first, then fallback to item's store
-  const storeData = order.store || order.items?.[0]?.store;
-  const storeName = (storeData as any)?.name || order.items?.[0]?.storeName || 'Store';
+  const storeData = order.store || (order.items?.[0] as any)?.store;
+  const storeName = (storeData as any)?.name || (order.items?.[0] as any)?.storeName || 'Store';
   const storeLogo = (storeData as any)?.logo || undefined;
 
   // Calculate total if it's 0 (fallback calculation)
@@ -209,7 +209,7 @@ function OrderTrackingScreen() {
       if (response.success && response.data) {
         setCounts(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       // Non-critical, counts will still come from getOrders
     }
   }, []);
@@ -333,7 +333,7 @@ function OrderTrackingScreen() {
             <View style={styles.inactiveStepDot} />
           )}
         </View>
-        {!isLast && <View style={[styles.modernStepLine, step.isCompleted && styles.stepLineCompleted]} />}
+        {!isLast && <View style={[styles.modernStepLine, step.isCompleted ? styles.stepLineCompleted : null]} />}
       </View>
 
       <View style={styles.stepRightColumn}>
@@ -630,7 +630,7 @@ function OrderTrackingScreen() {
           data={orders}
           renderItem={renderModernOrderCard}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }] as any}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl

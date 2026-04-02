@@ -119,14 +119,14 @@ class WishlistSharingService {
    * Generate shareable link for wishlist
    */
   async generateShareableLink(wishlistId: string): Promise<ApiResponse<ShareableLink>> {
-    return apiClient.post(`/wishlist/${wishlistId}/generate-share-link`);
+    return apiClient.post<any>(`/wishlist/${wishlistId}/generate-share-link`);
   }
 
   /**
    * Get public wishlist by share code
    */
   async getPublicWishlist(shareCode: string): Promise<ApiResponse<PublicWishlist>> {
-    return apiClient.get(`/wishlist/public/${shareCode}`);
+    return apiClient.get<any>(`/wishlist/public/${shareCode}`);
   }
 
   /**
@@ -136,14 +136,14 @@ class WishlistSharingService {
     wishlistId: string,
     settings: PrivacySettings
   ): Promise<ApiResponse<{ message: string; settings: PrivacySettings }>> {
-    return apiClient.patch(`/wishlist/${wishlistId}/privacy`, settings);
+    return apiClient.patch<any>(`/wishlist/${wishlistId}/privacy`, settings as any);
   }
 
   /**
    * Get current privacy settings
    */
   async getPrivacySettings(wishlistId: string): Promise<ApiResponse<PrivacySettings>> {
-    return apiClient.get(`/wishlist/${wishlistId}/privacy`);
+    return apiClient.get<any>(`/wishlist/${wishlistId}/privacy`);
   }
 
   /**
@@ -153,14 +153,14 @@ class WishlistSharingService {
     wishlistId: string,
     platform: 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'email' | 'sms' | 'link' | 'qrcode'
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/wishlist/${wishlistId}/track-share`, { platform });
+    return apiClient.post<any>(`/wishlist/${wishlistId}/track-share`, { platform });
   }
 
   /**
    * Get share analytics
    */
   async getShareAnalytics(wishlistId: string): Promise<ApiResponse<ShareAnalytics>> {
-    return apiClient.get(`/wishlist/${wishlistId}/analytics/shares`);
+    return apiClient.get<any>(`/wishlist/${wishlistId}/analytics/shares`);
   }
 
   /**
@@ -178,21 +178,21 @@ class WishlistSharingService {
       limit: number;
     };
   }>> {
-    return apiClient.get('/wishlist/shared-with-me', { page, limit });
+    return apiClient.get<any>('/wishlist/shared-with-me', { page, limit });
   }
 
   /**
    * Like a public wishlist
    */
   async likeWishlist(shareCode: string): Promise<ApiResponse<{ liked: boolean; likes: number }>> {
-    return apiClient.post(`/wishlist/public/${shareCode}/like`);
+    return apiClient.post<any>(`/wishlist/public/${shareCode}/like`);
   }
 
   /**
    * Unlike a public wishlist
    */
   async unlikeWishlist(shareCode: string): Promise<ApiResponse<{ liked: boolean; likes: number }>> {
-    return apiClient.delete(`/wishlist/public/${shareCode}/like`);
+    return apiClient.delete<any>(`/wishlist/public/${shareCode}/like`);
   }
 
   /**
@@ -202,7 +202,7 @@ class WishlistSharingService {
     shareCode: string,
     comment: string
   ): Promise<ApiResponse<PublicWishlist['comments'][0]>> {
-    return apiClient.post(`/wishlist/public/${shareCode}/comments`, { comment });
+    return apiClient.post<any>(`/wishlist/public/${shareCode}/comments`, { comment });
   }
 
   /**
@@ -212,7 +212,7 @@ class WishlistSharingService {
     shareCode: string,
     commentId: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/wishlist/public/${shareCode}/comments/${commentId}`);
+    return apiClient.delete<any>(`/wishlist/public/${shareCode}/comments/${commentId}`);
   }
 
   /**
@@ -226,7 +226,7 @@ class WishlistSharingService {
       message?: string;
     }
   ): Promise<ApiResponse<GiftReservation>> {
-    return apiClient.post(`/wishlist/public/${shareCode}/items/${itemId}/reserve`, options);
+    return apiClient.post<any>(`/wishlist/public/${shareCode}/items/${itemId}/reserve`, options);
   }
 
   /**
@@ -236,7 +236,7 @@ class WishlistSharingService {
     shareCode: string,
     itemId: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/wishlist/public/${shareCode}/items/${itemId}/reserve`);
+    return apiClient.delete<any>(`/wishlist/public/${shareCode}/items/${itemId}/reserve`);
   }
 
   /**
@@ -246,14 +246,14 @@ class WishlistSharingService {
     shareCode: string,
     itemId: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/wishlist/public/${shareCode}/items/${itemId}/purchased`);
+    return apiClient.post<any>(`/wishlist/public/${shareCode}/items/${itemId}/purchased`);
   }
 
   /**
    * Get gift reservations for a wishlist
    */
   async getGiftReservations(shareCode: string): Promise<ApiResponse<GiftReservation[]>> {
-    return apiClient.get(`/wishlist/public/${shareCode}/reservations`);
+    return apiClient.get<any>(`/wishlist/public/${shareCode}/reservations`);
   }
 
   /**
@@ -263,7 +263,7 @@ class WishlistSharingService {
     shareCode: string,
     itemId: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/wishlist/public/${shareCode}/items/${itemId}/add-to-mine`);
+    return apiClient.post<any>(`/wishlist/public/${shareCode}/items/${itemId}/add-to-mine`);
   }
 
   /**
@@ -274,7 +274,7 @@ class WishlistSharingService {
     reason: string,
     details?: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/wishlist/public/${shareCode}/report`, { reason, details });
+    return apiClient.post<any>(`/wishlist/public/${shareCode}/report`, { reason, details });
   }
 
   // ========== Local Share Functions (No API call) ==========

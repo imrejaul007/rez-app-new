@@ -31,18 +31,21 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Brand configurations
-const brandConfigs: Record<string, {
-  name: string;
-  logo: string;
-  description: string;
-  color: string;
-  category: string;
-  tags: string[];
-}> = {
+const brandConfigs: Record<
+  string,
+  {
+    name: string;
+    logo: string;
+    description: string;
+    color: string;
+    category: string;
+    tags: string[];
+  }
+> = {
   nykaa: {
     name: 'Nykaa',
     logo: '💅',
-    description: 'India\'s leading beauty and wellness destination',
+    description: "India's leading beauty and wellness destination",
     color: colors.brand.pink,
     category: 'Beauty',
     tags: ['beauty', 'cosmetics', 'skincare', 'nykaa'],
@@ -87,7 +90,7 @@ interface Product {
 const BrandPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { name } = useLocalSearchParams<{ name: string }>();
+  const { name } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -171,12 +174,12 @@ const BrandPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={[brandConfig.color, brandConfig.color + 'CC']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[brandConfig.color, brandConfig.color + 'CC']} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Pressable onPress={() => router.push('/search' as any)} style={styles.searchButton}>
@@ -213,11 +216,7 @@ const BrandPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={[brandConfig.color]}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[brandConfig.color]} />
         }
       >
         {/* Error State */}
@@ -236,9 +235,7 @@ const BrandPage: React.FC = () => {
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyIcon}>{brandConfig.logo}</Text>
             <Text style={styles.emptyTitle}>No Products Found</Text>
-            <Text style={styles.emptySubtitle}>
-              We're adding more {brandConfig.name} products soon!
-            </Text>
+            <Text style={styles.emptySubtitle}>We're adding more {brandConfig.name} products soon!</Text>
           </View>
         )}
 
@@ -248,12 +245,7 @@ const BrandPage: React.FC = () => {
             <Text style={styles.sectionTitle}>All Products</Text>
             <View style={styles.productsGrid}>
               {products.map((product) => (
-                <Pressable
-                  key={product.id}
-                  style={styles.productCard}
-                  onPress={() => handleProductPress(product)}
-                 
-                >
+                <Pressable key={product.id} style={styles.productCard} onPress={() => handleProductPress(product)}>
                   <View style={styles.productImageContainer}>
                     <CachedImage source={product.image} style={styles.productImage} />
                     {product.discount > 0 && (
@@ -266,15 +258,23 @@ const BrandPage: React.FC = () => {
                     </View>
                   </View>
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
+                    <Text style={styles.productName} numberOfLines={2}>
+                      {product.name}
+                    </Text>
                     <View style={styles.ratingContainer}>
                       <Ionicons name="star" size={12} color={Colors.warning} />
                       <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
                     </View>
                     <View style={styles.priceContainer}>
-                      <Text style={styles.price}>{currencySymbol}{product.price.toLocaleString()}</Text>
+                      <Text style={styles.price}>
+                        {currencySymbol}
+                        {product.price.toLocaleString()}
+                      </Text>
                       {product.discount > 0 && (
-                        <Text style={styles.originalPrice}>{currencySymbol}{product.originalPrice.toLocaleString()}</Text>
+                        <Text style={styles.originalPrice}>
+                          {currencySymbol}
+                          {product.originalPrice.toLocaleString()}
+                        </Text>
                       )}
                     </View>
                   </View>

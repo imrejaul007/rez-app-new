@@ -50,7 +50,7 @@ Or click: ${shareUrl}`;
         message: shareMessage,
         title: 'Join my Group Buy',
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

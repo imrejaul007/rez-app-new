@@ -33,7 +33,7 @@ interface MerchantProfile {
 
 function MerchantSlugScreen() {
   const router = useRouter();
-  const { merchantSlug } = useLocalSearchParams<{ merchantSlug: string }>();
+  const { merchantSlug } = useLocalSearchParams<any>();
   const [merchant, setMerchant] = useState<MerchantProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -171,7 +171,7 @@ function MerchantSlugScreen() {
 }
 
 const styles = StyleSheet.create<{ [key: string]: any }>({
-  safe: { flex: 1, backgroundColor: colors.background || '#fff' },
+  safe: { flex: 1, backgroundColor: (colors.background as any)?.primary || '#fff' },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
 
   header: {

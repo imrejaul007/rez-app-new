@@ -50,7 +50,7 @@ const StoreVouchers: React.FC<StoreVouchersProps> = ({
         if (!isMounted()) return;
         setVouchers(response.data.vouchers || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -190,13 +190,13 @@ const StoreVouchers: React.FC<StoreVouchersProps> = ({
                 )}
 
                 {/* Expiry */}
-                <View style={[styles.expiryContainer, isExpiringSoon && styles.expiryUrgent]}>
+                <View style={[styles.expiryContainer, isExpiringSoon ? styles.expiryUrgent : null]}>
                   <Ionicons
                     name="time-outline"
                     size={14}
                     color={isExpiringSoon ? colors.error : colors.neutral[500]}
                   />
-                  <Text style={[styles.expiryText, isExpiringSoon && styles.expiryTextUrgent]}>
+                  <Text style={[styles.expiryText, isExpiringSoon ? styles.expiryTextUrgent : null]}>
                     {formatExpiry(voucher.validUntil)}
                   </Text>
                 </View>

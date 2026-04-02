@@ -273,9 +273,9 @@ class SupportChatApi {
   ): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(
+      const response = await apiClient.post<any>(
         ENDPOINTS.CLOSE_TICKET(ticketId),
-        request
+        request as any
       );
       
       if (response.success) {
@@ -297,7 +297,7 @@ class SupportChatApi {
   async reopenTicket(ticketId: string): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(ENDPOINTS.REOPEN_TICKET(ticketId));
+      const response = await apiClient.post<any>(ENDPOINTS.REOPEN_TICKET(ticketId));
 
       if (response.success) {
 
@@ -377,7 +377,7 @@ class SupportChatApi {
             delivered: true,
             attachments: lastMsg.attachments,
           };
-          return { message: chatMessage, deliveryStatus: { messageId: chatMessage.id, status: 'delivered', timestamp: chatMessage.timestamp } } as SendMessageResponse;
+          return { message: chatMessage, deliveryStatus: { messageId: chatMessage.id, status: 'delivered', timestamp: chatMessage.timestamp } } as unknown as SendMessageResponse;
         }
 
         // Fallback: construct message from request
@@ -391,7 +391,7 @@ class SupportChatApi {
           read: false,
           delivered: true,
         };
-        return { message: fallbackMessage, deliveryStatus: { messageId: fallbackMessage.id, status: 'delivered', timestamp: fallbackMessage.timestamp } } as SendMessageResponse;
+        return { message: fallbackMessage, deliveryStatus: { messageId: fallbackMessage.id, status: 'delivered', timestamp: fallbackMessage.timestamp } } as unknown as SendMessageResponse;
       } else {
         devLog.error('❌ [SUPPORT API] Failed to send message:', response.error);
         return null;
@@ -408,7 +408,7 @@ class SupportChatApi {
   async deleteMessage(ticketId: string, messageId: string): Promise<boolean> {
     try {
 
-      const response = await apiClient.delete(
+      const response = await apiClient.delete<any>(
         ENDPOINTS.DELETE_MESSAGE(ticketId, messageId)
       );
       
@@ -431,7 +431,7 @@ class SupportChatApi {
   async markAsRead(ticketId: string, messageIds: string[]): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(ENDPOINTS.MARK_READ(ticketId), {
+      const response = await apiClient.post<any>(ENDPOINTS.MARK_READ(ticketId), {
         messageIds,
       });
 
@@ -589,7 +589,7 @@ class SupportChatApi {
   async rateConversation(request: RateConversationRequest): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(
+      const response = await apiClient.post<any>(
         ENDPOINTS.RATE_CONVERSATION(request.ticketId),
         {
           rating: request.rating,
@@ -673,7 +673,7 @@ class SupportChatApi {
   async markFAQHelpful(faqId: string, helpful: boolean): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(ENDPOINTS.FAQ_HELPFUL(faqId), {
+      const response = await apiClient.post<any>(ENDPOINTS.FAQ_HELPFUL(faqId), {
         helpful,
       });
 
@@ -771,7 +771,7 @@ class SupportChatApi {
   async acceptCall(callId: string): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(ENDPOINTS.ACCEPT_CALL(callId));
+      const response = await apiClient.post<any>(ENDPOINTS.ACCEPT_CALL(callId));
 
       if (response.success) {
 
@@ -792,7 +792,7 @@ class SupportChatApi {
   async rejectCall(callId: string): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(ENDPOINTS.REJECT_CALL(callId));
+      const response = await apiClient.post<any>(ENDPOINTS.REJECT_CALL(callId));
 
       if (response.success) {
 
@@ -882,7 +882,7 @@ class SupportChatApi {
   async requestTranscript(ticketId: string, email?: string): Promise<boolean> {
     try {
 
-      const response = await apiClient.post(
+      const response = await apiClient.post<any>(
         ENDPOINTS.REQUEST_TRANSCRIPT(ticketId),
         { email }
       );

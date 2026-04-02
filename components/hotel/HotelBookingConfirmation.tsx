@@ -55,6 +55,7 @@ const HotelBookingConfirmation: React.FC<HotelBookingConfirmationProps> = ({
   bookingData,
   onClose,
 }) => {
+  const router = useRouter();
   const calculateNights = () => {
     const diffTime = bookingData.checkOutDate.getTime() - bookingData.checkInDate.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -86,10 +87,10 @@ const HotelBookingConfirmation: React.FC<HotelBookingConfirmationProps> = ({
 
         {/* Booking Number */}
         {bookingData.bookingNumber && (
-          <View style={styles.bookingNumberCard}>
-            <Text style={styles.bookingNumberLabel}>Booking Number</Text>
-            <Text style={styles.bookingNumber}>{bookingData.bookingNumber}</Text>
-            <Text style={styles.bookingNote}>
+          <View style={(styles as any).bookingNumberCard}>
+            <Text style={(styles as any).bookingNumberLabel}>Booking Number</Text>
+            <Text style={(styles as any).bookingNumber}>{bookingData.bookingNumber}</Text>
+            <Text style={(styles as any).bookingNote}>
               Please save this number for your records
             </Text>
           </View>

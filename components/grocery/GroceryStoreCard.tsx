@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 6,
   },
   metaRow: {
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   ratingValue: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   ratingCount: {
     fontSize: 11,
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginLeft: 2,
   },
   dot: {
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   compactName: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
     marginBottom: 2,
   },

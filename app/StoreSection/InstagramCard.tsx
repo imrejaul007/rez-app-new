@@ -63,19 +63,16 @@ function InstagramCard({ productData, disabled = false, onError }: InstagramCard
         if (productImage) params.productImage = productImage;
         if (storeId) params.storeId = storeId;
         if (storeName) params.storeName = storeName;
-
       }
 
       // Add a small delay to show loading state
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       router.push({
         pathname: '/earn-from-social-media',
-        params
+        params,
       } as any);
-
-    } catch (error) {
-
+    } catch (error: any) {
       // Call error callback if provided
       if (onError) {
         onError(error as Error);
@@ -94,9 +91,8 @@ function InstagramCard({ productData, disabled = false, onError }: InstagramCard
       style={[
         styles.container,
         { marginHorizontal: responsiveMargin },
-        (disabled || isNavigating) && styles.containerDisabled
+        (disabled || isNavigating) && styles.containerDisabled,
       ]}
-     
       onPress={handleNavigateToEarnSocial}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       disabled={disabled || isNavigating}
@@ -120,13 +116,11 @@ function InstagramCard({ productData, disabled = false, onError }: InstagramCard
               <Ionicons name="logo-instagram" size={24} color={colors.text.inverse} />
             )}
           </View>
-          <Text style={styles.title}>
-            {isNavigating ? 'Loading...' : 'Earn from Social Media'}
-          </Text>
+          <Text style={styles.title}>{isNavigating ? 'Loading...' : 'Earn from Social Media'}</Text>
         </View>
       </LinearGradient>
     </Pressable>
-);
+  );
 }
 
 const styles = StyleSheet.create({

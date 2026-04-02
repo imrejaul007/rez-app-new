@@ -5,7 +5,18 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, TextInput, ActivityIndicator, Platform, StatusBar, KeyboardAvoidingView, Modal } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  TextInput,
+  ActivityIndicator,
+  Platform,
+  StatusBar,
+  KeyboardAvoidingView,
+  Modal,
+} from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { getImagePicker } from '@/utils/lazyImports';
@@ -28,14 +39,17 @@ const showAlert = (title: string, message: string, onOk?: () => void) => {
 };
 
 // Zone configurations
-const ZONE_CONFIGS: Record<string, {
-  title: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  color: string;
-  methods: { id: string; label: string; type: 'email' | 'document' | 'auto' }[];
-  description: string;
-  additionalFields?: string[];
-}> = {
+const ZONE_CONFIGS: Record<
+  string,
+  {
+    title: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    color: string;
+    methods: { id: string; label: string; type: 'email' | 'document' | 'auto' }[];
+    description: string;
+    additionalFields?: string[];
+  }
+> = {
   student: {
     title: 'Student Verification',
     icon: 'school',
@@ -51,9 +65,7 @@ const ZONE_CONFIGS: Record<string, {
     title: 'Corporate Verification',
     icon: 'briefcase',
     color: colors.brand.purpleLight,
-    methods: [
-      { id: 'corporate_email', label: 'Work Email', type: 'email' },
-    ],
+    methods: [{ id: 'corporate_email', label: 'Work Email', type: 'email' }],
     description: 'Use your corporate email to access employee benefits',
   },
   defence: {
@@ -85,9 +97,7 @@ const ZONE_CONFIGS: Record<string, {
     title: 'Senior Citizen',
     icon: 'person',
     color: colors.warningScale[400],
-    methods: [
-      { id: 'age_verification', label: 'Age Verification (60+)', type: 'auto' },
-    ],
+    methods: [{ id: 'age_verification', label: 'Age Verification (60+)', type: 'auto' }],
     description: 'Senior citizens (60+) get automatic verification from profile DOB',
   },
   teacher: {
@@ -143,7 +153,7 @@ const PROFESSION_OPTIONS = [
 
 function VerificationPage() {
   const router = useRouter();
-  const { zone = 'student' } = useLocalSearchParams<{ zone: string }>();
+  const { zone = 'student' } = useLocalSearchParams<any>();
   const user = useAuthUser();
   const isAuthenticated = useIsAuthenticated();
 
@@ -173,7 +183,7 @@ function VerificationPage() {
       if (response.success && response.data) {
         setVerificationStatus(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -200,7 +210,10 @@ function VerificationPage() {
     if (!result.canceled && result.assets[0]) {
       if (!isMounted()) return;
       setDocumentImage(result.assets[0].uri);
-      showAlert('Document Selected', 'Your document has been selected successfully. You can now submit your verification.');
+      showAlert(
+        'Document Selected',
+        'Your document has been selected successfully. You can now submit your verification.',
+      );
     }
   };
 
@@ -223,7 +236,10 @@ function VerificationPage() {
     if (!result.canceled && result.assets[0]) {
       if (!isMounted()) return;
       setDocumentImage(result.assets[0].uri);
-      showAlert('Photo Captured', 'Your document photo has been captured successfully. You can now submit your verification.');
+      showAlert(
+        'Photo Captured',
+        'Your document photo has been captured successfully. You can now submit your verification.',
+      );
     }
   };
 
@@ -253,7 +269,7 @@ function VerificationPage() {
       return;
     }
 
-    const methodConfig = config.methods.find(m => m.id === selectedMethod);
+    const methodConfig = config.methods.find((m) => m.id === selectedMethod);
 
     // Validate based on method type
     if (methodConfig?.type === 'email') {
@@ -272,24 +288,30 @@ function VerificationPage() {
       // Validate domain for student/corporate
       if (zone === 'student') {
         const validDomains = ['.edu', '.ac.in', '.edu.in', '.ac.uk', '.edu.au'];
-        const hasValidDomain = validDomains.some(domain => email.toLowerCase().endsWith(domain));
+        const hasValidDomain = validDomains.some((domain) => email.toLowerCase().endsWith(domain));
         if (!hasValidDomain) {
           showAlert(
             'Invalid Email Domain',
-            'Please use your college/university email ending with .edu, .ac.in, or similar academic domain.'
+            'Please use your college/university email ending with .edu, .ac.in, or similar academic domain.',
           );
           return;
         }
       }
 
       if (zone === 'corporate') {
-        const personalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com', 'protonmail.com', 'mail.com'];
+        const personalDomains = [
+          'gmail.com',
+          'yahoo.com',
+          'hotmail.com',
+          'outlook.com',
+          'icloud.com',
+          'aol.com',
+          'protonmail.com',
+          'mail.com',
+        ];
         const domain = email.split('@')[1]?.toLowerCase();
         if (personalDomains.includes(domain)) {
-          showAlert(
-            'Invalid Email Domain',
-            'Please use your corporate work email, not a personal email address.'
-          );
+          showAlert('Invalid Email Domain', 'Please use your corporate work email, not a personal email address.');
           return;
         }
       }
@@ -314,8 +336,8 @@ function VerificationPage() {
         const title = response.data.verified ? 'Verified!' : 'Submitted Successfully!';
         const message = response.data.verified
           ? 'Your verification is complete. You now have access to exclusive deals!'
-          : 'Your verification has been submitted and is under review. We\'ll notify you within 24-48 hours once it\'s approved.';
-        showAlert(title, message, () => router.canGoBack() ? router.back() : router.replace('/(tabs)'));
+          : "Your verification has been submitted and is under review. We'll notify you within 24-48 hours once it's approved.";
+        showAlert(title, message, () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')));
       } else {
         showAlert('Error', response.error || 'Failed to submit verification');
       }
@@ -344,36 +366,39 @@ function VerificationPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.container}>
           <StatusBar barStyle="light-content" />
-        <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
-          <SafeAreaView edges={['top']}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
-            </Pressable>
-          </SafeAreaView>
-        </LinearGradient>
+          <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
+            <SafeAreaView edges={['top']}>
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+              </Pressable>
+            </SafeAreaView>
+          </LinearGradient>
 
-        <View style={styles.verifiedContainer}>
-          <View style={[styles.verifiedIconContainer, { backgroundColor: config.color + '20' }]}>
-            <Ionicons name="checkmark-circle" size={80} color={Colors.success} />
-          </View>
-          <ThemedText style={styles.verifiedTitle}>Already Verified!</ThemedText>
-          <ThemedText style={styles.verifiedSubtitle}>
-            Your {config.title.toLowerCase().replace(' verification', '')} status is verified.
-            You have access to all exclusive deals.
-          </ThemedText>
-          {verificationStatus.verifiedAt && (
-            <ThemedText style={styles.verifiedDate}>
-              Verified on {new Date(verificationStatus.verifiedAt).toLocaleDateString()}
+          <View style={styles.verifiedContainer}>
+            <View style={[styles.verifiedIconContainer, { backgroundColor: config.color + '20' }]}>
+              <Ionicons name="checkmark-circle" size={80} color={Colors.success} />
+            </View>
+            <ThemedText style={styles.verifiedTitle}>Already Verified!</ThemedText>
+            <ThemedText style={styles.verifiedSubtitle}>
+              Your {config.title.toLowerCase().replace(' verification', '')} status is verified. You have access to all
+              exclusive deals.
             </ThemedText>
-          )}
-          <Pressable
-            style={[styles.primaryButton, { backgroundColor: config.color }]}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-          >
-            <ThemedText style={styles.primaryButtonText}>Go Back to Offers</ThemedText>
-          </Pressable>
+            {verificationStatus.verifiedAt && (
+              <ThemedText style={styles.verifiedDate}>
+                Verified on {new Date(verificationStatus.verifiedAt).toLocaleDateString()}
+              </ThemedText>
+            )}
+            <Pressable
+              style={[styles.primaryButton, { backgroundColor: config.color }]}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
+              <ThemedText style={styles.primaryButtonText}>Go Back to Offers</ThemedText>
+            </Pressable>
+          </View>
         </View>
-      </View>
       </>
     );
   }
@@ -385,36 +410,39 @@ function VerificationPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.container}>
           <StatusBar barStyle="light-content" />
-        <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
-          <SafeAreaView edges={['top']}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
-            </Pressable>
-          </SafeAreaView>
-        </LinearGradient>
+          <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
+            <SafeAreaView edges={['top']}>
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+              </Pressable>
+            </SafeAreaView>
+          </LinearGradient>
 
-        <View style={styles.verifiedContainer}>
-          <View style={[styles.verifiedIconContainer, { backgroundColor: '#F59E0B20' }]}>
-            <Ionicons name="time" size={80} color={colors.warningScale[400]} />
-          </View>
-          <ThemedText style={styles.verifiedTitle}>Verification Pending</ThemedText>
-          <ThemedText style={styles.verifiedSubtitle}>
-            Your {config.title.toLowerCase().replace(' verification', '')} verification is under review.
-            We'll notify you once it's approved. This usually takes 24-48 hours.
-          </ThemedText>
-          {verificationStatus.submittedAt && (
-            <ThemedText style={styles.verifiedDate}>
-              Submitted on {new Date(verificationStatus.submittedAt).toLocaleDateString()}
+          <View style={styles.verifiedContainer}>
+            <View style={[styles.verifiedIconContainer, { backgroundColor: '#F59E0B20' }]}>
+              <Ionicons name="time" size={80} color={colors.warningScale[400]} />
+            </View>
+            <ThemedText style={styles.verifiedTitle}>Verification Pending</ThemedText>
+            <ThemedText style={styles.verifiedSubtitle}>
+              Your {config.title.toLowerCase().replace(' verification', '')} verification is under review. We'll notify
+              you once it's approved. This usually takes 24-48 hours.
             </ThemedText>
-          )}
-          <Pressable
-            style={[styles.primaryButton, { backgroundColor: config.color }]}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-          >
-            <ThemedText style={styles.primaryButtonText}>Go Back to Offers</ThemedText>
-          </Pressable>
+            {verificationStatus.submittedAt && (
+              <ThemedText style={styles.verifiedDate}>
+                Submitted on {new Date(verificationStatus.submittedAt).toLocaleDateString()}
+              </ThemedText>
+            )}
+            <Pressable
+              style={[styles.primaryButton, { backgroundColor: config.color }]}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
+              <ThemedText style={styles.primaryButtonText}>Go Back to Offers</ThemedText>
+            </Pressable>
+          </View>
         </View>
-      </View>
       </>
     );
   }
@@ -426,41 +454,45 @@ function VerificationPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.container}>
           <StatusBar barStyle="light-content" />
-        <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
-          <SafeAreaView edges={['top']}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
-            </Pressable>
-          </SafeAreaView>
-        </LinearGradient>
+          <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
+            <SafeAreaView edges={['top']}>
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+              </Pressable>
+            </SafeAreaView>
+          </LinearGradient>
 
-        <View style={styles.verifiedContainer}>
-          <View style={[styles.verifiedIconContainer, { backgroundColor: Colors.error + '20' }]}>
-            <Ionicons name="close-circle" size={80} color={Colors.error} />
+          <View style={styles.verifiedContainer}>
+            <View style={[styles.verifiedIconContainer, { backgroundColor: Colors.error + '20' }]}>
+              <Ionicons name="close-circle" size={80} color={Colors.error} />
+            </View>
+            <ThemedText style={styles.verifiedTitle}>Verification Rejected</ThemedText>
+            <ThemedText style={styles.verifiedSubtitle}>
+              {verificationStatus.rejectionReason ||
+                'Your verification could not be approved. Please try again with valid documents.'}
+            </ThemedText>
+            <Pressable
+              style={[styles.primaryButton, { backgroundColor: config.color }]}
+              onPress={() => {
+                setVerificationStatus(null);
+                setSelectedMethod(null);
+                setDocumentImage(null);
+                setEmail('');
+              }}
+            >
+              <ThemedText style={styles.primaryButtonText}>Try Again</ThemedText>
+            </Pressable>
+            <Pressable
+              style={[styles.secondaryButton]}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
+              <ThemedText style={styles.secondaryButtonText}>Go Back</ThemedText>
+            </Pressable>
           </View>
-          <ThemedText style={styles.verifiedTitle}>Verification Rejected</ThemedText>
-          <ThemedText style={styles.verifiedSubtitle}>
-            {verificationStatus.rejectionReason || 'Your verification could not be approved. Please try again with valid documents.'}
-          </ThemedText>
-          <Pressable
-            style={[styles.primaryButton, { backgroundColor: config.color }]}
-            onPress={() => {
-              setVerificationStatus(null);
-              setSelectedMethod(null);
-              setDocumentImage(null);
-              setEmail('');
-            }}
-          >
-            <ThemedText style={styles.primaryButtonText}>Try Again</ThemedText>
-          </Pressable>
-          <Pressable
-            style={[styles.secondaryButton]}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-          >
-            <ThemedText style={styles.secondaryButtonText}>Go Back</ThemedText>
-          </Pressable>
         </View>
-      </View>
       </>
     );
   }
@@ -468,320 +500,314 @@ function VerificationPage() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <StatusBar barStyle="light-content" />
 
-      {/* Header */}
-      <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
-        <SafeAreaView edges={['top']}>
-          <View style={styles.headerContent}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
-            </Pressable>
-            <View style={styles.headerCenter}>
-              <View style={styles.headerIconContainer}>
-                <Ionicons name={config.icon} size={32} color={colors.background.primary} />
+        {/* Header */}
+        <LinearGradient colors={[config.color, config.color + 'CC']} style={styles.header}>
+          <SafeAreaView edges={['top']}>
+            <View style={styles.headerContent}>
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+              </Pressable>
+              <View style={styles.headerCenter}>
+                <View style={styles.headerIconContainer}>
+                  <Ionicons name={config.icon} size={32} color={colors.background.primary} />
+                </View>
+                <ThemedText style={styles.headerTitle}>{config.title}</ThemedText>
+                <ThemedText style={styles.headerSubtitle}>{config.description}</ThemedText>
               </View>
-              <ThemedText style={styles.headerTitle}>{config.title}</ThemedText>
-              <ThemedText style={styles.headerSubtitle}>{config.description}</ThemedText>
             </View>
-          </View>
-        </SafeAreaView>
-      </LinearGradient>
+          </SafeAreaView>
+        </LinearGradient>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Method Selection */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Select Verification Method</ThemedText>
-          {config.methods.map((method) => (
-            <Pressable
-              key={method.id}
-              style={[
-                styles.methodCard,
-                selectedMethod === method.id && styles.methodCardActive,
-                selectedMethod === method.id && { borderColor: config.color },
-              ]}
-              onPress={() => setSelectedMethod(method.id)}
-            >
-              <View style={[
-                styles.methodRadio,
-                selectedMethod === method.id && { borderColor: config.color },
-              ]}>
-                {selectedMethod === method.id && (
-                  <View style={[styles.methodRadioInner, { backgroundColor: config.color }]} />
-                )}
-              </View>
-              <View style={styles.methodInfo}>
-                <ThemedText style={styles.methodLabel}>{method.label}</ThemedText>
-                <ThemedText style={styles.methodType}>
-                  {method.type === 'email' ? 'Email Verification' :
-                   method.type === 'auto' ? 'Automatic (from profile)' : 'Document Upload'}
-                </ThemedText>
-              </View>
-              {method.type === 'email' && (
-                <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} />
-              )}
-              {method.type === 'document' && (
-                <Ionicons name="document-outline" size={20} color={colors.text.tertiary} />
-              )}
-              {method.type === 'auto' && (
-                <Ionicons name="flash-outline" size={20} color={config.color} />
-              )}
-            </Pressable>
-          ))}
-        </View>
-
-        {/* Email Input (for email verification) */}
-        {selectedMethod && config.methods.find(m => m.id === selectedMethod)?.type === 'email' && (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Method Selection */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Email Address</ThemedText>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder={zone === 'corporate' ? 'your.name@company.com' : 'your.email@college.edu'}
-                placeholderTextColor={colors.text.tertiary}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-            <ThemedText style={styles.helperText}>
-              {zone === 'student'
-                ? 'Enter your .edu or .ac.in email for instant verification'
-                : 'Use your work email (not gmail, yahoo, etc.)'}
-            </ThemedText>
+            <ThemedText style={styles.sectionTitle}>Select Verification Method</ThemedText>
+            {config.methods.map((method) => (
+              <Pressable
+                key={method.id}
+                style={[
+                  styles.methodCard,
+                  selectedMethod === method.id && styles.methodCardActive,
+                  selectedMethod === method.id && { borderColor: config.color },
+                ]}
+                onPress={() => setSelectedMethod(method.id)}
+              >
+                <View style={[styles.methodRadio, selectedMethod === method.id && { borderColor: config.color }]}>
+                  {selectedMethod === method.id && (
+                    <View style={[styles.methodRadioInner, { backgroundColor: config.color }]} />
+                  )}
+                </View>
+                <View style={styles.methodInfo}>
+                  <ThemedText style={styles.methodLabel}>{method.label}</ThemedText>
+                  <ThemedText style={styles.methodType}>
+                    {method.type === 'email'
+                      ? 'Email Verification'
+                      : method.type === 'auto'
+                        ? 'Automatic (from profile)'
+                        : 'Document Upload'}
+                  </ThemedText>
+                </View>
+                {method.type === 'email' && <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} />}
+                {method.type === 'document' && (
+                  <Ionicons name="document-outline" size={20} color={colors.text.tertiary} />
+                )}
+                {method.type === 'auto' && <Ionicons name="flash-outline" size={20} color={config.color} />}
+              </Pressable>
+            ))}
           </View>
-        )}
 
-        {/* Document Upload (for document verification) */}
-        {selectedMethod && config.methods.find(m => m.id === selectedMethod)?.type === 'document' && (
-          <>
+          {/* Email Input (for email verification) */}
+          {selectedMethod && config.methods.find((m) => m.id === selectedMethod)?.type === 'email' && (
             <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Document Number (Optional)</ThemedText>
+              <ThemedText style={styles.sectionTitle}>Email Address</ThemedText>
               <View style={styles.inputContainer}>
-                <Ionicons name="card-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  value={documentNumber}
-                  onChangeText={setDocumentNumber}
-                  placeholder="Enter document/ID number"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder={zone === 'corporate' ? 'your.name@company.com' : 'your.email@college.edu'}
+                  placeholderTextColor={colors.text.tertiary}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+              <ThemedText style={styles.helperText}>
+                {zone === 'student'
+                  ? 'Enter your .edu or .ac.in email for instant verification'
+                  : 'Use your work email (not gmail, yahoo, etc.)'}
+              </ThemedText>
+            </View>
+          )}
+
+          {/* Document Upload (for document verification) */}
+          {selectedMethod && config.methods.find((m) => m.id === selectedMethod)?.type === 'document' && (
+            <>
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Document Number (Optional)</ThemedText>
+                <View style={styles.inputContainer}>
+                  <Ionicons name="card-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.input}
+                    value={documentNumber}
+                    onChangeText={setDocumentNumber}
+                    placeholder="Enter document/ID number"
+                    placeholderTextColor={colors.text.tertiary}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Upload Document</ThemedText>
+                <Pressable style={styles.uploadBox} onPress={showImageOptions}>
+                  {documentImage ? (
+                    <View style={styles.uploadedImageContainer}>
+                      <CachedImage
+                        source={{ uri: documentImage }}
+                        style={styles.uploadedImage}
+                        contentFit="contain"
+                        cachePolicy="memory-disk"
+                      />
+                      <Pressable style={styles.removeImageButton} onPress={() => setDocumentImage(null)}>
+                        <Ionicons name="close-circle" size={24} color={Colors.error} />
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <View style={styles.uploadPlaceholder}>
+                      <Ionicons name="cloud-upload-outline" size={40} color={config.color} />
+                      <ThemedText style={styles.uploadText}>Tap to upload document</ThemedText>
+                      <ThemedText style={styles.uploadSubtext}>Take photo or choose from gallery</ThemedText>
+                    </View>
+                  )}
+                </Pressable>
+              </View>
+            </>
+          )}
+
+          {/* Auto verification info */}
+          {selectedMethod && config.methods.find((m) => m.id === selectedMethod)?.type === 'auto' && (
+            <View style={styles.section}>
+              <View style={styles.autoVerifyCard}>
+                <Ionicons name="flash" size={32} color={config.color} />
+                <ThemedText style={styles.autoVerifyTitle}>Automatic Verification</ThemedText>
+                <ThemedText style={styles.autoVerifyText}>
+                  We'll verify your eligibility based on your profile information.
+                  {zone === 'senior' && ' Your date of birth must show you are 60 years or older.'}
+                </ThemedText>
+              </View>
+            </View>
+          )}
+
+          {/* Additional Fields */}
+          {zone === 'defence' && selectedMethod && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Service Type</ThemedText>
+              <View style={styles.optionsRow}>
+                {SERVICE_TYPE_OPTIONS.map((option) => (
+                  <Pressable
+                    key={option.value}
+                    style={[
+                      styles.optionChip,
+                      serviceType === option.value && styles.optionChipActive,
+                      serviceType === option.value && { backgroundColor: config.color },
+                    ]}
+                    onPress={() => setServiceType(option.value)}
+                  >
+                    <ThemedText
+                      style={[styles.optionChipText, serviceType === option.value && styles.optionChipTextActive]}
+                    >
+                      {option.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {zone === 'healthcare' && selectedMethod && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Profession</ThemedText>
+              <View style={styles.optionsRow}>
+                {PROFESSION_OPTIONS.map((option) => (
+                  <Pressable
+                    key={option.value}
+                    style={[
+                      styles.optionChip,
+                      profession === option.value && styles.optionChipActive,
+                      profession === option.value && { backgroundColor: config.color },
+                    ]}
+                    onPress={() => setProfession(option.value)}
+                  >
+                    <ThemedText
+                      style={[styles.optionChipText, profession === option.value && styles.optionChipTextActive]}
+                    >
+                      {option.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {(zone === 'teacher' || zone === 'student') &&
+            selectedMethod &&
+            config.methods.find((m) => m.id === selectedMethod)?.type === 'document' && (
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Institution Name</ThemedText>
+                <View style={styles.inputContainer}>
+                  <Ionicons name="business-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.input}
+                    value={instituteName}
+                    onChangeText={setInstituteName}
+                    placeholder="Enter your school/college name"
+                    placeholderTextColor={colors.text.tertiary}
+                  />
+                </View>
+              </View>
+            )}
+
+          {zone === 'government' && selectedMethod && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Department</ThemedText>
+              <View style={styles.inputContainer}>
+                <Ionicons name="business-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={department}
+                  onChangeText={setDepartment}
+                  placeholder="Enter your department"
                   placeholderTextColor={colors.text.tertiary}
                 />
               </View>
             </View>
+          )}
 
-            <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Upload Document</ThemedText>
-              <Pressable style={styles.uploadBox} onPress={showImageOptions}>
-                {documentImage ? (
-                  <View style={styles.uploadedImageContainer}>
-                    <CachedImage source={{ uri: documentImage }} style={styles.uploadedImage} contentFit="contain" cachePolicy="memory-disk" />
-                    <Pressable
-                      style={styles.removeImageButton}
-                      onPress={() => setDocumentImage(null)}
-                    >
-                      <Ionicons name="close-circle" size={24} color={Colors.error} />
-                    </Pressable>
-                  </View>
-                ) : (
-                  <View style={styles.uploadPlaceholder}>
-                    <Ionicons name="cloud-upload-outline" size={40} color={config.color} />
-                    <ThemedText style={styles.uploadText}>Tap to upload document</ThemedText>
-                    <ThemedText style={styles.uploadSubtext}>Take photo or choose from gallery</ThemedText>
-                  </View>
-                )}
+          {/* Submit Button */}
+          <View style={styles.submitSection}>
+            <Pressable
+              style={[
+                styles.submitButton,
+                { backgroundColor: config.color },
+                (!selectedMethod || loading) && styles.submitButtonDisabled,
+              ]}
+              onPress={handleSubmit}
+              disabled={!selectedMethod || loading}
+            >
+              {loading ? (
+                <ActivityIndicator color={colors.background.primary} />
+              ) : (
+                <>
+                  <Ionicons name="checkmark-circle-outline" size={20} color={colors.background.primary} />
+                  <ThemedText style={styles.submitButtonText}>Submit Verification</ThemedText>
+                </>
+              )}
+            </Pressable>
+
+            <ThemedText style={styles.disclaimerText}>
+              By submitting, you confirm that all information provided is accurate. Document verification typically
+              takes 24-48 hours.
+            </ThemedText>
+          </View>
+        </ScrollView>
+
+        {/* Image Picker Modal for Mobile */}
+        <Modal
+          visible={showImageModal}
+          transparent
+          statusBarTranslucent
+          animationType="slide"
+          onRequestClose={() => setShowImageModal(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setShowImageModal(false)}>
+            <View style={styles.modalContent}>
+              <ThemedText style={styles.modalTitle}>Upload Document</ThemedText>
+              <ThemedText style={styles.modalSubtitle}>Choose how to upload your document</ThemedText>
+
+              <Pressable
+                style={styles.modalOption}
+                onPress={() => {
+                  setShowImageModal(false);
+                  takePhoto();
+                }}
+              >
+                <Ionicons name="camera-outline" size={24} color={config.color} />
+                <ThemedText style={styles.modalOptionText}>Take Photo</ThemedText>
+              </Pressable>
+
+              <Pressable
+                style={styles.modalOption}
+                onPress={() => {
+                  setShowImageModal(false);
+                  pickImage();
+                }}
+              >
+                <Ionicons name="images-outline" size={24} color={config.color} />
+                <ThemedText style={styles.modalOptionText}>Choose from Library</ThemedText>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalOption, styles.modalCancelOption]}
+                onPress={() => setShowImageModal(false)}
+              >
+                <ThemedText style={styles.modalCancelText}>Cancel</ThemedText>
               </Pressable>
             </View>
-          </>
-        )}
-
-        {/* Auto verification info */}
-        {selectedMethod && config.methods.find(m => m.id === selectedMethod)?.type === 'auto' && (
-          <View style={styles.section}>
-            <View style={styles.autoVerifyCard}>
-              <Ionicons name="flash" size={32} color={config.color} />
-              <ThemedText style={styles.autoVerifyTitle}>Automatic Verification</ThemedText>
-              <ThemedText style={styles.autoVerifyText}>
-                We'll verify your eligibility based on your profile information.
-                {zone === 'senior' && ' Your date of birth must show you are 60 years or older.'}
-              </ThemedText>
-            </View>
-          </View>
-        )}
-
-        {/* Additional Fields */}
-        {zone === 'defence' && selectedMethod && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Service Type</ThemedText>
-            <View style={styles.optionsRow}>
-              {SERVICE_TYPE_OPTIONS.map((option) => (
-                <Pressable
-                  key={option.value}
-                  style={[
-                    styles.optionChip,
-                    serviceType === option.value && styles.optionChipActive,
-                    serviceType === option.value && { backgroundColor: config.color },
-                  ]}
-                  onPress={() => setServiceType(option.value)}
-                >
-                  <ThemedText style={[
-                    styles.optionChipText,
-                    serviceType === option.value && styles.optionChipTextActive,
-                  ]}>
-                    {option.label}
-                  </ThemedText>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {zone === 'healthcare' && selectedMethod && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Profession</ThemedText>
-            <View style={styles.optionsRow}>
-              {PROFESSION_OPTIONS.map((option) => (
-                <Pressable
-                  key={option.value}
-                  style={[
-                    styles.optionChip,
-                    profession === option.value && styles.optionChipActive,
-                    profession === option.value && { backgroundColor: config.color },
-                  ]}
-                  onPress={() => setProfession(option.value)}
-                >
-                  <ThemedText style={[
-                    styles.optionChipText,
-                    profession === option.value && styles.optionChipTextActive,
-                  ]}>
-                    {option.label}
-                  </ThemedText>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {(zone === 'teacher' || zone === 'student') && selectedMethod && config.methods.find(m => m.id === selectedMethod)?.type === 'document' && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Institution Name</ThemedText>
-            <View style={styles.inputContainer}>
-              <Ionicons name="business-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={instituteName}
-                onChangeText={setInstituteName}
-                placeholder="Enter your school/college name"
-                placeholderTextColor={colors.text.tertiary}
-              />
-            </View>
-          </View>
-        )}
-
-        {zone === 'government' && selectedMethod && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Department</ThemedText>
-            <View style={styles.inputContainer}>
-              <Ionicons name="business-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={department}
-                onChangeText={setDepartment}
-                placeholder="Enter your department"
-                placeholderTextColor={colors.text.tertiary}
-              />
-            </View>
-          </View>
-        )}
-
-        {/* Submit Button */}
-        <View style={styles.submitSection}>
-          <Pressable
-            style={[
-              styles.submitButton,
-              { backgroundColor: config.color },
-              (!selectedMethod || loading) && styles.submitButtonDisabled,
-            ]}
-            onPress={handleSubmit}
-            disabled={!selectedMethod || loading}
-          >
-            {loading ? (
-              <ActivityIndicator color={colors.background.primary} />
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle-outline" size={20} color={colors.background.primary} />
-                <ThemedText style={styles.submitButtonText}>Submit Verification</ThemedText>
-              </>
-            )}
           </Pressable>
-
-          <ThemedText style={styles.disclaimerText}>
-            By submitting, you confirm that all information provided is accurate.
-            Document verification typically takes 24-48 hours.
-          </ThemedText>
-        </View>
-      </ScrollView>
-
-      {/* Image Picker Modal for Mobile */}
-      <Modal
-        visible={showImageModal}
-        transparent
-        statusBarTranslucent
-        animationType="slide"
-        onRequestClose={() => setShowImageModal(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-         
-          onPress={() => setShowImageModal(false)}
-        >
-          <View style={styles.modalContent}>
-            <ThemedText style={styles.modalTitle}>Upload Document</ThemedText>
-            <ThemedText style={styles.modalSubtitle}>Choose how to upload your document</ThemedText>
-
-            <Pressable
-              style={styles.modalOption}
-              onPress={() => {
-                setShowImageModal(false);
-                takePhoto();
-              }}
-            >
-              <Ionicons name="camera-outline" size={24} color={config.color} />
-              <ThemedText style={styles.modalOptionText}>Take Photo</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={styles.modalOption}
-              onPress={() => {
-                setShowImageModal(false);
-                pickImage();
-              }}
-            >
-              <Ionicons name="images-outline" size={24} color={config.color} />
-              <ThemedText style={styles.modalOptionText}>Choose from Library</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={[styles.modalOption, styles.modalCancelOption]}
-              onPress={() => setShowImageModal(false)}
-            >
-              <ThemedText style={styles.modalCancelText}>Cancel</ThemedText>
-            </Pressable>
-          </View>
-        </Pressable>
-      </Modal>
-    </KeyboardAvoidingView>
+        </Modal>
+      </KeyboardAvoidingView>
     </>
   );
 }

@@ -319,10 +319,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error fetching cart:', error);
-      return createErrorResponse(error, 'Failed to load cart. Please try again.');
+      return createErrorResponse(error, 'Failed to load cart. Please try again.') as any;
     }
   }
 
@@ -353,7 +353,7 @@ class CartService {
       logApiRequest('POST', '/cart/add', data);
 
       const response = await withRetry(
-        () => apiClient.post<Cart>('/cart/add', data),
+        () => apiClient.post<Cart>('/cart/add', data as any),
         { maxRetries: 2 }
       );
 
@@ -371,13 +371,13 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error adding to cart:', error);
       return createErrorResponse(
         error,
         'Failed to add item to cart. Please try again.'
-      );
+      ) as any;
     }
   }
 
@@ -442,7 +442,7 @@ class CartService {
       logApiRequest('POST', '/cart/add (service)', requestData);
 
       const response = await withRetry(
-        () => apiClient.post<Cart>('/cart/add', requestData),
+        () => apiClient.post<Cart>('/cart/add', requestData as any),
         { maxRetries: 2 }
       );
 
@@ -460,13 +460,13 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error adding service to cart:', error);
       return createErrorResponse(
         error,
         'Failed to add service to cart. Please try again.'
-      );
+      ) as any;
     }
   }
 
@@ -505,7 +505,7 @@ class CartService {
       logApiRequest('PUT', url, data);
 
       const response = await withRetry(
-        () => apiClient.put<Cart>(url, data),
+        () => apiClient.put<Cart>(url, data as any),
         { maxRetries: 2 }
       );
 
@@ -523,13 +523,13 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error updating cart item:', error);
       return createErrorResponse(
         error,
         'Failed to update cart item. Please try again.'
-      );
+      ) as any;
     }
   }
 
@@ -577,13 +577,13 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error removing cart item:', error);
       return createErrorResponse(
         error,
         'Failed to remove item from cart. Please try again.'
-      );
+      ) as any;
     }
   }
 
@@ -603,10 +603,10 @@ class CartService {
 
       logApiResponse('DELETE', '/cart/clear', response, Date.now() - startTime);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error clearing cart:', error);
-      return createErrorResponse(error, 'Failed to clear cart. Please try again.');
+      return createErrorResponse(error, 'Failed to clear cart. Please try again.') as any;
     }
   }
 
@@ -629,7 +629,7 @@ class CartService {
       logApiRequest('POST', '/cart/coupon', data);
 
       const response = await withRetry(
-        () => apiClient.post<Cart>('/cart/coupon', data),
+        () => apiClient.post<Cart>('/cart/coupon', data as any),
         { maxRetries: 1 } // Don't retry coupon applications
       );
 
@@ -647,10 +647,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error applying coupon:', error);
-      return createErrorResponse(error, 'Failed to apply coupon. Please try again.');
+      return createErrorResponse(error, 'Failed to apply coupon. Please try again.') as any;
     }
   }
 
@@ -682,10 +682,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error removing coupon:', error);
-      return createErrorResponse(error, 'Failed to remove coupon. Please try again.');
+      return createErrorResponse(error, 'Failed to remove coupon. Please try again.') as any;
     }
   }
 
@@ -717,10 +717,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error fetching cart summary:', error);
-      return createErrorResponse(error, 'Failed to load cart summary. Please try again.');
+      return createErrorResponse(error, 'Failed to load cart summary. Please try again.') as any;
     }
   }
 
@@ -758,10 +758,10 @@ class CartService {
 
       logApiResponse('GET', '/cart/validate', response, Date.now() - startTime);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error validating cart:', error);
-      return createErrorResponse(error, 'Failed to validate cart. Please try again.');
+      return createErrorResponse(error, 'Failed to validate cart. Please try again.') as any;
     }
   }
 
@@ -861,7 +861,7 @@ class CartService {
       return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error getting checkout summary:', error);
-      return createErrorResponse(error, 'Failed to load checkout summary');
+      return createErrorResponse(error, 'Failed to load checkout summary') as any;
     }
   }
 
@@ -907,10 +907,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error locking item:', error);
-      return createErrorResponse(error, 'Failed to lock item. Please try again.');
+      return createErrorResponse(error, 'Failed to lock item. Please try again.') as any;
     }
   }
 
@@ -930,10 +930,10 @@ class CartService {
 
       logApiResponse('GET', '/cart/locked', response, Date.now() - startTime);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error fetching locked items:', error);
-      return createErrorResponse(error, 'Failed to load locked items');
+      return createErrorResponse(error, 'Failed to load locked items') as any;
     }
   }
 
@@ -980,10 +980,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error unlocking item:', error);
-      return createErrorResponse(error, 'Failed to unlock item');
+      return createErrorResponse(error, 'Failed to unlock item') as any;
     }
   }
 
@@ -1030,10 +1030,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error moving locked item to cart:', error);
-      return createErrorResponse(error, 'Failed to move locked item to cart');
+      return createErrorResponse(error, 'Failed to move locked item to cart') as any;
     }
   }
 
@@ -1066,10 +1066,10 @@ class CartService {
 
       logApiResponse('GET', '/cart/lock-fee-options', response, Date.now() - startTime);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error getting lock fee options:', error);
-      return createErrorResponse(error, 'Failed to get lock fee options');
+      return createErrorResponse(error, 'Failed to get lock fee options') as any;
     }
   }
 
@@ -1111,7 +1111,7 @@ class CartService {
       logApiRequest('POST', '/cart/lock-with-payment', data);
 
       const response = await withRetry(
-        () => apiClient.post<LockWithPaymentResponse>('/cart/lock-with-payment', data),
+        () => apiClient.post<LockWithPaymentResponse>('/cart/lock-with-payment', data as any),
         { maxRetries: 1 } // Don't retry payment operations
       );
 
@@ -1129,10 +1129,10 @@ class CartService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[CART API] Error locking item with payment:', error);
-      return createErrorResponse(error, 'Failed to lock item. Please try again.');
+      return createErrorResponse(error, 'Failed to lock item. Please try again.') as any;
     }
   }
 }

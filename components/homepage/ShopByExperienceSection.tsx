@@ -88,7 +88,7 @@ const ShopByExperienceSection: React.FC = () => {
             };
           }));
         }
-      } catch (error) {
+      } catch (error: any) {
         if (!isMounted()) return;
         setExperiences(FALLBACK_EXPERIENCES.map(f => {
           const theme = getTheme(f.slug);

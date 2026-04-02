@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Frequently Asked Questions with search and categories
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  TextInput,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, TextInput, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -69,7 +60,7 @@ function FAQPage() {
         if (!isMounted()) return;
         setCategories(categoriesResponse.data.categories);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError(err instanceof Error ? err.message : 'Failed to load FAQs');
     } finally {
@@ -88,7 +79,7 @@ function FAQPage() {
         if (!isMounted()) return;
         setFaqs(response.data.faqs);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -113,7 +104,7 @@ function FAQPage() {
       // Track view
       try {
         await supportService.trackFAQView(faq._id);
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     }
@@ -122,7 +113,7 @@ function FAQPage() {
   const handleHelpful = async (faqId: string, helpful: boolean) => {
     try {
       await supportService.markFAQHelpful(faqId, helpful);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -130,10 +121,7 @@ function FAQPage() {
   const renderCategory = (category: FAQCategory, index: number) => (
     <Pressable
       key={index}
-      style={[
-        styles.categoryChip,
-        selectedCategory === category.category && styles.categoryChipActive,
-      ]}
+      style={[styles.categoryChip, selectedCategory === category.category && styles.categoryChipActive]}
       onPress={() => handleCategorySelect(category.category)}
       accessible={true}
       accessibilityLabel={`${category.category} category, ${category.count} FAQs`}
@@ -141,12 +129,7 @@ function FAQPage() {
       accessibilityState={{ selected: selectedCategory === category.category }}
       accessibilityHint={`Filter FAQs by ${category.category}`}
     >
-      <ThemedText
-        style={[
-          styles.categoryText,
-          selectedCategory === category.category && styles.categoryTextActive,
-        ]}
-      >
+      <ThemedText style={[styles.categoryText, selectedCategory === category.category && styles.categoryTextActive]}>
         {category.category} ({category.count})
       </ThemedText>
     </Pressable>
@@ -160,22 +143,17 @@ function FAQPage() {
         <Pressable
           style={styles.faqHeader}
           onPress={() => handleFAQPress(faq)}
-         
           accessible={true}
           accessibilityLabel={`FAQ: ${faq.question}`}
           accessibilityRole="button"
           accessibilityState={{ expanded: isExpanded }}
-          accessibilityHint={isExpanded ? "Collapse answer" : "Expand to view answer"}
+          accessibilityHint={isExpanded ? 'Collapse answer' : 'Expand to view answer'}
         >
           <View style={styles.faqIcon}>
             <Ionicons name="help-circle" size={24} color={Colors.info} />
           </View>
           <ThemedText style={styles.faqQuestion}>{faq.question}</ThemedText>
-          <Ionicons
-            name={isExpanded ? 'chevron-up' : 'chevron-down'}
-            size={20}
-            color={colors.text.tertiary}
-          />
+          <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} color={colors.text.tertiary} />
         </Pressable>
 
         {isExpanded && (
@@ -233,7 +211,7 @@ function FAQPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               accessible={true}
               accessibilityLabel="Go back"
               accessibilityRole="button"
@@ -241,7 +219,9 @@ function FAQPage() {
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-            <ThemedText style={styles.headerTitle} accessible={true} accessibilityRole="header">FAQs</ThemedText>
+            <ThemedText style={styles.headerTitle} accessible={true} accessibilityRole="header">
+              FAQs
+            </ThemedText>
             <View style={styles.placeholder} />
           </View>
         </LinearGradient>
@@ -256,7 +236,10 @@ function FAQPage() {
         <StatusBar barStyle="light-content" backgroundColor="#667eea" />
         <LinearGradient colors={['#667eea', '#764ba2'] as const} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>FAQs</ThemedText>
@@ -281,7 +264,10 @@ function FAQPage() {
       {/* Header */}
       <LinearGradient colors={['#667eea', '#764ba2'] as const} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>FAQs</ThemedText>
@@ -325,24 +311,12 @@ function FAQPage() {
         {categories.length > 0 && !searchQuery && (
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Categories</ThemedText>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.categoriesScroll}
-            >
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
               <Pressable
-                style={[
-                  styles.categoryChip,
-                  selectedCategory === null && styles.categoryChipActive,
-                ]}
+                style={[styles.categoryChip, selectedCategory === null && styles.categoryChipActive]}
                 onPress={() => handleCategorySelect(null)}
               >
-                <ThemedText
-                  style={[
-                    styles.categoryText,
-                    selectedCategory === null && styles.categoryTextActive,
-                  ]}
-                >
+                <ThemedText style={[styles.categoryText, selectedCategory === null && styles.categoryTextActive]}>
                   All
                 </ThemedText>
               </Pressable>

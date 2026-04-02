@@ -38,7 +38,7 @@ function createWalletError(
   recoverable?: boolean
 ): WalletError {
   return {
-    code,
+    code: code as WalletError['code'],
     message,
     details,
     timestamp: new Date(),
@@ -183,7 +183,7 @@ export const useWallet = ({
   });
 
   const lastOperationRef = useRef<() => Promise<void>>(null);
-  const refreshIntervalRef = useRef<NodeJS.Timeout>(null);
+  const refreshIntervalRef = useRef<ReturnType<typeof setTimeout>>(null);
   const abortControllerRef = useRef<AbortController>(null);
   const pendingRequestRef = useRef<Promise<void> | null>(null);
   const walletStateRef = useRef(walletState); // Ref to track state without triggering effects
@@ -220,7 +220,7 @@ export const useWallet = ({
       }));
 
       // Call real backend API
-      const response = await walletApi.getBalance();
+      const response: any = await walletApi.getBalance();
 
       // Check if request was aborted
       if (abortControllerRef.current.signal.aborted) {
@@ -242,7 +242,7 @@ export const useWallet = ({
       });
 
         lastOperationRef.current = fetchWallet;
-      } catch (error) {
+      } catch (error: any) {
         if (abortControllerRef.current?.signal.aborted) {
           return;
         }
@@ -295,7 +295,7 @@ export const useWallet = ({
       }));
 
       // Call real backend API
-      const response = await walletApi.getBalance();
+      const response: any = await walletApi.getBalance();
 
       // Check if request was aborted
       if (abortControllerRef.current.signal.aborted) {
@@ -316,7 +316,7 @@ export const useWallet = ({
       }));
 
         lastOperationRef.current = () => refreshWallet(forceRefresh);
-      } catch (error) {
+      } catch (error: any) {
         if (abortControllerRef.current?.signal.aborted) {
           return;
         }
@@ -394,7 +394,7 @@ export const useWallet = ({
         if (!walletStateRef.current.isLoading && !walletStateRef.current.isRefreshing) {
           refreshWallet(false);
         }
-      }, refreshInterval) as unknown as NodeJS.Timeout;
+      }, refreshInterval) as unknown as ReturnType<typeof setTimeout>;
     };
 
     const stopInterval = () => {

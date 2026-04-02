@@ -25,7 +25,7 @@ export function useVoucherRedemption() {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiClient.post('/vouchers/validate', {
+        const response: any = await apiClient.post('/vouchers/validate', {
           voucherId,
           orderAmount,
         });
@@ -35,7 +35,7 @@ export function useVoucherRedemption() {
         }
 
         return (response.data as any).validation;
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to validate voucher';
         setError(errorMessage);
@@ -70,14 +70,14 @@ export function useVoucherRedemption() {
           orderId: options?.orderId,
         };
 
-        const response = await apiClient.post('/vouchers/redeem', request);
+        const response: any = await apiClient.post('/vouchers/redeem', request as any);
 
         if (!response.success || !response.data) {
           throw new Error('Redemption failed');
         }
 
         return (response.data as any).redemption;
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to redeem voucher';
         setError(errorMessage);
@@ -103,14 +103,14 @@ export function useVoucherRedemption() {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiClient.get('/vouchers/redemptions', filters);
+        const response: any = await apiClient.get('/vouchers/redemptions', filters);
 
         if (!response.success || !response.data) {
           throw new Error('Failed to load history');
         }
 
         return response.data;
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to load redemption history';
         setError(errorMessage);
@@ -130,14 +130,14 @@ export function useVoucherRedemption() {
       setIsLoading(true);
       setError(null);
 
-      const response = await apiClient.get('/vouchers/savings-stats');
+      const response: any = await apiClient.get('/vouchers/savings-stats');
 
         if (!response.success || !response.data) {
           throw new Error('Failed to load stats');
         }
 
         return (response.data as any).stats;
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to load savings stats';
       setError(errorMessage);

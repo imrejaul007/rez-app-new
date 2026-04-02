@@ -106,7 +106,7 @@ export const PriveBenefitsGrid: React.FC<PriveBenefitsGridProps> = ({
                     <Text style={[styles.benefitCheck, { color: isCurrent ? colors.brand.emerald : PRIVE_COLORS.text.tertiary }]}>
                       {isCurrent ? '✓' : '○'}
                     </Text>
-                    <Text style={[styles.benefitText, isLocked && styles.benefitTextLocked]}>
+                    <Text style={[styles.benefitText, isLocked ? styles.benefitTextLocked : null]}>
                       {benefit}
                     </Text>
                   </View>

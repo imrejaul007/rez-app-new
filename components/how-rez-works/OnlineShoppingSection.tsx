@@ -66,7 +66,7 @@ const OnlineShoppingSection: React.FC = () => {
       {shoppingOptions.map((option, index) => (
         <LinearGradient
           key={index}
-          colors={option.cardBgColors}
+          colors={option.cardBgColors as [string, string]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.optionCard, { borderColor: option.borderColor }]}
@@ -74,7 +74,7 @@ const OnlineShoppingSection: React.FC = () => {
           {/* Card Header */}
           <View style={styles.cardHeader}>
             <LinearGradient
-              colors={option.iconBgColors}
+              colors={option.iconBgColors as [string, string]}
               style={styles.cardIconContainer}
             >
               <Ionicons name={option.icon} size={22} color={colors.background.primary} />

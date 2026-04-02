@@ -75,7 +75,7 @@ export const useProductQuestions = ({
         setError(null);
 
 
-        const response = await questionsApi.getProductQuestions(productId, {
+        const response: any = await questionsApi.getProductQuestions(productId, {
           page: pageNum,
           limit: 10,
           sortBy,
@@ -139,7 +139,7 @@ export const useProductQuestions = ({
     async (questionText: string) => {
       try {
 
-        const response = await questionsApi.askQuestion({
+        const response: any = await questionsApi.askQuestion({
           productId,
           question: questionText,
         });
@@ -164,7 +164,7 @@ export const useProductQuestions = ({
     async (questionId: string, answerText: string) => {
       try {
 
-        const response = await questionsApi.answerQuestion({
+        const response: any = await questionsApi.answerQuestion({
           questionId,
           answer: answerText,
         });
@@ -195,7 +195,7 @@ export const useProductQuestions = ({
   const markAnswerHelpful = useCallback(async (questionId: string, answerId: string) => {
     try {
 
-      const response = await questionsApi.markAnswerHelpful(questionId, answerId);
+      const response: any = await questionsApi.markAnswerHelpful(questionId, answerId);
 
       if (response.success) {
 

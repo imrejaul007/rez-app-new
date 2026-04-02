@@ -70,7 +70,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       } else {
         await videoRef.current.playAsync();
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -85,7 +85,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       if (!isMounted()) return;
       await videoRef.current.setIsMutedAsync(!isMuted);
       setIsMuted(!isMuted);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -98,7 +98,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     try {
       await videoRef.current.replayAsync();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

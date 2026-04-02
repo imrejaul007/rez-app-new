@@ -54,7 +54,7 @@ export const useProfile = ({
         setCompletionStatus(completionResponse.data);
       } else {
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load profile');
     } finally {
       setIsLoading(false);
@@ -79,7 +79,7 @@ export const useProfile = ({
       if (completionResponse.success && completionResponse.data) {
         setCompletionStatus(completionResponse.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to refresh profile');
     } finally {
       setIsRefreshing(false);
@@ -91,7 +91,7 @@ export const useProfile = ({
     try {
       setError(null);
 
-      const response = await profileApi.updateProfile(updates);
+      const response: any = await profileApi.updateProfile(updates);
 
       if (response.success && response.data) {
         setProfile(response.data);
@@ -100,7 +100,7 @@ export const useProfile = ({
         setError(response.error || 'Failed to update profile');
         return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to update profile');
       return false;
     }
@@ -111,7 +111,7 @@ export const useProfile = ({
     try {
       setError(null);
 
-      const response = await profileApi.uploadProfilePicture(imageUri);
+      const response: any = await profileApi.uploadProfilePicture(imageUri);
 
       if (response.success && response.data) {
         setProfile(prev => prev ? {
@@ -123,7 +123,7 @@ export const useProfile = ({
         setError(response.error || 'Failed to upload profile picture');
         return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to upload profile picture');
       return false;
     }

@@ -19,7 +19,7 @@ interface BookingDetails {
 
 export default function QRDisplayScreen() {
   const router = useRouter();
-  const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
+  const { bookingId } = useLocalSearchParams<any>();
   const [booking, setBooking] = useState<BookingDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState<string>('');
@@ -37,7 +37,7 @@ export default function QRDisplayScreen() {
       try {
         const details = await tryApi.getBookingDetails(bookingId);
         setBooking(details);
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to load booking details:', err);
         setBooking(null);
       } finally {
@@ -158,7 +158,7 @@ export default function QRDisplayScreen() {
               isExpired && styles.timerDisplayExpired,
             ]}
           >
-            <Text style={[styles.timerValue, isExpired && styles.timerValueExpired]}>{timeRemaining}</Text>
+            <Text style={[styles.timerValue, isExpired ? styles.timerValueExpired : null]}>{timeRemaining}</Text>
           </View>
           {isLowTime && !isExpired && <Text style={styles.timerWarningText}>⚡ Show QR code soon</Text>}
           {isExpired && <Text style={styles.timerExpiredText}>⏰ This QR code has expired</Text>}

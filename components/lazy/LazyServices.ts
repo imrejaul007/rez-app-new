@@ -10,281 +10,281 @@
 // ============================================================================
 
 export const lazyVideoUploadService = () =>
-  import('@/services/videoUploadService').then(module => module.default || module);
+  import('@/services/videoUploadService').then((module: any) => module.default || module);
 
 export const lazyVideoPreloadService = () =>
-  import('@/services/videoPreloadService').then(module => module.default || module);
+  import('@/services/videoPreloadService').then((module: any) => module.default || module);
 
 export const lazyRealVideosApi = () =>
-  import('@/services/realVideosApi').then(module => module.default || module);
+  import('@/services/realVideosApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Payment Services (High Impact)
 // ============================================================================
 
 export const lazyRazorpayService = () =>
-  import('@/services/razorpayService').then(module => module.default || module);
+  import('@/services/razorpayService').then((module: any) => module.default || module);
 
 export const lazyRazorpayApi = () =>
-  import('@/services/razorpayApi').then(module => module.default || module);
+  import('@/services/razorpayApi').then((module: any) => module.default || module);
 
 export const lazyPaymentOrchestratorService = () =>
-  import('@/services/paymentOrchestratorService').then(module => module.default || module);
+  import('@/services/paymentOrchestratorService').then((module: any) => module.default || module);
 
 export const lazyPaymentService = () =>
-  import('@/services/paymentService').then(module => module.default || module);
+  import('@/services/paymentService').then((module: any) => module.default || module);
 
 export const lazyPaymentVerificationService = () =>
-  import('@/services/paymentVerificationService').then(module => module.default || module);
+  import('@/services/paymentVerificationService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Upload Services (High Impact)
 // ============================================================================
 
 export const lazyBillUploadService = () =>
-  import('@/services/billUploadService').then(module => module.default || module);
+  import('@/services/billUploadService').then((module: any) => module.default || module);
 
 export const lazyBillUploadQueueService = () =>
-  import('@/services/billUploadQueueService').then(module => module.default || module);
+  import('@/services/billUploadQueueService').then((module: any) => module.default || module);
 
 export const lazyProjectUploadService = () =>
-  import('@/services/projectUploadService').then(module => module.default || module);
+  import('@/services/projectUploadService').then((module: any) => module.default || module);
 
 export const lazyImageUploadService = () =>
-  import('@/services/imageUploadService').then(module => module.default || module);
+  import('@/services/imageUploadService').then((module: any) => module.default || module);
 
 export const lazyFileUploadService = () =>
-  import('@/services/fileUploadService').then(module => module.default || module);
+  import('@/services/fileUploadService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Real-Time Services (Medium Impact)
 // ============================================================================
 
 export const lazyRealTimeService = () =>
-  import('@/services/realTimeService').then(module => module.default || module);
+  import('@/services/realTimeService').then((module: any) => module.default || module);
 
 export const lazyGlobalNotificationService = () =>
-  import('@/services/globalNotificationService').then(module => module.default || module);
+  import('@/services/globalNotificationService').then((module: any) => module.default || module);
 
 export const lazyEarningsNotificationService = () =>
-  import('@/services/earningsNotificationService').then(module => module.default || module);
+  import('@/services/earningsNotificationService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Gamification Services (Medium Impact)
 // ============================================================================
 
 export const lazyGamificationApi = () =>
-  import('@/services/gamificationApi').then(module => module.default || module);
+  import('@/services/gamificationApi').then((module: any) => module.default || module);
 
 export const lazyGamificationCacheService = () =>
-  import('@/services/gamificationCacheService').then(module => module.default || module);
+  import('@/services/gamificationCacheService').then((module: any) => module.default || module);
 
 export const lazyGamificationPerformanceMonitor = () =>
-  import('@/services/gamificationPerformanceMonitor').then(module => module.default || module);
+  import('@/services/gamificationPerformanceMonitor').then((module: any) => module.default || module);
 
 export const lazyGamificationTriggerService = () =>
-  import('@/services/gamificationTriggerService').then(module => module.default || module);
+  import('@/services/gamificationTriggerService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Social & Activity Services (Medium Impact)
 // ============================================================================
 
 export const lazyFollowApi = () =>
-  import('@/services/followApi').then(module => module.default || module);
+  import('@/services/followApi').then((module: any) => module.default || module);
 
 export const lazyActivityFeedApi = () =>
-  import('@/services/activityFeedApi').then(module => module.default || module);
+  import('@/services/activityFeedApi').then((module: any) => module.default || module);
 
 export const lazySocialMediaApi = () =>
-  import('@/services/socialMediaApi').then(module => module.default || module);
+  import('@/services/socialMediaApi').then((module: any) => module.default || module);
 
 export const lazyUGCApi = () =>
-  import('@/services/ugcApi').then(module => module.default || module);
+  import('@/services/ugcApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Subscription Services (Medium Impact)
 // ============================================================================
 
 export const lazySubscriptionApi = () =>
-  import('@/services/subscriptionApi').then(module => module.default || module);
+  import('@/services/subscriptionApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Analytics & Monitoring Services (Medium Impact)
 // ============================================================================
 
 export const lazyAnalyticsService = () =>
-  import('@/services/analyticsService').then(module => module.default || module);
+  import('@/services/analyticsService').then((module: any) => module.default || module);
 
 export const lazyBillUploadAnalytics = () =>
   import('@/services/billUploadAnalytics').then(module => module.billUploadAnalytics);
 
 export const lazyTelemetryService = () =>
-  import('@/services/telemetryService').then(module => module.default || module);
+  import('@/services/telemetryService').then((module: any) => module.default || module);
 
 export const lazyWalletPerformanceMonitor = () =>
-  import('@/services/walletPerformanceMonitor').then(module => module.default || module);
+  import('@/services/walletPerformanceMonitor').then((module: any) => module.default || module);
 
 // ============================================================================
 // Search Services (Medium Impact)
 // ============================================================================
 
 export const lazySearchService = () =>
-  import('@/services/searchService').then(module => module.default || module);
+  import('@/services/searchService').then((module: any) => module.default || module);
 
 export const lazySearchApi = () =>
-  import('@/services/searchApi').then(module => module.default || module);
+  import('@/services/searchApi').then((module: any) => module.default || module);
 
 export const lazySearchCacheService = () =>
-  import('@/services/searchCacheService').then(module => module.default || module);
+  import('@/services/searchCacheService').then((module: any) => module.default || module);
 
 export const lazySearchAnalyticsService = () =>
-  import('@/services/searchAnalyticsService').then(module => module.default || module);
+  import('@/services/searchAnalyticsService').then((module: any) => module.default || module);
 
 export const lazySearchHistoryService = () =>
-  import('@/services/searchHistoryService').then(module => module.default || module);
+  import('@/services/searchHistoryService').then((module: any) => module.default || module);
 
 export const lazyStoreSearchService = () =>
-  import('@/services/storeSearchService').then(module => module.default || module);
+  import('@/services/storeSearchService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Verification & Security Services (Medium Impact)
 // ============================================================================
 
 export const lazyBillVerificationService = () =>
-  import('@/services/billVerificationService').then(module => module.default || module);
+  import('@/services/billVerificationService').then((module: any) => module.default || module);
 
 export const lazyFraudDetectionService = () =>
-  import('@/services/fraudDetectionService').then(module => module.default || module);
+  import('@/services/fraudDetectionService').then((module: any) => module.default || module);
 
 export const lazySecurityService = () =>
-  import('@/services/securityService').then(module => module.default || module);
+  import('@/services/securityService').then((module: any) => module.default || module);
 
 export const lazyInstagramVerificationService = () =>
-  import('@/services/instagramVerificationService').then(module => module.default || module);
+  import('@/services/instagramVerificationService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Image Processing Services (Medium Impact)
 // ============================================================================
 
 export const lazyImageHashService = () =>
-  import('@/services/imageHashService').then(module => module.default || module);
+  import('@/services/imageHashService').then((module: any) => module.default || module);
 
 export const lazyImageQualityService = () =>
-  import('@/services/imageQualityService').then(module => module.default || module);
+  import('@/services/imageQualityService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Group Buying Services (Low Impact)
 // ============================================================================
 
 export const lazyGroupBuyingApi = () =>
-  import('@/services/groupBuyingApi').then(module => module.default || module);
+  import('@/services/groupBuyingApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Loyalty Services (Low Impact)
 // ============================================================================
 
 export const lazyLoyaltyApi = () =>
-  import('@/services/loyaltyApi').then(module => module.default || module);
+  import('@/services/loyaltyApi').then((module: any) => module.default || module);
 
 export const lazyLoyaltyRedemptionApi = () =>
-  import('@/services/loyaltyRedemptionApi').then(module => module.default || module);
+  import('@/services/loyaltyRedemptionApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Referral Services (Low Impact)
 // ============================================================================
 
 export const lazyReferralApi = () =>
-  import('@/services/referralApi').then(module => module.default || module);
+  import('@/services/referralApi').then((module: any) => module.default || module);
 
 export const lazyReferralTierApi = () =>
-  import('@/services/referralTierApi').then(module => module.default || module);
+  import('@/services/referralTierApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Event Services (Low Impact)
 // ============================================================================
 
 export const lazyEventsApi = () =>
-  import('@/services/eventsApi').then(module => module.default || module);
+  import('@/services/eventsApi').then((module: any) => module.default || module);
 
 export const lazyEventAnalytics = () =>
-  import('@/services/eventAnalytics').then(module => module.default || module);
+  import('@/services/eventAnalytics').then((module: any) => module.default || module);
 
 // ============================================================================
 // Support Services (Low Impact)
 // ============================================================================
 
 export const lazySupportApi = () =>
-  import('@/services/supportApi').then(module => module.default || module);
+  import('@/services/supportApi').then((module: any) => module.default || module);
 
 export const lazySupportChatApi = () =>
-  import('@/services/supportChatApi').then(module => module.default || module);
+  import('@/services/supportChatApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Store Messaging Services (Low Impact)
 // ============================================================================
 
 export const lazyStoreMessagingApi = () =>
-  import('@/services/storeMessagingApi').then(module => module.default || module);
+  import('@/services/storeMessagingApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Voucher Services (Low Impact)
 // ============================================================================
 
 export const lazyRealVouchersApi = () =>
-  import('@/services/realVouchersApi').then(module => module.default || module);
+  import('@/services/realVouchersApi').then((module: any) => module.default || module);
 
 export const lazyStoreVouchersApi = () =>
-  import('@/services/storeVouchersApi').then(module => module.default || module);
+  import('@/services/storeVouchersApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Projects Services (Low Impact)
 // ============================================================================
 
 export const lazyRealProjectsApi = () =>
-  import('@/services/realProjectsApi').then(module => module.default || module);
+  import('@/services/realProjectsApi').then((module: any) => module.default || module);
 
 export const lazyProjectsApi = () =>
-  import('@/services/projectsApi').then(module => module.default || module);
+  import('@/services/projectsApi').then((module: any) => module.default || module);
 
 export const lazyEarningProjectsApi = () =>
-  import('@/services/earningProjectsApi').then(module => module.default || module);
+  import('@/services/earningProjectsApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Cache Services (Low Impact)
 // ============================================================================
 
 export const lazyCacheService = () =>
-  import('@/services/cacheService').then(module => module.default || module);
+  import('@/services/cacheService').then((module: any) => module.default || module);
 
 export const lazyProductCacheService = () =>
-  import('@/services/productCacheService').then(module => module.default || module);
+  import('@/services/productCacheService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Calculation Services (Low Impact)
 // ============================================================================
 
 export const lazyEarningsCalculationService = () =>
-  import('@/services/earningsCalculationService').then(module => module.default || module);
+  import('@/services/earningsCalculationService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Coin Sync Service (Low Impact)
 // ============================================================================
 
 export const lazyCoinSyncService = () =>
-  import('@/services/coinSyncService').then(module => module.default || module);
+  import('@/services/coinSyncService').then((module: any) => module.default || module);
 
 // ============================================================================
 // Share Services (Low Impact)
 // ============================================================================
 
 export const lazyShareService = () =>
-  import('@/services/shareService').then(module => module.default || module);
+  import('@/services/shareService').then((module: any) => module.default || module);
 
 export const lazyShareContentGenerator = () =>
-  import('@/services/shareContentGenerator').then(module => module.default || module);
+  import('@/services/shareContentGenerator').then((module: any) => module.default || module);
 
 export const lazyWishlistSharingApi = () =>
-  import('@/services/wishlistSharingApi').then(module => module.default || module);
+  import('@/services/wishlistSharingApi').then((module: any) => module.default || module);
 
 // ============================================================================
 // Helper: Lazy Load Service with Retry
@@ -301,7 +301,7 @@ export async function lazyLoadService<T>(
     try {
       const service = await importFn();
       return service;
-    } catch (error) {
+    } catch (error: any) {
       lastError = error as Error;
 
       if (i < maxRetries - 1) {
@@ -320,14 +320,14 @@ export async function lazyLoadService<T>(
 // ============================================================================
 
 export async function preloadCriticalServices(): Promise<void> {
-  const criticalServices = [
+  const criticalServices: Promise<any>[] = [
     // Add critical services that should be preloaded
     // These are services likely to be used soon after app start
   ];
 
   try {
     await Promise.all(criticalServices);
-  } catch (error) {
+  } catch (error: any) {
     // silently handle
   }
 }
@@ -371,7 +371,7 @@ export async function preloadServicesByCategory(
 
   try {
     await Promise.all(services.map(fn => fn()));
-  } catch (error) {
+  } catch (error: any) {
     // silently handle
   }
 }

@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -44,7 +37,7 @@ const CompareDecide = () => {
       if (response.success && response.data) {
         setComparison(response.data?.comparison || null);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -65,9 +58,7 @@ const CompareDecide = () => {
       id: store.id,
       platform: store.name,
       rating: store.ratings?.average || null,
-      delivery: store.operationalInfo?.deliveryTime
-        ? `${store.operationalInfo.deliveryTime} min`
-        : 'In-store',
+      delivery: store.operationalInfo?.deliveryTime ? `${store.operationalInfo.deliveryTime} min` : 'In-store',
       cashback: store.cashbackRate ? `${store.cashbackRate}% back` : 'No cashback',
       cashbackRate: store.cashbackRate || 0,
       isBest: false,
@@ -143,26 +134,21 @@ const CompareDecide = () => {
             {options.map((option, index) => (
               <Pressable
                 key={option.id}
-                style={[
-                  styles.optionRow,
-                  option.isBest && styles.optionRowBest,
-                ]}
+                style={[styles.optionRow, option.isBest && styles.optionRowBest]}
                 onPress={() => navigateTo(`/MainStorePage?storeId=${option.id}`)}
               >
                 {/* Platform Icon & Name */}
                 <View style={styles.platformCell}>
-                  <View style={[
-                    styles.platformIcon,
-                    option.isBest && styles.platformIconBest,
-                  ]}>
-                    <Ionicons name="storefront" size={16} color={option.isBest ? colors.background.primary : colors.text.tertiary} />
+                  <View style={[styles.platformIcon, option.isBest && styles.platformIconBest]}>
+                    <Ionicons
+                      name="storefront"
+                      size={16}
+                      color={option.isBest ? colors.background.primary : colors.text.tertiary}
+                    />
                   </View>
                   <View style={styles.platformDetails}>
                     <View style={styles.platformNameRow}>
-                      <Text style={[
-                        styles.platformName,
-                        option.isBest && styles.platformNameBest,
-                      ]}>
+                      <Text style={[styles.platformName, option.isBest && styles.platformNameBest]}>
                         {option.platform}
                       </Text>
                       {option.rating && (
@@ -177,16 +163,20 @@ const CompareDecide = () => {
                 </View>
 
                 {/* Cashback */}
-                <View style={[
-                  styles.cashbackCell,
-                  option.isBest && styles.cashbackCellBest,
-                  option.cashback === 'No cashback' && styles.cashbackCellNone,
-                ]}>
-                  <Text style={[
-                    styles.cashbackText,
-                    option.isBest && styles.cashbackTextBest,
-                    option.cashback === 'No cashback' && styles.cashbackTextNone,
-                  ]}>
+                <View
+                  style={[
+                    styles.cashbackCell,
+                    option.isBest && styles.cashbackCellBest,
+                    option.cashback === 'No cashback' && styles.cashbackCellNone,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.cashbackText,
+                      option.isBest && styles.cashbackTextBest,
+                      option.cashback === 'No cashback' && styles.cashbackTextNone,
+                    ]}
+                  >
                     {option.cashback}
                   </Text>
                 </View>
@@ -195,10 +185,7 @@ const CompareDecide = () => {
           </View>
 
           {/* View All Options Button */}
-          <Pressable
-            style={styles.viewAllButton}
-            onPress={() => navigateTo('/explore/compare')}
-          >
+          <Pressable style={styles.viewAllButton} onPress={() => navigateTo('/explore/compare')}>
             <Text style={styles.viewAllText}>View All Options</Text>
           </Pressable>
         </View>

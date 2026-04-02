@@ -104,7 +104,7 @@ const StepItem: React.FC<{
     <Animated.View style={[styles.stepItem, scaleStyle]}>
       {/* Step Icon with Gradient */}
       <Animated.View style={bounceStyle}>
-        <LinearGradient colors={step.gradient} style={styles.stepIconContainer}>
+        <LinearGradient colors={step.gradient as [string, string]} style={styles.stepIconContainer}>
           <Ionicons name={step.icon as any} size={22} color={step.iconColor || colors.background.primary} />
         </LinearGradient>
       </Animated.View>

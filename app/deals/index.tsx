@@ -207,11 +207,7 @@ function DealsIndexPage() {
             </Text>
             <View style={{ gap: 10 }}>
               {filteredCampaigns.map((campaign) => (
-                <BonusZoneCard
-                  key={campaign.id}
-                  campaign={campaign}
-                  onPress={() => router.push(`/deals/${campaign.id}` as any)}
-                />
+                <BonusZoneCard key={campaign.id} campaign={campaign} />
               ))}
             </View>
           </>
@@ -254,7 +250,7 @@ function DealsIndexPage() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text.primary }} numberOfLines={1}>
-                      {campaign.title || campaign.name}
+                      {campaign.title}
                     </Text>
                     {campaign.description && (
                       <Text style={{ fontSize: 12, color: '#64748b', marginTop: 2 }} numberOfLines={1}>

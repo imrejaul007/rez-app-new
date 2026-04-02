@@ -111,7 +111,7 @@ const ExploreHotPage = () => {
     const isWishlisted = wishlistedIds.has(productId);
 
     // Optimistic update
-    setWishlistedIds(prev => {
+    setWishlistedIds((prev) => {
       const next = new Set(prev);
       if (isWishlisted) {
         next.delete(productId);
@@ -130,10 +130,10 @@ const ExploreHotPage = () => {
           itemId: productId,
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
       if (!isMounted()) return;
-      setWishlistedIds(prev => {
+      setWishlistedIds((prev) => {
         const next = new Set(prev);
         if (isWishlisted) {
           next.add(productId);
@@ -149,70 +149,80 @@ const ExploreHotPage = () => {
     router.push(path as any);
   };
 
-  const renderHotItem = useCallback(({ item }: { item: HotProduct }) => (
-    <Pressable
-      style={styles.itemCard}
-      onPress={() => navigateTo(`/product-page?cardId=${item.id}&cardType=product`)}
-    >
-      <View style={styles.imageContainer}>
-        {item.image && <CachedImage source={item.image} style={styles.itemImage} />}
-        {item.offer && (
-          <View style={styles.offerBadge}>
-            <Text style={styles.offerText}>{item.offer}</Text>
-          </View>
-        )}
-        {item.buyers && item.buyers > 0 && (
-          <View style={styles.hotBadge}>
-            <Ionicons name="flame" size={12} color={colors.text.inverse} />
-            <Text style={styles.hotText}>{item.buyers} bought</Text>
-          </View>
-        )}
-        <Pressable
-          style={styles.wishlistButton}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleToggleWishlist(item.id);
-          }}
-        >
-          <Ionicons
-            name={wishlistedIds.has(item.id) ? 'heart' : 'heart-outline'}
-            size={20}
-            color={wishlistedIds.has(item.id) ? Colors.error : colors.text.inverse}
-          />
-        </Pressable>
-      </View>
-      <View style={styles.itemContent}>
-        <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-        {item.store && (
-          <View style={styles.storeRow}>
-            <Ionicons name="storefront" size={12} color={colors.text.tertiary} />
-            <Text style={styles.storeName}>{item.store}</Text>
-          </View>
-        )}
-        <View style={styles.priceRow}>
-          {item.price > 0 && <Text style={styles.price}>{currencySymbol}{item.price.toLocaleString()}</Text>}
-          {item.originalPrice > 0 && item.originalPrice !== item.price && (
-            <Text style={styles.originalPrice}>{currencySymbol}{item.originalPrice.toLocaleString()}</Text>
-          )}
-        </View>
-        <View style={styles.bottomRow}>
-          {item.rating > 0 && (
-            <View style={styles.ratingBadge}>
-              <Ionicons name="star" size={12} color={Colors.warning} />
-              <Text style={styles.ratingText}>{item.rating}</Text>
-              {item.reviews > 0 && <Text style={styles.reviewsText}>({item.reviews})</Text>}
+  const renderHotItem = useCallback(
+    ({ item }: { item: HotProduct }) => (
+      <Pressable style={styles.itemCard} onPress={() => navigateTo(`/product-page?cardId=${item.id}&cardType=product`)}>
+        <View style={styles.imageContainer}>
+          {item.image && <CachedImage source={item.image} style={styles.itemImage} />}
+          {item.offer && (
+            <View style={styles.offerBadge}>
+              <Text style={styles.offerText}>{item.offer}</Text>
             </View>
           )}
-          {item.distance && (
-            <View style={styles.distanceBadge}>
-              <Ionicons name="location" size={12} color={colors.text.tertiary} />
-              <Text style={styles.distanceText}>{item.distance}</Text>
+          {item.buyers && item.buyers > 0 && (
+            <View style={styles.hotBadge}>
+              <Ionicons name="flame" size={12} color={colors.text.inverse} />
+              <Text style={styles.hotText}>{item.buyers} bought</Text>
             </View>
           )}
+          <Pressable
+            style={styles.wishlistButton}
+            onPress={(e) => {
+              e.stopPropagation();
+              handleToggleWishlist(item.id);
+            }}
+          >
+            <Ionicons
+              name={wishlistedIds.has(item.id) ? 'heart' : 'heart-outline'}
+              size={20}
+              color={wishlistedIds.has(item.id) ? Colors.error : colors.text.inverse}
+            />
+          </Pressable>
         </View>
-      </View>
-    </Pressable>
-  ), [navigateTo, handleToggleWishlist, wishlistedIds, currencySymbol]);
+        <View style={styles.itemContent}>
+          <Text style={styles.itemName} numberOfLines={1}>
+            {item.name}
+          </Text>
+          {item.store && (
+            <View style={styles.storeRow}>
+              <Ionicons name="storefront" size={12} color={colors.text.tertiary} />
+              <Text style={styles.storeName}>{item.store}</Text>
+            </View>
+          )}
+          <View style={styles.priceRow}>
+            {item.price > 0 && (
+              <Text style={styles.price}>
+                {currencySymbol}
+                {item.price.toLocaleString()}
+              </Text>
+            )}
+            {item.originalPrice > 0 && item.originalPrice !== item.price && (
+              <Text style={styles.originalPrice}>
+                {currencySymbol}
+                {item.originalPrice.toLocaleString()}
+              </Text>
+            )}
+          </View>
+          <View style={styles.bottomRow}>
+            {item.rating > 0 && (
+              <View style={styles.ratingBadge}>
+                <Ionicons name="star" size={12} color={Colors.warning} />
+                <Text style={styles.ratingText}>{item.rating}</Text>
+                {item.reviews > 0 && <Text style={styles.reviewsText}>({item.reviews})</Text>}
+              </View>
+            )}
+            {item.distance && (
+              <View style={styles.distanceBadge}>
+                <Ionicons name="location" size={12} color={colors.text.tertiary} />
+                <Text style={styles.distanceText}>{item.distance}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </Pressable>
+    ),
+    [navigateTo, handleToggleWishlist, wishlistedIds, currencySymbol],
+  );
 
   return (
     <>
@@ -220,87 +230,81 @@ const ExploreHotPage = () => {
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-        >
-          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
-        </Pressable>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>What's Hot</Text>
-          <Text style={styles.headerSubtitle}>{hotItems.length} items trending</Text>
-        </View>
-        <Pressable
-          style={[styles.filterButton, selectedSort !== 'trending' && { backgroundColor: colors.nileBlue }]}
-          onPress={() => setSelectedSort('trending')}
-        >
-          <Ionicons name="options" size={22} color={selectedSort !== 'trending' ? colors.text.inverse : colors.nileBlue} />
-        </Pressable>
-      </View>
-
-      {/* Sort Options */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.sortScroll}
-        contentContainerStyle={styles.sortContainer}
-      >
-        {sortOptions.map((option) => (
+        {/* Header */}
+        <View style={styles.header}>
           <Pressable
-            key={option.id}
-            style={[
-              styles.sortChip,
-              selectedSort === option.id && styles.sortChipActive,
-            ]}
-            onPress={() => setSelectedSort(option.id)}
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
-            <Text
-              style={[
-                styles.sortLabel,
-                selectedSort === option.id && styles.sortLabelActive,
-              ]}
-            >
-              {option.label}
-            </Text>
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
-        ))}
-      </ScrollView>
-
-      {/* Hot Items Grid */}
-      {loading && !refreshing ? (
-        <CardGridSkeleton />
-      ) : error ? (
-        <View style={[styles.itemsScroll, styles.errorContainer]}>
-          <Ionicons name="alert-circle" size={48} color={Colors.error} />
-          <Text style={styles.errorText}>{error}</Text>
-          <Pressable style={styles.retryButton} onPress={() => fetchHotDeals()}>
-            <Text style={styles.retryButtonText}>Try Again</Text>
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerTitle}>What's Hot</Text>
+            <Text style={styles.headerSubtitle}>{hotItems.length} items trending</Text>
+          </View>
+          <Pressable
+            style={[styles.filterButton, selectedSort !== 'trending' && { backgroundColor: colors.nileBlue }]}
+            onPress={() => setSelectedSort('trending')}
+          >
+            <Ionicons
+              name="options"
+              size={22}
+              color={selectedSort !== 'trending' ? colors.text.inverse : colors.nileBlue}
+            />
           </Pressable>
         </View>
-      ) : (
-        <FlashList
-          data={hotItems}
-          keyExtractor={(item) => item.id}
-          estimatedItemSize={220}
-          numColumns={2}
-          style={styles.itemsScroll}
-          contentContainerStyle={[styles.itemsContainer, { paddingBottom: 120 }]}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-          }
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Ionicons name="flame-outline" size={48} color={colors.text.tertiary} />
-              <Text style={styles.emptyText}>No hot deals available</Text>
-              <Text style={styles.emptySubtext}>Check back later for trending items</Text>
-            </View>
-          }
-          renderItem={renderHotItem}
-        />
-      )}
+
+        {/* Sort Options */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.sortScroll}
+          contentContainerStyle={styles.sortContainer}
+        >
+          {sortOptions.map((option) => (
+            <Pressable
+              key={option.id}
+              style={[styles.sortChip, selectedSort === option.id && styles.sortChipActive]}
+              onPress={() => setSelectedSort(option.id)}
+            >
+              <Text style={[styles.sortLabel, selectedSort === option.id && styles.sortLabelActive]}>
+                {option.label}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+
+        {/* Hot Items Grid */}
+        {loading && !refreshing ? (
+          <CardGridSkeleton />
+        ) : error ? (
+          <View style={[styles.itemsScroll, styles.errorContainer]}>
+            <Ionicons name="alert-circle" size={48} color={Colors.error} />
+            <Text style={styles.errorText}>{error}</Text>
+            <Pressable style={styles.retryButton} onPress={() => fetchHotDeals()}>
+              <Text style={styles.retryButtonText}>Try Again</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <FlashList
+            data={hotItems}
+            keyExtractor={(item) => item.id}
+            estimatedItemSize={220}
+            numColumns={2}
+            style={styles.itemsScroll}
+            contentContainerStyle={[styles.itemsContainer, { paddingBottom: 120 }] as any}
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons name="flame-outline" size={48} color={colors.text.tertiary} />
+                <Text style={styles.emptyText}>No hot deals available</Text>
+                <Text style={styles.emptySubtext}>Check back later for trending items</Text>
+              </View>
+            }
+            renderItem={renderHotItem}
+          />
+        )}
       </SafeAreaView>
     </>
   );

@@ -246,7 +246,7 @@ function TransactionsPage() {
         } else {
           throw new Error(response.message || response.error || 'Failed to load transactions');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (isMounted()) {
           setError(err instanceof Error ? err.message : 'Failed to load transactions');
         }

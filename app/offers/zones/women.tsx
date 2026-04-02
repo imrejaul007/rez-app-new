@@ -4,23 +4,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Fetches real data from backend API
  */
 
-import React, { useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Dimensions
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -93,13 +86,12 @@ function WomenZonePage() {
   useEffect(() => {
     fetchZoneData();
     shimmerAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
+      withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
+      -1,
     );
-    return () => { shimmerAnim.value = 0; };
+    return () => {
+      shimmerAnim.value = 0;
+    };
   }, []);
 
   const fetchZoneData = async () => {
@@ -122,7 +114,8 @@ function WomenZonePage() {
             offersCount: zone.offersCount || 0,
             verificationRequired: zone.verificationRequired,
             eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible });
+            userEligible: zone.userEligible,
+          });
         }
       }
 
@@ -132,7 +125,7 @@ function WomenZonePage() {
         if (!isMounted()) return;
         setOffers(Array.isArray(offersData) ? offersData : []);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load offers. Please try again.');
     } finally {
@@ -148,9 +141,11 @@ function WomenZonePage() {
   // Calculate stats from real data
   const stats = {
     totalDeals: offers.length,
-    avgSavings: offers.length > 0
-      ? Math.round(offers.reduce((sum, o) => sum + (o.cashbackPercentage || 0), 0) / offers.length)
-      : 0 };
+    avgSavings:
+      offers.length > 0
+        ? Math.round(offers.reduce((sum, o) => sum + (o.cashbackPercentage || 0), 0) / offers.length)
+        : 0,
+  };
 
   const handleDealPress = (offer: ZoneOffer) => {
     router.push(`/offers/${offer._id}` as any);
@@ -158,9 +153,7 @@ function WomenZonePage() {
 
   const renderSkeletonCard = () => (
     <View style={styles.dealCard}>
-      <Animated.View
-        style={[styles.skeletonImage, shimmerOpacityStyle]}
-      />
+      <Animated.View style={[styles.skeletonImage, shimmerOpacityStyle]} />
       <View style={styles.dealContent}>
         <View style={[styles.skeletonText, { width: '40%', marginBottom: 8 }]} />
         <View style={[styles.skeletonText, { width: '80%', marginBottom: 8 }]} />
@@ -170,15 +163,8 @@ function WomenZonePage() {
   );
 
   const renderDealCard = (deal: ZoneOffer) => (
-    <Pressable
-      key={deal._id}
-      style={styles.dealCard}
-      onPress={() => handleDealPress(deal)}
-     
-    >
-      {deal.image && (
-        <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />
-      )}
+    <Pressable key={deal._id} style={styles.dealCard} onPress={() => handleDealPress(deal)}>
+      {deal.image && <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />}
       <View style={styles.dealContent}>
         <View style={styles.dealHeader}>
           <View style={styles.dealInfo}>
@@ -230,14 +216,15 @@ function WomenZonePage() {
       >
         <SafeAreaView edges={['top']} style={styles.safeHeader}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
 
             <View style={styles.headerTitleContainer}>
-              <ThemedText style={styles.headerTitle}>
-                {zoneInfo?.name || 'Women Exclusive'}
-              </ThemedText>
+              <ThemedText style={styles.headerTitle}>{zoneInfo?.name || 'Women Exclusive'}</ThemedText>
               <ThemedText style={styles.headerSubtitle}>Beauty, wellness & lifestyle</ThemedText>
             </View>
 
@@ -250,7 +237,7 @@ function WomenZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -273,9 +260,7 @@ function WomenZonePage() {
 
               <View style={styles.heroStats}>
                 <View style={styles.heroStat}>
-                  <ThemedText style={styles.heroStatValue}>
-                    {loading ? '...' : `${stats.totalDeals}+`}
-                  </ThemedText>
+                  <ThemedText style={styles.heroStatValue}>{loading ? '...' : `${stats.totalDeals}+`}</ThemedText>
                   <ThemedText style={styles.heroStatLabel}>Deals</ThemedText>
                 </View>
                 <View style={styles.heroStat}>
@@ -298,9 +283,10 @@ function WomenZonePage() {
             {CATEGORIES.map((cat) => (
               <Pressable
                 key={cat.id}
-                style={[styles.categoryCard, selectedCategory === cat.id && styles.categoryCardActive]}
-                onPress={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id === 'All' ? null : cat.id)}
-               
+                style={[styles.categoryCard, selectedCategory === cat.id ? styles.categoryCardActive : null]}
+                onPress={() =>
+                  setSelectedCategory(selectedCategory === cat.id ? null : cat.id === 'All' ? null : cat.id)
+                }
               >
                 <ThemedText style={styles.categoryIcon}>{cat.icon}</ThemedText>
                 <ThemedText style={styles.categoryLabel}>{cat.label}</ThemedText>
@@ -343,9 +329,7 @@ function WomenZonePage() {
             </View>
             <View style={styles.selfCareContent}>
               <ThemedText style={styles.selfCareTitle}>Self-Care Sunday</ThemedText>
-              <ThemedText style={styles.selfCareSubtitle}>
-                Extra 10% off on wellness services
-              </ThemedText>
+              <ThemedText style={styles.selfCareSubtitle}>Extra 10% off on wellness services</ThemedText>
             </View>
           </LinearGradient>
         </View>
@@ -360,9 +344,7 @@ function WomenZonePage() {
             end={{ x: 1, y: 0 }}
             style={styles.ctaGradient}
           >
-            <ThemedText style={styles.ctaButtonText}>
-              Explore All Women Exclusive Deals
-            </ThemedText>
+            <ThemedText style={styles.ctaButtonText}>Explore All Women Exclusive Deals</ThemedText>
           </LinearGradient>
         </Pressable>
       </View>
@@ -373,12 +355,28 @@ function WomenZonePage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  errorText: { ...Typography.body, color: colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
-  retryButton: { backgroundColor: Colors.primary[600], paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: BorderRadius.md },
+  errorText: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  retryButton: {
+    backgroundColor: Colors.primary[600],
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: { ...Typography.button, color: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
   safeHeader: { paddingBottom: Spacing.base },
-  headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+  },
   backButton: { padding: Spacing.sm, marginRight: Spacing.sm },
   headerTitleContainer: { flex: 1, alignItems: 'center' },
   headerTitle: { ...Typography.h3, color: colors.background.primary, fontWeight: '700' },
@@ -388,51 +386,126 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: { paddingBottom: 150 },
   heroBanner: { margin: Spacing.base, borderRadius: BorderRadius['2xl'], overflow: 'hidden', ...Shadows.medium },
-  heroGradient: { padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(236, 72, 153, 0.2)', borderRadius: BorderRadius['2xl'] },
+  heroGradient: {
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(236, 72, 153, 0.2)',
+    borderRadius: BorderRadius['2xl'],
+  },
   heroContent: { position: 'relative' },
-  heroBadge: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: Spacing.xs, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, backgroundColor: 'rgba(255, 255, 255, 0.1)', marginBottom: Spacing.md },
+  heroBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    marginBottom: Spacing.md,
+  },
   heroBadgeText: { ...Typography.labelSmall, color: '#F472B6', fontWeight: '600' },
   heroTitle: { ...Typography.h2, color: colors.text.primary, fontWeight: '700', marginBottom: Spacing.xs },
   heroSubtitle: { ...Typography.body, color: colors.text.secondary, marginBottom: Spacing.base },
   heroStats: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.base },
-  heroStat: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+  heroStat: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
   heroStatValue: { ...Typography.h3, color: '#F472B6', fontWeight: '700', marginBottom: 2 },
   heroStatLabel: { ...Typography.caption, color: colors.text.tertiary },
   categorySection: { marginBottom: Spacing.lg },
   sectionHeader: { paddingHorizontal: Spacing.base, marginBottom: Spacing.md },
   sectionTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600' },
   categoryScroll: { paddingHorizontal: Spacing.base, gap: Spacing.md },
-  categoryCard: { alignItems: 'center', padding: Spacing.base, borderRadius: BorderRadius.lg, backgroundColor: colors.background.primary, minWidth: 100, ...Shadows.subtle },
+  categoryCard: {
+    alignItems: 'center',
+    padding: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: colors.background.primary,
+    minWidth: 100,
+    ...Shadows.subtle,
+  },
   categoryCardActive: { borderWidth: 2, borderColor: colors.brand.pink },
   categoryIcon: { fontSize: 32, marginBottom: Spacing.sm },
   categoryLabel: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
   dealsSection: { paddingHorizontal: Spacing.base },
-  dealCard: { flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.md, ...Shadows.subtle },
+  dealCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.md,
+    ...Shadows.subtle,
+  },
   dealImage: { width: 112, height: 112 },
   dealContent: { flex: 1, padding: Spacing.base },
-  dealHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.xs },
+  dealHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.xs,
+  },
   dealInfo: { flex: 1, marginRight: Spacing.sm },
   dealStore: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: 2 },
   dealTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600' },
-  discountBadge: { backgroundColor: 'rgba(236, 72, 153, 0.15)', paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  discountBadge: {
+    backgroundColor: 'rgba(236, 72, 153, 0.15)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   discountText: { ...Typography.labelSmall, color: colors.brand.pink, fontWeight: '700' },
   dealDescription: { ...Typography.bodySmall, color: colors.text.secondary, marginBottom: Spacing.sm },
   dealTags: { flexDirection: 'row', gap: Spacing.xs },
-  tag: { backgroundColor: Colors.gray[100], paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm },
+  tag: {
+    backgroundColor: Colors.gray[100],
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+  },
   tagText: { ...Typography.caption, color: colors.text.secondary },
   skeletonImage: { width: 112, height: 112, backgroundColor: Colors.gray[200] },
   skeletonText: { height: 12, borderRadius: 6, backgroundColor: Colors.gray[200] },
   emptyState: { alignItems: 'center', padding: Spacing.xl },
   emptyStateText: { ...Typography.body, color: colors.text.tertiary, marginTop: Spacing.md },
   selfCareCard: { margin: Spacing.base, borderRadius: BorderRadius.lg, overflow: 'hidden', ...Shadows.medium },
-  selfCareGradient: { flexDirection: 'row', alignItems: 'center', padding: Spacing.base, borderWidth: 1, borderColor: 'rgba(244, 63, 94, 0.2)', borderRadius: BorderRadius.lg, gap: Spacing.md },
-  selfCareIcon: { width: 48, height: 48, borderRadius: BorderRadius.md, backgroundColor: 'rgba(251, 113, 133, 0.2)', alignItems: 'center', justifyContent: 'center' },
+  selfCareGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: 'rgba(244, 63, 94, 0.2)',
+    borderRadius: BorderRadius.lg,
+    gap: Spacing.md,
+  },
+  selfCareIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.md,
+    backgroundColor: 'rgba(251, 113, 133, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   selfCareContent: { flex: 1 },
   selfCareTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
   selfCareSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
-  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.light, ...Shadows.medium },
+  fixedCTA: {
+    position: 'absolute',
+    bottom: 70,
+    left: 0,
+    right: 0,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    ...Shadows.medium,
+  },
   ctaButton: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
   ctaGradient: { paddingVertical: Spacing.base, alignItems: 'center', justifyContent: 'center' },
-  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' } });
+  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' },
+});
 
 export default withErrorBoundary(WomenZonePage, 'OffersZonesWomen');

@@ -45,7 +45,7 @@ interface StorePaymentDetail {
 
 const TransactionDetailPage = () => {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [transaction, setTransaction] = useState<TransactionResponse | null>(null);
@@ -83,7 +83,7 @@ const TransactionDetailPage = () => {
           setError(response.message || response.error || 'Transaction not found');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -129,7 +129,7 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
       }
 
       await Share.share({ message });
-    } catch (err) {
+    } catch (err: any) {
       platformAlertSimple('Error', 'Unable to share transaction details');
     }
   };
@@ -356,9 +356,12 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
     );
   }
 
+  // TypeScript guard: transaction is guaranteed non-null here
+  if (!transaction) return null;
+
   // Wallet transaction rendering (original code)
-  const statusColor = getStatusColor(transaction!.status.current);
-  const typeColor = getTypeColor(transaction!.type);
+  const statusColor = getStatusColor(transaction.status.current);
+  const typeColor = getTypeColor(transaction.type);
 
   return (
     <View style={styles.container}>

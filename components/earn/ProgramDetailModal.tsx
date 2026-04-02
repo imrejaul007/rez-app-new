@@ -79,7 +79,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
       } else {
         setError(response.message || 'Failed to check eligibility');
       }
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
     } finally {
@@ -111,7 +111,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
       } else {
         platformAlert('Activation Failed', response.message || 'Please try again.');
       }
-    } catch (e) {
+    } catch (e: any) {
       platformAlert('Error', 'Something went wrong. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -373,7 +373,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
               size={20}
               color={req.met ? colors.success : colors.text.tertiary}
             />
-            <Text style={[styles.requirementText, req.met && styles.requirementMet]}>
+            <Text style={[styles.requirementText, req.met ? styles.requirementMet : null]}>
               {req.label}
             </Text>
           </View>
@@ -472,13 +472,13 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <SafeAreaView style={[styles.container, isPrive && styles.containerDark]}>
+      <SafeAreaView style={[styles.container, isPrive ? styles.containerDark : null]}>
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={onClose} style={styles.closeButton} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Ionicons name="close" size={24} color={isPrive ? colors.background.primary : colors.text.primary} />
           </Pressable>
-          <Text style={[styles.headerTitle, isPrive && styles.headerTitleDark]}>
+          <Text style={[styles.headerTitle, isPrive ? styles.headerTitleDark : null]}>
             {eligibility?.program.name || 'Loading...'}
           </Text>
           <View style={{ width: 40 }} />

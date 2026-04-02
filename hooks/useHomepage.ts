@@ -56,7 +56,7 @@ export function useHomepage(): UseHomepageDataResult {
     loading: isLoading && !data, // Only show loading on first load (not background refetch)
     error: error ? (error instanceof Error ? error.message : 'Failed to load homepage data') : null,
     sections: batchToSections(data),
-    user: { preferences: [] },
+    user: { id: '', preferences: [] },
     lastRefresh: data ? new Date().toISOString() : initialHomepageState.lastRefresh,
   }), [data, isLoading, error]);
 
@@ -324,11 +324,10 @@ export function useHomepageNavigation() {
         quantity: 1,
         cashback: item.cashback || 0,
         category: item.category || 'general',
-        variants: item.variants || item.options || null,
         selectedVariant: item.selectedVariant || null,
         storeId: item.store?._id || item.store?.id || item.storeId,
         storeName: item.store?.name || item.storeName || 'Store'
-      });
+      } as any);
 
       showToast({
         message: `${item.name || item.title || 'Item'} added to cart`,

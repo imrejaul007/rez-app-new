@@ -20,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import MallLuxuryBrandCard from './cards/MallLuxuryBrandCard';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -197,19 +198,15 @@ const MallLuxuryZone: React.FC<MallLuxuryZoneProps> = ({
         </View>
 
         {/* Horizontal Brands List */}
-        <FlashList
+        <AnyFlashList
           data={brands}
           renderItem={renderBrand}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           snapToInterval={SCREEN_WIDTH * 0.75 + 14}
           decelerationRate="fast"
-          removeClippedSubviews={Platform.OS !== 'web'}
-          maxToRenderPerBatch={3}
-          windowSize={3}
-          initialNumToRender={2}
           estimatedItemSize={180}
         />
 

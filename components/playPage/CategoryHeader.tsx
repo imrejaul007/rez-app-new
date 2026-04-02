@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   activeTabText: {
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     fontWeight: '700',
   },
 });

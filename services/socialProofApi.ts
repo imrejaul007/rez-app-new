@@ -87,7 +87,7 @@ export const getNearbyActivity = async (
       `/social-proof/nearby-activity?${queryParams.toString()}`
     );
 
-    return response;
+    return response as any;
   } catch (error: any) {
     return {
       success: false,
@@ -107,7 +107,7 @@ export const getCityWideStats = async (
       `/social-proof/city-stats?city=${encodeURIComponent(city)}`
     );
 
-    return response;
+    return response as any;
   } catch (error: any) {
     return {
       success: false,

@@ -95,7 +95,7 @@ function ReorderSuggestions({ onAddToCart }: ReorderSuggestionsProps) {
           return next;
         });
       }, 2000);
-    } catch (err) {
+    } catch (err: any) {
       platformAlert('Error', 'Failed to add item to cart. Please try again.');
     }
   };

@@ -150,7 +150,7 @@ export function getTextContent(element: ReactTestInstance): string {
   }
   if (Array.isArray(element.props.children)) {
     return element.props.children
-      .filter(child => typeof child === 'string')
+      .filter((child: any) => typeof child === 'string')
       .join('');
   }
   return '';

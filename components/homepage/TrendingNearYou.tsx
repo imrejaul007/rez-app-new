@@ -39,7 +39,7 @@ const WebVideoPlayer: React.FC<{ uri: string; poster?: string }> = ({ uri, poste
           setTimeout(async () => {
             try {
               await video.play();
-            } catch (e) {
+            } catch (e: any) {
             }
           }, 100);
         }
@@ -110,7 +110,7 @@ const NativeVideoPlayer: React.FC<{
           await videoRef.current.playAsync();
           if (!isMounted()) return;
           setShowPoster(false);
-        } catch (err) {
+        } catch (err: any) {
           // ignore playback errors
         }
       }
@@ -136,9 +136,6 @@ const NativeVideoPlayer: React.FC<{
         isLooping={true}
         isMuted={true}
         useNativeControls={false}
-        onLoad={() => {
-          setIsLoaded(true);
-        }}
         onError={() => {}}
       />
     </View>
@@ -333,7 +330,7 @@ const TrendingNearYou: React.FC<TrendingNearYouProps> = ({
     if (onViewAllPress) {
       onViewAllPress();
     } else {
-      router.push('/explore/trending');
+      router.push('/explore/trending' as any);
     }
   };
 
@@ -398,7 +395,7 @@ const TrendingNearYou: React.FC<TrendingNearYouProps> = ({
                 source={{ uri: store.image || `https://picsum.photos/seed/${store.id || 'store'}/200/150` }}
                 style={styles.storeImage}
                 contentFit="cover"
-                defaultSource={{ uri: 'https://picsum.photos/200/150?grayscale' }}
+                {...({ defaultSource: { uri: 'https://picsum.photos/200/150?grayscale' } } as any)}
               />
             )}
             {/* Trending Badge */}

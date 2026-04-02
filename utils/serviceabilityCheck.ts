@@ -22,7 +22,7 @@ export async function checkAreaServiceability(
       limit: 1,
     });
 
-    const count = res.data?.stores?.length ?? res.data?.length ?? 0;
+    const count = (res.data as any)?.stores?.length ?? (res.data as any)?.length ?? 0;
 
     return {
       isServiceable: count > 0,

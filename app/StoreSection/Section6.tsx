@@ -1,25 +1,15 @@
-import React, { useState, useEffect, memo} from 'react';
-import { View, Pressable, StyleSheet, ActivityIndicator, ScrollView} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring } from 'react-native-reanimated';
+import React, { useState, useEffect, memo } from 'react';
+import { View, Pressable, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import storeVouchersApi from '@/services/storeVouchersApi';
 import { platformAlert } from '@/utils/platformAlert';
 import { RetryButton } from '@/components/common/RetryButton';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  IconSize,
-  Timing } from '@/constants/DesignSystem';
+import { Colors, Spacing, Shadows, BorderRadius, Typography, IconSize, Timing } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -91,7 +81,7 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
         if (!isMounted()) return;
         setVoucherCount(0);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setVoucherCount(0);
     }
@@ -105,7 +95,8 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
 
       const response = await storeVouchersApi.getStoreVouchers(storeId, {
         page: 1,
-        limit: 10 });
+        limit: 10,
+      });
 
       if (response.success && response.data?.vouchers) {
         if (!isMounted()) return;
@@ -119,7 +110,7 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
           setSelectedVoucher(response.data.vouchers[0]);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // Silent fail - show empty state
     } finally {
       if (!isMounted()) return;
@@ -166,7 +157,7 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
 
         platformAlert(
           'Voucher Claimed!',
-          `Store visit voucher for ${storeName || 'this store'} has been added to your account`
+          `Store visit voucher for ${storeName || 'this store'} has been added to your account`,
         );
 
         // Refresh vouchers to show updated status
@@ -184,7 +175,8 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
     } catch (error: any) {
       // Error haptic
       triggerNotification('Error');
-      const errorMessage = error?.response?.data?.message || error?.message || 'Unable to add voucher. Please try again.';
+      const errorMessage =
+        error?.response?.data?.message || error?.message || 'Unable to add voucher. Please try again.';
       platformAlert('Error', errorMessage);
     } finally {
       if (!isMounted()) return;
@@ -193,21 +185,11 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
   };
 
   return (
-    <View
-      style={styles.container}
-      accessibilityRole="summary"
-      accessibilityLabel="Store vouchers section"
-    >
-      <View
-        style={styles.card}
-        accessibilityLabel={`${getVoucherTitle()} available`}
-      >
+    <View style={styles.container} accessibilityRole="summary" accessibilityLabel="Store vouchers section">
+      <View style={styles.card} accessibilityLabel={`${getVoucherTitle()} available`}>
         {/* Header */}
         <View style={styles.header}>
-          <ThemedText
-            style={styles.mainTitle}
-            accessibilityRole="header"
-          >
+          <ThemedText style={styles.mainTitle} accessibilityRole="header">
             {getVoucherTitle()}
           </ThemedText>
           <View style={styles.percentContainer} accessibilityElementsHidden>
@@ -219,35 +201,27 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
         <View style={styles.actionButtonsRow}>
           {/* View Vouchers Button */}
           <Pressable
-           
             style={styles.expandButton}
             onPress={() => setShowDetails(!showDetails)}
             accessibilityRole="button"
             accessibilityLabel="View available vouchers"
             accessibilityHint="Double tap to see voucher details"
           >
-            <ThemedText style={styles.expandText}>
-              {showDetails ? 'Hide vouchers' : 'View vouchers'}
-            </ThemedText>
-            <Ionicons
-              name={showDetails ? "chevron-up" : "chevron-down"}
-              size={18}
-              color={colors.lightMustard}
-            />
+            <ThemedText style={styles.expandText}>{showDetails ? 'Hide vouchers' : 'View vouchers'}</ThemedText>
+            <Ionicons name={showDetails ? 'chevron-up' : 'chevron-down'} size={18} color={colors.lightMustard} />
           </Pressable>
 
           {/* View Outlets Button (only if storeId exists) */}
           {storeId && (
             <Pressable
-             
               style={styles.outletsButton}
               onPress={() => {
                 router.push({
                   pathname: '/outletspage',
                   params: {
                     storeId: storeId,
-                    storeName: storeName || 'Store'
-                  }
+                    storeName: storeName || 'Store',
+                  },
                 } as any);
               }}
               accessibilityRole="button"
@@ -271,93 +245,103 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
             </View>
           ) : vouchers.length > 0 ? (
             vouchers.map((voucher, index) => (
-            <View key={voucher._id || index} style={styles.voucherItemCard}>
-            <>
-              {/* Save Badge */}
-              <View style={styles.saveBadge}>
-                <ThemedText style={styles.saveBadgeText}>
-                  Save {voucher.discountType === 'percentage' ? voucher.discountValue + '%' : currencySymbol + voucher.discountValue}
-                </ThemedText>
-              </View>
-
-              {/* Icon */}
-              <View style={styles.voucherIconContainer}>
-                <Ionicons name="flash" size={24} color={colors.lightMustard} />
-              </View>
-
-              {/* Title */}
-              <ThemedText style={styles.voucherTitle}>{voucher.name}</ThemedText>
-
-              {/* Minimum Bill */}
-              <View style={styles.minimumBillRow}>
-                <ThemedText style={styles.minimumBillLabel}>Minimum bill:</ThemedText>
-                <ThemedText style={styles.minimumBillValue}>{currencySymbol}{voucher.minBillAmount}</ThemedText>
-              </View>
-
-              {/* Info Link */}
-              <Pressable style={styles.infoRow}>
-                {voucher.restrictions?.isOfflineOnly && (
-                  <>
-                    <ThemedText style={styles.infoText}>Offline Only</ThemedText>
-                    <View style={styles.divider} />
-                  </>
-                )}
-                <ThemedText style={styles.moreDetailsText}>More details</ThemedText>
-                <Ionicons name="information-circle-outline" size={16} color={colors.lightMustard} style={styles.infoIcon} />
-              </Pressable>
-
-              {/* Restrictions */}
-              <View style={styles.restrictionsContainer}>
-                {voucher.restrictions?.notValidAboveStoreDiscount && (
-                  <View style={styles.restrictionRow}>
-                    <View style={styles.bulletPoint} />
-                    <ThemedText style={styles.restrictionText}>Not valid above store discount</ThemedText>
-                  </View>
-                )}
-                {voucher.restrictions?.singleVoucherPerBill && (
-                  <View style={styles.restrictionRow}>
-                    <View style={styles.bulletPoint} />
-                    <ThemedText style={styles.restrictionText}>Single voucher per bill</ThemedText>
-                  </View>
-                )}
-              </View>
-
-              {/* Claim Status */}
-              {voucher.isAssigned && (
-                <View style={styles.claimedBadge}>
-                  <ThemedText style={styles.claimedText}>Already Claimed</ThemedText>
-                </View>
-              )}
-
-              {/* Add Button */}
-              {!voucher.isAssigned && (
-                <Pressable
-                  style={styles.addButtonWrapper}
-                 
-                  onPress={() => {
-                    setSelectedVoucher(voucher);
-                    handleAddVoucher();
-                  }}
-                  disabled={isAddingVoucher || !voucher.canRedeem}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Claim ${voucher.name} voucher. Minimum bill ${voucher.minBillAmount} rupees`}
-                  accessibilityHint="Double tap to claim this voucher for your account"
-                  accessibilityState={{ disabled: isAddingVoucher || !voucher.canRedeem, busy: isAddingVoucher }}
-                >
-                  <LinearGradient
-                    colors={[colors.lightMustard, colors.brand.goldRich]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={[styles.addButton, (isAddingVoucher || !voucher.canRedeem) && styles.addButtonDisabled]}
-                  >
-                    <ThemedText style={styles.addButtonText}>
-                      {isAddingVoucher ? 'Claiming...' : voucher.canRedeem ? 'Claim Voucher' : 'Not Available'}
+              <View key={voucher._id || index} style={styles.voucherItemCard}>
+                <>
+                  {/* Save Badge */}
+                  <View style={styles.saveBadge}>
+                    <ThemedText style={styles.saveBadgeText}>
+                      Save{' '}
+                      {voucher.discountType === 'percentage'
+                        ? voucher.discountValue + '%'
+                        : currencySymbol + voucher.discountValue}
                     </ThemedText>
-                  </LinearGradient>
-                </Pressable>
-              )}
-            </>
-            </View>
+                  </View>
+
+                  {/* Icon */}
+                  <View style={styles.voucherIconContainer}>
+                    <Ionicons name="flash" size={24} color={colors.lightMustard} />
+                  </View>
+
+                  {/* Title */}
+                  <ThemedText style={styles.voucherTitle}>{voucher.name}</ThemedText>
+
+                  {/* Minimum Bill */}
+                  <View style={styles.minimumBillRow}>
+                    <ThemedText style={styles.minimumBillLabel}>Minimum bill:</ThemedText>
+                    <ThemedText style={styles.minimumBillValue}>
+                      {currencySymbol}
+                      {voucher.minBillAmount}
+                    </ThemedText>
+                  </View>
+
+                  {/* Info Link */}
+                  <Pressable style={styles.infoRow}>
+                    {voucher.restrictions?.isOfflineOnly && (
+                      <>
+                        <ThemedText style={styles.infoText}>Offline Only</ThemedText>
+                        <View style={styles.divider} />
+                      </>
+                    )}
+                    <ThemedText style={styles.moreDetailsText}>More details</ThemedText>
+                    <Ionicons
+                      name="information-circle-outline"
+                      size={16}
+                      color={colors.lightMustard}
+                      style={styles.infoIcon}
+                    />
+                  </Pressable>
+
+                  {/* Restrictions */}
+                  <View style={styles.restrictionsContainer}>
+                    {voucher.restrictions?.notValidAboveStoreDiscount && (
+                      <View style={styles.restrictionRow}>
+                        <View style={styles.bulletPoint} />
+                        <ThemedText style={styles.restrictionText}>Not valid above store discount</ThemedText>
+                      </View>
+                    )}
+                    {voucher.restrictions?.singleVoucherPerBill && (
+                      <View style={styles.restrictionRow}>
+                        <View style={styles.bulletPoint} />
+                        <ThemedText style={styles.restrictionText}>Single voucher per bill</ThemedText>
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Claim Status */}
+                  {voucher.isAssigned && (
+                    <View style={styles.claimedBadge}>
+                      <ThemedText style={styles.claimedText}>Already Claimed</ThemedText>
+                    </View>
+                  )}
+
+                  {/* Add Button */}
+                  {!voucher.isAssigned && (
+                    <Pressable
+                      style={styles.addButtonWrapper}
+                      onPress={() => {
+                        setSelectedVoucher(voucher);
+                        handleAddVoucher();
+                      }}
+                      disabled={isAddingVoucher || !voucher.canRedeem}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Claim ${voucher.name} voucher. Minimum bill ${voucher.minBillAmount} rupees`}
+                      accessibilityHint="Double tap to claim this voucher for your account"
+                      accessibilityState={{ disabled: isAddingVoucher || !voucher.canRedeem, busy: isAddingVoucher }}
+                    >
+                      <LinearGradient
+                        colors={[colors.lightMustard, colors.brand.goldRich]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={[styles.addButton, (isAddingVoucher || !voucher.canRedeem) && styles.addButtonDisabled]}
+                      >
+                        <ThemedText style={styles.addButtonText}>
+                          {isAddingVoucher ? 'Claiming...' : voucher.canRedeem ? 'Claim Voucher' : 'Not Available'}
+                        </ThemedText>
+                      </LinearGradient>
+                    </Pressable>
+                  )}
+                </>
+              </View>
             ))
           ) : (
             <View style={styles.noVouchersContainer}>
@@ -374,7 +358,7 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
         </ScrollView>
       )}
     </View>
-);
+  );
 });
 
 const styles = StyleSheet.create({
@@ -382,20 +366,23 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing['2xl'] - 4,
     paddingVertical: Spacing.base,
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
 
   // Modern Card
   card: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.lg + 2,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
 
   // Modern Typography
   mainTitle: {
@@ -403,7 +390,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text.primary,
     flex: 1,
-    paddingRight: Spacing.md - 2 },
+    paddingRight: Spacing.md - 2,
+  },
 
   percentContainer: {
     backgroundColor: '#fff3cd',
@@ -413,11 +401,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ffe58f' },
+    borderColor: '#ffe58f',
+  },
   percentIcon: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#f39c12' },
+    color: '#f39c12',
+  },
 
   // Modern Action Buttons
   actionButtonsRow: {
@@ -425,16 +415,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: Spacing.sm + 2,
-    gap: Spacing.base },
+    gap: Spacing.base,
+  },
   expandButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1 },
+    flex: 1,
+  },
   expandText: {
     ...Typography.body,
     color: Colors.primary[600],
     marginRight: Spacing.xs,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   outletsButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -442,22 +435,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm + 2,
     borderRadius: BorderRadius.sm,
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   outletsButtonText: {
     ...Typography.body,
     color: Colors.primary[600],
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   // Modern Voucher Details
   voucherDetailsCard: {
     marginTop: Spacing.lg,
-    maxHeight: 500 },
+    maxHeight: 500,
+  },
   voucherItemCard: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing['2xl'] - 4,
     marginBottom: Spacing.base,
     ...Shadows.medium,
-    position: 'relative' },
+    position: 'relative',
+  },
 
   saveBadge: {
     position: 'absolute',
@@ -466,11 +463,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightMustard,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm + 2,
-    borderRadius: BorderRadius.full },
+    borderRadius: BorderRadius.full,
+  },
   saveBadgeText: {
     ...Typography.caption,
     color: colors.text.white,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
 
   voucherIconContainer: {
     width: 50,
@@ -479,96 +478,118 @@ const styles = StyleSheet.create({
     backgroundColor: colors.linen,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   voucherTitle: {
     ...Typography.h3,
     fontWeight: '700',
     color: Colors.gray[900],
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
 
   minimumBillRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   minimumBillLabel: {
     ...Typography.body,
     color: Colors.gray[600],
-    marginRight: Spacing.sm },
+    marginRight: Spacing.sm,
+  },
   minimumBillValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.gray[900] },
+    color: Colors.gray[900],
+  },
 
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   infoText: {
     ...Typography.body,
     color: Colors.primary[600],
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   divider: {
     width: 1,
     height: 12,
     backgroundColor: Colors.gray[300],
-    marginHorizontal: Spacing.sm },
+    marginHorizontal: Spacing.sm,
+  },
   moreDetailsText: {
     ...Typography.body,
     color: Colors.primary[600],
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   infoIcon: {
-    marginLeft: Spacing.xs },
+    marginLeft: Spacing.xs,
+  },
 
   restrictionsContainer: {
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   restrictionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   bulletPoint: {
     width: 4,
     height: 4,
     borderRadius: BorderRadius.xs,
     backgroundColor: Colors.gray[600],
-    marginRight: Spacing.sm },
+    marginRight: Spacing.sm,
+  },
   restrictionText: {
     ...Typography.caption,
     color: Colors.gray[600],
-    flex: 1 },
+    flex: 1,
+  },
 
   addButtonWrapper: {
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   addButton: {
     paddingVertical: Spacing.md,
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   addButtonDisabled: {
-    opacity: 0.6 },
+    opacity: 0.6,
+  },
   addButtonText: {
     ...Typography.h4,
     color: colors.text.white,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
 
   loadingContainer: {
     paddingVertical: Spacing['3xl'] + 8,
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   loadingText: {
     ...Typography.body,
     marginTop: Spacing.base,
-    color: Colors.gray[600] },
+    color: Colors.gray[600],
+  },
 
   noVouchersContainer: {
     paddingVertical: Spacing['3xl'] + 8,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   noVouchersText: {
     ...Typography.body,
     color: Colors.gray[600],
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
 
   claimedBadge: {
     backgroundColor: colors.lightMustard,
@@ -576,8 +597,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing['2xl'] - 4,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   claimedText: {
     ...Typography.body,
     color: colors.text.white,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});

@@ -40,7 +40,7 @@ const LoyaltyRewardsHubCard: React.FC<LoyaltyRewardsHubCardProps> = ({
     if (onPress) {
       onPress();
     } else {
-      router.push('/loyalty-rewards-hub');
+      router.push('/loyalty-rewards-hub' as any);
     }
   };
 

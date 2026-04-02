@@ -91,7 +91,7 @@ export function useOfflineCart() {
         updatePendingCount();
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       setSyncError(error instanceof Error ? error.message : 'Sync failed');
       return false;
     } finally {
@@ -128,7 +128,7 @@ export function useOfflineCart() {
     try {
       await offlineQueueService.retryFailedOperations();
       updatePendingCount();
-    } catch (error) {
+    } catch (error: any) {
       setSyncError(error instanceof Error ? error.message : 'Retry failed');
     } finally {
       setIsSyncing(false);

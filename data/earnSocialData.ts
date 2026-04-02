@@ -162,7 +162,7 @@ export const EarnSocialData = {
           status: post.status,
           submittedAt: new Date(post.submittedAt),
           cashbackAmount: post.cashbackAmount,
-          platform: post.platform,
+          platform: post.platform as SocialMediaPost['platform'],
           thumbnailUrl: post.metadata?.thumbnailUrl
         }));
 

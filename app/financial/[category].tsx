@@ -19,7 +19,6 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-
 // Fallback data
 const fallbackCategoryData: Record<string, any> = {
   bills: { title: 'Bill Payment', icon: '📄', gradientColors: [colors.infoScale[400], colors.brand.blue] },
@@ -33,11 +32,11 @@ const fallbackCategoryData: Record<string, any> = {
 const FinancialCategoryPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category } = useLocalSearchParams<any>();
   const { trackEvent, trackScreen } = useComprehensiveAnalytics();
   const { isOffline } = useNetworkStatus();
   const startTimeRef = useRef<number>(Date.now());
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [services, setServices] = useState<FinancialService[]>([]);
@@ -59,8 +58,7 @@ const FinancialCategoryPage: React.FC = () => {
       const response = await financialServicesApi.getByCategory(categorySlug, {
         page: 1,
         limit: 50,
-        sortBy: selectedFilter === 'Top Rated' ? 'rating' : 
-                selectedFilter === 'Best Price' ? 'price_low' : 'rating',
+        sortBy: selectedFilter === 'Top Rated' ? 'rating' : selectedFilter === 'Best Price' ? 'price_low' : 'rating',
       });
 
       if (response.success && response.data) {
@@ -78,7 +76,7 @@ const FinancialCategoryPage: React.FC = () => {
             color: response.data.category.metadata?.color || fallbackData.gradientColors[0],
             cashbackPercentage: response.data.category.cashbackPercentage,
             maxCashback: response.data.category.maxCashback,
-            serviceCount: response.data.category.serviceCount || 0,
+            serviceCount: (response.data.category as any).serviceCount || 0,
             metadata: response.data.category.metadata,
           });
         }
@@ -139,8 +137,8 @@ const FinancialCategoryPage: React.FC = () => {
     }
   };
 
-  const gradientColors = categoryInfo?.metadata?.color 
-    ? [categoryInfo.metadata.color, categoryInfo.metadata.color] 
+  const gradientColors = categoryInfo?.metadata?.color
+    ? [categoryInfo.metadata.color, categoryInfo.metadata.color]
     : fallbackData.gradientColors;
   const categoryTitle = categoryInfo?.name || fallbackData.title;
   const categoryIcon = categoryInfo?.icon || fallbackData.icon;
@@ -157,12 +155,19 @@ const FinancialCategoryPage: React.FC = () => {
     <View style={styles.container}>
       <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{categoryIcon} {categoryTitle}</Text>
-            <Text style={styles.headerSubtitle}>{services.length} {services.length === 1 ? 'service' : 'services'}</Text>
+            <Text style={styles.headerTitle}>
+              {categoryIcon} {categoryTitle}
+            </Text>
+            <Text style={styles.headerSubtitle}>
+              {services.length} {services.length === 1 ? 'service' : 'services'}
+            </Text>
           </View>
           <Pressable style={styles.searchButton}>
             <Ionicons name="search" size={24} color={colors.text.inverse} />
@@ -171,7 +176,7 @@ const FinancialCategoryPage: React.FC = () => {
       </LinearGradient>
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} 
+        contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[Colors.brand.purple]} />
@@ -181,23 +186,15 @@ const FinancialCategoryPage: React.FC = () => {
           {services.length > 0 ? (
             services.map((service) => {
               const serviceId = service._id || service.id || '';
-              const cashback = service.cashback?.percentage 
-                ? `${service.cashback.percentage}%` 
-                : service.serviceCategory?.cashbackPercentage 
-                  ? `${service.serviceCategory.cashbackPercentage}%` 
+              const cashback = service.cashback?.percentage
+                ? `${service.cashback.percentage}%`
+                : service.serviceCategory?.cashbackPercentage
+                  ? `${service.serviceCategory.cashbackPercentage}%`
                   : '5%';
-              
+
               return (
-                <Pressable 
-                  key={serviceId} 
-                  style={styles.itemCard} 
-                  onPress={() => handleServicePress(service)} 
-                 
-                >
-                  <CachedImage
-                    source={service.images?.[0] || undefined}
-                    style={styles.itemImage}
-                  />
+                <Pressable key={serviceId} style={styles.itemCard} onPress={() => handleServicePress(service)}>
+                  <CachedImage source={service.images?.[0] || ''} style={styles.itemImage} />
                   <View style={styles.cashbackBadge}>
                     <Text style={styles.cashbackText}>{cashback}</Text>
                   </View>
@@ -208,7 +205,7 @@ const FinancialCategoryPage: React.FC = () => {
                         {service.serviceCategory?.name || service.shortDescription || 'Service'}
                       </Text>
                     </View>
-                    <Pressable 
+                    <Pressable
                       style={styles.payButton}
                       onPress={(e) => {
                         e.stopPropagation();
@@ -243,15 +240,41 @@ const styles = StyleSheet.create({
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: Spacing.sm },
   itemsList: { padding: Spacing.base, gap: Spacing.base },
-  itemCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
+  itemCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   itemImage: { width: '100%', height: 140 },
-  cashbackBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: Colors.success, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  cashbackBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: Colors.success,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
   cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   itemInfo: { padding: Spacing.base },
   itemName: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.sm },
-  typeBadge: { alignSelf: 'flex-start', backgroundColor: colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm, marginBottom: Spacing.md },
+  typeBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.background.secondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+    marginBottom: Spacing.md,
+  },
   typeText: { ...Typography.caption, fontWeight: '600', color: colors.text.tertiary },
-  payButton: { backgroundColor: Colors.brand.purple, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' },
+  payButton: {
+    backgroundColor: Colors.brand.purple,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+  },
   payButtonText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
 });
 
@@ -262,7 +285,9 @@ const FinancialCategoryPageWithErrorBoundary: React.FC = () => {
       fallback={
         <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
           <Ionicons name="alert-circle" size={48} color={Colors.brand.purple} />
-          <Text style={{ marginTop: Spacing.md, color: colors.text.tertiary }}>Something went wrong. Please try again.</Text>
+          <Text style={{ marginTop: Spacing.md, color: colors.text.tertiary }}>
+            Something went wrong. Please try again.
+          </Text>
         </View>
       }
     >

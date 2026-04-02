@@ -14,7 +14,7 @@ const ScratchCardOffer: React.FC<ScratchCardOfferProps> = ({
 }) => {
   return (
     <Pressable
-      style={[styles.container, !isActive && styles.inactiveContainer]}
+      style={[styles.container, !isActive ? styles.inactiveContainer : null]}
       onPress={isActive ? onPress : undefined}
      
       disabled={!isActive}
@@ -25,11 +25,10 @@ const ScratchCardOffer: React.FC<ScratchCardOfferProps> = ({
       accessibilityState={{ disabled: !isActive }}
     >
       <CachedImage
-        source={imageSource}
-        style={[styles.image, !isActive && styles.inactiveImage]}
+        source={imageSource as any}
+        style={[styles.image, !isActive ? styles.inactiveImage : null] as any}
         contentFit="cover"
         transition={200}
-        accessible={false}
       />
       {(title || description) && (
         <View style={styles.textContainer}>

@@ -75,7 +75,7 @@ function ContactStoreModal({
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -112,7 +112,7 @@ function ContactStoreModal({
       } else {
         platformAlertSimple('Error', 'Failed to start conversation. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to start conversation. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -173,7 +173,7 @@ function ContactStoreModal({
       : 'Customer Inquiry';
     const emailUrl = `mailto:${storeEmail}?subject=${encodeURIComponent(subject)}`;
 
-    try { Linking.openURL(emailUrl); } catch (e) { catchAndWarn(e, 'ContactStoreModal/openURL'); }
+    try { Linking.openURL(emailUrl); } catch (e: any) { catchAndWarn(e, 'ContactStoreModal/openURL'); }
   };
 
   // Render contact option
@@ -186,7 +186,7 @@ function ContactStoreModal({
     disabled: boolean = false
   ) => (
     <Pressable
-      style={[styles.contactOption, disabled && styles.contactOptionDisabled]}
+      style={[styles.contactOption, disabled ? styles.contactOptionDisabled : null]}
       onPress={onPress}
       disabled={disabled || loading}
     >

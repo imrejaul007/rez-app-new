@@ -81,7 +81,7 @@ function EnhancedBillUploadPage() {
       } else {
         router.replace('/');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (router) {
         router.replace('/');
       }
@@ -128,7 +128,7 @@ function EnhancedBillUploadPage() {
 
         // Start verification process
         await startVerification(photo.uri);
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Failed to take picture. Please try again.');
       }
     }
@@ -152,7 +152,7 @@ function EnhancedBillUploadPage() {
         // Start verification process
         await startVerification(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to pick image. Please try again.');
     }
   };
@@ -188,7 +188,7 @@ function EnhancedBillUploadPage() {
       } else {
         platformAlertSimple('Upload Failed', error || 'Failed to upload bill. Please try again.');
       }
-    } catch (err) {
+    } catch (err: any) {
       platformAlertSimple('Error', 'An error occurred while uploading the bill. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -213,7 +213,7 @@ function EnhancedBillUploadPage() {
             { justifyContent: 'center', alignItems: 'center', backgroundColor: '#F9FAFB', padding: 32 },
           ]}
         >
-          <Ionicons name="camera-off-outline" size={64} color="#9CA3AF" />
+          <Ionicons name="camera-outline" size={64} color="#9CA3AF" />
           <Text style={{ fontSize: 18, fontWeight: '700', color: '#374151', marginTop: 16, textAlign: 'center' }}>
             Camera Not Available on Web
           </Text>

@@ -136,20 +136,20 @@ function PharmacyPage() {
 
       // Fetch pharmacies
       const pharmacyResponse = await apiClient.get('/stores?category=healthcare&type=pharmacy');
-      if (pharmacyResponse.success && pharmacyResponse.data?.stores) {
+      if (pharmacyResponse.success && (pharmacyResponse.data as any)?.stores) {
         if (!isMounted()) return;
-        setPharmacies(pharmacyResponse.data.stores);
+        setPharmacies((pharmacyResponse.data as any).stores);
       }
 
       // Fetch medicines/products
       const medicineResponse = await apiClient.get('/products?category=healthcare&type=medicine');
-      if (medicineResponse.success && medicineResponse.data?.products) {
+      if (medicineResponse.success && (medicineResponse.data as any)?.products) {
         if (!isMounted()) return;
-        setMedicines(medicineResponse.data.products);
+        setMedicines((medicineResponse.data as any).products);
         if (!isMounted()) return;
-        setFilteredMedicines(medicineResponse.data.products);
+        setFilteredMedicines((medicineResponse.data as any).products);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load pharmacy data. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -259,7 +259,7 @@ function PharmacyPage() {
         if (!isMounted()) return;
         setPrescriptionImage(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to select image.');
     }
   };
@@ -322,7 +322,7 @@ function PharmacyPage() {
         },
         'OK',
       );
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to submit prescription. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -371,7 +371,9 @@ function PharmacyPage() {
         accessibilityState={{ selected: isSelected }}
       >
         <Ionicons name={category.icon as any} size={16} color={isSelected ? colors.text.inverse : category.color} />
-        <Text style={[styles.categoryChipText, isSelected && styles.categoryChipTextSelected]}>{category.name}</Text>
+        <Text style={[styles.categoryChipText, isSelected ? styles.categoryChipTextSelected : null]}>
+          {category.name}
+        </Text>
       </Pressable>
     );
   };

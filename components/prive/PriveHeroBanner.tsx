@@ -87,7 +87,7 @@ const PriveHeroBanner: React.FC<PriveHeroBannerProps> = ({
 }) => {
   const flatListRef = useRef<FlashList<PriveBanner>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const autoScrollTimer = useRef<NodeJS.Timeout | null>(null);
+  const autoScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (banners.length <= 1) return;

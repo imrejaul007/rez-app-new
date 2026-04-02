@@ -121,7 +121,7 @@ function BookTablePage() {
         if (!isMounted()) return;
         setRestaurants(dineIn.length > 0 ? dineIn : allStores.slice(0, 20));
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load. Pull down to refresh.');
     } finally {
@@ -159,7 +159,7 @@ function BookTablePage() {
         const firstAvailable = diningSlots.find(s => s.available);
         if (firstAvailable) setSelectedTime(firstAvailable.time);
       }
-    } catch (err) {
+    } catch (err: any) {
       // Fallback to default slots
       const fallback: TimeSlot[] = [
         '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
@@ -327,7 +327,7 @@ function BookTablePage() {
             <Text style={styles.storeCuisine} numberOfLines={1}>{getCuisineTags(store)}</Text>
             <View style={styles.storeMetaRow}>
               <View style={styles.storeRating}>
-                <Ionicons name="star" size={12} color={COLORS.goldDark} />
+                <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
                 <Text style={styles.storeRatingText}>{rating}</Text>
                 <Text style={styles.storeReviewCount}>({reviewCount})</Text>
               </View>
@@ -461,7 +461,7 @@ function BookTablePage() {
             <View style={styles.confirmCard}>
               <View style={styles.confirmRow}>
                 <View style={[styles.confirmRowIcon, { backgroundColor: 'rgba(251,191,36,0.12)' }]}>
-                  <Ionicons name="restaurant" size={18} color={COLORS.goldDark} />
+                  <Ionicons name="restaurant" size={18} color={(COLORS as any).goldDark} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.confirmRowLabel}>Restaurant</Text>
@@ -515,7 +515,7 @@ function BookTablePage() {
                 end={{ x: 1, y: 1 }}
               >
                 <View style={styles.confirmNoteIconWrap}>
-                  <Ionicons name="gift" size={16} color={COLORS.goldDark} />
+                  <Ionicons name="gift" size={16} color={(COLORS as any).goldDark} />
                 </View>
                 <Text style={styles.confirmNoteText}>
                   The restaurant will confirm shortly. Earn bonus coins on check-in!
@@ -643,18 +643,18 @@ function BookTablePage() {
             return (
               <Pressable
                 key={i}
-                style={[styles.dateChip, isSelected && styles.dateChipActive]}
+                style={[styles.dateChip, isSelected ? styles.dateChipActive : null]}
                 onPress={() => setSelectedDate(date)}
                 accessibilityLabel={`${isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'short' })}${isSelected ? ', selected' : ''}`}
                 accessibilityRole="button"
               >
-                <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>
                   {isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}
                 </Text>
-                <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>
+                <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>
                   {date.getDate()}
                 </Text>
-                <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>
                   {date.toLocaleDateString(undefined, { month: 'short' })}
                 </Text>
               </Pressable>
@@ -732,7 +732,7 @@ function BookTablePage() {
             return (
               <Pressable
                 key={size}
-                style={[styles.partyChip, isSelected && styles.partyChipActive]}
+                style={[styles.partyChip, isSelected ? styles.partyChipActive : null]}
                 onPress={() => setPartySize(size)}
                 accessibilityLabel={`${size} ${size === 1 ? 'guest' : 'guests'}${isSelected ? ', selected' : ''}`}
                 accessibilityRole="button"
@@ -742,7 +742,7 @@ function BookTablePage() {
                   size={14}
                   color={isSelected ? COLORS.white : COLORS.textSecondary}
                 />
-                <Text style={[styles.partyText, isSelected && styles.partyTextActive]}>
+                <Text style={[styles.partyText, isSelected ? styles.partyTextActive : null]}>
                   {size}
                 </Text>
               </Pressable>
@@ -828,7 +828,7 @@ function BookTablePage() {
         {/* Bonus note */}
         <View style={styles.bonusNote}>
           <View style={styles.bonusIconWrap}>
-            <Ionicons name="wallet-outline" size={14} color={COLORS.goldDark} />
+            <Ionicons name="wallet-outline" size={14} color={(COLORS as any).goldDark} />
           </View>
           <Text style={styles.bonusText}>
             No pre-payment required. Earn bonus coins when you check in at the restaurant!

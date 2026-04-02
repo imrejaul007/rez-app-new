@@ -78,21 +78,21 @@ class VerificationService {
    * Get verification status for all zones
    */
   async getStatus(): Promise<ApiResponse<AllVerifications>> {
-    return apiClient.get('/user/verifications');
+    return apiClient.get<any>('/user/verifications');
   }
 
   /**
    * Get verification status for a specific zone
    */
   async getZoneStatus(zone: string): Promise<ApiResponse<VerificationStatus>> {
-    return apiClient.get(`/user/verifications/${zone}`);
+    return apiClient.get<any>(`/user/verifications/${zone}`);
   }
 
   /**
    * Get available verification methods for a zone
    */
   async getMethods(zone: string): Promise<ApiResponse<VerificationMethods>> {
-    return apiClient.get(`/user/verifications/methods/${zone}`);
+    return apiClient.get<any>(`/user/verifications/methods/${zone}`);
   }
 
   /**
@@ -136,11 +136,11 @@ class VerificationService {
         formData.append('additionalInfo', JSON.stringify(data.additionalInfo));
       }
 
-      return apiClient.post(`/user/verifications/${zone}`, formData);
+      return apiClient.post<any>(`/user/verifications/${zone}`, formData as any);
     }
 
     // No document, send as JSON
-    return apiClient.post(`/user/verifications/${zone}`, data);
+    return apiClient.post<any>(`/user/verifications/${zone}`, data as any);
   }
 
   /**
@@ -157,7 +157,7 @@ class VerificationService {
       name: file.name || 'document.jpg',
     } as any);
 
-    return apiClient.post(`/user/verifications/${zone}/upload`, formData);
+    return apiClient.post<any>(`/user/verifications/${zone}/upload`, formData as any);
   }
 }
 

@@ -121,7 +121,7 @@ function StoreOffersBuilder({
     <StoreOffersPreview
       offers={offers}
       onViewAll={onViewAll}
-      onApplyOffer={onApplyOffer}
+        onApplyOffer={onApplyOffer as any}
     />
   );
 }

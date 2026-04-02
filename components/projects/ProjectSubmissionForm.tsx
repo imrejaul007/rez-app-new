@@ -209,7 +209,7 @@ function ProjectSubmissionForm({
         if (!isMounted()) return;
         setSelectedImages(prev => [...prev, ...imageUris]);
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to select images. Please try again.');
     }
   };
@@ -234,7 +234,7 @@ function ProjectSubmissionForm({
         if (!isMounted()) return;
         setSelectedVideo(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to select video. Please try again.');
     }
   };
@@ -278,7 +278,7 @@ function ProjectSubmissionForm({
         if (!isMounted()) return;
         setLocationName('Current Location');
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to get location. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -422,7 +422,7 @@ function ProjectSubmissionForm({
         contentType,
         metadata,
       });
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to submit project. Please try again.');
     } finally {
       if (!isMounted()) return;

@@ -91,7 +91,7 @@ function MallHeroCarousel({ banners = DEFAULT_BANNERS }: MallHeroCarouselProps) 
   const router = useRouter();
   const flatListRef = useRef<FlashList<CarouselItem>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const autoScrollTimer = useRef<NodeJS.Timeout | null>(null);
+  const autoScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-scroll effect
   useEffect(() => {

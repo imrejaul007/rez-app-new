@@ -36,7 +36,7 @@ import EarningsPieChart from '@/components/earnings/EarningsPieChart';
 import EarningsStatsCard from '@/components/earnings/EarningsStatsCard';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import analyticsService from '@/services/analyticsService';
-import { Paths, File } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -151,7 +151,7 @@ const MyEarningsPage = () => {
             transaction_count: response.data.statistics?.transactionCount,
           });
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load earnings. Please try again.');
       } finally {
@@ -262,14 +262,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
       const isAvailable = await Sharing.isAvailableAsync();
 
       if (isAvailable) {
-        const file = new File(Paths.document, `earnings_report_${Date.now()}.csv`);
-        const writer = file.writableStream();
-        const encoder = new TextEncoder();
-        const writerObj = writer.getWriter();
-        await writerObj.write(encoder.encode(csvContent));
-        await writerObj.close();
+        const fileUri = `${FileSystem.documentDirectory}earnings_report_${Date.now()}.csv`;
+        await FileSystem.writeAsStringAsync(fileUri, csvContent, { encoding: FileSystem.EncodingType.UTF8 });
 
-        await Sharing.shareAsync(file.uri, {
+        await Sharing.shareAsync(fileUri, {
           mimeType: 'text/csv',
           dialogTitle: 'Export Earnings Report',
         });
@@ -280,7 +276,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
           title: 'My Earnings Report',
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       platformAlert('Export Error', 'Failed to export earnings report. Please try again.');
     }
   };
@@ -373,10 +369,12 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
           {PERIOD_OPTIONS.map((option) => (
             <Pressable
               key={option.value}
-              style={[styles.periodChip, selectedPeriod === option.value && styles.periodChipActive]}
+              style={[styles.periodChip, selectedPeriod === option.value ? styles.periodChipActive : null]}
               onPress={() => handlePeriodChange(option.value)}
             >
-              <Text style={[styles.periodChipText, selectedPeriod === option.value && styles.periodChipTextActive]}>
+              <Text
+                style={[styles.periodChipText, selectedPeriod === option.value ? styles.periodChipTextActive : null]}
+              >
                 {option.label}
               </Text>
             </Pressable>

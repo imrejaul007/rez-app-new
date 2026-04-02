@@ -67,11 +67,12 @@ function BirthdayRewardsPage() {
           id: offer._id,
           store: offer.store?.name || offer.merchantName || BRAND.APP_NAME,
           title: offer.title,
-          discount: offer.discount?.type === 'percentage'
-            ? `${offer.discount.value}%`
-            : offer.discount?.type === 'fixed'
-              ? `${offer.discount.value}`
-              : 'FREE',
+          discount:
+            offer.discount?.type === 'percentage'
+              ? `${offer.discount.value}%`
+              : offer.discount?.type === 'fixed'
+                ? `${offer.discount.value}`
+                : 'FREE',
           description: offer.description || '',
           image: offer.images?.[0] || offer.store?.logo,
         }));
@@ -125,9 +126,7 @@ function BirthdayRewardsPage() {
       </View>
 
       <View style={styles.giftContent}>
-        {deal.image && (
-          <CachedImage source={deal.image} style={styles.giftImage} contentFit="cover" />
-        )}
+        {deal.image && <CachedImage source={deal.image} style={styles.giftImage} contentFit="cover" />}
         <View style={styles.giftInfo}>
           <View style={styles.giftHeader}>
             <View style={styles.giftStoreInfo}>
@@ -144,11 +143,7 @@ function BirthdayRewardsPage() {
             </View>
           </View>
 
-          <Pressable
-            style={styles.claimButton}
-            onPress={() => handleClaimGift(deal)}
-           
-          >
+          <Pressable style={styles.claimButton} onPress={() => handleClaimGift(deal)}>
             <LinearGradient
               colors={[colors.warningScale[400], colors.brand.orangeDark]}
               start={{ x: 0, y: 0 }}
@@ -166,7 +161,7 @@ function BirthdayRewardsPage() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.warningScale[400]} translucent />
-      
+
       {/* Header with Gradient */}
       <LinearGradient
         colors={[colors.warningScale[400], colors.brand.orangeDark, colors.error]}
@@ -178,7 +173,7 @@ function BirthdayRewardsPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
@@ -198,7 +193,7 @@ function BirthdayRewardsPage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {loading && (
@@ -223,9 +218,7 @@ function BirthdayRewardsPage() {
                 </View>
 
                 <ThemedText style={styles.heroTitle}>Happy Birthday! 🎉</ThemedText>
-                <ThemedText style={styles.heroSubtitle}>
-                  Enjoy exclusive gifts & rewards this week
-                </ThemedText>
+                <ThemedText style={styles.heroSubtitle}>Enjoy exclusive gifts & rewards this week</ThemedText>
 
                 <View style={styles.heroStats}>
                   <View style={styles.heroStat}>
@@ -244,12 +237,8 @@ function BirthdayRewardsPage() {
                   <Ionicons name="calendar" size={28} color={colors.brand.purpleSoft} />
                 </View>
                 <View style={styles.countdownContent}>
-                  <ThemedText style={styles.countdownTitle}>
-                    Your birthday: {birthdayDate}
-                  </ThemedText>
-                  <ThemedText style={styles.countdownSubtitle}>
-                    {daysUntil} days until your special day
-                  </ThemedText>
+                  <ThemedText style={styles.countdownTitle}>Your birthday: {birthdayDate}</ThemedText>
+                  <ThemedText style={styles.countdownSubtitle}>{daysUntil} days until your special day</ThemedText>
                 </View>
                 <Pressable style={styles.updateButton}>
                   <ThemedText style={styles.updateButtonText}>Update</ThemedText>
@@ -285,9 +274,7 @@ function BirthdayRewardsPage() {
             </View>
             <View style={styles.bonusCoinsContent}>
               <ThemedText style={styles.bonusCoinsValue}>500 Bonus Coins</ThemedText>
-              <ThemedText style={styles.bonusCoinsSubtitle}>
-                Auto-credited to your wallet
-              </ThemedText>
+              <ThemedText style={styles.bonusCoinsSubtitle}>Auto-credited to your wallet</ThemedText>
               <View style={styles.creditedBadge}>
                 <ThemedText style={styles.creditedBadgeText}>Credited</ThemedText>
               </View>
@@ -300,18 +287,19 @@ function BirthdayRewardsPage() {
           <Ionicons name="balloon" size={24} color={colors.brand.purpleSoft} />
           <View style={styles.partyContent}>
             <ThemedText style={styles.partyTitle}>Share Your Birthday Joy</ThemedText>
-            <ThemedText style={styles.partySubtitle}>
-              Invite friends & both get bonus coins
-            </ThemedText>
+            <ThemedText style={styles.partySubtitle}>Invite friends & both get bonus coins</ThemedText>
           </View>
-          <Pressable style={styles.shareButton} onPress={async () => {
-            try {
-              await Share.share({
-                message: `It's my birthday! Check out my birthday rewards on ${BRAND.APP_NAME}!`,
-                title: 'Birthday Rewards',
-              });
-            } catch (_e) {}
-          }}>
+          <Pressable
+            style={styles.shareButton}
+            onPress={async () => {
+              try {
+                await Share.share({
+                  message: `It's my birthday! Check out my birthday rewards on ${BRAND.APP_NAME}!`,
+                  title: 'Birthday Rewards',
+                });
+              } catch (_e) {}
+            }}
+          >
             <ThemedText style={styles.shareButtonText}>Share</ThemedText>
           </Pressable>
         </View>
@@ -328,7 +316,6 @@ function BirthdayRewardsPage() {
               handleClaimGift(firstDeal);
             }
           }}
-
         >
           <LinearGradient
             colors={[colors.warningScale[400], colors.brand.pink]}

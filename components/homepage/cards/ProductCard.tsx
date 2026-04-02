@@ -46,7 +46,7 @@ function ProductCard({
   });
 
   // Memoize product ID to avoid recalculation - use helper for consistency
-  const productId = useMemo(() => getProductId(product), [product._id, product.id]);
+  const productId = useMemo(() => getProductId(product), [(product as any)._id, product.id]);
 
   // Check if product is in cart and get quantity - ONLY for THIS product
   const { cartItem, quantityInCart, isInCart } = useMemo(() => {
@@ -113,17 +113,17 @@ function ProductCard({
           productId,
           productName: product.name,
           productImage: product.image,
-          price: price.current,
-          originalPrice: price.original,
+          price: Number(price.current),
+          originalPrice: Number(price.original),
           discount: priceData.discount,
-          rating: product.rating?.value || 0,
-          reviewCount: product.rating?.count || 0,
+          rating: Number(product.rating?.value || 0),
+          reviewCount: Number(product.rating?.count || 0),
           brand: product.brand,
           category: product.category || 'General',
           availability: isOutOfStock ? 'OUT_OF_STOCK' : isLowStock ? 'LIMITED' : 'IN_STOCK',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -225,7 +225,7 @@ function ProductCard({
         await cartActions.removeItem(cartItem!.id);
         showSuccess(`${product.name} removed from cart`);
       }
-    } catch (error) {
+    } catch (error: any) {
       showError(`Failed to update ${product.name}`);
     }
   }, [quantityInCart, cartActions, cartItem, showSuccess, showError, product.name]);
@@ -240,7 +240,7 @@ function ProductCard({
       } else {
         showError(`Maximum quantity reached for ${product.name}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       showError(`Failed to update ${product.name}`);
     }
   }, [quantityInCart, stock, cartActions, cartItem, showSuccess, showError, product.name]);
@@ -252,7 +252,7 @@ function ProductCard({
       try {
         await onAddToCart(product);
         showSuccess(`${product.name} added to cart`);
-      } catch (error) {
+      } catch (error: any) {
         showError(`Failed to add ${product.name} to cart`);
       }
     }
@@ -317,10 +317,10 @@ function ProductCard({
           {product.rating && (
             <View style={styles.ratingContainer}>
               <RatingStars
-                rating={product.rating.value}
+                rating={Number(product.rating.value)}
                 size={12}
                 showCount={true}
-                count={product.rating.count}
+                count={Number(product.rating.count)}
               />
             </View>
           )}
@@ -491,7 +491,7 @@ const MemoizedProductCard = memo(ProductCard, (prevProps, nextProps) => {
     prevPrice?.current !== nextPrice?.current ||
     prevPrice?.original !== nextPrice?.original ||
     prevPrice?.discount !== nextPrice?.discount ||
-    prevPrice?.selling !== nextPrice?.selling ||
+    (prevPrice as any)?.selling !== (nextPrice as any)?.selling ||
     prevProps.product.inventory?.stock !== nextProps.product.inventory?.stock ||
     prevProps.product.availabilityStatus !== nextProps.product.availabilityStatus ||
     prevProps.product.name !== nextProps.product.name ||

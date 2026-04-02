@@ -33,14 +33,9 @@ const REASONS = [
 function CreateDisputeScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
-  const params = useLocalSearchParams<{
-    targetType?: string;
-    targetId?: string;
-    orderRef?: string;
-    addEvidence?: string;
-    disputeId?: string;
-  }>();
+  const { state } = useAuth();
+  const isAuthenticated = state.isAuthenticated;
+  const params = useLocalSearchParams<any>();
 
   const isAddingEvidence = params.addEvidence === 'true' && params.disputeId;
 
@@ -147,7 +142,7 @@ function CreateDisputeScreen() {
               {REASONS.map((r) => (
                 <TouchableOpacity
                   key={r.key}
-                  style={[styles.reasonChip, reason === r.key && styles.reasonChipActive]}
+                  style={[styles.reasonChip, reason === r.key ? styles.reasonChipActive : null]}
                   onPress={() => setReason(r.key)}
                 >
                   <Ionicons
@@ -155,7 +150,7 @@ function CreateDisputeScreen() {
                     size={18}
                     color={reason === r.key ? colors.text.inverse : colors.neutral[500]}
                   />
-                  <Text style={[styles.reasonText, reason === r.key && styles.reasonTextActive]}>{r.label}</Text>
+                  <Text style={[styles.reasonText, reason === r.key ? styles.reasonTextActive : null]}>{r.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>

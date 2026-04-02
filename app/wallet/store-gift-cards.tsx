@@ -159,7 +159,7 @@ function EmptyState({ tab }: { tab: FilterTab }) {
   const m = messages[tab];
   return (
     <View style={styles.emptyState}>
-      <Ionicons name={m.icon as any} size={48} color={colors.textMuted || '#9CA3AF'} />
+      <Ionicons name={m.icon as any} size={48} color={(colors as any).textMuted || '#9CA3AF'} />
       <Text style={styles.emptyTitle}>{m.title}</Text>
       <Text style={styles.emptyBody}>{m.body}</Text>
     </View>
@@ -186,7 +186,7 @@ function StoreGiftCardsScreen() {
         if (res.success && res.data?.giftCards) {
           setCards(res.data.giftCards);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -215,7 +215,7 @@ function StoreGiftCardsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={colors.text || '#111827'} />
+          <Ionicons name="arrow-back" size={24} color={(colors.text as any) || '#111827'} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Store Gift Cards</Text>
         <View style={{ width: 40 }} />
@@ -228,10 +228,10 @@ function StoreGiftCardsScreen() {
           return (
             <TouchableOpacity
               key={tab}
-              style={[styles.tab, activeTab === tab && styles.tabActive]}
+              style={[styles.tab, activeTab === tab ? styles.tabActive : null]}
               onPress={() => setActiveTab(tab)}
             >
-              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+              <Text style={[styles.tabText, activeTab === tab ? styles.tabTextActive : null]}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 {count > 0 ? ` (${count})` : ''}
               </Text>
@@ -337,4 +337,4 @@ const styles = StyleSheet.create({
   emptyBody: { fontSize: 14, color: '#6B7280', textAlign: 'center', lineHeight: 20 },
 });
 
-export default withErrorBoundary(StoreGiftCardsScreen);
+export default withErrorBoundary(StoreGiftCardsScreen, 'StoreGiftCards');

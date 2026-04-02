@@ -231,7 +231,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
             freeDelivery: false,
             prioritySupport: false,
             exclusiveDeals: false,
-          },
+          } as any,
           usage: {
             totalSavings: 0,
             ordersThisMonth: 0,
@@ -240,6 +240,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
             deliveryFeesSaved: 0,
             exclusiveDealsUsed: 0,
           },
+          daysRemaining: 365,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -256,7 +257,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
       ]);
 
       dispatch({ type: 'SUBSCRIPTION_LOADED', payload: { subscription, tiers } });
-    } catch (error) {
+    } catch (error: any) {
       // Graceful degradation - set free tier as default
       const freeTierDefault: CurrentSubscription = {
         _id: 'free-default',
@@ -273,7 +274,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
           freeDelivery: false,
           prioritySupport: false,
           exclusiveDeals: false,
-        },
+        } as any,
         usage: {
           totalSavings: 0,
           ordersThisMonth: 0,

@@ -27,12 +27,12 @@ const ThinkOutsideTheBox: React.FC<Props> = ({ experienceType = 'default', searc
         const fetchItems = async () => {
             try {
                 setLoading(true);
-                const response = await experiencesApi.getUniqueFinds(10, experienceType, searchQuery);
+                const response = await (experiencesApi.getUniqueFinds as any)(10, experienceType, searchQuery);
                 if (response.success && response.data) {
                     if (!isMounted()) return;
                     setItems(response.data);
                 }
-            } catch (e) {
+            } catch (e: any) {
                 // silently handle
             } finally {
                 if (!isMounted()) return;

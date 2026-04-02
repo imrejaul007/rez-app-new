@@ -60,7 +60,7 @@ class StockNotificationsApi {
   async subscribe(data: StockNotificationRequest) {
     try {
 
-      const response = await apiClient.post(this.baseUrl, data);
+      const response = await apiClient.post<any>(this.baseUrl, data as any);
 
       return response.data;
     } catch (error: any) {
@@ -78,9 +78,7 @@ class StockNotificationsApi {
   }) {
     try {
 
-      const response = await apiClient.get(`${this.baseUrl}/my-notifications`, {
-        params,
-      });
+      const response = await apiClient.get<any>(`${this.baseUrl}/my-notifications`, params as any);
 
       return response.data;
     } catch (error: any) {
@@ -93,9 +91,7 @@ class StockNotificationsApi {
    */
   async checkNotification(productId: string, variantId?: string) {
     try {
-      const response = await apiClient.get(`${this.baseUrl}/check/${productId}`, {
-        params: variantId ? { variantId } : {},
-      });
+      const response = await apiClient.get<any>(`${this.baseUrl}/check/${productId}`, variantId ? { variantId } : undefined);
 
       return response.data;
     } catch (error: any) {
@@ -109,7 +105,7 @@ class StockNotificationsApi {
   async cancelNotification(notificationId: string) {
     try {
 
-      const response = await apiClient.delete(`${this.baseUrl}/${notificationId}`);
+      const response = await apiClient.delete<any>(`${this.baseUrl}/${notificationId}`);
 
       return response.data;
     } catch (error: any) {
@@ -141,7 +137,7 @@ class StockNotificationsApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -163,7 +159,7 @@ class StockNotificationsApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -212,7 +208,7 @@ class StockNotificationsApi {
    */
   async getProductStats(productId: string) {
     try {
-      const response = await apiClient.get(`${this.baseUrl}/stats/${productId}`);
+      const response = await apiClient.get<any>(`${this.baseUrl}/stats/${productId}`);
       return response.data;
     } catch (error: any) {
       throw error;

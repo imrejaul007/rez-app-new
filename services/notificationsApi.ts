@@ -164,32 +164,32 @@ export interface NotificationTemplate {
 class NotificationsService {
   // Get user notifications with filtering and pagination
   async getNotifications(query: NotificationsQuery = {}): Promise<ApiResponse<NotificationsResponse>> {
-    return apiClient.get('/notifications', query);
+    return apiClient.get<any>('/notifications', query as any);
   }
 
   // Get single notification by ID
   async getNotificationById(notificationId: string): Promise<ApiResponse<Notification>> {
-    return apiClient.get(`/notifications/${notificationId}`);
+    return apiClient.get<any>(`/notifications/${notificationId}`);
   }
 
   // Mark notification as read
   async markAsRead(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch('/notifications/read', { notificationIds: [notificationId] });
+    return apiClient.patch<any>('/notifications/read', { notificationIds: [notificationId] });
   }
 
   // Mark all notifications as read
   async markAllAsRead(): Promise<ApiResponse<{ message: string; count: number }>> {
-    return apiClient.patch('/notifications/read');
+    return apiClient.patch<any>('/notifications/read');
   }
 
   // Mark notification as unread
   async markAsUnread(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/notifications/${notificationId}/unread`);
+    return apiClient.patch<any>(`/notifications/${notificationId}/unread`);
   }
 
   // Delete notification
   async deleteNotification(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/notifications/${notificationId}`);
+    return apiClient.delete<any>(`/notifications/${notificationId}`);
   }
 
   // Delete multiple notifications
@@ -197,26 +197,26 @@ class NotificationsService {
     message: string;
     deleted: number;
   }>> {
-    return apiClient.post('/notifications/bulk-delete', {
+    return apiClient.post<any>('/notifications/bulk-delete', {
       ids: notificationIds
     });
   }
 
   // Clear all notifications
   async clearAllNotifications(): Promise<ApiResponse<{ message: string; count: number }>> {
-    return apiClient.delete('/notifications/clear-all');
+    return apiClient.delete<any>('/notifications/clear-all');
   }
 
   // Get notification preferences
   async getNotificationPreferences(): Promise<ApiResponse<NotificationPreferences>> {
-    return apiClient.get('/notifications/preferences');
+    return apiClient.get<any>('/notifications/preferences');
   }
 
   // Update notification preferences
   async updateNotificationPreferences(
     preferences: Partial<NotificationPreferences>
   ): Promise<ApiResponse<NotificationPreferences>> {
-    return apiClient.patch('/notifications/preferences', preferences);
+    return apiClient.patch<any>('/notifications/preferences', preferences);
   }
 
   // Subscribe to push notifications
@@ -233,20 +233,20 @@ class NotificationsService {
       version?: string;
     };
   }): Promise<ApiResponse<PushSubscription>> {
-    return apiClient.post('/notifications/push/subscribe', subscription);
+    return apiClient.post<any>('/notifications/push/subscribe', subscription);
   }
 
   // Unsubscribe from push notifications
   async unsubscribeFromPush(subscriptionId?: string): Promise<ApiResponse<{ message: string }>> {
     if (subscriptionId) {
-      return apiClient.delete(`/notifications/push/subscribe/${subscriptionId}`);
+      return apiClient.delete<any>(`/notifications/push/subscribe/${subscriptionId}`);
     }
-    return apiClient.delete('/notifications/push/subscribe');
+    return apiClient.delete<any>('/notifications/push/subscribe');
   }
 
   // Get push subscriptions
   async getPushSubscriptions(): Promise<ApiResponse<PushSubscription[]>> {
-    return apiClient.get('/notifications/push/subscriptions');
+    return apiClient.get<any>('/notifications/push/subscriptions');
   }
 
   // Test push notification
@@ -254,7 +254,7 @@ class NotificationsService {
     subscriptionId: string,
     message: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/notifications/push/test/${subscriptionId}`, {
+    return apiClient.post<any>(`/notifications/push/test/${subscriptionId}`, {
       message
     });
   }
@@ -277,7 +277,7 @@ class NotificationsService {
     sent: number;
     failed: number;
   }>> {
-    return apiClient.post('/notifications/send', notification);
+    return apiClient.post<any>('/notifications/send', notification);
   }
 
   // Get notification statistics
@@ -308,12 +308,12 @@ class NotificationsService {
       unsubscribeRate: number;
     };
   }>> {
-    return apiClient.get('/notifications/stats', dateRange);
+    return apiClient.get<any>('/notifications/stats', dateRange);
   }
 
   // Get notification templates (admin use)
   async getNotificationTemplates(): Promise<ApiResponse<NotificationTemplate[]>> {
-    return apiClient.get('/notifications/templates');
+    return apiClient.get<any>('/notifications/templates');
   }
 
   // Create notification template (admin use)
@@ -326,7 +326,7 @@ class NotificationsService {
     variables?: string[];
     channels: ('push' | 'email' | 'sms' | 'inApp')[];
   }): Promise<ApiResponse<NotificationTemplate>> {
-    return apiClient.post('/notifications/templates', template);
+    return apiClient.post<any>('/notifications/templates', template);
   }
 
   // Update notification template (admin use)
@@ -341,7 +341,7 @@ class NotificationsService {
       active: boolean;
     }>
   ): Promise<ApiResponse<NotificationTemplate>> {
-    return apiClient.patch(`/notifications/templates/${templateId}`, updates);
+    return apiClient.patch<any>(`/notifications/templates/${templateId}`, updates);
   }
 
   // Send notification using template
@@ -359,7 +359,7 @@ class NotificationsService {
     sent: number;
     failed: number;
   }>> {
-    return apiClient.post(`/notifications/templates/${templateId}/send`, data);
+    return apiClient.post<any>(`/notifications/templates/${templateId}/send`, data as any);
   }
 
   // Get unread notifications count
@@ -368,7 +368,7 @@ class NotificationsService {
     byType: Record<Notification['type'], number>;
     byPriority: Record<Notification['priority'], number>;
   }>> {
-    return apiClient.get('/notifications/unread-count');
+    return apiClient.get<any>('/notifications/unread-count');
   }
 
   // Snooze notification
@@ -376,29 +376,29 @@ class NotificationsService {
     notificationId: string,
     snoozeUntil: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/notifications/${notificationId}/snooze`, {
+    return apiClient.patch<any>(`/notifications/${notificationId}/snooze`, {
       snoozeUntil
     });
   }
 
   // Pin notification
   async pinNotification(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/notifications/${notificationId}/pin`);
+    return apiClient.patch<any>(`/notifications/${notificationId}/pin`);
   }
 
   // Unpin notification
   async unpinNotification(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/notifications/${notificationId}/unpin`);
+    return apiClient.patch<any>(`/notifications/${notificationId}/unpin`);
   }
 
   // Get pinned notifications
   async getPinnedNotifications(): Promise<ApiResponse<Notification[]>> {
-    return apiClient.get('/notifications/pinned');
+    return apiClient.get<any>('/notifications/pinned');
   }
 
   // Archive notification
   async archiveNotification(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/notifications/${notificationId}/archive`);
+    return apiClient.patch<any>(`/notifications/${notificationId}/archive`);
   }
 
   // Get archived notifications
@@ -406,12 +406,12 @@ class NotificationsService {
     page: number = 1,
     limit: number = 20
   ): Promise<ApiResponse<NotificationsResponse>> {
-    return apiClient.get('/notifications/archived', { page, limit });
+    return apiClient.get<any>('/notifications/archived', { page, limit });
   }
 
   // Restore archived notification
   async restoreNotification(notificationId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/notifications/${notificationId}/restore`);
+    return apiClient.patch<any>(`/notifications/${notificationId}/restore`);
   }
 }
 

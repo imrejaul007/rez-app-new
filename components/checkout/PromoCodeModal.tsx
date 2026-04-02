@@ -214,7 +214,7 @@ function PromoCodeModal({
                               </View>
                             )}
                             {promo.minOrderValue > 0 && (
-                              <ThemedText style={[styles.minOrderText, minOrderEligible && styles.eligibleMinOrder]}>
+                              <ThemedText style={[styles.minOrderText, minOrderEligible ? styles.eligibleMinOrder : null]}>
                                 Min order: {currencySymbol}{promo.minOrderValue}
                               </ThemedText>
                             )}
@@ -235,7 +235,7 @@ function PromoCodeModal({
 
           <View style={styles.modalFooter}>
             <Pressable
-              style={[styles.applyPromoButton, applyingPromo && styles.applyPromoButtonDisabled]}
+              style={[styles.applyPromoButton, applyingPromo ? styles.applyPromoButtonDisabled : null]}
               onPress={onApplyPromoCode}
               disabled={applyingPromo}
               accessibilityLabel={applyingPromo ? 'Applying promo code' : 'Apply promo code'}

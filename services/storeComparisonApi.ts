@@ -85,7 +85,7 @@ class StoreComparisonApi {
         this.basePath,
         { storeIds, name }
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -104,7 +104,7 @@ class StoreComparisonApi {
         `${this.basePath}/user/my-comparisons`,
         params
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -122,7 +122,7 @@ class StoreComparisonApi {
       const response = await apiClient.get<StoreComparisonResponse>(
         `${this.basePath}/${comparisonId}`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -144,7 +144,7 @@ class StoreComparisonApi {
         `${this.basePath}/${comparisonId}`,
         updates
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -162,7 +162,7 @@ class StoreComparisonApi {
       const response = await apiClient.delete<null>(
         `${this.basePath}/${comparisonId}`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -184,7 +184,7 @@ class StoreComparisonApi {
         `${this.basePath}/${comparisonId}/stores`,
         { storeId }
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -205,7 +205,7 @@ class StoreComparisonApi {
       const response = await apiClient.delete<StoreComparisonResponse>(
         `${this.basePath}/${comparisonId}/stores/${storeId}`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -223,7 +223,7 @@ class StoreComparisonApi {
       const response = await apiClient.get<{ stats: ComparisonStats }>(
         `${this.basePath}/user/stats`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -241,7 +241,7 @@ class StoreComparisonApi {
       const response = await apiClient.delete<{ deletedCount: number }>(
         `${this.basePath}/user/clear-all`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,

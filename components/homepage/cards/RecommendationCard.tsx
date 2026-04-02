@@ -25,12 +25,12 @@ const arePropsEqual = (prevProps: RecommendationCardProps, nextProps: Recommenda
   const nextRec = nextProps.recommendation;
 
   return (
-    (prevRec._id || prevRec.id) === (nextRec._id || nextRec.id) &&
+    ((prevRec as any)._id || prevRec.id) === ((nextRec as any)._id || nextRec.id) &&
     prevProps.width === nextProps.width &&
     prevProps.showReason === nextProps.showReason &&
     prevRec.name === nextRec.name &&
-    prevRec.price.current === nextRec.price.current &&
-    prevRec.price.original === nextRec.price.original &&
+    (prevRec as any).price?.current === (nextRec as any).price?.current &&
+    (prevRec as any).price?.original === (nextRec as any).price?.original &&
     prevRec.rating?.value === nextRec.rating?.value &&
     prevRec.inventory?.stock === nextRec.inventory?.stock &&
     prevRec.availabilityStatus === nextRec.availabilityStatus
@@ -67,7 +67,7 @@ function RecommendationCard({
 
   // Check if product is in cart and get quantity
   const { productId, cartItem, quantityInCart, isInCart } = useMemo(() => {
-    const id = recommendation._id || recommendation.id;
+    const id = (recommendation as any)._id || recommendation.id;
     const item = cartState.items.find(i => i.productId === id);
     const qty = item?.quantity || 0;
     const inCart = qty > 0;
@@ -78,11 +78,11 @@ function RecommendationCard({
       quantityInCart: qty,
       isInCart: inCart
     };
-  }, [recommendation._id, recommendation.id, cartState.items, cartState.items.length]);
+  }, [(recommendation as any)._id, recommendation.id, cartState.items, cartState.items.length]);
   // Get currency from recommendation data
   const productCurrency = useMemo(() => {
-    return recommendation.price?.currency || recommendation.pricing?.currency || 'INR';
-  }, [recommendation.price?.currency, recommendation.pricing?.currency]);
+    return recommendation.price?.currency || (recommendation as any).pricing?.currency || 'INR';
+  }, [recommendation.price?.currency, (recommendation as any).pricing?.currency]);
 
   // Memoize price formatting - uses product's currency
   const formattedCurrentPrice = useMemo(() => {
@@ -126,17 +126,17 @@ function RecommendationCard({
           productId,
           productName: recommendation.name,
           productImage: recommendation.image,
-          price: recommendation.price.current,
-          originalPrice: recommendation.price.original,
+          price: (recommendation.price as any)?.current,
+          originalPrice: (recommendation.price as any)?.original,
           discount: discountPercentage,
-          rating: recommendation.rating?.value || 0,
-          reviewCount: recommendation.rating?.count || 0,
+          rating: Number(recommendation.rating?.value || 0),
+          reviewCount: Number(recommendation.rating?.count || 0),
           brand: recommendation.brand,
           category: recommendation.category || 'General',
           availability: isOutOfStock ? 'OUT_OF_STOCK' : isLowStock ? 'LIMITED' : 'IN_STOCK',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

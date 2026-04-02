@@ -51,6 +51,7 @@ const createMockCoinBalance = (
   description: description || `There is no cap or limit on the uses of this coin`,
   iconPath: type === 'rez' ? WALLET_ASSETS.rezCoin : WALLET_ASSETS.promoCoin,
   backgroundColor: COIN_TYPES[type].color,
+  color: COIN_TYPES[type].color,
   isActive: true,
   earnedDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date in last 30 days
   lastUsed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Random date in last 7 days
@@ -141,11 +142,21 @@ export const mockTransactions: WalletTransaction[] = [
 export const mockWalletData: WalletData = {
   userId: 'user-12345',
   totalBalance: mockCoinBalances.reduce((sum, coin) => sum + coin.amount, 0),
+  availableBalance: mockCoinBalances.reduce((sum, coin) => sum + coin.amount, 0),
+  cashbackBalance: 0,
+  pendingRewards: 0,
   currency: DEFAULT_CURRENCY,
   formattedTotalBalance: formatCurrency(
     mockCoinBalances.reduce((sum, coin) => sum + coin.amount, 0)
   ),
   coins: mockCoinBalances,
+  brandedCoins: [],
+  brandedCoinsTotal: 0,
+  savingsInsights: {
+    totalSaved: 0,
+    thisMonth: 0,
+    avgPerVisit: 0,
+  },
   recentTransactions: mockTransactions,
   lastUpdated: new Date(),
   isActive: true,

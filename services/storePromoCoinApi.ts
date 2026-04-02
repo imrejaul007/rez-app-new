@@ -80,7 +80,7 @@ class StorePromoCoinApiService {
       const response = await apiClient.get<GetUserStoreCoinsResponse>(
         '/store-promo-coins'
       );
-      return response;
+      return response as any;
       
     } catch (error: any) {
       throw error;
@@ -96,7 +96,7 @@ class StorePromoCoinApiService {
       const response = await apiClient.get<GetStoreCoinsResponse>(
         `/store-promo-coins/store/${storeId}`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       throw error;
     }
@@ -117,7 +117,7 @@ class StorePromoCoinApiService {
         '/store-promo-coins/transactions',
         options
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       throw error;
     }
@@ -143,7 +143,7 @@ class StorePromoCoinApiService {
           orderId
         }
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       throw error;
     }

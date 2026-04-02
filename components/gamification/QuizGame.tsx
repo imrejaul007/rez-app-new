@@ -166,16 +166,16 @@ function QuizGame({ difficulty, category, onGameComplete }: QuizGameProps) {
     return (
       <Pressable
         key={`option-${optionLabels[index]}-${index}`}
-        style={[styles.optionButton, isSelected && styles.optionButtonSelected]}
+        style={[styles.optionButton, isSelected ? styles.optionButtonSelected : null]}
         onPress={() => setSelectedAnswer(index)}
         disabled={isSubmitting}
       >
-        <View style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
+        <View style={[styles.optionLabel, isSelected ? styles.optionLabelSelected : null]}>
           <ThemedText style={[styles.optionLabelText, isSelected && { color: colors.background.primary }]}>
             {optionLabels[index]}
           </ThemedText>
         </View>
-        <ThemedText style={[styles.optionText, isSelected && styles.optionTextSelected]}>
+        <ThemedText style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
           {option}
         </ThemedText>
       </Pressable>

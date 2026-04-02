@@ -42,7 +42,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.getVerificationStatus(id);
+      const response: any = await paymentVerificationService.getVerificationStatus(id);
 
       if (response.success && response.data) {
         setState(prev => ({
@@ -72,7 +72,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.initiateCardVerification(request);
+      const response: any = await paymentVerificationService.initiateCardVerification(request);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, isLoading: false }));
@@ -94,7 +94,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.complete3DSAuthentication(
+      const response: any = await paymentVerificationService.complete3DSAuthentication(
         verificationId,
         authData
       );
@@ -122,7 +122,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.initiateBankVerification(request);
+      const response: any = await paymentVerificationService.initiateBankVerification(request);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, isLoading: false }));
@@ -145,7 +145,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
       try {
-        const response = await paymentVerificationService.verifyMicroDeposits(
+        const response: any = await paymentVerificationService.verifyMicroDeposits(
           verificationId,
           deposits
         );
@@ -175,7 +175,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.initiateUPIVerification(request);
+      const response: any = await paymentVerificationService.initiateUPIVerification(request);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, isLoading: false }));
@@ -201,7 +201,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.uploadKYCDocuments(request);
+      const response: any = await paymentVerificationService.uploadKYCDocuments(request);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, isLoading: false }));
@@ -227,7 +227,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.sendOTP(request);
+      const response: any = await paymentVerificationService.sendOTP(request);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, isLoading: false }));
@@ -249,7 +249,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.validateOTP({
+      const response: any = await paymentVerificationService.validateOTP({
         verificationId,
         otp,
       });
@@ -278,7 +278,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     try {
       const available = await paymentVerificationService.isBiometricAvailable();
       return available;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   }, []);
@@ -287,7 +287,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await paymentVerificationService.authenticateWithBiometric(prompt);
+      const response: any = await paymentVerificationService.authenticateWithBiometric(prompt);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, isLoading: false }));

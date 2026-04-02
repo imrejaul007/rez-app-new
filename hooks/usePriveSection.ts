@@ -166,7 +166,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
 
   // State - initialized with empty defaults (no mock data)
   const [userData, setUserData] = useState<PriveUserData>(
-    createEmptyUserData(user?.name || 'Privé Member')
+    createEmptyUserData(user?.profile?.firstName || 'Privé Member')
   );
   const [featuredOffers, setFeaturedOffers] = useState<PriveOffer[]>([]);
   const [highlights, setHighlights] = useState<{
@@ -211,7 +211,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
     setIsLoading(true);
 
     try {
-      const response = await priveApi.getDashboard();
+      const response: any = await priveApi.getDashboard();
 
       if (response.success && response.data) {
         const dashboard = response.data;
@@ -220,7 +220,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
         if (dashboard.user) {
           setUserData(prev => ({
             ...prev,
-            name: dashboard.user.name || prev.name,
+            name: (dashboard.user as any).name || prev.name,
             memberId: dashboard.user.memberId || prev.memberId,
             memberSince: dashboard.user.memberSince || prev.memberSince,
             validThru: dashboard.user.validThru || prev.validThru,
@@ -279,7 +279,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
             isCheckedIn: dashboard.dailyProgress.isCheckedIn,
             streak: dashboard.dailyProgress.streak,
             weeklyEarnings,
-            loops: (dashboard.dailyProgress.loops || []).map(loop => ({
+            loops: (dashboard.dailyProgress.loops || []).map((loop: any) => ({
               id: loop.id,
               name: loop.name,
               icon: loop.icon,
@@ -294,7 +294,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
 
         setError(null);
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('Failed to load Privé data');
     } finally {
       setIsLoading(false);
@@ -303,13 +303,13 @@ export const usePriveSection = (): UsePriveSectionReturn => {
 
   // Update user name when auth changes
   useEffect(() => {
-    if (user?.name) {
+    if (user?.profile?.firstName) {
       setUserData(prev => ({
         ...prev,
-        name: user?.name || 'Privé Member',
+        name: user?.profile?.firstName || 'Privé Member',
       }));
     }
-  }, [user?.name]);
+  }, [user?.profile?.firstName]);
 
   // Update pillars when eligibility changes (in background)
   useEffect(() => {
@@ -347,7 +347,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
         refreshEligibility(),
         fetchDashboardData(),
       ]);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to refresh');
     } finally {
       setIsRefreshing(false);
@@ -357,7 +357,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
   // Check-in function - now uses real API
   const checkIn = useCallback(async () => {
     try {
-      const response = await priveApi.checkIn();
+      const response: any = await priveApi.checkIn();
 
       if (response.success && response.data) {
         const { currentStreak, coinsEarned, totalEarned, message } = response.data;
@@ -381,7 +381,7 @@ export const usePriveSection = (): UsePriveSectionReturn => {
         // Sync wallet after earning coins
         refreshWallet().catch(() => {});
       }
-    } catch (err) {
+    } catch (err: any) {
       // Don't fabricate streak data on failure — show error
       setError('Check-in failed. Please try again.');
     }

@@ -35,21 +35,21 @@ class CategoryMetadataApiService {
    * Get vibes for a category
    */
   async getVibes(categorySlug: string): Promise<ApiResponse<{ vibes: Vibe[] }>> {
-    return apiClient.get(`${this.baseUrl}/${categorySlug}/vibes`);
+    return apiClient.get<any>(`${this.baseUrl}/${categorySlug}/vibes`);
   }
 
   /**
    * Get occasions for a category
    */
   async getOccasions(categorySlug: string): Promise<ApiResponse<{ occasions: Occasion[] }>> {
-    return apiClient.get(`${this.baseUrl}/${categorySlug}/occasions`);
+    return apiClient.get<any>(`${this.baseUrl}/${categorySlug}/occasions`);
   }
 
   /**
    * Get trending hashtags for a category
    */
   async getHashtags(categorySlug: string): Promise<ApiResponse<{ hashtags: TrendingHashtag[] }>> {
-    return apiClient.get(`${this.baseUrl}/${categorySlug}/hashtags`);
+    return apiClient.get<any>(`${this.baseUrl}/${categorySlug}/hashtags`);
   }
 
   /**

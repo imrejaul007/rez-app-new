@@ -106,31 +106,27 @@ const LabTestsPage: React.FC = () => {
 
       // Fetch lab tests (products with type 'service' and lab-test tag)
       const testsResponse = await apiClient.get('/products', {
-        params: {
-          productType: 'service',
-          tags: selectedCategory === 'all' ? 'lab-test' : `lab-test,${selectedCategory}`,
-          limit: 50,
-        },
+        productType: 'service',
+        tags: selectedCategory === 'all' ? 'lab-test' : `lab-test,${selectedCategory}`,
+        limit: 50,
       });
 
       // Fetch lab providers (stores with metadata.type = 'lab')
       const providersResponse = await apiClient.get('/stores', {
-        params: {
-          tags: 'lab',
-          limit: 20,
-        },
+        tags: 'lab',
+        limit: 20,
       });
 
       if (testsResponse.success && testsResponse.data) {
         if (!isMounted()) return;
-        setTests(testsResponse.data.products || []);
+        setTests((testsResponse.data as any).products || []);
       }
 
       if (providersResponse.success && providersResponse.data) {
         if (!isMounted()) return;
-        setProviders(providersResponse.data.stores || []);
+        setProviders((providersResponse.data as any).stores || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -173,7 +169,7 @@ const LabTestsPage: React.FC = () => {
       setIsBooking(true);
       const serviceAppointmentApi = (await import('@/services/serviceAppointmentApi')).default;
       const res = await serviceAppointmentApi.createServiceAppointment({
-        storeId: selectedProvider?._id || selectedProvider?.slug,
+        storeId: (selectedProvider?._id || selectedProvider?.slug) as string,
         serviceType: 'lab-test',
         appointmentDate: bookingForm.preferredDate || new Date().toISOString().split('T')[0],
         appointmentTime:
@@ -221,7 +217,7 @@ const LabTestsPage: React.FC = () => {
           accessibilityState={{ selected: selectedCategory === category.id }}
         >
           <Text style={styles.categoryIcon}>{category.icon}</Text>
-          <Text style={[styles.categoryText, selectedCategory === category.id && styles.categoryTextActive]}>
+          <Text style={[styles.categoryText, selectedCategory === category.id ? styles.categoryTextActive : null]}>
             {category.name}
           </Text>
         </Pressable>
@@ -483,7 +479,7 @@ const LabTestsPage: React.FC = () => {
                 ].map((slot) => (
                   <Pressable
                     key={slot.id}
-                    style={[styles.timeSlot, bookingForm.preferredTime === slot.id && styles.timeSlotActive]}
+                    style={[styles.timeSlot, bookingForm.preferredTime === slot.id ? styles.timeSlotActive : null]}
                     onPress={() => setBookingForm({ ...bookingForm, preferredTime: slot.id })}
                     accessibilityRole="radio"
                     accessibilityLabel={`${slot.label} time slot`}
@@ -491,7 +487,10 @@ const LabTestsPage: React.FC = () => {
                   >
                     <Text style={styles.timeSlotIcon}>{slot.icon}</Text>
                     <Text
-                      style={[styles.timeSlotText, bookingForm.preferredTime === slot.id && styles.timeSlotTextActive]}
+                      style={[
+                        styles.timeSlotText,
+                        bookingForm.preferredTime === slot.id ? styles.timeSlotTextActive : null,
+                      ]}
                     >
                       {slot.label}
                     </Text>
@@ -502,7 +501,7 @@ const LabTestsPage: React.FC = () => {
 
             <View style={styles.collectionToggle}>
               <Pressable
-                style={[styles.collectionOption, bookingForm.homeCollection && styles.collectionOptionActive]}
+                style={[styles.collectionOption, bookingForm.homeCollection ? styles.collectionOptionActive : null]}
                 onPress={() => setBookingForm({ ...bookingForm, homeCollection: true })}
                 accessibilityRole="radio"
                 accessibilityLabel="Home collection — sample collected at your address"
@@ -514,13 +513,16 @@ const LabTestsPage: React.FC = () => {
                   color={bookingForm.homeCollection ? colors.background.primary : colors.text.tertiary}
                 />
                 <Text
-                  style={[styles.collectionOptionText, bookingForm.homeCollection && styles.collectionOptionTextActive]}
+                  style={[
+                    styles.collectionOptionText,
+                    bookingForm.homeCollection ? styles.collectionOptionTextActive : null,
+                  ]}
                 >
                   Home Collection
                 </Text>
               </Pressable>
               <Pressable
-                style={[styles.collectionOption, !bookingForm.homeCollection && styles.collectionOptionActive]}
+                style={[styles.collectionOption, !bookingForm.homeCollection ? styles.collectionOptionActive : null]}
                 onPress={() => setBookingForm({ ...bookingForm, homeCollection: false })}
                 accessibilityRole="radio"
                 accessibilityLabel="Visit lab — go to the lab for sample collection"

@@ -70,7 +70,7 @@ const SimilarStoresSection: React.FC<SimilarStoresSectionProps> = ({
 
       if (response?.data) {
         // Filter out current store
-        let filteredStores = response.data.filter(
+        let filteredStores = (response.data as any[]).filter(
           (store: Store) =>
             store.id !== currentStoreId &&
             store._id !== currentStoreId
@@ -90,14 +90,14 @@ const SimilarStoresSection: React.FC<SimilarStoresSectionProps> = ({
         }
 
         if (!isMounted()) return;
-        setStores(filteredStores);
+        setStores(filteredStores as any);
       } else {
-        setStores([]);
+        setStores([] as any);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load similar stores');
-      setStores([]);
+      setStores([] as any);
     } finally {
       if (!isMounted()) return;
       setLoading(false);
@@ -136,7 +136,7 @@ const SimilarStoresSection: React.FC<SimilarStoresSectionProps> = ({
   const renderStoreItem = useCallback(({ item }: { item: Store }) => (
     <View style={{ width: cardWidth }}>
       <StoreCard
-        store={item}
+        store={item as any}
         onPress={() => handleStorePress(item)}
         width={cardWidth}
       />
@@ -223,11 +223,6 @@ const SimilarStoresSection: React.FC<SimilarStoresSectionProps> = ({
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={() => <View style={styles.listFooter} />}
-        initialNumToRender={isWeb ? 8 : 4}
-        maxToRenderPerBatch={isWeb ? 8 : 4}
-        windowSize={isWeb ? 10 : 5}
-        removeClippedSubviews={Platform.OS === 'android'}
-        accessibilityLabel="Similar stores list"
         estimatedItemSize={110}
       />
 

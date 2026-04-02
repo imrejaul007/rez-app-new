@@ -58,7 +58,7 @@ const MallLuxuryBrandCard: React.FC<MallLuxuryBrandCardProps> = ({
         <View style={styles.imageContainer}>
           {!imageError && (brand.banner || brand.logo) ? (
             <CachedImage
-              source={brand.banner || brand.logo}
+              source={(brand.banner || brand.logo) as any}
               style={styles.bannerImage}
               contentFit="cover"
               onError={() => setImageError(true)}
@@ -100,7 +100,7 @@ const MallLuxuryBrandCard: React.FC<MallLuxuryBrandCardProps> = ({
               <View style={styles.logoInner}>
                 {!imageError && brand.logo ? (
                   <CachedImage
-                    source={brand.logo}
+                    source={brand.logo as any}
                     style={styles.logo}
                     contentFit="cover"
                   />

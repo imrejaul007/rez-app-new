@@ -19,6 +19,7 @@ export interface FulfillmentState {
   tableNumber?: string;
   vehicleInfo?: string;
   pickupInstructions?: string;
+  deliverySlot?: string;
 }
 
 export interface FulfillmentDetails {

@@ -284,7 +284,7 @@ interface Campaign {
 class TryApi {
   /**
    * Get personalized trial feed for current location
-   * FR-001 FIX: replaced apiClient.request() (non-existent method) with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() (non-existent method) with apiClient.get<any>()
    */
   async getFeed(lat: number, lng: number): Promise<TrialCard[]> {
     return withMockFallback(
@@ -300,7 +300,7 @@ class TryApi {
 
   /**
    * Get detailed information about a specific trial
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getTrialDetails(trialId: string): Promise<TrialCard | null> {
     const response = await apiClient.get<{ data: TrialCard }>(`/try/${trialId}`);
@@ -310,7 +310,7 @@ class TryApi {
 
   /**
    * Get detailed information about a booking
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getBookingDetails(bookingId: string): Promise<any> {
     const response = await apiClient.get<{ data: any }>(`/try/bookings/${bookingId}`);
@@ -320,19 +320,19 @@ class TryApi {
 
   /**
    * Book a trial with commitment fee payment
-   * FR-001 FIX: replaced apiClient.request() with apiClient.post().
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post<any>().
    * Returns the full ApiResponse wrapper so the caller can distinguish
    * success from failure (check response.success and response.data).
    *
    * The backend handler returns:
-   *   { success: true, data: { bookingId, qrToken, ... }, message }
+   *   { success: true, data as any: { bookingId, qrToken, ... }, message }
    * apiClient.post unwraps one level via (responseData.data || responseData), so
    * response.data IS the BookingResponse.data payload: { bookingId, qrToken, ... }
    * Callers should read: response.data?.bookingId (NOT response.data?.data?.bookingId)
    */
   async bookTrial(request: BookingRequest): Promise<BookingResponse & { _apiResponse: true }> {
     // Return ApiResponse shape so caller can check .success and .data.bookingId
-    const response = await apiClient.post<BookingResponse['data']>('/try/book', request);
+    const response = await apiClient.post<BookingResponse['data']>('/try/book', request as any);
     // Construct a BookingResponse-compatible shape the existing callers expect.
     return {
       success: response.success,
@@ -344,7 +344,7 @@ class TryApi {
 
   /**
    * Get user's trial history
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getHistory(): Promise<HistoryItem[]> {
     return withMockFallback(
@@ -360,7 +360,7 @@ class TryApi {
 
   /**
    * Get trial coin wallet balance and buckets
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getCoins(): Promise<CoinsData> {
     return withMockFallback(
@@ -376,7 +376,7 @@ class TryApi {
 
   /**
    * Purchase trial coins pack
-   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post<any>()
    * Returns ApiResponse; caller should check response.success and response.data.coinsAdded
    */
   async purchaseCoins(packIndex: number, paymentId: string): Promise<{ success: boolean; coinsAdded: number }> {
@@ -386,7 +386,7 @@ class TryApi {
 
   /**
    * Get explorer score and tier
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getScore(): Promise<ScoreData> {
     return withMockFallback(
@@ -409,7 +409,7 @@ class TryApi {
 
   /**
    * Get active weekly missions
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getMissions(): Promise<Mission[]> {
     return withMockFallback(
@@ -425,7 +425,7 @@ class TryApi {
 
   /**
    * Get user's category badges
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getBadges(): Promise<BadgesData> {
     return withMockFallback(
@@ -441,7 +441,7 @@ class TryApi {
 
   /**
    * Get leaderboard for a city and period
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getLeaderboard(city: string, period: 'weekly' | 'monthly' | 'alltime'): Promise<LeaderboardData> {
     return withMockFallback(
@@ -457,7 +457,7 @@ class TryApi {
 
   /**
    * Get this week's surprise trial (category only, merchant hidden)
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getSurpriseTrial(): Promise<SurpriseData> {
     return withMockFallback(
@@ -473,7 +473,7 @@ class TryApi {
 
   /**
    * Reveal the surprise trial merchant
-   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post<any>()
    */
   async revealSurpriseTrial(): Promise<SurpriseData> {
     const response = await apiClient.post<{ data: SurpriseData }>('/try/surprise/reveal', {});
@@ -483,7 +483,7 @@ class TryApi {
 
   /**
    * Get trial bundles and passes
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getBundles(category?: string): Promise<Bundle[]> {
     return withMockFallback(
@@ -499,16 +499,16 @@ class TryApi {
 
   /**
    * Purchase a bundle
-   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post<any>()
    */
   async purchaseBundle(bundleId: string, paymentId: string): Promise<{ success: boolean; message?: string }> {
-    const response = await apiClient.post('/try/bundles/purchase', { bundleId, paymentId });
+    const response = await apiClient.post<any>('/try/bundles/purchase', { bundleId, paymentId });
     return { success: response.success, message: response.message };
   }
 
   /**
    * Get user's active bundles
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getMyBundles(): Promise<ActiveBundle[]> {
     return withMockFallback(
@@ -524,7 +524,7 @@ class TryApi {
 
   /**
    * Get active discovery campaigns
-   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get<any>()
    */
   async getCampaigns(city: string): Promise<Campaign[]> {
     return withMockFallback(
@@ -540,10 +540,10 @@ class TryApi {
 
   /**
    * Join a campaign
-   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post<any>()
    */
   async joinCampaign(campaignId: string): Promise<{ success: boolean; message?: string }> {
-    const response = await apiClient.post(`/try/campaigns/${campaignId}/join`, {});
+    const response = await apiClient.post<any>(`/try/campaigns/${campaignId}/join`, {});
     return { success: response.success, message: response.message };
   }
 

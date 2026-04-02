@@ -62,7 +62,7 @@ function SettingsPage() {
           const parsed = JSON.parse(stored);
           setSettings((prev) => ({ ...prev, ...parsed }));
         }
-      } catch (e) {
+      } catch (e: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -130,7 +130,7 @@ function SettingsPage() {
         setSettings((prev) => ({ ...prev, biometrics: true }));
         platformAlertSimple('Enabled', 'Biometric authentication has been enabled.');
       }
-    } catch (e) {
+    } catch (e: any) {
       platformAlertSimple('Error', 'Could not verify biometric support. Please try again.');
     }
   }, [settings.biometrics]);
@@ -139,16 +139,16 @@ function SettingsPage() {
     platformAlertDestructive(
       'Reset Settings',
       'Are you sure you want to reset all settings to default values?',
-      'Reset',
       async () => {
         setSettings(DEFAULT_SETTINGS);
         try {
           await AsyncStorage.removeItem(SETTINGS_STORAGE_KEY);
-        } catch (e) {
+        } catch (e: any) {
           // silently handle
         }
         platformAlertSimple('Settings Reset', 'All settings have been reset to default values.');
       },
+      'Reset',
     );
   };
 

@@ -1,28 +1,14 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // TabNavigation.tsx - Redesigned tab navigation for MainStorePage
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  Dimensions,
-  LayoutChangeEvent,
-  Platform,
-} from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Pressable, StyleSheet, Dimensions, LayoutChangeEvent, Platform } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-} from "@/constants/DesignSystem";
+import { Colors, Spacing } from '@/constants/DesignSystem';
 
-export type TabKey = "menu" | "photos" | "reviews" | "about";
+export type TabKey = 'menu' | 'photos' | 'reviews' | 'about';
 
 interface TabData {
   key: TabKey;
@@ -30,10 +16,10 @@ interface TabData {
 }
 
 const defaultTabs: TabData[] = [
-  { key: "menu", title: "Menu" },
-  { key: "photos", title: "Photos" },
-  { key: "reviews", title: "Reviews" },
-  { key: "about", title: "About" },
+  { key: 'menu', title: 'Menu' },
+  { key: 'photos', title: 'Photos' },
+  { key: 'reviews', title: 'Reviews' },
+  { key: 'about', title: 'About' },
 ];
 
 interface TabNavigationProps {
@@ -43,13 +29,8 @@ interface TabNavigationProps {
   menuTabLabel?: string;
 }
 
-function TabNavigation({
-  activeTab,
-  onTabChange,
-  compact = false,
-  menuTabLabel,
-}: TabNavigationProps) {
-  const [containerWidth, setContainerWidth] = useState<number>(Dimensions.get("window").width);
+function TabNavigation({ activeTab, onTabChange, compact = false, menuTabLabel }: TabNavigationProps) {
+  const [containerWidth, setContainerWidth] = useState<number>(Dimensions.get('window').width);
   const [tabPositions, setTabPositions] = useState<{ [key: string]: { x: number; width: number } }>({});
 
   // Animated value for underline position (reanimated for layout props)
@@ -66,7 +47,7 @@ function TabNavigation({
 
   // Override menu tab label if provided
   const tabs = menuTabLabel
-    ? defaultTabs.map(t => t.key === 'menu' ? { ...t, title: menuTabLabel } : t)
+    ? defaultTabs.map((t) => (t.key === 'menu' ? { ...t, title: menuTabLabel } : t))
     : defaultTabs;
 
   const tabCount = tabs.length;
@@ -86,7 +67,7 @@ function TabNavigation({
   }, [activeTab, tabPositions]);
 
   const onLayout = (e: LayoutChangeEvent) => {
-    const w = e.nativeEvent.layout.width || Dimensions.get("window").width;
+    const w = e.nativeEvent.layout.width || Dimensions.get('window').width;
     setContainerWidth(w);
   };
 
@@ -112,8 +93,8 @@ function TabNavigation({
   };
 
   return (
-    <View style={[styles.wrapper, compact && styles.wrapperCompact]}>
-      <View style={[styles.container, compact && styles.containerCompact]} onLayout={onLayout}>
+    <View style={[styles.wrapper, compact ? styles.wrapperCompact : null]}>
+      <View style={[styles.container, compact ? styles.containerCompact : null]} onLayout={onLayout}>
         <View style={styles.tabsRow}>
           {tabs.map((tab, index) => {
             const isActive = tab.key === activeTab;
@@ -124,28 +105,18 @@ function TabNavigation({
             return (
               <Animated.View
                 key={tab.key}
-                style={[
-                  styles.tabWrapper,
-                  scaleStyle,
-                ]}
+                style={[styles.tabWrapper, scaleStyle]}
                 onLayout={(e) => handleTabLayout(tab.key, e)}
               >
                 <Pressable
-                  style={[styles.tab, compact && styles.tabCompact]}
+                  style={[styles.tab, compact ? styles.tabCompact : null]}
                   onPress={() => handlePress(tab.key)}
                   onPressIn={() => handlePressIn(index)}
                   onPressOut={() => handlePressOut(index)}
-                 
                   accessibilityRole="tab"
                   accessibilityState={{ selected: isActive }}
                 >
-                  <ThemedText
-                    style={[
-                      styles.label,
-                      isActive && styles.labelActive,
-                      compact && styles.labelCompact,
-                    ]}
-                  >
+                  <ThemedText style={[styles.label, isActive && styles.labelActive, compact && styles.labelCompact]}>
                     {tab.title}
                   </ThemedText>
                 </Pressable>
@@ -155,12 +126,7 @@ function TabNavigation({
         </View>
 
         {/* Animated Underline */}
-        <Animated.View
-          style={[
-            styles.underline,
-            underlineAnimStyle,
-          ]}
-        />
+        <Animated.View style={[styles.underline, underlineAnimStyle]} />
       </View>
     </View>
   );
@@ -176,12 +142,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background.primary,
     borderRadius: 12,
-    position: "relative",
+    position: 'relative',
   },
   tabsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
     paddingHorizontal: 4,
   },
   tabWrapper: {
@@ -196,16 +162,16 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.text.tertiary,
     textAlign: 'center',
   },
   labelActive: {
     color: colors.lightMustard,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   underline: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     height: 2,
     backgroundColor: colors.lightMustard,

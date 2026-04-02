@@ -217,7 +217,7 @@ export const StockNotificationModal: React.FC<StockNotificationModalProps> = ({
 
               {/* Subscribe Button */}
               <Pressable
-                style={[styles.subscribeButton, isSubmitting && styles.buttonDisabled]}
+                style={[styles.subscribeButton, isSubmitting ? styles.buttonDisabled : null]}
                 onPress={handleSubscribe}
                 disabled={isSubmitting}
                

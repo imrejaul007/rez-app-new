@@ -223,23 +223,23 @@ class CategoriesService {
       }
     });
 
-    return apiClient.get(`${this.baseUrl}?${query.toString()}`);
+    return apiClient.get<any>(`${this.baseUrl}?${query.toString()}`);
   }
 
   // Get category by ID
   async getCategoryById(id: string): Promise<ApiResponse<Category>> {
-    return apiClient.get(`${this.baseUrl}/${id}`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}`);
   }
 
   // Get category by slug
   async getCategoryBySlug(slug: string): Promise<ApiResponse<Category>> {
-    return apiClient.get(`${this.baseUrl}/${slug}`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}`);
   }
 
   // Get category tree structure
   async getCategoryTree(type?: string): Promise<ApiResponse<Category[]>> {
     const query = type ? `?type=${type}` : '';
-    return apiClient.get(`${this.baseUrl}/tree${query}`);
+    return apiClient.get<any>(`${this.baseUrl}/tree${query}`);
   }
 
   // Get featured categories - uses dedicated /featured endpoint
@@ -248,7 +248,7 @@ class CategoriesService {
     params.append('limit', String(limit));
     if (type) params.append('type', type);
 
-    return apiClient.get(`${this.baseUrl}/featured?${params.toString()}`);
+    return apiClient.get<any>(`${this.baseUrl}/featured?${params.toString()}`);
   }
 
   // Get root categories (no parent)
@@ -258,7 +258,7 @@ class CategoriesService {
     params.append('parent', 'null');
     if (type) params.append('type', type);
 
-    return apiClient.get(`${this.baseUrl}?${params.toString()}`);
+    return apiClient.get<any>(`${this.baseUrl}?${params.toString()}`);
   }
 
   // Search categories
@@ -268,7 +268,7 @@ class CategoriesService {
     params.append('isActive', 'true');
     if (type) params.append('type', type);
 
-    return apiClient.get(`${this.baseUrl}?${params.toString()}`);
+    return apiClient.get<any>(`${this.baseUrl}?${params.toString()}`);
   }
 
   // Get categories with product counts
@@ -278,32 +278,32 @@ class CategoriesService {
     params.append('isActive', 'true');
     if (type) params.append('type', type);
 
-    return apiClient.get(`${this.baseUrl}?${params.toString()}`);
+    return apiClient.get<any>(`${this.baseUrl}?${params.toString()}`);
   }
 
   // Get best discount categories
   async getBestDiscountCategories(limit: number = 10): Promise<ApiResponse<Category[]>> {
-    return apiClient.get(`${this.baseUrl}/best-discount?limit=${limit}`);
+    return apiClient.get<any>(`${this.baseUrl}/best-discount?limit=${limit}`);
   }
 
   // Get best seller categories
   async getBestSellerCategories(limit: number = 10): Promise<ApiResponse<Category[]>> {
-    return apiClient.get(`${this.baseUrl}/best-seller?limit=${limit}`);
+    return apiClient.get<any>(`${this.baseUrl}/best-seller?limit=${limit}`);
   }
 
   // Get category vibes
   async getCategoryVibes(slug: string): Promise<ApiResponse<{ vibes: CategoryVibe[] }>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/vibes`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/vibes`);
   }
 
   // Get category occasions
   async getCategoryOccasions(slug: string): Promise<ApiResponse<{ occasions: CategoryOccasion[] }>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/occasions`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/occasions`);
   }
 
   // Get category hashtags
   async getCategoryHashtags(slug: string, limit: number = 6): Promise<ApiResponse<{ hashtags: CategoryHashtag[] }>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/hashtags?limit=${limit}`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/hashtags?limit=${limit}`);
   }
 
   // Get full category page data (category details + vibes + occasions + hashtags)
@@ -313,7 +313,7 @@ class CategoriesService {
       const response = await apiClient.get<Category>(`${this.baseUrl}/${slug}`);
 
       if (response.success && response.data) {
-        return response;
+        return response as any;
       }
 
       return {
@@ -332,22 +332,22 @@ class CategoriesService {
 
   // Get category loyalty stats
   async getCategoryLoyaltyStats(slug: string): Promise<ApiResponse<{ ordersCount: number; brandsCount: number }>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/loyalty-stats`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/loyalty-stats`);
   }
 
   // Get recent orders for social proof ticker
   async getRecentOrders(slug: string, limit: number = 5): Promise<ApiResponse<{ orders: { id: string; userName: string; storeName: string; timeAgo: string }[] }>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/recent-orders?limit=${limit}`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/recent-orders?limit=${limit}`);
   }
 
   // Get AI suggestions for a category
   async getCategoryAISuggestions(slug: string): Promise<ApiResponse<{ suggestions: { id: string; title: string; icon: string; link: string }[]; placeholders: string[] }>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/ai-suggestions`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/ai-suggestions`);
   }
 
   // Get dynamic page configuration for a category
   async getPageConfig(slug: string): Promise<ApiResponse<CategoryPageConfig>> {
-    return apiClient.get(`${this.baseUrl}/${slug}/page-config`);
+    return apiClient.get<any>(`${this.baseUrl}/${slug}/page-config`);
   }
 }
 

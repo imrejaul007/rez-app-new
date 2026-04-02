@@ -71,7 +71,7 @@ const EnhancedAISuggestionsSection: React.FC<EnhancedAISuggestionsSectionProps> 
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
-            <Ionicons name="sparkles" size={24} color={COLORS.purple} />
+            <Ionicons name="sparkles" size={24} color={(COLORS as any).purple} />
           </View>
           <View style={styles.headerText}>
             <Text style={styles.title}>Smart AI Search</Text>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.purple,
+        shadowColor: (COLORS as any).purple,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 12,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   searchButton: {
     width: 44,
     height: 44,
-    backgroundColor: COLORS.purple,
+    backgroundColor: (COLORS as any).purple,
     borderRadius: 10,
     margin: 4,
     justifyContent: 'center',

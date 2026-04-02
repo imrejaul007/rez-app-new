@@ -64,7 +64,7 @@ class ReferralService {
    */
   async getReferralData(): Promise<ApiResponse<ReferralData>> {
 
-    return apiClient.get('/referral/data');
+    return apiClient.get<any>('/referral/data');
   }
 
   /**
@@ -82,7 +82,7 @@ class ReferralService {
     };
   }>> {
 
-    return apiClient.get('/referral/history', { page, limit });
+    return apiClient.get<any>('/referral/history', { page, limit });
   }
 
   /**
@@ -90,7 +90,7 @@ class ReferralService {
    */
   async getReferralStatistics(): Promise<ApiResponse<ReferralStatistics>> {
 
-    return apiClient.get('/referral/statistics');
+    return apiClient.get<any>('/referral/statistics');
   }
 
   /**
@@ -98,7 +98,7 @@ class ReferralService {
    */
   async generateReferralLink(): Promise<ApiResponse<{ referralLink: string; referralCode: string }>> {
 
-    return apiClient.post('/referral/generate-link');
+    return apiClient.post<any>('/referral/generate-link');
   }
 
   /**
@@ -106,7 +106,7 @@ class ReferralService {
    */
   async shareReferralLink(platform: 'whatsapp' | 'telegram' | 'email' | 'sms'): Promise<ApiResponse<{ success: boolean }>> {
 
-    return apiClient.post('/referral/share', { platform });
+    return apiClient.post<any>('/referral/share', { platform });
   }
 
   /**
@@ -118,7 +118,7 @@ class ReferralService {
     transactionId: string;
   }>> {
 
-    return apiClient.post('/referral/claim-rewards');
+    return apiClient.post<any>('/referral/claim-rewards');
   }
 
   /**
@@ -139,7 +139,7 @@ class ReferralService {
     };
   }>> {
 
-    return apiClient.get('/referral/leaderboard', { period });
+    return apiClient.get<any>('/referral/leaderboard', { period });
   }
   /**
    * Offline-aware referral share tracking.

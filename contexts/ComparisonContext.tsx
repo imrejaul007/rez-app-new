@@ -68,7 +68,7 @@ export function ComparisonProvider({ children }: { children: React.ReactNode }) 
         const parsedData = JSON.parse(storedData);
         setProducts(parsedData);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       setIsLoading(false);
@@ -81,7 +81,7 @@ export function ComparisonProvider({ children }: { children: React.ReactNode }) 
   const saveComparisonData = async () => {
     try {
       await AsyncStorage.setItem(COMPARISON_STORAGE_KEY, JSON.stringify(products));
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

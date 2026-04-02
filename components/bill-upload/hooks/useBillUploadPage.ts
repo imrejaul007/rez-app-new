@@ -145,7 +145,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
       const result = await requestCameraPermission();
       if (!isMounted()) return;
       setHasPermission(result?.granted ?? false);
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       setHasPermission(false);
     }
@@ -165,7 +165,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
           showToast('Draft restored', 'info');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to load saved form data:', error);
     }
   };
@@ -176,7 +176,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
         ...formData,
         billDate: formData.billDate.toISOString()};
       await AsyncStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(dataToSave));
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to save form data:', error);
     }
   }, [formData]);
@@ -184,7 +184,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
   const clearSavedFormData = async () => {
     try {
       await AsyncStorage.removeItem(FORM_STORAGE_KEY);
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to clear saved form data:', error);
     }
   };
@@ -213,7 +213,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
           category: store.category}));
         setMerchants(mappedStores);
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error loading merchants:', error);
       showToast('Failed to load merchants', 'error');
     } finally {
@@ -361,7 +361,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
           handleFieldChange('billImage', compressedUri);
           showToast(`Bill photo captured (Quality: ${quality.score}/100)`, 'success');
         }
-      } catch (error) {
+      } catch (error: any) {
         logger.error('Error taking picture:', error);
         showToast('Failed to take picture', 'error');
       }
@@ -398,7 +398,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
         handleFieldChange('billImage', compressedUri);
         showToast(`Bill photo selected (Quality: ${quality.score}/100)`, 'success');
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error picking image:', error);
       showToast('Failed to pick image', 'error');
     }
@@ -470,7 +470,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
           resetForm();
           return;
         } catch (queueError) {
-          logger.error('Failed to add to queue:', queueError);
+          logger.error('Failed to add to queue:', queueError as Error);
           if (!isMounted()) return;
           setShowProgressModal(false);
           showToast('Failed to queue bill for upload. Please try again.', 'error');
@@ -528,7 +528,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
               : { text: 'Cancel', onPress: () => {}, style: 'cancel' as const },
           ]});
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error uploading bill:', error);
       if (!isMounted()) return;
       setShowProgressModal(false);

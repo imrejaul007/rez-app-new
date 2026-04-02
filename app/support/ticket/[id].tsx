@@ -28,7 +28,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 function TicketDetailPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const scrollRef = useRef<ScrollView>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -51,7 +51,7 @@ function TicketDetailPage() {
       if (response.success && response.data?.ticket) {
         setTicket(response.data.ticket);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [id]);
@@ -95,7 +95,7 @@ function TicketDetailPage() {
       } else {
         platformAlertSimple('Error', 'Failed to send message. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Something went wrong. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -115,14 +115,14 @@ function TicketDetailPage() {
             setTicket(response.data.ticket);
             platformAlertSimple('Ticket Closed', 'Your ticket has been closed.');
           }
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to close ticket.');
         } finally {
           if (!isMounted()) return;
           setClosing(false);
         }
       },
-      'Close'
+      'Close',
     );
   };
 
@@ -138,14 +138,14 @@ function TicketDetailPage() {
             setTicket(response.data.ticket);
             platformAlertSimple('Ticket Reopened', 'Your ticket has been reopened.');
           }
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to reopen ticket.');
         } finally {
           if (!isMounted()) return;
           setReopening(false);
         }
       },
-      'Reopen'
+      'Reopen',
     );
   };
 
@@ -159,7 +159,7 @@ function TicketDetailPage() {
         setShowRating(false);
         platformAlertSimple('Thank You', 'Your feedback helps us improve our support.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to submit rating.');
     } finally {
       if (!isMounted()) return;
@@ -169,23 +169,35 @@ function TicketDetailPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return Colors.primary[500];
-      case 'in_progress': return Colors.secondary[500];
-      case 'waiting_customer': return Colors.warning;
-      case 'resolved': return Colors.success;
-      case 'closed': return Colors.gray[400];
-      default: return Colors.gray[600];
+      case 'open':
+        return Colors.primary[500];
+      case 'in_progress':
+        return Colors.secondary[500];
+      case 'waiting_customer':
+        return Colors.warning;
+      case 'resolved':
+        return Colors.success;
+      case 'closed':
+        return Colors.gray[400];
+      default:
+        return Colors.gray[600];
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'open': return 'Open';
-      case 'in_progress': return 'In Progress';
-      case 'waiting_customer': return 'Waiting for Reply';
-      case 'resolved': return 'Resolved';
-      case 'closed': return 'Closed';
-      default: return status;
+      case 'open':
+        return 'Open';
+      case 'in_progress':
+        return 'In Progress';
+      case 'waiting_customer':
+        return 'Waiting for Reply';
+      case 'resolved':
+        return 'Resolved';
+      case 'closed':
+        return 'Closed';
+      default:
+        return status;
     }
   };
 
@@ -212,7 +224,10 @@ function TicketDetailPage() {
           <StatusBar barStyle="light-content" translucent />
           <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
             <View style={styles.headerContent}>
-              <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+              <Pressable
+                style={styles.backButton}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              >
                 <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
               </Pressable>
               <View style={styles.headerTitleContainer}>
@@ -225,7 +240,7 @@ function TicketDetailPage() {
             <SkeletonLoader width="70%" height={20} borderRadius={4} />
             <SkeletonLoader width="40%" height={14} borderRadius={4} style={{ marginTop: 8 }} />
             <View style={{ marginTop: 24 }}>
-              {[1, 2, 3].map(i => (
+              {[1, 2, 3].map((i) => (
                 <View key={i} style={{ marginBottom: 16, alignItems: i % 2 === 0 ? 'flex-end' : 'flex-start' }}>
                   <SkeletonLoader width="70%" height={60} borderRadius={12} />
                 </View>
@@ -245,7 +260,10 @@ function TicketDetailPage() {
           <StatusBar barStyle="light-content" translucent />
           <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
             <View style={styles.headerContent}>
-              <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+              <Pressable
+                style={styles.backButton}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              >
                 <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
               </Pressable>
               <View style={styles.headerTitleContainer}>
@@ -279,7 +297,10 @@ function TicketDetailPage() {
         {/* Header */}
         <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
@@ -304,9 +325,7 @@ function TicketDetailPage() {
             </View>
             <View style={styles.metaItem}>
               <Ionicons name="time-outline" size={14} color={Colors.gray[500]} />
-              <ThemedText style={styles.metaText}>
-                Created {formatTime(ticket.createdAt)}
-              </ThemedText>
+              <ThemedText style={styles.metaText}>Created {formatTime(ticket.createdAt)}</ThemedText>
             </View>
           </View>
         </View>
@@ -322,26 +341,18 @@ function TicketDetailPage() {
             style={styles.messagesContainer}
             contentContainerStyle={styles.messagesContent}
             showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-            }
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           >
             {ticket.messages.map((msg, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.messageWrapper,
-                  msg.senderType === 'user' && styles.messageWrapperUser,
-                ]}
-              >
+              <View key={index} style={[styles.messageWrapper, msg.senderType === 'user' && styles.messageWrapperUser]}>
                 <View
                   style={[
                     styles.messageBubble,
                     msg.senderType === 'user'
                       ? styles.messageBubbleUser
                       : msg.senderType === 'system'
-                      ? styles.messageBubbleSystem
-                      : styles.messageBubbleSupport,
+                        ? styles.messageBubbleSystem
+                        : styles.messageBubbleSupport,
                   ]}
                 >
                   {msg.senderType === 'agent' && (
@@ -365,12 +376,7 @@ function TicketDetailPage() {
                   >
                     {msg.message}
                   </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.messageTime,
-                      msg.senderType === 'user' && styles.messageTimeUser,
-                    ]}
-                  >
+                  <ThemedText style={[styles.messageTime, msg.senderType === 'user' && styles.messageTimeUser]}>
                     {formatTime(msg.timestamp)}
                   </ThemedText>
                 </View>
@@ -424,20 +430,14 @@ function TicketDetailPage() {
                   }}
                 >
                   <Ionicons name="thumbs-up" size={20} color={colors.background.primary} />
-                  <ThemedText style={styles.resolutionButtonText}>
-                    {canRate ? 'Yes, Rate' : 'Yes, Close'}
-                  </ThemedText>
+                  <ThemedText style={styles.resolutionButtonText}>{canRate ? 'Yes, Rate' : 'Yes, Close'}</ThemedText>
                 </Pressable>
-                <Pressable
-                  style={styles.resolutionButtonNo}
-                  onPress={handleReopenTicket}
-                  disabled={reopening}
-                >
+                <Pressable style={styles.resolutionButtonNo} onPress={handleReopenTicket} disabled={reopening}>
                   {reopening ? (
-                    <ActivityIndicator size="small" color={Colors.text?.primary || colors.deepNavy} />
+                    <ActivityIndicator size="small" color={(Colors as any).text?.primary || colors.deepNavy} />
                   ) : (
                     <>
-                      <Ionicons name="thumbs-down" size={20} color={Colors.text?.primary || colors.deepNavy} />
+                      <Ionicons name="thumbs-down" size={20} color={(Colors as any).text?.primary || colors.deepNavy} />
                       <ThemedText style={styles.resolutionButtonNoText}>No, reopen</ThemedText>
                     </>
                   )}
@@ -451,7 +451,7 @@ function TicketDetailPage() {
             <View style={styles.ratingContainer}>
               <ThemedText style={styles.ratingTitle}>Rate your experience</ThemedText>
               <View style={styles.starsRow}>
-                {[1, 2, 3, 4, 5].map(star => (
+                {[1, 2, 3, 4, 5].map((star) => (
                   <Pressable key={star} onPress={() => setRatingScore(star)}>
                     <Ionicons
                       name={star <= ratingScore ? 'star' : 'star-outline'}
@@ -470,7 +470,7 @@ function TicketDetailPage() {
                 maxLength={1000}
               />
               <Pressable
-                style={[styles.ratingSubmit, ratingScore === 0 && styles.submitButtonDisabled]}
+                style={[styles.ratingSubmit, ratingScore === 0 ? styles.submitButtonDisabled : null]}
                 onPress={handleSubmitRating}
                 disabled={ratingScore === 0 || submittingRating}
               >
@@ -488,7 +488,7 @@ function TicketDetailPage() {
             <View style={styles.ratedContainer}>
               <ThemedText style={styles.ratedText}>You rated this ticket</ThemedText>
               <View style={styles.starsRow}>
-                {[1, 2, 3, 4, 5].map(star => (
+                {[1, 2, 3, 4, 5].map((star) => (
                   <Ionicons
                     key={star}
                     name={star <= ticket.rating!.score ? 'star' : 'star-outline'}
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   ticketSubject: {
     fontSize: 17,
     fontWeight: '600',
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     marginBottom: Spacing.sm,
   },
   ticketMeta: {
@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 14,
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     lineHeight: 20,
   },
   messageTextUser: {
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     maxHeight: 100,
     paddingVertical: Spacing.sm,
   },
@@ -708,7 +708,7 @@ const styles = StyleSheet.create({
   },
   resolutionText: {
     fontSize: 15,
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     marginBottom: Spacing.md,
   },
   resolutionButtons: {
@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
   resolutionButtonNoText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
   },
   ratingContainer: {
     backgroundColor: colors.background.primary,
@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     fontSize: 14,
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     marginBottom: 12,
   },
   ratingSubmit: {

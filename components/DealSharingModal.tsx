@@ -137,7 +137,7 @@ ${deal.description || 'Don\'t miss out on this incredible offer!'}
             url,
             title: deal.title,
           });
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to share deal. Please try again.');
         }
       },
@@ -154,7 +154,7 @@ ${deal.description || 'Don\'t miss out on this incredible offer!'}
           if (!isMounted()) return;
           await Clipboard.setStringAsync(shareText);
           setCopyFeedback(true);
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to copy link. Please try again.');
         }
       },
@@ -172,7 +172,7 @@ ${deal.description || 'Don\'t miss out on this incredible offer!'}
             message,
             title: `Share ${deal.title} on WhatsApp`,
           });
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to share to WhatsApp. Please try again.');
         }
       },
@@ -190,7 +190,7 @@ ${deal.description || 'Don\'t miss out on this incredible offer!'}
             message,
             title: `Share ${deal.title} via SMS`,
           });
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to share via SMS. Please try again.');
         }
       },

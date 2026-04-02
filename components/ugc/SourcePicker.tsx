@@ -65,7 +65,7 @@ function SourcePicker({
       <View style={styles.optionsContainer}>
         {/* Camera Option */}
         <Pressable
-          style={[styles.optionCard, disabled && styles.optionCardDisabled]}
+          style={[styles.optionCard, disabled ? styles.optionCardDisabled : null]}
           onPress={onSelectCamera}
           disabled={disabled}
          
@@ -84,7 +84,7 @@ function SourcePicker({
 
         {/* Gallery Option */}
         <Pressable
-          style={[styles.optionCard, disabled && styles.optionCardDisabled]}
+          style={[styles.optionCard, disabled ? styles.optionCardDisabled : null]}
           onPress={onSelectGallery}
           disabled={disabled}
          
@@ -103,7 +103,7 @@ function SourcePicker({
 
         {/* URL Option */}
         <Pressable
-          style={[styles.optionCard, disabled && styles.optionCardDisabled]}
+          style={[styles.optionCard, disabled ? styles.optionCardDisabled : null]}
           onPress={() => setShowUrlModal(true)}
           disabled={disabled}
          

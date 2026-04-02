@@ -64,7 +64,7 @@ const consultationApi = {
       devLog.log('[consultationApi] Time:', data.consultationTime);
       devLog.log('[consultationApi] Patient:', data.patientName);
 
-      const response = await apiClient.post('/consultations', data);
+      const response = await apiClient.post<any>('/consultations', data as any);
 
       devLog.log('[consultationApi] Consultation created successfully:', response);
       if (response.success && response.data) {
@@ -72,7 +72,7 @@ const consultationApi = {
         devLog.log('[consultationApi] Status:', response.data.status);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[consultationApi] Error creating consultation:', error);
       throw error;
@@ -87,7 +87,7 @@ const consultationApi = {
     try {
       devLog.log('[consultationApi] Fetching user consultations');
 
-      const response = await apiClient.get('/consultations/user');
+      const response = await apiClient.get<any>('/consultations/user');
 
       devLog.log('[consultationApi] User consultations fetched successfully');
       if (response.success && response.data) {
@@ -95,7 +95,7 @@ const consultationApi = {
         devLog.log('[consultationApi] Consultations:', response.data);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[consultationApi] Error fetching user consultations:', error);
       throw error;
@@ -111,7 +111,7 @@ const consultationApi = {
     try {
       devLog.log('[consultationApi] Fetching consultation with ID:', consultationId);
 
-      const response = await apiClient.get(`/consultations/${consultationId}`);
+      const response = await apiClient.get<any>(`/consultations/${consultationId}`);
 
       devLog.log('[consultationApi] Consultation fetched successfully');
       if (response.success && response.data) {
@@ -121,7 +121,7 @@ const consultationApi = {
         devLog.log('[consultationApi] Doctor:', response.data.doctorName || 'Not assigned');
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[consultationApi] Error fetching consultation:', error);
       throw error;
@@ -137,7 +137,7 @@ const consultationApi = {
     try {
       devLog.log('[consultationApi] Cancelling consultation with ID:', consultationId);
 
-      const response = await apiClient.put(`/consultations/${consultationId}/cancel`, {});
+      const response = await apiClient.put<any>(`/consultations/${consultationId}/cancel`, {});
 
       devLog.log('[consultationApi] Consultation cancelled successfully');
       if (response.success && response.data) {
@@ -145,7 +145,7 @@ const consultationApi = {
         devLog.log('[consultationApi] Consultation Number:', response.data.consultationNumber);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[consultationApi] Error cancelling consultation:', error);
       throw error;
@@ -164,14 +164,14 @@ const consultationApi = {
       devLog.log('[consultationApi] Store ID:', storeId);
       devLog.log('[consultationApi] Date:', date);
 
-      const response = await apiClient.get(`/consultations/availability/${storeId}?date=${date}`);
+      const response = await apiClient.get<any>(`/consultations/availability/${storeId}?date=${date}`);
 
       devLog.log('[consultationApi] Availability data fetched successfully');
       if (response.success && response.data) {
         devLog.log('[consultationApi] Availability:', response.data);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[consultationApi] Error checking availability:', error);
       throw error;

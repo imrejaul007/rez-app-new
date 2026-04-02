@@ -82,15 +82,15 @@ function ReviewsPage() {
         });
 
         if (response.success && response.data) {
-          const newReviews = response.data.reviews || [];
+          const newReviews = (response.data as any).reviews || [];
           if (pageNum === 1) {
-            setReviews(newReviews);
+            setReviews(newReviews as any);
           } else {
             if (!isMounted()) return;
-            setReviews((prev) => [...prev, ...newReviews]);
+            setReviews((prev) => [...prev, ...(newReviews as any)]);
           }
           if (!isMounted()) return;
-          setStats(response.data.stats || null);
+          setStats((response.data as any).stats || null);
           if (!isMounted()) return;
           setPage(pageNum);
           if (!isMounted()) return;
@@ -105,7 +105,7 @@ function ReviewsPage() {
           if (!isMounted()) return;
           setHasMore(false);
         }
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load reviews';
         if (pageNum === 1) setError(errorMessage);
         if (!isMounted()) return;
@@ -338,17 +338,17 @@ function ReviewsPage() {
               <View style={styles.filtersContainer}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <Pressable
-                    style={[styles.filterChip, filterRating === null && styles.filterChipActive]}
+                    style={[styles.filterChip, filterRating === null ? styles.filterChipActive : null]}
                     onPress={() => setFilterRating(null)}
                   >
-                    <ThemedText style={[styles.filterText, filterRating === null && styles.filterTextActive]}>
+                    <ThemedText style={[styles.filterText, filterRating === null ? styles.filterTextActive : null]}>
                       All
                     </ThemedText>
                   </Pressable>
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <Pressable
                       key={rating}
-                      style={[styles.filterChip, filterRating === rating && styles.filterChipActive]}
+                      style={[styles.filterChip, filterRating === rating ? styles.filterChipActive : null]}
                       onPress={() => setFilterRating(rating)}
                     >
                       <Ionicons
@@ -356,7 +356,7 @@ function ReviewsPage() {
                         size={14}
                         color={filterRating === rating ? colors.text.inverse : Colors.warning}
                       />
-                      <ThemedText style={[styles.filterText, filterRating === rating && styles.filterTextActive]}>
+                      <ThemedText style={[styles.filterText, filterRating === rating ? styles.filterTextActive : null]}>
                         {rating}
                       </ThemedText>
                     </Pressable>

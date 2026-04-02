@@ -89,7 +89,7 @@ export function useOffersPage(): UseOffersPageReturn {
       } else {
         throw new Error('Failed to load offers page data');
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         loading: false,
@@ -130,7 +130,7 @@ export function useOffersPage(): UseOffersPageReturn {
       } else {
         throw new Error('Failed to refresh offers page data');
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         refreshing: false,
@@ -143,7 +143,7 @@ export function useOffersPage(): UseOffersPageReturn {
   // Toggle offer like
   const toggleOfferLike = useCallback(async (offerId: string) => {
     try {
-      const response = await realOffersApi.toggleOfferLike(offerId);
+      const response: any = await realOffersApi.toggleOfferLike(offerId);
       
       if (response.success && response.data) {
         // Update the offer in pageData

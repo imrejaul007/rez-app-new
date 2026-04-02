@@ -20,7 +20,6 @@ import NetInfo from '@react-native-community/netinfo';
 import { billVerificationService } from './billVerificationService';
 import { billUploadService } from './billUploadService';
 import { imageHashService } from './imageHashService';
-import type { BillUploadData as BillVerificationUploadData } from '../types/billVerification.types';
 import type { BillUploadData } from './billUploadService';
 import { BILL_UPLOAD_CONFIG } from '@/config/uploadConfig';
 
@@ -147,7 +146,7 @@ class BillUploadQueueService extends EventEmitter {
   private isSyncing = false;
   private isInitialized = false;
   private networkUnsubscribe?: () => void;
-  private syncInterval?: NodeJS.Timeout;
+  private syncInterval?: ReturnType<typeof setTimeout>;
 
   /**
    * Initialize the queue service
@@ -365,7 +364,7 @@ class BillUploadQueueService extends EventEmitter {
 
 
       if (billsToSync.length === 0) {
-        return result;
+        return result as any;
       }
 
       // Process in batches to avoid overwhelming the server
@@ -439,7 +438,7 @@ class BillUploadQueueService extends EventEmitter {
       this.isSyncing = false;
     }
 
-    return result;
+    return result as any;
   }
 
   /**

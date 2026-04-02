@@ -112,7 +112,7 @@ class EarningsApiService {
     if (params?.startDate) queryParams.startDate = params.startDate;
     if (params?.endDate) queryParams.endDate = params.endDate;
 
-    return apiClient.get('/earnings/consolidated-summary', queryParams);
+    return apiClient.get<any>('/earnings/consolidated-summary', queryParams);
   }
 
   /**
@@ -123,7 +123,7 @@ class EarningsApiService {
   }): Promise<ApiResponse<PartnerEarningsSummary>> {
     const queryParams: Record<string, string> = {};
     if (params?.period) queryParams.period = params.period;
-    return apiClient.get('/earnings/partner-summary', queryParams);
+    return apiClient.get<any>('/earnings/partner-summary', queryParams);
   }
 
   /**
@@ -143,7 +143,7 @@ class EarningsApiService {
     if (params?.startDate) queryParams.startDate = params.startDate;
     if (params?.endDate) queryParams.endDate = params.endDate;
 
-    return apiClient.get('/earnings/history', queryParams);
+    return apiClient.get<any>('/earnings/history', queryParams);
   }
 }
 

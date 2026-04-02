@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { FormPageSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -82,9 +74,7 @@ function ReviewEarnPage() {
     fetchReviewableItems(true);
   }, [fetchReviewableItems]);
 
-  const filteredItems = reviewableItems.filter(item =>
-    filter === 'all' ? true : item.type === filter
-  );
+  const filteredItems = reviewableItems.filter((item) => (filter === 'all' ? true : item.type === filter));
 
   const handleWriteReview = (item: ReviewableItem) => {
     router.push({
@@ -102,7 +92,10 @@ function ReviewEarnPage() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Write & Earn</Text>
@@ -112,14 +105,10 @@ function ReviewEarnPage() {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.warning]} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.warning]} />}
       >
         {/* Loading State */}
-        {loading && !refreshing && (
-          <FormPageSkeleton />
-        )}
+        {loading && !refreshing && <FormPageSkeleton />}
 
         {/* Error State */}
         {error && !loading && (
@@ -134,10 +123,7 @@ function ReviewEarnPage() {
 
         {/* Hero Section */}
         {!loading && !error && (
-          <LinearGradient
-            colors={[colors.tint.amberLight, colors.warningScale[200]]}
-            style={styles.heroCard}
-          >
+          <LinearGradient colors={[colors.tint.amberLight, colors.warningScale[200]]} style={styles.heroCard}>
             <View style={styles.heroContent}>
               <View style={styles.heroIconContainer}>
                 <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 32, height: 32 }} />
@@ -166,34 +152,34 @@ function ReviewEarnPage() {
 
         {/* Tips Section */}
         {!loading && !error && (
-        <View style={styles.tipsSection}>
-          <Text style={styles.tipsTitle}>Review Tips</Text>
-          <View style={styles.tipsGrid}>
-            {reviewTips.map((tip, idx) => (
-              <View key={idx} style={styles.tipItem}>
-                <Ionicons name={tip.icon as any} size={16} color={Colors.warning} />
-                <Text style={styles.tipText}>{tip.tip}</Text>
-              </View>
-            ))}
+          <View style={styles.tipsSection}>
+            <Text style={styles.tipsTitle}>Review Tips</Text>
+            <View style={styles.tipsGrid}>
+              {reviewTips.map((tip, idx) => (
+                <View key={idx} style={styles.tipItem}>
+                  <Ionicons name={tip.icon as any} size={16} color={Colors.warning} />
+                  <Text style={styles.tipText}>{tip.tip}</Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
         )}
 
         {/* Filter Tabs */}
         {!loading && !error && (
-        <View style={styles.filterTabs}>
-          {(['all', 'store', 'product'] as const).map((tab) => (
-            <Pressable
-              key={tab}
-              style={[styles.filterTab, filter === tab && styles.filterTabActive]}
-              onPress={() => setFilter(tab)}
-            >
-              <Text style={[styles.filterTabText, filter === tab && styles.filterTabTextActive]}>
-                {tab === 'all' ? 'All' : tab === 'store' ? 'Stores' : 'Products'}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+          <View style={styles.filterTabs}>
+            {(['all', 'store', 'product'] as const).map((tab) => (
+              <Pressable
+                key={tab}
+                style={[styles.filterTab, filter === tab ? styles.filterTabActive : null]}
+                onPress={() => setFilter(tab)}
+              >
+                <Text style={[styles.filterTabText, filter === tab ? styles.filterTabTextActive : null]}>
+                  {tab === 'all' ? 'All' : tab === 'store' ? 'Stores' : 'Products'}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         )}
 
         {/* Empty State */}
@@ -207,68 +193,65 @@ function ReviewEarnPage() {
 
         {/* Reviewable Items */}
         {!loading && !error && filteredItems.length > 0 && (
-        <View style={styles.itemsList}>
-          <Text style={styles.sectionTitle}>Ready to Review ({filteredItems.length})</Text>
+          <View style={styles.itemsList}>
+            <Text style={styles.sectionTitle}>Ready to Review ({filteredItems.length})</Text>
 
-          {filteredItems.map((item) => (
-            <Pressable
-              key={item.id}
-              style={styles.itemCard}
-              onPress={() => handleWriteReview(item)}
-            >
-              {item.image ? (
-                <CachedImage source={item.image} style={styles.itemImage} />
-              ) : (
-                <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
-                  <Ionicons name={item.type === 'store' ? 'storefront' : 'cube'} size={24} color={colors.text.tertiary} />
-                </View>
-              )}
-              <View style={styles.itemContent}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <View style={styles.coinBadge}>
-                    <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 14, height: 14 }} />
-                    <Text style={styles.coinText}>+{item.coins}</Text>
+            {filteredItems.map((item) => (
+              <Pressable key={item.id} style={styles.itemCard} onPress={() => handleWriteReview(item)}>
+                {item.image ? (
+                  <CachedImage source={item.image} style={styles.itemImage} />
+                ) : (
+                  <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
+                    <Ionicons
+                      name={item.type === 'store' ? 'storefront' : 'cube'}
+                      size={24}
+                      color={colors.text.tertiary}
+                    />
                   </View>
-                </View>
-                <Text style={styles.itemCategory}>{item.category}</Text>
-                <View style={styles.itemFooter}>
-                  <View style={styles.itemMeta}>
-                    <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-                    <Text style={styles.itemMetaText}>
-                      {item.type === 'store' ? item.visitDate : item.purchaseDate}
-                    </Text>
-                  </View>
-                  {item.type === 'store' && item.hasReceipt && (
-                    <View style={styles.receiptBadge}>
-                      <Ionicons name="receipt-outline" size={12} color={Colors.success} />
-                      <Text style={styles.receiptText}>Receipt</Text>
+                )}
+                <View style={styles.itemContent}>
+                  <View style={styles.itemHeader}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <View style={styles.coinBadge}>
+                      <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 14, height: 14 }} />
+                      <Text style={styles.coinText}>+{item.coins}</Text>
                     </View>
-                  )}
+                  </View>
+                  <Text style={styles.itemCategory}>{item.category}</Text>
+                  <View style={styles.itemFooter}>
+                    <View style={styles.itemMeta}>
+                      <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
+                      <Text style={styles.itemMetaText}>
+                        {item.type === 'store' ? item.visitDate : item.purchaseDate}
+                      </Text>
+                    </View>
+                    {item.type === 'store' && item.hasReceipt && (
+                      <View style={styles.receiptBadge}>
+                        <Ionicons name="receipt-outline" size={12} color={Colors.success} />
+                        <Text style={styles.receiptText}>Receipt</Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-            </Pressable>
-          ))}
-        </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+              </Pressable>
+            ))}
+          </View>
         )}
 
         {/* Bottom CTA */}
         {!loading && !error && (
-        <View style={styles.bottomSection}>
-          <LinearGradient
-            colors={['#E0F2FE', colors.tint.blueLight]}
-            style={styles.bottomCard}
-          >
-            <Ionicons name="information-circle" size={24} color={Colors.info} />
-            <View style={styles.bottomCardText}>
-              <Text style={styles.bottomCardTitle}>More Ways to Earn</Text>
-              <Text style={styles.bottomCardSubtitle}>
-                Visit partner stores & make purchases to unlock more review opportunities
-              </Text>
-            </View>
-          </LinearGradient>
-        </View>
+          <View style={styles.bottomSection}>
+            <LinearGradient colors={['#E0F2FE', colors.tint.blueLight]} style={styles.bottomCard}>
+              <Ionicons name="information-circle" size={24} color={Colors.info} />
+              <View style={styles.bottomCardText}>
+                <Text style={styles.bottomCardTitle}>More Ways to Earn</Text>
+                <Text style={styles.bottomCardSubtitle}>
+                  Visit partner stores & make purchases to unlock more review opportunities
+                </Text>
+              </View>
+            </LinearGradient>
+          </View>
         )}
 
         <View style={{ height: insets.bottom + 80 }} />

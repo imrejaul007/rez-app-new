@@ -5,7 +5,7 @@ import exploreApi from '@/services/exploreApi';
 export function useExploreStores(params?: { page?: number; limit?: number; category?: string; sortBy?: string }) {
   return useQuery({
     queryKey: queryKeys.explore.deals(params),
-    queryFn: () => exploreApi.getStores(params),
+    queryFn: () => exploreApi.getStores(params as any),
   });
 }
 
@@ -48,7 +48,7 @@ export function useExploreTrendingStores(params?: { page?: number; limit?: numbe
 export function useExploreFeaturedStores() {
   return useQuery({
     queryKey: queryKeys.explore.featured(),
-    queryFn: () => exploreApi.getStores({ sortBy: 'featured', limit: 10 }),
+    queryFn: () => exploreApi.getStores({ sortBy: 'featured' as any, limit: 10 }),
   });
 }
 

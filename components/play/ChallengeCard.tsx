@@ -29,7 +29,7 @@ function ChallengeCard({
 
   return (
     <Pressable
-      style={[styles.challengeCard, isCompleted && styles.completedCard]}
+      style={[styles.challengeCard, isCompleted ? styles.completedCard : null]}
       onPress={onPress}
       disabled={isCompleted}
       accessibilityLabel={`${title} challenge. ${description}. Progress: ${progress} out of ${maxProgress}${isCompleted ? '. Complete!' : ''}`}
@@ -38,7 +38,7 @@ function ChallengeCard({
       accessibilityState={{ disabled: isCompleted }}
     >
       <View style={styles.challengeInfo}>
-        <View style={[styles.iconContainer, isCompleted && styles.completedIcon]}>
+        <View style={[styles.iconContainer, isCompleted ? styles.completedIcon : null]}>
           <Ionicons 
             name={isCompleted ? "checkmark-circle" : icon} 
             size={24} 
@@ -46,17 +46,17 @@ function ChallengeCard({
           />
         </View>
         <View style={styles.challengeDetails}>
-          <ThemedText style={[styles.challengeTitle, isCompleted && styles.completedText]}>
+          <ThemedText style={[styles.challengeTitle, isCompleted ? styles.completedText : null]}>
             {title}
           </ThemedText>
-          <ThemedText style={[styles.challengeDescription, isCompleted && styles.completedDescription]}>
+          <ThemedText style={[styles.challengeDescription, isCompleted ? styles.completedDescription : null]}>
             {description}
           </ThemedText>
         </View>
       </View>
       
       <View style={styles.challengeProgress}>
-        <ThemedText style={[styles.progressText, isCompleted && styles.completedProgressText]}>
+        <ThemedText style={[styles.progressText, isCompleted ? styles.completedProgressText : null]}>
           {isCompleted ? "Complete!" : `${progress}/${maxProgress}`}
         </ThemedText>
         <View style={styles.progressBar}>

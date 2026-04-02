@@ -23,7 +23,7 @@ const COLORS = {
 
 function SurveyTakePage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const [survey, setSurvey] = useState<SurveyDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -65,7 +65,7 @@ function SurveyTakePage() {
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
 
   const handleAnswer = (questionId: string, value: string | string[] | number) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }));
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const handleNext = async () => {
@@ -78,7 +78,7 @@ function SurveyTakePage() {
     }
 
     if (currentIndex < totalQuestions - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
 
       // Save progress periodically
       if ((currentIndex + 1) % 3 === 0 && id) {
@@ -96,7 +96,7 @@ function SurveyTakePage() {
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
     }
   };
 
@@ -104,14 +104,12 @@ function SurveyTakePage() {
     if (!id || !survey) return;
 
     // Check all required questions are answered
-    const unanswered = survey.questions?.filter(
-      q => q.required && !answers[q.id]
-    ) || [];
+    const unanswered = survey.questions?.filter((q) => q.required && !answers[q.id]) || [];
 
     if (unanswered.length > 0) {
       platformAlertSimple(
         'Missing Answers',
-        `Please answer all required questions. ${unanswered.length} question(s) remaining.`
+        `Please answer all required questions. ${unanswered.length} question(s) remaining.`,
       );
       return;
     }
@@ -127,7 +125,7 @@ function SurveyTakePage() {
 
       // Navigate to completion page with result
       router.replace({
-        pathname: `/survey/${id}/complete`,
+        pathname: `/survey/${id}/complete` as any,
         params: {
           coinsEarned: result.coinsEarned.toString(),
           timeSpent: result.timeSpent.toString(),
@@ -155,7 +153,7 @@ function SurveyTakePage() {
         }
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       },
-      'Exit'
+      'Exit',
     );
   };
 
@@ -167,24 +165,13 @@ function SurveyTakePage() {
             {question.options?.map((option, index) => (
               <Pressable
                 key={index}
-                style={[
-                  styles.optionButton,
-                  currentAnswer === option && styles.optionButtonSelected,
-                ]}
+                style={[styles.optionButton, currentAnswer === option && styles.optionButtonSelected]}
                 onPress={() => handleAnswer(question.id, option)}
               >
-                <View style={[
-                  styles.radioOuter,
-                  currentAnswer === option && styles.radioOuterSelected,
-                ]}>
+                <View style={[styles.radioOuter, currentAnswer === option && styles.radioOuterSelected]}>
                   {currentAnswer === option && <View style={styles.radioInner} />}
                 </View>
-                <Text style={[
-                  styles.optionText,
-                  currentAnswer === option && styles.optionTextSelected,
-                ]}>
-                  {option}
-                </Text>
+                <Text style={[styles.optionText, currentAnswer === option && styles.optionTextSelected]}>{option}</Text>
               </Pressable>
             ))}
           </View>
@@ -199,29 +186,18 @@ function SurveyTakePage() {
               return (
                 <Pressable
                   key={index}
-                  style={[
-                    styles.optionButton,
-                    isSelected && styles.optionButtonSelected,
-                  ]}
+                  style={[styles.optionButton, isSelected && styles.optionButtonSelected]}
                   onPress={() => {
                     const newSelected = isSelected
-                      ? selectedOptions.filter(o => o !== option)
+                      ? selectedOptions.filter((o) => o !== option)
                       : [...selectedOptions, option];
                     handleAnswer(question.id, newSelected);
                   }}
                 >
-                  <View style={[
-                    styles.checkbox,
-                    isSelected && styles.checkboxSelected,
-                  ]}>
+                  <View style={[styles.checkbox, isSelected && styles.checkboxSelected]}>
                     {isSelected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
                   </View>
-                  <Text style={[
-                    styles.optionText,
-                    isSelected && styles.optionTextSelected,
-                  ]}>
-                    {option}
-                  </Text>
+                  <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>{option}</Text>
                 </Pressable>
               );
             })}
@@ -235,11 +211,7 @@ function SurveyTakePage() {
           <View style={styles.ratingContainer}>
             <View style={styles.starsRow}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <Pressable
-                  key={star}
-                  onPress={() => handleAnswer(question.id, star)}
-                  style={styles.starButton}
-                >
+                <Pressable key={star} onPress={() => handleAnswer(question.id, star)} style={styles.starButton}>
                   <Ionicons
                     name={star <= ratingValue ? 'star' : 'star-outline'}
                     size={40}
@@ -265,17 +237,9 @@ function SurveyTakePage() {
                 <Pressable
                   key={num}
                   onPress={() => handleAnswer(question.id, num)}
-                  style={[
-                    styles.scaleButton,
-                    scaleValue === num && styles.scaleButtonSelected,
-                  ]}
+                  style={[styles.scaleButton, scaleValue === num && styles.scaleButtonSelected]}
                 >
-                  <Text style={[
-                    styles.scaleText,
-                    scaleValue === num && styles.scaleTextSelected,
-                  ]}>
-                    {num}
-                  </Text>
+                  <Text style={[styles.scaleText, scaleValue === num && styles.scaleTextSelected]}>{num}</Text>
                 </Pressable>
               ))}
             </View>
@@ -329,7 +293,10 @@ function SurveyTakePage() {
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle-outline" size={64} color={COLORS.textMuted} />
             <Text style={styles.errorText}>{error || 'No questions found'}</Text>
-            <Pressable style={styles.retryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.retryButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Text style={styles.retryText}>Go Back</Text>
             </Pressable>
           </View>
@@ -361,10 +328,10 @@ function SurveyTakePage() {
         </View>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           {/* Question */}
           <View style={styles.questionSection}>
             <View style={styles.questionHeader}>
@@ -390,31 +357,16 @@ function SurveyTakePage() {
             onPress={handlePrevious}
             disabled={currentIndex === 0}
           >
-            <Ionicons
-              name="chevron-back"
-              size={20}
-              color={currentIndex === 0 ? COLORS.textMuted : COLORS.textDark}
-            />
-            <Text style={[
-              styles.navButtonText,
-              currentIndex === 0 && styles.navButtonTextDisabled,
-            ]}>
-              Previous
-            </Text>
+            <Ionicons name="chevron-back" size={20} color={currentIndex === 0 ? COLORS.textMuted : COLORS.textDark} />
+            <Text style={[styles.navButtonText, currentIndex === 0 && styles.navButtonTextDisabled]}>Previous</Text>
           </Pressable>
 
-          <Pressable
-            style={[styles.navButton, styles.nextButton]}
-            onPress={handleNext}
-            disabled={submitting}
-          >
+          <Pressable style={[styles.navButton, styles.nextButton]} onPress={handleNext} disabled={submitting}>
             {submitting ? (
               <ActivityIndicator color={colors.text.inverse} size="small" />
             ) : (
               <>
-                <Text style={styles.nextButtonText}>
-                  {currentIndex === totalQuestions - 1 ? 'Submit' : 'Next'}
-                </Text>
+                <Text style={styles.nextButtonText}>{currentIndex === totalQuestions - 1 ? 'Submit' : 'Next'}</Text>
                 <Ionicons
                   name={currentIndex === totalQuestions - 1 ? 'checkmark' : 'chevron-forward'}
                   size={20}
@@ -435,9 +387,22 @@ const styles = StyleSheet.create({
   loadingText: { marginTop: 12, fontSize: 14, color: COLORS.textMuted },
   errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 },
   errorText: { fontSize: 16, color: COLORS.textMuted, marginTop: 16, textAlign: 'center' },
-  retryButton: { marginTop: 16, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: COLORS.primary, borderRadius: 12 },
+  retryButton: {
+    marginTop: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+  },
   retryText: { color: colors.text.inverse, fontSize: 14, fontWeight: '600' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: COLORS.white },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: COLORS.white,
+  },
   exitButton: { padding: 8 },
   progressInfo: { flex: 1, alignItems: 'center' },
   progressText: { fontSize: 14, fontWeight: '600', color: COLORS.textDark },
@@ -446,16 +411,47 @@ const styles = StyleSheet.create({
   content: { flex: 1, padding: 20 },
   questionSection: { marginBottom: 24 },
   questionHeader: { flexDirection: 'row', marginBottom: 8 },
-  requiredBadge: { paddingHorizontal: 8, paddingVertical: 4, backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 6 },
+  requiredBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderRadius: 6,
+  },
   requiredText: { fontSize: 11, fontWeight: '600', color: COLORS.error },
   questionText: { fontSize: 18, fontWeight: '700', color: COLORS.textDark, lineHeight: 28 },
   optionsContainer: { gap: 12 },
-  optionButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border },
+  optionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
   optionButtonSelected: { borderColor: COLORS.primary, backgroundColor: 'rgba(0, 192, 106, 0.05)' },
-  radioOuter: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: COLORS.border, marginRight: 12, justifyContent: 'center', alignItems: 'center' },
+  radioOuter: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   radioOuterSelected: { borderColor: COLORS.primary },
   radioInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.primary },
-  checkbox: { width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: COLORS.border, marginRight: 12, justifyContent: 'center', alignItems: 'center' },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   checkboxSelected: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   optionText: { flex: 1, fontSize: 15, color: COLORS.textDark },
   optionTextSelected: { fontWeight: '600' },
@@ -466,7 +462,16 @@ const styles = StyleSheet.create({
   ratingLabel: { marginTop: 16, fontSize: 14, color: COLORS.textMuted },
   scaleContainer: { padding: 10 },
   scaleRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 },
-  scaleButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border, justifyContent: 'center', alignItems: 'center' },
+  scaleButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   scaleButtonSelected: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   scaleText: { fontSize: 14, fontWeight: '600', color: COLORS.textDark },
   scaleTextSelected: { color: colors.text.inverse },
@@ -474,8 +479,24 @@ const styles = StyleSheet.create({
   scaleLabelText: { fontSize: 12, color: COLORS.textMuted },
   textInputContainer: { backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border },
   textInput: { padding: 16, fontSize: 15, color: COLORS.textDark, minHeight: 120 },
-  navigation: { flexDirection: 'row', padding: 16, paddingBottom: Platform.OS === 'ios' ? 32 : 16, backgroundColor: COLORS.white, borderTopWidth: 1, borderTopColor: COLORS.border, gap: 12 },
-  navButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 12, gap: 8 },
+  navigation: {
+    flexDirection: 'row',
+    padding: 16,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+    backgroundColor: COLORS.white,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    gap: 12,
+  },
+  navButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 8,
+  },
   prevButton: { backgroundColor: 'rgba(0,0,0,0.05)' },
   nextButton: { backgroundColor: COLORS.primary },
   navButtonText: { fontSize: 15, fontWeight: '600', color: COLORS.textDark },

@@ -221,10 +221,10 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
 
           <View style={styles.quickSelectRow}>
             <Pressable
-              style={[styles.quickSelectButton, using === 0 && styles.quickSelectActive]}
+              style={[styles.quickSelectButton, using === 0 ? styles.quickSelectActive : null]}
               onPress={() => onAmountChange(0)}
             >
-              <Text style={[styles.quickSelectText, using === 0 && styles.quickSelectTextActive]}>
+              <Text style={[styles.quickSelectText, using === 0 ? styles.quickSelectTextActive : null]}>
                 None
               </Text>
             </Pressable>
@@ -237,10 +237,10 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
               </Text>
             </Pressable>
             <Pressable
-              style={[styles.quickSelectButton, using === maxUsable && styles.quickSelectActive]}
+              style={[styles.quickSelectButton, using === maxUsable ? styles.quickSelectActive : null]}
               onPress={() => onAmountChange(maxUsable)}
             >
-              <Text style={[styles.quickSelectText, using === maxUsable && styles.quickSelectTextActive]}>
+              <Text style={[styles.quickSelectText, using === maxUsable ? styles.quickSelectTextActive : null]}>
                 Max
               </Text>
             </Pressable>

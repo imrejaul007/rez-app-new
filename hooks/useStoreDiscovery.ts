@@ -210,9 +210,9 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
             limit * 2 // Get more to sort by rating
           );
 
-          if (nearbyResponse.success && nearbyResponse.data?.length > 0) {
+          if (nearbyResponse.success && (nearbyResponse.data as any)?.length > 0) {
             // Transform and sort by rating (descending), then by distance (ascending)
-            const stores = nearbyResponse.data
+            const stores = (nearbyResponse.data as any)
               .map((store: any) => transformStore(store, userCoordinates))
               .sort((a: DiscoveryStore, b: DiscoveryStore) => {
                 // First sort by rating (higher is better)
@@ -267,9 +267,9 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         }),
       });
 
-      if (highRatedResponse.success && highRatedResponse.data?.stores?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${highRatedResponse.data.stores.length} high-rated stores`);
-        return highRatedResponse.data.stores.map((store: any) =>
+      if (highRatedResponse.success && (highRatedResponse.data as any)?.stores?.length > 0) {
+        devLog.log(`✅ [StoreDiscovery] Got ${((highRatedResponse.data as any) as any).stores.length} high-rated stores`);
+        return ((highRatedResponse.data as any) as any).stores.map((store: any) =>
           transformStore(store, userCoordinates)
         );
       }
@@ -278,15 +278,15 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
       devLog.log('📊 [StoreDiscovery] Trying featured stores fallback...');
       const featuredResponse = await storesService.getFeaturedStores(limit);
 
-      if (featuredResponse.success && featuredResponse.data?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${featuredResponse.data.length} featured stores`);
-        return featuredResponse.data.map((store: any) =>
+      if (featuredResponse.success && (featuredResponse.data as any)?.length > 0) {
+        devLog.log(`✅ [StoreDiscovery] Got ${((featuredResponse.data as any) as any).length} featured stores`);
+        return ((featuredResponse.data as any) as any).map((store: any) =>
           transformStore(store, userCoordinates)
         );
       }
 
       return [];
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [StoreDiscovery] Error fetching top stores:', error);
       throw error;
     }
@@ -301,8 +301,8 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         devLog.log('⚠️ [StoreDiscovery] No user location available for nearby stores');
         // Fall back to featured stores if no location
         const featuredResponse = await storesService.getFeaturedStores(limit);
-        if (featuredResponse.success && featuredResponse.data?.length > 0) {
-          return featuredResponse.data.map((store: any) =>
+        if (featuredResponse.success && (featuredResponse.data as any)?.length > 0) {
+          return ((featuredResponse.data as any) as any).map((store: any) =>
             transformStore(store, undefined)
           );
         }
@@ -317,9 +317,9 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         limit
       );
 
-      if (nearbyResponse.success && nearbyResponse.data?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${nearbyResponse.data.length} nearby stores`);
-        return nearbyResponse.data.map((store: any) =>
+      if (nearbyResponse.success && (nearbyResponse.data as any)?.length > 0) {
+        devLog.log(`✅ [StoreDiscovery] Got ${((nearbyResponse.data as any) as any).length} nearby stores`);
+        return ((nearbyResponse.data as any) as any).map((store: any) =>
           transformStore(store, userCoordinates)
         );
       }
@@ -327,14 +327,14 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
       // Fallback to featured if no nearby stores
       devLog.log('📊 [StoreDiscovery] No nearby stores, falling back to featured...');
       const featuredResponse = await storesService.getFeaturedStores(limit);
-      if (featuredResponse.success && featuredResponse.data?.length > 0) {
-        return featuredResponse.data.map((store: any) =>
+      if (featuredResponse.success && (featuredResponse.data as any)?.length > 0) {
+        return ((featuredResponse.data as any) as any).map((store: any) =>
           transformStore(store, userCoordinates)
         );
       }
 
       return [];
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [StoreDiscovery] Error fetching popular stores:', error);
       throw error;
     }

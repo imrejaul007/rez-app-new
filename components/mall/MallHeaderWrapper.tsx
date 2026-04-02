@@ -25,7 +25,7 @@ const MallHeaderWrapper: React.FC = () => {
           if (!isMounted()) return;
           setHeroBanners(banners);
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (mounted) {

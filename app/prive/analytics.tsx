@@ -29,7 +29,7 @@ function AnalyticsScreen() {
       const response = await priveApi.getAnalytics(period);
       if (!isMounted()) return;
       if (response.success && response.data) setData(response.data);
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       catchAndReport(e, setError, 'Analytics/fetchData');
     } finally {
@@ -120,10 +120,10 @@ function AnalyticsScreen() {
           {periods.map((p) => (
             <Pressable
               key={p}
-              style={[styles.periodTab, period === p && styles.periodTabActive]}
+              style={[styles.periodTab, period === p ? styles.periodTabActive : null]}
               onPress={() => setPeriod(p)}
             >
-              <Text style={[styles.periodText, period === p && styles.periodTextActive]}>{p}d</Text>
+              <Text style={[styles.periodText, period === p ? styles.periodTextActive : null]}>{p}d</Text>
             </Pressable>
           ))}
         </View>

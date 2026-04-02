@@ -291,7 +291,7 @@ export function useCashStoreSection(
 
     (async () => {
       try {
-        const response = await travelApi.getCategories();
+        const response: any = await travelApi.getCategories();
         if (response.success && response.data && response.data.length > 0) {
           setTravelDeals(
             response.data.map((cat: any) => ({
@@ -345,10 +345,10 @@ export function useCashStoreSection(
   );
 
   const cashbackSummary = useMemo(() => {
-    if (!summaryQuery.data?.success || !summaryQuery.data?.data) {
+    if (!(summaryQuery.data as any)?.success || !(summaryQuery.data as any)?.data) {
       return { total: 0, pending: 0, confirmed: 0, available: 0 };
     }
-    const s = summaryQuery.data.data;
+    const s = (summaryQuery.data as any).data;
     return {
       total: s.totalEarned ?? (s as any).total ?? 0,
       pending: s.pending ?? 0,

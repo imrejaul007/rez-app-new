@@ -6,16 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  RefreshControl,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, RefreshControl, Dimensions } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,14 +24,21 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const COLORS = EVENT_COLORS;
 
 // Fallback category configurations (used when backend metadata not available)
-const FALLBACK_CATEGORY_CONFIG: Record<string, { title: string; icon: string; gradientColors: readonly [string, string] }> = {
+const FALLBACK_CATEGORY_CONFIG: Record<
+  string,
+  { title: string; icon: string; gradientColors: readonly [string, string] }
+> = {
   movies: { title: 'Movies', icon: '\uD83C\uDFAC', gradientColors: EVENT_COLORS.categoryGradients.movies },
   concerts: { title: 'Concerts', icon: '\uD83C\uDFB5', gradientColors: EVENT_COLORS.categoryGradients.concerts },
   parks: { title: 'Theme Parks', icon: '\uD83C\uDFA2', gradientColors: EVENT_COLORS.categoryGradients.parks },
   workshops: { title: 'Workshops', icon: '\uD83C\uDFA8', gradientColors: EVENT_COLORS.categoryGradients.workshops },
   gaming: { title: 'Gaming', icon: '\uD83C\uDFAE', gradientColors: EVENT_COLORS.categoryGradients.gaming },
   sports: { title: 'Sports Events', icon: '\u26BD', gradientColors: EVENT_COLORS.categoryGradients.sports },
-  entertainment: { title: 'Entertainment', icon: '\uD83C\uDFAD', gradientColors: EVENT_COLORS.categoryGradients.entertainment },
+  entertainment: {
+    title: 'Entertainment',
+    icon: '\uD83C\uDFAD',
+    gradientColors: EVENT_COLORS.categoryGradients.entertainment,
+  },
   arts: { title: 'Arts & Culture', icon: '\uD83C\uDFA8', gradientColors: EVENT_COLORS.categoryGradients.arts },
   music: { title: 'Music', icon: '\uD83C\uDFB5', gradientColors: EVENT_COLORS.categoryGradients.music },
 };
@@ -63,7 +61,7 @@ interface DisplayEvent {
 const EventsCategoryPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [selectedFilter, setSelectedFilter] = useState<DateFilter>('all');
@@ -98,12 +96,10 @@ const EventsCategoryPage: React.FC = () => {
     const cashbackValue = (event as any).cashback;
     const cashbackText = cashbackValue && cashbackValue > 0 ? `${cashbackValue}%` : undefined;
 
-    const locationName = typeof event.location === 'string'
-      ? event.location
-      : (event.location as any)?.name || 'Venue';
+    const locationName = typeof event.location === 'string' ? event.location : (event.location as any)?.name || 'Venue';
 
     const isOnline = (event as any).isOnline || (event.location as any)?.isOnline;
-    const displayCurrency = isOnline ? currencySymbol : (event.price?.currency || currencySymbol);
+    const displayCurrency = isOnline ? currencySymbol : event.price?.currency || currencySymbol;
 
     return {
       id: event.id,
@@ -114,72 +110,80 @@ const EventsCategoryPage: React.FC = () => {
       price: event.price?.isFree ? 'Free' : `${displayCurrency}${event.price?.amount || 0}`,
       rating: (event as any).rating || 0,
       reviewCount: (event as any).reviewCount || 0,
-      image: event.image || undefined,
+      image: event.image || '',
       cashback: cashbackText,
     };
   };
 
-  const fetchEvents = useCallback(async (filter: DateFilter = 'all') => {
-    try {
-      setError(null);
+  const fetchEvents = useCallback(
+    async (filter: DateFilter = 'all') => {
+      try {
+        setError(null);
 
-      // Fetch category metadata and events in parallel — pass date filter to backend
-      const [categoriesResult, result] = await Promise.all([
-        eventsApiService.getCategories().catch(() => []),
-        eventsApiService.getEventsByCategory(categoryKey, 20, 0, filter),
-      ]);
+        // Fetch category metadata and events in parallel — pass date filter to backend
+        const [categoriesResult, result] = await Promise.all([
+          eventsApiService.getCategories().catch(() => []),
+          eventsApiService.getEventsByCategory(categoryKey, 20, 0, filter),
+        ]);
 
-      // Find this category's metadata from backend
-      if (categoriesResult && categoriesResult.length > 0) {
-        const found = categoriesResult.find((c: any) => c.slug === categoryKey);
-        if (found) {
-          setCategoryMeta({
-            name: found.name,
-            icon: found.icon,
-            color: found.color,
-            gradient: found.gradient
-              ? (Array.isArray(found.gradient) ? found.gradient : found.gradient.split(','))
-              : (fallbackConfig.gradientColors as unknown as string[]),
-          });
+        // Find this category's metadata from backend
+        if (categoriesResult && categoriesResult.length > 0) {
+          const found = categoriesResult.find((c: any) => c.slug === categoryKey);
+          if (found) {
+            setCategoryMeta({
+              name: found.name,
+              icon: found.icon,
+              color: found.color,
+              gradient: found.gradient
+                ? Array.isArray(found.gradient)
+                  ? found.gradient
+                  : found.gradient.split(',')
+                : (fallbackConfig.gradientColors as unknown as string[]),
+            });
+          }
         }
-      }
 
-      if (result && result.events && result.events.length > 0) {
+        if (result && result.events && result.events.length > 0) {
+          if (!isMounted()) return;
+          setEvents(result.events.map(transformEventToDisplay));
+          if (!isMounted()) return;
+          setTotalEvents(result.total || result.events.length);
+        } else {
+          if (!isMounted()) return;
+          setEvents([]);
+          if (!isMounted()) return;
+          setTotalEvents(0);
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setEvents(result.events.map(transformEventToDisplay));
-        if (!isMounted()) return;
-        setTotalEvents(result.total || result.events.length);
-      } else {
+        setError(err.message || 'Failed to load events. Please try again.');
         if (!isMounted()) return;
         setEvents([]);
         if (!isMounted()) return;
         setTotalEvents(0);
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load events. Please try again.');
-      if (!isMounted()) return;
-      setEvents([]);
-      if (!isMounted()) return;
-      setTotalEvents(0);
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, [categoryKey]);
+    },
+    [categoryKey],
+  );
 
   useEffect(() => {
     setIsLoading(true);
     fetchEvents(selectedFilter);
   }, [categoryKey]);
 
-  const handleFilterChange = useCallback((filter: DateFilter) => {
-    setSelectedFilter(filter);
-    setIsLoading(true);
-    fetchEvents(filter);
-  }, [fetchEvents]);
+  const handleFilterChange = useCallback(
+    (filter: DateFilter) => {
+      setSelectedFilter(filter);
+      setIsLoading(true);
+      fetchEvents(filter);
+    },
+    [fetchEvents],
+  );
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
@@ -205,17 +209,22 @@ const EventsCategoryPage: React.FC = () => {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <LinearGradient
-          colors={displayGradient as unknown as string[]}
+          colors={displayGradient as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.header}
         >
           <View style={styles.headerTop}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={COLORS.background} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
-              <Text style={styles.headerTitle}>{displayIcon} {displayTitle}</Text>
+              <Text style={styles.headerTitle}>
+                {displayIcon} {displayTitle}
+              </Text>
               <Text style={styles.headerSubtitle}>Events</Text>
             </View>
             <View style={{ width: 40 }} />
@@ -233,7 +242,6 @@ const EventsCategoryPage: React.FC = () => {
               setIsLoading(true);
               fetchEvents(selectedFilter);
             }}
-           
           >
             <Ionicons name="refresh-outline" size={20} color={COLORS.background} />
             <Text style={styles.retryButtonText}>Try Again</Text>
@@ -248,18 +256,18 @@ const EventsCategoryPage: React.FC = () => {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <LinearGradient
-        colors={displayGradient as unknown as string[]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
+      <LinearGradient colors={displayGradient as any} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.background} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{displayIcon} {displayTitle}</Text>
+            <Text style={styles.headerTitle}>
+              {displayIcon} {displayTitle}
+            </Text>
             <Text style={styles.headerSubtitle}>{totalEvents} events available</Text>
           </View>
           <Pressable style={styles.searchButton} onPress={() => router.push('/events-list' as any)}>
@@ -275,15 +283,9 @@ const EventsCategoryPage: React.FC = () => {
             <Pressable
               key={filter.id}
               onPress={() => handleFilterChange(filter.id)}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.id && styles.filterChipActive
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.id && styles.filterChipActive]}
             >
-              <Text style={[
-                styles.filterChipText,
-                selectedFilter === filter.id && styles.filterChipTextActive
-              ]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -295,19 +297,14 @@ const EventsCategoryPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[COLORS.primary]} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[COLORS.primary] as any} />
         }
       >
         {/* Events List */}
         <View style={styles.eventsList}>
           {events.length > 0 ? (
             events.map((event) => (
-              <Pressable
-                key={event.id}
-                style={styles.eventCard}
-                onPress={() => handleEventPress(event.id)}
-               
-              >
+              <Pressable key={event.id} style={styles.eventCard} onPress={() => handleEventPress(event.id)}>
                 <CachedImage source={event.image} style={styles.eventImage} />
                 {event.cashback && (
                   <View style={styles.cashbackBadge}>
@@ -323,7 +320,9 @@ const EventsCategoryPage: React.FC = () => {
                     </View>
                     <View style={styles.metaItem}>
                       <Ionicons name="calendar-outline" size={14} color={COLORS.textMuted} />
-                      <Text style={styles.metaText}>{event.date} {'\u2022'} {event.time}</Text>
+                      <Text style={styles.metaText}>
+                        {event.date} {'\u2022'} {event.time}
+                      </Text>
                     </View>
                   </View>
                   <View style={styles.eventFooter}>
@@ -331,9 +330,7 @@ const EventsCategoryPage: React.FC = () => {
                       <View style={styles.ratingContainer}>
                         <Ionicons name="star" size={14} color={COLORS.star} />
                         <Text style={styles.ratingText}>{event.rating.toFixed(1)}</Text>
-                        {event.reviewCount > 0 && (
-                          <Text style={styles.reviewCount}>({event.reviewCount})</Text>
-                        )}
+                        {event.reviewCount > 0 && <Text style={styles.reviewCount}>({event.reviewCount})</Text>}
                       </View>
                     ) : (
                       <View style={styles.ratingContainer}>
@@ -351,15 +348,11 @@ const EventsCategoryPage: React.FC = () => {
               <Text style={styles.emptyTitle}>No events found</Text>
               <Text style={styles.emptySubtitle}>
                 {selectedFilter !== 'all'
-                  ? `No ${displayTitle.toLowerCase()} scheduled for ${filters.find(f => f.id === selectedFilter)?.label.toLowerCase()}`
+                  ? `No ${displayTitle.toLowerCase()} scheduled for ${filters.find((f) => f.id === selectedFilter)?.label.toLowerCase()}`
                   : `Check back later for upcoming ${displayTitle.toLowerCase()}`}
               </Text>
               {selectedFilter !== 'all' && (
-                <Pressable
-                  style={styles.clearFilterButton}
-                  onPress={() => handleFilterChange('all')}
-                 
-                >
+                <Pressable style={styles.clearFilterButton} onPress={() => handleFilterChange('all')}>
                   <Text style={styles.clearFilterText}>Show all events</Text>
                 </Pressable>
               )}
@@ -570,7 +563,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: COLORS.errorLight || colors.errorScale[100],
+    backgroundColor: (COLORS as any).errorLight || colors.errorScale[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,

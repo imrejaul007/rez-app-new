@@ -47,8 +47,6 @@ function ProductChip({
           source={imageUrl}
           style={styles.image}
           contentFit="cover"
-          accessibilityIgnoresInvertColors={true}
-          accessible={false}
         />
       ) : (
         <View style={[styles.image, styles.imagePlaceholder]} accessible={false}>

@@ -46,7 +46,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onLike, onComment
       const activityStats = await activityFeedApi.getActivityStats(activity._id);
       if (!isMounted()) return;
       setStats(activityStats);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -59,7 +59,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onLike, onComment
       const { comments: fetchedComments } = await activityFeedApi.getActivityComments(activity._id, 1, 20);
       if (!isMounted()) return;
       setComments(fetchedComments);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -95,7 +95,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onLike, onComment
       await loadComments();
       if (!isMounted()) return;
       setStats(prev => ({ ...prev, comments: prev.comments + 1 }));
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -206,7 +206,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onLike, onComment
             size={24}
             color={activity.hasLiked ? '#FF3B30' : colors.midGray}
           />
-          <Text style={[styles.actionText, activity.hasLiked && styles.actionTextActive]}>
+          <Text style={[styles.actionText, activity.hasLiked ? styles.actionTextActive : null]}>
             {stats.likes || 0}
           </Text>
         </Pressable>

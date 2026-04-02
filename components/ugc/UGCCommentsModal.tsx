@@ -21,6 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import ugcApi, { UGCComment } from '@/services/ugcApi';
 import { useToast } from '@/hooks/useToast';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useAuth } from '@/contexts/AuthContext';
@@ -99,7 +100,7 @@ function CommentItem({
   const fullName = `${comment.user.profile.firstName} ${comment.user.profile.lastName}`;
 
   return (
-    <View style={[styles.commentItem, isReply && styles.replyItem]}>
+    <View style={[styles.commentItem, isReply ? styles.replyItem : null]}>
       {/* Avatar */}
       <CachedImage
         source={
@@ -128,7 +129,7 @@ function CommentItem({
               color={comment.isLiked ? colors.error : colors.neutral[500]}
             />
             {comment.likes > 0 && (
-              <Text style={[styles.actionText, comment.isLiked && styles.likedText]}>
+              <Text style={[styles.actionText, comment.isLiked ? styles.likedText : null]}>
                 {formatCount(comment.likes)}
               </Text>
             )}
@@ -305,7 +306,7 @@ function UGCCommentsModal({
       } else {
         setError('Failed to load comments');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load comments');
     } finally {
@@ -393,7 +394,7 @@ function UGCCommentsModal({
       } else {
         showError('Failed to post comment');
       }
-    } catch (err) {
+    } catch (err: any) {
       showError('Failed to post comment');
     } finally {
       if (!isMounted()) return;
@@ -444,7 +445,7 @@ function UGCCommentsModal({
           return prev.map(revertComment);
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -485,7 +486,7 @@ function UGCCommentsModal({
       } else {
         showError('Failed to delete comment');
       }
-    } catch (err) {
+    } catch (err: any) {
       showError('Failed to delete comment');
     }
   };
@@ -500,7 +501,7 @@ function UGCCommentsModal({
       } else {
         showError('Failed to report comment');
       }
-    } catch (err) {
+    } catch (err: any) {
       showError('Failed to report comment');
     }
   };
@@ -591,22 +592,15 @@ function UGCCommentsModal({
             </View>
 
             {/* Comments List */}
-            <FlashList
+            <AnyFlashList
               ref={flatListRef}
               data={comments}
-              keyExtractor={(item) => item._id}
+              keyExtractor={(item: any) => item._id}
               renderItem={renderCommentItem}
-              contentContainerStyle={[
-                styles.commentsList,
-                comments.length === 0 && styles.emptyList,
-              ]}
+              contentContainerStyle={comments.length === 0 ? styles.emptyList : styles.commentsList}
               showsVerticalScrollIndicator={false}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.5}
-              removeClippedSubviews={Platform.OS !== 'web'}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-              initialNumToRender={8}
               estimatedItemSize={150}
               refreshControl={
                 <RefreshControl
@@ -705,7 +699,7 @@ function UGCCommentsModal({
               </View>
 
               {commentText.length > 0 && (
-                <Text style={[styles.charCount, isOverLimit && styles.charCountError]}>
+                <Text style={[styles.charCount, isOverLimit ? styles.charCountError : null]}>
                   {remainingChars} characters remaining
                 </Text>
               )}

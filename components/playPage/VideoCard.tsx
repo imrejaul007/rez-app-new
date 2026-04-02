@@ -49,7 +49,7 @@ function VideoCard({
   const [isFullscreen, setIsFullscreen] = useState(false); // Fullscreen state
   const [showControls, setShowControls] = useState(false); // Show/hide controls
   const [isLiked, setIsLiked] = useState(item.isLiked || false); // Like state
-  const [likeCount, setLikeCount] = useState(item.engagement?.likes || 0); // Like count
+  const [likeCount, setLikeCount] = useState((item as any).engagement?.likes || 0); // Like count
   const [lastTap, setLastTap] = useState<number | null>(null); // For double-tap detection
   const isMounted = useIsMounted();
   
@@ -88,7 +88,7 @@ function VideoCard({
               volume: 0,
             }
           );
-        } catch (error) {
+        } catch (error: any) {
           logger.warn('Video loading error:', error);
           if (!isMounted()) return;
           setHasError(true);
@@ -184,7 +184,7 @@ function VideoCard({
     // Optimistic update
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
-    setLikeCount(prev => newLikedState ? prev + 1 : Math.max(0, prev - 1));
+    setLikeCount((prev: any) => newLikedState ? prev + 1 : Math.max(0, prev - 1));
 
     // Animate heart
     scaleAnim.value = withSequence(
@@ -198,10 +198,10 @@ function VideoCard({
     // In real implementation, call API:
     // try {
     //   await videosApi.toggleLike(item.id);
-    // } catch (error) {
+    // } catch (error: any) {
     //   // Revert on error
     //   setIsLiked(!newLikedState);
-    //   setLikeCount(prev => newLikedState ? prev - 1 : prev + 1);
+    //   setLikeCount((prev: any) => newLikedState ? prev - 1 : prev + 1);
     // }
   };
 
@@ -223,7 +223,7 @@ function VideoCard({
     //     message: `Check out this video: ${item.description}`,
     //     url: `https://yourapp.com/video/${item.id}`,
     //   });
-    // } catch (error) {
+    // } catch (error: any) {
     //   logger.error('Error sharing:', error);
     // }
   };
@@ -245,7 +245,7 @@ function VideoCard({
         await videoRef.current.setIsMutedAsync(!isMuted);
         setIsMuted(!isMuted);
         logger.debug(`🔊 [VideoCard] Volume ${!isMuted ? 'muted' : 'unmuted'}`);
-      } catch (error) {
+      } catch (error: any) {
         logger.error('Error toggling volume:', error);
       }
     }
@@ -469,16 +469,16 @@ function VideoCard({
               style={styles.socialActionButton}
               onPress={handleComment}
              
-              accessibilityLabel={`View comments${item.engagement?.comments ? `. ${item.engagement.comments} comment${item.engagement.comments !== 1 ? 's' : ''}` : ''}`}
+              accessibilityLabel={`View comments${(item as any).engagement?.comments ? `. ${(item as any).engagement.comments} comment${(item as any).engagement.comments !== 1 ? 's' : ''}` : ''}`}
               accessibilityRole="button"
               accessibilityHint="Double tap to view and add comments"
             >
               <Ionicons name="chatbubble-outline" size={26} color={colors.background.primary} />
-              {item.engagement?.comments && item.engagement.comments > 0 && (
+              {(item as any).engagement?.comments && (item as any).engagement.comments > 0 && (
                 <ThemedText style={styles.socialActionText}>
-                  {item.engagement.comments >= 1000
-                    ? `${(item.engagement.comments / 1000).toFixed(1)}k`
-                    : item.engagement.comments}
+                  {(item as any).engagement.comments >= 1000
+                    ? `${((item as any).engagement.comments / 1000).toFixed(1)}k`
+                    : (item as any).engagement.comments}
                 </ThemedText>
               )}
             </Pressable>
@@ -488,16 +488,16 @@ function VideoCard({
               style={styles.socialActionButton}
               onPress={handleShare}
              
-              accessibilityLabel={`Share video${item.engagement?.shares ? `. ${item.engagement.shares} share${item.engagement.shares !== 1 ? 's' : ''}` : ''}`}
+              accessibilityLabel={`Share video${(item as any).engagement?.shares ? `. ${(item as any).engagement.shares} share${(item as any).engagement.shares !== 1 ? 's' : ''}` : ''}`}
               accessibilityRole="button"
               accessibilityHint="Double tap to share this video with others"
             >
               <Ionicons name="paper-plane-outline" size={26} color={colors.background.primary} />
-              {item.engagement?.shares && item.engagement.shares > 0 && (
+              {(item as any).engagement?.shares && (item as any).engagement.shares > 0 && (
                 <ThemedText style={styles.socialActionText}>
-                  {item.engagement.shares >= 1000
-                    ? `${(item.engagement.shares / 1000).toFixed(1)}k`
-                    : item.engagement.shares}
+                  {(item as any).engagement.shares >= 1000
+                    ? `${((item as any).engagement.shares / 1000).toFixed(1)}k`
+                    : (item as any).engagement.shares}
                 </ThemedText>
               )}
             </Pressable>

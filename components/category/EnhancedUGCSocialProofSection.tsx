@@ -33,7 +33,7 @@ interface UGCPostCardProps {
 const UGCPostCard: React.FC<UGCPostCardProps> = ({ post, onPress, isLarge = false }) => {
   return (
     <Pressable
-      style={[styles.postCard, isLarge && styles.postCardLarge]}
+      style={[styles.postCard, isLarge ? styles.postCardLarge : null]}
       onPress={() => onPress?.(post)}
      
     >

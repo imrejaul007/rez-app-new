@@ -46,7 +46,7 @@ const RelatedPackagesSection: React.FC<RelatedPackagesSectionProps> = ({ current
         if (!isMounted()) return;
         setRelatedPackages(filtered);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

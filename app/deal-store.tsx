@@ -6,14 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -59,11 +52,11 @@ const DealStorePage: React.FC = () => {
           });
           return index === firstIndex;
         });
-        
+
         if (!isMounted()) return;
         setDealCategories(uniqueCategories);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -88,7 +81,7 @@ const DealStorePage: React.FC = () => {
 
   const renderDealValue = (deal: CampaignDeal | undefined) => {
     if (!deal) return null;
-    
+
     if (deal.cashback) {
       return <Text style={styles.dealCashback}>{deal.cashback}</Text>;
     }
@@ -110,56 +103,61 @@ const DealStorePage: React.FC = () => {
   };
 
   // Filter deals based on selected category and query params
-  const filteredDealCategories = useMemo(() => dealCategories
-    .filter((category) => {
-      // Filter by campaign if specified in URL
-      if (filteredCampaign) {
-        return category.id === filteredCampaign ||
-               category.id?.toLowerCase().includes(filteredCampaign.toLowerCase()) ||
-               filteredCampaign.toLowerCase().includes(category.id?.toLowerCase() || '');
-      }
-      // Filter by category tab
-      if (selectedCategory === 'all') return true;
-      if (selectedCategory === 'Cashback') {
-        return category.id === 'super-cashback-weekend' ||
-               category.id === 'super-cashback' ||
-               category.title?.toLowerCase().includes('cashback');
-      }
-      if (selectedCategory === 'Coins') {
-        return category.id === 'triple-coin-day' ||
-               category.title?.toLowerCase().includes('coin');
-      }
-      if (selectedCategory === 'Bank Offers') {
-        return category.id === 'mega-bank-offers' ||
-               category.title?.toLowerCase().includes('bank');
-      }
-      if (selectedCategory === 'Flash Deals') {
-        return category.id === 'flash-coin-drops' ||
-               category.title?.toLowerCase().includes('flash');
-      }
-      return true;
-    })
-    .map((category) => {
-      // If a specific deal name is provided, filter deals within the category
-      if (filteredDealName) {
-        const filteredDeals = category.deals.filter((deal) => {
-          const dealStoreName = deal.store?.toLowerCase() || '';
-          const searchName = filteredDealName.toLowerCase().replace(/\+/g, ' ');
-          return dealStoreName.includes(searchName) || searchName.includes(dealStoreName);
-        });
+  const filteredDealCategories = useMemo(
+    () =>
+      dealCategories
+        .filter((category) => {
+          // Filter by campaign if specified in URL
+          if (filteredCampaign) {
+            return (
+              category.id === filteredCampaign ||
+              category.id?.toLowerCase().includes(filteredCampaign.toLowerCase()) ||
+              filteredCampaign.toLowerCase().includes(category.id?.toLowerCase() || '')
+            );
+          }
+          // Filter by category tab
+          if (selectedCategory === 'all') return true;
+          if (selectedCategory === 'Cashback') {
+            return (
+              category.id === 'super-cashback-weekend' ||
+              category.id === 'super-cashback' ||
+              category.title?.toLowerCase().includes('cashback')
+            );
+          }
+          if (selectedCategory === 'Coins') {
+            return category.id === 'triple-coin-day' || category.title?.toLowerCase().includes('coin');
+          }
+          if (selectedCategory === 'Bank Offers') {
+            return category.id === 'mega-bank-offers' || category.title?.toLowerCase().includes('bank');
+          }
+          if (selectedCategory === 'Flash Deals') {
+            return category.id === 'flash-coin-drops' || category.title?.toLowerCase().includes('flash');
+          }
+          return true;
+        })
+        .map((category) => {
+          // If a specific deal name is provided, filter deals within the category
+          if (filteredDealName) {
+            const filteredDeals = category.deals.filter((deal) => {
+              const dealStoreName = deal.store?.toLowerCase() || '';
+              const searchName = filteredDealName.toLowerCase().replace(/\+/g, ' ');
+              return dealStoreName.includes(searchName) || searchName.includes(dealStoreName);
+            });
 
-        // Only return category if it has matching deals
-        if (filteredDeals.length > 0) {
-          return {
-            ...category,
-            deals: filteredDeals,
-          };
-        }
-        return null;
-      }
-      return category;
-    })
-    .filter((cat) => cat !== null) as DealCategory[], [dealCategories, filteredCampaign, selectedCategory, filteredDealName]);
+            // Only return category if it has matching deals
+            if (filteredDeals.length > 0) {
+              return {
+                ...category,
+                deals: filteredDeals,
+              };
+            }
+            return null;
+          }
+          return category;
+        })
+        .filter((cat) => cat !== null) as DealCategory[],
+    [dealCategories, filteredCampaign, selectedCategory, filteredDealName],
+  );
 
   if (isLoading) {
     return (
@@ -179,7 +177,10 @@ const DealStorePage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -206,15 +207,9 @@ const DealStorePage: React.FC = () => {
             <Pressable
               key={category}
               onPress={() => setSelectedCategory(category)}
-              style={[
-                styles.filterChip,
-                selectedCategory === category && styles.filterChipActive
-              ]}
+              style={[styles.filterChip, selectedCategory === category && styles.filterChipActive]}
             >
-              <Text style={[
-                styles.filterChipText,
-                selectedCategory === category && styles.filterChipTextActive
-              ]}>
+              <Text style={[styles.filterChipText, selectedCategory === category && styles.filterChipTextActive]}>
                 {category === 'all' ? 'All Deals' : category}
               </Text>
             </Pressable>
@@ -222,17 +217,13 @@ const DealStorePage: React.FC = () => {
         </ScrollView>
       </View>
 
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {/* Deal Categories */}
         {filteredDealCategories.length > 0 ? (
           filteredDealCategories.map((category) => (
             <View key={category.id} style={styles.categorySection}>
               {/* Category Header */}
-              <Pressable
-                onPress={() => router.push(`/deals/${category.id}` as any)}
-               
-              >
+              <Pressable onPress={() => router.push(`/deals/${category.id}` as any)}>
                 <LinearGradient
                   colors={category.gradientColors as any}
                   start={{ x: 0, y: 0 }}
@@ -243,7 +234,9 @@ const DealStorePage: React.FC = () => {
                     <Text style={styles.categoryTitle}>{category.title}</Text>
                     <Text style={styles.categorySubtitle}>{category.subtitle}</Text>
                   </View>
-                  <View style={[styles.categoryBadge, { backgroundColor: category.badgeBg || colors.background.primary }]}>
+                  <View
+                    style={[styles.categoryBadge, { backgroundColor: category.badgeBg || colors.background.primary }]}
+                  >
                     <Text style={[styles.categoryBadgeText, { color: category.badgeColor || colors.nileBlue }]}>
                       {category.badge}
                     </Text>
@@ -259,7 +252,7 @@ const DealStorePage: React.FC = () => {
                     .map((deal, idx) => {
                       // Additional safety check
                       if (!deal) return null;
-                      
+
                       return (
                         <Pressable
                           key={`${category.id}-deal-${idx}-${deal.store || idx}`}
@@ -268,7 +261,6 @@ const DealStorePage: React.FC = () => {
                             // Navigate to deal detail page using the current index
                             router.push(`/deals/${category.id}/${idx}` as any);
                           }}
-                         
                         >
                           <View style={styles.dealImageContainer}>
                             <CachedImage source={deal.image} style={styles.dealImage} />
@@ -299,15 +291,8 @@ const DealStorePage: React.FC = () => {
           <View style={styles.emptyContainer}>
             <Ionicons name="search-outline" size={64} color={colors.text.tertiary} />
             <Text style={styles.emptyText}>No deals found</Text>
-            {filteredDealName && (
-              <Text style={styles.emptySubtext}>
-                No deals found for "{filteredDealName}"
-              </Text>
-            )}
-            <Pressable
-              style={styles.clearFilterButton}
-              onPress={() => router.push('/deal-store' as any)}
-            >
+            {filteredDealName && <Text style={styles.emptySubtext}>No deals found for "{filteredDealName}"</Text>}
+            <Pressable style={styles.clearFilterButton} onPress={() => router.push('/deal-store' as any)}>
               <Text style={styles.clearFilterText}>Clear Filter</Text>
             </Pressable>
           </View>

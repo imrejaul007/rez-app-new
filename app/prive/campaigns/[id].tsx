@@ -93,7 +93,13 @@ function CampaignDetailScreen() {
           <Text style={styles.headerTitle}>Campaign</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ErrorState title="Failed to load campaign" message="Please try again" onRetry={refetch} />
+        <ErrorState
+          error="Failed to load campaign"
+          title="Failed to load campaign"
+          onRetry={() => {
+            refetch();
+          }}
+        />
       </SafeAreaView>
     );
   }
@@ -153,7 +159,7 @@ function CampaignDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Required Hashtag</Text>
           <View style={styles.hashtagBox}>
-            <Ionicons name="hash" size={20} color={Colors.primary} />
+            <Ionicons name={'hash' as any} size={20} color={Colors.primary} />
             <Text style={styles.hashtagText}>{campaign.requiredHashtag}</Text>
           </View>
         </View>

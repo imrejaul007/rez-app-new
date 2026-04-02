@@ -124,7 +124,7 @@ export function useGoingOutSection(): UseGoingOutSectionReturn {
     setError(null);
 
     try {
-      const response = await storesApi.getStoresBySubcategorySlug(
+      const response: any = await storesApi.getStoresBySubcategorySlug(
         subcategorySlug,
         GOING_OUT_SECTION_CONFIG.storesPerCategory
       );

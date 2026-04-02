@@ -233,7 +233,8 @@ export function useExplore(): UseExploreReturn {
 
       if (storesRes.status === 'fulfilled') {
         const sRes = storesRes.value;
-        const storesData = sRes.data?.stores || sRes.data || [];
+        const storesDataRaw = sRes.data?.stores || sRes.data || [];
+        const storesData: any[] = Array.isArray(storesDataRaw) ? storesDataRaw : [];
         if (sRes.success && storesData && storesData.length > 0) {
           const transformedStores = storesData.slice(0, 5).map((store: any) => ({
             id: store.id || store._id,

@@ -77,7 +77,7 @@ function DiscoverAndShopTabBar({
           return (
             <Pressable
               key={tab.id}
-              style={[styles.tab, isActive && styles.activeTab]}
+              style={[styles.tab, isActive ? styles.activeTab : null]}
               onPress={() => onTabChange(tab.id)}
              
               accessibilityLabel={`${tab.label} tab`}

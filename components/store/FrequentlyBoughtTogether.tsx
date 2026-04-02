@@ -94,7 +94,7 @@ function FrequentlyBoughtTogether({
           if (!response) {
             response = { success: false, data: [] };
           }
-        } catch (err) {
+        } catch (err: any) {
           response = { success: false, data: [] };
         }
       } else {
@@ -142,7 +142,7 @@ function FrequentlyBoughtTogether({
         // No mock data - just show empty if API returns nothing
         setBundleProducts([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       // No mock data on error - just show empty
       if (!isMounted()) return;
       setBundleProducts([]);
@@ -309,12 +309,15 @@ function FrequentlyBoughtTogether({
             id: product.id,
             name: product.name,
             image: product.image,
+            price: product.price.current,
             originalPrice: product.price.original || product.price.current,
             discountedPrice: product.price.current,
             discount: product.price.discount,
+            cashback: '0',
+            category: 'products' as const,
           });
           successCount++;
-        } catch (error) {
+        } catch (error: any) {
           failCount++;
         }
       }
@@ -330,7 +333,7 @@ function FrequentlyBoughtTogether({
       if (failCount > 0) {
         showError(`Failed to add ${failCount} ${failCount === 1 ? 'item' : 'items'}`, 3000);
       }
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to add items to cart');
     } finally {
       if (!isMounted()) return;
@@ -350,11 +353,13 @@ function FrequentlyBoughtTogether({
         id: pendingProduct.id,
         name: pendingProduct.name,
         image: pendingProduct.image,
+        price: variant.price || pendingProduct.price.current,
         originalPrice: variant.price || pendingProduct.price.current,
         discountedPrice: variant.price || pendingProduct.price.current,
         discount: pendingProduct.price.discount,
-        variant: variant,
-      });
+        cashback: '0',
+        category: 'products' as const,
+      } as any);
 
       // Continue adding remaining products
       const productsToAdd = bundleProducts.filter(
@@ -373,19 +378,22 @@ function FrequentlyBoughtTogether({
             id: product.id,
             name: product.name,
             image: product.image,
+            price: product.price.current,
             originalPrice: product.price.original || product.price.current,
             discountedPrice: product.price.current,
             discount: product.price.discount,
+            cashback: '0',
+            category: 'products' as const,
           });
           successCount++;
-        } catch (error) {
+        } catch (error: any) {
           // silently handle
         }
       }
 
       showSuccess(`${successCount} ${successCount === 1 ? 'item' : 'items'} added to cart!`, 3000);
       onBundleAdded?.();
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to add item to cart');
     } finally {
       if (!isMounted()) return;
@@ -509,7 +517,7 @@ function FrequentlyBoughtTogether({
 
       {/* Add All to Cart Button */}
       <Pressable
-        style={[styles.addButton, selectedProducts.size === 0 && styles.addButtonDisabled]}
+        style={[styles.addButton, selectedProducts.size === 0 ? styles.addButtonDisabled : null]}
         onPress={handleAddAllToCart}
         disabled={selectedProducts.size === 0 || addingToCart}
        
@@ -572,14 +580,14 @@ function BundleProductCard({
 
   return (
     <Pressable
-      style={[styles.productCard, isSelected && styles.productCardSelected]}
+      style={[styles.productCard, isSelected ? styles.productCardSelected : null]}
       onPress={() => !isCurrentProduct && onToggle(product.id)}
      
       disabled={isCurrentProduct}
     >
       {/* Selection Checkbox */}
       <View style={styles.checkboxContainer}>
-        <View style={[styles.checkbox, isSelected && styles.checkboxSelected]}>
+        <View style={[styles.checkbox, isSelected ? styles.checkboxSelected : null]}>
           {isSelected && <Ionicons name="checkmark" size={14} color={colors.background.primary} />}
         </View>
       </View>

@@ -69,10 +69,6 @@ function LeaderboardPage() {
     },
   });
 
-  useEffect(() => {
-    fetchLeaderboard();
-  }, [fetchLeaderboard]);
-
   // Fetch leaderboard data
   const fetchLeaderboard = useCallback(async () => {
     try {
@@ -81,9 +77,9 @@ function LeaderboardPage() {
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setLeaderboardData(response.data);
+        setLeaderboardData(response.data as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -92,6 +88,10 @@ function LeaderboardPage() {
       setIsRefreshing(false);
     }
   }, [selectedPeriod, isMounted]);
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
   // Handle refresh
   const handleRefresh = useCallback(() => {
@@ -184,7 +184,7 @@ function LeaderboardPage() {
           </View>
 
           {/* Avatar */}
-          <View style={[styles.avatar, isTopThree && styles.topThreeAvatar]}>
+          <View style={[styles.avatar, isTopThree ? styles.topThreeAvatar : null]}>
             <View style={styles.avatarPlaceholder}>
               <ThemedText style={styles.avatarText}>{entry.fullName?.charAt(0)?.toUpperCase() || '?'}</ThemedText>
             </View>
@@ -227,14 +227,14 @@ function LeaderboardPage() {
   const renderPeriodButton = useCallback(
     (period: Period, label: string) => (
       <Pressable
-        style={[styles.periodButton, selectedPeriod === period && styles.periodButtonActive]}
+        style={[styles.periodButton, selectedPeriod === period ? styles.periodButtonActive : null]}
         onPress={() => setSelectedPeriod(period)}
         accessibilityLabel={`${label} leaderboard`}
         accessibilityRole="button"
         accessibilityState={{ selected: selectedPeriod === period }}
         accessibilityHint={`Double tap to view ${label.toLowerCase()} rankings`}
       >
-        <ThemedText style={[styles.periodButtonText, selectedPeriod === period && styles.periodButtonTextActive]}>
+        <ThemedText style={[styles.periodButtonText, selectedPeriod === period ? styles.periodButtonTextActive : null]}>
           {label}
         </ThemedText>
       </Pressable>

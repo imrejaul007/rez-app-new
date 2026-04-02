@@ -34,7 +34,7 @@ function TierComparisonScreen() {
       const response = await priveApi.getTierComparison();
       if (!isMounted()) return;
       if (response.success && response.data) setData(response.data);
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       catchAndReport(e, setError, 'TierComparison/fetchData');
     } finally {
@@ -118,7 +118,7 @@ function TierComparisonScreen() {
             </View>
             {tiers.map((t: any) => {
               const val = t[row.key];
-              const formatted = row.format(val);
+              const formatted = (row.format as (v: any) => string)(val);
               const isCheck = formatted === '✓';
               const isCross = formatted === '✗';
               return (

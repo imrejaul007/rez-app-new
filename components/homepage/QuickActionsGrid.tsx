@@ -71,7 +71,7 @@ export const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ actions, sty
                   } else {
                     action.onPress();
                   }
-                } catch (error) {
+                } catch (error: any) {
                   // silently handle
                 }
               }}
@@ -92,7 +92,7 @@ export const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ actions, sty
               onPress={() => {
                 try {
                   action.onPress();
-                } catch (error) {
+                } catch (error: any) {
                   // silently handle
                 }
               }}

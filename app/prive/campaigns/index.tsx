@@ -97,7 +97,7 @@ function PriveCampaignsScreen() {
           <Text style={styles.headerTitle}>Campaigns</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ErrorState title="Failed to load campaigns" message="Please try again" onRetry={refetch} />
+        <ErrorState error="Failed to load campaigns. Please try again" onRetry={refetch} />
       </SafeAreaView>
     );
   }
@@ -126,9 +126,9 @@ function PriveCampaignsScreen() {
           <Pressable
             key={chip.id}
             onPress={() => handleFilterChange(chip.id)}
-            style={[styles.filterChip, selectedFilter === chip.id && styles.filterChipActive]}
+            style={[styles.filterChip, selectedFilter === chip.id ? styles.filterChipActive : null]}
           >
-            <Text style={[styles.filterChipText, selectedFilter === chip.id && styles.filterChipTextActive]}>
+            <Text style={[styles.filterChipText, selectedFilter === chip.id ? styles.filterChipTextActive : null]}>
               {chip.label}
             </Text>
           </Pressable>

@@ -45,9 +45,11 @@ const REASON_LABELS: Record<string, string> = {
 
 function DisputeDetailScreen() {
   const isMounted = useIsMounted();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const router = useRouter();
-  const { isAuthenticated, authLoading } = useAuth();
+  const { state } = useAuth();
+  const isAuthenticated = state.isAuthenticated;
+  const authLoading = state.isLoading;
   const [dispute, setDispute] = useState<Dispute | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -207,7 +207,7 @@ function AccountPage() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }] as any}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

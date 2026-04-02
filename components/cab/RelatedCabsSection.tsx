@@ -47,7 +47,7 @@ const RelatedCabsSection: React.FC<RelatedCabsSectionProps> = ({ currentCabId })
         if (!isMounted()) return;
         setRelatedCabs(filtered);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

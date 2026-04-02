@@ -12,7 +12,9 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import socialProofApi, { CategorySocialProofStats } from '@/services/socialProofApi';
+import socialProofApi from '@/services/socialProofApi';
+
+type CategorySocialProofStats = any;
 import { socialProofStats, SocialProofStats } from '@/data/categoryDummyData';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
@@ -53,7 +55,7 @@ const SocialProofSection: React.FC<SocialProofSectionProps> = ({
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await socialProofApi.getCategoryStats(categorySlug);
+        const response = await (socialProofApi as any).getCategoryStats(categorySlug);
         if (response.success && response.data?.stats) {
           const converted = convertApiToStats(response.data.stats);
           if (!isMounted()) return;
@@ -62,7 +64,7 @@ const SocialProofSection: React.FC<SocialProofSectionProps> = ({
           // Fallback to dummy data
           setApiStats(socialProofStats);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Fallback to dummy data on error
         if (!isMounted()) return;
         setApiStats(socialProofStats);

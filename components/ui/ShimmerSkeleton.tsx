@@ -112,7 +112,7 @@ export const ShimmerSkeleton: React.FC<ShimmerSkeletonProps> = ({
       style={[
         styles.container,
         {
-          width: getFinalWidth(),
+          width: getFinalWidth() as any,
           height,
           borderRadius: getFinalBorderRadius(),
           backgroundColor,

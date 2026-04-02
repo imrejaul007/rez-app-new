@@ -53,8 +53,8 @@ function AllianceStorePage() {
 
       const data = await mallApi.getAllianceStores(30);
       if (!isMounted()) return;
-      setStores(data || []);
-    } catch (err) {
+      setStores((data || []) as AllianceStore[]);
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to load alliance stores');
     } finally {
@@ -70,76 +70,71 @@ function AllianceStorePage() {
   }, [fetchStores]);
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    return name
+      .split(' ')
+      .map((w) => w[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
-  const renderStore = useCallback(({ item }: { item: AllianceStore }) => (
-    <Pressable
-      style={styles.storeCard}
-      onPress={() => router.push(`/MainStorePage?storeId=${item._id}` as any)}
-     
-    >
-      {/* Store Image */}
-      <View style={styles.storeImageContainer}>
-        {item.logo ? (
-          <CachedImage
-            source={item.logo}
-            style={styles.storeLogo}
-            contentFit="cover"
-          />
-        ) : (
-          <LinearGradient
-            colors={[colors.brand.sky, colors.brand.skyDark]}
-            style={styles.storeLogoFallback}
-          >
-            <ThemedText style={styles.storeInitials}>{getInitials(item.name)}</ThemedText>
-          </LinearGradient>
-        )}
-        {item.isVerified && (
-          <View style={styles.verifiedBadge}>
-            <Ionicons name="checkmark-circle" size={16} color={colors.brand.sky} />
+  const renderStore = useCallback(
+    ({ item }: { item: AllianceStore }) => (
+      <Pressable style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${item._id}` as any)}>
+        {/* Store Image */}
+        <View style={styles.storeImageContainer}>
+          {item.logo ? (
+            <CachedImage source={item.logo} style={styles.storeLogo} contentFit="cover" />
+          ) : (
+            <LinearGradient colors={[colors.brand.sky, colors.brand.skyDark]} style={styles.storeLogoFallback}>
+              <ThemedText style={styles.storeInitials}>{getInitials(item.name)}</ThemedText>
+            </LinearGradient>
+          )}
+          {item.isVerified && (
+            <View style={styles.verifiedBadge}>
+              <Ionicons name="checkmark-circle" size={16} color={colors.brand.sky} />
+            </View>
+          )}
+        </View>
+
+        <ThemedText style={styles.storeName} numberOfLines={1}>
+          {item.name}
+        </ThemedText>
+        <ThemedText style={styles.storeCategory} numberOfLines={1}>
+          {item.category?.name || 'Store'}
+        </ThemedText>
+
+        {/* Rating */}
+        {item.ratings && item.ratings.count > 0 && (
+          <View style={styles.ratingRow}>
+            <Ionicons name="star" size={12} color={colors.warningScale[400]} />
+            <ThemedText style={styles.ratingText}>{item.ratings.average.toFixed(1)}</ThemedText>
+            <ThemedText style={styles.ratingCount}>({item.ratings.count})</ThemedText>
           </View>
         )}
-      </View>
 
-      <ThemedText style={styles.storeName} numberOfLines={1}>{item.name}</ThemedText>
-      <ThemedText style={styles.storeCategory} numberOfLines={1}>
-        {item.category?.name || 'Store'}
-      </ThemedText>
-
-      {/* Rating */}
-      {item.ratings && item.ratings.count > 0 && (
-        <View style={styles.ratingRow}>
-          <Ionicons name="star" size={12} color={colors.warningScale[400]} />
-          <ThemedText style={styles.ratingText}>
-            {item.ratings.average.toFixed(1)}
-          </ThemedText>
-          <ThemedText style={styles.ratingCount}>
-            ({item.ratings.count})
-          </ThemedText>
-        </View>
-      )}
-
-      <View style={styles.benefitsContainer}>
-        <View style={styles.benefitRow}>
-          <View style={styles.benefitIconContainer}>
-            <Ionicons name="flash" size={12} color={colors.brand.sky} />
+        <View style={styles.benefitsContainer}>
+          <View style={styles.benefitRow}>
+            <View style={styles.benefitIconContainer}>
+              <Ionicons name="flash" size={12} color={colors.brand.sky} />
+            </View>
+            <ThemedText style={styles.benefitText} numberOfLines={1}>
+              {item.offers?.cashback ? `${item.offers.cashback}% Coins` : 'Earn Coins'}
+            </ThemedText>
           </View>
-          <ThemedText style={styles.benefitText} numberOfLines={1}>
-            {item.offers?.cashback ? `${item.offers.cashback}% Coins` : 'Earn Coins'}
-          </ThemedText>
-        </View>
-        <View style={styles.benefitRow}>
-          <View style={styles.benefitIconContainer}>
-            <Ionicons name="link" size={12} color={colors.successScale[700]} />
+          <View style={styles.benefitRow}>
+            <View style={styles.benefitIconContainer}>
+              <Ionicons name="link" size={12} color={colors.successScale[700]} />
+            </View>
+            <ThemedText style={styles.benefitText} numberOfLines={1}>
+              Partner Points
+            </ThemedText>
           </View>
-          <ThemedText style={styles.benefitText} numberOfLines={1}>
-            Partner Points
-          </ThemedText>
         </View>
-      </View>
-    </Pressable>
-  ), [router]);
+      </Pressable>
+    ),
+    [router],
+  );
 
   return (
     <View style={styles.container}>
@@ -156,8 +151,7 @@ function AllianceStorePage() {
           <View style={styles.headerTop}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <View style={styles.backButtonInner}>
                 <Ionicons name="chevron-back" size={22} color={colors.brand.sky} />
@@ -176,9 +170,7 @@ function AllianceStorePage() {
               <Ionicons name="link" size={32} color={colors.background.primary} />
             </View>
             <ThemedText style={styles.heroTitle}>Partner Benefits</ThemedText>
-            <ThemedText style={styles.heroSubtitle}>
-              {`Earn ${BRAND.COIN_NAME} + Partner Points together`}
-            </ThemedText>
+            <ThemedText style={styles.heroSubtitle}>{`Earn ${BRAND.COIN_NAME} + Partner Points together`}</ThemedText>
           </View>
         </LinearGradient>
 
@@ -198,7 +190,7 @@ function AllianceStorePage() {
             data={stores}
             renderItem={renderStore}
             keyExtractor={(item) => item._id}
-          estimatedItemSize={110}
+            estimatedItemSize={110}
             numColumns={2}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
@@ -219,10 +211,7 @@ function AllianceStorePage() {
                   style={styles.infoCardGradient}
                 >
                   <View style={styles.infoIconContainer}>
-                    <LinearGradient
-                      colors={[colors.brand.sky, colors.brand.skyDark]}
-                      style={styles.infoIconGradient}
-                    >
+                    <LinearGradient colors={[colors.brand.sky, colors.brand.skyDark]} style={styles.infoIconGradient}>
                       <Ionicons name="gift" size={20} color={colors.background.primary} />
                     </LinearGradient>
                   </View>
@@ -239,9 +228,7 @@ function AllianceStorePage() {
               <View style={styles.emptyContainer}>
                 <Ionicons name="storefront-outline" size={64} color={colors.neutral[400]} />
                 <ThemedText style={styles.emptyText}>No alliance stores yet</ThemedText>
-                <ThemedText style={styles.emptySubtext}>
-                  Partner stores will appear here soon
-                </ThemedText>
+                <ThemedText style={styles.emptySubtext}>Partner stores will appear here soon</ThemedText>
               </View>
             }
           />

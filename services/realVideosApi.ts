@@ -86,7 +86,7 @@ export const realVideosApi = {
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get(`/videos?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
+    return apiClient.get<any>(`/videos?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
   },
 
   /**
@@ -101,7 +101,7 @@ export const realVideosApi = {
     if (params?.limit) queryParams.append('limit', String(params.limit));
     if (params?.timeframe) queryParams.append('timeframe', params.timeframe);
 
-    return apiClient.get(`/videos/trending?${queryParams.toString()}`).then(response => response as ApiResponse<Video[]>);
+    return apiClient.get<any>(`/videos/trending?${queryParams.toString()}`).then(response => response as ApiResponse<Video[]>);
   },
 
   /**
@@ -121,7 +121,7 @@ export const realVideosApi = {
     if (params?.limit) queryParams.append('limit', String(params.limit));
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
 
-    return apiClient.get(`/videos/category/${category}?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
+    return apiClient.get<any>(`/videos/category/${category}?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
   },
 
   /**
@@ -139,22 +139,22 @@ export const realVideosApi = {
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get(`/videos/creator/${creatorId}?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
+    return apiClient.get<any>(`/videos/creator/${creatorId}?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
   },
 
   /**
    * Get single video by ID
    */
   async getVideoById(videoId: string): Promise<any> {
-    const response = await apiClient.get(`/videos/${videoId}`);
-    return response;
+    const response = await apiClient.get<any>(`/videos/${videoId}`);
+    return response as any;
   },
 
   /**
    * Like/Unlike a video (requires authentication)
    */
   async toggleVideoLike(videoId: string): Promise<ApiResponse<{ liked: boolean; likeCount: number; isLiked?: boolean; totalLikes?: number }>> {
-    const response = await apiClient.post(`/videos/${videoId}/like`);
+    const response = await apiClient.post<any>(`/videos/${videoId}/like`);
     return response as ApiResponse<{ liked: boolean; likeCount: number; isLiked?: boolean; totalLikes?: number }>;
   },
 
@@ -162,7 +162,7 @@ export const realVideosApi = {
    * Bookmark/Unbookmark a video (requires authentication)
    */
   async toggleBookmark(videoId: string): Promise<ApiResponse<{ videoId: string; isBookmarked: boolean; totalBookmarks: number }>> {
-    const response = await apiClient.post(`/videos/${videoId}/bookmark`);
+    const response = await apiClient.post<any>(`/videos/${videoId}/bookmark`);
     return response as ApiResponse<{ videoId: string; isBookmarked: boolean; totalBookmarks: number }>;
   },
 
@@ -170,7 +170,7 @@ export const realVideosApi = {
    * Track video view (optional authentication)
    */
   async trackView(videoId: string): Promise<ApiResponse<{ videoId: string; views: number }>> {
-    const response = await apiClient.post(`/videos/${videoId}/view`);
+    const response = await apiClient.post<any>(`/videos/${videoId}/view`);
     return response as ApiResponse<{ videoId: string; views: number }>;
   },
 
@@ -178,7 +178,7 @@ export const realVideosApi = {
    * Add comment to video (requires authentication)
    */
   async addVideoComment(videoId: string, comment: string): Promise<ApiResponse<any>> {
-    return apiClient.post(`/videos/${videoId}/comments`, { comment }).then(response => response as ApiResponse<any>);
+    return apiClient.post<any>(`/videos/${videoId}/comments`, { comment }).then(response => response as ApiResponse<any>);
   },
 
   /**
@@ -196,7 +196,7 @@ export const realVideosApi = {
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get(`/videos/${videoId}/comments?${queryParams.toString()}`).then(response => response as ApiResponse<{ comments: any[]; pagination: any }>);
+    return apiClient.get<any>(`/videos/${videoId}/comments?${queryParams.toString()}`).then(response => response as ApiResponse<{ comments: any[]; pagination: any }>);
   },
 
   /**
@@ -217,7 +217,7 @@ export const realVideosApi = {
     if (params.page) queryParams.append('page', String(params.page));
     if (params.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get(`/videos/search?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
+    return apiClient.get<any>(`/videos/search?${queryParams.toString()}`).then(response => response as ApiResponse<{ videos: Video[]; pagination: any }>);
   },
 
   /**
@@ -228,7 +228,7 @@ export const realVideosApi = {
     reason: 'inappropriate' | 'misleading' | 'spam' | 'copyright' | 'other',
     details?: string
   ): Promise<ApiResponse<{ videoId: string; reportCount: number; isReported: boolean }>> {
-    return apiClient.post(`/videos/${videoId}/report`, { reason, details }).then(response => response as ApiResponse<{ videoId: string; reportCount: number; isReported: boolean }>);
+    return apiClient.post<any>(`/videos/${videoId}/report`, { reason, details }).then(response => response as ApiResponse<{ videoId: string; reportCount: number; isReported: boolean }>);
   },
 };
 

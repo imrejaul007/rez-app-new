@@ -35,8 +35,8 @@ interface StampCardData {
 export default function StampCardScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
-  const theme = getCategoryTheme(slug || 'food');
+  const { slug } = useLocalSearchParams<any>();
+  const theme = getCategoryTheme(slug || 'food') as any;
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -48,12 +48,12 @@ export default function StampCardScreen() {
     if (!slug) return;
     try {
       setLoading(true);
-      const response = await userLoyaltyApi.getStampCard(slug);
+      const response = await (userLoyaltyApi as any).getStampCard(slug);
       if (response.success && response.data?.stampCard) {
         if (!isMounted()) return;
         setStampCard(response.data.stampCard);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (__DEV__) console.error('[Stamp Card] Error fetching data:', error);
     } finally {
       if (!isMounted()) return;
@@ -78,7 +78,7 @@ export default function StampCardScreen() {
     if (!stampCard?.isRewardReady) return;
 
     try {
-      const response = await userLoyaltyApi.claimStampReward(stampCard.storeId);
+      const response = await (userLoyaltyApi as any).claimStampReward(stampCard.storeId);
       if (response.success) {
         platformAlertSimple(
           'Reward Claimed!',

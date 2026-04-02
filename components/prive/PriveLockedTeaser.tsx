@@ -212,7 +212,7 @@ function PriveLockedTeaser({ onAccessGranted }: PriveLockedTeaserProps) {
 
             {validationResult?.valid && (
               <Pressable
-                style={[styles.applyButton, isApplying && styles.buttonDisabled]}
+                style={[styles.applyButton, isApplying ? styles.buttonDisabled : null]}
                 onPress={handleApply}
                 disabled={isApplying}
               >

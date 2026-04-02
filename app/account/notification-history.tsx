@@ -87,7 +87,7 @@ function NotificationHistoryScreen() {
         if (!isMounted()) return;
         setHasMore(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (pageNum === 1) setNotifications([]);
       if (!isMounted()) return;
       setHasMore(false);
@@ -197,7 +197,7 @@ function NotificationHistoryScreen() {
           notification.id === notificationId ? { ...notification, read: true } : notification,
         ),
       );
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -210,7 +210,7 @@ function NotificationHistoryScreen() {
       // Update local state
       if (!isMounted()) return;
       setNotifications((prev) => prev.map((notification) => ({ ...notification, read: true })));
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -236,7 +236,7 @@ function NotificationHistoryScreen() {
 
         <View style={styles.notificationContent}>
           <View style={styles.notificationHeader}>
-            <Text style={[styles.notificationTitle, !item.read && styles.unreadTitle]}>{item.title}</Text>
+            <Text style={[styles.notificationTitle, !item.read ? styles.unreadTitle : null]}>{item.title}</Text>
             <Text style={styles.notificationTime}>{formatDate(item.timestamp)}</Text>
           </View>
 

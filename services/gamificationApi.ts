@@ -304,7 +304,7 @@ class GamificationApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[GAMIFICATION API] Error fetching streak:', error);
       return { success: false, error: error.message };
@@ -667,7 +667,7 @@ class GamificationApiService {
         return { success: true, data: response.data };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[GAMIFICATION API] Error fetching stats:', error);
       return { success: false, error: error.message };
@@ -691,7 +691,7 @@ class GamificationApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[GAMIFICATION API] Error fetching coin balance:', error);
       return { success: false, error: error.message };
@@ -810,7 +810,7 @@ class GamificationApiService {
     shareBonus: number;
   }): Promise<ApiResponse<ShareSubmission>> {
     try {
-      const response = await apiClient.post<any>('/gamification/affiliate/submit', data);
+      const response = await apiClient.post<any>('/gamification/affiliate/submit', data as any);
 
       if (response.success && response.data) {
         // Backend returns { submission: {...} }
@@ -892,7 +892,7 @@ class GamificationApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[GAMIFICATION API] Error fetching reviewable items:', error);
       return { success: false, error: error.message };
@@ -959,7 +959,7 @@ class GamificationApiService {
         return { success: true, data: response.data };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('[GAMIFICATION API] Error fetching play and earn data:', error);
       return { success: false, error: error.message };
@@ -1152,9 +1152,8 @@ class GamificationApiService {
             nextQuestion: data.nextQuestion || null,
             gameCompleted: data.gameCompleted ?? data.completed ?? false,
             totalCoins: data.totalCoins || 0,
-            tournamentUpdate: data.tournamentUpdate || null,
           },
-        };
+        } as any;
       }
 
       return {

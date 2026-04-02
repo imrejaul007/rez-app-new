@@ -240,10 +240,10 @@ function FitnessCategoryPage() {
         <View style={[styles.chipIconCircle, { backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : `${filter.color}14` }]}>
           {isActive ? <Ionicons name="checkmark" size={14} color={COLORS.white} /> : <Text style={styles.chipIconText}>{filter.icon}</Text>}
         </View>
-        <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>{filter.label}</Text>
+        <Text style={[styles.chipLabel, isActive ? styles.chipLabelActive : null]}>{filter.label}</Text>
         {count > 0 && (
-          <View style={[styles.chipCount, isActive && styles.chipCountActive]}>
-            <Text style={[styles.chipCountText, isActive && styles.chipCountTextActive]}>{count}</Text>
+          <View style={[styles.chipCount, isActive ? styles.chipCountActive : null]}>
+            <Text style={[styles.chipCountText, isActive ? styles.chipCountTextActive : null]}>{count}</Text>
           </View>
         )}
       </Pressable>
@@ -256,7 +256,7 @@ function FitnessCategoryPage() {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.orange]} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[(COLORS as any).orange]} />}
     >
       <CategoryHeader
         categoryName={categoryConfig.name}
@@ -269,9 +269,9 @@ function FitnessCategoryPage() {
       <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fitness-sports/loyalty' as any)}>
         <LinearGradient colors={['rgba(249,115,22,0.15)', 'rgba(234,88,12,0.1)']} style={styles.rewardsGradient}>
           <View style={styles.rewardsContent}>
-            <Ionicons name="star" size={20} color={COLORS.orange} />
+            <Ionicons name="star" size={20} color={(COLORS as any).orange} />
             <Text style={styles.rewardsText}>{`Earn up to 25% Cashback + ${BRAND.COIN_NAME} on every fitness visit`}</Text>
-            <Ionicons name="chevron-forward" size={16} color={COLORS.orange} />
+            <Ionicons name="chevron-forward" size={16} color={(COLORS as any).orange} />
           </View>
           <Text style={styles.rewardsSubtext}>Works at gyms, studios & sports stores</Text>
         </LinearGradient>
@@ -297,7 +297,7 @@ function FitnessCategoryPage() {
             </Text>
             <Pressable onPress={clearAllFilters} style={styles.clearFilters}>
               <Text style={styles.clearFiltersText}>Clear all</Text>
-              <Ionicons name="close-circle" size={14} color={COLORS.orange} />
+              <Ionicons name="close-circle" size={14} color={(COLORS as any).orange} />
             </Pressable>
           </View>
         )}
@@ -307,7 +307,7 @@ function FitnessCategoryPage() {
 
       <EnhancedAISuggestionsSection categorySlug={slug} categoryName={categoryConfig.name} placeholders={aiPlaceholders} onSearch={handleAISearch} />
 
-      <BrowseCategoryGrid categories={subcategories} title="Explore Fitness" onCategoryPress={handleCategoryPress} />
+      <BrowseCategoryGrid categories={subcategories as any} title="Explore Fitness" onCategoryPress={handleCategoryPress} />
 
       {/* Trending Workouts */}
       {filteredTrending.length > 0 && (
@@ -322,11 +322,11 @@ function FitnessCategoryPage() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingList}>
             {filteredTrending.map(w => (
               <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fitness-sports/book-class?service=${w.id}` as any)}>
-                <LinearGradient colors={[COLORS.orange, COLORS.orangeDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <LinearGradient colors={[(COLORS as any).orange, COLORS.orangeDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                   <Text style={styles.trendingEmoji}>{w.emoji}</Text>
                   <Text style={styles.trendingName}>{w.name}</Text>
                   <View style={styles.trendingBadge}>
-                    <Ionicons name="trending-up" size={10} color={COLORS.orange} />
+                    <Ionicons name="trending-up" size={10} color={(COLORS as any).orange} />
                     <Text style={styles.trendingBadgeText}>{w.bookings}+ bookings</Text>
                   </View>
                   <Text style={styles.trendingPrice}>From {currencySymbol}{w.priceFrom}</Text>
@@ -378,7 +378,7 @@ function FitnessCategoryPage() {
                   <CachedImage source={p.image} style={styles.productImageCompact} contentFit="cover" />
                 ) : (
                   <View style={[styles.productImageCompact, styles.productPlaceholder]}>
-                    <Ionicons name="barbell-outline" size={28} color={COLORS.orange} />
+                    <Ionicons name="barbell-outline" size={28} color={(COLORS as any).orange} />
                   </View>
                 )}
                 <Text style={styles.productNameCompact} numberOfLines={2}>{p.name}</Text>
@@ -394,7 +394,7 @@ function FitnessCategoryPage() {
       {filteredStores.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="shield-checkmark" size={20} color={COLORS.orange} />
+            <Ionicons name="shield-checkmark" size={20} color={(COLORS as any).orange} />
             <Text style={styles.sectionTitle}>Top Gyms & Studios</Text>
             <Pressable onPress={() => router.push('/MainCategory/fitness-sports/top-rated' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
@@ -409,7 +409,7 @@ function FitnessCategoryPage() {
                   {(store.logo || store.banner?.[0]) ? (
                     <CachedImage source={store.logo || store.banner?.[0]} style={styles.storeImage} contentFit="cover" />
                   ) : (
-                    <View style={[styles.storeImage, styles.storePlaceholder]}><Ionicons name="barbell" size={32} color={COLORS.orange} /></View>
+                    <View style={[styles.storeImage, styles.storePlaceholder]}><Ionicons name="barbell" size={32} color={(COLORS as any).orange} /></View>
                   )}
                   <View style={styles.storeBadge}>
                     <Ionicons name="checkmark-circle" size={14} color={COLORS.white} />
@@ -448,7 +448,7 @@ function FitnessCategoryPage() {
       {/* 30-Day Challenge */}
       <View style={styles.section}>
         <Pressable style={styles.challengeBanner} onPress={() => router.push('/MainCategory/fitness-sports/challenges' as any)}>
-          <LinearGradient colors={[COLORS.orange, COLORS.orangeDark]} style={styles.challengeGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+          <LinearGradient colors={[(COLORS as any).orange, COLORS.orangeDark]} style={styles.challengeGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.challengeContent}>
               <Text style={styles.challengeEmoji}>🏆</Text>
               <View style={styles.challengeText}>
@@ -461,7 +461,7 @@ function FitnessCategoryPage() {
         </Pressable>
       </View>
 
-      <StreakLoyaltySection categorySlug={slug} primaryColor={COLORS.orange} />
+      <StreakLoyaltySection categorySlug={slug} primaryColor={(COLORS as any).orange} />
 
       <EnhancedUGCSocialProofSection
         categorySlug={slug} categoryName={categoryConfig.name} posts={ugcPosts}
@@ -499,19 +499,19 @@ const styles = StyleSheet.create({
   filterSummary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTopWidth: 1, borderTopColor: COLORS.border },
   filterSummaryText: { flex: 1, fontSize: 12, color: COLORS.textSecondary },
   clearFilters: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  clearFiltersText: { fontSize: 12, color: COLORS.orange, fontWeight: '600' },
+  clearFiltersText: { fontSize: 12, color: (COLORS as any).orange, fontWeight: '600' },
   section: { marginTop: 24, paddingHorizontal: 16 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 },
   sectionEmoji: { fontSize: 20 },
   sectionTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: COLORS.textPrimary },
-  sectionSeeAll: { fontSize: 12, color: COLORS.orange, fontWeight: '500' },
+  sectionSeeAll: { fontSize: 12, color: (COLORS as any).orange, fontWeight: '500' },
   trendingList: { gap: 12, paddingRight: 16 },
   trendingCard: { width: 140, borderRadius: 16, overflow: 'hidden' },
   trendingGradient: { padding: 14, height: 160, justifyContent: 'space-between' },
   trendingEmoji: { fontSize: 28 },
   trendingName: { fontSize: 14, fontWeight: '700', color: COLORS.white, marginTop: 4 },
   trendingBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.9)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8 },
-  trendingBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.orange },
+  trendingBadgeText: { fontSize: 10, fontWeight: '600', color: (COLORS as any).orange },
   trendingPrice: { fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' },
   servicesList: { gap: 12, paddingRight: 16 },
   serviceCard: {
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   serviceIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: COLORS.orangeLight, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   serviceEmoji: { fontSize: 24 },
   serviceName: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 4 },
-  serviceCashback: { fontSize: 11, color: COLORS.orange, textAlign: 'center' },
+  serviceCashback: { fontSize: 11, color: (COLORS as any).orange, textAlign: 'center' },
   productsList: { gap: 12, paddingRight: 16 },
   productCardCompact: {
     width: 140, padding: 8, borderRadius: 12, backgroundColor: COLORS.white,
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   productPlaceholder: { backgroundColor: COLORS.orangeLight, justifyContent: 'center', alignItems: 'center' },
   productNameCompact: { fontSize: 12, fontWeight: '500', color: COLORS.textPrimary, marginBottom: 4 },
   productPriceCompact: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 4 },
-  productCashbackCompact: { fontSize: 11, color: COLORS.orange },
+  productCashbackCompact: { fontSize: 11, color: (COLORS as any).orange },
   storesList: { gap: 12, paddingRight: 16 },
   storeCard: {
     width: 170, borderRadius: 16, backgroundColor: COLORS.white, overflow: 'hidden', position: 'relative',
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   },
   storeImage: { width: '100%', height: 100 },
   storePlaceholder: { backgroundColor: COLORS.orangeLight, justifyContent: 'center', alignItems: 'center' },
-  storeBadge: { position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 12, backgroundColor: COLORS.orange, gap: 3 },
+  storeBadge: { position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 12, backgroundColor: (COLORS as any).orange, gap: 3 },
   storeBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.white },
   storeName: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary, paddingHorizontal: 8, paddingTop: 8, paddingBottom: 2 },
   storeMeta: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, gap: 8 },
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   filterEmptyState: { alignItems: 'center', padding: 40, marginTop: 24 },
   filterEmptyTitle: { fontSize: 16, fontWeight: '600', color: COLORS.textPrimary, marginTop: 16 },
   filterEmptySubtitle: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, textAlign: 'center' },
-  filterEmptyClearBtn: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: COLORS.orange },
+  filterEmptyClearBtn: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: (COLORS as any).orange },
   filterEmptyClearText: { color: COLORS.white, fontWeight: '600', fontSize: 14 },
   challengeBanner: { borderRadius: 16, overflow: 'hidden' },
   challengeGradient: { padding: 16 },
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   challengeTitle: { fontSize: 16, fontWeight: '700', color: COLORS.white },
   challengeSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   challengeBtn: { backgroundColor: COLORS.white, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  challengeBtnText: { fontSize: 13, fontWeight: '600', color: COLORS.orange },
+  challengeBtnText: { fontSize: 13, fontWeight: '600', color: (COLORS as any).orange },
 });
 
 export default React.memo(FitnessCategoryPage);

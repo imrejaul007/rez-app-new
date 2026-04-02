@@ -296,7 +296,7 @@ function ReviewForm({
             {/* Add Image Button */}
             {images.length < 5 && (
               <Pressable
-                style={[styles.addImageButton, isUploadingImage && styles.addImageButtonDisabled]}
+                style={[styles.addImageButton, isUploadingImage ? styles.addImageButtonDisabled : null]}
                 onPress={handleImageAdd}
                 disabled={isUploadingImage}
                
@@ -349,7 +349,7 @@ function ReviewForm({
         )}
 
         <Pressable
-          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          style={[styles.submitButton, isSubmitting ? styles.submitButtonDisabled : null]}
           onPress={handleSubmit}
           disabled={isSubmitting}
          

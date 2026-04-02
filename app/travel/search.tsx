@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Category-specific search with city inputs, date pickers, passenger selectors
 
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  TextInput,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, ActivityIndicator, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -65,7 +56,7 @@ function TravelSearchPage() {
         if (!isMounted()) return;
         setResults([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setResults([]);
     } finally {
@@ -80,28 +71,31 @@ function TravelSearchPage() {
 
   const getCategoryDetailRoute = (serviceId: string): string => {
     switch (selectedCategory) {
-      case 'flights': return `/flight/${serviceId}`;
-      case 'hotels': return `/hotel/${serviceId}`;
-      case 'trains': return `/train/${serviceId}`;
-      case 'bus': return `/bus/${serviceId}`;
-      case 'cab': return `/cab/${serviceId}`;
-      case 'packages': return `/package/${serviceId}`;
-      default: return `/flight/${serviceId}`;
+      case 'flights':
+        return `/flight/${serviceId}`;
+      case 'hotels':
+        return `/hotel/${serviceId}`;
+      case 'trains':
+        return `/train/${serviceId}`;
+      case 'bus':
+        return `/bus/${serviceId}`;
+      case 'cab':
+        return `/cab/${serviceId}`;
+      case 'packages':
+        return `/package/${serviceId}`;
+      default:
+        return `/flight/${serviceId}`;
     }
   };
 
   const renderResultCard = ({ item }: { item: TravelService }) => (
-    <Pressable
-      style={styles.resultCard}
-      onPress={() => router.push(getCategoryDetailRoute(item._id) as any)}
-     
-    >
+    <Pressable style={styles.resultCard} onPress={() => router.push(getCategoryDetailRoute(item._id) as any)}>
       <View style={styles.resultCardContent}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.resultName} numberOfLines={2}>{item.name}</Text>
-          {item.store?.name && (
-            <Text style={styles.resultStore}>{item.store.name}</Text>
-          )}
+          <Text style={styles.resultName} numberOfLines={2}>
+            {item.name}
+          </Text>
+          {item.store?.name && <Text style={styles.resultStore}>{item.store.name}</Text>}
           <View style={styles.resultRating}>
             <Ionicons name="star" size={14} color={Colors.warning} />
             <Text style={styles.resultRatingText}>
@@ -112,11 +106,13 @@ function TravelSearchPage() {
         <View style={styles.resultPriceSection}>
           {item.pricing?.original > item.pricing?.selling && (
             <Text style={styles.resultOriginalPrice}>
-              {currencySymbol}{item.pricing.original.toLocaleString()}
+              {currencySymbol}
+              {item.pricing.original.toLocaleString()}
             </Text>
           )}
           <Text style={styles.resultPrice}>
-            {currencySymbol}{item.pricing?.selling?.toLocaleString()}
+            {currencySymbol}
+            {item.pricing?.selling?.toLocaleString()}
           </Text>
           {item.cashback?.isActive && (
             <View style={styles.cashbackBadge}>
@@ -133,29 +129,27 @@ function TravelSearchPage() {
       {/* Header */}
       <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Search Travel</Text>
-            <Text style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>Find travel cashback deals from our partners</Text>
+            <Text style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>
+              Find travel cashback deals from our partners
+            </Text>
           </View>
           <View style={{ width: 40 }} />
         </View>
 
         {/* Category Selector */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryBar}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryBar}>
           {CATEGORIES.map((cat) => (
             <Pressable
               key={cat.slug}
-              style={[
-                styles.categoryChip,
-                selectedCategory === cat.slug && styles.categoryChipActive,
-              ]}
+              style={[styles.categoryChip, selectedCategory === cat.slug && styles.categoryChipActive]}
               onPress={() => setSelectedCategory(cat.slug)}
             >
               <Ionicons
@@ -163,12 +157,7 @@ function TravelSearchPage() {
                 size={16}
                 color={selectedCategory === cat.slug ? colors.nileBlue : '#94A3B8'}
               />
-              <Text
-                style={[
-                  styles.categoryChipText,
-                  selectedCategory === cat.slug && styles.categoryChipTextActive,
-                ]}
-              >
+              <Text style={[styles.categoryChipText, selectedCategory === cat.slug && styles.categoryChipTextActive]}>
                 {cat.label}
               </Text>
             </Pressable>
@@ -251,17 +240,11 @@ function TravelSearchPage() {
               <View style={[styles.inputRow, { flex: 1 }]}>
                 <Ionicons name="people-outline" size={18} color={colors.text.tertiary} />
                 <View style={styles.stepper}>
-                  <Pressable
-                    onPress={() => setPassengers(Math.max(1, passengers - 1))}
-                    style={styles.stepBtn}
-                  >
+                  <Pressable onPress={() => setPassengers(Math.max(1, passengers - 1))} style={styles.stepBtn}>
                     <Ionicons name="remove" size={18} color={colors.text.tertiary} />
                   </Pressable>
                   <Text style={styles.stepperValue}>{passengers}</Text>
-                  <Pressable
-                    onPress={() => setPassengers(Math.min(9, passengers + 1))}
-                    style={styles.stepBtn}
-                  >
+                  <Pressable onPress={() => setPassengers(Math.min(9, passengers + 1))} style={styles.stepBtn}>
                     <Ionicons name="add" size={18} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
@@ -284,10 +267,7 @@ function TravelSearchPage() {
 
           {/* Search Button */}
           <Pressable onPress={handleSearch} style={styles.searchBtn}>
-            <LinearGradient
-              colors={[colors.nileBlue, '#0f2a3d']}
-              style={styles.searchBtnGradient}
-            >
+            <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.searchBtnGradient}>
               <Ionicons name="search" size={20} color={colors.text.inverse} />
               <Text style={styles.searchBtnText}>Search</Text>
             </LinearGradient>
@@ -295,9 +275,7 @@ function TravelSearchPage() {
         </View>
 
         {/* Results */}
-        {loading && (
-          <CardGridSkeleton />
-        )}
+        {loading && <CardGridSkeleton />}
 
         {!loading && hasSearched && results.length === 0 && (
           <View style={styles.emptyContainer}>
@@ -336,15 +314,22 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   backBtn: {
-    width: 40, height: 40, borderRadius: BorderRadius.xl,
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse },
   categoryBar: { gap: Spacing.sm },
   categoryChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 14, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
   categoryChipActive: { backgroundColor: colors.background.primary },
@@ -377,17 +362,23 @@ const styles = StyleSheet.create({
   rowFields: { flexDirection: 'row', gap: 10 },
   stepper: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, flex: 1 },
   stepBtn: {
-    width: 28, height: 28, borderRadius: 14,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: colors.border.default,
-    justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   stepperValue: { ...Typography.bodyLarge, fontWeight: '700', color: '#1E293B' },
   classText: { ...Typography.body, color: '#1E293B', fontWeight: '500' },
 
   searchBtn: { borderRadius: 14, overflow: 'hidden', marginTop: Spacing.xs },
   searchBtnGradient: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.sm, paddingVertical: Spacing.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.base,
   },
   searchBtnText: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.inverse },
 
@@ -422,7 +413,9 @@ const styles = StyleSheet.create({
   resultPrice: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue },
   cashbackBadge: {
     backgroundColor: colors.successScale[50],
-    paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: 6,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
+    borderRadius: 6,
     marginTop: Spacing.xs,
   },
   cashbackText: { ...Typography.caption, fontWeight: '600', color: Colors.success },

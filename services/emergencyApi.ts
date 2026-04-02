@@ -158,8 +158,8 @@ const emergencyApi = {
       const queryString = params.toString();
       const url = queryString ? `/emergency/contacts?${queryString}` : '/emergency/contacts';
 
-      const response = await apiClient.get(url);
-      return response;
+      const response = await apiClient.get<any>(url);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -188,8 +188,8 @@ const emergencyApi = {
       });
       if (type) params.append('type', type);
 
-      const response = await apiClient.get(`/emergency/contacts/nearby?${params.toString()}`);
-      return response;
+      const response = await apiClient.get<any>(`/emergency/contacts/nearby?${params.toString()}`);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -202,8 +202,8 @@ const emergencyApi = {
    */
   bookEmergency: async (data: CreateEmergencyBookingRequest): Promise<ApiResponse<EmergencyBooking>> => {
     try {
-      const response = await apiClient.post('/emergency/book', data);
-      return response;
+      const response = await apiClient.post<any>('/emergency/book', data as any as any);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -216,8 +216,8 @@ const emergencyApi = {
    */
   getBookingStatus: async (id: string): Promise<ApiResponse<EmergencyBooking>> => {
     try {
-      const response = await apiClient.get(`/emergency/booking/${id}`);
-      return response;
+      const response = await apiClient.get<any>(`/emergency/booking/${id}`);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -243,8 +243,8 @@ const emergencyApi = {
       });
       if (status) params.append('status', status);
 
-      const response = await apiClient.get(`/emergency/bookings?${params.toString()}`);
-      return response;
+      const response = await apiClient.get<any>(`/emergency/bookings?${params.toString()}`);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -258,8 +258,8 @@ const emergencyApi = {
    */
   cancelBooking: async (id: string, reason?: string): Promise<ApiResponse<EmergencyBooking>> => {
     try {
-      const response = await apiClient.put(`/emergency/booking/${id}/cancel`, { reason });
-      return response;
+      const response = await apiClient.put<any>(`/emergency/booking/${id}/cancel`, { reason });
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -271,8 +271,8 @@ const emergencyApi = {
    */
   getActiveBooking: async (): Promise<ApiResponse<ActiveBookingResponse>> => {
     try {
-      const response = await apiClient.get('/emergency/active');
-      return response;
+      const response = await apiClient.get<any>('/emergency/active');
+      return response as any;
     } catch (error) {
       throw error;
     }

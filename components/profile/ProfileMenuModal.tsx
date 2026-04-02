@@ -116,7 +116,7 @@ function ProfileMenuModal({
       onClose();
       // AuthContext navigation guard handles redirect after logout
       await actions.logout();
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Logout Error', 'There was an issue logging you out.');
     }
   };
@@ -284,7 +284,7 @@ function ProfileMenuModal({
 
         {/* Title */}
         <View style={styles.menuTextContainer}>
-          <ThemedText style={[styles.menuTitle, isGold && styles.menuTitleGold]}>{item.title}</ThemedText>
+          <ThemedText style={[styles.menuTitle, isGold ? styles.menuTitleGold : null]}>{item.title}</ThemedText>
           {item.description && (
             <ThemedText style={styles.menuDescription}>{item.description}</ThemedText>
           )}
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: COLORS.goldLight,
+    backgroundColor: (COLORS as any).goldLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   menuIconGold: {
-    backgroundColor: COLORS.goldLight,
+    backgroundColor: (COLORS as any).goldLight,
   },
   menuTextContainer: {
     flex: 1,
@@ -664,7 +664,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gold,
   },
   badgeNumeric: {
-    backgroundColor: COLORS.goldLight,
+    backgroundColor: (COLORS as any).goldLight,
     borderWidth: 1,
     borderColor: COLORS.goldBorder,
   },

@@ -44,7 +44,7 @@ const BonusZoneHighlight: React.FC = () => {
             .slice(0, MAX_FEATURED);
           setFeatured(featuredCampaigns);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Silently fail — this is a non-critical promotional section
       } finally {
         if (!cancelled) setLoading(false);

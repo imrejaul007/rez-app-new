@@ -39,7 +39,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
     setError(null);
 
     try {
-      const response = await userSettingsApi.getUserSettings();
+      const response: any = await userSettingsApi.getUserSettings();
 
       if (response.success && response.data) {
         setSettings(response.data);
@@ -59,7 +59,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updateGeneralSettings(data);
+        const response: any = await userSettingsApi.updateGeneralSettings(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -81,7 +81,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updateNotificationPreferences(data);
+        const response: any = await userSettingsApi.updateNotificationPreferences(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -103,7 +103,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updatePrivacySettings(data);
+        const response: any = await userSettingsApi.updatePrivacySettings(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -125,7 +125,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updateSecuritySettings(data);
+        const response: any = await userSettingsApi.updateSecuritySettings(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -147,7 +147,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updateDeliveryPreferences(data);
+        const response: any = await userSettingsApi.updateDeliveryPreferences(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -169,7 +169,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updatePaymentPreferences(data);
+        const response: any = await userSettingsApi.updatePaymentPreferences(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -191,7 +191,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
       setError(null);
 
       try {
-        const response = await userSettingsApi.updateAppPreferences(data);
+        const response: any = await userSettingsApi.updateAppPreferences(data);
 
         if (response.success && response.data) {
           setSettings(response.data);
@@ -212,7 +212,7 @@ export const useUserSettings = (autoFetch: boolean = true): UseUserSettingsRetur
     setError(null);
 
     try {
-      const response = await userSettingsApi.resetSettings();
+      const response: any = await userSettingsApi.resetSettings();
 
       if (response.success && response.data) {
         setSettings(response.data);

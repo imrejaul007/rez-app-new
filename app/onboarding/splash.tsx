@@ -123,12 +123,7 @@ function SplashScreen() {
 
           {/* Main Logo */}
           <Animated.View style={[styles.coinOuter, coinSpinStyle]}>
-            <CachedImage
-              source={require('@/assets/images/nuqta-logo.png')}
-              style={styles.coinImage}
-              contentFit="contain"
-              transition={200}
-            />
+            <CachedImage source={BRAND.LOGO_IMAGE} style={styles.coinImage} contentFit="contain" transition={200} />
           </Animated.View>
         </Animated.View>
 
@@ -137,7 +132,7 @@ function SplashScreen() {
           <Text style={styles.brandText}>{BRAND.APP_NAME}</Text>
           <View style={styles.brandUnderline}>
             <LinearGradient
-              colors={[COLORS.gold, COLORS.goldDark]}
+              colors={[COLORS.gold, (COLORS as any).goldDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.underlineGradient}

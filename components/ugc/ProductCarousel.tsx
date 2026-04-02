@@ -267,10 +267,6 @@ function ProductCarousel({
             getItemLayout={getItemLayout}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            initialNumToRender={3}
-            maxToRenderPerBatch={5}
-            windowSize={5}
-            removeClippedSubviews={true}
           />
 
           {/* Pagination Dots */}
@@ -311,10 +307,6 @@ function ProductCarousel({
             getItemLayout={getItemLayout}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            initialNumToRender={3}
-            maxToRenderPerBatch={5}
-            windowSize={5}
-            removeClippedSubviews={true}
           />
 
           {/* Pagination Dots */}

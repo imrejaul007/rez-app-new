@@ -56,7 +56,7 @@ const fmt = (n: number) => {
 
 const CreatorPickDetail = () => {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const user = useAuthUser();
   const currentUserId = user?.id;
 
@@ -138,7 +138,7 @@ const CreatorPickDetail = () => {
         if (!isMounted()) return;
         setError(pickResponse.error || 'Pick not found');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError(err instanceof Error ? err.message : 'Failed to load pick details');
     } finally {

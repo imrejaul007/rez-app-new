@@ -24,32 +24,32 @@ import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 // Category emoji mapping
 const categoryEmojis: Record<string, string> = {
-  'Shopping': '📦',
-  'Food': '🍔',
-  'Fashion': '👗',
-  'Finance': '🏦',
-  'Health': '💊',
-  'Technology': '📱',
-  'Travel': '✈️',
-  'Entertainment': '🎬',
-  'Lifestyle': '🏡',
-  'Education': '📚',
-  'Sports': '⚽',
-  'General': '📋',
+  Shopping: '📦',
+  Food: '🍔',
+  Fashion: '👗',
+  Finance: '🏦',
+  Health: '💊',
+  Technology: '📱',
+  Travel: '✈️',
+  Entertainment: '🎬',
+  Lifestyle: '🏡',
+  Education: '📚',
+  Sports: '⚽',
+  General: '📋',
 };
 
 // Category colors
 const categoryColors: Record<string, { bg: string; border: string }> = {
-  'Shopping': { bg: 'rgba(249, 115, 22, 0.1)', border: 'rgba(249, 115, 22, 0.3)' },
-  'Food': { bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)' },
-  'Fashion': { bg: 'rgba(236, 72, 153, 0.1)', border: 'rgba(236, 72, 153, 0.3)' },
-  'Finance': { bg: 'rgba(59, 130, 246, 0.1)', border: 'rgba(59, 130, 246, 0.3)' },
-  'Health': { bg: 'rgba(255, 205, 87, 0.1)', border: 'rgba(255, 205, 87, 0.3)' },
-  'Technology': { bg: 'rgba(139, 92, 246, 0.1)', border: 'rgba(139, 92, 246, 0.3)' },
-  'Travel': { bg: 'rgba(14, 165, 233, 0.1)', border: 'rgba(14, 165, 233, 0.3)' },
-  'Entertainment': { bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)' },
-  'Lifestyle': { bg: 'rgba(168, 85, 247, 0.1)', border: 'rgba(168, 85, 247, 0.3)' },
-  'General': { bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' },
+  Shopping: { bg: 'rgba(249, 115, 22, 0.1)', border: 'rgba(249, 115, 22, 0.3)' },
+  Food: { bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)' },
+  Fashion: { bg: 'rgba(236, 72, 153, 0.1)', border: 'rgba(236, 72, 153, 0.3)' },
+  Finance: { bg: 'rgba(59, 130, 246, 0.1)', border: 'rgba(59, 130, 246, 0.3)' },
+  Health: { bg: 'rgba(255, 205, 87, 0.1)', border: 'rgba(255, 205, 87, 0.3)' },
+  Technology: { bg: 'rgba(139, 92, 246, 0.1)', border: 'rgba(139, 92, 246, 0.3)' },
+  Travel: { bg: 'rgba(14, 165, 233, 0.1)', border: 'rgba(14, 165, 233, 0.3)' },
+  Entertainment: { bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)' },
+  Lifestyle: { bg: 'rgba(168, 85, 247, 0.1)', border: 'rgba(168, 85, 247, 0.3)' },
+  General: { bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' },
 };
 
 const difficultyColors = {
@@ -74,29 +74,32 @@ function SurveysPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   // Load all data
-  const loadData = useCallback(async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    try {
-      const [surveysData, categoriesData, statsData] = await Promise.all([
-        surveyApiService.getSurveys(activeCategory !== 'All' ? activeCategory : undefined),
-        surveyApiService.getCategories(),
-        surveyApiService.getUserStats(),
-      ]);
-      if (!isMounted()) return;
-      setSurveys(surveysData);
-      if (!isMounted()) return;
-      setCategories(categoriesData);
-      if (!isMounted()) return;
-      setUserStats(statsData);
-    } catch (error) {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [activeCategory]);
+  const loadData = useCallback(
+    async (showLoading = true) => {
+      if (showLoading) setLoading(true);
+      try {
+        const [surveysData, categoriesData, statsData] = await Promise.all([
+          surveyApiService.getSurveys(activeCategory !== 'All' ? activeCategory : undefined),
+          surveyApiService.getCategories(),
+          surveyApiService.getUserStats(),
+        ]);
+        if (!isMounted()) return;
+        setSurveys(surveysData);
+        if (!isMounted()) return;
+        setCategories(categoriesData);
+        if (!isMounted()) return;
+        setUserStats(statsData);
+      } catch (error: any) {
+        // silently handle
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+      }
+    },
+    [activeCategory],
+  );
   const isMounted = useIsMounted();
 
   // Initial load
@@ -166,7 +169,7 @@ function SurveysPage() {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
           </Pressable>
@@ -240,18 +243,10 @@ function SurveysPage() {
             {categories.map((cat) => (
               <Pressable
                 key={cat.name}
-                style={[
-                  styles.categoryButton,
-                  activeCategory === cat.name && styles.categoryButtonActive,
-                ]}
+                style={[styles.categoryButton, activeCategory === cat.name && styles.categoryButtonActive]}
                 onPress={() => handleCategoryChange(cat.name)}
               >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    activeCategory === cat.name && styles.categoryTextActive,
-                  ]}
-                >
+                <Text style={[styles.categoryText, activeCategory === cat.name && styles.categoryTextActive]}>
                   {cat.name} ({cat.count})
                 </Text>
               </Pressable>
@@ -287,17 +282,11 @@ function SurveysPage() {
                 const catInfo = getCategoryInfo(survey.subcategory);
                 const difficulty = survey.difficulty || 'easy';
                 const diffColors = difficultyColors[difficulty] || difficultyColors.easy;
-                const completionPercent = survey.targetResponses > 0
-                  ? Math.round((survey.completedCount / survey.targetResponses) * 100)
-                  : 0;
+                const completionPercent =
+                  survey.targetResponses > 0 ? Math.round((survey.completedCount / survey.targetResponses) * 100) : 0;
 
                 return (
-                  <Pressable
-                    key={survey._id}
-                    style={styles.surveyCard}
-                   
-                    onPress={() => handleStartSurvey(survey._id)}
-                  >
+                  <Pressable key={survey._id} style={styles.surveyCard} onPress={() => handleStartSurvey(survey._id)}>
                     {/* Header */}
                     <View style={styles.surveyHeader}>
                       <View
@@ -315,16 +304,11 @@ function SurveysPage() {
                               styles.difficultyBadge,
                               {
                                 backgroundColor: diffColors.bg,
-                                borderColor: diffcolors.border,
+                                borderColor: diffColors.border,
                               },
                             ]}
                           >
-                            <Text
-                              style={[
-                                styles.difficultyText,
-                                { color: diffColors.text },
-                              ]}
-                            >
+                            <Text style={[styles.difficultyText, { color: diffColors.text }]}>
                               {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
                             </Text>
                           </View>
@@ -368,12 +352,7 @@ function SurveysPage() {
                         </Text>
                       </View>
                       <View style={styles.progressBar}>
-                        <View
-                          style={[
-                            styles.progressFill,
-                            { width: `${Math.min(completionPercent, 100)}%` },
-                          ]}
-                        />
+                        <View style={[styles.progressFill, { width: `${Math.min(completionPercent, 100)}%` }]} />
                       </View>
                     </View>
 
@@ -386,10 +365,7 @@ function SurveysPage() {
                           <Text style={styles.rewardLabel}>{BRAND.COIN_NAME}</Text>
                         </View>
                       </View>
-                      <Pressable
-                        style={styles.startButton}
-                        onPress={() => handleStartSurvey(survey._id)}
-                      >
+                      <Pressable style={styles.startButton} onPress={() => handleStartSurvey(survey._id)}>
                         <LinearGradient
                           colors={[colors.infoScale[400], colors.brand.purpleLight]}
                           start={{ x: 0, y: 0 }}
@@ -417,9 +393,7 @@ function SurveysPage() {
                 <Ionicons name="bar-chart" size={28} color={colors.background.primary} />
               </View>
               <Text style={styles.bottomCTATitle}>New Surveys Daily</Text>
-              <Text style={styles.bottomCTADesc}>
-                Check back often for fresh surveys from top brands
-              </Text>
+              <Text style={styles.bottomCTADesc}>Check back often for fresh surveys from top brands</Text>
               <View style={styles.bottomCTAFeatures}>
                 <View style={styles.featureItem}>
                   <Ionicons name="trophy" size={14} color={colors.text.tertiary} />

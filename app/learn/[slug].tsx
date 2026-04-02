@@ -1,15 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,7 +17,7 @@ const { width } = Dimensions.get('window');
 const LearnDetailPage = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
 
   const [content, setContent] = useState<LearningContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,7 +64,7 @@ const LearnDetailPage = () => {
       const remaining = minRequired - timeSpentSeconds;
       platformAlertSimple(
         'Keep Reading',
-        `Please spend at least ${remaining} more seconds on this content to earn your reward.`
+        `Please spend at least ${remaining} more seconds on this content to earn your reward.`,
       );
       return;
     }
@@ -117,7 +109,7 @@ const LearnDetailPage = () => {
       'platform-guide': Colors.brand.purpleLight,
       'coin-types': Colors.warning,
     };
-    return colors[cat] || colors.text.tertiary;
+    return colors[cat] || (colors as any).text?.tertiary;
   };
 
   if (loading) {
@@ -135,7 +127,10 @@ const LearnDetailPage = () => {
         <Stack.Screen options={{ headerShown: false }} />
         <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
         <Text style={styles.errorText}>{error || 'Content not found'}</Text>
-        <Pressable style={styles.retryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.retryButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.retryText}>Go Back</Text>
         </Pressable>
       </SafeAreaView>
@@ -150,11 +145,16 @@ const LearnDetailPage = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle} numberOfLines={1}>Learn</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Learn
+          </Text>
         </View>
         <View style={styles.headerRight}>
           {content.rewardClaimed && (
@@ -172,9 +172,7 @@ const LearnDetailPage = () => {
       >
         {/* Category Badge */}
         <View style={[styles.categoryBadge, { backgroundColor: catColor + '20' }]}>
-          <Text style={[styles.categoryText, { color: catColor }]}>
-            {getCategoryLabel(content.category)}
-          </Text>
+          <Text style={[styles.categoryText, { color: catColor }]}>{getCategoryLabel(content.category)}</Text>
         </View>
 
         {/* Title */}
@@ -183,7 +181,7 @@ const LearnDetailPage = () => {
         {/* Meta Row */}
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
+            <Ionicons name="time-outline" size={16} color={(colors.text as any).tertiary} />
             <Text style={styles.metaText}>{content.estimatedMinutes} min read</Text>
           </View>
           <View style={styles.metaItem}>
@@ -259,13 +257,11 @@ const LearnDetailPage = () => {
         {content.rewardClaimed ? (
           <View style={styles.claimedBar}>
             <Ionicons name="checkmark-circle" size={22} color={Colors.success} />
-            <Text style={styles.claimedText}>
-              Completed - {content.coinReward} coins earned
-            </Text>
+            <Text style={styles.claimedText}>Completed - {content.coinReward} coins earned</Text>
           </View>
         ) : (
           <Pressable
-            style={[styles.completeButton, completing && styles.completeButtonDisabled]}
+            style={[styles.completeButton, completing ? styles.completeButtonDisabled : null]}
             onPress={handleComplete}
             disabled={completing}
           >
@@ -280,9 +276,7 @@ const LearnDetailPage = () => {
               ) : (
                 <>
                   <Ionicons name="gift-outline" size={20} color={colors.text.inverse} />
-                  <Text style={styles.completeText}>
-                    Mark Complete & Earn {content.coinReward} Coins
-                  </Text>
+                  <Text style={styles.completeText}>Mark Complete & Earn {content.coinReward} Coins</Text>
                 </>
               )}
             </LinearGradient>
@@ -314,7 +308,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: colors.text.tertiary,
+    color: (colors.text as any).tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -399,7 +393,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary,
+    color: (colors.text as any).tertiary,
   },
   divider: {
     height: 1,
@@ -440,7 +434,7 @@ const styles = StyleSheet.create({
   },
   bullet: {
     ...Typography.body,
-    color: colors.text.tertiary,
+    color: (colors.text as any).tertiary,
     marginRight: Spacing.sm,
     lineHeight: 22,
   },
@@ -457,7 +451,7 @@ const styles = StyleSheet.create({
   },
   noContent: {
     ...Typography.body,
-    color: colors.text.tertiary,
+    color: (colors.text as any).tertiary,
     textAlign: 'center',
     marginTop: 40,
   },

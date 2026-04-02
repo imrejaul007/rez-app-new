@@ -278,9 +278,10 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
 
         // Replace temp item with real item
         if (response.data) {
+          const responseData = response.data;
           setWishlistItems(prev => prev.map(i =>
             i.id === optimisticItem.id
-              ? { ...i, id: response.data.id || (response.data as any)._id }
+              ? { ...i, id: responseData.id || (responseData as any)._id }
               : i
           ));
         } else {

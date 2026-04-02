@@ -24,9 +24,9 @@ class WhatsNewApiService {
       );
       return {
         success: response.success,
-        data: response.data || [],
+        data: (response.data || []) as any,
         message: response.message,
-      };
+      } as any;
     } catch (error) {
       throw error;
     }
@@ -43,9 +43,9 @@ class WhatsNewApiService {
       );
       return {
         success: response.success,
-        data: response.data,
+        data: response.data as any,
         message: response.message,
-      };
+      } as any;
     } catch (error) {
       throw error;
     }
@@ -61,9 +61,9 @@ class WhatsNewApiService {
       );
       return {
         success: response.success,
-        data: response.data || { count: 0, hasUnseen: false },
+        data: (response.data || { count: 0, hasUnseen: false }) as any,
         message: response.message,
-      };
+      } as any;
     } catch (error) {
       throw error;
     }
@@ -75,7 +75,7 @@ class WhatsNewApiService {
    */
   async trackView(storyId: string): Promise<void> {
     try {
-      await apiClient.post(`${this.baseUrl}/${storyId}/view`, {});
+      await apiClient.post<any>(`${this.baseUrl}/${storyId}/view`, {});
     } catch (error) {
       // Don't throw - tracking failures shouldn't break the UX
     }
@@ -87,7 +87,7 @@ class WhatsNewApiService {
    */
   async trackClick(storyId: string): Promise<void> {
     try {
-      await apiClient.post(`${this.baseUrl}/${storyId}/click`, {});
+      await apiClient.post<any>(`${this.baseUrl}/${storyId}/click`, {});
     } catch (error) {
       // Don't throw - tracking failures shouldn't break the UX
     }
@@ -99,7 +99,7 @@ class WhatsNewApiService {
    */
   async trackCompletion(storyId: string): Promise<void> {
     try {
-      await apiClient.post(`${this.baseUrl}/${storyId}/complete`, {});
+      await apiClient.post<any>(`${this.baseUrl}/${storyId}/complete`, {});
     } catch (error) {
       // Don't throw - tracking failures shouldn't break the UX
     }

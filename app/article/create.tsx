@@ -167,11 +167,13 @@ function CreateArticlePage() {
               {CATEGORIES.map((cat) => (
                 <Pressable
                   key={cat.id}
-                  style={[styles.categoryPill, form.category === cat.id && styles.categoryPillSelected]}
+                  style={[styles.categoryPill, form.category === cat.id ? styles.categoryPillSelected : null]}
                   onPress={() => setForm((f) => ({ ...f, category: cat.id }))}
                 >
                   <ThemedText style={styles.categoryEmoji}>{cat.emoji}</ThemedText>
-                  <ThemedText style={[styles.categoryLabel, form.category === cat.id && styles.categoryLabelSelected]}>
+                  <ThemedText
+                    style={[styles.categoryLabel, form.category === cat.id ? styles.categoryLabelSelected : null]}
+                  >
                     {cat.label}
                   </ThemedText>
                 </Pressable>
@@ -254,7 +256,7 @@ function CreateArticlePage() {
             <ThemedText style={styles.sectionTitle}>Visibility</ThemedText>
             <View style={styles.visibilityOptions}>
               <Pressable
-                style={[styles.visibilityOption, form.isPublic && styles.visibilityOptionSelected]}
+                style={[styles.visibilityOption, form.isPublic ? styles.visibilityOptionSelected : null]}
                 onPress={() => setForm((f) => ({ ...f, isPublic: true }))}
               >
                 <Ionicons
@@ -265,7 +267,7 @@ function CreateArticlePage() {
                 <ThemedText style={styles.visibilityLabel}>Public</ThemedText>
               </Pressable>
               <Pressable
-                style={[styles.visibilityOption, !form.isPublic && styles.visibilityOptionSelected]}
+                style={[styles.visibilityOption, !form.isPublic ? styles.visibilityOptionSelected : null]}
                 onPress={() => setForm((f) => ({ ...f, isPublic: false }))}
               >
                 <Ionicons

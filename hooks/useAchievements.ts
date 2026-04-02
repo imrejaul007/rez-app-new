@@ -29,7 +29,7 @@ export const useAchievements = (autoFetch: boolean = true): UseAchievementsRetur
     setError(null);
 
     try {
-      const response = await achievementApi.getUserAchievements();
+      const response: any = await achievementApi.getUserAchievements();
 
       if (response.success && response.data) {
         setAchievements(response.data);
@@ -57,7 +57,7 @@ export const useAchievements = (autoFetch: boolean = true): UseAchievementsRetur
     setError(null);
 
     try {
-      const response = await achievementApi.getAchievementProgress();
+      const response: any = await achievementApi.getAchievementProgress();
 
       if (response.success && response.data) {
         setProgress(response.data);
@@ -74,7 +74,7 @@ export const useAchievements = (autoFetch: boolean = true): UseAchievementsRetur
     setError(null);
 
     try {
-      const response = await achievementApi.getUnlockedAchievements();
+      const response: any = await achievementApi.getUnlockedAchievements();
 
       if (response.success && response.data) {
         return response.data;
@@ -92,7 +92,7 @@ export const useAchievements = (autoFetch: boolean = true): UseAchievementsRetur
     setError(null);
 
     try {
-      const response = await achievementApi.initializeUserAchievements();
+      const response: any = await achievementApi.initializeUserAchievements();
 
       if (response.success && response.data) {
         setAchievements(response.data);
@@ -112,7 +112,7 @@ export const useAchievements = (autoFetch: boolean = true): UseAchievementsRetur
     setError(null);
 
     try {
-      const response = await achievementApi.recalculateAchievements();
+      const response: any = await achievementApi.recalculateAchievements();
 
       if (response.success && response.data) {
         setAchievements(response.data);

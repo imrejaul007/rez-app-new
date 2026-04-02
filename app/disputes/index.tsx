@@ -32,7 +32,9 @@ const STATUS_LABELS: Record<string, string> = {
 function DisputeListScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { isAuthenticated, authLoading } = useAuth();
+  const { state } = useAuth();
+  const isAuthenticated = state.isAuthenticated;
+  const authLoading = state.isLoading;
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -61,7 +63,7 @@ function DisputeListScreen() {
           setPage(pageNum);
           setHasMore(pagination?.hasNext ?? false);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to fetch disputes:', err);
       } finally {
         if (!isMounted()) return;
@@ -154,7 +156,9 @@ function DisputeListScreen() {
             <Text style={styles.emptySubtitle}>You haven't raised any disputes yet</Text>
           </View>
         }
-        contentContainerStyle={[disputes.length === 0 && { flex: 1, justifyContent: 'center' }, { paddingBottom: 120 }]}
+        contentContainerStyle={
+          [disputes.length === 0 && { flex: 1, justifyContent: 'center' }, { paddingBottom: 120 }] as any
+        }
       />
     </View>
   );

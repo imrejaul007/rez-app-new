@@ -68,10 +68,10 @@ function ProductVariantModal({
 
   // Extract unique sizes and colors from variants
   const availableSizes = Array.from(
-    new Set(variants.filter(v => v.size).map(v => v.size))
+    new Set(variants.filter(v => v.size).map(v => v.size as string))
   );
   const availableColors = Array.from(
-    new Set(variants.filter(v => v.color).map(v => v.color))
+    new Set(variants.filter(v => v.color).map(v => v.color as string))
   );
 
   // Safely get product price with fallback

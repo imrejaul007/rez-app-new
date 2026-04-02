@@ -63,7 +63,7 @@ const StoreExperienceCard: React.FC<StoreExperienceCardProps> = memo(({
 
   const handlePress = useCallback(() => {
     if (Platform.OS !== 'web') {
-      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch (e) { catchSilent(e, 'StoreExperienceCard/haptics'); }
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch (e: any) { catchSilent(e, 'StoreExperienceCard/haptics'); }
     }
     router.push({
       pathname: '/StoreListPage',

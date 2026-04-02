@@ -136,7 +136,7 @@ function validateFileFormat(
   const extension = getFileExtension(filename);
 
   // Check extension
-  const isValidExtension = IMAGE_CONFIG.supportedFormats.includes(extension);
+  const isValidExtension = IMAGE_CONFIG.supportedFormats.includes(extension as any);
 
   // Check MIME type if provided
   const isValidMime = mimeType ? SUPPORTED_MIME_TYPES.includes(mimeType) : true;

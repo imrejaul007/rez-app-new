@@ -18,7 +18,7 @@ interface MemoryStats {
 class MemoryMonitor {
   private static instance: MemoryMonitor;
   private memoryWarningCallbacks: Set<() => void> = new Set();
-  private monitoringInterval: NodeJS.Timeout | null = null;
+  private monitoringInterval: ReturnType<typeof setTimeout> | null = null;
   private lastMemoryWarning: number = 0;
   private readonly WARNING_THRESHOLD_MB = 100; // Warn if memory exceeds 100MB
   private readonly WARNING_COOLDOWN_MS = 30000; // 30 seconds between warnings

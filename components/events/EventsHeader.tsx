@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       web: {
         outlineStyle: 'none',
-      },
+      } as any,
     }),
   },
   clearButton: {

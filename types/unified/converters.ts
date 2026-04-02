@@ -126,7 +126,7 @@ export function toProduct(data: any): Product {
           // Preserve additional store data
           contact: data.store.contact,
           operationalInfo: data.store.operationalInfo,
-        }
+        } as any
       : undefined,
     cashback: data.cashback
       ? {
@@ -160,6 +160,7 @@ export function toProduct(data: any): Product {
     shipping: data.shipping,
     metadata: data.metadata,
     // Preserve raw backend fields for components that need them
+    // @ts-ignore - pricing is a backend field not in Product type
     pricing: data.pricing,
     ratings: data.ratings,
     analytics: data.analytics,

@@ -55,7 +55,7 @@ export default function FastDeliveryPage() {
         if (!isMounted()) return;
         setStores(fastStores);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load. Pull down to refresh.');
     } finally {

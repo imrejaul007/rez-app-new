@@ -238,10 +238,10 @@ function ElectronicsCategoryPage() {
         <View style={[styles.chipIconCircle, { backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : `${filter.color}14` }]}>
           {isActive ? <Ionicons name="checkmark" size={14} color={COLORS.white} /> : <Text style={styles.chipIconText}>{filter.icon}</Text>}
         </View>
-        <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>{filter.label}</Text>
+        <Text style={[styles.chipLabel, isActive ? styles.chipLabelActive : null]}>{filter.label}</Text>
         {count > 0 && (
-          <View style={[styles.chipCount, isActive && styles.chipCountActive]}>
-            <Text style={[styles.chipCountText, isActive && styles.chipCountTextActive]}>{count}</Text>
+          <View style={[styles.chipCount, isActive ? styles.chipCountActive : null]}>
+            <Text style={[styles.chipCountText, isActive ? styles.chipCountTextActive : null]}>{count}</Text>
           </View>
         )}
       </Pressable>
@@ -305,7 +305,7 @@ function ElectronicsCategoryPage() {
 
       <EnhancedAISuggestionsSection categorySlug={slug} categoryName={categoryConfig.name} placeholders={aiPlaceholders} onSearch={handleAISearch} />
 
-      <BrowseCategoryGrid categories={subcategories} title="Shop by Category" onCategoryPress={handleCategoryPress} />
+      <BrowseCategoryGrid categories={subcategories as any} title="Shop by Category" onCategoryPress={handleCategoryPress} />
 
       {/* Trending Gadgets */}
       {filteredTrending.length > 0 && (

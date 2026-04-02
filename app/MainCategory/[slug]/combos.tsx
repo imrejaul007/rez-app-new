@@ -135,7 +135,7 @@ function EmptyState() {
 function CombosScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<{ storeId?: string; storeName?: string }>();
+  const params = useLocalSearchParams<any>();
   const storeId = params.storeId;
   const storeName = params.storeName || 'Store';
 
@@ -292,4 +292,4 @@ const styles = StyleSheet.create({
   emptyBody: { fontSize: 14, color: '#6B7280', textAlign: 'center', lineHeight: 20 },
 });
 
-export default withErrorBoundary(CombosScreen);
+export default withErrorBoundary(CombosScreen, 'CombosScreen');

@@ -34,7 +34,12 @@ const categories = [
   { id: 'food', label: 'Food', icon: 'restaurant', gradient: [colors.brand.orange, '#FB923C'] },
   { id: 'fashion', label: 'Fashion', icon: 'shirt', gradient: [colors.brand.pink, '#F472B6'] },
   { id: 'beauty', label: 'Beauty', icon: 'sparkles', gradient: [colors.brand.purpleLight, colors.brand.purpleSoft] },
-  { id: 'electronics', label: 'Tech', icon: 'phone-portrait', gradient: [colors.infoScale[400], colors.infoScale[400]] },
+  {
+    id: 'electronics',
+    label: 'Tech',
+    icon: 'phone-portrait',
+    gradient: [colors.infoScale[400], colors.infoScale[400]],
+  },
   { id: 'grocery', label: 'Grocery', icon: 'cart', gradient: [colors.lightMustard, '#ffd977'] },
 ];
 
@@ -104,42 +109,45 @@ const ExploreStoresPage = () => {
   }, [currentLocation?.coordinates, regionState.regionConfig?.defaultCoordinates]);
 
   // Fetch stores from API
-  const fetchStores = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchStores = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      let response;
-      if (searchQuery.trim()) {
-        response = await exploreApi.searchStores(searchQuery);
-      } else {
-        response = await exploreApi.getStores({
-          category: selectedCategory !== 'all' ? selectedCategory : undefined,
-          limit: 30,
-        });
-      }
+        let response;
+        if (searchQuery.trim()) {
+          response = await exploreApi.searchStores(searchQuery);
+        } else {
+          response = await exploreApi.getStores({
+            category: selectedCategory !== 'all' ? selectedCategory : undefined,
+            limit: 30,
+          });
+        }
 
-      if (response.success && response.data) {
+        if (response.success && response.data) {
+          if (!isMounted()) return;
+          setStores(response.data.stores || []);
+        } else {
+          if (!isMounted()) return;
+          setError(response.error || 'Failed to fetch stores');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setStores(response.data.stores || []);
-      } else {
+        setError(err.message || 'Something went wrong');
+      } finally {
         if (!isMounted()) return;
-        setError(response.error || 'Failed to fetch stores');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [selectedCategory, searchQuery]);
+    },
+    [selectedCategory, searchQuery],
+  );
 
   // Initial fetch
   useEffect(() => {
@@ -207,7 +215,6 @@ const ExploreStoresPage = () => {
         key={store.id}
         style={styles.listCard}
         onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-       
       >
         {/* Store Image/Logo */}
         <View style={styles.listCardLeft}>
@@ -230,7 +237,9 @@ const ExploreStoresPage = () => {
         {/* Store Info */}
         <View style={styles.listCardContent}>
           <View style={styles.listCardHeader}>
-            <Text style={styles.listCardName} numberOfLines={1}>{store.name}</Text>
+            <Text style={styles.listCardName} numberOfLines={1}>
+              {store.name}
+            </Text>
             {rating && (
               <View style={styles.ratingBadge}>
                 <Ionicons name="star" size={12} color={colors.warningScale[400]} />
@@ -240,7 +249,9 @@ const ExploreStoresPage = () => {
           </View>
 
           {store.category && (
-            <Text style={styles.listCardCategory} numberOfLines={1}>{store.category}</Text>
+            <Text style={styles.listCardCategory} numberOfLines={1}>
+              {store.category}
+            </Text>
           )}
 
           <View style={styles.listCardMeta}>
@@ -289,7 +300,6 @@ const ExploreStoresPage = () => {
         key={store.id}
         style={styles.gridCard}
         onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-       
       >
         {/* Store Image */}
         <View style={styles.gridImageContainer}>
@@ -321,7 +331,9 @@ const ExploreStoresPage = () => {
 
         {/* Store Info */}
         <View style={styles.gridContent}>
-          <Text style={styles.gridName} numberOfLines={1}>{store.name}</Text>
+          <Text style={styles.gridName} numberOfLines={1}>
+            {store.name}
+          </Text>
 
           <View style={styles.gridMeta}>
             {rating && (
@@ -331,7 +343,9 @@ const ExploreStoresPage = () => {
               </View>
             )}
             {store.category && (
-              <Text style={styles.gridCategory} numberOfLines={1}>{store.category}</Text>
+              <Text style={styles.gridCategory} numberOfLines={1}>
+                {store.category}
+              </Text>
             )}
           </View>
         </View>
@@ -349,7 +363,7 @@ const ExploreStoresPage = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
@@ -360,10 +374,7 @@ const ExploreStoresPage = () => {
               <Text style={styles.headerLocationText}>{regionName}</Text>
             </View>
           </View>
-          <Pressable
-            style={styles.mapIconButton}
-            onPress={() => navigateTo('/explore/map')}
-          >
+          <Pressable style={styles.mapIconButton} onPress={() => navigateTo('/explore/map')}>
             <Ionicons name="map" size={22} color={colors.nileBlue} />
           </Pressable>
         </View>
@@ -400,10 +411,7 @@ const ExploreStoresPage = () => {
           {categories.map((cat) => (
             <Pressable
               key={cat.id}
-              style={[
-                styles.categoryChip,
-                selectedCategory === cat.id && styles.categoryChipActive,
-              ]}
+              style={[styles.categoryChip, selectedCategory === cat.id && styles.categoryChipActive]}
               onPress={() => handleCategoryChange(cat.id)}
             >
               {selectedCategory === cat.id ? (
@@ -438,19 +446,29 @@ const ExploreStoresPage = () => {
                 style={[styles.viewToggleBtn, viewMode === 'list' && styles.viewToggleBtnActive]}
                 onPress={() => setViewMode('list')}
               >
-                <Ionicons name="list" size={16} color={viewMode === 'list' ? colors.lightMustard : colors.neutral[400]} />
+                <Ionicons
+                  name="list"
+                  size={16}
+                  color={viewMode === 'list' ? colors.lightMustard : colors.neutral[400]}
+                />
               </Pressable>
               <Pressable
                 style={[styles.viewToggleBtn, viewMode === 'grid' && styles.viewToggleBtnActive]}
                 onPress={() => setViewMode('grid')}
               >
-                <Ionicons name="grid" size={16} color={viewMode === 'grid' ? colors.lightMustard : colors.neutral[400]} />
+                <Ionicons
+                  name="grid"
+                  size={16}
+                  color={viewMode === 'grid' ? colors.lightMustard : colors.neutral[400]}
+                />
               </Pressable>
             </View>
             {/* Sort */}
             <Pressable style={styles.sortButton} onPress={handleSort}>
               <Ionicons name="swap-vertical" size={14} color={colors.neutral[500]} />
-              <Text style={styles.sortText}>{sortBy === 'default' ? 'Sort' : sortBy === 'rating' ? 'Top Rated' : 'A-Z'}</Text>
+              <Text style={styles.sortText}>
+                {sortBy === 'default' ? 'Sort' : sortBy === 'rating' ? 'Top Rated' : 'A-Z'}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -459,18 +477,13 @@ const ExploreStoresPage = () => {
         <ScrollView
           style={styles.storesList}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={[
-            styles.storesContainer,
-            viewMode === 'grid' && styles.storesContainerGrid,
-          ]}
+          contentContainerStyle={[styles.storesContainer, viewMode === 'grid' && styles.storesContainerGrid] as any}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.lightMustard]} />
           }
         >
           {/* Loading State */}
-          {loading && !refreshing && (
-            <MapViewSkeleton />
-          )}
+          {loading && !refreshing && <MapViewSkeleton />}
 
           {/* Error State */}
           {error && !loading && (
@@ -505,25 +518,19 @@ const ExploreStoresPage = () => {
           )}
 
           {/* Store Cards */}
-          {!loading && !error && (
-            viewMode === 'grid' ? (
-              <View style={styles.gridContainer}>
-                {filteredStores.map((store) => renderGridCard(store))}
-              </View>
+          {!loading &&
+            !error &&
+            (viewMode === 'grid' ? (
+              <View style={styles.gridContainer}>{filteredStores.map((store) => renderGridCard(store))}</View>
             ) : (
               filteredStores.map((store) => renderListCard(store))
-            )
-          )}
+            ))}
 
           <View style={{ height: 120 }} />
         </ScrollView>
 
         {/* Floating Map Button */}
-        <Pressable
-          style={styles.floatingMapButton}
-          onPress={() => navigateTo('/explore/map')}
-         
-        >
+        <Pressable style={styles.floatingMapButton} onPress={() => navigateTo('/explore/map')}>
           <LinearGradient
             colors={[colors.lightMustard, colors.nileBlue]}
             start={{ x: 0, y: 0 }}

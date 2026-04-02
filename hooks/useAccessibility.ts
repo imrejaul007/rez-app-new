@@ -100,7 +100,7 @@ export const useAccessibility = (
   const reduceMotionListenerRef = useRef<any>(null);
   const reduceTransparencyListenerRef = useRef<any>(null);
   const mountedRef = useRef(true);
-  const announceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const announceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * Check screen reader status
@@ -328,7 +328,7 @@ export const useReducedMotion = (): boolean => {
  * Hook for managing accessibility announcements with debouncing
  */
 export const useAnnouncement = () => {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {

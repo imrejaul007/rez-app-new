@@ -191,7 +191,7 @@ function UGCUploadModal({
 
     try {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: 'mixed',
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
         aspect: [9, 16],
         quality: 0.8,
@@ -207,20 +207,20 @@ function UGCUploadModal({
           setSelectedMedia({
             uri: asset.uri,
             type,
-            width: asset.width,
-            height: asset.height,
-            duration: asset.duration,
-            fileSize: asset.fileSize,
-            fileName: asset.fileName,
+            width: asset.width ?? undefined,
+            height: asset.height ?? undefined,
+            duration: asset.duration ?? undefined,
+            fileSize: asset.fileSize ?? undefined,
+            fileName: asset.fileName ?? undefined,
           });
           if (!isMounted()) return;
           setCurrentStep('preview');
           if (Platform.OS !== 'web') {
-            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e) { catchSilent(e, 'UGCUploadModal/haptics'); }
+            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e: any) { catchSilent(e, 'UGCUploadModal/haptics'); }
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to capture media. Please try again.');
     }
@@ -233,7 +233,7 @@ function UGCUploadModal({
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'mixed',
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
         aspect: [9, 16],
         quality: 0.8,
@@ -249,20 +249,20 @@ function UGCUploadModal({
           setSelectedMedia({
             uri: asset.uri,
             type,
-            width: asset.width,
-            height: asset.height,
-            duration: asset.duration,
-            fileSize: asset.fileSize,
-            fileName: asset.fileName,
+            width: asset.width ?? undefined,
+            height: asset.height ?? undefined,
+            duration: asset.duration ?? undefined,
+            fileSize: asset.fileSize ?? undefined,
+            fileName: asset.fileName ?? undefined,
           });
           if (!isMounted()) return;
           setCurrentStep('preview');
           if (Platform.OS !== 'web') {
-            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e) { catchSilent(e, 'UGCUploadModal/haptics'); }
+            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e: any) { catchSilent(e, 'UGCUploadModal/haptics'); }
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to select media. Please try again.');
     }
@@ -374,7 +374,7 @@ function UGCUploadModal({
           friction: 5 } as any);
 
         if (Platform.OS !== 'web') {
-          try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e) { catchSilent(e, 'UGCUploadModal/haptics'); }
+          try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e: any) { catchSilent(e, 'UGCUploadModal/haptics'); }
         }
 
         // Auto close after 3 seconds
@@ -394,7 +394,7 @@ function UGCUploadModal({
       setError(err.message || 'Failed to upload content. Please try again.');
       setCurrentStep('details');
       if (Platform.OS !== 'web') {
-        try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}); } catch (e) { catchSilent(e, 'UGCUploadModal/haptics'); }
+        try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}); } catch (e: any) { catchSilent(e, 'UGCUploadModal/haptics'); }
       }
     } finally {
       if (progressInterval) clearInterval(progressInterval);
@@ -514,16 +514,16 @@ function UGCUploadModal({
       <View style={styles.mediaPreviewContainer}>
         {selectedMedia?.type === 'video' ? (
           <Video
-            source={selectedMedia.uri}
+            source={{ uri: selectedMedia.uri } as any}
             style={styles.mediaPreview}
-            contentFit="cover"
             shouldPlay={false}
             isLooping
             useNativeControls
+            {...({ contentFit: "cover" } as any)}
           />
         ) : (
           <CachedImage
-            source={selectedMedia?.uri}
+            source={selectedMedia?.uri || ''}
             style={styles.mediaPreview}
             contentFit="cover"
           />

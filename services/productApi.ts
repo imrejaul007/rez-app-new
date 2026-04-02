@@ -67,7 +67,7 @@ class ProductApiService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load popular products. Please try again.');
+      return createErrorResponse(error, 'Failed to load popular products. Please try again.') as any;
     }
   }
 
@@ -91,7 +91,7 @@ class ProductApiService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load nearby products. Please try again.');
+      return createErrorResponse(error, 'Failed to load nearby products. Please try again.') as any;
     }
   }
 
@@ -112,7 +112,7 @@ class ProductApiService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load hot deals. Please try again.');
+      return createErrorResponse(error, 'Failed to load hot deals. Please try again.') as any;
     }
   }
 
@@ -135,7 +135,7 @@ class ProductApiService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load category products. Please try again.');
+      return createErrorResponse(error, 'Failed to load category products. Please try again.') as any;
     }
   }
 }

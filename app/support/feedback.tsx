@@ -136,7 +136,7 @@ function FeedbackPage() {
       } else {
         platformAlertSimple('Error', 'Failed to submit feedback. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Something went wrong. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -243,7 +243,7 @@ function FeedbackPage() {
               {FEEDBACK_CATEGORIES.map((category) => (
                 <Pressable
                   key={category.id}
-                  style={[styles.categoryCard, selectedCategory === category.id && styles.categoryCardSelected]}
+                  style={[styles.categoryCard, selectedCategory === category.id ? styles.categoryCardSelected : null]}
                   onPress={() => setSelectedCategory(category.id)}
                 >
                   <Ionicons
@@ -252,7 +252,10 @@ function FeedbackPage() {
                     color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
                   />
                   <ThemedText
-                    style={[styles.categoryLabel, selectedCategory === category.id && styles.categoryLabelSelected]}
+                    style={[
+                      styles.categoryLabel,
+                      selectedCategory === category.id ? styles.categoryLabelSelected : null,
+                    ]}
                   >
                     {category.label}
                   </ThemedText>

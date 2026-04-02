@@ -81,6 +81,7 @@ function ExperienceDetailPage() {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
+  const isMounted = useIsMounted();
   const [experience, setExperience] = useState<StoreExperience | null>(null);
   const [stores, setStores] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,7 +109,7 @@ function ExperienceDetailPage() {
       if (storesRes.success && storesRes.data?.stores) {
         setStores(storesRes.data.stores);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load experience. Pull down to refresh.');
     } finally {

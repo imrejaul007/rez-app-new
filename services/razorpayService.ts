@@ -81,7 +81,7 @@ class RazorpayService {
         throw new Error('Razorpay is not properly configured');
       }
 
-      const response = await apiClient.post('/payment/create-order', {
+      const response = await apiClient.post<any>('/payment/create-order', {
         orderId,
         amount, // in rupees
         currency,
@@ -319,7 +319,7 @@ class RazorpayService {
   ): Promise<PaymentResponse> {
 
     try {
-      const response = await apiClient.post('/payment/verify', {
+      const response = await apiClient.post<any>('/payment/verify', {
         orderId,
         razorpay_order_id: paymentData.razorpay_order_id,
         razorpay_payment_id: paymentData.razorpay_payment_id,
@@ -374,7 +374,7 @@ class RazorpayService {
   async checkPaymentStatus(paymentId: string): Promise<PaymentResponse> {
 
     try {
-      const response = await apiClient.get(`/payment/status/${paymentId}`);
+      const response = await apiClient.get<any>(`/payment/status/${paymentId}`);
 
       if (response.success && response.data) {
         return response.data as PaymentResponse;

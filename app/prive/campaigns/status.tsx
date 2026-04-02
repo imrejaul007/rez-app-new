@@ -70,7 +70,7 @@ function CampaignStatusScreen() {
           <Text style={styles.headerTitle}>Submission Status</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ErrorState title="Failed to load status" message="Please try again" onRetry={refetch} />
+        <ErrorState error="Failed to load status. Please try again" onRetry={refetch} />
       </SafeAreaView>
     );
   }
@@ -138,13 +138,13 @@ function CampaignStatusScreen() {
             {timelineSteps.map((step, idx) => (
               <React.Fragment key={idx}>
                 <View style={styles.timelineItem}>
-                  <View style={[styles.timelineItemDot, step.completed && styles.timelineItemDotCompleted]}>
+                  <View style={[styles.timelineItemDot, step.completed ? styles.timelineItemDotCompleted : null]}>
                     {step.completed && <Ionicons name="checkmark" size={12} color={Colors.white} />}
                   </View>
                   <Text style={styles.timelineItemLabel}>{step.label}</Text>
                 </View>
                 {idx < timelineSteps.length - 1 && (
-                  <View style={[styles.timelineConnector, step.completed && styles.timelineConnectorCompleted]} />
+                  <View style={[styles.timelineConnector, step.completed ? styles.timelineConnectorCompleted : null]} />
                 )}
               </React.Fragment>
             ))}

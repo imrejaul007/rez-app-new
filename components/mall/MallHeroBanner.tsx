@@ -32,6 +32,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBanner } from '../../types/mall.types';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -296,8 +297,8 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
 
   return (
     <View style={styles.container}>
-      <FlashList
-        ref={flatListRef}
+      <AnyFlashList
+        ref={flatListRef as any}
         data={displayBanners}
         renderItem={renderBanner}
         keyExtractor={keyExtractor}
@@ -310,13 +311,9 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
         snapToInterval={SNAP_INTERVAL}
         snapToAlignment="start"
         decelerationRate="fast"
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={styles.listContent as any}
         estimatedItemSize={200}
-        ItemSeparatorComponent={ItemSeparator}
-        removeClippedSubviews={Platform.OS !== 'web'}
-        initialNumToRender={1}
-        maxToRenderPerBatch={2}
-        windowSize={3}
+        ItemSeparatorComponent={ItemSeparator as any}
       />
 
       {/* External animated pagination dots */}

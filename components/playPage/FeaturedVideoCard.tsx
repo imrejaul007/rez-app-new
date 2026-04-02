@@ -49,7 +49,7 @@ function FeaturedVideoCard({
               shouldPlay: false,
             });
           }
-        } catch (error) {
+        } catch (error: any) {
           if (!isMounted()) return;
           setHasError(true);
         }

@@ -1,6 +1,16 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Pressable, ActivityIndicator, Linking, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Pressable,
+  ActivityIndicator,
+  Linking,
+  Platform,
+} from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useOrderTracking } from '@/hooks/useOrderTracking';
@@ -13,7 +23,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 
 function OrderTrackingScreen() {
-  const { orderId } = useLocalSearchParams<{ orderId: string }>();
+  const { orderId } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -36,7 +46,6 @@ function OrderTrackingScreen() {
   useEffect(() => {
     if (statusUpdate) {
       // In production, this would trigger a push notification
-
     }
   }, [statusUpdate]);
 
@@ -48,12 +57,11 @@ function OrderTrackingScreen() {
     platformAlertDestructive(
       'Cancel Order',
       'Are you sure you want to cancel this order?',
-      'Yes, Cancel',
       async () => {
         // Call cancel order API
-
         // ordersService.cancelOrder(orderId);
-      }
+      },
+      'Yes, Cancel',
     );
   };
 
@@ -61,13 +69,13 @@ function OrderTrackingScreen() {
     platformAlertConfirm(
       'Contact Support',
       'How would you like to reach us?',
-      'Call Support',
       () => {
         // Support phone number
         Linking.openURL('tel:+918001234567').catch(() => {
           platformAlertSimple('Unable to Call', 'Please try again or email us at support@nuqta.app');
         });
-      }
+      },
+      'Call Support',
     );
   };
 
@@ -114,7 +122,7 @@ function OrderTrackingScreen() {
         <Text style={styles.errorText}>Order not found</Text>
         <Pressable
           style={styles.retryButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Text style={styles.retryButtonText}>Go Back</Text>
         </Pressable>
@@ -137,36 +145,48 @@ function OrderTrackingScreen() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={handleRefresh}
-            colors={[Colors.gold]}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={handleRefresh} colors={[Colors.gold]} />}
       >
         {/* Reconnection Banner */}
         {isReconnecting && (
-          <View style={{ backgroundColor: Colors.warningScale[50], paddingHorizontal: Spacing.base, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
+          <View
+            style={{
+              backgroundColor: Colors.warningScale[50],
+              paddingHorizontal: Spacing.base,
+              paddingVertical: 10,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: Spacing.sm,
+            }}
+          >
             <ActivityIndicator size="small" color={Colors.warning} />
             <Text style={{ flex: 1, color: colors.brand.amberDark, ...Typography.caption }}>
               Reconnecting... (attempt {reconnectAttempts || 1})
             </Text>
             <Pressable onPress={refresh}>
-              <Text style={{ color: Colors.warning, fontWeight: '600', ...Typography.caption }}>Retry</Text>
+              <Text style={{ ...Typography.caption, color: Colors.warning, fontWeight: '600' }}>Retry</Text>
             </Pressable>
           </View>
         )}
 
         {/* Connection lost banner (after max attempts) */}
         {!isConnected && !isReconnecting && reconnectAttempts > 0 && (
-          <View style={{ backgroundColor: Colors.errorScale[50], paddingHorizontal: Spacing.base, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
+          <View
+            style={{
+              backgroundColor: Colors.errorScale[50],
+              paddingHorizontal: Spacing.base,
+              paddingVertical: 10,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: Spacing.sm,
+            }}
+          >
             <Ionicons name="cloud-offline-outline" size={18} color={Colors.error} />
             <Text style={{ flex: 1, color: '#991B1B', ...Typography.caption }}>
               Connection lost. Updates may be delayed.
             </Text>
             <Pressable onPress={refresh}>
-              <Text style={{ color: Colors.error, fontWeight: '600', ...Typography.caption }}>Retry</Text>
+              <Text style={{ ...Typography.caption, color: Colors.error, fontWeight: '600' }}>Retry</Text>
             </Pressable>
           </View>
         )}
@@ -204,10 +224,7 @@ function OrderTrackingScreen() {
         {/* Delivery Map */}
         {showMap && (
           <View style={styles.section}>
-            <DeliveryMap
-              locationUpdate={locationUpdate}
-              deliveryAddress={order.delivery?.address}
-            />
+            <DeliveryMap locationUpdate={locationUpdate} deliveryAddress={order.delivery?.address} />
           </View>
         )}
 
@@ -227,7 +244,10 @@ function OrderTrackingScreen() {
             <Text style={styles.itemsCount}>
               {order.items.length} item{order.items.length > 1 ? 's' : ''}
             </Text>
-            <Text style={styles.itemsTotal}>{currencySymbol}{order.totals.total}</Text>
+            <Text style={styles.itemsTotal}>
+              {currencySymbol}
+              {order.totals.total}
+            </Text>
           </View>
           {order.items.slice(0, 3).map((item: any, index: number) => (
             <View key={index} style={styles.itemRow}>
@@ -274,17 +294,19 @@ function OrderTrackingScreen() {
                 return (
                   <View key={index} style={styles.serviceBookingCard}>
                     <View style={styles.serviceBookingHeader}>
-                      <Text style={styles.serviceBookingName}>
-                        {item.name || item.product?.name}
-                      </Text>
-                      <View style={[
-                        styles.serviceBookingStatus,
-                        { backgroundColor: item.serviceBookingId ? colors.lavenderMist : colors.linen }
-                      ]}>
-                        <Text style={[
-                          styles.serviceBookingStatusText,
-                          { color: item.serviceBookingId ? colors.nileBlue : colors.lightMustard }
-                        ]}>
+                      <Text style={styles.serviceBookingName}>{item.name || item.product?.name}</Text>
+                      <View
+                        style={[
+                          styles.serviceBookingStatus,
+                          { backgroundColor: item.serviceBookingId ? colors.lavenderMist : colors.linen },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.serviceBookingStatusText,
+                            { color: item.serviceBookingId ? colors.nileBlue : colors.lightMustard },
+                          ]}
+                        >
                           {item.serviceBookingId ? 'Confirmed' : 'Pending'}
                         </Text>
                       </View>
@@ -322,8 +344,7 @@ function OrderTrackingScreen() {
                 {order.delivery.address.addressLine2 && `, ${order.delivery.address.addressLine2}`}
               </Text>
               <Text style={styles.addressText}>
-                {order.delivery.address.city}, {order.delivery.address.state} -{' '}
-                {order.delivery.address.pincode}
+                {order.delivery.address.city}, {order.delivery.address.state} - {order.delivery.address.pincode}
               </Text>
               <Text style={styles.addressPhone}>{order.delivery.address.phone}</Text>
             </View>
@@ -333,20 +354,12 @@ function OrderTrackingScreen() {
         {/* Actions */}
         <View style={styles.actions}>
           {canCancel && (
-            <Pressable
-              style={styles.cancelButton}
-              onPress={handleCancelOrder}
-             
-            >
+            <Pressable style={styles.cancelButton} onPress={handleCancelOrder}>
               <Text style={styles.cancelButtonText}>Cancel Order</Text>
             </Pressable>
           )}
 
-          <Pressable
-            style={styles.supportButton}
-            onPress={handleContactSupport}
-           
-          >
+          <Pressable style={styles.supportButton} onPress={handleContactSupport}>
             <Text style={styles.supportButtonText}>Contact Support</Text>
           </Pressable>
         </View>

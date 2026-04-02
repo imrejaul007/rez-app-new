@@ -97,7 +97,7 @@ function DeliverySettingsScreen() {
     setContactlessDelivery(newValue);
     try {
       await userSettingsApi.updateDeliveryPreferences({ contactlessDelivery: newValue });
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       setContactlessDelivery(!newValue);
       platformAlertSimple('Error', 'Failed to save preference. Please try again.');
@@ -109,7 +109,7 @@ function DeliverySettingsScreen() {
     setDeliveryNotifications(newValue);
     try {
       await userSettingsApi.updateDeliveryPreferences({ deliveryNotifications: newValue });
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       setDeliveryNotifications(!newValue);
       platformAlertSimple('Error', 'Failed to save preference. Please try again.');
@@ -121,7 +121,7 @@ function DeliverySettingsScreen() {
     try {
       await userSettingsApi.updateDeliveryPreferences({ deliveryInstructions: instructions });
       platformAlertSimple('Success', 'Delivery instructions updated');
-    } catch (e) {
+    } catch (e: any) {
       platformAlertSimple('Error', 'Failed to save instructions. Please try again.');
     }
   };

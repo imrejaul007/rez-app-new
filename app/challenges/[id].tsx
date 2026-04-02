@@ -1,15 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Dimensions,
-  Platform
-} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, ActivityIndicator, Dimensions, Platform } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -77,7 +68,7 @@ interface ChallengeDetailData {
 
 function ChallengeDetailPage() {
   const isMounted = useIsMounted();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ChallengeDetailData | null>(null);
   const [claiming, setClaiming] = useState(false);
@@ -114,20 +105,19 @@ function ChallengeDetailPage() {
       if (isAuthenticated && id) {
         loadChallengeDetail();
       }
-    }, [isAuthenticated, id])
+    }, [isAuthenticated, id]),
   );
 
   // Start pulse animation when challenge is completed and ready to claim
   useEffect(() => {
     if (data?.userProgress?.completed && !data?.userProgress?.rewardsClaimed) {
       pulseAnim.value = withRepeat(
-        withSequence(
-          withTiming(1.05, { duration: 1000 }),
-          withTiming(1, { duration: 1000 })
-        ),
-        -1
+        withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })),
+        -1,
       );
-      return () => { pulseAnim.value = 1; };
+      return () => {
+        pulseAnim.value = 1;
+      };
     }
   }, [data?.userProgress?.completed, data?.userProgress?.rewardsClaimed]);
 
@@ -142,8 +132,8 @@ function ChallengeDetailPage() {
         apiClient.get('/gamification/challenges/my-progress?includeCompleted=true'),
       ]);
 
-      const allChallenges = challengeRes.success ? ((challengeRes.data as any) || []) : [];
-      const allProgress = progressRes.success ? ((progressRes.data as any)?.challenges || []) : [];
+      const allChallenges = challengeRes.success ? (challengeRes.data as any) || [] : [];
+      const allProgress = progressRes.success ? (progressRes.data as any)?.challenges || [] : [];
 
       logger.debug('📊 [Challenge Detail] All challenges:', allChallenges.length);
       logger.debug('📊 [Challenge Detail] User progress:', allProgress.length);
@@ -213,7 +203,7 @@ function ChallengeDetailPage() {
         'Auto-Tracked Challenge! ✅',
         'This challenge completes automatically when you log in to the app. Just keep coming back daily to maintain your streak!',
         [{ text: 'Got it!' }],
-        'success'
+        'success',
       );
       return;
     }
@@ -255,11 +245,7 @@ function ChallengeDetailPage() {
         const coinsEarned = data.challenge.rewards.coins;
 
         // Sync coins to wallet
-        const syncResult = await coinSyncService.handleChallengeReward(
-          data.userProgress._id,
-          'Challenge',
-          coinsEarned
-        );
+        const syncResult = await coinSyncService.handleChallengeReward(data.userProgress._id, 'Challenge', coinsEarned);
 
         const afterBalance = syncResult.success ? syncResult.newWalletBalance : beforeBalance + coinsEarned;
 
@@ -410,7 +396,10 @@ function ChallengeDetailPage() {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         {/* Hero Section */}
-        <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple, colors.brand.purpleDeep]} style={styles.heroSection}>
+        <LinearGradient
+          colors={[Colors.brand.purpleLight, Colors.brand.purple, colors.brand.purpleDeep]}
+          style={styles.heroSection}
+        >
           <View style={styles.iconContainer}>
             <Ionicons name={challenge.icon as any} size={60} color={colors.text.inverse} />
           </View>
@@ -449,10 +438,10 @@ function ChallengeDetailPage() {
                         isPassed && styles.milestoneMarkerPassed,
                       ]}
                     >
-                      <View style={[styles.milestoneDot, isPassed && styles.milestoneDotPassed]}>
+                      <View style={[styles.milestoneDot, isPassed ? styles.milestoneDotPassed : null]}>
                         {isPassed && <Ionicons name="checkmark" size={12} color={colors.text.inverse} />}
                       </View>
-                      <Text style={[styles.milestoneLabel, isPassed && styles.milestoneLabelPassed]}>
+                      <Text style={[styles.milestoneLabel, isPassed ? styles.milestoneLabelPassed : null]}>
                         {milestone}%
                       </Text>
                     </View>
@@ -472,9 +461,7 @@ function ChallengeDetailPage() {
           <View style={styles.requirementCard}>
             <View style={styles.requirementHeader}>
               <Ionicons name="checkmark-circle" size={24} color={Colors.brand.purpleLight} />
-              <Text style={styles.requirementTitle}>
-                {getActionLabel(challenge.requirements.action)}
-              </Text>
+              <Text style={styles.requirementTitle}>{getActionLabel(challenge.requirements.action)}</Text>
             </View>
             <Text style={styles.requirementDescription}>
               Complete {challenge.requirements.target} {getActionLabel(challenge.requirements.action).toLowerCase()} to
@@ -492,7 +479,7 @@ function ChallengeDetailPage() {
                         size={20}
                         color={isDone ? Colors.success : colors.text.tertiary}
                       />
-                      <Text style={[styles.checklistText, isDone && styles.checklistTextDone]}>
+                      <Text style={[styles.checklistText, isDone ? styles.checklistTextDone : null]}>
                         {getActionLabel(challenge.requirements.action)} #{index + 1}
                       </Text>
                       {isDone && <Text style={styles.checklistDone}>Done</Text>}
@@ -567,12 +554,7 @@ function ChallengeDetailPage() {
           </View>
         ) : canClaim ? (
           <Animated.View style={pulseAnimStyle}>
-            <Pressable
-              style={styles.claimButton}
-              onPress={handleClaimReward}
-              disabled={claiming}
-             
-            >
+            <Pressable style={styles.claimButton} onPress={handleClaimReward} disabled={claiming}>
               <LinearGradient colors={[Colors.success, colors.successScale[700]]} style={styles.claimButtonGradient}>
                 {claiming ? (
                   <ActivityIndicator size="small" color={colors.text.inverse} />
@@ -586,11 +568,7 @@ function ChallengeDetailPage() {
             </Pressable>
           </Animated.View>
         ) : (
-          <Pressable
-            style={styles.startButton}
-            onPress={handleStartChallenge}
-           
-          >
+          <Pressable style={styles.startButton} onPress={handleStartChallenge}>
             <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.startButtonGradient}>
               <Text style={styles.startButtonText}>
                 {isStarted ? `Continue: ${getActionLabel(challenge.requirements.action)}` : 'Start Challenge'}

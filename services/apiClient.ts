@@ -368,7 +368,7 @@ class ApiClient {
                 // For mutating methods (POST, PUT, PATCH, DELETE), the server may have
                 // partially processed the request before the 401 was returned, so
                 // retrying blindly risks duplicate mutations or inconsistent state.
-                if (method === 'GET' || method === 'HEAD') {
+                if (method === 'GET' || (method as string) === 'HEAD') {
                   return this.makeRequest<T>(endpoint, options);
                 }
               }

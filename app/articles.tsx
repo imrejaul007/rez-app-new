@@ -59,7 +59,7 @@ function ArticlesPage() {
         } else {
           throw new Error(response.message || 'Failed to fetch articles');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load articles');
       } finally {
@@ -200,7 +200,7 @@ function ArticlesPage() {
         {categories.map((category) => (
           <Pressable
             key={category.id}
-            style={[styles.categoryPill, selectedCategory === category.id && styles.categoryPillActive]}
+            style={[styles.categoryPill, selectedCategory === category.id ? styles.categoryPillActive : null]}
             onPress={() => setSelectedCategory(category.id)}
           >
             <Ionicons
@@ -209,7 +209,7 @@ function ArticlesPage() {
               color={selectedCategory === category.id ? colors.text.inverse : Colors.brand.purpleLight}
             />
             <ThemedText
-              style={[styles.categoryPillText, selectedCategory === category.id && styles.categoryPillTextActive]}
+              style={[styles.categoryPillText, selectedCategory === category.id ? styles.categoryPillTextActive : null]}
             >
               {category.label}
             </ThemedText>

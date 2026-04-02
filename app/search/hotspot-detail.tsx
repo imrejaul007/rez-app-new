@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -37,15 +37,7 @@ interface OfferFromAPI {
 
 function HotspotDetailPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{
-    slug: string;
-    name: string;
-    image: string;
-    totalDeals: string;
-    lat: string;
-    lng: string;
-    city: string;
-  }>();
+  const params = useLocalSearchParams<any>();
 
   const [offers, setOffers] = useState<OfferFromAPI[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +58,7 @@ function HotspotDetailPage() {
           if (!isMounted()) return;
           setOffers([]);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load offers. Please try again.');
       } finally {
@@ -108,7 +100,7 @@ function HotspotDetailPage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[colors.nileBlue, colors.nileBlueLight]} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, (colors as any).nileBlueLight || '#243f55']} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
@@ -160,7 +152,7 @@ function HotspotDetailPage() {
               setError(null);
               apiClient
                 .get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 })
-                .then((r) => {
+                .then((r: any) => {
                   const data = r.data as any;
                   setOffers(Array.isArray(data?.offers) ? data.offers : []);
                 })

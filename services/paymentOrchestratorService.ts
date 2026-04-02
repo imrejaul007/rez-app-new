@@ -74,7 +74,7 @@ class PaymentOrchestratorService {
     methods.push({
       id: 'rezcoins',
       name: 'REZ Coins',
-      type: 'rezcoins',
+      type: 'rezcoins' as any,
       gateway: 'internal',
       icon: 'diamond',
       isAvailable: true,
@@ -232,7 +232,7 @@ class PaymentOrchestratorService {
   ): Promise<PaymentResponse> {
 
     try {
-      const response = await apiClient.post<any>('/payment/internal/process', paymentRequest);
+      const response = await apiClient.post<any>('/payment/internal/process', paymentRequest as any);
 
       if (response.success && response.data) {
         return response.data;
@@ -252,7 +252,7 @@ class PaymentOrchestratorService {
   ): Promise<PaymentResponse> {
 
     try {
-      const response = await apiClient.post<any>('/payment/cod/create', paymentRequest);
+      const response = await apiClient.post<any>('/payment/cod/create', paymentRequest as any);
 
       if (response.success && response.data) {
         return response.data;

@@ -1,12 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,7 +9,8 @@ import Animated, {
   withSequence,
   withRepeat,
   interpolate,
-  Easing} from 'react-native-reanimated';
+  Easing,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -62,7 +57,8 @@ const COLORS = {
   error: colors.error,
   errorBg: colors.errorScale[50],
 
-  shadow: 'rgba(26, 58, 82, 0.08)'};
+  shadow: 'rgba(26, 58, 82, 0.08)',
+};
 
 interface Coin {
   id: number;
@@ -82,11 +78,8 @@ const AnimatedCoin: React.FC<{ coin: Coin; onCatch: () => void }> = ({ coin, onC
 
     // Pulse animation
     pulseAnim.value = withRepeat(
-      withSequence(
-        withTiming(1.1, { duration: 500 }),
-        withTiming(1, { duration: 500 }),
-      ),
-      -1
+      withSequence(withTiming(1.1, { duration: 500 }), withTiming(1, { duration: 500 })),
+      -1,
     );
     return () => {
       scaleAnim.value = 0;
@@ -94,18 +87,13 @@ const AnimatedCoin: React.FC<{ coin: Coin; onCatch: () => void }> = ({ coin, onC
     };
   }, []);
 
-  const bgColors: [string, string] = coin.value >= 20 ? [COLORS.goldDark, COLORS.amber] : [COLORS.gold, COLORS.primary];
+  const bgColors: [string, string] =
+    coin.value >= 20 ? [(COLORS as any).goldDark, COLORS.amber] : [COLORS.gold, COLORS.primary];
 
   return (
-    <Pressable
-      onPress={onCatch}
-      style={[styles.coinButton, { left: `${coin.x}%`, top: `${coin.y}%` }]}
-    >
+    <Pressable onPress={onCatch} style={[styles.coinButton, { left: `${coin.x}%`, top: `${coin.y}%` }]}>
       <Animated.View style={{ transform: [{ scale: scaleAnim.value * pulseAnim.value }] }}>
-        <LinearGradient
-          colors={bgColors}
-          style={styles.coinGradient}
-        >
+        <LinearGradient colors={bgColors} style={styles.coinGradient}>
           <Text style={styles.coinValue}>+{coin.value}</Text>
         </LinearGradient>
       </Animated.View>
@@ -138,11 +126,16 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     };
   }, []);
 
-  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg']);
+  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as any);
 
   return (
     <Animated.View
-      style={[styles.confetti, { backgroundColor: color, transform: [{ translateY }, { translateX }, { rotate: spin }], opacity }]}
+      style={
+        [
+          styles.confetti,
+          { backgroundColor: color, transform: [{ translateY }, { translateX }, { rotate: spin }], opacity },
+        ] as any
+      }
     />
   );
 };
@@ -172,10 +165,7 @@ const CoinHunt = () => {
     setLoading(true);
     setError(null);
     try {
-      const [limitsResponse] = await Promise.all([
-        gameApi.getDailyLimits(),
-        refreshWallet(),
-      ]);
+      const [limitsResponse] = await Promise.all([gameApi.getDailyLimits(), refreshWallet()]);
 
       if (limitsResponse.data) {
         const huntLimits = limitsResponse.data.coin_hunt;
@@ -184,7 +174,7 @@ const CoinHunt = () => {
           setMaxPlays(huntLimits.limit);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load game data. Please try again.');
     } finally {
@@ -200,7 +190,7 @@ const CoinHunt = () => {
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setTimeout(() => {
-        setTimeLeft(prev => prev - 1);
+        setTimeLeft((prev) => prev - 1);
         progressAnim.value = withTiming((timeLeft - 1) / 30, { duration: 1000 });
       }, 1000);
       return () => {
@@ -228,7 +218,7 @@ const CoinHunt = () => {
           setTodayPlays(limitsResponse.data.coin_hunt.used);
         }
         await gamificationActions.syncCoinsFromWallet();
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setTodayPlays(todayPlays + 1);
       }
@@ -246,18 +236,18 @@ const CoinHunt = () => {
           id: Date.now(),
           x: Math.random() * 70 + 10,
           y: Math.random() * 55 + 5,
-          value: [5, 10, 15, 25][Math.floor(Math.random() * 4)]
+          value: [5, 10, 15, 25][Math.floor(Math.random() * 4)],
         };
-        setCoins(prev => [...prev, newCoin]);
+        setCoins((prev) => [...prev, newCoin]);
         const t = setTimeout(() => {
-          setCoins(prev => prev.filter(c => c.id !== newCoin.id));
+          setCoins((prev) => prev.filter((c) => c.id !== newCoin.id));
           pendingTimeouts.delete(t);
         }, 2000);
         pendingTimeouts.add(t);
       }, 800);
       return () => {
         clearInterval(interval);
-        pendingTimeouts.forEach(t => clearTimeout(t));
+        pendingTimeouts.forEach((t) => clearTimeout(t));
         pendingTimeouts.clear();
       };
     }
@@ -280,16 +270,16 @@ const CoinHunt = () => {
       }
       if (!isMounted()) return;
       setGameState('playing');
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to start the game. Please try again.');
     }
   };
 
   const catchCoin = (coin: Coin) => {
-    setScore(prev => prev + coin.value);
-    setCoins(prev => prev.filter(c => c.id !== coin.id));
-    setCoinsCollected(prev => prev + 1);
+    setScore((prev) => prev + coin.value);
+    setCoins((prev) => prev.filter((c) => c.id !== coin.id));
+    setCoinsCollected((prev) => prev + 1);
   };
 
   const getPerformanceRating = () => {
@@ -299,7 +289,7 @@ const CoinHunt = () => {
     return { text: 'Keep Hunting!', icon: 'refresh' as const, color: COLORS.textMuted };
   };
 
-  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%']);
+  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%'] as any);
 
   return (
     <View style={styles.container}>
@@ -307,8 +297,11 @@ const CoinHunt = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="chevron-back" size={24} color={COLORS.navy} />
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
+          <Ionicons name="chevron-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -320,9 +313,9 @@ const CoinHunt = () => {
         </View>
 
         {gameState === 'playing' ? (
-          <View style={[styles.timerBadge, timeLeft <= 10 && styles.timerBadgeWarning]}>
+          <View style={[styles.timerBadge, timeLeft <= 10 ? styles.timerBadgeWarning : null]}>
             <Ionicons name="time-outline" size={16} color={timeLeft <= 10 ? COLORS.error : COLORS.amber} />
-            <Text style={[styles.timerText, timeLeft <= 10 && styles.timerTextWarning]}>{timeLeft}s</Text>
+            <Text style={[styles.timerText, timeLeft <= 10 ? styles.timerTextWarning : null]}>{timeLeft}s</Text>
           </View>
         ) : (
           <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
@@ -345,7 +338,13 @@ const CoinHunt = () => {
               <View style={styles.errorCard}>
                 <Ionicons name="alert-circle-outline" size={32} color={COLORS.error} />
                 <Text style={styles.errorText}>{error}</Text>
-                <Pressable onPress={() => { setError(null); fetchData(); }} style={styles.retryBtn}>
+                <Pressable
+                  onPress={() => {
+                    setError(null);
+                    fetchData();
+                  }}
+                  style={styles.retryBtn}
+                >
                   <Text style={styles.retryBtnText}>Retry</Text>
                 </Pressable>
               </View>
@@ -374,7 +373,9 @@ const CoinHunt = () => {
                 <View style={styles.heroStatDivider} />
                 <View style={styles.heroStatBox}>
                   <Ionicons name="game-controller" size={24} color={colors.text.inverse} />
-                  <Text style={styles.heroStatValue}>{maxPlays - todayPlays}/{maxPlays}</Text>
+                  <Text style={styles.heroStatValue}>
+                    {maxPlays - todayPlays}/{maxPlays}
+                  </Text>
                   <Text style={styles.heroStatLabel}>Plays Left</Text>
                 </View>
               </View>
@@ -392,9 +393,27 @@ const CoinHunt = () => {
 
               <View style={styles.stepsContainer}>
                 {[
-                  { num: '1', color: COLORS.amber, title: 'Tap coins before they vanish', desc: 'Each coin appears for 2 seconds', icon: 'hand-left' },
-                  { num: '2', color: COLORS.gold, title: 'Each coin is worth 5-25 points', desc: 'Bigger coins = more points', icon: 'cash' },
-                  { num: '3', color: colors.brand.pink, title: 'Collect as many as you can', desc: '30 seconds on the clock!', icon: 'timer' },
+                  {
+                    num: '1',
+                    color: COLORS.amber,
+                    title: 'Tap coins before they vanish',
+                    desc: 'Each coin appears for 2 seconds',
+                    icon: 'hand-left',
+                  },
+                  {
+                    num: '2',
+                    color: COLORS.gold,
+                    title: 'Each coin is worth 5-25 points',
+                    desc: 'Bigger coins = more points',
+                    icon: 'cash',
+                  },
+                  {
+                    num: '3',
+                    color: colors.brand.pink,
+                    title: 'Collect as many as you can',
+                    desc: '30 seconds on the clock!',
+                    icon: 'timer',
+                  },
                 ].map((step, idx) => (
                   <View key={idx} style={styles.stepRow}>
                     <View style={[styles.stepBadge, { backgroundColor: `${step.color}15` }]}>
@@ -413,19 +432,22 @@ const CoinHunt = () => {
             </View>
 
             {/* Start Button */}
-            <Pressable
-              onPress={startGame}
-              disabled={todayPlays >= maxPlays}
-             
-              style={styles.startButtonWrapper}
-            >
+            <Pressable onPress={startGame} disabled={todayPlays >= maxPlays} style={styles.startButtonWrapper}>
               <LinearGradient
-                colors={todayPlays >= maxPlays ? [colors.text.tertiary, colors.neutral[500]] : [COLORS.amber, COLORS.amberDark]}
+                colors={
+                  todayPlays >= maxPlays
+                    ? [colors.text.tertiary, colors.neutral[500]]
+                    : [COLORS.amber, COLORS.amberDark]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.startButton}
               >
-                <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "play"} size={22} color={colors.text.inverse} />
+                <Ionicons
+                  name={todayPlays >= maxPlays ? 'time-outline' : 'play'}
+                  size={22}
+                  color={colors.text.inverse}
+                />
                 <Text style={styles.startButtonText}>
                   {todayPlays >= maxPlays ? 'Come Back Tomorrow' : 'Start Game'}
                 </Text>
@@ -455,11 +477,8 @@ const CoinHunt = () => {
 
             {/* Game Area */}
             <View style={styles.gameContainer}>
-              <LinearGradient
-                colors={[COLORS.surface, COLORS.surfaceSecondary]}
-                style={styles.gameArea}
-              >
-                {coins.map(coin => (
+              <LinearGradient colors={[COLORS.surface, COLORS.surfaceSecondary]} style={styles.gameArea}>
+                {coins.map((coin) => (
                   <AnimatedCoin key={coin.id} coin={coin} onCatch={() => catchCoin(coin)} />
                 ))}
 
@@ -486,7 +505,9 @@ const CoinHunt = () => {
               </View>
               <View style={styles.progressLabels}>
                 <Text style={styles.progressLabel}>0s</Text>
-                <Text style={[styles.progressLabel, styles.progressLabelCenter, timeLeft <= 10 && { color: COLORS.error }]}>
+                <Text
+                  style={[styles.progressLabel, styles.progressLabelCenter, timeLeft <= 10 && { color: COLORS.error }]}
+                >
                   {timeLeft}s remaining
                 </Text>
                 <Text style={styles.progressLabel}>30s</Text>
@@ -519,7 +540,12 @@ const CoinHunt = () => {
                 end={{ x: 1, y: 1 }}
                 style={styles.resultGradient}
               >
-                <View style={[styles.resultIconWrapper, { backgroundColor: score >= 100 ? 'rgba(255,255,255,0.2)' : COLORS.amberBg }]}>
+                <View
+                  style={[
+                    styles.resultIconWrapper,
+                    { backgroundColor: score >= 100 ? 'rgba(255,255,255,0.2)' : COLORS.amberBg },
+                  ]}
+                >
                   <Ionicons
                     name={getPerformanceRating().icon}
                     size={48}
@@ -527,19 +553,32 @@ const CoinHunt = () => {
                   />
                 </View>
 
-                <Text style={[styles.resultTitle, { color: score >= 100 ? colors.text.inverse : COLORS.navy }]}>
+                <Text
+                  style={[styles.resultTitle, { color: score >= 100 ? colors.text.inverse : (COLORS as any).navy }]}
+                >
                   {getPerformanceRating().text}
                 </Text>
-                <Text style={[styles.resultSubtitle, { color: score >= 100 ? 'rgba(255,255,255,0.9)' : COLORS.textMuted }]}>
+                <Text
+                  style={[styles.resultSubtitle, { color: score >= 100 ? 'rgba(255,255,255,0.9)' : COLORS.textMuted }]}
+                >
                   You collected {coinsCollected} coins in 30 seconds
                 </Text>
 
-                <View style={[styles.earnedBox, { backgroundColor: score >= 100 ? 'rgba(255,255,255,0.15)' : COLORS.goldBg }]}>
+                <View
+                  style={[
+                    styles.earnedBox,
+                    { backgroundColor: score >= 100 ? 'rgba(255,255,255,0.15)' : COLORS.goldBg },
+                  ]}
+                >
                   <View style={styles.earnedRow}>
                     <CachedImage source={BRAND.COIN_IMAGE} style={styles.earnedCoin} contentFit="contain" />
-                    <Text style={[styles.earnedValue, { color: score >= 100 ? colors.text.inverse : COLORS.gold }]}>+{score}</Text>
+                    <Text style={[styles.earnedValue, { color: score >= 100 ? colors.text.inverse : COLORS.gold }]}>
+                      +{score}
+                    </Text>
                   </View>
-                  <Text style={[styles.earnedLabel, { color: score >= 100 ? 'rgba(255,255,255,0.8)' : COLORS.textMuted }]}>
+                  <Text
+                    style={[styles.earnedLabel, { color: score >= 100 ? 'rgba(255,255,255,0.8)' : COLORS.textMuted }]}
+                  >
                     Coins Earned
                   </Text>
                 </View>
@@ -575,18 +614,22 @@ const CoinHunt = () => {
 
             {/* Action Buttons */}
             <View style={styles.actionsContainer}>
-              <Pressable
-                onPress={startGame}
-                disabled={todayPlays >= maxPlays}
-               
-              >
+              <Pressable onPress={startGame} disabled={todayPlays >= maxPlays}>
                 <LinearGradient
-                  colors={todayPlays >= maxPlays ? [colors.text.tertiary, colors.neutral[500]] : [COLORS.amber, COLORS.amberDark]}
+                  colors={
+                    todayPlays >= maxPlays
+                      ? [colors.text.tertiary, colors.neutral[500]]
+                      : [COLORS.amber, COLORS.amberDark]
+                  }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.primaryAction}
                 >
-                  <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "refresh"} size={20} color={colors.text.inverse} />
+                  <Ionicons
+                    name={todayPlays >= maxPlays ? 'time-outline' : 'refresh'}
+                    size={20}
+                    color={colors.text.inverse}
+                  />
                   <Text style={styles.primaryActionText}>
                     {todayPlays >= maxPlays
                       ? `No Plays Left (${todayPlays}/${maxPlays})`
@@ -595,10 +638,7 @@ const CoinHunt = () => {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable
-                onPress={() => router.push('/playandearn' as any)}
-                style={styles.secondaryAction}
-              >
+              <Pressable onPress={() => router.push('/playandearn' as any)} style={styles.secondaryAction}>
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
                 <Text style={styles.secondaryActionText}>Back to Games</Text>
               </Pressable>
@@ -617,50 +657,102 @@ const styles = StyleSheet.create({
 
   // Header
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base,
-    paddingTop: 52, paddingBottom: Spacing.base, gap: Spacing.md,
-    backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border},
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingTop: 52,
+    paddingBottom: Spacing.base,
+    gap: Spacing.md,
+    backgroundColor: COLORS.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
   backButton: {
-    width: 44, height: 44, borderRadius: BorderRadius.md,
-    backgroundColor: COLORS.surfaceSecondary, justifyContent: 'center', alignItems: 'center'},
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.md,
+    backgroundColor: COLORS.surfaceSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerCenter: { flex: 1 },
   headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   headerIconText: { ...Typography.h2, fontSize: 24 },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: COLORS.navy },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy },
   headerSubtitle: { ...Typography.bodySmall, fontSize: 13, color: COLORS.textMuted, marginTop: 2 },
   timerBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 14, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: COLORS.amberBg},
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: COLORS.amberBg,
+  },
   timerBadgeWarning: { backgroundColor: COLORS.errorBg },
   timerText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: COLORS.amber },
   timerTextWarning: { color: COLORS.error },
   coinsBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 14, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: COLORS.goldBg},
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: COLORS.goldBg,
+  },
   coinIcon: { width: 20, height: 20 },
-  coinsText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: COLORS.goldDark },
+  coinsText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: (COLORS as any).goldDark },
 
   scrollView: { flex: 1 },
   content: { padding: Spacing.base },
 
   // Error
   errorCard: {
-    padding: Spacing.base, backgroundColor: COLORS.errorBg, borderRadius: BorderRadius.md, marginBottom: Spacing.base, alignItems: 'center', gap: Spacing.sm},
+    padding: Spacing.base,
+    backgroundColor: COLORS.errorBg,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.base,
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
   errorText: { color: '#991B1B', ...Typography.body, textAlign: 'center' },
   retryBtn: {
-    marginTop: Spacing.xs, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, backgroundColor: COLORS.error, borderRadius: BorderRadius.sm},
+    marginTop: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    backgroundColor: COLORS.error,
+    borderRadius: BorderRadius.sm,
+  },
   retryBtnText: { color: colors.text.inverse, fontWeight: '600' },
 
   // Hero Card
   heroCard: {
-    padding: 28, borderRadius: BorderRadius['2xl'], alignItems: 'center', marginBottom: Spacing.lg,
-    overflow: 'hidden', position: 'relative'},
+    padding: 28,
+    borderRadius: BorderRadius['2xl'],
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+    overflow: 'hidden',
+    position: 'relative',
+  },
   heroIconBg: {
-    width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.base},
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.base,
+  },
   heroIconText: { fontSize: 40 },
   heroTitle: { ...Typography.h1, fontWeight: '800', color: colors.text.inverse, marginBottom: Spacing.sm },
-  heroSubtitle: { ...Typography.body, fontSize: 15, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.xl },
+  heroSubtitle: {
+    ...Typography.body,
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+  },
   heroStatsRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing['2xl'] },
   heroStatBox: { alignItems: 'center' },
   heroStatIcon: { width: 28, height: 28, marginBottom: Spacing.sm },
@@ -673,52 +765,110 @@ const styles = StyleSheet.create({
 
   // How to Play
   howToPlayCard: {
-    backgroundColor: COLORS.surface, borderRadius: BorderRadius.xl, padding: Spacing.lg, marginBottom: Spacing.lg,
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12, elevation: 4},
+    backgroundColor: COLORS.surface,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
   howToPlayHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.base },
-  howToPlayTitle: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: COLORS.navy },
+  howToPlayTitle: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: (COLORS as any).navy },
   stepsContainer: { gap: 14 },
   stepRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   stepBadge: { width: 32, height: 32, borderRadius: BorderRadius.lg, justifyContent: 'center', alignItems: 'center' },
   stepBadgeText: { ...Typography.body, fontWeight: '700' },
   stepTextContainer: { flex: 1 },
-  stepTitle: { ...Typography.body, fontWeight: '600', color: COLORS.navy, marginBottom: 2 },
+  stepTitle: { ...Typography.body, fontWeight: '600', color: (COLORS as any).navy, marginBottom: 2 },
   stepDesc: { ...Typography.bodySmall, color: COLORS.textMuted },
   stepIconBg: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
 
   // Start Button
   startButtonWrapper: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
   startButton: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 10, paddingVertical: 18, borderRadius: BorderRadius.lg},
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 18,
+    borderRadius: BorderRadius.lg,
+  },
   startButtonText: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: colors.text.inverse },
 
   // Game Stats Bar
   gameStatsBar: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.surface,
-    borderRadius: BorderRadius.lg, padding: Spacing.base, marginBottom: Spacing.base,
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 1, shadowRadius: 8, elevation: 2},
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    marginBottom: Spacing.base,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   gameStatItem: { flex: 1, alignItems: 'center' },
-  gameStatLabel: { ...Typography.overline, fontWeight: '600', color: COLORS.textLight, marginBottom: Spacing.xs, letterSpacing: 0.5 },
-  gameStatValue: { ...Typography.h3, fontWeight: '700', color: COLORS.navy },
+  gameStatLabel: {
+    ...Typography.overline,
+    fontWeight: '600',
+    color: COLORS.textLight,
+    marginBottom: Spacing.xs,
+    letterSpacing: 0.5,
+  },
+  gameStatValue: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy },
   gameStatDivider: { width: 1, height: 32, backgroundColor: COLORS.border },
   scoreRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   miniCoin: { width: 18, height: 18 },
 
   // Game Area
   gameContainer: {
-    borderRadius: BorderRadius['2xl'], overflow: 'hidden', marginBottom: Spacing.base,
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12, elevation: 4},
+    borderRadius: BorderRadius['2xl'],
+    overflow: 'hidden',
+    marginBottom: Spacing.base,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
   gameArea: {
-    aspectRatio: 4 / 3, borderRadius: BorderRadius['2xl'], borderWidth: 2, borderColor: COLORS.border, position: 'relative'},
+    aspectRatio: 4 / 3,
+    borderRadius: BorderRadius['2xl'],
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    position: 'relative',
+  },
   coinButton: {
-    position: 'absolute', width: 56, height: 56},
+    position: 'absolute',
+    width: 56,
+    height: 56,
+  },
   coinGradient: {
-    width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center',
-    shadowColor: COLORS.amber, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 8},
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: COLORS.amber,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
+  },
   coinValue: { ...Typography.bodySmall, fontSize: 13, fontWeight: '800', color: colors.text.inverse },
   waitingLabel: {
-    position: 'absolute', top: '45%', left: 0, right: 0, alignItems: 'center', gap: Spacing.sm},
+    position: 'absolute',
+    top: '45%',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
   waitingText: { ...Typography.body, color: COLORS.textLight, fontWeight: '500' },
 
   // Progress Bar
@@ -732,19 +882,44 @@ const styles = StyleSheet.create({
 
   // Confetti
   confettiContainer: {
-    position: 'absolute', top: 0, left: 0, right: 0, height: 200, pointerEvents: 'none', overflow: 'hidden'},
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    pointerEvents: 'none',
+    overflow: 'hidden',
+  },
   confetti: { position: 'absolute', width: 10, height: 10, borderRadius: 2, left: '50%', top: -10 },
 
   // Result Card
   resultCard: {
-    borderRadius: BorderRadius['2xl'], overflow: 'hidden', marginBottom: Spacing.lg,
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 1, shadowRadius: 20, elevation: 8},
+    borderRadius: BorderRadius['2xl'],
+    overflow: 'hidden',
+    marginBottom: Spacing.lg,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 1,
+    shadowRadius: 20,
+    elevation: 8,
+  },
   resultGradient: { padding: Spacing['2xl'], alignItems: 'center' },
   resultIconWrapper: {
-    width: 96, height: 96, borderRadius: 48, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.lg},
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
   resultTitle: { ...Typography.display, fontWeight: '800', marginBottom: Spacing.sm },
   resultSubtitle: { ...Typography.body, fontSize: 15, marginBottom: Spacing.xl },
-  earnedBox: { paddingHorizontal: Spacing['2xl'], paddingVertical: Spacing.lg, borderRadius: BorderRadius.lg, alignItems: 'center' },
+  earnedBox: {
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    alignItems: 'center',
+  },
   earnedRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 6 },
   earnedCoin: { width: 36, height: 36 },
   earnedValue: { fontSize: 44, fontWeight: '800' },
@@ -753,20 +928,57 @@ const styles = StyleSheet.create({
   // Stats Grid
   statsGrid: { flexDirection: 'row', gap: Spacing.md, marginBottom: Spacing.lg },
   statCard: {
-    flex: 1, backgroundColor: COLORS.surface, borderRadius: BorderRadius.lg, padding: Spacing.base, alignItems: 'center',
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 1, shadowRadius: 8, elevation: 2},
-  statIconBg: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
-  statValue: { ...Typography.h3, fontWeight: '700', color: COLORS.navy, marginBottom: Spacing.xs },
-  statLabel: { ...Typography.caption, fontWeight: '600', color: COLORS.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
+    flex: 1,
+    backgroundColor: COLORS.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    alignItems: 'center',
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  statIconBg: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  statValue: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy, marginBottom: Spacing.xs },
+  statLabel: {
+    ...Typography.caption,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
 
   // Actions
   actionsContainer: { gap: Spacing.md },
   primaryAction: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: BorderRadius.lg},
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 18,
+    borderRadius: BorderRadius.lg,
+  },
   primaryActionText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
   secondaryAction: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm,
-    paddingVertical: Spacing.base, borderRadius: BorderRadius.lg, backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.border},
-  secondaryActionText: { ...Typography.body, fontSize: 15, fontWeight: '600', color: COLORS.textMuted }});
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  secondaryActionText: { ...Typography.body, fontSize: 15, fontWeight: '600', color: COLORS.textMuted },
+});
 
 export default withErrorBoundary(CoinHunt, 'PlayandearnCoinhunt');

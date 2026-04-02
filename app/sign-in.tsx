@@ -284,15 +284,15 @@ function SignInScreen() {
 
       if (response.success) {
         // Normalise user: backend returns _id, frontend expects id
-        const rawUser = response.data.user;
+        const rawUser = (response.data as any).user;
         const user = { ...rawUser, id: rawUser._id || rawUser.id };
-        await actions.loginWithTokens(response.data.tokens, user);
+        await actions.loginWithTokens((response.data as any).tokens, user);
         try {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch {}
         // Navigate based on onboarding status
         if (user.isOnboarded) {
-          router.replace('/(tabs)/');
+          router.replace('/(tabs)/' as any);
         } else {
           router.replace('/onboarding/notification-permission');
         }
@@ -366,7 +366,7 @@ function SignInScreen() {
       // Use the returned user directly to avoid reading stale store state
       const loggedInUser = (result as any) || useAuthStore.getState()?.state?.user;
       if (loggedInUser?.isOnboarded) {
-        router.replace('/(tabs)/');
+        router.replace('/(tabs)/' as any);
       } else {
         router.replace('/onboarding/notification-permission');
       }
@@ -546,6 +546,18 @@ function SignInScreen() {
             </Text>
           </Text>
 
+          <Pressable
+            onPress={handleBackToPhone}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel="Change phone number"
+            accessibilityRole="button"
+            style={{ marginTop: 4, marginBottom: 4, alignSelf: 'center' }}
+          >
+            <Text style={{ fontSize: 13, color: '#FFC857', fontWeight: '600', textDecorationLine: 'underline' }}>
+              Wrong number? Change
+            </Text>
+          </Pressable>
+
           {/* Brand Underline */}
           <View style={styles.underlineContainer}>
             <LinearGradient
@@ -606,7 +618,7 @@ function SignInScreen() {
                 accessibilityHint="Double tap to send a new verification code to your phone"
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <Text style={[styles.resendText, !canResendOTP && styles.resendTextDisabled]}>Resend OTP</Text>
+                <Text style={[styles.resendText, !canResendOTP ? styles.resendTextDisabled : null]}>Resend OTP</Text>
               </Pressable>
             )}
           </View>
@@ -984,9 +996,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   phoneNumber: {
-    fontWeight: '700',
     color: '#1a3a52',
     ...Typography.bodyLarge,
+    fontWeight: '700',
   },
 
   // Gold Underline

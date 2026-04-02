@@ -57,7 +57,7 @@ const ProfileOptionsList: React.FC<ProfileOptionsListProps> = ({
   const optionsToRender = options || defaultOptionsData;
   const renderItem = ({ item }: { item: ProfileOption }) => (
     <Pressable
-      style={[styles.itemContainer, item.disabled && styles.disabledItem]}
+      style={[styles.itemContainer, item.disabled ? styles.disabledItem : null]}
       accessibilityLabel={item.rightLabel ? `${item.title}: ${item.rightLabel}` : item.title}
       accessibilityRole="button"
       accessibilityState={{ disabled: item.disabled }}
@@ -82,14 +82,14 @@ const ProfileOptionsList: React.FC<ProfileOptionsListProps> = ({
 
       <View style={styles.textContainer}>
         <View style={styles.titleRow}>
-          <Text style={[styles.title, item.disabled && styles.disabledText]}>{item.title}</Text>
+          <Text style={[styles.title, item.disabled ? styles.disabledText : null]}>{item.title}</Text>
           {item.rightLabel && (
             <View style={[styles.badge, { backgroundColor: item.badgeColor || "#38C172" }]}>
               <Text style={styles.badgeText}>{item.rightLabel}</Text>
             </View>
           )}
         </View>
-        <Text style={[styles.subtitle, item.disabled && styles.disabledText]}>{item.subtitle}</Text>
+        <Text style={[styles.subtitle, item.disabled ? styles.disabledText : null]}>{item.subtitle}</Text>
       </View>
 
       <Ionicons name="chevron-forward" size={20} color={item.disabled ? "#CCC" : "#999"} />

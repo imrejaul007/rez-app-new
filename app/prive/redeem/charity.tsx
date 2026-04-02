@@ -38,10 +38,7 @@ function CharityScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const [catalogRes, configRes] = await Promise.all([
-          priveApi.getCatalog(),
-          priveApi.getRedeemConfig(),
-        ]);
+        const [catalogRes, configRes] = await Promise.all([priveApi.getCatalog(), priveApi.getRedeemConfig()]);
         if (catalogRes.success && catalogRes.data) {
           if (catalogRes.data.charities) setCharities(catalogRes.data.charities as unknown as Charity[]);
           if (catalogRes.data.donationAmounts) setDonationAmounts(catalogRes.data.donationAmounts);
@@ -109,7 +106,7 @@ function CharityScreen() {
           setIsRedeeming(false);
         }
       },
-      'Donate'
+      'Donate',
     );
   };
 
@@ -126,7 +123,10 @@ function CharityScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Donate</Text>
@@ -140,10 +140,10 @@ function CharityScreen() {
         </View>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           {/* Hero */}
           <View style={styles.heroCard}>
             <Text style={styles.heroIcon}>💝</Text>
@@ -162,7 +162,7 @@ function CharityScreen() {
               return (
                 <Pressable
                   key={charity.id}
-                  style={[styles.charityCard, isSelected && styles.charityCardSelected]}
+                  style={[styles.charityCard, isSelected ? styles.charityCardSelected : null]}
                   onPress={() => handleSelectCharity(charity)}
                 >
                   <Text style={styles.charityIcon}>{charity.icon}</Text>
@@ -193,11 +193,13 @@ function CharityScreen() {
                       onPress={() => handleSelectAmount(amount)}
                       disabled={!canAfford}
                     >
-                      <Text style={[
-                        styles.amountChipText,
-                        isSelected && styles.amountChipTextSelected,
-                        !canAfford && styles.amountChipTextDisabled,
-                      ]}>
+                      <Text
+                        style={[
+                          styles.amountChipText,
+                          isSelected && styles.amountChipTextSelected,
+                          !canAfford && styles.amountChipTextDisabled,
+                        ]}
+                      >
                         {amount}
                       </Text>
                     </Pressable>
@@ -213,7 +215,10 @@ function CharityScreen() {
                   </View>
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Donation Value:</Text>
-                    <Text style={styles.summaryValueGold}>{currencySymbol}{getDonationValue(selectedAmount)}</Text>
+                    <Text style={styles.summaryValueGold}>
+                      {currencySymbol}
+                      {getDonationValue(selectedAmount)}
+                    </Text>
                   </View>
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>To:</Text>
@@ -227,7 +232,7 @@ function CharityScreen() {
           {/* Donate Button */}
           {selectedCharity && selectedAmount && (
             <Pressable
-              style={[styles.donateButton, isRedeeming && styles.donateButtonDisabled]}
+              style={[styles.donateButton, isRedeeming ? styles.donateButtonDisabled : null]}
               onPress={handleDonate}
               disabled={isRedeeming}
             >
@@ -237,7 +242,8 @@ function CharityScreen() {
                 <>
                   <Text style={styles.donateButtonEmoji}>💝</Text>
                   <Text style={styles.donateButtonText}>
-                    Donate {currencySymbol}{getDonationValue(selectedAmount)}
+                    Donate {currencySymbol}
+                    {getDonationValue(selectedAmount)}
                   </Text>
                 </>
               )}
@@ -248,8 +254,7 @@ function CharityScreen() {
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>📧</Text>
             <Text style={styles.infoText}>
-              You will receive a tax receipt via email within 7 days of your donation.
-              Thank you for your generosity!
+              You will receive a tax receipt via email within 7 days of your donation. Thank you for your generosity!
             </Text>
           </View>
         </ScrollView>
@@ -268,24 +273,23 @@ function CharityScreen() {
                 <Text style={styles.successEmoji}>🙏</Text>
               </View>
               <Text style={styles.modalTitle}>Thank You!</Text>
-              <Text style={styles.modalSubtitle}>
-                Your donation has been processed
-              </Text>
+              <Text style={styles.modalSubtitle}>Your donation has been processed</Text>
 
               {generatedVoucher && (
                 <>
                   <View style={styles.donationConfirm}>
                     <Text style={styles.confirmLabel}>Amount Donated</Text>
-                    <Text style={styles.confirmValue}>{currencySymbol}{generatedVoucher.value}</Text>
+                    <Text style={styles.confirmValue}>
+                      {currencySymbol}
+                      {generatedVoucher.value}
+                    </Text>
                     <Text style={styles.confirmCharity}>{generatedVoucher.category}</Text>
                   </View>
 
                   <View style={styles.receiptInfo}>
                     <Text style={styles.receiptTitle}>Receipt Reference</Text>
                     <Text style={styles.receiptCode}>{generatedVoucher.code}</Text>
-                    <Text style={styles.receiptNote}>
-                      Tax receipt will be sent to your registered email
-                    </Text>
+                    <Text style={styles.receiptNote}>Tax receipt will be sent to your registered email</Text>
                   </View>
                 </>
               )}

@@ -198,7 +198,7 @@ function ChatRating({
               </Pressable>
 
               <Pressable
-                style={[styles.submitButton, !rating && styles.submitButtonDisabled]}
+                style={[styles.submitButton, !rating ? styles.submitButtonDisabled : null]}
                 onPress={handleSubmit}
                 disabled={!rating}
               >

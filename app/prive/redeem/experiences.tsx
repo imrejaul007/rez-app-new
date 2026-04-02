@@ -140,14 +140,18 @@ function ExperiencesScreen() {
             return (
               <Pressable
                 key={exp.id}
-                style={[styles.expCard, isSelected && styles.expCardSelected, !canAfford && styles.expCardDisabled]}
+                style={[
+                  styles.expCard,
+                  isSelected && styles.expCardSelected,
+                  !canAfford ? styles.expCardDisabled : null,
+                ]}
                 onPress={() => handleSelectExperience(exp)}
                 disabled={!canAfford}
               >
                 <View style={styles.expHeader}>
                   <Text style={styles.expIcon}>{exp.icon}</Text>
                   <View style={styles.expTitleSection}>
-                    <Text style={[styles.expName, !canAfford && styles.expNameDisabled]}>{exp.name}</Text>
+                    <Text style={[styles.expName, !canAfford ? styles.expNameDisabled : null]}>{exp.name}</Text>
                     <Text style={styles.expDesc}>{exp.description}</Text>
                   </View>
                 </View>
@@ -163,7 +167,7 @@ function ExperiencesScreen() {
 
                 <View style={styles.expFooter}>
                   <View>
-                    <Text style={[styles.expCoins, !canAfford && styles.expCoinsDisabled]}>
+                    <Text style={[styles.expCoins, !canAfford ? styles.expCoinsDisabled : null]}>
                       {exp.coinCost.toLocaleString()} coins
                     </Text>
                     <Text style={styles.expValue}>
@@ -190,7 +194,7 @@ function ExperiencesScreen() {
           {/* Redeem Button */}
           {selectedExperience && (
             <Pressable
-              style={[styles.redeemButton, isRedeeming && styles.redeemButtonDisabled]}
+              style={[styles.redeemButton, isRedeeming ? styles.redeemButtonDisabled : null]}
               onPress={handleRedeem}
               disabled={isRedeeming}
             >

@@ -31,7 +31,7 @@ interface UseNearbyStoresReturn {
   requestLocationPermission: () => Promise<boolean>;
 }
 
-// Timeout for fetch operations to prevent infinite loading
+// ReturnType<typeof setTimeout> for fetch operations to prevent infinite loading
 const FETCH_TIMEOUT = 15000; // 15 seconds
 
 /**
@@ -61,7 +61,7 @@ export function useNearbyStores(options: UseNearbyStoresOptions = {}): UseNearby
 
   // Track if initial fetch has been attempted
   const hasInitialFetchRef = useRef(false);
-  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Check if we have location permission
   const hasLocationPermission = permissionStatus === 'granted';
@@ -131,7 +131,7 @@ export function useNearbyStores(options: UseNearbyStoresOptions = {}): UseNearby
       );
 
       // Race between fetch and timeout
-      const response = await Promise.race([fetchPromise, timeoutPromise]);
+      const response: any = await Promise.race([fetchPromise, timeoutPromise]);
 
       // Clear timeout on success
       if (fetchTimeoutRef.current) {

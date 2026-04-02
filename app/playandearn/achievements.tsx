@@ -95,7 +95,7 @@ const Achievements = () => {
       const uniqueCategories = [...new Set(mapped.map((a) => a.category))];
       if (!isMounted()) return;
       setCategories(['All', ...uniqueCategories]);
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load achievements. Please try again.');
     } finally {
@@ -166,9 +166,11 @@ const Achievements = () => {
             <Pressable
               key={cat}
               onPress={() => setActiveCategory(cat)}
-              style={[styles.categoryButton, activeCategory === cat && styles.categoryButtonActive]}
+              style={[styles.categoryButton, activeCategory === cat ? styles.categoryButtonActive : null]}
             >
-              <Text style={[styles.categoryText, activeCategory === cat && styles.categoryTextActive]}>{cat}</Text>
+              <Text style={[styles.categoryText, activeCategory === cat ? styles.categoryTextActive : null]}>
+                {cat}
+              </Text>
             </Pressable>
           ))}
         </ScrollView>
@@ -189,7 +191,7 @@ const Achievements = () => {
           {filteredAchievements.map((achievement) => (
             <View
               key={achievement.id}
-              style={[styles.achievementCard, achievement.unlocked && styles.achievementUnlocked]}
+              style={[styles.achievementCard, achievement.unlocked ? styles.achievementUnlocked : null]}
             >
               {!achievement.unlocked && (
                 <View style={styles.lockIcon}>

@@ -25,7 +25,7 @@ export function useStockNotifications() {
       setSubscribing((prev) => ({ ...prev, [productId]: true }));
 
       try {
-        const response = await stockNotificationApi.subscribe({
+        const response: any = await stockNotificationApi.subscribe({
           productId,
           method
         });
@@ -55,7 +55,7 @@ export function useStockNotifications() {
           platformAlertSimple('Error', errorMessage);
           options?.onError?.(errorMessage);
         }
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = 'Failed to subscribe to stock notification';
         platformAlertSimple('Error', errorMessage);
         options?.onError?.(errorMessage);
@@ -80,7 +80,7 @@ export function useStockNotifications() {
       setSubscribing((prev) => ({ ...prev, [productId]: true }));
 
       try {
-        const response = await stockNotificationApi.unsubscribe({ productId });
+        const response: any = await stockNotificationApi.unsubscribe({ productId });
 
         if (response.success) {
           // Update local subscriptions
@@ -94,7 +94,7 @@ export function useStockNotifications() {
           platformAlertSimple('Error', errorMessage);
           options?.onError?.(errorMessage);
         }
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = 'Failed to unsubscribe from stock notification';
         platformAlertSimple('Error', errorMessage);
         options?.onError?.(errorMessage);
@@ -113,13 +113,13 @@ export function useStockNotifications() {
       setLoading(true);
 
       try {
-        const response = await stockNotificationApi.getMySubscriptions(status);
+        const response: any = await stockNotificationApi.getMySubscriptions(status);
 
         if (response.success && response.data) {
           setSubscriptions(response.data.subscriptions);
         } else {
         }
-      } catch (error) {
+      } catch (error: any) {
       } finally {
         setLoading(false);
       }
@@ -133,14 +133,14 @@ export function useStockNotifications() {
   const isSubscribed = useCallback(
     async (productId: string): Promise<boolean> => {
       try {
-        const response = await stockNotificationApi.checkSubscription(productId);
+        const response: any = await stockNotificationApi.checkSubscription(productId);
 
         if (response.success && response.data) {
           return response.data.isSubscribed;
         }
 
         return false;
-      } catch (error) {
+      } catch (error: any) {
         return false;
       }
     },
@@ -169,7 +169,7 @@ export function useStockNotifications() {
       }
     ) => {
       try {
-        const response = await stockNotificationApi.deleteSubscription(notificationId);
+        const response: any = await stockNotificationApi.deleteSubscription(notificationId);
 
         if (response.success) {
           // Update local subscriptions
@@ -182,7 +182,7 @@ export function useStockNotifications() {
           platformAlertSimple('Error', errorMessage);
           options?.onError?.(errorMessage);
         }
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = 'Failed to delete subscription';
         platformAlertSimple('Error', errorMessage);
         options?.onError?.(errorMessage);

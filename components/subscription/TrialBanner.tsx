@@ -103,7 +103,7 @@ function TrialBanner({
           daysRemaining,
         })
       );
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -168,7 +168,7 @@ function TrialBanner({
           </View>
 
           {/* Countdown Badge */}
-          <View style={[styles.countdownBadge, isLastDay && styles.countdownBadgeUrgent]}>
+          <View style={[styles.countdownBadge, isLastDay ? styles.countdownBadgeUrgent : null]}>
             <ThemedText style={styles.countdownNumber}>{daysRemaining}</ThemedText>
             <ThemedText style={styles.countdownLabel}>
               day{daysRemaining !== 1 ? 's' : ''}

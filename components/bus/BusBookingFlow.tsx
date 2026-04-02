@@ -246,16 +246,16 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
         // Add booking ID and number from API response
         const bookingResponse: BookingData = {
           ...bookingData,
-          bookingId: response.data._id || response.data.id,
+          bookingId: response.data._id || (response.data as any).id,
           bookingNumber: response.data.bookingNumber,
         };
-        (bookingResponse as any).requiresPayment = response.requiresPayment || response.data?.requiresPaymentUpfront;
+        (bookingResponse as any).requiresPayment = (response as any).requiresPayment || response.data?.requiresPaymentUpfront;
         (bookingResponse as any).totalAmount = calculateTotalPrice();
         onComplete(bookingResponse);
       } else {
         platformAlertSimple('Booking Failed', response.error || 'Please try again');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to complete booking. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -403,7 +403,7 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
         return (
           <Pressable
             key={type}
-            style={[styles.classCard, isSelected && styles.classCardSelected]}
+            style={[styles.classCard, isSelected ? styles.classCardSelected : null]}
             onPress={() => setBusClass(type)}
           >
             <View style={styles.classCardHeader}>
@@ -411,10 +411,10 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
                 <Ionicons name="bus" size={28} color={isSelected ? colors.background.primary : colors.brand.orange} />
               </View>
               <View style={styles.classInfo}>
-                <Text style={[styles.classTypeName, isSelected && styles.classTypeNameSelected]}>
+                <Text style={[styles.classTypeName, isSelected ? styles.classTypeNameSelected : null]}>
                   {classNames[type]}
                 </Text>
-                <Text style={[styles.classDescription, isSelected && styles.classDescriptionSelected]}>
+                <Text style={[styles.classDescription, isSelected ? styles.classDescriptionSelected : null]}>
                   {type === 'seater' && 'Comfortable seats'}
                   {type === 'sleeper' && 'Full sleeper berths'}
                   {type === 'semiSleeper' && 'Semi-sleeper seats'}
@@ -426,10 +426,10 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
               )}
             </View>
             <View style={styles.classPrice}>
-              <Text style={[styles.classPriceLabel, isSelected && styles.classPriceLabelSelected]}>
+              <Text style={[styles.classPriceLabel, isSelected ? styles.classPriceLabelSelected : null]}>
                 Price
               </Text>
-              <Text style={[styles.classPriceValue, isSelected && styles.classPriceValueSelected]}>
+              <Text style={[styles.classPriceValue, isSelected ? styles.classPriceValueSelected : null]}>
                 {currencySymbol}{busClassOption.price.toLocaleString(locale)}
               </Text>
             </View>
@@ -453,14 +453,14 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
         {extras.map((extra) => (
           <Pressable
             key={extra.key}
-            style={[styles.extraCard, extra.selected && styles.extraCardSelected]}
+            style={[styles.extraCard, extra.selected ? styles.extraCardSelected : null]}
             onPress={() => extra.onToggle(!extra.selected)}
           >
             <View style={styles.extraInfo}>
               <Text style={styles.extraLabel}>{extra.label}</Text>
               <Text style={styles.extraPrice}>+ {currencySymbol}{extra.price.toLocaleString(locale)}</Text>
             </View>
-            <View style={[styles.checkbox, extra.selected && styles.checkboxSelected]}>
+            <View style={[styles.checkbox, extra.selected ? styles.checkboxSelected : null]}>
               {extra.selected && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
             </View>
           </Pressable>
@@ -613,13 +613,13 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
       <View style={styles.progressContainer}>
         {[1, 2, 3, 4].map((step) => (
           <React.Fragment key={step}>
-            <View style={[styles.progressStep, currentStep >= step && styles.progressStepActive]}>
-              <Text style={[styles.progressStepText, currentStep >= step && styles.progressStepTextActive]}>
+            <View style={[styles.progressStep, currentStep >= step ? styles.progressStepActive : null]}>
+              <Text style={[styles.progressStepText, currentStep >= step ? styles.progressStepTextActive : null]}>
                 {step}
               </Text>
             </View>
             {step < 4 && (
-              <View style={[styles.progressLine, currentStep > step && styles.progressLineActive]} />
+              <View style={[styles.progressLine, currentStep > step ? styles.progressLineActive : null]} />
             )}
           </React.Fragment>
         ))}
@@ -640,7 +640,7 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
           <Text style={styles.footerPriceValue}>{currencySymbol}{calculateTotalPrice().toLocaleString(locale)}</Text>
         </View>
         <Pressable
-          style={[styles.nextButton, isSubmitting && styles.nextButtonDisabled]}
+          style={[styles.nextButton, isSubmitting ? styles.nextButtonDisabled : null]}
           onPress={handleNext}
           disabled={isSubmitting}
         >

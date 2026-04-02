@@ -122,7 +122,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
       // Race between initialization and timeout
       await Promise.race([initPromise(), timeoutPromise]);
       
-    } catch (error) {
+    } catch (error: any) {
       // Set a default location if initialization fails - default to Bangalore
       const defaultLocation: UserLocation = {
         coordinates: {
@@ -161,7 +161,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
         userLocation.address.neighbourhood = extraData.neighbourhood;
       }
       dispatch({ type: 'SET_CURRENT_LOCATION', payload: userLocation });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to update location' });
       throw error;
     }
@@ -179,7 +179,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
 
       // Update the context state
       dispatch({ type: 'SET_CURRENT_LOCATION', payload: location });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to set location' });
       throw error;
     }
@@ -230,7 +230,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
       dispatch({ type: 'SET_CURRENT_LOCATION', payload: userLocation });
 
       return userLocation;
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to get current location' });
       return null;
     }
@@ -241,7 +241,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
       const history = await (await getLocationService()).getLocationHistory();
       dispatch({ type: 'SET_LOCATION_HISTORY', payload: history });
       return history;
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to get location history' });
       return [];
     }
@@ -251,7 +251,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
     try {
       // This would need to be implemented in the backend
       dispatch({ type: 'SET_LOCATION_HISTORY', payload: [] });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to clear location history' });
     }
   }, []);
@@ -293,7 +293,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
       }
       
       return permission.status === 'granted';
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to request location permission' });
       return false;
     }
@@ -302,7 +302,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
   const searchAddresses = useCallback(async (query: string): Promise<AddressSearchResult[]> => {
     try {
       return await (await getLocationService()).searchAddresses(query);
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to search addresses' });
       return [];
     }
@@ -311,7 +311,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
   const reverseGeocode = useCallback(async (coordinates: LocationCoordinates): Promise<LocationAddress> => {
     try {
       return await (await getLocationService()).reverseGeocode(coordinates);
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to get address from coordinates' });
       throw error;
     }
@@ -320,7 +320,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
   const validateAddress = useCallback(async (address: string): Promise<boolean> => {
     try {
       return await (await getLocationService()).validateAddress(address);
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to validate address' });
       return false;
     }

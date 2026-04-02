@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   distanceBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: (COLORS as any).primaryLight,
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderRadius: 4,
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 11,
     paddingHorizontal: 12,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: (COLORS as any).primaryLight,
     borderRadius: 10,
     gap: 4,
   },

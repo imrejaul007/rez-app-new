@@ -175,12 +175,12 @@ export interface ReviewStats {
 class ReviewsService {
   // Get reviews with filtering and pagination
   async getReviews(query: ReviewsQuery = {}): Promise<ApiResponse<ReviewsResponse>> {
-    return apiClient.get('/reviews', query);
+    return apiClient.get<any>('/reviews', query as any);
   }
 
   // Get single review by ID
   async getReviewById(reviewId: string): Promise<ApiResponse<Review>> {
-    return apiClient.get(`/reviews/${reviewId}`);
+    return apiClient.get<any>(`/reviews/${reviewId}`);
   }
 
   // Get reviews for a specific target (product/store/etc.)
@@ -189,7 +189,7 @@ class ReviewsService {
     targetId: string,
     query: Omit<ReviewsQuery, 'targetType' | 'targetId'> = {}
   ): Promise<ApiResponse<ReviewsResponse>> {
-    return apiClient.get(`/reviews/${targetType}/${targetId}`, query);
+    return apiClient.get<any>(`/reviews/${targetType}/${targetId}`, query as any);
   }
 
   // Get user's reviews
@@ -198,7 +198,7 @@ class ReviewsService {
     query: Omit<ReviewsQuery, 'userId'> = {}
   ): Promise<ApiResponse<ReviewsResponse>> {
     const endpoint = userId ? `/reviews/user/${userId}` : '/reviews/my';
-    return apiClient.get(endpoint, query);
+    return apiClient.get<any>(endpoint, query as any);
   }
 
   // Create new review
@@ -227,7 +227,7 @@ class ReviewsService {
       return apiClient.uploadFile(endpoint, formData);
     }
 
-    return apiClient.post(endpoint, data);
+    return apiClient.post<any>(endpoint, data as any);
   }
 
   // Update review
@@ -245,12 +245,12 @@ class ReviewsService {
       tags: string[];
     }>
   ): Promise<ApiResponse<Review>> {
-    return apiClient.patch(`/reviews/${reviewId}`, updates);
+    return apiClient.patch<any>(`/reviews/${reviewId}`, updates);
   }
 
   // Delete review
   async deleteReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/reviews/${reviewId}`);
+    return apiClient.delete<any>(`/reviews/${reviewId}`);
   }
 
   // Mark review as helpful
@@ -258,7 +258,7 @@ class ReviewsService {
     helpful: boolean;
     count: number;
   }>> {
-    return apiClient.post(`/reviews/${reviewId}/helpful`);
+    return apiClient.post<any>(`/reviews/${reviewId}/helpful`);
   }
 
   // Mark review as not helpful
@@ -266,7 +266,7 @@ class ReviewsService {
     helpful: boolean;
     count: number;
   }>> {
-    return apiClient.post(`/reviews/${reviewId}/not-helpful`);
+    return apiClient.post<any>(`/reviews/${reviewId}/not-helpful`);
   }
 
   // Remove helpful/not helpful vote
@@ -274,7 +274,7 @@ class ReviewsService {
     helpful: boolean;
     count: number;
   }>> {
-    return apiClient.delete(`/reviews/${reviewId}/helpful`);
+    return apiClient.delete<any>(`/reviews/${reviewId}/helpful`);
   }
 
   // Add reply to review
@@ -282,7 +282,7 @@ class ReviewsService {
     reviewId: string,
     content: string
   ): Promise<ApiResponse<Review['replies'][0]>> {
-    return apiClient.post(`/reviews/${reviewId}/replies`, { content });
+    return apiClient.post<any>(`/reviews/${reviewId}/replies`, { content });
   }
 
   // Update reply
@@ -290,12 +290,12 @@ class ReviewsService {
     replyId: string,
     content: string
   ): Promise<ApiResponse<Review['replies'][0]>> {
-    return apiClient.patch(`/replies/${replyId}`, { content });
+    return apiClient.patch<any>(`/replies/${replyId}`, { content });
   }
 
   // Delete reply
   async deleteReply(replyId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/replies/${replyId}`);
+    return apiClient.delete<any>(`/replies/${replyId}`);
   }
 
   // Report review
@@ -304,7 +304,7 @@ class ReviewsService {
     reason: 'spam' | 'inappropriate' | 'fake' | 'offensive' | 'other',
     description?: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/reviews/${reviewId}/report`, {
+    return apiClient.post<any>(`/reviews/${reviewId}/report`, {
       reason,
       description
     });
@@ -312,22 +312,22 @@ class ReviewsService {
 
   // Feature review (admin/store owner)
   async featureReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/reviews/${reviewId}/feature`);
+    return apiClient.patch<any>(`/reviews/${reviewId}/feature`);
   }
 
   // Unfeature review (admin/store owner)
   async unfeatureReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/reviews/${reviewId}/unfeature`);
+    return apiClient.patch<any>(`/reviews/${reviewId}/unfeature`);
   }
 
   // Pin review (admin/store owner)
   async pinReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/reviews/${reviewId}/pin`);
+    return apiClient.patch<any>(`/reviews/${reviewId}/pin`);
   }
 
   // Unpin review (admin/store owner)
   async unpinReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/reviews/${reviewId}/unpin`);
+    return apiClient.patch<any>(`/reviews/${reviewId}/unpin`);
   }
 
   // Get featured reviews
@@ -339,7 +339,7 @@ class ReviewsService {
       limit?: number;
     }
   ): Promise<ApiResponse<Review[]>> {
-    return apiClient.get('/reviews/featured', {
+    return apiClient.get<any>('/reviews/featured', {
       page: options?.page,
       limit: options?.limit,
       category: options?.category,
@@ -355,7 +355,7 @@ class ReviewsService {
       to: string;
     }
   ): Promise<ApiResponse<ReviewStats>> {
-    return apiClient.get(`/reviews/${targetType}/${targetId}/stats`, dateRange);
+    return apiClient.get<any>(`/reviews/${targetType}/${targetId}/stats`, dateRange);
   }
 
   // Get user's review for specific target
@@ -363,7 +363,7 @@ class ReviewsService {
     targetType: Review['targetType'],
     targetId: string
   ): Promise<ApiResponse<Review | null>> {
-    return apiClient.get(`/reviews/${targetType}/${targetId}/my`);
+    return apiClient.get<any>(`/reviews/${targetType}/${targetId}/my`);
   }
 
   // Check if user can review target
@@ -376,7 +376,7 @@ class ReviewsService {
     existingReviewId?: string;
     requiresVerification?: boolean;
   }>> {
-    return apiClient.get(`/reviews/${targetType}/${targetId}/can-review`);
+    return apiClient.get<any>(`/reviews/${targetType}/${targetId}/can-review`);
   }
 
   // Get review templates/suggestions
@@ -390,7 +390,7 @@ class ReviewsService {
     commonCons: string[];
     relevantTags: string[];
   }>> {
-    return apiClient.get('/reviews/suggestions', {
+    return apiClient.get<any>('/reviews/suggestions', {
       targetType,
       rating
     });
@@ -402,7 +402,7 @@ class ReviewsService {
     action: 'approve' | 'reject' | 'flag',
     reason?: string
   ): Promise<ApiResponse<Review>> {
-    return apiClient.patch(`/reviews/${reviewId}/moderate`, {
+    return apiClient.patch<any>(`/reviews/${reviewId}/moderate`, {
       action,
       reason
     });
@@ -413,7 +413,7 @@ class ReviewsService {
     page: number = 1,
     limit: number = 20
   ): Promise<ApiResponse<ReviewsResponse>> {
-    return apiClient.get('/reviews/pending', {
+    return apiClient.get<any>('/reviews/pending', {
       page,
       limit
     });
@@ -429,7 +429,7 @@ class ReviewsService {
     successful: number;
     failed: number;
   }>> {
-    return apiClient.post('/reviews/bulk-moderate', {
+    return apiClient.post<any>('/reviews/bulk-moderate', {
       reviewIds,
       action,
       reason
@@ -468,7 +468,7 @@ class ReviewsService {
       impact: 'positive' | 'negative' | 'neutral';
     }>;
   }>> {
-    return apiClient.get('/reviews/analytics', {
+    return apiClient.get<any>('/reviews/analytics', {
       targetType,
       targetId,
       ...dateRange

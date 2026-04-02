@@ -50,7 +50,7 @@ function StoreProductCard({
   const isMounted = useIsMounted();
 
   // Get main image or fallback
-  const mainImage = product.image?.[0]?.url || product.image || 'https://via.placeholder.com/300';
+  const mainImage = (product.image as any)?.[0]?.url || (typeof product.image === 'string' ? product.image : '') || 'https://via.placeholder.com/300';
 
   // Normalize price and rating using utility functions
   const normalizedPrice = normalizeProductPrice(product);
@@ -95,7 +95,7 @@ function StoreProductCard({
 
     try {
       // Create cart item from variant
-      const cartItem = createCartItemFromVariant(product, selectedVariant, 1);
+      const cartItem = createCartItemFromVariant(product, selectedVariant, 1) as any;
 
       // Add to cart
       await cartActions.addItem(cartItem);
@@ -106,7 +106,7 @@ function StoreProductCard({
       }
 
       showSuccess('Added to cart!');
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to add to cart. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -155,17 +155,19 @@ function StoreProductCard({
         name: product.name,
         brand: product.brand,
         image: mainImage,
+        price: currentPrice,
         originalPrice: originalPrice || currentPrice,
         discountedPrice: currentPrice,
         quantity: 1,
         selected: true,
         addedAt: new Date().toISOString(),
-        category: product.category,
+        category: 'products' as const,
+        cashback: '0',
       };
 
-      await cartActions.addItem(cartItem);
+      await cartActions.addItem(cartItem as any);
       showSuccess('Added to cart!');
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to add to cart. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -174,7 +176,7 @@ function StoreProductCard({
   };
 
   // Get product ID
-  const productId = product._id || product.id;
+  const productId = (product as any)._id || product.id;
 
   // Check if in wishlist (using context or prop)
   const inWishlist = onWishlistToggle ? isFavorited : isInWishlist(productId);
@@ -217,7 +219,7 @@ function StoreProductCard({
         });
         showSuccess('Added to wishlist');
       }
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to update wishlist');
     } finally {
       if (!isMounted()) return;

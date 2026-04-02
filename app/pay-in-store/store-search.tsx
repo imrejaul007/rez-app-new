@@ -43,7 +43,7 @@ function StoreSearchScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Hook for search functionality
   const {
@@ -219,7 +219,7 @@ function StoreSearchScreen() {
         {/* Main Content */}
         <AnimatedScrollView
           style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}

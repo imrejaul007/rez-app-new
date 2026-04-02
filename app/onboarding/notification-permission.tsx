@@ -69,7 +69,7 @@ function NotificationPermissionPage() {
       if (status === 'granted') {
         await finishOnboarding();
       }
-    } catch (error) {
+    } catch (error: any) {
       // Don't auto-navigate, let user choose
     }
   };
@@ -103,7 +103,7 @@ function NotificationPermissionPage() {
         analyticsService.track('notification_permission_responded', { result: 'denied' });
         await finishOnboarding();
       }
-    } catch (error) {
+    } catch (error: any) {
       await finishOnboarding();
     } finally {
       if (!isMounted()) return;

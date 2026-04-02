@@ -148,7 +148,7 @@ const ActivityItem: React.FC<{
           activity.status === 'pending' && { transform: [{ scale: pulseAnim }] },
         ]}
       >
-        <LinearGradient colors={statusGradient} style={styles.timelineDot}>
+        <LinearGradient colors={statusGradient as [string, string]} style={styles.timelineDot}>
           <Ionicons name={statusIcon as any} size={12} color={colors.background.primary} />
         </LinearGradient>
       </Animated.View>

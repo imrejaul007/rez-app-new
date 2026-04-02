@@ -137,7 +137,7 @@ const MicroMomentDecisionCard: React.FC<MicroMomentDecisionCardProps> = ({
         limit: 5,
       });
       if (result.success && result.data) {
-        setStores(result.data.slice(0, 5));
+        setStores((result.data as any).slice(0, 5));
         setFetchedAt(Date.now());
       }
     } catch (_) {

@@ -79,7 +79,7 @@ export default function CampaignsScreen() {
       try {
         const data = await tryApi.getCampaigns(cityName ?? city);
         setCampaigns(data);
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to load campaigns:', err);
       } finally {
         setLoading(false);
@@ -99,7 +99,7 @@ export default function CampaignsScreen() {
       await tryApi.joinCampaign(campaignId);
       // Reload campaigns to update joined status
       await loadCampaigns();
-    } catch (err) {
+    } catch (err: any) {
       if (__DEV__) console.error('Failed to join campaign:', err);
     }
   };
@@ -159,7 +159,7 @@ export default function CampaignsScreen() {
 
           {/* Goal */}
           <View style={styles.goalSection}>
-            <Ionicons name="target" size={16} color={colors.text.secondary} />
+            <Ionicons name={'target' as any} size={16} color={colors.text.secondary} />
             <Text style={styles.goalText}>{item.goal}</Text>
           </View>
 

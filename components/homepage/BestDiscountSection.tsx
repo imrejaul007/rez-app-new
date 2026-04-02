@@ -109,7 +109,7 @@ function BestDiscountSection({
   }, [router]);
 
   const renderCategory = useCallback(({ item, index }: { item: Category; index: number }) => (
-    <View style={[styles.cardWrapper, index === categories.length - 1 && styles.lastCard]}>
+    <View style={[styles.cardWrapper, index === categories.length - 1 ? styles.lastCard : null]}>
       <CategorySectionCard
         category={item}
         onPress={handleCategoryPress}
@@ -167,10 +167,6 @@ function BestDiscountSection({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent as any}
           estimatedItemSize={150}
-          initialNumToRender={4}
-          maxToRenderPerBatch={6}
-          windowSize={5}
-          removeClippedSubviews={Platform.OS !== 'web'}
         />
       )}
     </View>

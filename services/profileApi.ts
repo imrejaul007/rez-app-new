@@ -41,7 +41,7 @@ class ProfileService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load profile. Please try again.');
+      return createErrorResponse(error, 'Failed to load profile. Please try again.') as any;
     }
   }
 
@@ -55,7 +55,7 @@ class ProfileService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to update profile. Please try again.');
+      return createErrorResponse(error, 'Failed to update profile. Please try again.') as any;
     }
   }
 
@@ -69,7 +69,7 @@ class ProfileService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load profile completion status. Please try again.');
+      return createErrorResponse(error, 'Failed to load profile completion status. Please try again.') as any;
     }
   }
 
@@ -90,7 +90,7 @@ class ProfileService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to upload profile picture. Please try again.');
+      return createErrorResponse(error, 'Failed to upload profile picture. Please try again.') as any;
     }
   }
 
@@ -104,7 +104,7 @@ class ProfileService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to delete profile picture. Please try again.');
+      return createErrorResponse(error, 'Failed to delete profile picture. Please try again.') as any;
     }
   }
 
@@ -122,7 +122,7 @@ class ProfileService {
         { maxRetries: 3 }
       );
     } catch (error: any) {
-      return createErrorResponse(error, 'Failed to submit verification. Please try again.');
+      return createErrorResponse(error, 'Failed to submit verification. Please try again.') as any;
     }
   }
 }

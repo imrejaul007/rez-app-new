@@ -19,7 +19,7 @@ function TrialCountdownCircle({
   strokeWidth = 8,
 }: TrialCountdownCircleProps) {
   const [daysLeft, setDaysLeft] = useState(0);
-  const [color, setColor] = useState(colors.successScale[400]);
+  const [color, setColor] = useState<string>(colors.successScale[400]);
 
   useEffect(() => {
     // Calculate days remaining

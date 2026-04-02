@@ -80,8 +80,8 @@ interface RawBookingStoreObject {
   _id?: string;
   name?: string;
   logo?: string;
-  location?: unknown;
-  contact?: unknown;
+  location?: any;
+  contact?: any;
   [key: string]: unknown;
 }
 
@@ -437,7 +437,7 @@ function BookingsPage() {
       setServicePage({ page: sNextPage, hasMore: sHasMore });
       if (!isMounted()) return;
       setAllBookings((prev) => sortBookings([...prev, ...newItems]));
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -860,11 +860,11 @@ function BookingsPage() {
             return (
               <Pressable
                 key={tab.key}
-                style={[styles.typeTab, active && styles.typeTabActive]}
+                style={[styles.typeTab, active ? styles.typeTabActive : null]}
                 onPress={() => handleTypeFilterPress(tab.key)}
               >
                 <Ionicons name={tab.icon} size={16} color={active ? C.white : C.textSecondary} />
-                <Text style={[styles.typeTabText, active && styles.typeTabTextActive]}>{tab.label}</Text>
+                <Text style={[styles.typeTabText, active ? styles.typeTabTextActive : null]}>{tab.label}</Text>
               </Pressable>
             );
           })}
@@ -882,10 +882,10 @@ function BookingsPage() {
             return (
               <Pressable
                 key={tab.key}
-                style={[styles.statusPill, active && styles.statusPillActive]}
+                style={[styles.statusPill, active ? styles.statusPillActive : null]}
                 onPress={() => handleStatusFilterPress(tab.key)}
               >
-                <Text style={[styles.statusPillText, active && styles.statusPillTextActive]}>{tab.label}</Text>
+                <Text style={[styles.statusPillText, active ? styles.statusPillTextActive : null]}>{tab.label}</Text>
               </Pressable>
             );
           })}
@@ -916,10 +916,6 @@ function BookingsPage() {
             ListEmptyComponent={renderEmpty}
             estimatedItemSize={120}
             {...({
-              maxToRenderPerBatch: 10,
-              updateCellsBatchingPeriod: 50,
-              initialNumToRender: 8,
-              windowSize: 5,
               removeClippedSubviews: true,
             } as any)}
             ListFooterComponent={

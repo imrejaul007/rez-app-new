@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Central hub for user assistance and support
 
 import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  SafeAreaView,
-  TextInput,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, SafeAreaView, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -149,38 +140,44 @@ function HelpPage() {
     {
       id: 'faq1',
       question: 'How do I track my order?',
-      answer: 'You can track your order by going to the "Tracking" section in the app or by clicking on the order number in your order history. You\'ll see real-time updates on your order status, estimated delivery time, and delivery partner information.',
+      answer:
+        'You can track your order by going to the "Tracking" section in the app or by clicking on the order number in your order history. You\'ll see real-time updates on your order status, estimated delivery time, and delivery partner information.',
       category: 'orders',
     },
     {
       id: 'faq2',
       question: 'How do I cancel my order?',
-      answer: 'You can cancel your order within 5 minutes of placing it by going to "My Orders" and clicking the cancel button. If it\'s been longer than 5 minutes, you can contact our support team for assistance.',
+      answer:
+        'You can cancel your order within 5 minutes of placing it by going to "My Orders" and clicking the cancel button. If it\'s been longer than 5 minutes, you can contact our support team for assistance.',
       category: 'orders',
     },
     {
       id: 'faq3',
       question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit cards, debit cards, UPI, net banking, digital wallets, and cash on delivery. You can manage your payment methods in the "Payment Methods" section of your account.',
+      answer:
+        'We accept all major credit cards, debit cards, UPI, net banking, digital wallets, and cash on delivery. You can manage your payment methods in the "Payment Methods" section of your account.',
       category: 'payments',
     },
     {
       id: 'faq4',
       question: 'How do I get a refund?',
-      answer: 'Refunds are processed automatically for cancelled orders. For other refund requests, please contact our support team with your order details. Refunds typically take 3-5 business days to reflect in your account.',
+      answer:
+        'Refunds are processed automatically for cancelled orders. For other refund requests, please contact our support team with your order details. Refunds typically take 3-5 business days to reflect in your account.',
       category: 'payments',
     },
     {
       id: 'faq5',
       question: 'How do I change my delivery address?',
-      answer: 'You can update your delivery address during checkout or manage saved addresses in your account settings. Note that address changes may not be possible after the order has been confirmed.',
+      answer:
+        'You can update your delivery address during checkout or manage saved addresses in your account settings. Note that address changes may not be possible after the order has been confirmed.',
       category: 'account',
     },
   ];
 
-  const filteredFAQs = popularFAQs.filter(faq =>
-    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFAQs = popularFAQs.filter(
+    (faq) =>
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const renderQuickAction = (action: QuickAction) => (
@@ -188,7 +185,6 @@ function HelpPage() {
       key={action.id}
       style={styles.quickAction}
       onPress={() => router.push(action.route as any)}
-     
       accessibilityLabel={`${action.title}. ${action.description}`}
       accessibilityRole="button"
       accessibilityHint="Double tap to access this support option"
@@ -206,7 +202,6 @@ function HelpPage() {
       key={category.id}
       style={styles.helpCategory}
       onPress={() => router.push(category.route as any)}
-     
       accessibilityLabel={`${category.title} category. ${category.itemCount} articles available`}
       accessibilityRole="button"
       accessibilityHint="Double tap to browse articles in this category"
@@ -218,9 +213,7 @@ function HelpPage() {
 
         <View style={styles.categoryText}>
           <ThemedText style={styles.categoryTitle}>{category.title}</ThemedText>
-          <ThemedText style={styles.categoryCount}>
-            {category.itemCount} articles
-          </ThemedText>
+          <ThemedText style={styles.categoryCount}>{category.itemCount} articles</ThemedText>
         </View>
       </View>
 
@@ -235,7 +228,6 @@ function HelpPage() {
         key={faq.id}
         style={styles.faqItem}
         onPress={() => handleFAQPress(faq.id)}
-       
         accessibilityLabel={`${isExpanded ? 'Collapse' : 'Expand'} FAQ: ${faq.question}`}
         accessibilityRole="button"
         accessibilityHint="Double tap to view answer"
@@ -243,19 +235,11 @@ function HelpPage() {
       >
         <View style={styles.faqHeader}>
           <ThemedText style={styles.faqQuestion}>{faq.question}</ThemedText>
-          <Ionicons
-            name={isExpanded ? "chevron-up" : "chevron-down"}
-            size={20}
-            color={colors.text.tertiary}
-          />
+          <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} color={colors.text.tertiary} />
         </View>
 
         {isExpanded && (
-          <View
-            style={styles.faqAnswer}
-            accessibilityLabel={`Answer: ${faq.answer}`}
-            accessibilityRole="text"
-          >
+          <View style={styles.faqAnswer} accessibilityLabel={`Answer: ${faq.answer}`} accessibilityRole="text">
             <ThemedText style={styles.faqAnswerText}>{faq.answer}</ThemedText>
           </View>
         )}
@@ -265,17 +249,10 @@ function HelpPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={Colors.brand.purpleLight}
-        translucent={false}
-      />
-      
+      <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} translucent={false} />
+
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.brand.purpleLight, colors.brand.purpleMedium] as const}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.brand.purpleLight, colors.brand.purpleMedium] as const} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
@@ -286,12 +263,12 @@ function HelpPage() {
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
-          
+
           <ThemedText style={styles.headerTitle}>Help & Support</ThemedText>
-          
+
           <View style={styles.headerRight} />
         </View>
-        
+
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={18} color={colors.text.tertiary} style={styles.searchIcon} />
@@ -319,7 +296,7 @@ function HelpPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -327,17 +304,13 @@ function HelpPage() {
         {/* Quick Actions */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Get Quick Help</ThemedText>
-          <View style={styles.quickActions}>
-            {quickActions.map(renderQuickAction)}
-          </View>
+          <View style={styles.quickActions}>{quickActions.map(renderQuickAction)}</View>
         </View>
 
         {/* Help Categories */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Browse by Category</ThemedText>
-          <View style={styles.helpCategories}>
-            {helpCategories.map(renderHelpCategory)}
-          </View>
+          <View style={styles.helpCategories}>{helpCategories.map(renderHelpCategory)}</View>
         </View>
 
         {/* Popular FAQs */}
@@ -345,10 +318,8 @@ function HelpPage() {
           <ThemedText style={styles.sectionTitle}>
             {searchQuery ? `Search Results (${filteredFAQs.length})` : 'Popular Questions'}
           </ThemedText>
-          <View style={styles.faqList}>
-            {filteredFAQs.map(renderFAQItem)}
-          </View>
-          
+          <View style={styles.faqList}>{filteredFAQs.map(renderFAQItem)}</View>
+
           {filteredFAQs.length === 0 && searchQuery && (
             <View style={styles.noResults}>
               <Ionicons name="search" size={48} color={colors.border.default} />
@@ -363,10 +334,8 @@ function HelpPage() {
         {/* Contact Info */}
         <View style={styles.contactInfo}>
           <ThemedText style={styles.contactTitle}>Still need help?</ThemedText>
-          <ThemedText style={styles.contactText}>
-            Our support team is available 24/7 to assist you.
-          </ThemedText>
-          
+          <ThemedText style={styles.contactText}>Our support team is available 24/7 to assist you.</ThemedText>
+
           <Pressable
             style={styles.contactButton}
             onPress={() => router.push('/help/chat' as any)}
@@ -381,7 +350,7 @@ function HelpPage() {
         <View style={styles.bottomSpace} />
       </ScrollView>
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -448,7 +417,7 @@ const styles = StyleSheet.create({
     color: colors.text.secondary,
     marginBottom: Spacing.base,
   },
-  
+
   // Quick Actions
   quickActions: {
     flexDirection: 'row',
@@ -488,7 +457,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16,
   },
-  
+
   // Help Categories
   helpCategories: {
     backgroundColor: colors.background.primary,
@@ -535,7 +504,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     color: colors.text.tertiary,
   },
-  
+
   // FAQ List
   faqList: {
     backgroundColor: colors.background.primary,
@@ -574,7 +543,7 @@ const styles = StyleSheet.create({
     color: colors.text.tertiary,
     lineHeight: 20,
   },
-  
+
   // No Results
   noResults: {
     backgroundColor: colors.background.primary,
@@ -600,7 +569,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
-  
+
   // Contact Info
   contactInfo: {
     backgroundColor: colors.background.primary,
@@ -636,10 +605,10 @@ const styles = StyleSheet.create({
   },
   contactButtonText: {
     color: colors.text.inverse,
-    fontWeight: '600',
     ...Typography.bodyLarge,
+    fontWeight: '600' as const,
   },
-  
+
   bottomSpace: {
     height: 20,
   },

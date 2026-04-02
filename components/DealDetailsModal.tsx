@@ -93,12 +93,13 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
   };
 
   if (!deal) return null;
+  const dealData = deal;
 
   // Calculate savings examples
-  const exampleBills = [deal.minimumBill, deal.minimumBill * 1.5, deal.minimumBill * 2];
+  const exampleBills = [dealData.minimumBill, dealData.minimumBill * 1.5, dealData.minimumBill * 2];
   const savingsExamples = exampleBills.map(amount => ({
     billAmount: amount,
-    ...calculateDealDiscount(deal, amount)
+    ...calculateDealDiscount(dealData, amount)
   }));
 
   // Format expiry date
@@ -113,7 +114,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
   // Get time until expiry
   const getTimeUntilExpiry = () => {
     const now = new Date().getTime();
-    const expiry = deal.validUntil.getTime();
+    const expiry = dealData.validUntil.getTime();
     const difference = expiry - now;
 
     if (difference <= 0) return 'Expired';
@@ -210,10 +211,10 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
             {(deal as any).featured && (
               <View style={styles.featuredBadgeContainer}>
                 <LinearGradient
-                  colors={[COLORS.gold, COLORS.goldDark]}
+                  colors={[COLORS.gold, (COLORS as any).goldDark]}
                   style={styles.featuredBadge}
                 >
-                  <Ionicons name="star" size={12} color={COLORS.navy} />
+                  <Ionicons name="star" size={12} color={(COLORS as any).navy} />
                   <ThemedText style={styles.featuredBadgeText}>Featured</ThemedText>
                 </LinearGradient>
               </View>
@@ -225,7 +226,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                 style={styles.discountBadge}
               >
                 <ThemedText style={styles.discountBadgeText}>
-                  {deal.discountValue}% OFF
+                  {dealData.discountValue}% OFF
                 </ThemedText>
               </LinearGradient>
             </View>
@@ -237,18 +238,18 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
           {!(deal as any).image && (
             <View style={styles.badgeContainer}>
               <LinearGradient
-                colors={[COLORS.gold, COLORS.goldDark]}
+                colors={[COLORS.gold, (COLORS as any).goldDark]}
                 style={styles.badge}
               >
                 <ThemedText style={styles.badgeText}>
-                  {deal.badge?.text || `Save ${deal.discountValue}%`}
+                  {dealData.badge?.text || `Save ${dealData.discountValue}%`}
                 </ThemedText>
               </LinearGradient>
             </View>
           )}
-          <ThemedText style={styles.title}>{deal.title}</ThemedText>
-          {deal.description && (
-            <ThemedText style={styles.description}>{deal.description}</ThemedText>
+          <ThemedText style={styles.title}>{dealData.title}</ThemedText>
+          {dealData.description && (
+            <ThemedText style={styles.description}>{dealData.description}</ThemedText>
           )}
         </View>
 
@@ -272,31 +273,31 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                 </View>
                 <View style={styles.detailContent}>
                   <ThemedText style={styles.detailLabel}>Minimum Bill</ThemedText>
-                  <ThemedText style={styles.detailValue}>{currencySymbol}{deal.minimumBill.toLocaleString()}</ThemedText>
+                  <ThemedText style={styles.detailValue}>{currencySymbol}{dealData.minimumBill.toLocaleString()}</ThemedText>
                 </View>
               </View>
 
-              {deal.maxDiscount && (
+              {dealData.maxDiscount && (
                 <View style={styles.detailRow}>
                   <View style={styles.detailIconContainer}>
                     <Ionicons name="trending-up-outline" size={18} color={COLORS.primary} />
                   </View>
                   <View style={styles.detailContent}>
                     <ThemedText style={styles.detailLabel}>Maximum Discount</ThemedText>
-                    <ThemedText style={styles.detailValue}>{currencySymbol}{deal.maxDiscount.toLocaleString()}</ThemedText>
+                    <ThemedText style={styles.detailValue}>{currencySymbol}{dealData.maxDiscount.toLocaleString()}</ThemedText>
                   </View>
                 </View>
               )}
 
               <View style={styles.detailRow}>
                 <View style={styles.detailIconContainer}>
-                  <Ionicons name={deal.isOfflineOnly ? "storefront-outline" : "globe-outline"} size={18} color={COLORS.primary} />
+                  <Ionicons name={dealData.isOfflineOnly ? "storefront-outline" : "globe-outline"} size={18} color={COLORS.primary} />
                 </View>
                 <View style={styles.detailContent}>
                   <ThemedText style={styles.detailLabel}>Available</ThemedText>
                   <View style={styles.availabilityBadge}>
                     <ThemedText style={styles.availabilityText}>
-                      {deal.isOfflineOnly ? 'In-store only' : 'Online & In-store'}
+                      {dealData.isOfflineOnly ? 'In-store only' : 'Online & In-store'}
                     </ThemedText>
                   </View>
                 </View>
@@ -308,7 +309,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                 </View>
                 <View style={styles.detailContent}>
                   <ThemedText style={styles.detailLabel}>Valid Until</ThemedText>
-                  <ThemedText style={styles.detailValue}>{formatExpiryDate(deal.validUntil)}</ThemedText>
+                  <ThemedText style={styles.detailValue}>{formatExpiryDate(dealData.validUntil)}</ThemedText>
                   <View style={styles.timeRemainingBadge}>
                     <Ionicons name="hourglass-outline" size={12} color={COLORS.primary} />
                     <ThemedText style={styles.timeRemaining}>{getTimeUntilExpiry()}</ThemedText>
@@ -316,7 +317,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                 </View>
               </View>
 
-              {deal.usageLimit && (
+              {dealData.usageLimit && (
                 <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
                   <View style={styles.detailIconContainer}>
                     <Ionicons name="repeat-outline" size={18} color={COLORS.primary} />
@@ -324,7 +325,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                   <View style={styles.detailContent}>
                     <ThemedText style={styles.detailLabel}>Usage Limit</ThemedText>
                     <ThemedText style={styles.detailValue}>
-                      {deal.usageLimit - (deal.usageCount || 0)} uses remaining
+                      {dealData.usageLimit - (dealData.usageCount || 0)} uses remaining
                     </ThemedText>
                   </View>
                 </View>
@@ -336,10 +337,10 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <LinearGradient
-                colors={[COLORS.gold, COLORS.goldDark]}
+                colors={[COLORS.gold, (COLORS as any).goldDark]}
                 style={styles.sectionIconContainer}
               >
-                <Ionicons name="calculator" size={18} color={COLORS.navy} />
+                <Ionicons name="calculator" size={18} color={(COLORS as any).navy} />
               </LinearGradient>
               <ThemedText style={styles.sectionTitle}>Savings Calculator</ThemedText>
             </View>
@@ -365,7 +366,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
           </View>
 
           {/* Applicable Products */}
-          {deal.applicableProducts && deal.applicableProducts.length > 0 && (
+          {dealData.applicableProducts && dealData.applicableProducts.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <LinearGradient
@@ -377,7 +378,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                 <ThemedText style={styles.sectionTitle}>Applicable Categories</ThemedText>
               </View>
               <View style={styles.categoriesContainer}>
-                {deal.applicableProducts.map((category, index) => (
+                {dealData.applicableProducts.map((category, index) => (
                   <View key={`cat-${category}-${index}`} style={styles.categoryTag}>
                     <ThemedText style={styles.categoryTagText}>{category}</ThemedText>
                   </View>
@@ -398,7 +399,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
               <ThemedText style={styles.sectionTitle}>Terms & Conditions</ThemedText>
             </View>
             <View style={styles.glassCard}>
-              {deal.terms.map((term, index) => (
+              {dealData.terms.map((term, index) => (
                 <View key={`term-${index}`} style={styles.termRow}>
                   <View style={styles.termBullet}>
                     <Ionicons name="checkmark" size={12} color={COLORS.primary} />
@@ -413,10 +414,10 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <LinearGradient
-                colors={[COLORS.gold, COLORS.goldDark]}
+                colors={[COLORS.gold, (COLORS as any).goldDark]}
                 style={styles.sectionIconContainer}
               >
-                <Ionicons name="help-circle-outline" size={18} color={COLORS.navy} />
+                <Ionicons name="help-circle-outline" size={18} color={(COLORS as any).navy} />
               </LinearGradient>
               <ThemedText style={styles.sectionTitle}>How to Use</ThemedText>
             </View>
@@ -438,7 +439,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
                 >
                   <ThemedText style={styles.stepNumberText}>2</ThemedText>
                 </LinearGradient>
-                <ThemedText style={styles.stepText}>Shop for items worth {currencySymbol}{deal.minimumBill.toLocaleString()} or more</ThemedText>
+                <ThemedText style={styles.stepText}>Shop for items worth {currencySymbol}{dealData.minimumBill.toLocaleString()} or more</ThemedText>
               </View>
               <View style={styles.stepConnector} />
               <View style={styles.stepRow}>
@@ -541,7 +542,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       borderColor: GLASS.lightBorder,
       ...Platform.select({
         ios: {
-          shadowColor: COLORS.navy,
+          shadowColor: (COLORS as any).navy,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
@@ -576,7 +577,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
     featuredBadgeText: {
       fontSize: 11,
       fontWeight: '700',
-      color: COLORS.navy,
+      color: (COLORS as any).navy,
     },
     discountBadgeContainer: {
       position: 'absolute',
@@ -609,7 +610,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
     badgeText: {
       fontSize: 14,
       fontWeight: '700',
-      color: COLORS.navy,
+      color: (COLORS as any).navy,
     },
     title: {
       fontSize: 22,
@@ -658,7 +659,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       borderColor: GLASS.lightBorder,
       ...Platform.select({
         ios: {
-          shadowColor: COLORS.navy,
+          shadowColor: (COLORS as any).navy,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.06,
           shadowRadius: 8,

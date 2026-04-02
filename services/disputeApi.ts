@@ -80,7 +80,7 @@ class DisputeApiService {
   private baseUrl = '/disputes';
 
   async createDispute(data: CreateDisputeRequest): Promise<ApiResponse<Dispute>> {
-    return apiClient.post<Dispute>(this.baseUrl, data);
+    return apiClient.post<Dispute>(this.baseUrl, data as any);
   }
 
   async getMyDisputes(page: number = 1, limit: number = 20): Promise<ApiResponse<DisputeListResponse>> {

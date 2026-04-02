@@ -122,13 +122,13 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
           const response = await videosApi.getVideosByCategory(categorySlug, { limit: maxItems });
           if (response.success && response.data?.videos && response.data.videos.length > 0) {
             if (!isMounted()) return;
-            setVideos(response.data.videos.slice(0, maxItems));
+            setVideos(response.data.videos.slice(0, maxItems) as any);
           } else {
             // Try trending videos as fallback
             const trendingResponse = await videosApi.getTrendingVideos(maxItems, categorySlug);
             if (trendingResponse.success && trendingResponse.data && trendingResponse.data.length > 0) {
               if (!isMounted()) return;
-              setVideos(trendingResponse.data.slice(0, maxItems));
+              setVideos(trendingResponse.data.slice(0, maxItems) as any);
             }
           }
         } else {
@@ -136,10 +136,10 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
           const response = await videosApi.getTrendingVideos(maxItems);
           if (response.success && response.data && response.data.length > 0) {
             if (!isMounted()) return;
-            setVideos(response.data.slice(0, maxItems));
+            setVideos(response.data.slice(0, maxItems) as any);
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         // API error - silently use fallback dummy data
         if (!isMounted()) return;
         setError(null);
@@ -168,7 +168,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
 
   const handleLike = useCallback(async (videoId: string) => {
     try {
-      await videosApi.likeVideo(videoId);
+      await (videosApi as any).likeVideo(videoId);
       if (!isMounted()) return;
       setVideos((prev) =>
         prev.map((item) =>
@@ -186,7 +186,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
             : item
         )
       );
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   }, []);
@@ -204,7 +204,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
        
       >
         <CachedImage
-          source={item.thumbnail}
+          source={item.thumbnail || ''}
           style={styles.ugcImage}
           contentFit="cover"
         />
@@ -316,7 +316,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
         keyExtractor={(item) => item.id || Math.random().toString()}
         numColumns={2}
         scrollEnabled={false}
-        contentContainerStyle={styles.gridContainer}
+        contentContainerStyle={styles.gridContainer as any}
         estimatedItemSize={250}
       />
 

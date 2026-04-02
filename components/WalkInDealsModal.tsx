@@ -112,7 +112,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
       setError(null);
 
       const response = await realOffersApi.getStoreOffers(storeId, {
-        type: filterType,
+        type: filterType as any,
         active: true,
         sortBy: sortBy,
         limit: 20
@@ -195,11 +195,11 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
           }
 
           // Determine badge color based on deal type - using green/gold theme
-          let badgeBgColor = GLASS.tintedGreenBg;
-          let badgeTextColor = COLORS.primary;
+          let badgeBgColor: string = GLASS.tintedGreenBg;
+          let badgeTextColor: string = COLORS.primary;
           if (deal.metadata?.featured || deal.type === 'mega') {
             badgeBgColor = GLASS.tintedGoldBg;
-            badgeTextColor = COLORS.goldDark;
+            badgeTextColor = (COLORS as any).goldDark;
           } else if (deal.type === 'cashback') {
             badgeBgColor = GLASS.tintedGreenBg;
             badgeTextColor = COLORS.primary;
@@ -244,7 +244,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
       } else {
         setError(response.message || 'Failed to load deals');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to load deals. Please try again.');
     } finally {
@@ -260,7 +260,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
   useEffect(() => {
     if (visible) {
       fadeAnim.value = withTiming(1, { duration: 200 });
-      slideAnim.value = withSpring(0, { tension: 100, friction: 8 });
+      slideAnim.value = withSpring(0, { stiffness: 100, damping: 8 });
     } else {
       fadeAnim.value = withTiming(0, { duration: 150 });
       slideAnim.value = withTiming(screenData.height, { duration: 200 });
@@ -500,7 +500,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
     const isActive = filterType === type;
     return (
       <Pressable
-        style={[styles.filterTab, isActive && styles.filterTabActive]}
+        style={[styles.filterTab, isActive ? styles.filterTabActive : null]}
         onPress={() => handleFilterChange(type)}
       >
         {isActive ? (
@@ -519,7 +519,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
 
   function renderTypeChip(type: typeof filterType, label: string, isActive: boolean) {
     return (
-      <Pressable style={[styles.typeChip, isActive && styles.typeChipActive]} onPress={() => setFilterType(type)}>
+      <Pressable style={[styles.typeChip, isActive ? styles.typeChipActive : null]} onPress={() => setFilterType(type)}>
         {isActive ? (
           <LinearGradient
             colors={[COLORS.primary, COLORS.primaryDark]}
@@ -613,7 +613,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       borderColor: GLASS.lightBorder,
       ...Platform.select({
         ios: {
-          shadowColor: COLORS.navy,
+          shadowColor: (COLORS as any).navy,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,

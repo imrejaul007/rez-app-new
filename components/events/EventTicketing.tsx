@@ -138,7 +138,7 @@ const EventTicketing = React.memo(function EventTicketing({
                       <Ionicons name="checkmark-circle" size={20} color={colors.brand.purpleLight} />
                     )}
                   </View>
-                  <Text style={[styles.slotCapacity, !slot.available && styles.slotCapacityDisabled]}>
+                  <Text style={[styles.slotCapacity, !slot.available ? styles.slotCapacityDisabled : null]}>
                     {slot.available ? `${slot.maxCapacity - slot.bookedCount} spots left` : 'Fully booked'}
                   </Text>
                   <View style={styles.capacityBar}>
@@ -168,7 +168,7 @@ const EventTicketing = React.memo(function EventTicketing({
       {/* Fixed Action Button */}
       <View style={[styles.fixedBottom, { left: HORIZONTAL_PADDING, right: HORIZONTAL_PADDING }]}>
         <Pressable
-          style={[styles.actionButtonContainer, isDisabled && styles.actionButtonDisabled]}
+          style={[styles.actionButtonContainer, isDisabled ? styles.actionButtonDisabled : null]}
           onPress={onBook}
           disabled={isLoading || isDisabled}
         >

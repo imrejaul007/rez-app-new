@@ -27,7 +27,7 @@ interface UseModePersistenceReturn {
 export const useModePersistence = (): UseModePersistenceReturn => {
   const [storedMode, setStoredMode] = useState<ModeId>(DEFAULT_MODE);
   const [isLoaded, setIsLoaded] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load persisted mode on mount
   useEffect(() => {
@@ -49,7 +49,7 @@ export const useModePersistence = (): UseModePersistenceReturn => {
           // No saved mode, use default
           setStoredMode(DEFAULT_MODE);
         }
-      } catch (error) {
+      } catch (error: any) {
         setStoredMode(DEFAULT_MODE);
       } finally {
         setIsLoaded(true);

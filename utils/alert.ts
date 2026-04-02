@@ -34,7 +34,7 @@ export function showAlert(
       actions: defaultButtons.map(btn => ({
         text: btn.text,
         onPress: (btn.onPress && typeof btn.onPress === 'function') ? btn.onPress : (() => {}),
-        style: btn.style || 'default',
+        style: (btn.style === 'cancel' ? 'cancel' : 'default') as 'cancel' | 'default',
       })),
     });
   } else {

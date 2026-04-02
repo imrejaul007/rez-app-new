@@ -138,18 +138,20 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   const offlineMessagesRef = useRef(offlineMessages);
   offlineMessagesRef.current = offlineMessages;
 
+  const processOfflineMessagesRef = useRef<(() => Promise<void>) | null>(null);
+
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       const online = state.isConnected ?? false;
       setIsOnline(online);
 
       if (online && offlineMessagesRef.current.length > 0) {
-        processOfflineMessages();
+        processOfflineMessagesRef.current?.();
       }
     });
 
     return () => unsubscribe();
-  }, [processOfflineMessages]);
+  }, []);
 
   // ==================== Initialization ====================
 
@@ -167,7 +169,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       // connecting is already true (initial state)
       await loadStoredData();
       setConnecting(false);
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Failed to initialize support chat:', error);
       setConnecting(false);
     }
@@ -232,7 +234,9 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
         setAssignedAgent({
           id: agent.id || agent._id || '',
           name: agent.name || agent.fullName || 'Support Agent',
+          email: agent.email || '',
           status: agent.status || 'online',
+          title: agent.title || 'Support Agent',
           avatar: agent.avatar,
         });
         setQueueInfo(null);
@@ -326,7 +330,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
   const createTicket = async (request: CreateTicketRequest): Promise<SupportTicket | null> => {
     try {
-      const response = await createTicketMutation.mutateAsync(request);
+      const response: any = await createTicketMutation.mutateAsync(request);
 
       if (response && response.ticket) {
         setCurrentTicket(response.ticket);
@@ -353,7 +357,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return null;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error creating ticket:', error);
       setMessagesError('Failed to create support ticket');
       return null;
@@ -378,7 +382,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return success;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error closing ticket:', error);
       return false;
     }
@@ -397,7 +401,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return success;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error reopening ticket:', error);
       return false;
     }
@@ -453,7 +457,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     setAttachments([]);
 
     try {
-      const response = await sendMessageMutation.mutateAsync(messageRequest);
+      const response: any = await sendMessageMutation.mutateAsync(messageRequest);
 
       if (response && response.message) {
         // Replace optimistic message with real one
@@ -482,7 +486,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
         setIsSendingMessage(false);
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error sending message:', error);
       // Remove optimistic message on error
       setMessages((prev) =>
@@ -499,7 +503,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     type: string
   ): Promise<MessageAttachment | null> => {
     try {
-      const response = await supportChatApi.uploadAttachment(
+      const response: any = await supportChatApi.uploadAttachment(
         file,
         type,
         currentTicket?.id
@@ -510,7 +514,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return null;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error uploading attachment:', error);
       return null;
     }
@@ -530,7 +534,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return success;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error deleting message:', error);
       return false;
     }
@@ -594,7 +598,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return false;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error requesting agent:', error);
       return false;
     }
@@ -614,7 +618,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       );
 
       return transfer !== null;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error transferring to agent:', error);
       return false;
     }
@@ -645,7 +649,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return success;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error rating conversation:', error);
       return false;
     }
@@ -655,7 +659,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
   const searchFAQ = async (query: string): Promise<FAQSuggestion[]> => {
     try {
-      const response = await supportChatApi.searchFAQ({ query });
+      const response: any = await supportChatApi.searchFAQ({ query });
 
       if (response && response.suggestions) {
         setFaqSuggestions(response.suggestions);
@@ -663,7 +667,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
 
       return [];
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error searching FAQ:', error);
       return [];
     }
@@ -672,7 +676,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   const markFAQHelpful = async (faqId: string, helpful: boolean): Promise<boolean> => {
     try {
       return await supportChatApi.markFAQHelpful(faqId, helpful);
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error marking FAQ helpful:', error);
       return false;
     }
@@ -686,7 +690,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     try {
       const callRequest = await supportChatApi.requestCall(currentTicket.id, type);
       return callRequest !== null;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error requesting call:', error);
       return false;
     }
@@ -695,7 +699,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   const acceptCall = async (callId: string): Promise<boolean> => {
     try {
       return await supportChatApi.acceptCall(callId);
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error accepting call:', error);
       return false;
     }
@@ -704,7 +708,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   const rejectCall = async (callId: string): Promise<boolean> => {
     try {
       return await supportChatApi.rejectCall(callId);
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error rejecting call:', error);
       return false;
     }
@@ -744,13 +748,13 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       setMessagesLoading(true);
       setMessagesError(null);
 
-      const response = await supportChatApi.getMessages(ticketId, before, 50);
+      const response: any = await supportChatApi.getMessages(ticketId, before, 50);
 
       if (response && response.messages) {
         // Prepend older messages
         setMessages((prev) => [...response.messages, ...prev]);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading messages:', error);
       setMessagesError('Failed to load messages');
     } finally {
@@ -793,7 +797,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     return true;
   };
 
-  const processOfflineMessages = async () => {
+  const processOfflineMessages = async (): Promise<void> => {
     if (offlineMessages.length === 0) return;
 
     for (const offlineMsg of offlineMessages) {
@@ -806,7 +810,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
             attachments: offlineMsg.message.attachments,
           };
 
-          const response = await supportChatApi.sendMessage(request);
+          const response: any = await supportChatApi.sendMessage(request);
 
           if (response && response.message) {
             setOfflineMessages((prev) =>
@@ -821,7 +825,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
               )
             );
           }
-        } catch (error) {
+        } catch (error: any) {
           devLog.error('Failed to send offline message:', error);
         }
       }
@@ -832,6 +836,9 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       JSON.stringify(offlineMessages)
     );
   };
+
+  // Keep ref up-to-date so the NetInfo listener above can call it
+  processOfflineMessagesRef.current = processOfflineMessages;
 
   // ==================== Connection Management ====================
 
@@ -943,7 +950,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       if (storedDraft) {
         setInputText(storedDraft);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading stored data:', error);
     }
   };
@@ -1023,7 +1030,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
   // ==================== Return ====================
 
-  return {
+  return ({
     // State
     currentTicket,
     messages,
@@ -1076,7 +1083,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     removeAttachment,
     toggleRating,
     toggleFAQ,
-  };
+  }) as UseSupportChatReturn;
 }
 
 export default useSupportChat;

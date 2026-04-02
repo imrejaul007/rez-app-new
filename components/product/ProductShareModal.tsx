@@ -96,7 +96,7 @@ export const ProductShareModal: React.FC<ProductShareModalProps> = ({
         }
       } else if (result.action === Share.dismissedAction) {
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to share product. Please try again.');
     }
   };
@@ -117,7 +117,7 @@ export const ProductShareModal: React.FC<ProductShareModalProps> = ({
 
       platformAlertSimple('Link Copied', 'Product link copied to clipboard!');
       handleShareSuccess('clipboard');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy link. Please try again.');
     }
   };

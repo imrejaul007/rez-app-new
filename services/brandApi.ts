@@ -58,11 +58,11 @@ class BrandApiService {
     try {
       const response = await apiClient.get<BrandListResponse>(
         `${this.BASE_PATH}/featured`,
-        { params: { limit } }
+        { limit }
       );
 
       if (response.success && response.data) {
-        return response.data;
+        return response.data as any;
       }
 
       return [];
@@ -82,7 +82,7 @@ class BrandApiService {
       );
 
       if (response.success && response.data) {
-        return response.data;
+        return response.data as any;
       }
 
       return null;
@@ -124,11 +124,11 @@ class BrandApiService {
     try {
       const response = await apiClient.get<BrandListResponse>(
         `${this.BASE_PATH}/category/${categorySlug}`,
-        { params: { limit } }
+        { limit }
       );
 
       if (response.success && response.data) {
-        return response.data;
+        return response.data as any;
       }
 
       return [];
@@ -146,11 +146,11 @@ class BrandApiService {
     try {
       const response = await apiClient.get<BrandListResponse>(
         `${this.BASE_PATH}/search`,
-        { params: { q: query, limit } }
+        { q: query, limit }
       );
 
       if (response.success && response.data) {
-        return response.data;
+        return response.data as any;
       }
 
       return [];

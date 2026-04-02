@@ -55,7 +55,7 @@ function SuccessCheckmark({
     // Haptic feedback
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    } catch (e) {
+    } catch (e: any) {
       // Silent fail
     }
 

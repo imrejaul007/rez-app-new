@@ -62,7 +62,7 @@ function RedemptionModal({
       if (!isMounted()) return;
       setRedemptionData(result);
       setStep('success');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Redemption Failed', error instanceof Error ? error.message : 'Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -124,7 +124,7 @@ function RedemptionModal({
         <ThemedText style={styles.sectionTitle}>Quantity</ThemedText>
         <View style={styles.quantityControls}>
           <Pressable
-            style={[styles.quantityButton, quantity <= 1 && styles.quantityButtonDisabled]}
+            style={[styles.quantityButton, quantity <= 1 ? styles.quantityButtonDisabled : null]}
             onPress={() => setQuantity(Math.max(1, quantity - 1))}
             disabled={quantity <= 1}
           >

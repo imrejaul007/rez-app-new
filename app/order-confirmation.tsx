@@ -99,7 +99,7 @@ function OrderConfirmationPage() {
         if (!isMounted()) return;
         setError(response.error || 'Failed to load order details');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError(error instanceof Error ? error.message : 'Failed to load order');
     } finally {

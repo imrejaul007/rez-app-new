@@ -122,11 +122,11 @@ export const PostersGrid = React.memo(function PostersGrid({
   }
 
   return (
-    <View style={[styles.postersGrid, checkInStarted && styles.postersGridHighlight]}>
+    <View style={[styles.postersGrid, checkInStarted ? styles.postersGridHighlight : null]}>
       {promotionalPosters.map((poster) => (
         <Pressable key={poster.id} style={styles.posterCard} onPress={() => onSelectPoster(poster)}>
           <LinearGradient colors={poster.colors} style={styles.posterGradient}>
-            <CachedImage source={poster.image} style={styles.posterImage} blurRadius={2} />
+            <CachedImage source={poster.image} style={styles.posterImage} {...{ blurRadius: 2 } as any} />
             <View style={styles.posterContent}>
               <Text style={styles.posterTitle}>{poster.title}</Text>
               <Text style={styles.posterSubtitle}>{poster.subtitle}</Text>
@@ -187,7 +187,7 @@ export const SubmissionsList = React.memo(function SubmissionsList({
                 onPress={() => {
                   try {
                     Linking.openURL(submission.postUrl);
-                  } catch (e) {
+                  } catch (e: any) {
                     catchAndWarn(e, 'DailyCheckin/openURL');
                   }
                 }}
@@ -204,7 +204,7 @@ export const SubmissionsList = React.memo(function SubmissionsList({
                   <Text style={styles.statusTextPending}>Pending</Text>
                 </View>
               )}
-              {(submission.status === 'approved' || submission.status === 'credited') && (
+              {(submission.status === 'approved' || (submission.status as string) === 'credited') && (
                 <View style={styles.statusBadgeApproved}>
                   <Ionicons name="checkmark-circle" size={12} color={colors.nileBlue} />
                   <Text style={styles.statusTextApproved}>Approved</Text>
@@ -222,7 +222,7 @@ export const SubmissionsList = React.memo(function SubmissionsList({
               </Text>
             </View>
           </View>
-          {(submission.status === 'approved' || submission.status === 'credited') && (
+          {(submission.status === 'approved' || (submission.status as string) === 'credited') && (
             <View style={styles.submissionFooter}>
               <Ionicons name="trophy" size={12} color={colors.nileBlue} />
               <Text style={styles.submissionFooterText}>
@@ -299,7 +299,7 @@ export const StreakBonusesSection = React.memo(function StreakBonusesSection({
       {streakBonuses.map((bonus, index) => {
         const colorSet = colorSets[index % colorSets.length];
         return (
-          <View key={bonus.days} style={[styles.streakCard, bonus.achieved && styles.streakCardAchieved]}>
+          <View key={bonus.days} style={[styles.streakCard, bonus.achieved ? styles.streakCardAchieved : null]}>
             <View style={[styles.streakIcon, { backgroundColor: colorSet.bg }]}>
               <Ionicons
                 name={bonus.achieved ? 'checkmark-circle' : 'flame'}

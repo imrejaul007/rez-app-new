@@ -20,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MallOffer } from '../../types/mall.types';
 import MallOfferCard from './cards/MallOfferCard';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 interface MallExclusiveOffersProps {
@@ -170,17 +171,13 @@ const MallExclusiveOffers: React.FC<MallExclusiveOffersProps> = ({
         </Text>
 
         {/* Offers List */}
-        <FlashList
+        <AnyFlashList
           data={offers}
           renderItem={renderOffer}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-          removeClippedSubviews={Platform.OS !== 'web'}
-          maxToRenderPerBatch={3}
-          windowSize={3}
-          initialNumToRender={2}
+          contentContainerStyle={styles.listContent as any}
           estimatedItemSize={150}
         />
       </LinearGradient>

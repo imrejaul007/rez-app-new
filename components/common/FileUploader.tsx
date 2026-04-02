@@ -69,7 +69,7 @@ function FileUploader({
       // Configure picker options
       const pickerOptions: UploadOptions = {
         allowsMultipleSelection: maxFiles > 1,
-        mediaTypes: allowedTypes.includes('video') ? 'mixed' : 'images',
+        mediaTypes: (allowedTypes.includes('video') ? 'mixed' : 'images') as any,
         ...options,
       };
 
@@ -109,7 +109,7 @@ function FileUploader({
 
       // Start uploading
       startUploads(newUploads);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to select files. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -149,7 +149,7 @@ function FileUploader({
               }
             : u
         ));
-      } catch (error) {
+      } catch (error: any) {
         if (!isMounted()) return;
         setUploads(prev => prev.map(u => 
           u.id === upload.id 

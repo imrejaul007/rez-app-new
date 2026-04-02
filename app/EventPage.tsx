@@ -151,7 +151,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               if (!cancelled && realData) {
                 setRealEventData(realData);
               }
-            } catch (err) {
+            } catch (err: any) {
               // Continue with dynamic data if backend fetch fails
               errorReporter.captureError(
                 err instanceof Error ? err : new Error('Failed to fetch real event data'),
@@ -159,7 +159,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                 'info',
               );
             }
-          } catch (err) {
+          } catch (err: any) {
             if (cancelled) return;
             errorReporter.captureError(
               err instanceof Error ? err : new Error('Failed to parse event data param'),
@@ -179,7 +179,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             } else {
               setError('Event not found');
             }
-          } catch (err) {
+          } catch (err: any) {
             if (cancelled) return;
             errorReporter.captureError(
               err instanceof Error ? err : new Error('Failed to load event by ID'),
@@ -192,7 +192,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           if (cancelled) return;
           setIsDynamic(false);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (cancelled) return;
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to load event data'),
@@ -281,7 +281,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
     try {
       await retryFn();
-    } catch (error) {
+    } catch (error: any) {
       if (!isMountedRef.current) return;
       const delay = Math.min(1000 * Math.pow(2, retries), 10000); // Exponential backoff, max 10s
       retryTimeoutRef.current = setTimeout(() => {
@@ -349,7 +349,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               setIsLoadingEvent(false);
             });
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to handle deep link'),
           { context: 'EventPage.handleDeepLink' },
@@ -506,7 +506,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       } catch (shareError) {
         eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof Error && err.message !== 'User canceled') {
         setError('Failed to share event.');
       }
@@ -550,7 +550,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         setIsFavorited(previousState);
         throw new Error(result.message || 'Failed to update favorite status');
       }
-    } catch (error) {
+    } catch (error: any) {
       setError(error instanceof Error ? error.message : 'Failed to update favorite status');
     } finally {
       setIsLoadingFavorite(false);
@@ -721,7 +721,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                       setError('Event not found');
                     }
                   }
-                } catch (error) {
+                } catch (error: any) {
                   if (retryCount < MAX_RETRIES) {
                     const delay = Math.min(1000 * Math.pow(2, retryCount), 10000);
                     setTimeout(() => {
@@ -749,6 +749,10 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       </ThemedView>
     );
   }
+
+  // TypeScript guard: at this point eventDetails is guaranteed non-null
+  // (null case handled by early return above)
+  if (!eventDetails) return null;
 
   return (
     <ThemedView style={styles.page}>
@@ -963,7 +967,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                 </View>
               </View>
               {rewardInfo.rewards.map((reward, index) => (
-                <View key={index} style={[styles.rewardRow, index > 0 && styles.rewardRowBorder]}>
+                <View key={index} style={[styles.rewardRow, index > 0 ? styles.rewardRowBorder : null]}>
                   <Ionicons
                     name={
                       reward.action.includes('checkin')
@@ -1069,7 +1073,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                       )}
                     </View>
 
-                    <Text style={[styles.slotCapacity, !slot.available && styles.slotCapacityDisabled]}>
+                    <Text style={[styles.slotCapacity, !slot.available ? styles.slotCapacityDisabled : null]}>
                       {slot.available ? `${slot.maxCapacity - slot.bookedCount} spots left` : 'Fully booked'}
                     </Text>
 

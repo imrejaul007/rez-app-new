@@ -73,7 +73,7 @@ const SimplifiedWalletView: React.FC<SimplifiedWalletViewProps> = ({
         </ThemedText>
 
         <Pressable
-          style={({ pressed }) => [styles.detailLink, pressed && styles.detailLinkPressed]}
+          style={({ pressed }) => [styles.detailLink, pressed ? styles.detailLinkPressed : null]}
           onPress={onDetailPress}
           hitSlop={8}
         >

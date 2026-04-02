@@ -127,7 +127,7 @@ const ActionCard: React.FC<{
        
       >
         <LinearGradient
-          colors={action.gradientColors || [action.backgroundColor, action.backgroundColor]}
+          colors={(action.gradientColors || [action.backgroundColor, action.backgroundColor]) as [string, string]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.cardGradient}

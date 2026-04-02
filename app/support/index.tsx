@@ -55,7 +55,7 @@ function SupportHubPage() {
         if (!isMounted()) return;
         setPopularFAQs(faqsResponse.data.faqs);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

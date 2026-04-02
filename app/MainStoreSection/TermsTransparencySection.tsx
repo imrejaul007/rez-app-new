@@ -1,32 +1,17 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // TermsTransparencySection.tsx - Collapsible terms and transparency section
-import React, { useState} from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  LayoutAnimation,
-  Platform,
-  UIManager,
-  Linking } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  interpolate,
-} from 'react-native-reanimated';
-import { Ionicons } from "@expo/vector-icons";
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
+import React, { useState } from 'react';
+import { View, Pressable, StyleSheet, LayoutAnimation, Platform, UIManager, Linking } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  BorderRadius } from "@/constants/DesignSystem";
+import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { catchAndWarn } from '@/utils/catchAndReport';
 
 // Enable LayoutAnimation on Android
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -38,10 +23,11 @@ export interface TermsTransparencySectionProps {
 }
 
 function TermsTransparencySection({
-  cashbackRules = "Cashback is credited within 24 hours of purchase. Valid on all payment methods.",
-  coinExpiry = "Earned coins expire after 90 days. Branded coins expire as per store policy.",
-  returnImpact = "Returns will deduct earned cashback and coins from your wallet.",
-  supportEmail = "support@rez.app" }: TermsTransparencySectionProps) {
+  cashbackRules = 'Cashback is credited within 24 hours of purchase. Valid on all payment methods.',
+  coinExpiry = 'Earned coins expire after 90 days. Branded coins expire as per store policy.',
+  returnImpact = 'Returns will deduct earned cashback and coins from your wallet.',
+  supportEmail = 'support@rez.app',
+}: TermsTransparencySectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const rotateAnim = useSharedValue(0);
 
@@ -56,7 +42,11 @@ function TermsTransparencySection({
 
   const handleContactSupport = () => {
     triggerImpact('Light');
-    try { Linking.openURL(`mailto:${supportEmail}`); } catch (e) { catchAndWarn(e, 'TermsTransparencySection/openURL'); }
+    try {
+      Linking.openURL(`mailto:${supportEmail}`);
+    } catch (e: any) {
+      catchAndWarn(e, 'TermsTransparencySection/openURL');
+    }
   };
 
   const rotateStyle = useAnimatedStyle(() => ({
@@ -68,10 +58,9 @@ function TermsTransparencySection({
       {/* Header - Always Visible */}
       <Pressable
         style={styles.header}
-
         onPress={toggleExpand}
         accessibilityRole="button"
-        accessibilityLabel={isExpanded ? "Collapse terms" : "Expand terms"}
+        accessibilityLabel={isExpanded ? 'Collapse terms' : 'Expand terms'}
       >
         <ThemedText style={styles.headerTitle}>Terms & Transparency</ThemedText>
         <Animated.View style={rotateStyle}>
@@ -121,36 +110,45 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     borderColor: Colors.gray[100],
-    overflow: "hidden" },
+    overflow: 'hidden',
+  },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: Spacing.md },
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: Spacing.md,
+  },
   headerTitle: {
     fontSize: 16,
-    fontWeight: "600",
-    color: colors.text.primary },
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
   content: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: Colors.gray[100],
-    paddingTop: Spacing.md },
+    paddingTop: Spacing.md,
+  },
   termItem: {
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   termTitle: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: 4 },
+    marginBottom: 4,
+  },
   termText: {
     fontSize: 13,
     color: colors.text.secondary,
-    lineHeight: 18 },
+    lineHeight: 18,
+  },
   supportLink: {
     fontSize: 14,
-    fontWeight: "600",
-    color: colors.lightMustard } });
+    fontWeight: '600',
+    color: colors.lightMustard,
+  },
+});
 
 export default withErrorBoundary(TermsTransparencySection, 'MainStoreSectionTermsTransparencySection');

@@ -4,7 +4,7 @@ import subscriptionApi from '@/services/subscriptionApi';
 
 export function useInitiateUpgrade() {
   return useMutation({
-    mutationFn: (tier: string) => subscriptionApi.initiateUpgrade(tier),
+    mutationFn: (tier: string) => subscriptionApi.initiateUpgrade(tier as any),
     retry: 0,
   });
 }
@@ -13,7 +13,7 @@ export function useConfirmUpgrade() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { upgradeId: string; paymentData: any }) =>
-      subscriptionApi.confirmUpgrade(data),
+      subscriptionApi.confirmUpgrade(data.upgradeId, data.paymentData?.paymentId as any, data.paymentData?.paymentIntentId),
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.subscription.all });
@@ -26,7 +26,7 @@ export function useCancelSubscription() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data?: { reason?: string; feedback?: string }) =>
-      subscriptionApi.cancelSubscription(data),
+      subscriptionApi.cancelSubscription(data as any || {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.subscription.all });
     },

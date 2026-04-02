@@ -354,7 +354,7 @@ function DailyCheckInPage() {
             {selectedPoster && (
               <>
                 <LinearGradient colors={selectedPoster.colors} style={styles.modalPosterPreview}>
-                  <CachedImage source={selectedPoster.image} style={styles.modalPosterImage} blurRadius={2} />
+                  <CachedImage source={{ uri: selectedPoster.image }} style={styles.modalPosterImage} />
                   <View style={styles.modalPosterContentWrapper}>
                     <Text style={styles.modalPosterTitle}>{selectedPoster.title}</Text>
                     <Text style={styles.modalPosterSubtitle}>{selectedPoster.subtitle}</Text>
@@ -448,7 +448,7 @@ function DailyCheckInPage() {
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </Pressable>
               <Pressable
-                style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+                style={[styles.submitButton, submitting ? styles.submitButtonDisabled : null]}
                 onPress={handleSubmitPost}
                 disabled={submitting}
               >

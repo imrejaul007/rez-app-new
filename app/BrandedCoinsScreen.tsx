@@ -105,10 +105,6 @@ function BrandedCoinsScreen() {
             <View style={{ height: 40 }} />
           </>
         )}
-        initialNumToRender={10}
-        maxToRenderPerBatch={5}
-        windowSize={10}
-        removeClippedSubviews={true}
       />
     </View>
   );

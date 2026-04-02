@@ -102,7 +102,7 @@ function CommentSystem({
       if (!isMounted()) return;
       setNewComment('');
       inputRef.current?.blur();
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to post comment. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -152,7 +152,7 @@ function CommentSystem({
     setIsRefreshing(true);
     try {
       await onRefresh();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -180,7 +180,7 @@ function CommentSystem({
   };
 
   const renderComment = ({ item: comment, index }: { item: Comment; index: number }) => (
-    <View style={[styles.commentContainer, comment.parentId && styles.replyContainer]}>
+    <View style={[styles.commentContainer, comment.parentId ? styles.replyContainer : null]}>
       {/* User Avatar */}
       <View style={styles.avatarContainer}>
         {comment.userAvatar ? (
@@ -211,7 +211,7 @@ function CommentSystem({
         {/* Actions */}
         <View style={styles.commentActions}>
           <Pressable
-            style={[styles.actionButton, comment.isLiked && styles.likedButton]}
+            style={[styles.actionButton, comment.isLiked ? styles.likedButton : null]}
             onPress={() => handleLikeComment(comment.id)}
           >
             <Ionicons 
@@ -220,7 +220,7 @@ function CommentSystem({
               color={comment.isLiked ? colors.error : colors.midGray} 
             />
             {comment.likesCount > 0 && (
-              <ThemedText style={[styles.actionText, comment.isLiked && styles.likedText]}>
+              <ThemedText style={[styles.actionText, comment.isLiked ? styles.likedText : null]}>
                 {comment.likesCount}
               </ThemedText>
             )}

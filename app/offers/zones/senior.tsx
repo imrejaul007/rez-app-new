@@ -4,23 +4,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Fetches real data from backend API for 60+ citizens
  */
 
-import React, { useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Dimensions
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -92,19 +85,18 @@ function SeniorCitizenZonePage() {
   };
 
   const userAge = user?.profile?.dateOfBirth ? calculateAge(user.profile.dateOfBirth) : 0;
-  const isVerified = user?.verifications?.senior?.verified === true;
+  const isVerified = (user as any)?.verifications?.senior?.verified === true;
   const isEligible = userAge >= 60 || isVerified || zoneInfo?.userEligible === true;
 
   useEffect(() => {
     fetchZoneData();
     shimmerAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
+      withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
+      -1,
     );
-    return () => { shimmerAnim.value = 0; };
+    return () => {
+      shimmerAnim.value = 0;
+    };
   }, []);
 
   const fetchZoneData = async () => {
@@ -130,7 +122,8 @@ function SeniorCitizenZonePage() {
             offersCount: zone.offersCount || 0,
             verificationRequired: zone.verificationRequired,
             eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible });
+            userEligible: zone.userEligible,
+          });
         }
       }
 
@@ -146,7 +139,8 @@ function SeniorCitizenZonePage() {
             verificationRequired: !!profile.verificationRequired,
             eligibilityDetails: profile.verificationRequired,
             userEligible: profile.userEligible,
-            discountRange: profile.discountRange });
+            discountRange: profile.discountRange,
+          });
         }
       }
 
@@ -155,7 +149,7 @@ function SeniorCitizenZonePage() {
         if (!isMounted()) return;
         setOffers(Array.isArray(offersData) ? offersData : []);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load offers. Please try again.');
     } finally {
@@ -171,15 +165,13 @@ function SeniorCitizenZonePage() {
   const handleVerify = () => {
     router.push({
       pathname: '/profile/verification',
-      params: { zone: 'senior' }
+      params: { zone: 'senior' },
     } as any);
   };
 
   const renderSkeletonCard = () => (
     <View style={styles.dealCard}>
-      <Animated.View
-        style={[styles.skeletonImage, shimmerOpacityStyle]}
-      />
+      <Animated.View style={[styles.skeletonImage, shimmerOpacityStyle]} />
       <View style={styles.dealContent}>
         <View style={[styles.skeletonText, { width: '40%', marginBottom: 8 }]} />
         <View style={[styles.skeletonText, { width: '80%', marginBottom: 8 }]} />
@@ -189,15 +181,8 @@ function SeniorCitizenZonePage() {
   );
 
   const renderDealCard = (deal: ZoneOffer) => (
-    <Pressable
-      key={deal._id}
-      style={styles.dealCard}
-      onPress={() => handleDealPress(deal)}
-     
-    >
-      {deal.image && (
-        <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />
-      )}
+    <Pressable key={deal._id} style={styles.dealCard} onPress={() => handleDealPress(deal)}>
+      {deal.image && <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />}
       <View style={styles.dealContent}>
         <View style={styles.dealHeader}>
           <View style={styles.dealInfo}>
@@ -247,14 +232,15 @@ function SeniorCitizenZonePage() {
       >
         <SafeAreaView edges={['top']} style={styles.safeHeader}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
 
             <View style={styles.headerTitleContainer}>
-              <ThemedText style={styles.headerTitle}>
-                {zoneInfo?.name || 'Senior Citizens'}
-              </ThemedText>
+              <ThemedText style={styles.headerTitle}>{zoneInfo?.name || 'Senior Citizens'}</ThemedText>
               <ThemedText style={styles.headerSubtitle}>Exclusive benefits for 60+</ThemedText>
             </View>
 
@@ -267,7 +253,7 @@ function SeniorCitizenZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -361,7 +347,12 @@ function SeniorCitizenZonePage() {
       {!isEligible && (
         <View style={styles.fixedCTA}>
           <Pressable style={styles.ctaButton} onPress={handleVerify}>
-            <LinearGradient colors={[colors.brand.purple, colors.brand.purpleDeep]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaGradient}>
+            <LinearGradient
+              colors={[colors.brand.purple, colors.brand.purpleDeep]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.ctaGradient}
+            >
               <Ionicons name="shield-checkmark" size={20} color={colors.background.primary} />
               <ThemedText style={styles.ctaButtonText}>Verify Age to Unlock Benefits</ThemedText>
             </LinearGradient>
@@ -375,12 +366,28 @@ function SeniorCitizenZonePage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  errorText: { ...Typography.body, color: colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
-  retryButton: { backgroundColor: colors.brand.purple, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: BorderRadius.md },
+  errorText: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  retryButton: {
+    backgroundColor: colors.brand.purple,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: { ...Typography.button, color: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
   safeHeader: { paddingBottom: Spacing.base },
-  headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+  },
   backButton: { padding: Spacing.sm, marginRight: Spacing.sm },
   headerTitleContainer: { flex: 1, alignItems: 'center' },
   headerTitle: { ...Typography.h3, color: colors.background.primary, fontWeight: '700' },
@@ -390,43 +397,103 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: { paddingBottom: 150 },
   heroBanner: { margin: Spacing.base, borderRadius: BorderRadius['2xl'], overflow: 'hidden', ...Shadows.medium },
-  heroGradient: { padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(124, 58, 237, 0.3)', borderRadius: BorderRadius['2xl'] },
+  heroGradient: {
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(124, 58, 237, 0.3)',
+    borderRadius: BorderRadius['2xl'],
+  },
   heroContent: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.base },
-  heroIconContainer: { width: 64, height: 64, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(124, 58, 237, 0.2)', alignItems: 'center', justifyContent: 'center', marginRight: Spacing.base },
+  heroIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(124, 58, 237, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.base,
+  },
   heroTextContainer: { flex: 1 },
   heroTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: 4 },
   heroSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
-  verificationCard: { marginTop: Spacing.base, padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.5)' },
+  verificationCard: {
+    marginTop: Spacing.base,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
   verifiedStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   verifiedLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   verifiedText: { ...Typography.label, color: Colors.success },
-  activeBadge: { backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  activeBadge: {
+    backgroundColor: Colors.success,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   activeBadgeText: { ...Typography.caption, color: colors.background.primary, fontWeight: '600' },
   unverifiedStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   unverifiedLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flex: 1 },
   unverifiedText: { ...Typography.body, color: colors.warningScale[400], flex: 1 },
-  verifyButton: { backgroundColor: colors.brand.purple, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
+  verifyButton: {
+    backgroundColor: colors.brand.purple,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
   verifyButtonText: { ...Typography.labelSmall, color: colors.background.primary, fontWeight: '600' },
   perksSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
   sectionTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: Spacing.md },
   perksGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  perkCard: { width: (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, alignItems: 'center', ...Shadows.subtle },
+  perkCard: {
+    width: (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    alignItems: 'center',
+    ...Shadows.subtle,
+  },
   perkIcon: { fontSize: 28, marginBottom: Spacing.xs },
   perkTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
   perkDesc: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center' },
   dealsSection: { paddingHorizontal: Spacing.base },
-  dealCard: { flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.md, ...Shadows.subtle },
+  dealCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.md,
+    ...Shadows.subtle,
+  },
   dealImage: { width: 96, height: 96 },
   dealContent: { flex: 1, padding: Spacing.base },
-  dealHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.xs },
+  dealHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.xs,
+  },
   dealInfo: { flex: 1, marginRight: Spacing.sm },
   dealStore: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: 2 },
   dealTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600' },
-  discountBadge: { backgroundColor: 'rgba(124, 58, 237, 0.15)', paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  discountBadge: {
+    backgroundColor: 'rgba(124, 58, 237, 0.15)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   discountText: { ...Typography.labelSmall, color: colors.brand.purpleDeep, fontWeight: '700' },
   dealDescription: { ...Typography.bodySmall, color: colors.text.secondary, marginBottom: Spacing.sm },
   dealTags: { flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap' },
-  tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.tint.purple, paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm, gap: 4 },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.tint.purple,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+    gap: 4,
+  },
   tagText: { ...Typography.caption, color: colors.brand.purpleDeep },
   skeletonImage: { width: 96, height: 96, backgroundColor: Colors.gray[200] },
   skeletonText: { height: 12, borderRadius: 6, backgroundColor: Colors.gray[200] },
@@ -434,9 +501,26 @@ const styles = StyleSheet.create({
   emptyEmoji: { fontSize: 48, marginBottom: Spacing.md },
   emptyStateText: { ...Typography.body, color: colors.text.tertiary },
   emptyStateSubtext: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs },
-  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.light, ...Shadows.medium },
+  fixedCTA: {
+    position: 'absolute',
+    bottom: 70,
+    left: 0,
+    right: 0,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    ...Shadows.medium,
+  },
   ctaButton: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
-  ctaGradient: { flexDirection: 'row', paddingVertical: Spacing.base, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
-  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' } });
+  ctaGradient: {
+    flexDirection: 'row',
+    paddingVertical: Spacing.base,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+  },
+  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' },
+});
 
 export default withErrorBoundary(SeniorCitizenZonePage, 'OffersZonesSenior');

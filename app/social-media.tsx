@@ -52,14 +52,16 @@ interface EarningsData {
 
 function SocialMediaPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ orderId?: string }>();
+  const params = useLocalSearchParams<any>();
   const user = useAuthUser();
   const authLoading = useAuthLoading();
   const isAuthenticated = useIsAuthenticated();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [activeTab, setActiveTab] = useState<'earn' | 'history'>('earn');
-  const [selectedPlatform, setSelectedPlatform] = useState<'instagram' | 'facebook' | 'twitter' | 'tiktok'>('instagram');
+  const [selectedPlatform, setSelectedPlatform] = useState<'instagram' | 'facebook' | 'twitter' | 'tiktok'>(
+    'instagram',
+  );
   const [postUrl, setPostUrl] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState<string | undefined>(params.orderId);
   const [completedOrders, setCompletedOrders] = useState<Order[]>([]);
@@ -79,7 +81,6 @@ function SocialMediaPage() {
   useEffect(() => {
     // Wait for auth to finish loading
     if (authLoading) {
-
       return;
     }
 
@@ -96,12 +97,11 @@ function SocialMediaPage() {
       const response = await ordersApi.getOrders({ status: 'delivered' });
 
       // Filter for delivered/completed orders only
-      const delivered = (response.data?.orders || []).filter((order: Order) =>
-        order.status === 'delivered' || order.status === 'cancelled'
+      const delivered = (response.data?.orders || []).filter(
+        (order: Order) => order.status === 'delivered' || order.status === 'cancelled',
       );
       if (!isMounted()) return;
       setCompletedOrders(delivered);
-
     } catch (error: any) {
       // silently handle
     } finally {
@@ -122,7 +122,7 @@ function SocialMediaPage() {
       // Fetch earnings and posts from API
       const [earningsData, postsData] = await Promise.all([
         socialMediaApi.getUserEarnings(),
-        socialMediaApi.getUserPosts({ page: 1, limit: 50 })
+        socialMediaApi.getUserPosts({ page: 1, limit: 50 }),
       ]);
 
       // Set earnings data
@@ -136,7 +136,7 @@ function SocialMediaPage() {
       });
 
       // Transform and set posts data
-      const transformedPosts: SocialPost[] = postsData.posts.map(post => ({
+      const transformedPosts: SocialPost[] = postsData.posts.map((post) => ({
         id: post._id,
         platform: post.platform,
         url: post.postUrl,
@@ -149,9 +149,7 @@ function SocialMediaPage() {
 
       if (!isMounted()) return;
       setPosts(transformedPosts);
-
     } catch (error: any) {
-
       // Auth errors (401) are handled by apiClient's refresh flow + AuthContext guard
       if (error.response?.status === 401 || error.message?.includes('Access token')) {
         return;
@@ -174,16 +172,15 @@ function SocialMediaPage() {
 
     setSubmitting(true);
     try {
-
       // Submit post to API with optional orderId
       const response = await socialMediaApi.submitPost({
         platform: selectedPlatform,
         postUrl: postUrl.trim(),
-        ...(selectedOrderId && { orderId: selectedOrderId })
+        ...(selectedOrderId && { orderId: selectedOrderId }),
       });
 
       // Calculate cashback message
-      const selectedOrder = completedOrders.find(o => o._id === selectedOrderId);
+      const selectedOrder = completedOrders.find((o) => o._id === selectedOrderId);
       const cashbackAmount = selectedOrder ? Math.round((selectedOrder.totals?.total || 0) * 0.05) : 0;
 
       let successMessage = `Your post has been submitted and will be reviewed within 24-48 hours.`;
@@ -199,9 +196,7 @@ function SocialMediaPage() {
       if (!isMounted()) return;
       setSelectedOrderId(undefined);
       loadData();
-
     } catch (error: any) {
-
       platformAlertSimple('Error', 'Failed to submit post. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -218,21 +213,31 @@ function SocialMediaPage() {
 
   const getStatusColor = (status: SocialPost['status']) => {
     switch (status) {
-      case 'approved': return Colors.success;
-      case 'pending': return Colors.warning;
-      case 'rejected': return Colors.error;
-      case 'credited': return colors.brand.green;
-      default: return colors.text.tertiary;
+      case 'approved':
+        return Colors.success;
+      case 'pending':
+        return Colors.warning;
+      case 'rejected':
+        return Colors.error;
+      case 'credited':
+        return colors.brand.green;
+      default:
+        return colors.text.tertiary;
     }
   };
 
   const getStatusText = (status: SocialPost['status']) => {
     switch (status) {
-      case 'approved': return 'Approved';
-      case 'pending': return 'Under Review';
-      case 'rejected': return 'Rejected';
-      case 'credited': return 'Credited';
-      default: return 'Unknown';
+      case 'approved':
+        return 'Approved';
+      case 'pending':
+        return 'Under Review';
+      case 'rejected':
+        return 'Rejected';
+      case 'credited':
+        return 'Credited';
+      default:
+        return 'Unknown';
     }
   };
 
@@ -240,7 +245,7 @@ function SocialMediaPage() {
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -254,7 +259,7 @@ function SocialMediaPage() {
         <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Returns to previous screen"
@@ -282,9 +287,7 @@ function SocialMediaPage() {
             accessibilityState={{ selected: activeTab === 'earn' }}
             accessibilityHint="View how to earn cashback by sharing on social media"
           >
-            <Text style={[styles.tabText, activeTab === 'earn' && styles.activeTabText]}>
-              Earn Cashback
-            </Text>
+            <Text style={[styles.tabText, activeTab === 'earn' && styles.activeTabText]}>Earn Cashback</Text>
           </Pressable>
           <Pressable
             style={[styles.tab, activeTab === 'history' && styles.activeTab]}
@@ -294,17 +297,15 @@ function SocialMediaPage() {
             accessibilityState={{ selected: activeTab === 'history' }}
             accessibilityHint="View your submission history and earnings"
           >
-            <Text style={[styles.tabText, activeTab === 'history' && styles.activeTabText]}>
-              History
-            </Text>
+            <Text style={[styles.tabText, activeTab === 'history' && styles.activeTabText]}>History</Text>
           </Pressable>
         </View>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           {activeTab === 'earn' ? (
             <>
               {/* Earnings Summary */}
@@ -321,16 +322,25 @@ function SocialMediaPage() {
                       <Ionicons name="trending-up" size={16} color="white" />
                     </View>
                   </View>
-                  <Text style={styles.summaryAmount}>{currencySymbol}{earnings.totalEarned}</Text>
+                  <Text style={styles.summaryAmount}>
+                    {currencySymbol}
+                    {earnings.totalEarned}
+                  </Text>
                   <View style={styles.summaryStats}>
                     <View style={styles.stat}>
                       <Text style={styles.statLabel}>Pending</Text>
-                      <Text style={styles.statValue}>{currencySymbol}{earnings.pendingAmount}</Text>
+                      <Text style={styles.statValue}>
+                        {currencySymbol}
+                        {earnings.pendingAmount}
+                      </Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.stat}>
                       <Text style={styles.statLabel}>Credited</Text>
-                      <Text style={styles.statValue}>{currencySymbol}{earnings.creditedAmount}</Text>
+                      <Text style={styles.statValue}>
+                        {currencySymbol}
+                        {earnings.creditedAmount}
+                      </Text>
                     </View>
                   </View>
                 </LinearGradient>
@@ -346,9 +356,7 @@ function SocialMediaPage() {
                     </View>
                     <View style={styles.stepContent}>
                       <Text style={styles.stepTitle}>Make a Purchase</Text>
-                      <Text style={styles.stepDescription}>
-                        Buy any product from our stores
-                      </Text>
+                      <Text style={styles.stepDescription}>Buy any product from our stores</Text>
                     </View>
                   </View>
 
@@ -370,9 +378,7 @@ function SocialMediaPage() {
                     </View>
                     <View style={styles.stepContent}>
                       <Text style={styles.stepTitle}>Submit Your Post</Text>
-                      <Text style={styles.stepDescription}>
-                        Copy and paste the post URL below
-                      </Text>
+                      <Text style={styles.stepDescription}>Copy and paste the post URL below</Text>
                     </View>
                   </View>
 
@@ -394,9 +400,7 @@ function SocialMediaPage() {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Link to Order (Optional)</Text>
-                  {selectedOrderId && (
-                    <Text style={styles.cashbackBadge}>+5% Cashback!</Text>
-                  )}
+                  {selectedOrderId && <Text style={styles.cashbackBadge}>+5% Cashback!</Text>}
                 </View>
                 <Text style={styles.sectionDescription}>
                   Select a completed order to earn 5% cashback when your post is approved
@@ -409,17 +413,14 @@ function SocialMediaPage() {
                   </View>
                 ) : completedOrders.length > 0 ? (
                   <View style={styles.orderDropdown}>
-                    <Pressable
-                      style={styles.orderSelectButton}
-                      onPress={() => setSelectedOrderId(undefined)}
-                    >
+                    <Pressable style={styles.orderSelectButton} onPress={() => setSelectedOrderId(undefined)}>
                       <View style={styles.orderOption}>
                         <Ionicons
-                          name={selectedOrderId ? "radio-button-off" : "radio-button-on"}
+                          name={selectedOrderId ? 'radio-button-off' : 'radio-button-on'}
                           size={20}
                           color={selectedOrderId ? colors.neutral[400] : colors.brand.green}
                         />
-                        <Text style={[styles.orderText, !selectedOrderId && styles.orderTextActive]}>
+                        <Text style={[styles.orderText, !selectedOrderId ? styles.orderTextActive : null]}>
                           No order ({currencySymbol}0 cashback)
                         </Text>
                       </View>
@@ -433,16 +434,20 @@ function SocialMediaPage() {
                       >
                         <View style={styles.orderOption}>
                           <Ionicons
-                            name={selectedOrderId === order._id ? "radio-button-on" : "radio-button-off"}
+                            name={selectedOrderId === order._id ? 'radio-button-on' : 'radio-button-off'}
                             size={20}
                             color={selectedOrderId === order._id ? colors.brand.green : colors.neutral[400]}
                           />
                           <View style={styles.orderInfo}>
-                            <Text style={[styles.orderText, selectedOrderId === order._id && styles.orderTextActive]}>
+                            <Text
+                              style={[styles.orderText, selectedOrderId === order._id ? styles.orderTextActive : null]}
+                            >
                               Order #{order.orderNumber}
                             </Text>
                             <Text style={styles.orderAmount}>
-                              {currencySymbol}{order.totals?.total || 0} • Earn {currencySymbol}{Math.round((order.totals?.total || 0) * 0.05)}
+                              {currencySymbol}
+                              {order.totals?.total || 0} • Earn {currencySymbol}
+                              {Math.round((order.totals?.total || 0) * 0.05)}
                             </Text>
                           </View>
                         </View>
@@ -465,10 +470,7 @@ function SocialMediaPage() {
                   {platforms.map((platform) => (
                     <Pressable
                       key={platform.id}
-                      style={[
-                        styles.platformButton,
-                        selectedPlatform === platform.id && styles.platformButtonActive
-                      ]}
+                      style={[styles.platformButton, selectedPlatform === platform.id && styles.platformButtonActive]}
                       onPress={() => setSelectedPlatform(platform.id)}
                       accessibilityLabel={`Select ${platform.name}`}
                       accessibilityRole="radio"
@@ -481,10 +483,7 @@ function SocialMediaPage() {
                         color={selectedPlatform === platform.id ? platform.color : colors.neutral[500]}
                       />
                       <Text
-                        style={[
-                          styles.platformName,
-                          selectedPlatform === platform.id && { color: platform.color }
-                        ]}
+                        style={[styles.platformName, selectedPlatform === platform.id && { color: platform.color }]}
                       >
                         {platform.name}
                       </Text>
@@ -520,10 +519,10 @@ function SocialMediaPage() {
                 </View>
 
                 <Pressable
-                  style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+                  style={[styles.submitButton, submitting ? styles.submitButtonDisabled : null]}
                   onPress={handleSubmitPost}
                   disabled={submitting}
-                  accessibilityLabel={submitting ? "Submitting post" : "Submit post for verification"}
+                  accessibilityLabel={submitting ? 'Submitting post' : 'Submit post for verification'}
                   accessibilityRole="button"
                   accessibilityState={{ disabled: submitting, busy: submitting }}
                   accessibilityHint="Submits your social media post URL for cashback approval"
@@ -568,9 +567,7 @@ function SocialMediaPage() {
                   <View style={styles.emptyContainer}>
                     <Ionicons name="document-text-outline" size={64} color={colors.border.default} />
                     <Text style={styles.emptyTitle}>No Submissions Yet</Text>
-                    <Text style={styles.emptyText}>
-                      Start earning by sharing your purchases on social media!
-                    </Text>
+                    <Text style={styles.emptyText}>Start earning by sharing your purchases on social media!</Text>
                     <Pressable
                       style={styles.emptyButton}
                       onPress={() => setActiveTab('earn')}
@@ -589,29 +586,30 @@ function SocialMediaPage() {
                           <View style={styles.postPlatform}>
                             <Ionicons
                               name={
-                                post.platform === 'instagram' ? 'logo-instagram' :
-                                post.platform === 'facebook' ? 'logo-facebook' :
-                                post.platform === 'twitter' ? 'logo-twitter' :
-                                'musical-notes'
+                                post.platform === 'instagram'
+                                  ? 'logo-instagram'
+                                  : post.platform === 'facebook'
+                                    ? 'logo-facebook'
+                                    : post.platform === 'twitter'
+                                      ? 'logo-twitter'
+                                      : 'musical-notes'
                               }
                               size={20}
                               color={
-                                post.platform === 'instagram' ? '#E4405F' :
-                                post.platform === 'facebook' ? '#1877F2' :
-                                post.platform === 'twitter' ? '#1DA1F2' :
-                                '#000000'
+                                post.platform === 'instagram'
+                                  ? '#E4405F'
+                                  : post.platform === 'facebook'
+                                    ? '#1877F2'
+                                    : post.platform === 'twitter'
+                                      ? '#1DA1F2'
+                                      : '#000000'
                               }
                             />
                             <Text style={styles.postPlatformName}>
                               {post.platform.charAt(0).toUpperCase() + post.platform.slice(1)}
                             </Text>
                           </View>
-                          <View
-                            style={[
-                              styles.postStatus,
-                              { backgroundColor: getStatusColor(post.status) + '20' }
-                            ]}
-                          >
+                          <View style={[styles.postStatus, { backgroundColor: getStatusColor(post.status) + '20' }]}>
                             <Text style={[styles.postStatusText, { color: getStatusColor(post.status) }]}>
                               {getStatusText(post.status)}
                             </Text>
@@ -619,17 +617,24 @@ function SocialMediaPage() {
                         </View>
 
                         <Text style={styles.postDate}>{formatDate(post.submittedAt)}</Text>
-                        {post.orderNumber && (
-                          <Text style={styles.postOrderNumber}>Order: {post.orderNumber}</Text>
-                        )}
+                        {post.orderNumber && <Text style={styles.postOrderNumber}>Order: {post.orderNumber}</Text>}
 
                         <View style={styles.postFooter}>
                           <View style={styles.postCashback}>
                             <Ionicons name="cash" size={16} color={Colors.success} />
-                            <Text style={styles.postCashbackAmount}>{currencySymbol}{post.cashbackAmount}</Text>
+                            <Text style={styles.postCashbackAmount}>
+                              {currencySymbol}
+                              {post.cashbackAmount}
+                            </Text>
                           </View>
                           <Pressable
-                            onPress={() => { try { Linking.openURL(post.url); } catch (e) { catchAndWarn(e, 'SocialMedia/openURL'); } }}
+                            onPress={() => {
+                              try {
+                                Linking.openURL(post.url);
+                              } catch (e: any) {
+                                catchAndWarn(e, 'SocialMedia/openURL');
+                              }
+                            }}
                             style={styles.postLink}
                             accessibilityLabel={`View ${post.platform} post`}
                             accessibilityRole="link"

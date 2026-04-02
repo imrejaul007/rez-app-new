@@ -173,7 +173,7 @@ function ServiceCategoryPage() {
           if (!isMounted()) return;
           setError('Failed to load services');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load services');
       } finally {
@@ -321,10 +321,10 @@ function ServiceCategoryPage() {
           {SORT_OPTIONS.map((option) => (
             <Pressable
               key={option.value}
-              style={[styles.sortOption, sortBy === option.value && styles.sortOptionActive]}
+              style={[styles.sortOption, sortBy === option.value ? styles.sortOptionActive : null]}
               onPress={() => handleSortChange(option.value as ServiceCategoryQueryParams['sortBy'])}
             >
-              <ThemedText style={[styles.sortOptionText, sortBy === option.value && styles.sortOptionTextActive]}>
+              <ThemedText style={[styles.sortOptionText, sortBy === option.value ? styles.sortOptionTextActive : null]}>
                 {option.label}
               </ThemedText>
               {sortBy === option.value && <Ionicons name="checkmark" size={18} color={colors.brand.green} />}

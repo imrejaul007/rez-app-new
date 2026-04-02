@@ -63,7 +63,7 @@ const externalWalletApi = {
    */
   async getLinkedWallets(): Promise<ExternalWallet[]> {
     try {
-      const response = await apiClient.get(`${EXTERNAL_WALLET_BASE}/status`);
+      const response = await apiClient.get<any>(`${EXTERNAL_WALLET_BASE}/status`);
 
       if (!response.success || !response.data) {
         return [];
@@ -83,7 +83,7 @@ const externalWalletApi = {
     options?: { phone?: string; email?: string }
   ): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await apiClient.post(`${EXTERNAL_WALLET_BASE}/link`, {
+      const response = await apiClient.post<any>(`${EXTERNAL_WALLET_BASE}/link`, {
         provider,
         ...options,
       });
@@ -105,7 +105,7 @@ const externalWalletApi = {
    */
   async unlinkWallet(provider: ExternalWalletProvider): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await apiClient.delete(`${EXTERNAL_WALLET_BASE}/unlink/${provider}`);
+      const response = await apiClient.delete<any>(`${EXTERNAL_WALLET_BASE}/unlink/${provider}`);
 
       return {
         success: response.success,
@@ -128,7 +128,7 @@ const externalWalletApi = {
     storeId?: string
   ): Promise<PaytmPaymentResponse> {
     try {
-      const response = await apiClient.post(`${EXTERNAL_WALLET_BASE}/paytm/initiate`, {
+      const response = await apiClient.post<any>(`${EXTERNAL_WALLET_BASE}/paytm/initiate`, {
         amount,
         orderId,
         storeId,
@@ -153,7 +153,7 @@ const externalWalletApi = {
     storeId?: string
   ): Promise<AmazonPayResponse> {
     try {
-      const response = await apiClient.post(`${EXTERNAL_WALLET_BASE}/amazonpay/initiate`, {
+      const response = await apiClient.post<any>(`${EXTERNAL_WALLET_BASE}/amazonpay/initiate`, {
         amount,
         orderId,
         storeId,
@@ -178,7 +178,7 @@ const externalWalletApi = {
     storeId?: string
   ): Promise<MobikwikResponse> {
     try {
-      const response = await apiClient.post(`${EXTERNAL_WALLET_BASE}/mobikwik/initiate`, {
+      const response = await apiClient.post<any>(`${EXTERNAL_WALLET_BASE}/mobikwik/initiate`, {
         amount,
         orderId,
         storeId,
@@ -202,7 +202,7 @@ const externalWalletApi = {
     orderId: string
   ): Promise<ExternalPaymentStatusResponse> {
     try {
-      const response = await apiClient.get(`${EXTERNAL_WALLET_BASE}/status/${provider}/${orderId}`);
+      const response = await apiClient.get<any>(`${EXTERNAL_WALLET_BASE}/status/${provider}/${orderId}`);
 
       if (!response.success || !response.data) {
         return {

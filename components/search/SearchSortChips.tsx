@@ -34,9 +34,9 @@ const SearchSortChips = React.memo(function SearchSortChips({
             <Pressable
               key={opt.value}
               onPress={() => onSortChange(opt.value)}
-              style={[styles.chip, isActive && styles.activeChip]}
+              style={[styles.chip, isActive ? styles.activeChip : null]}
             >
-              <Text style={[styles.chipText, isActive && styles.activeChipText]}>
+              <Text style={[styles.chipText, isActive ? styles.activeChipText : null]}>
                 {opt.label}
               </Text>
             </Pressable>

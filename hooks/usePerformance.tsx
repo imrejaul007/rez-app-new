@@ -174,7 +174,7 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
         const duration = endMeasure(label);
 
         // Track in analytics
-        if (typeof analyticsService !== 'undefined') {
+        if (typeof (window as any).analyticsService !== 'undefined') {
           (window as any).analyticsService?.trackPerformance(
             `${componentName}_${label}`,
             duration
@@ -201,14 +201,14 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
     devLog.log('Total render time:', `${metrics.totalRenderTime.toFixed(2)}ms`);
     devLog.log('Mount time:', `${metrics.mountTime}ms`);
 
-    if (trackMemory && performance.memory) {
+    if (trackMemory && (performance as any).memory) {
       devLog.log(
         'Memory used:',
-        `${(performance.memory.usedJSHeapSize / 1048576).toFixed(2)}MB`
+        `${((performance as any).memory.usedJSHeapSize / 1048576).toFixed(2)}MB`
       );
       devLog.log(
         'Memory limit:',
-        `${(performance.memory.jsHeapSizeLimit / 1048576).toFixed(2)}MB`
+        `${((performance as any).memory.jsHeapSizeLimit / 1048576).toFixed(2)}MB`
       );
     }
 

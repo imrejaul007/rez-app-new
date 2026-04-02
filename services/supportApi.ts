@@ -218,7 +218,7 @@ class SupportService {
    */
   async createTicket(data: CreateTicketRequest): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post('/support/tickets', data);
+    return apiClient.post<any>('/support/tickets', data as any);
   }
 
   /**
@@ -226,8 +226,8 @@ class SupportService {
    */
   async getMyTickets(filters?: GetTicketsFilters): Promise<ApiResponse<GetTicketsResponse>> {
     try {
-      const response = await apiClient.get<GetTicketsResponse>('/support/tickets', filters);
-      return response;
+      const response = await apiClient.get<GetTicketsResponse>('/support/tickets', filters as any);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -238,7 +238,7 @@ class SupportService {
    */
   async getTicketById(ticketId: string): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.get(`/support/tickets/${ticketId}`);
+    return apiClient.get<any>(`/support/tickets/${ticketId}`);
   }
 
   /**
@@ -250,7 +250,7 @@ class SupportService {
     attachments?: string[]
   ): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post(`/support/tickets/${ticketId}/messages`, {
+    return apiClient.post<any>(`/support/tickets/${ticketId}/messages`, {
       message,
       attachments,
     });
@@ -261,7 +261,7 @@ class SupportService {
    */
   async closeTicket(ticketId: string): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post(`/support/tickets/${ticketId}/close`);
+    return apiClient.post<any>(`/support/tickets/${ticketId}/close`);
   }
 
   /**
@@ -272,7 +272,7 @@ class SupportService {
     reason: string
   ): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post(`/support/tickets/${ticketId}/reopen`, { reason });
+    return apiClient.post<any>(`/support/tickets/${ticketId}/reopen`, { reason });
   }
 
   /**
@@ -284,7 +284,7 @@ class SupportService {
     comment?: string
   ): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post(`/support/tickets/${ticketId}/rate`, {
+    return apiClient.post<any>(`/support/tickets/${ticketId}/rate`, {
       score,
       comment,
     });
@@ -295,7 +295,7 @@ class SupportService {
    */
   async getTicketsSummary(): Promise<ApiResponse<TicketsSummary>> {
 
-    return apiClient.get('/support/tickets/summary');
+    return apiClient.get<any>('/support/tickets/summary');
   }
 
   /**
@@ -303,7 +303,7 @@ class SupportService {
    */
   async getAllFAQs(category?: string, subcategory?: string): Promise<ApiResponse<{ faqs: FAQ[]; total: number }>> {
 
-    return apiClient.get('/support/faq', { category, subcategory });
+    return apiClient.get<any>('/support/faq', { category, subcategory });
   }
 
   /**
@@ -311,7 +311,7 @@ class SupportService {
    */
   async searchFAQs(query: string, limit: number = 10): Promise<ApiResponse<{ faqs: FAQ[]; total: number }>> {
 
-    return apiClient.get('/support/faq/search', { q: query, limit });
+    return apiClient.get<any>('/support/faq/search', { q: query, limit });
   }
 
   /**
@@ -319,7 +319,7 @@ class SupportService {
    */
   async getFAQCategories(): Promise<ApiResponse<{ categories: FAQCategory[] }>> {
 
-    return apiClient.get('/support/faq/categories');
+    return apiClient.get<any>('/support/faq/categories');
   }
 
   /**
@@ -327,7 +327,7 @@ class SupportService {
    */
   async getPopularFAQs(limit: number = 10): Promise<ApiResponse<{ faqs: FAQ[]; total: number }>> {
 
-    return apiClient.get('/support/faq/popular', { limit });
+    return apiClient.get<any>('/support/faq/popular', { limit });
   }
 
   /**
@@ -335,7 +335,7 @@ class SupportService {
    */
   async markFAQHelpful(faqId: string, helpful: boolean): Promise<ApiResponse<{ message: string }>> {
 
-    return apiClient.post(`/support/faq/${faqId}/helpful`, { helpful });
+    return apiClient.post<any>(`/support/faq/${faqId}/helpful`, { helpful });
   }
 
   /**
@@ -343,7 +343,7 @@ class SupportService {
    */
   async trackFAQView(faqId: string): Promise<ApiResponse<{ message: string }>> {
 
-    return apiClient.post(`/support/faq/${faqId}/view`);
+    return apiClient.post<any>(`/support/faq/${faqId}/view`);
   }
 
   /**
@@ -355,7 +355,7 @@ class SupportService {
     description: string
   ): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post('/support/quick-actions/order-issue', {
+    return apiClient.post<any>('/support/quick-actions/order-issue', {
       orderId,
       issueType,
       description,
@@ -372,7 +372,7 @@ class SupportService {
     images?: string[]
   ): Promise<ApiResponse<{ ticket: SupportTicket }>> {
 
-    return apiClient.post('/support/quick-actions/report-product', {
+    return apiClient.post<any>('/support/quick-actions/report-product', {
       productId,
       issueType,
       description,
@@ -384,14 +384,14 @@ class SupportService {
    * Get public support config (hours, phones, categories, open status)
    */
   async getSupportConfig(): Promise<ApiResponse<PublicSupportConfig>> {
-    return apiClient.get('/support/config/public');
+    return apiClient.get<any>('/support/config/public');
   }
 
   /**
    * Request a callback from support
    */
   async requestCallback(data: CallbackRequest): Promise<ApiResponse<CallbackResponse>> {
-    return apiClient.post('/support/callback', data);
+    return apiClient.post<any>('/support/callback', data as any);
   }
 }
 

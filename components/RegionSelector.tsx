@@ -62,7 +62,7 @@ export function RegionSelector({
           await setRegion(regionId);
           onRegionChange?.(regionId);
           setModalVisible(false);
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to change region. Please try again.');
         } finally {
           if (!isMounted()) return;
@@ -223,7 +223,7 @@ export function RegionSelectorPage() {
         try {
           if (!isMounted()) return;
           await setRegion(regionId);
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to change region');
         } finally {
           if (!isMounted()) return;

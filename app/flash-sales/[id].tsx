@@ -141,7 +141,7 @@ function FlashSaleDetailPage() {
         if (!isMounted()) return;
         setError(response.message || 'Failed to load flash sale details');
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error loading flash sale details:', error);
       if (!isMounted()) return;
       setError('Failed to load flash sale details');
@@ -208,7 +208,7 @@ function FlashSaleDetailPage() {
         message: `🔥 Flash Deal Alert!\n\n${flashSale.title}\n\n${flashSale.discountPercentage}% OFF - Only ${flashSale.maxQuantity - flashSale.soldQuantity} left!\n\nUse code: ${flashSale.promoCode || 'No code needed'}`,
         title: flashSale.title,
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error sharing flash sale:', error);
     }
   };
@@ -403,7 +403,7 @@ function FlashSaleDetailPage() {
               <View style={styles.stockHeader}>
                 <View style={styles.stockLeft}>
                   <ThemedText style={styles.stockEmoji}>{urgency.emoji}</ThemedText>
-                  <ThemedText style={[styles.stockTitle, stockPercentage >= 80 && styles.stockTitleUrgent]}>
+                  <ThemedText style={[styles.stockTitle, stockPercentage >= 80 ? styles.stockTitleUrgent : null]}>
                     {urgency.text}
                   </ThemedText>
                 </View>
@@ -439,7 +439,7 @@ function FlashSaleDetailPage() {
                     </View>
                   </View>
                   <Pressable
-                    style={[styles.copyButton, copiedCode && styles.copyButtonSuccess]}
+                    style={[styles.copyButton, copiedCode ? styles.copyButtonSuccess : null]}
                     onPress={handleCopyCode}
                   >
                     <Ionicons
@@ -447,7 +447,7 @@ function FlashSaleDetailPage() {
                       size={18}
                       color={copiedCode ? 'white' : '#CA8A04'}
                     />
-                    <ThemedText style={[styles.copyButtonText, copiedCode && styles.copyButtonTextSuccess]}>
+                    <ThemedText style={[styles.copyButtonText, copiedCode ? styles.copyButtonTextSuccess : null]}>
                       {copiedCode ? 'Copied!' : 'Copy'}
                     </ThemedText>
                   </Pressable>
@@ -1006,8 +1006,8 @@ const styles = StyleSheet.create({
   },
   copyButtonText: {
     color: '#CA8A04',
-    fontWeight: '600',
     ...Typography.body,
+    fontWeight: '600',
   },
   copyButtonTextSuccess: {
     color: colors.text.inverse,

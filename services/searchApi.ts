@@ -146,25 +146,25 @@ class SearchService {
   // Search products
   async searchProducts(params: ProductSearchParams): Promise<ApiResponse<ProductSearchResponse>> {
 
-    return apiClient.get('/products/search', params);
+    return apiClient.get<any>('/products/search', params as any);
   }
 
   // Search stores
   async searchStores(params: StoreSearchParams): Promise<ApiResponse<StoreSearchResponse>> {
 
-    return apiClient.get('/stores/search', params);
+    return apiClient.get<any>('/stores/search', params as any);
   }
 
   // Advanced store search with filters
   async advancedStoreSearch(params: AdvancedStoreSearchParams): Promise<ApiResponse<StoreSearchResponse>> {
 
-    return apiClient.get('/stores/search/advanced', params);
+    return apiClient.get<any>('/stores/search/advanced', params as any);
   }
 
   // Get search suggestions from autocomplete endpoint
   async getSearchSuggestions(query: string): Promise<ApiResponse<SearchSuggestion[]>> {
     try {
-      const response = await apiClient.get('/search/autocomplete', { q: query });
+      const response = await apiClient.get<any>('/search/autocomplete', { q: query });
       if (response.success && response.data) {
         const suggestions: SearchSuggestion[] = [];
         const data = response.data as any;
@@ -226,7 +226,7 @@ class SearchService {
     }
   ): Promise<ApiResponse<ProductSearchResponse>> {
 
-    return apiClient.get(`/products/category/${categorySlug}`, params);
+    return apiClient.get<any>(`/products/category/${categorySlug}`, params as any);
   }
 
   // Search stores by category
@@ -241,7 +241,7 @@ class SearchService {
     }
   ): Promise<ApiResponse<StoreSearchResponse>> {
 
-    return apiClient.get(`/stores/search-by-category/${category}`, params);
+    return apiClient.get<any>(`/stores/search-by-category/${category}`, params as any);
   }
 
   // Search stores by delivery time
@@ -256,7 +256,7 @@ class SearchService {
     }
   ): Promise<ApiResponse<StoreSearchResponse>> {
 
-    return apiClient.get('/stores/search-by-delivery-time', params);
+    return apiClient.get<any>('/stores/search-by-delivery-time', params as any);
   }
 
   // Get nearby stores (useful for location-based search)
@@ -269,7 +269,7 @@ class SearchService {
     }
   ): Promise<ApiResponse<StoreSearchResponse>> {
 
-    return apiClient.get('/stores/nearby', params);
+    return apiClient.get<any>('/stores/nearby', params as any);
   }
 
   // Search products by store
@@ -284,25 +284,25 @@ class SearchService {
     }
   ): Promise<ApiResponse<ProductSearchResponse>> {
 
-    return apiClient.get(`/stores/${storeId}/products`, params);
+    return apiClient.get<any>(`/stores/${storeId}/products`, params as any);
   }
 
   // Get featured products (useful for search homepage)
   async getFeaturedProducts(limit: number = 10): Promise<ApiResponse<{ data: ProductSearchResult[] }>> {
 
-    return apiClient.get('/products/featured', { limit });
+    return apiClient.get<any>('/products/featured', { limit });
   }
 
   // Get new arrivals (useful for search homepage)
   async getNewArrivals(limit: number = 10): Promise<ApiResponse<{ data: ProductSearchResult[] }>> {
 
-    return apiClient.get('/products/new-arrivals', { limit });
+    return apiClient.get<any>('/products/new-arrivals', { limit });
   }
 
   // Get featured stores (useful for search homepage)
   async getFeaturedStores(limit: number = 10): Promise<ApiResponse<{ stores: StoreSearchResult[] }>> {
 
-    return apiClient.get('/stores/featured', { limit });
+    return apiClient.get<any>('/stores/featured', { limit });
   }
 
   // Search products grouped by name with seller comparison
@@ -331,7 +331,7 @@ class SearchService {
     total: number;
     hasMore: boolean;
   }>> {
-    return apiClient.get('/search/products-grouped', params);
+    return apiClient.get<any>('/search/products-grouped', params as any);
   }
 
   // Get "Did you mean?" typo correction suggestions

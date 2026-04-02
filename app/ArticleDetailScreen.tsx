@@ -240,7 +240,7 @@ function ArticleDetailScreen() {
         setArticle(parsedItem);
         setLikesCount(parsedItem.engagement?.likes || 0);
         setLoading(false);
-      } catch (err) {
+      } catch (err: any) {
         setError('Failed to load article');
         setLoading(false);
       }
@@ -270,7 +270,7 @@ function ArticleDetailScreen() {
         message: `Check out this article on ${BRAND.APP_NAME}: ${article.title}`,
         title: article.title,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [article]);
@@ -288,7 +288,7 @@ function ArticleDetailScreen() {
     async (product: DiscoverProduct) => {
       try {
         await addItem({ productId: product._id, quantity: 1 } as any);
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     },
@@ -415,7 +415,7 @@ function ArticleDetailScreen() {
             {!imageError && (
               <CachedImage
                 source={imageUrl}
-                style={[styles.featuredImage, !imageLoaded && styles.hiddenImage]}
+                style={[styles.featuredImage, !imageLoaded ? styles.hiddenImage : null]}
                 contentFit="cover"
                 onLoad={() => setImageLoaded(true)}
                 onError={() => {

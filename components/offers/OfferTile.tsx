@@ -45,7 +45,7 @@ const OfferTile: React.FC<OfferTileProps> = ({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
     >
       {/* Top row: logo + store name + distance */}
       <View style={styles.topRow}>

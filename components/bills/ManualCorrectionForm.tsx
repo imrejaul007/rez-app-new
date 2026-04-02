@@ -167,7 +167,7 @@ function ManualCorrectionForm({
               </Pressable>
             ) : (
               <TextInput
-                style={[styles.input, errors.merchantName && styles.inputError]}
+                style={[styles.input, errors.merchantName ? styles.inputError : null]}
                 value={corrections.merchantName}
                 onChangeText={(text) => {
                   setCorrections({ ...corrections, merchantName: text });
@@ -211,7 +211,7 @@ function ManualCorrectionForm({
               Bill Amount ({currencySymbol}) <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
-              style={[styles.input, errors.amount && styles.inputError]}
+              style={[styles.input, errors.amount ? styles.inputError : null]}
               value={corrections.amount?.toString()}
               onChangeText={(text) => {
                 setCorrections({ ...corrections, amount: parseFloat(text) || 0 });
@@ -255,7 +255,7 @@ function ManualCorrectionForm({
               Bill Date <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
-              style={[styles.input, errors.billDate && styles.inputError]}
+              style={[styles.input, errors.billDate ? styles.inputError : null]}
               value={corrections.billDate}
               onChangeText={(text) => {
                 setCorrections({ ...corrections, billDate: text });

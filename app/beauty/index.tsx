@@ -150,7 +150,7 @@ const BeautyPage: React.FC = () => {
         if (!isMounted()) return;
         setFeaturedSalons(storesResponse.data.stores.slice(0, 6).map(transformStoreToSalon));
         if (!isMounted()) return;
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
           salons: storesResponse.data?.pagination?.total || storesResponse.data?.stores?.length || 0,
         }));
@@ -161,12 +161,12 @@ const BeautyPage: React.FC = () => {
         if (!isMounted()) return;
         setTrendingProducts(productsResponse.data.products.slice(0, 8).map(transformProduct));
         if (!isMounted()) return;
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
           products: productsResponse.data?.pagination?.total || productsResponse.data?.products?.length || 0,
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       catchAndReport(error, setError, 'BeautyPage/fetchData');
     } finally {
       if (!isMounted()) return;
@@ -221,7 +221,10 @@ const BeautyPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -280,12 +283,7 @@ const BeautyPage: React.FC = () => {
           <Text style={styles.sectionTitle}>Browse Categories</Text>
           <View style={styles.categoriesGrid}>
             {BEAUTY_CATEGORIES.map((cat) => (
-              <Pressable
-                key={cat.id}
-                style={styles.categoryCard}
-                onPress={() => handleCategoryPress(cat.route)}
-               
-              >
+              <Pressable key={cat.id} style={styles.categoryCard} onPress={() => handleCategoryPress(cat.route)}>
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                   <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                 </View>
@@ -306,12 +304,7 @@ const BeautyPage: React.FC = () => {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
               {featuredSalons.map((salon) => (
-                <Pressable
-                  key={salon.id}
-                  style={styles.salonCard}
-                  onPress={() => handleSalonPress(salon.id)}
-                 
-                >
+                <Pressable key={salon.id} style={styles.salonCard} onPress={() => handleSalonPress(salon.id)}>
                   <CachedImage source={salon.image} style={styles.salonImage} />
                   {salon.isVerified && (
                     <View style={styles.verifiedBadge}>
@@ -322,8 +315,12 @@ const BeautyPage: React.FC = () => {
                     <Text style={styles.cashbackText}>{salon.cashback}</Text>
                   </View>
                   <View style={styles.salonInfo}>
-                    <Text style={styles.salonName} numberOfLines={1}>{salon.name}</Text>
-                    <Text style={styles.salonCategory} numberOfLines={1}>{salon.category}</Text>
+                    <Text style={styles.salonName} numberOfLines={1}>
+                      {salon.name}
+                    </Text>
+                    <Text style={styles.salonCategory} numberOfLines={1}>
+                      {salon.category}
+                    </Text>
                     <View style={styles.salonMeta}>
                       <View style={styles.ratingContainer}>
                         <Ionicons name="star" size={12} color={COLORS.amber500} />
@@ -349,12 +346,7 @@ const BeautyPage: React.FC = () => {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
               {trendingProducts.map((product) => (
-                <Pressable
-                  key={product.id}
-                  style={styles.productCard}
-                  onPress={() => handleProductPress(product.id)}
-                 
-                >
+                <Pressable key={product.id} style={styles.productCard} onPress={() => handleProductPress(product.id)}>
                   <View style={styles.productImageContainer}>
                     <CachedImage source={product.image} style={styles.productImage} />
                     {product.discount > 0 && (
@@ -365,11 +357,19 @@ const BeautyPage: React.FC = () => {
                   </View>
                   <View style={styles.productInfo}>
                     <Text style={styles.productBrand}>{product.brand}</Text>
-                    <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
+                    <Text style={styles.productName} numberOfLines={2}>
+                      {product.name}
+                    </Text>
                     <View style={styles.priceRow}>
-                      <Text style={styles.productPrice}>{currencySymbol}{product.price.toLocaleString()}</Text>
+                      <Text style={styles.productPrice}>
+                        {currencySymbol}
+                        {product.price.toLocaleString()}
+                      </Text>
                       {product.discount > 0 && (
-                        <Text style={styles.originalPrice}>{currencySymbol}{product.originalPrice.toLocaleString()}</Text>
+                        <Text style={styles.originalPrice}>
+                          {currencySymbol}
+                          {product.originalPrice.toLocaleString()}
+                        </Text>
                       )}
                     </View>
                     <Text style={styles.productCashback}>{product.cashback} cashback</Text>
@@ -385,12 +385,7 @@ const BeautyPage: React.FC = () => {
           <Text style={styles.sectionTitle}>Top Brands</Text>
           <View style={styles.brandsGrid}>
             {TOP_BRANDS.map((brand) => (
-              <Pressable
-                key={brand.id}
-                style={styles.brandCard}
-               
-                onPress={() => router.push(brand.route as any)}
-              >
+              <Pressable key={brand.id} style={styles.brandCard} onPress={() => router.push(brand.route as any)}>
                 <Text style={styles.brandLogo}>{brand.logo}</Text>
                 <Text style={styles.brandName}>{brand.name}</Text>
                 <Text style={styles.brandDiscount}>{brand.discount}</Text>
@@ -412,10 +407,7 @@ const BeautyPage: React.FC = () => {
               <Text style={styles.promoTitle}>Beauty Week Special</Text>
               <Text style={styles.promoSubtitle}>Extra 15% cashback on all bookings</Text>
             </View>
-            <Pressable
-              style={styles.promoButton}
-              onPress={() => router.push('/offers' as any)}
-            >
+            <Pressable style={styles.promoButton} onPress={() => router.push('/offers' as any)}>
               <Text style={styles.promoButtonText}>View Offers</Text>
             </Pressable>
           </LinearGradient>
@@ -443,10 +435,7 @@ const BeautyPage: React.FC = () => {
               </View>
               <Text style={styles.quickActionLabel}>Near{'\n'}Me</Text>
             </Pressable>
-            <Pressable
-              style={styles.quickActionCard}
-              onPress={() => router.push('/offers?type=cashback' as any)}
-            >
+            <Pressable style={styles.quickActionCard} onPress={() => router.push('/offers?type=cashback' as any)}>
               <View style={[styles.quickActionIcon, { backgroundColor: colors.tint.green }]}>
                 <Ionicons name="wallet" size={24} color={Colors.success} />
               </View>
@@ -526,7 +515,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   statsRow: {
     flexDirection: 'row',
@@ -565,7 +554,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.md,
   },
   viewAllText: {
@@ -599,7 +588,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
   },
   horizontalList: {
@@ -644,7 +633,7 @@ const styles = StyleSheet.create({
   salonName: {
     ...Typography.body,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   salonCategory: {
@@ -665,7 +654,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   distanceText: {
     ...Typography.bodySmall,
@@ -709,7 +698,7 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
     minHeight: 32,
   },
@@ -722,7 +711,7 @@ const styles = StyleSheet.create({
   productPrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   originalPrice: {
     ...Typography.caption,
@@ -753,7 +742,7 @@ const styles = StyleSheet.create({
   brandName: {
     ...Typography.body,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
   },
   brandDiscount: {
@@ -817,7 +806,7 @@ const styles = StyleSheet.create({
   },
   quickActionLabel: {
     ...Typography.caption,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
     fontWeight: '500',
   },

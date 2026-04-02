@@ -153,7 +153,7 @@ export function useEventsPage(options: UseEventsPageOptions = {}): UseEventsPage
         total: result.total,
         hasMore: result.hasMore,
       });
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof Error && err.name === 'AbortError') {
         return; // Ignore aborted requests
       }
@@ -203,7 +203,7 @@ export function useEventsPage(options: UseEventsPageOptions = {}): UseEventsPage
         offset: prev.offset + pageSize,
         hasMore: result.hasMore,
       }));
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load more events');
     } finally {
       setLoading(false);

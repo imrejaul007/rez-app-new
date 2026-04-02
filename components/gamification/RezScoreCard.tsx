@@ -167,7 +167,7 @@ const RezScoreCard: React.FC<RezScoreCardProps> = ({
 
   return (
     <Pressable
-      style={({ pressed }) => [styles.container, pressed && styles.containerPressed]}
+      style={({ pressed }) => [styles.container, pressed ? styles.containerPressed : null]}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`REZ Score ${score}, ${tier} tier. Tap for full details.`}

@@ -171,7 +171,7 @@ export function useGroupBuying() {
       if (myGroupsRes.success && myGroupsRes.data) {
         myGroupsRes.data.forEach((group) => subscribeToGroup(group.id));
       }
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -211,7 +211,7 @@ export function useGroupBuying() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await groupBuyingApi.createGroup(data);
+      const response: any = await groupBuyingApi.createGroup(data);
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to create group');
@@ -227,7 +227,7 @@ export function useGroupBuying() {
       subscribeToGroup(response.data.id);
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -242,7 +242,7 @@ export function useGroupBuying() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await groupBuyingApi.joinGroup(data);
+      const response: any = await groupBuyingApi.joinGroup(data);
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to join group');
@@ -261,7 +261,7 @@ export function useGroupBuying() {
       subscribeToGroup(response.data.id);
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -276,7 +276,7 @@ export function useGroupBuying() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await groupBuyingApi.leaveGroup(groupId);
+      const response: any = await groupBuyingApi.leaveGroup(groupId);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to leave group');
@@ -292,7 +292,7 @@ export function useGroupBuying() {
       unsubscribeFromGroup(groupId);
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -311,9 +311,9 @@ export function useGroupBuying() {
       }
 
       // Fallback to API if socket not available
-      const response = await groupBuyingApi.sendMessage(groupId, message);
+      const response: any = await groupBuyingApi.sendMessage(groupId, message);
       return response.success;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   };
@@ -323,7 +323,7 @@ export function useGroupBuying() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await groupBuyingApi.getGroup(groupId);
+      const response: any = await groupBuyingApi.getGroup(groupId);
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to fetch group details');
@@ -339,7 +339,7 @@ export function useGroupBuying() {
       subscribeToGroup(groupId);
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -354,7 +354,7 @@ export function useGroupBuying() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await groupBuyingApi.getGroupByCode(code);
+      const response: any = await groupBuyingApi.getGroupByCode(code);
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Group not found');
@@ -367,7 +367,7 @@ export function useGroupBuying() {
       }));
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -382,7 +382,7 @@ export function useGroupBuying() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await groupBuyingApi.checkout(data);
+      const response: any = await groupBuyingApi.checkout(data);
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Checkout failed');
@@ -391,7 +391,7 @@ export function useGroupBuying() {
       setState((prev) => ({ ...prev, loading: false }));
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -404,7 +404,7 @@ export function useGroupBuying() {
   // Refresh available groups
   const refreshAvailableGroups = async (filters?: GroupBuyingFilters) => {
     try {
-      const response = await groupBuyingApi.getAvailableGroups(filters);
+      const response: any = await groupBuyingApi.getAvailableGroups(filters);
 
       if (response.success && response.data) {
         setState((prev) => ({
@@ -420,7 +420,7 @@ export function useGroupBuying() {
   // Refresh my groups
   const refreshMyGroups = async () => {
     try {
-      const response = await groupBuyingApi.getMyGroups();
+      const response: any = await groupBuyingApi.getMyGroups();
 
       if (response.success && response.data) {
         setState((prev) => ({

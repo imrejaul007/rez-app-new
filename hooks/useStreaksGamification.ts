@@ -13,7 +13,7 @@ import {
   PlayAndEarnResponse,
 } from '@/types/streaksGamification.types';
 
-// Timeout for API calls to prevent infinite loading
+// ReturnType<typeof setTimeout> for API calls to prevent infinite loading
 const API_TIMEOUT = 10000; // 10 seconds
 
 // Default streak data (used as initial state before API data loads)
@@ -92,7 +92,7 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
       });
 
       // Race between API call and timeout
-      const response = await Promise.race([
+      const response: any = await Promise.race([
         gamificationAPI.getPlayAndEarnData(),
         timeoutPromise,
       ]).finally(() => clearTimeout(timeoutId));
@@ -142,7 +142,7 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
   // Claim mission reward
   const claimReward = useCallback(async (missionId: string): Promise<boolean> => {
     try {
-      const response = await gamificationAPI.claimChallengeReward(missionId);
+      const response: any = await (gamificationAPI as any).claimChallengeReward(missionId);
 
       if (response.success) {
         // Update local state to reflect claimed reward
@@ -163,7 +163,7 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
       }
 
       return false;
-    } catch (err) {
+    } catch (err: any) {
       return false;
     }
   }, []);
@@ -171,7 +171,7 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
   // Check in for streak
   const checkin = useCallback(async () => {
     try {
-      const response = await gamificationAPI.streakCheckin();
+      const response: any = await gamificationAPI.streakCheckin();
 
       if (response.success && response.data) {
         // Update streak data

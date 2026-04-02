@@ -73,7 +73,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const scanIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const scanIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasScannedRef = useRef(false);
 
   // Check webcam availability and auto-start camera
@@ -210,12 +210,12 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
     try {
       // Try parsing as JSON first
       const qrData: QRCodeData = JSON.parse(data);
-      if (qrData.type === 'REZ_STORE_PAYMENT' && qrData.code) {
+      if (qrData.type === 'NUQTA_STORE_PAYMENT' && qrData.code) {
         stopScanning();
         onScan(qrData.code);
         return;
       }
-    } catch (e) {
+    } catch (e: any) {
       // Not JSON, try as plain text
     }
 
@@ -260,7 +260,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
 
     try {
       const qrData: QRCodeData = JSON.parse(code);
-      if (qrData.type === 'REZ_STORE_PAYMENT' && qrData.code) {
+      if (qrData.type === 'NUQTA_STORE_PAYMENT' && qrData.code) {
         stopScanning();
         onScan(qrData.code);
         return;
@@ -430,7 +430,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
           </View>
 
           <Pressable
-            style={[styles.submitBtn, !manualCode && styles.submitBtnDisabled]}
+            style={[styles.submitBtn, !manualCode ? styles.submitBtnDisabled : null]}
             onPress={validateAndSubmit}
             disabled={!manualCode}
           >

@@ -21,7 +21,7 @@ interface RequestStats {
 interface InFlightRequest<T> {
   promise: Promise<T>;
   timestamp: number;
-  timeout?: NodeJS.Timeout;
+  timeout?: ReturnType<typeof setTimeout>;
   controller?: AbortController;
 }
 
@@ -109,7 +109,7 @@ export class RequestDeduplicator {
     }
 
     // Create timeout handler
-    let timeoutId: NodeJS.Timeout | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(() => {
         this.cleanup(key);

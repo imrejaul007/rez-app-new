@@ -170,14 +170,14 @@ function LevelUpCelebration({
     }
   };
 
-  const getLevelColor = (level: number) => {
+  const getLevelColor = (level: number): [string, string] => {
     switch (level) {
       case 1:
         return [COLORS.primary, COLORS.primaryDark];
       case 2:
         return [colors.lightMustard, colors.nileBlue];
       case 3:
-        return [COLORS.gold, COLORS.goldDark];
+        return [COLORS.gold, (COLORS as any).goldDark];
       default:
         return [COLORS.primary, COLORS.primaryDark];
     }
@@ -227,7 +227,7 @@ function LevelUpCelebration({
             ]}
           >
             <LinearGradient
-              colors={[...getLevelColor(newLevel), 'transparent']}
+              colors={[...getLevelColor(newLevel), 'transparent'] as [string, string, string]}
               style={styles.glow}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}

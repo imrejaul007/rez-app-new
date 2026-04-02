@@ -332,7 +332,7 @@ export function createAbortController(
   timeout: number
 ): {
   controller: AbortController;
-  timeoutId: NodeJS.Timeout;
+  timeoutId: ReturnType<typeof setTimeout>;
 } {
   const controller = new AbortController();
   const timeoutId = setTimeout(

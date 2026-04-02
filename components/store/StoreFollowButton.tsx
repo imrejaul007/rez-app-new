@@ -93,7 +93,7 @@ function StoreFollowButton({
         setIsFollowing(response.data.following);
         setHasCheckedStatus(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       // Silently fail - use initial values
     }
   };
@@ -246,14 +246,12 @@ function StoreFollowButton({
         <Pressable
           style={[
             styles.compactButton,
-            isFollowing && styles.compactButtonFollowing,
-            isLoading && styles.buttonLoading,
-          ]}
+            isFollowing ? styles.compactButtonFollowing : undefined,
+            isLoading ? styles.buttonLoading : undefined,
+          ] as any}
           onPress={handleFollowToggle}
           disabled={isLoading}
-         
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          {...({ onMouseEnter: () => setIsHovered(true), onMouseLeave: () => setIsHovered(false) } as any)}
           accessibilityRole="button"
           accessibilityLabel={isFollowing ? `Unfollow ${storeName}` : `Follow ${storeName}`}
           accessibilityState={{ disabled: isLoading }}
@@ -293,14 +291,12 @@ function StoreFollowButton({
       <Pressable
         style={[
           styles.defaultButton,
-          isFollowing && styles.defaultButtonFollowing,
-          isLoading && styles.buttonLoading,
-        ]}
+          isFollowing ? styles.defaultButtonFollowing : undefined,
+          isLoading ? styles.buttonLoading : undefined,
+        ] as any}
         onPress={handleFollowToggle}
         disabled={isLoading}
-       
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        {...({ onMouseEnter: () => setIsHovered(true), onMouseLeave: () => setIsHovered(false) } as any)}
         accessibilityRole="button"
         accessibilityLabel={
           isFollowing

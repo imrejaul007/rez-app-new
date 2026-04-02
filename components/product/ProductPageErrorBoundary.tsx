@@ -98,7 +98,7 @@ class ProductPageErrorBoundary extends Component<Props, State> {
               <Ionicons
                 name={isNetworkError ? "cloud-offline" : isNotFoundError ? "search" : "alert-circle"}
                 size={64}
-                color={Colors.error}
+                color={colors.error}
               />
             </View>
 
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   errorDetailsTitle: {
     ...Typography.labelSmall,
-    color: Colors.error,
+    color: colors.error,
     marginBottom: Spacing.xs,
   },
   errorDetailsText: {

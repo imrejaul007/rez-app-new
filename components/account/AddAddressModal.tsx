@@ -112,7 +112,7 @@ function AddAddressModal({ visible, onClose, onAdd }: AddAddressModalProps) {
         handleClose();
         showAlert('Success', 'Address added successfully');
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -323,7 +323,7 @@ function AddAddressModal({ visible, onClose, onAdd }: AddAddressModalProps) {
                 style={styles.checkboxContainer}
                 onPress={() => setIsDefault(!isDefault)}
               >
-                <View style={[styles.checkbox, isDefault && styles.checkboxChecked]}>
+                <View style={[styles.checkbox, isDefault ? styles.checkboxChecked : null]}>
                   {isDefault && <Ionicons name="checkmark" size={16} color="white" />}
                 </View>
                 <ThemedText style={styles.checkboxLabel}>
@@ -345,7 +345,7 @@ function AddAddressModal({ visible, onClose, onAdd }: AddAddressModalProps) {
               </Pressable>
 
               <Pressable
-                style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+                style={[styles.submitButton, isSubmitting ? styles.submitButtonDisabled : null]}
                 onPress={handleSubmit}
                 disabled={isSubmitting}
               >

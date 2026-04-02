@@ -26,7 +26,8 @@ const SocialImpactEventDetail = () => {
   const colorScheme = useColorScheme();
   const isDark = false; // Force white theme
   const params = useLocalSearchParams();
-  const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : params.id?.toString() || '1';
+  const id =
+    typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : String(params.id || '1');
   const [isRegistered, setIsRegistered] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ const SocialImpactEventDetail = () => {
         if (res.data) {
           setEventData(res.data);
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -58,7 +59,7 @@ const SocialImpactEventDetail = () => {
       setIsRegistered(true);
       if (!isMounted()) return;
       setShowConfirmation(true);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -82,31 +83,32 @@ const SocialImpactEventDetail = () => {
       goal: 500,
       impact: 'Save 3 lives per donation',
       status: 'upcoming',
-      description: 'Join us for a life-saving blood donation drive. Every donation can save up to 3 lives. Registered donors will receive health checkup and refreshments.',
+      description:
+        'Join us for a life-saving blood donation drive. Every donation can save up to 3 lives. Registered donors will receive health checkup and refreshments.',
       requirements: [
         'Age between 18-65 years',
         'Weight above 50kg',
         'Valid ID proof required',
         'No recent illness or medication',
-        'Fasting not required, eat normally'
+        'Fasting not required, eat normally',
       ],
       benefits: [
         'Free health checkup',
         'Refreshments provided',
         'Blood donor certificate',
         `${BRAND.COIN_NAME} + Apollo branded coins`,
-        'Priority access to blood bank if needed'
+        'Priority access to blood bank if needed',
       ],
       contact: {
         phone: '+91-9876543210',
-        email: 'blooddrive@apollo.com'
+        email: 'blooddrive@apollo.com',
       },
       schedule: [
         { time: '9:00 AM', activity: 'Registration & Check-in' },
         { time: '9:30 AM', activity: 'Health Screening' },
         { time: '10:00 AM', activity: 'Blood Donation' },
-        { time: '4:30 PM', activity: 'Refreshments & Certificate' }
-      ]
+        { time: '4:30 PM', activity: 'Refreshments & Certificate' },
+      ],
     },
     '2': {
       type: 'tree-plantation',
@@ -126,31 +128,32 @@ const SocialImpactEventDetail = () => {
       goal: 200,
       impact: 'Plant 1000+ saplings',
       status: 'upcoming',
-      description: 'Help us make the city greener! Join our tree plantation drive and contribute to a sustainable future. Each participant will plant at least 5 saplings.',
+      description:
+        'Help us make the city greener! Join our tree plantation drive and contribute to a sustainable future. Each participant will plant at least 5 saplings.',
       requirements: [
         'Comfortable outdoor clothing',
         'Closed-toe shoes required',
         'Bring your own water bottle',
         'Sun protection (hat, sunscreen)',
-        'Minimum age 12 years (with guardian)'
+        'Minimum age 12 years (with guardian)',
       ],
       benefits: [
         'Contribute to environmental conservation',
         'Learn about native tree species',
         'Breakfast and refreshments',
         'Tree adoption certificate',
-        `${BRAND.APP_NAME} + Branded coins`
+        `${BRAND.APP_NAME} + Branded coins`,
       ],
       contact: {
         phone: '+91-9876543211',
-        email: 'events@greenearth.org'
+        email: 'events@greenearth.org',
       },
       schedule: [
         { time: '7:00 AM', activity: 'Assembly & Breakfast' },
         { time: '7:30 AM', activity: 'Site allocation & Tools distribution' },
         { time: '8:00 AM', activity: 'Plantation begins' },
-        { time: '10:30 AM', activity: 'Certificates & Photo session' }
-      ]
+        { time: '10:30 AM', activity: 'Certificates & Photo session' },
+      ],
     },
     '3': {
       type: 'cleanup',
@@ -170,31 +173,32 @@ const SocialImpactEventDetail = () => {
       goal: 150,
       impact: 'Clean 5 km of coastline',
       status: 'upcoming',
-      description: 'Join us in keeping our beaches clean! Participate in this beach cleanup drive and help protect marine life. All equipment will be provided.',
+      description:
+        'Join us in keeping our beaches clean! Participate in this beach cleanup drive and help protect marine life. All equipment will be provided.',
       requirements: [
         'Comfortable clothes you can get dirty',
         'Closed-toe shoes (no flip-flops)',
         'Sun protection essential',
         'Bring reusable water bottle',
-        'Gloves will be provided'
+        'Gloves will be provided',
       ],
       benefits: [
         'Protect marine ecosystem',
         'Morning refreshments',
         'Cleanup completion certificate',
         `${BRAND.APP_NAME} + Branded coins`,
-        'Photo with collected waste stats'
+        'Photo with collected waste stats',
       ],
       contact: {
         phone: '+91-9876543212',
-        email: 'cleanup@cleanbeaches.org'
+        email: 'cleanup@cleanbeaches.org',
       },
       schedule: [
         { time: '6:00 AM', activity: 'Registration & Equipment' },
         { time: '6:30 AM', activity: 'Beach Cleanup begins' },
         { time: '8:30 AM', activity: 'Waste sorting & counting' },
-        { time: '9:00 AM', activity: 'Certificates & Group photo' }
-      ]
+        { time: '9:00 AM', activity: 'Certificates & Group photo' },
+      ],
     },
     '4': {
       type: 'ngo-volunteer',
@@ -214,46 +218,59 @@ const SocialImpactEventDetail = () => {
       goal: 100,
       impact: 'Feed 200+ people',
       status: 'ongoing',
-      description: 'Help us serve nutritious meals to those in need. Volunteers assist in cooking, serving, and cleanup. A fulfilling way to give back to the community.',
+      description:
+        'Help us serve nutritious meals to those in need. Volunteers assist in cooking, serving, and cleanup. A fulfilling way to give back to the community.',
       requirements: [
         'Available for 3 hours every Sunday',
         'Basic hygiene (hair tied, clean hands)',
         'Comfortable closed shoes',
         'Food handlers training provided',
-        'Age 16+ (or with guardian)'
+        'Age 16+ (or with guardian)',
       ],
       benefits: [
         'Make real impact in community',
         'Free lunch provided',
         'Volunteer certificate (monthly)',
         `${BRAND.COIN_NAME} weekly`,
-        'Meet like-minded people'
+        'Meet like-minded people',
       ],
       contact: {
         phone: '+91-9876543213',
-        email: 'volunteer@feedtheneed.org'
+        email: 'volunteer@feedtheneed.org',
       },
       schedule: [
         { time: '11:00 AM', activity: 'Arrival & Briefing' },
         { time: '11:30 AM', activity: 'Food preparation begins' },
         { time: '12:30 PM', activity: 'Serving meals' },
-        { time: '1:30 PM', activity: 'Cleanup & Debrief' }
-      ]
-    }
+        { time: '1:30 PM', activity: 'Cleanup & Debrief' },
+      ],
+    },
   };
 
   const event = events[id] || events['1'];
 
   const handleCall = () => {
-    try { Linking.openURL(`tel:${event.contact.phone}`); } catch (e) { catchAndWarn(e, 'SocialImpactEventDetail/openURL'); }
+    try {
+      Linking.openURL(`tel:${event.contact.phone}`);
+    } catch (e: any) {
+      catchAndWarn(e, 'SocialImpactEventDetail/openURL');
+    }
   };
 
   const handleEmail = () => {
-    try { Linking.openURL(`mailto:${event.contact.email}`); } catch (e) { catchAndWarn(e, 'SocialImpactEventDetail/openURL'); }
+    try {
+      Linking.openURL(`mailto:${event.contact.email}`);
+    } catch (e: any) {
+      catchAndWarn(e, 'SocialImpactEventDetail/openURL');
+    }
   };
 
   const handleMaps = () => {
-    try { Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(event.fullAddress)}`); } catch (e) { catchAndWarn(e, 'SocialImpactEventDetail/openURL'); }
+    try {
+      Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(event.fullAddress)}`);
+    } catch (e: any) {
+      catchAndWarn(e, 'SocialImpactEventDetail/openURL');
+    }
   };
 
   return (
@@ -266,12 +283,19 @@ const SocialImpactEventDetail = () => {
         {/* Header */}
         <View style={[styles.header, { backgroundColor: isDark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)' }]}>
           <View style={styles.headerContent}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={isDark ? colors.text.inverse : colors.text.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
-              <Text style={[styles.headerTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.title}</Text>
-              <Text style={[styles.headerSubtitle, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.organizer}</Text>
+              <Text style={[styles.headerTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                {event.title}
+              </Text>
+              <Text style={[styles.headerSubtitle, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                {event.organizer}
+              </Text>
             </View>
             <Pressable style={styles.shareButton}>
               <Ionicons name="share-social" size={24} color={isDark ? colors.text.inverse : colors.text.primary} />
@@ -287,41 +311,95 @@ const SocialImpactEventDetail = () => {
 
           {/* Quick Info */}
           <View style={styles.quickInfo}>
-            <View style={[styles.infoCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+            <View
+              style={[
+                styles.infoCard,
+                {
+                  backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+                },
+              ]}
+            >
               <View style={styles.infoHeader}>
                 <Ionicons name="calendar" size={16} color={Colors.info} />
-                <Text style={[styles.infoLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Date</Text>
+                <Text style={[styles.infoLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                  Date
+                </Text>
               </View>
-              <Text style={[styles.infoValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.date}</Text>
+              <Text style={[styles.infoValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                {event.date}
+              </Text>
             </View>
-            <View style={[styles.infoCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+            <View
+              style={[
+                styles.infoCard,
+                {
+                  backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+                },
+              ]}
+            >
               <View style={styles.infoHeader}>
                 <Ionicons name="time" size={16} color={colors.brand.orange} />
-                <Text style={[styles.infoLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Time</Text>
+                <Text style={[styles.infoLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                  Time
+                </Text>
               </View>
-              <Text style={[styles.infoValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.time}</Text>
+              <Text style={[styles.infoValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                {event.time}
+              </Text>
             </View>
           </View>
 
           {/* Location */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
             <View style={styles.locationHeader}>
               <Ionicons name="location" size={20} color={Colors.error} />
               <View style={styles.locationInfo}>
-                <Text style={[styles.locationTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.location}</Text>
-                <Text style={[styles.locationAddress, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.fullAddress}</Text>
+                <Text style={[styles.locationTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                  {event.location}
+                </Text>
+                <Text style={[styles.locationAddress, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                  {event.fullAddress}
+                </Text>
                 <Text style={[styles.locationDistance, { color: Colors.info }]}>{event.distance} away</Text>
               </View>
             </View>
-            <Pressable onPress={handleMaps} style={[styles.mapsButton, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)' }]}>
+            <Pressable
+              onPress={handleMaps}
+              style={[
+                styles.mapsButton,
+                { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)' },
+              ]}
+            >
               <Text style={[styles.mapsButtonText, { color: Colors.info }]}>Open in Maps</Text>
             </Pressable>
           </View>
 
           {/* Description */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
-            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>About This Event</Text>
-            <Text style={[styles.sectionText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.description}</Text>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
+            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+              About This Event
+            </Text>
+            <Text style={[styles.sectionText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+              {event.description}
+            </Text>
           </View>
 
           {/* Impact & Progress */}
@@ -331,16 +409,25 @@ const SocialImpactEventDetail = () => {
           >
             <View style={styles.impactHeader}>
               <Ionicons name="trending-up" size={20} color={Colors.gold} />
-              <Text style={[styles.impactTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Expected Impact</Text>
+              <Text style={[styles.impactTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                Expected Impact
+              </Text>
             </View>
             <Text style={[styles.impactText, { color: isDark ? '#6EE7B7' : '#047857' }]}>{event.impact}</Text>
             <View style={styles.progressHeader}>
-              <Text style={[styles.progressLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Participants</Text>
+              <Text style={[styles.progressLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                Participants
+              </Text>
               <Text style={[styles.progressValue, { color: Colors.gold }]}>
                 {event.enrolled}/{event.goal}
               </Text>
             </View>
-            <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+            <View
+              style={[
+                styles.progressBar,
+                { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default },
+              ]}
+            >
               <LinearGradient
                 colors={[Colors.gold, '#e6b84e']}
                 start={{ x: 0, y: 0 }}
@@ -351,16 +438,28 @@ const SocialImpactEventDetail = () => {
           </LinearGradient>
 
           {/* Rewards */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
             <View style={styles.sectionHeader}>
               <Ionicons name="ribbon" size={20} color={Colors.warning} />
-              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Rewards</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                Rewards
+              </Text>
             </View>
             <View style={styles.rewardsList}>
               <View style={[styles.rewardCard, { backgroundColor: isDark ? 'rgba(255, 205, 87, 0.1)' : colors.linen }]}>
                 <View style={styles.rewardHeader}>
                   <Text style={styles.rewardEmoji}>💰</Text>
-                  <Text style={[styles.rewardLabel, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{BRAND.COIN_NAME}</Text>
+                  <Text style={[styles.rewardLabel, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                    {BRAND.COIN_NAME}
+                  </Text>
                 </View>
                 <Text style={[styles.rewardAmount, { color: Colors.gold }]}>+{event.rewards.rezCoins}</Text>
               </View>
@@ -368,62 +467,114 @@ const SocialImpactEventDetail = () => {
                 <View style={[styles.rewardCard, { backgroundColor: isDark ? 'rgba(168, 85, 247, 0.1)' : '#FAF5FF' }]}>
                   <View style={styles.rewardHeader}>
                     <Text style={styles.rewardEmoji}>🏪</Text>
-                    <Text style={[styles.rewardLabel, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.rewards.brandName} Coins</Text>
+                    <Text style={[styles.rewardLabel, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                      {event.rewards.brandName} Coins
+                    </Text>
                   </View>
-                  <Text style={[styles.rewardAmount, { color: colors.brand.purpleMedium }]}>+{event.rewards.brandedCoins}</Text>
+                  <Text style={[styles.rewardAmount, { color: colors.brand.purpleMedium }]}>
+                    +{event.rewards.brandedCoins}
+                  </Text>
                 </View>
               )}
             </View>
           </View>
 
           {/* Requirements */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
             <View style={styles.sectionHeader}>
               <Ionicons name="information-circle" size={20} color={Colors.info} />
-              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Requirements</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                Requirements
+              </Text>
             </View>
             <View style={styles.list}>
               {event.requirements.map((req: string, idx: number) => (
                 <View key={idx} style={styles.listItem}>
                   <Ionicons name="checkmark-circle" size={16} color={Colors.gold} />
-                  <Text style={[styles.listText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{req}</Text>
+                  <Text style={[styles.listText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                    {req}
+                  </Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Benefits */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
             <View style={styles.sectionHeader}>
               <Ionicons name="heart" size={20} color={Colors.error} />
-              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>What You Get</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+                What You Get
+              </Text>
             </View>
             <View style={styles.list}>
               {event.benefits.map((benefit: string, idx: number) => (
                 <View key={idx} style={styles.listItem}>
                   <View style={[styles.benefitDot, { backgroundColor: Colors.error }]} />
-                  <Text style={[styles.listText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{benefit}</Text>
+                  <Text style={[styles.listText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+                    {benefit}
+                  </Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Schedule */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
-            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Event Schedule</Text>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
+            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+              Event Schedule
+            </Text>
             <View style={styles.scheduleList}>
               {event.schedule.map((item: any, idx: number) => (
                 <View key={idx} style={styles.scheduleItem}>
                   <Text style={[styles.scheduleTime, { color: Colors.info }]}>{item.time}</Text>
-                  <Text style={[styles.scheduleActivity, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{item.activity}</Text>
+                  <Text
+                    style={[styles.scheduleActivity, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}
+                  >
+                    {item.activity}
+                  </Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Contact */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
-            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Contact Organizer</Text>
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: isDark ? colors.text.primary : colors.background.primary,
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+              },
+            ]}
+          >
+            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+              Contact Organizer
+            </Text>
             <View style={styles.contactList}>
               <Pressable onPress={handleCall} style={styles.contactItem}>
                 <Ionicons name="call" size={20} color={Colors.gold} />
@@ -448,7 +599,9 @@ const SocialImpactEventDetail = () => {
           style={[
             styles.registerButton,
             isRegistered && { backgroundColor: Colors.gold },
-            event.status === 'completed' && { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }
+            event.status === 'completed' && {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default,
+            },
           ]}
         >
           {!isRegistered && event.status !== 'completed' ? (
@@ -456,7 +609,12 @@ const SocialImpactEventDetail = () => {
               <Text style={styles.registerButtonText}>Register Now</Text>
             </LinearGradient>
           ) : (
-            <Text style={[styles.registerButtonText, { color: isRegistered ? colors.text.inverse : (isDark ? colors.text.tertiary : colors.text.tertiary) }]}>
+            <Text
+              style={[
+                styles.registerButtonText,
+                { color: isRegistered ? colors.text.inverse : isDark ? colors.text.tertiary : colors.text.tertiary },
+              ]}
+            >
               {isRegistered ? '✓ Registered Successfully' : 'Event Completed'}
             </Text>
           )}
@@ -464,14 +622,25 @@ const SocialImpactEventDetail = () => {
       </View>
 
       {/* Confirmation Modal */}
-      <Modal visible={showConfirmation} transparent animationType="fade" onRequestClose={() => setShowConfirmation(false)}>
+      <Modal
+        visible={showConfirmation}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowConfirmation(false)}
+      >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: isDark ? colors.text.primary : colors.background.primary }]}>
+          <View
+            style={[styles.modalContent, { backgroundColor: isDark ? colors.text.primary : colors.background.primary }]}
+          >
             <View style={[styles.modalIconContainer, { backgroundColor: 'rgba(255, 205, 87, 0.2)' }]}>
               <Ionicons name="checkmark-circle" size={32} color={Colors.gold} />
             </View>
-            <Text style={[styles.modalTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Processing...</Text>
-            <Text style={[styles.modalText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Confirming your registration</Text>
+            <Text style={[styles.modalTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>
+              Processing...
+            </Text>
+            <Text style={[styles.modalText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
+              Confirming your registration
+            </Text>
           </View>
         </View>
       </Modal>
@@ -764,4 +933,3 @@ const styles = StyleSheet.create({
 });
 
 export default withErrorBoundary(SocialImpactEventDetail, 'PlayandearnSocialImpactEventDetail');
-

@@ -49,63 +49,65 @@ import { isSmallDevice, wp, responsiveFontSize } from '@/utils/responsive';
 const { width } = Dimensions.get('window');
 
 // AutoPlay Video Component for Trending Reels
-const AutoPlayVideoReel: React.FC<{ uri: string; poster?: string; style?: any }> = React.memo(({ uri, poster, style }) => {
-  const videoRef = useRef<Video>(null);
-  const webVideoRef = useRef<any>(null); // Use any for cross-platform compatibility
+const AutoPlayVideoReel: React.FC<{ uri: string; poster?: string; style?: any }> = React.memo(
+  ({ uri, poster, style }) => {
+    const videoRef = useRef<Video>(null);
+    const webVideoRef = useRef<any>(null); // Use any for cross-platform compatibility
 
-  useEffect(() => {
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      // For web, create native video element
-      const container = document.querySelector(`[data-video-uri="${uri}"]`);
-      if (container && !container.querySelector('video')) {
-        const video = document.createElement('video');
-        video.src = uri;
-        video.poster = poster || '';
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = true;
-        video.playsInline = true;
-        video.setAttribute('webkit-playsinline', 'true');
-        video.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
-        container.appendChild(video);
-        video.play().catch(() => {});
-        webVideoRef.current = video;
+    useEffect(() => {
+      if (Platform.OS === 'web' && typeof document !== 'undefined') {
+        // For web, create native video element
+        const container = document.querySelector(`[data-video-uri="${uri}"]`);
+        if (container && !container.querySelector('video')) {
+          const video = document.createElement('video');
+          video.src = uri;
+          video.poster = poster || '';
+          video.autoplay = true;
+          video.loop = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.setAttribute('webkit-playsinline', 'true');
+          video.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+          container.appendChild(video);
+          video.play().catch(() => {});
+          webVideoRef.current = video;
+        }
       }
+      return () => {
+        if (webVideoRef.current) {
+          webVideoRef.current.pause();
+          webVideoRef.current.remove();
+        }
+        videoRef.current?.unloadAsync();
+      };
+    }, [uri, poster]);
+
+    if (Platform.OS === 'web') {
+      return (
+        <View
+          style={[{ width: '100%', height: '100%', overflow: 'hidden', backgroundColor: '#1a1a1a' }, style]}
+          // @ts-ignore
+          dataSet={{ videoUri: uri }}
+        />
+      );
     }
-    return () => {
-      if (webVideoRef.current) {
-        webVideoRef.current.pause();
-        webVideoRef.current.remove();
-      }
-      videoRef.current?.unloadAsync();
-    };
-  }, [uri, poster]);
 
-  if (Platform.OS === 'web') {
+    // For mobile, use expo-av
     return (
-      <View
-        style={[{ width: '100%', height: '100%', overflow: 'hidden', backgroundColor: '#1a1a1a' }, style]}
-        // @ts-ignore
-        dataSet={{ videoUri: uri }}
+      <Video
+        ref={videoRef}
+        source={{ uri }}
+        posterSource={poster ? { uri: poster } : undefined}
+        style={[{ width: '100%', height: '100%' }, style]}
+        resizeMode={ResizeMode.COVER}
+        shouldPlay={true}
+        isLooping={true}
+        isMuted={true}
+        useNativeControls={false}
       />
     );
-  }
-
-  // For mobile, use expo-av
-  return (
-    <Video
-      ref={videoRef}
-      source={{ uri }}
-      posterSource={poster ? { uri: poster } : undefined}
-      style={[{ width: '100%', height: '100%' }, style]}
-      resizeMode={ResizeMode.COVER}
-      shouldPlay={true}
-      isLooping={true}
-      isMuted={true}
-      useNativeControls={false}
-    />
-  );
-});
+  },
+);
 
 // No fallback data - only real data from backend
 
@@ -137,102 +139,102 @@ const getDefaultSearchSuggestions = (currencySymbol: string) => [
 const iconToEmojiMap: { [key: string]: string } = {
   // Food & Dining
   'restaurant-outline': '🍔',
-  'restaurant': '🍔',
+  restaurant: '🍔',
   'fast-food-outline': '🍔',
   'fast-food': '🍔',
   'cafe-outline': '☕',
-  'cafe': '☕',
+  cafe: '☕',
   'pizza-outline': '🍕',
-  'pizza': '🍕',
+  pizza: '🍕',
   // Fashion & Shopping
   'shirt-outline': '👔',
-  'shirt': '👔',
+  shirt: '👔',
   'bag-outline': '👜',
-  'bag': '👜',
+  bag: '👜',
   'bag-handle-outline': '👜',
   'bag-handle': '👜',
   // Electronics
   'phone-portrait-outline': '📱',
   'phone-portrait': '📱',
   'laptop-outline': '💻',
-  'laptop': '💻',
+  laptop: '💻',
   'calculator-outline': '📱',
-  'calculator': '📱',
+  calculator: '📱',
   'tv-outline': '📺',
-  'tv': '📺',
+  tv: '📺',
   // Beauty & Personal Care
   'color-palette-outline': '💄',
   'color-palette': '💄',
   'sparkles-outline': '💄',
-  'sparkles': '💄',
+  sparkles: '💄',
   'flower-outline': '💐',
-  'flower': '💐',
+  flower: '💐',
   // Grocery
   'cart-outline': '🛒',
-  'cart': '🛒',
+  cart: '🛒',
   'basket-outline': '🧺',
-  'basket': '🧺',
+  basket: '🧺',
   // Fitness & Sports
   'barbell-outline': '🏋️',
-  'barbell': '🏋️',
+  barbell: '🏋️',
   'fitness-outline': '🏋️',
-  'fitness': '🏋️',
+  fitness: '🏋️',
   'bicycle-outline': '🚴',
-  'bicycle': '🚴',
+  bicycle: '🚴',
   'trophy-outline': '🏆',
-  'trophy': '🏆',
+  trophy: '🏆',
   // Home & Services
   'home-outline': '🏠',
-  'home': '🏠',
+  home: '🏠',
   'construct-outline': '🔧',
-  'construct': '🔧',
+  construct: '🔧',
   'hammer-outline': '🔨',
-  'hammer': '🔨',
+  hammer: '🔨',
   'build-outline': '🛠️',
-  'build': '🛠️',
+  build: '🛠️',
   // Weather & Seasonal
   'snow-outline': '❄️',
-  'snow': '❄️',
+  snow: '❄️',
   'sunny-outline': '☀️',
-  'sunny': '☀️',
+  sunny: '☀️',
   // Payments & Bills
   'receipt-outline': '🧾',
-  'receipt': '🧾',
+  receipt: '🧾',
   'card-outline': '💳',
-  'card': '💳',
+  card: '💳',
   'cash-outline': '💵',
-  'cash': '💵',
+  cash: '💵',
   // Education & Coaching
   'book-outline': '📚',
-  'book': '📚',
+  book: '📚',
   'school-outline': '🎓',
-  'school': '🎓',
+  school: '🎓',
   // Medical & Health
   'medical-outline': '🏥',
-  'medical': '🏥',
+  medical: '🏥',
   'medkit-outline': '💊',
-  'medkit': '💊',
+  medkit: '💊',
   'heart-outline': '❤️',
-  'heart': '❤️',
+  heart: '❤️',
   // Entertainment
   'film-outline': '🎬',
-  'film': '🎬',
+  film: '🎬',
   'musical-notes-outline': '🎵',
   'musical-notes': '🎵',
   'game-controller-outline': '🎮',
   'game-controller': '🎮',
   // Travel & Transport
   'airplane-outline': '✈️',
-  'airplane': '✈️',
+  airplane: '✈️',
   'car-outline': '🚗',
-  'car': '🚗',
+  car: '🚗',
   'bus-outline': '🚌',
-  'bus': '🚌',
+  bus: '🚌',
   'train-outline': '🚆',
-  'train': '🚆',
+  train: '🚆',
   // Pets
   'paw-outline': '🐾',
-  'paw': '🐾',
+  paw: '🐾',
   // Default fallbacks by category name keywords
 };
 
@@ -265,7 +267,6 @@ const getEmojiForCategory = (icon?: string, name?: string): string => {
   return '🏷️';
 };
 
-
 const ExplorePage = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -283,21 +284,19 @@ const ExplorePage = () => {
   const [ugcReels, setUgcReels] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [trendingStores, setTrendingStores] = useState<any[]>([]);
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>(() => getDefaultSearchSuggestions(currencySymbol));
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>(() =>
+    getDefaultSearchSuggestions(currencySymbol),
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   // Format location display (memoized to avoid recalc on every render)
-  const locationDisplay = useMemo(() =>
-    currentLocation?.address?.city
-      || currentLocation?.address?.formattedAddress?.split(',')[0]
-      || 'Select Location',
-    [currentLocation?.address?.city, currentLocation?.address?.formattedAddress]
+  const locationDisplay = useMemo(
+    () =>
+      currentLocation?.address?.city || currentLocation?.address?.formattedAddress?.split(',')[0] || 'Select Location',
+    [currentLocation?.address?.city, currentLocation?.address?.formattedAddress],
   );
-  const locationSubtitle = useMemo(() =>
-    currentLocation ? 'Within 3 km' : 'Tap to set location',
-    [currentLocation]
-  );
+  const locationSubtitle = useMemo(() => (currentLocation ? 'Within 3 km' : 'Tap to set location'), [currentLocation]);
 
   // Get Nuqta coins from wallet - use context's pre-computed rezBalance
   const rezCoins = rezBalance;
@@ -371,7 +370,7 @@ const ExplorePage = () => {
       // Update trending stores
       if (storesRes.status === 'fulfilled') {
         const sRes = storesRes.value;
-        const storesData = sRes.data?.stores || sRes.data || [];
+        const storesData: any[] = (sRes.data as any)?.stores || sRes.data || [];
         if (sRes.success && storesData && storesData.length > 0) {
           const transformedStores = storesData.slice(0, 5).map((store: any) => ({
             id: store.id || store._id,
@@ -398,14 +397,16 @@ const ExplorePage = () => {
     fetchAllExploreData(cancelled).finally(() => {
       if (!cancelled.current) setIsLoading(false);
     });
-    return () => { cancelled.current = true; };
+    return () => {
+      cancelled.current = true;
+    };
   }, [fetchAllExploreData]);
 
   // Reset selected category when page gains focus (after navigating back)
   useFocusEffect(
     useCallback(() => {
       setSelectedCategory('all');
-    }, [])
+    }, []),
   );
 
   // Rotate placeholder — only when page is focused (stop background state churn)
@@ -416,12 +417,15 @@ const ExplorePage = () => {
         setCurrentPlaceholder((prev) => (prev + 1) % searchSuggestions.length);
       }, 3000);
       return () => clearInterval(interval);
-    }, [searchSuggestions.length])
+    }, [searchSuggestions.length]),
   );
 
-  const navigateTo = useCallback((path: string) => {
-    router.push(path as any);
-  }, [router]);
+  const navigateTo = useCallback(
+    (path: string) => {
+      router.push(path as any);
+    },
+    [router],
+  );
 
   // Pull-to-refresh — reuses shared fetcher (no duplicate API calls)
   const handleRefresh = useCallback(async () => {
@@ -436,300 +440,441 @@ const ExplorePage = () => {
   }, [fetchAllExploreData]);
 
   // Section data for FlashList virtualization
-  const sectionData = useMemo(() => [
-    'trending',
-    'hot',
-    'categories',
-    'stores',
-    'liveStats',
-    'exclusiveOffers',
-    'ugcPosts',
-    'reviews',
-    'smartPicks',
-    'compare',
-    'friends',
-    'storesNear',
-    'playEarn',
-    'earnLikeThem',
-    'spacer',
-  ] as const, []);
+  const sectionData = useMemo(
+    () =>
+      [
+        'trending',
+        'hot',
+        'categories',
+        'stores',
+        'liveStats',
+        'exclusiveOffers',
+        'ugcPosts',
+        'reviews',
+        'smartPicks',
+        'compare',
+        'friends',
+        'storesNear',
+        'playEarn',
+        'earnLikeThem',
+        'spacer',
+      ] as const,
+    [],
+  );
 
   // Render each section based on type
-  const renderSection = useCallback(({ item }: { item: string }) => {
-    switch (item) {
-      case 'trending':
-        return (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <View>
-                <View style={styles.sectionTitleRow}>
-                  <Text style={styles.sectionTitle}>Trending Near You</Text>
-                  <Text style={styles.fireEmoji}>🔥</Text>
+  const renderSection = useCallback(
+    ({ item }: { item: string }) => {
+      switch (item) {
+        case 'trending':
+          return (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <View>
+                  <View style={styles.sectionTitleRow}>
+                    <Text style={styles.sectionTitle}>Trending Near You</Text>
+                    <Text style={styles.fireEmoji}>🔥</Text>
+                  </View>
+                  <Text style={styles.sectionSubtitle}>Real experiences • Real savings</Text>
                 </View>
-                <Text style={styles.sectionSubtitle}>Real experiences • Real savings</Text>
+                <Pressable
+                  onPress={() => navigateTo('/explore/reels')}
+                  accessibilityLabel="View all reels"
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.viewAllText}>View All Reels</Text>
+                </Pressable>
               </View>
-              <Pressable onPress={() => navigateTo('/explore/reels')} accessibilityLabel="View all reels" accessibilityRole="button">
-                <Text style={styles.viewAllText}>View All Reels</Text>
-              </Pressable>
+              {isLoading && (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color={Colors.gold} />
+                  <Text style={styles.loadingText}>Loading trending content...</Text>
+                </View>
+              )}
+              {!isLoading && ugcReels.length === 0 && (
+                <View style={styles.emptyContainer}>
+                  <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
+                  <Text style={styles.emptyText}>No trending videos available</Text>
+                </View>
+              )}
+              {ugcReels.length > 0 && (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.reelsContainer}
+                >
+                  {ugcReels.map((reel) => (
+                    <Pressable
+                      key={reel.id}
+                      style={styles.reelCard}
+                      onPress={() => navigateTo(`/explore/reel/${reel.id}`)}
+                      accessibilityLabel={`Watch reel: ${reel.product}`}
+                      accessibilityRole="button"
+                    >
+                      {reel.videoUrl ? (
+                        <AutoPlayVideoReel uri={reel.videoUrl} poster={reel.image} style={styles.reelImage} />
+                      ) : (
+                        <CachedImage
+                          source={{ uri: reel.image }}
+                          style={styles.reelImage}
+                          contentFit="cover"
+                          transition={200}
+                          cachePolicy="memory-disk"
+                        />
+                      )}
+                      <View style={styles.reelUserBadge}>
+                        <CachedImage
+                          source={{ uri: reel.user.avatar }}
+                          style={styles.reelAvatar}
+                          cachePolicy="memory-disk"
+                        />
+                        <Text style={styles.reelUserName}>{reel.user.name}</Text>
+                      </View>
+                      {!reel.videoUrl && (
+                        <View style={styles.playButtonOverlay}>
+                          <View style={styles.playButton}>
+                            <Ionicons name="play" size={24} color={colors.text.inverse} />
+                          </View>
+                        </View>
+                      )}
+                      <LinearGradient colors={['transparent', 'rgba(0,0,0,0.85)']} style={styles.reelGradient}>
+                        <Text style={styles.reelProduct} numberOfLines={2}>
+                          {reel.product}
+                        </Text>
+                        <View style={styles.savedBadge}>
+                          <Ionicons name="checkmark-circle" size={12} color={colors.text.inverse} />
+                          <Text style={styles.savedText}>
+                            Saved {currencySymbol}
+                            {reel.saved}
+                          </Text>
+                        </View>
+                        <View style={styles.reelStats}>
+                          <View style={styles.statItem}>
+                            <Ionicons name="heart-outline" size={18} color={colors.text.inverse} />
+                            <Text style={styles.statText}>{reel.likes}</Text>
+                          </View>
+                          <View style={styles.statItem}>
+                            <Ionicons name="chatbubble-outline" size={18} color={colors.text.inverse} />
+                            <Text style={styles.statText}>{reel.comments}</Text>
+                          </View>
+                          <Pressable
+                            style={styles.bookmarkButton}
+                            onPress={() => navigateTo(`/explore/reel/${reel.id}`)}
+                            accessibilityLabel="Bookmark reel"
+                            accessibilityRole="button"
+                          >
+                            <Ionicons name="bookmark-outline" size={18} color={colors.text.inverse} />
+                          </Pressable>
+                        </View>
+                      </LinearGradient>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              )}
             </View>
-            {isLoading && (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={Colors.gold} />
-                <Text style={styles.loadingText}>Loading trending content...</Text>
+          );
+        case 'hot':
+          return <HotRightNow />;
+        case 'categories':
+          return (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Shop by Category</Text>
+                <Pressable
+                  onPress={() => navigateTo('/(tabs)/categories')}
+                  accessibilityLabel="View all categories"
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.viewAllText}>View all →</Text>
+                </Pressable>
               </View>
-            )}
-            {!isLoading && ugcReels.length === 0 && (
-              <View style={styles.emptyContainer}>
-                <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
-                <Text style={styles.emptyText}>No trending videos available</Text>
+              <View style={styles.categoryGrid}>
+                {categories.map((cat) => (
+                  <Pressable
+                    key={cat.id}
+                    style={styles.categoryCard}
+                    onPress={() => navigateTo(`/explore/category/${cat.id}`)}
+                    accessibilityLabel={cat.name}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.categoryCardEmoji}>{cat.emoji}</Text>
+                    <Text style={styles.categoryCardName}>{cat.name}</Text>
+                    {cat.cashback && <Text style={styles.categoryCardCashback}>{cat.cashback}</Text>}
+                    {cat.stores && <Text style={styles.categoryCardStores}>{cat.stores} stores</Text>}
+                  </Pressable>
+                ))}
               </View>
-            )}
-            {ugcReels.length > 0 && (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.reelsContainer}>
-                {ugcReels.map((reel) => (
-                  <Pressable key={reel.id} style={styles.reelCard} onPress={() => navigateTo(`/explore/reel/${reel.id}`)} accessibilityLabel={`Watch reel: ${reel.product}`} accessibilityRole="button">
-                    {reel.videoUrl ? (
-                      <AutoPlayVideoReel uri={reel.videoUrl} poster={reel.image} style={styles.reelImage} />
-                    ) : (
-                      <CachedImage source={{ uri: reel.image }} style={styles.reelImage} contentFit="cover" transition={200} cachePolicy="memory-disk" />
-                    )}
-                    <View style={styles.reelUserBadge}>
-                      <CachedImage source={{ uri: reel.user.avatar }} style={styles.reelAvatar} cachePolicy="memory-disk" />
-                      <Text style={styles.reelUserName}>{reel.user.name}</Text>
+            </View>
+          );
+        case 'stores':
+          return (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Trending Stores</Text>
+                <Pressable
+                  onPress={() => navigateTo('/explore/stores')}
+                  accessibilityLabel="View all stores"
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.viewAllText}>View all →</Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.storesContainer}
+              >
+                {trendingStores.map((store) => (
+                  <Pressable
+                    key={store.id}
+                    style={styles.storeCard}
+                    onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
+                    accessibilityLabel={store.name}
+                    accessibilityRole="button"
+                  >
+                    <View style={styles.storeHeader}>
+                      {store.image ? (
+                        <CachedImage
+                          source={{ uri: store.image }}
+                          style={styles.storeLogoImage}
+                          contentFit="cover"
+                          transition={200}
+                          cachePolicy="memory-disk"
+                        />
+                      ) : (
+                        <View style={styles.storeLogo}>
+                          <Text style={styles.storeLogoText}>{store.name?.charAt(0) || 'S'}</Text>
+                        </View>
+                      )}
+                      {store.badge && store.badgeColor && (
+                        <View style={[styles.storeBadge, { backgroundColor: store.badgeColor }]}>
+                          <Text style={styles.storeBadgeText}>{store.badge}</Text>
+                        </View>
+                      )}
                     </View>
-                    {!reel.videoUrl && (
-                      <View style={styles.playButtonOverlay}>
-                        <View style={styles.playButton}>
-                          <Ionicons name="play" size={24} color={colors.text.inverse} />
+                    <Text style={styles.storeName}>{store.name}</Text>
+                    {store.offer && <Text style={styles.storeOffer}>{store.offer}</Text>}
+                    <View style={styles.storeFooter}>
+                      {store.distance && (
+                        <View style={styles.storeDistance}>
+                          <Ionicons name="location" size={12} color={colors.text.tertiary} />
+                          <Text style={styles.storeDistanceText}>{store.distance}</Text>
                         </View>
-                      </View>
-                    )}
-                    <LinearGradient colors={['transparent', 'rgba(0,0,0,0.85)']} style={styles.reelGradient}>
-                      <Text style={styles.reelProduct} numberOfLines={2}>{reel.product}</Text>
-                      <View style={styles.savedBadge}>
-                        <Ionicons name="checkmark-circle" size={12} color={colors.text.inverse} />
-                        <Text style={styles.savedText}>Saved {currencySymbol}{reel.saved}</Text>
-                      </View>
-                      <View style={styles.reelStats}>
-                        <View style={styles.statItem}>
-                          <Ionicons name="heart-outline" size={18} color={colors.text.inverse} />
-                          <Text style={styles.statText}>{reel.likes}</Text>
+                      )}
+                      {store.activity && (
+                        <View style={styles.storeActivity}>
+                          <View style={styles.activityDot} />
+                          <Text style={styles.activityText}>{store.activity}</Text>
                         </View>
-                        <View style={styles.statItem}>
-                          <Ionicons name="chatbubble-outline" size={18} color={colors.text.inverse} />
-                          <Text style={styles.statText}>{reel.comments}</Text>
-                        </View>
-                        <Pressable style={styles.bookmarkButton} onPress={() => navigateTo(`/explore/reel/${reel.id}`)} accessibilityLabel="Bookmark reel" accessibilityRole="button">
-                          <Ionicons name="bookmark-outline" size={18} color={colors.text.inverse} />
-                        </Pressable>
-                      </View>
-                    </LinearGradient>
+                      )}
+                    </View>
+                    <Pressable
+                      style={styles.payNowButton}
+                      onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
+                      accessibilityLabel={`Pay now at ${store.name}`}
+                      accessibilityRole="button"
+                    >
+                      <Text style={styles.payNowText}>Pay Now</Text>
+                    </Pressable>
                   </Pressable>
                 ))}
               </ScrollView>
-            )}
-          </View>
-        );
-      case 'hot':
-        return <HotRightNow />;
-      case 'categories':
-        return (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Shop by Category</Text>
-              <Pressable onPress={() => navigateTo('/(tabs)/categories')} accessibilityLabel="View all categories" accessibilityRole="button">
-                <Text style={styles.viewAllText}>View all →</Text>
-              </Pressable>
             </View>
-            <View style={styles.categoryGrid}>
-              {categories.map((cat) => (
-                <Pressable key={cat.id} style={styles.categoryCard} onPress={() => navigateTo(`/explore/category/${cat.id}`)} accessibilityLabel={cat.name} accessibilityRole="button">
-                  <Text style={styles.categoryCardEmoji}>{cat.emoji}</Text>
-                  <Text style={styles.categoryCardName}>{cat.name}</Text>
-                  {cat.cashback && <Text style={styles.categoryCardCashback}>{cat.cashback}</Text>}
-                  {cat.stores && <Text style={styles.categoryCardStores}>{cat.stores} stores</Text>}
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        );
-      case 'stores':
-        return (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Trending Stores</Text>
-              <Pressable onPress={() => navigateTo('/explore/stores')} accessibilityLabel="View all stores" accessibilityRole="button">
-                <Text style={styles.viewAllText}>View all →</Text>
-              </Pressable>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.storesContainer}>
-              {trendingStores.map((store) => (
-                <Pressable key={store.id} style={styles.storeCard} onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)} accessibilityLabel={store.name} accessibilityRole="button">
-                  <View style={styles.storeHeader}>
-                    {store.image ? (
-                      <CachedImage source={{ uri: store.image }} style={styles.storeLogoImage} contentFit="cover" transition={200} cachePolicy="memory-disk" />
-                    ) : (
-                      <View style={styles.storeLogo}>
-                        <Text style={styles.storeLogoText}>{store.name?.charAt(0) || 'S'}</Text>
-                      </View>
-                    )}
-                    {store.badge && store.badgeColor && (
-                      <View style={[styles.storeBadge, { backgroundColor: store.badgeColor }]}>
-                        <Text style={styles.storeBadgeText}>{store.badge}</Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text style={styles.storeName}>{store.name}</Text>
-                  {store.offer && <Text style={styles.storeOffer}>{store.offer}</Text>}
-                  <View style={styles.storeFooter}>
-                    {store.distance && (
-                      <View style={styles.storeDistance}>
-                        <Ionicons name="location" size={12} color={colors.text.tertiary} />
-                        <Text style={styles.storeDistanceText}>{store.distance}</Text>
-                      </View>
-                    )}
-                    {store.activity && (
-                      <View style={styles.storeActivity}>
-                        <View style={styles.activityDot} />
-                        <Text style={styles.activityText}>{store.activity}</Text>
-                      </View>
-                    )}
-                  </View>
-                  <Pressable style={styles.payNowButton} onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)} accessibilityLabel={`Pay now at ${store.name}`} accessibilityRole="button">
-                    <Text style={styles.payNowText}>Pay Now</Text>
-                  </Pressable>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        );
-      case 'liveStats':
-        return <LiveStatsStrip />;
-      case 'exclusiveOffers':
-        return <ExclusiveOffers />;
-      case 'ugcPosts':
-        return <UGCPostsFeed />;
-      case 'reviews':
-        return <VerifiedReviews />;
-      case 'smartPicks':
-        return <SmartPicks />;
-      case 'compare':
-        return <CompareDecide />;
-      case 'friends':
-        return <FriendsCommunity />;
-      case 'storesNear':
-        return <StoresNearYou />;
-      case 'playEarn':
-        return <PlayEarn />;
-      case 'earnLikeThem':
-        return <EarnLikeThem />;
-      case 'spacer':
-        return <View style={{ height: 100 }} />;
-      default:
-        return null;
-    }
-  }, [isLoading, ugcReels, categories, trendingStores, currencySymbol, navigateTo]);
+          );
+        case 'liveStats':
+          return <LiveStatsStrip />;
+        case 'exclusiveOffers':
+          return <ExclusiveOffers />;
+        case 'ugcPosts':
+          return <UGCPostsFeed />;
+        case 'reviews':
+          return <VerifiedReviews />;
+        case 'smartPicks':
+          return <SmartPicks />;
+        case 'compare':
+          return <CompareDecide />;
+        case 'friends':
+          return <FriendsCommunity />;
+        case 'storesNear':
+          return <StoresNearYou />;
+        case 'playEarn':
+          return <PlayEarn />;
+        case 'earnLikeThem':
+          return <EarnLikeThem />;
+        case 'spacer':
+          return <View style={{ height: 100 }} />;
+        default:
+          return null;
+      }
+    },
+    [isLoading, ugcReels, categories, trendingStores, currencySymbol, navigateTo],
+  );
 
   // Header component rendered above the list
-  const renderHeader = useCallback(() => (
-    <View style={styles.headerContainer}>
-      {/* Location & Actions Row */}
-      <View style={styles.headerRow}>
-        <Pressable style={styles.locationButton} onPress={() => navigateTo('/explore/map')} accessibilityLabel={`Current location: ${locationDisplay}`} accessibilityRole="button">
-          <Ionicons name={currentLocation?.source === 'gps' ? 'navigate' : 'location'} size={18} color={Colors.gold} />
-          <View style={styles.locationText}>
-            {isLocationLoading ? (
-              <View style={styles.locationSkeleton}>
-                <View style={styles.skeletonLine} />
-                <View style={[styles.skeletonLine, styles.skeletonLineShort]} />
-              </View>
-            ) : (
-              <>
-                <Text style={styles.locationTitle} numberOfLines={1}>{locationDisplay}</Text>
-                <Text style={styles.locationSubtitle}>{locationSubtitle}</Text>
-              </>
-            )}
-          </View>
-          <Ionicons name="chevron-down" size={16} color={colors.text.tertiary} />
-        </Pressable>
-
-        <View style={styles.headerActions}>
-          <Pressable style={styles.mapButton} onPress={() => navigateTo('/explore/map')} accessibilityLabel="Open map view" accessibilityRole="button">
-            <Ionicons name="map" size={22} color={colors.nileBlue} />
-          </Pressable>
-          <Pressable style={styles.coinsButton} onPress={() => navigateTo('/wallet')} accessibilityLabel={`Wallet: ${rezCoins.toLocaleString()} coins`} accessibilityRole="button">
-            <View style={styles.coinIcon}>
-              <Text style={styles.coinEmoji}>🪙</Text>
+  const renderHeader = useCallback(
+    () => (
+      <View style={styles.headerContainer}>
+        {/* Location & Actions Row */}
+        <View style={styles.headerRow}>
+          <Pressable
+            style={styles.locationButton}
+            onPress={() => navigateTo('/explore/map')}
+            accessibilityLabel={`Current location: ${locationDisplay}`}
+            accessibilityRole="button"
+          >
+            <Ionicons
+              name={currentLocation?.source === 'gps' ? 'navigate' : 'location'}
+              size={18}
+              color={Colors.gold}
+            />
+            <View style={styles.locationText}>
+              {isLocationLoading ? (
+                <View style={styles.locationSkeleton}>
+                  <View style={styles.skeletonLine} />
+                  <View style={[styles.skeletonLine, styles.skeletonLineShort]} />
+                </View>
+              ) : (
+                <>
+                  <Text style={styles.locationTitle} numberOfLines={1}>
+                    {locationDisplay}
+                  </Text>
+                  <Text style={styles.locationSubtitle}>{locationSubtitle}</Text>
+                </>
+              )}
             </View>
-            <Text style={styles.coinsText}>{rezCoins.toLocaleString()}</Text>
+            <Ionicons name="chevron-down" size={16} color={colors.text.tertiary} />
+          </Pressable>
+
+          <View style={styles.headerActions}>
+            <Pressable
+              style={styles.mapButton}
+              onPress={() => navigateTo('/explore/map')}
+              accessibilityLabel="Open map view"
+              accessibilityRole="button"
+            >
+              <Ionicons name="map" size={22} color={colors.nileBlue} />
+            </Pressable>
+            <Pressable
+              style={styles.coinsButton}
+              onPress={() => navigateTo('/wallet')}
+              accessibilityLabel={`Wallet: ${rezCoins.toLocaleString()} coins`}
+              accessibilityRole="button"
+            >
+              <View style={styles.coinIcon}>
+                <Text style={styles.coinEmoji}>🪙</Text>
+              </View>
+              <Text style={styles.coinsText}>{rezCoins.toLocaleString()}</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Pressable
+            style={styles.searchBar}
+            onPress={() => navigateTo('/explore/search')}
+            accessibilityLabel="Search stores and products"
+            accessibilityRole="search"
+          >
+            <Ionicons name="search" size={20} color={colors.text.tertiary} />
+            <Text style={styles.searchPlaceholder}>{searchSuggestions[currentPlaceholder]}</Text>
+          </Pressable>
+          <Pressable
+            style={styles.filterButton}
+            onPress={() => navigateTo('/explore/stores')}
+            accessibilityLabel="Filter options"
+            accessibilityRole="button"
+          >
+            <Ionicons name="options" size={22} color={colors.nileBlue} />
           </Pressable>
         </View>
-      </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Pressable style={styles.searchBar} onPress={() => navigateTo('/explore/search')} accessibilityLabel="Search stores and products" accessibilityRole="search">
-          <Ionicons name="search" size={20} color={colors.text.tertiary} />
-          <Text style={styles.searchPlaceholder}>{searchSuggestions[currentPlaceholder]}</Text>
-        </Pressable>
-        <Pressable style={styles.filterButton} onPress={() => navigateTo('/explore/stores')} accessibilityLabel="Filter options" accessibilityRole="button">
-          <Ionicons name="options" size={22} color={colors.nileBlue} />
-        </Pressable>
-      </View>
-
-      {/* Category Filter Chips */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.categoryContainer}>
-        {categoryFilters.map((category) => (
-          <Pressable
-            key={category.id}
-            style={[styles.categoryChip, selectedCategory === category.id && styles.categoryChipActive]}
-            onPress={() => {
-              setSelectedCategory(category.id);
-              if (category.id !== 'all') {
-                const tagFilters = ['halal', 'vegan', 'veg', 'adult', 'occasion'];
-                if (tagFilters.includes(category.id)) {
-                  navigateTo(`/explore/filter/${category.id}`);
-                } else {
-                  navigateTo(`/explore/category/${category.id}`);
+        {/* Category Filter Chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScroll}
+          contentContainerStyle={styles.categoryContainer}
+        >
+          {categoryFilters.map((category) => (
+            <Pressable
+              key={category.id}
+              style={[styles.categoryChip, selectedCategory === category.id ? styles.categoryChipActive : null]}
+              onPress={() => {
+                setSelectedCategory(category.id);
+                if (category.id !== 'all') {
+                  const tagFilters = ['halal', 'vegan', 'veg', 'adult', 'occasion'];
+                  if (tagFilters.includes(category.id)) {
+                    navigateTo(`/explore/filter/${category.id}`);
+                  } else {
+                    navigateTo(`/explore/category/${category.id}`);
+                  }
                 }
-              }
-            }}
-            accessibilityLabel={category.label}
-            accessibilityRole="button"
-            accessibilityState={{ selected: selectedCategory === category.id }}
-          >
-            <Text style={styles.categoryEmoji}>{category.emoji}</Text>
-            <Text style={[styles.categoryLabel, selectedCategory === category.id && styles.categoryLabelActive]}>{category.label}</Text>
-          </Pressable>
-        ))}
-        <View style={styles.bestValueTag}>
-          <Ionicons name="trending-up" size={14} color={colors.text.inverse} />
-          <Text style={styles.bestValueText}>Best Value</Text>
-        </View>
-      </ScrollView>
+              }}
+              accessibilityLabel={category.label}
+              accessibilityRole="button"
+              accessibilityState={{ selected: selectedCategory === category.id }}
+            >
+              <Text style={styles.categoryEmoji}>{category.emoji}</Text>
+              <Text
+                style={[styles.categoryLabel, selectedCategory === category.id ? styles.categoryLabelActive : null]}
+              >
+                {category.label}
+              </Text>
+            </Pressable>
+          ))}
+          <View style={styles.bestValueTag}>
+            <Ionicons name="trending-up" size={14} color={colors.text.inverse} />
+            <Text style={styles.bestValueText}>Best Value</Text>
+          </View>
+        </ScrollView>
 
-      {/* Quick Discovery Chips */}
-      <View style={styles.quickChipsRow}>
-        {quickChips.map((chip) => (
-          <Pressable
-            key={chip.id}
-            style={[styles.quickChip, selectedChip === chip.id && styles.quickChipActive]}
-            onPress={() => {
-              setSelectedChip(chip.id);
-              if (chip.id === 'trending') navigateTo('/explore/hot');
-              else if (chip.id === 'delivery') navigateTo('/explore/stores');
-            }}
-            accessibilityLabel={chip.label}
-            accessibilityRole="button"
-            accessibilityState={{ selected: selectedChip === chip.id }}
-          >
-            <Ionicons name={chip.icon as any} size={16} color={selectedChip === chip.id ? chip.color : colors.text.tertiary} />
-            <Text style={[styles.quickChipText, selectedChip === chip.id && { color: colors.nileBlue, fontWeight: '600' }]}>{chip.label}</Text>
-          </Pressable>
-        ))}
+        {/* Quick Discovery Chips */}
+        <View style={styles.quickChipsRow}>
+          {quickChips.map((chip) => (
+            <Pressable
+              key={chip.id}
+              style={[styles.quickChip, selectedChip === chip.id ? styles.quickChipActive : null]}
+              onPress={() => {
+                setSelectedChip(chip.id);
+                if (chip.id === 'trending') navigateTo('/explore/hot');
+                else if (chip.id === 'delivery') navigateTo('/explore/stores');
+              }}
+              accessibilityLabel={chip.label}
+              accessibilityRole="button"
+              accessibilityState={{ selected: selectedChip === chip.id }}
+            >
+              <Ionicons
+                name={chip.icon as any}
+                size={16}
+                color={selectedChip === chip.id ? chip.color : colors.text.tertiary}
+              />
+              <Text
+                style={[
+                  styles.quickChipText,
+                  selectedChip === chip.id && { color: colors.nileBlue, fontWeight: '600' },
+                ]}
+              >
+                {chip.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
       </View>
-    </View>
-  ), [navigateTo, currentLocation, isLocationLoading, locationDisplay, locationSubtitle, rezCoins, searchSuggestions, currentPlaceholder, selectedCategory, selectedChip]);
+    ),
+    [
+      navigateTo,
+      currentLocation,
+      isLocationLoading,
+      locationDisplay,
+      locationSubtitle,
+      rezCoins,
+      searchSuggestions,
+      currentPlaceholder,
+      selectedCategory,
+      selectedChip,
+    ],
+  );
 
   const keyExtractor = useCallback((item: string) => item, []);
 

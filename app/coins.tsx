@@ -223,10 +223,10 @@ function CoinsScreen() {
             {(['all', 'earn', 'spend'] as const).map((tab) => (
               <TouchableOpacity
                 key={tab}
-                style={[styles.tab, activeTab === tab && styles.activeTab]}
+                style={[styles.tab, activeTab === tab ? styles.activeTab : null]}
                 onPress={() => setActiveTab(tab)}
               >
-                <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+                <Text style={[styles.tabText, activeTab === tab ? styles.activeTabText : null]}>
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </Text>
               </TouchableOpacity>

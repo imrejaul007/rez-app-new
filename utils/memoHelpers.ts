@@ -3,7 +3,7 @@
  * Provides common comparison functions and memoization utilities
  */
 
-import { ComponentType, memo } from 'react';
+import React, { ComponentType, memo } from 'react';
 
 /**
  * Shallow comparison for objects

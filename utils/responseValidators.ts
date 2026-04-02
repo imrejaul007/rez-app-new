@@ -44,7 +44,6 @@ export function validateProduct(rawProduct: any): ProductItem | null {
       title: name,
       brand: rawProduct.brand || rawProduct.store?.name || 'Unknown Brand',
       image,
-      images,
       price,
       category: rawProduct.category?.name || rawProduct.category || 'Uncategorized',
       subcategory: rawProduct.subcategory?.name || rawProduct.subcategory,

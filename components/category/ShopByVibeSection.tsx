@@ -74,9 +74,9 @@ const ShopByVibeSection: React.FC<ShopByVibeSectionProps> = ({
       try {
         setLoading(true);
         const response = await categoryMetadataApi.getVibes(categorySlug);
-        if (response.success && response.data?.vibes?.length > 0) {
+        if (response.success && response.data?.vibes?.length && response.data.vibes.length > 0) {
           if (!isMounted()) return;
-          setApiVibes(response.data.vibes);
+          setApiVibes(response.data?.vibes ?? []);
           setError(false);
         } else {
           // Fallback to dummy data if API returns empty
@@ -84,7 +84,7 @@ const ShopByVibeSection: React.FC<ShopByVibeSectionProps> = ({
           setApiVibes(fallbackVibes);
           setError(true);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Fallback to dummy data on error
         const fallbackVibes = getVibesForCategory(categorySlug);
         if (!isMounted()) return;

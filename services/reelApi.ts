@@ -84,7 +84,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -105,7 +105,7 @@ class ReelApiService {
         return { success: true, data: reels };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -134,7 +134,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -152,7 +152,7 @@ class ReelApiService {
         return { success: true, data: reel };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -180,7 +180,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -201,7 +201,7 @@ class ReelApiService {
         return { success: true, data: reels };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -230,7 +230,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -253,7 +253,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -275,7 +275,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -297,7 +297,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -334,7 +334,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -364,7 +364,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -386,7 +386,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -409,7 +409,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -426,7 +426,7 @@ class ReelApiService {
         return { success: true, data: { reported: true } };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }

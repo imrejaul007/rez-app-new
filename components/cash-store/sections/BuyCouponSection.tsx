@@ -64,7 +64,7 @@ const GiftCardCard: React.FC<{
   const potentialSavings = Math.round((maxDenom * (brand.cashbackRate || 0)) / 100);
 
   // Generate brand gradient colors
-  const brandGradient = brand.backgroundColor
+  const brandGradient: [string, string] = brand.backgroundColor
     ? [brand.backgroundColor, adjustColor(brand.backgroundColor, -20)]
     : [colors.nileBlue, '#243f55'];
 
@@ -166,7 +166,7 @@ const GiftCardCard: React.FC<{
             <View style={styles.ratingRow}>
               <Ionicons name="star" size={12} color={colors.lightMustard} />
               <Text style={styles.ratingText}>{brand.rating.toFixed(1)}</Text>
-              <Text style={styles.reviewCount}>({brand.reviewCount || 0})</Text>
+              <Text style={styles.reviewCount}>({(brand as any).reviewCount || 0})</Text>
             </View>
           )}
         </View>

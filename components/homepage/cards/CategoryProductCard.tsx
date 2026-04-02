@@ -73,10 +73,9 @@ function CategoryProductCard({
           ) : (
             <CachedImage
               source={product.image || 'https://via.placeholder.com/160x140?text=No+Image'}
-              style={[styles.image, imageLoading && styles.imageHidden]}
+              style={[styles.image, imageLoading ? styles.imageHidden : null]}
               contentFit="cover"
-              onLoadStart={() => setImageLoading(true)}
-              onLoadEnd={() => setImageLoading(false)}
+              onLoad={() => setImageLoading(false)}
               onError={() => {
                 setImageLoading(false);
                 setImageError(true);

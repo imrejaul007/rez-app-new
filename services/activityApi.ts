@@ -77,37 +77,37 @@ class ActivityApiService {
       limit: limit.toString(),
       ...(type && { type })
     });
-    return apiClient.get(`${this.baseUrl}?${params.toString()}`);
+    return apiClient.get<any>(`${this.baseUrl}?${params.toString()}`);
   }
 
   // Get activity by ID
   async getActivityById(id: string): Promise<ApiResponse<Activity>> {
-    return apiClient.get(`${this.baseUrl}/${id}`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}`);
   }
 
   // Get activity summary by type
   async getActivitySummary(): Promise<ApiResponse<ActivitySummary>> {
-    return apiClient.get(`${this.baseUrl}/summary`);
+    return apiClient.get<any>(`${this.baseUrl}/summary`);
   }
 
   // Create activity (typically called by system)
   async createActivity(data: ActivityCreate): Promise<ApiResponse<Activity>> {
-    return apiClient.post(this.baseUrl, data);
+    return apiClient.post<any>(this.baseUrl, data as any);
   }
 
   // Batch create activities (for importing historical data)
   async batchCreateActivities(activities: ActivityCreate[]): Promise<ApiResponse<Activity[]>> {
-    return apiClient.post(`${this.baseUrl}/batch`, { activities });
+    return apiClient.post<any>(`${this.baseUrl}/batch`, { activities });
   }
 
   // Delete activity
   async deleteActivity(id: string): Promise<ApiResponse<{ deletedId: string }>> {
-    return apiClient.delete(`${this.baseUrl}/${id}`);
+    return apiClient.delete<any>(`${this.baseUrl}/${id}`);
   }
 
   // Clear all activities
   async clearAllActivities(): Promise<ApiResponse<{ deletedCount: number }>> {
-    return apiClient.delete(this.baseUrl);
+    return apiClient.delete<any>(this.baseUrl);
   }
 }
 

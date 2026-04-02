@@ -71,7 +71,7 @@ function SubcategoryPage() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { slug, subSlug } = useLocalSearchParams<{ slug: string; subSlug: string }>();
+  const { slug, subSlug } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -88,7 +88,9 @@ function SubcategoryPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   // Subcategory name
-  const subcategoryName = subSlug ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Subcategory';
+  const subcategoryName = subSlug
+    ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())
+    : 'Subcategory';
 
   /**
    * Fetch stores for this subcategory
@@ -168,7 +170,7 @@ function SubcategoryPage() {
 
       if (response.success && response.data) {
         // Handle potential array or paginated object
-        const data = Array.isArray(response.data) ? response.data : response.data.products || [];
+        const data = Array.isArray(response.data) ? response.data : (response.data as any)?.products || [];
         if (data.length > 0) {
           productsData = data;
         }
@@ -275,11 +277,14 @@ function SubcategoryPage() {
    */
   const renderStoreCard = useCallback(
     ({ item }: { item: StoreItem }) => (
-      <Pressable style={[styles.storeCard, isDark && styles.storeCardDark]} onPress={() => handleStorePress(item)}>
-        <CachedImage source={item.banner || item.logo || undefined} style={styles.storeBanner} />
+      <Pressable
+        style={[styles.storeCard, isDark ? styles.storeCardDark : null]}
+        onPress={() => handleStorePress(item)}
+      >
+        <CachedImage source={item.banner || item.logo || ''} style={styles.storeBanner} />
         <View style={styles.storeInfo}>
           <View style={styles.storeHeader}>
-            {item.logo && <CachedImage source={item.logo} style={styles.storeLogo} />}
+            {item.logo && <CachedImage source={item.logo as any} style={styles.storeLogo} />}
             <View style={styles.storeNameContainer}>
               <View style={styles.storeNameRow}>
                 <ThemedText style={styles.storeName} numberOfLines={1}>
@@ -319,10 +324,10 @@ function SubcategoryPage() {
   const renderProductCard = useCallback(
     ({ item }: { item: ProductItem }) => (
       <Pressable
-        style={[styles.productCard, isDark && styles.productCardDark]}
+        style={[styles.productCard, isDark ? styles.productCardDark : null]}
         onPress={() => handleProductPress(item)}
       >
-        <CachedImage source={item.image || undefined} style={styles.productImage} />
+        <CachedImage source={item.image || ''} style={styles.productImage} />
         {item.discount && item.discount > 0 && (
           <View style={styles.discountBadge}>
             <ThemedText style={styles.discountText}>{item.discount}% OFF</ThemedText>
@@ -392,7 +397,7 @@ function SubcategoryPage() {
         </LinearGradient>
 
         {/* Tabs */}
-        <View style={[styles.tabsContainer, isDark && styles.tabsContainerDark]}>
+        <View style={[styles.tabsContainer, isDark ? styles.tabsContainerDark : null]}>
           <Pressable
             style={[styles.tab, activeTab === 'stores' && styles.activeTab]}
             onPress={() => setActiveTab('stores')}
@@ -447,7 +452,6 @@ function SubcategoryPage() {
                 onRefresh={handleRefresh}
                 tintColor={Colors.gold}
                 colors={[Colors.gold]}
-                estimatedItemSize={110}
               />
             }
           />
@@ -465,7 +469,6 @@ function SubcategoryPage() {
                 onRefresh={handleRefresh}
                 tintColor={Colors.gold}
                 colors={[Colors.gold]}
-                estimatedItemSize={220}
               />
             }
           />

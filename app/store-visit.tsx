@@ -120,7 +120,7 @@ function StoreVisitPageInner() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [visitDetails, setVisitDetails] = useState<VisitDetails>({
-    name: user?.name || '',
+    name: (user as any)?.name || '',
     phone: user?.phoneNumber || '',
     email: user?.email || '',
     visitDate: null,
@@ -135,7 +135,7 @@ function StoreVisitPageInner() {
   const [queueEstimatedWait, setQueueEstimatedWait] = useState<string>('');
   const [queueSize, setQueueSize] = useState<number>(0);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  const refreshIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Memoized next 7 days for date selection - returns array directly
   const next7DaysArray = useMemo(() => {
@@ -295,7 +295,7 @@ function StoreVisitPageInner() {
     if (user) {
       setVisitDetails((prev) => ({
         ...prev,
-        name: user.name || prev.name,
+        name: (user as any).name || prev.name,
         phone: user.phoneNumber || prev.phone,
         email: user.email || prev.email,
       }));
@@ -335,7 +335,7 @@ function StoreVisitPageInner() {
           if (!isMounted()) return;
           setAvailableSlots([]);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setAvailableSlots([]);
       } finally {
@@ -371,7 +371,7 @@ function StoreVisitPageInner() {
         if (!isMounted()) return;
         setError(response.message || 'Failed to load store details');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to connect to server');
     } finally {
@@ -397,7 +397,7 @@ function StoreVisitPageInner() {
       } else {
         // Keep default 'Medium' if API fails
       }
-    } catch (err) {
+    } catch (err: any) {
       // Keep default 'Medium' if error occurs
     }
   }, [storeId]);
@@ -720,7 +720,7 @@ function StoreVisitPageInner() {
 
   // Memoized handle directions
   const handleGetDirections = useCallback(() => {
-    if (!store?.location?.address && !store?.location?.city) {
+    if (!(store as any)?.location?.address && !(store as any)?.location?.city) {
       showAlert('Address Not Available', 'Store address information is not available', undefined, 'warning');
       return;
     }
@@ -729,12 +729,17 @@ function StoreVisitPageInner() {
     analyticsService.track('directions_clicked', {
       storeId,
       storeName: store?.name,
-      address: [store.location?.address, store.location?.city].filter(Boolean).join(', '),
+      address: [(store as any).location?.address, (store as any).location?.city].filter(Boolean).join(', '),
       crowdLevel,
       timestamp: new Date().toISOString(),
     });
 
-    const address = [store.location?.address, store.location?.city, store.location?.state, store.location?.pincode]
+    const address = [
+      (store as any).location?.address,
+      (store as any).location?.city,
+      (store as any).location?.state,
+      (store as any).location?.pincode,
+    ]
       .filter(Boolean)
       .join(', ');
     const url = Platform.select({
@@ -853,11 +858,11 @@ function StoreVisitPageInner() {
             <View style={styles.flex1}>
               <Text style={styles.storeName}>{store.name}</Text>
               {store.category?.name && <Text style={styles.storeCategory}>{store.category.name}</Text>}
-              {(store.location?.address || store.location?.city) && (
+              {((store as any).location?.address || (store as any).location?.city) && (
                 <View style={styles.addressRow}>
                   <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
                   <Text style={styles.addressText} numberOfLines={1}>
-                    {[store.location?.address, store.location?.city].filter(Boolean).join(', ')}
+                    {[(store as any).location?.address, (store as any).location?.city].filter(Boolean).join(', ')}
                   </Text>
                 </View>
               )}
@@ -1194,7 +1199,7 @@ function StoreVisitPageInner() {
         <View style={styles.bottomActions}>
           <View style={styles.buttonRow}>
             <Pressable
-              style={[styles.secondaryButton, (gettingQueue || queueNumber) && styles.buttonDisabled]}
+              style={[styles.secondaryButton, (gettingQueue || !!queueNumber) && styles.buttonDisabled]}
               onPress={queueNumber ? undefined : handleGetQueueNumber}
               disabled={gettingQueue || !!queueNumber}
             >
@@ -1219,7 +1224,7 @@ function StoreVisitPageInner() {
           </View>
 
           <Pressable
-            style={[styles.primaryButton, schedulingVisit && styles.buttonDisabled]}
+            style={[styles.primaryButton, schedulingVisit ? styles.buttonDisabled : null] as any}
             onPress={handleScheduleVisit}
             disabled={schedulingVisit}
           >

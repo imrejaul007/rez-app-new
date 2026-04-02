@@ -58,7 +58,7 @@ export const useReviewState = () => {
     setError(null);
 
     try {
-      const response = await reviewService.createReview(targetId, {
+      const response: any = await reviewService.createReview(targetId, {
         rating,
         comment: reviewText,
         images: [],

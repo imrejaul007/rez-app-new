@@ -33,7 +33,7 @@ export const usePaymentMethods = (autoFetch: boolean = true): UsePaymentMethodsR
     setError(null);
 
     try {
-      const response = await paymentMethodApi.getUserPaymentMethods();
+      const response: any = await paymentMethodApi.getUserPaymentMethods();
 
       if (response.success && response.data) {
 
@@ -53,7 +53,7 @@ export const usePaymentMethods = (autoFetch: boolean = true): UsePaymentMethodsR
     setError(null);
 
     try {
-      const response = await paymentMethodApi.createPaymentMethod(data);
+      const response: any = await paymentMethodApi.createPaymentMethod(data);
 
       if (response.success && response.data) {
         await fetchPaymentMethods(); // Refresh list
@@ -73,7 +73,7 @@ export const usePaymentMethods = (autoFetch: boolean = true): UsePaymentMethodsR
       setError(null);
 
       try {
-        const response = await paymentMethodApi.updatePaymentMethod(id, data);
+        const response: any = await paymentMethodApi.updatePaymentMethod(id, data);
 
         if (response.success && response.data) {
           await fetchPaymentMethods(); // Refresh list
@@ -94,7 +94,7 @@ export const usePaymentMethods = (autoFetch: boolean = true): UsePaymentMethodsR
     setError(null);
 
     try {
-      const response = await paymentMethodApi.deletePaymentMethod(id);
+      const response: any = await paymentMethodApi.deletePaymentMethod(id);
 
       if (response.success) {
 
@@ -115,7 +115,7 @@ export const usePaymentMethods = (autoFetch: boolean = true): UsePaymentMethodsR
     setError(null);
 
     try {
-      const response = await paymentMethodApi.setDefaultPaymentMethod(id);
+      const response: any = await paymentMethodApi.setDefaultPaymentMethod(id);
 
       if (response.success && response.data) {
         await fetchPaymentMethods(); // Refresh list
@@ -134,7 +134,7 @@ export const usePaymentMethods = (autoFetch: boolean = true): UsePaymentMethodsR
     setError(null);
 
     try {
-      const response = await paymentMethodApi.getPaymentMethodById(id);
+      const response: any = await paymentMethodApi.getPaymentMethodById(id);
 
       if (response.success && response.data) {
         return response.data;

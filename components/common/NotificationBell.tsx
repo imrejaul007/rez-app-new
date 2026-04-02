@@ -49,6 +49,33 @@ function NotificationBell({
   // Ref to track if component is mounted
   const isMountedRef = useRef(true);
 
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const response = await notificationService.getNotifications({
+        limit: 10,
+      });
+
+      // Only update state if component is still mounted
+      if (!isMountedRef.current) return;
+
+      if (response.success && response.data) {
+        setNotifications(response.data.notifications);
+        setUnreadCount(response.data.unreadCount || 0);
+      }
+    } catch (error: any) {
+      // silently handle
+    } finally {
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  const loadNotifications = useCallback(async () => {
+    setLoading(true);
+    await fetchNotifications();
+  }, [fetchNotifications]);
+
   // Load notifications when authenticated
   useEffect(() => {
     isMountedRef.current = true;
@@ -68,33 +95,6 @@ function NotificationBell({
     };
   }, [isAuthenticated, loadNotifications, fetchNotifications]);
 
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const response = await notificationService.getNotifications({
-        limit: 10,
-      });
-
-      // Only update state if component is still mounted
-      if (!isMountedRef.current) return;
-
-      if (response.success && response.data) {
-        setNotifications(response.data.notifications);
-        setUnreadCount(response.data.unreadCount || 0);
-      }
-    } catch (error) {
-      // silently handle
-    } finally {
-      if (isMountedRef.current) {
-        setLoading(false);
-      }
-    }
-  }, []);
-
-  const loadNotifications = useCallback(async () => {
-    setLoading(true);
-    await fetchNotifications();
-  }, [fetchNotifications]);
-
   const handleNotificationPress = async (notification: Notification) => {
     // Mark as read if unread
     if (!notification.isRead) {
@@ -106,7 +106,7 @@ function NotificationBell({
           )
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     }
@@ -142,7 +142,7 @@ function NotificationBell({
         prev.map(n => ({ ...n, isRead: true }))
       );
       setUnreadCount(0);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       setMarking(false);

@@ -68,7 +68,7 @@ export const MoreForYouSection: React.FC<MoreForYouSectionProps> = ({
           {options.map((option, index) => (
             <Pressable
               key={option.id}
-              style={[styles.optionRow, index < options.length - 1 && styles.optionBorder]}
+              style={[styles.optionRow, index < options.length - 1 ? styles.optionBorder : null]}
               onPress={option.onPress}
              
               accessibilityLabel={option.title}

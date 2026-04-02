@@ -164,7 +164,7 @@ function HotelDetailsPage() {
         return;
       }
 
-      const productData = response.data;
+      const productData = response.data as any;
 
       // Check if this is a hotel service
       const isHotel =
@@ -330,7 +330,7 @@ function HotelDetailsPage() {
 
       if (!isMounted()) return;
       setHotel(hotelDetails);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load hotel details. Please try again.');
     } finally {
@@ -373,9 +373,9 @@ function HotelDetailsPage() {
       if (isInWishlist(hotel.id)) {
         await removeFromWishlist(hotel.id);
       } else {
-        await addToWishlist(hotel.id);
+        await addToWishlist(hotel.id as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -402,6 +402,8 @@ function HotelDetailsPage() {
     );
   }
 
+  if (!hotel) return null;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -418,16 +420,12 @@ function HotelDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl}
+                  source={imageUrl as any}
                   style={styles.headerImage}
                   contentFit="cover"
-                  onError={(error) => {
+                  onError={() => {
                     setImageError(true);
                   }}
-                  onLoadStart={() => {
-                    setImageError(false);
-                  }}
-                  onLoad={() => {}}
                 />
               );
             }
@@ -477,7 +475,7 @@ function HotelDetailsPage() {
               {hotel.images.map((_, index) => (
                 <Pressable
                   key={index}
-                  style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]}
+                  style={[styles.indicator, selectedImageIndex === index ? styles.indicatorActive : null]}
                   onPress={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -664,10 +662,22 @@ function HotelDetailsPage() {
           </View>
           <ProductReviewsSection
             productId={hotel.id}
+            productName={hotel.name}
             reviews={reviews}
             summary={reviewSummary}
             isLoading={reviewsLoading}
             onRefresh={refreshReviews}
+            isRefreshing={false}
+            hasMore={false}
+            sortBy="recent"
+            filterRating={null}
+            onSortChange={() => {}}
+            onFilterChange={() => {}}
+            onLoadMore={() => {}}
+            onSubmitReview={async () => {}}
+            onUpdateReview={async () => {}}
+            onDeleteReview={async () => {}}
+            onMarkHelpful={async () => {}}
           />
         </View>
 

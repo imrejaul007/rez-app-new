@@ -12,14 +12,14 @@ export function usePriveEligibility() {
 export function usePriveTier() {
   return useQuery({
     queryKey: queryKeys.prive.tier(),
-    queryFn: () => priveApi.getTier(),
+    queryFn: () => (priveApi as any).getTier(),
   });
 }
 
 export function usePriveSummary() {
   return useQuery({
     queryKey: queryKeys.prive.summary(),
-    queryFn: () => priveApi.getSummary(),
+    queryFn: () => (priveApi as any).getSummary(),
   });
 }
 
@@ -40,6 +40,6 @@ export function usePriveCatalog() {
 export function usePriveHabits() {
   return useQuery({
     queryKey: queryKeys.prive.habits(),
-    queryFn: () => priveApi.getHabits(),
+    queryFn: () => (priveApi as any).getHabits(),
   });
 }

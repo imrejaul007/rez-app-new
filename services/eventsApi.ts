@@ -782,9 +782,8 @@ class EventsApiService {
    * Helper for authenticated requests
    */
   private async authenticatedFetch(path: string, options: RequestInit = {}): Promise<any> {
-    const { getAuthTokens } = await import('@/utils/authStorage');
-    const tokens = await getAuthTokens();
-    const token = tokens?.accessToken;
+    const { getAuthToken } = await import('@/utils/authStorage');
+    const token = await getAuthToken();
 
     const headers: any = {
       'Content-Type': 'application/json',
@@ -911,7 +910,7 @@ class EventsApiService {
         method: 'POST',
         body: JSON.stringify({ bookingId, method, location }),
       });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[EventsApi] Error checking in:', error);
       throw error;

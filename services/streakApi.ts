@@ -112,11 +112,12 @@ class StreakApi {
             login: this.mapStreakData(response.data.login || response.data),
             order: this.mapStreakData(response.data.order),
             review: this.mapStreakData(response.data.review),
+            savings: this.mapStreakData(response.data.savings),
           },
         };
       }
 
-      return { success: true, data: { login: this.getDefaultStreak(), order: this.getDefaultStreak(), review: this.getDefaultStreak() } };
+      return { success: true, data: { login: this.getDefaultStreak(), order: this.getDefaultStreak(), review: this.getDefaultStreak(), savings: this.getDefaultStreak() } };
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -148,7 +149,7 @@ class StreakApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -179,7 +180,7 @@ class StreakApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -252,7 +253,7 @@ class StreakApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }

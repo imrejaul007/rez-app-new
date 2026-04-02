@@ -158,11 +158,10 @@ function CategoriesView({
                 <View style={styles.categoryImageContainer}>
                   {category.image ? (
                     <CachedImage
-                      source={category.image}
+                      source={category.image as any}
                       style={styles.categoryImage}
                       contentFit="cover"
                       accessibilityLabel={`${category.name} category image`}
-                      accessibilityRole="image"
                     />
                   ) : (
                     <LinearGradient

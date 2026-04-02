@@ -126,7 +126,7 @@ class ProductCacheService {
   delete(key: string): boolean {
     const result = this.cache.delete(key);
     this.updateSize();
-    return result;
+    return result as any;
   }
 
   /**

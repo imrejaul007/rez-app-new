@@ -511,7 +511,7 @@ class SubscriptionAPI {
    */
   async downloadInvoice(transactionId: string): Promise<any> {
     try {
-      const response = await apiClient.get(`/billing/invoice/${transactionId}/download`, {
+      const response = await apiClient.get<any>(`/billing/invoice/${transactionId}/download`, {
         responseType: 'blob'
       });
       return response.data;

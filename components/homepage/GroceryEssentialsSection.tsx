@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 
   // Bottom Row
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   bottomTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   bottomSubtitle: {
     fontSize: 11,

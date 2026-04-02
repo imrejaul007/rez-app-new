@@ -140,7 +140,7 @@ function ShareModal({
         if (!isMounted()) return;
         setShareLink(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to generate share link');
     } finally {
       if (!isMounted()) return;
@@ -155,7 +155,7 @@ function ShareModal({
         if (!isMounted()) return;
         setPrivacySettings(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [wishlistId]);
@@ -174,7 +174,7 @@ function ShareModal({
         if (!response.success) {
           throw new Error('Failed to update privacy settings');
         }
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Failed to update privacy settings');
         // Revert changes
         loadPrivacySettings();
@@ -240,7 +240,7 @@ function ShareModal({
         if (success && platform.action !== 'link') {
           platformAlertSimple('Success', `Shared via ${platform.name}!`);
         }
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', `Failed to share via ${platform.name}`);
       }
     },

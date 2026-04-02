@@ -1,5 +1,5 @@
 import React, { useCallback, memo } from 'react';
-import { View, StyleSheet, Dimensions, ListRenderItemInfo } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { ProductItem } from '@/types/homepage.types';
 import StoreProductCard from './StoreProductCard';
@@ -39,7 +39,7 @@ const StoreProductGrid = memo(function StoreProductGrid({
   }, [onProductPress, router]);
 
   // Memoized render function for products
-  const renderProduct = useCallback(({ item }: ListRenderItemInfo<ProductItem>) => (
+  const renderProduct = useCallback(({ item }: { item: ProductItem }) => (
     <View style={[styles.itemWrapper, { paddingHorizontal: itemGap / 2 }]}>
       <StoreProductCard
         product={item}
@@ -61,7 +61,7 @@ const StoreProductGrid = memo(function StoreProductGrid({
     if (loading || item === null) {
       return `skeleton-${index}`;
     }
-    return `product-${item.id || item._id || index}`;
+    return `product-${item.id || (item as any)._id || index}`;
   }, [loading]);
 
   // Render skeleton loaders

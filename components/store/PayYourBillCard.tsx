@@ -45,7 +45,7 @@ const PayYourBillCard: React.FC<PayYourBillCardProps> = ({
         // Navigate to quick pay flow
         router.push(`/payment?storeId=${storeId}&mode=quick`);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to initiate quick pay');
     } finally {
       if (!isMounted()) return;
@@ -62,7 +62,7 @@ const PayYourBillCard: React.FC<PayYourBillCardProps> = ({
         // Navigate to bill upload page
         router.push(`/bill-upload?storeId=${storeId}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open bill upload');
     } finally {
       if (!isMounted()) return;

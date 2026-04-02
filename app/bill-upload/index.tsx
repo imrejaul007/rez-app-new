@@ -34,7 +34,7 @@ import { colors } from '@/constants/theme';
 
 function BillUploadPage() {
   const router = useRouter();
-  const { bonusCampaignSlug } = useLocalSearchParams<{ bonusCampaignSlug?: string }>();
+  const { bonusCampaignSlug } = useLocalSearchParams<any>();
 
   const {
     // State

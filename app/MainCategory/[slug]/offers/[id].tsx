@@ -7,10 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  View, Text, StyleSheet, Pressable, ScrollView,
-  ActivityIndicator, Clipboard,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, Clipboard } from 'react-native';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { getCategoryTheme, SHARED_COLORS } from '@/config/categoryThemeConfig';
@@ -26,7 +23,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function OffersDetailPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { id, slug } = useLocalSearchParams<{ id: string; slug: string }>();
+  const { id, slug } = useLocalSearchParams<any>();
   const theme = getCategoryTheme(slug || 'electronics');
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -49,7 +46,7 @@ function OffersDetailPage() {
         if (offerRes?.success && offerRes.data) {
           setOffer(offerRes.data);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -77,7 +74,12 @@ function OffersDetailPage() {
       setIsRedeeming(true);
       const res = await apiClient.post<any>(`/offers/${id}/redeem`);
       if (res.success) {
-        platformAlertConfirm('Offer Applied!', res.data?.message || 'Your offer has been applied. Use it on your next purchase!', () => router.canGoBack() ? router.back() : router.replace('/(tabs)'), 'OK');
+        platformAlertConfirm(
+          'Offer Applied!',
+          res.data?.message || 'Your offer has been applied. Use it on your next purchase!',
+          () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+          'OK',
+        );
       } else {
         platformAlertSimple('Cannot Apply', res.message || 'This offer may have expired or reached its usage limit.');
       }
@@ -101,7 +103,10 @@ function OffersDetailPage() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
             <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Offer Details</Text>
@@ -127,7 +132,10 @@ function OffersDetailPage() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle}>Offer Details</Text>
@@ -144,14 +152,16 @@ function OffersDetailPage() {
           {discount > 0 && offer.maxDiscount > 0 ? (
             <>
               <Text style={styles.heroDiscount}>
-                Save up to {currencySymbol}{offer.maxDiscount.toLocaleString()}
+                Save up to {currencySymbol}
+                {offer.maxDiscount.toLocaleString()}
               </Text>
               <Text style={styles.heroMax}>{discount}% OFF</Text>
             </>
           ) : discount > 0 ? (
             <Text style={styles.heroDiscount}>
               {offer.discountType === 'percentage' || offer.discountPercentage
-                ? `${discount}% OFF` : `${currencySymbol}${discount} OFF`}
+                ? `${discount}% OFF`
+                : `${currencySymbol}${discount} OFF`}
             </Text>
           ) : null}
         </LinearGradient>
@@ -182,7 +192,10 @@ function OffersDetailPage() {
               <View style={styles.detailItem}>
                 <Ionicons name="cart-outline" size={18} color={theme.primaryColor} />
                 <Text style={styles.detailLabel}>Min. Order</Text>
-                <Text style={styles.detailValue}>{currencySymbol}{offer.minTransactionAmount}</Text>
+                <Text style={styles.detailValue}>
+                  {currencySymbol}
+                  {offer.minTransactionAmount}
+                </Text>
               </View>
             )}
             {validUntil && (
@@ -227,8 +240,8 @@ function OffersDetailPage() {
           <View style={styles.storesSection}>
             <Text style={styles.sectionLabel}>Available At</Text>
             {applicableStores.map((store: any, i: number) => {
-              const storeName = typeof store === 'string' ? store : (store.name || store.storeName || '');
-              const storeId = typeof store === 'string' ? null : (store._id || store.id);
+              const storeName = typeof store === 'string' ? store : store.name || store.storeName || '';
+              const storeId = typeof store === 'string' ? null : store._id || store.id;
               if (!storeName) return null;
               return (
                 <Pressable
@@ -242,7 +255,9 @@ function OffersDetailPage() {
                   disabled={!storeId}
                 >
                   <Ionicons name="storefront-outline" size={20} color={theme.primaryColor} />
-                  <Text style={styles.storeName} numberOfLines={1}>{storeName}</Text>
+                  <Text style={styles.storeName} numberOfLines={1}>
+                    {storeName}
+                  </Text>
                   {storeId && <Ionicons name="chevron-forward" size={18} color={SHARED_COLORS.textSecondary} />}
                 </Pressable>
               );
@@ -272,10 +287,7 @@ function OffersDetailPage() {
         return (
           <View style={styles.bottomCTA}>
             {promoCode ? (
-              <Pressable
-                style={styles.applyBtn}
-                onPress={() => handleCopyCode(promoCode)}
-              >
+              <Pressable style={styles.applyBtn} onPress={() => handleCopyCode(promoCode)}>
                 <Ionicons name="copy-outline" size={18} color={SHARED_COLORS.white} />
                 <Text style={styles.applyBtnText}>Copy Code</Text>
               </Pressable>
@@ -291,9 +303,13 @@ function OffersDetailPage() {
                   <>
                     <Ionicons name="gift-outline" size={18} color={SHARED_COLORS.white} />
                     <Text style={styles.applyBtnText}>
-                      {isExpired ? 'Offer Expired' : offer.maxDiscount > 0
-                        ? `Save up to ${currencySymbol}${offer.maxDiscount.toLocaleString()}`
-                        : discount > 0 ? `Get ${discount}% Off Now` : 'Apply Offer'}
+                      {isExpired
+                        ? 'Offer Expired'
+                        : offer.maxDiscount > 0
+                          ? `Save up to ${currencySymbol}${offer.maxDiscount.toLocaleString()}`
+                          : discount > 0
+                            ? `Get ${discount}% Off Now`
+                            : 'Apply Offer'}
                     </Text>
                   </>
                 )}
@@ -309,8 +325,14 @@ function OffersDetailPage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md,
-    backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default, gap: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+    gap: Spacing.md,
   },
   backBtn: { padding: Spacing.xs },
   headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.primary },
@@ -322,55 +344,116 @@ const styles = StyleSheet.create({
   content: { paddingBottom: 120 },
   hero: { padding: Spacing['2xl'], alignItems: 'center' },
   heroIcon: { fontSize: 48, marginBottom: Spacing.md },
-  heroTitle: { fontSize: 22, fontWeight: '700', color: colors.text.inverse, textAlign: 'center', marginBottom: Spacing.sm },
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
   heroDiscount: { ...Typography.h1, fontWeight: '800', color: colors.text.inverse },
   heroMax: { ...Typography.body, color: 'rgba(255,255,255,0.8)', marginTop: Spacing.xs },
-  promoSection: { margin: Spacing.base, padding: Spacing.base, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg },
+  promoSection: {
+    margin: Spacing.base,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+  },
   promoLabel: { ...Typography.body, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.md },
   promoRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   promoCodeBox: {
-    flex: 1, borderWidth: 2, borderColor: Colors.info, borderStyle: 'dashed',
-    borderRadius: BorderRadius.sm, paddingVertical: Spacing.md, alignItems: 'center',
+    flex: 1,
+    borderWidth: 2,
+    borderColor: Colors.info,
+    borderStyle: 'dashed',
+    borderRadius: BorderRadius.sm,
+    paddingVertical: Spacing.md,
+    alignItems: 'center',
   },
   promoCode: { ...Typography.h4, fontWeight: '700', color: colors.text.primary, letterSpacing: 2 },
   copyBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: Spacing.base, paddingVertical: Spacing.md, backgroundColor: Colors.info, borderRadius: BorderRadius.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.info,
+    borderRadius: BorderRadius.sm,
   },
   copyBtnText: { ...Typography.bodySmall, fontSize: 13, fontWeight: '600', color: colors.text.inverse },
-  detailsSection: { marginHorizontal: Spacing.base, marginBottom: Spacing.base, padding: Spacing.base, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg },
+  detailsSection: {
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+  },
   sectionLabel: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.md },
   descriptionText: { ...Typography.body, color: colors.text.tertiary, lineHeight: 20, marginBottom: Spacing.base },
   detailsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   detailItem: {
-    width: '47%' as any, padding: Spacing.md, borderRadius: BorderRadius.md,
-    backgroundColor: Colors.infoScale[50], alignItems: 'center', gap: Spacing.xs,
+    width: '47%' as any,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.infoScale[50],
+    alignItems: 'center',
+    gap: Spacing.xs,
   },
   detailLabel: { ...Typography.caption, color: colors.text.tertiary },
   detailValue: { ...Typography.body, fontWeight: '600', color: colors.text.primary },
-  termsSection: { marginHorizontal: Spacing.base, marginBottom: Spacing.base, padding: Spacing.base, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg },
+  termsSection: {
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+  },
   termItem: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.sm },
   termBullet: { ...Typography.body, color: colors.text.tertiary },
   termText: { flex: 1, ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, lineHeight: 18 },
-  storesSection: { marginHorizontal: Spacing.base, marginBottom: Spacing.base, padding: Spacing.base, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg },
+  storesSection: {
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+  },
   storeCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.border.default,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
   },
   storeName: { flex: 1, ...Typography.body, fontWeight: '500', color: colors.text.primary },
   singleStoreCard: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    marginHorizontal: Spacing.base, marginBottom: Spacing.base, padding: Spacing.base, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
   },
   storeLabel: { ...Typography.caption, color: colors.text.tertiary },
   singleStoreName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: colors.text.primary },
   bottomCTA: {
-    padding: Spacing.base, paddingBottom: Spacing['2xl'], backgroundColor: colors.background.primary,
-    borderTopWidth: 1, borderTopColor: colors.border.default,
+    padding: Spacing.base,
+    paddingBottom: Spacing['2xl'],
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.default,
   },
   applyBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm,
-    paddingVertical: Spacing.base, borderRadius: 14, backgroundColor: Colors.info,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.base,
+    borderRadius: 14,
+    backgroundColor: Colors.info,
   },
   applyBtnDisabled: { backgroundColor: colors.text.tertiary },
   applyBtnText: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.inverse },

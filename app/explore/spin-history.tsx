@@ -1,15 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { colors } from '@/constants/theme';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { TransactionListSkeleton } from '@/components/skeletons';
 import { Ionicons } from '@expo/vector-icons';
@@ -84,7 +76,7 @@ function SpinHistoryPage() {
           setHistory(entries);
         } else {
           if (!isMounted()) return;
-          setHistory(prev => [...prev, ...entries]);
+          setHistory((prev) => [...prev, ...entries]);
         }
 
         if (!isMounted()) return;
@@ -94,7 +86,7 @@ function SpinHistoryPage() {
         if (!isMounted()) return;
         setPage(pageNum);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -129,33 +121,36 @@ function SpinHistoryPage() {
     return entry.prize || 'Prize';
   };
 
-  const renderItem = useCallback(({ item }: { item: SpinHistoryEntry }) => {
-    const config = PRIZE_TYPE_CONFIG[item.type] || PRIZE_TYPE_CONFIG.coins;
-    const rewardText = getRewardDisplay(item);
-    const storeName = item.couponMetadata?.storeName;
+  const renderItem = useCallback(
+    ({ item }: { item: SpinHistoryEntry }) => {
+      const config = PRIZE_TYPE_CONFIG[item.type] || PRIZE_TYPE_CONFIG.coins;
+      const rewardText = getRewardDisplay(item);
+      const storeName = item.couponMetadata?.storeName;
 
-    return (
-      <View style={styles.historyItem}>
-        <View style={[styles.iconContainer, { backgroundColor: `${config.color}15` }]}>
-          <Ionicons name={config.icon as any} size={20} color={config.color} />
+      return (
+        <View style={styles.historyItem}>
+          <View style={[styles.iconContainer, { backgroundColor: `${config.color}15` }]}>
+            <Ionicons name={config.icon as any} size={20} color={config.color} />
+          </View>
+          <View style={styles.itemContent}>
+            <Text style={styles.itemPrize}>{rewardText}</Text>
+            {storeName && (
+              <Text style={styles.itemStore}>
+                {item.couponMetadata?.isProductSpecific
+                  ? `${item.couponMetadata.productName} at ${storeName}`
+                  : `Valid at ${storeName}`}
+              </Text>
+            )}
+            <Text style={styles.itemDate}>{formatDate(item.completedAt)}</Text>
+          </View>
+          <View style={[styles.typeBadge, { backgroundColor: `${config.color}15` }]}>
+            <Text style={[styles.typeBadgeText, { color: config.color }]}>{config.label}</Text>
+          </View>
         </View>
-        <View style={styles.itemContent}>
-          <Text style={styles.itemPrize}>{rewardText}</Text>
-          {storeName && (
-            <Text style={styles.itemStore}>
-              {item.couponMetadata?.isProductSpecific
-                ? `${item.couponMetadata.productName} at ${storeName}`
-                : `Valid at ${storeName}`}
-            </Text>
-          )}
-          <Text style={styles.itemDate}>{formatDate(item.completedAt)}</Text>
-        </View>
-        <View style={[styles.typeBadge, { backgroundColor: `${config.color}15` }]}>
-          <Text style={[styles.typeBadgeText, { color: config.color }]}>{config.label}</Text>
-        </View>
-      </View>
-    );
-  }, [currencySymbol]);
+      );
+    },
+    [currencySymbol],
+  );
 
   const renderEmpty = () => {
     if (loading) return null;
@@ -164,10 +159,7 @@ function SpinHistoryPage() {
         <Ionicons name="game-controller-outline" size={64} color={colors.border.default} />
         <Text style={styles.emptyTitle}>No Spins Yet</Text>
         <Text style={styles.emptyText}>Play the Spin & Win game to see your history here</Text>
-        <Pressable
-          style={styles.playButton}
-          onPress={() => router.push('/explore/spin-win' as any)}
-        >
+        <Pressable style={styles.playButton} onPress={() => router.push('/explore/spin-win' as any)}>
           <Text style={styles.playButtonText}>Play Now</Text>
         </Pressable>
       </View>
@@ -189,7 +181,10 @@ function SpinHistoryPage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Spin History</Text>
@@ -199,9 +194,7 @@ function SpinHistoryPage() {
       </View>
 
       {/* Loading */}
-      {loading && (
-        <TransactionListSkeleton />
-      )}
+      {loading && <TransactionListSkeleton />}
 
       {/* History List */}
       {!loading && (
@@ -210,9 +203,7 @@ function SpinHistoryPage() {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.warning]} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.warning]} />}
           onEndReached={onEndReached}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={renderEmpty}

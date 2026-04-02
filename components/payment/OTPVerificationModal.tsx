@@ -210,7 +210,7 @@ function OTPVerificationModal({
                   <TextInput
                     key={index}
                     ref={(ref) => { inputRefs.current[index] = ref; }}
-                    style={[styles.otpInput, digit && styles.otpInputFilled]}
+                    style={[styles.otpInput, digit ? styles.otpInputFilled : null]}
                     value={digit}
                     onChangeText={(value) => handleOtpChange(value, index)}
                     onKeyPress={(e) => handleKeyPress(e, index)}
@@ -229,7 +229,7 @@ function OTPVerificationModal({
               </View>
 
               <Pressable
-                style={[styles.verifyButton, isLoading && styles.verifyButtonDisabled]}
+                style={[styles.verifyButton, isLoading ? styles.verifyButtonDisabled : null]}
                 onPress={() => verifyOTP()}
                 disabled={isLoading || otp.some(d => !d)}
               >
@@ -245,7 +245,7 @@ function OTPVerificationModal({
                 onPress={handleResend}
                 disabled={resendTimer > 0}
               >
-                <ThemedText style={[styles.resendText, resendTimer > 0 && styles.resendTextDisabled]}>
+                <ThemedText style={[styles.resendText, resendTimer > 0 ? styles.resendTextDisabled : null]}>
                   {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
                 </ThemedText>
               </Pressable>

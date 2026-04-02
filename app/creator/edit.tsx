@@ -27,8 +27,20 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const SOCIAL_PLATFORMS = ['instagram', 'youtube', 'twitter', 'tiktok', 'website'] as const;
 const CREATOR_TAGS = [
-  'Fashion', 'Beauty', 'Tech', 'Food', 'Fitness', 'Travel', 'Lifestyle',
-  'Gaming', 'Music', 'Art', 'Photography', 'Home', 'Books', 'Sports',
+  'Fashion',
+  'Beauty',
+  'Tech',
+  'Food',
+  'Fitness',
+  'Travel',
+  'Lifestyle',
+  'Gaming',
+  'Music',
+  'Art',
+  'Photography',
+  'Home',
+  'Books',
+  'Sports',
 ];
 
 interface SocialLink {
@@ -64,7 +76,7 @@ function CreatorEditProfilePage() {
           setSelectedTags(data.tags || []);
           setSocialLinks(data.socialLinks || []);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -110,7 +122,7 @@ function CreatorEditProfilePage() {
 
     setSaving(true);
     try {
-      const filteredLinks = socialLinks.filter(link => link.url.trim());
+      const filteredLinks = socialLinks.filter((link) => link.url.trim());
       const response = await creatorsApi.updateMyProfile({
         displayName: displayName.trim(),
         bio: bio.trim(),
@@ -122,7 +134,7 @@ function CreatorEditProfilePage() {
 
       if (response.success) {
         platformAlert('Success', 'Profile updated successfully', [
-          { text: 'OK', onPress: () => router.canGoBack() ? router.back() : router.replace('/(tabs)') },
+          { text: 'OK', onPress: () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')) },
         ]);
       } else {
         platformAlert('Error', response.error || 'Failed to update profile');
@@ -136,29 +148,25 @@ function CreatorEditProfilePage() {
   }, [displayName, bio, avatar, coverImage, selectedTags, socialLinks, validate, router]);
 
   const toggleTag = useCallback((tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : prev.length < 5 ? [...prev, tag] : prev
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : prev.length < 5 ? [...prev, tag] : prev,
     );
   }, []);
 
   const addSocialLink = useCallback(() => {
-    const usedPlatforms = socialLinks.map(l => l.platform);
-    const available = SOCIAL_PLATFORMS.find(p => !usedPlatforms.includes(p));
+    const usedPlatforms = socialLinks.map((l) => l.platform);
+    const available = SOCIAL_PLATFORMS.find((p) => !usedPlatforms.includes(p));
     if (available) {
-      setSocialLinks(prev => [...prev, { platform: available, url: '' }]);
+      setSocialLinks((prev) => [...prev, { platform: available, url: '' }]);
     }
   }, [socialLinks]);
 
   const removeSocialLink = useCallback((index: number) => {
-    setSocialLinks(prev => prev.filter((_, i) => i !== index));
+    setSocialLinks((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const updateSocialLink = useCallback((index: number, field: 'platform' | 'url', value: string) => {
-    setSocialLinks(prev => prev.map((link, i) =>
-      i === index ? { ...link, [field]: value } : link
-    ));
+    setSocialLinks((prev) => prev.map((link, i) => (i === index ? { ...link, [field]: value } : link)));
   }, []);
 
   if (loading) {
@@ -167,7 +175,10 @@ function CreatorEditProfilePage() {
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Edit Profile</Text>
@@ -188,7 +199,10 @@ function CreatorEditProfilePage() {
       {/* Header */}
       <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Edit Profile</Text>
@@ -206,10 +220,7 @@ function CreatorEditProfilePage() {
         </View>
       </LinearGradient>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* Display Name */}
           <View style={styles.fieldGroup}>
@@ -223,9 +234,7 @@ function CreatorEditProfilePage() {
               maxLength={50}
             />
             <View style={styles.fieldFooter}>
-              {errors.displayName && (
-                <Text style={styles.errorText}>{errors.displayName}</Text>
-              )}
+              {errors.displayName && <Text style={styles.errorText}>{errors.displayName}</Text>}
               <Text style={styles.charCount}>{displayName.length}/50</Text>
             </View>
           </View>
@@ -284,18 +293,15 @@ function CreatorEditProfilePage() {
           <View style={styles.fieldGroup}>
             <Text style={styles.fieldLabel}>Tags (up to 5)</Text>
             <View style={styles.tagsGrid}>
-              {CREATOR_TAGS.map(tag => {
+              {CREATOR_TAGS.map((tag) => {
                 const isSelected = selectedTags.includes(tag);
                 return (
                   <Pressable
                     key={tag}
-                    style={[styles.tagChip, isSelected && styles.tagChipSelected]}
+                    style={[styles.tagChip, isSelected ? styles.tagChipSelected : null]}
                     onPress={() => toggleTag(tag)}
-                   
                   >
-                    <Text style={[styles.tagChipText, isSelected && styles.tagChipTextSelected]}>
-                      {tag}
-                    </Text>
+                    <Text style={[styles.tagChipText, isSelected ? styles.tagChipTextSelected : null]}>{tag}</Text>
                     {isSelected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
                   </Pressable>
                 );
@@ -320,11 +326,15 @@ function CreatorEditProfilePage() {
                 <View style={styles.platformBadge}>
                   <Ionicons
                     name={
-                      link.platform === 'instagram' ? 'logo-instagram' :
-                      link.platform === 'youtube' ? 'logo-youtube' :
-                      link.platform === 'twitter' ? 'logo-twitter' :
-                      link.platform === 'tiktok' ? 'musical-notes' :
-                      'globe-outline' as any
+                      link.platform === 'instagram'
+                        ? 'logo-instagram'
+                        : link.platform === 'youtube'
+                          ? 'logo-youtube'
+                          : link.platform === 'twitter'
+                            ? 'logo-twitter'
+                            : link.platform === 'tiktok'
+                              ? 'musical-notes'
+                              : ('globe-outline' as any)
                     }
                     size={16}
                     color={colors.text.tertiary}
@@ -334,10 +344,7 @@ function CreatorEditProfilePage() {
                   </Text>
                 </View>
                 <TextInput
-                  style={[
-                    styles.socialUrlInput,
-                    errors[`social_${link.platform}`] ? styles.textInputError : null,
-                  ]}
+                  style={[styles.socialUrlInput, errors[`social_${link.platform}`] ? styles.textInputError : null]}
                   value={link.url}
                   onChangeText={(value) => updateSocialLink(index, 'url', value)}
                   placeholder={`https://${link.platform}.com/...`}
@@ -345,26 +352,16 @@ function CreatorEditProfilePage() {
                   autoCapitalize="none"
                   keyboardType="url"
                 />
-                <Pressable
-                  onPress={() => removeSocialLink(index)}
-                  style={styles.removeLinkButton}
-                >
+                <Pressable onPress={() => removeSocialLink(index)} style={styles.removeLinkButton}>
                   <Ionicons name="close-circle" size={22} color={Colors.error} />
                 </Pressable>
               </View>
             ))}
-            {socialLinks.length === 0 && (
-              <Text style={styles.noLinksText}>No social links added yet</Text>
-            )}
+            {socialLinks.length === 0 && <Text style={styles.noLinksText}>No social links added yet</Text>}
           </View>
 
           {/* Save Button */}
-          <Pressable
-            style={[styles.saveButton, saving && { opacity: 0.5 }]}
-            onPress={handleSave}
-            disabled={saving}
-           
-          >
+          <Pressable style={[styles.saveButton, saving && { opacity: 0.5 }]} onPress={handleSave} disabled={saving}>
             {saving ? (
               <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (

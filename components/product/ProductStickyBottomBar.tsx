@@ -95,7 +95,7 @@ export const ProductStickyBottomBar: React.FC<ProductStickyBottomBarProps> = ({
       {onQuantityChange && (
         <View style={styles.quantitySection}>
           <Pressable
-            style={[styles.qtyButton, quantity <= 1 && styles.qtyButtonDisabled]}
+            style={[styles.qtyButton, quantity <= 1 ? styles.qtyButtonDisabled : null]}
             onPress={() => quantity > 1 && onQuantityChange(quantity - 1)}
             disabled={quantity <= 1}
            
@@ -104,7 +104,7 @@ export const ProductStickyBottomBar: React.FC<ProductStickyBottomBarProps> = ({
           </Pressable>
           <Text style={styles.qtyText}>{quantity}</Text>
           <Pressable
-            style={[styles.qtyButton, quantity >= maxQuantity && styles.qtyButtonDisabled]}
+            style={[styles.qtyButton, quantity >= maxQuantity ? styles.qtyButtonDisabled : null]}
             onPress={() => quantity < maxQuantity && onQuantityChange(quantity + 1)}
             disabled={quantity >= maxQuantity}
            

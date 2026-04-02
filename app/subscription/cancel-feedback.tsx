@@ -178,7 +178,7 @@ function CancelFeedbackPage() {
       setIsCancelling(true);
 
       const cancelRequest = {
-        reason: selectedReason === 'other' ? otherReasonText : selectedReason,
+        reason: (selectedReason === 'other' ? otherReasonText : selectedReason) ?? undefined,
         feedback: finalFeedback,
         cancelImmediately: cancellationType === 'immediate',
       };
@@ -218,7 +218,7 @@ function CancelFeedbackPage() {
         {CANCELLATION_REASONS.map((reason) => (
           <Pressable
             key={reason.value}
-            style={[styles.reasonOption, selectedReason === reason.value && styles.reasonOptionSelected]}
+            style={[styles.reasonOption, selectedReason === reason.value ? styles.reasonOptionSelected : null]}
             onPress={() => handleReasonSelect(reason.value)}
             accessibilityLabel={`Reason: ${reason.label}. ${selectedReason === reason.value ? 'Selected' : ''}`}
             accessibilityRole="radio"

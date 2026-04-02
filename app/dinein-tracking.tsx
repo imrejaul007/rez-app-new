@@ -30,7 +30,7 @@ function getStepIndex(status: string): number {
 }
 
 function DineInTrackingScreen() {
-  const { orderId } = useLocalSearchParams<{ orderId: string }>();
+  const { orderId } = useLocalSearchParams<any>();
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currency = getCurrencySymbol();
@@ -135,11 +135,11 @@ function DineInTrackingScreen() {
                     />
                   </View>
                   {idx < STATUS_STEPS.length - 1 && (
-                    <View style={[styles.timelineLine, isActive && styles.timelineLineActive]} />
+                    <View style={[styles.timelineLine, isActive ? styles.timelineLineActive : null]} />
                   )}
                 </View>
                 <View style={styles.timelineContent}>
-                  <Text style={[styles.timelineLabel, isActive && styles.timelineLabelActive]}>{step.label}</Text>
+                  <Text style={[styles.timelineLabel, isActive ? styles.timelineLabelActive : null]}>{step.label}</Text>
                 </View>
               </View>
             );

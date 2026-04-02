@@ -40,7 +40,7 @@ const BonusOpportunitiesSection = React.memo(function BonusOpportunitiesSection(
             <View style={styles.bonusOppRight}>
               <Text style={styles.bonusOppReward}>{replaceCurrencySymbol(opp.reward)}</Text>
               {opp.timeLeft ? (
-                <View style={[styles.bonusOppTimeBadge, opp.urgent && styles.bonusOppUrgent]}>
+                <View style={[styles.bonusOppTimeBadge, opp.urgent ? styles.bonusOppUrgent : null]}>
                   <Ionicons name="time" size={10} color={opp.urgent ? colors.error : colors.text.tertiary} />
                   <Text style={[styles.bonusOppTime, opp.urgent && { color: colors.error }]}>{opp.timeLeft}</Text>
                 </View>

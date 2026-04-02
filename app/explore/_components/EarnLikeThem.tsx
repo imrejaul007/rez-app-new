@@ -1,13 +1,6 @@
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -76,7 +69,7 @@ const EarnLikeThem = () => {
         if (!isMounted()) return;
         setError('Failed to load stats');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load stats');
     } finally {
@@ -118,91 +111,83 @@ const EarnLikeThem = () => {
 
   return (
     <FeatureErrorBoundary featureName="Earn Like Them" compact={true}>
-    <View style={styles.container}>
-      <LinearGradient
-        colors={[Colors.successScale[50], colors.tint.greenLight, colors.tint.green]}
-        style={styles.card}
-      >
-        {/* Header */}
-        <Text style={styles.title}>Earn Like Them</Text>
-        <Text style={styles.subtitle}>Start your rewarding journey in 4 simple steps</Text>
-
-        {/* Steps */}
-        <View style={styles.stepsContainer}>
-          {dynamicSteps.map((step) => (
-            <View key={step.id} style={styles.stepRow}>
-              <View style={styles.stepNumberContainer}>
-                <LinearGradient
-                  colors={[step.color, step.color]}
-                  style={styles.stepNumber}
-                >
-                  <Text style={styles.stepNumberText}>{step.id}</Text>
-                </LinearGradient>
-              </View>
-              <View style={[styles.stepIconContainer, { backgroundColor: step.bgColor }]}>
-                <Ionicons name={step.icon as any} size={22} color={step.color} />
-              </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>{step.title}</Text>
-                <Text style={styles.stepSubtitle}>{step.subtitle}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        {/* Stats */}
-        <View style={styles.statsRow}>
-          <View style={styles.statBox}>
-            {isLoading ? (
-              <View style={styles.skeletonContainer}>
-                <View style={styles.skeletonValue} />
-                <View style={styles.skeletonLabel} />
-              </View>
-            ) : (
-              <>
-                <Text style={styles.statValue}>{formatNumber(displayStats.partnerStores)}</Text>
-                <Text style={styles.statLabel}>Partner Stores</Text>
-              </>
-            )}
-          </View>
-          <View style={[styles.statBox, styles.statBoxHighlight]}>
-            {isLoading ? (
-              <View style={styles.skeletonContainer}>
-                <View style={[styles.skeletonValue, styles.skeletonLight]} />
-                <View style={[styles.skeletonLabel, styles.skeletonLight]} />
-              </View>
-            ) : (
-              <>
-                <Text style={[styles.statValue, styles.statValueHighlight]}>
-                  Up to {displayStats.maxCashback}%
-                </Text>
-                <Text style={[styles.statLabel, styles.statLabelHighlight]}>Cashback</Text>
-              </>
-            )}
-          </View>
-        </View>
-
-        {/* CTA Button */}
-        <Pressable
-          style={styles.ctaButton}
-          onPress={() => navigateTo('/explore/map')}
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.successScale[50], colors.tint.greenLight, colors.tint.green]}
+          style={styles.card}
         >
-          <Text style={styles.ctaText}>Start Earning Nearby</Text>
-          <Ionicons name="arrow-forward" size={18} color={colors.text.inverse} />
-        </Pressable>
+          {/* Header */}
+          <Text style={styles.title}>Earn Like Them</Text>
+          <Text style={styles.subtitle}>Start your rewarding journey in 4 simple steps</Text>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          {isLoading ? (
-            <View style={styles.skeletonFooter} />
-          ) : (
-            <Text style={styles.footerText}>
-              Join {formatNumber(displayStats.totalUsers)} users who are earning while spending
-            </Text>
-          )}
-        </View>
-      </LinearGradient>
-    </View>
+          {/* Steps */}
+          <View style={styles.stepsContainer}>
+            {dynamicSteps.map((step) => (
+              <View key={step.id} style={styles.stepRow}>
+                <View style={styles.stepNumberContainer}>
+                  <LinearGradient colors={[step.color, step.color]} style={styles.stepNumber}>
+                    <Text style={styles.stepNumberText}>{step.id}</Text>
+                  </LinearGradient>
+                </View>
+                <View style={[styles.stepIconContainer, { backgroundColor: step.bgColor }]}>
+                  <Ionicons name={step.icon as any} size={22} color={step.color} />
+                </View>
+                <View style={styles.stepContent}>
+                  <Text style={styles.stepTitle}>{step.title}</Text>
+                  <Text style={styles.stepSubtitle}>{step.subtitle}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          {/* Stats */}
+          <View style={styles.statsRow}>
+            <View style={styles.statBox}>
+              {isLoading ? (
+                <View style={styles.skeletonContainer}>
+                  <View style={styles.skeletonValue} />
+                  <View style={styles.skeletonLabel} />
+                </View>
+              ) : (
+                <>
+                  <Text style={styles.statValue}>{formatNumber(displayStats.partnerStores)}</Text>
+                  <Text style={styles.statLabel}>Partner Stores</Text>
+                </>
+              )}
+            </View>
+            <View style={[styles.statBox, styles.statBoxHighlight]}>
+              {isLoading ? (
+                <View style={styles.skeletonContainer}>
+                  <View style={[styles.skeletonValue, styles.skeletonLight]} />
+                  <View style={[styles.skeletonLabel, styles.skeletonLight]} />
+                </View>
+              ) : (
+                <>
+                  <Text style={[styles.statValue, styles.statValueHighlight]}>Up to {displayStats.maxCashback}%</Text>
+                  <Text style={[styles.statLabel, styles.statLabelHighlight]}>Cashback</Text>
+                </>
+              )}
+            </View>
+          </View>
+
+          {/* CTA Button */}
+          <Pressable style={styles.ctaButton} onPress={() => navigateTo('/explore/map')}>
+            <Text style={styles.ctaText}>Start Earning Nearby</Text>
+            <Ionicons name="arrow-forward" size={18} color={colors.text.inverse} />
+          </Pressable>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            {isLoading ? (
+              <View style={styles.skeletonFooter} />
+            ) : (
+              <Text style={styles.footerText}>
+                Join {formatNumber(displayStats.totalUsers)} users who are earning while spending
+              </Text>
+            )}
+          </View>
+        </LinearGradient>
+      </View>
     </FeatureErrorBoundary>
   );
 };

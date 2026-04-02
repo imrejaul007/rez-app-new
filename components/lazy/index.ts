@@ -66,7 +66,7 @@ export const LazyRelatedProductsSection = lazy(() =>
  */
 export const LazyCombinedSection78 = lazy(() =>
   import('@/app/StoreSection/CombinedSection78').catch(() => ({
-    default: () => null // Graceful fallback if component doesn't exist yet
+    default: (() => null) as any // Graceful fallback if component doesn't exist yet
   }))
 );
 
@@ -76,7 +76,7 @@ export const LazyCombinedSection78 = lazy(() =>
  */
 export const LazySection6 = lazy(() =>
   import('@/app/StoreSection/Section6').catch(() => ({
-    default: () => null // Graceful fallback if component doesn't exist yet
+    default: (() => null) as any // Graceful fallback if component doesn't exist yet
   }))
 );
 
@@ -90,7 +90,7 @@ export const LazySection6 = lazy(() =>
  */
 export const LazyCategoryRecommendationsGrid = lazy(() =>
   import('@/components/homepage/CategoryRecommendationsGrid').catch(() => ({
-    default: () => null // Graceful fallback if component doesn't exist yet
+    default: (() => null) as any // Graceful fallback if component doesn't exist yet
   }))
 );
 

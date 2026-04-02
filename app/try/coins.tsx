@@ -75,7 +75,7 @@ export default function TrialCoinsScreen() {
         if (coinsData.recentTransactions && Array.isArray(coinsData.recentTransactions)) {
           setTransactions(coinsData.recentTransactions);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to load coins data:', err);
       } finally {
         setLoading(false);
@@ -94,7 +94,7 @@ export default function TrialCoinsScreen() {
         packIndex: pack.index,
         amount: pack.price,
       });
-      const order = orderResp.data || orderResp;
+      const order = (orderResp as any).data || orderResp;
 
       // Open Razorpay checkout
       try {
@@ -138,7 +138,7 @@ export default function TrialCoinsScreen() {
     const isExpiringSoon = item.daysUntilExpiry < 7;
 
     return (
-      <View style={[styles.bucketItem, isExpiringSoon && styles.bucketItemExpiring]}>
+      <View style={[styles.bucketItem, isExpiringSoon ? styles.bucketItemExpiring : null]}>
         <View style={styles.bucketHeader}>
           <Text style={styles.bucketAmount}>{item.amount} 🪙</Text>
           {isExpiringSoon && (

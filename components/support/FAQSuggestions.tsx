@@ -46,7 +46,7 @@ function FAQSuggestions({
     if (url) {
       try {
         Linking.openURL(url);
-      } catch (e) { catchAndWarn(e, 'FAQSuggestions/handleArticlePress'); }
+      } catch (e: any) { catchAndWarn(e, 'FAQSuggestions/handleArticlePress'); }
     }
   };
 

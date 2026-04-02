@@ -150,9 +150,9 @@ const EventsPage: React.FC = () => {
       // Set categories (use backend if available, fallback otherwise)
       const categoriesData = categoriesResult.status === 'fulfilled' ? categoriesResult.value : [];
       if (categoriesData && categoriesData.length > 0) {
-        setCategories(categoriesData);
+        setCategories(categoriesData as CategoryItem[]);
       } else {
-        setCategories(FALLBACK_CATEGORIES);
+        setCategories(FALLBACK_CATEGORIES as CategoryItem[]);
       }
 
       // Set reward config
@@ -382,9 +382,9 @@ const EventsPage: React.FC = () => {
                 <Text style={styles.categoryTitle} numberOfLines={1}>
                   {cat.name}
                 </Text>
-                {cat.eventCount !== undefined && cat.eventCount > 0 ? (
+                {(cat as any).eventCount !== undefined && (cat as any).eventCount > 0 ? (
                   <Text style={styles.categoryCount}>
-                    {cat.eventCount} {cat.eventCount === 1 ? 'event' : 'events'}
+                    {(cat as any).eventCount} {(cat as any).eventCount === 1 ? 'event' : 'events'}
                   </Text>
                 ) : (
                   <Text style={[styles.categoryCount, { color: colors.border.dark }]}>Browse</Text>

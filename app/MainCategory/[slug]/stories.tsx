@@ -6,14 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -59,7 +52,7 @@ const BASE_FILTERS = [
 function CategoryStoriesPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const theme = getCategoryTheme(slug || 'electronics');
   const categoryConfig = getCategoryConfig(slug || '');
   const categoryName = categoryConfig?.name || theme.name;
@@ -88,7 +81,7 @@ function CategoryStoriesPage() {
       const combined: UGCItem[] = [];
 
       if (videosRes?.success && videosRes.data) {
-        const videos = Array.isArray(videosRes.data) ? videosRes.data : (videosRes.data?.videos || []);
+        const videos = Array.isArray(videosRes.data) ? videosRes.data : videosRes.data?.videos || [];
         videos.forEach((v: any) => {
           combined.push({
             _id: v._id,
@@ -109,7 +102,7 @@ function CategoryStoriesPage() {
       }
 
       if (reviewsRes?.success && reviewsRes.data) {
-        const reviews = Array.isArray(reviewsRes.data) ? reviewsRes.data : (reviewsRes.data?.reviews || []);
+        const reviews = Array.isArray(reviewsRes.data) ? reviewsRes.data : reviewsRes.data?.reviews || [];
         reviews.forEach((r: any) => {
           combined.push({
             _id: r._id,
@@ -129,7 +122,7 @@ function CategoryStoriesPage() {
       combined.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       if (!isMounted()) return;
       setItems(combined);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -137,7 +130,9 @@ function CategoryStoriesPage() {
     }
   }, []);
 
-  useEffect(() => { fetchUGC(); }, [fetchUGC]);
+  useEffect(() => {
+    fetchUGC();
+  }, [fetchUGC]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -146,7 +141,7 @@ function CategoryStoriesPage() {
     setRefreshing(false);
   };
 
-  const filtered = items.filter(item => {
+  const filtered = items.filter((item) => {
     if (activeFilter === 'all') return true;
     if (activeFilter === 'photos') return item.type === 'photo';
     if (activeFilter === 'videos') return item.type === 'video';
@@ -176,75 +171,84 @@ function CategoryStoriesPage() {
     return `${Math.floor(days / 7)}w ago`;
   };
 
-  const renderItem = useCallback(({ item }: { item: UGCItem }) => (
-    <Pressable
-      style={styles.card}
-      onPress={() => {
-        if (item.store?._id) {
-          router.push(`/MainStorePage?storeId=${item.store._id}` as any);
-        }
-      }}
-    >
-      {item.image ? (
-        <View style={styles.cardImageWrap}>
-          <CachedImage source={item.image} style={styles.cardImage} contentFit="cover" />
-          {item.type === 'video' && (
-            <View style={styles.playBadge}>
-              <Ionicons name="play" size={16} color={SHARED_COLORS.white} />
-            </View>
-          )}
-        </View>
-      ) : null}
-      <View style={styles.cardContent}>
-        <View style={styles.cardHeader}>
-          <View style={styles.cardUser}>
-            <View style={styles.cardAvatar}>
-              <Text style={styles.cardAvatarText}>{getUserName(item).charAt(0)}</Text>
-            </View>
-            <View>
-              <Text style={styles.cardUserName}>{getUserName(item)}</Text>
-              {getStoreName(item) ? (
-                <Text style={styles.cardStoreName}>at {getStoreName(item)}</Text>
-              ) : null}
-            </View>
-          </View>
-          <Text style={styles.cardTime}>{getTimeAgo(item.createdAt)}</Text>
-        </View>
-
-        {item.rating ? (
-          <View style={styles.ratingRow}>
-            {[1, 2, 3, 4, 5].map(i => (
-              <Ionicons key={i} name={i <= item.rating! ? 'star' : 'star-outline'} size={14} color={colors.warningScale[400]} />
-            ))}
+  const renderItem = useCallback(
+    ({ item }: { item: UGCItem }) => (
+      <Pressable
+        style={styles.card}
+        onPress={() => {
+          if (item.store?._id) {
+            router.push(`/MainStorePage?storeId=${item.store._id}` as any);
+          }
+        }}
+      >
+        {item.image ? (
+          <View style={styles.cardImageWrap}>
+            <CachedImage source={item.image} style={styles.cardImage} contentFit="cover" />
+            {item.type === 'video' && (
+              <View style={styles.playBadge}>
+                <Ionicons name="play" size={16} color={SHARED_COLORS.white} />
+              </View>
+            )}
           </View>
         ) : null}
-
-        {(item.caption || item.comment || item.title) && (
-          <Text style={styles.cardCaption} numberOfLines={3}>
-            {item.caption || item.comment || item.title}
-          </Text>
-        )}
-
-        <View style={styles.cardActions}>
-          <View style={styles.cardAction}>
-            <Ionicons name="heart-outline" size={16} color={SHARED_COLORS.textSecondary} />
-            <Text style={styles.cardActionText}>{item.likes || 0}</Text>
+        <View style={styles.cardContent}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardUser}>
+              <View style={styles.cardAvatar}>
+                <Text style={styles.cardAvatarText}>{getUserName(item).charAt(0)}</Text>
+              </View>
+              <View>
+                <Text style={styles.cardUserName}>{getUserName(item)}</Text>
+                {getStoreName(item) ? <Text style={styles.cardStoreName}>at {getStoreName(item)}</Text> : null}
+              </View>
+            </View>
+            <Text style={styles.cardTime}>{getTimeAgo(item.createdAt)}</Text>
           </View>
-          {item.views ? (
-            <View style={styles.cardAction}>
-              <Ionicons name="eye-outline" size={16} color={SHARED_COLORS.textSecondary} />
-              <Text style={styles.cardActionText}>{item.views}</Text>
+
+          {item.rating ? (
+            <View style={styles.ratingRow}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Ionicons
+                  key={i}
+                  name={i <= item.rating! ? 'star' : 'star-outline'}
+                  size={14}
+                  color={colors.warningScale[400]}
+                />
+              ))}
             </View>
           ) : null}
+
+          {(item.caption || item.comment || item.title) && (
+            <Text style={styles.cardCaption} numberOfLines={3}>
+              {item.caption || item.comment || item.title}
+            </Text>
+          )}
+
+          <View style={styles.cardActions}>
+            <View style={styles.cardAction}>
+              <Ionicons name="heart-outline" size={16} color={SHARED_COLORS.textSecondary} />
+              <Text style={styles.cardActionText}>{item.likes || 0}</Text>
+            </View>
+            {item.views ? (
+              <View style={styles.cardAction}>
+                <Ionicons name="eye-outline" size={16} color={SHARED_COLORS.textSecondary} />
+                <Text style={styles.cardActionText}>{item.views}</Text>
+              </View>
+            ) : null}
+          </View>
         </View>
-      </View>
-    </Pressable>
-  ), [router, categoryName]);
+      </Pressable>
+    ),
+    [router, categoryName],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <View style={{ flex: 1 }}>
@@ -254,15 +258,13 @@ function CategoryStoriesPage() {
       </View>
 
       <View style={styles.filterBar}>
-        {FILTERS.map(f => (
+        {FILTERS.map((f) => (
           <Pressable
             key={f.id}
-            style={[styles.filterChip, activeFilter === f.id && styles.filterChipActive]}
+            style={[styles.filterChip, activeFilter === f.id ? styles.filterChipActive : null]}
             onPress={() => setActiveFilter(f.id)}
           >
-            <Text style={[styles.filterText, activeFilter === f.id && styles.filterTextActive]}>
-              {f.label}
-            </Text>
+            <Text style={[styles.filterText, activeFilter === f.id ? styles.filterTextActive : null]}>{f.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -282,7 +284,9 @@ function CategoryStoriesPage() {
           renderItem={renderItem}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primaryColor]} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primaryColor]} />
+          }
           estimatedItemSize={120}
         />
       )}
@@ -293,19 +297,33 @@ function CategoryStoriesPage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md,
-    backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default, gap: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+    gap: Spacing.md,
   },
   backBtn: { padding: Spacing.xs },
   headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.primary },
   headerSubtitle: { ...Typography.bodySmall, color: colors.text.tertiary },
   filterBar: {
-    flexDirection: 'row', paddingHorizontal: Spacing.base, paddingVertical: 10,
-    backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default, gap: Spacing.sm,
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 10,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+    gap: Spacing.sm,
   },
   filterChip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: BorderRadius.xl,
-    borderWidth: 1, borderColor: colors.border.default,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   filterChipActive: { backgroundColor: Colors.info, borderColor: colors.infoScale[400] },
   filterText: { ...Typography.bodySmall, fontWeight: '500', color: colors.text.tertiary },
@@ -318,22 +336,41 @@ const styles = StyleSheet.create({
   emptySubtitle: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center' },
   list: { padding: Spacing.base, paddingBottom: 120 },
   card: {
-    backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.base,
-    elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.base,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
   cardImageWrap: { position: 'relative' },
   cardImage: { width: '100%', height: 200 },
   playBadge: {
-    position: 'absolute', top: '50%', left: '50%', marginTop: -20, marginLeft: -20,
-    width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center', alignItems: 'center',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -20,
+    marginLeft: -20,
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardContent: { padding: 14 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm },
   cardUser: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   cardAvatar: {
-    width: 32, height: 32, borderRadius: BorderRadius.lg, backgroundColor: colors.tint.blue,
-    justifyContent: 'center', alignItems: 'center',
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: colors.tint.blue,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardAvatarText: { ...Typography.body, fontWeight: '600', color: Colors.info },
   cardUserName: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.primary },

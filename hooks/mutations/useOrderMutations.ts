@@ -31,7 +31,7 @@ export function useCancelOrder() {
 export function useRetryPayment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (orderId: string) => ordersApi.retryPayment(orderId),
+    mutationFn: (orderId: string) => (ordersApi as any).retryPayment(orderId),
     retry: 0,
     onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(orderId) });

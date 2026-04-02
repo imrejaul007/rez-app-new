@@ -104,7 +104,7 @@ class ServiceAppointmentApi {
     devLog.log('📅 Appointment Data:', JSON.stringify(data, null, 2));
 
     try {
-      const response = await apiClient.post<ServiceAppointment>('/service-appointments', data);
+      const response = await apiClient.post<ServiceAppointment>('/service-appointments', data as any);
 
       if (response.success) {
         devLog.log('✅ [SERVICE APPOINTMENT API] Appointment created successfully');
@@ -114,7 +114,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to create appointment:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Create appointment error:', error);
       throw error;
@@ -153,7 +153,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch user appointments:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Get user appointments error:', error);
       throw error;
@@ -182,7 +182,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch appointment:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Get appointment error:', error);
       throw error;
@@ -216,7 +216,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to cancel appointment:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Cancel appointment error:', error);
       throw error;
@@ -263,7 +263,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to check availability:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Check availability error:', error);
       throw error;
@@ -304,7 +304,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch slots:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Get slots error:', error);
       throw error;
@@ -345,7 +345,7 @@ class ServiceAppointmentApi {
         devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch services:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICE APPOINTMENT API] Get services error:', error);
       throw error;

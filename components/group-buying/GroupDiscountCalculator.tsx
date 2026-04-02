@@ -88,10 +88,10 @@ function GroupDiscountCalculator({ group }: GroupDiscountCalculatorProps) {
                 )}
               </View>
               <View style={styles.tierContent}>
-                <Text style={[styles.tierMembers, isActive && styles.tierMembersActive]}>
+                <Text style={[styles.tierMembers, isActive ? styles.tierMembersActive : null]}>
                   {tier.minMembers}+ members
                 </Text>
-                <Text style={[styles.tierDiscount, isActive && styles.tierDiscountActive]}>
+                <Text style={[styles.tierDiscount, isActive ? styles.tierDiscountActive : null]}>
                   {tier.discountPercentage}% OFF - {currencySymbol}{tier.pricePerUnit.toFixed(2)}
                 </Text>
               </View>

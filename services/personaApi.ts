@@ -87,7 +87,7 @@ export async function updateAnchorLocations(
   locations: AnchorLocation[]
 ): Promise<boolean> {
   try {
-    const response = await apiClient.put('/persona/anchor-locations', { locations });
+    const response = await apiClient.put<any>('/persona/anchor-locations', { locations });
     return !!response.success;
   } catch {
     return false;

@@ -6,14 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -31,7 +24,17 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 type SortOption = 'popularity' | 'rating' | 'newest' | 'price-low' | 'price-high';
 
-function StoreCard({ store, currencySymbol, onVisitNow, primaryColor }: { store: any; currencySymbol: string; onVisitNow: () => void; primaryColor: string }) {
+function StoreCard({
+  store,
+  currencySymbol,
+  onVisitNow,
+  primaryColor,
+}: {
+  store: any;
+  currencySymbol: string;
+  onVisitNow: () => void;
+  primaryColor: string;
+}) {
   const router = useRouter();
   const [imageError, setImageError] = useState(false);
   const imageUri = store.banner?.[0] || store.banner || store.logo || store.image;
@@ -42,21 +45,28 @@ function StoreCard({ store, currencySymbol, onVisitNow, primaryColor }: { store:
   const hasFastDelivery = store.deliveryCategories?.fastDelivery;
   const hasEMI = store.tags?.some((t: string) => ['emi', 'no-cost-emi'].includes(t.toLowerCase()));
 
-  const serviceTags = (store.tags || [])
-    .filter((t: string) => !['premium', 'authorized', 'official', 'emi', 'no-cost-emi'].includes(t.toLowerCase()))
-    .slice(0, 3)
-    .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1))
-    .join(' \u2022 ') || store.category?.name || 'Store';
+  const serviceTags =
+    (store.tags || [])
+      .filter((t: string) => !['premium', 'authorized', 'official', 'emi', 'no-cost-emi'].includes(t.toLowerCase()))
+      .slice(0, 3)
+      .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1))
+      .join(' \u2022 ') ||
+    store.category?.name ||
+    'Store';
 
   return (
     <Pressable
       style={styles.storeCard}
       onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}
-     
     >
       <View style={styles.storeImageContainer}>
         {imageUri && !imageError ? (
-          <CachedImage source={imageUri} style={styles.storeImage} contentFit="cover" onError={() => setImageError(true)} />
+          <CachedImage
+            source={imageUri}
+            style={styles.storeImage}
+            contentFit="cover"
+            onError={() => setImageError(true)}
+          />
         ) : (
           <View style={[styles.storeImage, styles.storeImagePlaceholder]}>
             <Ionicons name="storefront-outline" size={32} color={SHARED_COLORS.textSecondary} />
@@ -102,8 +112,12 @@ function StoreCard({ store, currencySymbol, onVisitNow, primaryColor }: { store:
       </View>
 
       <View style={styles.storeContent}>
-        <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-        <Text style={styles.storeServices} numberOfLines={1}>{serviceTags}</Text>
+        <Text style={styles.storeName} numberOfLines={1}>
+          {store.name}
+        </Text>
+        <Text style={styles.storeServices} numberOfLines={1}>
+          {serviceTags}
+        </Text>
         <View style={styles.storeMeta}>
           <View style={styles.storeMetaItem}>
             <Ionicons name="location-outline" size={12} color={SHARED_COLORS.textSecondary} />
@@ -114,7 +128,10 @@ function StoreCard({ store, currencySymbol, onVisitNow, primaryColor }: { store:
             <Text style={styles.storeMetaText}>{store.operationalInfo?.deliveryTime || 'Same day delivery'}</Text>
           </View>
           {store.priceForTwo && (
-            <Text style={styles.storePriceForTwo}>{currencySymbol}{store.priceForTwo} avg.</Text>
+            <Text style={styles.storePriceForTwo}>
+              {currencySymbol}
+              {store.priceForTwo} avg.
+            </Text>
           )}
         </View>
 
@@ -125,7 +142,6 @@ function StoreCard({ store, currencySymbol, onVisitNow, primaryColor }: { store:
             e.stopPropagation();
             onVisitNow();
           }}
-         
         >
           <LinearGradient
             colors={[Colors.info, colors.brand.blue]}
@@ -144,7 +160,7 @@ function StoreCard({ store, currencySymbol, onVisitNow, primaryColor }: { store:
 
 function SharedCategoryPage() {
   const isMounted = useIsMounted();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const theme = getCategoryTheme(slug || '');
   const categoryConfig = getCategoryConfig(slug || '');
   const router = useRouter();
@@ -201,7 +217,7 @@ function SharedCategoryPage() {
         if (!isMounted()) return;
         setFilteredStores(applySorting(topRated, sortBy));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -209,7 +225,9 @@ function SharedCategoryPage() {
     }
   }, [applySorting, sortBy]);
 
-  useEffect(() => { fetchStores(); }, [fetchStores]);
+  useEffect(() => {
+    fetchStores();
+  }, [fetchStores]);
 
   useEffect(() => {
     setFilteredStores(applySorting(stores, sortBy));
@@ -222,18 +240,24 @@ function SharedCategoryPage() {
     setRefreshing(false);
   };
 
-  const handleVisitNow = useCallback((store: any) => {
-    router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
-  }, [router]);
+  const handleVisitNow = useCallback(
+    (store: any) => {
+      router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
+    },
+    [router],
+  );
 
-  const renderTopRatedItem = useCallback(({ item }: { item: any }) => (
-    <StoreCard
-      store={item}
-      currencySymbol={currencySymbol}
-      onVisitNow={() => handleVisitNow(item)}
-      primaryColor={theme.primaryColor}
-    />
-  ), [currencySymbol, handleVisitNow, theme.primaryColor]);
+  const renderTopRatedItem = useCallback(
+    ({ item }: { item: any }) => (
+      <StoreCard
+        store={item}
+        currencySymbol={currencySymbol}
+        onVisitNow={() => handleVisitNow(item)}
+        primaryColor={theme.primaryColor}
+      />
+    ),
+    [currencySymbol, handleVisitNow, theme.primaryColor],
+  );
 
   if (isLoading) {
     return (
@@ -252,7 +276,10 @@ function SharedCategoryPage() {
         end={{ x: 1, y: 0 }}
         style={styles.headerGradient}
       >
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.white} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
@@ -271,24 +298,15 @@ function SharedCategoryPage() {
           {sortOptions.map((option) => (
             <Pressable
               key={option.key}
-              style={[
-                styles.sortChip,
-                sortBy === option.key && styles.sortChipActive,
-              ]}
+              style={[styles.sortChip, sortBy === option.key && styles.sortChipActive]}
               onPress={() => setSortBy(option.key)}
-             
             >
               <Ionicons
                 name={option.icon}
                 size={12}
                 color={sortBy === option.key ? SHARED_COLORS.white : SHARED_COLORS.textSecondary}
               />
-              <Text
-                style={[
-                  styles.sortChipText,
-                  sortBy === option.key && styles.sortChipTextActive,
-                ]}
-              >
+              <Text style={[styles.sortChipText, sortBy === option.key && styles.sortChipTextActive]}>
                 {option.label}
               </Text>
             </Pressable>
@@ -302,11 +320,22 @@ function SharedCategoryPage() {
         renderItem={renderTopRatedItem}
         contentContainerStyle={styles.storeList}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primaryColor]} tintColor={theme.primaryColor} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[theme.primaryColor]}
+            tintColor={theme.primaryColor}
+          />
+        }
         estimatedItemSize={100}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name={(theme.defaultMissionIcon || 'storefront-outline') as any} size={48} color={theme.primaryColor} />
+            <Ionicons
+              name={(theme.defaultMissionIcon || 'storefront-outline') as any}
+              size={48}
+              color={theme.primaryColor}
+            />
             <Text style={styles.emptyTitle}>No top-rated stores found yet</Text>
             <Text style={styles.emptySubtitle}>We're working on bringing the best stores to your area</Text>
           </View>
@@ -367,21 +396,41 @@ const styles = StyleSheet.create({
 
   // Store Card
   storeCard: {
-    borderRadius: BorderRadius.lg, backgroundColor: colors.background.primary, overflow: 'hidden', marginBottom: Spacing.base,
-    elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: colors.background.primary,
+    overflow: 'hidden',
+    marginBottom: Spacing.base,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   storeImageContainer: { height: 160, position: 'relative' },
   storeImage: { width: '100%', height: '100%' },
   storeImagePlaceholder: { backgroundColor: colors.tint.blue, justifyContent: 'center', alignItems: 'center' },
   storeImageGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%' },
   storeBadges: {
-    position: 'absolute', top: 8, left: 8, flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap',
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    flexDirection: 'row',
+    gap: Spacing.xs,
+    flexWrap: 'wrap',
   },
   badgeTag: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   badgeTagText: { ...Typography.overline, fontWeight: '600', color: colors.text.inverse },
   ratingBadge: {
-    position: 'absolute', bottom: 8, left: 8, flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 10, paddingVertical: 6, borderRadius: BorderRadius.md, backgroundColor: 'rgba(255,255,255,0.95)', gap: Spacing.xs,
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.md,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    gap: Spacing.xs,
   },
   ratingValue: { ...Typography.body, fontWeight: '700', color: colors.text.primary },
   ratingCount: { ...Typography.caption, color: colors.text.tertiary },

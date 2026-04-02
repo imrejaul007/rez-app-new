@@ -185,7 +185,7 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
             {sizeChart.map((sizeData, index) => (
               <View
                 key={index}
-                style={[styles.tableRow, index % 2 === 0 && styles.tableRowEven]}
+                style={[styles.tableRow, index % 2 === 0 ? styles.tableRowEven : null]}
               >
                 <View style={[styles.tableCell, styles.sizeColumn]}>
                   <ThemedText style={styles.tableCellTextBold}>{sizeData.size}</ThemedText>
@@ -260,7 +260,7 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
             {['slim', 'regular', 'loose'].map(fit => (
               <View
                 key={fit}
-                style={[styles.fitOption, fitType === fit && styles.fitOptionActive]}
+                style={[styles.fitOption, fitType === fit ? styles.fitOptionActive : null]}
               >
                 <Ionicons
                   name={fitType === fit ? 'checkmark-circle' : 'ellipse-outline'}
@@ -268,7 +268,7 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
                   color={fitType === fit ? colors.brand.purpleLight : colors.neutral[400]}
                 />
                 <ThemedText
-                  style={[styles.fitOptionText, fitType === fit && styles.fitOptionTextActive]}
+                  style={[styles.fitOptionText, fitType === fit ? styles.fitOptionTextActive : null]}
                 >
                   {fit.charAt(0).toUpperCase() + fit.slice(1)} Fit
                 </ThemedText>
@@ -518,7 +518,7 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
              
             >
               <Ionicons
-                name="ruler"
+                name={"ruler" as any}
                 size={18}
                 color={activeTab === 'measure' ? colors.brand.purpleLight : colors.neutral[500]}
               />

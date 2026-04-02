@@ -107,7 +107,7 @@ class PointsApiService {
         return {
           success: true,
           data: {
-            total: w.balance?.total || w.total || 0,
+            total: w.balance?.total || (w as any).total || 0,
             earned: w.balance?.available || 0,
             spent: 0,
             pending: w.balance?.pending || 0,
@@ -149,7 +149,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get(`${this.baseUrl}/transactions`, {
+      return await apiClient.get<any>(`${this.baseUrl}/transactions`, {
         page,
         limit,
         ...filters,
@@ -165,7 +165,7 @@ class PointsApiService {
   async getStats(): Promise<ApiResponse<PointsStats>> {
     try {
 
-      return await apiClient.get(`${this.baseUrl}/stats`);
+      return await apiClient.get<any>(`${this.baseUrl}/stats`);
     } catch (error) {
       throw error;
     }
@@ -177,7 +177,7 @@ class PointsApiService {
   async earnPoints(data: EarnPointsRequest): Promise<ApiResponse<PointsReward>> {
     try {
 
-      return await apiClient.post(`${this.baseUrl}/earn`, data);
+      return await apiClient.post<any>(`${this.baseUrl}/earn`, data as any);
     } catch (error) {
       throw error;
     }
@@ -196,7 +196,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post(`${this.baseUrl}/spend`, data);
+      return await apiClient.post<any>(`${this.baseUrl}/spend`, data as any);
     } catch (error) {
       throw error;
     }
@@ -211,7 +211,7 @@ class PointsApiService {
   ): Promise<ApiResponse<{ estimatedPoints: number; multiplier: number; breakdown: any }>> {
     try {
 
-      return await apiClient.post(`${this.baseUrl}/calculate`, {
+      return await apiClient.post<any>(`${this.baseUrl}/calculate`, {
         source,
         metadata,
       });
@@ -232,7 +232,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post(`${this.baseUrl}/claim`, {
+      return await apiClient.post<any>(`${this.baseUrl}/claim`, {
         transactionIds,
       });
     } catch (error) {
@@ -260,7 +260,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get(`${this.baseUrl}/opportunities`);
+      return await apiClient.get<any>(`${this.baseUrl}/opportunities`);
     } catch (error) {
       throw error;
     }
@@ -290,7 +290,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get(`${this.baseUrl}/leaderboard`, {
+      return await apiClient.get<any>(`${this.baseUrl}/leaderboard`, {
         period,
         limit,
       });
@@ -316,7 +316,7 @@ class PointsApiService {
   > {
     try {
       // Use gamification streaks endpoint
-      const response = await apiClient.get('/gamification/streaks');
+      const response = await apiClient.get<any>('/gamification/streaks');
       
       // Transform the response to match expected format
       if (response.success && response.data) {
@@ -370,7 +370,7 @@ class PointsApiService {
   > {
     try {
       // Use gamification streak checkin endpoint
-      return await apiClient.post('/gamification/streak/checkin');
+      return await apiClient.post<any>('/gamification/streak/checkin');
     } catch (error) {
       throw error;
     }
@@ -394,7 +394,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get(`${this.baseUrl}/multiplier`);
+      return await apiClient.get<any>(`${this.baseUrl}/multiplier`);
     } catch (error) {
       throw error;
     }
@@ -416,7 +416,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post(`${this.baseUrl}/transfer`, {
+      return await apiClient.post<any>(`${this.baseUrl}/transfer`, {
         recipientId,
         amount,
         message,
@@ -442,7 +442,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post(`${this.baseUrl}/redeem`, {
+      return await apiClient.post<any>(`${this.baseUrl}/redeem`, {
         rewardId,
         pointsCost,
       });
@@ -470,7 +470,7 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get(`${this.baseUrl}/rewards`);
+      return await apiClient.get<any>(`${this.baseUrl}/rewards`);
     } catch (error) {
       throw error;
     }

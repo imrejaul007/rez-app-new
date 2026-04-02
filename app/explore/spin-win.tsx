@@ -122,7 +122,7 @@ function SpinWinPage() {
         if (!isMounted()) return;
         setError(wheelResponse.error || 'Unable to load spin wheel data');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to load spin wheel. Please try again.');
     } finally {
@@ -379,7 +379,7 @@ function SpinWinPage() {
               <Text style={styles.resultSubtitle}>
                 {wonPrize.type === 'coins'
                   ? 'Coins added to your wallet'
-                  : wonPrize.type === 'cashback'
+                  : (wonPrize.type as string) === 'cashback'
                     ? 'Cashback coupon added to your coupons'
                     : wonPrize.type === 'discount'
                       ? 'Discount coupon added to your coupons'

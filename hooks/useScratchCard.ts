@@ -60,7 +60,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
       setState('loading');
       setError(null);
 
-      const response = await scratchCardApi.checkEligibility();
+      const response: any = await scratchCardApi.checkEligibility();
       if (response.success && response.data) {
         const elig = response.data;
         setEligibility(elig);
@@ -79,7 +79,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
         setError(response.error || 'Failed to check eligibility');
         setState('unavailable');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to check eligibility');
       setState('unavailable');
     }
@@ -90,7 +90,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
       setState('creating');
       setError(null);
 
-      const response = await scratchCardApi.createSession();
+      const response: any = await scratchCardApi.createSession();
       if (response.success && response.data) {
         setSession(response.data);
         setState('scratching');
@@ -100,7 +100,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
         setState('available');
         return null;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to create session');
       setState('available');
       return null;
@@ -111,7 +111,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
     try {
       setError(null);
 
-      const response = await scratchCardApi.play(sessionId);
+      const response: any = await scratchCardApi.play(sessionId);
       if (response.success && response.data) {
         const completedSession = response.data;
         setSession(completedSession);
@@ -136,7 +136,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
         }
         return null;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to reveal prize');
       setState('claimFailed');
       return null;
@@ -147,7 +147,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
     try {
       setError(null);
 
-      const response = await scratchCardApi.retryClaim(sessionId);
+      const response: any = await scratchCardApi.retryClaim(sessionId);
       if (response.success && response.data) {
         const completedSession = response.data;
         setSession(completedSession);
@@ -160,7 +160,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
         setError(response.error || 'Retry failed');
         return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Retry failed');
       return false;
     }

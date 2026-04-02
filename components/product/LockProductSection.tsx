@@ -176,7 +176,7 @@ export const LockProductSection: React.FC<LockProductSectionProps> = ({
       if (!isMounted()) return;
       setIsAddingToCart(false);
       triggerNotification('Success');
-    } catch (err) {
+    } catch (err: any) {
       triggerNotification('Error');
       if (!isMounted()) return;
       setIsAddingToCart(false);

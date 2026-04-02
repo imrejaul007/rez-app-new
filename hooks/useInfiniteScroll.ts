@@ -145,7 +145,7 @@ export function useInfiniteScroll<T = any>(
           onSuccess(pageData, page);
         }
 
-      } catch (err) {
+      } catch (err: any) {
         const error = err instanceof Error ? err : new Error('Failed to fetch data');
 
         if (!isMounted.current) return;
@@ -337,7 +337,7 @@ export function useCursorInfiniteScroll<T = any>(
         if (onSuccess) {
           onSuccess(result.items, result.nextCursor);
         }
-      } catch (err) {
+      } catch (err: any) {
         const error = err instanceof Error ? err : new Error('Failed to fetch data');
 
         if (!isMounted.current) return;

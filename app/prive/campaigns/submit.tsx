@@ -125,7 +125,7 @@ function CampaignSubmitScreen() {
             <View style={styles.progressLine} />
             <ProgressStep number={3} label="Add Screenshot" active={!!postUrl} />
             <View style={styles.progressLine} />
-            <ProgressStep number={4} label="Submit" active={isValid} />
+            <ProgressStep number={4} label="Submit" active={!!isValid} />
           </View>
 
           {/* Step 1: Select Platform */}
@@ -136,14 +136,16 @@ function CampaignSubmitScreen() {
                 <Pressable
                   key={platform.id}
                   onPress={() => setSelectedPlatform(platform.id)}
-                  style={[styles.platformButton, selectedPlatform === platform.id && styles.platformButtonActive]}
+                  style={[styles.platformButton, selectedPlatform === platform.id ? styles.platformButtonActive : null]}
                 >
                   <Ionicons
                     name={platform.icon as any}
                     size={32}
                     color={selectedPlatform === platform.id ? Colors.primary : Colors.textSecondary}
                   />
-                  <Text style={[styles.platformLabel, selectedPlatform === platform.id && styles.platformLabelActive]}>
+                  <Text
+                    style={[styles.platformLabel, selectedPlatform === platform.id ? styles.platformLabelActive : null]}
+                  >
                     {platform.label}
                   </Text>
                 </Pressable>
@@ -253,8 +255,10 @@ interface ProgressStepProps {
 function ProgressStep({ number, label, active }: ProgressStepProps) {
   return (
     <View style={styles.progressStep}>
-      <View style={[styles.progressStepNumber, active && styles.progressStepNumberActive]}>
-        <Text style={[styles.progressStepNumberText, active && styles.progressStepNumberTextActive]}>{number}</Text>
+      <View style={[styles.progressStepNumber, active ? styles.progressStepNumberActive : null]}>
+        <Text style={[styles.progressStepNumberText, active ? styles.progressStepNumberTextActive : null]}>
+          {number}
+        </Text>
       </View>
       <Text style={styles.progressStepLabel}>{label}</Text>
     </View>

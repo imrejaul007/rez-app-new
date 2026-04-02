@@ -79,38 +79,86 @@ const FALLBACK_SECTIONS = [
   {
     section: 'Shopping',
     items: [
-      { id: 'electronics', title: 'Electronics', icon: '📱', color: colors.infoScale[400], route: '/MainCategory/electronics' },
+      {
+        id: 'electronics',
+        title: 'Electronics',
+        icon: '📱',
+        color: colors.infoScale[400],
+        route: '/MainCategory/electronics',
+      },
       { id: 'fashion', title: 'Fashion', icon: '👗', color: colors.brand.pink, route: '/MainCategory/fashion' },
-      { id: 'grocery', title: 'Grocery', icon: '🛒', color: colors.successScale[400], route: '/MainCategory/grocery-essentials' },
+      {
+        id: 'grocery',
+        title: 'Grocery',
+        icon: '🛒',
+        color: colors.successScale[400],
+        route: '/MainCategory/grocery-essentials',
+      },
       { id: 'beauty', title: 'Beauty', icon: '💄', color: '#F472B6', route: '/MainCategory/beauty-wellness' },
     ],
   },
   {
     section: 'Food & Dining',
     items: [
-      { id: 'food-dining', title: 'Food & Dining', icon: '🍕', color: colors.brand.orange, route: '/MainCategory/food-dining' },
+      {
+        id: 'food-dining',
+        title: 'Food & Dining',
+        icon: '🍕',
+        color: colors.brand.orange,
+        route: '/MainCategory/food-dining',
+      },
     ],
   },
   {
     section: 'Travel & Entertainment',
     items: [
       { id: 'travel', title: 'Travel', icon: '✈️', color: '#0EA5E9', route: '/MainCategory/travel-experiences' },
-      { id: 'entertainment', title: 'Entertainment', icon: '🎭', color: colors.brand.pink, route: '/MainCategory/entertainment' },
+      {
+        id: 'entertainment',
+        title: 'Entertainment',
+        icon: '🎭',
+        color: colors.brand.pink,
+        route: '/MainCategory/entertainment',
+      },
     ],
   },
   {
     section: 'Services',
     items: [
-      { id: 'home-services', title: 'Home Services', icon: '🏠', color: colors.warningScale[400], route: '/MainCategory/home-services' },
-      { id: 'fitness', title: 'Fitness', icon: '💪', color: colors.brand.purpleLight, route: '/MainCategory/fitness-sports' },
+      {
+        id: 'home-services',
+        title: 'Home Services',
+        icon: '🏠',
+        color: colors.warningScale[400],
+        route: '/MainCategory/home-services',
+      },
+      {
+        id: 'fitness',
+        title: 'Fitness',
+        icon: '💪',
+        color: colors.brand.purpleLight,
+        route: '/MainCategory/fitness-sports',
+      },
       { id: 'healthcare', title: 'Healthcare', icon: '🏥', color: colors.error, route: '/MainCategory/healthcare' },
-      { id: 'education', title: 'Education', icon: '🎓', color: colors.infoScale[400], route: '/MainCategory/education-learning' },
+      {
+        id: 'education',
+        title: 'Education',
+        icon: '🎓',
+        color: colors.infoScale[400],
+        route: '/MainCategory/education-learning',
+      },
     ],
   },
   {
     section: 'Financial Services',
     items: [
-      { id: 'financial', title: 'Financial', icon: '💳', color: colors.tealGreen, route: '/MainCategory/financial-lifestyle' },
+      {
+        id: 'financial',
+        title: 'Financial',
+        icon: '💳',
+        color: colors.tealGreen,
+        route: '/MainCategory/financial-lifestyle',
+      },
     ],
   },
 ];
@@ -168,7 +216,15 @@ const CategoriesPage: React.FC = () => {
     });
 
     // Order sections
-    const sectionOrder = ['Shopping', 'Food & Dining', 'Entertainment', 'Services', 'Financial Services', 'Earn Rewards', 'Other'];
+    const sectionOrder = [
+      'Shopping',
+      'Food & Dining',
+      'Entertainment',
+      'Services',
+      'Financial Services',
+      'Earn Rewards',
+      'Other',
+    ];
 
     return sectionOrder
       .filter((section) => grouped[section] && grouped[section].length > 0)
@@ -190,7 +246,7 @@ const CategoriesPage: React.FC = () => {
         if (!isMounted()) return;
         setTotalCategories(response.data.length);
       }
-    } catch (error) {
+    } catch (error: any) {
       // Keep fallback data
     } finally {
       if (!isMounted()) return;
@@ -212,9 +268,7 @@ const CategoriesPage: React.FC = () => {
   const filteredCategories = sections
     .map((section) => ({
       ...section,
-      items: section.items.filter((item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
+      items: section.items.filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase())),
     }))
     .filter((section) => section.items.length > 0);
 
@@ -231,7 +285,10 @@ const CategoriesPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -271,12 +328,7 @@ const CategoriesPage: React.FC = () => {
               <Text style={styles.sectionTitle}>{section.section}</Text>
               <View style={styles.categoriesGrid}>
                 {section.items.map((cat) => (
-                  <Pressable
-                    key={cat.id}
-                    style={styles.categoryCard}
-                    onPress={() => router.push(cat.route as any)}
-                   
-                  >
+                  <Pressable key={cat.id} style={styles.categoryCard} onPress={() => router.push(cat.route as any)}>
                     <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                       <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                     </View>
@@ -372,7 +424,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginLeft: Spacing.md,
   },
   section: {
@@ -381,7 +433,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.base,
   },
   categoriesGrid: {
@@ -410,7 +462,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.caption,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
   },
   emptyState: {
@@ -424,7 +476,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {

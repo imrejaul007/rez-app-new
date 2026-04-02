@@ -100,7 +100,7 @@ const FeatureTryCards: React.FC<FeatureTryCardsProps> = ({
         if (lockProduct?.productId) {
           router.push(`/product-page?cardId=${lockProduct.productId}&cardType=product` as any);
         } else {
-          router.push('/product-lock');
+          router.push('/product-lock' as any);
         }
       }),
     });
@@ -122,9 +122,9 @@ const FeatureTryCards: React.FC<FeatureTryCardsProps> = ({
       gradientColors: [colors.lightPeach, colors.brand.sand], // Light Peach gradient
       onPress: onServiceBookingPress || (() => {
         if (trendingService?.productId) {
-          router.push(`/service/${trendingService.productId}`);
+          router.push(`/service/${trendingService.productId}` as any);
         } else {
-          router.push('/service-booking');
+          router.push('/service-booking' as any);
         }
       }),
     });

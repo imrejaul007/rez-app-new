@@ -1,21 +1,16 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions, Platform } from 'react-native';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import tournamentApi, { Tournament, TournamentLeaderboardEntry, UserRankInTournament } from '../../services/tournamentApi';
+import tournamentApi, {
+  Tournament,
+  TournamentLeaderboardEntry,
+  UserRankInTournament,
+} from '../../services/tournamentApi';
 import { useAuthUser, useGetCurrencySymbol } from '@/stores/selectors';
 import { formatTimeLeft } from '@/types/playandearn.types';
 import { useTournamentSocket } from '@/hooks/useTournamentSocket';
@@ -27,30 +22,30 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const NUQTA_COIN = BRAND.COIN_IMAGE;
 
 const GAME_TYPE_ROUTES: Record<string, string> = {
-  'spin_wheel': '/games/spin-wheel',
-  'memory_match': '/games/memory',
-  'coin_hunt': '/games/slots',
-  'guess_price': '/games/trivia',
-  'quiz': '/games/quiz',
-  'mixed': '/games',
+  spin_wheel: '/games/spin-wheel',
+  memory_match: '/games/memory',
+  coin_hunt: '/games/slots',
+  guess_price: '/games/trivia',
+  quiz: '/games/quiz',
+  mixed: '/games',
 };
 
 const { width } = Dimensions.get('window');
 
 const GAME_TYPE_ICONS: Record<string, string> = {
-  'spin_wheel': '🎰',
-  'memory_match': '🧠',
-  'coin_hunt': '🪙',
-  'guess_price': '🏷️',
-  'quiz': '❓',
-  'mixed': '🏆',
+  spin_wheel: '🎰',
+  memory_match: '🧠',
+  coin_hunt: '🪙',
+  guess_price: '🏷️',
+  quiz: '❓',
+  mixed: '🏆',
 };
 
 const STATUS_CONFIG: Record<string, { colors: [string, string]; label: string; icon: string }> = {
-  'active': { colors: [Colors.success, Colors.success], label: 'LIVE', icon: 'radio' },
-  'upcoming': { colors: [Colors.info, Colors.info], label: 'UPCOMING', icon: 'time' },
-  'completed': { colors: [colors.text.tertiary, colors.text.tertiary], label: 'ENDED', icon: 'checkmark-circle' },
-  'cancelled': { colors: [Colors.error, Colors.error], label: 'CANCELLED', icon: 'close-circle' },
+  active: { colors: [Colors.success, Colors.success], label: 'LIVE', icon: 'radio' },
+  upcoming: { colors: [Colors.info, Colors.info], label: 'UPCOMING', icon: 'time' },
+  completed: { colors: [colors.text.tertiary, colors.text.tertiary], label: 'ENDED', icon: 'checkmark-circle' },
+  cancelled: { colors: [Colors.error, Colors.error], label: 'CANCELLED', icon: 'close-circle' },
 };
 
 const TournamentDetail = () => {
@@ -60,7 +55,8 @@ const TournamentDetail = () => {
   const user = useAuthUser();
   const currentUserId = user?._id || user?.id || '';
   const params = useLocalSearchParams();
-  const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : params.id?.toString() || '';
+  const id =
+    typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : String(params.id || '');
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -78,11 +74,11 @@ const TournamentDetail = () => {
   useEffect(() => {
     const unsubLeaderboard = onLeaderboardUpdate((data) => {
       if (data.tournamentId === id && data.leaderboard) {
-        setLeaderboard(prev => {
+        setLeaderboard((prev) => {
           if (prev.length === 0) return prev;
-          const updated = prev.map(existing => {
+          const updated = prev.map((existing) => {
             const userId = (existing as any).user?._id || (existing as any).userId;
-            const socketEntry = data.leaderboard.find(e => e.userId === userId);
+            const socketEntry = data.leaderboard.find((e) => e.userId === userId);
             if (socketEntry) {
               return { ...existing, score: socketEntry.score, rank: socketEntry.rank };
             }
@@ -96,31 +92,38 @@ const TournamentDetail = () => {
     const unsubScore = onScoreUpdate((data) => {
       if (data.tournamentId === id) {
         if (currentUserId && data.userId === String(currentUserId)) {
-          setMyRank(prev => prev ? { ...prev, score: data.newScore, rank: data.newRank } : prev);
+          setMyRank((prev) => (prev ? { ...prev, score: data.newScore, rank: data.newRank } : prev));
         }
-        setLeaderboard(prev =>
-          prev.map(entry => {
+        setLeaderboard((prev) =>
+          prev.map((entry) => {
             const userId = (entry as any).user?._id || (entry as any).userId;
             if (userId === data.userId) {
               return { ...entry, score: data.newScore, rank: data.newRank };
             }
             return entry;
-          })
+          }),
         );
       }
     });
 
-    return () => { unsubLeaderboard(); unsubScore(); };
+    return () => {
+      unsubLeaderboard();
+      unsubScore();
+    };
   }, [id, onLeaderboardUpdate, onScoreUpdate, currentUserId]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!id) { setError('Tournament not found'); setLoading(false); return; }
+      if (!id) {
+        setError('Tournament not found');
+        setLoading(false);
+        return;
+      }
       try {
         const [tournamentRes, leaderboardRes, myRankRes] = await Promise.all([
           tournamentApi.getTournamentById(id),
           tournamentApi.getTournamentLeaderboard(id, 10),
-          tournamentApi.getMyRankInTournament(id).catch(() => ({ data: null }))
+          tournamentApi.getMyRankInTournament(id).catch(() => ({ data: null })),
         ]);
         if (tournamentRes.data) setTournament(tournamentRes.data);
         else setError('Tournament not found');
@@ -131,7 +134,7 @@ const TournamentDetail = () => {
           if (!isMounted()) return;
           setIsJoined(true); // If we have rank data, user has joined
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load tournament');
       } finally {
@@ -152,7 +155,9 @@ const TournamentDetail = () => {
   useEffect(() => {
     updateTimer();
     timerRef.current = setInterval(updateTimer, 60000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [updateTimer]);
 
   const handleJoin = async () => {
@@ -183,9 +188,10 @@ const TournamentDetail = () => {
     router.push(route as any);
   };
 
-  const icon = tournament ? (GAME_TYPE_ICONS[tournament.gameType] || '🏆') : '🏆';
-  const statusCfg = tournament ? (STATUS_CONFIG[tournament.status] || STATUS_CONFIG['active']) : STATUS_CONFIG['active'];
-  const totalPrizePool = tournament?.prizes?.reduce((sum, p) => sum + (p.coins || 0), 0) || tournament?.totalPrizePool || 0;
+  const icon = tournament ? GAME_TYPE_ICONS[tournament.gameType] || '🏆' : '🏆';
+  const statusCfg = tournament ? STATUS_CONFIG[tournament.status] || STATUS_CONFIG['active'] : STATUS_CONFIG['active'];
+  const totalPrizePool =
+    tournament?.prizes?.reduce((sum, p) => sum + (p.coins || 0), 0) || tournament?.totalPrizePool || 0;
 
   if (loading) {
     return (
@@ -201,7 +207,10 @@ const TournamentDetail = () => {
         <View style={styles.errorCard}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <Text style={styles.errorTitle}>{error || 'Tournament not found'}</Text>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.errorBtn}
+          >
             <Text style={styles.errorBtnText}>Go Back</Text>
           </Pressable>
         </View>
@@ -211,15 +220,14 @@ const TournamentDetail = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {/* Hero Header */}
-        <LinearGradient
-          colors={[colors.nileBlue, '#234B6B']}
-          style={styles.hero}
-        >
+        <LinearGradient colors={[colors.nileBlue, '#234B6B']} style={styles.hero}>
           {/* Back button */}
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
 
@@ -232,9 +240,7 @@ const TournamentDetail = () => {
           {/* Icon + Title */}
           <Text style={styles.heroIcon}>{icon}</Text>
           <Text style={styles.heroTitle}>{tournament.name}</Text>
-          {tournament.description ? (
-            <Text style={styles.heroDescription}>{tournament.description}</Text>
-          ) : null}
+          {tournament.description ? <Text style={styles.heroDescription}>{tournament.description}</Text> : null}
 
           {/* Participants count */}
           <View style={styles.participantsRow}>
@@ -257,8 +263,20 @@ const TournamentDetail = () => {
               <Text style={styles.heroStatLabel}>Game Type</Text>
             </View>
             <View style={styles.heroStatCard}>
-              <Ionicons name="time" size={20} color={tournament.status === 'active' ? colors.errorScale[400] : colors.infoScale[400]} />
-              <Text style={[styles.heroStatValue, { color: tournament.status === 'active' ? colors.errorScale[400] : colors.infoScale[400], fontSize: 14 }]}>
+              <Ionicons
+                name="time"
+                size={20}
+                color={tournament.status === 'active' ? colors.errorScale[400] : colors.infoScale[400]}
+              />
+              <Text
+                style={[
+                  styles.heroStatValue,
+                  {
+                    color: tournament.status === 'active' ? colors.errorScale[400] : colors.infoScale[400],
+                    fontSize: 14,
+                  },
+                ]}
+              >
                 {tournament.status === 'completed' ? 'Ended' : timeDisplay || '...'}
               </Text>
               <Text style={styles.heroStatLabel}>
@@ -292,9 +310,7 @@ const TournamentDetail = () => {
                 {myRank.isWinner && myRank.prize && (
                   <View style={styles.prizeEligible}>
                     <Ionicons name="star" size={14} color={colors.nileBlue} />
-                    <Text style={styles.prizeEligibleText}>
-                      Prize: {myRank.prize.coins.toLocaleString()} coins
-                    </Text>
+                    <Text style={styles.prizeEligibleText}>Prize: {myRank.prize.coins.toLocaleString()} coins</Text>
                   </View>
                 )}
               </LinearGradient>
@@ -313,10 +329,17 @@ const TournamentDetail = () => {
               {tournament.prizes.map((prize, idx) => {
                 const rankIcons = ['🥇', '🥈', '🥉'];
                 const prizeIcon = idx < 3 ? rankIcons[idx] : '🎁';
-                const rankLabel = idx === 0 ? '1st Place' : idx === 1 ? '2nd Place' : idx === 2 ? '3rd Place' : `${prize.rank || idx + 1}th Place`;
+                const rankLabel =
+                  idx === 0
+                    ? '1st Place'
+                    : idx === 1
+                      ? '2nd Place'
+                      : idx === 2
+                        ? '3rd Place'
+                        : `${prize.rank || idx + 1}th Place`;
                 const isTop = idx < 3;
                 return (
-                  <View key={idx} style={[styles.prizeItem, isTop && styles.prizeItemTop]}>
+                  <View key={idx} style={[styles.prizeItem, isTop ? styles.prizeItemTop : null]}>
                     <View style={styles.prizeLeft}>
                       <Text style={styles.prizeIcon}>{prizeIcon}</Text>
                       <Text style={[styles.prizeRank, isTop && { fontWeight: '700' }]}>{rankLabel}</Text>
@@ -360,9 +383,7 @@ const TournamentDetail = () => {
                 <Ionicons name="ribbon" size={18} color={Colors.brand.purple} />
               </View>
               <Text style={styles.sectionTitle}>Leaderboard</Text>
-              {leaderboard.length > 0 && (
-                <Text style={styles.sectionBadge}>Top {leaderboard.length}</Text>
-              )}
+              {leaderboard.length > 0 && <Text style={styles.sectionBadge}>Top {leaderboard.length}</Text>}
             </View>
 
             {leaderboard.length > 0 ? (
@@ -370,9 +391,9 @@ const TournamentDetail = () => {
                 {leaderboard.map((entry, idx) => {
                   const isTop3 = entry.rank <= 3;
                   const rankColors = [colors.warningScale[400], '#94A3B8', '#CD7F32'];
-                  const isCurrentUser = currentUserId && (
-                    (entry as any).user?._id === currentUserId || (entry as any).userId === currentUserId
-                  );
+                  const isCurrentUser =
+                    currentUserId &&
+                    ((entry as any).user?._id === currentUserId || (entry as any).userId === currentUserId);
 
                   return (
                     <View
@@ -393,7 +414,16 @@ const TournamentDetail = () => {
                       )}
 
                       {/* Avatar */}
-                      <View style={[styles.lbAvatar, { backgroundColor: isTop3 ? `${rankColors[Math.min(entry.rank - 1, 2)]}25` : colors.tint.slate }]}>
+                      <View
+                        style={[
+                          styles.lbAvatar,
+                          {
+                            backgroundColor: isTop3
+                              ? `${rankColors[Math.min(entry.rank - 1, 2)]}25`
+                              : colors.tint.slate,
+                          },
+                        ]}
+                      >
                         <Text style={styles.lbAvatarText}>
                           {entry.user?.name ? entry.user.name.charAt(0).toUpperCase() : '?'}
                         </Text>
@@ -454,7 +484,18 @@ const TournamentDetail = () => {
             </Pressable>
           )}
           {tournament.status === 'upcoming' && (
-            <View style={[styles.ctaGradient, { backgroundColor: colors.slateLight, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }]}>
+            <View
+              style={[
+                styles.ctaGradient,
+                {
+                  backgroundColor: colors.slateLight,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                },
+              ]}
+            >
               <Ionicons name="time" size={18} color={colors.slateGray} />
               <Text style={{ ...Typography.body, fontWeight: '700', color: colors.slateGray }}>
                 Starts in {timeDisplay || '...'}
@@ -612,7 +653,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: colors.warningScale[400], shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12 },
+      ios: {
+        shadowColor: colors.warningScale[400],
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+      },
       android: { elevation: 4 },
       web: { boxShadow: '0px 4px 16px rgba(245,158,11,0.2)' },
     }),
@@ -667,7 +713,12 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 18,
     ...Platform.select({
-      ios: { shadowColor: colors.nileBlue, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 10 },
+      ios: {
+        shadowColor: colors.nileBlue,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+      },
       android: { elevation: 2 },
       web: { boxShadow: '0px 2px 10px rgba(26,58,82,0.06)' },
     }),

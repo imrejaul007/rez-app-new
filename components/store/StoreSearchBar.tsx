@@ -115,7 +115,7 @@ const StoreSearchBar: React.FC<StoreSearchBarProps> = ({
       setSuggestions(allSuggestions);
       setShowSuggestions(allSuggestions.length > 0);
       setSelectedIndex(-1);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setSuggestions([]);
       setShowSuggestions(false);

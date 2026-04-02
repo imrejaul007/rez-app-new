@@ -82,7 +82,7 @@ function MessagesIndexPage() {
           if (!isMounted()) return;
           setError(response.error || 'Failed to load conversations');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError(err instanceof Error ? err.message : 'Failed to load conversations');
       } finally {

@@ -63,7 +63,7 @@ class LocationService {
       // Save permission status
       await AsyncStorage.setItem(STORAGE_KEYS.LOCATION_PERMISSION, JSON.stringify(result));
       
-      return result;
+      return result as any;
     } catch (error) {
       return {
         status: 'denied',

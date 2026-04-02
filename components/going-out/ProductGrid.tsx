@@ -108,7 +108,7 @@ export const ProductGrid = memo(function ProductGrid({
     <View style={styles.container}>
       <FlashList
         data={products}
-        renderItem={renderProduct}
+        renderItem={renderProduct as any}
         keyExtractor={keyExtractor}
         numColumns={numColumns}
         contentContainerStyle={styles.listContainer}

@@ -84,7 +84,7 @@ function LocationNotifications({
         },
       ];
       setNotifications(mockNotifications);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       setIsLoading(false);
@@ -154,7 +154,7 @@ function LocationNotifications({
 
   const renderNotificationItem = ({ item }: { item: LocationNotification }) => (
     <Pressable
-      style={[styles.notificationItem, !item.isRead && styles.unreadNotification]}
+      style={[styles.notificationItem, !item.isRead ? styles.unreadNotification : null]}
       onPress={() => handleNotificationPress(item)}
      
     >
@@ -165,7 +165,7 @@ function LocationNotifications({
         
         <View style={styles.notificationText}>
           <View style={styles.notificationHeader}>
-            <Text style={[styles.notificationTitle, !item.isRead && styles.unreadText]}>
+            <Text style={[styles.notificationTitle, !item.isRead ? styles.unreadText : null]}>
               {item.title}
             </Text>
             {!item.isRead && <View style={styles.unreadDot} />}

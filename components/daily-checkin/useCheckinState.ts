@@ -208,7 +208,7 @@ export function useCheckinState() {
           setReviewTimeframe(configResponse.data.reviewTimeframe);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMountedRef.current) return;
       setCalendarError('Network error. Please try again.');
     } finally {
@@ -301,8 +301,8 @@ export function useCheckinState() {
         if (response.success && response.data) {
           setShowReward(true);
           triggerRewardAnimation();
-          setCurrentStreak(response.data.streak);
-          setTotalEarned((prev) => prev + response.data.totalEarned);
+          setCurrentStreak(response.data!.streak);
+          setTotalEarned((prev) => prev + response.data!.totalEarned);
           setHasCheckedInToday(true);
 
           setCheckInRewards((prev) =>
@@ -347,7 +347,7 @@ export function useCheckinState() {
       setSelectedPlatform(platform);
       setSelectedPoster(null);
       setShowSubmitModal(true);
-    } catch (error) {
+    } catch (error: any) {
       // Dismissed by user
     }
   };

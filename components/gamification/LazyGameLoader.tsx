@@ -85,7 +85,7 @@ function LazyGameLoader({
       return componentCache.get(path)!;
     }
 
-    const lazyComponent = lazy(GAME_PATHS[path]);
+    const lazyComponent = lazy(GAME_PATHS[path] as any);
     componentCache.set(path, lazyComponent);
     return lazyComponent;
   };
@@ -95,7 +95,7 @@ function LazyGameLoader({
   return (
     <LazyGameErrorBoundary onError={onError}>
       <Suspense fallback={fallback || <DefaultLoader />}>
-        <LazyComponent />
+        <LazyComponent {...{} as any} />
       </Suspense>
     </LazyGameErrorBoundary>
   );
@@ -107,7 +107,7 @@ function LazyGameLoader({
  */
 export const preloadGame = (gamePath: GameType) => {
   if (!componentCache.has(gamePath)) {
-    const lazyComponent = lazy(GAME_PATHS[gamePath]);
+    const lazyComponent = lazy(GAME_PATHS[gamePath] as any);
     componentCache.set(gamePath, lazyComponent);
 
     // Trigger the import to start loading

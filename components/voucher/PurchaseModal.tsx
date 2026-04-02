@@ -350,7 +350,7 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({
           {/* Footer Buttons */}
           <View style={styles.footer}>
             <Pressable
-              style={[styles.cancelButton, purchasing && styles.buttonDisabled]}
+              style={[styles.cancelButton, purchasing ? styles.buttonDisabled : null]}
               onPress={handleClose}
               disabled={purchasing}
              

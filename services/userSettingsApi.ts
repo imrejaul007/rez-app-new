@@ -203,7 +203,7 @@ class UserSettingsApiService {
     this.inflight = apiClient.get<UserSettings>(this.baseUrl).then(response => {
       this.settingsCache = { data: response, timestamp: Date.now() };
       this.inflight = null;
-      return response;
+      return response as any;
     }).catch(err => {
       this.inflight = null;
       throw err;
@@ -219,46 +219,46 @@ class UserSettingsApiService {
   // Update general settings
   async updateGeneralSettings(data: Partial<GeneralSettings>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/general`, data);
+    return apiClient.put<any>(`${this.baseUrl}/general`, data as any);
   }
 
   // Update notification preferences
   async updateNotificationPreferences(data: Partial<NotificationPreferences>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/notifications`, data);
+    return apiClient.put<any>(`${this.baseUrl}/notifications`, data as any);
   }
 
   // Update privacy settings
   async updatePrivacySettings(data: Partial<PrivacySettings>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/privacy`, data);
+    return apiClient.put<any>(`${this.baseUrl}/privacy`, data as any);
   }
 
   // Update security settings
   async updateSecuritySettings(data: Partial<SecuritySettings>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/security`, data);
+    return apiClient.put<any>(`${this.baseUrl}/security`, data as any);
   }
 
   // Security-specific methods
   async getSecurityStatus(): Promise<ApiResponse<any>> {
-    return apiClient.get(`${this.baseUrl}/security/status`);
+    return apiClient.get<any>(`${this.baseUrl}/security/status`);
   }
 
   async enableTwoFactorAuth(method: '2FA_SMS' | '2FA_EMAIL' | '2FA_APP'): Promise<ApiResponse<any>> {
-    return apiClient.post(`${this.baseUrl}/security/2fa/enable`, { method });
+    return apiClient.post<any>(`${this.baseUrl}/security/2fa/enable`, { method });
   }
 
   async disableTwoFactorAuth(): Promise<ApiResponse<any>> {
-    return apiClient.post(`${this.baseUrl}/security/2fa/disable`);
+    return apiClient.post<any>(`${this.baseUrl}/security/2fa/disable`);
   }
 
   async verifyTwoFactorCode(code: string, method: string): Promise<ApiResponse<any>> {
-    return apiClient.post(`${this.baseUrl}/security/2fa/verify`, { code, method });
+    return apiClient.post<any>(`${this.baseUrl}/security/2fa/verify`, { code, method });
   }
 
   async generateBackupCodes(): Promise<ApiResponse<{ backupCodes: string[] }>> {
-    return apiClient.post(`${this.baseUrl}/security/2fa/backup-codes`);
+    return apiClient.post<any>(`${this.baseUrl}/security/2fa/backup-codes`);
   }
 
   async updateBiometricSettings(settings: {
@@ -267,43 +267,43 @@ class UserSettingsApiService {
     voiceEnabled: boolean;
     availableMethods: ('FINGERPRINT' | 'FACE_ID' | 'VOICE')[];
   }): Promise<ApiResponse<any>> {
-    return apiClient.put(`${this.baseUrl}/security/biometric`, settings);
+    return apiClient.put<any>(`${this.baseUrl}/security/biometric`, settings);
   }
 
   // Update delivery preferences
   async updateDeliveryPreferences(data: Partial<DeliveryPreferences>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/delivery`, data);
+    return apiClient.put<any>(`${this.baseUrl}/delivery`, data as any);
   }
 
   // Update payment preferences
   async updatePaymentPreferences(data: Partial<PaymentPreferences>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/payment`, data);
+    return apiClient.put<any>(`${this.baseUrl}/payment`, data as any);
   }
 
   // Update app preferences
   async updateAppPreferences(data: Partial<AppPreferences>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/preferences`, data);
+    return apiClient.put<any>(`${this.baseUrl}/preferences`, data as any);
   }
 
   // Update courier preferences
   async updateCourierPreferences(data: Partial<CourierPreferences>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(`${this.baseUrl}/courier`, data);
+    return apiClient.put<any>(`${this.baseUrl}/courier`, data as any);
   }
 
   // Generic update method (for any settings)
   async updateSettings(data: Partial<UserSettings>): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.put(this.baseUrl, data);
+    return apiClient.put<any>(this.baseUrl, data as any);
   }
 
   // Reset settings to default
   async resetSettings(): Promise<ApiResponse<UserSettings>> {
     this.invalidateCache();
-    return apiClient.post(`${this.baseUrl}/reset`, {});
+    return apiClient.post<any>(`${this.baseUrl}/reset`, {});
   }
 }
 

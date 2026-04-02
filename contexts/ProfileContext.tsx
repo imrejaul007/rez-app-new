@@ -63,7 +63,7 @@ const mapBackendUserToProfileUser = (backendUser: BackendUser): User => {
     avatar: backendUser.profile?.avatar,
     bio: backendUser.profile?.bio || '',
     location: backendUser.profile?.location?.address || '',
-    website: backendUser.profile?.website || '',
+    website: (backendUser.profile as any)?.website || '',
     dateOfBirth: backendUser.profile?.dateOfBirth ? new Date(backendUser.profile.dateOfBirth).toLocaleDateString() : '',
     gender: backendUser.profile?.gender || '',
     initials: getInitials(),

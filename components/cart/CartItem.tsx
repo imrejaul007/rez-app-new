@@ -114,7 +114,7 @@ function CartItem({
           onUpdateQuantity(item.id, newQty);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to update quantity');
     } finally {
       if (!isMounted()) return;
@@ -146,11 +146,10 @@ function CartItem({
               source={item.image}
               style={styles.productImage}
               contentFit="cover"
-              onError={(e) => {
+              onError={() => {
 
               }}
               accessibilityLabel={`Product image of ${item.name}`}
-              accessibilityRole="image"
             />
           ) : (
             <View
@@ -212,7 +211,7 @@ function CartItem({
                 const lockedQty = (item as any).lockedQuantity || 0;
                 const lockFeeDiscount = lockedQty > 0 ? (item.discount || 0) : 0;
                 const hasOriginalPrice = item.originalPrice && item.originalPrice > item.price;
-                const saleDiscount = hasOriginalPrice ? item.originalPrice - item.price : 0;
+                const saleDiscount = hasOriginalPrice ? (item.originalPrice ?? 0) - item.price : 0;
 
                 // Case 1: Item has lock fee (was locked)
                 if (lockFeeDiscount > 0) {

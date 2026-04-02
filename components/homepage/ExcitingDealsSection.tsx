@@ -143,7 +143,7 @@ const ExcitingDealsSection: React.FC = () => {
             ? cat.gradientColors
             : TYPE_GRADIENTS[cat.id?.split('-')[0] || 'general'] || TYPE_GRADIENTS.general,
           badgeBg: cat.badgeBg || COLORS.white,
-          badgeColor: cat.badgeColor || COLORS.navy,
+          badgeColor: cat.badgeColor || (COLORS as any).navy,
           deals: cat.deals?.map((deal: CampaignDeal) => ({
             ...deal,
             storeId: deal.storeId ? String(deal.storeId) : undefined,
@@ -284,7 +284,7 @@ const ExcitingDealsSection: React.FC = () => {
                   </View>
                 </View>
                 <View style={styles.categoryArrow}>
-                  <Ionicons name="chevron-forward" size={18} color={COLORS.navy} />
+                  <Ionicons name="chevron-forward" size={18} color={(COLORS as any).navy} />
                 </View>
               </LinearGradient>
             </Pressable>
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   categorySubtitle: {
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   viewMoreText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   viewMoreSubtext: {
     fontSize: 10,

@@ -76,7 +76,7 @@ export function useBillVerification(): UseBillVerificationReturn {
       } else {
         setError(result.error || 'Verification failed');
       }
-    } catch (err) {
+    } catch (err: any) {
       // M-11: Clear timeout on error
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -116,7 +116,7 @@ export function useBillVerification(): UseBillVerificationReturn {
         } else {
           setError(result.error || 'Failed to apply corrections');
         }
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         setError(errorMessage);
       } finally {
@@ -169,7 +169,7 @@ export function useBillVerification(): UseBillVerificationReturn {
         setError(result.error || 'Submission failed');
         return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
       return false;

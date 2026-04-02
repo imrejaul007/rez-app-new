@@ -72,42 +72,42 @@ export const realVouchersApi = {
       });
     }
 
-    return apiClient.get(`/vouchers/brands?${queryParams.toString()}`);
+    return apiClient.get<any>(`/vouchers/brands?${queryParams.toString()}`);
   },
 
   /**
    * Get featured voucher brands
    */
   async getFeaturedBrands(limit: number = 10): Promise<ApiResponse<VoucherBrand[]>> {
-    return apiClient.get(`/vouchers/brands/featured?limit=${limit}`);
+    return apiClient.get<any>(`/vouchers/brands/featured?limit=${limit}`);
   },
 
   /**
    * Get newly added voucher brands
    */
   async getNewlyAddedBrands(limit: number = 10): Promise<ApiResponse<VoucherBrand[]>> {
-    return apiClient.get(`/vouchers/brands/newly-added?limit=${limit}`);
+    return apiClient.get<any>(`/vouchers/brands/newly-added?limit=${limit}`);
   },
 
   /**
    * Get voucher categories
    */
   async getVoucherCategories(): Promise<ApiResponse<string[]>> {
-    return apiClient.get('/vouchers/categories');
+    return apiClient.get<any>('/vouchers/categories');
   },
 
   /**
    * Get single voucher brand by ID
    */
   async getVoucherBrandById(id: string): Promise<ApiResponse<VoucherBrand>> {
-    return apiClient.get(`/vouchers/brands/${id}`);
+    return apiClient.get<any>(`/vouchers/brands/${id}`);
   },
 
   /**
    * Track brand view (analytics)
    */
   async trackBrandView(id: string): Promise<ApiResponse<any>> {
-    return apiClient.post(`/vouchers/brands/${id}/track-view`);
+    return apiClient.post<any>(`/vouchers/brands/${id}/track-view`);
   },
 
   /**
@@ -125,7 +125,7 @@ export const realVouchersApi = {
       available: number;
     };
   }>> {
-    return apiClient.post('/vouchers/purchase', data);
+    return apiClient.post<any>('/vouchers/purchase', data as any);
   },
 
   /**
@@ -146,14 +146,14 @@ export const realVouchersApi = {
       });
     }
 
-    return apiClient.get(`/vouchers/my-vouchers?${queryParams.toString()}`);
+    return apiClient.get<any>(`/vouchers/my-vouchers?${queryParams.toString()}`);
   },
 
   /**
    * Get single user voucher by ID (requires authentication)
    */
   async getUserVoucherById(id: string): Promise<ApiResponse<UserVoucher>> {
-    return apiClient.get(`/vouchers/my-vouchers/${id}`);
+    return apiClient.get<any>(`/vouchers/my-vouchers/${id}`);
   },
 
   /**
@@ -165,14 +165,14 @@ export const realVouchersApi = {
       usageLocation?: string;
     }
   ): Promise<ApiResponse<UserVoucher>> {
-    return apiClient.post(`/vouchers/${id}/use`, data);
+    return apiClient.post<any>(`/vouchers/${id}/use`, data as any);
   },
 
   /**
    * Get hero carousel items for online voucher page
    */
   async getHeroCarousel(limit: number = 5): Promise<ApiResponse<any[]>> {
-    return apiClient.get(`/vouchers/hero-carousel?limit=${limit}`);
+    return apiClient.get<any>(`/vouchers/hero-carousel?limit=${limit}`);
   },
 };
 

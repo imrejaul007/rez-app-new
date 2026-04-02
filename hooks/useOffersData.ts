@@ -147,7 +147,7 @@ export function useOffersData() {
     setError(null);
 
     try {
-      const response = await realOffersApi.getAggregatedPageData({
+      const response: any = await realOffersApi.getAggregatedPageData({
         lat: 12.9716, lng: 77.5946, tab: 'all',
       });
 
@@ -201,7 +201,7 @@ export function useOffersData() {
       } else {
         setError('Failed to load offers data');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('Failed to load offers data');
     } finally {
       setLoading(false);
@@ -296,7 +296,7 @@ export function useOffersData() {
         newTodayOffers: transformOffersArray(extractData(newTodayRes)),
         heroBanner: Array.isArray(heroBannerData) ? heroBannerData[0] || null : heroBannerData || null,
       });
-    } catch (err) {
+    } catch (err: any) {
       setError('Failed to load offers data');
     } finally {
       setLoading(false);

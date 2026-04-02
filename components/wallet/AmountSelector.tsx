@@ -33,14 +33,14 @@ export const AmountSelector: React.FC<AmountSelectorProps> = ({
         return (
           <Pressable
             key={amount}
-            style={[styles.pill, isSelected && styles.pillSelected]}
+            style={[styles.pill, isSelected ? styles.pillSelected : null]}
             onPress={() => onSelect(amount)}
            
             accessibilityLabel={`${currency} ${amount}`}
             accessibilityState={{ selected: isSelected }}
             accessibilityRole="button"
           >
-            <ThemedText style={[styles.pillText, isSelected && styles.pillTextSelected]}>
+            <ThemedText style={[styles.pillText, isSelected ? styles.pillTextSelected : null]}>
               {amount.toLocaleString()}
             </ThemedText>
           </Pressable>

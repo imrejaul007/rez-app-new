@@ -80,7 +80,7 @@ function TierCard({
 }) {
   return (
     <Animated.View entering={FadeInDown.delay(index * 80).springify()}>
-      <View style={[styles.tierCard, isCurrentTier && styles.tierCardActive]}>
+      <View style={[styles.tierCard, isCurrentTier ? styles.tierCardActive : null]}>
         {isCurrentTier && (
           <View style={styles.currentBadge}>
             <Text style={styles.currentBadgeText}>YOUR TIER</Text>
@@ -116,7 +116,7 @@ function TierCard({
                   size={14}
                   color={isUnlocked ? '#059669' : '#9CA3AF'}
                 />
-                <Text style={[styles.perkText, !isUnlocked && styles.perkTextLocked]}>{perk}</Text>
+                <Text style={[styles.perkText, !isUnlocked ? styles.perkTextLocked : null]}>{perk}</Text>
               </View>
             ))}
           </View>
@@ -188,7 +188,7 @@ function UserProgressSection({ progress, tiers }: { progress: TierProgress; tier
 function TierProgressScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug, storeId } = useLocalSearchParams<{ slug?: string; storeId?: string }>();
+  const { slug, storeId } = useLocalSearchParams<any>();
   const theme = getCategoryTheme(slug || 'food');
   const getCurrencySymbol = useGetCurrencySymbol();
 
@@ -234,7 +234,10 @@ function TierProgressScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={[theme.primary, theme.secondary || theme.primary]} style={styles.header}>
+      <LinearGradient
+        colors={[(theme as any).primary, (theme as any).secondary || (theme as any).primary]}
+        style={styles.header}
+      >
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
@@ -247,7 +250,7 @@ function TierProgressScreen() {
 
       {loading ? (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color={theme.primary} />
+          <ActivityIndicator size="large" color={(theme as any).primary} />
         </View>
       ) : !data ? (
         <View style={styles.loader}>
@@ -413,4 +416,4 @@ const styles = StyleSheet.create({
   infoText: { flex: 1, fontSize: 12, color: '#374151', lineHeight: 18 },
 });
 
-export default withErrorBoundary(TierProgressScreen);
+export default withErrorBoundary(TierProgressScreen, 'TierProgressScreen');

@@ -74,7 +74,7 @@ interface SuccessData {
 function GiftPage() {
   const router = useRouter();
   const user = useAuthUser();
-  const senderName = user?.fullName || user?.phoneNumber || 'You';
+  const senderName = (user as any)?.fullName || user?.phoneNumber || 'You';
 
   // Server-driven config state
   const [themes, setThemes] = useState<GiftTheme[]>(FALLBACK_THEMES);
@@ -226,7 +226,7 @@ function GiftPage() {
       if (response.data) {
         // Refresh wallet balance via context FIRST, then regenerate idempotency key
         await refreshWallet();
-        const newBalance = response.data.newBalance ?? walletBalance - Number(amount);
+        const newBalance = (response.data as any).newBalance ?? walletBalance - Number(amount);
         if (!isMounted()) return;
         setSuccessData({
           giftId: response.data.giftId,
@@ -403,7 +403,7 @@ function GiftPage() {
               {themes.map((theme) => (
                 <Pressable
                   key={theme.id}
-                  style={[styles.themeCard, selectedTheme.id === theme.id && styles.themeCardSelected]}
+                  style={[styles.themeCard, selectedTheme.id === theme.id ? styles.themeCardSelected : null]}
                   onPress={() => setSelectedTheme(theme)}
                 >
                   <LinearGradient colors={theme.colors as any} style={styles.themeGradient}>

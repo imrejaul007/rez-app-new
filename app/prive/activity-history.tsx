@@ -39,7 +39,7 @@ function ActivityHistoryScreen() {
           }
           setHasMore(newItems.length === 20);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load activity data');
       } finally {

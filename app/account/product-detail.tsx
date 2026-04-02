@@ -41,7 +41,7 @@ function ProductDetailScreen() {
         if (!isMounted()) return;
         setError('Failed to load product details');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load product details. Please try again.');
     } finally {
@@ -106,7 +106,7 @@ function ProductDetailScreen() {
         } else {
           platformAlertSimple('Error', response.error || 'Failed to register product');
         }
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Failed to register product. Please try again.');
       }
     })();

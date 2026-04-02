@@ -90,7 +90,7 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
         </View>
 
         {/* Price badge — top-right */}
-        <View style={[styles.priceBadge, isFree && styles.priceBadgeFree]}>
+        <View style={[styles.priceBadge, isFree ? styles.priceBadgeFree : null]}>
           <ThemedText style={styles.priceText}>{priceDisplay}</ThemedText>
         </View>
 

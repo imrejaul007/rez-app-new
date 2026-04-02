@@ -99,7 +99,7 @@ export function GreetingProvider({ children }: GreetingProviderProps) {
       const greeting = getSmartGreeting(new Date(), greetingConfig);
 
       dispatch({ type: 'SET_GREETING', payload: greeting });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to update greeting' });
     }
   }, []);

@@ -47,7 +47,7 @@ export function useProductSearch(
   );
 
   // Refs for debouncing
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortController = useRef<AbortController | null>(null);
 
   // Cleanup on unmount

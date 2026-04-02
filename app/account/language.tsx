@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Comprehensive language and localization settings
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-  Text,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl, Text } from 'react-native';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -78,7 +69,7 @@ function LanguageSettingsPage() {
   const router = useRouter();
   const { settings, isLoading, updateGeneralSettings, refetch } = useUserSettings(true);
   const { actions: appActions } = useApp();
-  
+
   const [refreshing, setRefreshing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
   const [selectedRegion, setSelectedRegion] = useState<Region>('IN');
@@ -87,9 +78,9 @@ function LanguageSettingsPage() {
   // Initialize with current settings
   useEffect(() => {
     if (settings?.general) {
-      setSelectedLanguage(settings.general.language as Language || 'en');
+      setSelectedLanguage((settings.general.language as Language) || 'en');
       // Map currency to region
-      const region = REGION_OPTIONS.find(r => r.currency === settings.general.currency);
+      const region = REGION_OPTIONS.find((r) => r.currency === settings.general.currency);
       if (region) {
         setSelectedRegion(region.code);
       }
@@ -105,14 +96,14 @@ function LanguageSettingsPage() {
 
   const handleLanguageChange = async (language: Language) => {
     if (isUpdating) return;
-    
+
     setIsUpdating(true);
     setSelectedLanguage(language);
 
     try {
       // Update backend settings
       const success = await updateGeneralSettings({ language });
-      
+
       if (success) {
         // Update app context — this persists the language preference
         await appActions.setLanguage(language);
@@ -120,17 +111,17 @@ function LanguageSettingsPage() {
         // Show success feedback
         platformAlertSimple(
           'Language Updated',
-          `App language changed to ${LANGUAGE_OPTIONS.find(l => l.code === language)?.name}. Some changes may require an app restart.`,
+          `App language changed to ${LANGUAGE_OPTIONS.find((l) => l.code === language)?.name}. Some changes may require an app restart.`,
         );
       } else {
         // Revert on failure
         if (!isMounted()) return;
-        setSelectedLanguage(settings?.general.language as Language || 'en');
+        setSelectedLanguage((settings?.general.language as Language) || 'en');
         platformAlertSimple('Error', 'Failed to update language. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
-      setSelectedLanguage(settings?.general.language as Language || 'en');
+      setSelectedLanguage((settings?.general.language as Language) || 'en');
       platformAlertSimple('Error', 'Failed to update language. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -140,11 +131,11 @@ function LanguageSettingsPage() {
 
   const handleRegionChange = async (region: Region) => {
     if (isUpdating) return;
-    
+
     setIsUpdating(true);
     setSelectedRegion(region);
 
-    const regionData = REGION_OPTIONS.find(r => r.code === region);
+    const regionData = REGION_OPTIONS.find((r) => r.code === region);
     if (!regionData) return;
 
     try {
@@ -154,21 +145,18 @@ function LanguageSettingsPage() {
         timezone: regionData.timezone,
         dateFormat: regionData.dateFormat,
       });
-      
+
       if (success) {
-        platformAlertSimple(
-          'Region Updated',
-          `Region changed to ${regionData.name}`,
-        );
+        platformAlertSimple('Region Updated', `Region changed to ${regionData.name}`);
       } else {
         // Revert on failure
-        const currentRegion = REGION_OPTIONS.find(r => r.currency === settings?.general.currency);
+        const currentRegion = REGION_OPTIONS.find((r) => r.currency === settings?.general.currency);
         if (!isMounted()) return;
         setSelectedRegion(currentRegion?.code || 'IN');
         platformAlertSimple('Error', 'Failed to update region. Please try again.');
       }
-    } catch (error) {
-      const currentRegion = REGION_OPTIONS.find(r => r.currency === settings?.general.currency);
+    } catch (error: any) {
+      const currentRegion = REGION_OPTIONS.find((r) => r.currency === settings?.general.currency);
       if (!isMounted()) return;
       setSelectedRegion(currentRegion?.code || 'IN');
       platformAlertSimple('Error', 'Failed to update region. Please try again.');
@@ -188,7 +176,6 @@ function LanguageSettingsPage() {
       ]}
       onPress={() => handleLanguageChange(language.code)}
       disabled={isUpdating}
-     
       accessibilityLabel={`${language.name} - ${language.nativeName}${selectedLanguage === language.code ? ', selected' : ''}`}
       accessibilityRole="radio"
       accessibilityState={{ checked: selectedLanguage === language.code, disabled: isUpdating }}
@@ -198,16 +185,14 @@ function LanguageSettingsPage() {
         <View style={styles.languageInfo}>
           <Text style={styles.flag}>{language.flag}</Text>
           <View style={styles.languageText}>
-            <ThemedText style={[
-              styles.languageName,
-              selectedLanguage === language.code && styles.selectedLanguageName,
-            ]}>
+            <ThemedText
+              style={[styles.languageName, selectedLanguage === language.code && styles.selectedLanguageName]}
+            >
               {language.name}
             </ThemedText>
-            <ThemedText style={[
-              styles.languageNative,
-              selectedLanguage === language.code && styles.selectedLanguageNative,
-            ]}>
+            <ThemedText
+              style={[styles.languageNative, selectedLanguage === language.code && styles.selectedLanguageNative]}
+            >
               {language.nativeName}
             </ThemedText>
           </View>
@@ -229,7 +214,6 @@ function LanguageSettingsPage() {
       ]}
       onPress={() => handleRegionChange(region.code)}
       disabled={isUpdating}
-     
       accessibilityLabel={`${region.name}, ${region.currency}, ${region.timezone}${selectedRegion === region.code ? ', selected' : ''}`}
       accessibilityRole="radio"
       accessibilityState={{ checked: selectedRegion === region.code, disabled: isUpdating }}
@@ -237,16 +221,10 @@ function LanguageSettingsPage() {
     >
       <View style={styles.regionContent}>
         <View style={styles.regionInfo}>
-          <ThemedText style={[
-            styles.regionName,
-            selectedRegion === region.code && styles.selectedRegionName,
-          ]}>
+          <ThemedText style={[styles.regionName, selectedRegion === region.code && styles.selectedRegionName]}>
             {region.name}
           </ThemedText>
-          <ThemedText style={[
-            styles.regionDetails,
-            selectedRegion === region.code && styles.selectedRegionDetails,
-          ]}>
+          <ThemedText style={[styles.regionDetails, selectedRegion === region.code && styles.selectedRegionDetails]}>
             {region.currency} • {region.timezone}
           </ThemedText>
         </View>
@@ -263,7 +241,10 @@ function LanguageSettingsPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} />
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Language & Region</ThemedText>
@@ -286,7 +267,7 @@ function LanguageSettingsPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
@@ -316,19 +297,19 @@ function LanguageSettingsPage() {
             <View style={styles.summaryItem}>
               <ThemedText style={styles.summaryLabel}>Language</ThemedText>
               <ThemedText style={styles.summaryValue}>
-                {LANGUAGE_OPTIONS.find(l => l.code === selectedLanguage)?.name || 'English'}
+                {LANGUAGE_OPTIONS.find((l) => l.code === selectedLanguage)?.name || 'English'}
               </ThemedText>
             </View>
             <View style={styles.summaryItem}>
               <ThemedText style={styles.summaryLabel}>Region</ThemedText>
               <ThemedText style={styles.summaryValue}>
-                {REGION_OPTIONS.find(r => r.code === selectedRegion)?.name || 'India'}
+                {REGION_OPTIONS.find((r) => r.code === selectedRegion)?.name || 'India'}
               </ThemedText>
             </View>
             <View style={styles.summaryItem}>
               <ThemedText style={styles.summaryLabel}>Currency</ThemedText>
               <ThemedText style={styles.summaryValue}>
-                {REGION_OPTIONS.find(r => r.code === selectedRegion)?.currency || 'INR'}
+                {REGION_OPTIONS.find((r) => r.code === selectedRegion)?.currency || 'INR'}
               </ThemedText>
             </View>
           </View>
@@ -343,10 +324,8 @@ function LanguageSettingsPage() {
           <ThemedText style={styles.sectionDescription}>
             Choose your preferred language for the app interface
           </ThemedText>
-          
-          <View style={styles.optionsContainer}>
-            {LANGUAGE_OPTIONS.map(renderLanguageOption)}
-          </View>
+
+          <View style={styles.optionsContainer}>{LANGUAGE_OPTIONS.map(renderLanguageOption)}</View>
         </View>
 
         {/* Region Selection */}
@@ -358,10 +337,8 @@ function LanguageSettingsPage() {
           <ThemedText style={styles.sectionDescription}>
             Set your region for currency, timezone, and date format preferences
           </ThemedText>
-          
-          <View style={styles.optionsContainer}>
-            {REGION_OPTIONS.map(renderRegionOption)}
-          </View>
+
+          <View style={styles.optionsContainer}>{REGION_OPTIONS.map(renderRegionOption)}</View>
         </View>
 
         {/* Additional Settings */}
@@ -370,7 +347,7 @@ function LanguageSettingsPage() {
             <Ionicons name="settings-outline" size={24} color={Colors.brand.purpleLight} />
             <ThemedText style={styles.sectionTitle}>Additional Settings</ThemedText>
           </View>
-          
+
           <View style={styles.additionalSettings}>
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
@@ -381,10 +358,7 @@ function LanguageSettingsPage() {
               </View>
               <View style={styles.toggleGroup}>
                 <Pressable
-                  style={[
-                    styles.toggleButton,
-                    settings?.general.timeFormat === '12h' && styles.toggleButtonActive,
-                  ]}
+                  style={[styles.toggleButton, settings?.general.timeFormat === '12h' && styles.toggleButtonActive]}
                   onPress={() => updateGeneralSettings({ timeFormat: '12h' })}
                   accessibilityLabel={`12-hour format${settings?.general.timeFormat === '12h' ? ', selected' : ''}`}
                   accessibilityRole="radio"
@@ -401,10 +375,7 @@ function LanguageSettingsPage() {
                   </ThemedText>
                 </Pressable>
                 <Pressable
-                  style={[
-                    styles.toggleButton,
-                    settings?.general.timeFormat === '24h' && styles.toggleButtonActive,
-                  ]}
+                  style={[styles.toggleButton, settings?.general.timeFormat === '24h' && styles.toggleButtonActive]}
                   onPress={() => updateGeneralSettings({ timeFormat: '24h' })}
                   accessibilityLabel={`24-hour format${settings?.general.timeFormat === '24h' ? ', selected' : ''}`}
                   accessibilityRole="radio"
@@ -431,9 +402,8 @@ function LanguageSettingsPage() {
           <View style={styles.infoContent}>
             <ThemedText style={styles.infoTitle}>Language & Region Info</ThemedText>
             <ThemedText style={styles.infoText}>
-              Changes to language and region settings will affect the app interface, 
-              currency display, date formats, and timezone preferences. Some changes 
-              may require an app restart to take full effect.
+              Changes to language and region settings will affect the app interface, currency display, date formats, and
+              timezone preferences. Some changes may require an app restart to take full effect.
             </ThemedText>
           </View>
         </View>

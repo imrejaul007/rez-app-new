@@ -101,7 +101,7 @@ export function useStoreProducts(
         queryParams.search = filters.searchQuery;
       }
 
-      const response = await productsService.getProductsByStore(storeId, queryParams);
+      const response: any = await productsService.getProductsByStore(storeId, queryParams);
 
       if (response.success) {
         const newProducts = response.data?.products || response.data || [];
@@ -118,19 +118,17 @@ export function useStoreProducts(
       } else {
         throw new Error(response.message || 'Failed to load products');
       }
-    } catch (err) {
+    } catch (err: any) {
       const error = err instanceof Error ? err : new Error('Failed to load products');
       setError(error);
 
       // Report error to monitoring service
       errorReporter.captureError(error, {
         context: 'useStoreProducts',
-        storeId,
-        page: pageNum,
-        filters,
+        metadata: { storeId, page: pageNum, filters },
         severity: 'error',
         category: 'network'
-      });
+      } as any);
     } finally {
       setLoading(false);
     }

@@ -63,7 +63,7 @@ function ReferralSharePage() {
       } catch {
         // Non-critical, keep default tier
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load referral data');
     } finally {
       if (!isMounted()) return;

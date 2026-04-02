@@ -61,7 +61,7 @@ const CashStoreBrandCard: React.FC<CashStoreBrandCardProps> = ({ brand, index, o
         {isHot && <View style={styles.hotAccent} />}
 
         {/* Logo */}
-        <View style={[styles.logoArea, isHot && styles.logoAreaHot]}>
+        <View style={[styles.logoArea, isHot ? styles.logoAreaHot : null]}>
           {brand.logo?.startsWith('http') && !logoError ? (
             <CachedImage
               source={brand.logo}

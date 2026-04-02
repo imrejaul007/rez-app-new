@@ -31,7 +31,7 @@ function UGCCardSkeleton({
       {/* Main Image/Video Skeleton */}
       <SkeletonLoader
         width="100%"
-        height="100%"
+        height={"100%" as any}
         borderRadius={18}
       />
 

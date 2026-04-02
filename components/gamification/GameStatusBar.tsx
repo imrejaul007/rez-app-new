@@ -37,7 +37,7 @@ function GameStatusBar({ gameType, accentColor = colors.brand.purpleLight, onSta
   const exhausted = playsRemaining === 0;
 
   return (
-    <View style={[styles.container, exhausted && styles.containerExhausted]}>
+    <View style={[styles.container, exhausted ? styles.containerExhausted : null]}>
       <View style={styles.row}>
         {/* Plays remaining */}
         <View style={styles.stat}>
@@ -46,7 +46,7 @@ function GameStatusBar({ gameType, accentColor = colors.brand.purpleLight, onSta
             size={16}
             color={exhausted ? colors.error : accentColor}
           />
-          <ThemedText style={[styles.statText, exhausted && styles.exhaustedText]}>
+          <ThemedText style={[styles.statText, exhausted ? styles.exhaustedText : null]}>
             {exhausted ? 'No plays left' : `${playsRemaining}/${maxPlays} plays`}
           </ThemedText>
         </View>

@@ -210,7 +210,7 @@ export const lazyLoadImage = (source: string | number): Promise<void> => {
 export const preloadGameAssets = async (): Promise<void> => {
 
   // Define game assets to preload
-  const gameAssets = [
+  const gameAssets: any[] = [
     // Add your game asset paths here
     // require('@/assets/images/games/spin-wheel.png'),
     // require('@/assets/images/games/scratch-card.png'),
@@ -229,7 +229,7 @@ export const preloadGameAssets = async (): Promise<void> => {
  */
 export const preloadBadgeAssets = async (): Promise<void> => {
 
-  const badgeAssets = [
+  const badgeAssets: any[] = [
     // Add your badge asset paths here
     // require('@/assets/images/badges/bronze.png'),
     // require('@/assets/images/badges/silver.png'),

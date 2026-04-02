@@ -335,7 +335,7 @@ export const MonitoringHelpers = {
       Sentry.addBreadcrumb({
         message,
         category: category || 'default',
-        level: level || 'info',
+        level: (level || 'info') as any,
         data,
       });
     }

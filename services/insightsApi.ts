@@ -90,7 +90,7 @@ export async function getSpendingInsights(): Promise<SpendingInsightsDashboard> 
   const response = await apiClient.get<ApiResponse<SpendingInsightsDashboard>>(
     '/api/insights/dashboard',
   );
-  return response.data.data;
+  return (response.data as any).data;
 }
 
 /**
@@ -102,7 +102,7 @@ export async function getMonthlyReport(month: string): Promise<MonthlyReport> {
   const response = await apiClient.get<ApiResponse<MonthlyReport>>(
     `/api/insights/monthly/${month}`,
   );
-  return response.data.data;
+  return (response.data as any).data;
 }
 
 /**
@@ -113,5 +113,5 @@ export async function getMissedSavings(): Promise<MissedSavingsSummary> {
   const response = await apiClient.get<ApiResponse<MissedSavingsSummary>>(
     '/api/insights/missed-savings',
   );
-  return response.data.data;
+  return (response.data as any).data;
 }

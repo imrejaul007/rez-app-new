@@ -43,7 +43,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function PaymentScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<PaymentScreenParams>();
+  const params = useLocalSearchParams<any>();
   const { storeId, storeName, storeLogo, amount, selectedOffers: selectedOffersParam } = params;
   const user = useAuthUser();
   const { actions: gamificationActions } = useGamification();
@@ -188,7 +188,7 @@ function PaymentScreen() {
     if (paymentFlow.appliedCoins.totalApplied > 0) {
       try {
         await gamificationActions.syncCoinsFromWallet();
-      } catch (err) {
+      } catch (err: any) {
         // Show non-blocking notification - payment succeeded, but balance may be stale
         showToast({
           message: 'Payment successful! Wallet balance will update shortly.',
@@ -381,7 +381,7 @@ function PaymentScreen() {
 
             <View style={styles.upiInputContainer}>
               <Text style={styles.upiInputLabel}>Enter your UPI ID</Text>
-              <View style={[styles.upiInputWrapper, upiError && styles.upiInputError]}>
+              <View style={[styles.upiInputWrapper, upiError ? styles.upiInputError : null]}>
                 <Ionicons
                   name="phone-portrait-outline"
                   size={20}

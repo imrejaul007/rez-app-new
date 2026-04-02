@@ -28,16 +28,18 @@ function NewSection({ dynamicData, cardType }: NewSectionProps) {
   const cardGap = width < 360 ? 12 : 16;
 
   return (
-    <View style={[
-      styles.container,
-      {
-        backgroundColor,
-        paddingVertical: responsivePadding,
-        gap: cardGap,
-      }
-    ]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor,
+          paddingVertical: responsivePadding,
+          gap: cardGap,
+        },
+      ]}
+    >
       {/* PayBillCard removed - Add Money functionality is now in LockPriceModal */}
-      <InstagramCard productData={dynamicData} />
+      <InstagramCard productData={dynamicData ?? undefined} />
     </View>
   );
 }

@@ -56,7 +56,7 @@ function QuizPage() {
     // Refresh gamification data to update coins balance
     try {
       await gamificationActions.loadGamificationData();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

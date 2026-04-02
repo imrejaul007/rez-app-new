@@ -1,13 +1,6 @@
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -46,7 +39,7 @@ const LiveStatsStrip = () => {
       if (response.success && response.data) {
         setStats(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load live stats');
     } finally {
@@ -90,64 +83,59 @@ const LiveStatsStrip = () => {
 
   return (
     <FeatureErrorBoundary featureName="Live Stats" compact={true}>
-    <View style={styles.container}>
-      {/* Top Banner */}
-      <View style={styles.topBanner}>
-        <View style={styles.bannerLeft}>
-          <View style={styles.liveDot} />
-          <View style={styles.trendIcon}>
-            <Ionicons name="trending-up" size={20} color={Colors.gold} />
+      <View style={styles.container}>
+        {/* Top Banner */}
+        <View style={styles.topBanner}>
+          <View style={styles.bannerLeft}>
+            <View style={styles.liveDot} />
+            <View style={styles.trendIcon}>
+              <Ionicons name="trending-up" size={20} color={Colors.gold} />
+            </View>
+            <View style={styles.bannerText}>
+              <Text style={styles.bannerTitle}>
+                {stats.peopleEarnedToday > 0
+                  ? `${stats.peopleEarnedToday} people near you earned rewards today`
+                  : `${stats.peopleNearby} people near you earned rewards today`}
+              </Text>
+              <Text style={styles.bannerSubtitle}>Join them and start saving</Text>
+            </View>
           </View>
-          <View style={styles.bannerText}>
-            <Text style={styles.bannerTitle}>
-              {stats.peopleEarnedToday > 0
-                ? `${stats.peopleEarnedToday} people near you earned rewards today`
-                : `${stats.peopleNearby} people near you earned rewards today`}
-            </Text>
-            <Text style={styles.bannerSubtitle}>Join them and start saving</Text>
-          </View>
-        </View>
-        <Pressable
-          style={styles.seeHowButton}
-          onPress={() => navigateTo('/playandearn')}
-        >
-          <Text style={styles.seeHowText}>See How →</Text>
-        </Pressable>
-      </View>
-
-      {/* Stats Row */}
-      <View style={styles.statsRow}>
-        <View style={styles.statItem}>
-          <View style={styles.statIconContainer}>
-            <Ionicons name="people" size={18} color={Colors.info} />
-          </View>
-          <Text style={styles.statValue}>{stats.activeUsers}</Text>
-          <Text style={styles.statLabel}>Active Now</Text>
+          <Pressable style={styles.seeHowButton} onPress={() => navigateTo('/playandearn')}>
+            <Text style={styles.seeHowText}>See How →</Text>
+          </Pressable>
         </View>
 
-        <View style={styles.statDivider} />
-
-        <View style={styles.statItem}>
-          <View style={[styles.statIconContainer, { backgroundColor: Colors.warningScale[50] }]}>
-            <Ionicons name="wallet" size={18} color={Colors.warning} />
+        {/* Stats Row */}
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <View style={styles.statIconContainer}>
+              <Ionicons name="people" size={18} color={Colors.info} />
+            </View>
+            <Text style={styles.statValue}>{stats.activeUsers}</Text>
+            <Text style={styles.statLabel}>Active Now</Text>
           </View>
-          <Text style={styles.statValue}>
-            {formatCurrency(stats.earnedToday)}
-          </Text>
-          <Text style={styles.statLabel}>Earned Today</Text>
-        </View>
 
-        <View style={styles.statDivider} />
+          <View style={styles.statDivider} />
 
-        <View style={styles.statItem}>
-          <View style={[styles.statIconContainer, { backgroundColor: Colors.successScale[50] }]}>
-            <Ionicons name="flash" size={18} color={Colors.gold} />
+          <View style={styles.statItem}>
+            <View style={[styles.statIconContainer, { backgroundColor: Colors.warningScale[50] }]}>
+              <Ionicons name="wallet" size={18} color={Colors.warning} />
+            </View>
+            <Text style={styles.statValue}>{formatCurrency(stats.earnedToday)}</Text>
+            <Text style={styles.statLabel}>Earned Today</Text>
           </View>
-          <Text style={styles.statValue}>{stats.dealsLive}</Text>
-          <Text style={styles.statLabel}>Deals Live</Text>
+
+          <View style={styles.statDivider} />
+
+          <View style={styles.statItem}>
+            <View style={[styles.statIconContainer, { backgroundColor: Colors.successScale[50] }]}>
+              <Ionicons name="flash" size={18} color={Colors.gold} />
+            </View>
+            <Text style={styles.statValue}>{stats.dealsLive}</Text>
+            <Text style={styles.statLabel}>Deals Live</Text>
+          </View>
         </View>
       </View>
-    </View>
     </FeatureErrorBoundary>
   );
 };

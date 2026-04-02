@@ -106,7 +106,7 @@ function LocationDropdown({
           };
           onLocationSelect(currentLocationOption);
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;

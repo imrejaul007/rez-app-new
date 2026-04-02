@@ -48,7 +48,7 @@ export function useStoreData(storeId: string): UseStoreDataResult {
       setLoading(true);
       setError(null);
 
-      const response = await storesService.getStoreById(storeId);
+      const response: any = await storesService.getStoreById(storeId);
 
       if (response.success && response.data) {
         // Backend returns { store: {...}, products: [...] } — unwrap the store object
@@ -57,17 +57,17 @@ export function useStoreData(storeId: string): UseStoreDataResult {
       } else {
         throw new Error(response.message || 'Failed to load store');
       }
-    } catch (err) {
+    } catch (err: any) {
       const error = err instanceof Error ? err : new Error('Failed to load store');
       setError(error);
 
       // Report error to monitoring service
       errorReporter.captureError(error, {
         context: 'useStoreData',
-        storeId,
+        metadata: { storeId },
         severity: 'error',
         category: 'network'
-      });
+      } as any);
     } finally {
       setLoading(false);
     }

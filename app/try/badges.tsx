@@ -66,7 +66,7 @@ export default function BadgesScreen() {
       if (data && data.undiscovered) {
         setUndiscovered(data.undiscovered);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (__DEV__) console.error('Failed to load badges:', err);
     } finally {
       setLoading(false);
@@ -182,7 +182,7 @@ export default function BadgesScreen() {
         keyExtractor={(item, idx) => {
           if (item.type === 'header') return 'header';
           if (item.type === 'undiscovered-header') return 'undiscovered-header';
-          return `${item.type}-${item.data.category}`;
+          return `${item.type}-${item.data?.category}`;
         }}
         contentContainerStyle={styles.listContent}
         scrollEnabled={true}

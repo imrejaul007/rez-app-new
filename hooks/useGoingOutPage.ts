@@ -298,7 +298,7 @@ export function useGoingOutPage(): UseGoingOutPageReturn {
         setAccumulatedProducts(prev => {
           // Deduplicate by id
           const existingIds = new Set(prev.map(p => p.id));
-          const newProducts = currentPageProducts.filter(p => !existingIds.has(p.id));
+          const newProducts = currentPageProducts.filter((p: any) => !existingIds.has(p.id));
           return [...prev, ...newProducts];
         });
       }
@@ -511,7 +511,7 @@ export function useGoingOutPage(): UseGoingOutPageReturn {
           limit: 20,
         };
 
-        const response = await productsApi.searchProducts(searchQueryParams);
+        const response: any = await productsApi.searchProducts(searchQueryParams);
 
         if (response.success && response.data?.products) {
           const products = response.data.products.map(mapBackendProductToGoingOut);
@@ -571,7 +571,7 @@ export function useGoingOutPage(): UseGoingOutPageReturn {
         limit: 20,
       };
 
-      const response = await productsApi.searchProducts(searchQueryParams);
+      const response: any = await productsApi.searchProducts(searchQueryParams);
 
       if (response.success && response.data?.products) {
         const products = response.data.products.map(mapBackendProductToGoingOut);

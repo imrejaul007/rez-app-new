@@ -107,14 +107,14 @@ export const ProductGrid = memo(function ProductGrid({
     <View style={styles.container}>
       <FlashList
         data={products}
-        renderItem={renderProductCard}
+        renderItem={renderProductCard as any}
         keyExtractor={keyExtractor}
         numColumns={numColumns}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.contentContainer,
           products.length === 0 && styles.emptyContentContainer,
-        ]}
+        ] as any}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyState}
         ListFooterComponent={renderLoadingFooter}

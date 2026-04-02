@@ -88,7 +88,7 @@ function OffersSection({ categorySlug, categoryId, title, onSeeAll, filterTags }
         const couponList = Array.isArray(couponsRes.data) ? couponsRes.data : (couponsRes.data?.coupons || []);
         setCoupons(couponList.filter((c: any) => c.status === 'active' || c.isActive !== false).slice(0, 4));
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

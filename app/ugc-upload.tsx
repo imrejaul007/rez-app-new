@@ -63,11 +63,11 @@ function UGCUploadScreen() {
       platformAlertDestructive(
         'Upload in Progress',
         'Are you sure you want to cancel the upload?',
-        'Yes',
         () => {
           clearVideo();
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
-        }
+        },
+        'Yes',
       );
     } else {
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
@@ -78,8 +78,8 @@ function UGCUploadScreen() {
     platformAlertDestructive(
       'Remove Video',
       'Are you sure you want to remove this video and start over?',
+      clearVideo,
       'Remove',
-      clearVideo
     );
   };
 
@@ -193,11 +193,7 @@ function UGCUploadScreen() {
                       <Text style={styles.urlVideoText} numberOfLines={2}>
                         {state.video.uri}
                       </Text>
-                      <Pressable
-                        style={styles.removeUrlButton}
-                        onPress={handleClearVideo}
-                        disabled={isUploading}
-                      >
+                      <Pressable style={styles.removeUrlButton} onPress={handleClearVideo} disabled={isUploading}>
                         <Text style={styles.removeUrlText}>Remove</Text>
                       </Pressable>
                     </View>
@@ -208,17 +204,13 @@ function UGCUploadScreen() {
                     {state.video.duration > 0 && (
                       <View style={styles.infoItem}>
                         <Ionicons name="time-outline" size={16} color={colors.midGray} />
-                        <Text style={styles.infoText}>
-                          {formatDuration(state.video.duration)}
-                        </Text>
+                        <Text style={styles.infoText}>{formatDuration(state.video.duration)}</Text>
                       </View>
                     )}
                     {state.video.fileSize > 0 && (
                       <View style={styles.infoItem}>
                         <Ionicons name="document-outline" size={16} color={colors.midGray} />
-                        <Text style={styles.infoText}>
-                          {formatFileSize(state.video.fileSize)}
-                        </Text>
+                        <Text style={styles.infoText}>{formatFileSize(state.video.fileSize)}</Text>
                       </View>
                     )}
                   </View>
@@ -227,9 +219,7 @@ function UGCUploadScreen() {
                 {/* Product Tagging Section */}
                 <View style={styles.productTaggingContainer}>
                   <View style={styles.productTaggingHeader}>
-                    <Text style={styles.productTaggingTitle}>
-                      Tag Products (Optional)
-                    </Text>
+                    <Text style={styles.productTaggingTitle}>Tag Products (Optional)</Text>
                     <Text style={styles.productCount}>
                       {state.selectedProducts.length}/{PRODUCT_TAGGING_RULES.maxProducts}
                     </Text>
@@ -237,19 +227,13 @@ function UGCUploadScreen() {
 
                   {/* Tag Products Button */}
                   <Pressable
-                    style={[
-                      styles.tagProductsButton,
-                      isUploading && styles.tagProductsButtonDisabled,
-                    ]}
+                    style={[styles.tagProductsButton, isUploading && styles.tagProductsButtonDisabled]}
                     onPress={openProductSelector}
-                    disabled={
-                      isUploading ||
-                      state.selectedProducts.length >= PRODUCT_TAGGING_RULES.maxProducts
-                    }
+                    disabled={isUploading || state.selectedProducts.length >= PRODUCT_TAGGING_RULES.maxProducts}
                     accessibilityLabel={state.selectedProducts.length > 0 ? 'Add more products' : 'Tag products'}
                     accessibilityRole="button"
                     accessibilityState={{
-                      disabled: isUploading || state.selectedProducts.length >= PRODUCT_TAGGING_RULES.maxProducts
+                      disabled: isUploading || state.selectedProducts.length >= PRODUCT_TAGGING_RULES.maxProducts,
                     }}
                     accessibilityHint={`Tag products in your video. ${state.selectedProducts.length} of ${PRODUCT_TAGGING_RULES.maxProducts} products tagged`}
                   >
@@ -282,11 +266,7 @@ function UGCUploadScreen() {
                 {/* Upload Progress */}
                 {isUploading && (
                   <View style={styles.uploadProgressContainer}>
-                    <UploadProgress
-                      status={state.status}
-                      progress={state.progress}
-                      showCancel={false}
-                    />
+                    <UploadProgress status={state.status} progress={state.progress} showCancel={false} />
                   </View>
                 )}
 
@@ -300,7 +280,7 @@ function UGCUploadScreen() {
                     <TextInput
                       style={[
                         styles.input,
-                        state.validationErrors.some(e => e.field === 'title') && styles.inputError,
+                        state.validationErrors.some((e) => e.field === 'title') && styles.inputError,
                       ]}
                       placeholder="Give your video a catchy title"
                       placeholderTextColor={colors.neutral[400]}
@@ -319,8 +299,7 @@ function UGCUploadScreen() {
                       style={[
                         styles.input,
                         styles.textArea,
-                        state.validationErrors.some(e => e.field === 'description') &&
-                          styles.inputError,
+                        state.validationErrors.some((e) => e.field === 'description') && styles.inputError,
                       ]}
                       placeholder="Tell us more about your video..."
                       placeholderTextColor={colors.neutral[400]}
@@ -338,14 +317,12 @@ function UGCUploadScreen() {
                   {/* Hashtags */}
                   <View style={styles.inputGroup}>
                     <Text style={styles.inputLabel}>
-                      Hashtags{' '}
-                      <Text style={styles.helperText}>(comma-separated, max 10)</Text>
+                      Hashtags <Text style={styles.helperText}>(comma-separated, max 10)</Text>
                     </Text>
                     <TextInput
                       style={[
                         styles.input,
-                        state.validationErrors.some(e => e.field === 'hashtags') &&
-                          styles.inputError,
+                        state.validationErrors.some((e) => e.field === 'hashtags') && styles.inputError,
                       ]}
                       placeholder="fashion, style, trending"
                       placeholderTextColor={colors.neutral[400]}
@@ -375,14 +352,10 @@ function UGCUploadScreen() {
 
                 {/* Upload Button */}
                 <Pressable
-                  style={[
-                    styles.uploadButton,
-                    (!canUpload || isUploading) && styles.uploadButtonDisabled,
-                  ]}
+                  style={[styles.uploadButton, (!canUpload || isUploading) && styles.uploadButtonDisabled]}
                   onPress={handleUpload}
                   disabled={!canUpload || isUploading}
-                 
-                  accessibilityLabel={isUploading ? "Uploading video" : "Upload video"}
+                  accessibilityLabel={isUploading ? 'Uploading video' : 'Upload video'}
                   accessibilityRole="button"
                   accessibilityState={{ disabled: !canUpload || isUploading, busy: isUploading }}
                   accessibilityHint="Uploads your video to the platform"

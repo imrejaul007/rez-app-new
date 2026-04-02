@@ -250,7 +250,7 @@ class ImageCacheManager {
     });
 
     if (oldestEntry) {
-      await this.remove(oldestEntry.uri);
+      await this.remove((oldestEntry as { uri: string; lastAccessed: number }).uri);
     }
   }
 

@@ -67,7 +67,7 @@ export function useEventBooking(): UseEventBookingReturn {
       } else {
         throw new Error(result.message || 'Failed to book event');
       }
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to book event';
       setBookingError(errorMessage);
 
@@ -91,7 +91,7 @@ export function useEventBooking(): UseEventBookingReturn {
       } else {
         throw new Error(result.message || 'Failed to cancel booking');
       }
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to cancel booking';
       setBookingError(errorMessage);
 
@@ -106,7 +106,7 @@ export function useEventBooking(): UseEventBookingReturn {
     try {
       const result = await eventsApiService.getUserBookings();
       return result.bookings;
-    } catch (error) {
+    } catch (error: any) {
       return [];
     }
   }, []);

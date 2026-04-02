@@ -150,16 +150,21 @@ const GroupBuyPage = () => {
 
   // Handle leave group
   const handleLeaveGroup = (groupId: string) => {
-    platformAlertDestructive('Leave Group?', 'Are you sure you want to leave this group?', 'Leave', async () => {
-      const success = await groupBuying.leaveGroup(groupId);
-      if (success) {
-        platformAlertSimple('Success', 'You have left the group');
-        if (!isMounted()) return;
-        setExpandedGroupId(null);
-      } else if (groupBuying.error) {
-        platformAlertSimple('Error', groupBuying.error);
-      }
-    });
+    platformAlertDestructive(
+      'Leave Group?',
+      'Are you sure you want to leave this group?',
+      async () => {
+        const success = await groupBuying.leaveGroup(groupId);
+        if (success) {
+          platformAlertSimple('Success', 'You have left the group');
+          if (!isMounted()) return;
+          setExpandedGroupId(null);
+        } else if (groupBuying.error) {
+          platformAlertSimple('Error', groupBuying.error);
+        }
+      },
+      'Leave',
+    );
   };
 
   // Render available groups tab
@@ -209,10 +214,6 @@ const GroupBuyPage = () => {
         )}
         ListFooterComponent={() => <View style={styles.bottomSpacing} />}
         scrollEnabled={true}
-        initialNumToRender={5}
-        maxToRenderPerBatch={3}
-        windowSize={10}
-        removeClippedSubviews={true}
       />
     );
   };
@@ -289,10 +290,6 @@ const GroupBuyPage = () => {
         )}
         ListFooterComponent={() => <View style={styles.bottomSpacing} />}
         scrollEnabled={true}
-        initialNumToRender={5}
-        maxToRenderPerBatch={3}
-        windowSize={10}
-        removeClippedSubviews={true}
         contentContainerStyle={{ paddingBottom: 120 }}
       />
     );
@@ -357,10 +354,6 @@ const GroupBuyPage = () => {
         )}
         ListFooterComponent={() => <View style={styles.bottomSpacing} />}
         scrollEnabled={true}
-        initialNumToRender={6}
-        maxToRenderPerBatch={4}
-        windowSize={10}
-        removeClippedSubviews={true}
         contentContainerStyle={{ paddingBottom: 120 }}
       />
     );

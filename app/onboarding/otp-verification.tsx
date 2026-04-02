@@ -17,7 +17,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function OTPVerificationScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
+  const { phoneNumber } = useLocalSearchParams<any>();
   // DO NOT subscribe to authLoading/authError/authUser via selectors
   // They cause re-renders that dismiss the keyboard on Android
   const actions = useAuthActions();
@@ -204,9 +204,19 @@ function OTPVerificationScreen() {
                   <Text style={styles.phoneText}>{phoneNumber}</Text>
                 </Text>
 
+                <Pressable
+                  onPress={() => router.back()}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  accessibilityLabel="Change phone number"
+                  accessibilityRole="button"
+                  style={{ marginTop: 4, marginBottom: 4 }}
+                >
+                  <Text style={styles.changeNumberText}>Wrong number? Change</Text>
+                </Pressable>
+
                 <View style={styles.underlineContainer}>
                   <LinearGradient
-                    colors={[Colors.gold, Colors.goldDark]}
+                    colors={[Colors.gold, '#E6B84E']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.underline}
@@ -229,7 +239,7 @@ function OTPVerificationScreen() {
                       ref={(ref) => {
                         if (ref) inputRefs.current[index] = ref;
                       }}
-                      style={[styles.otpInput, digit && styles.otpInputFilled]}
+                      style={[styles.otpInput, digit ? styles.otpInputFilled : null]}
                       value={digit}
                       onChangeText={(value) => handleOTPChange(value, index)}
                       onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
@@ -437,6 +447,13 @@ const styles = StyleSheet.create({
     color: Colors.gold,
     fontWeight: '700',
     fontSize: 15,
+  },
+  changeNumberText: {
+    fontSize: 13,
+    color: Colors.gold,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+    textAlign: 'center',
   },
   underlineContainer: {
     alignItems: 'center',

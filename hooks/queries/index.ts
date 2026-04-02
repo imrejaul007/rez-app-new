@@ -1,8 +1,8 @@
 export * from './useCategories';
-export * from './useReviews';
+export { useStoreReviews, useUserReviews, useCanUserReviewStore } from './useReviews';
 export * from './useLeaderboard';
 export * from './useExplore';
-export * from './useStores';
+export { useStores, useStoreById, useStoreBySlug, useFeaturedStores, useNearbyStores, useSearchStores, useStoreProducts, useStoreMenu, useStoreCategories, useFollowedStores, useCheckFollowStatus, useTrendingStores, useNewStores, useUserStoreVisits, useStoreRecentEarnings } from './useStores';
 export * from './useProducts';
 export * from './useNotifications';
 export * from './useCart';

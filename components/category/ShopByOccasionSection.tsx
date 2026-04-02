@@ -58,7 +58,7 @@ const OccasionCard = memo(({
   occasion: Occasion;
   onPress: () => void;
 }) => {
-  const tagColors = getTagColor(occasion.tag);
+  const tagColors = getTagColor(occasion.tag ?? null);
 
   return (
     <Pressable
@@ -114,15 +114,15 @@ const ShopByOccasionSection: React.FC<ShopByOccasionSectionProps> = ({
       try {
         setLoading(true);
         const response = await categoryMetadataApi.getOccasions(categorySlug);
-        if (response.success && response.data?.occasions?.length > 0) {
+        if (response.success && response.data?.occasions?.length && response.data.occasions.length > 0) {
           if (!isMounted()) return;
-          setApiOccasions(response.data.occasions);
+          setApiOccasions(response.data?.occasions ?? []);
         } else {
           // Fallback to dummy data if API returns empty
           const fallbackOccasions = getOccasionsForCategory(categorySlug);
           setApiOccasions(fallbackOccasions);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Fallback to dummy data on error
         const fallbackOccasions = getOccasionsForCategory(categorySlug);
         if (!isMounted()) return;

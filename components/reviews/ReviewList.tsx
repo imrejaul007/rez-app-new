@@ -16,6 +16,7 @@ import RatingStars from './RatingStars';
 import { Review, ReviewFilters, ReviewStats } from '@/types/review.types';
 import reviewService from '@/services/reviewApi';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -86,7 +87,7 @@ function ReviewList({
         setCurrentPage(page);
         setHasNextPage(response.data.pagination.hasNextPage);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -279,19 +280,15 @@ function ReviewList({
   }
 
   return (
-    <FlashList
+    <AnyFlashList
       data={reviews}
-      keyExtractor={(item) => item._id || item.id || Math.random().toString()}
+      keyExtractor={(item: any) => item._id || item.id || Math.random().toString()}
       renderItem={renderReviewItem}
       ListHeaderComponent={renderHeader}
       ListEmptyComponent={renderEmptyState}
       ListFooterComponent={renderFooter}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
-      removeClippedSubviews={Platform.OS !== 'web'}
-      maxToRenderPerBatch={10}
-      windowSize={5}
-      initialNumToRender={8}
       estimatedItemSize={150}
       refreshControl={
         <RefreshControl
@@ -304,7 +301,7 @@ function ReviewList({
       contentContainerStyle={[
         styles.listContent,
         reviews.length === 0 && styles.listContentEmpty
-      ]}
+      ] as any}
       showsVerticalScrollIndicator={false}
     />
   );

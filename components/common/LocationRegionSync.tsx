@@ -24,12 +24,6 @@ const REGION_LOCATIONS: Record<RegionId, { name: string; coords: { lat: number; 
     country: 'India',
     timezone: 'Asia/Kolkata'
   },
-  china: {
-    name: 'Shanghai',
-    coords: { lat: 31.2304, lng: 121.4737 },
-    country: 'China',
-    timezone: 'Asia/Shanghai'
-  },
 };
 
 function LocationRegionSync() {

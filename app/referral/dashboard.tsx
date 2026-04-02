@@ -99,7 +99,7 @@ function ReferralDashboard() {
       if (allFailed) {
         platformAlertSimple('Error', 'Failed to load referral data');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load referral data');
     } finally {
       if (!isMounted()) return;
@@ -403,9 +403,7 @@ function ReferralDashboard() {
         </>
       )}
       ListFooterComponent={() => <View style={{ height: 8 }} />}
-      initialNumToRender={5}
       maxToRenderPerBatch={5}
-      windowSize={10}
       removeClippedSubviews={true}
     />
   );

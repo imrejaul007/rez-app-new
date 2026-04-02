@@ -30,7 +30,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const C = Colors;
+const C = Colors as any;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 type TabType = 'upcoming' | 'past' | 'favorites';
@@ -95,7 +95,7 @@ function MyEventsPage() {
           if (!isMounted()) return;
           setFavorites(result?.events || result?.favorites || result?.bookings || []);
         }
-      } catch (error) {
+      } catch (error: any) {
         alertOk('Error', 'Failed to load events. Pull down to refresh.');
       } finally {
         if (!isMounted()) return;
@@ -331,11 +331,11 @@ function MyEventsPage() {
         {tabs.map((tab) => (
           <Pressable
             key={tab.id}
-            style={[styles.tab, activeTab === tab.id && styles.tabActive]}
+            style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
             onPress={() => handleTabChange(tab.id)}
           >
             <Ionicons name={tab.icon as any} size={18} color={activeTab === tab.id ? C.purple : C.textSecondary} />
-            <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>{tab.label}</Text>
+            <Text style={[styles.tabText, activeTab === tab.id ? styles.tabTextActive : null]}>{tab.label}</Text>
           </Pressable>
         ))}
       </View>

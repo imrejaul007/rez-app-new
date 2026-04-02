@@ -90,12 +90,19 @@ function OfferDetailPage() {
 
         // Check if offer requires verification
         const offerData = response.data;
-        logger.log('📦 [OFFER DATA] Full offer:', JSON.stringify({
-          category: offerData.category,
-          exclusiveZone: (offerData as any).exclusiveZone,
-          userTypeRestriction: offerData.restrictions?.userTypeRestriction,
-          eligibilityRequirement: (offerData as any).eligibilityRequirement,
-        }, null, 2));
+        logger.log(
+          '📦 [OFFER DATA] Full offer:',
+          JSON.stringify(
+            {
+              category: offerData.category,
+              exclusiveZone: (offerData as any).exclusiveZone,
+              userTypeRestriction: offerData.restrictions?.userTypeRestriction,
+              eligibilityRequirement: (offerData as any).eligibilityRequirement,
+            },
+            null,
+            2,
+          ),
+        );
         // Check multiple fields for zone restriction
         const exclusiveZone = (offerData as any).exclusiveZone;
         const userTypeRestriction = offerData.restrictions?.userTypeRestriction;
@@ -111,7 +118,12 @@ function OfferDetailPage() {
           zone = offerData.category;
         }
 
-        logger.log('🔐 [VERIFICATION] Zone check:', { exclusiveZone, userTypeRestriction, category: offerData.category, determinedZone: zone });
+        logger.log('🔐 [VERIFICATION] Zone check:', {
+          exclusiveZone,
+          userTypeRestriction,
+          category: offerData.category,
+          determinedZone: zone,
+        });
 
         if (zone) {
           if (!isMounted()) return;
@@ -132,7 +144,7 @@ function OfferDetailPage() {
         if (!isMounted()) return;
         setError(response.message || 'Failed to load offer details');
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error loading offer details:', error);
       if (!isMounted()) return;
       setError('Failed to load offer details');
@@ -151,7 +163,7 @@ function OfferDetailPage() {
         setVerificationStatus(response.data);
         logger.log('📋 [VERIFICATION] Status:', response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('❌ [VERIFICATION] Error checking verification:', error);
     }
   };
@@ -161,41 +173,44 @@ function OfferDetailPage() {
       logger.log('🔍 [REDEMPTION CHECK] Checking status for offer:', offerId);
       const response = await realOffersApi.getUserRedemptions({ page: 1, limit: 50 });
       logger.log('📥 [REDEMPTION CHECK] API Response:', response);
-      
+
       if (response.success && response.data) {
         // Handle both direct array and paginated response
         const redemptionsArray = Array.isArray(response.data) ? response.data : response.data?.data || [];
         logger.log('📋 [REDEMPTION CHECK] Redemptions found:', redemptionsArray.length);
-        logger.log('📋 [REDEMPTION CHECK] All redemptions:', redemptionsArray.map((r: any) => ({
-          offerId: r.offer?._id || r.offer?.id || r.offer,
-          status: r.status,
-          code: r.redemptionCode
-        })));
-        
+        logger.log(
+          '📋 [REDEMPTION CHECK] All redemptions:',
+          redemptionsArray.map((r: any) => ({
+            offerId: r.offer?._id || r.offer?.id || r.offer,
+            status: r.status,
+            code: r.redemptionCode,
+          })),
+        );
+
         // Check for active or pending redemptions
         const redemption = redemptionsArray.find((r: any) => {
           const rOfferId = r.offer?._id || r.offer?.id || r.offer;
           const currentOfferId = offerId;
-          
+
           // Normalize both IDs to strings for comparison
           const rOfferIdStr = String(rOfferId).replace(/['"]/g, '');
           const currentOfferIdStr = String(currentOfferId).replace(/['"]/g, '');
-          
+
           const offerMatch = rOfferIdStr === currentOfferIdStr;
           const statusMatch = r.status === 'active' || r.status === 'pending';
-          
+
           logger.log('🔎 [REDEMPTION CHECK] Comparing:', {
             rOfferId: rOfferIdStr,
             currentOfferId: currentOfferIdStr,
             match: offerMatch,
             status: r.status,
             statusMatch,
-            finalMatch: offerMatch && statusMatch
+            finalMatch: offerMatch && statusMatch,
           });
-          
+
           return offerMatch && statusMatch;
         });
-        
+
         if (redemption) {
           if (!isMounted()) return;
           setIsAlreadyRedeemed(true);
@@ -205,7 +220,7 @@ function OfferDetailPage() {
           logger.log('✅ [REDEMPTION CHECK] User already redeemed this offer!', {
             code,
             redemptionId: redemption._id,
-            status: redemption.status
+            status: redemption.status,
           });
         } else {
           // Make sure to reset if no active redemption found
@@ -220,7 +235,7 @@ function OfferDetailPage() {
         if (!isMounted()) return;
         setIsAlreadyRedeemed(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('❌ [REDEMPTION CHECK] Error checking redemption status:', error);
       if (!isMounted()) return;
       setIsAlreadyRedeemed(false);
@@ -236,7 +251,7 @@ function OfferDetailPage() {
         'Authentication Required',
         'Please sign in to redeem this offer',
         () => router.push('/sign-in'),
-        'Sign In'
+        'Sign In',
       );
       return;
     }
@@ -252,11 +267,12 @@ function OfferDetailPage() {
       platformAlertConfirm(
         'Verification Required',
         `This offer is exclusive to verified ${requiredZone} users. Please complete your verification to access this offer.`,
-        () => router.push({
-          pathname: '/profile/verification',
-          params: { zone: requiredZone }
-        } as any),
-        'Verify Now'
+        () =>
+          router.push({
+            pathname: '/profile/verification',
+            params: { zone: requiredZone },
+          } as any),
+        'Verify Now',
       );
       return;
     }
@@ -277,21 +293,21 @@ function OfferDetailPage() {
       if (response.success && response.data) {
         const code = response.data.voucher?.voucherCode || 'Check My Vouchers';
         logger.log('✅ [REDEEM] Success! Voucher code:', code);
-        
+
         if (!isMounted()) return;
         setVoucherCode(code);
-        
+
         // Mark as redeemed and store the code
         if (!isMounted()) return;
         setIsAlreadyRedeemed(true);
         if (!isMounted()) return;
         setExistingVoucherCode(code);
-        
+
         // Re-check redemption status to ensure it's saved
         if (offer?._id) {
           await checkRedemptionStatus(offer._id);
         }
-        
+
         if (!isMounted()) return;
         setShowSuccessModal(true);
       } else {
@@ -313,21 +329,25 @@ function OfferDetailPage() {
 
     try {
       const response = await realOffersApi.toggleOfferLike(offer._id);
-      
+
       if (response.success && response.data) {
         if (!isMounted()) return;
         setIsLiked(response.data.isLiked);
         if (!isMounted()) return;
-        setOffer(prev => prev ? {
-          ...prev,
-          engagement: {
-            ...prev.engagement,
-            likesCount: response.data!.likesCount,
-            isLikedByUser: response.data!.isLiked
-          }
-        } : null);
+        setOffer((prev) =>
+          prev
+            ? {
+                ...prev,
+                engagement: {
+                  ...prev.engagement,
+                  likesCount: response.data!.likesCount,
+                  isLikedByUser: response.data!.isLiked,
+                },
+              }
+            : null,
+        );
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error toggling like:', error);
     }
   };
@@ -337,7 +357,7 @@ function OfferDetailPage() {
 
     try {
       await realOffersApi.shareOffer(offer._id);
-      
+
       const savingsText = offer.restrictions?.maxDiscountAmount
         ? `Save up to ${currencySymbol}${offer.restrictions.maxDiscountAmount.toLocaleString()}`
         : offer.cashbackPercentage
@@ -348,7 +368,7 @@ function OfferDetailPage() {
         message: `${savingsText} at ${offer.store?.name || 'this store'}!\n\n${offer.title}\n\nSave with ${BRAND.APP_NAME}`,
         title: offer.title,
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error sharing offer:', error);
     }
   };
@@ -365,7 +385,7 @@ function OfferDetailPage() {
       const now = new Date();
       const diffTime = Math.abs(now.getTime() - dateObj.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       if (diffDays === 0) {
         return 'today';
       } else if (diffDays === 1) {
@@ -392,7 +412,10 @@ function OfferDetailPage() {
       <View style={styles.container}>
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.header}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
             </Pressable>
           </View>
@@ -409,7 +432,10 @@ function OfferDetailPage() {
       <View style={styles.container}>
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.header}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
             </Pressable>
           </View>
@@ -426,26 +452,31 @@ function OfferDetailPage() {
   }
 
   const isExpired = new Date(offer.validity.endDate) < new Date();
-  const daysRemaining = Math.ceil((new Date(offer.validity.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+  const daysRemaining = Math.ceil(
+    (new Date(offer.validity.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+  );
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Minimal Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
           </Pressable>
           <View style={styles.headerActions}>
             <Pressable
               onPress={handleLike}
               style={styles.headerButton}
-              accessibilityLabel={isLiked ? "Remove from favorites" : "Add to favorites"}
+              accessibilityLabel={isLiked ? 'Remove from favorites' : 'Add to favorites'}
               accessibilityRole="button"
-              accessibilityHint={isLiked ? "Double tap to unlike this offer" : "Double tap to like this offer"}
+              accessibilityHint={isLiked ? 'Double tap to unlike this offer' : 'Double tap to like this offer'}
             >
               <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
+                name={isLiked ? 'heart' : 'heart-outline'}
                 size={26}
                 color={isLiked ? Colors.error : colors.text.primary}
               />
@@ -463,8 +494,8 @@ function OfferDetailPage() {
         </View>
       </SafeAreaView>
 
-      <ScrollView 
-        style={styles.content} 
+      <ScrollView
+        style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
@@ -518,19 +549,15 @@ function OfferDetailPage() {
               <ThemedText style={styles.categoryText}>{offer.category.toUpperCase()}</ThemedText>
             </View>
             {requiresVerification && (
-              <View style={[
-                styles.exclusiveBadge,
-                verificationStatus?.verified && styles.exclusiveBadgeVerified
-              ]}>
+              <View style={[styles.exclusiveBadge, verificationStatus?.verified && styles.exclusiveBadgeVerified]}>
                 <Ionicons
                   name={verificationStatus?.verified ? 'shield-checkmark' : 'shield'}
                   size={14}
                   color={verificationStatus?.verified ? Colors.success : colors.nileBlue}
                 />
-                <ThemedText style={[
-                  styles.exclusiveBadgeText,
-                  verificationStatus?.verified && styles.exclusiveBadgeTextVerified
-                ]}>
+                <ThemedText
+                  style={[styles.exclusiveBadgeText, verificationStatus?.verified && styles.exclusiveBadgeTextVerified]}
+                >
                   {requiredZone?.toUpperCase()} EXCLUSIVE
                 </ThemedText>
               </View>
@@ -539,17 +566,12 @@ function OfferDetailPage() {
 
           {/* Title */}
           <ThemedText style={styles.title}>{offer.title}</ThemedText>
-          
+
           {/* Subtitle */}
-          {offer.subtitle && (
-            <ThemedText style={styles.subtitle}>{offer.subtitle}</ThemedText>
-          )}
+          {offer.subtitle && <ThemedText style={styles.subtitle}>{offer.subtitle}</ThemedText>}
 
           {/* Cashback Banner */}
-          <LinearGradient
-            colors={[colors.nileBlue, '#2d5a7b']}
-            style={styles.cashbackBanner}
-          >
+          <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.cashbackBanner}>
             <Ionicons name="gift-outline" size={32} color="white" />
             <View style={styles.cashbackInfo}>
               <ThemedText style={styles.cashbackLabel}>GET CASHBACK</ThemedText>
@@ -559,14 +581,16 @@ function OfferDetailPage() {
 
           {/* Verification Status Banner */}
           {requiresVerification && (
-            <View style={[
-              styles.verificationBanner,
-              verificationStatus?.verified
-                ? styles.verificationBannerVerified
-                : verificationStatus?.status === 'pending'
-                  ? styles.verificationBannerPending
-                  : styles.verificationBannerRequired
-            ]}>
+            <View
+              style={[
+                styles.verificationBanner,
+                verificationStatus?.verified
+                  ? styles.verificationBannerVerified
+                  : verificationStatus?.status === 'pending'
+                    ? styles.verificationBannerPending
+                    : styles.verificationBannerRequired,
+              ]}
+            >
               <Ionicons
                 name={
                   verificationStatus?.verified
@@ -585,11 +609,13 @@ function OfferDetailPage() {
                 }
               />
               <View style={styles.verificationBannerContent}>
-                <ThemedText style={[
-                  styles.verificationBannerTitle,
-                  verificationStatus?.verified && styles.verificationBannerTitleVerified,
-                  verificationStatus?.status === 'pending' && styles.verificationBannerTitlePending,
-                ]}>
+                <ThemedText
+                  style={[
+                    styles.verificationBannerTitle,
+                    verificationStatus?.verified && styles.verificationBannerTitleVerified,
+                    verificationStatus?.status === 'pending' && styles.verificationBannerTitlePending,
+                  ]}
+                >
                   {verificationStatus?.verified
                     ? `${requiredZone?.charAt(0).toUpperCase()}${requiredZone?.slice(1)} Verified`
                     : verificationStatus?.status === 'pending'
@@ -607,10 +633,12 @@ function OfferDetailPage() {
               {!verificationStatus?.verified && verificationStatus?.status !== 'pending' && (
                 <Pressable
                   style={styles.verifyNowButton}
-                  onPress={() => router.push({
-                    pathname: '/profile/verification',
-                    params: { zone: requiredZone }
-                  } as any)}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/profile/verification',
+                      params: { zone: requiredZone },
+                    } as any)
+                  }
                 >
                   <ThemedText style={styles.verifyNowButtonText}>Verify</ThemedText>
                 </Pressable>
@@ -644,9 +672,7 @@ function OfferDetailPage() {
                 </View>
               )}
             </View>
-            {offer.store.verified && (
-              <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
-            )}
+            {offer.store.verified && <Ionicons name="checkmark-circle" size={20} color={Colors.success} />}
             <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
           </Pressable>
 
@@ -654,9 +680,7 @@ function OfferDetailPage() {
           {offer.distance !== undefined && (
             <View style={styles.distanceCard}>
               <Ionicons name="location" size={20} color={colors.nileBlue} />
-              <ThemedText style={styles.distanceText}>
-                {offer.distance.toFixed(1)} km away from you
-              </ThemedText>
+              <ThemedText style={styles.distanceText}>{offer.distance.toFixed(1)} km away from you</ThemedText>
             </View>
           )}
 
@@ -666,7 +690,7 @@ function OfferDetailPage() {
             accessibilityLabel={`Validity: Valid until ${new Date(offer.validity.endDate).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
-              day: 'numeric'
+              day: 'numeric',
             })}${isExpired ? '. This offer has expired' : daysRemaining > 0 ? `. ${daysRemaining} days remaining` : ''}`}
             accessibilityRole="text"
           >
@@ -676,14 +700,15 @@ function OfferDetailPage() {
             </View>
             <View style={styles.validityInfo}>
               <ThemedText style={styles.validityDate}>
-                Valid until: {new Date(offer.validity.endDate).toLocaleDateString('en-US', {
+                Valid until:{' '}
+                {new Date(offer.validity.endDate).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
-                  day: 'numeric'
+                  day: 'numeric',
                 })}
               </ThemedText>
               {!isExpired && daysRemaining > 0 && (
-                <View style={[styles.daysRemainingBadge, daysRemaining <= 7 && styles.daysRemainingUrgent]}>
+                <View style={[styles.daysRemainingBadge, daysRemaining <= 7 ? styles.daysRemainingUrgent : null]}>
                   <ThemedText style={styles.daysRemainingText}>
                     {daysRemaining} {daysRemaining === 1 ? 'day' : 'days'} left
                   </ThemedText>
@@ -713,7 +738,8 @@ function OfferDetailPage() {
                 <View style={styles.restrictionItem}>
                   <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
-                    Minimum order value: {currencySymbol}{offer.restrictions.minOrderValue}
+                    Minimum order value: {currencySymbol}
+                    {offer.restrictions.minOrderValue}
                   </ThemedText>
                 </View>
               )}
@@ -721,7 +747,8 @@ function OfferDetailPage() {
                 <View style={styles.restrictionItem}>
                   <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
-                    Maximum discount: {currencySymbol}{offer.restrictions.maxDiscountAmount}
+                    Maximum discount: {currencySymbol}
+                    {offer.restrictions.maxDiscountAmount}
                   </ThemedText>
                 </View>
               )}
@@ -729,7 +756,8 @@ function OfferDetailPage() {
                 <View style={styles.restrictionItem}>
                   <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
-                    Can be used {(offer.restrictions as any).usageLimitPerUser} time{(offer.restrictions as any).usageLimitPerUser > 1 ? 's' : ''} per user
+                    Can be used {(offer.restrictions as any).usageLimitPerUser} time
+                    {(offer.restrictions as any).usageLimitPerUser > 1 ? 's' : ''} per user
                   </ThemedText>
                 </View>
               )}
@@ -764,7 +792,7 @@ function OfferDetailPage() {
             </View>
           </View>
         </View>
-        
+
         {/* Extra spacing at bottom */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
@@ -793,20 +821,18 @@ function OfferDetailPage() {
           <Pressable
             style={[
               styles.redeemButton,
-              verificationStatus?.status === 'pending'
-                ? styles.redeemButtonPending
-                : styles.redeemButtonLocked
+              verificationStatus?.status === 'pending' ? styles.redeemButtonPending : styles.redeemButtonLocked,
             ]}
             onPress={() => {
               if (verificationStatus?.status === 'pending') {
                 platformAlertSimple(
                   'Verification Pending',
-                  'Your verification is under review. You will be notified once approved.'
+                  'Your verification is under review. You will be notified once approved.',
                 );
               } else {
                 router.push({
                   pathname: '/profile/verification',
-                  params: { zone: requiredZone }
+                  params: { zone: requiredZone },
                 } as any);
               }
             }}
@@ -831,7 +857,11 @@ function OfferDetailPage() {
             disabled={isExpired || isRedeeming}
             accessibilityLabel={isExpired ? 'Offer expired' : 'Redeem offer'}
             accessibilityRole="button"
-            accessibilityHint={isExpired ? 'This offer has expired and cannot be redeemed' : 'Double tap to redeem this offer and get your voucher code'}
+            accessibilityHint={
+              isExpired
+                ? 'This offer has expired and cannot be redeemed'
+                : 'Double tap to redeem this offer and get your voucher code'
+            }
             accessibilityState={{ disabled: isExpired || isRedeeming }}
           >
             {isRedeeming ? (
@@ -839,9 +869,7 @@ function OfferDetailPage() {
             ) : (
               <>
                 <Ionicons name="ticket-outline" size={24} color="white" />
-                <ThemedText style={styles.redeemButtonText}>
-                  {isExpired ? 'Offer Expired' : 'Redeem Offer'}
-                </ThemedText>
+                <ThemedText style={styles.redeemButtonText}>{isExpired ? 'Offer Expired' : 'Redeem Offer'}</ThemedText>
               </>
             )}
           </Pressable>
@@ -862,20 +890,18 @@ function OfferDetailPage() {
             <ThemedText style={styles.modalTitle}>Redeem Offer</ThemedText>
             <ThemedText style={styles.modalMessage}>
               Do you want to redeem this offer?{'\n\n'}
-              <ThemedText style={styles.modalOfferTitle}>{offer?.title}</ThemedText>{'\n\n'}
+              <ThemedText style={styles.modalOfferTitle}>{offer?.title}</ThemedText>
+              {'\n\n'}
               Cashback: {offer?.cashbackPercentage}%
             </ThemedText>
             <View style={styles.modalButtons}>
-              <Pressable 
+              <Pressable
                 style={[styles.modalButton, styles.modalButtonCancel]}
                 onPress={() => setShowRedeemModal(false)}
               >
                 <ThemedText style={styles.modalButtonTextCancel}>Cancel</ThemedText>
               </Pressable>
-              <Pressable 
-                style={[styles.modalButton, styles.modalButtonConfirm]}
-                onPress={confirmRedeem}
-              >
+              <Pressable style={[styles.modalButton, styles.modalButtonConfirm]} onPress={confirmRedeem}>
                 <ThemedText style={styles.modalButtonTextConfirm}>Redeem</ThemedText>
               </Pressable>
             </View>
@@ -897,9 +923,7 @@ function OfferDetailPage() {
               <Ionicons name="checkmark-circle" size={64} color={Colors.success} />
             </View>
             <ThemedText style={styles.modalTitle}>Success!</ThemedText>
-            <ThemedText style={styles.modalMessage}>
-              Offer redeemed successfully!
-            </ThemedText>
+            <ThemedText style={styles.modalMessage}>Offer redeemed successfully!</ThemedText>
             <View style={styles.voucherCodeContainer}>
               <ThemedText style={styles.voucherCodeLabel}>Voucher Code:</ThemedText>
               <Pressable
@@ -908,7 +932,6 @@ function OfferDetailPage() {
                   await Clipboard.setStringAsync(voucherCode);
                   platformAlertSimple('Copied!', 'Voucher code copied to clipboard');
                 }}
-               
                 accessibilityLabel={`Voucher code: ${voucherCode}. Tap to copy`}
                 accessibilityRole="button"
                 accessibilityHint="Double tap to copy voucher code to clipboard"
@@ -917,17 +940,15 @@ function OfferDetailPage() {
                 <Ionicons name="copy-outline" size={20} color={colors.nileBlue} style={{ marginLeft: 8 }} />
               </Pressable>
             </View>
-            <ThemedText style={styles.voucherHint}>
-              👆 Tap code to copy • Use during checkout
-            </ThemedText>
+            <ThemedText style={styles.voucherHint}>👆 Tap code to copy • Use during checkout</ThemedText>
             <View style={styles.modalButtons}>
-              <Pressable 
+              <Pressable
                 style={[styles.modalButton, styles.modalButtonCancel]}
                 onPress={() => setShowSuccessModal(false)}
               >
                 <ThemedText style={styles.modalButtonTextCancel}>Close</ThemedText>
               </Pressable>
-              <Pressable 
+              <Pressable
                 style={[styles.modalButton, styles.modalButtonConfirm]}
                 onPress={() => {
                   setShowSuccessModal(false);

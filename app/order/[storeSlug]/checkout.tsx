@@ -143,12 +143,7 @@ function OrderSummary({ cart, gstPercent }: { cart: CartItem[]; gstPercent: numb
 
 export default function CheckoutScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{
-    storeSlug: string;
-    table: string;
-    cartJson: string;
-    storeJson: string;
-  }>();
+  const params = useLocalSearchParams<any>();
 
   const cart: CartItem[] = React.useMemo(() => {
     try {

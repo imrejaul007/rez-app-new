@@ -53,7 +53,7 @@ const RelatedBusesSection: React.FC<RelatedBusesSectionProps> = ({ currentBusId,
         if (!isMounted()) return;
         setRelatedBuses(filtered);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

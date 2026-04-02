@@ -146,7 +146,7 @@ const CrossStoreProductsSection: React.FC<CrossStoreProductsSectionProps> = ({
   // Handle product press
   const handleProductPress = useCallback(
     (product: ProductItem) => {
-      const productId = product._id || product.id;
+      const productId = (product as any)._id || product.id;
       if (onProductPress) {
         onProductPress(productId, product);
       } else {
@@ -221,7 +221,7 @@ const CrossStoreProductsSection: React.FC<CrossStoreProductsSectionProps> = ({
       <View
         style={[styles.productWrapper, { width: cardWidth }]}
         accessible={true}
-        accessibilityLabel={`Product ${index + 1} of ${products.length}. ${item.name} from ${item.storeName || 'Store'}`}
+        accessibilityLabel={`Product ${index + 1} of ${products.length}. ${item.name} from ${(item as any).storeName || 'Store'}`}
       >
         <ProductCard
           product={item}
@@ -280,18 +280,12 @@ const CrossStoreProductsSection: React.FC<CrossStoreProductsSectionProps> = ({
           <FlashList
             data={products}
             renderItem={renderProduct}
-            keyExtractor={(item, index) => item._id || item.id || `product-${index}`}
+            keyExtractor={(item, index) => (item as any)._id || item.id || `product-${index}`}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}
             ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
             estimatedItemSize={220}
-            initialNumToRender={3}
-            maxToRenderPerBatch={3}
-            windowSize={5}
-            removeClippedSubviews={Platform.OS === 'android'}
-            accessibilityLabel={`${products.length} recommended products`}
-            accessibilityRole="list"
           />
         )}
       </View>

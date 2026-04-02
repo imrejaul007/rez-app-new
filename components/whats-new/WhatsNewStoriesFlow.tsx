@@ -40,8 +40,8 @@ const WhatsNewStoriesFlow: React.FC<WhatsNewStoriesFlowProps> = ({ onClose, star
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const isMounted = useIsMounted();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentStory = stories[currentStoryIndex];
   const currentSlide = currentStory?.slides[currentSlideIndex];
@@ -51,13 +51,13 @@ const WhatsNewStoriesFlow: React.FC<WhatsNewStoriesFlowProps> = ({ onClose, star
     const fetchStories = async () => {
       try {
         const response = await whatsNewApi.getStories(true);
-        if (response.success && response.data.length > 0) {
+        if (response.success && response.data && response.data.length > 0) {
           if (!isMounted()) return;
           setStories(response.data);
         } else {
           onClose();
         }
-      } catch (error) {
+      } catch (error: any) {
         onClose();
       } finally {
         if (!isMounted()) return;

@@ -263,10 +263,10 @@ function SponsoredCashbackPage() {
         ].map((f) => (
           <Pressable
             key={f.key}
-            style={[styles.filterButton, filter === f.key && styles.filterButtonActive]}
+            style={[styles.filterButton, filter === f.key ? styles.filterButtonActive : null]}
             onPress={() => setFilter(f.key as any)}
           >
-            <ThemedText style={[styles.filterButtonText, filter === f.key && styles.filterButtonTextActive]}>
+            <ThemedText style={[styles.filterButtonText, filter === f.key ? styles.filterButtonTextActive : null]}>
               {f.label}
             </ThemedText>
           </Pressable>
@@ -285,7 +285,7 @@ function SponsoredCashbackPage() {
           data={offers}
           renderItem={renderOffer}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={[styles.listContent, offers.length === 0 && { flex: 1 }]}
+          contentContainerStyle={[styles.listContent, offers.length === 0 && { flex: 1 }] as any}
           showsVerticalScrollIndicator={false}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.3}

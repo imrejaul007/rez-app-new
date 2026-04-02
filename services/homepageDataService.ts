@@ -4,7 +4,7 @@ import eventsApiService from './eventsApi';
 import realOffersApi from './realOffersApi';
 import brandApiService from './brandApi';
 import cacheService from './cacheService';
-import locationService from './locationService';
+import { locationService } from './locationService';
 import recommendationService from './recommendationApi';
 import apiClient from './apiClient';
 import { ProductItem, RecommendationItem, HomepageSection, EventItem, HomepageBatchResponse } from '@/types/homepage.types';
@@ -233,9 +233,9 @@ class HomepageDataService {
         if (userLocation) {
           try {
             const pickedForYouResponse = await recommendationService.getPickedForYou(20, userLocation);
-            if (pickedForYouResponse.success && pickedForYouResponse.data?.recommendations?.length > 0) {
+            if (pickedForYouResponse.success && ((pickedForYouResponse.data as any)?.recommendations?.length ?? 0) > 0) {
               // Transform recommendations to ProductItem format
-              return pickedForYouResponse.data.recommendations.map((rec: any) => ({
+              return (pickedForYouResponse.data as any).recommendations.map((rec: any) => ({
                 ...rec,
                 recommendationReason: rec.recommendationReason || 'Recommended for you',
                 recommendationScore: rec.recommendationScore || 0.85,
@@ -262,7 +262,7 @@ class HomepageDataService {
       error: isOffline ? 'Showing offline data' : null
     };
 
-    return result;
+    return result as any;
   }
 
   /**
@@ -316,7 +316,7 @@ class HomepageDataService {
           lastUpdated: new Date().toISOString(),
           loading: false,
           error: null
-        };
+        } as any;
       }
 
       // No cache, try to fetch from backend
@@ -339,7 +339,7 @@ class HomepageDataService {
               lastUpdated: new Date().toISOString(),
               loading: false,
               error: null
-            };
+            } as any;
           }
         } catch (error) {
           // Silently fail - return empty section
@@ -353,7 +353,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      };
+      } as any;
     } catch (error) {
       // Return empty section on error (will be filtered out)
       return {
@@ -362,7 +362,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      };
+      } as any;
     }
   }
 
@@ -481,7 +481,7 @@ class HomepageDataService {
       error: isOffline ? 'Showing offline data' : null
     };
 
-    return result;
+    return result as any;
   }
 
   /**
@@ -529,7 +529,7 @@ class HomepageDataService {
       error: isOffline ? 'Showing offline data' : null
     };
 
-    return result;
+    return result as any;
   }
 
   /**
@@ -567,11 +567,11 @@ class HomepageDataService {
             limit: 10
           });
 
-          if (response.success && response.data && response.data.items) {
-            const offers = response.data.items || [];
+          if (response.success && response.data && (response.data as any).items) {
+            const offers = (response.data as any).items || [];
 
             // Transform offers to homepage format
-            const transformedItems = offers.map(offer => ({
+            const transformedItems = offers.map((offer: any) => ({
               id: offer._id,
               type: 'product' as const,
               title: offer.title,
@@ -661,14 +661,14 @@ class HomepageDataService {
             limit: 10
           });
 
-          if (response.success && response.data && response.data.items) {
+          if (response.success && response.data && (response.data as any).items) {
             // Filter for flash sale offers
-            const flashSales = response.data.items.filter(offer =>
+            const flashSales = (response.data as any).items.filter((offer: any) =>
               offer.metadata?.flashSale?.isActive
             );
 
             // Transform flash sales to homepage format
-            const transformedItems = (flashSales || []).map(offer => ({
+            const transformedItems = (flashSales || []).map((offer: any) => ({
               id: offer._id,
               type: 'product' as const,
               title: offer.title,
@@ -758,7 +758,7 @@ class HomepageDataService {
               lastUpdated: new Date().toISOString(),
               loading: false,
               error: null
-            };
+            } as any;
           }
         } catch (_error) {
           // silently handle
@@ -774,7 +774,7 @@ class HomepageDataService {
           lastUpdated: new Date().toISOString(),
           loading: false,
           error: null
-        };
+        } as any;
       }
 
       // No data available - return empty section (will be hidden)
@@ -784,7 +784,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      };
+      } as any;
 
     } catch (error) {
       return {
@@ -793,7 +793,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      };
+      } as any;
     }
   }
 
@@ -913,7 +913,7 @@ class HomepageDataService {
       this.performanceMetrics.batchSuccesses++;
 
       // Extract userContext if present (backend includes it for authenticated users)
-      const rawData = response.data;
+      const rawData = response.data as any;
       if (rawData?.userContext) {
         this._lastUserContext = rawData.userContext;
         this._userContextTimestamp = Date.now();
@@ -947,12 +947,12 @@ class HomepageDataService {
     // apiClient already unwraps backend data, so response may or may not have .data
     const data = response.data || response;
     const sections = data.sections || {
-      justForYou: data.featuredProducts || [],
-      newArrivals: data.newArrivals || [],
-      trendingStores: data.trendingStores || data.featuredStores || [],
-      events: data.upcomingEvents || [],
-      offers: data.megaOffers || data.studentOffers || [],
-      flashSales: data.flashSales || [],
+      justForYou: (data as any).featuredProducts || [],
+      newArrivals: (data as any).newArrivals || [],
+      trendingStores: (data as any).trendingStores || (data as any).featuredStores || [],
+      events: (data as any).upcomingEvents || [],
+      offers: (data as any).megaOffers || (data as any).studentOffers || [],
+      flashSales: (data as any).flashSales || [],
     };
     const metadata = data.metadata;
     const timestamp = new Date().toISOString();

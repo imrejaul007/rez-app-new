@@ -221,7 +221,7 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
       </View>
 
       <View style={styles.orderItems}>
-        {item.items.slice(0, 3).map((orderItem, index) => {
+        {item.items.slice(0, 3).map((orderItem: any, index) => {
           const itemName = orderItem.name || orderItem.product?.name || 'Product';
           const itemImage =
             orderItem.images[0]?.url ||
@@ -410,7 +410,7 @@ function OrdersListScreen() {
         setPage(pageNum);
         setError(null);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError(err instanceof Error ? err.message : 'Failed to load orders');
     } finally {
@@ -532,10 +532,10 @@ function OrdersListScreen() {
             {FILTERS.map((f) => (
               <Pressable
                 key={f.key}
-                style={[styles.filterChip, activeFilter === f.key && styles.filterChipActive]}
+                style={[styles.filterChip, activeFilter === f.key ? styles.filterChipActive : null]}
                 onPress={() => handleFilterChange(f.key)}
               >
-                <Text style={[styles.filterChipText, activeFilter === f.key && styles.filterChipTextActive]}>
+                <Text style={[styles.filterChipText, activeFilter === f.key ? styles.filterChipTextActive : null]}>
                   {f.label}
                 </Text>
               </Pressable>
@@ -569,7 +569,7 @@ function OrdersListScreen() {
           data={orders}
           renderItem={renderOrderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={orders.length === 0 ? styles.emptyListContent : styles.listContent}
+          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as any}
           ListHeaderComponent={renderListHeader}
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={renderFooter}

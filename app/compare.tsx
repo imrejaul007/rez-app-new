@@ -57,13 +57,13 @@ const transformProductToCompareItem = (product: ComparisonProduct): CompareItem 
   const price = product.pricing?.selling || product.pricing?.original || 0;
   const cashback = product.cashback?.percentage || 0;
   const rating = product.ratings?.average || 0;
-  
+
   // Extract features from description or specifications if available
   const features: string[] = [];
   if (product.description) {
     // Simple feature extraction - split by sentences or bullet points
-    const sentences = product.description.split(/[.!?]/).filter(s => s.trim().length > 10);
-    features.push(...sentences.slice(0, 3).map(s => s.trim()));
+    const sentences = product.description.split(/[.!?]/).filter((s) => s.trim().length > 10);
+    features.push(...sentences.slice(0, 3).map((s) => s.trim()));
   }
   if (features.length === 0) {
     features.push('High quality product', 'Verified seller', 'Fast delivery');
@@ -72,7 +72,7 @@ const transformProductToCompareItem = (product: ComparisonProduct): CompareItem 
   return {
     id: productId,
     name: product.name,
-    image: firstImage,
+    image: firstImage || '',
     price,
     cashback,
     rating,
@@ -101,13 +101,13 @@ function ComparePage() {
     try {
       setIsLoading(true);
       const response = await productComparisonApi.getUserComparisons({ page: 1, limit: 1 });
-      
+
       if (response.success && response.data?.comparisons && response.data.comparisons.length > 0) {
         // Load the most recent comparison
         const comparison = response.data.comparisons[0];
         if (!isMounted()) return;
         setCurrentComparisonId(comparison._id || comparison.id || null);
-        
+
         const items = comparison.products.map(transformProductToCompareItem);
         if (!isMounted()) return;
         setCompareItems(items);
@@ -118,7 +118,7 @@ function ComparePage() {
         if (!isMounted()) return;
         setCurrentComparisonId(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setCompareItems([]);
       platformAlertSimple('Error', 'Failed to load comparisons. Please try again.');
@@ -140,43 +140,46 @@ function ComparePage() {
     }
   }, [isAuthenticated, loadComparisons]);
 
-  const handleAddProductFromParams = useCallback(async (productId: string) => {
-    if (!isAuthenticated) {
-      platformAlertSimple('Login Required', 'Please login to compare products');
-      router.push('/sign-in' as any);
-      return;
-    }
-
-    setIsAddingProduct(true);
-    try {
-      if (currentComparisonId) {
-        // Check if comparison is full (by checking current items length)
-        if (compareItems.length >= 5) {
-          platformAlertSimple('Limit Reached', 'You can compare up to 5 products at once');
-          setIsAddingProduct(false);
-          return;
-        }
-
-        // Add to existing comparison
-        const response = await productComparisonApi.addProductToComparison(currentComparisonId, productId);
-        if (response.success && response.data?.comparison) {
-          const items = response.data.comparison.products.map(transformProductToCompareItem);
-          setCompareItems(items);
-          platformAlertSimple('Success', 'Product added to comparison');
-        } else {
-          platformAlertSimple('Error', response.error || 'Failed to add product to comparison');
-        }
-      } else {
-        // Create new comparison (need at least 2 products, so navigate to search for now)
-        router.push('/search?mode=compare');
+  const handleAddProductFromParams = useCallback(
+    async (productId: string) => {
+      if (!isAuthenticated) {
+        platformAlertSimple('Login Required', 'Please login to compare products');
+        router.push('/sign-in' as any);
+        return;
       }
-    } catch (error: any) {
-      platformAlertSimple('Error', error.message || 'Failed to add product to comparison');
-    } finally {
-      if (!isMounted()) return;
-      setIsAddingProduct(false);
-    }
-  }, [isAuthenticated, currentComparisonId, compareItems.length, router]);
+
+      setIsAddingProduct(true);
+      try {
+        if (currentComparisonId) {
+          // Check if comparison is full (by checking current items length)
+          if (compareItems.length >= 5) {
+            platformAlertSimple('Limit Reached', 'You can compare up to 5 products at once');
+            setIsAddingProduct(false);
+            return;
+          }
+
+          // Add to existing comparison
+          const response = await productComparisonApi.addProductToComparison(currentComparisonId, productId);
+          if (response.success && response.data?.comparison) {
+            const items = response.data.comparison.products.map(transformProductToCompareItem);
+            setCompareItems(items);
+            platformAlertSimple('Success', 'Product added to comparison');
+          } else {
+            platformAlertSimple('Error', response.error || 'Failed to add product to comparison');
+          }
+        } else {
+          // Create new comparison (need at least 2 products, so navigate to search for now)
+          router.push('/search?mode=compare');
+        }
+      } catch (error: any) {
+        platformAlertSimple('Error', error.message || 'Failed to add product to comparison');
+      } finally {
+        if (!isMounted()) return;
+        setIsAddingProduct(false);
+      }
+    },
+    [isAuthenticated, currentComparisonId, compareItems.length, router],
+  );
 
   // Check if productId is passed from search (when adding product to compare)
   // Wait for comparisons to load first to avoid race condition
@@ -213,49 +216,55 @@ function ComparePage() {
     }
   }, [isAuthenticated, currentComparisonId]);
 
-  const handleRemoveItem = useCallback(async (id: string) => {
-    if (!isAuthenticated || !currentComparisonId) {
-      // If not authenticated, just remove from local state
-      setCompareItems(compareItems.filter((item) => item.id !== id));
-      return;
-    }
-
-    // Check if this would leave only 1 product (backend requires minimum 2)
-    if (compareItems.length <= 2) {
-      platformAlertDestructive(
-        'Cannot Remove',
-        'A comparison must have at least 2 products. Delete the comparison instead.',
-        'Delete Comparison',
-        handleDeleteComparison
-      );
-      return;
-    }
-
-    setIsRemovingProduct(id);
-    try {
-      const response = await productComparisonApi.removeProductFromComparison(currentComparisonId, id);
-      if (response.success && response.data?.comparison) {
-        const items = response.data.comparison.products.map(transformProductToCompareItem);
-        setCompareItems(items);
-        
-        // If comparison is empty now, clear it
-        if (items.length === 0) {
-          setCurrentComparisonId(null);
-        }
-        platformAlertSimple('Success', 'Product removed from comparison');
-      } else {
-        // Handle backend error properly
-        platformAlertSimple('Error', response.error || 'Failed to remove product. Comparison must have at least 2 products.');
-        // Don't update local state - keep sync with backend
+  const handleRemoveItem = useCallback(
+    async (id: string) => {
+      if (!isAuthenticated || !currentComparisonId) {
+        // If not authenticated, just remove from local state
+        setCompareItems(compareItems.filter((item) => item.id !== id));
+        return;
       }
-    } catch (error: any) {
-      platformAlertSimple('Error', error.message || 'Failed to remove product from comparison');
-      // Don't update local state on error - keep sync with backend
-    } finally {
-      if (!isMounted()) return;
-      setIsRemovingProduct(null);
-    }
-  }, [isAuthenticated, currentComparisonId, compareItems.length, handleDeleteComparison]);
+
+      // Check if this would leave only 1 product (backend requires minimum 2)
+      if (compareItems.length <= 2) {
+        platformAlertDestructive(
+          'Cannot Remove',
+          'A comparison must have at least 2 products. Delete the comparison instead.',
+          handleDeleteComparison,
+          'Delete Comparison',
+        );
+        return;
+      }
+
+      setIsRemovingProduct(id);
+      try {
+        const response = await productComparisonApi.removeProductFromComparison(currentComparisonId, id);
+        if (response.success && response.data?.comparison) {
+          const items = response.data.comparison.products.map(transformProductToCompareItem);
+          setCompareItems(items);
+
+          // If comparison is empty now, clear it
+          if (items.length === 0) {
+            setCurrentComparisonId(null);
+          }
+          platformAlertSimple('Success', 'Product removed from comparison');
+        } else {
+          // Handle backend error properly
+          platformAlertSimple(
+            'Error',
+            response.error || 'Failed to remove product. Comparison must have at least 2 products.',
+          );
+          // Don't update local state - keep sync with backend
+        }
+      } catch (error: any) {
+        platformAlertSimple('Error', error.message || 'Failed to remove product from comparison');
+        // Don't update local state on error - keep sync with backend
+      } finally {
+        if (!isMounted()) return;
+        setIsRemovingProduct(null);
+      }
+    },
+    [isAuthenticated, currentComparisonId, compareItems.length, handleDeleteComparison],
+  );
 
   const handleBuy = (item: CompareItem) => {
     router.push(`/product-page?productId=${item.productId}` as any);
@@ -267,7 +276,10 @@ function ComparePage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Compare Products</Text>
@@ -284,7 +296,10 @@ function ComparePage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle}>Compare Products</Text>
@@ -302,9 +317,7 @@ function ComparePage() {
           <View style={styles.emptyState}>
             <Ionicons name="git-compare-outline" size={64} color={COLORS.textSecondary} />
             <Text style={styles.emptyTitle}>No items to compare</Text>
-            <Text style={styles.emptySubtitle}>
-              Add products to compare their features, prices, and cashback
-            </Text>
+            <Text style={styles.emptySubtitle}>Add products to compare their features, prices, and cashback</Text>
             <Pressable style={styles.addButton} onPress={handleAddItem}>
               <Ionicons name="add" size={20} color={COLORS.white} />
               <Text style={styles.addButtonText}>Add Products</Text>
@@ -331,22 +344,14 @@ function ComparePage() {
                           <Ionicons name="close-circle" size={24} color={Colors.error} />
                         )}
                       </Pressable>
-                      <CachedImage
-                        source={item.image || undefined}
-                        style={styles.productImage}
-                        onError={() => {}}
-                      />
+                      <CachedImage source={item.image || ''} style={styles.productImage} onError={() => {}} />
                       <Text style={styles.productName} numberOfLines={2}>
                         {item.name}
                       </Text>
                     </View>
                   ))}
                   {compareItems.length < 5 && (
-                    <Pressable 
-                      style={styles.addProductCell} 
-                      onPress={handleAddItem}
-                      disabled={isAddingProduct}
-                    >
+                    <Pressable style={styles.addProductCell} onPress={handleAddItem} disabled={isAddingProduct}>
                       {isAddingProduct ? (
                         <ActivityIndicator size="small" color={COLORS.primaryGreen} />
                       ) : (
@@ -366,7 +371,10 @@ function ComparePage() {
                   </View>
                   {compareItems.map((item) => (
                     <View key={item.id} style={styles.valueCell}>
-                      <Text style={styles.priceText}>{currencySymbol}{item.price.toLocaleString()}</Text>
+                      <Text style={styles.priceText}>
+                        {currencySymbol}
+                        {item.price.toLocaleString()}
+                      </Text>
                     </View>
                   ))}
                   {compareItems.length < 5 && <View style={styles.valueCell} />}
@@ -381,7 +389,8 @@ function ComparePage() {
                     <View key={item.id} style={styles.valueCell}>
                       <Text style={styles.cashbackText}>{item.cashback}%</Text>
                       <Text style={styles.cashbackAmount}>
-                        Save {currencySymbol}{Math.round(item.price * item.cashback / 100)}
+                        Save {currencySymbol}
+                        {Math.round((item.price * item.cashback) / 100)}
                       </Text>
                     </View>
                   ))}
@@ -427,10 +436,7 @@ function ComparePage() {
                   <View style={styles.labelCell} />
                   {compareItems.map((item) => (
                     <View key={item.id} style={styles.valueCell}>
-                      <Pressable
-                        style={styles.buyButton}
-                        onPress={() => handleBuy(item)}
-                      >
+                      <Pressable style={styles.buyButton} onPress={() => handleBuy(item)}>
                         <Text style={styles.buyButtonText}>Buy Now</Text>
                       </Pressable>
                     </View>
@@ -445,9 +451,7 @@ function ComparePage() {
               <View style={styles.bestValue}>
                 <Ionicons name="trophy" size={20} color={COLORS.primaryGold} />
                 <Text style={styles.bestValueText}>
-                  Best Value: {compareItems.reduce((best, item) =>
-                    item.cashback > best.cashback ? item : best
-                  ).name}
+                  Best Value: {compareItems.reduce((best, item) => (item.cashback > best.cashback ? item : best)).name}
                 </Text>
               </View>
             )}

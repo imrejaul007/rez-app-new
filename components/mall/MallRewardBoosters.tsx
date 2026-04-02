@@ -21,6 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 interface MallRewardBoostersProps {
@@ -265,19 +266,15 @@ const MallRewardBoosters: React.FC<MallRewardBoostersProps> = ({
         </View>
 
         {/* Brands List */}
-        <FlashList
+        <AnyFlashList
           data={brands}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           snapToInterval={155}
           decelerationRate="fast"
-          removeClippedSubviews={Platform.OS !== 'web'}
-          maxToRenderPerBatch={5}
-          windowSize={5}
-          initialNumToRender={3}
           estimatedItemSize={150}
         />
       </LinearGradient>

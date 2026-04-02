@@ -137,7 +137,7 @@ function ReportFraudPage() {
       } else {
         platformAlertSimple('Error', 'Failed to submit report. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Something went wrong. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -253,7 +253,7 @@ function ReportFraudPage() {
               {FRAUD_TYPES.map((type) => (
                 <Pressable
                   key={type.id}
-                  style={[styles.typeCard, selectedType === type.id && styles.typeCardSelected]}
+                  style={[styles.typeCard, selectedType === type.id ? styles.typeCardSelected : null]}
                   onPress={() => setSelectedType(type.id)}
                 >
                   <Ionicons
@@ -261,7 +261,7 @@ function ReportFraudPage() {
                     size={24}
                     color={selectedType === type.id ? Colors.error : colors.text.tertiary}
                   />
-                  <ThemedText style={[styles.typeLabel, selectedType === type.id && styles.typeLabelSelected]}>
+                  <ThemedText style={[styles.typeLabel, selectedType === type.id ? styles.typeLabelSelected : null]}>
                     {type.label}
                   </ThemedText>
                 </Pressable>

@@ -136,7 +136,7 @@ const DeliverySlotPicker = DeliverySlotPickerImpl;
 
 function CheckoutPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ offerRedemptionCode?: string; orderId?: string }>();
+  const params = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const authUser = useAuthUser();

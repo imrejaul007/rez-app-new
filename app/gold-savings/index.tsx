@@ -72,9 +72,7 @@ function GoldSavingsPage() {
   const goldBalance = holding?.balanceGrams || 0;
 
   const parsedAmount = parseFloat(amount) || 0;
-  const goldAmount = activeTab === 'buy'
-    ? (pricePerGram > 0 ? parsedAmount / pricePerGram : 0)
-    : parsedAmount; // For sell, amount IS grams
+  const goldAmount = activeTab === 'buy' ? (pricePerGram > 0 ? parsedAmount / pricePerGram : 0) : parsedAmount; // For sell, amount IS grams
 
   // Fetch gold price (public, no auth needed)
   const fetchPrice = useCallback(async () => {
@@ -89,13 +87,13 @@ function GoldSavingsPage() {
         if (!isMounted()) return;
         setError('Failed to load gold price. Please try again.');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load gold price. Please try again.');
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch gold price'),
         { context: 'GoldSavingsPage.fetchPrice' },
-        'warning'
+        'warning',
       );
     } finally {
       if (!isMounted()) return;
@@ -113,11 +111,11 @@ function GoldSavingsPage() {
         if (!isMounted()) return;
         setHolding(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch gold holding'),
         { context: 'GoldSavingsPage.fetchHolding' },
-        'warning'
+        'warning',
       );
     } finally {
       if (!isMounted()) return;
@@ -126,41 +124,44 @@ function GoldSavingsPage() {
   }, [isAuthenticated, authLoading]);
 
   // Fetch transactions
-  const fetchTransactions = useCallback(async (page: number = 1, append: boolean = false) => {
-    if (!isAuthenticated || authLoading) return;
-    try {
-      if (page === 1) setLoadingTx(true);
-      else setLoadingMoreTx(true);
+  const fetchTransactions = useCallback(
+    async (page: number = 1, append: boolean = false) => {
+      if (!isAuthenticated || authLoading) return;
+      try {
+        if (page === 1) setLoadingTx(true);
+        else setLoadingMoreTx(true);
 
-      const response = await goldSavingsApi.getTransactions(page, 10);
-      if (response.success && response.data) {
-        const items = response.data;
-        if (append) {
+        const response = await goldSavingsApi.getTransactions(page, 10);
+        if (response.success && response.data) {
+          const items = response.data;
+          if (append) {
+            if (!isMounted()) return;
+            setTransactions((prev) => [...prev, ...items]);
+          } else {
+            if (!isMounted()) return;
+            setTransactions(items);
+          }
+          const pagination = response.meta?.pagination;
           if (!isMounted()) return;
-          setTransactions(prev => [...prev, ...items]);
-        } else {
+          setTxHasMore(pagination ? pagination.page < pagination.pages : false);
           if (!isMounted()) return;
-          setTransactions(items);
+          setTxPage(page);
         }
-        const pagination = response.meta?.pagination;
+      } catch (err: any) {
+        errorReporter.captureError(
+          err instanceof Error ? err : new Error('Failed to fetch gold transactions'),
+          { context: 'GoldSavingsPage.fetchTransactions' },
+          'warning',
+        );
+      } finally {
         if (!isMounted()) return;
-        setTxHasMore(pagination ? pagination.page < pagination.pages : false);
+        setLoadingTx(false);
         if (!isMounted()) return;
-        setTxPage(page);
+        setLoadingMoreTx(false);
       }
-    } catch (err) {
-      errorReporter.captureError(
-        err instanceof Error ? err : new Error('Failed to fetch gold transactions'),
-        { context: 'GoldSavingsPage.fetchTransactions' },
-        'warning'
-      );
-    } finally {
-      if (!isMounted()) return;
-      setLoadingTx(false);
-      if (!isMounted()) return;
-      setLoadingMoreTx(false);
-    }
-  }, [isAuthenticated, authLoading]);
+    },
+    [isAuthenticated, authLoading],
+  );
 
   useEffect(() => {
     fetchPrice();
@@ -206,7 +207,7 @@ function GoldSavingsPage() {
         `Buy ${gramsToGet.toFixed(4)} gm gold for ${currencySymbol}${numAmount.toLocaleString()}?`,
         async () => {
           await executeBuy(numAmount);
-        }
+        },
       );
     } else {
       // For sell, amount field represents grams
@@ -221,7 +222,7 @@ function GoldSavingsPage() {
         `Sell ${gramsToSell.toFixed(4)} gm gold for ${currencySymbol}${sellAmount.toFixed(2)}?`,
         async () => {
           await executeSell(gramsToSell);
-        }
+        },
       );
     }
   }, [isAuthenticated, goldPrice, pricePerGram, amount, activeTab, goldBalance, currencySymbol]);
@@ -239,7 +240,7 @@ function GoldSavingsPage() {
         const result = response.data;
         platformAlertSimple(
           'Purchase Successful',
-          `You bought ${result.grams.toFixed(4)} gm of gold for ${currencySymbol}${result.amount.toLocaleString()}.`
+          `You bought ${result.grams.toFixed(4)} gm of gold for ${currencySymbol}${result.amount.toLocaleString()}.`,
         );
         if (!isMounted()) return;
         setAmount('');
@@ -250,11 +251,11 @@ function GoldSavingsPage() {
         setError(response.message || 'Purchase failed');
         platformAlertSimple('Purchase Failed', response.message || 'Something went wrong.');
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Gold purchase failed'),
         { context: 'GoldSavingsPage.executeBuy' },
-        'warning'
+        'warning',
       );
       if (!isMounted()) return;
       setError('Purchase failed. Please try again.');
@@ -279,7 +280,7 @@ function GoldSavingsPage() {
         const result = response.data;
         platformAlertSimple(
           'Sale Successful',
-          `You sold ${result.grams.toFixed(4)} gm of gold for ${currencySymbol}${result.amount.toFixed(2)}.`
+          `You sold ${result.grams.toFixed(4)} gm of gold for ${currencySymbol}${result.amount.toFixed(2)}.`,
         );
         if (!isMounted()) return;
         setAmount('');
@@ -290,11 +291,11 @@ function GoldSavingsPage() {
         setError(response.message || 'Sale failed');
         platformAlertSimple('Sale Failed', response.message || 'Something went wrong.');
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Gold sale failed'),
         { context: 'GoldSavingsPage.executeSell' },
-        'warning'
+        'warning',
       );
       if (!isMounted()) return;
       setError('Sale failed. Please try again.');
@@ -314,9 +315,10 @@ function GoldSavingsPage() {
   // Sell tab shows grams input instead of currency
   const inputPlaceholder = activeTab === 'buy' ? '0' : '0.0000';
   const inputLabel = activeTab === 'buy' ? 'Enter Amount to Buy' : 'Enter Grams to Sell';
-  const conversionText = activeTab === 'buy'
-    ? `= ${(pricePerGram > 0 ? parsedAmount / pricePerGram : 0).toFixed(4)} gm Gold`
-    : `= ${currencySymbol}${(parsedAmount * pricePerGram).toFixed(2)}`;
+  const conversionText =
+    activeTab === 'buy'
+      ? `= ${(pricePerGram > 0 ? parsedAmount / pricePerGram : 0).toFixed(4)} gm Gold`
+      : `= ${currencySymbol}${(parsedAmount * pricePerGram).toFixed(2)}`;
 
   const isPageLoading = loadingPrice && loadingHolding;
 
@@ -325,7 +327,10 @@ function GoldSavingsPage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Digital Gold</Text>
@@ -347,7 +352,10 @@ function GoldSavingsPage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Digital Gold</Text>
@@ -364,7 +372,10 @@ function GoldSavingsPage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Digital Gold</Text>
@@ -388,27 +399,30 @@ function GoldSavingsPage() {
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={GOLD_COLOR} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={GOLD_COLOR} />}
       >
         {/* Gold Balance Card */}
         <View style={styles.balanceCard}>
-          <LinearGradient
-            colors={[GOLD_COLOR, GOLD_DARK]}
-            style={styles.balanceGradient}
-          >
+          <LinearGradient colors={[GOLD_COLOR, GOLD_DARK]} style={styles.balanceGradient}>
             <View style={styles.balanceHeader}>
               <Text style={styles.balanceLabel}>Your Gold Balance</Text>
               <Ionicons name="diamond" size={24} color={colors.background.primary} />
             </View>
             {loadingHolding ? (
-              <ActivityIndicator color={colors.background.primary} size="small" style={{ marginVertical: Spacing.lg }} />
+              <ActivityIndicator
+                color={colors.background.primary}
+                size="small"
+                style={{ marginVertical: Spacing.lg }}
+              />
             ) : (
               <>
                 <Text style={styles.balanceAmount}>{goldBalance.toFixed(4)} gm</Text>
                 <Text style={styles.balanceValue}>
-                  {currencySymbol}{(goldBalance * pricePerGram).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {currencySymbol}
+                  {(goldBalance * pricePerGram).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </Text>
               </>
             )}
@@ -418,7 +432,8 @@ function GoldSavingsPage() {
                 <ActivityIndicator color="rgba(255,255,255,0.8)" size="small" />
               ) : (
                 <Text style={styles.priceValue}>
-                  {currencySymbol}{pricePerGram.toLocaleString()}/gm
+                  {currencySymbol}
+                  {pricePerGram.toLocaleString()}/gm
                 </Text>
               )}
             </View>
@@ -429,29 +444,31 @@ function GoldSavingsPage() {
         <View style={styles.tabsContainer}>
           <Pressable
             style={[styles.tab, activeTab === 'buy' && styles.tabActive]}
-            onPress={() => { setActiveTab('buy'); setAmount(''); }}
+            onPress={() => {
+              setActiveTab('buy');
+              setAmount('');
+            }}
           >
             <Ionicons
               name="add-circle-outline"
               size={20}
               color={activeTab === 'buy' ? colors.background.primary : colors.text.secondary}
             />
-            <Text style={[styles.tabText, activeTab === 'buy' && styles.tabTextActive]}>
-              Buy Gold
-            </Text>
+            <Text style={[styles.tabText, activeTab === 'buy' && styles.tabTextActive]}>Buy Gold</Text>
           </Pressable>
           <Pressable
             style={[styles.tab, activeTab === 'sell' && styles.tabActive]}
-            onPress={() => { setActiveTab('sell'); setAmount(''); }}
+            onPress={() => {
+              setActiveTab('sell');
+              setAmount('');
+            }}
           >
             <Ionicons
               name="remove-circle-outline"
               size={20}
               color={activeTab === 'sell' ? colors.background.primary : colors.text.secondary}
             />
-            <Text style={[styles.tabText, activeTab === 'sell' && styles.tabTextActive]}>
-              Sell Gold
-            </Text>
+            <Text style={[styles.tabText, activeTab === 'sell' && styles.tabTextActive]}>Sell Gold</Text>
           </Pressable>
         </View>
 
@@ -459,9 +476,7 @@ function GoldSavingsPage() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{inputLabel}</Text>
           <View style={styles.inputContainer}>
-            {activeTab === 'buy' && (
-              <Text style={styles.rupeeSymbol}>{currencySymbol}</Text>
-            )}
+            {activeTab === 'buy' && <Text style={styles.rupeeSymbol}>{currencySymbol}</Text>}
             <TextInput
               style={styles.amountInput}
               placeholder={inputPlaceholder}
@@ -471,9 +486,7 @@ function GoldSavingsPage() {
               onChangeText={setAmount}
               editable={!processing}
             />
-            {activeTab === 'sell' && (
-              <Text style={styles.unitLabel}>gm</Text>
-            )}
+            {activeTab === 'sell' && <Text style={styles.unitLabel}>gm</Text>}
           </View>
           {parsedAmount > 0 && pricePerGram > 0 && (
             <View style={styles.goldConversion}>
@@ -491,20 +504,13 @@ function GoldSavingsPage() {
               {QUICK_AMOUNTS.map((amt) => (
                 <Pressable
                   key={amt}
-                  style={[
-                    styles.quickAmountCard,
-                    amount === amt && styles.quickAmountCardActive,
-                  ]}
+                  style={[styles.quickAmountCard, amount === amt && styles.quickAmountCardActive]}
                   onPress={() => setAmount(amt)}
                   disabled={processing}
                 >
-                  <Text
-                    style={[
-                      styles.quickAmountText,
-                      amount === amt && styles.quickAmountTextActive,
-                    ]}
-                  >
-                    {currencySymbol}{parseInt(amt).toLocaleString()}
+                  <Text style={[styles.quickAmountText, amount === amt && styles.quickAmountTextActive]}>
+                    {currencySymbol}
+                    {parseInt(amt).toLocaleString()}
                   </Text>
                 </Pressable>
               ))}
@@ -518,7 +524,12 @@ function GoldSavingsPage() {
             <Text style={styles.sectionTitle}>Recent Transactions</Text>
             {transactions.slice(0, 5).map((tx) => (
               <View key={tx._id} style={styles.txCard}>
-                <View style={[styles.txIcon, { backgroundColor: tx.type === 'buy' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)' }]}>
+                <View
+                  style={[
+                    styles.txIcon,
+                    { backgroundColor: tx.type === 'buy' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)' },
+                  ]}
+                >
                   <Ionicons
                     name={tx.type === 'buy' ? 'arrow-down' : 'arrow-up'}
                     size={18}
@@ -526,28 +537,31 @@ function GoldSavingsPage() {
                   />
                 </View>
                 <View style={styles.txInfo}>
-                  <Text style={styles.txTitle}>
-                    {tx.type === 'buy' ? 'Bought Gold' : 'Sold Gold'}
-                  </Text>
+                  <Text style={styles.txTitle}>{tx.type === 'buy' ? 'Bought Gold' : 'Sold Gold'}</Text>
                   <Text style={styles.txDate}>
-                    {new Date(tx.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(tx.date).toLocaleDateString(undefined, {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
                   </Text>
                 </View>
                 <View style={styles.txAmounts}>
-                  <Text style={[styles.txAmount, { color: tx.type === 'buy' ? colors.successScale[400] : colors.error }]}>
-                    {tx.type === 'buy' ? '+' : '-'}{tx.grams.toFixed(4)} gm
+                  <Text
+                    style={[styles.txAmount, { color: tx.type === 'buy' ? colors.successScale[400] : colors.error }]}
+                  >
+                    {tx.type === 'buy' ? '+' : '-'}
+                    {tx.grams.toFixed(4)} gm
                   </Text>
                   <Text style={styles.txValue}>
-                    {currencySymbol}{tx.amount.toFixed(2)}
+                    {currencySymbol}
+                    {tx.amount.toFixed(2)}
                   </Text>
                 </View>
               </View>
             ))}
             {transactions.length > 5 && (
-              <Pressable
-                style={styles.viewAllButton}
-                onPress={() => router.push('/gold-savings/history' as any)}
-              >
+              <Pressable style={styles.viewAllButton} onPress={() => router.push('/gold-savings/history' as any)}>
                 <Text style={styles.viewAllText}>View All Transactions</Text>
                 <Ionicons name="chevron-forward" size={16} color={GOLD_COLOR} />
               </Pressable>
@@ -580,10 +594,7 @@ function GoldSavingsPage() {
 
         {/* SIP Option */}
         <View style={styles.sipCard}>
-          <LinearGradient
-            colors={['rgba(251, 191, 36, 0.15)', 'rgba(249, 115, 22, 0.15)']}
-            style={styles.sipGradient}
-          >
+          <LinearGradient colors={['rgba(251, 191, 36, 0.15)', 'rgba(249, 115, 22, 0.15)']} style={styles.sipGradient}>
             <View style={styles.sipContent}>
               <View style={styles.sipIcon}>
                 <Ionicons name="calendar" size={24} color={GOLD_COLOR} />
@@ -592,10 +603,7 @@ function GoldSavingsPage() {
                 <Text style={styles.sipTitle}>Start Gold SIP</Text>
                 <Text style={styles.sipDesc}>Auto-invest daily, weekly, or monthly</Text>
               </View>
-              <Pressable
-                style={styles.sipButton}
-                onPress={() => router.push('/gold-savings/sip' as any)}
-              >
+              <Pressable style={styles.sipButton} onPress={() => router.push('/gold-savings/sip' as any)}>
                 <Text style={styles.sipButtonText}>Setup</Text>
               </Pressable>
             </View>
@@ -619,9 +627,7 @@ function GoldSavingsPage() {
       {parsedAmount > 0 && pricePerGram > 0 && (
         <View style={styles.bottomCta}>
           <View style={styles.summary}>
-            <Text style={styles.summaryLabel}>
-              {activeTab === 'buy' ? 'You get' : 'You receive'}
-            </Text>
+            <Text style={styles.summaryLabel}>{activeTab === 'buy' ? 'You get' : 'You receive'}</Text>
             <Text style={styles.summaryValue}>
               {activeTab === 'buy'
                 ? `${(parsedAmount / pricePerGram).toFixed(4)} gm Gold`
@@ -629,7 +635,7 @@ function GoldSavingsPage() {
             </Text>
           </View>
           <Pressable
-            style={[styles.proceedButton, processing && styles.proceedButtonDisabled]}
+            style={[styles.proceedButton, processing ? styles.proceedButtonDisabled : null]}
             onPress={handleProceed}
             disabled={processing}
           >
@@ -637,9 +643,7 @@ function GoldSavingsPage() {
               <ActivityIndicator color={colors.background.primary} size="small" />
             ) : (
               <>
-                <Text style={styles.proceedButtonText}>
-                  {activeTab === 'buy' ? 'Buy Gold' : 'Sell Gold'}
-                </Text>
+                <Text style={styles.proceedButtonText}>{activeTab === 'buy' ? 'Buy Gold' : 'Sell Gold'}</Text>
                 <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />
               </>
             )}

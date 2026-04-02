@@ -48,7 +48,7 @@ const BrandPartnerships: React.FC<BrandPartnershipsProps> = ({
     if (!section?.items || section.items.length === 0) {
       return [];
     }
-    return section.items as BrandPartnership[];
+    return section.items as unknown as BrandPartnership[];
   }, [section?.items]);
 
   // Track views when brands are loaded

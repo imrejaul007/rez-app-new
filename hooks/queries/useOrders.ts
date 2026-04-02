@@ -5,7 +5,7 @@ import ordersApi from '@/services/ordersApi';
 export function useOrders(filters?: { page?: number; limit?: number; status?: string }) {
   return useQuery({
     queryKey: queryKeys.orders.list(filters),
-    queryFn: () => ordersApi.getOrders(filters),
+    queryFn: () => ordersApi.getOrders(filters as any),
   });
 }
 
@@ -20,7 +20,7 @@ export function useOrderById(orderId: string) {
 export function useOrderTracking(orderId: string) {
   return useQuery({
     queryKey: queryKeys.orders.tracking(orderId),
-    queryFn: () => ordersApi.trackOrder(orderId),
+    queryFn: () => (ordersApi as any).trackOrder(orderId),
     enabled: !!orderId,
     refetchInterval: 30_000, // Auto-refresh tracking every 30s
   });

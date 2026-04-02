@@ -113,7 +113,7 @@ function CardVerificationModal({
           onClose();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

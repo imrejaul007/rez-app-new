@@ -211,7 +211,7 @@ function ChangePasswordPage() {
 
           {/* Change Password Button */}
           <Pressable
-            style={[styles.changeButton, isLoading && styles.changeButtonDisabled]}
+            style={[styles.changeButton, isLoading ? styles.changeButtonDisabled : null]}
             onPress={handleChangePassword}
             disabled={isLoading}
             accessibilityRole="button"

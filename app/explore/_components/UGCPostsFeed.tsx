@@ -75,8 +75,8 @@ const UGCPostsFeed = () => {
       setIsLoading(true);
       setError(null);
       const response = await reelApi.getTrendingReels({ limit: 5 });
-      if (response.success && response.data && response.data.length > 0) {
-        const transformed = response.data.map((video: any, index: number) => ({
+      if (response.success && (response.data as any) && (response.data as any).length > 0) {
+        const transformed = (response.data as any).map((video: any, index: number) => ({
           id: video.id || video._id,
           // Use real storeId from backend
           storeId: video.storeId || video.store?.id || video.store?._id || null,
@@ -113,7 +113,7 @@ const UGCPostsFeed = () => {
         if (!isMounted()) return;
         setUgcPosts(transformed);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load posts');
     } finally {
@@ -157,22 +157,22 @@ const UGCPostsFeed = () => {
       const response = await reelApi.toggleLike(postId);
 
       // Update with actual server response if available
-      if (response.success && response.data) {
+      if (response.success && (response.data as any)) {
         if (!isMounted()) return;
         setUgcPosts((prev) =>
           prev.map((post) => {
             if (post.id === postId) {
               return {
                 ...post,
-                isLiked: response.data.liked ?? response.data.liked ?? !wasLiked,
-                helpful: response.data.likesCount ?? response.data.totalLikes ?? post.helpful,
+                isLiked: (response.data as any).liked ?? (response.data as any).liked ?? !wasLiked,
+                helpful: (response.data as any).likesCount ?? (response.data as any).totalLikes ?? post.helpful,
               };
             }
             return post;
           }),
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setUgcPosts((prev) =>
@@ -326,8 +326,8 @@ const UGCPostsFeed = () => {
                     size={18}
                     color={post.liked ? colors.lightMustard : colors.neutral[500]}
                   />
-                  <Text style={[styles.actionText, post.liked && styles.actionTextActive]}>{post.helpful}</Text>
-                  <Text style={[styles.actionLabel, post.liked && styles.actionLabelActive]}>Helpful</Text>
+                  <Text style={[styles.actionText, post.liked ? styles.actionTextActive : null]}>{post.helpful}</Text>
+                  <Text style={[styles.actionLabel, post.liked ? styles.actionLabelActive : null]}>Helpful</Text>
                 </Pressable>
 
                 <Pressable style={styles.actionButton} onPress={() => handleComment(post.id)}>

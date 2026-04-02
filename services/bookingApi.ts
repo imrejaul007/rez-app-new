@@ -84,7 +84,7 @@ class BookingService {
 
       const response = await apiClient.post<Booking>(
         '/bookings',
-        bookingData
+        bookingData as any
       );
 
       if (!response.success) {
@@ -93,7 +93,7 @@ class BookingService {
         devLog.log('✅ [BOOKING API] Booking created successfully:', response.data);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error creating booking:', error);
       return {
@@ -131,7 +131,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch user bookings:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching user bookings:', error);
       return {
@@ -168,7 +168,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch booking details:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching booking details:', error);
       return {
@@ -192,7 +192,7 @@ class BookingService {
 
       const payload = reason ? { reason } : {};
 
-      const response = await apiClient.post(
+      const response = await apiClient.post<any>(
         `/bookings/${bookingId}/cancel`,
         payload
       );
@@ -203,7 +203,7 @@ class BookingService {
         devLog.log('✅ [BOOKING API] Booking cancelled successfully');
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error cancelling booking:', error);
       return {
@@ -230,7 +230,7 @@ class BookingService {
 
       const response = await apiClient.post<Booking>(
         `/bookings/${bookingId}/reschedule`,
-        reschedulingData
+        reschedulingData as any
       );
 
       if (!response.success) {
@@ -239,7 +239,7 @@ class BookingService {
         devLog.log('✅ [BOOKING API] Booking rescheduled successfully');
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error rescheduling booking:', error);
       return {
@@ -279,7 +279,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch available slots:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching available slots:', error);
       return {
@@ -303,7 +303,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch upcoming bookings:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching upcoming bookings:', error);
       return {
@@ -341,7 +341,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch past bookings:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching past bookings:', error);
       return {
@@ -386,7 +386,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch store booking history:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching store booking history:', error);
       return {
@@ -406,7 +406,7 @@ class BookingService {
     cancelledCount: number;
   }>> {
     try {
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         '/bookings/user/stats'
       );
 
@@ -414,7 +414,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to fetch booking statistics:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error fetching booking statistics:', error);
       return {
@@ -446,7 +446,7 @@ class BookingService {
         devLog.log('✅ [BOOKING API] Booking marked as completed');
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error completing booking:', error);
       return {
@@ -471,7 +471,7 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `/bookings/availability/${serviceId}`,
         { date }
       );
@@ -480,7 +480,7 @@ class BookingService {
         devLog.error('❌ [BOOKING API] Failed to check availability:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [BOOKING API] Error checking availability:', error);
       return {
@@ -495,7 +495,7 @@ class BookingService {
    */
   async isBackendAvailable(): Promise<boolean> {
     try {
-      const response = await apiClient.get('/bookings/health');
+      const response = await apiClient.get<any>('/bookings/health');
 
       if (response.success) {
         return true;

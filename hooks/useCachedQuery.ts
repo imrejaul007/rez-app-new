@@ -146,7 +146,7 @@ export function useCachedQuery<T = any>(
         }
 
         break; // Success, exit retry loop
-      } catch (err) {
+      } catch (err: any) {
         const error = err instanceof Error ? err : new Error('Unknown error');
 
         if (attempt === maxRetries) {
@@ -201,7 +201,7 @@ export function useCachedQuery<T = any>(
 
       // Cache miss - fetch from network
       await fetchData(false);
-    } catch (err) {
+    } catch (err: any) {
       const error = err instanceof Error ? err : new Error('Unknown error');
       setError(error);
     } finally {
@@ -310,7 +310,7 @@ export function useCachedMutation<T = any, V = any>(
       }
 
       return result;
-    } catch (err) {
+    } catch (err: any) {
       const error = err instanceof Error ? err : new Error('Unknown error');
       setError(error);
 
@@ -327,7 +327,7 @@ export function useCachedMutation<T = any, V = any>(
   const mutate = useCallback(async (variables: V): Promise<T | null> => {
     try {
       return await mutateAsync(variables);
-    } catch (error) {
+    } catch (error: any) {
       return null;
     }
   }, [mutateAsync]);
@@ -417,7 +417,7 @@ export function useInfiniteCachedQuery<T = any>(
           currentPage.current = nextParam;
         }
       }
-    } catch (error) {
+    } catch (error: any) {
     } finally {
       setIsFetchingNextPage(false);
     }

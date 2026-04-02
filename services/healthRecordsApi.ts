@@ -112,9 +112,9 @@ const healthRecordsApi = {
   uploadRecord: async (data: CreateHealthRecordRequest): Promise<ApiResponse<HealthRecord>> => {
     try {
       devLog.log('[healthRecordsApi] Uploading health record:', data.title);
-      const response = await apiClient.post('/health-records', data);
+      const response = await apiClient.post<any>('/health-records', data as any as any);
       devLog.log('[healthRecordsApi] Health record uploaded successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error uploading health record:', error);
       throw error;
@@ -141,9 +141,9 @@ const healthRecordsApi = {
       const queryString = params.toString();
       const url = queryString ? `/health-records?${queryString}` : '/health-records';
 
-      const response = await apiClient.get(url);
+      const response = await apiClient.get<any>(url);
       devLog.log('[healthRecordsApi] Health records fetched successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error fetching health records:', error);
       throw error;
@@ -158,9 +158,9 @@ const healthRecordsApi = {
   getRecord: async (id: string): Promise<ApiResponse<HealthRecord>> => {
     try {
       devLog.log('[healthRecordsApi] Fetching health record:', id);
-      const response = await apiClient.get(`/health-records/${id}`);
+      const response = await apiClient.get<any>(`/health-records/${id}`);
       devLog.log('[healthRecordsApi] Health record fetched successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error fetching health record:', error);
       throw error;
@@ -176,9 +176,9 @@ const healthRecordsApi = {
   updateRecord: async (id: string, data: UpdateHealthRecordRequest): Promise<ApiResponse<HealthRecord>> => {
     try {
       devLog.log('[healthRecordsApi] Updating health record:', id);
-      const response = await apiClient.put(`/health-records/${id}`, data);
+      const response = await apiClient.put<any>(`/health-records/${id}`, data as any as any);
       devLog.log('[healthRecordsApi] Health record updated successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error updating health record:', error);
       throw error;
@@ -193,9 +193,9 @@ const healthRecordsApi = {
   deleteRecord: async (id: string): Promise<ApiResponse<{ deleted: boolean }>> => {
     try {
       devLog.log('[healthRecordsApi] Deleting health record:', id);
-      const response = await apiClient.delete(`/health-records/${id}`);
+      const response = await apiClient.delete<any>(`/health-records/${id}`);
       devLog.log('[healthRecordsApi] Health record deleted successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error deleting health record:', error);
       throw error;
@@ -211,9 +211,9 @@ const healthRecordsApi = {
   shareRecord: async (id: string, data: ShareRecordRequest): Promise<ApiResponse<HealthRecord>> => {
     try {
       devLog.log('[healthRecordsApi] Sharing health record:', id, 'with user:', data.shareWithUserId);
-      const response = await apiClient.post(`/health-records/${id}/share`, data);
+      const response = await apiClient.post<any>(`/health-records/${id}/share`, data as any as any);
       devLog.log('[healthRecordsApi] Health record shared successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error sharing health record:', error);
       throw error;
@@ -229,9 +229,9 @@ const healthRecordsApi = {
   revokeShare: async (recordId: string, shareId: string): Promise<ApiResponse<HealthRecord>> => {
     try {
       devLog.log('[healthRecordsApi] Revoking share:', shareId, 'for record:', recordId);
-      const response = await apiClient.delete(`/health-records/${recordId}/share/${shareId}`);
+      const response = await apiClient.delete<any>(`/health-records/${recordId}/share/${shareId}`);
       devLog.log('[healthRecordsApi] Share access revoked successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error revoking share:', error);
       throw error;
@@ -247,9 +247,9 @@ const healthRecordsApi = {
   archiveRecord: async (id: string, archive: boolean = true): Promise<ApiResponse<HealthRecord>> => {
     try {
       devLog.log('[healthRecordsApi] Archiving health record:', id, 'archive:', archive);
-      const response = await apiClient.post(`/health-records/${id}/archive`, { archive });
+      const response = await apiClient.post<any>(`/health-records/${id}/archive`, { archive });
       devLog.log('[healthRecordsApi] Health record archive status updated');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error archiving health record:', error);
       throw error;
@@ -265,9 +265,9 @@ const healthRecordsApi = {
   getSharedWithMe: async (limit: number = 20, offset: number = 0): Promise<ApiResponse<HealthRecordsResponse>> => {
     try {
       devLog.log('[healthRecordsApi] Fetching records shared with me');
-      const response = await apiClient.get(`/health-records/shared-with-me?limit=${limit}&offset=${offset}`);
+      const response = await apiClient.get<any>(`/health-records/shared-with-me?limit=${limit}&offset=${offset}`);
       devLog.log('[healthRecordsApi] Shared records fetched successfully');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[healthRecordsApi] Error fetching shared records:', error);
       throw error;

@@ -191,10 +191,10 @@ function PlanTripPage() {
       <View style={styles.progressBar}>
         {STEPS.map((s, i) => (
           <View key={s.key} style={styles.progressStep}>
-            <View style={[styles.progressDot, i <= stepIndex && styles.progressDotActive, i < stepIndex && styles.progressDotCompleted]}>
+            <View style={[styles.progressDot, i <= stepIndex && styles.progressDotActive, i < stepIndex ? styles.progressDotCompleted : null]}>
               {i < stepIndex ? <Ionicons name="checkmark" size={12} color={COLORS.white} /> : <Text style={[styles.progressDotText, i <= stepIndex && { color: COLORS.white }]}>{s.icon}</Text>}
             </View>
-            <Text style={[styles.progressLabel, i === stepIndex && styles.progressLabelActive]}>{s.label}</Text>
+            <Text style={[styles.progressLabel, i === stepIndex ? styles.progressLabelActive : null]}>{s.label}</Text>
           </View>
         ))}
       </View>
@@ -210,10 +210,10 @@ function PlanTripPage() {
               {POPULAR_DESTINATIONS.map(dest => {
                 const isSelected = destination === dest.id;
                 return (
-                  <Pressable key={dest.id} style={[styles.destCard, isSelected && styles.destCardActive]} onPress={() => { setDestination(dest.id); setCustomDestination(''); }}>
+                  <Pressable key={dest.id} style={[styles.destCard, isSelected ? styles.destCardActive : null]} onPress={() => { setDestination(dest.id); setCustomDestination(''); }}>
                     <Text style={styles.destEmoji}>{dest.emoji}</Text>
-                    <Text style={[styles.destName, isSelected && styles.destNameActive]}>{dest.name}</Text>
-                    <Text style={[styles.destTag, isSelected && styles.destTagActive]}>{dest.tag}</Text>
+                    <Text style={[styles.destName, isSelected ? styles.destNameActive : null]}>{dest.name}</Text>
+                    <Text style={[styles.destTag, isSelected ? styles.destTagActive : null]}>{dest.tag}</Text>
                   </Pressable>
                 );
               })}
@@ -230,32 +230,32 @@ function PlanTripPage() {
               {getDateOptions().map((date, i) => {
                 const isSelected = date.toDateString() === startDate.toDateString();
                 return (
-                  <Pressable key={i} style={[styles.dateChip, isSelected && styles.dateChipActive]} onPress={() => setStartDate(date)}>
-                    <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>{i === 0 ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}</Text>
-                    <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>{date.getDate()}</Text>
-                    <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>{date.toLocaleDateString(undefined, { month: 'short' })}</Text>
+                  <Pressable key={i} style={[styles.dateChip, isSelected ? styles.dateChipActive : null]} onPress={() => setStartDate(date)}>
+                    <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>{i === 0 ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}</Text>
+                    <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>{date.getDate()}</Text>
+                    <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>{date.toLocaleDateString(undefined, { month: 'short' })}</Text>
                   </Pressable>
                 );
               })}
             </ScrollView>
             <Text style={[styles.sectionLabel, { marginTop: 20 }]}>Trip Duration</Text>
             <View style={styles.durationRow}>
-              <Pressable style={styles.durationBtn} onPress={() => setTripDays(Math.max(1, tripDays - 1))}><Ionicons name="remove-circle" size={32} color={COLORS.cyan} /></Pressable>
+              <Pressable style={styles.durationBtn} onPress={() => setTripDays(Math.max(1, tripDays - 1))}><Ionicons name="remove-circle" size={32} color={(COLORS as any).cyan} /></Pressable>
               <View style={styles.durationDisplay}>
                 <Text style={styles.durationValue}>{tripDays}</Text>
                 <Text style={styles.durationLabel}>{tripDays === 1 ? 'day' : 'days'}</Text>
               </View>
-              <Pressable style={styles.durationBtn} onPress={() => setTripDays(Math.min(30, tripDays + 1))}><Ionicons name="add-circle" size={32} color={COLORS.cyan} /></Pressable>
+              <Pressable style={styles.durationBtn} onPress={() => setTripDays(Math.min(30, tripDays + 1))}><Ionicons name="add-circle" size={32} color={(COLORS as any).cyan} /></Pressable>
             </View>
             <View style={styles.quickDays}>
               {[2, 3, 5, 7, 10, 14].map(d => (
-                <Pressable key={d} style={[styles.quickDayChip, tripDays === d && styles.quickDayChipActive]} onPress={() => setTripDays(d)}>
-                  <Text style={[styles.quickDayText, tripDays === d && styles.quickDayTextActive]}>{d} days</Text>
+                <Pressable key={d} style={[styles.quickDayChip, tripDays === d ? styles.quickDayChipActive : null]} onPress={() => setTripDays(d)}>
+                  <Text style={[styles.quickDayText, tripDays === d ? styles.quickDayTextActive : null]}>{d} days</Text>
                 </Pressable>
               ))}
             </View>
             <View style={styles.dateSummary}>
-              <Ionicons name="calendar-outline" size={18} color={COLORS.cyan} />
+              <Ionicons name="calendar-outline" size={18} color={(COLORS as any).cyan} />
               <Text style={styles.dateSummaryText}>{formatDate(startDate)} - {formatDate(endDate)}</Text>
             </View>
           </>
@@ -272,9 +272,9 @@ function PlanTripPage() {
                   <Text style={styles.travelerDesc}>Age 13+</Text>
                 </View>
                 <View style={styles.counterRow}>
-                  <Pressable style={styles.counterBtn} onPress={() => setAdults(Math.max(1, adults - 1))}><Ionicons name="remove" size={20} color={COLORS.cyan} /></Pressable>
+                  <Pressable style={styles.counterBtn} onPress={() => setAdults(Math.max(1, adults - 1))}><Ionicons name="remove" size={20} color={(COLORS as any).cyan} /></Pressable>
                   <Text style={styles.counterValue}>{adults}</Text>
-                  <Pressable style={styles.counterBtn} onPress={() => setAdults(Math.min(10, adults + 1))}><Ionicons name="add" size={20} color={COLORS.cyan} /></Pressable>
+                  <Pressable style={styles.counterBtn} onPress={() => setAdults(Math.min(10, adults + 1))}><Ionicons name="add" size={20} color={(COLORS as any).cyan} /></Pressable>
                 </View>
               </View>
               <View style={styles.travelerDivider} />
@@ -284,14 +284,14 @@ function PlanTripPage() {
                   <Text style={styles.travelerDesc}>Age 2-12</Text>
                 </View>
                 <View style={styles.counterRow}>
-                  <Pressable style={styles.counterBtn} onPress={() => setChildren(Math.max(0, children - 1))}><Ionicons name="remove" size={20} color={COLORS.cyan} /></Pressable>
+                  <Pressable style={styles.counterBtn} onPress={() => setChildren(Math.max(0, children - 1))}><Ionicons name="remove" size={20} color={(COLORS as any).cyan} /></Pressable>
                   <Text style={styles.counterValue}>{children}</Text>
-                  <Pressable style={styles.counterBtn} onPress={() => setChildren(Math.min(6, children + 1))}><Ionicons name="add" size={20} color={COLORS.cyan} /></Pressable>
+                  <Pressable style={styles.counterBtn} onPress={() => setChildren(Math.min(6, children + 1))}><Ionicons name="add" size={20} color={(COLORS as any).cyan} /></Pressable>
                 </View>
               </View>
             </View>
             <View style={styles.travelerSummary}>
-              <Ionicons name="people-outline" size={18} color={COLORS.cyan} />
+              <Ionicons name="people-outline" size={18} color={(COLORS as any).cyan} />
               <Text style={styles.travelerSummaryText}>{adults} adult{adults > 1 ? 's' : ''}{children > 0 ? `, ${children} child${children > 1 ? 'ren' : ''}` : ''}</Text>
             </View>
           </>
@@ -305,10 +305,10 @@ function PlanTripPage() {
               {ACCOMMODATION_TYPES.map(a => {
                 const isSelected = accommodation === a.id;
                 return (
-                  <Pressable key={a.id} style={[styles.accomCard, isSelected && styles.accomCardActive]} onPress={() => setAccommodation(a.id)}>
+                  <Pressable key={a.id} style={[styles.accomCard, isSelected ? styles.accomCardActive : null]} onPress={() => setAccommodation(a.id)}>
                     <Text style={styles.accomEmoji}>{a.emoji}</Text>
-                    <Text style={[styles.accomLabel, isSelected && styles.accomLabelActive]}>{a.label}</Text>
-                    <Text style={[styles.accomDesc, isSelected && styles.accomDescActive]}>{a.desc}</Text>
+                    <Text style={[styles.accomLabel, isSelected ? styles.accomLabelActive : null]}>{a.label}</Text>
+                    <Text style={[styles.accomDesc, isSelected ? styles.accomDescActive : null]}>{a.desc}</Text>
                   </Pressable>
                 );
               })}
@@ -325,9 +325,9 @@ function PlanTripPage() {
               {ACTIVITY_OPTIONS.map(a => {
                 const isSelected = selectedActivities.includes(a.id);
                 return (
-                  <Pressable key={a.id} style={[styles.activityChip, isSelected && styles.activityChipActive]} onPress={() => toggleActivity(a.id)}>
+                  <Pressable key={a.id} style={[styles.activityChip, isSelected ? styles.activityChipActive : null]} onPress={() => toggleActivity(a.id)}>
                     <Text style={styles.activityEmoji}>{a.emoji}</Text>
-                    <Text style={[styles.activityLabel, isSelected && styles.activityLabelActive]}>{a.label}</Text>
+                    <Text style={[styles.activityLabel, isSelected ? styles.activityLabelActive : null]}>{a.label}</Text>
                     {isSelected && <Ionicons name="checkmark-circle" size={16} color={COLORS.white} />}
                   </Pressable>
                 );
@@ -352,7 +352,7 @@ function PlanTripPage() {
               <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Activities</Text><Text style={styles.summaryValue}>{selectedActivities.map(id => ACTIVITY_OPTIONS.find(a => a.id === id)?.label).join(', ') || 'None'}</Text></View>
             </View>
             <View style={styles.bonusNote}>
-              <View style={styles.bonusIconWrap}><Ionicons name="wallet-outline" size={14} color={COLORS.cyan} /></View>
+              <View style={styles.bonusIconWrap}><Ionicons name="wallet-outline" size={14} color={(COLORS as any).cyan} /></View>
               <Text style={styles.bonusText}>{`Earn bonus ${BRAND.COIN_NAME} when you book through ${BRAND.APP_NAME}!`}</Text>
             </View>
           </>
@@ -386,11 +386,11 @@ const styles = StyleSheet.create({
   progressBar: { flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 12, paddingHorizontal: 8, backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.border },
   progressStep: { alignItems: 'center', gap: 4 },
   progressDot: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.neutral[200], justifyContent: 'center', alignItems: 'center' },
-  progressDotActive: { backgroundColor: COLORS.cyan },
+  progressDotActive: { backgroundColor: (COLORS as any).cyan },
   progressDotCompleted: { backgroundColor: COLORS.green },
   progressDotText: { fontSize: 12, color: COLORS.textSecondary },
   progressLabel: { fontSize: 9, color: COLORS.textSecondary, fontWeight: '500' },
-  progressLabelActive: { color: COLORS.cyan, fontWeight: '700' },
+  progressLabelActive: { color: (COLORS as any).cyan, fontWeight: '700' },
   content: { padding: 16, paddingBottom: 100 },
   stepTitle: { fontSize: 22, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 8 },
   stepSubtitle: { fontSize: 14, color: COLORS.textSecondary, marginBottom: 16 },
@@ -398,15 +398,15 @@ const styles = StyleSheet.create({
   searchInput: { backgroundColor: COLORS.white, borderRadius: 14, padding: 14, fontSize: 15, color: COLORS.textPrimary, borderWidth: 1, borderColor: COLORS.border, marginBottom: 8 },
   destinationGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   destCard: { width: '31%', padding: 12, borderRadius: 14, backgroundColor: COLORS.white, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border },
-  destCardActive: { backgroundColor: COLORS.cyanLight, borderColor: COLORS.cyan },
+  destCardActive: { backgroundColor: COLORS.cyanLight, borderColor: (COLORS as any).cyan },
   destEmoji: { fontSize: 28, marginBottom: 4 },
   destName: { fontSize: 13, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 2 },
   destNameActive: { color: COLORS.cyanDark },
   destTag: { fontSize: 10, color: COLORS.textSecondary },
-  destTagActive: { color: COLORS.cyan },
+  destTagActive: { color: (COLORS as any).cyan },
   dateScroll: { marginBottom: 4 },
   dateChip: { width: 64, height: 78, borderRadius: 14, backgroundColor: COLORS.white, justifyContent: 'center', alignItems: 'center', marginRight: 8, borderWidth: 1, borderColor: 'transparent' },
-  dateChipActive: { backgroundColor: COLORS.cyan, borderColor: COLORS.cyan },
+  dateChipActive: { backgroundColor: (COLORS as any).cyan, borderColor: (COLORS as any).cyan },
   dateDay: { fontSize: 10, color: COLORS.textSecondary, marginBottom: 2, fontWeight: '500' },
   dateDayActive: { color: 'rgba(255,255,255,0.7)' },
   dateNum: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
@@ -415,11 +415,11 @@ const styles = StyleSheet.create({
   durationRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24, marginVertical: 16 },
   durationBtn: { padding: 4 },
   durationDisplay: { alignItems: 'center' },
-  durationValue: { fontSize: 36, fontWeight: '800', color: COLORS.cyan },
+  durationValue: { fontSize: 36, fontWeight: '800', color: (COLORS as any).cyan },
   durationLabel: { fontSize: 14, color: COLORS.textSecondary },
   quickDays: { flexDirection: 'row', justifyContent: 'center', gap: 8, flexWrap: 'wrap' },
   quickDayChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border, backgroundColor: COLORS.white },
-  quickDayChipActive: { backgroundColor: COLORS.cyan, borderColor: COLORS.cyan },
+  quickDayChipActive: { backgroundColor: (COLORS as any).cyan, borderColor: (COLORS as any).cyan },
   quickDayText: { fontSize: 13, color: COLORS.textSecondary, fontWeight: '500' },
   quickDayTextActive: { color: COLORS.white },
   dateSummary: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 16, padding: 12, backgroundColor: COLORS.cyanLight, borderRadius: 12 },
@@ -436,15 +436,15 @@ const styles = StyleSheet.create({
   travelerSummaryText: { fontSize: 14, fontWeight: '600', color: COLORS.cyanDark },
   accomGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 16 },
   accomCard: { width: '48%', padding: 16, borderRadius: 16, backgroundColor: COLORS.white, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border },
-  accomCardActive: { backgroundColor: COLORS.cyanLight, borderColor: COLORS.cyan },
+  accomCardActive: { backgroundColor: COLORS.cyanLight, borderColor: (COLORS as any).cyan },
   accomEmoji: { fontSize: 32, marginBottom: 8 },
   accomLabel: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 4 },
   accomLabelActive: { color: COLORS.cyanDark },
   accomDesc: { fontSize: 11, color: COLORS.textSecondary, textAlign: 'center' },
-  accomDescActive: { color: COLORS.cyan },
+  accomDescActive: { color: (COLORS as any).cyan },
   activityGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   activityChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border, gap: 6 },
-  activityChipActive: { backgroundColor: COLORS.cyan, borderColor: COLORS.cyan },
+  activityChipActive: { backgroundColor: (COLORS as any).cyan, borderColor: (COLORS as any).cyan },
   activityEmoji: { fontSize: 16 },
   activityLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary },
   activityLabelActive: { color: COLORS.white },
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   bonusIconWrap: { width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(6,182,212,0.15)', justifyContent: 'center', alignItems: 'center' },
   bonusText: { flex: 1, fontSize: 12, color: COLORS.cyanDark, lineHeight: 17 },
   navRow: { marginTop: 24 },
-  nextBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: COLORS.cyan, borderRadius: 16, paddingVertical: 16 },
+  nextBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: (COLORS as any).cyan, borderRadius: 16, paddingVertical: 16 },
   nextBtnDisabled: { opacity: 0.5 },
   nextBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
   confirmBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: COLORS.green, borderRadius: 16, paddingVertical: 16 },

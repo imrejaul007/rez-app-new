@@ -60,7 +60,7 @@ export const useReferral = ({
         setStatistics(statisticsResponse.data);
       } else {
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMountedRef.current) return;
       setError(err instanceof Error ? err.message : 'Failed to load referral data');
     } finally {
@@ -90,7 +90,7 @@ export const useReferral = ({
       if (statisticsResponse.success && statisticsResponse.data) {
         setStatistics(statisticsResponse.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMountedRef.current) return;
       setError(err instanceof Error ? err.message : 'Failed to refresh referral data');
     } finally {
@@ -105,7 +105,7 @@ export const useReferral = ({
     try {
       setError(null);
 
-      const response = await referralApi.generateReferralLink();
+      const response: any = await referralApi.generateReferralLink();
 
       if (response.success && response.data) {
         return response.data.referralLink;
@@ -113,7 +113,7 @@ export const useReferral = ({
         setError(response.error || 'Failed to generate referral link');
         return null;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to generate referral link');
       return null;
     }
@@ -124,7 +124,7 @@ export const useReferral = ({
     try {
       setError(null);
 
-      const response = await referralApi.shareReferralLink(platform);
+      const response: any = await referralApi.shareReferralLink(platform);
 
       if (response.success) {
         return true;
@@ -132,7 +132,7 @@ export const useReferral = ({
         setError(response.error || 'Failed to share referral link');
         return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to share referral link');
       return false;
     }
@@ -143,7 +143,7 @@ export const useReferral = ({
     try {
       setError(null);
 
-      const response = await referralApi.claimReferralRewards();
+      const response: any = await referralApi.claimReferralRewards();
 
       if (response.success) {
         // Refresh data after claiming rewards
@@ -153,7 +153,7 @@ export const useReferral = ({
         setError(response.error || 'Failed to claim rewards');
         return false;
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to claim rewards');
       return false;
     }

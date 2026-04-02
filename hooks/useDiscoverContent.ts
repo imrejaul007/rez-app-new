@@ -227,7 +227,7 @@ export function useDiscoverContent(): UseDiscoverContentReturn {
 
       switch (tab) {
         case 'reels': {
-          const response = await realVideosApi.getVideos({
+          const response: any = await realVideosApi.getVideos({
             contentType: 'ugc',
             hasProducts: true,
             sortBy: 'trending',
@@ -270,8 +270,8 @@ export function useDiscoverContent(): UseDiscoverContentReturn {
             }),
           ]);
 
-          const merchantVideos = merchantResponse?.data?.videos || merchantResponse?.videos || [];
-          const ugcVideos = ugcResponse?.data?.videos || ugcResponse?.videos || [];
+          const merchantVideos = merchantResponse?.data?.videos || (merchantResponse as any)?.videos || [];
+          const ugcVideos = ugcResponse?.data?.videos || (ugcResponse as any)?.videos || [];
 
           // Merge and shuffle posts
           const allPosts = [
@@ -297,7 +297,7 @@ export function useDiscoverContent(): UseDiscoverContentReturn {
         }
 
         case 'articles': {
-          const response = await articlesApi.getArticles({
+          const response: any = await articlesApi.getArticles({
             sortBy: 'popular',
             page,
             limit: ITEMS_PER_PAGE,
@@ -326,7 +326,7 @@ export function useDiscoverContent(): UseDiscoverContentReturn {
 
         case 'images': {
           // Fetch UGC without video (photos only)
-          const response = await realVideosApi.getVideos({
+          const response: any = await realVideosApi.getVideos({
             contentType: 'ugc',
             hasProducts: true,
             page,
@@ -357,7 +357,7 @@ export function useDiscoverContent(): UseDiscoverContentReturn {
           break;
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         error: `Failed to load ${tab}`,

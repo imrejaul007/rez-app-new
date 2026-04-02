@@ -21,7 +21,7 @@ export function SkeletonLoader({
 }: SkeletonLoaderProps) {
   const shimmerAnim = useShimmer();
   const opacityStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(shimmerAnim.value, [0, 1], [0.3, 0.7]),
+    opacity: interpolate((shimmerAnim as any).value ?? 0, [0, 1], [0.3, 0.7]),
   }));
 
   return (

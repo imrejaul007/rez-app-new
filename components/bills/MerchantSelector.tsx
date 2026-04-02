@@ -156,7 +156,7 @@ const MerchantSelector: React.FC<MerchantSelectorProps> = ({
 
     return (
       <Pressable
-        style={[styles.merchantCard, isSelected && styles.merchantCardSelected]}
+        style={[styles.merchantCard, isSelected ? styles.merchantCardSelected : null]}
         onPress={() => handleSelectMerchant(item)}
        
       >

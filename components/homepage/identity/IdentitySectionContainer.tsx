@@ -19,7 +19,7 @@ function IdentitySectionContainer() {
   const user = useAuthUser();
   const isAuthenticated = useIsAuthenticated();
   // Guard: wait for auth to be ready before making API calls
-  const { loading: authLoading = false } = useAuth();
+  const { loading: authLoading = false } = useAuth() as any;
 
   const {
     segment,
@@ -295,7 +295,7 @@ function IdentitySectionContainer() {
     featureLevel === 1 &&
     instituteStatus === 'onboarded' &&
     !hasSkippedVerificationPrompt &&
-    statedIdentity !== 'general'
+    (statedIdentity as string) !== 'general'
   ) {
     return (
       <VerificationPromptBanner
@@ -310,7 +310,7 @@ function IdentitySectionContainer() {
     featureLevel === 1 &&
     instituteStatus === 'not_available' &&
     !hasSkippedInstituteReferral &&
-    statedIdentity !== 'general'
+    (statedIdentity as string) !== 'general'
   ) {
     return (
       <InstituteNotOnboardedBanner

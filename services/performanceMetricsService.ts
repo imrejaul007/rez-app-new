@@ -100,8 +100,8 @@ class PerformanceMetricsService {
   private cacheMetrics: CacheMetric[] = [];
   private memoryMetrics: MemoryMetric[] = [];
   private isEnabled = __DEV__;
-  private memoryMonitoringInterval: NodeJS.Timeout | null = null;
-  private saveDebounceTimer: NodeJS.Timeout | null = null;
+  private memoryMonitoringInterval: ReturnType<typeof setTimeout> | null = null;
+  private saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.init();
@@ -543,7 +543,7 @@ class PerformanceMetricsService {
       .sort((a, b) => b.avgTime - a.avgTime)
       .slice(0, 10);
 
-    return result;
+    return result as any;
   }
 
   /**
@@ -575,7 +575,7 @@ class PerformanceMetricsService {
       .sort((a, b) => b.avgTime - a.avgTime)
       .slice(0, 10);
 
-    return result;
+    return result as any;
   }
 
   // ============================================================================

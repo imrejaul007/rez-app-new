@@ -128,7 +128,7 @@ function CashbackPage() {
       }
 
       await loadCashbackHistory();
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load cashback data. Pull down to retry.');
     } finally {
@@ -156,7 +156,7 @@ function CashbackPage() {
         if (!isMounted()) return;
         setCashbacks([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setCashbacks([]);
     }
@@ -462,10 +462,10 @@ function CashbackPage() {
                 return (
                   <Pressable
                     key={tab}
-                    style={[styles.tab, isActive && styles.activeTab]}
+                    style={[styles.tab, isActive ? styles.activeTab : null]}
                     onPress={() => setActiveTab(tab)}
                   >
-                    <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+                    <Text style={[styles.tabText, isActive ? styles.activeTabText : null]}>
                       {tab === 'expired' ? 'Rejected' : tab.charAt(0).toUpperCase() + tab.slice(1)}
                     </Text>
                   </Pressable>
@@ -770,10 +770,10 @@ function CashbackPage() {
                 return (
                   <Pressable
                     key={tab}
-                    style={[styles.tab, isActive && styles.activeTab]}
+                    style={[styles.tab, isActive ? styles.activeTab : null]}
                     onPress={() => setActiveTab(tab)}
                   >
-                    <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+                    <Text style={[styles.tabText, isActive ? styles.activeTabText : null]}>
                       {tab.charAt(0).toUpperCase() + tab.slice(1)}
                     </Text>
                   </Pressable>

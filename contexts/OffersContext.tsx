@@ -113,7 +113,7 @@ export function OffersProvider({ children }: OffersProviderProps) {
             id: 'featured-offers',
             title: 'Featured Offers',
             subtitle: 'Best deals available now',
-            offers: offersResponse.data.items as any,
+            offers: (offersResponse.data as any)?.items as any,
             viewAllEnabled: true
           }
         ],
@@ -121,7 +121,7 @@ export function OffersProvider({ children }: OffersProviderProps) {
       };
 
       dispatch({ type: 'SET_OFFERS', payload: offersPageData });
-    } catch (error) {
+    } catch (error: any) {
       dispatch({
         type: 'SET_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to load offers'

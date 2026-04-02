@@ -65,7 +65,7 @@ function AccountRecoveryPage() {
         setError(response.message || 'Failed to send verification code. Please try again.');
         platformAlertSimple('Error', response.message || 'Failed to send code.');
       }
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
       platformAlertSimple('Error', 'Something went wrong. Please try again.');
@@ -89,7 +89,7 @@ function AccountRecoveryPage() {
         setError(response.message || 'Invalid verification code. Please try again.');
         platformAlertSimple('Verification Failed', response.message || 'Invalid code.');
       }
-    } catch (e) {
+    } catch (e: any) {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
       platformAlertSimple('Error', 'Something went wrong. Please try again.');
@@ -105,46 +105,32 @@ function AccountRecoveryPage() {
         <Ionicons name="key-outline" size={60} color={Colors.primary[600]} />
       </View>
       <ThemedText style={styles.title}>Account Recovery</ThemedText>
-      <ThemedText style={styles.subtitle}>
-        Choose how you'd like to verify your identity
-      </ThemedText>
+      <ThemedText style={styles.subtitle}>Choose how you'd like to verify your identity</ThemedText>
 
-      <Pressable
-        style={styles.methodCard}
-        onPress={() => handleMethodSelect('phone')}
-      >
+      <Pressable style={styles.methodCard} onPress={() => handleMethodSelect('phone')}>
         <View style={styles.methodIcon}>
           <Ionicons name="call-outline" size={28} color={Colors.primary[600]} />
         </View>
         <View style={styles.methodInfo}>
           <ThemedText style={styles.methodTitle}>Phone Number</ThemedText>
-          <ThemedText style={styles.methodDesc}>
-            We'll send a verification code via SMS
-          </ThemedText>
+          <ThemedText style={styles.methodDesc}>We'll send a verification code via SMS</ThemedText>
         </View>
         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
 
-      <Pressable
-        style={styles.methodCard}
-        onPress={() => handleMethodSelect('email')}
-      >
+      <Pressable style={styles.methodCard} onPress={() => handleMethodSelect('email')}>
         <View style={styles.methodIcon}>
           <Ionicons name="mail-outline" size={28} color={Colors.primary[600]} />
         </View>
         <View style={styles.methodInfo}>
           <ThemedText style={styles.methodTitle}>Email Address</ThemedText>
-          <ThemedText style={styles.methodDesc}>
-            We'll send a recovery link to your email
-          </ThemedText>
+          <ThemedText style={styles.methodDesc}>We'll send a recovery link to your email</ThemedText>
         </View>
         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
 
       <View style={styles.helpSection}>
-        <ThemedText style={styles.helpText}>
-          Can't access your phone or email?
-        </ThemedText>
+        <ThemedText style={styles.helpText}>Can't access your phone or email?</ThemedText>
         <Pressable>
           <ThemedText style={styles.helpLink}>Contact Support</ThemedText>
         </Pressable>
@@ -160,16 +146,10 @@ function AccountRecoveryPage() {
       </Pressable>
 
       <View style={styles.iconContainer}>
-        <Ionicons
-          name={method === 'phone' ? 'call-outline' : 'mail-outline'}
-          size={60}
-          color={Colors.primary[600]}
-        />
+        <Ionicons name={method === 'phone' ? 'call-outline' : 'mail-outline'} size={60} color={Colors.primary[600]} />
       </View>
 
-      <ThemedText style={styles.title}>
-        Enter your {method === 'phone' ? 'Phone Number' : 'Email'}
-      </ThemedText>
+      <ThemedText style={styles.title}>Enter your {method === 'phone' ? 'Phone Number' : 'Email'}</ThemedText>
       <ThemedText style={styles.subtitle}>
         {method === 'phone'
           ? 'Enter the phone number linked to your account'
@@ -195,7 +175,7 @@ function AccountRecoveryPage() {
       </View>
 
       <Pressable
-        style={[styles.button, !input && styles.buttonDisabled]}
+        style={[styles.button, !input ? styles.buttonDisabled : null]}
         onPress={handleSendCode}
         disabled={!input || loading}
       >
@@ -236,7 +216,7 @@ function AccountRecoveryPage() {
       />
 
       <Pressable
-        style={[styles.button, otp.length < 6 && styles.buttonDisabled]}
+        style={[styles.button, otp.length < 6 ? styles.buttonDisabled : null]}
         onPress={handleVerifyOTP}
         disabled={otp.length < 6 || loading}
       >
@@ -266,10 +246,7 @@ function AccountRecoveryPage() {
         Your identity has been verified. You can now access your account.
       </ThemedText>
 
-      <Pressable
-        style={styles.button}
-        onPress={() => router.replace('/sign-in')}
-      >
+      <Pressable style={styles.button} onPress={() => router.replace('/sign-in')}>
         <ThemedText style={styles.buttonText}>Continue to Sign In</ThemedText>
       </Pressable>
     </View>
@@ -278,36 +255,33 @@ function AccountRecoveryPage() {
   return (
     <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
       {/* SOFIA: KeyboardAvoidingView for TextInput handling with phone/OTP fields */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardAvoidingView}>
         <View style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
-        <View style={styles.headerContent}>
-          <Pressable style={styles.closeButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="close" size={24} color={colors.background.primary} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>Account Recovery</ThemedText>
-          <View style={styles.placeholder} />
-        </View>
-      </LinearGradient>
+          <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
+            <View style={styles.headerContent}>
+              <Pressable
+                style={styles.closeButton}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              >
+                <Ionicons name="close" size={24} color={colors.background.primary} />
+              </Pressable>
+              <ThemedText style={styles.headerTitle}>Account Recovery</ThemedText>
+              <View style={styles.placeholder} />
+            </View>
+          </LinearGradient>
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {step === 'method' && renderMethodSelection()}
-        {step === 'input' && renderInputStep()}
-        {step === 'otp' && renderOTPStep()}
-        {step === 'success' && renderSuccess()}
-        </ScrollView>
+          <ScrollView
+            style={styles.content}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {step === 'method' && renderMethodSelection()}
+            {step === 'input' && renderInputStep()}
+            {step === 'otp' && renderOTPStep()}
+            {step === 'success' && renderSuccess()}
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

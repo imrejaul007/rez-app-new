@@ -105,7 +105,7 @@ function HeroBanner({ onScanPayPress, onViewWalletPress }: HeroBannerProps) {
       <View style={styles.ctaRow}>
         {/* Primary CTA — Mustard */}
         <Pressable
-          style={({ pressed }) => [styles.ctaPrimary, pressed && styles.ctaPrimaryPressed]}
+          style={({ pressed }) => [styles.ctaPrimary, pressed ? styles.ctaPrimaryPressed : null]}
           onPress={handleExploreDeals}
           accessibilityRole="button"
           accessibilityLabel="Explore deals"

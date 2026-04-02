@@ -108,7 +108,7 @@ const EventsExperiencesSection: React.FC = () => {
             });
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         // Keep using fallback data
       } finally {
         if (!isMounted()) return;
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   concertsTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   concertsSubtitle: {
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   concertsCoins: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 
   // Small Cards (Parks, Gaming)
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
   smallCardTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 
   // Workshops Card
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   workshopsTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   workshopsSubtitle: {
     fontSize: 11,

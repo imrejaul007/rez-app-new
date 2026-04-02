@@ -166,14 +166,14 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
             try {
               const realData = await eventsApiService.getEventById(eventIdParam);
               if (!cancelled && realData) setRealEventData(realData);
-            } catch (err) {
+            } catch (err: any) {
               errorReporter.captureError(
                 err instanceof Error ? err : new Error('Failed to fetch real event data'),
                 { context: 'EventPage.loadEventData.fetchReal' },
                 'info'
               );
             }
-          } catch (err) {
+          } catch (err: any) {
             if (cancelled) return;
             errorReporter.captureError(
               err instanceof Error ? err : new Error('Failed to parse event data param'),
@@ -192,7 +192,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
             } else {
               setError('Event not found');
             }
-          } catch (err) {
+          } catch (err: any) {
             if (cancelled) return;
             errorReporter.captureError(
               err instanceof Error ? err : new Error('Failed to load event by ID'),
@@ -205,7 +205,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
           if (cancelled) return;
           setIsDynamic(false);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (cancelled) return;
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to load event data'),
@@ -297,7 +297,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
             .catch(() => setError('Failed to load event from link'))
             .finally(() => setIsLoadingEvent(false));
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to handle deep link'),
           { context: 'EventPage.handleDeepLink' },
@@ -378,7 +378,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
       } catch {
         eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof Error && err.message !== 'User canceled') setError('Failed to share event.');
     } finally {
       setIsLoading(false);
@@ -405,7 +405,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
         setIsFavorited(previousState);
         throw new Error(result.message || 'Failed to update favorite status');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to update favorite status');
     } finally {
       setIsLoadingFavorite(false);

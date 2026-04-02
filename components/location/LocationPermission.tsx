@@ -46,7 +46,7 @@ function LocationPermission({
       } else {
         onPermissionDenied?.();
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Permission Error', 'Failed to request location permission. Please try again.');
     } finally {
       if (!isMounted()) return;

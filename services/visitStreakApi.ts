@@ -41,4 +41,4 @@ export interface VisitStreakData {
  * streak, next reward milestone, and the last 5 completed visits.
  */
 export const getVisitStreak = (): Promise<ApiResponse<VisitStreakData>> =>
-  apiClient.get('/users/visit-streak');
+  apiClient.get<any>('/users/visit-streak');

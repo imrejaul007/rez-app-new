@@ -127,7 +127,7 @@ const ProductCard = ({ product, index, scrollX, onPress, currencySymbol }: Produ
   const originalPrice = product.price?.original || product.pricing?.basePrice || product.pricing?.original || currentPrice;
   
   // Rating - API returns rating.value (string) and rating.count
-  const ratingValue = product.rating?.value || product.ratings?.average || 0;
+  const ratingValue = Number(product.rating?.value || product.ratings?.average || 0);
   const ratingCount = product.rating?.count || product.ratings?.count || 0;
   
   // Check if product ID exists (API might return 'id' or '_id')

@@ -83,13 +83,7 @@ function OffersScreen() {
   // Favorite state removed — no backend API integration for page-level favorites
 
   // Get URL query parameters for filtering
-  const searchParams = useLocalSearchParams<{
-    type?: string; // e.g., 'flash-sale', 'bogo', 'nearby'
-    tab?: string; // e.g., 'cashback'
-    category?: string; // category filter
-    multiplier?: string; // e.g., '2' for 2X cashback
-    filter?: string; // e.g., 'double', 'coindrops'
-  }>();
+  const searchParams = useLocalSearchParams<any>();
 
   // Convert search params to filter props
   const filterProps = {
@@ -118,7 +112,7 @@ function OffersScreen() {
 
       if (result.action === Share.sharedAction) {
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to share. Please try again.');
     }
   };

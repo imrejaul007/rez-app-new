@@ -7,10 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import * as Clipboard from 'expo-clipboard';
-import {
-  View, Text, StyleSheet, Pressable,
-  RefreshControl, ActivityIndicator, ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, ScrollView } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -32,22 +29,25 @@ const TABS = [
 ];
 
 const BANK_GRADIENTS: Record<string, string[]> = {
-  HDFC: ['#004C8F', '#002E5D'], SBI: ['#22336B', '#141D3B'],
-  ICICI: ['#F58220', '#C15A00'], AXIS: ['#800020', '#5A0016'],
-  KOTAK: ['#ED232A', '#B01B20'], DEFAULT: [colors.infoScale[400], '#1D4ED8'],
+  HDFC: ['#004C8F', '#002E5D'],
+  SBI: ['#22336B', '#141D3B'],
+  ICICI: ['#F58220', '#C15A00'],
+  AXIS: ['#800020', '#5A0016'],
+  KOTAK: ['#ED232A', '#B01B20'],
+  DEFAULT: [colors.infoScale[400], '#1D4ED8'],
 };
 
 function getBankGradient(bankName: string): string[] {
-  const key = Object.keys(BANK_GRADIENTS).find(k => bankName?.toUpperCase().includes(k));
+  const key = Object.keys(BANK_GRADIENTS).find((k) => bankName?.toUpperCase().includes(k));
   return key ? BANK_GRADIENTS[key] : BANK_GRADIENTS.DEFAULT;
 }
 
 function OffersIndexPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const theme = getCategoryTheme(slug || 'electronics');
-  const params = useLocalSearchParams<{ tab?: string }>();
+  const params = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -73,16 +73,16 @@ function OffersIndexPage() {
         setBankOffers(offers);
       }
       if (dealsRes?.success && dealsRes.data) {
-        const d = Array.isArray(dealsRes.data) ? dealsRes.data : (dealsRes.data?.offers || []);
+        const d = Array.isArray(dealsRes.data) ? dealsRes.data : dealsRes.data?.offers || [];
         if (!isMounted()) return;
         setDeals(d);
       }
       if (couponsRes?.success && couponsRes.data) {
-        const c = Array.isArray(couponsRes.data) ? couponsRes.data : (couponsRes.data?.coupons || []);
+        const c = Array.isArray(couponsRes.data) ? couponsRes.data : couponsRes.data?.coupons || [];
         if (!isMounted()) return;
         setCoupons(c.filter((cp: any) => cp.status === 'active' || cp.isActive !== false));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -90,7 +90,9 @@ function OffersIndexPage() {
     }
   }, []);
 
-  useEffect(() => { fetchOffers(); }, [fetchOffers]);
+  useEffect(() => {
+    fetchOffers();
+  }, [fetchOffers]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -121,15 +123,19 @@ function OffersIndexPage() {
     const allItems = [...bankOffers, ...deals, ...coupons];
     if (activeTab === 'all') return allItems;
     if (activeTab === 'store-offers') {
-      return allItems.filter((item: any) =>
-        item.store || item.storeId || item.brandName ||
-        item.tags?.includes('store') || item.subcategory === 'store-offers'
+      return allItems.filter(
+        (item: any) =>
+          item.store ||
+          item.storeId ||
+          item.brandName ||
+          item.tags?.includes('store') ||
+          item.subcategory === 'store-offers',
       );
     }
     if (activeTab === 'exclusive') {
-      return allItems.filter((item: any) =>
-        item.isExclusive || item.exclusive ||
-        item.tags?.includes('exclusive') || item.subcategory === 'exclusive'
+      return allItems.filter(
+        (item: any) =>
+          item.isExclusive || item.exclusive || item.tags?.includes('exclusive') || item.subcategory === 'exclusive',
       );
     }
     return allItems;
@@ -148,13 +154,21 @@ function OffersIndexPage() {
           <View style={{ flex: 1 }}>
             <Text style={styles.bankName}>{offer.bankName || 'Bank Offer'}</Text>
             <Text style={styles.bankDiscount}>
-              {offer.discountPercentage ? `Up to ${offer.discountPercentage}% Off` : offer.offerDescription || 'Special Discount'}
+              {offer.discountPercentage
+                ? `Up to ${offer.discountPercentage}% Off`
+                : offer.offerDescription || 'Special Discount'}
             </Text>
             {offer.maxDiscount > 0 && (
-              <Text style={styles.bankMax}>Max discount: {currencySymbol}{offer.maxDiscount}</Text>
+              <Text style={styles.bankMax}>
+                Max discount: {currencySymbol}
+                {offer.maxDiscount}
+              </Text>
             )}
             {offer.minTransactionAmount > 0 && (
-              <Text style={styles.bankMin}>Min order: {currencySymbol}{offer.minTransactionAmount}</Text>
+              <Text style={styles.bankMin}>
+                Min order: {currencySymbol}
+                {offer.minTransactionAmount}
+              </Text>
             )}
           </View>
         </View>
@@ -172,7 +186,7 @@ function OffersIndexPage() {
     const storeName = deal.store?.name || deal.brandName || '';
     const validity = deal.validUntil || deal.validTo || deal.expiresAt;
     const icon = discount >= 30 ? '\u{1F4AB}' : discount >= 20 ? '\u{2728}' : '\u{1F4A1}';
-    const title = discount > 0 ? `${discount}% Off` : (deal.title || 'Special Deal');
+    const title = discount > 0 ? `${discount}% Off` : deal.title || 'Special Deal';
 
     return (
       <Pressable
@@ -180,36 +194,49 @@ function OffersIndexPage() {
         onPress={() => router.push(`/MainCategory/' + slug + '/offers/${deal._id}` as any)}
       >
         <Text style={styles.dealIcon}>{icon}</Text>
-        <Text style={styles.dealTitle} numberOfLines={1}>{title}</Text>
+        <Text style={styles.dealTitle} numberOfLines={1}>
+          {title}
+        </Text>
         <Text style={styles.dealSubtitle} numberOfLines={2}>
           {deal.subtitle || deal.description || 'Limited time offer'}
         </Text>
         {storeName ? (
-          <Text style={styles.dealStore} numberOfLines={1}>{storeName}</Text>
-        ) : null}
-        {validity && (
-          <Text style={styles.dealValidity}>
-            Valid till {new Date(validity).toLocaleDateString()}
+          <Text style={styles.dealStore} numberOfLines={1}>
+            {storeName}
           </Text>
-        )}
+        ) : null}
+        {validity && <Text style={styles.dealValidity}>Valid till {new Date(validity).toLocaleDateString()}</Text>}
       </Pressable>
     );
   };
 
   const renderCoupon = (coupon: any) => {
     const code = coupon.couponCode || coupon.code || '';
-    const discountText = coupon.discountType === 'PERCENTAGE' || coupon.discountType === 'percentage'
-      ? `${coupon.discountValue}% OFF` : `${currencySymbol}${coupon.discountValue} OFF`;
+    const discountText =
+      coupon.discountType === 'PERCENTAGE' || coupon.discountType === 'percentage'
+        ? `${coupon.discountValue}% OFF`
+        : `${currencySymbol}${coupon.discountValue} OFF`;
     const expiry = getCouponExpiry(coupon);
 
     return (
       <View style={styles.couponCard}>
         <View style={styles.couponLeft}>
           <Text style={styles.couponDiscount}>{discountText}</Text>
-          {coupon.title && <Text style={styles.couponTitle} numberOfLines={1}>{coupon.title}</Text>}
-          {coupon.description && <Text style={styles.couponDesc} numberOfLines={1}>{coupon.description}</Text>}
+          {coupon.title && (
+            <Text style={styles.couponTitle} numberOfLines={1}>
+              {coupon.title}
+            </Text>
+          )}
+          {coupon.description && (
+            <Text style={styles.couponDesc} numberOfLines={1}>
+              {coupon.description}
+            </Text>
+          )}
           {coupon.minOrderValue > 0 && (
-            <Text style={styles.couponMin}>Min. order {currencySymbol}{coupon.minOrderValue}</Text>
+            <Text style={styles.couponMin}>
+              Min. order {currencySymbol}
+              {coupon.minOrderValue}
+            </Text>
           )}
           {expiry ? <Text style={styles.couponExpiry}>{expiry}</Text> : null}
         </View>
@@ -225,21 +252,34 @@ function OffersIndexPage() {
     );
   };
 
-  const renderItem = useCallback(({ item }: { item: any }) => {
-    if (item.bankName || item.cardType) return renderBankOffer(item);
-    if (item.couponCode || item.code) return renderCoupon(item);
-    return renderDeal(item);
-  }, [currencySymbol, router, slug]);
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => {
+      if (item.bankName || item.cardType) return renderBankOffer(item);
+      if (item.couponCode || item.code) return renderCoupon(item);
+      return renderDeal(item);
+    },
+    [currencySymbol, router, slug],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <View style={{ flex: 1 }}>
-          <Text style={styles.headerTitle}>{slug ? slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Offers' : 'Offers'}</Text>
+          <Text style={styles.headerTitle}>
+            {slug
+              ? slug
+                  .split('-')
+                  .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(' ') + ' Offers'
+              : 'Offers'}
+          </Text>
           <Text style={styles.headerSubtitle}>
             {bankOffers.length + deals.length + coupons.length} offers available
           </Text>
@@ -252,7 +292,7 @@ function OffersIndexPage() {
           {TABS.map((tab) => (
             <Pressable
               key={tab.id}
-              style={[styles.tab, activeTab === tab.id && styles.tabActive]}
+              style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
               onPress={() => setActiveTab(tab.id)}
             >
               <Ionicons
@@ -260,9 +300,7 @@ function OffersIndexPage() {
                 size={16}
                 color={activeTab === tab.id ? SHARED_COLORS.white : SHARED_COLORS.textSecondary}
               />
-              <Text style={[styles.tabLabel, activeTab === tab.id && styles.tabLabelActive]}>
-                {tab.label}
-              </Text>
+              <Text style={[styles.tabLabel, activeTab === tab.id ? styles.tabLabelActive : null]}>{tab.label}</Text>
             </Pressable>
           ))}
         </ScrollView>
@@ -277,17 +315,16 @@ function OffersIndexPage() {
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primaryColor]} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primaryColor]} />
+          }
           estimatedItemSize={120}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons
-                name="pricetag-outline"
-                size={48}
-                color={SHARED_COLORS.textSecondary}
-              />
+              <Ionicons name="pricetag-outline" size={48} color={SHARED_COLORS.textSecondary} />
               <Text style={styles.emptyTitle}>
-                No {activeTab === 'all' ? 'offers' : activeTab === 'store-offers' ? 'store offers' : 'exclusive offers'} right now
+                No {activeTab === 'all' ? 'offers' : activeTab === 'store-offers' ? 'store offers' : 'exclusive offers'}{' '}
+                right now
               </Text>
               <Text style={styles.emptySubtitle}>Check back later for new offers</Text>
             </View>
@@ -301,8 +338,14 @@ function OffersIndexPage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.tint.warmGray },
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12,
-    backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.neutral[200], gap: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[200],
+    gap: 12,
   },
   backBtn: { padding: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: colors.neutral[900] },
@@ -310,8 +353,12 @@ const styles = StyleSheet.create({
   tabsContainer: { backgroundColor: colors.background.primary, paddingBottom: 8 },
   tabs: { paddingHorizontal: 16, gap: 8 },
   tab: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
     backgroundColor: colors.neutral[100],
   },
   tabActive: { backgroundColor: colors.infoScale[400] },
@@ -334,8 +381,12 @@ const styles = StyleSheet.create({
   bankPromoCode: { fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: '600' },
   // Deal styles
   dealCard: {
-    flex: 1, padding: 16, borderRadius: 16, backgroundColor: colors.background.primary,
-    alignItems: 'center', marginBottom: 12,
+    flex: 1,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: colors.background.primary,
+    alignItems: 'center',
+    marginBottom: 12,
   },
   dealIcon: { fontSize: 32, marginBottom: 8 },
   dealTitle: { fontSize: 15, fontWeight: '600', color: colors.neutral[900], marginBottom: 4, textAlign: 'center' },
@@ -344,8 +395,13 @@ const styles = StyleSheet.create({
   dealValidity: { fontSize: 10, color: colors.neutral[500], marginTop: 4 },
   // Coupon styles
   couponCard: {
-    flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: 12,
-    padding: 16, borderLeftWidth: 4, borderLeftColor: colors.brand.blue, marginBottom: 12,
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.brand.blue,
+    marginBottom: 12,
   },
   couponLeft: { flex: 1 },
   couponDiscount: { fontSize: 18, fontWeight: '700', color: colors.brand.blue, marginBottom: 4 },
@@ -355,8 +411,13 @@ const styles = StyleSheet.create({
   couponExpiry: { fontSize: 11, color: colors.neutral[500] },
   couponRight: { alignItems: 'flex-end', justifyContent: 'center' },
   couponCodeBox: {
-    borderWidth: 1, borderColor: colors.neutral[200], borderStyle: 'dashed',
-    borderRadius: 6, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 8,
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
+    borderStyle: 'dashed',
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: 8,
   },
   couponCode: { fontSize: 12, fontWeight: '600', color: colors.neutral[900], letterSpacing: 1 },
   copyBtn: { paddingHorizontal: 16, paddingVertical: 6, backgroundColor: colors.brand.blue, borderRadius: 6 },

@@ -58,14 +58,7 @@ const SHARE_TARGETS: ShareTarget[] = [
 // ---------------------------------------------------------------------------
 function SavingsShareScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{
-    savings?: string;
-    score?: string;
-    streakDays?: string;
-    tier?: string;
-    referralCode?: string;
-    mode?: CardMode;
-  }>();
+  const params = useLocalSearchParams<any>();
 
   const viewShotRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);

@@ -5,8 +5,12 @@
 
 import { preloadCriticalImages } from '@/hooks/useImagePreload';
 import { preloadComponent, preloadComponents } from '@/utils/lazyLoad';
-import cacheService, { CacheTTL, CacheNamespace } from '@/services/cacheService';
+import cacheService from '@/services/cacheService';
 import { ComponentType } from 'react';
+
+// CacheTTL and CacheNamespace are not exported from cacheService — define locally
+const CacheTTL = { SHORT: 60, MEDIUM: 300, LONG: 3600, VERY_LONG: 86400 } as const;
+const CacheNamespace = { IMAGES: 'images', DATA: 'data', COMPONENTS: 'components' } as const;
 
 // ============================================================================
 // Types

@@ -149,7 +149,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
         url: url,
         title: storeName,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

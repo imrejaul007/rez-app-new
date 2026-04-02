@@ -6,6 +6,7 @@ import {
   Platform,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -46,7 +47,7 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
     (store: DiscoveryStore) => {
       try {
         router.push(`/MainStorePage?storeId=${store.id}` as any);
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     },
@@ -60,7 +61,7 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
         pathname: '/StoreListPage',
         params: { filter: 'trending' },
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [router]);
@@ -72,7 +73,7 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
         pathname: '/StoreListPage',
         params: { filter: 'nearby' },
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [router]);
@@ -152,18 +153,13 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
           {isLoadingTop ? (
             <StoreDiscoverySkeleton showTopStores={true} showPopularStores={false} />
           ) : (
-            <FlashList
+            <AnyFlashList
               data={topStores}
               renderItem={renderTopStoreCard}
               keyExtractor={keyExtractorTop}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-              removeClippedSubviews={Platform.OS !== 'web'}
-              maxToRenderPerBatch={5}
-              updateCellsBatchingPeriod={50}
-              initialNumToRender={4}
-              windowSize={5}
+              contentContainerStyle={styles.scrollContent as any}
               scrollEventThrottle={16}
               decelerationRate="normal"
               estimatedItemSize={110}
@@ -187,18 +183,13 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
           {isLoadingPopular ? (
             <StoreDiscoverySkeleton showTopStores={false} showPopularStores={true} />
           ) : (
-            <FlashList
+            <AnyFlashList
               data={popularStores}
               renderItem={renderPopularStoreCard}
               keyExtractor={keyExtractorPopular}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-              removeClippedSubviews={Platform.OS !== 'web'}
-              maxToRenderPerBatch={5}
-              updateCellsBatchingPeriod={50}
-              initialNumToRender={4}
-              windowSize={5}
+              contentContainerStyle={styles.scrollContent as any}
               scrollEventThrottle={16}
               decelerationRate="normal"
               estimatedItemSize={110}

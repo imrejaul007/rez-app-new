@@ -115,7 +115,7 @@ async function fetchRegionConfigFromServer(regionId: RegionId) {
   const now = Date.now();
   if (now - (regionConfigFetchedAt[regionId] || 0) < REGION_CACHE_TTL) return;
   try {
-    const response = await apiClient.get(`/location/region/${regionId}`);
+    const response = await apiClient.get<any>(`/location/region/${regionId}`);
     if (response.success && response.data?.region) {
       regionConfigFetchedAt[regionId] = now;
       const serverConfig = response.data.region as RegionConfig;
@@ -139,7 +139,7 @@ async function fetchAvailableRegions() {
   const now = Date.now();
   if (now - availableRegionsFetchedAt < REGION_CACHE_TTL) return;
   try {
-    const response = await apiClient.get('/location/regions');
+    const response = await apiClient.get<any>('/location/regions');
     if (response.success && response.data?.regions) {
       availableRegionsFetchedAt = now;
       useRegionStore.setState((s) => ({
@@ -310,7 +310,7 @@ export const useRegionStore = create<RegionStoreState>((set, get) => ({
     try {
       set((s) => ({ state: { ...s.state, isDetecting: true } }));
 
-      const response = await apiClient.get('/location/region/detect');
+      const response = await apiClient.get<any>('/location/region/detect');
       if (response.success && response.data?.region) {
         const { region, config } = response.data;
         syncRegionGetters(region, config);

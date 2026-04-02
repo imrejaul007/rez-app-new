@@ -93,7 +93,7 @@ const OptimizedGameCard = memo<OptimizedGameCardProps>(({ game, onPress, style }
       disabled={isDisabled && game.status === 'locked'}
     >
       <LinearGradient
-        colors={gradientColors}
+        colors={gradientColors as [string, string]}
         style={styles.gameGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

@@ -2,7 +2,18 @@
 // Shows comprehensive tracking information for a specific order
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, SafeAreaView, RefreshControl, Linking, ActivityIndicator } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  SafeAreaView,
+  RefreshControl,
+  Linking,
+  ActivityIndicator,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -131,12 +142,16 @@ function DetailedOrderTrackingPage() {
     const statusInfo = statusMap[realOrder.status] || statusMap.pending;
 
     // Format delivery partner info
-    const deliveryPartnerData = liveDeliveryPartner || (locationUpdate?.deliveryPartner ? {
-      name: locationUpdate.deliveryPartner.name,
-      phone: locationUpdate.deliveryPartner.phone,
-      rating: 0,
-      vehicleNumber: locationUpdate.deliveryPartner.vehicle || 'N/A',
-    } : null);
+    const deliveryPartnerData =
+      liveDeliveryPartner ||
+      (locationUpdate?.deliveryPartner
+        ? {
+            name: locationUpdate.deliveryPartner.name,
+            phone: locationUpdate.deliveryPartner.phone,
+            rating: 0,
+            vehicleNumber: locationUpdate.deliveryPartner.vehicle || 'N/A',
+          }
+        : null);
 
     return {
       ...realOrder,
@@ -164,7 +179,9 @@ function DetailedOrderTrackingPage() {
     if (order?.deliveryPartnerData?.phone) {
       try {
         Linking.openURL(`tel:${order.deliveryPartnerData.phone}`);
-      } catch (e) { catchAndReport(e, setLinkError, 'OrderTracking/callDeliveryPartner'); }
+      } catch (e: any) {
+        catchAndReport(e, setLinkError, 'OrderTracking/callDeliveryPartner');
+      }
     } else {
       platformAlertSimple('Not Available', 'Delivery partner contact not available yet.');
     }
@@ -177,14 +194,16 @@ function DetailedOrderTrackingPage() {
     // Check if order can be cancelled
     const cancellableStatuses = ['placed', 'confirmed', 'pending', 'processing'];
     if (!cancellableStatuses.includes(order.status)) {
-      platformAlertSimple('Cannot Cancel', 'This order cannot be cancelled at this stage. Please contact support if you need assistance.');
+      platformAlertSimple(
+        'Cannot Cancel',
+        'This order cannot be cancelled at this stage. Please contact support if you need assistance.',
+      );
       return;
     }
 
     platformAlertDestructive(
       'Cancel Order',
       'Are you sure you want to cancel this order?',
-      'Yes, Cancel',
       async () => {
         try {
           setIsCancelling(true);
@@ -196,13 +215,14 @@ function DetailedOrderTrackingPage() {
           } else {
             platformAlertSimple('Error', response.error || 'Failed to cancel order');
           }
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to cancel order. Please try again.');
         } finally {
           if (!isMounted()) return;
           setIsCancelling(false);
         }
-      }
+      },
+      'Yes, Cancel',
     );
   };
 
@@ -246,7 +266,7 @@ function DetailedOrderTrackingPage() {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     }
   };
@@ -265,43 +285,29 @@ function DetailedOrderTrackingPage() {
         accessibilityRole="text"
       >
         <View style={styles.updateIndicator}>
-          <View style={[
-            styles.updateCircle,
-            isCompleted && styles.updateCompleted,
-            isActive && styles.updateActive,
-          ]}>
+          <View style={[styles.updateCircle, isCompleted && styles.updateCompleted, isActive && styles.updateActive]}>
             {isCompleted ? (
               <Ionicons name="checkmark" size={12} color="white" />
             ) : (
-              <View style={[
-                styles.updateDot,
-                isActive && styles.updateActiveDot,
-              ]} />
+              <View style={[styles.updateDot, isActive && styles.updateActiveDot]} />
             )}
           </View>
-          {!isLast && (
-            <View style={[
-              styles.updateLine,
-              isCompleted && styles.updateLineCompleted,
-            ]} />
-          )}
+          {!isLast && <View style={[styles.updateLine, isCompleted && styles.updateLineCompleted]} />}
         </View>
 
         <View style={styles.updateContent}>
-          <ThemedText style={[
-            styles.updateStatus,
-            isActive && styles.updateActiveStatus,
-            isCompleted && styles.updateCompletedStatus,
-          ]}>
+          <ThemedText
+            style={[
+              styles.updateStatus,
+              isActive && styles.updateActiveStatus,
+              isCompleted && styles.updateCompletedStatus,
+            ]}
+          >
             {update.status || 'Update'}
           </ThemedText>
-          <ThemedText style={styles.updateDescription}>
-            {update.message || 'Order status updated'}
-          </ThemedText>
+          <ThemedText style={styles.updateDescription}>{update.message || 'Order status updated'}</ThemedText>
           {update.timestamp && (
-            <ThemedText style={styles.updateTimestamp}>
-              {formatTimestamp(update.timestamp)}
-            </ThemedText>
+            <ThemedText style={styles.updateTimestamp}>{formatTimestamp(update.timestamp)}</ThemedText>
           )}
         </View>
       </View>
@@ -312,15 +318,15 @@ function DetailedOrderTrackingPage() {
   const renderOrderItem = (item: any, index: number) => (
     <View key={item.id || index} style={styles.orderItem}>
       <View style={styles.itemInfo}>
-        <ThemedText style={styles.itemName}>
-          {item.product?.name || item.productName || 'Product'}
-        </ThemedText>
+        <ThemedText style={styles.itemName}>{item.product?.name || item.productName || 'Product'}</ThemedText>
         <ThemedText style={styles.itemDetails}>
-          Qty: {item.quantity} × {currencySymbol}{item.unitPrice?.toLocaleString() || item.price?.toLocaleString() || '0'}
+          Qty: {item.quantity} × {currencySymbol}
+          {item.unitPrice?.toLocaleString() || item.price?.toLocaleString() || '0'}
         </ThemedText>
       </View>
       <ThemedText style={styles.itemTotal}>
-        {currencySymbol}{(item.totalPrice || item.subtotal || 0).toLocaleString()}
+        {currencySymbol}
+        {(item.totalPrice || item.subtotal || 0).toLocaleString()}
       </ThemedText>
     </View>
   );
@@ -329,15 +335,8 @@ function DetailedOrderTrackingPage() {
   if (isLoading && !order) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={PROFILE_COLORS.primary}
-          translucent={false}
-        />
-        <LinearGradient
-          colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]}
-          style={styles.header}
-        >
+        <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primary} translucent={false} />
+        <LinearGradient colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.headerButton} onPress={handleBackPress}>
               <Ionicons name="arrow-back" size={24} color="white" />
@@ -357,15 +356,8 @@ function DetailedOrderTrackingPage() {
   if (error || !order) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={PROFILE_COLORS.primary}
-          translucent={false}
-        />
-        <LinearGradient
-          colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]}
-          style={styles.header}
-        >
+        <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primary} translucent={false} />
+        <LinearGradient colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.headerButton} onPress={handleBackPress}>
               <Ionicons name="arrow-back" size={24} color="white" />
@@ -378,9 +370,7 @@ function DetailedOrderTrackingPage() {
         </LinearGradient>
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
-          <ThemedText style={styles.errorTitle}>
-            {error ? 'Error Loading Order' : 'Order Not Found'}
-          </ThemedText>
+          <ThemedText style={styles.errorTitle}>{error ? 'Error Loading Order' : 'Order Not Found'}</ThemedText>
           <ThemedText style={styles.errorText}>
             {error || 'The order you are looking for could not be found.'}
           </ThemedText>
@@ -400,17 +390,10 @@ function DetailedOrderTrackingPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={PROFILE_COLORS.primary}
-        translucent={false}
-      />
-      
+      <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primary} translucent={false} />
+
       {/* Header */}
-      <LinearGradient
-        colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.headerButton}
@@ -445,7 +428,7 @@ function DetailedOrderTrackingPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -465,14 +448,8 @@ function DetailedOrderTrackingPage() {
         >
           <View style={styles.statusHeader}>
             <View style={[styles.statusBadge, { backgroundColor: order.statusColor + '20' }]}>
-              <Ionicons
-                name={order.statusIcon as any}
-                size={20}
-                color={order.statusColor}
-              />
-              <ThemedText style={[styles.statusText, { color: order.statusColor }]}>
-                {order.statusDisplay}
-              </ThemedText>
+              <Ionicons name={order.statusIcon as any} size={20} color={order.statusColor} />
+              <ThemedText style={[styles.statusText, { color: order.statusColor }]}>{order.statusDisplay}</ThemedText>
             </View>
           </View>
 
@@ -504,7 +481,7 @@ function DetailedOrderTrackingPage() {
           {/* Cancel order button */}
           {order.status !== 'delivered' && order.status !== 'cancelled' && order.status !== 'shipped' && (
             <Pressable
-              style={[styles.cancelButton, isCancelling && styles.cancelButtonDisabled]}
+              style={[styles.cancelButton, isCancelling ? styles.cancelButtonDisabled : null]}
               onPress={handleCancelOrder}
               disabled={isCancelling}
               accessibilityLabel={`Cancel order ${order.orderNumber}`}
@@ -542,10 +519,7 @@ function DetailedOrderTrackingPage() {
                 )}
               </View>
 
-              <Pressable
-                style={styles.callButton}
-                onPress={handleCallDeliveryPartner}
-              >
+              <Pressable style={styles.callButton} onPress={handleCallDeliveryPartner}>
                 <Ionicons name="call" size={20} color="white" />
                 <ThemedText style={styles.callButtonText}>Call</ThemedText>
               </Pressable>
@@ -558,10 +532,8 @@ function DetailedOrderTrackingPage() {
           <ThemedText style={styles.cardTitle}>Order Timeline</ThemedText>
 
           <View style={styles.trackingTimeline}>
-            {(timeline && timeline.length > 0) ? (
-              timeline.map((update, index) =>
-                renderTimelineUpdate(update, index, timeline.length)
-              )
+            {timeline && timeline.length > 0 ? (
+              timeline.map((update, index) => renderTimelineUpdate(update, index, timeline.length))
             ) : (
               <View style={styles.noTimelineContainer}>
                 <Ionicons name="time-outline" size={32} color={colors.text.tertiary} />
@@ -588,89 +560,105 @@ function DetailedOrderTrackingPage() {
             <View style={styles.summaryRow}>
               <ThemedText style={styles.summaryLabel}>Subtotal</ThemedText>
               <ThemedText style={styles.summaryValue}>
-                {currencySymbol}{(order.totals?.subtotal || order.summary?.subtotal || 0).toLocaleString()}
+                {currencySymbol}
+                {(order.totals?.subtotal || order.summary?.subtotal || 0).toLocaleString()}
               </ThemedText>
             </View>
             <View style={styles.summaryRow}>
               <ThemedText style={styles.summaryLabel}>Delivery Fee</ThemedText>
               <ThemedText style={styles.summaryValue}>
-                {currencySymbol}{(order.totals?.delivery || order.delivery?.deliveryFee || 0).toLocaleString()}
+                {currencySymbol}
+                {(order.totals?.delivery || order.delivery?.deliveryFee || 0).toLocaleString()}
               </ThemedText>
             </View>
             <View style={styles.summaryRow}>
               <ThemedText style={styles.summaryLabel}>Taxes</ThemedText>
               <ThemedText style={styles.summaryValue}>
-                {currencySymbol}{(order.totals?.tax || order.summary?.tax || 0).toLocaleString()}
+                {currencySymbol}
+                {(order.totals?.tax || order.summary?.tax || 0).toLocaleString()}
               </ThemedText>
             </View>
             {order.totals?.discount > 0 && (
               <View style={styles.summaryRow}>
                 <ThemedText style={styles.summaryLabel}>Discount</ThemedText>
                 <ThemedText style={[styles.summaryValue, { color: PROFILE_COLORS.success }]}>
-                  -{currencySymbol}{order.totals.discount.toLocaleString()}
+                  -{currencySymbol}
+                  {order.totals.discount.toLocaleString()}
                 </ThemedText>
               </View>
             )}
-            {order.payment?.coinsUsed && (order.payment.coinsUsed.wasilCoins > 0 || order.payment.coinsUsed.promoCoins > 0 || order.payment.coinsUsed.storePromoCoins > 0) && (
-              <View style={styles.summaryRow}>
-                <ThemedText style={styles.summaryLabel}>
-                  💎 Coins Used
-                  {order.payment.coinsUsed.storePromoCoins > 0 && ' (includes Store Promo)'}
-                </ThemedText>
-                <ThemedText style={[styles.summaryValue, { color: Colors.brand.purple }]}>
-                  -{currencySymbol}{order.payment.coinsUsed.totalCoinsValue || 0}
-                </ThemedText>
-              </View>
-            )}
+            {order.payment?.coinsUsed &&
+              (order.payment.coinsUsed.wasilCoins > 0 ||
+                order.payment.coinsUsed.promoCoins > 0 ||
+                order.payment.coinsUsed.storePromoCoins > 0) && (
+                <View style={styles.summaryRow}>
+                  <ThemedText style={styles.summaryLabel}>
+                    💎 Coins Used
+                    {order.payment.coinsUsed.storePromoCoins > 0 && ' (includes Store Promo)'}
+                  </ThemedText>
+                  <ThemedText style={[styles.summaryValue, { color: Colors.brand.purple }]}>
+                    -{currencySymbol}
+                    {order.payment.coinsUsed.totalCoinsValue || 0}
+                  </ThemedText>
+                </View>
+              )}
             <View style={[styles.summaryRow, styles.totalRow]}>
               <ThemedText style={styles.totalLabel}>Total</ThemedText>
               <ThemedText style={styles.totalValue}>
-                {currencySymbol}{(order.totals?.total || order.summary?.total || 0).toLocaleString()}
+                {currencySymbol}
+                {(order.totals?.total || order.summary?.total || 0).toLocaleString()}
               </ThemedText>
             </View>
           </View>
         </View>
 
         {/* Payment Breakdown - detailed coin usage */}
-        {order.payment?.coinsUsed && ((order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0) > 0 || (order.payment.coinsUsed.promoCoins || 0) > 0 || (order.payment.coinsUsed.storePromoCoins || 0) > 0) && (
-          <View style={styles.itemsCard}>
-            <ThemedText style={styles.cardTitle}>Payment Breakdown</ThemedText>
-            <View style={styles.orderSummary}>
-              {(order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0) > 0 && (
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabel}>{BRAND.COIN_NAME}</ThemedText>
-                  <ThemedText style={[styles.summaryValue, { color: Colors.brand.purple }]}>
-                    -{currencySymbol}{(order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0).toLocaleString()}
-                  </ThemedText>
-                </View>
-              )}
-              {(order.payment.coinsUsed.promoCoins || 0) > 0 && (
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabel}>Promo Coins</ThemedText>
-                  <ThemedText style={[styles.summaryValue, { color: Colors.warning }]}>
-                    -{currencySymbol}{order.payment.coinsUsed.promoCoins.toLocaleString()}
-                  </ThemedText>
-                </View>
-              )}
-              {(order.payment.coinsUsed.storePromoCoins || 0) > 0 && (
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabel}>Store Branded Coins</ThemedText>
-                  <ThemedText style={[styles.summaryValue, { color: Colors.success }]}>
-                    -{currencySymbol}{order.payment.coinsUsed.storePromoCoins.toLocaleString()}
-                  </ThemedText>
-                </View>
-              )}
-              {order.totals?.paidAmount != null && (
-                <View style={[styles.summaryRow, styles.totalRow]}>
-                  <ThemedText style={styles.totalLabel}>Cash / Gateway Paid</ThemedText>
-                  <ThemedText style={styles.totalValue}>
-                    {currencySymbol}{(order.totals.paidAmount || 0).toLocaleString()}
-                  </ThemedText>
-                </View>
-              )}
+        {order.payment?.coinsUsed &&
+          ((order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0) > 0 ||
+            (order.payment.coinsUsed.promoCoins || 0) > 0 ||
+            (order.payment.coinsUsed.storePromoCoins || 0) > 0) && (
+            <View style={styles.itemsCard}>
+              <ThemedText style={styles.cardTitle}>Payment Breakdown</ThemedText>
+              <View style={styles.orderSummary}>
+                {(order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0) > 0 && (
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabel}>{BRAND.COIN_NAME}</ThemedText>
+                    <ThemedText style={[styles.summaryValue, { color: Colors.brand.purple }]}>
+                      -{currencySymbol}
+                      {(order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0).toLocaleString()}
+                    </ThemedText>
+                  </View>
+                )}
+                {(order.payment.coinsUsed.promoCoins || 0) > 0 && (
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabel}>Promo Coins</ThemedText>
+                    <ThemedText style={[styles.summaryValue, { color: Colors.warning }]}>
+                      -{currencySymbol}
+                      {order.payment.coinsUsed.promoCoins.toLocaleString()}
+                    </ThemedText>
+                  </View>
+                )}
+                {(order.payment.coinsUsed.storePromoCoins || 0) > 0 && (
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabel}>Store Branded Coins</ThemedText>
+                    <ThemedText style={[styles.summaryValue, { color: Colors.success }]}>
+                      -{currencySymbol}
+                      {order.payment.coinsUsed.storePromoCoins.toLocaleString()}
+                    </ThemedText>
+                  </View>
+                )}
+                {order.totals?.paidAmount != null && (
+                  <View style={[styles.summaryRow, styles.totalRow]}>
+                    <ThemedText style={styles.totalLabel}>Cash / Gateway Paid</ThemedText>
+                    <ThemedText style={styles.totalValue}>
+                      {currencySymbol}
+                      {(order.totals.paidAmount || 0).toLocaleString()}
+                    </ThemedText>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-        )}
+          )}
 
         {/* Refund Info - shown for cancelled/refunded orders */}
         {(order.status === 'refunded' || order.status === 'cancelled') && order.totals?.refundAmount > 0 && (
@@ -680,7 +668,8 @@ function DetailedOrderTrackingPage() {
               <View style={styles.summaryRow}>
                 <ThemedText style={styles.summaryLabel}>Refund Amount</ThemedText>
                 <ThemedText style={[styles.summaryValue, { color: PROFILE_COLORS.success }]}>
-                  {currencySymbol}{order.totals.refundAmount.toLocaleString()}
+                  {currencySymbol}
+                  {order.totals.refundAmount.toLocaleString()}
                 </ThemedText>
               </View>
               {order.payment?.refundedAt && (
@@ -688,7 +677,9 @@ function DetailedOrderTrackingPage() {
                   <ThemedText style={styles.summaryLabel}>Refunded On</ThemedText>
                   <ThemedText style={styles.summaryValue}>
                     {new Date(order.payment.refundedAt).toLocaleDateString('en-US', {
-                      year: 'numeric', month: 'short', day: 'numeric'
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
                     })}
                   </ThemedText>
                 </View>
@@ -715,24 +706,24 @@ function DetailedOrderTrackingPage() {
                 month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
               })}
             </ThemedText>
           </View>
 
           <View style={styles.detailRow}>
             <ThemedText style={styles.detailLabel}>Payment Method</ThemedText>
-            <ThemedText style={styles.detailValue}>
-              {order.payment?.method?.toUpperCase() || 'N/A'}
-            </ThemedText>
+            <ThemedText style={styles.detailValue}>{order.payment?.method?.toUpperCase() || 'N/A'}</ThemedText>
           </View>
 
           <View style={styles.detailRow}>
             <ThemedText style={styles.detailLabel}>Payment Status</ThemedText>
-            <ThemedText style={[
-              styles.detailValue,
-              { color: order.payment?.status === 'paid' ? PROFILE_COLORS.success : PROFILE_COLORS.warning }
-            ]}>
+            <ThemedText
+              style={[
+                styles.detailValue,
+                { color: order.payment?.status === 'paid' ? PROFILE_COLORS.success : PROFILE_COLORS.warning },
+              ]}
+            >
               {order.payment?.status?.toUpperCase() || 'PENDING'}
             </ThemedText>
           </View>
@@ -740,10 +731,9 @@ function DetailedOrderTrackingPage() {
           <View style={styles.detailRow}>
             <ThemedText style={styles.detailLabel}>Delivery Address</ThemedText>
             <ThemedText style={styles.detailValue}>
-              {order.delivery?.address ?
-                `${order.delivery.address.addressLine1}, ${order.delivery.address.city}, ${order.delivery.address.state} ${order.delivery.address.pincode}` :
-                'Address not available'
-              }
+              {order.delivery?.address
+                ? `${order.delivery.address.addressLine1}, ${order.delivery.address.city}, ${order.delivery.address.state} ${order.delivery.address.pincode}`
+                : 'Address not available'}
             </ThemedText>
           </View>
 
@@ -790,7 +780,7 @@ function DetailedOrderTrackingPage() {
         orderNumber={order?.orderNumber}
       />
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -901,7 +891,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  
+
   // Cards
   statusCard: {
     backgroundColor: colors.background.primary,
@@ -984,7 +974,7 @@ const styles = StyleSheet.create({
     color: Colors.error,
     fontWeight: '600',
   },
-  
+
   // Delivery Partner Card
   deliveryPartnerCard: {
     backgroundColor: colors.background.primary,
@@ -1045,7 +1035,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: Spacing.xs,
   },
-  
+
   // Tracking Card
   trackingCard: {
     backgroundColor: colors.background.primary,
@@ -1229,7 +1219,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: PROFILE_COLORS.primary,
   },
-  
+
   // Details Card
   detailsCard: {
     backgroundColor: colors.background.primary,
@@ -1272,7 +1262,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: Spacing.sm,
   },
-  
+
   bottomSpace: {
     height: 20,
   },

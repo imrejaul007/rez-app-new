@@ -280,6 +280,7 @@ export function handleButtonDestination(
   const destination = buttonConfig.destination;
 
   // Default error handler logs to console if no callback provided
+  const showError: ButtonErrorCallback = onError || ((title, message) => console.warn(`[StoreAction] ${title}: ${message}`));
 
   // If no destination configured, use defaults based on button id
   if (!destination) {

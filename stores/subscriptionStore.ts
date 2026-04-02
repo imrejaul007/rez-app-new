@@ -64,6 +64,13 @@ const freeTierDefault = (userId: string): CurrentSubscription => ({
     freeDelivery: false,
     prioritySupport: false,
     exclusiveDeals: false,
+    unlimitedWishlists: false,
+    earlyFlashSaleAccess: false,
+    personalShopper: false,
+    premiumEvents: false,
+    conciergeService: false,
+    birthdayOffer: false,
+    anniversaryOffer: false,
   },
   usage: {
     totalSavings: 0,
@@ -73,6 +80,7 @@ const freeTierDefault = (userId: string): CurrentSubscription => ({
     deliveryFeesSaved: 0,
     exclusiveDealsUsed: 0,
   },
+  daysRemaining: 365,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 });
@@ -160,7 +168,7 @@ export const useSubscriptionStore = create<SubscriptionStoreState>((set, get) =>
             lastFetched: new Date().toISOString(),
           },
         });
-      } catch (error) {
+      } catch (error: any) {
         set({
           state: {
             ...get().state,

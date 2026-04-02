@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Manages 2FA setup and configuration
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  TextInput,
-  Modal,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, TextInput, Modal } from 'react-native';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,15 +57,15 @@ const TWO_FACTOR_OPTIONS: TwoFactorOption[] = [
 function TwoFactorAuthPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { 
-    securitySettings, 
-    updateSecuritySettings, 
-    enableTwoFactorAuth, 
+  const {
+    securitySettings,
+    updateSecuritySettings,
+    enableTwoFactorAuth,
     disableTwoFactorAuth,
     generateBackupCodes,
-    isLoading 
+    isLoading,
   } = useSecurity();
-  
+
   const [selectedMethod, setSelectedMethod] = useState<TwoFactorMethod>('2FA_SMS');
   const [showBackupCodes, setShowBackupCodes] = useState(false);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
@@ -87,19 +78,19 @@ function TwoFactorAuthPage() {
   const handleEnable2FA = async () => {
     try {
       setIsVerifying(true);
-      
+
       // Generate backup codes
       const codes = generateBackupCodes();
       setBackupCodes(codes);
-      
+
       // Enable 2FA
       const success = await enableTwoFactorAuth(selectedMethod);
-      
+
       if (success) {
         if (!isMounted()) return;
         setShowBackupCodes(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to enable two-factor authentication.');
     } finally {
       if (!isMounted()) return;
@@ -117,10 +108,10 @@ function TwoFactorAuthPage() {
           if (success) {
             router.canGoBack() ? router.back() : router.replace('/(tabs)');
           }
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to disable two-factor authentication.');
         }
-      }
+      },
     );
   };
 
@@ -139,13 +130,13 @@ function TwoFactorAuthPage() {
         platformAlertConfirm(
           'Verification Successful',
           'Two-factor authentication has been enabled successfully!',
-          () => router.canGoBack() ? router.back() : router.replace('/(tabs)'),
-          'OK'
+          () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+          'OK',
         );
       } else {
         platformAlertSimple('Error', response.message || 'Invalid verification code. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Invalid verification code. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -162,7 +153,6 @@ function TwoFactorAuthPage() {
         !option.available && styles.disabledOption,
       ]}
       onPress={() => option.available && setSelectedMethod(option.value)}
-     
       disabled={!option.available}
       accessibilityLabel={`${option.title}: ${option.description}${selectedMethod === option.value ? ', selected' : ''}`}
       accessibilityRole="radio"
@@ -224,10 +214,7 @@ function TwoFactorAuthPage() {
             ))}
           </View>
 
-          <Pressable
-            style={styles.continueButton}
-            onPress={() => setShowBackupCodes(false)}
-          >
+          <Pressable style={styles.continueButton} onPress={() => setShowBackupCodes(false)}>
             <ThemedText style={styles.continueButtonText}>I've Saved These Codes</ThemedText>
           </Pressable>
         </ScrollView>
@@ -241,7 +228,10 @@ function TwoFactorAuthPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} />
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple] as const} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Two-Factor Authentication</ThemedText>
@@ -264,7 +254,7 @@ function TwoFactorAuthPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
@@ -283,20 +273,17 @@ function TwoFactorAuthPage() {
         <View style={styles.statusSection}>
           <View style={styles.statusCard}>
             <View style={styles.statusHeader}>
-              <Ionicons 
-                name={is2FAEnabled ? "shield-checkmark" : "shield-outline"} 
-                size={24} 
-                color={is2FAEnabled ? Colors.success : colors.text.tertiary} 
+              <Ionicons
+                name={is2FAEnabled ? 'shield-checkmark' : 'shield-outline'}
+                size={24}
+                color={is2FAEnabled ? Colors.success : colors.text.tertiary}
               />
-              <ThemedText style={styles.statusTitle}>
-                {is2FAEnabled ? 'Enabled' : 'Disabled'}
-              </ThemedText>
+              <ThemedText style={styles.statusTitle}>{is2FAEnabled ? 'Enabled' : 'Disabled'}</ThemedText>
             </View>
             <ThemedText style={styles.statusDescription}>
-              {is2FAEnabled 
+              {is2FAEnabled
                 ? `Two-factor authentication is enabled using ${currentMethod.replace('2FA_', '')}.`
-                : 'Add an extra layer of security to your account.'
-              }
+                : 'Add an extra layer of security to your account.'}
             </ThemedText>
           </View>
         </View>
@@ -350,9 +337,7 @@ function TwoFactorAuthPage() {
                   accessibilityState={{ disabled: isVerifying || !verificationCode.trim() }}
                   accessibilityHint="Double tap to verify the entered code"
                 >
-                  <ThemedText style={styles.verifyButtonText}>
-                    {isVerifying ? 'Verifying...' : 'Verify'}
-                  </ThemedText>
+                  <ThemedText style={styles.verifyButtonText}>{isVerifying ? 'Verifying...' : 'Verify'}</ThemedText>
                 </Pressable>
               </View>
             </View>
@@ -378,8 +363,8 @@ function TwoFactorAuthPage() {
               <ThemedText style={styles.infoTitle}>About Two-Factor Authentication</ThemedText>
             </View>
             <ThemedText style={styles.infoText}>
-              Two-factor authentication adds an extra layer of security to your account. 
-              You'll need to enter a verification code in addition to your password when signing in.
+              Two-factor authentication adds an extra layer of security to your account. You'll need to enter a
+              verification code in addition to your password when signing in.
             </ThemedText>
           </View>
         </View>
@@ -689,6 +674,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
 
 export default withErrorBoundary(TwoFactorAuthPage, 'AccountTwoFactorAuth');

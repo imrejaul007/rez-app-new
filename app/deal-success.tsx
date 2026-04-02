@@ -33,12 +33,7 @@ function DealSuccessPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
 
-  const params = useLocalSearchParams<{
-    razorpay_order_id?: string;
-    razorpay_payment_id?: string;
-    razorpay_signature?: string;
-    redemptionId?: string;
-  }>();
+  const params = useLocalSearchParams<any>();
 
   const razorpayOrderId = params.razorpay_order_id;
   const razorpayPaymentId = params.razorpay_payment_id;
@@ -216,7 +211,7 @@ function DealSuccessPage() {
         <Animated.View style={[styles.textContainer, fadeAnimStyle]}>
           <ThemedText style={styles.successTitle}>Purchase Successful!</ThemedText>
           <ThemedText style={styles.successSubtitle}>
-            {dealStore} deal purchased for {getCurrencySymbol(purchaseCurrency)}
+            {dealStore} deal purchased for {getCurrencySymbol()}
             {purchaseAmount}
           </ThemedText>
         </Animated.View>

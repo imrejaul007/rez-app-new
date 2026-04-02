@@ -240,10 +240,10 @@ function EducationCategoryPage() {
         <View style={[styles.chipIconCircle, { backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : `${filter.color}14` }]}>
           {isActive ? <Ionicons name="checkmark" size={14} color={COLORS.white} /> : <Text style={styles.chipIconText}>{filter.icon}</Text>}
         </View>
-        <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>{filter.label}</Text>
+        <Text style={[styles.chipLabel, isActive ? styles.chipLabelActive : null]}>{filter.label}</Text>
         {count > 0 && (
-          <View style={[styles.chipCount, isActive && styles.chipCountActive]}>
-            <Text style={[styles.chipCountText, isActive && styles.chipCountTextActive]}>{count}</Text>
+          <View style={[styles.chipCount, isActive ? styles.chipCountActive : null]}>
+            <Text style={[styles.chipCountText, isActive ? styles.chipCountTextActive : null]}>{count}</Text>
           </View>
         )}
       </Pressable>
@@ -307,7 +307,7 @@ function EducationCategoryPage() {
 
       <EnhancedAISuggestionsSection categorySlug={slug} categoryName={categoryConfig.name} placeholders={aiPlaceholders} onSearch={handleAISearch} />
 
-      <BrowseCategoryGrid categories={subcategories} title="Explore Courses" onCategoryPress={handleCategoryPress} />
+      <BrowseCategoryGrid categories={subcategories as any} title="Explore Courses" onCategoryPress={handleCategoryPress} />
 
       {/* Popular Courses */}
       {filteredCourses.length > 0 && (
@@ -434,7 +434,7 @@ function EducationCategoryPage() {
       {/* Filter empty state */}
       {hasActiveFilters && filteredStores.length === 0 && filteredProducts.length === 0 && (
         <View style={styles.filterEmptyState}>
-          <Ionicons name="search-outline" size={48} color={COLORS.primaryLight} />
+          <Ionicons name="search-outline" size={48} color={(COLORS as any).primaryLight} />
           <Text style={styles.filterEmptyTitle}>No institutes match your filters</Text>
           <Text style={styles.filterEmptySubtitle}>Try removing some filters to see more results</Text>
           <Pressable onPress={clearAllFilters} style={styles.filterEmptyClearBtn}>
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     width: 100, alignItems: 'center', padding: 12, borderRadius: 16, backgroundColor: COLORS.white,
     ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4 }, android: { elevation: 1 }, web: { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' } }),
   },
-  serviceIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: COLORS.primaryLight, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
+  serviceIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: (COLORS as any).primaryLight, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   serviceEmoji: { fontSize: 24 },
   serviceName: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 4 },
   serviceCashback: { fontSize: 11, color: COLORS.primary, textAlign: 'center' },
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4 }, android: { elevation: 1 }, web: { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' } }),
   },
   productImageCompact: { width: '100%', height: 140, borderRadius: 8, marginBottom: 8 },
-  productPlaceholder: { backgroundColor: COLORS.primaryLight, justifyContent: 'center', alignItems: 'center' },
+  productPlaceholder: { backgroundColor: (COLORS as any).primaryLight, justifyContent: 'center', alignItems: 'center' },
   productNameCompact: { fontSize: 12, fontWeight: '500', color: COLORS.textPrimary, marginBottom: 4 },
   productPriceCompact: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 4 },
   productCashbackCompact: { fontSize: 11, color: COLORS.primary },
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4 }, android: { elevation: 1 }, web: { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' } }),
   },
   storeImage: { width: '100%', height: 100 },
-  storePlaceholder: { backgroundColor: COLORS.primaryLight, justifyContent: 'center', alignItems: 'center' },
+  storePlaceholder: { backgroundColor: (COLORS as any).primaryLight, justifyContent: 'center', alignItems: 'center' },
   storeBadge: { position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 12, backgroundColor: COLORS.primary, gap: 3 },
   storeBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.white },
   storeName: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary, paddingHorizontal: 8, paddingTop: 8, paddingBottom: 2 },

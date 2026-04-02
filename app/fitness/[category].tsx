@@ -76,7 +76,7 @@ const FitnessCategoryPage: React.FC = () => {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category } = useLocalSearchParams<any>();
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -144,7 +144,7 @@ const FitnessCategoryPage: React.FC = () => {
       if (!isMounted()) return;
       setLocationLoading(false);
       return coords;
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setLocationError('Failed to get location');
       if (!isMounted()) return;
@@ -160,7 +160,7 @@ const FitnessCategoryPage: React.FC = () => {
           page: 1,
           limit: 50,
           sortBy: 'rating',
-        },
+        } as any,
       });
 
       let storesData = (response.data as any)?.stores || [];
@@ -183,7 +183,7 @@ const FitnessCategoryPage: React.FC = () => {
       if (!isMounted()) return;
       setTotalCount(total);
       applyFilter(storesData, selectedFilter);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setItems([]);
       if (!isMounted()) return;
@@ -292,7 +292,7 @@ const FitnessCategoryPage: React.FC = () => {
     setIsSearching(true);
     try {
       const response = await apiClient.get('/stores/search', {
-        params: { q: query, limit: 20 },
+        params: { q: query, limit: 20 } as any,
       });
 
       // Filter results to only show fitness-related stores
@@ -304,7 +304,7 @@ const FitnessCategoryPage: React.FC = () => {
 
       if (!isMounted()) return;
       setSearchResults(results);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setSearchResults([]);
     } finally {
@@ -397,7 +397,7 @@ const FitnessCategoryPage: React.FC = () => {
             <Pressable
               key={filter.id}
               onPress={() => handleFilterChange(filter.id)}
-              style={[styles.filterChip, selectedFilter === filter.id && styles.filterChipActive]}
+              style={[styles.filterChip, selectedFilter === filter.id ? styles.filterChipActive : null]}
               accessibilityRole="radio"
               accessibilityLabel={`${filter.label} filter`}
               accessibilityState={{ selected: selectedFilter === filter.id }}
@@ -407,7 +407,7 @@ const FitnessCategoryPage: React.FC = () => {
                 size={16}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
-              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id ? styles.filterChipTextActive : null]}>
                 {filter.label}
               </Text>
               {filter.id === 'nearby' && locationLoading && (
@@ -448,7 +448,7 @@ const FitnessCategoryPage: React.FC = () => {
                 accessibilityRole="button"
                 accessibilityLabel={`${item.name}, ${item.location?.city || 'Bangalore'}, rating ${item.ratings?.average?.toFixed(1) || '4.5'}, ${item.offers?.cashback || 15}% cashback`}
               >
-                <CachedImage source={item.banner?.[0] || item.logo || undefined} style={styles.itemImage} />
+                <CachedImage source={(item.banner?.[0] || item.logo || '') as any} style={styles.itemImage} />
                 <View style={styles.cashbackBadge}>
                   <Text style={styles.cashbackText}>{item.offers?.cashback || 15}%</Text>
                 </View>
@@ -567,7 +567,7 @@ const FitnessCategoryPage: React.FC = () => {
                   accessibilityRole="button"
                   accessibilityLabel={`${item.name}, ${item.location?.city || 'Bangalore'}, rating ${item.ratings?.average?.toFixed(1) || '4.5'}`}
                 >
-                  <CachedImage source={item.logo || item.banner?.[0]} style={styles.searchResultImage} />
+                  <CachedImage source={item.logo || (item.banner?.[0] as any)} style={styles.searchResultImage} />
                   <View style={styles.searchResultInfo}>
                     <Text style={styles.searchResultName}>{item.name}</Text>
                     <View style={styles.searchResultMeta}>

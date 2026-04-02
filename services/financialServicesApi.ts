@@ -144,7 +144,7 @@ class FinancialServicesApi {
       const response = await apiClient.get<FinancialServiceCategory[]>(
         `${this.basePath}/categories`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -163,7 +163,7 @@ class FinancialServicesApi {
         `${this.basePath}/featured`,
         { limit }
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -181,7 +181,7 @@ class FinancialServicesApi {
       const response = await apiClient.get<FinancialServicesStats>(
         `${this.basePath}/stats`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -211,7 +211,7 @@ class FinancialServicesApi {
         `${this.basePath}/category/${slug}`,
         queryParams
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -229,7 +229,7 @@ class FinancialServicesApi {
       const response = await apiClient.get<FinancialService>(
         `${this.basePath}/${id}`
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -259,7 +259,7 @@ class FinancialServicesApi {
         `${this.basePath}/search`,
         queryParams
       );
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,

@@ -222,7 +222,7 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
       socket.on(SocketEvents.RECONNECT_ERROR, handleReconnectError);
       socket.on(SocketEvents.RECONNECT_FAILED, handleReconnectFailed);
 
-      } catch (error) {
+      } catch (error: any) {
         setSocketState(prev => ({
           ...prev,
           error: error instanceof Error ? error.message : 'Failed to initialize socket',

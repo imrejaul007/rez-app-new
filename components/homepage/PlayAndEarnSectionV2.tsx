@@ -125,7 +125,7 @@ const PlayAndEarnSectionV2: React.FC = () => {
           if (!isMounted()) return;
           setGames(response.data.games.slice(0, 2));
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   headerSubtitle: {
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   gameTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   gameSubtitle: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   quickActionLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 });
 

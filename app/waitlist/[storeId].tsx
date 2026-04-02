@@ -17,7 +17,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { platformAlertSimple } from '@/utils/platformAlert';
 
 function WaitlistScreen() {
-  const { storeId } = useLocalSearchParams<{ storeId: string }>();
+  const { storeId } = useLocalSearchParams<any>();
   const router = useRouter();
   const { colors } = useTheme();
   const [serviceType, setServiceType] = useState('');

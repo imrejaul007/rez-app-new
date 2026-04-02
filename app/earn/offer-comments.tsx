@@ -44,9 +44,9 @@ function OfferCommentsPage() {
     try {
       const result = await offerCommentApi.getCommentableOffers(1, 50);
       if (result.success && result.data) {
-        setOffers(result.data.offers);
+        setOffers((result.data as any).offers);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -58,9 +58,9 @@ function OfferCommentsPage() {
     try {
       const result = await offerCommentApi.getMyComments(1, 50);
       if (result.success && result.data) {
-        setMyComments(result.data.comments);
+        setMyComments((result.data as any).comments);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []);
@@ -132,7 +132,7 @@ function OfferCommentsPage() {
   const renderOfferCard = useCallback(
     ({ item }: { item: CommentableOffer }) => (
       <Pressable
-        style={[styles.offerCard, selectedOffer?.id === item.id && styles.offerCardSelected]}
+        style={[styles.offerCard, selectedOffer?.id === item.id ? styles.offerCardSelected : null]}
         onPress={() => setSelectedOffer(selectedOffer?.id === item.id ? null : item)}
       >
         <View style={styles.offerCardHeader}>
@@ -222,10 +222,10 @@ function OfferCommentsPage() {
         {(['offers', 'my-comments'] as TabType[]).map((tab) => (
           <Pressable
             key={tab}
-            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            style={[styles.tab, activeTab === tab ? styles.tabActive : null]}
             onPress={() => handleTabChange(tab)}
           >
-            <ThemedText style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+            <ThemedText style={[styles.tabText, activeTab === tab ? styles.tabTextActive : null]}>
               {tab === 'offers' ? 'Active Offers' : 'My Comments'}
             </ThemedText>
           </Pressable>
@@ -281,7 +281,7 @@ function OfferCommentsPage() {
                   <ThemedText style={styles.charCount}>{commentText.length}/1000</ThemedText>
                 </View>
                 <Pressable
-                  style={[styles.submitButton, commentText.trim().length < 20 && styles.submitButtonDisabled]}
+                  style={[styles.submitButton, commentText.trim().length < 20 ? styles.submitButtonDisabled : null]}
                   onPress={handleSubmitComment}
                   disabled={commentText.trim().length < 20 || submitting}
                 >

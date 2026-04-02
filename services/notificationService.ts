@@ -69,7 +69,7 @@ class NotificationService {
       if (params?.page) queryParams.append('page', params.page.toString());
       if (params?.limit) queryParams.append('limit', params.limit.toString());
 
-      const response: any = await apiClient.get(`/notifications?${queryParams.toString()}`);
+      const response: any = await apiClient.get<any>(`/notifications?${queryParams.toString()}`);
       return {
         success: Boolean(response?.success),
         data: response?.data as NotificationHistoryResponse | undefined,
@@ -88,10 +88,10 @@ class NotificationService {
    */
   async markAsRead(notificationIds?: string[]): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.patch('/notifications/read', {
+      const response = await apiClient.patch<any>('/notifications/read', {
         notificationIds: notificationIds || []
       });
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -105,8 +105,8 @@ class NotificationService {
    */
   async deleteNotification(notificationId: string): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.delete(`/notifications/${notificationId}`);
-      return response;
+      const response = await apiClient.delete<any>(`/notifications/${notificationId}`);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -120,8 +120,8 @@ class NotificationService {
    */
   async getNotificationSettings(): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.get('/user-settings/notifications/all');
-      return response;
+      const response = await apiClient.get<any>('/user-settings/notifications/all');
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -135,8 +135,8 @@ class NotificationService {
    */
   async updatePushSettings(settings: any): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.put('/user-settings/notifications/push', settings);
-      return response;
+      const response = await apiClient.put<any>('/user-settings/notifications/push', settings);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -150,8 +150,8 @@ class NotificationService {
    */
   async updateEmailSettings(settings: any): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.put('/user-settings/notifications/email', settings);
-      return response;
+      const response = await apiClient.put<any>('/user-settings/notifications/email', settings);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -165,8 +165,8 @@ class NotificationService {
    */
   async updateSMSSettings(settings: any): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.put('/user-settings/notifications/sms', settings);
-      return response;
+      const response = await apiClient.put<any>('/user-settings/notifications/sms', settings);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -180,8 +180,8 @@ class NotificationService {
    */
   async updateInAppSettings(settings: any): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.put('/user-settings/notifications/inapp', settings);
-      return response;
+      const response = await apiClient.put<any>('/user-settings/notifications/inapp', settings);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -196,8 +196,8 @@ class NotificationService {
   async createTestNotification(data: NotificationData): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       // This would typically be an admin endpoint
-      const response = await apiClient.post('/notifications/test', data);
-      return response;
+      const response = await apiClient.post<any>('/notifications/test', data as any);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -211,8 +211,8 @@ class NotificationService {
    */
   async getNotificationStats(): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.get('/notifications/stats');
-      return response;
+      const response = await apiClient.get<any>('/notifications/stats');
+      return response as any;
     } catch (error) {
       return {
         success: false,

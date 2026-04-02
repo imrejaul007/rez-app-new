@@ -278,7 +278,7 @@ const GroceryProductCard: React.FC<GroceryProductCardProps> = ({
         <View style={styles.cartSection}>
           {quantity === 0 ? (
             <Pressable
-              style={[styles.addButton, !inStock && styles.addButtonDisabled]}
+              style={[styles.addButton, !inStock ? styles.addButtonDisabled : null]}
               onPress={handleAddToCart}
               disabled={!inStock}
             >
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
     lineHeight: 18,
   },
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginLeft: 2,
   },
   ratingCount: {
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   originalPrice: {
     fontSize: 12,
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   compactName: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   compactUnit: {
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   compactPrice: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   addButtonCompact: {
     position: 'absolute',

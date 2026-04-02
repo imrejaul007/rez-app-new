@@ -111,11 +111,11 @@ const CashStoreSectionContainer: React.FC<CashStoreSectionContainerProps> = ({
             toolbarColor: colors.nileBlue, // Nile Blue
             controlsColor: colors.background.primary,
           });
-        } catch (error) {
+        } catch (error: any) {
           if (deal.externalUrl) {
             try {
               await Linking.openURL(deal.externalUrl);
-            } catch (e) { catchAndWarn(e, 'CashStoreSectionContainer/handleTrendingDealPress-fallback'); }
+            } catch (e: any) { catchAndWarn(e, 'CashStoreSectionContainer/handleTrendingDealPress-fallback'); }
           }
         }
       } else {
@@ -135,7 +135,7 @@ const CashStoreSectionContainer: React.FC<CashStoreSectionContainerProps> = ({
 
   const handleCouponCopy = useCallback(
     (coupon: CashStoreCoupon) => {
-      copyCouponCode(coupon.code, coupon.id);
+      copyCouponCode(coupon.code);
     },
     [copyCouponCode]
   );
@@ -152,11 +152,11 @@ const CashStoreSectionContainer: React.FC<CashStoreSectionContainerProps> = ({
             toolbarColor: colors.nileBlue, // Nile Blue
             controlsColor: colors.background.primary,
           });
-        } catch (error) {
+        } catch (error: any) {
           if (deal.externalUrl) {
             try {
               await Linking.openURL(deal.externalUrl);
-            } catch (e) { catchAndWarn(e, 'CashStoreSectionContainer/handleHighCashbackPress-fallback'); }
+            } catch (e: any) { catchAndWarn(e, 'CashStoreSectionContainer/handleHighCashbackPress-fallback'); }
           }
         }
       } else {

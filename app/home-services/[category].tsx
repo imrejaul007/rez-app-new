@@ -29,7 +29,7 @@ const categoryGradients: Record<string, string[]> = {
 const HomeServicesCategoryPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -44,11 +44,11 @@ const HomeServicesCategoryPage: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       if (!category) return;
-      
+
       try {
         setIsLoading(true);
         let sortBy: 'price_low' | 'price_high' | 'rating' | 'newest' | 'popular' = 'rating';
-        
+
         if (selectedFilter === 'Best Price') {
           sortBy = 'price_low';
         } else if (selectedFilter === 'Top Rated') {
@@ -61,7 +61,7 @@ const HomeServicesCategoryPage: React.FC = () => {
         const response = await homeServicesApi.getByCategory(category, {
           page: currentPage,
           limit: 20,
-          sortBy
+          sortBy,
         });
 
         if (response.success && response.data) {
@@ -71,7 +71,7 @@ const HomeServicesCategoryPage: React.FC = () => {
             setServices(data.services || []);
           } else {
             if (!isMounted()) return;
-            setServices(prev => [...prev, ...(data.services || [])]);
+            setServices((prev) => [...prev, ...(data.services || [])]);
           }
           if (data.category) {
             if (!isMounted()) return;
@@ -88,7 +88,7 @@ const HomeServicesCategoryPage: React.FC = () => {
           if (!isMounted()) return;
           setError(response.error || 'Failed to load services');
         }
-      } catch (error) {
+      } catch (error: any) {
         if (!isMounted()) return;
         setError('Failed to load services. Please try again.');
       } finally {
@@ -108,7 +108,7 @@ const HomeServicesCategoryPage: React.FC = () => {
 
   const loadMore = () => {
     if (hasMore && !isLoading) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
@@ -130,7 +130,7 @@ const HomeServicesCategoryPage: React.FC = () => {
   const gradientColors = categoryGradients[category || 'repair'] || categoryGradients['repair'];
   const displayTitle = categoryInfo?.name || `${category?.charAt(0).toUpperCase()}${category?.slice(1)} Services`;
   const displayIcon = categoryInfo?.icon || '🔧';
-  
+
   // Check if icon is a URL or emoji
   const isIconUrl = displayIcon && (displayIcon.startsWith('http://') || displayIcon.startsWith('https://'));
 
@@ -144,13 +144,23 @@ const HomeServicesCategoryPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
+      <LinearGradient colors={gradientColors as any} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}><Ionicons name="arrow-back" size={24} color={colors.text.inverse} /></Pressable>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+          </Pressable>
           <View style={styles.headerTitleContainer}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               {isIconUrl ? (
-                <CachedImage source={{ uri: displayIcon }} style={{ width: 24, height: 24 }} contentFit="contain" cachePolicy="memory-disk" />
+                <CachedImage
+                  source={{ uri: displayIcon }}
+                  style={{ width: 24, height: 24 }}
+                  contentFit="contain"
+                  cachePolicy="memory-disk"
+                />
               ) : (
                 <Text style={styles.headerTitle}>{displayIcon} </Text>
               )}
@@ -158,22 +168,30 @@ const HomeServicesCategoryPage: React.FC = () => {
             </View>
             <Text style={styles.headerSubtitle}>{services.length} services</Text>
           </View>
-          <Pressable style={styles.searchButton}><Ionicons name="search" size={24} color={colors.text.inverse} /></Pressable>
+          <Pressable style={styles.searchButton}>
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
+          </Pressable>
         </View>
       </LinearGradient>
 
       <View style={styles.filtersContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {['all', 'Today', 'Top Rated', 'Best Price'].map((filter) => (
-            <Pressable key={filter} onPress={() => setSelectedFilter(filter)} style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}>
-              <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>{filter === 'all' ? 'All' : filter}</Text>
+            <Pressable
+              key={filter}
+              onPress={() => setSelectedFilter(filter)}
+              style={[styles.filterChip, selectedFilter === filter ? styles.filterChipActive : null]}
+            >
+              <Text style={[styles.filterChipText, selectedFilter === filter ? styles.filterChipTextActive : null]}>
+                {filter === 'all' ? 'All' : filter}
+              </Text>
             </Pressable>
           ))}
         </ScrollView>
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} 
+        contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         onScroll={({ nativeEvent }) => {
           const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
@@ -211,14 +229,9 @@ const HomeServicesCategoryPage: React.FC = () => {
               const price = service.pricing?.selling || 0;
               const cashback = service.cashback?.percentage || service.serviceCategory?.cashbackPercentage || 0;
               const rating = service.ratings?.average || 0;
-              
+
               return (
-                <Pressable 
-                  key={serviceId} 
-                  style={styles.itemCard} 
-                  onPress={() => handleServicePress(service)} 
-                 
-                >
+                <Pressable key={serviceId} style={styles.itemCard} onPress={() => handleServicePress(service)}>
                   <CachedImage source={{ uri: imageUrl }} style={styles.itemImage} cachePolicy="memory-disk" />
                   <View style={styles.cashbackBadge}>
                     <Text style={styles.cashbackText}>{cashback}%</Text>
@@ -235,8 +248,11 @@ const HomeServicesCategoryPage: React.FC = () => {
                       </View>
                     </View>
                     <View style={styles.itemFooter}>
-                      <Text style={styles.priceText}>From {currencySymbol}{price}</Text>
-                      <Pressable 
+                      <Text style={styles.priceText}>
+                        From {currencySymbol}
+                        {price}
+                      </Text>
+                      <Pressable
                         style={styles.bookButton}
                         onPress={(e) => {
                           e.stopPropagation();
@@ -273,26 +289,64 @@ const styles = StyleSheet.create({
   headerTitle: { ...Typography.h3, color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: Spacing.sm },
-  filtersContainer: { paddingVertical: Spacing.md, paddingHorizontal: Spacing.base, backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, marginRight: Spacing.sm },
+  filtersContainer: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
+  filterChip: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.background.secondary,
+    marginRight: Spacing.sm,
+  },
   filterChipActive: { backgroundColor: Colors.info },
   filterChipText: { ...Typography.body, color: colors.text.tertiary },
   filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   itemsList: { padding: Spacing.base, gap: Spacing.base },
-  itemCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
+  itemCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   itemImage: { width: '100%', height: 140 },
-  cashbackBadge: { position: 'absolute', top: Spacing.md, right: Spacing.md, backgroundColor: Colors.success, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  cashbackBadge: {
+    position: 'absolute',
+    top: Spacing.md,
+    right: Spacing.md,
+    backgroundColor: Colors.success,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
   cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   itemInfo: { padding: Spacing.base },
   itemName: { ...Typography.h4, color: colors.nileBlue, marginBottom: Spacing.sm },
-  typeBadge: { alignSelf: 'flex-start', backgroundColor: colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm, marginBottom: Spacing.sm },
+  typeBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.background.secondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+    marginBottom: Spacing.sm,
+  },
   typeText: { ...Typography.caption, fontWeight: '600', color: colors.text.tertiary },
   itemMeta: { flexDirection: 'row', gap: Spacing.base, marginBottom: Spacing.md },
   ratingContainer: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   ratingText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
   itemFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   priceText: { ...Typography.body, fontWeight: '600', color: Colors.success },
-  bookButton: { backgroundColor: Colors.info, paddingHorizontal: Spacing.lg, paddingVertical: 10, borderRadius: BorderRadius.xl },
+  bookButton: {
+    backgroundColor: Colors.info,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.xl,
+  },
   bookButtonText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
 });
 

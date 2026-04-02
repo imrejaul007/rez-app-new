@@ -105,7 +105,7 @@ function BillVerificationStatus({ state }: BillVerificationStatusProps) {
               ]}
             >
               <Ionicons
-                name={item.step < state.currentStep ? 'checkmark' : item.icon}
+                name={(item.step < state.currentStep ? 'checkmark' : item.icon) as any}
                 size={16}
                 color={
                   item.step <= state.currentStep

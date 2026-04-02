@@ -92,12 +92,12 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
 
       // Get or create conversation
       if (conversationId) {
-        const response = await storeMessagingService.getConversation(conversationId);
+        const response: any = await storeMessagingService.getConversation(conversationId);
         if (response.success && response.data) {
           conv = response.data;
         }
       } else if (storeId) {
-        const response = await storeMessagingService.getOrCreateConversation(storeId, orderId);
+        const response: any = await storeMessagingService.getOrCreateConversation(storeId, orderId);
         if (response.success && response.data) {
           conv = response.data;
           setConversationId(response.data.id);
@@ -115,7 +115,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
       } else {
         setError('Failed to load conversation');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load conversation');
     } finally {
       setLoading(false);
@@ -130,7 +130,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
     setError(null);
 
     try {
-      const response = await storeMessagingService.getMessages(conversationId, page, 50);
+      const response: any = await storeMessagingService.getMessages(conversationId, page, 50);
 
       if (response.success && response.data) {
         const newMessages = response.data.messages;
@@ -145,7 +145,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
         setHasMore(response.data.pagination.current < response.data.pagination.pages);
         setCurrentPage(page);
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load messages');
     } finally {
       setLoading(false);
@@ -190,7 +190,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
         orderId,
       };
 
-      const response = await storeMessagingService.sendMessage(request);
+      const response: any = await storeMessagingService.sendMessage(request);
 
       if (response.success && response.data) {
         // Replace temp message with real message
@@ -206,7 +206,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
         );
         setError(response.error || 'Failed to send message');
       }
-    } catch (err) {
+    } catch (err: any) {
       setMessages(prev =>
         prev.map(msg =>
           msg.id === tempMessage.id ? { ...msg, status: 'failed' as MessageStatus } : msg
@@ -226,7 +226,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
     setError(null);
 
     try {
-      const response = await storeMessagingService.sendMessageWithAttachments(
+      const response: any = await storeMessagingService.sendMessageWithAttachments(
         conversationId,
         content,
         attachments
@@ -236,7 +236,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
       } else {
         setError(response.error || 'Failed to send message with attachments');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to send message with attachments');
     } finally {
       setSending(false);
@@ -296,11 +296,11 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
     if (!conversationId) return;
 
     try {
-      const response = await storeMessagingService.archiveConversation(conversationId);
+      const response: any = await storeMessagingService.archiveConversation(conversationId);
       if (response.success && response.data) {
         setConversation(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to archive conversation');
     }
   }, [conversationId]);
@@ -313,7 +313,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
       await storeMessagingService.deleteConversation(conversationId);
       setConversation(null);
       setMessages([]);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to delete conversation');
     }
   }, [conversationId]);

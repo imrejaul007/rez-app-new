@@ -171,7 +171,7 @@ const LazySection: React.FC<LazySectionProps> = ({
 
   // Use appropriate hook based on platform
   const isVisible = Platform.OS === 'web'
-    ? useLazySectionWeb(ref, threshold, rootMargin, onVisible)
+    ? useLazySectionWeb(ref as React.RefObject<View>, threshold, rootMargin, onVisible)
     : useLazySectionNative(sectionY, scrollY, rootMargin, onVisible);
 
   // Track if section has ever been loaded — fade in content

@@ -63,21 +63,11 @@ const getTagColor = (tag: string | null) => {
   }
 };
 
-const OccasionCard = ({
-  occasion,
-  onPress,
-}: {
-  occasion: Occasion;
-  onPress: () => void;
-}) => {
-  const tagColors = getTagColor(occasion.tag);
+const OccasionCard = ({ occasion, onPress }: { occasion: Occasion; onPress: () => void }) => {
+  const tagColors = getTagColor(occasion.tag ?? null);
 
   return (
-    <Pressable
-      style={[styles.occasionCard, { backgroundColor: `${occasion.color}15` }]}
-      onPress={onPress}
-     
-    >
+    <Pressable style={[styles.occasionCard, { backgroundColor: `${occasion.color}15` }]} onPress={onPress}>
       {/* Tag Badge */}
       {occasion.tag && (
         <View style={[styles.tagBadge, { backgroundColor: tagColors.bg }]}>
@@ -127,15 +117,15 @@ function OccasionsPage() {
     try {
       const slug = categorySlug || '';
       const response = await categoryMetadataApi.getOccasions(slug);
-      if (response.success && response.data?.occasions?.length > 0) {
+      if (response.success && (response.data?.occasions?.length ?? 0) > 0) {
         if (!isMounted()) return;
-        setOccasions(response.data.occasions);
+        setOccasions(response.data!.occasions);
       } else {
         // No occasions available from API — show empty state instead of dummy data
         if (!isMounted()) return;
         setOccasions([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setOccasions([]);
     } finally {
@@ -151,25 +141,25 @@ function OccasionsPage() {
     loadOccasions();
   };
 
-  const handleOccasionPress = useCallback((occasion: Occasion) => {
-    router.push({
-      pathname: '/shop',
-      params: { occasion: occasion.id, category: categorySlug },
-    } as any);
-  }, [router, categorySlug]);
+  const handleOccasionPress = useCallback(
+    (occasion: Occasion) => {
+      router.push({
+        pathname: '/shop',
+        params: { occasion: occasion.id, category: categorySlug },
+      } as any);
+    },
+    [router, categorySlug],
+  );
 
-  const renderOccasion = useCallback(({ item }: { item: Occasion }) => (
-    <OccasionCard occasion={item} onPress={() => handleOccasionPress(item)} />
-  ), [handleOccasionPress]);
+  const renderOccasion = useCallback(
+    ({ item }: { item: Occasion }) => <OccasionCard occasion={item} onPress={() => handleOccasionPress(item)} />,
+    [handleOccasionPress],
+  );
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
-      <Text style={styles.pageTitle}>
-        {categorySlug ? 'Shop for Every Occasion' : 'All Occasions'}
-      </Text>
-      <Text style={styles.pageSubtitle}>
-        Find the perfect products for any event or celebration
-      </Text>
+      <Text style={styles.pageTitle}>{categorySlug ? 'Shop for Every Occasion' : 'All Occasions'}</Text>
+      <Text style={styles.pageSubtitle}>Find the perfect products for any event or celebration</Text>
       <Text style={styles.resultCount}>
         {occasions.length} {occasions.length === 1 ? 'occasion' : 'occasions'}
       </Text>
@@ -180,29 +170,24 @@ function OccasionsPage() {
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyEmoji}>🎉</Text>
       <Text style={styles.emptyTitle}>No occasions found</Text>
-      <Text style={styles.emptyText}>
-        Check back later for upcoming occasions and deals
-      </Text>
+      <Text style={styles.emptyText}>Check back later for upcoming occasions and deals</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.gold, '#e6b94e']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.gold, '#e6b94e']} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="chevron-back" size={24} color={COLORS.white} />
           </Pressable>
           <Text style={styles.headerTitle}>
             {categorySlug
-              ? `${categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Occasions`
+              ? `${categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())} Occasions`
               : 'Shop by Occasion'}
           </Text>
           <View style={styles.placeholder} />
@@ -277,7 +262,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
   },
   pageSubtitle: {
@@ -341,7 +326,7 @@ const styles = StyleSheet.create({
   occasionName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
     marginBottom: 10,
   },
@@ -376,7 +361,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

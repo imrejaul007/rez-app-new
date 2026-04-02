@@ -55,7 +55,7 @@ export const WalletPaymentOption: React.FC<WalletPaymentOptionProps> = ({
       </View>
 
       <View style={styles.infoContainer}>
-        <Text style={[styles.walletName, disabled && styles.textDisabled]}>
+        <Text style={[styles.walletName, disabled ? styles.textDisabled : null]}>
           {wallet.name}
         </Text>
         {wallet.isLinked ? (

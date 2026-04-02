@@ -52,7 +52,7 @@ function PartnerStatsDashboard({
       if (response.success && response.data) {
         setStats(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load stats');
     } finally {
@@ -87,7 +87,7 @@ function PartnerStatsDashboard({
 
   if (loading) {
     return (
-      <View style={[styles.container, compact && styles.containerCompact]}>
+      <View style={[styles.container, compact ? styles.containerCompact : null]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="small" color={COLORS.primary} />
         </View>

@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
  *         ]);
  *         setReviews(reviewsData);
  *         setSummary(summaryData);
- *       } catch (error) {
+ *       } catch (error: any) {
  *         console.error('Failed to load expert reviews:', error);
  *       } finally {
  *         setLoading(false);

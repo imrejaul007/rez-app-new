@@ -86,7 +86,7 @@ async function initializeCache(): Promise<void> {
 
     cacheInitialized = true;
     devLog.log('[ImagePreload] Cache initialized');
-  } catch (error) {
+  } catch (error: any) {
     devLog.error('[ImagePreload] Failed to initialize cache:', error);
   }
 }
@@ -97,7 +97,7 @@ async function initializeCache(): Promise<void> {
 async function saveCacheIndex(): Promise<void> {
   try {
     await AsyncStorage.setItem(CACHE_INDEX_KEY, JSON.stringify(cacheIndex));
-  } catch (error) {
+  } catch (error: any) {
     devLog.error('[ImagePreload] Failed to save cache index:', error);
   }
 }
@@ -160,7 +160,7 @@ async function evictOldEntries(): Promise<void> {
       await FileSystem.deleteAsync(entry.localUri, { idempotent: true });
       delete cacheIndex[url];
       currentSize -= entry.size;
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('[ImagePreload] Failed to delete cached file:', error);
     }
   }
@@ -237,7 +237,7 @@ async function downloadAndCache(
 
     // Get file size
     const fileInfo = await FileSystem.getInfoAsync(localUri);
-    const size = fileInfo.size || 0;
+    const size = (fileInfo as any).size || 0;
 
     // Update cache index
     cacheIndex[uri] = {
@@ -252,7 +252,7 @@ async function downloadAndCache(
     devLog.log('[ImagePreload] Image cached:', uri);
 
     return { success: true, uri, cachedUri: localUri };
-  } catch (error) {
+  } catch (error: any) {
     devLog.error('[ImagePreload] Failed to download image:', error);
     return {
       success: false,
@@ -355,7 +355,7 @@ export function useImagePreload(): UseImagePreloadResult {
         if (isMounted.current) {
           setErrors(newErrors);
         }
-      } catch (error) {
+      } catch (error: any) {
         devLog.error('[ImagePreload] Preload failed:', error);
       } finally {
         if (isMounted.current) {
@@ -381,7 +381,7 @@ export function useImagePreload(): UseImagePreloadResult {
       await AsyncStorage.removeItem(CACHE_INDEX_KEY);
 
       devLog.log('[ImagePreload] Cache cleared');
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('[ImagePreload] Failed to clear cache:', error);
     }
   }, []);

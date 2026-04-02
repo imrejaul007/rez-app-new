@@ -127,7 +127,7 @@ function ComparePage() {
           if (!isMounted()) return;
           setSavedComparisons(res.data.comparisons);
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to fetch saved comparisons'),
           { context: 'ComparePage.fetchSavedComparisons' },
@@ -196,7 +196,7 @@ function ComparePage() {
         if (!isMounted()) return;
         setSearchResults(products.filter((p: any) => !selectedIds.has(p._id || p.id)));
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to search products for comparison'),
         { context: 'ComparePage.performSearch' },
@@ -285,7 +285,7 @@ function ComparePage() {
         if (!isMounted()) return;
         setSavedComparisons(saved.data.comparisons);
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to save comparison'),
         { context: 'ComparePage.handleSaveComparison' },
@@ -309,7 +309,7 @@ function ComparePage() {
         setCurrentComparisonId(comparisonId);
         setViewPhase('comparing');
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to load saved comparison'),
         { context: 'ComparePage.handleLoadSavedComparison' },
@@ -330,7 +330,7 @@ function ComparePage() {
           setCurrentComparisonId(null);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to delete comparison'),
         { context: 'ComparePage.handleDeleteSavedComparison' },
@@ -405,7 +405,7 @@ function ComparePage() {
         const selling = p.pricing?.selling;
         return (
           <View>
-            <Text style={[styles.priceText, cheapestId === p._id && styles.winnerText]}>
+            <Text style={[styles.priceText, cheapestId === p._id ? styles.winnerText : null]}>
               {currencySymbol}{price}
             </Text>
             {original && selling && original > selling && (
@@ -427,7 +427,7 @@ function ComparePage() {
           {p.ratings?.average ? (
             <>
               <Ionicons name="star" size={14} color={COLORS.primaryGold} />
-              <Text style={[styles.valueText, bestRatingId === p._id && styles.winnerText]}>
+              <Text style={[styles.valueText, bestRatingId === p._id ? styles.winnerText : null]}>
                 {p.ratings.average.toFixed(1)}
               </Text>
               {p.ratings.count !== undefined && (
@@ -456,7 +456,7 @@ function ComparePage() {
       label: 'Cashback',
       winnerId: bestCashbackId,
       renderCell: (p) => (
-        <Text style={[styles.valueText, bestCashbackId === p._id && styles.winnerText]}>
+        <Text style={[styles.valueText, bestCashbackId === p._id ? styles.winnerText : null]}>
           {p.cashback?.percentage ? `${p.cashback.percentage}%` : '--'}
         </Text>
       ),
@@ -564,7 +564,7 @@ function ComparePage() {
                 {selectedProducts.map((p) => (
                   <View
                     key={p._id}
-                    style={[styles.valueCell, row.winnerId === p._id && styles.winnerCell]}
+                    style={[styles.valueCell, row.winnerId === p._id ? styles.winnerCell : null]}
                   >
                     {row.renderCell(p)}
                   </View>

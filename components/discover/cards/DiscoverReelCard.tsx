@@ -65,7 +65,7 @@ function DiscoverReelCard({
           if (!isMounted()) return;
           setIsPlaying(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         // Silently handle playback errors
       }
     };
@@ -123,8 +123,8 @@ function DiscoverReelCard({
           {item.videoUrl && (
             <Video
               ref={videoRef}
-              source={item.videoUrl}
-              style={[styles.video, showThumbnail && styles.hiddenVideo]}
+              source={{ uri: item.videoUrl }}
+              style={[styles.video, showThumbnail ? styles.hiddenVideo : null]}
               resizeMode={ResizeMode.COVER}
               isLooping
               isMuted

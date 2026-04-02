@@ -133,7 +133,7 @@ function BookAppointmentPage() {
         if (!isMounted()) return;
         setSalons(bookable.length > 0 ? bookable : allStores.slice(0, 20));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -167,7 +167,7 @@ function BookAppointmentPage() {
         const firstAvailable = serviceSlots.find(s => s.available);
         if (firstAvailable) setSelectedTime(firstAvailable.time);
       }
-    } catch (err) {
+    } catch (err: any) {
       const fallback: TimeSlot[] = [
         '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
         '12:00', '13:00', '14:00', '14:30', '15:00', '15:30',
@@ -242,8 +242,8 @@ function BookAppointmentPage() {
 
       if (res.success) {
         if (!isMounted()) return;
-        setBookingId(res.data?.id || res.data?._id || null);
-        setBookingNumber(res.data?.appointmentNumber || res.data?.bookingNumber || null);
+        setBookingId(res.data?.id || (res.data as any)?._id || null);
+        setBookingNumber((res.data as any)?.appointmentNumber || (res.data as any)?.bookingNumber || null);
         setStep('confirm');
       } else {
         platformAlertSimple('Booking Failed', res.message || 'Could not create booking. Please try again.');
@@ -308,7 +308,7 @@ function BookAppointmentPage() {
             <Text style={styles.storeCuisine} numberOfLines={1}>{getServiceTags(store)}</Text>
             <View style={styles.storeMetaRow}>
               <View style={styles.storeRating}>
-                <Ionicons name="star" size={12} color={COLORS.goldDark} />
+                <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
                 <Text style={styles.storeRatingText}>{rating}</Text>
                 <Text style={styles.storeReviewCount}>({reviewCount})</Text>
               </View>
@@ -359,7 +359,7 @@ function BookAppointmentPage() {
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.pink} />
+            <ActivityIndicator size="large" color={(COLORS as any).pink} />
             <Text style={styles.loadingText}>Finding salons & clinics...</Text>
           </View>
         ) : filteredSalons.length === 0 ? (
@@ -396,7 +396,7 @@ function BookAppointmentPage() {
               colors={[COLORS.pinkLight, '#FDE8EF']}
               style={styles.confirmIconGradient}
             >
-              <Ionicons name="checkmark-circle" size={64} color={COLORS.pink} />
+              <Ionicons name="checkmark-circle" size={64} color={(COLORS as any).pink} />
             </LinearGradient>
           </View>
           <Text style={styles.confirmTitle}>Appointment Booked!</Text>
@@ -413,7 +413,7 @@ function BookAppointmentPage() {
           <View style={styles.confirmCard}>
             <View style={styles.confirmRow}>
               <View style={[styles.confirmRowIcon, { backgroundColor: 'rgba(236,72,153,0.1)' }]}>
-                <Ionicons name="flower" size={16} color={COLORS.pink} />
+                <Ionicons name="flower" size={16} color={(COLORS as any).pink} />
               </View>
               <View>
                 <Text style={styles.confirmRowLabel}>Salon / Clinic</Text>
@@ -443,7 +443,7 @@ function BookAppointmentPage() {
           </View>
 
           <View style={styles.confirmNote}>
-            <Ionicons name="information-circle" size={16} color={COLORS.pink} />
+            <Ionicons name="information-circle" size={16} color={(COLORS as any).pink} />
             <Text style={styles.confirmNoteText}>
               The salon will confirm your appointment shortly. You'll earn bonus coins when you check in!
             </Text>
@@ -493,7 +493,7 @@ function BookAppointmentPage() {
         {selectedStore?.name && (
           <View style={styles.storePreview}>
             <LinearGradient
-              colors={[COLORS.pink, COLORS.pinkDark]}
+              colors={[(COLORS as any).pink, COLORS.pinkDark]}
               style={styles.storePreviewGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -526,14 +526,14 @@ function BookAppointmentPage() {
             return (
               <Pressable
                 key={service.id}
-                style={[styles.serviceChip, isSelected && styles.serviceChipActive]}
+                style={[styles.serviceChip, isSelected ? styles.serviceChipActive : null]}
                 onPress={() => setSelectedService(service.id)}
               >
                 <Text style={styles.serviceEmoji}>{service.icon}</Text>
-                <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelActive]}>
+                <Text style={[styles.serviceLabel, isSelected ? styles.serviceLabelActive : null]}>
                   {service.label}
                 </Text>
-                <Text style={[styles.serviceDuration, isSelected && styles.serviceDurationActive]}>
+                <Text style={[styles.serviceDuration, isSelected ? styles.serviceDurationActive : null]}>
                   {service.duration}
                 </Text>
               </Pressable>
@@ -548,7 +548,7 @@ function BookAppointmentPage() {
             <Pressable
               key={opt.value}
               onPress={() => setSelectedDuration(opt.value)}
-              style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedDuration === opt.value ? COLORS.pink : COLORS.background, borderWidth: 1, borderColor: selectedDuration === opt.value ? COLORS.pink : COLORS.border }}
+              style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedDuration === opt.value ? (COLORS as any).pink : COLORS.background, borderWidth: 1, borderColor: selectedDuration === opt.value ? (COLORS as any).pink : COLORS.border }}
             >
               <Text style={{ fontSize: 13, fontWeight: '600', color: selectedDuration === opt.value ? COLORS.white : COLORS.textSecondary }}>{opt.label}</Text>
             </Pressable>
@@ -574,16 +574,16 @@ function BookAppointmentPage() {
             return (
               <Pressable
                 key={i}
-                style={[styles.dateChip, isSelected && styles.dateChipActive]}
+                style={[styles.dateChip, isSelected ? styles.dateChipActive : null]}
                 onPress={() => setSelectedDate(date)}
               >
-                <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>
                   {isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}
                 </Text>
-                <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>
+                <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>
                   {date.getDate()}
                 </Text>
-                <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>
                   {date.toLocaleDateString(undefined, { month: 'short' })}
                 </Text>
               </Pressable>
@@ -595,7 +595,7 @@ function BookAppointmentPage() {
         <View style={styles.formLabelRow}>
           <Text style={styles.formLabel}>Select Time</Text>
           {isLoadingAvailability ? (
-            <ActivityIndicator size="small" color={COLORS.pink} />
+            <ActivityIndicator size="small" color={(COLORS as any).pink} />
           ) : (
             <Text style={styles.availableLabel}>
               {availableCount} slots available
@@ -605,7 +605,7 @@ function BookAppointmentPage() {
 
         {isLoadingAvailability ? (
           <View style={styles.timeLoadingWrap}>
-            <ActivityIndicator size="small" color={COLORS.pink} />
+            <ActivityIndicator size="small" color={(COLORS as any).pink} />
             <Text style={styles.timeLoadingText}>Checking availability...</Text>
           </View>
         ) : (
@@ -719,7 +719,7 @@ function BookAppointmentPage() {
 
         <View style={styles.bonusNote}>
           <View style={styles.bonusIconWrap}>
-            <Ionicons name="wallet-outline" size={14} color={COLORS.pink} />
+            <Ionicons name="wallet-outline" size={14} color={(COLORS as any).pink} />
           </View>
           <Text style={styles.bonusText}>
             No pre-payment required. Earn bonus coins when you check in at the salon!
@@ -765,14 +765,14 @@ const styles = StyleSheet.create({
   storeImgPlaceholder: { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' },
   storeCashbackBadge: {
     position: 'absolute', bottom: -4, right: -4,
-    backgroundColor: COLORS.pink, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
+    backgroundColor: (COLORS as any).pink, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
   },
   storeCashbackText: { fontSize: 9, fontWeight: '700', color: COLORS.white },
   storeInfo: { flex: 1 },
   storeNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   storeName: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary, flex: 1 },
   verifiedBadge: { backgroundColor: COLORS.pinkLight, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: COLORS.pink },
+  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: (COLORS as any).pink },
   storeCuisine: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   storeMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6 },
   storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
@@ -803,19 +803,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 12, borderRadius: 12,
     backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border,
   },
-  serviceChipActive: { backgroundColor: COLORS.pinkLight, borderColor: COLORS.pink },
+  serviceChipActive: { backgroundColor: COLORS.pinkLight, borderColor: (COLORS as any).pink },
   serviceEmoji: { fontSize: 20 },
   serviceLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, flex: 1 },
   serviceLabelActive: { color: COLORS.pinkDark, fontWeight: '600' },
   serviceDuration: { fontSize: 10, color: COLORS.textSecondary },
-  serviceDurationActive: { color: COLORS.pink },
+  serviceDurationActive: { color: (COLORS as any).pink },
   dateScroll: { marginBottom: 4 },
   dateChip: {
     width: 64, height: 78, borderRadius: 14, backgroundColor: COLORS.white,
     justifyContent: 'center', alignItems: 'center', marginRight: 8,
     borderWidth: 1, borderColor: 'transparent',
   },
-  dateChipActive: { backgroundColor: COLORS.pink, borderColor: COLORS.pink },
+  dateChipActive: { backgroundColor: (COLORS as any).pink, borderColor: (COLORS as any).pink },
   dateDay: { fontSize: 10, color: COLORS.textSecondary, marginBottom: 2, fontWeight: '500' },
   dateDayActive: { color: 'rgba(255,255,255,0.7)' },
   dateNum: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white, minWidth: 70, alignItems: 'center',
     borderWidth: 1, borderColor: 'transparent',
   },
-  timeChipActive: { backgroundColor: COLORS.pink, borderColor: COLORS.pink },
+  timeChipActive: { backgroundColor: (COLORS as any).pink, borderColor: (COLORS as any).pink },
   timeChipUnavailable: { backgroundColor: colors.neutral[100], borderColor: colors.neutral[200] },
   timeText: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary },
   timeTextActive: { color: COLORS.white },
@@ -865,7 +865,7 @@ const styles = StyleSheet.create({
   summaryLabel: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary },
   submitBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    backgroundColor: COLORS.pink, borderRadius: 16, paddingVertical: 16, marginTop: 20,
+    backgroundColor: (COLORS as any).pink, borderRadius: 16, paddingVertical: 16, marginTop: 20,
   },
   submitBtnDisabled: { opacity: 0.5 },
   submitBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
@@ -913,11 +913,11 @@ const styles = StyleSheet.create({
   },
   confirmNoteText: { flex: 1, fontSize: 13, color: COLORS.pinkDark, lineHeight: 18 },
   doneBtn: {
-    width: '100%', paddingVertical: 16, backgroundColor: COLORS.pink, borderRadius: 16, alignItems: 'center',
+    width: '100%', paddingVertical: 16, backgroundColor: (COLORS as any).pink, borderRadius: 16, alignItems: 'center',
   },
   doneBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
   viewBookingsBtn: { marginTop: 12, paddingVertical: 12, alignItems: 'center' },
-  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: COLORS.pink },
+  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: (COLORS as any).pink },
 });
 
 export default React.memo(BookAppointmentPage);

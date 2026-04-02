@@ -71,7 +71,7 @@ function BenefitsTable({ tiers }: BenefitsTableProps) {
         {benefitKeys.map((key, index) => {
           const isEven = (index + 1) % 2 === 0; // +1 because cashback row is index 0
           return (
-            <View key={key} style={[styles.row, isEven && styles.rowEven]}>
+            <View key={key} style={[styles.row, isEven ? styles.rowEven : null]}>
               <View style={styles.labelCell}>
                 <Text style={styles.labelText}>{BENEFIT_LABELS[key]}</Text>
               </View>

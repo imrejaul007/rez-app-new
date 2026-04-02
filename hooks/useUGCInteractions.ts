@@ -96,7 +96,7 @@ export function useUGCInteractions() {
 
       try {
         // Call backend API
-        const response = await ugcApi.toggleLike(contentId);
+        const response: any = await ugcApi.toggleLike(contentId);
 
         if (response.success && response.data) {
           // Update with actual backend data
@@ -192,7 +192,7 @@ export function useUGCInteractions() {
 
       try {
         // Call backend API
-        const response = await ugcApi.toggleBookmark(contentId);
+        const response: any = await ugcApi.toggleBookmark(contentId);
 
         if (response.success && response.data) {
           // Update with actual backend data

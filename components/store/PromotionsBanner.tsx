@@ -58,7 +58,7 @@ function PromotionsBanner({
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const [dismissedBanners, setDismissedBanners] = useState<Set<string>>(new Set());
   const slideAnim = useSharedValue(-100);
-  const rotationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const rotationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Filter active and non-dismissed banners
   const visibleBanners = banners.filter(
@@ -222,7 +222,7 @@ function PromotionBannerItem({
     transform: [{ scale: pulseAnim.value }],
   }));
 
-  const gradientColors = banner.backgroundColor || [colors.brand.purple, colors.brand.pink];
+  const gradientColors = (banner.backgroundColor || [colors.brand.purple, colors.brand.pink]) as [string, string];
   const textColor = banner.textColor || colors.text.white;
 
   return (

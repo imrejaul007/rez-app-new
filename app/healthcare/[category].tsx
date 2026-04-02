@@ -151,7 +151,7 @@ const filterOptions = ['All', 'Nearby', 'Top Rated', 'Best Price'];
 const HealthcareCategoryPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [selectedFilter, setSelectedFilter] = useState('All');
@@ -193,11 +193,11 @@ const HealthcareCategoryPage: React.FC = () => {
 
       const response = await apiClient.get(url);
 
-      if (response.success && response.data?.stores) {
+      if (response.success && (response.data as any)?.stores) {
         if (!isMounted()) return;
-        setStores(response.data.stores);
+        setStores((response.data as any).stores);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load data. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -437,7 +437,7 @@ const HealthcareCategoryPage: React.FC = () => {
                 accessibilityLabel={`Filter by ${filter}`}
                 accessibilityState={{ selected: selectedFilter === filter }}
               >
-                <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
+                <Text style={[styles.filterChipText, selectedFilter === filter ? styles.filterChipTextActive : null]}>
                   {filter}
                 </Text>
               </Pressable>
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
   },
   emptySubtext: {
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   itemName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 6,
   },
   typeBadge: {
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.body,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   languagesContainer: {
     flexDirection: 'row',
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
   comingSoonTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

@@ -314,10 +314,6 @@ function EventsListPage() {
               <View style={styles.bottomSpacer} />
             </>
           )}
-          initialNumToRender={10}
-          maxToRenderPerBatch={5}
-          windowSize={10}
-          removeClippedSubviews={true}
         />
       </SafeAreaView>
 

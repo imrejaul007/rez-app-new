@@ -61,7 +61,7 @@ function PartnerVouchersSection({
         if (!isMounted()) return;
         setOffers(claimedOffers);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load partner vouchers');
     } finally {
@@ -76,7 +76,7 @@ function PartnerVouchersSection({
       await Clipboard.setStringAsync(voucherCode);
       platformAlertSimple('Copied!', `Voucher code ${voucherCode} copied to clipboard`);
       onVoucherCopied?.(voucherCode);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy voucher code');
     }
   };
@@ -102,7 +102,7 @@ function PartnerVouchersSection({
     const daysLeft = getDaysRemaining(item.validUntil);
 
     return (
-      <View style={[styles.voucherCard, expired && styles.voucherExpired]}>
+      <View style={[styles.voucherCard, expired ? styles.voucherExpired : null]}>
         {/* Left Badge */}
         <View style={styles.voucherLeft}>
           <LinearGradient
@@ -151,7 +151,7 @@ function PartnerVouchersSection({
               color={expired ? colors.error : COLORS.textSecondary}
             />
             <Text
-              style={[styles.expiryText, expired && styles.expiryTextExpired]}
+              style={[styles.expiryText, expired ? styles.expiryTextExpired : null]}
             >
               {expired
                 ? 'Expired'

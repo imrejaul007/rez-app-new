@@ -146,7 +146,7 @@ class UGCApiService {
     hasMore: boolean;
   }>> {
 
-    return apiClient.get(this.baseUrl, filters);
+    return apiClient.get<any>(this.baseUrl, filters as any);
   }
 
   /**
@@ -154,7 +154,7 @@ class UGCApiService {
    */
   async getById(id: string): Promise<ApiResponse<{ content: UGCMedia }>> {
 
-    return apiClient.get(`${this.baseUrl}/${id}`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}`);
   }
 
   /**
@@ -183,7 +183,7 @@ class UGCApiService {
     tags?: string[];
   }): Promise<ApiResponse<{ content: UGCMedia }>> {
 
-    return apiClient.put(`${this.baseUrl}/${id}`, data);
+    return apiClient.put<any>(`${this.baseUrl}/${id}`, data as any);
   }
 
   /**
@@ -191,7 +191,7 @@ class UGCApiService {
    */
   async delete(id: string): Promise<ApiResponse<{ message: string }>> {
 
-    return apiClient.delete(`${this.baseUrl}/${id}`);
+    return apiClient.delete<any>(`${this.baseUrl}/${id}`);
   }
 
   /**
@@ -201,7 +201,7 @@ class UGCApiService {
     isLiked: boolean;
     likes: number;
   }>> {
-    return apiClient.post(`${this.baseUrl}/${id}/like`);
+    return apiClient.post<any>(`${this.baseUrl}/${id}/like`);
   }
 
   /**
@@ -211,7 +211,7 @@ class UGCApiService {
     isLiked: boolean;
     likes: number;
   }>> {
-    return apiClient.delete(`${this.baseUrl}/${id}/like`);
+    return apiClient.delete<any>(`${this.baseUrl}/${id}/like`);
   }
 
   /**
@@ -221,7 +221,7 @@ class UGCApiService {
     isLiked: boolean;
     likes: number;
   }>> {
-    return apiClient.post(`${this.baseUrl}/${id}/like`);
+    return apiClient.post<any>(`${this.baseUrl}/${id}/like`);
   }
 
   /**
@@ -230,7 +230,7 @@ class UGCApiService {
   async bookmarkContent(id: string): Promise<ApiResponse<{
     isBookmarked: boolean;
   }>> {
-    return apiClient.post(`${this.baseUrl}/${id}/bookmark`);
+    return apiClient.post<any>(`${this.baseUrl}/${id}/bookmark`);
   }
 
   /**
@@ -239,7 +239,7 @@ class UGCApiService {
   async removeBookmark(id: string): Promise<ApiResponse<{
     isBookmarked: boolean;
   }>> {
-    return apiClient.delete(`${this.baseUrl}/${id}/bookmark`);
+    return apiClient.delete<any>(`${this.baseUrl}/${id}/bookmark`);
   }
 
   /**
@@ -248,7 +248,7 @@ class UGCApiService {
   async toggleBookmark(id: string): Promise<ApiResponse<{
     isBookmarked: boolean;
   }>> {
-    return apiClient.post(`${this.baseUrl}/${id}/bookmark`);
+    return apiClient.post<any>(`${this.baseUrl}/${id}/bookmark`);
   }
 
   /**
@@ -257,7 +257,7 @@ class UGCApiService {
   async checkLikeStatus(id: string): Promise<ApiResponse<{
     isLiked: boolean;
   }>> {
-    return apiClient.get(`${this.baseUrl}/${id}/like/status`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}/like/status`);
   }
 
   /**
@@ -266,7 +266,7 @@ class UGCApiService {
   async checkBookmarkStatus(id: string): Promise<ApiResponse<{
     isBookmarked: boolean;
   }>> {
-    return apiClient.get(`${this.baseUrl}/${id}/bookmark/status`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}/bookmark/status`);
   }
 
   /**
@@ -274,7 +274,7 @@ class UGCApiService {
    */
   async share(id: string): Promise<ApiResponse<{ shares: number }>> {
 
-    return apiClient.post(`${this.baseUrl}/${id}/share`);
+    return apiClient.post<any>(`${this.baseUrl}/${id}/share`);
   }
 
   /**
@@ -286,7 +286,7 @@ class UGCApiService {
     hasMore: boolean;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/${id}/comments`, { limit, offset });
+    return apiClient.get<any>(`${this.baseUrl}/${id}/comments`, { limit, offset });
   }
 
   /**
@@ -296,7 +296,7 @@ class UGCApiService {
     comment: UGCComment;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/${id}/comments`, { comment, parentId });
+    return apiClient.post<any>(`${this.baseUrl}/${id}/comments`, { comment, parentId });
   }
 
   /**
@@ -307,7 +307,7 @@ class UGCApiService {
     likes: number;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/${ugcId}/comments/${commentId}/like`);
+    return apiClient.post<any>(`${this.baseUrl}/${ugcId}/comments/${commentId}/like`);
   }
 
   /**
@@ -315,7 +315,7 @@ class UGCApiService {
    */
   async deleteComment(ugcId: string, commentId: string): Promise<ApiResponse<{ message: string }>> {
 
-    return apiClient.delete(`${this.baseUrl}/${ugcId}/comments/${commentId}`);
+    return apiClient.delete<any>(`${this.baseUrl}/${ugcId}/comments/${commentId}`);
   }
 
   /**
@@ -325,7 +325,7 @@ class UGCApiService {
     message: string;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/${ugcId}/comments/${commentId}/report`, { reason, description });
+    return apiClient.post<any>(`${this.baseUrl}/${ugcId}/comments/${commentId}/report`, { reason, description });
   }
 
   /**
@@ -336,7 +336,7 @@ class UGCApiService {
     total: number;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/user/${userId || 'me'}`, type ? { type } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/user/${userId || 'me'}`, type ? { type } : undefined);
   }
 
   /**
@@ -347,7 +347,7 @@ class UGCApiService {
     total: number;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/product/${productId}`);
+    return apiClient.get<any>(`${this.baseUrl}/product/${productId}`);
   }
 
   /**
@@ -364,7 +364,7 @@ class UGCApiService {
 
     try {
       // First, try to get videos from the videos endpoint
-      const videosResponse = await apiClient.get(`/videos/store/${storeId}`, {
+      const videosResponse = await apiClient.get<any>(`/videos/store/${storeId}`, {
         limit: params?.limit || 20,
         offset: params?.offset || 0
       });
@@ -378,7 +378,7 @@ class UGCApiService {
       }
 
       // Then try to get UGC content
-      const ugcResponse = await apiClient.get(`${this.baseUrl}/store/${storeId}`, params);
+      const ugcResponse = await apiClient.get<any>(`${this.baseUrl}/store/${storeId}`, params);
 
       // Add UGC content if available (deduplicate by _id)
       if (ugcResponse.success && ugcResponse.data?.content) {
@@ -422,7 +422,7 @@ class UGCApiService {
    */
   async createReel(data: CreateReelRequest): Promise<{ success: boolean; data?: CreateReelResponse; message?: string; error?: string }> {
     try {
-      const response = await apiClient.post('/ugc/create', data);
+      const response = await apiClient.post<any>('/ugc/create', data as any);
       if (response.success && response.data) {
         return { success: true, data: response.data as CreateReelResponse, message: (response as any).message };
       }
@@ -445,7 +445,7 @@ class UGCApiService {
     storeId?: string;
   }): Promise<{ success: boolean; data?: any; message?: string; error?: string }> {
     try {
-      const response = await apiClient.post('/ugc/create-post', data);
+      const response = await apiClient.post<any>('/ugc/create-post', data as any);
       if (response.success && response.data) {
         return { success: true, data: response.data, message: (response as any).message };
       }
@@ -463,7 +463,7 @@ class UGCApiService {
     limit: number = 20
   ): Promise<{ success: boolean; data?: { reels: UgcReel[]; pagination: UgcPagination }; error?: string }> {
     try {
-      const response = await apiClient.get(`/ugc/my-reels?page=${page}&limit=${limit}`);
+      const response = await apiClient.get<any>(`/ugc/my-reels?page=${page}&limit=${limit}`);
       if (response.success && response.data) {
         return { success: true, data: response.data as { reels: UgcReel[]; pagination: UgcPagination } };
       }
@@ -481,7 +481,7 @@ class UGCApiService {
     limit: number = 20
   ): Promise<{ success: boolean; data?: { reels: UgcReel[]; pagination: UgcPagination }; error?: string }> {
     try {
-      const response = await apiClient.get(`/ugc/feed?page=${page}&limit=${limit}`);
+      const response = await apiClient.get<any>(`/ugc/feed?page=${page}&limit=${limit}`);
       if (response.success && response.data) {
         return { success: true, data: response.data as { reels: UgcReel[]; pagination: UgcPagination } };
       }
@@ -499,7 +499,7 @@ class UGCApiService {
     total: number;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/bookmarked`, type ? { type } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/bookmarked`, type ? { type } : undefined);
   }
 
   /**
@@ -509,7 +509,7 @@ class UGCApiService {
     message: string;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/${id}/report`, { reason, description });
+    return apiClient.post<any>(`${this.baseUrl}/${id}/report`, { reason, description });
   }
 }
 

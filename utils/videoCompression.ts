@@ -190,7 +190,7 @@ class VideoCompressionService {
       const extension = videoUri.split('.').pop()?.toLowerCase();
       const allowedFormats = CLOUDINARY_CONFIG.allowedFormats.video;
 
-      if (extension && !allowedFormats.includes(extension)) {
+      if (extension && !(allowedFormats as readonly string[]).includes(extension)) {
         errors.push(`Video format .${extension} is not supported. Allowed formats: ${allowedFormats.join(', ')}`);
       }
 

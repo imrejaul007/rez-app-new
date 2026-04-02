@@ -67,7 +67,7 @@ const FlashSaleTimer: React.FC<FlashSaleTimerProps> = ({
 
   if (timeRemaining.total <= 0) {
     return (
-      <View style={[styles.container, compact && styles.containerCompact]}>
+      <View style={[styles.container, compact ? styles.containerCompact : null]}>
         <Text style={styles.expiredText}>Sale Ended</Text>
       </View>
     );
@@ -78,34 +78,34 @@ const FlashSaleTimer: React.FC<FlashSaleTimerProps> = ({
   };
 
   return (
-    <View style={[styles.container, compact && styles.containerCompact]}>
+    <View style={[styles.container, compact ? styles.containerCompact : null]}>
       {/* Timer Display */}
       <View style={styles.timerContainer}>
-        <Text style={[styles.label, compact && styles.labelCompact]}>
+        <Text style={[styles.label, compact ? styles.labelCompact : null]}>
           {isCritical ? 'ENDING NOW!' : isExpiring ? 'ENDING SOON!' : 'ENDS IN'}
         </Text>
 
         <View style={styles.timeDisplay}>
-          <View style={[styles.timeBox, isCritical && styles.timeBoxCritical]}>
-            <Text style={[styles.timeNumber, compact && styles.timeNumberCompact]}>
+          <View style={[styles.timeBox, isCritical ? styles.timeBoxCritical : null]}>
+            <Text style={[styles.timeNumber, compact ? styles.timeNumberCompact : null]}>
               {formatNumber(timeRemaining.hours)}
             </Text>
             {!compact && <Text style={styles.timeUnit}>HR</Text>}
           </View>
 
-          <Text style={[styles.separator, compact && styles.separatorCompact]}>:</Text>
+          <Text style={[styles.separator, compact ? styles.separatorCompact : null]}>:</Text>
 
-          <View style={[styles.timeBox, isCritical && styles.timeBoxCritical]}>
-            <Text style={[styles.timeNumber, compact && styles.timeNumberCompact]}>
+          <View style={[styles.timeBox, isCritical ? styles.timeBoxCritical : null]}>
+            <Text style={[styles.timeNumber, compact ? styles.timeNumberCompact : null]}>
               {formatNumber(timeRemaining.minutes)}
             </Text>
             {!compact && <Text style={styles.timeUnit}>MIN</Text>}
           </View>
 
-          <Text style={[styles.separator, compact && styles.separatorCompact]}>:</Text>
+          <Text style={[styles.separator, compact ? styles.separatorCompact : null]}>:</Text>
 
-          <View style={[styles.timeBox, isCritical && styles.timeBoxCritical]}>
-            <Text style={[styles.timeNumber, compact && styles.timeNumberCompact]}>
+          <View style={[styles.timeBox, isCritical ? styles.timeBoxCritical : null]}>
+            <Text style={[styles.timeNumber, compact ? styles.timeNumberCompact : null]}>
               {formatNumber(timeRemaining.seconds)}
             </Text>
             {!compact && <Text style={styles.timeUnit}>SEC</Text>}

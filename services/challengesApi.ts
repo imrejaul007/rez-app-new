@@ -107,7 +107,7 @@ class ChallengesApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -127,7 +127,7 @@ class ChallengesApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -278,7 +278,7 @@ class ChallengesApiService {
         return { success: true, data: dailyChallenges };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -298,7 +298,7 @@ class ChallengesApiService {
         return { success: true, data: weeklyChallenges };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -318,7 +318,7 @@ class ChallengesApiService {
         return { success: true, data: specialChallenges };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -339,7 +339,7 @@ class ChallengesApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -394,7 +394,7 @@ class ChallengesApiService {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return { success: false, error: error.message };
     }

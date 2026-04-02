@@ -138,7 +138,7 @@ function SendMoneyModal({
       const res = await walletApi.initiateTransfer({
         recipientPhone: recipient,
         amount: amountNum,
-        coinType: 'nuqta',
+        coinType: 'rez' as 'rez' | 'branded' | 'promo',
         note: note || undefined,
         idempotencyKey,
       });
@@ -466,7 +466,7 @@ function SendMoneyModal({
               </Pressable>
             ) : (
               <Pressable
-                style={[styles.proceedButton, loading && styles.proceedButtonDisabled]}
+                style={[styles.proceedButton, loading ? styles.proceedButtonDisabled : null]}
                 onPress={handleConfirmSend}
                 disabled={loading}
                 accessible={true}

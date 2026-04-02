@@ -254,20 +254,13 @@ const UGCCard = memo(function UGCCard({
             <>
               <Video
                 ref={videoRef}
-                source={item.videoUrl}
+                source={{ uri: item.videoUrl! }}
                 style={styles.cardMedia}
                 resizeMode={ResizeMode.COVER}
                 isLooping
                 shouldPlay={isVisible} // autoplay when visible
                 isMuted // muted for autoplay policies
                 useNativeControls={false}
-                onLoadStart={() => {
-                  setMediaLoading(true);
-                  setMediaError(null);
-                }}
-                onLoad={() => {
-                  setMediaLoading(false);
-                }}
                 onError={(e) => {
                   setMediaLoading(false);
                   setMediaError(String(e));
@@ -293,16 +286,9 @@ const UGCCard = memo(function UGCCard({
           ) : (
             <>
               <CachedImage
-                source={item.uri}
+                source={item.uri || ''}
                 style={styles.cardMedia}
                 contentFit="cover"
-                defaultSource={require('@/assets/images/icon.png')}
-                loadingIndicatorSource={require('@/assets/images/icon.png')}
-                onLoadStart={() => {
-                  setMediaLoading(true);
-                  setMediaError(null);
-                }}
-                onLoadEnd={() => setMediaLoading(false)}
                 onError={() => {
                   setMediaLoading(false);
                   setMediaError('image');
@@ -397,11 +383,7 @@ const UGCCard = memo(function UGCCard({
           <View style={styles.productPlateWrapper}>
             <View style={styles.productPlate}>
               {item.productThumb && (
-                <CachedImage
-                  source={item.productThumb}
-                  style={styles.productThumb}
-                  defaultSource={require('@/assets/images/icon.png')}
-                />
+                <CachedImage source={item.productThumb || ''} style={styles.productThumb} contentFit="cover" />
               )}
               <View style={{ flex: 1, marginLeft: item.productThumb ? 10 : 0 }}>
                 <ThemedText numberOfLines={1} style={styles.productTitle}>
@@ -499,7 +481,7 @@ function UGCSection({
           if (!isMounted()) return;
           setUgcContent([]); // Set empty array instead of error
         }
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         if (!isMounted()) return;
         setError(errorMessage);
@@ -567,7 +549,7 @@ function UGCSection({
           ),
         );
       }
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
       if (!isMounted()) return;
       setUgcContent((prev) =>
@@ -610,7 +592,7 @@ function UGCSection({
           );
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
       if (!isMounted()) return;
       setUgcContent((prev) =>
@@ -740,7 +722,7 @@ function UGCSection({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }]}
+          contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as any}
           scrollEnabled={false}
         >
           {Array.from({ length: 3 }).map((_, index) => (
@@ -830,18 +812,17 @@ function UGCSection({
       </View>
 
       <FlashList
-        data={images}
+        data={images as any[]}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         estimatedItemSize={250}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }]}
+        contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as any}
         ItemSeparatorComponent={() => <View style={{ width: cardSpacing }} />}
         snapToInterval={cardWidth + cardSpacing}
         decelerationRate="fast"
         removeClippedSubviews
-        updateCellsBatchingPeriod={60}
         disableIntervalMomentum
         onViewableItemsChanged={stableOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}

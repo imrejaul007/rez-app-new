@@ -33,7 +33,6 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
 
-
 type FilterTab = 'all' | 'featured' | 'ending_soon';
 
 const LockDealsPage: React.FC = () => {
@@ -76,15 +75,16 @@ const LockDealsPage: React.FC = () => {
         if (reset) {
           // For "ending_soon", sort by validUntil
           if (activeTab === 'ending_soon') {
-            newDeals.sort((a: LockPriceDeal, b: LockPriceDeal) =>
-              new Date(a.validUntil).getTime() - new Date(b.validUntil).getTime()
+            newDeals.sort(
+              (a: LockPriceDeal, b: LockPriceDeal) =>
+                new Date(a.validUntil).getTime() - new Date(b.validUntil).getTime(),
             );
           }
           if (!isMounted()) return;
           setDeals(newDeals);
         } else {
           if (!isMounted()) return;
-          setDeals(prev => [...prev, ...newDeals]);
+          setDeals((prev) => [...prev, ...newDeals]);
         }
 
         if (!isMounted()) return;
@@ -94,7 +94,7 @@ const LockDealsPage: React.FC = () => {
         if (!isMounted()) return;
         setPage(reset ? 2 : page + 1);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -115,9 +115,12 @@ const LockDealsPage: React.FC = () => {
     }
   }, [isLoading, hasMore, page]);
 
-  const handleDealPress = useCallback((deal: LockPriceDeal) => {
-    router.push(`/lock-deals/${deal._id}` as any);
-  }, [router]);
+  const handleDealPress = useCallback(
+    (deal: LockPriceDeal) => {
+      router.push(`/lock-deals/${deal._id}` as any);
+    },
+    [router],
+  );
 
   const handleMyLocksPress = () => {
     router.push('/lock-deals/my-locks' as any);
@@ -137,110 +140,115 @@ const LockDealsPage: React.FC = () => {
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
-      case 'INR': return '\u20B9';
-      case 'AED': return 'AED ';
-      case 'USD': return '$';
-      default: return '\u20B9';
+      case 'INR':
+        return '\u20B9';
+      case 'AED':
+        return 'AED ';
+      case 'USD':
+        return '$';
+      default:
+        return '\u20B9';
     }
   };
 
-  const renderDealCard = useCallback(({ item: deal }: { item: LockPriceDeal }) => {
-    const daysLeft = getDaysRemaining(deal.validUntil);
-    const discount = getDiscountPercent(deal);
-    const currSymbol = getCurrencySymbol(deal.currency);
-    const totalReward = (deal.lockReward.amount + deal.pickupReward.amount) * deal.earningsMultiplier;
-    const storeName = typeof deal.store === 'object' ? deal.store.name : deal.storeName;
+  const renderDealCard = useCallback(
+    ({ item: deal }: { item: LockPriceDeal }) => {
+      const daysLeft = getDaysRemaining(deal.validUntil);
+      const discount = getDiscountPercent(deal);
+      const currSymbol = getCurrencySymbol(deal.currency);
+      const totalReward = (deal.lockReward.amount + deal.pickupReward.amount) * deal.earningsMultiplier;
+      const storeName = typeof deal.store === 'object' ? deal.store.name : deal.storeName;
 
-    return (
-      <Pressable
-        style={styles.dealCard}
-        onPress={() => handleDealPress(deal)}
-       
-      >
-        {/* Deal Image */}
-        <View style={styles.imageContainer}>
-          <CachedImage
-            source={deal.image}
-            style={styles.dealImage}
-            contentFit="cover"
-          />
-          {/* Discount Badge */}
-          {discount > 0 && (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>{discount}% OFF</Text>
-            </View>
-          )}
-          {/* Featured Badge */}
-          {deal.isFeatured && (
-            <View style={styles.featuredBadge}>
-              <Ionicons name="star" size={10} color={colors.text.inverse} />
-            </View>
-          )}
-          {/* Sold Out Overlay */}
-          {deal.isSoldOut && (
-            <View style={styles.soldOutOverlay}>
-              <Text style={styles.soldOutText}>SOLD OUT</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Deal Info */}
-        <View style={styles.dealInfo}>
-          <Text style={styles.dealTitle} numberOfLines={2}>{deal.title}</Text>
-          <Text style={styles.storeName} numberOfLines={1}>{storeName}</Text>
-
-          {/* Price */}
-          <View style={styles.priceRow}>
-            <Text style={styles.lockedPrice}>{currSymbol}{deal.lockedPrice}</Text>
-            <Text style={styles.originalPrice}>{currSymbol}{deal.originalPrice}</Text>
-          </View>
-
-          {/* Deposit Label */}
-          <View style={styles.depositRow}>
-            <Ionicons name="lock-closed" size={12} color={Colors.warning} />
-            <Text style={styles.depositText}>
-              Lock with {currSymbol}{deal.depositAmount} ({deal.depositPercent}%)
-            </Text>
-          </View>
-
-          {/* Earnings */}
-          <View style={styles.earningsRow}>
-            <View style={styles.earningsBadge}>
-              <CoinIcon size={12} />
-              <Text style={styles.earningsText}>{totalReward} coins</Text>
-            </View>
-            {deal.earningsMultiplier > 1 && (
-              <View style={styles.multiplierBadge}>
-                <Text style={styles.multiplierText}>{deal.earningsMultiplier}x</Text>
+      return (
+        <Pressable style={styles.dealCard} onPress={() => handleDealPress(deal)}>
+          {/* Deal Image */}
+          <View style={styles.imageContainer}>
+            <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />
+            {/* Discount Badge */}
+            {discount > 0 && (
+              <View style={styles.discountBadge}>
+                <Text style={styles.discountText}>{discount}% OFF</Text>
+              </View>
+            )}
+            {/* Featured Badge */}
+            {deal.isFeatured && (
+              <View style={styles.featuredBadge}>
+                <Ionicons name="star" size={10} color={colors.text.inverse} />
+              </View>
+            )}
+            {/* Sold Out Overlay */}
+            {deal.isSoldOut && (
+              <View style={styles.soldOutOverlay}>
+                <Text style={styles.soldOutText}>SOLD OUT</Text>
               </View>
             )}
           </View>
 
-          {/* Timer */}
-          {daysLeft <= 7 && daysLeft > 0 && (
-            <View style={styles.timerRow}>
-              <Ionicons name="time-outline" size={12} color={Colors.error} />
-              <Text style={styles.timerText}>{daysLeft}d left</Text>
+          {/* Deal Info */}
+          <View style={styles.dealInfo}>
+            <Text style={styles.dealTitle} numberOfLines={2}>
+              {deal.title}
+            </Text>
+            <Text style={styles.storeName} numberOfLines={1}>
+              {storeName}
+            </Text>
+
+            {/* Price */}
+            <View style={styles.priceRow}>
+              <Text style={styles.lockedPrice}>
+                {currSymbol}
+                {deal.lockedPrice}
+              </Text>
+              <Text style={styles.originalPrice}>
+                {currSymbol}
+                {deal.originalPrice}
+              </Text>
             </View>
-          )}
-        </View>
-      </Pressable>
-    );
-  }, [handleDealPress]);
+
+            {/* Deposit Label */}
+            <View style={styles.depositRow}>
+              <Ionicons name="lock-closed" size={12} color={Colors.warning} />
+              <Text style={styles.depositText}>
+                Lock with {currSymbol}
+                {deal.depositAmount} ({deal.depositPercent}%)
+              </Text>
+            </View>
+
+            {/* Earnings */}
+            <View style={styles.earningsRow}>
+              <View style={styles.earningsBadge}>
+                <CoinIcon size={12} />
+                <Text style={styles.earningsText}>{totalReward} coins</Text>
+              </View>
+              {deal.earningsMultiplier > 1 && (
+                <View style={styles.multiplierBadge}>
+                  <Text style={styles.multiplierText}>{deal.earningsMultiplier}x</Text>
+                </View>
+              )}
+            </View>
+
+            {/* Timer */}
+            {daysLeft <= 7 && daysLeft > 0 && (
+              <View style={styles.timerRow}>
+                <Ionicons name="time-outline" size={12} color={Colors.error} />
+                <Text style={styles.timerText}>{daysLeft}d left</Text>
+              </View>
+            )}
+          </View>
+        </Pressable>
+      );
+    },
+    [handleDealPress],
+  );
 
   const renderHeader = () => (
     <View>
       {/* Hero Banner */}
-      <LinearGradient
-        colors={[colors.brand.navyDark, colors.nileBlue]}
-        style={styles.heroBanner}
-      >
+      <LinearGradient colors={[colors.brand.navyDark, colors.nileBlue]} style={styles.heroBanner}>
         <View style={styles.heroContent}>
           <View style={styles.heroTextSection}>
             <Text style={styles.heroTitle}>Lock Price Deals</Text>
-            <Text style={styles.heroSubtitle}>
-              Lock with just 10% deposit. Earn on lock + earn on pickup.
-            </Text>
+            <Text style={styles.heroSubtitle}>Lock with just 10% deposit. Earn on lock + earn on pickup.</Text>
             <View style={styles.heroFeatures}>
               <View style={styles.heroFeature}>
                 <Ionicons name="lock-closed" size={14} color={Colors.gold} />
@@ -278,12 +286,10 @@ const LockDealsPage: React.FC = () => {
         ].map((tab) => (
           <Pressable
             key={tab.key}
-            style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+            style={[styles.tab, activeTab === tab.key ? styles.tabActive : null]}
             onPress={() => setActiveTab(tab.key)}
           >
-            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
-              {tab.label}
-            </Text>
+            <Text style={[styles.tabText, activeTab === tab.key ? styles.tabTextActive : null]}>{tab.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -301,7 +307,10 @@ const LockDealsPage: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Lock Price Deals</Text>
@@ -316,7 +325,10 @@ const LockDealsPage: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>Lock Price Deals</Text>
@@ -329,7 +341,7 @@ const LockDealsPage: React.FC = () => {
         data={deals}
         renderItem={renderDealCard}
         keyExtractor={(item) => item._id}
-          estimatedItemSize={220}
+        estimatedItemSize={220}
         numColumns={2}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={
@@ -348,9 +360,7 @@ const LockDealsPage: React.FC = () => {
         }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />

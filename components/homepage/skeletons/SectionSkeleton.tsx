@@ -85,7 +85,7 @@ function SectionSkeleton({
           data={skeletonCards}
           horizontal
           showsHorizontalScrollIndicator={showIndicator}
-          contentContainerStyle={[styles.scrollContent, { paddingHorizontal: spacing }]}
+          contentContainerStyle={[styles.scrollContent, { paddingHorizontal: spacing }] as any}
           style={styles.webFlatListContainer}
           removeClippedSubviews={false}
           scrollEnabled={false}

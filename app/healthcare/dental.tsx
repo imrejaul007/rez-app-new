@@ -211,7 +211,7 @@ function DentalCarePage() {
           setFilteredDentists(dentistStores);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load dentists. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -342,16 +342,16 @@ function DentalCarePage() {
     return (
       <Pressable
         key={service.id}
-        style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+        style={[styles.serviceCard, isSelected ? styles.serviceCardSelected : null]}
         onPress={() => setSelectedService(isSelected ? null : service.id)}
         accessibilityRole="radio"
         accessibilityLabel={`${service.name}, ${service.priceRange}`}
         accessibilityState={{ selected: isSelected }}
       >
-        <View style={[styles.serviceIcon, isSelected && styles.serviceIconSelected]}>
+        <View style={[styles.serviceIcon, isSelected ? styles.serviceIconSelected : null]}>
           <Ionicons name={service.icon as any} size={24} color={isSelected ? colors.text.inverse : colors.brand.cyan} />
         </View>
-        <Text style={[styles.serviceName, isSelected && styles.serviceNameSelected]}>{service.name}</Text>
+        <Text style={[styles.serviceName, isSelected ? styles.serviceNameSelected : null]}>{service.name}</Text>
         <Text style={styles.servicePrice}>{service.priceRange}</Text>
       </Pressable>
     );
@@ -622,7 +622,10 @@ function DentalCarePage() {
                 {dentalServices.map((service) => (
                   <Pressable
                     key={service.id}
-                    style={[styles.serviceChip, selectedServiceType === service.name && styles.serviceChipSelected]}
+                    style={[
+                      styles.serviceChip,
+                      selectedServiceType === service.name ? styles.serviceChipSelected : null,
+                    ]}
                     onPress={() => setSelectedServiceType(service.name)}
                     accessibilityRole="radio"
                     accessibilityLabel={`${service.name} dental service`}
@@ -649,15 +652,19 @@ function DentalCarePage() {
                   return (
                     <Pressable
                       key={index}
-                      style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                      style={[styles.dateCard, isSelected ? styles.dateCardSelected : null]}
                       onPress={() => setSelectedDate(date)}
                       accessibilityRole="radio"
                       accessibilityLabel={`${formatted.day} ${formatted.date} ${formatted.month}`}
                       accessibilityState={{ selected: isSelected }}
                     >
-                      <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>{formatted.day}</Text>
-                      <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>{formatted.date}</Text>
-                      <Text style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>{formatted.month}</Text>
+                      <Text style={[styles.dateDay, isSelected ? styles.dateTextSelected : null]}>{formatted.day}</Text>
+                      <Text style={[styles.dateNumber, isSelected ? styles.dateTextSelected : null]}>
+                        {formatted.date}
+                      </Text>
+                      <Text style={[styles.dateMonth, isSelected ? styles.dateTextSelected : null]}>
+                        {formatted.month}
+                      </Text>
                     </Pressable>
                   );
                 })}
@@ -719,7 +726,7 @@ function DentalCarePage() {
 
               {/* Book Button */}
               <Pressable
-                style={[styles.confirmButton, isBooking && styles.confirmButtonDisabled]}
+                style={[styles.confirmButton, isBooking ? styles.confirmButtonDisabled : null]}
                 onPress={handleBookAppointment}
                 disabled={isBooking}
                 accessibilityRole="button"

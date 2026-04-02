@@ -140,7 +140,7 @@ const PickedForYou: React.FC<PickedForYouProps> = ({
     if (onViewAllPress) {
       onViewAllPress();
     } else {
-      router.push('/recommendations');
+      router.push('/recommendations' as any);
     }
   };
 

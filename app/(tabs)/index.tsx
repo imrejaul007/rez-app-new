@@ -642,7 +642,7 @@ function HomeScreen() {
         // Refresh recently viewed
         refreshRecentlyViewed();
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -705,7 +705,7 @@ function HomeScreen() {
         } as any);
         if (!isMounted()) return;
         setIsLocationModalVisible(false);
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Failed to update location. Please try again.');
       }
     },

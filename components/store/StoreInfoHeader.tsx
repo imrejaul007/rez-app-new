@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
-import { Colors } from '@/constants/theme';
 
 interface StoreInfoHeaderProps {
   storeName: string;
@@ -64,7 +63,7 @@ function StoreInfoHeader({ storeName, rating, categoryTags, horizontalPadding }:
       {/* Feature Tags Row */}
       <View style={styles.featureTagsRow}>
         <View style={styles.tagVerified}>
-          <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
+          <Ionicons name="checkmark-circle" size={14} color={colors.gold} />
           <ThemedText style={styles.tagTextVerified}>Verified Partner</ThemedText>
         </View>
         <View style={styles.tagCashback}>
@@ -72,7 +71,7 @@ function StoreInfoHeader({ storeName, rating, categoryTags, horizontalPadding }:
           <ThemedText style={styles.tagTextCashback}>Instant Cashback</ThemedText>
         </View>
         <View style={styles.tagCoins}>
-          <Ionicons name="gift" size={14} color={Colors.brand.purpleLight} />
+          <Ionicons name="gift" size={14} color={colors.brand.purpleLight} />
           <ThemedText style={styles.tagTextCoins}>Extra Coins</ThemedText>
         </View>
       </View>
@@ -188,6 +187,6 @@ const createStyles = (horizontalPadding: number) =>
     tagTextCoins: {
       ...Typography.bodySmall,
       fontWeight: "600",
-      color: Colors.brand.purple,
+      color: colors.brand.purple,
     },
   });

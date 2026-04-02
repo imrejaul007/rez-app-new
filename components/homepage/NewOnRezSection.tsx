@@ -81,7 +81,7 @@ const AutoPlayVideo: React.FC<{ uri: string; poster?: string; style?: any }> = (
               video.play().catch(() => { });
             }
           });
-        } catch (e) {
+        } catch (e: any) {
           // Silent error handling
         }
       }, 100);
@@ -508,7 +508,7 @@ const NewOnNuqtaSection: React.FC = () => {
             setHorizontalStore(transformedStores[3]);
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -680,33 +680,33 @@ const NewOnNuqtaSection: React.FC = () => {
               <Animated.View style={[styles.incomingCardWrapper, newCardStyle, webAnimationStyle]}>
                 <Pressable
                   style={styles.smallCard}
-                  onPress={() => handleStorePress(incomingStore.id)}
+                  onPress={() => handleStorePress(incomingStore!.id)}
                  
                 >
                   <View style={styles.smallImageContainer}>
-                    {incomingStore.video ? (
+                    {incomingStore!.video ? (
                       <AutoPlayVideo
-                        uri={incomingStore.video}
-                        poster={incomingStore.videoThumbnail || incomingStore.image}
+                        uri={incomingStore!.video || ''}
+                        poster={incomingStore!.videoThumbnail || incomingStore!.image || ''}
                         style={styles.smallImage}
                       />
                     ) : (
                       <CachedImage
-                        source={incomingStore.image}
+                        source={incomingStore!.image || ''}
                         style={styles.smallImage}
                         contentFit="cover"
                       />
                     )}
                     <View style={styles.smallPeopleBadge}>
                       <Text style={styles.fireEmoji}>🔥</Text>
-                      <Text style={styles.smallPeopleText}>{incomingStore.people}</Text>
+                      <Text style={styles.smallPeopleText}>{incomingStore!.people}</Text>
                     </View>
                   </View>
                   <View style={styles.smallContent}>
-                    <Text style={styles.smallCategory}>{incomingStore.category}</Text>
-                    <Text style={styles.smallName} numberOfLines={1}>{incomingStore.name}</Text>
+                    <Text style={styles.smallCategory}>{incomingStore!.category}</Text>
+                    <Text style={styles.smallName} numberOfLines={1}>{incomingStore!.name}</Text>
                     <View style={styles.smallRewardRow}>
-                      <Text style={styles.smallCashback}>{incomingStore.cashback}</Text>
+                      <Text style={styles.smallCashback}>{incomingStore!.cashback}</Text>
                       <CoinIcon size={12} />
                     </View>
                   </View>
@@ -725,8 +725,8 @@ const NewOnNuqtaSection: React.FC = () => {
                   <View style={styles.smallImageContainer}>
                     {smallStores[0].video ? (
                       <AutoPlayVideo
-                        uri={smallStores[0].video}
-                        poster={smallStores[0].videoThumbnail || smallStores[0].image}
+                        uri={smallStores[0].video || ''}
+                        poster={smallStores[0].videoThumbnail || smallStores[0].image || ''}
                         style={styles.smallImage}
                       />
                     ) : (
@@ -764,8 +764,8 @@ const NewOnNuqtaSection: React.FC = () => {
                   <View style={styles.smallImageContainer}>
                     {smallStores[1].video ? (
                       <AutoPlayVideo
-                        uri={smallStores[1].video}
-                        poster={smallStores[1].videoThumbnail || smallStores[1].image}
+                        uri={smallStores[1].video || ''}
+                        poster={smallStores[1].videoThumbnail || smallStores[1].image || ''}
                         style={styles.smallImage}
                       />
                     ) : (
@@ -876,7 +876,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -1055,7 +1055,7 @@ const styles = StyleSheet.create({
   smallName: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 6,
   },
   smallRewardRow: {
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
   horizontalName: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   horizontalPeopleBadge: {
     flexDirection: 'row',

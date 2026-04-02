@@ -47,7 +47,7 @@ function StoreMapScreen() {
         if (isMounted()) {
           setLocation(currentLocation);
         }
-      } catch (error) {
+      } catch (error: any) {
         if (__DEV__) console.error('Location error:', error);
         if (isMounted()) {
           setLocationPermission(false);
@@ -80,7 +80,7 @@ function StoreMapScreen() {
           }
           setLoading(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         if (__DEV__) console.error('Fetch stores error:', error);
         if (isMounted()) {
           platformAlertSimple('Error', 'Failed to load nearby stores');

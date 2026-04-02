@@ -72,19 +72,17 @@ const ProductCard = ({
   currencySymbol: string;
 }) => {
   const imageUrl = product.image || (product.images && product.images[0]) || '';
-  const discount = product.discount || (product.originalPrice && product.price
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0);
+  const discount =
+    product.discount ||
+    (product.originalPrice && product.price
+      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+      : 0);
 
   return (
     <Pressable style={styles.productCard} onPress={onPress}>
       <View style={styles.imageContainer}>
         {imageUrl ? (
-          <FastImage
-            source={imageUrl}
-            style={styles.productImage}
-            resizeMode="cover"
-          />
+          <FastImage source={imageUrl} style={styles.productImage} resizeMode="cover" />
         ) : (
           <View style={styles.imagePlaceholder}>
             <Ionicons name="image-outline" size={40} color={COLORS.gray200} />
@@ -97,17 +95,19 @@ const ProductCard = ({
         )}
       </View>
       <View style={styles.productInfo}>
-        <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
-        {product.store?.name && (
-          <Text style={styles.storeName}>{product.store.name}</Text>
-        )}
+        <Text style={styles.productName} numberOfLines={2}>
+          {product.name}
+        </Text>
+        {product.store?.name && <Text style={styles.storeName}>{product.store.name}</Text>}
         <View style={styles.priceRow}>
           <Text style={styles.currentPrice}>
-            {currencySymbol}{product.price?.toLocaleString()}
+            {currencySymbol}
+            {product.price?.toLocaleString()}
           </Text>
           {product.originalPrice && product.originalPrice > product.price && (
             <Text style={styles.originalPrice}>
-              {currencySymbol}{product.originalPrice?.toLocaleString()}
+              {currencySymbol}
+              {product.originalPrice?.toLocaleString()}
             </Text>
           )}
         </View>
@@ -164,18 +164,18 @@ function ShopPage() {
               setFilterTitle(vibe.name);
               setFilterSubtitle(vibe.description || '');
               setFilterIcon(vibe.icon || '');
-              setFilterColor(vibe.color || COLORS.primaryGreen);
+              setFilterColor((vibe.color || COLORS.primaryGreen) as any);
               return;
             }
           }
           // Fallback to dummy data
           const vibes = getVibesForCategory(categorySlug);
-          const vibe = vibes.find(v => v.id === vibeId);
+          const vibe = vibes.find((v) => v.id === vibeId);
           if (vibe) {
             setFilterTitle(vibe.name);
             setFilterSubtitle(vibe.description || '');
             setFilterIcon(vibe.icon || '');
-            setFilterColor(vibe.color || COLORS.primaryGreen);
+            setFilterColor((vibe.color || COLORS.primaryGreen) as any);
           }
         } else if (occasionId && categorySlug) {
           // Try API first
@@ -186,28 +186,28 @@ function ShopPage() {
               setFilterTitle(occasion.name);
               setFilterSubtitle(`Up to ${occasion.discount}% off`);
               setFilterIcon(occasion.icon || '');
-              setFilterColor(occasion.color || COLORS.primaryGreen);
+              setFilterColor((occasion.color || COLORS.primaryGreen) as any);
               return;
             }
           }
           // Fallback to dummy data
           const occasions = getOccasionsForCategory(categorySlug);
-          const occasion = occasions.find(o => o.id === occasionId);
+          const occasion = occasions.find((o) => o.id === occasionId);
           if (occasion) {
             setFilterTitle(occasion.name);
             setFilterSubtitle(`Up to ${occasion.discount}% off`);
             setFilterIcon(occasion.icon || '');
-            setFilterColor(occasion.color || COLORS.primaryGreen);
+            setFilterColor((occasion.color || COLORS.primaryGreen) as any);
           }
         } else if (categorySlug) {
           if (!isMounted()) return;
-          setFilterTitle(categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          setFilterTitle(categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()));
         }
-      } catch (error) {
+      } catch (error: any) {
         // Use fallback data on error
         if (vibeId && categorySlug) {
           const vibes = getVibesForCategory(categorySlug);
-          const vibe = vibes.find(v => v.id === vibeId);
+          const vibe = vibes.find((v) => v.id === vibeId);
           if (vibe) {
             setFilterTitle(vibe.name);
             setFilterSubtitle(vibe.description || '');
@@ -215,7 +215,7 @@ function ShopPage() {
           }
         } else if (occasionId && categorySlug) {
           const occasions = getOccasionsForCategory(categorySlug);
-          const occasion = occasions.find(o => o.id === occasionId);
+          const occasion = occasions.find((o) => o.id === occasionId);
           if (occasion) {
             setFilterTitle(occasion.name);
             setFilterSubtitle(`Up to ${occasion.discount}% off`);
@@ -229,75 +229,78 @@ function ShopPage() {
   }, [vibeId, occasionId, categorySlug]);
 
   // Fetch products
-  const fetchProducts = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setPage(1);
-        setProducts([]);
-        setHasMore(true); // Reset hasMore on refresh
-      }
-
-      setLoading(true);
-
-      // Build query params
-      const queryParams: any = {
-        page: isRefresh ? 1 : page,
-        limit: 20,
-      };
-
-      if (categorySlug) {
-        queryParams.category = categorySlug;
-      }
-
-      if (vibeId) {
-        queryParams.tags = vibeId;
-      }
-
-      if (occasionId) {
-        queryParams.occasion = occasionId;
-      }
-
-      if (brandId) {
-        queryParams.brand = brandId;
-      }
-
-      // Fetch products from API
-      const response = await productsApi.getProducts(queryParams);
-
-      if (response.success && response.data) {
-        const newProducts = response.data.products || response.data || [];
-
+  const fetchProducts = useCallback(
+    async (isRefresh = false) => {
+      try {
         if (isRefresh) {
-          if (!isMounted()) return;
-          setProducts(newProducts);
-        } else {
-          if (!isMounted()) return;
-          setProducts(prev => [...prev, ...newProducts]);
+          setPage(1);
+          setProducts([]);
+          setHasMore(true); // Reset hasMore on refresh
         }
 
-        // Stop pagination if fewer than limit products returned
-        if (!isMounted()) return;
-        setHasMore(newProducts.length === 20);
-      } else {
-        // API returned unsuccessful response - stop pagination
+        setLoading(true);
+
+        // Build query params
+        const queryParams: any = {
+          page: isRefresh ? 1 : page,
+          limit: 20,
+        };
+
+        if (categorySlug) {
+          queryParams.category = categorySlug;
+        }
+
+        if (vibeId) {
+          queryParams.tags = vibeId;
+        }
+
+        if (occasionId) {
+          queryParams.occasion = occasionId;
+        }
+
+        if (brandId) {
+          queryParams.brand = brandId;
+        }
+
+        // Fetch products from API
+        const response = await productsApi.getProducts(queryParams);
+
+        if (response.success && response.data) {
+          const newProducts = response.data.products || response.data || [];
+
+          if (isRefresh) {
+            if (!isMounted()) return;
+            setProducts(newProducts as any);
+          } else {
+            if (!isMounted()) return;
+            setProducts((prev: any) => [...prev, ...newProducts]);
+          }
+
+          // Stop pagination if fewer than limit products returned
+          if (!isMounted()) return;
+          setHasMore(newProducts.length === 20);
+        } else {
+          // API returned unsuccessful response - stop pagination
+          if (!isMounted()) return;
+          setHasMore(false);
+        }
+      } catch (error: any) {
+        // Stop pagination on error to prevent infinite loop
         if (!isMounted()) return;
         setHasMore(false);
+        showToast({
+          message: 'Failed to load products',
+          type: 'error',
+        });
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (error) {
-      // Stop pagination on error to prevent infinite loop
-      if (!isMounted()) return;
-      setHasMore(false);
-      showToast({
-        message: 'Failed to load products',
-        type: 'error',
-      });
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [categorySlug, vibeId, occasionId, brandId, page]);
+    },
+    [categorySlug, vibeId, occasionId, brandId, page],
+  );
 
   useEffect(() => {
     fetchProducts();
@@ -310,23 +313,25 @@ function ShopPage() {
 
   const handleLoadMore = () => {
     if (!loading && hasMore) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
       fetchProducts();
     }
   };
 
-  const handleProductPress = useCallback((product: Product) => {
-    const productId = product._id || product.id;
-    router.push(`/product-page?cardId=${productId}&cardType=product` as any);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (product: Product) => {
+      const productId = product._id || product.id;
+      router.push(`/product-page?cardId=${productId}&cardType=product` as any);
+    },
+    [router],
+  );
 
-  const renderProduct = useCallback(({ item }: { item: Product }) => (
-    <ProductCard
-      product={item}
-      onPress={() => handleProductPress(item)}
-      currencySymbol={currencySymbol}
-    />
-  ), [handleProductPress, currencySymbol]);
+  const renderProduct = useCallback(
+    ({ item }: { item: Product }) => (
+      <ProductCard product={item} onPress={() => handleProductPress(item)} currencySymbol={currencySymbol} />
+    ),
+    [handleProductPress, currencySymbol],
+  );
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
@@ -336,9 +341,7 @@ function ShopPage() {
         </View>
       )}
       <Text style={styles.filterTitle}>{filterTitle}</Text>
-      {filterSubtitle && (
-        <Text style={styles.filterSubtitle}>{filterSubtitle}</Text>
-      )}
+      {filterSubtitle && <Text style={styles.filterSubtitle}>{filterSubtitle}</Text>}
       <Text style={styles.resultCount}>
         {products.length} {products.length === 1 ? 'product' : 'products'}
       </Text>
@@ -349,12 +352,10 @@ function ShopPage() {
     <View style={styles.emptyContainer}>
       <Ionicons name="cube-outline" size={64} color={COLORS.gray200} />
       <Text style={styles.emptyTitle}>No products found</Text>
-      <Text style={styles.emptyText}>
-        Try adjusting your filters or browse other categories
-      </Text>
+      <Text style={styles.emptyText}>Try adjusting your filters or browse other categories</Text>
       <Pressable
         style={styles.browseButton}
-        onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+        onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
       >
         <Text style={styles.browseButtonText}>Go Back</Text>
       </Pressable>
@@ -373,14 +374,11 @@ function ShopPage() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={[filterColor, filterColor]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[filterColor, filterColor]} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="chevron-back" size={24} color={COLORS.white} />
           </Pressable>
@@ -470,7 +468,7 @@ const styles = StyleSheet.create({
   filterTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
@@ -546,7 +544,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
     lineHeight: 18,
   },
@@ -565,7 +563,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   originalPrice: {
     ...Typography.bodySmall,
@@ -602,7 +600,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

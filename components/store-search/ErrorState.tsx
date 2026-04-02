@@ -65,7 +65,7 @@ const ErrorState: React.FC<ErrorStateProps> = ({
       case 'TIMEOUT':
         return {
           icon: 'time-outline',
-          title: 'Request Timeout',
+          title: 'Request ReturnType<typeof setTimeout>',
           subtitle: 'The request took too long. Please try again.',
           showRetry: true,
         };

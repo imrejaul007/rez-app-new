@@ -81,7 +81,7 @@ export const PremiumSearchHeader: React.FC<PremiumSearchHeaderProps> = ({
         />
 
         <TextInput
-          style={styles.searchInput}
+          style={styles.searchInput as any}
           placeholder="Search stores to pay..."
           placeholderTextColor={colors.neutral[400]}
           value={searchQuery}

@@ -23,7 +23,7 @@ export const CoinChip: React.FC<CoinChipProps> = React.memo(({ type, amount, onP
   const label = type === 'rez' || type === 'nuqta' ? BRAND.APP_NAME : type === 'promo' ? 'Promo' : 'Branded';
 
   const content = (
-    <View style={[styles.chip, { backgroundColor: chipBg }, compact && styles.chipCompact]}>
+    <View style={[styles.chip, { backgroundColor: chipBg }, compact ? styles.chipCompact : null]}>
       <View style={[styles.dot, { backgroundColor: coinInfo.color }]} />
       <ThemedText style={[styles.label, { color: textColor }]}>
         {label}: {Number.isFinite(amount) ? amount.toLocaleString() : '0'}

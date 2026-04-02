@@ -89,11 +89,7 @@ function PaymentSuccessPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const { orderId, transactionId, paymentMethod } = useLocalSearchParams<{
-    orderId: string;
-    transactionId: string;
-    paymentMethod: string;
-  }>();
+  const { orderId, transactionId, paymentMethod } = useLocalSearchParams<any>();
 
   const [orders, setOrders] = useState<OrderDetails[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +104,7 @@ function PaymentSuccessPage() {
   const orderIds = orderId
     ? orderId
         .split(',')
-        .map((id) => id.trim())
+        .map((id: string) => id.trim())
         .filter(Boolean)
     : [];
   const isMultiStoreOrder = orderIds.length > 1;
@@ -122,7 +118,7 @@ function PaymentSuccessPage() {
       }
 
       try {
-        const orderPromises = orderIds.map((id) => ordersApi.getOrderById(id));
+        const orderPromises = orderIds.map((id: string) => ordersApi.getOrderById(id));
         const responses = await Promise.all(orderPromises);
 
         const fetchedOrders: OrderDetails[] = [];
@@ -136,21 +132,23 @@ function PaymentSuccessPage() {
             const orderData = response.data;
             // Extract store name from various possible locations in the response
             const extractedStoreName =
-              orderData.store?.name ||
-              orderData.storeName ||
-              orderData.items?.[0]?.store?.name ||
+              (orderData as any).store?.name ||
+              (orderData as any).storeName ||
+              (orderData as any).items?.[0]?.store?.name ||
               orderData.items?.[0]?.storeName ||
-              (orderData.store && typeof orderData.store === 'string' ? orderData.store : null) ||
+              ((orderData as any).store && typeof (orderData as any).store === 'string'
+                ? (orderData as any).store
+                : null) ||
               `Order ${orderData.orderNumber?.slice(-4) || ''}`;
 
             // Extract store ID from various possible locations
             const extractedStoreId =
-              (orderData.store && typeof orderData.store === 'object'
-                ? orderData.store._id || orderData.store.id
+              ((orderData as any).store && typeof (orderData as any).store === 'object'
+                ? (orderData as any).store._id || (orderData as any).store.id
                 : null) ||
-              (typeof orderData.store === 'string' ? orderData.store : null) ||
-              orderData.store ||
-              orderData.items?.[0]?.store?.id ||
+              (typeof (orderData as any).store === 'string' ? (orderData as any).store : null) ||
+              (orderData as any).store ||
+              (orderData as any).items?.[0]?.store?.id ||
               '';
 
             fetchedOrders.push({
@@ -159,12 +157,12 @@ function PaymentSuccessPage() {
               status: orderData.status || 'placed',
               storeId: extractedStoreId,
               storeName: extractedStoreName,
-              items: orderData.items || [],
+              items: (orderData.items || []) as any,
               totals: {
                 subtotal: orderData.totals?.subtotal || orderData.summary?.subtotal || 0,
                 delivery:
                   orderData.totals?.delivery ||
-                  orderData.totals?.shipping ||
+                  (orderData as any).totals?.shipping ||
                   orderData.delivery?.deliveryFee ||
                   orderData.summary?.shipping ||
                   0,
@@ -179,7 +177,7 @@ function PaymentSuccessPage() {
               payment: {
                 method: orderData.payment?.method || paymentMethod || 'unknown',
                 status: orderData.payment?.status || 'completed',
-                coinsUsed: orderData.payment?.coinsUsed || {
+                coinsUsed: (orderData as any).payment?.coinsUsed || {
                   rezCoins: 0,
                   promoCoins: 0,
                   storePromoCoins: 0,
@@ -187,8 +185,9 @@ function PaymentSuccessPage() {
                 },
               },
               delivery: orderData.delivery || undefined,
-              fulfillmentType: orderData.fulfillmentType || orderData.fulfillment?.type || undefined,
-              fulfillmentDetails: orderData.fulfillmentDetails || orderData.fulfillment?.details || undefined,
+              fulfillmentType: (orderData as any).fulfillmentType || (orderData as any).fulfillment?.type || undefined,
+              fulfillmentDetails:
+                (orderData as any).fulfillmentDetails || (orderData as any).fulfillment?.details || undefined,
               createdAt: orderData.createdAt || new Date().toISOString(),
             });
           } else {
@@ -278,7 +277,7 @@ function PaymentSuccessPage() {
           if (!isMounted()) return;
           setError('Could not load order details. Please check your orders page.');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load order details');
       } finally {
@@ -434,7 +433,7 @@ function PaymentSuccessPage() {
                 <View style={styles.orderNumberCard}>
                   <ThemedText style={styles.orderNumberLabel}>{orders.length} Orders Placed</ThemedText>
                   {orders.map((o, index) => (
-                    <View key={o.id} style={[styles.multiOrderRow, index > 0 && styles.multiOrderDivider]}>
+                    <View key={o.id} style={[styles.multiOrderRow, index > 0 ? styles.multiOrderDivider : null]}>
                       <View style={styles.multiOrderInfo}>
                         <ThemedText style={styles.multiOrderStore}>{o.storeName}</ThemedText>
                         <ThemedText style={styles.orderNumber}>#{o.orderNumber}</ThemedText>
@@ -736,12 +735,12 @@ function PaymentSuccessPage() {
             </Pressable>
 
             {/* Rate Your Experience - shown for single-store orders with a known store */}
-            {!isMultiStoreOrder && order?.store ? (
+            {!isMultiStoreOrder && order?.storeId ? (
               <Pressable
                 style={styles.reviewButton}
                 onPress={() =>
                   router.push(
-                    `/ReviewPage?storeId=${order.store}&storeName=${encodeURIComponent(order.storeName || '')}` as any,
+                    `/ReviewPage?storeId=${order.storeId}&storeName=${encodeURIComponent(order.storeName || '')}` as any,
                   )
                 }
                 accessibilityLabel="Rate your experience"

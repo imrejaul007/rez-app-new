@@ -60,9 +60,9 @@ const PlayAndEarnSection: React.FC = () => {
       const response = await gamificationApi.getPlayAndEarnData();
       if (response.success) {
         if (!isMounted()) return;
-        setData(response.data);
+        setData(response.data ?? null);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load');
     } finally {
@@ -89,7 +89,7 @@ const PlayAndEarnSection: React.FC = () => {
       try {
         await gamificationApi.streakCheckin();
         fetchPlayAndEarnData(); // Refresh data
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     }
@@ -101,7 +101,7 @@ const PlayAndEarnSection: React.FC = () => {
       try {
         await gamificationApi.claimSurpriseDrop(data.surpriseDrop.id);
         fetchPlayAndEarnData(); // Refresh data
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     }

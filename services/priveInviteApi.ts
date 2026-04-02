@@ -84,7 +84,7 @@ class PriveInviteApi {
     maxUses: number;
     usageCount: number;
   }>> {
-    return apiClient.post('/prive/invites/generate');
+    return apiClient.post<any>('/prive/invites/generate');
   }
 
   /**
@@ -95,7 +95,7 @@ class PriveInviteApi {
     reason?: string;
     creator?: { name: string; tier: string };
   }>> {
-    return apiClient.post('/prive/invites/validate', { code });
+    return apiClient.post<any>('/prive/invites/validate', { code });
   }
 
   /**
@@ -106,7 +106,7 @@ class PriveInviteApi {
     inviterReward: number;
     inviteeReward: number;
   }>> {
-    return apiClient.post('/prive/invites/apply', { code });
+    return apiClient.post<any>('/prive/invites/apply', { code });
   }
 
   /**

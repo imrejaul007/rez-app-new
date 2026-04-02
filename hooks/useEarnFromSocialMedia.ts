@@ -15,7 +15,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
   const authLoading = useAuthLoading();
   const [state, setState] = useState<EarnSocialState>(EarnSocialData.initialState);
   const [contextOrderId] = useState(orderId);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
   // Track mounted state and cleanup on unmount
@@ -52,7 +52,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
         posts,
         error: null
       }));
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         loading: false,
@@ -140,11 +140,11 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
       if (result.success) {
         // Add new post to the list
         const newPost = {
-          id: result.data.postId,
+          id: (result.data as any).postId,
           url: state.instagramUrl,
           status: 'pending' as const,
           submittedAt: new Date(),
-          cashbackAmount: result.data.cashbackAmount,
+          cashbackAmount: (result.data as any).cashbackAmount,
           platform: 'instagram' as const
         };
 
@@ -168,7 +168,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
           uploadProgress: 0
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       // Clear interval on error
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
@@ -208,7 +208,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
         earnings,
         posts
       }));
-    } catch (error) {
+    } catch (error: any) {
       // Silently fail refresh
     }
   }, []);
@@ -241,7 +241,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
       // For overview, try to go back or go to home
       try {
         router.back();
-      } catch (error) {
+      } catch (error: any) {
         router.replace('/');
       }
     }

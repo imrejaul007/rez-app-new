@@ -491,7 +491,7 @@ function AdminSocialMediaPosts() {
                 onPress={() => {
                   try {
                     Linking.openURL(post.postUrl);
-                  } catch (e) {
+                  } catch (e: any) {
                     catchAndWarn(e, 'SocialMediaPosts/openURL');
                   }
                 }}

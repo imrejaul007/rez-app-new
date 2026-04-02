@@ -60,7 +60,7 @@ export function usePartnerProgress(options: UsePartnerProgressOptions = {}) {
 
   const [refreshing, setRefreshing] = useState(false);
   const previousDataRef = useRef<PartnerDashboard | null>(null);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
 
   // Fetch partner data
@@ -97,7 +97,7 @@ export function usePartnerProgress(options: UsePartnerProgressOptions = {}) {
       } else {
         throw new Error(dashboardResponse.error || 'Failed to load partner data');
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         loading: false,

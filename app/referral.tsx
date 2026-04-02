@@ -43,9 +43,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Helper to get next tier info based on current referrals
 const getNextTierInfo = (currentReferrals: number) => {
-  const tiers = Object.entries(REFERRAL_TIERS).sort(
-    (a, b) => a[1].referralsRequired - b[1].referralsRequired
-  );
+  const tiers = Object.entries(REFERRAL_TIERS).sort((a, b) => a[1].referralsRequired - b[1].referralsRequired);
 
   for (const [tierKey, tierData] of tiers) {
     if (currentReferrals < tierData.referralsRequired) {
@@ -88,8 +86,8 @@ const ReferralPageContent = () => {
   } | null>(null);
 
   // Refs for cleanup and timeout
-  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
   const loadingRef = useRef(loading);
   // Keep loadingRef in sync so the 15 s timeout reads the live value, not a stale closure
@@ -146,9 +144,7 @@ const ReferralPageContent = () => {
         if (statsData?.totalReferrals != null) {
           const currentTierInfo = getNextTierInfo(statsData.totalReferrals);
           // Find current tier (one before next)
-          const tiers = Object.entries(REFERRAL_TIERS).sort(
-            (a, b) => a[1].referralsRequired - b[1].referralsRequired
-          );
+          const tiers = Object.entries(REFERRAL_TIERS).sort((a, b) => a[1].referralsRequired - b[1].referralsRequired);
           let currentTierKey = '';
           for (const [key, data] of tiers) {
             if (statsData.totalReferrals >= data.referralsRequired) currentTierKey = key;
@@ -170,7 +166,7 @@ const ReferralPageContent = () => {
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       hasError = true;
       // Don't fail entire page, just show empty stats
       if (isMountedRef.current) {
@@ -184,7 +180,7 @@ const ReferralPageContent = () => {
       if (isMountedRef.current) {
         setHistory(historyData || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       hasError = true;
       // Don't fail entire page, just show empty history
       if (isMountedRef.current) {
@@ -198,7 +194,7 @@ const ReferralPageContent = () => {
       if (isMountedRef.current) {
         setCodeInfo(codeData);
       }
-    } catch (error) {
+    } catch (error: any) {
       hasError = true;
       // Show error for code since it's critical
       if (isMountedRef.current) {
@@ -268,7 +264,7 @@ const ReferralPageContent = () => {
       analyticsService.track('referral_code_copied', { referralCode });
 
       platformAlertSimple('Copied!', 'Referral code copied to clipboard');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy referral code');
     }
   }, [referralCode]);
@@ -310,36 +306,39 @@ const ReferralPageContent = () => {
     }
   };
 
-  const renderReferralHistoryItem = useCallback(({ item }: { item: ReferralHistoryItem }) => (
-    <View style={styles.historyCard}>
-      <View style={styles.historyHeader}>
-        <View>
-          <ThemedText style={styles.historyName}>{item.referredUser?.name || 'User'}</ThemedText>
-          <Text style={styles.historyPhone}>
-            {item.referredUser?.email ? anonymizeEmail(item.referredUser.email) : 'No email'}
+  const renderReferralHistoryItem = useCallback(
+    ({ item }: { item: ReferralHistoryItem }) => (
+      <View style={styles.historyCard}>
+        <View style={styles.historyHeader}>
+          <View>
+            <ThemedText style={styles.historyName}>{item.referredUser?.name || 'User'}</ThemedText>
+            <Text style={styles.historyPhone}>
+              {item.referredUser?.email ? anonymizeEmail(item.referredUser.email) : 'No email'}
+            </Text>
+          </View>
+          <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
+            <Text style={styles.statusText}>{item.status}</Text>
+          </View>
+        </View>
+        <View style={styles.historyReward}>
+          <Ionicons name="cash-outline" size={16} color={Colors.gold} />
+          <Text style={styles.rewardText}>
+            {item.rewardStatus === 'credited'
+              ? `Earned ${currencySymbol}${item.rewardAmount}`
+              : `${item.rewardStatus === 'pending' ? 'Pending' : 'Cancelled'} ${currencySymbol}${item.rewardAmount}`}
           </Text>
         </View>
-        <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
-          <Text style={styles.statusText}>{item.status}</Text>
-        </View>
-      </View>
-      <View style={styles.historyReward}>
-        <Ionicons name="cash-outline" size={16} color={Colors.gold} />
-        <Text style={styles.rewardText}>
-          {item.rewardStatus === 'credited'
-            ? `Earned ${currencySymbol}${item.rewardAmount}`
-            : `${item.rewardStatus === 'pending' ? 'Pending' : 'Cancelled'} ${currencySymbol}${item.rewardAmount}`}
+        <Text style={styles.historyDate}>
+          {new Date(item.createdAt).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          })}
         </Text>
       </View>
-      <Text style={styles.historyDate}>
-        {new Date(item.createdAt).toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric'
-        })}
-      </Text>
-    </View>
-  ), [currencySymbol, getStatusStyle]);
+    ),
+    [currencySymbol, getStatusStyle],
+  );
 
   // Performance optimization: Memoize calculated values
   const totalReferrals = useMemo(() => stats?.totalReferrals || 0, [stats?.totalReferrals]);
@@ -355,7 +354,7 @@ const ReferralPageContent = () => {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
@@ -398,7 +397,7 @@ const ReferralPageContent = () => {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityHint="Returns to previous screen"
           >
@@ -412,9 +411,7 @@ const ReferralPageContent = () => {
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
       >
         {/* Referral Code Card */}
         <View style={styles.codeCard}>
@@ -428,16 +425,12 @@ const ReferralPageContent = () => {
             <Pressable
               style={styles.copyButton}
               onPress={handleCopyCode}
-              accessibilityLabel={copied ? "Code copied" : "Copy referral code"}
+              accessibilityLabel={copied ? 'Code copied' : 'Copy referral code'}
               accessibilityRole="button"
               accessibilityState={{ selected: copied }}
               accessibilityHint="Copies your referral code to clipboard"
             >
-              <Ionicons
-                name={copied ? 'checkmark' : 'copy-outline'}
-                size={20}
-                color="white"
-              />
+              <Ionicons name={copied ? 'checkmark' : 'copy-outline'} size={20} color="white" />
             </Pressable>
           </View>
 
@@ -475,9 +468,7 @@ const ReferralPageContent = () => {
             </View>
             <View style={styles.stepContent}>
               <ThemedText style={styles.stepTitle}>Friend signs up</ThemedText>
-              <Text style={styles.stepDescription}>
-                Your friend creates an account using your referral code
-              </Text>
+              <Text style={styles.stepDescription}>Your friend creates an account using your referral code</Text>
             </View>
           </View>
 
@@ -500,9 +491,7 @@ const ReferralPageContent = () => {
 
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
-              <ThemedText style={styles.statValue}>
-                {totalReferrals}
-              </ThemedText>
+              <ThemedText style={styles.statValue}>{totalReferrals}</ThemedText>
               <Text style={styles.statLabel}>Total Referrals</Text>
             </View>
 
@@ -510,7 +499,8 @@ const ReferralPageContent = () => {
 
             <View style={styles.statItem}>
               <ThemedText style={styles.statValue}>
-                {currencySymbol}{totalEarned}
+                {currencySymbol}
+                {totalEarned}
               </ThemedText>
               <Text style={styles.statLabel}>Total Earned</Text>
             </View>
@@ -520,9 +510,7 @@ const ReferralPageContent = () => {
           {(stats?.pendingEarnings || 0) > 0 && (
             <View style={styles.statsGrid}>
               <View style={styles.statItem}>
-                <ThemedText style={styles.statValue}>
-                  {stats?.pendingReferrals || 0}
-                </ThemedText>
+                <ThemedText style={styles.statValue}>{stats?.pendingReferrals || 0}</ThemedText>
                 <Text style={styles.statLabel}>Pending</Text>
               </View>
 
@@ -530,7 +518,8 @@ const ReferralPageContent = () => {
 
               <View style={styles.statItem}>
                 <ThemedText style={styles.statValue}>
-                  {currencySymbol}{stats?.pendingEarnings || 0}
+                  {currencySymbol}
+                  {stats?.pendingEarnings || 0}
                 </ThemedText>
                 <Text style={styles.statLabel}>Pending Earnings</Text>
               </View>
@@ -565,7 +554,7 @@ const ReferralPageContent = () => {
               data={history.slice(0, 5)}
               scrollEnabled={false}
               keyExtractor={(item) => item.id}
-          estimatedItemSize={70}
+              estimatedItemSize={70}
               renderItem={renderReferralHistoryItem}
             />
           </View>
@@ -575,11 +564,9 @@ const ReferralPageContent = () => {
         <View style={styles.termsCard}>
           <ThemedText style={styles.termsTitle}>Terms & Conditions</ThemedText>
           <Text style={styles.termsText}>
-            • Referral bonus is credited after friend's first successful order{'\n'}
-            • Minimum order value {currencySymbol}500 required{'\n'}
-            • Rewards expire after 90 days{'\n'}
-            • Cannot be combined with other offers{'\n'}
-            • REZ reserves the right to modify terms
+            • Referral bonus is credited after friend's first successful order{'\n'}• Minimum order value{' '}
+            {currencySymbol}500 required{'\n'}• Rewards expire after 90 days{'\n'}• Cannot be combined with other offers
+            {'\n'}• REZ reserves the right to modify terms
           </Text>
         </View>
       </ScrollView>

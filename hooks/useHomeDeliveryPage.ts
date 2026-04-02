@@ -316,7 +316,7 @@ export function useHomeDeliveryPage(): UseHomeDeliveryPageReturn {
         setAccumulatedProducts(prev => {
           // Deduplicate by id
           const existingIds = new Set(prev.map(p => p.id));
-          const newProducts = currentPageProducts.filter(p => !existingIds.has(p.id));
+          const newProducts = currentPageProducts.filter((p: any) => !existingIds.has(p.id));
           return [...prev, ...newProducts];
         });
       }
@@ -514,7 +514,7 @@ export function useHomeDeliveryPage(): UseHomeDeliveryPageReturn {
           limit: 20,
         };
 
-        const response = await productsApi.searchProducts(searchQueryParams);
+        const response: any = await productsApi.searchProducts(searchQueryParams);
 
         if (response.success && response.data?.products) {
           const products = response.data.products.map(mapBackendProductToHomeDelivery);
@@ -577,7 +577,7 @@ export function useHomeDeliveryPage(): UseHomeDeliveryPageReturn {
         limit: 20,
       };
 
-      const response = await productsApi.searchProducts(searchQueryParams);
+      const response: any = await productsApi.searchProducts(searchQueryParams);
 
       if (response.success && response.data?.products) {
         const products = response.data.products.map(mapBackendProductToHomeDelivery);

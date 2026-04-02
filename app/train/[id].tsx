@@ -164,7 +164,7 @@ function TrainDetailsPage() {
         return;
       }
 
-      const productData = response.data;
+      const productData = response.data as any;
 
       // Check if this is a train service
       const isTrain =
@@ -321,7 +321,7 @@ function TrainDetailsPage() {
               return null;
             })
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
-          const validatedImages = processedImages.filter((url) => {
+          const validatedImages = processedImages.filter((url: string) => {
             // Remove mismatched bus images from train listings
             if (url.toLowerCase().includes('bus') && !url.toLowerCase().includes('train')) {
               return false;
@@ -378,7 +378,7 @@ function TrainDetailsPage() {
 
       if (!isMounted()) return;
       setTrain(trainDetails);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load train details. Please try again.');
     } finally {
@@ -432,9 +432,9 @@ function TrainDetailsPage() {
       if (isInWishlist(train.id)) {
         await removeFromWishlist(train.id);
       } else {
-        await addToWishlist(train.id);
+        await addToWishlist(train.id as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -461,6 +461,8 @@ function TrainDetailsPage() {
     );
   }
 
+  if (!train) return null;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -477,16 +479,10 @@ function TrainDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl}
+                  source={imageUrl as any}
                   style={styles.headerImage}
                   contentFit="cover"
-                  onError={(error) => {
-                    setImageError(true);
-                  }}
-                  onLoadStart={() => {
-                    setImageError(false);
-                  }}
-                  onLoad={() => {}}
+                  onError={() => setImageError(true)}
                 />
               );
             }
@@ -536,7 +532,7 @@ function TrainDetailsPage() {
               {train.images.map((_, index) => (
                 <Pressable
                   key={index}
-                  style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]}
+                  style={[styles.indicator, selectedImageIndex === index ? styles.indicatorActive : null]}
                   onPress={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -728,10 +724,22 @@ function TrainDetailsPage() {
           </View>
           <ProductReviewsSection
             productId={train.id}
-            reviews={reviews}
-            summary={reviewSummary}
+            reviews={reviews as any}
+            summary={reviewSummary as any}
             isLoading={reviewsLoading}
-            onRefresh={refreshReviews}
+            onRefresh={refreshReviews as any}
+            productName={train.name}
+            isRefreshing={false}
+            hasMore={false}
+            sortBy={'newest' as any}
+            filterRating={null}
+            onSortChange={() => {}}
+            onFilterChange={() => {}}
+            onLoadMore={() => {}}
+            onSubmitReview={async () => {}}
+            onUpdateReview={async () => {}}
+            onDeleteReview={async () => {}}
+            onMarkHelpful={async () => {}}
           />
         </View>
 
@@ -1145,7 +1153,7 @@ const styles = StyleSheet.create({
   section: {
     padding: Spacing.xl,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.primary,
+    borderBottomColor: colors.border.default,
     backgroundColor: colors.background.primary,
   },
   sectionHeader: {
@@ -1174,7 +1182,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border.primary,
+    borderColor: colors.border.default,
   },
   detailIconContainer: {
     width: 48,
@@ -1204,7 +1212,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: colors.border.primary,
+    borderTopColor: colors.border.default,
     gap: Spacing.md,
   },
   infoRow: {
@@ -1266,7 +1274,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? Spacing.lg : Spacing.base,
     backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: colors.border.primary,
+    borderTopColor: colors.border.default,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.2,

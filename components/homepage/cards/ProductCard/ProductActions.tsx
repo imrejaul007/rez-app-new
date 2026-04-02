@@ -44,7 +44,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
       {isOutOfStock ? (
         // Notify Me Button when out of stock
         <Pressable
-          style={[styles.notifyMeButton, subscribing && styles.notifyMeButtonDisabled]}
+          style={[styles.notifyMeButton, subscribing ? styles.notifyMeButtonDisabled : null]}
           key="notify-me-button"
           onPress={onNotifyMe}
          
@@ -117,7 +117,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
       ) : (
         // Add to Cart Button
         <Pressable
-          style={[styles.addToCartButton, !canAddToCart && styles.addToCartButtonDisabled]}
+          style={[styles.addToCartButton, !canAddToCart ? styles.addToCartButtonDisabled : null]}
           key="add-to-cart-button"
           onPress={onAddToCart}
          

@@ -72,7 +72,7 @@ const StorePolicies: React.FC<StorePoliciesProps> = ({
         message: `${policy.title}\n\n${policy.content}`,
         title: policy.title,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,7 +36,7 @@ const HotRightNow = () => {
         if (!isMounted()) return;
         setHotDeals(products);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load hot deals');
     } finally {
@@ -93,47 +86,58 @@ const HotRightNow = () => {
 
   return (
     <FeatureErrorBoundary featureName="Hot Right Now" compact={true}>
-    <View style={styles.container}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>What's Hot Near You</Text>
-        <Pressable onPress={() => navigateTo('/explore/hot')}>
-          <Text style={styles.viewAllText}>View all →</Text>
-        </Pressable>
-      </View>
+      <View style={styles.container}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>What's Hot Near You</Text>
+          <Pressable onPress={() => navigateTo('/explore/hot')}>
+            <Text style={styles.viewAllText}>View all →</Text>
+          </Pressable>
+        </View>
 
-      <View style={styles.gridContainer}>
-        {hotDeals.slice(0, 4).map((product, index) => (
-          <Pressable
-            key={product.id || index}
-            style={styles.productCard}
-            onPress={() => navigateTo(`/product-page?cardId=${product.id}&cardType=product`)}
-          >
-            <View style={styles.imageContainer}>
-              {product.image && <CachedImage source={product.image} style={styles.productImage} />}
-              {product.offer && (
-                <View style={[styles.offerBadge, { backgroundColor: getOfferBadgeColor(product.offer) }]}>
-                  <Text style={styles.offerBadgeText}>{product.offer}</Text>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.productInfo}>
-              <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
-              {product.store && <Text style={styles.storeName} numberOfLines={1}>{product.store}</Text>}
-              <View style={styles.priceRow}>
-                {product.price > 0 && <Text style={styles.price}>{'\u20B9'}{product.price.toLocaleString('en-IN')}</Text>}
-                {product.distance && (
-                  <View style={styles.distanceContainer}>
-                    <Ionicons name="location" size={12} color={colors.text.tertiary} />
-                    <Text style={styles.distanceText}>{product.distance}</Text>
+        <View style={styles.gridContainer}>
+          {hotDeals.slice(0, 4).map((product, index) => (
+            <Pressable
+              key={product.id || index}
+              style={styles.productCard}
+              onPress={() => navigateTo(`/product-page?cardId=${product.id}&cardType=product`)}
+            >
+              <View style={styles.imageContainer}>
+                {product.image && <CachedImage source={product.image} style={styles.productImage} />}
+                {product.offer && (
+                  <View style={[styles.offerBadge, { backgroundColor: getOfferBadgeColor(product.offer) }]}>
+                    <Text style={styles.offerBadgeText}>{product.offer}</Text>
                   </View>
                 )}
               </View>
-            </View>
-          </Pressable>
-        ))}
+
+              <View style={styles.productInfo}>
+                <Text style={styles.productName} numberOfLines={1}>
+                  {product.name}
+                </Text>
+                {product.store && (
+                  <Text style={styles.storeName} numberOfLines={1}>
+                    {product.store}
+                  </Text>
+                )}
+                <View style={styles.priceRow}>
+                  {product.price > 0 && (
+                    <Text style={styles.price}>
+                      {'\u20B9'}
+                      {product.price.toLocaleString('en-IN')}
+                    </Text>
+                  )}
+                  {product.distance && (
+                    <View style={styles.distanceContainer}>
+                      <Ionicons name="location" size={12} color={colors.text.tertiary} />
+                      <Text style={styles.distanceText}>{product.distance}</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </Pressable>
+          ))}
+        </View>
       </View>
-    </View>
     </FeatureErrorBoundary>
   );
 };

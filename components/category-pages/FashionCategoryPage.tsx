@@ -237,10 +237,10 @@ function FashionCategoryPage() {
         <View style={[styles.chipIconCircle, { backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : `${filter.color}14` }]}>
           {isActive ? <Ionicons name="checkmark" size={14} color={COLORS.white} /> : <Text style={styles.chipIconText}>{filter.icon}</Text>}
         </View>
-        <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>{filter.label}</Text>
+        <Text style={[styles.chipLabel, isActive ? styles.chipLabelActive : null]}>{filter.label}</Text>
         {count > 0 && (
-          <View style={[styles.chipCount, isActive && styles.chipCountActive]}>
-            <Text style={[styles.chipCountText, isActive && styles.chipCountTextActive]}>{count}</Text>
+          <View style={[styles.chipCount, isActive ? styles.chipCountActive : null]}>
+            <Text style={[styles.chipCountText, isActive ? styles.chipCountTextActive : null]}>{count}</Text>
           </View>
         )}
       </Pressable>
@@ -253,7 +253,7 @@ function FashionCategoryPage() {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.purple]} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[(COLORS as any).purple]} />}
     >
       <CategoryHeader
         categoryName={categoryConfig.name}
@@ -266,9 +266,9 @@ function FashionCategoryPage() {
       <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fashion/loyalty' as any)}>
         <LinearGradient colors={['rgba(168,85,247,0.15)', 'rgba(124,58,237,0.1)']} style={styles.rewardsGradient}>
           <View style={styles.rewardsContent}>
-            <Ionicons name="star" size={20} color={COLORS.purple} />
+            <Ionicons name="star" size={20} color={(COLORS as any).purple} />
             <Text style={styles.rewardsText}>{`Earn up to 25% Cashback + ${BRAND.COIN_NAME} on every fashion purchase`}</Text>
-            <Ionicons name="chevron-forward" size={16} color={COLORS.purple} />
+            <Ionicons name="chevron-forward" size={16} color={(COLORS as any).purple} />
           </View>
           <Text style={styles.rewardsSubtext}>Works at boutiques, brands & online stores</Text>
         </LinearGradient>
@@ -294,7 +294,7 @@ function FashionCategoryPage() {
             </Text>
             <Pressable onPress={clearAllFilters} style={styles.clearFilters}>
               <Text style={styles.clearFiltersText}>Clear all</Text>
-              <Ionicons name="close-circle" size={14} color={COLORS.purple} />
+              <Ionicons name="close-circle" size={14} color={(COLORS as any).purple} />
             </Pressable>
           </View>
         )}
@@ -304,7 +304,7 @@ function FashionCategoryPage() {
 
       <EnhancedAISuggestionsSection categorySlug={slug} categoryName={categoryConfig.name} placeholders={aiPlaceholders} onSearch={handleAISearch} />
 
-      <BrowseCategoryGrid categories={subcategories} title="Shop by Category" onCategoryPress={handleCategoryPress} />
+      <BrowseCategoryGrid categories={subcategories as any} title="Shop by Category" onCategoryPress={handleCategoryPress} />
 
       {/* Trending Items */}
       {filteredTrending.length > 0 && (
@@ -319,11 +319,11 @@ function FashionCategoryPage() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingList}>
             {filteredTrending.map(w => (
               <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fashion/search?q=${w.id}` as any)}>
-                <LinearGradient colors={[COLORS.purple, COLORS.purpleDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <LinearGradient colors={[(COLORS as any).purple, COLORS.purpleDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                   <Text style={styles.trendingEmoji}>{w.emoji}</Text>
                   <Text style={styles.trendingName}>{w.name}</Text>
                   <View style={styles.trendingBadge}>
-                    <Ionicons name="trending-up" size={10} color={COLORS.purple} />
+                    <Ionicons name="trending-up" size={10} color={(COLORS as any).purple} />
                     <Text style={styles.trendingBadgeText}>{w.bookings}+ sold</Text>
                   </View>
                   <Text style={styles.trendingPrice}>From {currencySymbol}{w.priceFrom}</Text>
@@ -375,7 +375,7 @@ function FashionCategoryPage() {
                   <CachedImage source={p.image} style={styles.productImageCompact} contentFit="cover" />
                 ) : (
                   <View style={[styles.productImageCompact, styles.productPlaceholder]}>
-                    <Ionicons name="shirt-outline" size={28} color={COLORS.purple} />
+                    <Ionicons name="shirt-outline" size={28} color={(COLORS as any).purple} />
                   </View>
                 )}
                 <Text style={styles.productNameCompact} numberOfLines={2}>{p.name}</Text>
@@ -391,7 +391,7 @@ function FashionCategoryPage() {
       {filteredStores.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="shield-checkmark" size={20} color={COLORS.purple} />
+            <Ionicons name="shield-checkmark" size={20} color={(COLORS as any).purple} />
             <Text style={styles.sectionTitle}>Top Stores & Boutiques</Text>
             <Pressable onPress={() => router.push('/MainCategory/fashion/top-rated' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
@@ -415,7 +415,7 @@ function FashionCategoryPage() {
                     <CachedImage source={imageSource} style={styles.storeImage} contentFit="cover" />
                   ) : (
                     <View style={[styles.storeImage, styles.storePlaceholder]}>
-                      <Ionicons name="storefront" size={32} color={COLORS.purple} />
+                      <Ionicons name="storefront" size={32} color={(COLORS as any).purple} />
                     </View>
                   )}
                   {/* Badges overlay */}
@@ -461,7 +461,7 @@ function FashionCategoryPage() {
                     )}
                     {/* New arrivals pill */}
                     <View style={styles.storeNewArrivalsRow}>
-                      <Ionicons name="sparkles-outline" size={11} color={COLORS.purple} />
+                      <Ionicons name="sparkles-outline" size={11} color={(COLORS as any).purple} />
                       <Text style={styles.storeNewArrivalsText}>New arrivals this week</Text>
                     </View>
                   </View>
@@ -489,7 +489,7 @@ function FashionCategoryPage() {
       {/* 60-min Try & Buy Banner */}
       <View style={styles.section}>
         <Pressable style={styles.ctaBanner} onPress={() => router.push('/MainCategory/fashion/try-and-buy' as any)}>
-          <LinearGradient colors={[COLORS.purple, COLORS.purpleDark]} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+          <LinearGradient colors={[(COLORS as any).purple, COLORS.purpleDark]} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.ctaContent}>
               <Text style={styles.ctaEmoji}>⚡</Text>
               <View style={styles.ctaText}>
@@ -502,7 +502,7 @@ function FashionCategoryPage() {
         </Pressable>
       </View>
 
-      <StreakLoyaltySection categorySlug={slug} primaryColor={COLORS.purple} />
+      <StreakLoyaltySection categorySlug={slug} primaryColor={(COLORS as any).purple} />
 
       <EnhancedUGCSocialProofSection
         categorySlug={slug} categoryName={categoryConfig.name} posts={ugcPosts}
@@ -540,19 +540,19 @@ const styles = StyleSheet.create({
   filterSummary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTopWidth: 1, borderTopColor: COLORS.border },
   filterSummaryText: { flex: 1, fontSize: 12, color: COLORS.textSecondary },
   clearFilters: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  clearFiltersText: { fontSize: 12, color: COLORS.purple, fontWeight: '600' },
+  clearFiltersText: { fontSize: 12, color: (COLORS as any).purple, fontWeight: '600' },
   section: { marginTop: 24, paddingHorizontal: 16 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 },
   sectionEmoji: { fontSize: 20 },
   sectionTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: COLORS.textPrimary },
-  sectionSeeAll: { fontSize: 12, color: COLORS.purple, fontWeight: '500' },
+  sectionSeeAll: { fontSize: 12, color: (COLORS as any).purple, fontWeight: '500' },
   trendingList: { gap: 12, paddingRight: 16 },
   trendingCard: { width: 140, borderRadius: 16, overflow: 'hidden' },
   trendingGradient: { padding: 14, height: 160, justifyContent: 'space-between' },
   trendingEmoji: { fontSize: 28 },
   trendingName: { fontSize: 14, fontWeight: '700', color: COLORS.white, marginTop: 4 },
   trendingBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.9)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8 },
-  trendingBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.purple },
+  trendingBadgeText: { fontSize: 10, fontWeight: '600', color: (COLORS as any).purple },
   trendingPrice: { fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' },
   servicesList: { gap: 12, paddingRight: 16 },
   serviceCard: {
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   serviceIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: COLORS.purpleLight, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   serviceEmoji: { fontSize: 24 },
   serviceName: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 4 },
-  serviceCashback: { fontSize: 11, color: COLORS.purple, textAlign: 'center' },
+  serviceCashback: { fontSize: 11, color: (COLORS as any).purple, textAlign: 'center' },
   productsList: { gap: 12, paddingRight: 16 },
   productCardCompact: {
     width: 140, padding: 8, borderRadius: 12, backgroundColor: COLORS.white,
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   productPlaceholder: { backgroundColor: COLORS.purpleLight, justifyContent: 'center', alignItems: 'center' },
   productNameCompact: { fontSize: 12, fontWeight: '500', color: COLORS.textPrimary, marginBottom: 4 },
   productPriceCompact: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 4 },
-  productCashbackCompact: { fontSize: 11, color: COLORS.purple },
+  productCashbackCompact: { fontSize: 11, color: (COLORS as any).purple },
   storesList: { gap: 12, paddingRight: 16 },
   storeCard: {
     width: 180,
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 12,
-    backgroundColor: COLORS.purple,
+    backgroundColor: (COLORS as any).purple,
     gap: 3,
   },
   storeBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.white },
@@ -635,16 +635,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
-    backgroundColor: `${COLORS.purple}14`,
+    backgroundColor: `${(COLORS as any).purple}14`,
   },
-  storeTagText: { fontSize: 10, color: COLORS.purple, fontWeight: '500' },
+  storeTagText: { fontSize: 10, color: (COLORS as any).purple, fontWeight: '500' },
   storeNewArrivalsRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  storeNewArrivalsText: { fontSize: 10, color: COLORS.purple, fontWeight: '500' },
+  storeNewArrivalsText: { fontSize: 10, color: (COLORS as any).purple, fontWeight: '500' },
   storeService: { fontSize: 11, color: COLORS.textSecondary, paddingHorizontal: 8, paddingBottom: 8 },
   filterEmptyState: { alignItems: 'center', padding: 40, marginTop: 24 },
   filterEmptyTitle: { fontSize: 16, fontWeight: '600', color: COLORS.textPrimary, marginTop: 16 },
   filterEmptySubtitle: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, textAlign: 'center' },
-  filterEmptyClearBtn: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: COLORS.purple },
+  filterEmptyClearBtn: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: (COLORS as any).purple },
   filterEmptyClearText: { color: COLORS.white, fontWeight: '600', fontSize: 14 },
   ctaBanner: { borderRadius: 16, overflow: 'hidden' },
   ctaGradient: { padding: 16 },
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   ctaTitle: { fontSize: 16, fontWeight: '700', color: COLORS.white },
   ctaSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   ctaBtn: { backgroundColor: COLORS.white, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  ctaBtnText: { fontSize: 13, fontWeight: '600', color: COLORS.purple },
+  ctaBtnText: { fontSize: 13, fontWeight: '600', color: (COLORS as any).purple },
 });
 
 export default React.memo(FashionCategoryPage);

@@ -4,7 +4,7 @@ import { searchCacheService } from '@/services/searchCacheService';
 import { searchAnalyticsService } from '@/services/searchAnalyticsService';
 import { searchHistoryService } from '@/services/searchHistoryService';
 import { SearchPageState, SearchSection, SearchCategory, SearchResult, SearchSuggestion, GroupedProductResult, SearchResultsSummary } from '@/types/search.types';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 import searchService from '@/services/searchApi';
 import searchDiscoveryApi, { TrendingSearch, StoreItem } from '@/services/searchDiscoveryApi';
 import type { FilterState } from '@/components/search/FilterModal';
@@ -22,7 +22,7 @@ export const useSearchPage = () => {
     suggestions: [],
     activeFilters: {},
     availableFilters: [],
-    sortBy: 'savings',
+    sortBy: 'relevance',
     searchHistory: [],
     recentSearches: [],
     showSuggestions: false,
@@ -97,7 +97,7 @@ export const useSearchPage = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
       
-      const response = await apiClient.get('/categories', {
+      const response: any = await apiClient.get('/categories', {
         featured: true
       });
 
@@ -135,7 +135,7 @@ export const useSearchPage = () => {
           loading: false,
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         sections: [],
@@ -167,7 +167,7 @@ export const useSearchPage = () => {
 
     try {
       // Get suggestions from backend
-      const response = await searchService.getSearchSuggestions(query);
+      const response: any = await searchService.getSearchSuggestions(query);
 
       if (response.success && response.data) {
         // Map API suggestions to UI suggestions with ids
@@ -205,7 +205,7 @@ export const useSearchPage = () => {
           showSuggestions: true,
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       // Silently fail for suggestions
     }
   }, []);
@@ -246,7 +246,7 @@ export const useSearchPage = () => {
         if (filters.inStock) params.inStock = true;
       }
 
-      const response = await searchService.searchProductsGrouped(params);
+      const response: any = await searchService.searchProductsGrouped(params);
 
       // Bail out if a newer request already started
       if (signal.aborted) return;
@@ -294,7 +294,7 @@ export const useSearchPage = () => {
       } else {
         throw new Error('Failed to fetch grouped products');
       }
-    } catch (error) {
+    } catch (error: any) {
       // Ignore errors from aborted requests — a newer search is already running
       if (signal.aborted) return;
       setState(prev => ({
@@ -366,7 +366,7 @@ export const useSearchPage = () => {
           hasMore: searchHookState.pagination.hasMore,
         },
       }));
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         isSearching: false,
@@ -499,7 +499,7 @@ export const useSearchPage = () => {
       setTrendingSearches(trending);
       setPopularStores(popular);
       if (popularProductsRes.success && popularProductsRes.data) {
-        const products = Array.isArray(popularProductsRes.data) ? popularProductsRes.data : popularProductsRes.data.products || [];
+        const products = Array.isArray(popularProductsRes.data) ? popularProductsRes.data : (popularProductsRes.data as any).products || [];
         setPopularProducts(products);
       }
     } catch (_error) {

@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Real price comparison using products-grouped API
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  TextInput,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, TextInput, RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -51,8 +42,16 @@ interface GroupedProduct {
 }
 
 const POPULAR_QUERIES = [
-  'iPhone', 'Samsung', 'Laptop', 'Headphones', 'Watch',
-  'Shoes', 'T-shirt', 'Perfume', 'Skincare', 'Rice',
+  'iPhone',
+  'Samsung',
+  'Laptop',
+  'Headphones',
+  'Watch',
+  'Shoes',
+  'T-shirt',
+  'Perfume',
+  'Skincare',
+  'Rice',
 ];
 
 function LowestPricePage() {
@@ -63,12 +62,17 @@ function LowestPricePage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState<GroupedProduct[]>([]);
-  const [summary, setSummary] = useState<{ sellerCount: number; minPrice: number; maxCashback: number; priceRange: { min: number; max: number } } | null>(null);
+  const [summary, setSummary] = useState<{
+    sellerCount: number;
+    minPrice: number;
+    maxCashback: number;
+    priceRange: { min: number; max: number };
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchPriceComparison = useCallback(async (query: string, showRefresh = false) => {
     if (!query || query.length < 2) return;
@@ -84,14 +88,14 @@ function LowestPricePage() {
 
       // Filter to only products with 2+ sellers (actual price comparison)
       const multiSellerProducts = (data?.groupedProducts || []).filter(
-        (p: GroupedProduct) => p.sellers && p.sellers.length >= 2
+        (p: GroupedProduct) => p.sellers && p.sellers.length >= 2,
       );
 
       if (!isMounted()) return;
       setProducts(multiSellerProducts);
       if (!isMounted()) return;
       setSummary(data?.summary || null);
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to load price comparisons');
     } finally {
@@ -102,22 +106,28 @@ function LowestPricePage() {
     }
   }, []);
 
-  const handleSearch = useCallback((text: string) => {
-    setSearchQuery(text);
+  const handleSearch = useCallback(
+    (text: string) => {
+      setSearchQuery(text);
 
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    if (text.length >= 2) {
-      debounceRef.current = setTimeout(() => {
-        fetchPriceComparison(text);
-      }, 500);
-    }
-  }, [fetchPriceComparison]);
+      if (text.length >= 2) {
+        debounceRef.current = setTimeout(() => {
+          fetchPriceComparison(text);
+        }, 500);
+      }
+    },
+    [fetchPriceComparison],
+  );
 
-  const handleQuickSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-    fetchPriceComparison(query);
-  }, [fetchPriceComparison]);
+  const handleQuickSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      fetchPriceComparison(query);
+    },
+    [fetchPriceComparison],
+  );
 
   useEffect(() => {
     return () => {
@@ -131,114 +141,102 @@ function LowestPricePage() {
 
   const totalSavings = products.reduce((sum, p) => {
     if (p.sellers.length < 2) return sum;
-    const prices = p.sellers.map(s => s.price.current);
+    const prices = p.sellers.map((s) => s.price.current);
     const maxPrice = Math.max(...prices);
     const minPrice = Math.min(...prices);
     return sum + (maxPrice - minPrice);
   }, 0);
 
-  const renderProduct = useCallback(({ item }: { item: GroupedProduct }) => {
-    const bestSeller = item.sellers[0]; // Already sorted by best value
-    const otherSellers = item.sellers.slice(1);
-    const maxSaving = item.sellers.length >= 2
-      ? Math.max(...item.sellers.map(s => s.price.current)) - bestSeller.price.current
-      : 0;
+  const renderProduct = useCallback(
+    ({ item }: { item: GroupedProduct }) => {
+      const bestSeller = item.sellers[0]; // Already sorted by best value
+      const otherSellers = item.sellers.slice(1);
+      const maxSaving =
+        item.sellers.length >= 2 ? Math.max(...item.sellers.map((s) => s.price.current)) - bestSeller.price.current : 0;
 
-    return (
-      <Pressable
-        style={styles.productCard}
-        onPress={() => router.push(`/product-page?cardId=${bestSeller.productId}&cardType=product` as any)}
-       
-      >
-        {maxSaving > 0 && (
-          <View style={styles.guaranteeBadge}>
-            <Ionicons name="shield-checkmark" size={12} color={colors.background.primary} />
-            <ThemedText style={styles.guaranteeText}>Best Price</ThemedText>
-          </View>
-        )}
+      return (
+        <Pressable
+          style={styles.productCard}
+          onPress={() => router.push(`/product-page?cardId=${bestSeller.productId}&cardType=product` as any)}
+        >
+          {maxSaving > 0 && (
+            <View style={styles.guaranteeBadge}>
+              <Ionicons name="shield-checkmark" size={12} color={colors.background.primary} />
+              <ThemedText style={styles.guaranteeText}>Best Price</ThemedText>
+            </View>
+          )}
 
-        <View style={styles.productHeader}>
-          <View style={styles.productImageContainer}>
-            {item.productImage ? (
-              <CachedImage
-                source={item.productImage}
-                style={styles.productImageReal}
-                contentFit="cover"
-              />
-            ) : (
-              <View style={styles.productImageFallback}>
-                <Ionicons name="cube-outline" size={28} color={colors.neutral[400]} />
+          <View style={styles.productHeader}>
+            <View style={styles.productImageContainer}>
+              {item.productImage ? (
+                <CachedImage source={item.productImage} style={styles.productImageReal} contentFit="cover" />
+              ) : (
+                <View style={styles.productImageFallback}>
+                  <Ionicons name="cube-outline" size={28} color={colors.neutral[400]} />
+                </View>
+              )}
+            </View>
+            <View style={styles.productInfo}>
+              <ThemedText style={styles.productName} numberOfLines={2}>
+                {item.productName}
+              </ThemedText>
+              {item.category ? <ThemedText style={styles.categoryLabel}>{item.category}</ThemedText> : null}
+              <View style={styles.storeBadge}>
+                <Ionicons name="storefront" size={10} color={colors.successScale[700]} />
+                <ThemedText style={styles.lowestStore}>{bestSeller.storeName}</ThemedText>
+                {bestSeller.isVerified && <Ionicons name="checkmark-circle" size={12} color={colors.brand.sky} />}
               </View>
-            )}
+            </View>
           </View>
-          <View style={styles.productInfo}>
-            <ThemedText style={styles.productName} numberOfLines={2}>{item.productName}</ThemedText>
-            {item.category ? (
-              <ThemedText style={styles.categoryLabel}>{item.category}</ThemedText>
-            ) : null}
-            <View style={styles.storeBadge}>
-              <Ionicons name="storefront" size={10} color={colors.successScale[700]} />
-              <ThemedText style={styles.lowestStore}>{bestSeller.storeName}</ThemedText>
-              {bestSeller.isVerified && (
-                <Ionicons name="checkmark-circle" size={12} color={colors.brand.sky} />
+
+          <View style={styles.priceComparison}>
+            <View style={styles.lowestPriceContainer}>
+              <ThemedText style={styles.lowestPriceLabel}>Best Price</ThemedText>
+              <ThemedText style={styles.lowestPrice}>{formatPrice(bestSeller.price.current)}</ThemedText>
+              {bestSeller.cashback.amount > 0 && (
+                <ThemedText style={styles.cashbackText}>+{formatPrice(bestSeller.cashback.amount)} cashback</ThemedText>
+              )}
+            </View>
+
+            <View style={styles.otherPricesContainer}>
+              {otherSellers.slice(0, 3).map((seller, index) => (
+                <View key={index} style={styles.otherPriceRow}>
+                  <ThemedText style={styles.otherStore} numberOfLines={1}>
+                    {seller.storeName}
+                  </ThemedText>
+                  <ThemedText style={styles.otherPrice}>{formatPrice(seller.price.current)}</ThemedText>
+                </View>
+              ))}
+              {item.sellerCount > 4 && (
+                <ThemedText style={styles.moreStoresText}>+{item.sellerCount - 4} more stores</ThemedText>
               )}
             </View>
           </View>
-        </View>
 
-        <View style={styles.priceComparison}>
-          <View style={styles.lowestPriceContainer}>
-            <ThemedText style={styles.lowestPriceLabel}>Best Price</ThemedText>
-            <ThemedText style={styles.lowestPrice}>{formatPrice(bestSeller.price.current)}</ThemedText>
-            {bestSeller.cashback.amount > 0 && (
-              <ThemedText style={styles.cashbackText}>
-                +{formatPrice(bestSeller.cashback.amount)} cashback
-              </ThemedText>
-            )}
-          </View>
-
-          <View style={styles.otherPricesContainer}>
-            {otherSellers.slice(0, 3).map((seller, index) => (
-              <View key={index} style={styles.otherPriceRow}>
-                <ThemedText style={styles.otherStore} numberOfLines={1}>{seller.storeName}</ThemedText>
-                <ThemedText style={styles.otherPrice}>{formatPrice(seller.price.current)}</ThemedText>
+          <View style={styles.savingsContainer}>
+            {maxSaving > 0 && (
+              <View style={styles.savingsBadge}>
+                <LinearGradient colors={[colors.successScale[700], '#047857']} style={styles.savingsBadgeGradient}>
+                  <Ionicons name="trending-down" size={14} color={colors.background.primary} />
+                  <ThemedText style={styles.savingsText}>Save {formatPrice(maxSaving)}</ThemedText>
+                </LinearGradient>
               </View>
-            ))}
-            {item.sellerCount > 4 && (
-              <ThemedText style={styles.moreStoresText}>+{item.sellerCount - 4} more stores</ThemedText>
             )}
-          </View>
-        </View>
-
-        <View style={styles.savingsContainer}>
-          {maxSaving > 0 && (
-            <View style={styles.savingsBadge}>
-              <LinearGradient
-                colors={[colors.successScale[700], '#047857']}
-                style={styles.savingsBadgeGradient}
-              >
-                <Ionicons name="trending-down" size={14} color={colors.background.primary} />
-                <ThemedText style={styles.savingsText}>Save {formatPrice(maxSaving)}</ThemedText>
-              </LinearGradient>
-            </View>
-          )}
-          <Pressable
-            style={styles.shopButton}
-            onPress={() => router.push(`/MainStorePage?storeId=${bestSeller.storeId}` as any)}
-           
-          >
-            <LinearGradient
-              colors={[colors.brand.sky, colors.brand.skyDark]}
-              style={styles.shopButtonGradient}
+            <Pressable
+              style={styles.shopButton}
+              onPress={() => router.push(`/MainStorePage?storeId=${bestSeller.storeId}` as any)}
             >
-              <ThemedText style={styles.shopButtonText}>Shop Now</ThemedText>
-              <Ionicons name="arrow-forward" size={14} color={colors.background.primary} />
-            </LinearGradient>
-          </Pressable>
-        </View>
-      </Pressable>
-    );
-  }, [router, currencySymbol]);
+              <LinearGradient colors={[colors.brand.sky, colors.brand.skyDark]} style={styles.shopButtonGradient}>
+                <ThemedText style={styles.shopButtonText}>Shop Now</ThemedText>
+                <Ionicons name="arrow-forward" size={14} color={colors.background.primary} />
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </Pressable>
+      );
+    },
+    [router, currencySymbol],
+  );
 
   return (
     <View style={styles.container}>
@@ -255,8 +253,7 @@ function LowestPricePage() {
           <View style={styles.headerTop}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <View style={styles.backButtonInner}>
                 <Ionicons name="chevron-back" size={22} color={colors.brand.sky} />
@@ -275,9 +272,7 @@ function LowestPricePage() {
               <Ionicons name="pricetag" size={32} color={colors.background.primary} />
             </View>
             <ThemedText style={styles.heroTitle}>Compare & Save</ThemedText>
-            <ThemedText style={styles.heroSubtitle}>
-              Search any product to compare prices across stores
-            </ThemedText>
+            <ThemedText style={styles.heroSubtitle}>Search any product to compare prices across stores</ThemedText>
           </View>
 
           {/* Search Bar */}
@@ -294,7 +289,13 @@ function LowestPricePage() {
                 onSubmitEditing={() => fetchPriceComparison(searchQuery)}
               />
               {searchQuery.length > 0 && (
-                <Pressable onPress={() => { setSearchQuery(''); setProducts([]); setHasSearched(false); }}>
+                <Pressable
+                  onPress={() => {
+                    setSearchQuery('');
+                    setProducts([]);
+                    setHasSearched(false);
+                  }}
+                >
                   <Ionicons name="close-circle" size={18} color={colors.neutral[400]} />
                 </Pressable>
               )}
@@ -326,17 +327,10 @@ function LowestPricePage() {
           >
             <View style={styles.popularSection}>
               <ThemedText style={styles.popularTitle}>Popular Searches</ThemedText>
-              <ThemedText style={styles.popularSubtitle}>
-                Tap to compare prices across stores
-              </ThemedText>
+              <ThemedText style={styles.popularSubtitle}>Tap to compare prices across stores</ThemedText>
               <View style={styles.chipContainer}>
                 {POPULAR_QUERIES.map((query) => (
-                  <Pressable
-                    key={query}
-                    style={styles.chip}
-                    onPress={() => handleQuickSearch(query)}
-                   
-                  >
+                  <Pressable key={query} style={styles.chip} onPress={() => handleQuickSearch(query)}>
                     <Ionicons name="search-outline" size={14} color={colors.brand.sky} />
                     <ThemedText style={styles.chipText}>{query}</ThemedText>
                   </Pressable>
@@ -366,10 +360,7 @@ function LowestPricePage() {
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle-outline" size={48} color={colors.neutral[400]} />
             <ThemedText style={styles.errorText}>{error}</ThemedText>
-            <Pressable
-              style={styles.retryButton}
-              onPress={() => fetchPriceComparison(searchQuery)}
-            >
+            <Pressable style={styles.retryButton} onPress={() => fetchPriceComparison(searchQuery)}>
               <ThemedText style={styles.retryText}>Try Again</ThemedText>
             </Pressable>
           </View>
@@ -377,7 +368,7 @@ function LowestPricePage() {
           <FlashList
             data={products}
             renderItem={renderProduct}
-            keyExtractor={item => item.productId}
+            keyExtractor={(item) => item.productId}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
             estimatedItemSize={120}
@@ -393,9 +384,7 @@ function LowestPricePage() {
               <View style={styles.emptyContainer}>
                 <Ionicons name="search-outline" size={64} color={colors.neutral[400]} />
                 <ThemedText style={styles.emptyText}>No price comparisons found</ThemedText>
-                <ThemedText style={styles.emptySubtext}>
-                  Try a different search term or check back later
-                </ThemedText>
+                <ThemedText style={styles.emptySubtext}>Try a different search term or check back later</ThemedText>
               </View>
             }
           />

@@ -238,7 +238,7 @@ const FashionPage: React.FC = () => {
           })),
         );
       }
-    } catch (e) {
+    } catch (e: any) {
       catchAndReport(e, setError, 'Fashion/fetchTrending');
     }
   }, []);
@@ -263,7 +263,7 @@ const FashionPage: React.FC = () => {
           })),
         );
       }
-    } catch (e) {
+    } catch (e: any) {
       catchAndReport(e, setError, 'Fashion/fetchStores');
     }
   }, []);
@@ -439,9 +439,9 @@ const FashionPage: React.FC = () => {
             <Pressable
               key={filter}
               onPress={() => setSelectedFilter(filter)}
-              style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}
+              style={[styles.filterChip, selectedFilter === filter ? styles.filterChipActive : null]}
             >
-              <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter ? styles.filterChipTextActive : null]}>
                 {filter === 'all' ? 'All' : filter}
               </Text>
             </Pressable>

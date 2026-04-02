@@ -141,7 +141,7 @@ function BonusZoneCard({ campaign, currencySymbol = 'د.إ' }: BonusZoneCardProp
 
   return (
     <Pressable
-      style={[styles.card, isDisabled && styles.cardDisabled]}
+      style={[styles.card, isDisabled ? styles.cardDisabled : null]}
       onPress={handlePress}
      
       accessibilityLabel={`${campaign.title}. ${campaign.subtitle}. ${rewardText}. ${timeRemaining.text}`}

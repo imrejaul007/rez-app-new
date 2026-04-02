@@ -3,7 +3,19 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Comprehensive Frequently Asked Questions page with search and categories
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl, TextInput, ActivityIndicator, Animated, LayoutAnimation } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  RefreshControl,
+  TextInput,
+  ActivityIndicator,
+  Animated,
+  LayoutAnimation,
+} from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -71,7 +83,7 @@ function FAQPage() {
         if (!isMounted()) return;
         setCategories(categoriesResponse.data.categories);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load FAQs. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -91,49 +103,45 @@ function FAQPage() {
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(faq =>
-        faq.category.toLowerCase() === selectedCategory.toLowerCase()
-      );
+      filtered = filtered.filter((faq) => faq.category.toLowerCase() === selectedCategory.toLowerCase());
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(faq =>
-        faq.question.toLowerCase().includes(query) ||
-        faq.answer.toLowerCase().includes(query) ||
-        faq.tags.some(tag => tag.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        (faq) =>
+          faq.question.toLowerCase().includes(query) ||
+          faq.answer.toLowerCase().includes(query) ||
+          faq.tags.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
     setDisplayedFAQs(filtered);
   };
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      setSearchQuery(query);
+  const handleSearch = useCallback(async (query: string) => {
+    setSearchQuery(query);
 
-      // If query is empty, just filter locally
-      if (!query.trim()) {
-        return;
-      }
+    // If query is empty, just filter locally
+    if (!query.trim()) {
+      return;
+    }
 
-      // Perform API search for better results
-      setSearching(true);
-      try {
-        const response = await supportService.searchFAQs(query, 50);
-        if (response.success && response.data) {
-          setDisplayedFAQs(response.data.faqs);
-        }
-      } catch (error) {
-        // silently handle
-      } finally {
-        if (!isMounted()) return;
-        setSearching(false);
+    // Perform API search for better results
+    setSearching(true);
+    try {
+      const response = await supportService.searchFAQs(query, 50);
+      if (response.success && response.data) {
+        setDisplayedFAQs(response.data.faqs);
       }
-    },
-    []
-  );
+    } catch (error: any) {
+      // silently handle
+    } finally {
+      if (!isMounted()) return;
+      setSearching(false);
+    }
+  }, []);
 
   const toggleFAQ = async (faqId: string) => {
     if (Platform.OS === 'ios') {
@@ -150,7 +158,7 @@ function FAQPage() {
       // Track view when FAQ is expanded
       try {
         await supportService.trackFAQView(faqId);
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     }
@@ -163,17 +171,17 @@ function FAQPage() {
     try {
       await supportService.markFAQHelpful(faqId, helpful);
       if (!isMounted()) return;
-      setFaqFeedback(prev => ({ ...prev, [faqId]: helpful }));
+      setFaqFeedback((prev) => ({ ...prev, [faqId]: helpful }));
 
       // Show success feedback
       platformAlertSimple('Thank you!', 'Your feedback helps us improve our support.');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to submit feedback. Please try again.');
     }
   };
 
   const expandAll = () => {
-    setExpandedFAQs(new Set(displayedFAQs.map(faq => faq._id)));
+    setExpandedFAQs(new Set(displayedFAQs.map((faq) => faq._id)));
   };
 
   const collapseAll = () => {
@@ -196,17 +204,17 @@ function FAQPage() {
   };
 
   const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
+    const categoryColors: { [key: string]: string } = {
       order: Colors.secondary[600],
       payment: Colors.primary[500],
       product: Colors.warning,
       account: Colors.error,
       technical: Colors.secondary[500],
-      delivery: colors.brand.pink,
+      delivery: (colors as any).brand?.pink || Colors.error,
       refund: Colors.success,
       other: Colors.gray[600],
     };
-    return colors[category.toLowerCase()] || Colors.gray[600];
+    return categoryColors[category.toLowerCase()] || Colors.gray[600];
   };
 
   const getCategoryIcon = (category: string) => {
@@ -226,7 +234,7 @@ function FAQPage() {
   const renderCategoryFilter = () => {
     const allCategories = [
       { key: 'all', name: 'All', count: allFAQs.length },
-      ...categories.map(cat => ({
+      ...categories.map((cat) => ({
         key: cat.category.toLowerCase(),
         name: cat.category.charAt(0).toUpperCase() + cat.category.slice(1),
         count: cat.count,
@@ -244,10 +252,7 @@ function FAQPage() {
           {allCategories.map((category) => (
             <Pressable
               key={category.key}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category.key && styles.selectedCategoryButton,
-              ]}
+              style={[styles.categoryButton, selectedCategory === category.key && styles.selectedCategoryButton]}
               onPress={() => setSelectedCategory(category.key)}
             >
               <Ionicons
@@ -264,12 +269,7 @@ function FAQPage() {
                 {category.name}
               </ThemedText>
               {category.count > 0 && (
-                <View
-                  style={[
-                    styles.categoryBadge,
-                    selectedCategory === category.key && styles.selectedCategoryBadge,
-                  ]}
-                >
+                <View style={[styles.categoryBadge, selectedCategory === category.key && styles.selectedCategoryBadge]}>
                   <ThemedText
                     style={[
                       styles.categoryBadgeText,
@@ -295,36 +295,15 @@ function FAQPage() {
     const feedback = faqFeedback[faq._id];
 
     return (
-      <View
-        key={faq._id}
-        style={[styles.faqItem, isExpanded && styles.expandedFAQItem]}
-      >
-        <Pressable
-          style={styles.faqHeader}
-          onPress={() => toggleFAQ(faq._id)}
-         
-        >
+      <View key={faq._id} style={[styles.faqItem, isExpanded ? styles.expandedFAQItem : null]}>
+        <Pressable style={styles.faqHeader} onPress={() => toggleFAQ(faq._id)}>
           <View style={styles.questionContainer}>
-            <View
-              style={[
-                styles.categoryIndicator,
-                { backgroundColor: `${categoryColor}20` },
-              ]}
-            >
-              <Ionicons
-                name={getCategoryIcon(faq.category) as any}
-                size={14}
-                color={categoryColor}
-              />
+            <View style={[styles.categoryIndicator, { backgroundColor: `${categoryColor}20` }]}>
+              <Ionicons name={getCategoryIcon(faq.category) as any} size={14} color={categoryColor} />
             </View>
             <ThemedText style={styles.questionText}>{faq.question}</ThemedText>
           </View>
-          <Animated.View
-            style={[
-              styles.expandIcon,
-              { transform: [{ rotate: isExpanded ? '180deg' : '0deg' }] },
-            ]}
-          >
+          <Animated.View style={[styles.expandIcon, { transform: [{ rotate: isExpanded ? '180deg' : '0deg' }] }]}>
             <Ionicons name="chevron-down" size={20} color={Colors.gray[600]} />
           </Animated.View>
         </Pressable>
@@ -344,9 +323,7 @@ function FAQPage() {
                 <ThemedText style={styles.metaText}>{faq.helpfulCount}</ThemedText>
               </View>
               <View style={styles.categoryTag}>
-                <ThemedText style={[styles.categoryTagText, { color: categoryColor }]}>
-                  {faq.category}
-                </ThemedText>
+                <ThemedText style={[styles.categoryTagText, { color: categoryColor }]}>{faq.category}</ThemedText>
               </View>
             </View>
 
@@ -355,23 +332,13 @@ function FAQPage() {
               <View style={styles.feedbackContainer}>
                 <ThemedText style={styles.feedbackQuestion}>Was this helpful?</ThemedText>
                 <View style={styles.feedbackButtons}>
-                  <Pressable
-                    style={styles.feedbackButton}
-                    onPress={() => handleFAQFeedback(faq._id, true)}
-                  >
+                  <Pressable style={styles.feedbackButton} onPress={() => handleFAQFeedback(faq._id, true)}>
                     <Ionicons name="thumbs-up-outline" size={20} color={Colors.success} />
-                    <ThemedText style={[styles.feedbackButtonText, { color: Colors.success }]}>
-                      Yes
-                    </ThemedText>
+                    <ThemedText style={[styles.feedbackButtonText, { color: Colors.success }]}>Yes</ThemedText>
                   </Pressable>
-                  <Pressable
-                    style={styles.feedbackButton}
-                    onPress={() => handleFAQFeedback(faq._id, false)}
-                  >
+                  <Pressable style={styles.feedbackButton} onPress={() => handleFAQFeedback(faq._id, false)}>
                     <Ionicons name="thumbs-down-outline" size={20} color={Colors.error} />
-                    <ThemedText style={[styles.feedbackButtonText, { color: Colors.error }]}>
-                      No
-                    </ThemedText>
+                    <ThemedText style={[styles.feedbackButtonText, { color: Colors.error }]}>No</ThemedText>
                   </Pressable>
                 </View>
               </View>
@@ -382,9 +349,7 @@ function FAQPage() {
                   size={16}
                   color={feedback ? Colors.success : Colors.error}
                 />
-                <ThemedText style={styles.feedbackThanksText}>
-                  Thank you for your feedback!
-                </ThemedText>
+                <ThemedText style={styles.feedbackThanksText}>Thank you for your feedback!</ThemedText>
               </View>
             )}
 
@@ -393,11 +358,7 @@ function FAQPage() {
               <View style={styles.relatedQuestions}>
                 <ThemedText style={styles.relatedTitle}>Related Questions:</ThemedText>
                 {faq.relatedQuestions.slice(0, 3).map((relatedFaq) => (
-                  <Pressable
-                    key={relatedFaq._id}
-                    style={styles.relatedItem}
-                    onPress={() => toggleFAQ(relatedFaq._id)}
-                  >
+                  <Pressable key={relatedFaq._id} style={styles.relatedItem} onPress={() => toggleFAQ(relatedFaq._id)}>
                     <Ionicons name="arrow-forward" size={14} color={Colors.secondary[600]} />
                     <ThemedText style={styles.relatedText} numberOfLines={1}>
                       {relatedFaq.question}
@@ -419,129 +380,117 @@ function FAQPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.secondary[600]} translucent={true} />
 
         {/* Header */}
-        <LinearGradient colors={Gradients.nileBlue as unknown as string[]} style={styles.header}>
-        <View style={styles.headerContent}>
-          <Pressable onPress={handleBackPress} style={styles.backButton}>
-            <View style={styles.backButtonInner}>
-              <Ionicons name="arrow-back" size={22} color="white" />
-            </View>
-          </Pressable>
+        <LinearGradient colors={Gradients.nileBlue as any} style={styles.header}>
+          <View style={styles.headerContent}>
+            <Pressable onPress={handleBackPress} style={styles.backButton}>
+              <View style={styles.backButtonInner}>
+                <Ionicons name="arrow-back" size={22} color="white" />
+              </View>
+            </Pressable>
 
-          <View style={styles.headerTitleSection}>
-            <ThemedText style={styles.headerTitle}>FAQs</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>
-              Find answers to common questions
-            </ThemedText>
+            <View style={styles.headerTitleSection}>
+              <ThemedText style={styles.headerTitle}>FAQs</ThemedText>
+              <ThemedText style={styles.headerSubtitle}>Find answers to common questions</ThemedText>
+            </View>
+
+            <Pressable style={styles.searchButton} onPress={() => setShowSearch(!showSearch)}>
+              <View style={styles.backButtonInner}>
+                <Ionicons name={showSearch ? 'close' : 'search'} size={22} color="white" />
+              </View>
+            </Pressable>
           </View>
 
-          <Pressable
-            style={styles.searchButton}
-            onPress={() => setShowSearch(!showSearch)}
-          >
-            <View style={styles.backButtonInner}>
-              <Ionicons name={showSearch ? 'close' : 'search'} size={22} color="white" />
+          {/* Search Bar */}
+          {showSearch && (
+            <View style={styles.searchBarContainer}>
+              <View style={styles.searchBar}>
+                <Ionicons name="search" size={20} color={Colors.gray[400]} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search FAQs..."
+                  placeholderTextColor={Colors.gray[400]}
+                  value={searchQuery}
+                  onChangeText={handleSearch}
+                  autoFocus={true}
+                />
+                {searchQuery.length > 0 && (
+                  <Pressable onPress={() => setSearchQuery('')}>
+                    <Ionicons name="close-circle" size={20} color={Colors.gray[400]} />
+                  </Pressable>
+                )}
+                {searching && <ActivityIndicator size="small" color={Colors.secondary[600]} />}
+              </View>
             </View>
-          </Pressable>
-        </View>
+          )}
+        </LinearGradient>
 
-        {/* Search Bar */}
-        {showSearch && (
-          <View style={styles.searchBarContainer}>
-            <View style={styles.searchBar}>
-              <Ionicons name="search" size={20} color={Colors.gray[400]} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search FAQs..."
-                placeholderTextColor={Colors.gray[400]}
-                value={searchQuery}
-                onChangeText={handleSearch}
-                autoFocus={true}
-              />
-              {searchQuery.length > 0 && (
-                <Pressable onPress={() => setSearchQuery('')}>
-                  <Ionicons name="close-circle" size={20} color={Colors.gray[400]} />
-                </Pressable>
-              )}
-              {searching && <ActivityIndicator size="small" color={Colors.secondary[600]} />}
-            </View>
+        {/* Category Filter */}
+        {renderCategoryFilter()}
+
+        {/* Controls */}
+        <View style={styles.controls}>
+          <ThemedText style={styles.controlsInfo}>
+            Showing {displayedFAQs.length} of {allFAQs.length} questions
+          </ThemedText>
+          <View style={styles.controlButtons}>
+            <Pressable style={styles.controlButton} onPress={expandAll}>
+              <Ionicons name="chevron-down-circle-outline" size={16} color={Colors.secondary[600]} />
+              <ThemedText style={styles.controlButtonText}>Expand All</ThemedText>
+            </Pressable>
+            <Pressable style={styles.controlButton} onPress={collapseAll}>
+              <Ionicons name="chevron-up-circle-outline" size={16} color={Colors.secondary[600]} />
+              <ThemedText style={styles.controlButtonText}>Collapse All</ThemedText>
+            </Pressable>
           </View>
-        )}
-      </LinearGradient>
-
-      {/* Category Filter */}
-      {renderCategoryFilter()}
-
-      {/* Controls */}
-      <View style={styles.controls}>
-        <ThemedText style={styles.controlsInfo}>
-          Showing {displayedFAQs.length} of {allFAQs.length} questions
-        </ThemedText>
-        <View style={styles.controlButtons}>
-          <Pressable style={styles.controlButton} onPress={expandAll}>
-            <Ionicons name="chevron-down-circle-outline" size={16} color={Colors.secondary[600]} />
-            <ThemedText style={styles.controlButtonText}>Expand All</ThemedText>
-          </Pressable>
-          <Pressable style={styles.controlButton} onPress={collapseAll}>
-            <Ionicons name="chevron-up-circle-outline" size={16} color={Colors.secondary[600]} />
-            <ThemedText style={styles.controlButtonText}>Collapse All</ThemedText>
-          </Pressable>
         </View>
-      </View>
 
-      {/* FAQ List */}
-      {loading ? (
-        <SectionListSkeleton />
-      ) : (
-        <FlashList
-          data={displayedFAQs}
-          keyExtractor={(item) => item._id}
-          renderItem={renderFAQListItem}
-          contentContainerStyle={{ paddingBottom: 120 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-          showsVerticalScrollIndicator={false}
-          estimatedItemSize={80}
-          ListEmptyComponent={
-            <View style={styles.emptyState}>
-              <Ionicons name="document-text-outline" size={64} color={Colors.gray[300]} />
-              <ThemedText style={styles.emptyStateTitle}>No FAQs Found</ThemedText>
-              <ThemedText style={styles.emptyStateText}>
-                {searchQuery
-                  ? `No results found for "${searchQuery}"`
-                  : 'No questions found for this category.'}
-              </ThemedText>
-              {searchQuery && (
-                <Pressable
-                  style={styles.clearSearchButton}
-                  onPress={() => setSearchQuery('')}
-                >
-                  <ThemedText style={styles.clearSearchText}>Clear Search</ThemedText>
-                </Pressable>
-              )}
-            </View>
-          }
-          ListFooterComponent={
-            <>
-              {/* Contact Support Card */}
-              <Pressable style={styles.contactCard} onPress={handleContactSupport}>
-                <LinearGradient colors={Gradients.nileBlue as unknown as string[]} style={styles.contactGradient}>
-                  <View style={styles.contactContent}>
-                    <Ionicons name="chatbubble-ellipses" size={24} color="white" />
-                    <View style={styles.contactText}>
-                      <ThemedText style={styles.contactTitle}>Still need help?</ThemedText>
-                      <ThemedText style={styles.contactDescription}>
-                        Chat with our support team
-                      </ThemedText>
+        {/* FAQ List */}
+        {loading ? (
+          <SectionListSkeleton />
+        ) : (
+          <FlashList
+            data={displayedFAQs}
+            keyExtractor={(item) => item._id}
+            renderItem={renderFAQListItem}
+            contentContainerStyle={{ paddingBottom: 120 }}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+            showsVerticalScrollIndicator={false}
+            estimatedItemSize={80}
+            ListEmptyComponent={
+              <View style={styles.emptyState}>
+                <Ionicons name="document-text-outline" size={64} color={Colors.gray[300]} />
+                <ThemedText style={styles.emptyStateTitle}>No FAQs Found</ThemedText>
+                <ThemedText style={styles.emptyStateText}>
+                  {searchQuery ? `No results found for "${searchQuery}"` : 'No questions found for this category.'}
+                </ThemedText>
+                {searchQuery && (
+                  <Pressable style={styles.clearSearchButton} onPress={() => setSearchQuery('')}>
+                    <ThemedText style={styles.clearSearchText}>Clear Search</ThemedText>
+                  </Pressable>
+                )}
+              </View>
+            }
+            ListFooterComponent={
+              <>
+                {/* Contact Support Card */}
+                <Pressable style={styles.contactCard} onPress={handleContactSupport}>
+                  <LinearGradient colors={Gradients.nileBlue as any} style={styles.contactGradient}>
+                    <View style={styles.contactContent}>
+                      <Ionicons name="chatbubble-ellipses" size={24} color="white" />
+                      <View style={styles.contactText}>
+                        <ThemedText style={styles.contactTitle}>Still need help?</ThemedText>
+                        <ThemedText style={styles.contactDescription}>Chat with our support team</ThemedText>
+                      </View>
+                      <Ionicons name="arrow-forward" size={20} color="white" />
                     </View>
-                    <Ionicons name="arrow-forward" size={20} color="white" />
-                  </View>
-                </LinearGradient>
-              </Pressable>
-              <View style={styles.footer} />
-            </>
-          }
-        />
-      )}
-    </View>
+                  </LinearGradient>
+                </Pressable>
+                <View style={styles.footer} />
+              </>
+            }
+          />
+        )}
+      </View>
     </>
   );
 }

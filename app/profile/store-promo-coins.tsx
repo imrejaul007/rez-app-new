@@ -229,7 +229,7 @@ function StorePromoCoinsPage() {
               >
                 <View style={styles.storeCardHeader}>
                   {getStoreLogo(storeCoin.store) ? (
-                    <CachedImage source={getStoreLogo(storeCoin.store)} style={styles.storeLogo} />
+                    <CachedImage source={getStoreLogo(storeCoin.store) || ''} style={styles.storeLogo} />
                   ) : (
                     <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
                       <Ionicons name="storefront" size={24} color={Colors.gold} />

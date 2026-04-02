@@ -58,7 +58,7 @@ function assertSuccess<T>(response: any, fallbackMsg: string): T {
 export async function setStatedIdentity(
   statedIdentity: string
 ): Promise<void> {
-  const response = await apiClient.put('/user/auth/profile', { statedIdentity });
+  const response = await apiClient.put<any>('/user/auth/profile', { statedIdentity });
   // Non-blocking: don't throw on failure
 }
 

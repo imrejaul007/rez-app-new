@@ -146,14 +146,14 @@ class PartnerApiService {
    */
   async getDashboard(): Promise<ApiResponse<PartnerDashboard & { enrolled?: boolean }>> {
 
-    return apiClient.get(`${this.baseUrl}/dashboard`);
+    return apiClient.get<any>(`${this.baseUrl}/dashboard`);
   }
 
   /**
    * Explicitly enroll user in partner program
    */
   async enrollPartner(): Promise<ApiResponse<PartnerDashboard & { enrolled: boolean }>> {
-    return apiClient.post(`${this.baseUrl}/enroll`);
+    return apiClient.post<any>(`${this.baseUrl}/enroll`);
   }
 
   /**
@@ -171,7 +171,7 @@ class PartnerApiService {
     levels: Array<any>; // Same as allLevels for compatibility
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/benefits`);
+    return apiClient.get<any>(`${this.baseUrl}/benefits`);
   }
 
   /**
@@ -179,7 +179,7 @@ class PartnerApiService {
    */
   async getProfile(): Promise<ApiResponse<{ profile: PartnerProfile }>> {
 
-    return apiClient.get(`${this.baseUrl}/profile`);
+    return apiClient.get<any>(`${this.baseUrl}/profile`);
   }
 
   /**
@@ -187,7 +187,7 @@ class PartnerApiService {
    */
   async getEarnings(): Promise<ApiResponse<PartnerEarnings>> {
 
-    return apiClient.get(`${this.baseUrl}/earnings`);
+    return apiClient.get<any>(`${this.baseUrl}/earnings`);
   }
 
   /**
@@ -195,7 +195,7 @@ class PartnerApiService {
    */
   async getMilestones(): Promise<ApiResponse<{ milestones: OrderMilestone[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/milestones`);
+    return apiClient.get<any>(`${this.baseUrl}/milestones`);
   }
 
   /**
@@ -207,7 +207,7 @@ class PartnerApiService {
     milestone: OrderMilestone;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/milestones/${milestoneId}/claim`);
+    return apiClient.post<any>(`${this.baseUrl}/milestones/${milestoneId}/claim`);
   }
 
   /**
@@ -215,7 +215,7 @@ class PartnerApiService {
    */
   async getTasks(): Promise<ApiResponse<{ tasks: RewardTask[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/tasks`);
+    return apiClient.get<any>(`${this.baseUrl}/tasks`);
   }
 
   /**
@@ -227,7 +227,7 @@ class PartnerApiService {
     task: RewardTask;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/tasks/${taskId}/claim`);
+    return apiClient.post<any>(`${this.baseUrl}/tasks/${taskId}/claim`);
   }
 
   /**
@@ -238,7 +238,7 @@ class PartnerApiService {
     milestones: JackpotMilestone[];
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/jackpot`);
+    return apiClient.get<any>(`${this.baseUrl}/jackpot`);
   }
 
   /**
@@ -250,7 +250,7 @@ class PartnerApiService {
     jackpot: JackpotMilestone;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/jackpot/${spendAmount}/claim`);
+    return apiClient.post<any>(`${this.baseUrl}/jackpot/${spendAmount}/claim`);
   }
 
   /**
@@ -258,7 +258,7 @@ class PartnerApiService {
    */
   async getOffers(): Promise<ApiResponse<{ offers: ClaimableOffer[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/offers`);
+    return apiClient.get<any>(`${this.baseUrl}/offers`);
   }
 
   /**
@@ -275,7 +275,7 @@ class PartnerApiService {
 
     // Pass offer ID in request body to avoid URL encoding issues with special characters
 
-    const response = await apiClient.post(`${this.baseUrl}/offers/claim`, { offerId });
+    const response = await apiClient.post<any>(`${this.baseUrl}/offers/claim`, { offerId });
 
     return response as ApiResponse<{ success: boolean; message: string; voucher: { code: string; expiryDate: string; }; }>;
   }
@@ -285,7 +285,7 @@ class PartnerApiService {
    */
   async getFAQs(category?: string): Promise<ApiResponse<{ faqs: PartnerFAQ[] }>> {
 
-    return apiClient.get(`${this.baseUrl}/faqs`, category ? { category } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/faqs`, category ? { category } : undefined);
   }
 
   /**
@@ -303,7 +303,7 @@ class PartnerApiService {
     }>;
   }>> {
 
-    return apiClient.get(`${this.baseUrl}/levels`);
+    return apiClient.get<any>(`${this.baseUrl}/levels`);
   }
 
   /**
@@ -315,14 +315,14 @@ class PartnerApiService {
     payoutId: string;
   }>> {
 
-    return apiClient.post(`${this.baseUrl}/payout/request`, { amount, method });
+    return apiClient.post<any>(`${this.baseUrl}/payout/request`, { amount, method });
   }
 
   /**
    * Get partner statistics and rankings
    */
   async getStats(): Promise<ApiResponse<PartnerStats>> {
-    return apiClient.get(`${this.baseUrl}/stats`);
+    return apiClient.get<any>(`${this.baseUrl}/stats`);
   }
 
   /**
@@ -338,7 +338,7 @@ class PartnerApiService {
     page: number;
     totalPages: number;
   }>> {
-    return apiClient.get(`${this.baseUrl}/earnings`, params);
+    return apiClient.get<any>(`${this.baseUrl}/earnings`, params);
   }
 }
 

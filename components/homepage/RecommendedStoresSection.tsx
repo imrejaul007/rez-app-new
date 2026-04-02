@@ -44,7 +44,7 @@ export const RecommendedStoresSection: React.FC = () => {
           }
           setLoading(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         if (isMounted()) {
           setLoading(false);
         }
@@ -156,9 +156,6 @@ export const RecommendedStoresSection: React.FC = () => {
         renderItem={renderStoreItem}
         getItemLayout={getItemLayout}
         removeClippedSubviews
-        maxToRenderPerBatch={5}
-        windowSize={5}
-        initialNumToRender={4}
       />
     </View>
   );

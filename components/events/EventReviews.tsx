@@ -96,7 +96,7 @@ const EventReviews: React.FC<EventReviewsProps> = ({ eventId, eventTitle }) => {
       setUserReview(data.review);
       setCanReview(data.canReview);
       setHasBooking(data.hasBooking);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   }, [eventId, isAuthenticated]);
@@ -162,7 +162,7 @@ const EventReviews: React.FC<EventReviewsProps> = ({ eventId, eventTitle }) => {
   const handleHelpfulPress = async (reviewId: string) => {
     try {
       await eventReviewApi.markReviewHelpful(reviewId);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -239,10 +239,10 @@ const EventReviews: React.FC<EventReviewsProps> = ({ eventId, eventTitle }) => {
           {sortOptions.map(option => (
             <Pressable
               key={option.id}
-              style={[styles.sortChip, sortBy === option.id && styles.sortChipActive]}
+              style={[styles.sortChip, sortBy === option.id ? styles.sortChipActive : null]}
               onPress={() => handleSortChange(option.id)}
             >
-              <Text style={[styles.sortChipText, sortBy === option.id && styles.sortChipTextActive]}>
+              <Text style={[styles.sortChipText, sortBy === option.id ? styles.sortChipTextActive : null]}>
                 {option.label}
               </Text>
             </Pressable>

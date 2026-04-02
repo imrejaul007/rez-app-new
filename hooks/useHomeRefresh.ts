@@ -57,7 +57,7 @@ export function useHomeRefresh(
       if (hasUser && actions.refreshUserStatistics) {
         await actions.refreshUserStatistics();
       }
-    } catch (error) {
+    } catch (error: any) {
     } finally {
       setRefreshing(false);
     }

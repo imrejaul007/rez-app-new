@@ -146,7 +146,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       try {
         const success = await tryRefreshToken();
         return success;  // Return actual result, not always true
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
         return false;
       }
@@ -169,7 +169,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
         // Set explicit logout flag to prevent auto-restoration
         setHasExplicitlyLoggedOut(true);
-      } catch (error) {
+      } catch (error: any) {
         // Even if cleanup fails, ensure auth state is cleared
         dispatch({ type: 'AUTH_LOGOUT' });
         setHasExplicitlyLoggedOut(true);
@@ -447,7 +447,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Always proceed with local cleanup regardless of backend response
       await performLocalLogout();
       
-    } catch (error) {
+    } catch (error: any) {
       // Even if there's an error, try to perform local logout
       try {
         await performLocalLogout();
@@ -477,7 +477,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
       // Double-check that state is properly cleared
 
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -498,7 +498,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Set explicit logout flag to prevent auto-restoration
       setHasExplicitlyLoggedOut(true);
 
-    } catch (error) {
+    } catch (error: any) {
       // Still dispatch logout even if clearing fails
       dispatch({ type: 'AUTH_LOGOUT' });
       setHasExplicitlyLoggedOut(true);
@@ -644,7 +644,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
           clearTimeout(authTimeout);
           // Do NOT call apiClient.setAuthToken — cookie handles auth on web.
           // Setting a sentinel would inject a fake Bearer header and break requests.
-          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: null } });
+          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: '' } });
           setHasExplicitlyLoggedOut(false);
           return;
         }
@@ -759,7 +759,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       } else {
         dispatch({ type: 'AUTH_LOGOUT' });
       }
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'AUTH_LOGOUT' });
     } finally {
       clearTimeout(authTimeout);
@@ -909,12 +909,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const contextValue: AuthContextType = useMemo(() => ({
     state,
     actions: stableActions,
-  }), [state, stableActions]);
+  }), [state, stableActions]) as any;
 
   // Sync to Zustand store for crash-safe fallback
   const _setFromProvider = useAuthStore((s) => s._setFromProvider);
   useEffect(() => {
-    _setFromProvider(state, stableActions);
+    _setFromProvider(state, stableActions as any);
   }, [state, stableActions, _setFromProvider]);
 
   return (

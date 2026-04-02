@@ -179,7 +179,7 @@ function ReorderModal({
           duration: 4000
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       platformAlertSimple('Reorder Failed', err instanceof Error ? err.message : 'Failed to reorder items');
     }
   };
@@ -203,7 +203,7 @@ function ReorderModal({
       >
         <View style={styles.checkbox}>
           {item.isAvailable && (
-            <View style={[styles.checkboxInner, isSelected && styles.checkboxSelected]}>
+            <View style={[styles.checkboxInner, isSelected ? styles.checkboxSelected : null]}>
               {isSelected && <Text style={styles.checkmark}>✓</Text>}
             </View>
           )}
@@ -311,7 +311,7 @@ function ReorderModal({
                   onPress={toggleSelectAll}
                 >
                   <View style={[styles.checkbox, styles.selectAllCheckbox]}>
-                    <View style={[styles.checkboxInner, selectAll && styles.checkboxSelected]}>
+                    <View style={[styles.checkboxInner, selectAll ? styles.checkboxSelected : null]}>
                       {selectAll && <Text style={styles.checkmark}>✓</Text>}
                     </View>
                   </View>

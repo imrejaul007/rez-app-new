@@ -31,7 +31,7 @@ function _GoingOutProductCardInner({
   const cartActions = useCartActions();
 
   // Get product ID and check if in cart
-  const productId = product._id || product.id;
+  const productId = (product as any)._id || product.id;
   const { cartItem, quantityInCart, isInCart } = useMemo(() => {
     const item = cartState.items.find(i => i.productId === productId || i.id === productId);
     const qty = item?.quantity || 0;
@@ -84,10 +84,10 @@ function _GoingOutProductCardInner({
         originalPrice: originalPrice,
         discountedPrice: price,
         quantity: 1,
-        cashback: product.cashback?.percentage || 0,
-        category: product.categoryId || 'general',
+        cashback: String(product.cashback?.percentage || 0),
+        category: 'products' as 'products' | 'service',
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onAddToCart, product, productId, normalizedPrice, cartActions]);

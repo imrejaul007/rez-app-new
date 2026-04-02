@@ -150,7 +150,7 @@ function CorporateVerifyPage() {
           <Pressable
             onPress={handleVerify}
             disabled={loading}
-            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+            style={[styles.verifyButton, loading ? styles.verifyButtonDisabled : null]}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />

@@ -116,7 +116,7 @@ function BookingDetailPage() {
           } else {
             platformAlertSimple('Error', response.error || 'Failed to cancel booking');
           }
-        } catch (err) {
+        } catch (err: any) {
           platformAlertSimple('Error', 'Failed to cancel booking');
         } finally {
           if (!isMounted()) return;
@@ -135,7 +135,7 @@ function BookingDetailPage() {
         message: `Booking #${booking.bookingNumber}\n${routeText}${booking.service?.name || ''}\nDate: ${formatDate(booking.bookingDate)}\n\nBooked via ReZ App`,
         title: 'Booking Details',
       });
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -655,7 +655,7 @@ function PriceRow({
   return (
     <View style={styles.priceRow}>
       <Text style={styles.priceLabel}>{label}</Text>
-      <Text style={[styles.priceValue, isDiscount && styles.discountValue]}>
+      <Text style={[styles.priceValue, isDiscount ? styles.discountValue : null]}>
         {isDiscount ? '-' : ''}
         {symbol}
         {Math.abs(value).toLocaleString()}

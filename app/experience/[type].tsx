@@ -5,16 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  TextInput,
-  StatusBar,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, StatusBar, Platform } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatformBlurView';
@@ -32,8 +23,8 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const ExperienceDetailPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { type } = useLocalSearchParams<{ type: string }>();
-  const { currentLocation } = useLocation();
+  const { type } = useLocalSearchParams<any>();
+  const { currentLocation } = useLocation() as any;
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,14 +85,12 @@ const ExperienceDetailPage: React.FC = () => {
 
           // Extract unique categories (only on initial load or if not filtering)
           if (!searchQuery) {
-            const uniqueCategories = Array.from(
-              new Set(fetchedStores.map((s: any) => s.category?.name || 'Other'))
-            );
+            const uniqueCategories = Array.from(new Set(fetchedStores.map((s: any) => s.category?.name || 'Other')));
             if (!isMounted()) return;
             setCategories(['all', ...uniqueCategories]);
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -110,21 +99,29 @@ const ExperienceDetailPage: React.FC = () => {
     };
 
     // Debounce search requests
-    const timer = setTimeout(() => {
-      fetchExperienceData();
-    }, isSearchActive ? 500 : 0);
+    const timer = setTimeout(
+      () => {
+        fetchExperienceData();
+      },
+      isSearchActive ? 500 : 0,
+    );
 
     return () => clearTimeout(timer);
   }, [type, searchQuery, currentLocation]);
 
-  const capitalizeLine = (str: string) => str.replace(/\b\w/g, l => l.toUpperCase());
+  const capitalizeLine = (str: string) => str.replace(/\b\w/g, (l) => l.toUpperCase());
 
   // Filter Logic
-  const filteredStores = useMemo(() => stores.filter((store: any) => {
-    const matchesCategory = selectedFilter === 'all' || (store.category?.name || store.category || 'Other') === selectedFilter;
-    const matchesSearch = store.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  }), [stores, selectedFilter, searchQuery]);
+  const filteredStores = useMemo(
+    () =>
+      stores.filter((store: any) => {
+        const matchesCategory =
+          selectedFilter === 'all' || (store.category?.name || store.category || 'Other') === selectedFilter;
+        const matchesSearch = store.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      }),
+    [stores, selectedFilter, searchQuery],
+  );
 
   const handleStorePress = (store: any) => {
     const storeId = store._id || store.id;
@@ -147,19 +144,22 @@ const ExperienceDetailPage: React.FC = () => {
   const displayDesc = experience?.description || currentTheme.description;
   // Use Theme Gradient if backend missing or default, for better contrast
   const displayGradient = currentTheme.gradientColors;
-  const benefits = experience?.benefits && experience.benefits.length > 0 ? experience.benefits : (currentTheme.benefits || []);
+  const benefits =
+    experience?.benefits && experience.benefits.length > 0 ? experience.benefits : currentTheme.benefits || [];
 
   // Calculate real stats from stores data
   const { avgRating, avgCashback } = useMemo(() => {
     const withRating = stores.filter((s: any) => s.rating && s.rating > 0);
-    const rating = withRating.length > 0
-      ? (withRating.reduce((sum: number, s: any) => sum + s.rating, 0) / withRating.length).toFixed(1)
-      : null;
+    const rating =
+      withRating.length > 0
+        ? (withRating.reduce((sum: number, s: any) => sum + s.rating, 0) / withRating.length).toFixed(1)
+        : null;
 
     const withCashback = stores.filter((s: any) => s.cashback && s.cashback > 0);
-    const cashback = withCashback.length > 0
-      ? Math.round(withCashback.reduce((sum: number, s: any) => sum + s.cashback, 0) / withCashback.length)
-      : null;
+    const cashback =
+      withCashback.length > 0
+        ? Math.round(withCashback.reduce((sum: number, s: any) => sum + s.cashback, 0) / withCashback.length)
+        : null;
 
     return { avgRating: rating, avgCashback: cashback };
   }, [stores]);
@@ -170,15 +170,12 @@ const ExperienceDetailPage: React.FC = () => {
 
       {/* Floating Header with Blur */}
       <View style={styles.header}>
-        {scrollY > 50 && (
-          <BlurView
-            intensity={80}
-            tint="light"
-            style={StyleSheet.absoluteFill}
-          />
-        )}
+        {scrollY > 50 && <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />}
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.iconButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.iconButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
 
@@ -198,7 +195,7 @@ const ExperienceDetailPage: React.FC = () => {
           )}
 
           <Pressable onPress={() => setIsSearchActive(!isSearchActive)} style={styles.iconButton}>
-            <Ionicons name={isSearchActive ? "close" : "search"} size={24} color={colors.nileBlue} />
+            <Ionicons name={isSearchActive ? 'close' : 'search'} size={24} color={colors.nileBlue} />
           </Pressable>
         </View>
       </View>
@@ -209,7 +206,6 @@ const ExperienceDetailPage: React.FC = () => {
         onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
         scrollEventThrottle={16}
       >
-
         {/* Dynamic Gradient Hero */}
         <LinearGradient
           colors={displayGradient as any}
@@ -254,7 +250,6 @@ const ExperienceDetailPage: React.FC = () => {
         </LinearGradient>
 
         <View style={styles.contentContainer}>
-
           {/* New Section: Think Outside The Box */}
           <ThinkOutsideTheBox experienceType={type as string} searchQuery={searchQuery} />
 
@@ -278,20 +273,19 @@ const ExperienceDetailPage: React.FC = () => {
           </View>
 
           {/* Categories Filter */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll} contentContainerStyle={{ paddingRight: 20 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.filterScroll}
+            contentContainerStyle={{ paddingRight: 20 }}
+          >
             {categories.map((cat) => (
               <Pressable
                 key={cat}
                 onPress={() => setSelectedFilter(cat)}
-                style={[
-                  styles.filterChip,
-                  selectedFilter === cat && styles.filterChipActive
-                ]}
+                style={[styles.filterChip, selectedFilter === cat && styles.filterChipActive]}
               >
-                <Text style={[
-                  styles.filterText,
-                  selectedFilter === cat && styles.filterTextActive
-                ]}>
+                <Text style={[styles.filterText, selectedFilter === cat && styles.filterTextActive]}>
                   {cat === 'all' ? 'All Stores' : cat}
                 </Text>
               </Pressable>
@@ -307,15 +301,10 @@ const ExperienceDetailPage: React.FC = () => {
               </View>
             ) : (
               filteredStores.map((store: any, index: number) => (
-                <PremiumStoreCard
-                  key={store.id || index}
-                  store={store}
-                  onPress={handleStorePress}
-                />
+                <PremiumStoreCard key={store.id || index} store={store} onPress={handleStorePress} />
               ))
             )}
           </View>
-
         </View>
       </ScrollView>
     </View>

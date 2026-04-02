@@ -52,8 +52,8 @@ const getEventTypeIconBg = (eventType?: string): string => {
     'health-camp': 'rgba(6, 182, 212, 0.15)',
     'skill-training': 'rgba(236, 72, 153, 0.15)',
     'women-empowerment': 'rgba(236, 72, 153, 0.15)',
-    'education': 'rgba(99, 102, 241, 0.15)',
-    'environment': 'rgba(255, 205, 87, 0.15)',
+    education: 'rgba(99, 102, 241, 0.15)',
+    environment: 'rgba(255, 205, 87, 0.15)',
   };
   return bgMap[eventType || ''] || 'rgba(139, 92, 246, 0.15)';
 };
@@ -69,8 +69,8 @@ const getEventTypeEmoji = (eventType?: string): string => {
     'health-camp': '🏥',
     'skill-training': '👩‍💼',
     'women-empowerment': '👩‍💼',
-    'education': '📚',
-    'environment': '🌍',
+    education: '📚',
+    environment: '🌍',
   };
   return emojiMap[eventType || ''] || '✨';
 };
@@ -96,7 +96,7 @@ const formatEventDate = (dateString?: string): string => {
 function SocialImpactEventDetail() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
 
   // State
   const [event, setEvent] = useState<SocialImpactEvent | null>(null);
@@ -120,32 +120,35 @@ function SocialImpactEventDetail() {
   const pollIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fetch event data
-  const fetchEvent = useCallback(async (isRefresh = false) => {
-    if (!id) return;
+  const fetchEvent = useCallback(
+    async (isRefresh = false) => {
+      if (!id) return;
 
-    try {
-      if (!isRefresh) setLoading(true);
-      setError(null);
+      try {
+        if (!isRefresh) setLoading(true);
+        setError(null);
 
-      const response = await socialImpactApi.getEventById(id);
+        const response = await socialImpactApi.getEventById(id);
 
-      if (response.success && response.data) {
+        if (response.success && response.data) {
+          if (!isMounted()) return;
+          setEvent(response.data);
+        } else {
+          if (!isMounted()) return;
+          setError('Event not found');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setEvent(response.data);
-      } else {
+        setError(err.message || 'Failed to load event');
+      } finally {
         if (!isMounted()) return;
-        setError('Event not found');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load event');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [id]);
+    },
+    [id],
+  );
 
   // Initial fetch
   useEffect(() => {
@@ -177,15 +180,21 @@ function SocialImpactEventDetail() {
         setModalMessage('Registration successful!');
         // Update local state
         if (!isMounted()) return;
-        setEvent(prev => prev ? {
-          ...prev,
-          isEnrolled: true,
-          enrollmentStatus: 'registered',
-          capacity: prev.capacity ? {
-            ...prev.capacity,
-            enrolled: prev.capacity.enrolled + 1
-          } : undefined
-        } : null);
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                isEnrolled: true,
+                enrollmentStatus: 'registered',
+                capacity: prev.capacity
+                  ? {
+                      ...prev.capacity,
+                      enrolled: prev.capacity.enrolled + 1,
+                    }
+                  : undefined,
+              }
+            : null,
+        );
 
         // Close modal after delay
         setTimeout(() => {
@@ -231,16 +240,22 @@ function SocialImpactEventDetail() {
             setModalMessage('Registration cancelled');
             // Update local state
             if (!isMounted()) return;
-            setEvent(prev => prev ? {
-              ...prev,
-              isEnrolled: false,
-              enrollmentStatus: undefined,
-              enrollmentId: undefined,
-              capacity: prev.capacity ? {
-                ...prev.capacity,
-                enrolled: Math.max(0, prev.capacity.enrolled - 1)
-              } : undefined
-            } : null);
+            setEvent((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    isEnrolled: false,
+                    enrollmentStatus: undefined,
+                    enrollmentId: undefined,
+                    capacity: prev.capacity
+                      ? {
+                          ...prev.capacity,
+                          enrolled: Math.max(0, prev.capacity.enrolled - 1),
+                        }
+                      : undefined,
+                  }
+                : null,
+            );
 
             setTimeout(() => {
               setShowModal(false);
@@ -262,7 +277,7 @@ function SocialImpactEventDetail() {
         }
       },
       'Yes, Cancel',
-      'No, Keep It'
+      'No, Keep It',
     );
   };
 
@@ -271,7 +286,9 @@ function SocialImpactEventDetail() {
     const message = `${event.name}\n${event.organizer?.name || ''}\n${formatEventDate(event.eventDate)}\n${event.location?.city || ''}\nEarn +${event.rewards?.rezCoins || 0} ${BRAND.COIN_NAME}!`;
     try {
       await Share.share({ message });
-    } catch (_e) { /* silently handle */ }
+    } catch (_e) {
+      /* silently handle */
+    }
   };
 
   const openMaps = () => {
@@ -287,18 +304,30 @@ function SocialImpactEventDetail() {
       // Web fallback — open Google Maps in a new tab
       url = `https://www.google.com/maps/search/?api=1&query=${encoded}`;
     }
-    try { Linking.openURL(url); } catch (e) { catchAndWarn(e, 'SocialImpactDetail/openURL'); }
+    try {
+      Linking.openURL(url);
+    } catch (e: any) {
+      catchAndWarn(e, 'SocialImpactDetail/openURL');
+    }
   };
 
   const callPhone = () => {
     if (event?.contact?.phone) {
-      try { Linking.openURL(`tel:${event.contact.phone}`); } catch (e) { catchAndWarn(e, 'SocialImpactDetail/openURL'); }
+      try {
+        Linking.openURL(`tel:${event.contact.phone}`);
+      } catch (e: any) {
+        catchAndWarn(e, 'SocialImpactDetail/openURL');
+      }
     }
   };
 
   const sendEmail = () => {
     if (event?.contact?.email) {
-      try { Linking.openURL(`mailto:${event.contact.email}`); } catch (e) { catchAndWarn(e, 'SocialImpactDetail/openURL'); }
+      try {
+        Linking.openURL(`mailto:${event.contact.email}`);
+      } catch (e: any) {
+        catchAndWarn(e, 'SocialImpactDetail/openURL');
+      }
     }
   };
 
@@ -357,7 +386,7 @@ function SocialImpactEventDetail() {
       if (response.success) {
         setShowCheckInModal(false);
         setOtpInput('');
-        setEvent(prev => prev ? { ...prev, enrollmentStatus: 'checked_in' } : null);
+        setEvent((prev) => (prev ? { ...prev, enrollmentStatus: 'checked_in' } : null));
         setModalState('success');
         setModalMessage('Checked in successfully!');
         setShowModal(true);
@@ -406,16 +435,12 @@ function SocialImpactEventDetail() {
         return;
       }
       const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const response = await socialImpactApi.verifyGeoCheckIn(
-        id,
-        location.coords.latitude,
-        location.coords.longitude
-      );
+      const response = await socialImpactApi.verifyGeoCheckIn(id, location.coords.latitude, location.coords.longitude);
       if (response.success) {
         if (!isMounted()) return;
         setShowCheckInModal(false);
         if (!isMounted()) return;
-        setEvent(prev => prev ? { ...prev, enrollmentStatus: 'checked_in' } : null);
+        setEvent((prev) => (prev ? { ...prev, enrollmentStatus: 'checked_in' } : null));
         if (!isMounted()) return;
         setModalState('success');
         if (!isMounted()) return;
@@ -461,7 +486,7 @@ function SocialImpactEventDetail() {
             // Check-in detected!
             stopCheckInPolling();
             setCheckInSuccess(true);
-            setEvent(prev => prev ? { ...prev, enrollmentStatus: status } : null);
+            setEvent((prev) => (prev ? { ...prev, enrollmentStatus: status } : null));
           }
         }
       } catch {
@@ -519,7 +544,10 @@ function SocialImpactEventDetail() {
         <SafeAreaView style={styles.container} edges={['top']}>
           <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
           <View style={styles.header}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={22} color={COLORS.textDark} />
             </Pressable>
             <View style={styles.headerTextContainer}>
@@ -549,12 +577,17 @@ function SocialImpactEventDetail() {
 
         {/* Header */}
         <View style={styles.header}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={COLORS.textDark} />
           </Pressable>
           <View style={styles.headerTextContainer}>
             <View style={styles.headerTitleRow}>
-              <Text style={styles.headerTitle} numberOfLines={1}>{event.name}</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>
+                {event.name}
+              </Text>
               {event.isCsrActivity && (
                 <View style={styles.csrBadge}>
                   <Text style={styles.csrBadgeText}>CSR</Text>
@@ -593,8 +626,11 @@ function SocialImpactEventDetail() {
               <View style={styles.enrolledBadgeHero}>
                 <Ionicons name="checkmark-circle" size={14} color={COLORS.white} />
                 <Text style={styles.enrolledBadgeHeroText}>
-                  {event.enrollmentStatus === 'completed' ? 'Completed' :
-                   event.enrollmentStatus === 'checked_in' ? 'Checked In' : 'Enrolled'}
+                  {event.enrollmentStatus === 'completed'
+                    ? 'Completed'
+                    : event.enrollmentStatus === 'checked_in'
+                      ? 'Checked In'
+                      : 'Enrolled'}
                 </Text>
               </View>
             )}
@@ -625,9 +661,7 @@ function SocialImpactEventDetail() {
                 <Ionicons name="location" size={18} color={Colors.error} />
                 <View style={styles.locationContent}>
                   <Text style={styles.locationTitle}>{event.location.address || 'Location'}</Text>
-                  {event.location.city && (
-                    <Text style={styles.locationAddress}>{event.location.city}</Text>
-                  )}
+                  {event.location.city && <Text style={styles.locationAddress}>{event.location.city}</Text>}
                 </View>
               </View>
               <Pressable style={styles.mapsButton} onPress={openMaps}>
@@ -664,7 +698,9 @@ function SocialImpactEventDetail() {
                       <View style={styles.hostedByMeta}>
                         <Ionicons name="location-outline" size={12} color={COLORS.textMuted} />
                         <Text style={styles.hostedByMetaText}>
-                          {[event.merchant.businessAddress.city, event.merchant.businessAddress.state].filter(Boolean).join(', ')}
+                          {[event.merchant.businessAddress.city, event.merchant.businessAddress.state]
+                            .filter(Boolean)
+                            .join(', ')}
                         </Text>
                       </View>
                     )}
@@ -690,7 +726,13 @@ function SocialImpactEventDetail() {
               {event.merchant?.phone && (
                 <Pressable
                   style={styles.hostedByContact}
-                  onPress={() => { try { Linking.openURL(`tel:${event.merchant!.phone}`); } catch (e) { catchAndWarn(e, 'SocialImpactDetail/openURL'); } }}
+                  onPress={() => {
+                    try {
+                      Linking.openURL(`tel:${event.merchant!.phone}`);
+                    } catch (e: any) {
+                      catchAndWarn(e, 'SocialImpactDetail/openURL');
+                    }
+                  }}
                 >
                   <Ionicons name="call-outline" size={14} color={Colors.info} />
                   <Text style={styles.hostedByContactText}>{event.merchant.phone}</Text>
@@ -714,26 +756,24 @@ function SocialImpactEventDetail() {
                 <Ionicons name="trending-up" size={18} color={COLORS.primary} />
                 <Text style={styles.impactTitle}>Expected Impact</Text>
               </View>
-              {event.impact?.description && (
-                <Text style={styles.impactText}>{event.impact.description}</Text>
-              )}
+              {event.impact?.description && <Text style={styles.impactText}>{event.impact.description}</Text>}
               {event.capacity && event.capacity.goal > 0 && (
                 <View style={styles.progressSection}>
                   <View style={styles.progressHeader}>
                     <Text style={styles.progressLabel}>Participants</Text>
-                    <Text style={styles.progressValue}>{event.capacity.enrolled}/{event.capacity.goal}</Text>
+                    <Text style={styles.progressValue}>
+                      {event.capacity.enrolled}/{event.capacity.goal}
+                    </Text>
                   </View>
                   <View style={styles.progressBar}>
                     <View
                       style={[
                         styles.progressFill,
-                        { width: `${Math.min((event.capacity.enrolled / event.capacity.goal) * 100, 100)}%` }
+                        { width: `${Math.min((event.capacity.enrolled / event.capacity.goal) * 100, 100)}%` },
                       ]}
                     />
                   </View>
-                  {isEventFull && (
-                    <Text style={styles.eventFullText}>This event is full</Text>
-                  )}
+                  {isEventFull && <Text style={styles.eventFullText}>This event is full</Text>}
                 </View>
               )}
             </View>
@@ -767,7 +807,9 @@ function SocialImpactEventDetail() {
                       <Ionicons name="sparkles" size={18} color={Colors.brand.purpleLight} />
                       <Text style={styles.rewardLabel}>Brand Coins</Text>
                     </View>
-                    <Text style={[styles.rewardValue, { color: colors.brand.purpleLight }]}>+{event.rewards.brandCoins}</Text>
+                    <Text style={[styles.rewardValue, { color: colors.brand.purpleLight }]}>
+                      +{event.rewards.brandCoins}
+                    </Text>
                     <Text style={styles.brandName}>{event.sponsor.brandCoinName}</Text>
                   </View>
                 )}
@@ -785,7 +827,7 @@ function SocialImpactEventDetail() {
               {event.eventRequirements.map((req, idx) => (
                 <View key={idx} style={styles.listItem}>
                   <Ionicons
-                    name={req.isMandatory ? "alert-circle" : "checkmark-circle"}
+                    name={req.isMandatory ? 'alert-circle' : 'checkmark-circle'}
                     size={16}
                     color={req.isMandatory ? colors.error : COLORS.primary}
                   />
@@ -869,17 +911,10 @@ function SocialImpactEventDetail() {
               </View>
             ) : (
               <View style={styles.enrolledButtonsRow}>
-                <Pressable
-                  style={styles.cancelButton}
-                  onPress={handleCancelRegistration}
-                  disabled={actionLoading}
-                >
+                <Pressable style={styles.cancelButton} onPress={handleCancelRegistration} disabled={actionLoading}>
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </Pressable>
-                <Pressable
-                  style={styles.checkInActionButton}
-                  onPress={openCheckInModal}
-                >
+                <Pressable style={styles.checkInActionButton} onPress={openCheckInModal}>
                   <Ionicons name="qr-code" size={18} color={COLORS.white} />
                   <Text style={styles.checkInActionButtonText}>Check In</Text>
                 </Pressable>
@@ -891,11 +926,7 @@ function SocialImpactEventDetail() {
               <Text style={styles.eventFullButtonText}>Event is Full</Text>
             </View>
           ) : (
-            <Pressable
-              style={styles.registerButton}
-              onPress={handleRegister}
-              disabled={actionLoading}
-            >
+            <Pressable style={styles.registerButton} onPress={handleRegister} disabled={actionLoading}>
               <LinearGradient
                 colors={[COLORS.primary, '#e6b84e']}
                 start={{ x: 0, y: 0 }}
@@ -930,10 +961,7 @@ function SocialImpactEventDetail() {
                     <Ionicons name="close-circle" size={48} color={Colors.error} />
                   </View>
                   <Text style={styles.modalTitle}>{modalMessage}</Text>
-                  <Pressable
-                    style={styles.modalButton}
-                    onPress={() => setShowModal(false)}
-                  >
+                  <Pressable style={styles.modalButton} onPress={() => setShowModal(false)}>
                     <Text style={styles.modalButtonText}>OK</Text>
                   </Pressable>
                 </>
@@ -942,12 +970,7 @@ function SocialImpactEventDetail() {
           </View>
         </Modal>
         {/* Check-In Modal */}
-        <Modal
-          visible={showCheckInModal}
-          transparent
-          animationType="slide"
-          onRequestClose={closeCheckInModal}
-        >
+        <Modal visible={showCheckInModal} transparent animationType="slide" onRequestClose={closeCheckInModal}>
           <View style={styles.checkInOverlay}>
             <View style={styles.checkInSheet}>
               {/* Header */}
@@ -973,10 +996,7 @@ function SocialImpactEventDetail() {
                         {methods.map((method) => (
                           <Pressable
                             key={method}
-                            style={[
-                              styles.checkInTab,
-                              checkInTab === method && styles.checkInTabActive,
-                            ]}
+                            style={[styles.checkInTab, checkInTab === method && styles.checkInTabActive]}
                             onPress={() => setCheckInTab(method)}
                           >
                             <Ionicons
@@ -984,12 +1004,7 @@ function SocialImpactEventDetail() {
                               size={16}
                               color={checkInTab === method ? COLORS.white : COLORS.textMuted}
                             />
-                            <Text
-                              style={[
-                                styles.checkInTabText,
-                                checkInTab === method && styles.checkInTabTextActive,
-                              ]}
-                            >
+                            <Text style={[styles.checkInTabText, checkInTab === method && styles.checkInTabTextActive]}>
                               {TAB_CONFIG[method].label}
                             </Text>
                           </Pressable>
@@ -1041,11 +1056,7 @@ function SocialImpactEventDetail() {
                       <Text style={styles.checkInInstructions}>
                         Generate your unique QR code to show at the event venue
                       </Text>
-                      <Pressable
-                        style={styles.checkInPrimaryButton}
-                        onPress={handleGenerateQR}
-                        disabled={qrLoading}
-                      >
+                      <Pressable style={styles.checkInPrimaryButton} onPress={handleGenerateQR} disabled={qrLoading}>
                         {qrLoading ? (
                           <ActivityIndicator size="small" color={COLORS.white} />
                         ) : (
@@ -1123,9 +1134,7 @@ function SocialImpactEventDetail() {
                         </>
                       )}
                     </Pressable>
-                    {geoLoading && (
-                      <Text style={styles.geoLoadingText}>Getting your location...</Text>
-                    )}
+                    {geoLoading && <Text style={styles.geoLoadingText}>Getting your location...</Text>}
                   </View>
                 </View>
               )}

@@ -106,7 +106,7 @@ interface Store {
 const StoreDetailPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { id, redemptionCode: passedRedemptionCode } = useLocalSearchParams<{ id: string; redemptionCode?: string }>();
+  const { id, redemptionCode: passedRedemptionCode } = useLocalSearchParams<any>();
   const isAuthenticated = useIsAuthenticated();
   const [store, setStore] = useState<Store | null>(null);
   const [loading, setLoading] = useState(true);
@@ -178,7 +178,7 @@ const StoreDetailPage: React.FC = () => {
         // Filter redemptions for this store
         // Compare with both URL id (could be slug) and store._id (MongoDB ObjectId)
         const storeRedemptions = (response.data.redemptions ?? []).filter((r) => {
-          const dealStoreId = r.deal.storeId;
+          const dealStoreId = (r as any).deal?.storeId ?? (r as any).dealSnapshot?.storeId;
           if (!dealStoreId) return false;
           // Match against URL param (id) or loaded store's _id
           return dealStoreId === id || (store && dealStoreId === store._id);
@@ -196,7 +196,7 @@ const StoreDetailPage: React.FC = () => {
           setSelectedRedemption(storeRedemptions[0]);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -217,7 +217,7 @@ const StoreDetailPage: React.FC = () => {
     if (store?.contact?.phone) {
       try {
         Linking.openURL(`tel:${store.contact.phone}`);
-      } catch (e) {
+      } catch (e: any) {
         catchAndWarn(e, 'StoreDetail/openURL');
       }
     }
@@ -229,7 +229,7 @@ const StoreDetailPage: React.FC = () => {
       const cleanPhone = phone.replace(/[^0-9]/g, '');
       try {
         Linking.openURL(`whatsapp://send?phone=${cleanPhone}&text=Hi, I found you on ${BRAND.APP_NAME} app!`);
-      } catch (e) {
+      } catch (e: any) {
         catchAndWarn(e, 'StoreDetail/openURL');
       }
     }
@@ -246,7 +246,7 @@ const StoreDetailPage: React.FC = () => {
       if (url) {
         try {
           Linking.openURL(url);
-        } catch (e) {
+        } catch (e: any) {
           catchAndWarn(e, 'StoreDetail/openURL');
         }
       }
@@ -257,7 +257,7 @@ const StoreDetailPage: React.FC = () => {
     if (store?.contact?.website) {
       try {
         Linking.openURL(store.contact.website);
-      } catch (e) {
+      } catch (e: any) {
         catchAndWarn(e, 'StoreDetail/openURL');
       }
     }
@@ -280,17 +280,17 @@ const StoreDetailPage: React.FC = () => {
 
     // Add redemption info if a deal is selected
     if (selectedRedemption) {
-      baseParams.redemptionCode = selectedRedemption.redemptionCode;
+      baseParams.redemptionCode = selectedRedemption.redemptionCode!;
       baseParams.redemptionId = selectedRedemption.id;
       // Add deal benefit info
-      if (selectedRedemption.deal.cashback) {
-        baseParams.dealCashback = selectedRedemption.deal.cashback;
+      if ((selectedRedemption as any).deal?.cashback) {
+        baseParams.dealCashback = (selectedRedemption as any).deal.cashback;
       }
-      if (selectedRedemption.deal.coins) {
-        baseParams.dealCoins = selectedRedemption.deal.coins;
+      if ((selectedRedemption as any).deal?.coins) {
+        baseParams.dealCoins = (selectedRedemption as any).deal.coins;
       }
-      if (selectedRedemption.deal.discount) {
-        baseParams.dealDiscount = selectedRedemption.deal.discount;
+      if ((selectedRedemption as any).deal?.discount) {
+        baseParams.dealDiscount = (selectedRedemption as any).deal.discount;
       }
     }
 
@@ -311,7 +311,7 @@ const StoreDetailPage: React.FC = () => {
   };
 
   // Get deal value display
-  const getDealValue = (deal: DealRedemption['deal']) => {
+  const getDealValue = (deal: any) => {
     if (deal.cashback) return { type: 'Cashback', value: deal.cashback, color: COLORS.green500 };
     if (deal.coins) return { type: 'Coins', value: deal.coins, color: COLORS.amber500 };
     if (deal.discount) return { type: 'Discount', value: deal.discount, color: COLORS.purple500 };
@@ -574,13 +574,13 @@ const StoreDetailPage: React.FC = () => {
               </View>
 
               {activeRedemptions.map((redemption) => {
-                const dealValue = getDealValue(redemption.deal);
+                const dealValue = getDealValue((redemption as any).deal);
                 const isSelected = selectedRedemption?.id === redemption.id;
 
                 return (
                   <Pressable
                     key={redemption.id}
-                    style={[styles.redemptionCard, isSelected && styles.redemptionCardSelected]}
+                    style={[styles.redemptionCard, isSelected ? styles.redemptionCardSelected : null]}
                     onPress={() => setSelectedRedemption(isSelected ? null : redemption)}
                   >
                     <View style={styles.redemptionLeft}>
@@ -593,7 +593,7 @@ const StoreDetailPage: React.FC = () => {
                       </View>
                       <View style={styles.redemptionInfo}>
                         <Text style={styles.redemptionCampaign} numberOfLines={1}>
-                          {redemption.campaignId.title}
+                          {(redemption as any).campaignId.title}
                         </Text>
                         <View style={styles.redemptionCodeRow}>
                           <Ionicons name="qr-code-outline" size={12} color={COLORS.gray500} />
@@ -625,7 +625,7 @@ const StoreDetailPage: React.FC = () => {
           {store.description && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="information-circle-outline" size={20} color={COLORS.navy} />
+                <Ionicons name="information-circle-outline" size={20} color={(COLORS as any).navy} />
                 <Text style={styles.sectionTitle}>About</Text>
               </View>
               <Text style={styles.descriptionText}>{store.description}</Text>
@@ -635,7 +635,7 @@ const StoreDetailPage: React.FC = () => {
           {/* Location Section */}
           <View style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
-              <Ionicons name="location-outline" size={20} color={COLORS.navy} />
+              <Ionicons name="location-outline" size={20} color={(COLORS as any).navy} />
               <Text style={styles.sectionTitle}>Location</Text>
             </View>
             <Pressable style={styles.locationBox} onPress={handleDirections}>
@@ -656,7 +656,7 @@ const StoreDetailPage: React.FC = () => {
           {store.operationalInfo?.hours && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="time-outline" size={20} color={COLORS.navy} />
+                <Ionicons name="time-outline" size={20} color={(COLORS as any).navy} />
                 <Text style={styles.sectionTitle}>Operating Hours</Text>
               </View>
               <View style={styles.hoursGrid}>
@@ -664,9 +664,9 @@ const StoreDetailPage: React.FC = () => {
                   const hours = store.operationalInfo?.hours?.[day];
                   const isToday = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase() === day;
                   return (
-                    <View key={day} style={[styles.hoursRow, isToday && styles.hoursRowToday]}>
-                      <Text style={[styles.dayText, isToday && styles.dayTextToday]}>{getDayName(day)}</Text>
-                      <Text style={[styles.timeText, hours?.closed && styles.closedTimeText]}>
+                    <View key={day} style={[styles.hoursRow, isToday ? styles.hoursRowToday : null]}>
+                      <Text style={[styles.dayText, isToday ? styles.dayTextToday : null]}>{getDayName(day)}</Text>
+                      <Text style={[styles.timeText, hours?.closed ? styles.closedTimeText : null]}>
                         {hours?.closed
                           ? 'Closed'
                           : hours
@@ -684,7 +684,7 @@ const StoreDetailPage: React.FC = () => {
           {store.serviceTypes && store.serviceTypes.length > 0 && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="grid-outline" size={20} color={COLORS.navy} />
+                <Ionicons name="grid-outline" size={20} color={(COLORS as any).navy} />
                 <Text style={styles.sectionTitle}>Services</Text>
               </View>
               <View style={styles.tagsContainer}>
@@ -707,7 +707,7 @@ const StoreDetailPage: React.FC = () => {
           {store.operationalInfo?.paymentMethods && store.operationalInfo.paymentMethods.length > 0 && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="wallet-outline" size={20} color={COLORS.navy} />
+                <Ionicons name="wallet-outline" size={20} color={(COLORS as any).navy} />
                 <Text style={styles.sectionTitle}>Payment Methods</Text>
               </View>
               <View style={styles.paymentContainer}>
@@ -739,7 +739,7 @@ const StoreDetailPage: React.FC = () => {
           {store.tags && store.tags.length > 0 && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="pricetags-outline" size={20} color={COLORS.navy} />
+                <Ionicons name="pricetags-outline" size={20} color={(COLORS as any).navy} />
                 <Text style={styles.sectionTitle}>Tags</Text>
               </View>
               <View style={styles.tagsContainer}>
@@ -830,7 +830,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   errorDescription: {
     fontSize: 15,
@@ -973,7 +973,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     lineHeight: 26,
   },
   storeCategory: {
@@ -1118,7 +1118,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   descriptionText: {
     fontSize: 14,
@@ -1149,7 +1149,7 @@ const styles = StyleSheet.create({
   addressText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   cityText: {
     fontSize: 13,
@@ -1182,7 +1182,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 14,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     fontWeight: '500',
   },
   closedTimeText: {
@@ -1286,7 +1286,7 @@ const styles = StyleSheet.create({
   partnerLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   bookButton: {
     borderRadius: 28,
@@ -1346,7 +1346,7 @@ const styles = StyleSheet.create({
   activeDealsTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   activeDealsSubtitle: {
     fontSize: 13,
@@ -1381,7 +1381,7 @@ const styles = StyleSheet.create({
   redemptionCampaign: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   redemptionCodeRow: {

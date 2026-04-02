@@ -67,7 +67,7 @@ function GoldSavingsSipPage() {
         if (isMounted && response?.data) {
           setGoldData(response.data);
         }
-      } catch (error) {
+      } catch (error: any) {
         if (__DEV__) console.debug('[GoldSIP] API fetch failed, using fallback data');
         if (isMounted) {
           // Use fallback data if API not available
@@ -117,7 +117,7 @@ function GoldSavingsSipPage() {
       if (response?.data) {
         setGoldData(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (__DEV__) console.debug('[GoldSIP] API fetch failed, using fallback data');
       // Use fallback data if API not available
       setGoldData({
@@ -169,7 +169,7 @@ function GoldSavingsSipPage() {
         await fetchGoldData();
         setCustomAmount('');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (__DEV__) console.error('[GoldSIP] Failed to start SIP:', error);
     } finally {
       setSaving(false);
@@ -181,7 +181,7 @@ function GoldSavingsSipPage() {
       setSaving(true);
       await apiClient.delete('/wallet/gold-sip');
       await fetchGoldData();
-    } catch (error) {
+    } catch (error: any) {
       if (__DEV__) console.error('[GoldSIP] Failed to cancel SIP:', error);
     } finally {
       setSaving(false);
@@ -196,7 +196,7 @@ function GoldSavingsSipPage() {
 
   const getGainLossPercentage = () => {
     if (!goldData?.holdings.invested) return 0;
-    return ((goldData.holdings.gainLoss / goldData.holdings.invested) * 100).toFixed(1);
+    return (((goldData as any)?.holdings.gainLoss / (goldData as any)?.holdings.invested) * 100).toFixed(1);
   };
 
   if (loading) {
@@ -255,17 +255,19 @@ function GoldSavingsSipPage() {
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Monthly Amount</ThemedText>
                 <ThemedText style={styles.detailValue}>
-                  ₹{goldData.activeSip?.monthlyAmount.toLocaleString()}
+                  ₹{(goldData as any)?.activeSip?.monthlyAmount.toLocaleString()}
                 </ThemedText>
               </View>
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Deduction Date</ThemedText>
-                <ThemedText style={styles.detailValue}>{goldData.activeSip?.deductionDate}th of every month</ThemedText>
+                <ThemedText style={styles.detailValue}>
+                  {(goldData as any)?.activeSip?.deductionDate}th of every month
+                </ThemedText>
               </View>
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Next Debit</ThemedText>
                 <ThemedText style={styles.detailValue}>
-                  {new Date(goldData.activeSip?.startDate || '').toLocaleDateString()}
+                  {new Date((goldData as any)?.activeSip?.startDate || '').toLocaleDateString()}
                 </ThemedText>
               </View>
             </View>
@@ -284,14 +286,17 @@ function GoldSavingsSipPage() {
                 {AMOUNT_OPTIONS.map((amount) => (
                   <Pressable
                     key={amount}
-                    style={[styles.pill, selectedAmount === amount && !customAmount && styles.pillActive]}
+                    style={[styles.pill, selectedAmount === amount && !customAmount ? styles.pillActive : null]}
                     onPress={() => {
                       setSelectedAmount(amount);
                       setCustomAmount('');
                     }}
                   >
                     <ThemedText
-                      style={[styles.pillText, selectedAmount === amount && !customAmount && styles.pillTextActive]}
+                      style={[
+                        styles.pillText,
+                        selectedAmount === amount && !customAmount ? styles.pillTextActive : null,
+                      ]}
                     >
                       ₹{amount}
                     </ThemedText>
@@ -315,10 +320,10 @@ function GoldSavingsSipPage() {
                 {DATE_OPTIONS.map((date) => (
                   <Pressable
                     key={date}
-                    style={[styles.dateOption, selectedDate === date && styles.dateOptionActive]}
+                    style={[styles.dateOption, selectedDate === date ? styles.dateOptionActive : null]}
                     onPress={() => setSelectedDate(date)}
                   >
-                    <ThemedText style={[styles.dateText, selectedDate === date && styles.dateTextActive]}>
+                    <ThemedText style={[styles.dateText, selectedDate === date ? styles.dateTextActive : null]}>
                       {date}
                     </ThemedText>
                   </Pressable>
@@ -369,11 +374,11 @@ function GoldSavingsSipPage() {
         </View>
 
         {/* SIP History */}
-        {goldData?.history && goldData.history.length > 0 && (
+        {goldData?.history && (goldData as any)?.history.length > 0 && (
           <View style={styles.card}>
             <ThemedText style={styles.cardTitle}>SIP History</ThemedText>
             <View style={styles.historyList}>
-              {goldData.history.map((entry, index) => (
+              {(goldData as any)?.history.map((entry: any, index: number) => (
                 <View key={index} style={styles.historyItem}>
                   <View style={styles.historyLeft}>
                     <ThemedText style={styles.historyDate}>
@@ -481,7 +486,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   cardTitle: {
-    ...Typography.h5,
+    ...(Typography as any).h5,
     color: colors.text.primary,
     fontWeight: '600',
   },
@@ -559,7 +564,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   currencySymbol: {
-    ...Typography.h5,
+    ...(Typography as any).h5,
     color: colors.nileBlue,
     fontWeight: '600',
     marginRight: Spacing.xs,
@@ -651,7 +656,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   holdingValue: {
-    ...Typography.h5,
+    ...(Typography as any).h5,
     color: colors.text.primary,
     fontWeight: '600',
   },

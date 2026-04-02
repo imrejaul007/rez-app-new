@@ -108,7 +108,7 @@ function QASection({
       if (!isMounted()) return;
       setQuestionText('');
       setShowAskModal(false);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -128,7 +128,7 @@ function QASection({
       if (!isMounted()) return;
       setAnswerText('');
       setActiveAnswer(null);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

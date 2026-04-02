@@ -72,7 +72,7 @@ function AddressSearch({
       if (!isMounted()) return;
       setShowResultsList(showResults && results.length > 0);
       onSearch?.(searchQuery);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Search Error', 'Failed to search addresses. Please try again.');
     }
   };

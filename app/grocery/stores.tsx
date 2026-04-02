@@ -104,7 +104,7 @@ const GroceryStoresPage: React.FC = () => {
         if (!isMounted()) return;
         setFeaturedStores(getFallbackStores().slice(0, 3));
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setStores(getFallbackStores());
       if (!isMounted()) return;
@@ -141,15 +141,18 @@ const GroceryStoresPage: React.FC = () => {
         style={styles.featuredCard}
         onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as any)}
       >
-        <CachedImage source={store.banner || store.logo || undefined} style={styles.featuredImage} />
+        <CachedImage source={store.banner || store.logo || ('' as any)} style={styles.featuredImage} />
         <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.featuredOverlay}>
-          {(store.offers?.cashback || store.maxCashback) && (store.offers?.cashback || store.maxCashback) > 0 && (
-            <View style={styles.cashbackBadge}>
-              <Text style={styles.cashbackText}>{store.offers?.cashback || store.maxCashback}% Cashback</Text>
-            </View>
-          )}
+          {((store as any).offers?.cashback || store.maxCashback) &&
+            ((store as any).offers?.cashback || store.maxCashback) > 0 && (
+              <View style={styles.cashbackBadge}>
+                <Text style={styles.cashbackText}>
+                  {(store as any).offers?.cashback || store.maxCashback}% Cashback
+                </Text>
+              </View>
+            )}
           <View style={styles.featuredContent}>
-            {store.logo && <CachedImage source={store.logo} style={styles.storeLogo} />}
+            {store.logo && <CachedImage source={store.logo as any} style={styles.storeLogo} />}
             <View style={styles.featuredInfo}>
               <Text style={styles.featuredName} numberOfLines={1}>
                 {store.name}
@@ -193,12 +196,13 @@ const GroceryStoresPage: React.FC = () => {
         style={styles.storeCard}
         onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as any)}
       >
-        <CachedImage source={store.logo || store.banner || undefined} style={styles.storeImage} />
-        {(store.offers?.cashback || store.maxCashback) && (store.offers?.cashback || store.maxCashback) > 0 && (
-          <View style={styles.storeCashbackBadge}>
-            <Text style={styles.storeCashbackText}>{store.offers?.cashback || store.maxCashback}%</Text>
-          </View>
-        )}
+        <CachedImage source={store.logo || store.banner || ('' as any)} style={styles.storeImage} />
+        {((store as any).offers?.cashback || store.maxCashback) &&
+          ((store as any).offers?.cashback || store.maxCashback) > 0 && (
+            <View style={styles.storeCashbackBadge}>
+              <Text style={styles.storeCashbackText}>{(store as any).offers?.cashback || store.maxCashback}%</Text>
+            </View>
+          )}
         <View style={styles.storeInfo}>
           <Text style={styles.storeName} numberOfLines={1}>
             {store.name}
@@ -293,7 +297,7 @@ const GroceryStoresPage: React.FC = () => {
           {filterOptions.map((filter) => (
             <Pressable
               key={filter.key}
-              style={[styles.filterChip, selectedFilter === filter.key && styles.filterChipActive]}
+              style={[styles.filterChip, selectedFilter === filter.key ? styles.filterChipActive : null]}
               onPress={() => setSelectedFilter(filter.key)}
             >
               <Ionicons
@@ -301,7 +305,7 @@ const GroceryStoresPage: React.FC = () => {
                 size={16}
                 color={selectedFilter === filter.key ? colors.background.primary : colors.neutral[500]}
               />
-              <Text style={[styles.filterChipText, selectedFilter === filter.key && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.key ? styles.filterChipTextActive : null]}>
                 {filter.label}
               </Text>
             </Pressable>

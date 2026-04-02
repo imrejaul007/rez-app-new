@@ -199,7 +199,7 @@ function AccountProfilePage() {
       if (response.success && response.data) {
         setSettings(response.data as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -271,7 +271,7 @@ function AccountProfilePage() {
         await loadSettings();
         platformAlertSimple('Error', 'Failed to update setting');
       }
-    } catch (error) {
+    } catch (error: any) {
       await loadSettings();
       platformAlertSimple('Error', 'Failed to update setting');
     }

@@ -136,7 +136,7 @@ function PaymentMethodSelector({
         accessibilityState={{ selected: isSelected }}
       >
         <View style={styles.methodContent}>
-          <View style={[styles.methodIcon, isSelected && styles.methodIconSelected]}>
+          <View style={[styles.methodIcon, isSelected ? styles.methodIconSelected : null]}>
             <Ionicons
               name={getPaymentIconName(method.type) as any}
               size={24}
@@ -145,19 +145,19 @@ function PaymentMethodSelector({
           </View>
 
           <View style={styles.methodDetails}>
-            <ThemedText style={[styles.methodLabel, isSelected && styles.methodLabelSelected]}>
+            <ThemedText style={[styles.methodLabel, isSelected ? styles.methodLabelSelected : null]}>
               {getPaymentTypeLabel(method.type)}
             </ThemedText>
-            <ThemedText style={[styles.methodName, isSelected && styles.methodNameSelected]}>
+            <ThemedText style={[styles.methodName, isSelected ? styles.methodNameSelected : null]}>
               {method.displayName}
             </ThemedText>
             {method.type === 'card' && method.lastFour && (
-              <ThemedText style={[styles.methodMeta, isSelected && styles.methodMetaSelected]}>
+              <ThemedText style={[styles.methodMeta, isSelected ? styles.methodMetaSelected : null]}>
                 ends in {method.lastFour}
               </ThemedText>
             )}
             {method.type === 'netbanking' && method.bankName && (
-              <ThemedText style={[styles.methodMeta, isSelected && styles.methodMetaSelected]}>
+              <ThemedText style={[styles.methodMeta, isSelected ? styles.methodMetaSelected : null]}>
                 {method.bankName}
               </ThemedText>
             )}
@@ -170,7 +170,7 @@ function PaymentMethodSelector({
           </View>
         )}
 
-        <View style={[styles.radioButton, isSelected && styles.radioButtonSelected]}>
+        <View style={[styles.radioButton, isSelected ? styles.radioButtonSelected : null]}>
           {isSelected && (
             <Ionicons
               name="checkmark"

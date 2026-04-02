@@ -69,7 +69,7 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
           setNextSpinTime(response.data.nextSpinEligibleAt);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -102,7 +102,7 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
           setCanSpin(false);
 
           // Show celebration modal
-          setCelebrationResult(result);
+          setCelebrationResult(result as unknown as SpinWheelResult);
           setCelebrationCoins(coinsAdded || 0);
           setCelebrationBalance(newBalance || 0);
           setCelebrationVisible(true);

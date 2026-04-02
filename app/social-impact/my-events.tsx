@@ -1,15 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -37,10 +29,16 @@ const TABS = [
 
 const getEventTypeEmoji = (eventType?: string): string => {
   const map: Record<string, string> = {
-    'blood-donation': '🩸', 'tree-plantation': '🌳', 'beach-cleanup': '🏖️',
-    'digital-literacy': '💻', 'food-drive': '🍲', 'health-camp': '🏥',
-    'skill-training': '🎓', 'women-empowerment': '👩', 'education': '📚',
-    'environment': '🌍',
+    'blood-donation': '🩸',
+    'tree-plantation': '🌳',
+    'beach-cleanup': '🏖️',
+    'digital-literacy': '💻',
+    'food-drive': '🍲',
+    'health-camp': '🏥',
+    'skill-training': '🎓',
+    'women-empowerment': '👩',
+    education: '📚',
+    environment: '🌍',
   };
   return map[eventType || ''] || '✨';
 };
@@ -59,7 +57,7 @@ function MyParticipationsScreen() {
       if (response.success && response.data) {
         setEnrollments(response.data as UserEnrollment[]);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -83,88 +81,89 @@ function MyParticipationsScreen() {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('en-IN', {
-      day: 'numeric', month: 'short', year: 'numeric'
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     });
   };
 
-  const renderEnrollmentCard = useCallback(({ item }: { item: UserEnrollment }) => {
-    const event = item.event;
-    const statusCfg = STATUS_CONFIG[item.status] || STATUS_CONFIG.registered;
+  const renderEnrollmentCard = useCallback(
+    ({ item }: { item: UserEnrollment }) => {
+      const event = item.event;
+      const statusCfg = STATUS_CONFIG[item.status] || STATUS_CONFIG.registered;
 
-    return (
-      <Pressable
-        style={styles.card}
-        onPress={() => router.push(`/social-impact/${event?._id}`)}
-       
-      >
-        <View style={styles.cardHeader}>
-          <View style={styles.emojiContainer}>
-            <Text style={styles.emoji}>{getEventTypeEmoji(event?.eventType)}</Text>
-          </View>
-          <View style={styles.cardHeaderText}>
-            <Text style={styles.cardTitle} numberOfLines={2}>{event?.name || 'Event'}</Text>
-            {event?.organizer?.name && (
-              <Text style={styles.cardOrganizer}>{event.organizer.name}</Text>
-            )}
-          </View>
-          <View style={[styles.statusBadge, { backgroundColor: `${statusCfg.color}15` }]}>
-            <Ionicons name={statusCfg.icon as any} size={12} color={statusCfg.color} />
-            <Text style={[styles.statusText, { color: statusCfg.color }]}>{statusCfg.label}</Text>
-          </View>
-        </View>
-
-        <View style={styles.cardDetails}>
-          {event?.eventDate && (
-            <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
-              <Text style={styles.detailText}>{formatDate(event.eventDate)}</Text>
+      return (
+        <Pressable style={styles.card} onPress={() => router.push(`/social-impact/${event?._id}`)}>
+          <View style={styles.cardHeader}>
+            <View style={styles.emojiContainer}>
+              <Text style={styles.emoji}>{getEventTypeEmoji(event?.eventType)}</Text>
             </View>
-          )}
-          {event?.location?.city && (
-            <View style={styles.detailRow}>
-              <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
-              <Text style={styles.detailText}>{event.location.city}</Text>
+            <View style={styles.cardHeaderText}>
+              <Text style={styles.cardTitle} numberOfLines={2}>
+                {event?.name || 'Event'}
+              </Text>
+              {event?.organizer?.name && <Text style={styles.cardOrganizer}>{event.organizer.name}</Text>}
             </View>
-          )}
-          <View style={styles.detailRow}>
-            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>Registered {formatDate(item.registeredAt)}</Text>
+            <View style={[styles.statusBadge, { backgroundColor: `${statusCfg.color}15` }]}>
+              <Ionicons name={statusCfg.icon as any} size={12} color={statusCfg.color} />
+              <Text style={[styles.statusText, { color: statusCfg.color }]}>{statusCfg.label}</Text>
+            </View>
           </View>
-        </View>
 
-        {item.status === 'completed' && item.coinsAwarded && (
-          <View style={styles.rewardsRow}>
-            {item.coinsAwarded.rez > 0 && (
-              <View style={styles.rewardChip}>
-                <Text style={styles.rewardText}>+{item.coinsAwarded.rez} {BRAND.APP_NAME}</Text>
+          <View style={styles.cardDetails}>
+            {event?.eventDate && (
+              <View style={styles.detailRow}>
+                <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
+                <Text style={styles.detailText}>{formatDate(event.eventDate)}</Text>
               </View>
             )}
-            {item.coinsAwarded.brand > 0 && (
-              <View style={[styles.rewardChip, { backgroundColor: colors.tint.purple }]}>
-                <Text style={[styles.rewardText, { color: Colors.brand.purple }]}>
-                  +{item.coinsAwarded.brand} Brand
-                </Text>
+            {event?.location?.city && (
+              <View style={styles.detailRow}>
+                <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
+                <Text style={styles.detailText}>{event.location.city}</Text>
               </View>
             )}
+            <View style={styles.detailRow}>
+              <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
+              <Text style={styles.detailText}>Registered {formatDate(item.registeredAt)}</Text>
+            </View>
           </View>
-        )}
-      </Pressable>
-    );
-  }, [router]);
 
-  const renderTabItem = useCallback(({ item: tab }: { item: typeof TABS[number] }) => {
-    const isActive = activeTab === tab.id;
-    return (
-      <Pressable
-        style={[styles.tab, isActive && styles.tabActive]}
-        onPress={() => setActiveTab(tab.id)}
-      >
-        <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
-          {tab.label}
-        </Text>
-      </Pressable>
-    );
-  }, [activeTab]);
+          {item.status === 'completed' && item.coinsAwarded && (
+            <View style={styles.rewardsRow}>
+              {item.coinsAwarded.rez > 0 && (
+                <View style={styles.rewardChip}>
+                  <Text style={styles.rewardText}>
+                    +{item.coinsAwarded.rez} {BRAND.APP_NAME}
+                  </Text>
+                </View>
+              )}
+              {item.coinsAwarded.brand > 0 && (
+                <View style={[styles.rewardChip, { backgroundColor: colors.tint.purple }]}>
+                  <Text style={[styles.rewardText, { color: Colors.brand.purple }]}>
+                    +{item.coinsAwarded.brand} Brand
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+        </Pressable>
+      );
+    },
+    [router],
+  );
+
+  const renderTabItem = useCallback(
+    ({ item: tab }: { item: (typeof TABS)[number] }) => {
+      const isActive = activeTab === tab.id;
+      return (
+        <Pressable style={[styles.tab, isActive ? styles.tabActive : null]} onPress={() => setActiveTab(tab.id)}>
+          <Text style={[styles.tabText, isActive ? styles.tabTextActive : null]}>{tab.label}</Text>
+        </Pressable>
+      );
+    },
+    [activeTab],
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -172,7 +171,10 @@ function MyParticipationsScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.deepNavy} />
         </Pressable>
         <View>
@@ -187,7 +189,7 @@ function MyParticipationsScreen() {
           horizontal
           showsHorizontalScrollIndicator={false}
           data={TABS}
-          keyExtractor={t => t.id}
+          keyExtractor={(t) => t.id}
           contentContainerStyle={styles.tabsContent}
           renderItem={renderTabItem}
           estimatedItemSize={44}
@@ -201,23 +203,16 @@ function MyParticipationsScreen() {
         <FlashList
           data={enrollments}
           renderItem={renderEnrollmentCard}
-          keyExtractor={item => item.enrollmentId}
+          keyExtractor={(item) => item.enrollmentId}
           contentContainerStyle={styles.listContent}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.gold} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.gold} />}
           estimatedItemSize={120}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="heart-outline" size={56} color={colors.text.tertiary} />
               <Text style={styles.emptyTitle}>No participations yet</Text>
-              <Text style={styles.emptySubtitle}>
-                Browse social impact events and start making a difference!
-              </Text>
-              <Pressable
-                style={styles.browseBtn}
-                onPress={() => router.replace('/social-impact')}
-              >
+              <Text style={styles.emptySubtitle}>Browse social impact events and start making a difference!</Text>
+              <Pressable style={styles.browseBtn} onPress={() => router.replace('/social-impact')}>
                 <Text style={styles.browseBtnText}>Browse Events</Text>
               </Pressable>
             </View>

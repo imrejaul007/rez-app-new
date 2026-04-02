@@ -44,7 +44,7 @@ function LocationAnalytics({
       const locationStats = await locationService.getLocationStats();
       if (!isMounted()) return;
       setStats(locationStats);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load location statistics');
     } finally {

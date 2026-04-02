@@ -94,7 +94,7 @@ function ExperienceCard({
           />
         ) : (
           <View style={[styles.cardImage, styles.cardImagePlaceholder]}>
-            <Ionicons name="sparkles" size={32} color={COLORS.pink} />
+            <Ionicons name="sparkles" size={32} color={(COLORS as any).pink} />
           </View>
         )}
         <LinearGradient
@@ -156,7 +156,7 @@ function ExperienceCard({
 
           <View style={styles.viewButton}>
             <Text style={styles.viewButtonText}>View</Text>
-            <Ionicons name="chevron-forward" size={14} color={COLORS.pink} />
+            <Ionicons name="chevron-forward" size={14} color={(COLORS as any).pink} />
           </View>
         </View>
       </View>
@@ -169,6 +169,7 @@ function BeautyExperiencesPage() {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
+  const isMounted = useIsMounted();
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [filteredExperiences, setFilteredExperiences] = useState<Experience[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +250,7 @@ function BeautyExperiencesPage() {
     const isActive = selectedCategory === item.key;
     return (
       <Pressable
-        style={[styles.chip, isActive && styles.chipActive]}
+        style={[styles.chip, isActive ? styles.chipActive : null]}
         onPress={() => handleCategoryPress(item.key)}
       >
         <Ionicons
@@ -257,7 +258,7 @@ function BeautyExperiencesPage() {
           size={14}
           color={isActive ? COLORS.white : COLORS.textSecondary}
         />
-        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
+        <Text style={[styles.chipText, isActive ? styles.chipTextActive : null]}>
           {item.label}
         </Text>
       </Pressable>
@@ -277,7 +278,7 @@ function BeautyExperiencesPage() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.pink} />
+          <ActivityIndicator size="large" color={(COLORS as any).pink} />
           <Text style={styles.loadingText}>Loading beauty experiences...</Text>
         </View>
       </SafeAreaView>
@@ -341,13 +342,13 @@ function BeautyExperiencesPage() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={[COLORS.pink]}
-              tintColor={COLORS.pink}
+              colors={[(COLORS as any).pink]}
+              tintColor={(COLORS as any).pink}
             />
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="sparkles-outline" size={48} color={COLORS.pink} />
+              <Ionicons name="sparkles-outline" size={48} color={(COLORS as any).pink} />
               <Text style={styles.emptyTitle}>No beauty experiences available yet</Text>
               <Text style={styles.emptySubtitle}>
                 Check back soon for curated spa packages, bridal experiences, and more
@@ -399,7 +400,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   chipActive: {
-    backgroundColor: COLORS.pink,
+    backgroundColor: (COLORS as any).pink,
   },
   chipText: { fontSize: 13, fontWeight: '500', color: COLORS.textSecondary },
   chipTextActive: { color: COLORS.white, fontWeight: '600' },
@@ -483,7 +484,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   priceRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  priceText: { fontSize: 16, fontWeight: '700', color: COLORS.pink },
+  priceText: { fontSize: 16, fontWeight: '700', color: (COLORS as any).pink },
   originalPrice: {
     fontSize: 13,
     color: COLORS.textSecondary,
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.pinkLight,
   },
-  viewButtonText: { fontSize: 13, fontWeight: '600', color: COLORS.pink },
+  viewButtonText: { fontSize: 13, fontWeight: '600', color: (COLORS as any).pink },
 
   // Error State
   errorContainer: {
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: COLORS.pink,
+    backgroundColor: (COLORS as any).pink,
   },
   retryButtonText: { fontSize: 14, fontWeight: '600', color: COLORS.white },
 

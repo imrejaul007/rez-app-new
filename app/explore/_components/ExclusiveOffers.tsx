@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -60,15 +52,17 @@ const ExclusiveOffers = () => {
           image: offer.image || null,
           discount: offer.discountPercentage ? `${offer.discountPercentage}% OFF` : offer.discount,
           cashback: offer.cashbackPercentage || null,
-          store: offer.store ? {
-            name: offer.store.name || 'Store',
-            logo: offer.store.logo || null,
-          } : null,
+          store: offer.store
+            ? {
+                name: offer.store.name || 'Store',
+                logo: offer.store.logo || null,
+              }
+            : null,
           validUntil: offer.validity?.endDate || offer.validUntil,
         }));
-        setOffers(transformedOffers);
+        setOffers(transformedOffers as Offer[]);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load offers');
     } finally {
@@ -90,10 +84,7 @@ const ExclusiveOffers = () => {
   if (offers.length === 0) {
     return (
       <View style={styles.container}>
-        <Pressable
-          style={styles.bannerContainer}
-          onPress={() => navigateTo('/offers')}
-        >
+        <Pressable style={styles.bannerContainer} onPress={() => navigateTo('/offers')}>
           <LinearGradient
             colors={[Colors.gold, Colors.gold, colors.nileBlue]}
             start={{ x: 0, y: 0 }}
@@ -103,10 +94,7 @@ const ExclusiveOffers = () => {
             <View style={styles.bannerContent}>
               <Text style={styles.bannerTitle}>Exclusive Offers</Text>
               <Text style={styles.bannerSubtitle}>Unlock special deals and cashback rewards</Text>
-              <Pressable
-                style={styles.bannerButton}
-                onPress={() => navigateTo('/offers')}
-              >
+              <Pressable style={styles.bannerButton} onPress={() => navigateTo('/offers')}>
                 <Text style={styles.bannerButtonText}>View All Offers</Text>
               </Pressable>
             </View>
@@ -118,73 +106,65 @@ const ExclusiveOffers = () => {
 
   return (
     <FeatureErrorBoundary featureName="Exclusive Offers" compact={true}>
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>Exclusive Offers</Text>
-        <Pressable onPress={() => navigateTo('/offers')}>
-          <Text style={styles.viewAllText}>View All →</Text>
-        </Pressable>
-      </View>
-
-      {/* Offers Carousel */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        snapToInterval={CARD_WIDTH + 12}
-        decelerationRate="fast"
-      >
-        {offers.map((offer) => (
-          <Pressable
-            key={offer.id}
-            style={styles.offerCard}
-            onPress={() => navigateTo(`/offers/${offer.id}`)}
-           
-          >
-            <LinearGradient
-              colors={[Colors.gold, colors.nileBlue]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.offerGradient}
-            >
-              {/* Offer Image or Icon */}
-              {offer.image ? (
-                <CachedImage source={offer.image} style={styles.offerImage} />
-              ) : (
-                <View style={styles.offerIconContainer}>
-                  <Ionicons name="pricetag" size={32} color={colors.background.primary} />
-                </View>
-              )}
-
-              {/* Offer Content */}
-              <View style={styles.offerContent}>
-                <View style={styles.offerBadge}>
-                  <Text style={styles.offerBadgeText}>
-                    {offer.discount || (offer.cashback ? `${offer.cashback}% Cashback` : 'Special')}
-                  </Text>
-                </View>
-                <Text style={styles.offerTitle} numberOfLines={2}>{offer.title}</Text>
-                {offer.store && (
-                  <Text style={styles.offerStore}>{offer.store.name}</Text>
-                )}
-              </View>
-            </LinearGradient>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.headerRow}>
+          <Text style={styles.sectionTitle}>Exclusive Offers</Text>
+          <Pressable onPress={() => navigateTo('/offers')}>
+            <Text style={styles.viewAllText}>View All →</Text>
           </Pressable>
-        ))}
+        </View>
 
-        {/* View All Card */}
-        <Pressable
-          style={styles.viewAllCard}
-          onPress={() => navigateTo('/offers')}
+        {/* Offers Carousel */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          snapToInterval={CARD_WIDTH + 12}
+          decelerationRate="fast"
         >
-          <View style={styles.viewAllIconContainer}>
-            <Ionicons name="arrow-forward" size={24} color={Colors.gold} />
-          </View>
-          <Text style={styles.viewAllCardText}>View All</Text>
-        </Pressable>
-      </ScrollView>
-    </View>
+          {offers.map((offer) => (
+            <Pressable key={offer.id} style={styles.offerCard} onPress={() => navigateTo(`/offers/${offer.id}`)}>
+              <LinearGradient
+                colors={[Colors.gold, colors.nileBlue]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.offerGradient}
+              >
+                {/* Offer Image or Icon */}
+                {offer.image ? (
+                  <CachedImage source={offer.image} style={styles.offerImage} />
+                ) : (
+                  <View style={styles.offerIconContainer}>
+                    <Ionicons name="pricetag" size={32} color={colors.background.primary} />
+                  </View>
+                )}
+
+                {/* Offer Content */}
+                <View style={styles.offerContent}>
+                  <View style={styles.offerBadge}>
+                    <Text style={styles.offerBadgeText}>
+                      {offer.discount || (offer.cashback ? `${offer.cashback}% Cashback` : 'Special')}
+                    </Text>
+                  </View>
+                  <Text style={styles.offerTitle} numberOfLines={2}>
+                    {offer.title}
+                  </Text>
+                  {offer.store && <Text style={styles.offerStore}>{offer.store.name}</Text>}
+                </View>
+              </LinearGradient>
+            </Pressable>
+          ))}
+
+          {/* View All Card */}
+          <Pressable style={styles.viewAllCard} onPress={() => navigateTo('/offers')}>
+            <View style={styles.viewAllIconContainer}>
+              <Ionicons name="arrow-forward" size={24} color={Colors.gold} />
+            </View>
+            <Text style={styles.viewAllCardText}>View All</Text>
+          </Pressable>
+        </ScrollView>
+      </View>
     </FeatureErrorBoundary>
   );
 };

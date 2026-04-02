@@ -147,7 +147,7 @@ class CashbackService {
     try {
       const response = await apiClient.get<CashbackSummary>('/cashback/summary');
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -160,7 +160,7 @@ class CashbackService {
     filters?: CashbackHistoryFilters
   ): Promise<ApiResponse<CashbackHistoryResponse>> {
 
-    return apiClient.get('/cashback/history', filters);
+    return apiClient.get<any>('/cashback/history', filters as any);
   }
 
   /**
@@ -168,7 +168,7 @@ class CashbackService {
    */
   async getPendingCashback(): Promise<ApiResponse<PendingCashbackResponse>> {
 
-    return apiClient.get('/cashback/pending');
+    return apiClient.get<any>('/cashback/pending');
   }
 
   /**
@@ -176,7 +176,7 @@ class CashbackService {
    */
   async getExpiringSoon(days: number = 7): Promise<ApiResponse<PendingCashbackResponse>> {
 
-    return apiClient.get('/cashback/expiring-soon', { days });
+    return apiClient.get<any>('/cashback/expiring-soon', { days });
   }
 
   /**
@@ -184,7 +184,7 @@ class CashbackService {
    */
   async redeemCashback(): Promise<ApiResponse<RedeemCashbackResponse>> {
 
-    return apiClient.post('/cashback/redeem');
+    return apiClient.post<any>('/cashback/redeem');
   }
 
   /**
@@ -192,7 +192,7 @@ class CashbackService {
    */
   async getActiveCampaigns(): Promise<ApiResponse<{ campaigns: CashbackCampaign[] }>> {
 
-    return apiClient.get('/cashback/campaigns');
+    return apiClient.get<any>('/cashback/campaigns');
   }
 
   /**
@@ -207,7 +207,7 @@ class CashbackService {
     subtotal: number;
   }): Promise<ApiResponse<ForecastCashbackResponse>> {
 
-    return apiClient.post('/cashback/forecast', { cartData });
+    return apiClient.post<any>('/cashback/forecast', { cartData });
   }
 
   /**
@@ -217,7 +217,7 @@ class CashbackService {
     period: 'day' | 'week' | 'month' | 'year' = 'month'
   ): Promise<ApiResponse<CashbackStatistics>> {
 
-    return apiClient.get('/cashback/statistics', { period });
+    return apiClient.get<any>('/cashback/statistics', { period });
   }
 }
 

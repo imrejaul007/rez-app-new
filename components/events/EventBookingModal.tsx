@@ -40,6 +40,7 @@ function EventBookingModal({
   onBookingSuccess,
   initialSelectedSlot = null
 }: EventBookingModalProps) {
+  const isMounted = useIsMounted();
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [formData, setFormData] = useState<BookingFormData>({
     attendeeInfo: {
@@ -293,7 +294,7 @@ function EventBookingModal({
       router.push(
         `/payment-razorpay?bookingId=${bookingId}&bookingType=event&amount=${event.price.amount}&currency=${event.price.currency || 'INR'}` as any
       );
-    } catch (error) {
+    } catch (error: any) {
       
       // Track payment failure
       const bookingId = (bookingResult as any)?.booking?.id || (bookingResult as any)?.booking?._id || '';

@@ -265,10 +265,10 @@ const CategoryDetailPage = () => {
           {filterChips.map((filter) => (
             <Pressable
               key={filter.id}
-              style={[styles.filterChip, selectedFilter === filter.id && styles.filterChipActive]}
+              style={[styles.filterChip, selectedFilter === filter.id ? styles.filterChipActive : null]}
               onPress={() => setSelectedFilter(filter.id)}
             >
-              <Text style={[styles.filterLabel, selectedFilter === filter.id && styles.filterLabelActive]}>
+              <Text style={[styles.filterLabel, selectedFilter === filter.id ? styles.filterLabelActive : null]}>
                 {filter.label}
               </Text>
             </Pressable>

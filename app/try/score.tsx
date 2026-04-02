@@ -63,7 +63,7 @@ export default function ExplorerScoreScreen() {
       try {
         const data = await tryApi.getScore();
         setScoreData(data);
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to load score data:', err);
       } finally {
         setLoading(false);

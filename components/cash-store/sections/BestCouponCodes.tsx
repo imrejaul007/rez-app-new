@@ -166,7 +166,7 @@ const CouponCard: React.FC<{
           </View>
           <Animated.View style={{ transform: [{ scale: copyScaleAnim }] }}>
             <Pressable
-              style={[styles.copyButton, isCopied && styles.copyButtonCopied]}
+              style={[styles.copyButton, isCopied ? styles.copyButtonCopied : null]}
               onPress={handleCopy}
              
             >

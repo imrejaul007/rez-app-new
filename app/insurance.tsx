@@ -199,7 +199,7 @@ function InsurancePage() {
                 return (
                   <Pressable
                     key={t.type}
-                    style={[styles.typeCard, selectedType === t.type && styles.typeCardActive]}
+                    style={[styles.typeCard, selectedType === t.type ? styles.typeCardActive : null]}
                     onPress={() => handleTypePress(t.type)}
                   >
                     <View style={[styles.typeIcon, { backgroundColor: meta.color + '20' }]}>
@@ -342,7 +342,7 @@ function InsurancePage() {
 
           {item.claimSettlementRatio > 0 && (
             <View style={styles.claimRatioRow}>
-              <Ionicons name="checkmark-shield" size={14} color={colors.successScale[400]} />
+              <Ionicons name={'checkmark-shield' as any} size={14} color={colors.successScale[400]} />
               <Text style={styles.claimRatioText}>{item.claimSettlementRatio.toFixed(1)}% claim settlement ratio</Text>
             </View>
           )}

@@ -225,8 +225,8 @@ function CommentsPage() {
         const addedComment: Comment = {
           id: response.data.id,
           user: {
-            name: response.data.userName || user?.fullName || 'You',
-            avatar: response.data.userAvatar || (user?.fullName || 'Y').charAt(0).toUpperCase(),
+            name: response.data.userName || (user as any)?.fullName || 'You',
+            avatar: response.data.userAvatar || ((user as any)?.fullName || 'Y').charAt(0).toUpperCase(),
             verified: false,
           },
           text: response.data.comment,
@@ -267,7 +267,7 @@ function CommentsPage() {
 
   const renderComment = useCallback(
     (comment: Comment, isReply = false) => (
-      <View key={comment.id} style={[styles.commentItem, isReply && styles.replyItem]}>
+      <View key={comment.id} style={[styles.commentItem, isReply ? styles.replyItem : null]}>
         <View style={styles.avatar}>
           <ThemedText style={styles.avatarText}>{comment.user.avatar}</ThemedText>
         </View>

@@ -41,13 +41,13 @@ class StoreMessagingService {
   // Get all conversations for the current user
   async getConversations(filter: ConversationFilter = {}): Promise<ApiResponse<ConversationsResponse>> {
 
-    return apiClient.get('/messages/conversations', filter);
+    return apiClient.get<any>('/messages/conversations', filter as any);
   }
 
   // Get a specific conversation
   async getConversation(conversationId: string): Promise<ApiResponse<Conversation>> {
 
-    return apiClient.get(`/messages/conversations/${conversationId}`);
+    return apiClient.get<any>(`/messages/conversations/${conversationId}`);
   }
 
   // Create or get conversation with a store
@@ -56,7 +56,7 @@ class StoreMessagingService {
     orderId?: string
   ): Promise<ApiResponse<Conversation>> {
 
-    return apiClient.post('/messages/conversations', {
+    return apiClient.post<any>('/messages/conversations', {
       storeId,
       orderId,
     });
@@ -69,7 +69,7 @@ class StoreMessagingService {
     limit: number = 50
   ): Promise<ApiResponse<MessagesResponse>> {
 
-    return apiClient.get(`/messages/conversations/${conversationId}/messages`, {
+    return apiClient.get<any>(`/messages/conversations/${conversationId}/messages`, {
       page,
       limit,
     });
@@ -91,7 +91,7 @@ class StoreMessagingService {
       }
     }
 
-    return apiClient.post(`/messages/conversations/${data.conversationId}/messages`, {
+    return apiClient.post<any>(`/messages/conversations/${data.conversationId}/messages`, {
       content: data.content,
       type: data.type || 'text',
       replyToMessageId: data.replyToMessageId,
@@ -114,7 +114,7 @@ class StoreMessagingService {
       formData.append(`attachments`, file);
     });
 
-    return apiClient.post(
+    return apiClient.post<any>(
       `/messages/conversations/${conversationId}/messages`,
       formData
     );
@@ -123,37 +123,37 @@ class StoreMessagingService {
   // Mark message as read
   async markMessageAsRead(conversationId: string, messageId: string): Promise<ApiResponse<void>> {
 
-    return apiClient.patch(`/messages/conversations/${conversationId}/messages/${messageId}/read`);
+    return apiClient.patch<any>(`/messages/conversations/${conversationId}/messages/${messageId}/read`);
   }
 
   // Mark all messages in conversation as read
   async markConversationAsRead(conversationId: string): Promise<ApiResponse<void>> {
 
-    return apiClient.patch(`/messages/conversations/${conversationId}/read`);
+    return apiClient.patch<any>(`/messages/conversations/${conversationId}/read`);
   }
 
   // Archive conversation
   async archiveConversation(conversationId: string): Promise<ApiResponse<Conversation>> {
 
-    return apiClient.patch(`/messages/conversations/${conversationId}/archive`);
+    return apiClient.patch<any>(`/messages/conversations/${conversationId}/archive`);
   }
 
   // Unarchive conversation
   async unarchiveConversation(conversationId: string): Promise<ApiResponse<Conversation>> {
 
-    return apiClient.patch(`/messages/conversations/${conversationId}/unarchive`);
+    return apiClient.patch<any>(`/messages/conversations/${conversationId}/unarchive`);
   }
 
   // Delete conversation
   async deleteConversation(conversationId: string): Promise<ApiResponse<void>> {
 
-    return apiClient.delete(`/messages/conversations/${conversationId}`);
+    return apiClient.delete<any>(`/messages/conversations/${conversationId}`);
   }
 
   // Get store availability status
   async getStoreAvailability(storeId: string): Promise<ApiResponse<StoreAvailability>> {
 
-    return apiClient.get(`/stores/${storeId}/availability`);
+    return apiClient.get<any>(`/stores/${storeId}/availability`);
   }
 
   // Send typing indicator
@@ -169,7 +169,7 @@ class StoreMessagingService {
     conversationId?: string
   ): Promise<ApiResponse<Message[]>> {
 
-    return apiClient.get('/messages/search', {
+    return apiClient.get<any>('/messages/search', {
       query,
       conversationId,
     });
@@ -182,7 +182,7 @@ class StoreMessagingService {
     details?: string
   ): Promise<ApiResponse<void>> {
 
-    return apiClient.post(`/messages/${messageId}/report`, {
+    return apiClient.post<any>(`/messages/${messageId}/report`, {
       reason,
       details,
     });
@@ -191,19 +191,19 @@ class StoreMessagingService {
   // Block store
   async blockStore(storeId: string): Promise<ApiResponse<void>> {
 
-    return apiClient.post(`/stores/${storeId}/block`);
+    return apiClient.post<any>(`/stores/${storeId}/block`);
   }
 
   // Unblock store
   async unblockStore(storeId: string): Promise<ApiResponse<void>> {
 
-    return apiClient.post(`/stores/${storeId}/unblock`);
+    return apiClient.post<any>(`/stores/${storeId}/unblock`);
   }
 
   // Get unread count
   async getUnreadCount(): Promise<ApiResponse<{ total: number; byStore: Record<string, number> }>> {
 
-    return apiClient.get('/messages/unread/count');
+    return apiClient.get<any>('/messages/unread/count');
   }
 
   // Create support ticket from conversation
@@ -213,7 +213,7 @@ class StoreMessagingService {
     category: string
   ): Promise<ApiResponse<any>> {
 
-    return apiClient.post('/support/tickets', {
+    return apiClient.post<any>('/support/tickets', {
       conversationId,
       subject,
       category,
@@ -226,7 +226,7 @@ class StoreMessagingService {
     query: string
   ): Promise<ApiResponse<string[]>> {
 
-    return apiClient.get(`/stores/${storeId}/auto-responses`, {
+    return apiClient.get<any>(`/stores/${storeId}/auto-responses`, {
       query,
     });
   }

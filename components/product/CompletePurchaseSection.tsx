@@ -79,7 +79,7 @@ export const CompletePurchaseSection: React.FC<CompletePurchaseSectionProps> = (
         ios: `${scheme}${label}@${latLng}`,
         android: `${scheme}${latLng}(${label})`,
       });
-      if (url) { try { Linking.openURL(url); } catch (e) { catchAndWarn(e, 'CompletePurchaseSection/openURL'); } }
+      if (url) { try { Linking.openURL(url); } catch (e: any) { catchAndWarn(e, 'CompletePurchaseSection/openURL'); } }
     }
   };
 

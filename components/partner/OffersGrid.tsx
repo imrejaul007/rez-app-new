@@ -61,9 +61,7 @@ function OffersGrid({
 
   const handleTermsPress = (offer: ClaimableOffer) => {
     // Always use Alert for terms (works better for long text)
-    platformAlertSimple('Terms & Conditions', offer.termsAndConditions.join('\n\n'),
-      [{ text: 'Close', style: 'default' }]
-    );
+    platformAlertSimple('Terms & Conditions', offer.termsAndConditions.join('\n\n'));
   };
 
   const renderOfferCard = (offer: ClaimableOffer) => {

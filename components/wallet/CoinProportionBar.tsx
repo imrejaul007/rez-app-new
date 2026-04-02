@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
     flexDirection: 'row',
-    backgroundColor: colors.border.primary,
+    backgroundColor: colors.border.default,
   },
   segment: {
     height: 8,

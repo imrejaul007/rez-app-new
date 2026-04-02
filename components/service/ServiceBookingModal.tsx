@@ -346,7 +346,7 @@ function ServiceBookingModal({
       } else {
         setAvailableSlots([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setAvailableSlots([]);
     } finally {
@@ -427,7 +427,7 @@ function ServiceBookingModal({
       } else {
         platformAlertSimple('Error', response.error || 'Failed to create booking');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to create booking. Please try again.');
     } finally {
       if (!isMounted()) return;

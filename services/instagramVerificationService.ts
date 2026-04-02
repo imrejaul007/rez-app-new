@@ -328,7 +328,7 @@ export const verifyInstagramPost = async (url: string): Promise<PostVerification
 
     // Step 2: Call backend to verify post exists and is accessible
 
-    const response: any = await apiClient.post(INSTAGRAM_CONFIG.VERIFY_POST_ENDPOINT, {
+    const response: any = await apiClient.post<any>(INSTAGRAM_CONFIG.VERIFY_POST_ENDPOINT, {
       url,
       postId: parsed.postId,
       username: parsed.username,
@@ -463,7 +463,7 @@ export const verifyInstagramAccount = async (
   const errors: string[] = [];
 
   try {
-    const response: any = await apiClient.post(INSTAGRAM_CONFIG.VERIFY_ACCOUNT_ENDPOINT, {
+    const response: any = await apiClient.post<any>(INSTAGRAM_CONFIG.VERIFY_ACCOUNT_ENDPOINT, {
       username: usernameOrUrl,
     });
 
@@ -512,7 +512,7 @@ export const extractInstagramPostData = async (url: string): Promise<{
     }
 
     // Call backend to extract basic data
-    const response: any = await apiClient.post(INSTAGRAM_CONFIG.EXTRACT_POST_DATA_ENDPOINT, {
+    const response: any = await apiClient.post<any>(INSTAGRAM_CONFIG.EXTRACT_POST_DATA_ENDPOINT, {
       url,
       postId: parsed.postId,
     });

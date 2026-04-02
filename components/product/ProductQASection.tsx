@@ -75,7 +75,7 @@ export const ProductQASection: React.FC<ProductQASectionProps> = ({ productId, p
       setQuestionText('');
       setShowAskQuestion(false);
       platformAlertSimple('Success', 'Your question has been posted!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to post question. Please try again.');
     }
   };
@@ -96,7 +96,7 @@ export const ProductQASection: React.FC<ProductQASectionProps> = ({ productId, p
       if (!isMounted()) return;
       setAnswerText(prev => ({ ...prev, [questionId]: '' }));
       platformAlertSimple('Success', 'Your answer has been posted!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to post answer. Please try again.');
     }
   };
@@ -312,11 +312,11 @@ export const ProductQASection: React.FC<ProductQASectionProps> = ({ productId, p
         {(['recent', 'popular', 'unanswered'] as const).map(sort => (
           <Pressable
             key={sort}
-            style={[styles.sortButton, sortBy === sort && styles.sortButtonActive]}
+            style={[styles.sortButton, sortBy === sort ? styles.sortButtonActive : null]}
             onPress={() => changeSortBy(sort)}
            
           >
-            <ThemedText style={[styles.sortText, sortBy === sort && styles.sortTextActive]}>
+            <ThemedText style={[styles.sortText, sortBy === sort ? styles.sortTextActive : null]}>
               {sort.charAt(0).toUpperCase() + sort.slice(1)}
             </ThemedText>
           </Pressable>
@@ -328,7 +328,7 @@ export const ProductQASection: React.FC<ProductQASectionProps> = ({ productId, p
         data={questions}
         renderItem={renderQuestion}
         keyExtractor={item => item._id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={styles.listContent as any}
         onRefresh={refresh}
         refreshing={isRefreshing}
         onEndReached={loadMore}

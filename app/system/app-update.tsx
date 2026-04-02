@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Force or suggest users to update when new version available
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Linking,
-  ScrollView,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, Linking, ScrollView } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -42,7 +34,7 @@ function AppUpdatePage() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo>({
     currentVersion: Constants.expoConfig?.version || '1.0.0',
     requiredVersion: '1.2.0',
-    latestVersion: params.version as string || '1.3.0',
+    latestVersion: (params.version as string) || '1.3.0',
     updateType: (params.type as 'force' | 'soft') || 'soft',
     releaseNotes: [
       'New wallet features with P2P transfers',
@@ -63,15 +55,15 @@ function AppUpdatePage() {
 
   const handleUpdateNow = async () => {
     try {
-      const storeUrl = Platform.OS === 'ios'
-        ? updateInfo.storeUrl.ios
-        : updateInfo.storeUrl.android;
+      const storeUrl = Platform.OS === 'ios' ? updateInfo.storeUrl.ios : updateInfo.storeUrl.android;
 
       const canOpen = await Linking.canOpenURL(storeUrl);
       if (canOpen) {
         await Linking.openURL(storeUrl);
       }
-    } catch (e) { catchAndReport(e, setError, 'AppUpdate/openStoreUrl'); }
+    } catch (e: any) {
+      catchAndReport(e, setError, 'AppUpdate/openStoreUrl');
+    }
   };
 
   const handleLater = () => {
@@ -84,18 +76,11 @@ function AppUpdatePage() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Logo Section */}
         <View style={styles.logoSection}>
           <View style={styles.logoContainer}>
-            <CachedImage
-              source={require('@/assets/images/icon.png')}
-              style={styles.logo}
-              contentFit="contain"
-            />
+            <CachedImage source={require('@/assets/images/icon.png')} style={styles.logo} contentFit="contain" />
             <View style={styles.updateIconBadge}>
               <Ionicons name="arrow-up-circle" size={32} color={Colors.primary[600]} />
             </View>
@@ -136,9 +121,7 @@ function AppUpdatePage() {
         {isForceUpdate && (
           <View style={styles.forceUpdateNotice}>
             <Ionicons name="warning" size={20} color={Colors.warning} />
-            <ThemedText style={styles.forceUpdateText}>
-              This update is required to continue using the app
-            </ThemedText>
+            <ThemedText style={styles.forceUpdateText}>This update is required to continue using the app</ThemedText>
           </View>
         )}
       </ScrollView>
@@ -153,10 +136,7 @@ function AppUpdatePage() {
           accessibilityRole="button"
           accessibilityHint="Opens app store to update the app"
         >
-          <LinearGradient
-            colors={[Colors.primary[600], Colors.primary[700]]}
-            style={styles.updateButtonGradient}
-          >
+          <LinearGradient colors={[Colors.primary[600], Colors.primary[700]]} style={styles.updateButtonGradient}>
             <Ionicons name="download-outline" size={20} color={colors.background.primary} />
             <ThemedText style={styles.updateButtonText}>Update Now</ThemedText>
           </LinearGradient>

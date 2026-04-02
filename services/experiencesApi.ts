@@ -57,7 +57,7 @@ class ExperiencesService {
         limit: params?.limit || 10,
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -80,7 +80,7 @@ class ExperiencesService {
         total: number;
       }>('/experiences/homepage', { limit });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -97,7 +97,7 @@ class ExperiencesService {
     try {
       const response = await apiClient.get<StoreExperience>(`/experiences/${experienceId}`);
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -132,7 +132,7 @@ class ExperiencesService {
         ...(params?.q && { q: params.q }),
       });
 
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,
@@ -151,7 +151,7 @@ class ExperiencesService {
         limit,
         ...(experience && { experience }),
       });
-      return response;
+      return response as any;
     } catch (error: any) {
       return {
         success: false,

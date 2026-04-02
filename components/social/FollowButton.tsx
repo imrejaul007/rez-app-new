@@ -26,7 +26,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ userId, onFollowChange, sty
       const status = await checkFollowStatus(userId);
       if (!isMounted()) return;
       setIsFollowing(status);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -46,7 +46,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ userId, onFollowChange, sty
       if (onFollowChange) {
         onFollowChange(result.following);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

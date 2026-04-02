@@ -4,23 +4,15 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Connected to /api/travel-services
  */
 
-import React, { useState, useEffect, useCallback} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  Dimensions,
-  RefreshControl
-} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Dimensions, RefreshControl } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming} from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -60,16 +52,22 @@ const C = {
   blue500: colors.infoScale[400],
   orange500: colors.brand.orange,
   skeleton: colors.slateLight,
-  skeletonShine: colors.tint.slate };
+  skeletonShine: colors.tint.slate,
+};
 
 // ─── Category Config (Ionicons + gradients) ──────────────────────────────────
 const CATEGORY_CONFIG: Record<string, { icon: string; gradient: string[]; bg: string }> = {
-  flights:  { icon: 'airplane',       gradient: [colors.infoScale[400], '#1D4ED8'], bg: colors.tint.blue },
-  hotels:   { icon: 'bed',            gradient: [colors.brand.pink, '#BE185D'], bg: '#FDF2F8' },
-  trains:   { icon: 'train',          gradient: [colors.success, colors.successScale[700]], bg: colors.successScale[50] },
-  bus:      { icon: 'bus',            gradient: [colors.brand.orange, '#C2410C'], bg: colors.tint.orange },
-  cab:      { icon: 'car-sport',      gradient: [colors.brand.amber, '#A16207'], bg: '#FEFCE8' },
-  packages: { icon: 'globe',          gradient: [colors.brand.purpleLight, colors.brand.purpleDeep], bg: colors.tint.purpleLight } };
+  flights: { icon: 'airplane', gradient: [colors.infoScale[400], '#1D4ED8'], bg: colors.tint.blue },
+  hotels: { icon: 'bed', gradient: [colors.brand.pink, '#BE185D'], bg: '#FDF2F8' },
+  trains: { icon: 'train', gradient: [colors.success, colors.successScale[700]], bg: colors.successScale[50] },
+  bus: { icon: 'bus', gradient: [colors.brand.orange, '#C2410C'], bg: colors.tint.orange },
+  cab: { icon: 'car-sport', gradient: [colors.brand.amber, '#A16207'], bg: '#FEFCE8' },
+  packages: {
+    icon: 'globe',
+    gradient: [colors.brand.purpleLight, colors.brand.purpleDeep],
+    bg: colors.tint.purpleLight,
+  },
+};
 
 const getCategoryDetailRoute = (slug: string, id: string): string => {
   const routes: Record<string, string> = {
@@ -78,7 +76,8 @@ const getCategoryDetailRoute = (slug: string, id: string): string => {
     trains: `/train/${id}`,
     bus: `/bus/${id}`,
     cab: `/cab/${id}`,
-    packages: `/package/${id}` };
+    packages: `/package/${id}`,
+  };
   return routes[slug] || `/product-page?cardId=${id}&cardType=product`;
 };
 
@@ -87,14 +86,10 @@ const SkeletonPulse: React.FC<{ style?: any }> = ({ style }) => {
   const anim = useSharedValue(0.3);
   const animStyle = useAnimatedStyle(() => ({ opacity: anim.value }));
   useEffect(() => {
-    anim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 800 }),
-        withTiming(0.3, { duration: 800 })
-      ),
-      -1
-    );
-    return () => { anim.value = 0.3; };
+    anim.value = withRepeat(withSequence(withTiming(1, { duration: 800 }), withTiming(0.3, { duration: 800 })), -1);
+    return () => {
+      anim.value = 0.3;
+    };
   }, []);
   return <Animated.View style={[{ backgroundColor: C.skeleton, borderRadius: 8 }, style, animStyle]} />;
 };
@@ -129,7 +124,10 @@ const DealSkeleton = () => (
 const PopularSkeleton = () => (
   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16 }}>
     {Array.from({ length: 3 }).map((_, i) => (
-      <View key={i} style={{ width: CARD_W, marginRight: 12, borderRadius: 16, overflow: 'hidden', backgroundColor: C.white }}>
+      <View
+        key={i}
+        style={{ width: CARD_W, marginRight: 12, borderRadius: 16, overflow: 'hidden', backgroundColor: C.white }}
+      >
         <SkeletonPulse style={{ width: '100%', height: 120, borderRadius: 0 }} />
         <View style={{ padding: 12 }}>
           <SkeletonPulse style={{ width: '70%', height: 14 }} />
@@ -209,18 +207,18 @@ const TravelPage: React.FC = () => {
             name: svc.name,
             type: svc.serviceCategory?.name || 'Travel',
             categorySlug: svc.serviceCategory?.slug || 'packages',
-            price: svc.pricing?.selling
-              ? `${cs}${svc.pricing.selling.toLocaleString('en-IN')}`
-              : 'Price on request',
-            originalPrice: svc.pricing?.original && svc.pricing.original > svc.pricing.selling
-              ? `${cs}${svc.pricing.original.toLocaleString('en-IN')}`
-              : undefined,
+            price: svc.pricing?.selling ? `${cs}${svc.pricing.selling.toLocaleString('en-IN')}` : 'Price on request',
+            originalPrice:
+              svc.pricing?.original && svc.pricing.original > svc.pricing.selling
+                ? `${cs}${svc.pricing.original.toLocaleString('en-IN')}`
+                : undefined,
             cashback: cbPct > 0 ? `${cbPct}% back` : '',
             cashbackNum: cbPct,
             image: svc.images?.[0] || '',
             rating: svc.ratings?.average || 0,
             ratingCount: svc.ratings?.count || 0,
-            storeName: svc.store?.name };
+            storeName: svc.store?.name,
+          };
         });
         if (!isMounted()) return;
         setFeaturedDeals(transformed);
@@ -236,7 +234,8 @@ const TravelPage: React.FC = () => {
           price: svc.pricing?.selling || 0,
           cashback: svc.cashback?.percentage || svc.serviceCategory?.cashbackPercentage || 0,
           image: svc.images?.[0] || '',
-          rating: svc.ratings?.average || 0 }));
+          rating: svc.ratings?.average || 0,
+        }));
         if (!isMounted()) return;
         setPopularServices(popular);
       }
@@ -247,9 +246,10 @@ const TravelPage: React.FC = () => {
         setStats({
           serviceCount: statsRes.data.serviceCount || statsRes.data.hotels || 0,
           maxCashback: statsRes.data.maxCashback || 0,
-          coinMultiplier: statsRes.data.coinMultiplier || 2 });
+          coinMultiplier: statsRes.data.coinMultiplier || 2,
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       if (categories.length === 0) {
         if (!isMounted()) return;
         setError('Unable to load travel services');
@@ -262,7 +262,9 @@ const TravelPage: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => { fetchTravelData(); }, []);
+  useEffect(() => {
+    fetchTravelData();
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
@@ -289,11 +291,12 @@ const TravelPage: React.FC = () => {
           <Ionicons name="cloud-offline-outline" size={36} color={C.cyan600} />
         </View>
         <Text style={s.errorTitle}>Connection Error</Text>
-        <Text style={s.errorMessage}>
-          {error}. Pull down to retry.
-        </Text>
+        <Text style={s.errorMessage}>{error}. Pull down to retry.</Text>
         <Pressable
-          onPress={() => { setIsLoading(true); fetchTravelData(); }}
+          onPress={() => {
+            setIsLoading(true);
+            fetchTravelData();
+          }}
           style={s.errorRetryBtn}
         >
           <Text style={s.errorRetryBtnText}>Try Again</Text>
@@ -303,10 +306,11 @@ const TravelPage: React.FC = () => {
   }
 
   // ─── Compute total from categories ─────────────────────────────────────
-  const totalServices = categories.reduce((sum, cat) => {
-    const num = parseInt(String(cat.count).replace(/[^0-9]/g, ''), 10) || 0;
-    return sum + num;
-  }, 0) || stats.serviceCount;
+  const totalServices =
+    categories.reduce((sum, cat) => {
+      const num = parseInt(String(cat.count).replace(/[^0-9]/g, ''), 10) || 0;
+      return sum + num;
+    }, 0) || stats.serviceCount;
 
   return (
     <View style={s.container}>
@@ -319,7 +323,10 @@ const TravelPage: React.FC = () => {
       >
         {/* Top row */}
         <View style={s.headerRow}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={s.headerBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={s.headerBtn}
+          >
             <Ionicons name="arrow-back" size={22} color={C.white} />
           </Pressable>
           <View style={s.headerTitleWrap}>
@@ -332,11 +339,7 @@ const TravelPage: React.FC = () => {
         </View>
 
         {/* Search bar */}
-        <Pressable
-          style={s.searchBar}
-          onPress={() => router.push('/travel/search' as any)}
-         
-        >
+        <Pressable style={s.searchBar} onPress={() => router.push('/travel/search' as any)}>
           <Ionicons name="search" size={18} color={C.slate400} />
           <Text style={s.searchPlaceholder}>Search flights, hotels, trains...</Text>
         </Pressable>
@@ -345,9 +348,7 @@ const TravelPage: React.FC = () => {
         <View style={s.statsStrip}>
           <View style={s.statPill}>
             <Ionicons name="globe-outline" size={14} color={C.white} />
-            <Text style={s.statPillText}>
-              {totalServices > 0 ? `${totalServices}+ Services` : 'Coming Soon'}
-            </Text>
+            <Text style={s.statPillText}>{totalServices > 0 ? `${totalServices}+ Services` : 'Coming Soon'}</Text>
           </View>
           {stats.maxCashback > 0 && (
             <View style={s.statPill}>
@@ -375,7 +376,9 @@ const TravelPage: React.FC = () => {
           <View style={s.sectionRow}>
             <Text style={s.sectionTitle}>Book Travel</Text>
           </View>
-          {isLoading ? <CategorySkeleton /> : (
+          {isLoading ? (
+            <CategorySkeleton />
+          ) : (
             <View style={s.catGrid}>
               {categories.map((cat) => {
                 const slug = cat.id;
@@ -386,18 +389,12 @@ const TravelPage: React.FC = () => {
                     key={cat.id}
                     style={[s.catCard, { backgroundColor: cfg.bg }]}
                     onPress={() => navigateToCategory(slug)}
-                   
                   >
-                    <LinearGradient
-                      colors={cfg.gradient}
-                      style={s.catIconWrap}
-                    >
+                    <LinearGradient colors={cfg.gradient as [string, string]} style={s.catIconWrap}>
                       <Ionicons name={cfg.icon as any} size={24} color={C.white} />
                     </LinearGradient>
                     <Text style={s.catName}>{cat.title}</Text>
-                    <Text style={s.catCount}>
-                      {countNum > 0 ? `${countNum}+ options` : 'Explore'}
-                    </Text>
+                    <Text style={s.catCount}>{countNum > 0 ? `${countNum}+ options` : 'Explore'}</Text>
                   </Pressable>
                 );
               })}
@@ -419,24 +416,19 @@ const TravelPage: React.FC = () => {
             )}
           </View>
 
-          {isLoading ? <DealSkeleton /> : featuredDeals.length > 0 ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.horizontalScrollPadding}>
+          {isLoading ? (
+            <DealSkeleton />
+          ) : featuredDeals.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={s.horizontalScrollPadding}
+            >
               {featuredDeals.map((deal) => (
-                <Pressable
-                  key={deal.id}
-                  style={s.dealCard}
-                  onPress={() => navigateToDeal(deal)}
-                 
-                >
-                  <CachedImage
-                    source={deal.image}
-                    style={s.dealImg}
-                  />
+                <Pressable key={deal.id} style={s.dealCard} onPress={() => navigateToDeal(deal)}>
+                  <CachedImage source={deal.image} style={s.dealImg} />
                   {/* Gradient overlay */}
-                  <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.5)']}
-                    style={s.dealOverlay}
-                  />
+                  <LinearGradient colors={['transparent', 'rgba(0,0,0,0.5)']} style={s.dealOverlay} />
                   {/* Cashback badge */}
                   {deal.cashbackNum > 0 && (
                     <View style={s.dealBadge}>
@@ -454,22 +446,18 @@ const TravelPage: React.FC = () => {
                   </View>
                   {/* Bottom info */}
                   <View style={s.dealBottom}>
-                    <Text style={s.dealName} numberOfLines={1}>{deal.name}</Text>
+                    <Text style={s.dealName} numberOfLines={1}>
+                      {deal.name}
+                    </Text>
                     <View style={s.dealPriceRow}>
                       <Text style={s.dealPrice}>{deal.price}</Text>
-                      {deal.originalPrice && (
-                        <Text style={s.dealOrigPrice}>{deal.originalPrice}</Text>
-                      )}
+                      {deal.originalPrice && <Text style={s.dealOrigPrice}>{deal.originalPrice}</Text>}
                     </View>
                     {deal.rating > 0 && (
                       <View style={s.dealRatingRow}>
                         <Ionicons name="star" size={11} color={C.amber500} />
-                        <Text style={s.dealRatingText}>
-                          {deal.rating.toFixed(1)}
-                        </Text>
-                        {deal.storeName && (
-                          <Text style={s.dealStoreText}> | {deal.storeName}</Text>
-                        )}
+                        <Text style={s.dealRatingText}>{deal.rating.toFixed(1)}</Text>
+                        {deal.storeName && <Text style={s.dealStoreText}> | {deal.storeName}</Text>}
                       </View>
                     )}
                   </View>
@@ -496,28 +484,28 @@ const TravelPage: React.FC = () => {
             </View>
           </View>
 
-          {isLoading ? <PopularSkeleton /> : popularServices.length > 0 ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.horizontalScrollPadding}>
+          {isLoading ? (
+            <PopularSkeleton />
+          ) : popularServices.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={s.horizontalScrollPadding}
+            >
               {popularServices.map((svc) => {
                 const cfg = CATEGORY_CONFIG[svc.categorySlug] || CATEGORY_CONFIG.packages;
                 return (
-                  <Pressable
-                    key={svc.id}
-                    style={s.popCard}
-                    onPress={() => navigateToPopular(svc)}
-                   
-                  >
-                    <CachedImage
-                      source={svc.image}
-                      style={s.popImg}
-                    />
+                  <Pressable key={svc.id} style={s.popCard} onPress={() => navigateToPopular(svc)}>
+                    <CachedImage source={svc.image} style={s.popImg} />
                     {svc.cashback > 0 && (
                       <View style={[s.popCbBadge, { backgroundColor: cfg.gradient[0] }]}>
                         <Text style={s.popCbText}>{svc.cashback}%</Text>
                       </View>
                     )}
                     <View style={s.popInfo}>
-                      <Text style={s.popName} numberOfLines={2}>{svc.name}</Text>
+                      <Text style={s.popName} numberOfLines={2}>
+                        {svc.name}
+                      </Text>
                       <View style={s.popMeta}>
                         <View style={[s.popCatChip, { backgroundColor: cfg.bg }]}>
                           <Ionicons name={cfg.icon as any} size={10} color={cfg.gradient[0]} />
@@ -538,14 +526,16 @@ const TravelPage: React.FC = () => {
                 );
               })}
             </ScrollView>
-          ) : !isLoading && (
-            <View style={s.emptySection}>
-              <View style={s.emptyIcon}>
-                <Ionicons name="compass-outline" size={28} color={C.slate400} />
+          ) : (
+            !isLoading && (
+              <View style={s.emptySection}>
+                <View style={s.emptyIcon}>
+                  <Ionicons name="compass-outline" size={28} color={C.slate400} />
+                </View>
+                <Text style={s.emptyTitle}>No services yet</Text>
+                <Text style={s.emptySub}>Travel services will appear here once added by merchants</Text>
               </View>
-              <Text style={s.emptyTitle}>No services yet</Text>
-              <Text style={s.emptySub}>Travel services will appear here once added by merchants</Text>
-            </View>
+            )
           )}
         </View>
 
@@ -572,11 +562,7 @@ const TravelPage: React.FC = () => {
                   ? `Up to ${stats.maxCashback}% cashback + ${stats.coinMultiplier}X ${BRAND.COIN_NAME} on every booking`
                   : `Earn cashback + ${stats.coinMultiplier}X ${BRAND.COIN_NAME} on every booking`}
               </Text>
-              <Pressable
-                style={s.rewardsBtn}
-                onPress={() => navigateToCategory('packages')}
-               
-              >
+              <Pressable style={s.rewardsBtn} onPress={() => navigateToCategory('packages')}>
                 <Text style={s.rewardsBtnText}>Explore Packages</Text>
                 <Ionicons name="arrow-forward" size={14} color={colors.brand.purple} />
               </Pressable>
@@ -587,41 +573,25 @@ const TravelPage: React.FC = () => {
         {/* ── Quick Links ─────────────────────────────────────────────────── */}
         <View style={s.quickLinksWrap}>
           <View style={s.quickLinks}>
-            <Pressable
-              style={s.quickLink}
-              onPress={() => router.push('/travel/search' as any)}
-             
-            >
+            <Pressable style={s.quickLink} onPress={() => router.push('/travel/search' as any)}>
               <View style={[s.qlIcon, { backgroundColor: C.cyan50 }]}>
                 <Ionicons name="search" size={18} color={C.cyan600} />
               </View>
               <Text style={s.qlText}>Search</Text>
             </Pressable>
-            <Pressable
-              style={s.quickLink}
-              onPress={() => router.push('/travel/deals' as any)}
-             
-            >
+            <Pressable style={s.quickLink} onPress={() => router.push('/travel/deals' as any)}>
               <View style={[s.qlIcon, { backgroundColor: colors.errorScale[50] }]}>
                 <Ionicons name="flame" size={18} color={C.rose500} />
               </View>
               <Text style={s.qlText}>Hot Deals</Text>
             </Pressable>
-            <Pressable
-              style={s.quickLink}
-              onPress={() => router.push('/my-bookings' as any)}
-             
-            >
+            <Pressable style={s.quickLink} onPress={() => router.push('/my-bookings' as any)}>
               <View style={[s.qlIcon, { backgroundColor: C.green50 }]}>
                 <Ionicons name="receipt-outline" size={18} color={C.green600} />
               </View>
               <Text style={s.qlText}>My Bookings</Text>
             </Pressable>
-            <Pressable
-              style={s.quickLink}
-              onPress={() => router.push('/wallet' as any)}
-             
-            >
+            <Pressable style={s.quickLink} onPress={() => router.push('/wallet' as any)}>
               <View style={[s.qlIcon, { backgroundColor: C.violet50 }]}>
                 <Ionicons name="wallet" size={18} color={C.violet600} />
               </View>
@@ -641,19 +611,22 @@ const s = StyleSheet.create({
   // Header
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 14,
-    paddingBottom: Spacing.base },
+    paddingBottom: Spacing.base,
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
-    marginBottom: 14 },
+    marginBottom: 14,
+  },
   headerBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
     backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerTitle: { ...Typography.h3, fontWeight: '800', color: C.white, letterSpacing: -0.3 },
   headerSub: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.75)', marginTop: 1 },
   searchBar: {
@@ -665,14 +638,16 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
     height: 44,
     gap: 10,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   searchPlaceholder: { ...Typography.body, color: C.slate400, flex: 1 },
   statsStrip: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     marginTop: 14,
     gap: Spacing.sm,
-    flexWrap: 'wrap' },
+    flexWrap: 'wrap',
+  },
   statPill: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -680,7 +655,8 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.18)',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: BorderRadius.xl },
+    borderRadius: BorderRadius.xl,
+  },
   statPillText: { ...Typography.bodySmall, fontWeight: '600', color: C.white },
 
   // Section
@@ -691,7 +667,8 @@ const s = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
-    marginBottom: 14 },
+    marginBottom: 14,
+  },
   viewAll: { ...Typography.body, fontWeight: '600', color: C.cyan600 },
 
   // Categories
@@ -699,21 +676,24 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: Spacing.base,
-    gap: 10 },
+    gap: 10,
+  },
   catCard: {
     width: (SW - 52) / 3,
     alignItems: 'center',
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.lg,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   catIconWrap: {
     width: 52,
     height: 52,
     borderRadius: BorderRadius.lg,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   catName: { ...Typography.body, fontWeight: '700', color: C.navy, textAlign: 'center' },
   catCount: { fontSize: 11, color: C.slate500, marginTop: 2 },
 
@@ -724,7 +704,8 @@ const s = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: C.white,
     marginRight: Spacing.md,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   dealImg: { width: '100%', height: 160, backgroundColor: C.slate100 },
   dealOverlay: { position: 'absolute', top: 0, left: 0, right: 0, height: 160 },
   dealBadge: {
@@ -734,7 +715,8 @@ const s = StyleSheet.create({
     backgroundColor: C.green600,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   dealBadgeText: { fontSize: 11, fontWeight: '700', color: C.white },
   dealCatTag: {
     position: 'absolute',
@@ -746,7 +728,8 @@ const s = StyleSheet.create({
     gap: Spacing.xs,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   dealCatTagText: { ...Typography.caption, fontWeight: '600', color: C.white },
   dealBottom: {
     position: 'absolute',
@@ -754,7 +737,8 @@ const s = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.md,
-    backgroundColor: 'rgba(0,0,0,0.45)' },
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
   dealName: { ...Typography.body, fontWeight: '700', color: C.white, marginBottom: 3 },
   dealPriceRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   dealPrice: { ...Typography.bodyLarge, fontWeight: '800', color: C.white },
@@ -767,7 +751,8 @@ const s = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: C.white,
     marginRight: Spacing.md,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   popImg: { width: '100%', height: 110, backgroundColor: C.slate100 },
   popCbBadge: {
     position: 'absolute',
@@ -775,7 +760,8 @@ const s = StyleSheet.create({
     right: Spacing.sm,
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6 },
+    borderRadius: 6,
+  },
   popCbText: { ...Typography.caption, fontWeight: '700', color: C.white },
   popInfo: { padding: 10 },
   popName: { ...Typography.body, fontWeight: '600', color: C.navy, marginBottom: 6, minHeight: 34 },
@@ -786,7 +772,8 @@ const s = StyleSheet.create({
     gap: 3,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6 },
+    borderRadius: 6,
+  },
   popCatText: { ...Typography.caption, fontWeight: '600' },
   popPrice: { ...Typography.body, fontWeight: '700', color: C.green600 },
 
@@ -794,7 +781,8 @@ const s = StyleSheet.create({
   emptySection: {
     alignItems: 'center',
     paddingVertical: Spacing['2xl'],
-    paddingHorizontal: 40 },
+    paddingHorizontal: 40,
+  },
   emptyIcon: {
     width: 56,
     height: 56,
@@ -802,7 +790,8 @@ const s = StyleSheet.create({
     backgroundColor: C.slate100,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   emptyTitle: { ...Typography.body, fontWeight: '600', color: C.navy, marginBottom: Spacing.xs },
   emptySub: { ...Typography.body, color: C.slate500, textAlign: 'center', lineHeight: 18 },
 
@@ -818,7 +807,8 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.3)' },
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
   rewardsTitle: { ...Typography.h3, fontWeight: '800', color: C.white, marginBottom: 6, letterSpacing: -0.3 },
   rewardsSub: { ...Typography.body, color: 'rgba(255,255,255,0.85)', lineHeight: 18, marginBottom: Spacing.base },
   rewardsBtn: {
@@ -829,7 +819,8 @@ const s = StyleSheet.create({
     backgroundColor: C.white,
     paddingHorizontal: 18,
     paddingVertical: 10,
-    borderRadius: BorderRadius['2xl'] },
+    borderRadius: BorderRadius['2xl'],
+  },
   rewardsBtnText: { ...Typography.body, fontWeight: '700', color: colors.brand.purple },
 
   // Quick Links
@@ -839,14 +830,23 @@ const s = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     justifyContent: 'space-around',
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   quickLink: { alignItems: 'center', gap: 6 },
   qlIcon: { width: 42, height: 42, borderRadius: BorderRadius.md, justifyContent: 'center', alignItems: 'center' },
   qlText: { fontSize: 11, fontWeight: '600', color: C.slate500 },
 
   // Extracted inline styles
   centeredContent: { justifyContent: 'center', alignItems: 'center' },
-  errorIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: C.cyan50, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
+  errorIconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: C.cyan50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   errorTitle: { fontSize: 18, fontWeight: '700', color: C.navy, marginBottom: 6 },
   errorMessage: { fontSize: 14, color: C.slate500, textAlign: 'center', paddingHorizontal: 40, marginBottom: 24 },
   errorRetryBtn: { backgroundColor: C.cyan600, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 24 },
@@ -861,6 +861,7 @@ const s = StyleSheet.create({
   popRatingRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   popRatingText: { fontSize: 11, fontWeight: '600', color: C.navy },
   rewardsBannerWrap: { paddingHorizontal: 16, marginBottom: 20 },
-  quickLinksWrap: { paddingHorizontal: 16, marginBottom: 16 } });
+  quickLinksWrap: { paddingHorizontal: 16, marginBottom: 16 },
+});
 
 export default withErrorBoundary(TravelPage, 'TravelIndex');

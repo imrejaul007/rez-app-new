@@ -171,7 +171,7 @@ class ContextPreloadManager {
     try {
       await preloadFn();
       this.preloadedContexts.add(contextName);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }
@@ -190,7 +190,7 @@ class ContextPreloadManager {
       await Promise.all(
         unpreloaded.map(ctx => this.preload(ctx.name, ctx.preloadFn))
       );
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }

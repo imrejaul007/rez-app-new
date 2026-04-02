@@ -196,7 +196,7 @@ const RestaurantCompareSection: React.FC<RestaurantCompareSectionProps> = ({
         return (
           <Pressable
             key={id}
-            style={[styles.chip, isSelected && styles.chipSelected]}
+            style={[styles.chip, isSelected ? styles.chipSelected : null]}
             onPress={() => toggleSelect(id)}
            
             accessibilityLabel={`${r.name}${isSelected ? ', selected for comparison' : ', tap to select for comparison'}`}
@@ -209,7 +209,7 @@ const RestaurantCompareSection: React.FC<RestaurantCompareSectionProps> = ({
                 <Ionicons name="restaurant-outline" size={14} color={COLORS.textSecondary} />
               </View>
             )}
-            <Text style={[styles.chipText, isSelected && styles.chipTextSelected]} numberOfLines={1}>
+            <Text style={[styles.chipText, isSelected ? styles.chipTextSelected : null]} numberOfLines={1}>
               {r.name}
             </Text>
             {isSelected && (
@@ -280,7 +280,7 @@ const RestaurantCompareSection: React.FC<RestaurantCompareSectionProps> = ({
                       {m.key === 'rating' && val != null && (
                         <Ionicons name="star" size={12} color={isBest ? colors.brand.greenDark : COLORS.primaryGold} style={{ marginRight: 3 }} />
                       )}
-                      <Text style={[styles.dataText, isBest && styles.dataTextBest]}>{display}</Text>
+                      <Text style={[styles.dataText, isBest ? styles.dataTextBest : null]}>{display}</Text>
                     </View>
                   );
                 })}
@@ -365,7 +365,7 @@ const RestaurantCompareSection: React.FC<RestaurantCompareSectionProps> = ({
               {selectedIds.size}/{MAX_COMPARE} selected
             </Text>
             <Pressable
-              style={[styles.compareBtn, selectedIds.size < MIN_COMPARE && styles.compareBtnDisabled]}
+              style={[styles.compareBtn, selectedIds.size < MIN_COMPARE ? styles.compareBtnDisabled : null]}
               onPress={handleCompareNow}
               disabled={selectedIds.size < MIN_COMPARE}
              

@@ -64,7 +64,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ faq, isExpanded, onToggle
   };
 
   return (
-    <View style={[styles.accordionItem, isExpanded && styles.expandedAccordionItem]}>
+    <View style={[styles.accordionItem, isExpanded ? styles.expandedAccordionItem : null]}>
       <Pressable
         style={styles.accordionHeader}
         onPress={handleToggle}

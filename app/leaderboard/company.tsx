@@ -63,11 +63,11 @@ function CompanyLeaderboardPage() {
     ({ item }: { item: any }) => {
       const isCurrentUser = userId && item.userId === userId;
       return (
-        <View style={[styles.row, isCurrentUser && styles.currentUserRow]}>
-          <View style={[styles.rankCircle, item.rank <= 3 && styles.topRankCircle]}>
-            <ThemedText style={[styles.rankText, item.rank <= 3 && styles.topRankText]}>{item.rank}</ThemedText>
+        <View style={[styles.row, isCurrentUser ? styles.currentUserRow : null]}>
+          <View style={[styles.rankCircle, item.rank <= 3 ? styles.topRankCircle : null]}>
+            <ThemedText style={[styles.rankText, item.rank <= 3 ? styles.topRankText : null]}>{item.rank}</ThemedText>
           </View>
-          <ThemedText style={[styles.name, isCurrentUser && styles.currentUserName]} numberOfLines={1}>
+          <ThemedText style={[styles.name, isCurrentUser ? styles.currentUserName : null]} numberOfLines={1}>
             {item.name}
             {isCurrentUser ? ' (You)' : ''}
           </ThemedText>
@@ -109,10 +109,6 @@ function CompanyLeaderboardPage() {
         renderItem={renderItem}
         keyExtractor={(item) => item.userId}
         contentContainerStyle={styles.listContent}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={8}
-        windowSize={5}
-        initialNumToRender={6}
         ListHeaderComponent={
           <View style={styles.statsCard}>
             <ThemedText style={styles.companyName}>{companyName}</ThemedText>

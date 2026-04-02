@@ -252,16 +252,16 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
       if (response.success && response.data) {
         const bookingResponse: BookingData = {
           ...bookingData,
-          bookingId: response.data._id || response.data.id,
+          bookingId: (response.data as any)._id || (response.data as any).id,
           bookingNumber: response.data.bookingNumber,
         };
-        (bookingResponse as any).requiresPayment = response.requiresPayment || response.data?.requiresPaymentUpfront;
+        (bookingResponse as any).requiresPayment = (response as any).requiresPayment || (response.data as any)?.requiresPaymentUpfront;
         (bookingResponse as any).totalAmount = calculateTotalPrice();
         onComplete(bookingResponse);
       } else {
         platformAlertSimple('Booking Failed', response.error || 'Please try again');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to complete booking. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -392,7 +392,7 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
         return (
           <Pressable
             key={type}
-            style={[styles.accommodationCard, isSelected && styles.accommodationCardSelected]}
+            style={[styles.accommodationCard, isSelected ? styles.accommodationCardSelected : null]}
             onPress={() => setAccommodationType(type)}
           >
             <View style={styles.accommodationCardHeader}>
@@ -400,11 +400,11 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
                 <Ionicons name="bed" size={28} color={isSelected ? colors.background.primary : colors.brand.purpleLight} />
               </View>
               <View style={styles.accommodationInfo}>
-                <Text style={[styles.accommodationTypeName, isSelected && styles.accommodationTypeNameSelected]}>
+                <Text style={[styles.accommodationTypeName, isSelected ? styles.accommodationTypeNameSelected : null]}>
                   {typeNames[type]}
                 </Text>
                 {option.description && (
-                  <Text style={[styles.accommodationDescription, isSelected && styles.accommodationDescriptionSelected]}>
+                  <Text style={[styles.accommodationDescription, isSelected ? styles.accommodationDescriptionSelected : null]}>
                     {option.description}
                   </Text>
                 )}
@@ -414,10 +414,10 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
               )}
             </View>
             <View style={styles.accommodationPrice}>
-              <Text style={[styles.accommodationPriceLabel, isSelected && styles.accommodationPriceLabelSelected]}>
+              <Text style={[styles.accommodationPriceLabel, isSelected ? styles.accommodationPriceLabelSelected : null]}>
                 Price per person
               </Text>
-              <Text style={[styles.accommodationPriceValue, isSelected && styles.accommodationPriceValueSelected]}>
+              <Text style={[styles.accommodationPriceValue, isSelected ? styles.accommodationPriceValueSelected : null]}>
                 {currencySymbol}{option.price.toLocaleString(locale)}
               </Text>
             </View>
@@ -447,20 +447,20 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
             return (
               <Pressable
                 key={plan.key}
-                style={[styles.mealPlanCard, isSelected && styles.mealPlanCardSelected]}
+                style={[styles.mealPlanCard, isSelected ? styles.mealPlanCardSelected : null]}
                 onPress={() => setMealPlan(plan.key as any)}
               >
                 <View style={styles.mealPlanInfo}>
-                  <Text style={[styles.mealPlanLabel, isSelected && styles.mealPlanLabelSelected]}>
+                  <Text style={[styles.mealPlanLabel, isSelected ? styles.mealPlanLabelSelected : null]}>
                     {plan.label}
                   </Text>
                   {plan.price > 0 && (
-                    <Text style={[styles.mealPlanPrice, isSelected && styles.mealPlanPriceSelected]}>
+                    <Text style={[styles.mealPlanPrice, isSelected ? styles.mealPlanPriceSelected : null]}>
                       + {currencySymbol}{plan.price}/night/person
                     </Text>
                   )}
                 </View>
-                <View style={[styles.checkbox, isSelected && styles.checkboxSelected]}>
+                <View style={[styles.checkbox, isSelected ? styles.checkboxSelected : null]}>
                   {isSelected && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
                 </View>
               </Pressable>
@@ -472,53 +472,53 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Add-ons</Text>
           <Pressable
-            style={[styles.addonCard, sightseeing && styles.addonCardSelected]}
+            style={[styles.addonCard, sightseeing ? styles.addonCardSelected : null]}
             onPress={() => setSightseeing(!sightseeing)}
           >
             <View style={styles.addonInfo}>
               <Text style={styles.addonLabel}>Sightseeing Tours</Text>
               <Text style={styles.addonDescription}>Included in package</Text>
             </View>
-            <View style={[styles.checkbox, sightseeing && styles.checkboxSelected]}>
+            <View style={[styles.checkbox, sightseeing ? styles.checkboxSelected : null]}>
               {sightseeing && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
             </View>
           </Pressable>
 
           <Pressable
-            style={[styles.addonCard, transfers && styles.addonCardSelected]}
+            style={[styles.addonCard, transfers ? styles.addonCardSelected : null]}
             onPress={() => setTransfers(!transfers)}
           >
             <View style={styles.addonInfo}>
               <Text style={styles.addonLabel}>Airport Transfers</Text>
               <Text style={styles.addonPrice}>+ {currencySymbol}2,000</Text>
             </View>
-            <View style={[styles.checkbox, transfers && styles.checkboxSelected]}>
+            <View style={[styles.checkbox, transfers ? styles.checkboxSelected : null]}>
               {transfers && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
             </View>
           </Pressable>
 
           <Pressable
-            style={[styles.addonCard, travelInsurance && styles.addonCardSelected]}
+            style={[styles.addonCard, travelInsurance ? styles.addonCardSelected : null]}
             onPress={() => setTravelInsurance(!travelInsurance)}
           >
             <View style={styles.addonInfo}>
               <Text style={styles.addonLabel}>Travel Insurance</Text>
               <Text style={styles.addonPrice}>+ {currencySymbol}1,000/person</Text>
             </View>
-            <View style={[styles.checkbox, travelInsurance && styles.checkboxSelected]}>
+            <View style={[styles.checkbox, travelInsurance ? styles.checkboxSelected : null]}>
               {travelInsurance && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
             </View>
           </Pressable>
 
           <Pressable
-            style={[styles.addonCard, guide && styles.addonCardSelected]}
+            style={[styles.addonCard, guide ? styles.addonCardSelected : null]}
             onPress={() => setGuide(!guide)}
           >
             <View style={styles.addonInfo}>
               <Text style={styles.addonLabel}>Professional Guide</Text>
               <Text style={styles.addonPrice}>+ {currencySymbol}3,000/day</Text>
             </View>
-            <View style={[styles.checkbox, guide && styles.checkboxSelected]}>
+            <View style={[styles.checkbox, guide ? styles.checkboxSelected : null]}>
               {guide && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
             </View>
           </Pressable>
@@ -688,13 +688,13 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
       <View style={styles.progressContainer}>
         {[1, 2, 3, 4].map((step) => (
           <React.Fragment key={step}>
-            <View style={[styles.progressStep, currentStep >= step && styles.progressStepActive]}>
-              <Text style={[styles.progressStepText, currentStep >= step && styles.progressStepTextActive]}>
+            <View style={[styles.progressStep, currentStep >= step ? styles.progressStepActive : null]}>
+              <Text style={[styles.progressStepText, currentStep >= step ? styles.progressStepTextActive : null]}>
                 {step}
               </Text>
             </View>
             {step < 4 && (
-              <View style={[styles.progressLine, currentStep > step && styles.progressLineActive]} />
+              <View style={[styles.progressLine, currentStep > step ? styles.progressLineActive : null]} />
             )}
           </React.Fragment>
         ))}
@@ -715,7 +715,7 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
           <Text style={styles.footerPriceValue}>{currencySymbol}{calculateTotalPrice().toLocaleString(locale)}</Text>
         </View>
         <Pressable
-          style={[styles.nextButton, isSubmitting && styles.nextButtonDisabled]}
+          style={[styles.nextButton, isSubmitting ? styles.nextButtonDisabled : null]}
           onPress={handleNext}
           disabled={isSubmitting}
         >

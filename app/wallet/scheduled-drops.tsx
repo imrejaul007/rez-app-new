@@ -160,7 +160,10 @@ function ScheduledDropsPage() {
           setClaimingId(drop.id);
           const result = await gamificationApi.streakCheckin();
           if (result.success && result.data) {
-            platformAlertSimple('Check-in Complete', `You earned ${result.data.coinsEarned} ${BRAND.CURRENCY_CODE}!`);
+            platformAlertSimple(
+              'Check-in Complete',
+              `You earned ${(result.data as any).coinsEarned} ${BRAND.CURRENCY_CODE}!`,
+            );
             fetchDrops(true);
           } else {
             platformAlertSimple('Check-in Failed', result.error || 'Please try again later.');
@@ -180,7 +183,7 @@ function ScheduledDropsPage() {
           if (result.success && result.data) {
             platformAlertSimple(
               'Claimed!',
-              result.data.message || `You got ${result.data.coins} ${BRAND.CURRENCY_CODE}!`,
+              (result.data as any).message || `You got ${(result.data as any).coins} ${BRAND.CURRENCY_CODE}!`,
             );
             fetchDrops(true);
           } else {
@@ -259,8 +262,10 @@ function ScheduledDropsPage() {
                   ]}
                   onPress={() => setSelectedDate(day.date === selectedDate ? null : day.date)}
                 >
-                  <ThemedText style={[styles.dayName, day.isToday && styles.dayTextToday]}>{day.dayName}</ThemedText>
-                  <ThemedText style={[styles.dayNumber, day.isToday && styles.dayTextToday]}>
+                  <ThemedText style={[styles.dayName, day.isToday ? styles.dayTextToday : null]}>
+                    {day.dayName}
+                  </ThemedText>
+                  <ThemedText style={[styles.dayNumber, day.isToday ? styles.dayTextToday : null]}>
                     {day.dayNumber}
                   </ThemedText>
                   {day.totalAmount > 0 && (
@@ -289,7 +294,7 @@ function ScheduledDropsPage() {
               filteredDrops.map((drop) => (
                 <Pressable
                   key={drop.id}
-                  style={[styles.dropCard, drop.claimable && styles.dropCardClaimable]}
+                  style={[styles.dropCard, drop.claimable ? styles.dropCardClaimable : null]}
                   onPress={() => handleDropPress(drop)}
                   disabled={!drop.claimable || claimingId === drop.id}
                 >
@@ -314,7 +319,9 @@ function ScheduledDropsPage() {
                     <ThemedText style={styles.dropAmount}>+{drop.amount}</ThemedText>
                     <ThemedText style={styles.dropCurrency}>{BRAND.CURRENCY_CODE}</ThemedText>
                     {drop.claimable && (
-                      <View style={[styles.claimableBadge, claimingId === drop.id && styles.claimableBadgeDisabled]}>
+                      <View
+                        style={[styles.claimableBadge, claimingId === drop.id ? styles.claimableBadgeDisabled : null]}
+                      >
                         {claimingId === drop.id ? (
                           <ActivityIndicator size="small" color={colors.background.primary} />
                         ) : (

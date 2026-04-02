@@ -32,7 +32,7 @@ export const StoreInfoCard: React.FC<StoreInfoCardProps> = ({
   storeCategory,
   membership,
 }) => {
-  const tierStyle = membership ? TIER_COLORS[membership.tier] : TIER_colors.new;
+  const tierStyle = membership ? TIER_COLORS[membership.tier] : TIER_COLORS.new;
 
   return (
     <View style={styles.container}>

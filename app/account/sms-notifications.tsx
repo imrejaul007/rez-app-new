@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Pressable, ActivityIndicator } from 'react-native';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -51,7 +43,7 @@ function SMSNotificationsScreen() {
         if (!isMounted()) return;
         setSettings(getDefaultSettings());
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setSettings(getDefaultSettings());
     } finally {
@@ -88,8 +80,11 @@ function SMSNotificationsScreen() {
         setShowSuccessMessage(true);
         setTimeout(() => setShowSuccessMessage(false), 2000);
       }
-    } catch (error) {
-      platformAlertSimple('Error', 'Failed to update SMS notification settings. Please check your connection and try again.');
+    } catch (error: any) {
+      platformAlertSimple(
+        'Error',
+        'Failed to update SMS notification settings. Please check your connection and try again.',
+      );
       if (!isMounted()) return;
       setSettings(settings);
     } finally {
@@ -102,12 +97,10 @@ function SMSNotificationsScreen() {
     title: string,
     value: boolean,
     onValueChange: (value: boolean) => void,
-    disabled?: boolean
+    disabled?: boolean,
   ) => (
     <View style={styles.settingItem}>
-      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>
-        {title}
-      </Text>
+      <Text style={[styles.settingTitle, disabled ? styles.disabledText : null]}>{title}</Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
@@ -115,7 +108,11 @@ function SMSNotificationsScreen() {
         accessibilityLabel={`${title}${value ? ', enabled' : ', disabled'}${disabled ? ', unavailable' : ''}`}
         accessibilityRole="switch"
         accessibilityState={{ checked: value, disabled: disabled || saving }}
-        accessibilityHint={disabled ? 'Enable SMS notifications first' : `Toggle to ${value ? 'disable' : 'enable'} ${title.toLowerCase()}`}
+        accessibilityHint={
+          disabled
+            ? 'Enable SMS notifications first'
+            : `Toggle to ${value ? 'disable' : 'enable'} ${title.toLowerCase()}`
+        }
         trackColor={{ false: colors.border.default, true: Colors.info }}
         thumbColor={value ? colors.background.primary : colors.background.secondary}
       />
@@ -133,10 +130,7 @@ function SMSNotificationsScreen() {
   if (!settings) {
     return (
       <View style={styles.errorContainer}>
-        <Text
-          style={styles.errorText}
-          accessibilityRole="alert"
-        >
+        <Text style={styles.errorText} accessibilityRole="alert">
           Failed to load settings
         </Text>
         <Pressable
@@ -157,7 +151,7 @@ function SMSNotificationsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -165,7 +159,9 @@ function SMSNotificationsScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
-        <Text style={styles.headerTitle} accessibilityRole="header">SMS Notifications</Text>
+        <Text style={styles.headerTitle} accessibilityRole="header">
+          SMS Notifications
+        </Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -176,45 +172,43 @@ function SMSNotificationsScreen() {
             <Text style={styles.sectionTitle}>SMS Notification Settings</Text>
           </View>
 
-          {renderSettingItem(
-            'Enable SMS Notifications',
-            settings.enabled,
-            (value) => updateSettings({ enabled: value })
+          {renderSettingItem('Enable SMS Notifications', settings.enabled, (value) =>
+            updateSettings({ enabled: value }),
           )}
 
           {renderSettingItem(
             'Order Updates',
             settings.orderUpdates,
             (value) => updateSettings({ orderUpdates: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Delivery Alerts',
             settings.deliveryAlerts,
             (value) => updateSettings({ deliveryAlerts: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Payment Confirmations',
             settings.paymentConfirmations,
             (value) => updateSettings({ paymentConfirmations: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Security Alerts',
             settings.securityAlerts,
             (value) => updateSettings({ securityAlerts: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'OTP Messages',
             settings.otpMessages,
             (value) => updateSettings({ otpMessages: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
         </View>
       </ScrollView>

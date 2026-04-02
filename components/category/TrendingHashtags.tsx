@@ -74,15 +74,15 @@ const TrendingHashtags: React.FC<TrendingHashtagsProps> = ({
       try {
         setLoading(true);
         const response = await categoryMetadataApi.getHashtags(categorySlug);
-        if (response.success && response.data?.hashtags?.length > 0) {
+        if (response.success && response.data?.hashtags?.length && response.data.hashtags.length > 0) {
           if (!isMounted()) return;
-          setApiHashtags(response.data.hashtags);
+          setApiHashtags(response.data?.hashtags ?? []);
         } else {
           // Fallback to dummy data if API returns empty
           const fallbackHashtags = getTrendingHashtagsForCategory(categorySlug);
           setApiHashtags(fallbackHashtags);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Fallback to dummy data on error
         const fallbackHashtags = getTrendingHashtagsForCategory(categorySlug);
         if (!isMounted()) return;

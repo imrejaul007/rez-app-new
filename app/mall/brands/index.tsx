@@ -129,8 +129,8 @@ function transformStoreToMallBrand(store: any): MallBrand {
       average: store.ratings?.average || 0,
       count: store.ratings?.count || 0,
       successRate: store.ratings?.successRate || Math.min(Math.round(((store.ratings?.average || 0) / 5) * 100), 100),
-      distribution: store.ratings?.distribution || ({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } as any),
-    },
+      distribution: (store.ratings as any)?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+    } as any,
     isFeatured: store.isFeatured || false,
     isActive: store.isActive !== false,
     isNewArrival,
@@ -143,7 +143,7 @@ function transformStoreToMallBrand(store: any): MallBrand {
 }
 
 function BrandsListingPage() {
-  const { filter: initialFilter } = useLocalSearchParams<{ filter?: string }>();
+  const { filter: initialFilter } = useLocalSearchParams<any>();
   const isMounted = useIsMounted();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -312,7 +312,7 @@ function BrandsListingPage() {
 
           {/* Back Button */}
           <Pressable
-            style={[styles.backButton, isLuxuryTheme && styles.luxuryBackButton]}
+            style={[styles.backButton, isLuxuryTheme ? styles.luxuryBackButton : null]}
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
@@ -336,18 +336,18 @@ function BrandsListingPage() {
                 <Text style={styles.luxuryPremiumText}>PREMIUM</Text>
               </View>
             )}
-            <Text style={[styles.headerDescription, isLuxuryTheme && styles.luxuryDescription]}>
+            <Text style={[styles.headerDescription, isLuxuryTheme ? styles.luxuryDescription : null]}>
               {filterConfig.description}
             </Text>
           </View>
 
           {/* Stats Row */}
-          <View style={[styles.statsRow, isLuxuryTheme && styles.luxuryStatsRow]}>
+          <View style={[styles.statsRow, isLuxuryTheme ? styles.luxuryStatsRow : null]}>
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, isLuxuryTheme && styles.luxuryStatValue]}>{brands.length}</Text>
+              <Text style={[styles.statValue, isLuxuryTheme ? styles.luxuryStatValue : null]}>{brands.length}</Text>
               <Text style={styles.statLabel}>Stores</Text>
             </View>
-            <View style={[styles.statDivider, isLuxuryTheme && styles.luxuryStatDivider]} />
+            <View style={[styles.statDivider, isLuxuryTheme ? styles.luxuryStatDivider : null]} />
             <View style={styles.statItem}>
               <Ionicons name="gift" size={18} color={colors.brand.goldBright} />
               <Text style={styles.statLabel}>{isLuxuryTheme ? 'Premium Rewards' : 'Earn Coins'}</Text>
@@ -375,8 +375,8 @@ function BrandsListingPage() {
         {/* Results Count */}
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsTitle}>Results</Text>
-          <View style={[styles.resultsCountBadge, isLuxuryTheme && styles.luxuryResultsBadge]}>
-            <Text style={[styles.resultsCount, isLuxuryTheme && styles.luxuryResultsCount]}>
+          <View style={[styles.resultsCountBadge, isLuxuryTheme ? styles.luxuryResultsBadge : null]}>
+            <Text style={[styles.resultsCount, isLuxuryTheme ? styles.luxuryResultsCount : null]}>
               {brands.length} stores
             </Text>
           </View>

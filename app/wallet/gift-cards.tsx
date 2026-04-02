@@ -144,40 +144,40 @@ function GiftCardsPage() {
 
   const filteredCards = catalogCards;
 
-  const handleBuyGiftCard = async () => {
+  const handleBuyGiftCard = () => {
     if (!selectedCard || !amount) return;
     if (submittingRef.current) return;
 
     const numAmount = Number(amount);
     if (isNaN(numAmount) || !selectedCard.denominations.includes(numAmount)) return;
 
-    const confirmed = await platformAlertConfirm(
+    platformAlertConfirm(
       'Confirm Purchase',
       `Buy ${selectedCard.name} gift card for ${currencySymbol}${numAmount} ${BRAND.CURRENCY_CODE}?`,
+      async () => {
+        submittingRef.current = true;
+        setLoading(true);
+        try {
+          await walletApi.purchaseGiftCard({
+            giftCardId: selectedCard._id,
+            amount: numAmount,
+            idempotencyKey,
+          } as any);
+          if (mountedRef.current) {
+            setIdempotencyKey(generateIdempotencyKey('gift-card'));
+            platformAlert('Success', 'Gift card purchased successfully!');
+            setSelectedCard(null);
+            setAmount('');
+            setActiveTab('my');
+          }
+        } catch (err: any) {
+          if (mountedRef.current) handleWalletError(err, 'Purchase Failed');
+        } finally {
+          if (mountedRef.current) setLoading(false);
+          submittingRef.current = false;
+        }
+      },
     );
-    if (!confirmed) return;
-
-    submittingRef.current = true;
-    setLoading(true);
-    try {
-      await walletApi.purchaseGiftCard({
-        giftCardId: selectedCard._id,
-        amount: numAmount,
-        idempotencyKey,
-      } as any);
-      if (mountedRef.current) {
-        setIdempotencyKey(generateIdempotencyKey('gift-card'));
-        platformAlert('Success', 'Gift card purchased successfully!');
-        setSelectedCard(null);
-        setAmount('');
-        setActiveTab('my');
-      }
-    } catch (err: any) {
-      if (mountedRef.current) handleWalletError(err, 'Purchase Failed');
-    } finally {
-      if (mountedRef.current) setLoading(false);
-      submittingRef.current = false;
-    }
   };
 
   const renderGiftCard = useCallback(
@@ -221,7 +221,7 @@ function GiftCardsPage() {
               ? 'Expired'
               : '';
       return (
-        <View style={[styles.myGiftCard, isUsed && styles.myGiftCardUsed]}>
+        <View style={[styles.myGiftCard, isUsed ? styles.myGiftCardUsed : null]}>
           <View style={styles.myGiftCardHeader}>
             <ThemedText style={styles.myGiftCardBrand}>{brandName}</ThemedText>
             {statusLabel ? (
@@ -339,10 +339,12 @@ function GiftCardsPage() {
             {categories.map((category) => (
               <Pressable
                 key={category}
-                style={[styles.categoryChip, selectedCategory === category && styles.categoryChipActive]}
+                style={[styles.categoryChip, selectedCategory === category ? styles.categoryChipActive : null]}
                 onPress={() => setSelectedCategory(category)}
               >
-                <ThemedText style={[styles.categoryText, selectedCategory === category && styles.categoryTextActive]}>
+                <ThemedText
+                  style={[styles.categoryText, selectedCategory === category ? styles.categoryTextActive : null]}
+                >
                   {category}
                 </ThemedText>
               </Pressable>
@@ -427,11 +429,11 @@ function GiftCardsPage() {
                 {selectedCard.denominations.map((denom) => (
                   <Pressable
                     key={denom}
-                    style={[styles.denominationChip, Number(amount) === denom && styles.denominationChipActive]}
+                    style={[styles.denominationChip, Number(amount) === denom ? styles.denominationChipActive : null]}
                     onPress={() => setAmount(String(denom))}
                   >
                     <ThemedText
-                      style={[styles.denominationText, Number(amount) === denom && styles.denominationTextActive]}
+                      style={[styles.denominationText, Number(amount) === denom ? styles.denominationTextActive : null]}
                     >
                       {currencySymbol}
                       {denom}

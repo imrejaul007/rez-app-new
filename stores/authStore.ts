@@ -13,7 +13,7 @@ interface AuthState {
 }
 
 interface AuthActions {
-  sendOTP: (phoneNumber: string, email?: string, referralCode?: string) => Promise<void>;
+  sendOTP: (phoneNumber: string, email?: string, referralCode?: string, flow?: 'login' | 'signup') => Promise<void>;
   login: (phoneNumber: string, otp: string) => Promise<void>;
   register: (phoneNumber: string, email: string, referralCode?: string) => Promise<void>;
   // FR-D003 FIX: verifyOTP returns the fresh User so callers can read isOnboarded

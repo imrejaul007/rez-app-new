@@ -345,7 +345,7 @@ function RedeemScreen() {
                 return (
                   <Animated.View key={option.id} style={{ transform: [{ scale: scale as any }] }}>
                     <Pressable
-                      style={[styles.optionCard, !hasEnoughCoins && styles.optionCardDisabled]}
+                      style={[styles.optionCard, !hasEnoughCoins ? styles.optionCardDisabled : null]}
                       onPress={() => {
                         // Bug #4 fix: guard against double-tap opening duplicate screens
                         if (hasEnoughCoins && !isNavigating) {
@@ -358,13 +358,15 @@ function RedeemScreen() {
                         <Text style={styles.optionEmoji}>{option.icon}</Text>
                       </View>
                       <View style={styles.optionInfo}>
-                        <Text style={[styles.optionTitle, !hasEnoughCoins && styles.optionTitleDisabled]}>
+                        <Text style={[styles.optionTitle, !hasEnoughCoins ? styles.optionTitleDisabled : null]}>
                           {option.title}
                         </Text>
                         <Text style={styles.optionDescription}>{option.description}</Text>
                       </View>
                       <View style={styles.optionRight}>
-                        <Text style={[styles.optionMinCoins, !hasEnoughCoins && styles.optionMinCoinsInsufficient]}>
+                        <Text
+                          style={[styles.optionMinCoins, !hasEnoughCoins ? styles.optionMinCoinsInsufficient : null]}
+                        >
                           {hasEnoughCoins ? `Min ${option.minCoins}` : `Need ${option.minCoins - availableCoins} more`}
                         </Text>
                         <Ionicons

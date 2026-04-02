@@ -95,44 +95,49 @@ function MenuPage() {
   });
 
   // Fetch menu data from real API
-  const fetchMenu = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchMenu = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      const response = await menuApi.getStoreMenu(storeId);
+        const response = await menuApi.getStoreMenu(storeId);
 
-      if (response.success && response.data) {
+        if (response.success && response.data) {
+          if (!isMounted()) return;
+          setStoreName(response.data.storeName || 'Restaurant');
+          const transformedCategories: MenuCategory[] = (response.data.categories || []).map(
+            (cat: ApiMenuCategory) => ({
+              id: cat._id,
+              name: cat.name,
+              items: (cat.items || []).map(transformMenuItem),
+            }),
+          );
+          if (!isMounted()) return;
+          setCategories(transformedCategories);
+        } else {
+          if (!isMounted()) return;
+          setStoreName('Restaurant');
+          if (!isMounted()) return;
+          setCategories([]);
+        }
+      } catch (err: any) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load menu';
         if (!isMounted()) return;
-        setStoreName(response.data.storeName || 'Restaurant');
-        const transformedCategories: MenuCategory[] = (response.data.categories || []).map((cat: ApiMenuCategory) => ({
-          id: cat._id,
-          name: cat.name,
-          items: (cat.items || []).map(transformMenuItem),
-        }));
+        setError(errorMessage);
+      } finally {
         if (!isMounted()) return;
-        setCategories(transformedCategories);
-      } else {
+        setLoading(false);
         if (!isMounted()) return;
-        setStoreName('Restaurant');
-        if (!isMounted()) return;
-        setCategories([]);
+        setRefreshing(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load menu';
-      if (!isMounted()) return;
-      setError(errorMessage);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [storeId]);
+    },
+    [storeId],
+  );
 
   useEffect(() => {
     if (storeId && !authLoading) {
@@ -144,10 +149,10 @@ function MenuPage() {
 
   // Add to cart
   const handleAddToCart = useCallback((item: MenuItem) => {
-    setCart(prev => {
-      const existing = prev.find(c => c.menuItem.id === item.id);
+    setCart((prev) => {
+      const existing = prev.find((c) => c.menuItem.id === item.id);
       if (existing) {
-        return prev.map(c => c.menuItem.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
+        return prev.map((c) => (c.menuItem.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
       }
       return [...prev, { menuItem: item, quantity: 1 }];
     });
@@ -155,17 +160,17 @@ function MenuPage() {
 
   // Remove from cart
   const handleRemoveFromCart = useCallback((itemId: string) => {
-    setCart(prev => {
-      const existing = prev.find(c => c.menuItem.id === itemId);
+    setCart((prev) => {
+      const existing = prev.find((c) => c.menuItem.id === itemId);
       if (existing && existing.quantity > 1) {
-        return prev.map(c => c.menuItem.id === itemId ? { ...c, quantity: c.quantity - 1 } : c);
+        return prev.map((c) => (c.menuItem.id === itemId ? { ...c, quantity: c.quantity - 1 } : c));
       }
-      return prev.filter(c => c.menuItem.id !== itemId);
+      return prev.filter((c) => c.menuItem.id !== itemId);
     });
   }, []);
 
   // Place dine-in order via pre-order API
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = () => {
     if (!isAuthenticated) {
       platformAlertSimple('Login Required', 'Please login to place an order.');
       return;
@@ -176,209 +181,219 @@ function MenuPage() {
       return;
     }
 
-    const confirmed = await platformAlertConfirm(
+    platformAlertConfirm(
       'Place Order',
       isDineIn
         ? `Place dine-in order for Table ${dineInTable}? (${cartItemCount} items, ${currencySymbol}${cartTotal.toFixed(2)})`
-        : `Place order? (${cartItemCount} items, ${currencySymbol}${cartTotal.toFixed(2)})`
-    );
-    if (!confirmed) return;
-
-    if (!isMounted()) return;
-    setSubmitting(true);
-    try {
-      const response = await menuApi.createPreOrder({
-        storeId,
-        items: cart.map(c => ({
-          menuItemId: c.menuItem.id,
-          quantity: c.quantity,
-          specialInstructions: c.specialInstructions,
-        })),
-        deliveryType: isDineIn ? 'dine_in' : 'pickup',
-        tableNumber: isDineIn ? dineInTable : undefined,
-        contactPhone: '',
-      });
-
-      if (response.success && response.data) {
+        : `Place order? (${cartItemCount} items, ${currencySymbol}${cartTotal.toFixed(2)})`,
+      async () => {
         if (!isMounted()) return;
-        setCart([]);
-        platformAlertSimple(
-          'Order Placed!',
-          isDineIn
-            ? `Your dine-in order for Table ${dineInTable} has been placed. Order #${response.data.orderNumber}`
-            : `Your order has been placed. Order #${response.data.orderNumber}`
-        );
-        if (isDineIn) {
-          router.replace({
-            pathname: '/dinein-tracking',
-            params: { orderId: response.data._id },
-          } as any);
-        } else {
-          router.canGoBack() ? router.back() : router.replace('/(tabs)');
+        setSubmitting(true);
+        try {
+          const response = await menuApi.createPreOrder({
+            storeId,
+            items: cart.map((c) => ({
+              menuItemId: c.menuItem.id,
+              quantity: c.quantity,
+              specialInstructions: c.specialInstructions,
+            })),
+            deliveryType: isDineIn ? 'dine_in' : 'pickup',
+            tableNumber: isDineIn ? dineInTable : undefined,
+            contactPhone: '',
+          });
+
+          if (response.success && response.data) {
+            if (!isMounted()) return;
+            setCart([]);
+            platformAlertSimple(
+              'Order Placed!',
+              isDineIn
+                ? `Your dine-in order for Table ${dineInTable} has been placed. Order #${response.data.orderNumber}`
+                : `Your order has been placed. Order #${response.data.orderNumber}`,
+            );
+            if (isDineIn) {
+              router.replace({
+                pathname: '/dinein-tracking',
+                params: { orderId: response.data._id },
+              } as any);
+            } else {
+              router.canGoBack() ? router.back() : router.replace('/(tabs)');
+            }
+          } else {
+            platformAlertSimple('Error', response.error || 'Failed to place order');
+          }
+        } catch (err: any) {
+          platformAlertSimple('Error', err.message || 'Failed to place order');
+        } finally {
+          if (!isMounted()) return;
+          setSubmitting(false);
         }
-      } else {
-        platformAlertSimple('Error', response.error || 'Failed to place order');
-      }
-    } catch (err: any) {
-      platformAlertSimple('Error', err.message || 'Failed to place order');
-    } finally {
-      if (!isMounted()) return;
-      setSubmitting(false);
-    }
+      },
+    );
   };
 
   // Calculate cart total
-  const cartTotal = cart.reduce((total, item) => total + (item.menuItem.price * item.quantity), 0);
+  const cartTotal = cart.reduce((total, item) => total + item.menuItem.price * item.quantity, 0);
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
   // Get filtered menu items
-  const filteredItems = selectedCategory === 'all'
-    ? categories.flatMap(cat => cat.items)
-    : categories.find(cat => cat.id === selectedCategory)?.items || [];
+  const filteredItems =
+    selectedCategory === 'all'
+      ? categories.flatMap((cat) => cat.items)
+      : categories.find((cat) => cat.id === selectedCategory)?.items || [];
 
-  const getCartQuantity = useCallback((itemId: string) => cart.find(c => c.menuItem.id === itemId)?.quantity || 0, [cart]);
+  const getCartQuantity = useCallback(
+    (itemId: string) => cart.find((c) => c.menuItem.id === itemId)?.quantity || 0,
+    [cart],
+  );
 
   // FlatList renderItem
-  const renderMenuItem = useCallback(({ item }: { item: MenuItem }) => {
-    const quantity = getCartQuantity(item.id);
+  const renderMenuItem = useCallback(
+    ({ item }: { item: MenuItem }) => {
+      const quantity = getCartQuantity(item.id);
 
-    return (
-      <View style={[styles.menuCard, !item.isAvailable && styles.menuCardUnavailable]}>
-        <View style={styles.menuCardRow}>
-          {/* Left: Info */}
-          <View style={styles.menuCardInfo}>
-            {/* Veg/Non-veg badge */}
-            <View style={styles.menuCardBadges}>
-              {item.isVegetarian !== undefined && (
-                <View style={[styles.vegBadge, item.isVegetarian ? styles.vegBadgeGreen : styles.vegBadgeRed]}>
-                  <View style={[styles.vegDot, item.isVegetarian ? styles.vegDotGreen : styles.vegDotRed]} />
-                </View>
-              )}
-              {item.spicyLevel && item.spicyLevel > 0 ? (
-                <View style={styles.spicyBadge}>
-                  <ThemedText style={styles.spicyText}>
-                    {'🌶️'.repeat(Math.min(item.spicyLevel, 3))}
-                  </ThemedText>
-                </View>
-              ) : null}
-              {!item.isAvailable && (
-                <View style={styles.unavailableBadge}>
-                  <ThemedText style={styles.unavailableText}>Unavailable</ThemedText>
-                </View>
-              )}
-            </View>
-
-            <ThemedText style={styles.menuItemName} numberOfLines={2}>{item.name}</ThemedText>
-
-            {item.description ? (
-              <ThemedText style={styles.menuItemDesc} numberOfLines={2}>{item.description}</ThemedText>
-            ) : null}
-
-            {/* Price row */}
-            <View style={styles.priceRow}>
-              <ThemedText style={styles.menuItemPrice}>{currencySymbol}{item.price}</ThemedText>
-              {item.originalPrice && item.originalPrice > item.price ? (
-                <ThemedText style={styles.menuItemOriginalPrice}>{currencySymbol}{item.originalPrice}</ThemedText>
-              ) : null}
-              {item.preparationTime ? (
-                <View style={styles.prepTimeBadge}>
-                  <Ionicons name="time-outline" size={11} color={colors.text.tertiary} />
-                  <ThemedText style={styles.prepTimeText}>{item.preparationTime}</ThemedText>
-                </View>
-              ) : null}
-            </View>
-
-            {/* Allergens */}
-            {item.allergens && item.allergens.length > 0 ? (
-              <View style={styles.allergenRow}>
-                <Ionicons name="alert-circle" size={12} color={Colors.warning} />
-                <ThemedText style={styles.allergenText} numberOfLines={1}>
-                  {item.allergens.join(', ')}
-                </ThemedText>
-              </View>
-            ) : null}
-          </View>
-
-          {/* Right: Image + Add button */}
-          <View style={styles.menuCardRight}>
-            {item.image ? (
-              <CachedImage
-                source={{ uri: item.image }}
-                style={styles.menuItemImage}
-                contentFit="cover"
-                cachePolicy="memory-disk"
-              />
-            ) : (
-              <View style={styles.menuItemImagePlaceholder}>
-                <Ionicons name="fast-food-outline" size={28} color={colors.border.default} />
-              </View>
-            )}
-
-            {/* Add / Quantity control */}
-            {item.isAvailable && (
-              <View style={styles.addControlWrap}>
-                {quantity === 0 ? (
-                  <Pressable
-                    style={styles.addBtn}
-                    onPress={() => handleAddToCart(item)}
-                  >
-                    <ThemedText style={styles.addBtnText}>ADD</ThemedText>
-                    <Ionicons name="add" size={14} color={Colors.brand.purple} style={{ marginLeft: 2 }} />
-                  </Pressable>
-                ) : (
-                  <View style={styles.qtyControl}>
-                    <Pressable
-                      style={styles.qtyBtn}
-                      onPress={() => handleRemoveFromCart(item.id)}
-                    >
-                      <Ionicons name="remove" size={16} color={colors.text.inverse} />
-                    </Pressable>
-                    <ThemedText style={styles.qtyText}>{quantity}</ThemedText>
-                    <Pressable
-                      style={styles.qtyBtn}
-                      onPress={() => handleAddToCart(item)}
-                    >
-                      <Ionicons name="add" size={16} color={colors.text.inverse} />
-                    </Pressable>
+      return (
+        <View style={[styles.menuCard, !item.isAvailable ? styles.menuCardUnavailable : null]}>
+          <View style={styles.menuCardRow}>
+            {/* Left: Info */}
+            <View style={styles.menuCardInfo}>
+              {/* Veg/Non-veg badge */}
+              <View style={styles.menuCardBadges}>
+                {item.isVegetarian !== undefined && (
+                  <View style={[styles.vegBadge, item.isVegetarian ? styles.vegBadgeGreen : styles.vegBadgeRed]}>
+                    <View style={[styles.vegDot, item.isVegetarian ? styles.vegDotGreen : styles.vegDotRed]} />
+                  </View>
+                )}
+                {item.spicyLevel && item.spicyLevel > 0 ? (
+                  <View style={styles.spicyBadge}>
+                    <ThemedText style={styles.spicyText}>{'🌶️'.repeat(Math.min(item.spicyLevel, 3))}</ThemedText>
+                  </View>
+                ) : null}
+                {!item.isAvailable && (
+                  <View style={styles.unavailableBadge}>
+                    <ThemedText style={styles.unavailableText}>Unavailable</ThemedText>
                   </View>
                 )}
               </View>
-            )}
+
+              <ThemedText style={styles.menuItemName} numberOfLines={2}>
+                {item.name}
+              </ThemedText>
+
+              {item.description ? (
+                <ThemedText style={styles.menuItemDesc} numberOfLines={2}>
+                  {item.description}
+                </ThemedText>
+              ) : null}
+
+              {/* Price row */}
+              <View style={styles.priceRow}>
+                <ThemedText style={styles.menuItemPrice}>
+                  {currencySymbol}
+                  {item.price}
+                </ThemedText>
+                {item.originalPrice && item.originalPrice > item.price ? (
+                  <ThemedText style={styles.menuItemOriginalPrice}>
+                    {currencySymbol}
+                    {item.originalPrice}
+                  </ThemedText>
+                ) : null}
+                {item.preparationTime ? (
+                  <View style={styles.prepTimeBadge}>
+                    <Ionicons name="time-outline" size={11} color={colors.text.tertiary} />
+                    <ThemedText style={styles.prepTimeText}>{item.preparationTime}</ThemedText>
+                  </View>
+                ) : null}
+              </View>
+
+              {/* Allergens */}
+              {item.allergens && item.allergens.length > 0 ? (
+                <View style={styles.allergenRow}>
+                  <Ionicons name="alert-circle" size={12} color={Colors.warning} />
+                  <ThemedText style={styles.allergenText} numberOfLines={1}>
+                    {item.allergens.join(', ')}
+                  </ThemedText>
+                </View>
+              ) : null}
+            </View>
+
+            {/* Right: Image + Add button */}
+            <View style={styles.menuCardRight}>
+              {item.image ? (
+                <CachedImage
+                  source={{ uri: item.image }}
+                  style={styles.menuItemImage}
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                />
+              ) : (
+                <View style={styles.menuItemImagePlaceholder}>
+                  <Ionicons name="fast-food-outline" size={28} color={colors.border.default} />
+                </View>
+              )}
+
+              {/* Add / Quantity control */}
+              {item.isAvailable && (
+                <View style={styles.addControlWrap}>
+                  {quantity === 0 ? (
+                    <Pressable style={styles.addBtn} onPress={() => handleAddToCart(item)}>
+                      <ThemedText style={styles.addBtnText}>ADD</ThemedText>
+                      <Ionicons name="add" size={14} color={Colors.brand.purple} style={{ marginLeft: 2 }} />
+                    </Pressable>
+                  ) : (
+                    <View style={styles.qtyControl}>
+                      <Pressable style={styles.qtyBtn} onPress={() => handleRemoveFromCart(item.id)}>
+                        <Ionicons name="remove" size={16} color={colors.text.inverse} />
+                      </Pressable>
+                      <ThemedText style={styles.qtyText}>{quantity}</ThemedText>
+                      <Pressable style={styles.qtyBtn} onPress={() => handleAddToCart(item)}>
+                        <Ionicons name="add" size={16} color={colors.text.inverse} />
+                      </Pressable>
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-    );
-  }, [getCartQuantity, currencySymbol, handleAddToCart, handleRemoveFromCart]);
+      );
+    },
+    [getCartQuantity, currencySymbol, handleAddToCart, handleRemoveFromCart],
+  );
 
   const keyExtractor = useCallback((item: MenuItem) => item.id, []);
 
-  const ListHeaderContent = useMemo(() => (
-    <View style={styles.itemsCountBar}>
-      <ThemedText style={styles.itemsCountText}>
-        {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
-      </ThemedText>
-    </View>
-  ), [filteredItems.length]);
-
-  const ListEmptyContent = useMemo(() => (
-    <View style={styles.emptyContainer}>
-      <View style={styles.emptyIconWrap}>
-        <Ionicons name="restaurant-outline" size={40} color={colors.border.default} />
+  const ListHeaderContent = useMemo(
+    () => (
+      <View style={styles.itemsCountBar}>
+        <ThemedText style={styles.itemsCountText}>
+          {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
+        </ThemedText>
       </View>
-      <ThemedText style={styles.emptyTitle}>
-        {categories.length === 0 ? 'Menu not available' : 'No items here'}
-      </ThemedText>
-      <ThemedText style={styles.emptyText}>
-        {categories.length === 0
-          ? 'This restaurant hasn\'t set up their menu yet.'
-          : 'Try selecting a different category.'}
-      </ThemedText>
-    </View>
-  ), [categories.length]);
+    ),
+    [filteredItems.length],
+  );
 
-  const ListFooterContent = useMemo(() => (
-    <View style={{ height: cart.length > 0 ? 160 : 120 }} />
-  ), [cart.length]);
+  const ListEmptyContent = useMemo(
+    () => (
+      <View style={styles.emptyContainer}>
+        <View style={styles.emptyIconWrap}>
+          <Ionicons name="restaurant-outline" size={40} color={colors.border.default} />
+        </View>
+        <ThemedText style={styles.emptyTitle}>
+          {categories.length === 0 ? 'Menu not available' : 'No items here'}
+        </ThemedText>
+        <ThemedText style={styles.emptyText}>
+          {categories.length === 0
+            ? "This restaurant hasn't set up their menu yet."
+            : 'Try selecting a different category.'}
+        </ThemedText>
+      </View>
+    ),
+    [categories.length],
+  );
+
+  const ListFooterContent = useMemo(() => <View style={{ height: cart.length > 0 ? 160 : 120 }} />, [cart.length]);
 
   // Loading state
   if (loading) {
@@ -394,7 +409,10 @@ function MenuPage() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Menu</ThemedText>
@@ -419,11 +437,16 @@ function MenuPage() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerCenter}>
-          <ThemedText style={styles.headerTitle} numberOfLines={1}>{storeName}</ThemedText>
+          <ThemedText style={styles.headerTitle} numberOfLines={1}>
+            {storeName}
+          </ThemedText>
           {isDineIn && dineInTable ? (
             <View style={styles.tableBadge}>
               <Ionicons name="restaurant-outline" size={11} color={Colors.brand.purple} />
@@ -470,11 +493,7 @@ function MenuPage() {
 
       {/* Category Filters */}
       <View style={styles.categoriesWrapper}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesContent}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContent}>
           <Pressable
             style={[styles.categoryChip, selectedCategory === 'all' && styles.categoryChipActive]}
             onPress={() => setSelectedCategory('all')}
@@ -489,17 +508,26 @@ function MenuPage() {
               All
             </ThemedText>
           </Pressable>
-          {categories.map(category => (
+          {categories.map((category) => (
             <Pressable
               key={category.id}
-              style={[styles.categoryChip, selectedCategory === category.id && styles.categoryChipActive]}
+              style={[styles.categoryChip, selectedCategory === category.id ? styles.categoryChipActive : null]}
               onPress={() => setSelectedCategory(category.id)}
             >
-              <ThemedText style={[styles.categoryText, selectedCategory === category.id && styles.categoryTextActive]}>
+              <ThemedText
+                style={[styles.categoryText, selectedCategory === category.id ? styles.categoryTextActive : null]}
+              >
                 {category.name}
               </ThemedText>
-              <View style={[styles.categoryCount, selectedCategory === category.id && styles.categoryCountActive]}>
-                <ThemedText style={[styles.categoryCountText, selectedCategory === category.id && styles.categoryCountTextActive]}>
+              <View
+                style={[styles.categoryCount, selectedCategory === category.id ? styles.categoryCountActive : null]}
+              >
+                <ThemedText
+                  style={[
+                    styles.categoryCountText,
+                    selectedCategory === category.id ? styles.categoryCountTextActive : null,
+                  ]}
+                >
                   {category.items.length}
                 </ThemedText>
               </View>
@@ -537,22 +565,16 @@ function MenuPage() {
                 {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'}
               </ThemedText>
               <ThemedText style={styles.cartTotal}>
-                {currencySymbol}{cartTotal.toFixed(2)}
+                {currencySymbol}
+                {cartTotal.toFixed(2)}
               </ThemedText>
             </View>
-            <Pressable
-              style={styles.placeOrderBtn}
-              onPress={handlePlaceOrder}
-              disabled={submitting}
-             
-            >
+            <Pressable style={styles.placeOrderBtn} onPress={handlePlaceOrder} disabled={submitting}>
               {submitting ? (
                 <ActivityIndicator size="small" color={Colors.brand.purple} />
               ) : (
                 <>
-                  <ThemedText style={styles.placeOrderText}>
-                    Place Order
-                  </ThemedText>
+                  <ThemedText style={styles.placeOrderText}>Place Order</ThemedText>
                   <Ionicons name="arrow-forward" size={18} color={Colors.brand.purple} />
                 </>
               )}
@@ -952,7 +974,12 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     minWidth: 80,
     ...Platform.select({
-      ios: { shadowColor: Colors.brand.purple, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 },
+      ios: {
+        shadowColor: Colors.brand.purple,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+      },
       android: { elevation: 3 },
       web: { boxShadow: '0 2px 4px rgba(124,58,237,0.15)' },
     }),
@@ -970,7 +997,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     minWidth: 80,
     ...Platform.select({
-      ios: { shadowColor: Colors.brand.purple, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
+      ios: {
+        shadowColor: Colors.brand.purple,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
       android: { elevation: 3 },
       web: { boxShadow: '0 2px 4px rgba(124,58,237,0.2)' },
     }),

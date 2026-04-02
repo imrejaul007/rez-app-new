@@ -76,7 +76,7 @@ function PostDetailScreen() {
         setIsBookmarked(parsedItem.engagement?.bookmarked || false);
 
         setLoading(false);
-      } catch (err) {
+      } catch (err: any) {
         setError('Failed to load post');
         setLoading(false);
       }
@@ -93,7 +93,7 @@ function PostDetailScreen() {
         // Refresh engagement data on focus
         const refreshEngagement = async () => {
           try {
-            const updatedPost = await realVideosApi.getPostById(post._id);
+            const updatedPost = await (realVideosApi as any).getPostById(post._id);
             if (!isMounted()) return;
             if (updatedPost) {
               const likes =
@@ -106,7 +106,7 @@ function PostDetailScreen() {
               setIsLiked(updatedPost.engagement?.liked || false);
               setIsBookmarked(updatedPost.engagement?.bookmarked || false);
             }
-          } catch (err) {
+          } catch (err: any) {
             // silently handle
           }
         };
@@ -125,7 +125,7 @@ function PostDetailScreen() {
 
     try {
       await realVideosApi.toggleVideoLike(post._id);
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setIsLiked(!newLikedState);
@@ -143,7 +143,7 @@ function PostDetailScreen() {
 
     try {
       await realVideosApi.toggleBookmark(post._id);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setIsBookmarked(!newBookmarkedState);
     }
@@ -158,7 +158,7 @@ function PostDetailScreen() {
         message: `Check out this post on ${BRAND.APP_NAME}! ${post.caption || ''}`,
         title: 'Share Post',
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [post]);
@@ -176,10 +176,14 @@ function PostDetailScreen() {
     async (product: DiscoverProduct) => {
       try {
         await addItem({
-          productId: product._id,
-          quantity: 1,
-        });
-      } catch (error) {
+          id: product._id,
+          name: product.name || product.title || '',
+          price: product.salePrice || product.price || 0,
+          image: product.image || product.images?.[0] || '',
+          cashback: product.cashbackPercent ? `${product.cashbackPercent}%` : '0%',
+          category: 'products',
+        } as any);
+      } catch (error: any) {
         // silently handle
       }
     },
@@ -305,7 +309,7 @@ function PostDetailScreen() {
       >
         {/* Creator Info */}
         <View style={styles.creatorSection}>
-          {creatorInfo.avatar && <CachedImage source={creatorInfo.avatar} style={styles.creatorAvatar} />}
+          {creatorInfo.avatar && <CachedImage source={creatorInfo.avatar as any} style={styles.creatorAvatar} />}
           <View style={styles.creatorInfo}>
             <Text style={styles.creatorName}>{creatorInfo.name || 'User'}</Text>
             {post.contentType === 'merchant' && (
@@ -333,13 +337,13 @@ function PostDetailScreen() {
           {/* Main image */}
           {imageUrl && !imageError && (
             <CachedImage
-              source={imageUrl}
-              style={[styles.postImage, !imageLoaded && styles.hiddenImage]}
+              source={imageUrl as any}
+              style={[styles.postImage, !imageLoaded ? styles.hiddenImage : null]}
               contentFit="cover"
               onLoad={() => {
                 setImageLoaded(true);
               }}
-              onError={(e) => {
+              onError={() => {
                 setImageLoaded(true);
                 setImageError(true);
               }}
@@ -458,7 +462,7 @@ function PostDetailScreen() {
                   onPress={() => handleProductPress(product)}
                 >
                   <CachedImage
-                    source={product.image || product.images?.[0]}
+                    source={product.image || product.images?.[0] || ''}
                     style={styles.productImage}
                     contentFit="cover"
                   />

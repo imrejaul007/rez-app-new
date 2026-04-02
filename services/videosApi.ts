@@ -161,12 +161,12 @@ export interface VideoAnalytics {
 class VideosService {
   // Get videos with filtering and pagination
   async getVideos(query: VideosQuery = {}): Promise<ApiResponse<VideosResponse>> {
-    return apiClient.get('/videos', query);
+    return apiClient.get<any>('/videos', query as any);
   }
 
   // Get single video by ID
   async getVideoById(videoId: string): Promise<ApiResponse<Video>> {
-    return apiClient.get(`/videos/${videoId}`);
+    return apiClient.get<any>(`/videos/${videoId}`);
   }
 
   // Get trending videos
@@ -174,12 +174,12 @@ class VideosService {
     limit: number = 20,
     category?: string
   ): Promise<ApiResponse<Video[]>> {
-    return apiClient.get('/videos/trending', { limit, category });
+    return apiClient.get<any>('/videos/trending', { limit, category } as any);
   }
 
   // Get featured videos
   async getFeaturedVideos(limit: number = 10): Promise<ApiResponse<Video[]>> {
-    return apiClient.get('/videos/featured', { limit });
+    return apiClient.get<any>('/videos/featured', { limit } as any);
   }
 
   // Search videos
@@ -187,10 +187,10 @@ class VideosService {
     query: string,
     filters?: Omit<VideosQuery, 'search'>
   ): Promise<ApiResponse<VideosResponse>> {
-    return apiClient.get('/videos/search', {
+    return apiClient.get<any>('/videos/search', {
       search: query,
       ...filters
-    });
+    } as any);
   }
 
   // Get recommended videos based on user preferences
@@ -198,7 +198,7 @@ class VideosService {
     userId?: string,
     limit: number = 20
   ): Promise<ApiResponse<Video[]>> {
-    return apiClient.get('/videos/recommendations', { userId, limit });
+    return apiClient.get<any>('/videos/recommendations', { userId, limit } as any);
   }
 
   // Get videos by category
@@ -206,7 +206,7 @@ class VideosService {
     categorySlug: string,
     query: Omit<VideosQuery, 'category'> = {}
   ): Promise<ApiResponse<VideosResponse>> {
-    return apiClient.get(`/videos/category/${categorySlug}`, query);
+    return apiClient.get<any>(`/videos/category/${categorySlug}`, query as any);
   }
 
   // Get videos by creator
@@ -214,7 +214,7 @@ class VideosService {
     creatorId: string,
     query: Omit<VideosQuery, 'creator'> = {}
   ): Promise<ApiResponse<VideosResponse>> {
-    return apiClient.get(`/videos/creator/${creatorId}`, query);
+    return apiClient.get<any>(`/videos/creator/${creatorId}`, query as any);
   }
 
   // Upload video
@@ -234,12 +234,12 @@ class VideosService {
     videoId: string,
     updates: Partial<VideoUpload>
   ): Promise<ApiResponse<Video>> {
-    return apiClient.patch(`/videos/${videoId}`, updates);
+    return apiClient.patch<any>(`/videos/${videoId}`, updates);
   }
 
   // Delete video
   async deleteVideo(videoId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/videos/${videoId}`);
+    return apiClient.delete<any>(`/videos/${videoId}`);
   }
 
   // Record video view
@@ -248,7 +248,7 @@ class VideosService {
     watchTime?: number,
     quality?: string
   ): Promise<ApiResponse<void>> {
-    return apiClient.post(`/videos/${videoId}/view`, {
+    return apiClient.post<any>(`/videos/${videoId}/view`, {
       watchTime,
       quality
     });
@@ -256,32 +256,32 @@ class VideosService {
 
   // Like video
   async likeVideo(videoId: string): Promise<ApiResponse<{ liked: boolean }>> {
-    return apiClient.post(`/videos/${videoId}/like`);
+    return apiClient.post<any>(`/videos/${videoId}/like`);
   }
 
   // Unlike video
   async unlikeVideo(videoId: string): Promise<ApiResponse<{ liked: boolean }>> {
-    return apiClient.delete(`/videos/${videoId}/like`);
+    return apiClient.delete<any>(`/videos/${videoId}/like`);
   }
 
   // Dislike video
   async dislikeVideo(videoId: string): Promise<ApiResponse<{ disliked: boolean }>> {
-    return apiClient.post(`/videos/${videoId}/dislike`);
+    return apiClient.post<any>(`/videos/${videoId}/dislike`);
   }
 
   // Remove dislike from video
   async removeDislike(videoId: string): Promise<ApiResponse<{ disliked: boolean }>> {
-    return apiClient.delete(`/videos/${videoId}/dislike`);
+    return apiClient.delete<any>(`/videos/${videoId}/dislike`);
   }
 
   // Bookmark video
   async bookmarkVideo(videoId: string): Promise<ApiResponse<{ bookmarked: boolean }>> {
-    return apiClient.post(`/videos/${videoId}/bookmark`);
+    return apiClient.post<any>(`/videos/${videoId}/bookmark`);
   }
 
   // Remove bookmark from video
   async removeBookmark(videoId: string): Promise<ApiResponse<{ bookmarked: boolean }>> {
-    return apiClient.delete(`/videos/${videoId}/bookmark`);
+    return apiClient.delete<any>(`/videos/${videoId}/bookmark`);
   }
 
   // Get user's bookmarked videos
@@ -289,7 +289,7 @@ class VideosService {
     page: number = 1,
     limit: number = 20
   ): Promise<ApiResponse<VideosResponse>> {
-    return apiClient.get('/videos/bookmarks', { page, limit });
+    return apiClient.get<any>('/videos/bookmarks', { page, limit } as any);
   }
 
   // Share video
@@ -298,7 +298,7 @@ class VideosService {
     platform: 'facebook' | 'twitter' | 'whatsapp' | 'copy_link',
     message?: string
   ): Promise<ApiResponse<{ shareUrl: string }>> {
-    return apiClient.post(`/videos/${videoId}/share`, {
+    return apiClient.post<any>(`/videos/${videoId}/share`, {
       platform,
       message
     });
@@ -319,7 +319,7 @@ class VideosService {
       limit: number;
     };
   }>> {
-    return apiClient.get(`/videos/${videoId}/comments`, {
+    return apiClient.get<any>(`/videos/${videoId}/comments`, {
       page,
       limit,
       sort
@@ -332,7 +332,7 @@ class VideosService {
     content: string,
     parentId?: string
   ): Promise<ApiResponse<VideoComment>> {
-    return apiClient.post(`/videos/${videoId}/comments`, {
+    return apiClient.post<any>(`/videos/${videoId}/comments`, {
       content,
       parentId
     });
@@ -343,17 +343,17 @@ class VideosService {
     commentId: string,
     content: string
   ): Promise<ApiResponse<VideoComment>> {
-    return apiClient.patch(`/comments/${commentId}`, { content });
+    return apiClient.patch<any>(`/comments/${commentId}`, { content });
   }
 
   // Delete comment
   async deleteComment(commentId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/comments/${commentId}`);
+    return apiClient.delete<any>(`/comments/${commentId}`);
   }
 
   // Like comment
   async likeComment(commentId: string): Promise<ApiResponse<{ liked: boolean }>> {
-    return apiClient.post(`/comments/${commentId}/like`);
+    return apiClient.post<any>(`/comments/${commentId}/like`);
   }
 
   // Get video analytics (creator only)
@@ -364,7 +364,7 @@ class VideosService {
       to: string;
     }
   ): Promise<ApiResponse<VideoAnalytics>> {
-    return apiClient.get(`/videos/${videoId}/analytics`, dateRange);
+    return apiClient.get<any>(`/videos/${videoId}/analytics`, dateRange as any);
   }
 
   // Get video categories
@@ -376,7 +376,7 @@ class VideosService {
     icon?: string;
     videoCount: number;
   }>>> {
-    return apiClient.get('/videos/categories');
+    return apiClient.get<any>('/videos/categories');
   }
 
   // Get video streaming URL with quality options
@@ -391,7 +391,7 @@ class VideosService {
       url: string;
     }>;
   }>> {
-    return apiClient.get(`/videos/${videoId}/stream`, { quality });
+    return apiClient.get<any>(`/videos/${videoId}/stream`, { quality });
   }
 
   // Report video
@@ -400,7 +400,7 @@ class VideosService {
     reason: string,
     description?: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/videos/${videoId}/report`, {
+    return apiClient.post<any>(`/videos/${videoId}/report`, {
       reason,
       description
     });
@@ -424,12 +424,12 @@ class VideosService {
       limit: number;
     };
   }>> {
-    return apiClient.get('/videos/history', { page, limit });
+    return apiClient.get<any>('/videos/history', { page, limit } as any);
   }
 
   // Clear watch history
   async clearWatchHistory(): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete('/videos/history');
+    return apiClient.delete<any>('/videos/history');
   }
 }
 

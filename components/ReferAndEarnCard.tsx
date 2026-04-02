@@ -53,7 +53,7 @@ const ReferAndEarnCard: React.FC<ReferAndEarnCardProps> = ({
       } else {
         try {
           await Linking.openURL(data.inviteLink);
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple("Error", "Could not open invite link");
         }
       }

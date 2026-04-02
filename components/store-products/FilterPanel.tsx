@@ -231,20 +231,20 @@ function FilterPanel({
               ) : (
                 <View style={styles.categoryGrid}>
                   <Pressable
-                    style={[styles.categoryChip, !selectedCategory && styles.categoryChipActive]}
+                    style={[styles.categoryChip, !selectedCategory ? styles.categoryChipActive : null]}
                     onPress={() => onCategoryChange(null)}
                   >
-                    <ThemedText style={[styles.categoryChipText, !selectedCategory && styles.categoryChipTextActive]}>
+                    <ThemedText style={[styles.categoryChipText, !selectedCategory ? styles.categoryChipTextActive : null]}>
                       All
                     </ThemedText>
                   </Pressable>
                   {categories.map((category) => (
                     <Pressable
                       key={category.id}
-                      style={[styles.categoryChip, selectedCategory === category.id && styles.categoryChipActive]}
+                      style={[styles.categoryChip, selectedCategory === category.id ? styles.categoryChipActive : null]}
                       onPress={() => onCategoryChange(category.id)}
                     >
-                      <ThemedText style={[styles.categoryChipText, selectedCategory === category.id && styles.categoryChipTextActive]}>
+                      <ThemedText style={[styles.categoryChipText, selectedCategory === category.id ? styles.categoryChipTextActive : null]}>
                         {category.name}
                       </ThemedText>
                     </Pressable>
@@ -259,10 +259,10 @@ function FilterPanel({
               {(['newest', 'price_low', 'price_high', 'rating', 'popular'] as const).map((sort) => (
                 <Pressable
                   key={sort}
-                  style={[styles.sortOption, sortBy === sort && styles.sortOptionActive]}
+                  style={[styles.sortOption, sortBy === sort ? styles.sortOptionActive : null]}
                   onPress={() => onSortChange(sort)}
                 >
-                  <ThemedText style={[styles.sortOptionText, sortBy === sort && styles.sortOptionTextActive]}>
+                  <ThemedText style={[styles.sortOptionText, sortBy === sort ? styles.sortOptionTextActive : null]}>
                     {SORT_LABELS[sort]}
                   </ThemedText>
                   {sortBy === sort && (
@@ -311,10 +311,10 @@ function FilterPanel({
               {(['all', 'in_stock', 'out_of_stock'] as const).map((availability) => (
                 <Pressable
                   key={availability}
-                  style={[styles.sortOption, availabilityFilter === availability && styles.sortOptionActive]}
+                  style={[styles.sortOption, availabilityFilter === availability ? styles.sortOptionActive : null]}
                   onPress={() => onAvailabilityChange(availability)}
                 >
-                  <ThemedText style={[styles.sortOptionText, availabilityFilter === availability && styles.sortOptionTextActive]}>
+                  <ThemedText style={[styles.sortOptionText, availabilityFilter === availability ? styles.sortOptionTextActive : null]}>
                     {AVAILABILITY_LABELS[availability]}
                   </ThemedText>
                   {availabilityFilter === availability && (

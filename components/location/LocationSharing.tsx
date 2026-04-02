@@ -58,7 +58,7 @@ function LocationSharing({
       if (result.action === Share.sharedAction) {
         onShare?.(currentLocation.coordinates);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to share location');
     } finally {
       if (!isMounted()) return;
@@ -79,7 +79,7 @@ function LocationSharing({
       
       platformAlertSimple('Copied', 'Location coordinates copied to clipboard');
       onCopy?.(currentLocation.coordinates);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy location');
     }
   };
@@ -117,13 +117,13 @@ function LocationSharing({
     disabled = false
   ) => (
     <Pressable
-      style={[styles.actionButton, disabled && styles.disabledButton]}
+      style={[styles.actionButton, disabled ? styles.disabledButton : null]}
       onPress={onPress}
       disabled={disabled}
      
     >
       <View style={styles.actionContent}>
-        <View style={[styles.actionIcon, disabled && styles.disabledIcon]}>
+        <View style={[styles.actionIcon, disabled ? styles.disabledIcon : null]}>
           <Ionicons
             name={icon as any}
             size={24}
@@ -131,10 +131,10 @@ function LocationSharing({
           />
         </View>
         <View style={styles.actionText}>
-          <Text style={[styles.actionTitle, disabled && styles.disabledText]}>
+          <Text style={[styles.actionTitle, disabled ? styles.disabledText : null]}>
             {title}
           </Text>
-          <Text style={[styles.actionSubtitle, disabled && styles.disabledText]}>
+          <Text style={[styles.actionSubtitle, disabled ? styles.disabledText : null]}>
             {subtitle}
           </Text>
         </View>

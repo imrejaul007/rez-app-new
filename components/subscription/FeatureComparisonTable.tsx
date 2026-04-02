@@ -70,7 +70,7 @@ function FeatureComparisonTable({
   const renderCheckIcon = (hasFeature: boolean, tier?: SubscriptionTier) => {
     const isHighlighted = tier === newTier;
     return (
-      <View style={[styles.iconCell, isHighlighted && styles.iconCellHighlighted]}>
+      <View style={[styles.iconCell, isHighlighted ? styles.iconCellHighlighted : null]}>
         <Ionicons
           name={hasFeature ? 'checkmark-circle' : 'close-circle-outline'}
           size={20}

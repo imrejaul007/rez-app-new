@@ -125,7 +125,7 @@ function NotificationsScreen() {
         if (!isMounted()) return;
         setSettings(getDefaultSettings());
       }
-    } catch (error) {
+    } catch (error: any) {
       // Set default settings on error
       if (!isMounted()) return;
       setSettings(getDefaultSettings());
@@ -159,7 +159,7 @@ function NotificationsScreen() {
           if (isMounted()) setShowSuccessMessage(false);
         }, 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         'Failed to update push notification settings. Please check your connection and try again.',
@@ -195,7 +195,7 @@ function NotificationsScreen() {
           if (isMounted()) setShowSuccessMessage(false);
         }, 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         'Failed to update email notification settings. Please check your connection and try again.',
@@ -230,7 +230,7 @@ function NotificationsScreen() {
           if (isMounted()) setShowSuccessMessage(false);
         }, 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         'Failed to update SMS notification settings. Please check your connection and try again.',
@@ -265,7 +265,7 @@ function NotificationsScreen() {
           if (isMounted()) setShowSuccessMessage(false);
         }, 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         'Failed to update in-app notification settings. Please check your connection and try again.',
@@ -285,7 +285,7 @@ function NotificationsScreen() {
     disabled?: boolean,
   ) => (
     <View style={styles.settingItem}>
-      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>{title}</Text>
+      <Text style={[styles.settingTitle, disabled ? styles.disabledText : null]}>{title}</Text>
       <Switch
         value={value}
         onValueChange={onValueChange}

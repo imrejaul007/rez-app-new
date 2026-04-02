@@ -26,7 +26,7 @@ import { useAuth } from '@/contexts/AuthContext';
 let RazorpayCheckout: any = null;
 try {
   RazorpayCheckout = require('react-native-razorpay').default;
-} catch (error) {
+} catch (error: any) {
   // Not available in Expo Go
 }
 
@@ -101,7 +101,7 @@ function PaymentPage() {
           setIsProcessing(false);
           setCurrentStep('methods');
           platformAlertConfirm(
-            'Payment Timeout',
+            'Payment ReturnType<typeof setTimeout>',
             'Your payment session has expired. Please try again.',
             () => setPaymentStartedAt(null),
             'Retry',
@@ -161,7 +161,7 @@ function PaymentPage() {
         if (!isMounted()) return;
         setPaymentMethods(methods);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load payment methods. Please try again.');
     } finally {
       if (!isMounted()) return;

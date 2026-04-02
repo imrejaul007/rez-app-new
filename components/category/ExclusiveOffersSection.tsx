@@ -44,7 +44,7 @@ const OfferCard = memo(({
     accessibilityRole="button"
   >
     <LinearGradient
-      colors={offer.gradient}
+      colors={offer.gradient as [string, string]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.cardGradient}
@@ -89,14 +89,14 @@ const ExclusiveOffersSection: React.FC<ExclusiveOffersSectionProps> = ({
         const response = await exclusiveOffersApi.getOffers(
           categorySlug ? { category: categorySlug, limit: 10 } : { limit: 10 }
         );
-        if (response.success && response.data?.offers?.length > 0) {
+        if (response.success && response.data?.offers?.length && response.data.offers.length > 0) {
           if (!isMounted()) return;
-          setApiOffers(response.data.offers);
+          setApiOffers(response.data?.offers ?? []);
         } else {
           // Fallback to dummy data if API returns empty
           setApiOffers(exclusiveOffersData as any);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Fallback to dummy data on error
         if (!isMounted()) return;
         setApiOffers(exclusiveOffersData as any);

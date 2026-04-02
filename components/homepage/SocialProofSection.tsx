@@ -128,7 +128,7 @@ const SocialProofSection: React.FC = () => {
         setStoreAggregates(response.data.storeAggregates || []);
         setCityWideStats(response.data.cityWideStats || null);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

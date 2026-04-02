@@ -159,7 +159,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   const unlockAmount = (walletData as any)?.unlockAmount ?? (walletData as any)?.lockedBalance ?? undefined;
 
   // Gamification — streak count for StreakToDealConnector
-  const dailyStreak = useGamificationStore((s) => s.dailyStreak ?? 0);
+  const dailyStreak = useGamificationStore((s) => (s as any).dailyStreak ?? 0);
 
   // API-backed check-in status and visit streak
   const { data: checkinStatus } = useCheckinStatus();
@@ -187,7 +187,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
     const earliest = promoCoins
       .map((c: any) => c.expiryDate ? new Date(c.expiryDate) : null)
       .filter(Boolean)
-      .sort((a: Date, b: Date) => a.getTime() - b.getTime())[0];
+      .sort((a: Date | null, b: Date | null) => (a?.getTime() ?? 0) - (b?.getTime() ?? 0))[0];
     if (!earliest) return { expiringCount: 0, daysLeft: 99 };
     const msLeft = earliest.getTime() - now.getTime();
     const daysLeft = Math.max(0, Math.floor(msLeft / (1000 * 60 * 60 * 24)));
@@ -434,7 +434,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         <Text style={savingsStrip.text} numberOfLines={1}>
           You've saved{' '}
           <Text style={savingsStrip.amount}>
-            {currencySymbol ?? '₹'}{((thisMonthSaved ?? 0) > 0 ? thisMonthSaved : totalSaved ?? 0).toLocaleString()}
+            {currencySymbol ?? '₹'}{((thisMonthSaved ?? 0) > 0 ? (thisMonthSaved ?? 0) : totalSaved ?? 0).toLocaleString()}
           </Text>
           {' '}this month
         </Text>
@@ -466,7 +466,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         renderSection={() => <GlobeBanner />} />
     </>
   );
-  } catch (e) {
+  } catch (e: any) {
     // Schedule state update outside the render cycle to avoid React warnings
     setTimeout(() => setRenderError(e instanceof Error ? e : new Error(String(e))), 0);
     return null;

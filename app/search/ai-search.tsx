@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -84,7 +84,7 @@ function AISearchPage() {
         if (!isMounted()) return;
         setResults([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Search failed. Please check your connection and try again.');
       if (!isMounted()) return;
@@ -205,7 +205,7 @@ function AISearchPage() {
           </View>
           <Pressable
             style={[styles.searchButton, !query.trim() && styles.searchButtonDisabled]}
-            onPress={handleSearch}
+            onPress={() => handleSearch()}
             disabled={!query.trim() || searching}
           >
             {searching ? (
@@ -600,9 +600,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   retryText: {
+    ...Typography.body,
     color: colors.text.inverse,
     fontWeight: '600',
-    ...Typography.body,
   },
 });
 

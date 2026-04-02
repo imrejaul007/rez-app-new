@@ -256,7 +256,7 @@ class UserProductService {
    */
   async getUserProducts(filters?: ProductFilters): Promise<ApiResponse<UserProduct[]>> {
 
-    return apiClient.get('/user-products', filters);
+    return apiClient.get<any>('/user-products', filters as any);
   }
 
   /**
@@ -264,7 +264,7 @@ class UserProductService {
    */
   async getProductDetails(productId: string): Promise<ApiResponse<UserProduct>> {
 
-    return apiClient.get(`/user-products/${productId}`);
+    return apiClient.get<any>(`/user-products/${productId}`);
   }
 
   /**
@@ -275,7 +275,7 @@ class UserProductService {
     count: number;
   }>> {
 
-    return apiClient.get('/user-products/expiring-warranties', { days });
+    return apiClient.get<any>('/user-products/expiring-warranties', { days });
   }
 
   /**
@@ -286,7 +286,7 @@ class UserProductService {
     count: number;
   }>> {
 
-    return apiClient.get('/user-products/expiring-amc', { days });
+    return apiClient.get<any>('/user-products/expiring-amc', { days });
   }
 
   /**
@@ -297,7 +297,7 @@ class UserProductService {
     data: RegisterProductData
   ): Promise<ApiResponse<UserProduct>> {
 
-    return apiClient.post(`/user-products/${productId}/register`, data);
+    return apiClient.post<any>(`/user-products/${productId}/register`, data as any);
   }
 
   /**
@@ -308,7 +308,7 @@ class UserProductService {
     data: ScheduleInstallationData
   ): Promise<ApiResponse<UserProduct>> {
 
-    return apiClient.post(`/user-products/${productId}/schedule-installation`, data);
+    return apiClient.post<any>(`/user-products/${productId}/schedule-installation`, data as any);
   }
 
   /**
@@ -319,7 +319,7 @@ class UserProductService {
     data: RenewAMCData
   ): Promise<ApiResponse<UserProduct>> {
 
-    return apiClient.post(`/user-products/${productId}/renew-amc`, data);
+    return apiClient.post<any>(`/user-products/${productId}/renew-amc`, data as any);
   }
 
   /**
@@ -332,7 +332,7 @@ class UserProductService {
     isWarrantyExpiringSoon?: boolean;
   }>> {
 
-    return apiClient.get(`/user-products/${productId}/warranty`);
+    return apiClient.get<any>(`/user-products/${productId}/warranty`);
   }
 
   /**
@@ -344,7 +344,7 @@ class UserProductService {
     isAMCExpiringSoon?: boolean;
   }>> {
 
-    return apiClient.get(`/user-products/${productId}/amc`);
+    return apiClient.get<any>(`/user-products/${productId}/amc`);
   }
 
   // ============================================================================
@@ -358,7 +358,7 @@ class UserProductService {
     data: CreateServiceRequestData
   ): Promise<ApiResponse<ServiceRequest>> {
 
-    return apiClient.post('/user-products/service-requests', data);
+    return apiClient.post<any>('/user-products/service-requests', data as any);
   }
 
   /**
@@ -368,7 +368,7 @@ class UserProductService {
     filters?: ServiceRequestFilters
   ): Promise<ApiResponse<ServiceRequestsResponse>> {
 
-    return apiClient.get('/user-products/service-requests', filters);
+    return apiClient.get<any>('/user-products/service-requests', filters as any);
   }
 
   /**
@@ -379,7 +379,7 @@ class UserProductService {
     count: number;
   }>> {
 
-    return apiClient.get('/user-products/service-requests/active');
+    return apiClient.get<any>('/user-products/service-requests/active');
   }
 
   /**
@@ -389,7 +389,7 @@ class UserProductService {
     requestId: string
   ): Promise<ApiResponse<ServiceRequest>> {
 
-    return apiClient.get(`/user-products/service-requests/${requestId}`);
+    return apiClient.get<any>(`/user-products/service-requests/${requestId}`);
   }
 
   /**
@@ -400,7 +400,7 @@ class UserProductService {
     reason: string
   ): Promise<ApiResponse<ServiceRequest>> {
 
-    return apiClient.post(`/user-products/service-requests/${requestId}/cancel`, { reason });
+    return apiClient.post<any>(`/user-products/service-requests/${requestId}/cancel`, { reason });
   }
 
   /**
@@ -411,7 +411,7 @@ class UserProductService {
     data: RescheduleServiceData
   ): Promise<ApiResponse<ServiceRequest>> {
 
-    return apiClient.post(`/user-products/service-requests/${requestId}/reschedule`, data);
+    return apiClient.post<any>(`/user-products/service-requests/${requestId}/reschedule`, data as any);
   }
 
   /**
@@ -422,7 +422,7 @@ class UserProductService {
     data: RateServiceData
   ): Promise<ApiResponse<ServiceRequest>> {
 
-    return apiClient.post(`/user-products/service-requests/${requestId}/rate`, data);
+    return apiClient.post<any>(`/user-products/service-requests/${requestId}/rate`, data as any);
   }
 }
 

@@ -47,25 +47,25 @@ const FulfillmentTypeSelector = memo(({
           return (
             <Pressable
               key={option.type}
-              style={[styles.card, isSelected && styles.cardSelected]}
+              style={[styles.card, isSelected ? styles.cardSelected : null]}
               onPress={() => onSelect(option.type)}
               accessibilityLabel={option.estimatedTime ? `${option.label}, ${option.estimatedTime}` : option.label}
               accessibilityRole="radio"
               accessibilityState={{ selected: isSelected }}
               accessibilityHint={`Double tap to select ${option.label} as your fulfillment method`}
             >
-              <View style={[styles.iconCircle, isSelected && styles.iconCircleSelected]}>
+              <View style={[styles.iconCircle, isSelected ? styles.iconCircleSelected : null]}>
                 <Ionicons
                   name={iconName}
                   size={22}
                   color={isSelected ? colors.background.primary : colors.nileBlue}
                 />
               </View>
-              <Text style={[styles.label, isSelected && styles.labelSelected]}>
+              <Text style={[styles.label, isSelected ? styles.labelSelected : null]}>
                 {option.label}
               </Text>
               {option.estimatedTime ? (
-                <Text style={[styles.time, isSelected && styles.timeSelected]}>
+                <Text style={[styles.time, isSelected ? styles.timeSelected : null]}>
                   {option.estimatedTime}
                 </Text>
               ) : null}

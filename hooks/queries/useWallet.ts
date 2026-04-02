@@ -13,7 +13,7 @@ export function useWalletBalance() {
 export function useWalletTransactions(filters?: { page?: number; limit?: number; type?: string; source?: string }) {
   return useQuery({
     queryKey: queryKeys.wallet.transactions(filters),
-    queryFn: () => walletApi.getTransactions(filters),
+    queryFn: () => walletApi.getTransactions(filters as any),
   });
 }
 
@@ -28,7 +28,7 @@ export function useWalletTransactionById(id: string) {
 export function useWalletSummary(period?: string) {
   return useQuery({
     queryKey: queryKeys.wallet.summary(period),
-    queryFn: () => walletApi.getSummary(period),
+    queryFn: () => walletApi.getSummary(period as any),
   });
 }
 

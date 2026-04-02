@@ -174,7 +174,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
             accessibilityRole="button"
             accessibilityHint="Double tap to view subscription plans and upgrade options"
           >
-            <TierBadge tier={subscriptionTier} size="small" />
+            <TierBadge tier={subscriptionTier as any} size="small" />
           </Pressable>
 
           {/* Nuqta Coins - Branded coin display */}
@@ -190,8 +190,6 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
           {/* Cart Icon */}
           <Pressable
             onPress={handleCartPress}
-           
-            delayPressIn={Platform.OS === 'ios' ? 50 : 0}
             accessibilityLabel={`Shopping cart: ${cartItemCount} items`}
             accessibilityRole="button"
             accessibilityHint="Double tap to view your shopping cart"

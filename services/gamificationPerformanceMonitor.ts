@@ -334,7 +334,7 @@ class GamificationPerformanceMonitor {
     try {
       const result = await apiCall();
       this.endTimer(name, { ...metadata, success: true });
-      return result;
+      return result as any;
     } catch (error) {
       this.endTimer(name, { ...metadata, success: false, error: String(error) });
       throw error;

@@ -201,7 +201,7 @@ function EarnFromSocialMediaPage() {
       // Normalize completed store payments
       if (paymentsResponse.transactions && paymentsResponse.transactions.length > 0) {
         paymentsResponse.transactions.forEach((txn) => {
-          if (txn.status === 'completed') {
+          if (txn.status === 'COMPLETED') {
             items.push({
               id: txn.paymentId || txn.id,
               orderNumber: txn.paymentId || txn.id,
@@ -257,7 +257,7 @@ function EarnFromSocialMediaPage() {
         setTodayShareCount(todayCount);
       }
       setOrderSubmissions(submissionsMap);
-    } catch (err) {
+    } catch (err: any) {
       setShareableOrders([]);
       setOrderSubmissions({});
     } finally {
@@ -320,7 +320,7 @@ function EarnFromSocialMediaPage() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'mixed',
+        mediaTypes: ['images', 'videos'],
         allowsMultipleSelection: true,
         selectionLimit: 5 - selectedMedia.length,
         quality: 0.8,
@@ -330,7 +330,7 @@ function EarnFromSocialMediaPage() {
         const total = [...selectedMedia, ...result.assets].slice(0, 5);
         setSelectedMedia(total);
       }
-    } catch (err) {
+    } catch (err: any) {
       showAlert('Error', 'Failed to open gallery. Please try again.', undefined, 'error');
     }
   };
@@ -352,6 +352,8 @@ function EarnFromSocialMediaPage() {
       return;
     }
 
+    let progressInterval: ReturnType<typeof setInterval> | undefined;
+
     try {
       const { validators } = await import('@/services/socialMediaApi');
 
@@ -369,8 +371,7 @@ function EarnFromSocialMediaPage() {
       setSubmitting(true);
       setCurrentStep('uploading');
       setUploadProgress(0);
-
-      const progressInterval = setInterval(() => {
+      progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 90) {
             clearInterval(progressInterval);
@@ -427,12 +428,13 @@ function EarnFromSocialMediaPage() {
       return;
     }
 
+    let progressInterval: ReturnType<typeof setInterval> | undefined;
+
     try {
       setSubmitting(true);
       setCurrentStep('uploading');
       setUploadProgress(0);
-
-      const progressInterval = setInterval(() => {
+      progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 85) {
             clearInterval(progressInterval);
@@ -776,7 +778,7 @@ function EarnFromSocialMediaPage() {
             return (
               <Pressable
                 key={platform}
-                style={[styles.platformButton, isSelected && styles.platformButtonSelected]}
+                style={[styles.platformButton, isSelected ? styles.platformButtonSelected : null]}
                 onPress={() => setSelectedPlatform(platform)}
               >
                 <Ionicons
@@ -983,7 +985,7 @@ function EarnFromSocialMediaPage() {
 
         {/* Submit Button */}
         <Pressable
-          style={[styles.uploadButton, selectedMedia.length === 0 && styles.buttonDisabled]}
+          style={[styles.uploadButton, selectedMedia.length === 0 ? styles.buttonDisabled : null]}
           onPress={handleSubmitMedia}
           disabled={submitting || selectedMedia.length === 0}
         >

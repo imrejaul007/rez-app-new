@@ -33,7 +33,7 @@ function FeaturedCategoriesContainer({
       } else {
         setError('Failed to load categories');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load categories');
     } finally {

@@ -167,7 +167,7 @@ function BillPaymentPage() {
         if (!cancelled && res.success && res.data) {
           setProviders(res.data.providers);
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to fetch bill providers'),
           { context: 'BillPaymentPage.fetchProviders' },
@@ -201,7 +201,7 @@ function BillPaymentPage() {
           setHasMoreHistory(res.data.pagination.hasNextPage);
           setHistoryPage(page);
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to fetch payment history'),
           { context: 'BillPaymentPage.loadHistory' },
@@ -251,7 +251,7 @@ function BillPaymentPage() {
           if (isMounted()) setLoadingBill(false);
           return;
         }
-      } catch (err) {
+      } catch (err: any) {
         lastErr = err instanceof Error ? err : new Error('Failed to fetch bill details');
         // Only retry on network/timeout errors; stop if unmounted
         if (!isMounted()) return;
@@ -410,7 +410,7 @@ function BillPaymentPage() {
         }
         platformAlert('Error', res.message || 'Payment failed');
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Bill payment failed'),
         { context: 'BillPaymentPage.handlePayBill' },
@@ -460,7 +460,7 @@ function BillPaymentPage() {
       return (
         <Pressable
           key={type.id}
-          style={[styles.billTypeCard, isActive && styles.billTypeCardActive]}
+          style={[styles.billTypeCard, isActive ? styles.billTypeCardActive : null]}
           onPress={() => {
             setSelectedType(type.id);
           }}
@@ -482,7 +482,7 @@ function BillPaymentPage() {
       return (
         <Pressable
           key={provider._id}
-          style={[styles.providerCard, isActive && styles.providerCardActive]}
+          style={[styles.providerCard, isActive ? styles.providerCardActive : null]}
           onPress={() => {
             setSelectedProvider(provider);
             setFetchedBill(null);
@@ -535,8 +535,8 @@ function BillPaymentPage() {
               {currencySymbol}
               {item.amount.toLocaleString()}
             </Text>
-            <View style={[styles.recentStatus, isPaid && styles.recentStatusPaid]}>
-              <Text style={[styles.recentStatusText, isPaid && styles.recentStatusTextPaid]}>
+            <View style={[styles.recentStatus, isPaid ? styles.recentStatusPaid : null]}>
+              <Text style={[styles.recentStatusText, isPaid ? styles.recentStatusTextPaid : null]}>
                 {isPaid ? 'Paid' : item.status === 'failed' ? 'Failed' : 'Pending'}
               </Text>
             </View>
@@ -895,7 +895,7 @@ function BillPaymentPage() {
       {fetchedBill && !paymentPolling && (
         <View style={styles.bottomCta}>
           <Pressable
-            style={[styles.payButton, loadingPay && styles.payButtonDisabled]}
+            style={[styles.payButton, loadingPay ? styles.payButtonDisabled : null]}
             onPress={handlePayBill}
             disabled={loadingPay}
           >

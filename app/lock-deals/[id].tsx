@@ -26,7 +26,7 @@ const LockDealDetailPage: React.FC = () => {
   const isMounted = useIsMounted();
 
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const [deal, setDeal] = useState<LockPriceDeal | null>(null);
   const [userLock, setUserLock] = useState<UserLockDeal | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +46,7 @@ const LockDealDetailPage: React.FC = () => {
         if (!isMounted()) return;
         setUserLock(response.data.userLock);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load deal details');
     } finally {
       if (!isMounted()) return;
@@ -72,48 +72,47 @@ const LockDealDetailPage: React.FC = () => {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   };
 
-  const handleLockDeal = async () => {
+  const handleLockDeal = () => {
     if (!deal) return;
 
     const currSymbol = getCurrencySymbol(deal.currency);
-    const confirmed = await platformAlertConfirm(
+    platformAlertConfirm(
       'Lock This Deal?',
       `You'll pay ${currSymbol}${deal.depositAmount} (${deal.depositPercent}%) as deposit.\n\nRemaining ${currSymbol}${deal.balanceAmount} to be paid on pickup.\n\nYou'll earn ${deal.lockReward.amount * deal.earningsMultiplier} coins immediately!`,
+      async () => {
+        try {
+          if (!isMounted()) return;
+          setIsLocking(true);
+          const response = await lockDealApi.initiateLock(deal._id);
+
+          if (response?.data) {
+            // Navigate to the universal Razorpay payment hub
+            router.push({
+              pathname: '/payment-razorpay' as any,
+              params: {
+                bookingType: 'lock_deal',
+                // Pre-created Razorpay order (no need for hub to call API again)
+                razorpayOrderId: response.data.razorpayOrderId,
+                razorpayKeyId: response.data.razorpayKeyId,
+                // Deal context for the payment hub
+                dealId: deal._id,
+                dealTitle: deal.title,
+                amount: deal.depositAmount.toString(),
+                currency: deal.currency,
+                storeName: deal.storeName,
+                // For success screen routing
+                paymentType: 'deposit',
+              },
+            });
+          }
+        } catch (error: any) {
+          platformAlertSimple('Error', error?.message || 'Failed to initiate lock. Please try again.');
+        } finally {
+          if (!isMounted()) return;
+          setIsLocking(false);
+        }
+      },
     );
-
-    if (!confirmed) return;
-
-    try {
-      if (!isMounted()) return;
-      setIsLocking(true);
-      const response = await lockDealApi.initiateLock(deal._id);
-
-      if (response?.data) {
-        // Navigate to the universal Razorpay payment hub
-        router.push({
-          pathname: '/payment-razorpay' as any,
-          params: {
-            bookingType: 'lock_deal',
-            // Pre-created Razorpay order (no need for hub to call API again)
-            razorpayOrderId: response.data.razorpayOrderId,
-            razorpayKeyId: response.data.razorpayKeyId,
-            // Deal context for the payment hub
-            dealId: deal._id,
-            dealTitle: deal.title,
-            amount: deal.depositAmount.toString(),
-            currency: deal.currency,
-            storeName: deal.storeName,
-            // For success screen routing
-            paymentType: 'deposit',
-          },
-        });
-      }
-    } catch (error: any) {
-      platformAlertSimple('Error', error?.message || 'Failed to initiate lock. Please try again.');
-    } finally {
-      if (!isMounted()) return;
-      setIsLocking(false);
-    }
   };
 
   const handleViewMyLock = () => {
@@ -432,7 +431,7 @@ const LockDealDetailPage: React.FC = () => {
           </Pressable>
         ) : (
           <Pressable
-            style={[styles.lockButton, !canLock && styles.lockButtonDisabled]}
+            style={[styles.lockButton, !canLock ? styles.lockButtonDisabled : null]}
             onPress={handleLockDeal}
             disabled={!canLock || isLocking}
           >
@@ -494,7 +493,6 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   scrollContent: {
-    paddingBottom: Spacing.xl,
     paddingBottom: 120,
   },
 

@@ -83,7 +83,7 @@ export function useLocationBasedGreeting() {
       language: 'en',
       includeEmoji: true,
       personalized: true,
-      location: locationState.currentLocation?.address.city || undefined,
+      // location not in GreetingConfig
       ...config,
     };
 
@@ -97,7 +97,7 @@ export function useLocationBasedGreeting() {
       language: 'en',
       includeEmoji: true,
       personalized: true,
-      location: locationState.currentLocation?.address.city || undefined,
+      // location not in GreetingConfig
       ...config,
     };
 
@@ -214,7 +214,7 @@ export function useGreetingTime() {
 export function useGreetingAnimation() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
   // Track mounted state

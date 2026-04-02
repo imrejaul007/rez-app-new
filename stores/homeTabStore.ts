@@ -125,9 +125,9 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
       // Import here to avoid circular dependencies
       const apiClient = require('@/services/apiClient').default || require('@/services/apiClient');
 
-      const response = await apiClient.get<PriveEligibility>(
+      const response = await (apiClient.get as Function)(
         '/api/v1/user/prive/eligibility'
-      );
+      ) as { success: boolean; data?: PriveEligibility };
 
       if (response.success && response.data) {
         set({
@@ -141,7 +141,7 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
           },
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.warn('[homeTabStore] Failed to fetch Prive eligibility:', error);
       // Keep the default state on error
     }

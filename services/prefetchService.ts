@@ -12,7 +12,7 @@
 
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import imageCacheService from './imageCacheService';
-import imagePreloadService from './imagePreloadService';
+import imagePreloadService, { PreloadPriority } from './imagePreloadService';
 import { HomepageSection, HomepageSectionItem } from '@/types/homepage.types';
 
 export enum PrefetchPriority {
@@ -379,13 +379,13 @@ class PrefetchService {
     // Critical images in parallel
     await Promise.all(
       criticalImages.map(url =>
-        imageCacheService.preload(url, 'high').catch(() => {})
+        imageCacheService.preload(url, PreloadPriority.HIGH).catch(() => {})
       )
     );
 
     // Background images sequentially (don't block)
     for (const url of backgroundImages) {
-      imageCacheService.preload(url, 'low').catch(() => {});
+      imageCacheService.preload(url, PreloadPriority.LOW).catch(() => {});
     }
   }
 

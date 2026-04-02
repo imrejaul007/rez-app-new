@@ -5,16 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  Platform,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Platform, TextInput } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -34,7 +25,7 @@ interface CompareItem {
   stores: Array<{
     storeId: string;
     storeName: string;
-    storeLogo: string;
+    storeLogo?: string;
     price: number;
     originalPrice?: number;
     cashback: number;
@@ -87,7 +78,12 @@ const GroceryComparePage: React.FC = () => {
         const items: CompareItem[] = productsRes.data.products.slice(0, 8).map((product: any) => {
           const productId = product.id || product._id;
           // Handle both API formats: pricing.original/selling and pricing.basePrice/salePrice
-          const basePrice = product.pricing?.original || product.pricing?.basePrice || product.pricing?.selling || product.pricing?.salePrice || 100;
+          const basePrice =
+            product.pricing?.original ||
+            product.pricing?.basePrice ||
+            product.pricing?.selling ||
+            product.pricing?.salePrice ||
+            100;
 
           // G-02: Use actual store prices (no random simulation)
           const storeComparisons = stores.map((store: any, index: number) => {
@@ -98,14 +94,15 @@ const GroceryComparePage: React.FC = () => {
               storeName: store.name,
               storeLogo: store.logo || store.banner || undefined,
               price,
-              originalPrice: product.pricing?.original && product.pricing.original > price ? product.pricing.original : undefined,
+              originalPrice:
+                product.pricing?.original && product.pricing.original > price ? product.pricing.original : undefined,
               cashback: store.offers?.cashback || store.maxCashback || 0,
               deliveryTime: store.operationalInfo?.deliveryTime || `${15 + index * 10}-${30 + index * 10} min`,
               inStock: true, // Default to true — real stock data would come from a per-store inventory API
             };
           });
 
-          const prices = storeComparisons.map(s => s.price);
+          const prices = storeComparisons.map((s) => s.price);
 
           // Handle images as both string array and object array
           const firstImage = product.images?.[0];
@@ -128,7 +125,7 @@ const GroceryComparePage: React.FC = () => {
         if (!isMounted()) return;
         setCompareItems(getFallbackCompareItems());
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setCompareItems(getFallbackCompareItems());
     } finally {
@@ -149,9 +146,10 @@ const GroceryComparePage: React.FC = () => {
   }, [fetchCompareData]);
 
   // Filter items by search
-  const filteredItems = useMemo(() => compareItems.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  ), [compareItems, searchQuery]);
+  const filteredItems = useMemo(
+    () => compareItems.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase())),
+    [compareItems, searchQuery],
+  );
 
   // Render comparison card
   const renderCompareCard = (item: CompareItem) => {
@@ -162,16 +160,28 @@ const GroceryComparePage: React.FC = () => {
       <View key={item.id} style={styles.compareCard}>
         {/* Product Header */}
         <View style={styles.productHeader}>
-          <CachedImage source={item.image} style={styles.productImage} />
+          <CachedImage source={item.image as any} style={styles.productImage} />
           <View style={styles.productInfo}>
-            <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
+            <Text style={styles.productName} numberOfLines={2}>
+              {item.name}
+            </Text>
             <View style={styles.priceRange}>
-              <Text style={styles.lowestPrice}>{currencySymbol}{item.lowestPrice}</Text>
-              <Text style={styles.priceRangeText}> - {currencySymbol}{item.highestPrice}</Text>
+              <Text style={styles.lowestPrice}>
+                {currencySymbol}
+                {item.lowestPrice}
+              </Text>
+              <Text style={styles.priceRangeText}>
+                {' '}
+                - {currencySymbol}
+                {item.highestPrice}
+              </Text>
             </View>
             {savings > 0 && (
               <View style={styles.savingsBadge}>
-                <Text style={styles.savingsText}>Save up to {currencySymbol}{savings} ({savingsPercent}%)</Text>
+                <Text style={styles.savingsText}>
+                  Save up to {currencySymbol}
+                  {savings} ({savingsPercent}%)
+                </Text>
               </View>
             )}
           </View>
@@ -182,10 +192,7 @@ const GroceryComparePage: React.FC = () => {
           {item.stores.map((store, index) => (
             <Pressable
               key={store.storeId}
-              style={[
-                styles.storeRow,
-                index === 0 && styles.bestDealRow,
-              ]}
+              style={[styles.storeRow, index === 0 && styles.bestDealRow]}
               onPress={() => router.push(`/MainStorePage?storeId=${store.storeId}` as any)}
             >
               {index === 0 && (
@@ -193,17 +200,21 @@ const GroceryComparePage: React.FC = () => {
                   <Text style={styles.bestDealText}>Best Price</Text>
                 </View>
               )}
-              <CachedImage source={store.storeLogo} style={styles.storeLogo} />
+              <CachedImage source={(store.storeLogo || '') as any} style={styles.storeLogo} />
               <View style={styles.storeInfo}>
                 <Text style={styles.storeName}>{store.storeName}</Text>
                 <Text style={styles.deliveryTime}>{store.deliveryTime}</Text>
               </View>
               <View style={styles.priceSection}>
-                <Text style={[styles.storePrice, index === 0 && styles.bestPrice]}>
-                  {currencySymbol}{store.price}
+                <Text style={[styles.storePrice, index === 0 ? styles.bestPrice : null]}>
+                  {currencySymbol}
+                  {store.price}
                 </Text>
                 {store.originalPrice && (
-                  <Text style={styles.originalPrice}>{currencySymbol}{store.originalPrice}</Text>
+                  <Text style={styles.originalPrice}>
+                    {currencySymbol}
+                    {store.originalPrice}
+                  </Text>
                 )}
                 <Text style={styles.cashbackText}>{store.cashback}% cashback</Text>
               </View>
@@ -233,7 +244,10 @@ const GroceryComparePage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -261,18 +275,10 @@ const GroceryComparePage: React.FC = () => {
           {categories.map((cat) => (
             <Pressable
               key={cat.key}
-              style={[
-                styles.categoryChip,
-                selectedCategory === cat.key && styles.categoryChipActive,
-              ]}
+              style={[styles.categoryChip, selectedCategory === cat.key && styles.categoryChipActive]}
               onPress={() => setSelectedCategory(cat.key)}
             >
-              <Text
-                style={[
-                  styles.categoryChipText,
-                  selectedCategory === cat.key && styles.categoryChipTextActive,
-                ]}
-              >
+              <Text style={[styles.categoryChipText, selectedCategory === cat.key && styles.categoryChipTextActive]}>
                 {cat.label}
               </Text>
             </Pressable>
@@ -300,9 +306,7 @@ const GroceryComparePage: React.FC = () => {
             <Text style={styles.emptyText}>Try searching for a product</Text>
           </View>
         ) : (
-          <View style={styles.content}>
-            {filteredItems.map(renderCompareCard)}
-          </View>
+          <View style={styles.content}>{filteredItems.map(renderCompareCard)}</View>
         )}
         <View style={{ height: 100 }} />
       </ScrollView>
@@ -332,17 +336,19 @@ function getFallbackCompareItems(): CompareItem[] {
 
   return products.map((product, idx) => {
     const basePrice = 100 + idx * 50;
-    const storeComparisons = stores.map((store, storeIdx) => ({
-      storeId: store.id,
-      storeName: store.name,
-      storeLogo: store.logo,
-      price: basePrice + (storeIdx) * 10, // G-02: deterministic fallback prices, no random
-      cashback: store.offers?.cashback || store.maxCashback || 0,
-      deliveryTime: `${15 + storeIdx * 10}-${30 + storeIdx * 10} min`,
-      inStock: true,
-    })).sort((a, b) => a.price - b.price);
+    const storeComparisons = stores
+      .map((store, storeIdx) => ({
+        storeId: store.id,
+        storeName: store.name,
+        storeLogo: store.logo,
+        price: basePrice + storeIdx * 10, // G-02: deterministic fallback prices, no random
+        cashback: (store as any).offers?.cashback || store.maxCashback || 0,
+        deliveryTime: `${15 + storeIdx * 10}-${30 + storeIdx * 10} min`,
+        inStock: true,
+      }))
+      .sort((a, b) => a.price - b.price);
 
-    const prices = storeComparisons.map(s => s.price);
+    const prices = storeComparisons.map((s) => s.price);
 
     return {
       id: `compare-${idx}`,

@@ -58,7 +58,7 @@ function SocialActions({
 
     try {
       await onLike();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -79,7 +79,7 @@ function SocialActions({
 
     try {
       await onBookmark();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

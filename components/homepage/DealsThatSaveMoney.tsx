@@ -148,7 +148,7 @@ const generateGradientColors = (bgColor: string, iconColor: string): readonly [s
     [colors.warningScale[400]]: ['#FCD34D', colors.warningScale[400], colors.warningScale[400]], // Amber - Birthday
     [colors.lightMustard]: ['#ffe5a3', '#ffd97a', colors.lightMustard], // Mustard gradient - Senior
     [colors.nileBlue]: ['#C4B5FD', colors.brand.purpleSoft, colors.nileBlue], // Violet - First time
-    [colors.nileBlue]: ['#2d5c7e', colors.brand.nileBlueLight, colors.nileBlue], // Nile Blue gradient - Defence
+    '#1a4a6e': ['#2d5c7e', colors.brand.nileBlueLight, colors.nileBlue], // Nile Blue gradient - Defence
     [colors.error]: ['#FCA5A5', colors.errorScale[400], colors.error], // Red - Healthcare
     '#243f55': ['#C4B5FD', colors.brand.purpleSoft, '#243f55'], // Purple - Senior
     '#2d4a5f': ['#93C5FD', colors.infoScale[400], '#2d4a5f'], // Blue - Teachers
@@ -314,7 +314,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
 
         // Reset impressions tracking on refresh
         if (isRefresh) {
-          setImpressionsSent(new Set());
+          impressionsSent.current = new Set();
         }
       }
     } catch (error: any) {
@@ -369,7 +369,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
 
     try {
       await apiClient.post('/offers/homepage-deals-section/track-impression', { itemIds, tabType });
-    } catch (error) {
+    } catch (error: any) {
       // Silent fail for analytics
     }
   }, []);
@@ -380,7 +380,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
 
     try {
       await apiClient.post('/offers/homepage-deals-section/track-click', { itemId, tabType });
-    } catch (error) {
+    } catch (error: any) {
       // Silent fail for analytics
     }
   }, []);
@@ -421,22 +421,22 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
 
     switch (eligibilityType) {
       case 'student':
-        return user?.verifications?.student === true;
+        return (user as any)?.verifications?.student === true;
       case 'corporate_email':
-        return user?.verifications?.corporate === true;
+        return (user as any)?.verifications?.corporate === true;
       case 'gender':
-        return user?.profile?.gender === 'female';
+        return (user as any)?.profile?.gender === 'female';
       case 'birthday_month':
-        if (!user?.profile?.dateOfBirth) return false;
-        const birthMonth = new Date(user.profile.dateOfBirth).getMonth();
+        if (!(user as any)?.profile?.dateOfBirth) return false;
+        const birthMonth = new Date((user as any).profile.dateOfBirth).getMonth();
         const currentMonth = new Date().getMonth();
         return birthMonth === currentMonth;
       case 'age':
-        if (!user?.profile?.dateOfBirth) return false;
-        const age = Math.floor((Date.now() - new Date(user.profile.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+        if (!(user as any)?.profile?.dateOfBirth) return false;
+        const age = Math.floor((Date.now() - new Date((user as any).profile.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
         return age >= 60;
       case 'verification':
-        return user?.isFirstOrder !== false;
+        return (user as any)?.isFirstOrder !== false;
       default:
         return false;
     }
@@ -498,7 +498,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         if (!isMounted()) return;
         setExclusiveZones(zones);
       }
-    } catch (error) {
+    } catch (error: any) {
       // Keep fallback data
     } finally {
       if (!isMounted()) return;
@@ -551,7 +551,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         if (!isMounted()) return;
         setCashbackData(cards);
       }
-    } catch (error) {
+    } catch (error: any) {
       // Keep fallback data
     } finally {
       if (!isMounted()) return;
@@ -572,12 +572,12 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setOffers(response.data);
+        setOffers(response.data as any);
 
         // Group offers by category and create category cards
         const categoryMap = new Map<string, { count: number; type: string }>();
 
-        response.data.forEach((offer: Offer) => {
+        (response.data as any).forEach((offer: Offer) => {
           const category = offer.category || 'general';
           const existing = categoryMap.get(category) || { count: 0, type: offer.type || 'discount' };
           categoryMap.set(category, {
@@ -590,7 +590,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         const categories: CategoryCard[] = [];
 
         // Nearby Offers (offers with location)
-        const nearbyCount = response.data.filter((o: Offer) => o.distance && o.distance < 5).length;
+        const nearbyCount = (response.data as any).filter((o: Offer) => o.distance && o.distance < 5).length;
         if (nearbyCount > 0) {
           categories.push({
             id: 'nearby',
@@ -604,7 +604,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         }
 
         // Today's Deals (offers expiring today or flash sales)
-        const todayCount = response.data.filter((o: Offer) => {
+        const todayCount = (response.data as any).filter((o: Offer) => {
           if (o.metadata?.flashSale?.isActive) return true;
           const endDate = new Date(o.validity.endDate);
           const today = new Date();
@@ -623,7 +623,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         }
 
         // BOGO deals
-        const bogoCount = response.data.filter((o: Offer) => o.type === 'combo' || o.title?.toLowerCase().includes('bogo')).length;
+        const bogoCount = (response.data as any).filter((o: Offer) => o.type === 'combo' || o.title?.toLowerCase().includes('bogo')).length;
         if (bogoCount > 0) {
           categories.push({
             id: 'bogo',
@@ -638,7 +638,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         }
 
         // Flash Sale
-        const flashCount = response.data.filter((o: Offer) => o.metadata?.flashSale?.isActive).length;
+        const flashCount = (response.data as any).filter((o: Offer) => o.metadata?.flashSale?.isActive).length;
         if (flashCount > 0) {
           categories.push({
             id: 'flash',
@@ -652,7 +652,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         }
 
         // Cashback offers
-        const cashbackCount = response.data.filter((o: Offer) => o.type === 'cashback' || o.cashbackPercentage > 0).length;
+        const cashbackCount = (response.data as any).filter((o: Offer) => o.type === 'cashback' || o.cashbackPercentage > 0).length;
         if (cashbackCount > 0) {
           categories.push({
             id: 'cashback',
@@ -666,7 +666,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         }
 
         // Freebies
-        const freebieCount = response.data.filter((o: Offer) => 
+        const freebieCount = (response.data as any).filter((o: Offer) => 
           o.title?.toLowerCase().includes('free') || o.discountedPrice === 0
         ).length;
         if (freebieCount > 0) {
@@ -687,18 +687,18 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
             {
               id: 'all',
               title: 'All Offers',
-              subtitle: `${response.data.length} offers`,
+              subtitle: `${(response.data as any).length} offers`,
               icon: 'grid-outline',
               iconColor: colors.nileBlue,
               bgColor: '#4C1D95',
-              count: response.data.length,
+              count: (response.data as any).length,
             }
           );
         }
 
         setOfferCategories(categories);
       }
-    } catch (error) {
+    } catch (error: any) {
       // On error, show default categories
       if (!isMounted()) return;
       setOfferCategories([
@@ -1325,11 +1325,11 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
           enabledTabs.map((tab) => (
             <Pressable
               key={tab.key}
-              style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+              style={[styles.tab, activeTab === tab.key ? styles.tabActive : null]}
               onPress={() => setActiveTab(tab.key as TabType)}
              
             >
-              <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
+              <Text style={[styles.tabText, activeTab === tab.key ? styles.tabTextActive : null]}>
                 {tab.displayName}
               </Text>
             </Pressable>

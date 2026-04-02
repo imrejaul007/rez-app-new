@@ -77,7 +77,7 @@ function AchievementUnlockModal({
       await Share.share({
         message: `I just unlocked the "${achievement.title}" achievement on REZ! 🏆\n\nEarned ${achievement.coinReward} coins!\n\nJoin me on REZ and start earning!`,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -135,10 +135,10 @@ function AchievementUnlockModal({
                 {
                   transform: [
                     {
-                      rotate: interpolate(shineAnim.value, [0, 1], ['0deg', '10deg']),
+                      rotate: interpolate(shineAnim.value, [0, 1], [0, 10]) as any,
                     },
                   ],
-                },
+                } as any,
               ]}
             >
               <LinearGradient colors={[colors.background.primary, colors.neutral[100]]} style={styles.iconCircle}>

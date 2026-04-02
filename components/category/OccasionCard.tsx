@@ -46,13 +46,13 @@ const OccasionCard: React.FC<OccasionCardProps> = ({ occasion, onPress }) => {
       >
         {/* Tag Badge */}
         {occasion.tag && (
-          <View style={[styles.tagBadge, { backgroundColor: tagColor }]}>
+          <View style={[styles.tagBadge, { backgroundColor: tagColor || undefined }]}>
             <Text style={styles.tagText}>{occasion.tag}</Text>
           </View>
         )}
 
         {/* Icon */}
-        <View style={[styles.iconContainer, { backgroundColor: occasion.color + '30' }]}>
+        <View style={[styles.iconContainer, { backgroundColor: occasion.color + '30' || undefined }]}>
           <Text style={styles.icon}>{occasion.icon}</Text>
         </View>
 

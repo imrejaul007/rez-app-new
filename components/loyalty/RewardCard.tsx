@@ -71,7 +71,7 @@ function RewardCard({
   if (compact) {
     return (
       <Pressable
-        style={[styles.compactCard, !canRedeem && styles.cardDisabled]}
+        style={[styles.compactCard, !canRedeem ? styles.cardDisabled : null]}
         onPress={() => canRedeem && onRedeem(reward)}
        
         disabled={!canRedeem}
@@ -106,7 +106,7 @@ function RewardCard({
 
   return (
     <Pressable
-      style={[styles.card, !canRedeem && styles.cardDisabled]}
+      style={[styles.card, !canRedeem ? styles.cardDisabled : null]}
       onPress={() => canRedeem && onRedeem(reward)}
      
       disabled={!canRedeem}

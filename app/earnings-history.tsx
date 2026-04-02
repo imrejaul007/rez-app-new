@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   ScrollView,
@@ -9,14 +9,9 @@ import {
   RefreshControl,
   Platform,
   Dimensions,
-  Share
+  Share,
 } from 'react-native';
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useNavigation, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -91,92 +86,107 @@ function EarningsHistoryPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'project' | 'referral' | 'social_media' | 'spin' | 'withdrawal'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'project' | 'referral' | 'social_media' | 'spin' | 'withdrawal'
+  >('all');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [exporting, setExporting] = useState(false);
-  
+
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(30);
 
   const filters = [
     { label: 'All', value: 'all', icon: 'list', gradient: [Colors.brand.purpleLight, Colors.brand.purple] },
-    { label: 'Projects', value: 'project', icon: 'briefcase', gradient: [Colors.brand.purpleLight, Colors.brand.purple] },
+    {
+      label: 'Projects',
+      value: 'project',
+      icon: 'briefcase',
+      gradient: [Colors.brand.purpleLight, Colors.brand.purple],
+    },
     { label: 'Referrals', value: 'referral', icon: 'people', gradient: [Colors.gold, colors.nileBlue] },
-    { label: 'Social', value: 'social_media', icon: 'share-social', gradient: [colors.warningScale[400], colors.warningScale[700]] },
+    {
+      label: 'Social',
+      value: 'social_media',
+      icon: 'share-social',
+      gradient: [colors.warningScale[400], colors.warningScale[700]],
+    },
     { label: 'Spin', value: 'spin', icon: 'trophy', gradient: [colors.brand.pink, colors.deepPink] },
     { label: 'Events', value: 'events', icon: 'ticket', gradient: [Colors.brand.purple, colors.brand.purpleDeep] },
     { label: 'Withdrawals', value: 'withdrawal', icon: 'cash', gradient: [colors.error, colors.error] },
   ];
 
-  const loadEarningsHistory = useCallback(async (pageNum = 1, reset = false) => {
-    try {
-      if (reset) {
-        setLoading(true);
-        setError(null);
-      }
-
-      const params: any = {
-        page: pageNum,
-        limit: 20,
-      };
-
-      if (selectedFilter !== 'all') {
-        params.type = selectedFilter;
-      }
-
-      if (startDate) {
-        params.startDate = startDate.toISOString();
-      }
-
-      if (endDate) {
-        params.endDate = endDate.toISOString();
-      }
-
-      // For now, we'll use a mock endpoint structure
-      // In the future, this should be /api/earnings/history
-      const response = await apiClient.get<EarningsHistoryResponse>('/earnings/history', params);
-
-      if (response.success && response.data) {
-        const newTransactions = response.data.transactions || [];
-        
+  const loadEarningsHistory = useCallback(
+    async (pageNum = 1, reset = false) => {
+      try {
         if (reset) {
+          setLoading(true);
+          setError(null);
+        }
+
+        const params: any = {
+          page: pageNum,
+          limit: 20,
+        };
+
+        if (selectedFilter !== 'all') {
+          params.type = selectedFilter;
+        }
+
+        if (startDate) {
+          params.startDate = startDate.toISOString();
+        }
+
+        if (endDate) {
+          params.endDate = endDate.toISOString();
+        }
+
+        // For now, we'll use a mock endpoint structure
+        // In the future, this should be /api/earnings/history
+        const response = await apiClient.get<EarningsHistoryResponse>('/earnings/history', params);
+
+        if (response.success && response.data) {
+          const newTransactions = response.data.transactions || [];
+
+          if (reset) {
+            if (!isMounted()) return;
+            setTransactions(newTransactions);
+          } else {
+            if (!isMounted()) return;
+            setTransactions((prev) => [...prev, ...newTransactions]);
+          }
+
+          if (response.data.summary) {
+            if (!isMounted()) return;
+            setSummary(response.data.summary);
+          }
+
           if (!isMounted()) return;
-          setTransactions(newTransactions);
+          setHasMore(response.data.pagination?.hasNext || false);
+          if (!isMounted()) return;
+          setPage(pageNum);
+
+          // Animate in
+          if (reset) {
+            fadeAnim.value = withTiming(1, { duration: 500 });
+            slideAnim.value = withTiming(0, { duration: 500 });
+          }
         } else {
-          if (!isMounted()) return;
-          setTransactions(prev => [...prev, ...newTransactions]);
+          throw new Error('Failed to load earnings history');
         }
-
-        if (response.data.summary) {
-          if (!isMounted()) return;
-          setSummary(response.data.summary);
-        }
-
+      } catch (err: any) {
         if (!isMounted()) return;
-        setHasMore(response.data.pagination?.hasNext || false);
+        setError(err instanceof Error ? err.message : 'Failed to load earnings history');
+      } finally {
         if (!isMounted()) return;
-        setPage(pageNum);
-
-        // Animate in
-        if (reset) {
-          fadeAnim.value = withTiming(1, { duration: 500 });
-          slideAnim.value = withTiming(0, { duration: 500 });
-        }
-      } else {
-        throw new Error('Failed to load earnings history');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError(err instanceof Error ? err.message : 'Failed to load earnings history');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [selectedFilter, startDate, endDate]);
+    },
+    [selectedFilter, startDate, endDate],
+  );
 
   useEffect(() => {
     loadEarningsHistory(1, true);
@@ -253,7 +263,11 @@ function EarningsHistoryPage() {
     } else if (days < 7) {
       return `${days} days ago`;
     } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined });
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
+      });
     }
   };
 
@@ -265,10 +279,10 @@ function EarningsHistoryPage() {
   const handleExport = async () => {
     try {
       setExporting(true);
-      
+
       // Create CSV content
       let csvContent = 'Date,Type,Source,Amount,Status,Description\n';
-      
+
       transactions.forEach((transaction) => {
         const date = new Date(transaction.createdAt).toLocaleDateString('en-US');
         const type = transaction.type;
@@ -276,7 +290,7 @@ function EarningsHistoryPage() {
         const amount = transaction.amount;
         const status = transaction.status;
         const description = transaction.description.replace(/,/g, ';'); // Replace commas in description
-        
+
         csvContent += `${date},${type},${source},${amount},${status},${description}\n`;
       });
 
@@ -313,7 +327,7 @@ function EarningsHistoryPage() {
           title: 'Earnings History',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to export earnings history');
     } finally {
       if (!isMounted()) return;
@@ -327,88 +341,71 @@ function EarningsHistoryPage() {
     loadEarningsHistory(1, true);
   };
 
-  const renderTransactionItem = useCallback(({ item: transaction }: { item: EarningsTransaction }) => {
-    return (
-      <Pressable
-        onPress={() => router.push(`/wallet/transaction/${transaction._id}`)}
-        accessibilityLabel={`${transaction.type}. ${transaction.description}. Amount: ${transaction.type === 'withdrawal' ? '-' : '+'}${currencySymbol}${transaction.amount}. Date: ${formatDate(transaction.createdAt)}. Status: ${transaction.status}`}
-        accessibilityRole="button"
-      >
-      <Animated.View
-        style={[
-          styles.transactionCard,
-        ]}
-      >
-        <LinearGradient
-          colors={[colors.background.primary, colors.background.secondary]}
-          style={styles.transactionGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+  const renderTransactionItem = useCallback(
+    ({ item: transaction }: { item: EarningsTransaction }) => {
+      return (
+        <Pressable
+          onPress={() => router.push(`/wallet/transaction/${transaction._id}`)}
+          accessibilityLabel={`${transaction.type}. ${transaction.description}. Amount: ${transaction.type === 'withdrawal' ? '-' : '+'}${currencySymbol}${transaction.amount}. Date: ${formatDate(transaction.createdAt)}. Status: ${transaction.status}`}
+          accessibilityRole="button"
         >
-          <View style={styles.transactionHeader}>
-            <View style={styles.transactionLeft}>
-              <LinearGradient
-                colors={getTypeColor(transaction.type)}
-                style={styles.typeIconContainer}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-              >
-                <Ionicons
-                  name={getTypeIcon(transaction.type) as any}
-                  size={20}
-                  color={colors.text.inverse}
-                />
-              </LinearGradient>
-              <View style={styles.transactionInfo}>
-                <ThemedText style={styles.transactionSource}>
-                  {transaction.source}
-                </ThemedText>
-                <ThemedText style={styles.transactionDescription} numberOfLines={1}>
-                  {transaction.description}
-                </ThemedText>
+          <Animated.View style={[styles.transactionCard]}>
+            <LinearGradient
+              colors={[colors.background.primary, colors.background.secondary]}
+              style={styles.transactionGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.transactionHeader}>
+                <View style={styles.transactionLeft}>
+                  <LinearGradient
+                    colors={getTypeColor(transaction.type) as [string, string]}
+                    style={styles.typeIconContainer}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Ionicons name={getTypeIcon(transaction.type) as any} size={20} color={colors.text.inverse} />
+                  </LinearGradient>
+                  <View style={styles.transactionInfo}>
+                    <ThemedText style={styles.transactionSource}>{transaction.source}</ThemedText>
+                    <ThemedText style={styles.transactionDescription} numberOfLines={1}>
+                      {transaction.description}
+                    </ThemedText>
+                  </View>
+                </View>
+                <View style={styles.transactionRight}>
+                  <ThemedText
+                    style={[
+                      styles.transactionAmount,
+                      transaction.type === 'withdrawal' && styles.transactionAmountNegative,
+                    ]}
+                  >
+                    {transaction.type === 'withdrawal' ? '-' : '+'}
+                    {currencySymbol}
+                    {transaction.amount}
+                  </ThemedText>
+                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(transaction.status) + '20' }]}>
+                    <ThemedText style={[styles.statusText, { color: getStatusColor(transaction.status) }]}>
+                      {transaction.status}
+                    </ThemedText>
+                  </View>
+                </View>
               </View>
-            </View>
-            <View style={styles.transactionRight}>
-              <ThemedText
-                style={[
-                  styles.transactionAmount,
-                  transaction.type === 'withdrawal' && styles.transactionAmountNegative,
-                ]}
-              >
-                {transaction.type === 'withdrawal' ? '-' : '+'}{currencySymbol}{transaction.amount}
-              </ThemedText>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: getStatusColor(transaction.status) + '20' },
-                ]}
-              >
-                <ThemedText
-                  style={[
-                    styles.statusText,
-                    { color: getStatusColor(transaction.status) },
-                  ]}
-                >
-                  {transaction.status}
-                </ThemedText>
+              <View style={styles.transactionFooter}>
+                <ThemedText style={styles.transactionDate}>{formatDate(transaction.createdAt)}</ThemedText>
+                {transaction.metadata?.projectTitle && (
+                  <ThemedText style={styles.transactionMeta} numberOfLines={1}>
+                    {transaction.metadata.projectTitle}
+                  </ThemedText>
+                )}
               </View>
-            </View>
-          </View>
-          <View style={styles.transactionFooter}>
-            <ThemedText style={styles.transactionDate}>
-              {formatDate(transaction.createdAt)}
-            </ThemedText>
-            {transaction.metadata?.projectTitle && (
-              <ThemedText style={styles.transactionMeta} numberOfLines={1}>
-                {transaction.metadata.projectTitle}
-              </ThemedText>
-            )}
-          </View>
-        </LinearGradient>
-      </Animated.View>
-      </Pressable>
-    );
-  }, [currencySymbol, router]);
+            </LinearGradient>
+          </Animated.View>
+        </Pressable>
+      );
+    },
+    [currencySymbol, router],
+  );
 
   const fadeSlideStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -427,8 +424,7 @@ function EarningsHistoryPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-           
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
@@ -454,9 +450,8 @@ function EarningsHistoryPage() {
           <Pressable
             style={styles.exportButton}
             onPress={handleExport}
-           
             disabled={exporting || transactions.length === 0}
-            accessibilityLabel={exporting ? "Exporting earnings report" : "Export earnings report"}
+            accessibilityLabel={exporting ? 'Exporting earnings report' : 'Export earnings report'}
             accessibilityRole="button"
             accessibilityState={{ disabled: exporting || transactions.length === 0, busy: exporting }}
             accessibilityHint="Double tap to download earnings history as CSV"
@@ -480,10 +475,7 @@ function EarningsHistoryPage() {
       {/* Summary Card */}
       {summary && (
         <Animated.View
-          style={[
-            styles.summaryCard,
-            fadeSlideStyle,
-          ]}
+          style={[styles.summaryCard, fadeSlideStyle]}
           accessibilityLabel={`Earnings summary. Total earned: ${currencySymbol}${summary.totalEarned}. Withdrawn: ${currencySymbol}${summary.totalWithdrawn}. Pending: ${currencySymbol}${summary.pendingAmount}`}
           accessibilityRole="summary"
         >
@@ -496,18 +488,23 @@ function EarningsHistoryPage() {
             <View style={styles.summaryRow}>
               <View style={styles.summaryItem}>
                 <ThemedText style={styles.summaryLabel}>Total Earned</ThemedText>
-                <ThemedText style={styles.summaryValue}>{currencySymbol}{summary.totalEarned}</ThemedText>
+                <ThemedText style={styles.summaryValue}>
+                  {currencySymbol}
+                  {summary.totalEarned}
+                </ThemedText>
               </View>
               <View style={styles.summaryItem}>
                 <ThemedText style={styles.summaryLabel}>Withdrawn</ThemedText>
                 <ThemedText style={[styles.summaryValue, { color: Colors.error }]}>
-                  {currencySymbol}{summary.totalWithdrawn}
+                  {currencySymbol}
+                  {summary.totalWithdrawn}
                 </ThemedText>
               </View>
               <View style={styles.summaryItem}>
                 <ThemedText style={styles.summaryLabel}>Pending</ThemedText>
                 <ThemedText style={[styles.summaryValue, { color: Colors.warning }]}>
-                  {currencySymbol}{summary.pendingAmount}
+                  {currencySymbol}
+                  {summary.pendingAmount}
                 </ThemedText>
               </View>
             </View>
@@ -516,12 +513,7 @@ function EarningsHistoryPage() {
       )}
 
       {/* Date Range Filter */}
-      <Animated.View
-        style={[
-          styles.dateFilterContainer,
-          fadeSlideStyle,
-        ]}
-      >
+      <Animated.View style={[styles.dateFilterContainer, fadeSlideStyle]}>
         <View style={styles.dateFilterRow}>
           <Pressable
             style={styles.dateFilterButton}
@@ -532,7 +524,6 @@ function EarningsHistoryPage() {
               setEndDate(today);
               loadEarningsHistory(1, true);
             }}
-           
           >
             <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <ThemedText style={styles.dateFilterText}>Last 7 days</ThemedText>
@@ -547,22 +538,15 @@ function EarningsHistoryPage() {
               setEndDate(today);
               loadEarningsHistory(1, true);
             }}
-           
           >
             <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <ThemedText style={styles.dateFilterText}>Last 30 days</ThemedText>
           </Pressable>
 
           {(startDate || endDate) && (
-            <Pressable
-              style={styles.dateFilterButton}
-              onPress={handleClearDateFilter}
-             
-            >
+            <Pressable style={styles.dateFilterButton} onPress={handleClearDateFilter}>
               <Ionicons name="close-circle" size={16} color={Colors.error} />
-              <ThemedText style={[styles.dateFilterText, { color: Colors.error }]}>
-                Clear
-              </ThemedText>
+              <ThemedText style={[styles.dateFilterText, { color: Colors.error }]}>Clear</ThemedText>
             </Pressable>
           )}
         </View>
@@ -577,26 +561,13 @@ function EarningsHistoryPage() {
       </Animated.View>
 
       {/* Filters */}
-      <Animated.View
-        style={[
-          styles.filtersContainer,
-          fadeSlideStyle,
-        ]}
-      >
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersScroll}
-        >
+      <Animated.View style={[styles.filtersContainer, fadeSlideStyle]}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersScroll}>
           {filters.map((filter) => (
             <Pressable
               key={filter.value}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.value && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.value && styles.filterChipActive]}
               onPress={() => setSelectedFilter(filter.value as any)}
-             
               accessibilityLabel={`Filter by ${filter.label}`}
               accessibilityRole="button"
               accessibilityState={{ selected: selectedFilter === filter.value }}
@@ -604,7 +575,7 @@ function EarningsHistoryPage() {
             >
               {selectedFilter === filter.value ? (
                 <LinearGradient
-                  colors={filter.gradient}
+                  colors={filter.gradient as [string, string]}
                   style={styles.filterGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -631,10 +602,7 @@ function EarningsHistoryPage() {
           <Ionicons name="alert-circle" size={48} color={Colors.error} />
           <ThemedText style={styles.errorTitle}>Error</ThemedText>
           <ThemedText style={styles.errorMessage}>{error}</ThemedText>
-          <Pressable
-            style={styles.retryButton}
-            onPress={() => loadEarningsHistory(1, true)}
-          >
+          <Pressable style={styles.retryButton} onPress={() => loadEarningsHistory(1, true)}>
             <LinearGradient
               colors={[Colors.brand.purpleLight, Colors.brand.purple]}
               style={styles.retryGradient}
@@ -649,11 +617,11 @@ function EarningsHistoryPage() {
         <FlashList
           data={transactions}
           keyExtractor={(item) => item._id}
-          contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
-          onEndReached={() => { if (hasMore && !loading) handleLoadMore(); }}
+          contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }] as any}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+          onEndReached={() => {
+            if (hasMore && !loading) handleLoadMore();
+          }}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -1063,6 +1031,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
 
 export default withErrorBoundary(EarningsHistoryPage, 'EarningsHistory');

@@ -70,7 +70,7 @@ function PlayScreen() {
       } else {
         throw new Error(response.message || 'Failed to fetch articles');
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('❌ [PlayPage] Failed to fetch articles:', error instanceof Error ? error : undefined);
       if (!isMounted()) return;
       setArticlesError('Failed to load articles');
@@ -96,7 +96,7 @@ function PlayScreen() {
       if (state.allVideos.length > 0) {
         await preloadVideos(state.allVideos.slice(0, 5), 0);
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to refresh play data:', error instanceof Error ? error : undefined);
     }
   }, [actions, fetchArticles, preloadVideos, state.allVideos]);

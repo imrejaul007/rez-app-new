@@ -169,13 +169,13 @@ function FoodDiningCategoryPage() {
         if (response.success && response.data?.visits) {
           const counts: Record<string, number> = {};
           response.data.visits.forEach(visit => {
-            const storeId = visit.store?._id || visit.store?.id;
+            const storeId = (visit.store as any)?._id || visit.store?.id;
             if (!storeId) return;
             counts[storeId] = (counts[storeId] || 0) + 1;
           });
           setVisitCounts(counts);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     };
@@ -231,7 +231,7 @@ function FoodDiningCategoryPage() {
           ];
           setRealCuisineFilters(filters);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     };
@@ -309,7 +309,7 @@ function FoodDiningCategoryPage() {
         } else if (res.success && Array.isArray(res.data)) {
           setMyBookings(res.data);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     };
@@ -335,7 +335,7 @@ function FoodDiningCategoryPage() {
         : [];
       if (storesArr.length > 0) {
         const formatted = storesArr.map((store: any) => ({
-          id: store._id || store.id, _id: store._id || store.id, name: store.name, slug: store.slug,
+          id: (store as any)._id || store.id, _id: (store as any)._id || store.id, name: store.name, slug: store.slug,
           logo: store.logo, banner: store.banner, rating: store.rating?.average || 0, ratings: store.rating,
           cashback: store.offers?.cashback, distance: store.distance, tags: store.tags || [],
           rewardRules: store.rewardRules, priceForTwo: store.priceForTwo, offers: store.offers,
@@ -391,30 +391,30 @@ function FoodDiningCategoryPage() {
 
     // Rating filter
     if (activeFilters.minRating) {
-      result = result.filter(s => (s.rating?.average || s.rating || 0) >= activeFilters.minRating!);
+      result = result.filter(s => ((s as any).rating?.average || (s as any).rating || 0) >= activeFilters.minRating!);
     }
 
     // Price filter
     if (activeFilters.priceMax) {
-      result = result.filter(s => (s.priceForTwo || 0) <= activeFilters.priceMax!);
+      result = result.filter(s => ((s as any).priceForTwo || 0) <= activeFilters.priceMax!);
     }
 
     // Open Now filter
     if (activeFilters.openNow) {
-      result = result.filter(s => isRestaurantOpen(s).isOpen);
+      result = result.filter(s => isRestaurantOpen(s as any).isOpen);
     }
 
     // Sort
     result.sort((a, b) => {
       switch (sortOption) {
-        case 'rating': return (b.rating?.average || b.rating || 0) - (a.rating?.average || a.rating || 0);
+        case 'rating': return ((b as any).rating?.average || (b as any).rating || 0) - ((a as any).rating?.average || (a as any).rating || 0);
         case 'delivery_time': {
-          const aTime = parseInt(a.operationalInfo?.deliveryTime) || 60;
-          const bTime = parseInt(b.operationalInfo?.deliveryTime) || 60;
+          const aTime = parseInt((a as any).operationalInfo?.deliveryTime) || 60;
+          const bTime = parseInt((b as any).operationalInfo?.deliveryTime) || 60;
           return aTime - bTime;
         }
         case 'newest': return 0;
-        default: return (b.rating?.count || 0) - (a.rating?.count || 0);
+        default: return ((b as any).rating?.count || 0) - ((a as any).rating?.count || 0);
       }
     });
 
@@ -620,13 +620,13 @@ function FoodDiningCategoryPage() {
               <Pressable
                 key={tab.id}
                 onPress={() => setActiveTab(tab.id)}
-                style={[styles.tab, activeTab === tab.id && styles.tabActive]}
+                style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
                 accessibilityLabel={`${tab.label} tab`}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: activeTab === tab.id }}
               >
                 <Ionicons name={tab.icon as any} size={18} color={activeTab === tab.id ? COLORS.white : COLORS.textSecondary} />
-                <Text style={[styles.tabLabel, activeTab === tab.id && styles.tabLabelActive]}>{tab.label}</Text>
+                <Text style={[styles.tabLabel, activeTab === tab.id ? styles.tabLabelActive : null]}>{tab.label}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -651,7 +651,7 @@ function FoodDiningCategoryPage() {
 
         {(activeTab === 'delivery' || activeTab === 'dineIn' || activeTab === 'takeaway') && (
           <BrowseCategoryGrid
-            categories={subcategories}
+            categories={subcategories as any}
             title="What are you craving?"
             onCategoryPress={handleCategoryPress}
             itemCountLabel="places"
@@ -675,7 +675,7 @@ function FoodDiningCategoryPage() {
                   accessibilityLabel={`Under ${currencySymbol}500 filter${activeFilters.priceMax ? ', active' : ''}`}
                   accessibilityRole="button"
                 >
-                  <Text style={[styles.filterChipText, activeFilters.priceMax && styles.filterChipTextActive]}>Under {currencySymbol}500</Text>
+                  <Text style={[styles.filterChipText, activeFilters.priceMax ? styles.filterChipTextActive : null]}>Under {currencySymbol}500</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.filterChip, activeFilters.minRating ? styles.filterChipActive : null]}
@@ -684,7 +684,7 @@ function FoodDiningCategoryPage() {
                   accessibilityRole="button"
                 >
                   <Ionicons name="star" size={12} color={activeFilters.minRating ? colors.background.primary : COLORS.primaryGold} />
-                  <Text style={[styles.filterChipText, activeFilters.minRating && styles.filterChipTextActive]}>4.0+</Text>
+                  <Text style={[styles.filterChipText, activeFilters.minRating ? styles.filterChipTextActive : null]}>4.0+</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.filterChip, activeFilters.openNow ? styles.filterChipActive : null]}
@@ -693,7 +693,7 @@ function FoodDiningCategoryPage() {
                   accessibilityRole="button"
                 >
                   <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: activeFilters.openNow ? colors.background.primary : colors.success }} />
-                  <Text style={[styles.filterChipText, activeFilters.openNow && styles.filterChipTextActive]}>Open Now</Text>
+                  <Text style={[styles.filterChipText, activeFilters.openNow ? styles.filterChipTextActive : null]}>Open Now</Text>
                 </Pressable>
               </ScrollView>
             </View>
@@ -706,14 +706,14 @@ function FoodDiningCategoryPage() {
                   {dynamicSortOptions.map(opt => (
                     <Pressable
                       key={opt.id}
-                      style={[styles.modalOption, sortOption === opt.id && styles.modalOptionActive]}
+                      style={[styles.modalOption, sortOption === opt.id ? styles.modalOptionActive : null]}
                       onPress={() => { setSortOption(opt.id); setShowSortModal(false); }}
                       accessibilityLabel={`Sort by ${opt.label}`}
                       accessibilityRole="radio"
                       accessibilityState={{ checked: sortOption === opt.id }}
                     >
                       <Ionicons name={opt.icon as any} size={20} color={sortOption === opt.id ? COLORS.primaryGold : COLORS.textSecondary} />
-                      <Text style={[styles.modalOptionText, sortOption === opt.id && styles.modalOptionTextActive]}>{opt.label}</Text>
+                      <Text style={[styles.modalOptionText, sortOption === opt.id ? styles.modalOptionTextActive : null]}>{opt.label}</Text>
                       {sortOption === opt.id && <Ionicons name="checkmark-circle" size={20} color={COLORS.primaryGold} />}
                     </Pressable>
                   ))}
@@ -762,12 +762,12 @@ function FoodDiningCategoryPage() {
                   <Pressable
                     key={cuisine.id}
                     onPress={() => setActiveCuisine(cuisine.id)}
-                    style={[styles.cuisineChip, activeCuisine === cuisine.id && styles.cuisineChipActive]}
+                    style={[styles.cuisineChip, activeCuisine === cuisine.id ? styles.cuisineChipActive : null]}
                     accessibilityLabel={`${cuisine.label} cuisine filter${activeCuisine === cuisine.id ? ', selected' : ''}`}
                     accessibilityRole="button"
                   >
                     <Text style={styles.cuisineIcon}>{cuisine.icon}</Text>
-                    <Text style={[styles.cuisineLabel, activeCuisine === cuisine.id && styles.cuisineLabelActive]}>{cuisine.label}</Text>
+                    <Text style={[styles.cuisineLabel, activeCuisine === cuisine.id ? styles.cuisineLabelActive : null]}>{cuisine.label}</Text>
                   </Pressable>
                 ))}
               </ScrollView>
@@ -829,7 +829,7 @@ function FoodDiningCategoryPage() {
             {filteredStores.length >= 2 && (
               <View onLayout={(e) => { compareSectionY.current = e.nativeEvent.layout.y; }}>
                 <RestaurantCompareSection
-                  restaurants={filteredStores}
+                  restaurants={filteredStores as any}
                   currencySymbol={currencySymbol}
                   onSaveComparison={handleSaveComparison}
                 />
@@ -853,7 +853,7 @@ function FoodDiningCategoryPage() {
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.restaurantsList}>
                   {fastDeliveryStores.slice(0, 5).map((store) => (
-                    <RestaurantCard key={store._id || store.id} restaurant={store} variant="compact" userVisitCount={visitCounts[store._id || store.id] || 0} />
+                    <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} variant="compact" userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
                   ))}
                 </ScrollView>
               </View>
@@ -876,7 +876,7 @@ function FoodDiningCategoryPage() {
                 </View>
                 <View style={styles.restaurantsGrid}>
                   {topRatedStores.slice(0, 4).map((store) => (
-                    <RestaurantCard key={store._id || store.id} restaurant={store} userVisitCount={visitCounts[store._id || store.id] || 0} />
+                    <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
                   ))}
                 </View>
               </View>
@@ -896,7 +896,7 @@ function FoodDiningCategoryPage() {
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.restaurantsList}>
                   {filteredNewStores.map((store: any) => (
-                    <RestaurantCard key={store._id || store.id} restaurant={store} variant="compact" showNewBadge />
+                    <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} variant="compact" showNewBadge />
                   ))}
                 </ScrollView>
               </View>
@@ -921,10 +921,10 @@ function FoodDiningCategoryPage() {
                 ) : (
                   <>
                     {filteredStores.slice(0, RESTAURANTS_PER_PAGE).map((store) => (
-                      <RestaurantCard key={store._id || store.id} restaurant={store} userVisitCount={visitCounts[store._id || store.id] || 0} />
+                      <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
                     ))}
                     {extraStores.map((store) => (
-                      <RestaurantCard key={store._id || store.id} restaurant={store} userVisitCount={visitCounts[store._id || store.id] || 0} />
+                      <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
                     ))}
                     {hasMoreRestaurants && (
                       <Pressable style={styles.loadMoreButton} onPress={loadMoreRestaurants} disabled={isLoadingMore} accessibilityLabel="Load more restaurants" accessibilityRole="button">
@@ -1037,7 +1037,7 @@ function FoodDiningCategoryPage() {
               </View>
               <View style={styles.restaurantsGrid}>
                 {dineInStores.map((store) => (
-                  <RestaurantCard key={store._id || store.id} restaurant={store} showReserveButton={!isDineInFallback} userVisitCount={visitCounts[store._id || store.id] || 0} />
+                  <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} showReserveButton={!isDineInFallback} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
                 ))}
               </View>
             </View>
@@ -1065,9 +1065,9 @@ function FoodDiningCategoryPage() {
               <View style={styles.restaurantsGrid}>
                 {takeawayStores.map((store) => (
                   <RestaurantCard
-                    key={store._id || store.id}
-                    restaurant={store}
-                    userVisitCount={visitCounts[store._id || store.id] || 0}
+                    key={(store as any)._id || store.id}
+                    restaurant={store as any}
+                    userVisitCount={visitCounts[(store as any)._id || store.id] || 0}
                   />
                 ))}
               </View>

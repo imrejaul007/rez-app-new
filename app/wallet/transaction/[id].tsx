@@ -37,7 +37,7 @@ const STATUS_COLORS: Record<string, { color: string; bg: string }> = {
 
 function TransactionDetailPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const [transaction, setTransaction] = useState<TransactionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +60,7 @@ function TransactionDetailPage() {
             <View style={{ width: 40 }} />
           </View>
         </LinearGradient>
-        <View style={styles.emptyState}>
+        <View style={(styles as any).emptyState}>
           <ThemedText style={styles.errorText}>Transaction not found</ThemedText>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}

@@ -159,7 +159,7 @@ function CategoryGrid({
           styles.contentContainer,
           horizontal && styles.horizontalContent,
           items.length === 0 && styles.emptyContent,
-        ]}
+        ] as any}
         ItemSeparatorComponent={
           layoutConfig.type === 'list' && !horizontal ?
             () => <View style={styles.listSeparator} /> :

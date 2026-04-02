@@ -104,7 +104,7 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
   // Fetch eligibility from backend API using priveApi service
   const fetchEligibilityFromBackend = async (): Promise<PriveEligibility | null> => {
     try {
-      const response = await priveApi.getEligibility();
+      const response: any = await priveApi.getEligibility();
 
       if (response.success && response.data) {
         const backendData = response.data;
@@ -159,7 +159,7 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
         };
       }
       return null;
-    } catch (err) {
+    } catch (err: any) {
       return null;
     }
   };
@@ -192,7 +192,7 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
     try {
       const newEligibility = await calculateEligibility();
       setEligibility(newEligibility);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to calculate eligibility');
     } finally {
       setIsLoading(false);
@@ -227,14 +227,14 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
     error,
     isEligible: eligibility.isEligible,
     // Access is the gate now — not just reputation tier
-    isPrive: eligibility.hasAccess === true || eligibility.tier !== 'none',
-    tier: eligibility.effectiveTier || eligibility.tier,
+    isPrive: (eligibility as any).hasAccess === true || eligibility.tier !== 'none',
+    tier: (eligibility as any).effectiveTier || eligibility.tier,
     refresh,
     markGlowSeen,
     // Invite-based access fields
-    hasAccess: eligibility.hasAccess === true,
-    accessSource: eligibility.accessSource || 'none',
-    isWhitelisted: eligibility.isWhitelisted === true,
+    hasAccess: (eligibility as any).hasAccess === true,
+    accessSource: (eligibility as any).accessSource || 'none',
+    isWhitelisted: (eligibility as any).isWhitelisted === true,
   };
 };
 

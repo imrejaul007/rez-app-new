@@ -112,7 +112,7 @@ function ReviewSystem({
     setIsRefreshing(true);
     try {
       await onRefresh();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -147,7 +147,7 @@ function ReviewSystem({
       setNewReview({ rating: 0, title: '', content: '', images: [] });
       setIsWritingReview(false);
       platformAlertSimple('Success', 'Your review has been posted!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to post review. Please try again.');
     }
   };

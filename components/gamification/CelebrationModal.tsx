@@ -58,7 +58,7 @@ function CelebrationModal({
   }, [visible]);
 
   const rotationStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: interpolate(rotateAnim.value, [0, 1], ['0deg', '360deg']) }],
+    transform: [{ rotate: (interpolate as any)(rotateAnim.value, [0, 1], ['0deg', '360deg']) }],
   }));
 
   if (!result) return null;
@@ -143,11 +143,11 @@ function CelebrationModal({
           <Animated.View
             style={[
               styles.iconContainer,
-              rotationStyle,
+              rotationStyle as any,
             ]}
           >
             <LinearGradient
-              colors={getPrizeColor()}
+              colors={getPrizeColor() as any}
               style={styles.iconGradient}
             >
               <Ionicons name={getPrizeIcon() as any} size={64} color="white" />
@@ -258,7 +258,7 @@ function CelebrationModal({
            
           >
             <LinearGradient
-              colors={[colors.brand.purpleLight, colors.brand.purple]}
+              colors={[colors.brand.purpleLight, colors.brand.purple] as any}
               style={styles.awesomeButtonGradient}
             >
               <ThemedText style={styles.awesomeButtonText}>Awesome!</ThemedText>

@@ -97,7 +97,7 @@ interface DisplayItem {
 const BeautyCategoryPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -344,7 +344,7 @@ const BeautyCategoryPage: React.FC = () => {
                   color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
                 />
               )}
-              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id ? styles.filterChipTextActive : null]}>
                 {filter.label}
               </Text>
             </Pressable>

@@ -154,7 +154,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
         if (localCategory) {
 
         }
-      } catch (e) {
+      } catch (e: any) {
 
       }
       
@@ -227,10 +227,9 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                 try {
                   const storesApi = (await import('@/services/storesApi')).default;
                   const storesResponse = await storesApi.getStores({
-                    tags: 'fleet',
-                    isFeatured: true,
+                    tags: ['fleet'],
                     limit: 10
-                  });
+                  } as any);
 
                   if (storesResponse.success && storesResponse.data && Array.isArray(storesResponse.data)) {
                     const featuredStores = storesResponse.data.slice(0, 5);
@@ -319,10 +318,9 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                   let storesFound = false;
                   for (const tag of tagQueries) {
                     const storesResponse = await storesApi.getStores({
-                      tags: tag,
-                      isFeatured: true,
+                      tags: tag ? [tag] : undefined,
                       limit: 10
-                    });
+                    } as any);
 
                     if (storesResponse.success && storesResponse.data && Array.isArray(storesResponse.data) && storesResponse.data.length > 0) {
                       const featuredStores = storesResponse.data.slice(0, 5);
@@ -347,9 +345,9 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                     // Try without featured filter
                     for (const tag of tagQueries) {
                       const storesResponse = await storesApi.getStores({
-                        tags: tag,
+                        tags: tag ? [tag] : undefined,
                         limit: 10
-                      });
+                      } as any);
 
                       if (storesResponse.success && storesResponse.data && Array.isArray(storesResponse.data) && storesResponse.data.length > 0) {
                         const allStores = storesResponse.data.slice(0, 5);
@@ -388,7 +386,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                     cashback: product.offers?.cashback || product.cashback?.percentage || 8,
                     action: {
                       type: 'navigate',
-                      target: `/product-page?cardId=${product._id || product.id}&cardType=category&category=${response.data._id}`
+                      target: `/product-page?cardId=${product._id || product.id}&cardType=category&category=${response.data?._id}`
                     }
                   }));
                 }
@@ -558,7 +556,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
         }
       });
       
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load category';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
     } finally {
@@ -580,7 +578,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       }
       
       // Map backend categories to frontend format
-      const categories = response.data.map(cat => ({
+      const categories = (response.data as any).map((cat: any) => ({
         id: cat._id,
         name: cat.name,
         slug: cat.slug,
@@ -614,7 +612,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       } as Category));
       
       dispatch({ type: 'SET_CATEGORIES', payload: categories });
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load categories';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
     }
@@ -669,7 +667,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       }
       
       dispatch({ type: 'SET_LOADING', payload: false });
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load more items';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
     }

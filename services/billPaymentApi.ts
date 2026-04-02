@@ -90,7 +90,7 @@ export async function getProviders(
   page = 1,
   limit = 20
 ): Promise<ApiResponse<{ providers: BillProviderInfo[]; pagination: PaginationInfo }>> {
-  return apiClient.get(`/bill-payments/providers?type=${type}&page=${page}&limit=${limit}`);
+  return apiClient.get<any>(`/bill-payments/providers?type=${type}&page=${page}&limit=${limit}`);
 }
 
 export async function fetchBill(
@@ -98,14 +98,14 @@ export async function fetchBill(
   customerNumber: string
 ): Promise<ApiResponse<FetchedBillInfo>> {
   // CONS-015: BILL_FETCH timeout — external BBPS/utility calls can be slow
-  return apiClient.post('/bill-payments/fetch-bill', { providerId, customerNumber }, { timeout: API_TIMEOUTS.BILL_FETCH });
+  return apiClient.post<any>('/bill-payments/fetch-bill', { providerId, customerNumber }, { timeout: API_TIMEOUTS.BILL_FETCH });
 }
 
 export async function getPlans(
   providerId: string,
   circle: string = 'KA'
 ): Promise<ApiResponse<{ popular: BillPlanInfo[]; allPlans: BillPlanInfo[]; promoCoins: number; expiryDays: number }>> {
-  return apiClient.get(`/bill-payments/plans?providerId=${providerId}&circle=${circle}`);
+  return apiClient.get<any>(`/bill-payments/plans?providerId=${providerId}&circle=${circle}`);
 }
 
 export async function payBill(
@@ -130,7 +130,7 @@ export async function payBill(
     `bill-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
   // CONS-015: PAYMENT timeout — give payment gateway and BBPS enough time
-  return apiClient.post('/bill-payments/pay', {
+  return apiClient.post<any>('/bill-payments/pay', {
     providerId,
     customerNumber,
     amount,
@@ -148,12 +148,12 @@ export async function getPaymentHistory(
   billType?: string
 ): Promise<ApiResponse<{ payments: BillPaymentRecord[]; pagination: PaginationInfo }>> {
   const q = `page=${page}&limit=${limit}${billType ? `&billType=${billType}` : ''}`;
-  return apiClient.get(`/bill-payments/history?${q}`);
+  return apiClient.get<any>(`/bill-payments/history?${q}`);
 }
 
 export async function requestRefund(
   paymentId: string,
   reason?: string
 ): Promise<ApiResponse<{ refundId: string; status: string }>> {
-  return apiClient.post('/bill-payments/refund', { paymentId, reason });
+  return apiClient.post<any>('/bill-payments/refund', { paymentId, reason });
 }

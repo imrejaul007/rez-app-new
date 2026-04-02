@@ -50,7 +50,7 @@ const FitnessSportsSection: React.FC = () => {
           if (!isMounted()) return;
           setStats(prev => ({ ...prev, maxCashback: maxCashback || 25 }));
         }
-      } catch (error) {
+      } catch (error: any) {
         // Use default values on error
       }
     };
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   gymsTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   gymsSubtitle: {
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   smallTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
   },
   smallSubtitle: {

@@ -107,7 +107,7 @@ const storePaymentApi = {
       throw new Error(response.error || 'Store not found');
     }
 
-    return response.data;
+    return response.data as any;
   },
 
   /**
@@ -123,7 +123,7 @@ const storePaymentApi = {
       throw new Error(response.error || 'Store not found');
     }
 
-    return response.data;
+    return response.data as any;
   },
 
   /**
@@ -132,14 +132,14 @@ const storePaymentApi = {
   async getOffers(storeId: string, amount: number): Promise<OffersResponse> {
     const response = await apiClient.get<OffersApiResponse>(
       `${STORE_PAYMENT_BASE}/offers/${storeId}`,
-      { params: { amount } }
+      { amount } as any
     );
 
     if (!response.success || !response.data) {
       throw new Error(response.error || 'Failed to load offers');
     }
 
-    return response.data;
+    return response.data as any;
   },
 
   /**
@@ -148,14 +148,14 @@ const storePaymentApi = {
   async initiatePayment(request: StorePaymentRequest): Promise<StorePaymentInitResponse> {
     const response = await apiClient.post<PaymentInitApiResponse>(
       `${STORE_PAYMENT_BASE}/initiate`,
-      request
+      request as any
     );
 
     if (!response.success || !response.data) {
       throw new Error(response.error || 'Failed to initiate payment');
     }
 
-    return response.data;
+    return response.data as any;
   },
 
   /**
@@ -164,14 +164,14 @@ const storePaymentApi = {
   async confirmPayment(request: StorePaymentConfirmRequest): Promise<StorePaymentConfirmResponse> {
     const response = await apiClient.post<PaymentConfirmApiResponse>(
       `${STORE_PAYMENT_BASE}/confirm`,
-      request
+      request as any
     );
 
     if (!response.success || !response.data) {
       throw new Error(response.error || 'Failed to confirm payment');
     }
 
-    return response.data;
+    return response.data as any;
   },
 
   /**
@@ -203,7 +203,7 @@ const storePaymentApi = {
         };
       }
 
-      return response.data;
+      return response.data as any;
     } catch (error) {
       // Return empty history on error - API might not be implemented yet
       return {
@@ -273,7 +273,7 @@ const storePaymentApi = {
       throw new Error(response.error || 'Store not found');
     }
 
-    return response.data;
+    return response.data as any;
   },
 
   /**
@@ -372,7 +372,7 @@ const storePaymentApi = {
     try {
       const response = await apiClient.get<any>(
         `${STORE_PAYMENT_BASE}/payment-methods/${storeId}`,
-        { params: amount ? { amount } : undefined }
+        (amount ? { amount } : undefined) as any
       );
 
       if (!response.success || !response.data) {

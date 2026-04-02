@@ -123,7 +123,7 @@ function CategoryCard({
         type: 'success',
         duration: 3000
       });
-    } catch (error) {
+    } catch (error: any) {
       
       // Show error toast
       showToast({
@@ -367,7 +367,7 @@ function CategoryCard({
                         } else {
                           await cartActions.removeItem(cartItem!.id);
                         }
-                      } catch (error) {
+                      } catch (error: any) {
                         showToast({
                           message: 'Failed to update quantity',
                           type: 'error',
@@ -390,7 +390,7 @@ function CategoryCard({
                       e.stopPropagation();
                       try {
                         await cartActions.updateQuantity(cartItem!.id, quantityInCart + 1);
-                      } catch (error) {
+                      } catch (error: any) {
                         showToast({
                           message: 'Failed to update quantity',
                           type: 'error',
@@ -406,7 +406,7 @@ function CategoryCard({
               ) : (
                 // Add to Cart Button
                 <Pressable 
-                  style={[styles.addToCartButton, isAddingToCart && styles.addToCartButtonDisabled]} 
+                  style={[styles.addToCartButton, isAddingToCart ? styles.addToCartButtonDisabled : null]} 
                   onPress={handleAddToCart}
                   disabled={isAddingToCart}
                 >

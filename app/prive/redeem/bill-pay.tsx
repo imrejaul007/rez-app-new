@@ -208,7 +208,7 @@ function BillPayScreen() {
                   onPress={() => canAfford && handleSelectAmount(amount)}
                   disabled={!canAfford}
                 >
-                  <Text style={[styles.amountCoins, !canAfford && styles.amountCoinsDisabled]}>
+                  <Text style={[styles.amountCoins, !canAfford ? styles.amountCoinsDisabled : null]}>
                     {amount.toLocaleString()}
                   </Text>
                   <Text style={styles.amountLabel}>coins</Text>
@@ -244,7 +244,7 @@ function BillPayScreen() {
           {/* Redeem Button */}
           {selectedAmount && selectedAmount >= 100 && (
             <Pressable
-              style={[styles.redeemButton, isRedeeming && styles.redeemButtonDisabled]}
+              style={[styles.redeemButton, isRedeeming ? styles.redeemButtonDisabled : null]}
               onPress={handleRedeem}
               disabled={isRedeeming || availableCoins < selectedAmount}
             >

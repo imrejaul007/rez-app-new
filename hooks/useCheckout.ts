@@ -754,7 +754,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                     addr.pincode === (lastAddr.pincode || (lastAddr as any).postalCode)
                   );
                 }
-              } catch (err) {
+              } catch (err: any) {
                 errorReporter.captureError(
                   err instanceof Error ? err : new Error('Failed to fetch recent order for address'),
                   { context: 'useCheckout.loadAddresses' },
@@ -995,7 +995,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       devLog.log('🎟️ [Checkout] Validating coupon:', code.code, 'with cart data:', cartData);
 
-      const response = await couponService.validateCoupon(code.code, cartData);
+      const response: any = await couponService.validateCoupon(code.code, cartData);
 
       devLog.log('🎟️ [Checkout] Coupon validation response:', response);
 
@@ -1052,7 +1052,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         }));
         return { success: false, message: errorMsg };
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('💳 [Checkout] Coupon validation error:', error);
       const errorMsg = 'Failed to validate coupon';
       setState(prev => ({
@@ -1503,7 +1503,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       devLog.log('💰 [Checkout] Store promo coin state:', JSON.stringify(state.coinSystem.storePromoCoin));
 
       // Create order via API
-      const response = await ordersService.createOrder(orderData);
+      const response: any = await ordersService.createOrder(orderData);
 
       if (response.success && response.data) {
         // Debug: Log the order data to trace ID extraction
@@ -1544,7 +1544,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           currentStep: 'payment_methods',
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('💳 [Checkout] Order creation failed:', error);
       setState(prev => ({
         ...prev,
@@ -1793,7 +1793,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId}&paymentMethod=wallet`);
 
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('💳 [Checkout] Wallet payment error:', error);
       setState(prev => ({
         ...prev,
@@ -2005,7 +2005,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             devLog.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error);
             failedStores.push(storeGroup.storeName);
           }
-        } catch (err) {
+        } catch (err: any) {
           devLog.error(`❌ [COD] Error creating order for ${storeGroup.storeName}:`, err);
           failedStores.push(storeGroup.storeName);
         }
@@ -2057,7 +2057,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       router.replace(`/payment-success?orderId=${orderIdsParam}&transactionId=${transactionId}&paymentMethod=cod&multiStore=${isMultiStore}`);
 
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('💵 [Checkout] COD payment error:', error);
       setState(prev => ({
         ...prev,
@@ -2191,7 +2191,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                     }
                   }
                 }
-              } catch (err) {
+              } catch (err: any) {
                 devLog.error('⚠️ [Checkout] Error auto-applying card offer:', err);
                 // Non-critical error, continue with order
               }
@@ -2307,7 +2307,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             router.replace(
               `/payment-success?orderId=${orderId}&transactionId=${paymentResponse.transactionId}&paymentMethod=razorpay`
             );
-          } catch (error) {
+          } catch (error: any) {
             devLog.error('❌ [Checkout] Post-payment error:', error);
             // Payment was charged but order creation failed — attempt server-side refund.
             try {
@@ -2343,7 +2343,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           }));
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [Checkout] Razorpay initialization error:', error);
       showToast({
         message: error instanceof Error ? error.message : 'Failed to initialize payment',
@@ -2421,7 +2421,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           subtotal: itemTotal,
         };
 
-        const response = await couponService.validateCoupon(code, cartData);
+        const response: any = await couponService.validateCoupon(code, cartData);
 
         if (response.success && response.data) {
           // Update promo code with backend values
@@ -2470,7 +2470,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           }));
           return { success: false, message: errorMsg };
         }
-      } catch (error) {
+      } catch (error: any) {
         const errorMsg = 'Failed to validate promo code';
         setState(prev => ({
           ...prev,

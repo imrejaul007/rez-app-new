@@ -50,7 +50,7 @@ export function useRecommendations({
       setLoading(true);
       setError(null);
 
-      const response = await recommendationService.getSimilarProducts(productId, 6);
+      const response: any = await recommendationService.getSimilarProducts(productId, 6);
       if (response.success && response.data) {
         setSimilar(response.data.similarProducts);
       }
@@ -69,7 +69,7 @@ export function useRecommendations({
       setLoading(true);
       setError(null);
 
-      const response = await recommendationService.getFrequentlyBoughtTogether(productId, 4);
+      const response: any = await recommendationService.getFrequentlyBoughtTogether(productId, 4);
       if (response.success && response.data) {
         setFrequentlyBought(response.data.bundles);
       }
@@ -88,7 +88,7 @@ export function useRecommendations({
       setLoading(true);
       setError(null);
 
-      const response = await recommendationService.getBundleDeals(productId, 3);
+      const response: any = await recommendationService.getBundleDeals(productId, 3);
       if (response.success && response.data) {
         setBundles(response.data.bundles);
       }
@@ -188,7 +188,7 @@ export function usePersonalizedRecommendations({
 
       // Try personalized recommendations first
       try {
-        const response = await recommendationService.getPersonalizedRecommendations(limit, excludeProducts);
+        const response: any = await recommendationService.getPersonalizedRecommendations(limit, excludeProducts);
         if (response.success && response.data?.recommendations?.length > 0) {
           setRecommendations(response.data.recommendations);
           gotProducts = true;

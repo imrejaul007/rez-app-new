@@ -61,7 +61,7 @@ export default function SurpriseScreen() {
       const surpriseData = await tryApi.getSurpriseTrial();
       setData(surpriseData);
       setRevealed(!!surpriseData.merchant);
-    } catch (err) {
+    } catch (err: any) {
       if (__DEV__) console.error('Failed to load surprise:', err);
     } finally {
       setLoading(false);
@@ -93,7 +93,7 @@ export default function SurpriseScreen() {
           const revealed = await tryApi.revealSurpriseTrial();
           setData(revealed);
           setRevealed(true);
-        } catch (err) {
+        } catch (err: any) {
           if (__DEV__) console.error('Failed to reveal surprise:', err);
         } finally {
           setRevealing(false);

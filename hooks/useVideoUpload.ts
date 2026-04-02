@@ -55,7 +55,7 @@ export function useVideoUpload() {
       const status = result?.granted ? 'granted' : 'denied';
       setPermissions(prev => ({ ...prev, camera: status }));
       return result?.granted ?? false;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   }, [requestCameraPermissionHook]);
@@ -68,7 +68,7 @@ export function useVideoUpload() {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       setPermissions(prev => ({ ...prev, mediaLibrary: status }));
       return status === 'granted';
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   }, []);
@@ -208,7 +208,7 @@ export function useVideoUpload() {
       } else {
         setState(prev => ({ ...prev, status: 'idle' }));
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         status: 'error',
@@ -277,7 +277,7 @@ export function useVideoUpload() {
       } else {
         setState(prev => ({ ...prev, status: 'idle' }));
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         status: 'error',
@@ -397,10 +397,10 @@ export function useVideoUpload() {
     const startTime = Date.now();
     setState(prev => ({
       ...prev,
-      status: 'uploading',
+      status: 'uploading' as const,
       error: null,
       progress: { loaded: 0, total: 100, percentage: 0, speed: 0, timeRemaining: 0, startTime, currentTime: startTime },
-    }));
+    }) as unknown as VideoUploadState);
 
     try {
       // Step 1: Upload to Cloudinary
@@ -457,7 +457,7 @@ export function useVideoUpload() {
                 startTime,
                 currentTime: Date.now(),
               },
-            }));
+            }) as unknown as VideoUploadState);
           }
         };
 

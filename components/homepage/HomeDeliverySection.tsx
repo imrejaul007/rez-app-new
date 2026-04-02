@@ -64,11 +64,11 @@ const CategoryChip = memo(({
   onPress: () => void;
 }) => (
   <Pressable
-    style={[styles.categoryChip, isActive && styles.categoryChipActive]}
+    style={[styles.categoryChip, isActive ? styles.categoryChipActive : null]}
     onPress={onPress}
    
   >
-    <Text style={[styles.categoryChipText, isActive && styles.categoryChipTextActive]}>
+    <Text style={[styles.categoryChipText, isActive ? styles.categoryChipTextActive : null]}>
       {label}
     </Text>
   </Pressable>

@@ -93,7 +93,7 @@ const LearnMaximiseSection = () => {
           if (!isMounted()) return;
           setContent(response.data.content);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Silent fail - section shows explainer video regardless
       } finally {
         if (!isMounted()) return;

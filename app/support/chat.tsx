@@ -37,7 +37,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 function SupportChatPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ ticketId?: string; category?: string }>();
+  const params = useLocalSearchParams<any>();
   const scrollViewRef = useRef<ScrollView>(null);
 
   const {
@@ -56,7 +56,6 @@ function SupportChatPage() {
     showRating,
     showFAQ,
     faqSuggestions,
-    isSendingMessage,
     isOnline,
     createTicket,
     closeTicket,
@@ -78,6 +77,7 @@ function SupportChatPage() {
 
   const [showOptions, setShowOptions] = useState(false);
   const [initializingTicket, setInitializingTicket] = useState(false);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const isMounted = useIsMounted();
 
   // Auto-scroll to bottom when new messages arrive
@@ -147,12 +147,17 @@ function SupportChatPage() {
     if (!inputText.trim() && attachments.length === 0) return;
 
     stopTyping();
-    const success = await sendMessage(inputText, attachments.length > 0 ? attachments : undefined);
+    setIsSendingMessage(true);
+    try {
+      const success = await sendMessage(inputText, attachments.length > 0 ? attachments : undefined);
 
-    if (success) {
-      analyticsService.track('support_message_sent', { ticketId: currentTicket?.id });
-    } else if (!isOnline) {
-      platformAlertSimple('Offline', 'You are offline. Your message will be sent when you reconnect.');
+      if (success) {
+        analyticsService.track('support_message_sent', { ticketId: currentTicket?.id });
+      } else if (!isOnline) {
+        platformAlertSimple('Offline', 'You are offline. Your message will be sent when you reconnect.');
+      }
+    } finally {
+      if (isMounted()) setIsSendingMessage(false);
     }
   };
 

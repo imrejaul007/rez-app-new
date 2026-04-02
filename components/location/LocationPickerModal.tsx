@@ -40,7 +40,7 @@ function LocationPickerModal({
   const { search, searchResults, isSearching, clearResults } = useAddressSearch();
   const { getCurrentLocation } = useLocation();
   const [isGettingCurrentLocation, setIsGettingCurrentLocation] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<TextInput>(null);
 
   // New state for details form
@@ -91,7 +91,7 @@ function LocationPickerModal({
       if (location) {
         onClose();
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -357,7 +357,7 @@ function LocationPickerModal({
         data={searchResults}
         renderItem={renderResultItem}
         keyExtractor={keyExtractor}
-        contentContainerStyle={searchResults.length === 0 ? styles.emptyListContent : undefined}
+        contentContainerStyle={(searchResults.length === 0 ? styles.emptyListContent : undefined) as any}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={ListEmptyComponent}

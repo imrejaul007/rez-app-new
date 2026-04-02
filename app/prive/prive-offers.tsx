@@ -41,7 +41,7 @@ function PriveOffersScreen() {
           setHasMore(pageNum < (response.data.pagination?.pages || 1));
           setError(null);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load offers');
       } finally {

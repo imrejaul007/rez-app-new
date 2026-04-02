@@ -161,7 +161,7 @@ function DealCard({
     >
       <Pressable
         onPress={handleCardPress}
-        accessibilityLabel={`${deal.storeName} deal: ${deal.badge?.text || `Save up to ${currencySymbol}${savingsAmount.toLocaleString()}`}. ${timeLeft}`}
+        accessibilityLabel={`${(deal as any).storeName} deal: ${deal.badge?.text || `Save up to ${currencySymbol}${savingsAmount.toLocaleString()}`}. ${timeLeft}`}
         accessibilityRole="button"
         accessibilityHint="Double tap to view deal details"
         style={styles.cardContent}
@@ -230,7 +230,7 @@ function DealCard({
         )}
 
         {/* Main Content */}
-        <View style={[styles.dealContent, deal.image && styles.dealContentWithImage]}>
+        <View style={[styles.dealContent, deal.image ? styles.dealContentWithImage : null]}>
           <ThemedText style={styles.dealTitle}>{deal.title}</ThemedText>
           
           {deal.description && (

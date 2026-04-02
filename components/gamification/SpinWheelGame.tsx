@@ -130,7 +130,7 @@ function SpinWheelGame({
           }
 
           // Show result with coins info (modal will be shown by parent component)
-          onSpinComplete(result, coinsAdded, newBalance, tournamentUpdate);
+          onSpinComplete(result as unknown as SpinWheelResult, coinsAdded, newBalance, tournamentUpdate);
 
           // Check eligibility for next spin
           await checkSpinEligibility();

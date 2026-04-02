@@ -84,7 +84,7 @@ const AllCampaignsPage: React.FC = () => {
         if (!isMounted()) return;
         setCampaigns(response.data.campaigns);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -194,14 +194,14 @@ const AllCampaignsPage: React.FC = () => {
             <Pressable
               key={type.id}
               onPress={() => setSelectedType(type.id)}
-              style={[styles.filterChip, selectedType === type.id && styles.filterChipActive]}
+              style={[styles.filterChip, selectedType === type.id ? styles.filterChipActive : null]}
             >
               <Ionicons
                 name={type.icon as any}
                 size={16}
                 color={selectedType === type.id ? COLORS.white : COLORS.gray600}
               />
-              <Text style={[styles.filterChipText, selectedType === type.id && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedType === type.id ? styles.filterChipTextActive : null]}>
                 {type.label}
               </Text>
             </Pressable>
@@ -248,7 +248,7 @@ const AllCampaignsPage: React.FC = () => {
 
                   {/* Badge */}
                   <View style={[styles.badge, { backgroundColor: campaign.badgeBg || COLORS.white }]}>
-                    <Text style={[styles.badgeText, { color: campaign.badgeColor || COLORS.navy }]}>
+                    <Text style={[styles.badgeText, { color: campaign.badgeColor || (COLORS as any).navy }]}>
                       {campaign.badge}
                     </Text>
                   </View>
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h4,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtext: {

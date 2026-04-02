@@ -80,7 +80,7 @@ function ContactModal({
           textArea.select();
           try {
             document.execCommand('copy');
-          } catch (err) {
+          } catch (err: any) {
             // silently handle
           }
           document.body.removeChild(textArea);
@@ -96,7 +96,7 @@ function ContactModal({
       setTimeout(() => {
         setCopiedField(null);
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -110,7 +110,7 @@ function ContactModal({
       if (canOpen) {
         await Linking.openURL(url);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -124,7 +124,7 @@ function ContactModal({
       if (canOpen) {
         await Linking.openURL(url);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -217,7 +217,7 @@ function ContactModal({
 
               {/* Email */}
               {email && (
-                <View style={[styles.contactItem, !phone && styles.contactItemFirst]}>
+                <View style={[styles.contactItem, !phone ? styles.contactItemFirst : null]}>
                   <View style={styles.contactHeader}>
                     <Ionicons name="mail" size={20} color={colors.brand.purpleLight} />
                     <ThemedText style={styles.contactLabel}>Email Address</ThemedText>

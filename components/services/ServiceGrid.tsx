@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import ServiceCard, { ServiceItem } from './ServiceCard';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
@@ -98,18 +99,16 @@ const ServiceGrid: React.FC<ServiceGridProps> = ({
   }
 
   return (
-    <FlashList
+    <AnyFlashList
       data={services}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item: any) => item.id}
       numColumns={columns}
-      contentContainerStyle={[styles.listContent, contentContainerStyle]}
+      contentContainerStyle={[styles.listContent, contentContainerStyle] as any}
       showsVerticalScrollIndicator={false}
       ListEmptyComponent={renderEmpty}
       removeClippedSubviews={Platform.OS !== 'web'}
       maxToRenderPerBatch={10}
-      windowSize={5}
-      initialNumToRender={8}
       estimatedItemSize={220}
     />
   );

@@ -297,10 +297,10 @@ function CreatorDashboard() {
               ).map((f) => (
                 <Pressable
                   key={f.key}
-                  style={[styles.filterChip, pickFilter === f.key && styles.filterChipActive]}
+                  style={[styles.filterChip, pickFilter === f.key ? styles.filterChipActive : null]}
                   onPress={() => setPickFilter(f.key)}
                 >
-                  <Text style={[styles.filterChipText, pickFilter === f.key && styles.filterChipTextActive]}>
+                  <Text style={[styles.filterChipText, pickFilter === f.key ? styles.filterChipTextActive : null]}>
                     {f.label} ({pickCounts[f.key]})
                   </Text>
                 </Pressable>
@@ -512,13 +512,13 @@ function CreatorDashboard() {
                     <View
                       style={[
                         styles.tierDot,
-                        isPast && !isActive && { backgroundColor: tcolors.border, borderColor: tcolors.border },
+                        isPast && !isActive && { backgroundColor: tColors.border, borderColor: tColors.border },
                         isActive && {
                           backgroundColor: tColors.bg,
-                          borderColor: tcolors.border,
+                          borderColor: tColors.border,
                           borderWidth: 2.5,
                           transform: [{ scale: 1.35 }],
-                          shadowColor: tcolors.border,
+                          shadowColor: tColors.border,
                           shadowOffset: { width: 0, height: 2 },
                           shadowOpacity: 0.4,
                           shadowRadius: 5,
@@ -526,7 +526,7 @@ function CreatorDashboard() {
                         },
                       ]}
                     >
-                      {isActive && <Ionicons name={icon.filled as any} size={13} color={tcolors.border} />}
+                      {isActive && <Ionicons name={icon.filled as any} size={13} color={tColors.border} />}
                       {isPast && !isActive && (
                         <Ionicons name={icon.outline as any} size={10} color={colors.text.inverse} />
                       )}
@@ -534,7 +534,7 @@ function CreatorDashboard() {
                     <Text
                       style={[
                         styles.tierName,
-                        isActive && { fontWeight: '700', color: tcolors.border },
+                        isActive && { fontWeight: '700', color: tColors.border },
                         isPast && !isActive && { color: colors.text.tertiary },
                       ]}
                     >

@@ -101,7 +101,7 @@ class AddressApiService {
 
   // Create new address
   async createAddress(data: AddressCreate): Promise<ApiResponse<Address>> {
-    const response = await apiClient.post<any>(this.baseUrl, data);
+    const response = await apiClient.post<any>(this.baseUrl, data as any);
     if (response.success && response.data) {
       return { ...response, data: normaliseAddress(response.data) };
     }
@@ -110,7 +110,7 @@ class AddressApiService {
 
   // Update address
   async updateAddress(id: string, data: AddressUpdate): Promise<ApiResponse<Address>> {
-    const response = await apiClient.put<any>(`${this.baseUrl}/${id}`, data);
+    const response = await apiClient.put<any>(`${this.baseUrl}/${id}`, data as any);
     if (response.success && response.data) {
       return { ...response, data: normaliseAddress(response.data) };
     }
@@ -119,7 +119,7 @@ class AddressApiService {
 
   // Delete address
   async deleteAddress(id: string): Promise<ApiResponse<{ deletedId: string }>> {
-    return apiClient.delete(`${this.baseUrl}/${id}`);
+    return apiClient.delete<any>(`${this.baseUrl}/${id}`);
   }
 
   // Set default address

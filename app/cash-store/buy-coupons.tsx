@@ -115,7 +115,7 @@ function BuyCouponsPage() {
         if (response.success && response.data) {
           setGiftCardCategories(response.data as unknown as string[]);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       }
     };
@@ -167,7 +167,7 @@ function BuyCouponsPage() {
           if (!isMounted()) return;
           setGiftCardsHasMore(mapped.length >= PAGE_SIZE);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!append) {
           if (!isMounted()) return;
           setGiftCardsError('Unable to load gift cards. Pull down to retry.');
@@ -205,7 +205,7 @@ function BuyCouponsPage() {
           setCoupons((response.data as any)?.coupons || []);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setCouponsError('Unable to load coupons. Pull down to retry.');
     }
@@ -358,9 +358,9 @@ function BuyCouponsPage() {
                 <Pressable
                   key={cat}
                   onPress={() => handleCategorySelect(cat)}
-                  style={[styles.chip, isActive && styles.chipActive]}
+                  style={[styles.chip, isActive ? styles.chipActive : null]}
                 >
-                  <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{cat}</Text>
+                  <Text style={[styles.chipText, isActive ? styles.chipTextActive : null]}>{cat}</Text>
                 </Pressable>
               );
             })}
@@ -565,7 +565,7 @@ function BuyCouponsPage() {
           </View>
 
           {/* Search */}
-          <View style={[styles.searchBar, searchFocused && styles.searchBarFocused]}>
+          <View style={[styles.searchBar, searchFocused ? styles.searchBarFocused : null]}>
             <Ionicons name="search" size={15} color={searchFocused ? colors.brand.caramel : '#94A3B8'} />
             <TextInput
               style={styles.searchInput}
@@ -889,7 +889,7 @@ const CouponCard = React.memo(
 
               <Pressable
                 onPress={() => onClaim(coupon._id)}
-                style={[styles.claimBtn, isClaimed && styles.claimBtnClaimed]}
+                style={[styles.claimBtn, isClaimed ? styles.claimBtnClaimed : null]}
                 disabled={isClaiming || isClaimed}
               >
                 {isClaiming ? (

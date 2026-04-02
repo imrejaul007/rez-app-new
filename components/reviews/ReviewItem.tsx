@@ -94,7 +94,7 @@ function ReviewItem({
         setHelpfulCount(newCount);
         onHelpfulPress?.(reviewId, newCount);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to mark review as helpful');
     } finally {
       if (!isMounted()) return;
@@ -119,7 +119,7 @@ function ReviewItem({
       await reviewService.reportReview(reviewId, reason);
       platformAlertSimple('Success', 'Review reported successfully');
       onReportPress?.(reviewId);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to report review');
     }
   };
@@ -229,7 +229,7 @@ function ReviewItem({
       {showActions && (
         <View style={styles.actionsRow}>
           <Pressable
-            style={[styles.actionButton, isHelpful && styles.actionButtonActive]}
+            style={[styles.actionButton, isHelpful ? styles.actionButtonActive : null]}
             onPress={handleHelpfulPress}
             disabled={isProcessing || isHelpful}
            
@@ -239,7 +239,7 @@ function ReviewItem({
               size={16}
               color={isHelpful ? colors.brand.purpleLight : colors.neutral[500]}
             />
-            <ThemedText style={[styles.actionText, isHelpful && styles.actionTextActive]}>
+            <ThemedText style={[styles.actionText, isHelpful ? styles.actionTextActive : null]}>
               Helpful ({helpfulCount})
             </ThemedText>
           </Pressable>

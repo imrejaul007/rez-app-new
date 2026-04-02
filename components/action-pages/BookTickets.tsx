@@ -132,7 +132,7 @@ function BookTicketsPage() {
         if (!isMounted()) return;
         setVenues(bookable.length > 0 ? bookable : allStores.slice(0, 20));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -164,7 +164,7 @@ function BookTicketsPage() {
         const firstAvailable = eventSlots.find(s => s.available);
         if (firstAvailable) setSelectedTime(firstAvailable.time);
       }
-    } catch (err) {
+    } catch (err: any) {
       const fallback: TimeSlot[] = [
         '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
         '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00',
@@ -227,8 +227,8 @@ function BookTicketsPage() {
 
       if (res.success) {
         if (!isMounted()) return;
-        setBookingId(res.data?.id || res.data?._id || null);
-        setBookingNumber(res.data?.appointmentNumber || res.data?.bookingNumber || null);
+        setBookingId(res.data?.id || (res.data as any)?._id || null);
+        setBookingNumber((res.data as any)?.appointmentNumber || (res.data as any)?.bookingNumber || null);
         setStep('confirm');
       } else {
         platformAlertSimple('Booking Failed', res.message || 'Could not create booking. Please try again.');
@@ -284,7 +284,7 @@ function BookTicketsPage() {
             <Text style={styles.storeCuisine} numberOfLines={1}>{getServiceTags(store)}</Text>
             <View style={styles.storeMetaRow}>
               <View style={styles.storeRating}>
-                <Ionicons name="star" size={12} color={COLORS.goldDark} />
+                <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
                 <Text style={styles.storeRatingText}>{rating}</Text>
                 <Text style={styles.storeReviewCount}>({reviewCount})</Text>
               </View>
@@ -323,7 +323,7 @@ function BookTicketsPage() {
         </View>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.violet} />
+            <ActivityIndicator size="large" color={(COLORS as any).violet} />
             <Text style={styles.loadingText}>Finding entertainment venues...</Text>
           </View>
         ) : filteredVenues.length === 0 ? (
@@ -348,7 +348,7 @@ function BookTicketsPage() {
         <ScrollView contentContainerStyle={styles.confirmContent}>
           <View style={styles.confirmIconWrap}>
             <LinearGradient colors={[COLORS.violetLight, colors.tint.purple]} style={styles.confirmIconGradient}>
-              <Ionicons name="checkmark-circle" size={64} color={COLORS.violet} />
+              <Ionicons name="checkmark-circle" size={64} color={(COLORS as any).violet} />
             </LinearGradient>
           </View>
           <Text style={styles.confirmTitle}>Tickets Booked!</Text>
@@ -367,7 +367,7 @@ function BookTicketsPage() {
           <View style={styles.confirmCard}>
             <View style={styles.confirmRow}>
               <View style={[styles.confirmRowIcon, { backgroundColor: 'rgba(139,92,246,0.1)' }]}>
-                <Ionicons name="location" size={16} color={COLORS.violet} />
+                <Ionicons name="location" size={16} color={(COLORS as any).violet} />
               </View>
               <View><Text style={styles.confirmRowLabel}>Venue</Text><Text style={styles.confirmRowValue}>{selectedStore?.name}</Text></View>
             </View>
@@ -394,7 +394,7 @@ function BookTicketsPage() {
             </View>
           </View>
           <View style={styles.confirmNote}>
-            <Ionicons name="information-circle" size={16} color={COLORS.violet} />
+            <Ionicons name="information-circle" size={16} color={(COLORS as any).violet} />
             <Text style={styles.confirmNoteText}>Show your booking reference at the venue. Earn bonus coins on check-in!</Text>
           </View>
           <Pressable style={styles.doneBtn} onPress={() => router.back()}>
@@ -426,7 +426,7 @@ function BookTicketsPage() {
       <ScrollView contentContainerStyle={styles.formContent} showsVerticalScrollIndicator={false}>
         {selectedStore?.name && (
           <View style={styles.storePreview}>
-            <LinearGradient colors={[COLORS.violet, COLORS.violetDark]} style={styles.storePreviewGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+            <LinearGradient colors={[(COLORS as any).violet, COLORS.violetDark]} style={styles.storePreviewGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <View style={styles.storePreviewIcon}><Ionicons name="film" size={20} color={COLORS.white} /></View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.storePreviewName} numberOfLines={1}>{selectedStore.name}</Text>
@@ -445,10 +445,10 @@ function BookTicketsPage() {
           {EVENT_TYPES.map(service => {
             const isSelected = selectedService === service.id;
             return (
-              <Pressable key={service.id} style={[styles.serviceChip, isSelected && styles.serviceChipActive]} onPress={() => setSelectedService(service.id)}>
+              <Pressable key={service.id} style={[styles.serviceChip, isSelected ? styles.serviceChipActive : null]} onPress={() => setSelectedService(service.id)}>
                 <Text style={styles.serviceEmoji}>{service.icon}</Text>
-                <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelActive]}>{service.label}</Text>
-                <Text style={[styles.serviceDuration, isSelected && styles.serviceDurationActive]}>{service.duration}</Text>
+                <Text style={[styles.serviceLabel, isSelected ? styles.serviceLabelActive : null]}>{service.label}</Text>
+                <Text style={[styles.serviceDuration, isSelected ? styles.serviceDurationActive : null]}>{service.duration}</Text>
               </Pressable>
             );
           })}
@@ -461,10 +461,10 @@ function BookTicketsPage() {
             const isSelected = date.toDateString() === selectedDate.toDateString();
             const isToday = i === 0;
             return (
-              <Pressable key={i} style={[styles.dateChip, isSelected && styles.dateChipActive]} onPress={() => setSelectedDate(date)}>
-                <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>{isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}</Text>
-                <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>{date.getDate()}</Text>
-                <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>{date.toLocaleDateString(undefined, { month: 'short' })}</Text>
+              <Pressable key={i} style={[styles.dateChip, isSelected ? styles.dateChipActive : null]} onPress={() => setSelectedDate(date)}>
+                <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>{isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}</Text>
+                <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>{date.getDate()}</Text>
+                <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>{date.toLocaleDateString(undefined, { month: 'short' })}</Text>
               </Pressable>
             );
           })}
@@ -473,11 +473,11 @@ function BookTicketsPage() {
         {/* Time Selection */}
         <View style={styles.formLabelRow}>
           <Text style={styles.formLabel}>Select Time</Text>
-          {isLoadingAvailability ? <ActivityIndicator size="small" color={COLORS.violet} /> : <Text style={styles.availableLabel}>{availableCount} slots available</Text>}
+          {isLoadingAvailability ? <ActivityIndicator size="small" color={(COLORS as any).violet} /> : <Text style={styles.availableLabel}>{availableCount} slots available</Text>}
         </View>
         {isLoadingAvailability ? (
           <View style={styles.timeLoadingWrap}>
-            <ActivityIndicator size="small" color={COLORS.violet} />
+            <ActivityIndicator size="small" color={(COLORS as any).violet} />
             <Text style={styles.timeLoadingText}>Checking availability...</Text>
           </View>
         ) : (
@@ -486,11 +486,11 @@ function BookTicketsPage() {
               const isSelected = slot.time === selectedTime;
               const isUnavailable = !slot.available;
               return (
-                <Pressable key={slot.time} style={[styles.timeChip, isSelected && styles.timeChipActive, isUnavailable && styles.timeChipUnavailable]}
+                <Pressable key={slot.time} style={[styles.timeChip, isSelected && styles.timeChipActive, isUnavailable ? styles.timeChipUnavailable : null]}
                   onPress={() => { if (isUnavailable) { platformAlertSimple('Unavailable', 'This time slot is fully booked.'); return; } setSelectedTime(slot.time); }}
                  
                 >
-                  <Text style={[styles.timeText, isSelected && styles.timeTextActive, isUnavailable && styles.timeTextUnavailable]}>{slot.time}</Text>
+                  <Text style={[styles.timeText, isSelected && styles.timeTextActive, isUnavailable ? styles.timeTextUnavailable : null]}>{slot.time}</Text>
                   {isUnavailable && <Text style={styles.timeFullText}>Full</Text>}
                 </Pressable>
               );
@@ -504,10 +504,10 @@ function BookTicketsPage() {
           {SEAT_TYPES.map(seat => {
             const isSelected = selectedSeat === seat.id;
             return (
-              <Pressable key={seat.id} style={[styles.seatChip, isSelected && styles.seatChipActive]} onPress={() => setSelectedSeat(seat.id)}>
+              <Pressable key={seat.id} style={[styles.seatChip, isSelected ? styles.seatChipActive : null]} onPress={() => setSelectedSeat(seat.id)}>
                 <Text style={styles.seatEmoji}>{seat.icon}</Text>
-                <Text style={[styles.seatLabel, isSelected && styles.seatLabelActive]}>{seat.label}</Text>
-                {seat.price > 0 && <Text style={[styles.seatPrice, isSelected && styles.seatPriceActive]}>+{seat.price}</Text>}
+                <Text style={[styles.seatLabel, isSelected ? styles.seatLabelActive : null]}>{seat.label}</Text>
+                {seat.price > 0 && <Text style={[styles.seatPrice, isSelected ? styles.seatPriceActive : null]}>+{seat.price}</Text>}
               </Pressable>
             );
           })}
@@ -589,7 +589,7 @@ function BookTicketsPage() {
         </Pressable>
 
         <View style={styles.bonusNote}>
-          <View style={styles.bonusIconWrap}><Ionicons name="wallet-outline" size={14} color={COLORS.violet} /></View>
+          <View style={styles.bonusIconWrap}><Ionicons name="wallet-outline" size={14} color={(COLORS as any).violet} /></View>
           <Text style={styles.bonusText}>No pre-payment required. Earn bonus coins when you check in at the venue!</Text>
         </View>
       </ScrollView>
@@ -619,13 +619,13 @@ const styles = StyleSheet.create({
   storeImgWrap: { position: 'relative' },
   storeImg: { width: 64, height: 64, borderRadius: 14 },
   storeImgPlaceholder: { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' },
-  storeCashbackBadge: { position: 'absolute', bottom: -4, right: -4, backgroundColor: COLORS.violet, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2 },
+  storeCashbackBadge: { position: 'absolute', bottom: -4, right: -4, backgroundColor: (COLORS as any).violet, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2 },
   storeCashbackText: { fontSize: 9, fontWeight: '700', color: COLORS.white },
   storeInfo: { flex: 1 },
   storeNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   storeName: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary, flex: 1 },
   verifiedBadge: { backgroundColor: COLORS.violetLight, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: COLORS.violet },
+  verifiedBadgeText: { fontSize: 9, fontWeight: '600', color: (COLORS as any).violet },
   storeCuisine: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   storeMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6 },
   storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
@@ -646,15 +646,15 @@ const styles = StyleSheet.create({
   availableLabel: { fontSize: 12, color: COLORS.green, fontWeight: '500' },
   serviceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   serviceChip: { width: '48%', flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border },
-  serviceChipActive: { backgroundColor: COLORS.violetLight, borderColor: COLORS.violet },
+  serviceChipActive: { backgroundColor: COLORS.violetLight, borderColor: (COLORS as any).violet },
   serviceEmoji: { fontSize: 20 },
   serviceLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, flex: 1 },
   serviceLabelActive: { color: COLORS.violetDark, fontWeight: '600' },
   serviceDuration: { fontSize: 10, color: COLORS.textSecondary },
-  serviceDurationActive: { color: COLORS.violet },
+  serviceDurationActive: { color: (COLORS as any).violet },
   dateScroll: { marginBottom: 4 },
   dateChip: { width: 64, height: 78, borderRadius: 14, backgroundColor: COLORS.white, justifyContent: 'center', alignItems: 'center', marginRight: 8, borderWidth: 1, borderColor: 'transparent' },
-  dateChipActive: { backgroundColor: COLORS.violet, borderColor: COLORS.violet },
+  dateChipActive: { backgroundColor: (COLORS as any).violet, borderColor: (COLORS as any).violet },
   dateDay: { fontSize: 10, color: COLORS.textSecondary, marginBottom: 2, fontWeight: '500' },
   dateDayActive: { color: 'rgba(255,255,255,0.7)' },
   dateNum: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
@@ -664,7 +664,7 @@ const styles = StyleSheet.create({
   timeLoadingText: { fontSize: 13, color: COLORS.textSecondary },
   timeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   timeChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, backgroundColor: COLORS.white, minWidth: 70, alignItems: 'center', borderWidth: 1, borderColor: 'transparent' },
-  timeChipActive: { backgroundColor: COLORS.violet, borderColor: COLORS.violet },
+  timeChipActive: { backgroundColor: (COLORS as any).violet, borderColor: (COLORS as any).violet },
   timeChipUnavailable: { backgroundColor: colors.neutral[100], borderColor: colors.neutral[200] },
   timeText: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary },
   timeTextActive: { color: COLORS.white },
@@ -672,12 +672,12 @@ const styles = StyleSheet.create({
   timeFullText: { fontSize: 9, color: colors.neutral[300], marginTop: 1, fontWeight: '500' },
   seatGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   seatChip: { width: '48%', alignItems: 'center', padding: 14, borderRadius: 12, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border },
-  seatChipActive: { backgroundColor: COLORS.violetLight, borderColor: COLORS.violet },
+  seatChipActive: { backgroundColor: COLORS.violetLight, borderColor: (COLORS as any).violet },
   seatEmoji: { fontSize: 24, marginBottom: 4 },
   seatLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary },
   seatLabelActive: { color: COLORS.violetDark, fontWeight: '600' },
   seatPrice: { fontSize: 11, color: COLORS.textSecondary, marginTop: 2 },
-  seatPriceActive: { color: COLORS.violet },
+  seatPriceActive: { color: (COLORS as any).violet },
   counterRow: { flexDirection: 'row', alignItems: 'center', gap: 20, justifyContent: 'center', paddingVertical: 8 },
   counterBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border, justifyContent: 'center', alignItems: 'center' },
   counterValue: { fontSize: 24, fontWeight: '700', color: COLORS.textPrimary, minWidth: 40, textAlign: 'center' },
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
   summaryTitle: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginBottom: 8 },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   summaryLabel: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary },
-  submitBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: COLORS.violet, borderRadius: 16, paddingVertical: 16, marginTop: 20 },
+  submitBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: (COLORS as any).violet, borderRadius: 16, paddingVertical: 16, marginTop: 20 },
   submitBtnDisabled: { opacity: 0.5 },
   submitBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
   bonusNote: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14, padding: 14, backgroundColor: COLORS.violetLight, borderRadius: 14 },
@@ -718,10 +718,10 @@ const styles = StyleSheet.create({
   confirmDivider: { height: 1, backgroundColor: colors.neutral[100], marginVertical: 10, marginLeft: 50 },
   confirmNote: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, padding: 16, backgroundColor: COLORS.violetLight, borderRadius: 14, marginBottom: 24, width: '100%' },
   confirmNoteText: { flex: 1, fontSize: 13, color: COLORS.violetDark, lineHeight: 18 },
-  doneBtn: { width: '100%', paddingVertical: 16, backgroundColor: COLORS.violet, borderRadius: 16, alignItems: 'center' },
+  doneBtn: { width: '100%', paddingVertical: 16, backgroundColor: (COLORS as any).violet, borderRadius: 16, alignItems: 'center' },
   doneBtnText: { fontSize: 16, fontWeight: '600', color: COLORS.white },
   viewBookingsBtn: { marginTop: 12, paddingVertical: 12, alignItems: 'center' },
-  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: COLORS.violet },
+  viewBookingsBtnText: { fontSize: 14, fontWeight: '600', color: (COLORS as any).violet },
 });
 
 export default React.memo(BookTicketsPage);

@@ -585,10 +585,10 @@ class BillUploadService {
           amount: response.data.amount,
           status: response.data.verificationStatus,
         });
-        return response;
+        return response as any;
       } else {
         devLog.error('❌ [BILL DETAIL] Failed:', response.error);
-        return response;
+        return response as any;
       }
     } catch (error) {
       devLog.error('❌ [BILL DETAIL] Exception:', error);
@@ -662,10 +662,10 @@ class BillUploadService {
           billId: response.data._id,
           status: response.data.verificationStatus,
         });
-        return response;
+        return response as any;
       } else {
         devLog.error('❌ [BILL RESUBMIT] Failed:', response.error);
-        return response;
+        return response as any;
       }
     } catch (error) {
       devLog.error('❌ [BILL RESUBMIT] Exception:', error);
@@ -708,10 +708,10 @@ class BillUploadService {
           totalCashback: response.data.totalCashback,
           pendingCashback: response.data.pendingCashback,
         });
-        return response;
+        return response as any;
       } else {
         devLog.error('❌ [BILL STATS] Failed:', response.error);
-        return response;
+        return response as any;
       }
     } catch (error) {
       devLog.error('❌ [BILL STATS] Exception:', error);

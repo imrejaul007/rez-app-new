@@ -432,7 +432,7 @@ function GalleryViewerModal({
               <View key={item.id} style={styles.itemContainer}>
                 {item.type === 'video' ? (
                   <Video
-                    source={item.url}
+                    source={{ uri: item.url }}
                     style={styles.media}
                     resizeMode={ResizeMode.CONTAIN}
                     shouldPlay={index === currentIndex}
@@ -441,7 +441,7 @@ function GalleryViewerModal({
                   />
                 ) : (
                   <ZoomableImage
-                    source={item.url}
+                    source={{ uri: item.url }}
                     style={styles.media}
                     onLoadStart={() => setIsLoading(true)}
                     onLoadEnd={() => setIsLoading(false)}

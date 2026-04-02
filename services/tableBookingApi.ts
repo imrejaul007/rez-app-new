@@ -59,8 +59,8 @@ const tableBookingApi = {
    */
   createTableBooking: async (data: CreateTableBookingRequest): Promise<ApiResponse<TableBooking>> => {
     try {
-      const response = await apiClient.post('/table-bookings', data);
-      return response;
+      const response = await apiClient.post<any>('/table-bookings', data as any);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -86,8 +86,8 @@ const tableBookingApi = {
         ? '?' + new URLSearchParams(query).toString()
         : '';
 
-      const response = await apiClient.get(`/table-bookings/user${queryString}`);
-      return response;
+      const response = await apiClient.get<any>(`/table-bookings/user${queryString}`);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -100,8 +100,8 @@ const tableBookingApi = {
    */
   getTableBooking: async (bookingId: string): Promise<ApiResponse<TableBooking>> => {
     try {
-      const response = await apiClient.get(`/table-bookings/${bookingId}`);
-      return response;
+      const response = await apiClient.get<any>(`/table-bookings/${bookingId}`);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -114,8 +114,8 @@ const tableBookingApi = {
    */
   cancelTableBooking: async (bookingId: string): Promise<ApiResponse<TableBooking>> => {
     try {
-      const response = await apiClient.put(`/table-bookings/${bookingId}/cancel`, {});
-      return response;
+      const response = await apiClient.put<any>(`/table-bookings/${bookingId}/cancel`, {});
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -129,8 +129,8 @@ const tableBookingApi = {
    */
   checkAvailability: async (storeId: string, date: string): Promise<ApiResponse<any>> => {
     try {
-      const response = await apiClient.get(`/table-bookings/availability/${storeId}?date=${date}`);
-      return response;
+      const response = await apiClient.get<any>(`/table-bookings/availability/${storeId}?date=${date}`);
+      return response as any;
     } catch (error) {
       throw error;
     }

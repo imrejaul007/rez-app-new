@@ -7,7 +7,7 @@ import loyaltyApi, {
   FeaturedProduct,
 } from '@/services/loyaltyApi';
 
-// Timeout for waiting on location - don't block forever
+// ReturnType<typeof setTimeout> for waiting on location - don't block forever
 const LOCATION_WAIT_TIMEOUT = 3000; // 3 seconds max wait for location
 
 // ── Module-level dedup: survives component remounts caused by DeferredProviders ──
@@ -53,7 +53,7 @@ export function useLoyaltySection(options: UseLoyaltySectionOptions = {}): UseLo
 
   // Track if we've already fetched
   const hasFetchedRef = useRef(false);
-  const locationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const locationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Get effective coordinates (GPS or region fallback)
   const getEffectiveCoordinates = useCallback(() => {
@@ -110,7 +110,7 @@ export function useLoyaltySection(options: UseLoyaltySectionOptions = {}): UseLo
     _loyaltyPending = (async () => {
       try {
         const coords = getEffectiveCoordinates();
-        const response = await loyaltyApi.getHomepageSummary(coords.latitude, coords.longitude);
+        const response: any = await loyaltyApi.getHomepageSummary(coords.latitude, coords.longitude);
 
         if (response.success && response.data) {
           _loyaltyCache = response.data;

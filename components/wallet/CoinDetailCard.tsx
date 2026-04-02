@@ -30,12 +30,12 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
 
   const handlePressIn = () => {
     scaleAnim.value = withSpring(0.97, { speed: 50,
-      bounciness: 4 });
+      bounciness: 4 } as any);
   };
 
   const handlePressOut = () => {
     scaleAnim.value = withSpring(1, { speed: 50,
-      bounciness: 4 });
+      bounciness: 4 } as any);
   };
 
   // Determine info line
@@ -100,7 +100,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
               {Number.isFinite(coin.amount) ? coin.amount.toLocaleString() : '0'} {BRAND.CURRENCY_CODE}
             </ThemedText>
           </View>
-          <ThemedText style={[styles.info, isExpiringSoon && styles.infoWarning]}>
+          <ThemedText style={[styles.info, isExpiringSoon ? styles.infoWarning : null]}>
             {getInfoText()}
           </ThemedText>
         </View>

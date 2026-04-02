@@ -101,7 +101,7 @@ function NearbyStores({
 
       if (!isMounted()) return;
       setStores(transformedStores);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load nearby stores');
     } finally {
@@ -283,7 +283,7 @@ function NearbyStores({
             />
           }
           ListEmptyComponent={renderEmptyState}
-          contentContainerStyle={stores.length === 0 ? styles.emptyContainer : undefined}
+          contentContainerStyle={(stores.length === 0 ? styles.emptyContainer : undefined) as any}
           estimatedItemSize={100}
         />
       )}

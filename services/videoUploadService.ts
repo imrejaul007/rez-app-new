@@ -281,7 +281,7 @@ class VideoUploadService {
       // Cleanup
       this.uploadStates.delete(uploadId);
 
-      return result;
+      return result as any;
     } catch (error) {
       // Cleanup
       this.uploadStates.delete(uploadId);

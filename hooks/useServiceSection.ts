@@ -123,7 +123,7 @@ export function useServiceSection(): UseServiceSectionReturn {
     setError(null);
 
     try {
-      const response = await storesApi.getStoresBySubcategorySlug(
+      const response: any = await storesApi.getStoresBySubcategorySlug(
         subcategorySlug,
         SERVICE_SECTION_CONFIG.storesPerCategory
       );

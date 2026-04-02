@@ -221,7 +221,7 @@ function StoreActionButtons({
             await config.onPress();
             // Success haptic feedback only - parent handles alerts/modals
             triggerNotification('Success');
-          } catch (error) {
+          } catch (error: any) {
             // Error haptic feedback
             triggerNotification('Error');
             throw error;
@@ -292,7 +292,7 @@ function StoreActionButtons({
       const scaleStyle = getAnimStyle(config.id);
 
       return (
-        <Animated.View key={config.id} style={[scaleStyle, { width: layout.buttonWidth }]}>
+        <Animated.View key={config.id} style={[scaleStyle, { width: layout.buttonWidth } as any]}>
           <Pressable
             style={[styles.buttonContainer, shouldDisable && styles.buttonDisabled, buttonStyle]}
             onPress={() => handleButtonPress(config.id)}

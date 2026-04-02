@@ -210,21 +210,21 @@ export const lockDealApi = {
     if (filters.limit) params.set('limit', filters.limit.toString());
 
     const query = params.toString();
-    return apiClient.get(`${BASE_URL}${query ? `?${query}` : ''}`);
+    return apiClient.get<any>(`${BASE_URL}${query ? `?${query}` : ''}`);
   },
 
   /**
    * Get single deal detail
    */
   async getDealById(id: string): Promise<ApiResponse<{ deal: LockPriceDeal; userLock: UserLockDeal | null }>> {
-    return apiClient.get(`${BASE_URL}/${id}`);
+    return apiClient.get<any>(`${BASE_URL}/${id}`);
   },
 
   /**
    * Initiate lock — creates payment intent for deposit
    */
   async initiateLock(dealId: string): Promise<ApiResponse<InitiateLockResponse>> {
-    return apiClient.post(`${BASE_URL}/${dealId}/lock`);
+    return apiClient.post<any>(`${BASE_URL}/${dealId}/lock`);
   },
 
   /**
@@ -236,7 +236,7 @@ export const lockDealApi = {
     razorpayPaymentId: string,
     razorpaySignature: string,
   ): Promise<ApiResponse<ConfirmLockResponse>> {
-    return apiClient.post(`${BASE_URL}/${dealId}/confirm-lock`, {
+    return apiClient.post<any>(`${BASE_URL}/${dealId}/confirm-lock`, {
       razorpayOrderId,
       razorpayPaymentId,
       razorpaySignature,
@@ -247,7 +247,7 @@ export const lockDealApi = {
    * Initiate balance payment for a locked deal
    */
   async initiateBalancePayment(lockId: string): Promise<ApiResponse<BalancePaymentResponse>> {
-    return apiClient.post(`${BASE_URL}/${lockId}/pay-balance`);
+    return apiClient.post<any>(`${BASE_URL}/${lockId}/pay-balance`);
   },
 
   /**
@@ -259,7 +259,7 @@ export const lockDealApi = {
     razorpayPaymentId: string,
     razorpaySignature: string,
   ): Promise<ApiResponse<ConfirmBalanceResponse>> {
-    return apiClient.post(`${BASE_URL}/${lockId}/confirm-balance`, {
+    return apiClient.post<any>(`${BASE_URL}/${lockId}/confirm-balance`, {
       razorpayOrderId,
       razorpayPaymentId,
       razorpaySignature,
@@ -275,21 +275,21 @@ export const lockDealApi = {
     params.set('page', page.toString());
     params.set('limit', limit.toString());
 
-    return apiClient.get(`${BASE_URL}/my-locks?${params.toString()}`);
+    return apiClient.get<any>(`${BASE_URL}/my-locks?${params.toString()}`);
   },
 
   /**
    * Get single lock detail
    */
   async getMyLockDetail(lockId: string): Promise<ApiResponse<{ lock: UserLockDeal }>> {
-    return apiClient.get(`${BASE_URL}/my-locks/${lockId}`);
+    return apiClient.get<any>(`${BASE_URL}/my-locks/${lockId}`);
   },
 
   /**
    * Cancel a lock
    */
   async cancelLock(lockId: string, reason?: string): Promise<ApiResponse<CancelLockResponse>> {
-    return apiClient.post(`${BASE_URL}/${lockId}/cancel`, { reason });
+    return apiClient.post<any>(`${BASE_URL}/${lockId}/cancel`, { reason });
   },
 };
 

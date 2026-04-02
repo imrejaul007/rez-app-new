@@ -50,7 +50,9 @@ const ReelDetailPage = () => {
   const isMountedRef = useRef(true);
 
   useEffect(() => {
-    return () => { isMountedRef.current = false; };
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   // API state
@@ -62,49 +64,52 @@ const ReelDetailPage = () => {
   const [likesCount, setLikesCount] = useState(0);
 
   // Fetch reel data
-  const fetchReelData = useCallback(async (isRefresh = false) => {
-    if (!reelId) return;
+  const fetchReelData = useCallback(
+    async (isRefresh = false) => {
+      if (!reelId) return;
 
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
+
+        const [reelResponse, commentsResponse] = await Promise.all([
+          reelApi.getReelById(reelId),
+          reelApi.getComments(reelId, { limit: 20 }),
+        ]);
+
+        if (!isMountedRef.current) return;
+
+        if (reelResponse.success && reelResponse.data) {
+          setReel(reelResponse.data);
+          setIsLiked(reelResponse.data.isLiked || false);
+          setIsSaved(reelResponse.data.isBookmarked || false);
+          setLikesCount(reelResponse.data.stats.likes);
+        } else {
+          setError(reelResponse.error || 'Failed to load reel');
+        }
+
+        if (commentsResponse.success && commentsResponse.data) {
+          setComments(commentsResponse.data.comments || []);
+        }
+
+        // Track view
+        reelApi.trackView(reelId).catch(() => {});
+      } catch (err: any) {
+        if (!isMountedRef.current) return;
+        setError(err.message || 'Something went wrong');
+      } finally {
+        if (isMountedRef.current) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
-      setError(null);
-
-      const [reelResponse, commentsResponse] = await Promise.all([
-        reelApi.getReelById(reelId),
-        reelApi.getComments(reelId, { limit: 20 }),
-      ]);
-
-      if (!isMountedRef.current) return;
-
-      if (reelResponse.success && reelResponse.data) {
-        setReel(reelResponse.data);
-        setIsLiked(reelResponse.data.isLiked || false);
-        setIsSaved(reelResponse.data.isBookmarked || false);
-        setLikesCount(reelResponse.data.stats.likes);
-      } else {
-        setError(reelResponse.error || 'Failed to load reel');
-      }
-
-      if (commentsResponse.success && commentsResponse.data) {
-        setComments(commentsResponse.data.comments || []);
-      }
-
-      // Track view
-      reelApi.trackView(reelId).catch(() => {});
-    } catch (err: any) {
-      if (!isMountedRef.current) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (isMountedRef.current) {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    }
-  }, [reelId]);
+    },
+    [reelId],
+  );
 
   // Initial fetch
   useEffect(() => {
@@ -121,17 +126,17 @@ const ReelDetailPage = () => {
 
     const newLiked = !isLiked;
     setIsLiked(newLiked);
-    setLikesCount(prev => Math.max(0, newLiked ? prev + 1 : prev - 1));
+    setLikesCount((prev) => Math.max(0, newLiked ? prev + 1 : prev - 1));
 
     try {
       const response = await reelApi.toggleLike(reelId);
       if (response.success && response.data) {
         setLikesCount(Math.max(0, response.data.likesCount));
       }
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
       setIsLiked(!newLiked);
-      setLikesCount(prev => Math.max(0, newLiked ? prev - 1 : prev + 1));
+      setLikesCount((prev) => Math.max(0, newLiked ? prev - 1 : prev + 1));
     }
   };
 
@@ -144,7 +149,7 @@ const ReelDetailPage = () => {
 
     try {
       await reelApi.toggleBookmark(reelId);
-    } catch (err) {
+    } catch (err: any) {
       setIsSaved(!newSaved);
     }
   };
@@ -158,7 +163,7 @@ const ReelDetailPage = () => {
       const response = await reelApi.addComment(reelId, comment.trim());
 
       if (response.success && response.data) {
-        setComments(prev => [response.data!, ...prev]);
+        setComments((prev) => [response.data!, ...prev]);
         setComment('');
       } else {
         platformAlertSimple('Error', response.error || 'Failed to add comment');
@@ -184,10 +189,14 @@ const ReelDetailPage = () => {
       // Track the share event on backend
       const response = await reelApi.shareReel(reelId!);
       if (response.success && response.data) {
-        setReel(prev => prev ? {
-          ...prev,
-          stats: { ...prev.stats, shares: response.data!.shares }
-        } : prev);
+        setReel((prev) =>
+          prev
+            ? {
+                ...prev,
+                stats: { ...prev.stats, shares: response.data!.shares },
+              }
+            : prev,
+        );
       }
     } catch (err: any) {
       // User cancelled share - not an error
@@ -205,7 +214,7 @@ const ReelDetailPage = () => {
 
     try {
       await toggleFollow(reel.creator.id);
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
       setIsFollowing(!newFollowing);
     }
@@ -215,7 +224,7 @@ const ReelDetailPage = () => {
   useEffect(() => {
     if (reel?.creator?.id) {
       checkFollowStatus(reel.creator.id)
-        .then(response => {
+        .then((response) => {
           if (response.success && response.data) {
             setIsFollowing(response.data.isFollowing);
           }
@@ -229,28 +238,30 @@ const ReelDetailPage = () => {
     if (!reelId) return;
 
     // Optimistic update
-    setComments(prev => prev.map(c =>
-      c.id === commentId
-        ? { ...c, isLiked: !currentlyLiked, likes: Math.max(0, currentlyLiked ? c.likes - 1 : c.likes + 1) }
-        : c
-    ));
+    setComments((prev) =>
+      prev.map((c) =>
+        c.id === commentId
+          ? { ...c, isLiked: !currentlyLiked, likes: Math.max(0, currentlyLiked ? c.likes - 1 : c.likes + 1) }
+          : c,
+      ),
+    );
 
     try {
       const response = await reelApi.toggleCommentLike(reelId, commentId);
       if (response.success && response.data) {
-        setComments(prev => prev.map(c =>
-          c.id === commentId
-            ? { ...c, isLiked: response.data!.isLiked, likes: response.data!.likesCount }
-            : c
-        ));
+        setComments((prev) =>
+          prev.map((c) =>
+            c.id === commentId ? { ...c, isLiked: response.data!.isLiked, likes: response.data!.likesCount } : c,
+          ),
+        );
       }
-    } catch (err) {
+    } catch (err: any) {
       // Revert on error
-      setComments(prev => prev.map(c =>
-        c.id === commentId
-          ? { ...c, isLiked: currentlyLiked, likes: currentlyLiked ? c.likes + 1 : c.likes - 1 }
-          : c
-      ));
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId ? { ...c, isLiked: currentlyLiked, likes: currentlyLiked ? c.likes + 1 : c.likes - 1 } : c,
+        ),
+      );
     }
   };
 
@@ -260,10 +271,13 @@ const ReelDetailPage = () => {
     platformAlertDestructive(
       'Report Video',
       'Report this video as inappropriate content?',
-      'Report',
       () => {
-        reelApi.reportReel(reelId!, 'inappropriate').then(() => platformAlertSimple('Reported', 'Thank you for your feedback.')).catch(() => platformAlertSimple('Error', 'Failed to report. Try again.'));
-      }
+        reelApi
+          .reportReel(reelId!, 'inappropriate')
+          .then(() => platformAlertSimple('Reported', 'Thank you for your feedback.'))
+          .catch(() => platformAlertSimple('Error', 'Failed to report. Try again.'));
+      },
+      'Report',
     );
   };
 
@@ -271,53 +285,57 @@ const ReelDetailPage = () => {
   const handleOptionsMenu = () => {
     if (!reelId) return;
 
-    platformAlertConfirm(
-      'Options',
-      'What would you like to do with this video?',
-      handleReportVideo,
-      'Report'
-    );
+    platformAlertConfirm('Options', 'What would you like to do with this video?', handleReportVideo, 'Report');
   };
 
   const navigateTo = (path: string) => {
     router.push(path as any);
   };
 
-  const renderCommentItem = useCallback(({ item }: { item: ReelComment }) => (
-    <View style={styles.commentItem}>
-      {item.userAvatar ? (
-        <CachedImage source={item.userAvatar} style={styles.commentAvatar} />
-      ) : (
-        <View style={[styles.commentAvatar, { backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center' }]}>
-          <Ionicons name="person" size={14} color={colors.text.tertiary} />
-        </View>
-      )}
-      <View style={styles.commentContent}>
-        <View style={styles.commentHeader}>
-          <Text style={styles.commentUser}>{item.userName}</Text>
-          <Text style={styles.commentTime}>{new Date(item.createdAt).toLocaleDateString()}</Text>
-        </View>
-        <Text style={styles.commentText}>{item.comment}</Text>
-        <View style={styles.commentActions}>
-          <Pressable
-            style={styles.commentAction}
-            onPress={() => handleCommentLike(item.id, item.isLiked || false)}
+  const renderCommentItem = useCallback(
+    ({ item }: { item: ReelComment }) => (
+      <View style={styles.commentItem}>
+        {item.userAvatar ? (
+          <CachedImage source={item.userAvatar} style={styles.commentAvatar} />
+        ) : (
+          <View
+            style={[
+              styles.commentAvatar,
+              { backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center' },
+            ]}
           >
-            <Ionicons name={item.isLiked ? 'heart' : 'heart-outline'} size={14} color={item.isLiked ? Colors.error : colors.text.tertiary} />
-            <Text style={styles.commentActionText}>{item.likes}</Text>
-          </Pressable>
-          <Pressable
-            style={styles.commentAction}
-            onPress={() => {
-              setComment(`@${item.userName} `);
-            }}
-          >
-            <Text style={styles.commentActionText}>Reply</Text>
-          </Pressable>
+            <Ionicons name="person" size={14} color={colors.text.tertiary} />
+          </View>
+        )}
+        <View style={styles.commentContent}>
+          <View style={styles.commentHeader}>
+            <Text style={styles.commentUser}>{item.userName}</Text>
+            <Text style={styles.commentTime}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+          </View>
+          <Text style={styles.commentText}>{item.comment}</Text>
+          <View style={styles.commentActions}>
+            <Pressable style={styles.commentAction} onPress={() => handleCommentLike(item.id, item.isLiked || false)}>
+              <Ionicons
+                name={item.isLiked ? 'heart' : 'heart-outline'}
+                size={14}
+                color={item.isLiked ? Colors.error : colors.text.tertiary}
+              />
+              <Text style={styles.commentActionText}>{item.likes}</Text>
+            </Pressable>
+            <Pressable
+              style={styles.commentAction}
+              onPress={() => {
+                setComment(`@${item.userName} `);
+              }}
+            >
+              <Text style={styles.commentActionText}>Reply</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
-    </View>
-  ), [handleCommentLike, setComment]);
+    ),
+    [handleCommentLike, setComment],
+  );
 
   // Loading state
   if (loading && !reel) {
@@ -342,7 +360,10 @@ const ReelDetailPage = () => {
             <Pressable style={styles.retryButton} onPress={() => fetchReelData()}>
               <Text style={styles.retryButtonText}>Try Again</Text>
             </Pressable>
-            <Pressable style={styles.backButtonAlt} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButtonAlt}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Text style={styles.backButtonAltText}>Go Back</Text>
             </Pressable>
           </View>
@@ -359,247 +380,231 @@ const ReelDetailPage = () => {
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar barStyle="light-content" backgroundColor="#000000" />
 
-      {/* Full Screen Video/Image */}
-      <View style={styles.mediaContainer}>
-        {reel.videoUrl ? (
-          Platform.OS === 'web' ? (
-            <video
-              src={reel.videoUrl}
-              poster={reel.thumbnailUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{ width: '100%', height: '100%', objectFit: 'cover' } as any}
-            />
-          ) : (
-            <Video
-              source={reel.videoUrl}
-              posterSource={reel.thumbnailUrl ? { uri: reel.thumbnailUrl } : undefined}
-              style={styles.mediaVideo}
-              resizeMode={ResizeMode.COVER}
-              shouldPlay
-              isLooping
-              isMuted={false}
-              useNativeControls={false}
-            />
-          )
-        ) : (
-          <CachedImage source={reel.thumbnailUrl} style={styles.mediaImage} />
-        )}
-
-        {/* Top Header */}
-        <View style={styles.topHeader}>
-          <Pressable
-            style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-          >
-            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-          </Pressable>
-          <Pressable style={styles.moreButton} onPress={handleOptionsMenu}>
-            <Ionicons name="ellipsis-horizontal" size={24} color={colors.text.inverse} />
-          </Pressable>
-        </View>
-
-        {/* Right Actions */}
-        <View style={styles.rightActions}>
-          <Pressable
-            style={styles.actionButton}
-            onPress={handleLike}
-          >
-            <Ionicons
-              name={isLiked ? 'heart' : 'heart-outline'}
-              size={28}
-              color={isLiked ? Colors.error : colors.text.inverse}
-            />
-            <Text style={styles.actionText}>{likesCount}</Text>
-          </Pressable>
-
-          <Pressable style={styles.actionButton} onPress={() => commentInputRef.current?.focus()}>
-            <Ionicons name="chatbubble-outline" size={26} color={colors.text.inverse} />
-            <Text style={styles.actionText}>{reel.stats?.comments || 0}</Text>
-          </Pressable>
-
-          <Pressable style={styles.actionButton} onPress={handleShare}>
-            <Ionicons name="share-social-outline" size={26} color={colors.text.inverse} />
-            <Text style={styles.actionText}>{reel.stats.shares}</Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.actionButton}
-            onPress={handleBookmark}
-          >
-            <Ionicons
-              name={isSaved ? 'bookmark' : 'bookmark-outline'}
-              size={26}
-              color={isSaved ? Colors.warning : colors.text.inverse}
-            />
-          </Pressable>
-        </View>
-
-        {/* Bottom Gradient */}
-        <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.9)']}
-          style={styles.bottomGradient}
-        >
-          {/* User Info */}
-          <View style={styles.userInfo}>
-            {reel.creator.avatar ? (
-              <CachedImage source={reel.creator.avatar} style={styles.avatar} />
+        {/* Full Screen Video/Image */}
+        <View style={styles.mediaContainer}>
+          {reel.videoUrl ? (
+            Platform.OS === 'web' ? (
+              <video
+                src={reel.videoUrl}
+                poster={reel.thumbnailUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ width: '100%', height: '100%', objectFit: 'cover' } as any}
+              />
             ) : (
-              <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                <Text style={styles.avatarInitials}>
-                  {reel.creator.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U'}
-                </Text>
-              </View>
-            )}
-            <View style={styles.userText}>
-              <Text style={styles.userName}>{reel.creator.name}</Text>
-              <Text style={styles.timestamp}>{new Date(reel.createdAt).toLocaleDateString()}</Text>
-            </View>
+              <Video
+                source={{ uri: reel.videoUrl } as any}
+                posterSource={reel.thumbnailUrl ? { uri: reel.thumbnailUrl } : undefined}
+                style={styles.mediaVideo}
+                resizeMode={ResizeMode.COVER}
+                shouldPlay
+                isLooping
+                isMuted={false}
+                useNativeControls={false}
+              />
+            )
+          ) : (
+            <CachedImage source={reel.thumbnailUrl || ('' as any)} style={styles.mediaImage} />
+          )}
+
+          {/* Top Header */}
+          <View style={styles.topHeader}>
             <Pressable
-              style={[
-                styles.followButton,
-                isFollowing && styles.followingButton,
-              ]}
-              onPress={handleFollow}
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
-              <Text
-                style={[
-                  styles.followText,
-                  isFollowing && styles.followingText,
-                ]}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </Text>
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+            </Pressable>
+            <Pressable style={styles.moreButton} onPress={handleOptionsMenu}>
+              <Ionicons name="ellipsis-horizontal" size={24} color={colors.text.inverse} />
             </Pressable>
           </View>
 
-          {/* Product & Store */}
-          <View style={styles.productInfo}>
-            <Text style={styles.productName}>{reel.title}</Text>
-            {reel.store && (
-              <Pressable
-                style={styles.storeButton}
-                onPress={() => navigateTo(`/MainStorePage?storeId=${reel.store?.id}`)}
-              >
-                <Ionicons name="storefront" size={14} color={colors.text.inverse} />
-                <Text style={styles.storeName}>{reel.store.name}</Text>
-                {reel.products && reel.products.length > 0 && (
-                  <View style={styles.cashbackBadge}>
-                    <Text style={styles.cashbackText}>
-                      {currencySymbol}{reel.products[0].price}
-                    </Text>
-                  </View>
+          {/* Right Actions */}
+          <View style={styles.rightActions}>
+            <Pressable style={styles.actionButton} onPress={handleLike}>
+              <Ionicons
+                name={isLiked ? 'heart' : 'heart-outline'}
+                size={28}
+                color={isLiked ? Colors.error : colors.text.inverse}
+              />
+              <Text style={styles.actionText}>{likesCount}</Text>
+            </Pressable>
+
+            <Pressable style={styles.actionButton} onPress={() => commentInputRef.current?.focus()}>
+              <Ionicons name="chatbubble-outline" size={26} color={colors.text.inverse} />
+              <Text style={styles.actionText}>{reel.stats?.comments || 0}</Text>
+            </Pressable>
+
+            <Pressable style={styles.actionButton} onPress={handleShare}>
+              <Ionicons name="share-social-outline" size={26} color={colors.text.inverse} />
+              <Text style={styles.actionText}>{reel.stats.shares}</Text>
+            </Pressable>
+
+            <Pressable style={styles.actionButton} onPress={handleBookmark}>
+              <Ionicons
+                name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                size={26}
+                color={isSaved ? Colors.warning : colors.text.inverse}
+              />
+            </Pressable>
+          </View>
+
+          {/* Bottom Gradient */}
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.9)']} style={styles.bottomGradient}>
+            {/* User Info */}
+            <View style={styles.userInfo}>
+              {reel.creator.avatar ? (
+                <CachedImage source={reel.creator.avatar} style={styles.avatar} />
+              ) : (
+                <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                  <Text style={styles.avatarInitials}>
+                    {reel.creator.name
+                      ?.split(' ')
+                      .map((n) => n[0])
+                      .join('')
+                      .substring(0, 2)
+                      .toUpperCase() || 'U'}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.userText}>
+                <Text style={styles.userName}>{reel.creator.name}</Text>
+                <Text style={styles.timestamp}>{new Date(reel.createdAt).toLocaleDateString()}</Text>
+              </View>
+              <Pressable style={[styles.followButton, isFollowing && styles.followingButton]} onPress={handleFollow}>
+                <Text style={[styles.followText, isFollowing && styles.followingText]}>
+                  {isFollowing ? 'Following' : 'Follow'}
+                </Text>
+              </Pressable>
+            </View>
+
+            {/* Product & Store */}
+            <View style={styles.productInfo}>
+              <Text style={styles.productName}>{reel.title}</Text>
+              {reel.store && (
+                <Pressable
+                  style={styles.storeButton}
+                  onPress={() => navigateTo(`/MainStorePage?storeId=${reel.store?.id}`)}
+                >
+                  <Ionicons name="storefront" size={14} color={colors.text.inverse} />
+                  <Text style={styles.storeName}>{reel.store.name}</Text>
+                  {reel.products && reel.products.length > 0 && (
+                    <View style={styles.cashbackBadge}>
+                      <Text style={styles.cashbackText}>
+                        {currencySymbol}
+                        {reel.products[0].price}
+                      </Text>
+                    </View>
+                  )}
+                </Pressable>
+              )}
+            </View>
+
+            {/* Description */}
+            {reel.description && (
+              <Pressable onPress={() => setShowFullDescription((prev) => !prev)}>
+                <Text style={styles.description} numberOfLines={showFullDescription ? undefined : 2}>
+                  {reel.description}
+                </Text>
+                {reel.description.length > 100 && (
+                  <Text style={styles.readMoreText}>{showFullDescription ? 'Show less' : 'Read more'}</Text>
                 )}
               </Pressable>
             )}
-          </View>
 
-          {/* Description */}
-          {reel.description && (
-            <Pressable
-             
-              onPress={() => setShowFullDescription(prev => !prev)}
+            {/* Tags */}
+            {reel.tags && reel.tags.length > 0 && (
+              <View style={styles.tagsRow}>
+                {reel.tags.map((tag, index) => (
+                  <Text key={index} style={styles.tag}>
+                    {tag.startsWith('#') ? tag : `#${tag}`}
+                  </Text>
+                ))}
+              </View>
+            )}
+
+            {/* Savings Badge / Store Action */}
+            {reel.store && (
+              <View style={styles.savingsContainer}>
+                <LinearGradient
+                  colors={[Colors.gold, colors.nileBlue]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.savingsBadge}
+                >
+                  <Ionicons name="eye" size={16} color={colors.text.inverse} />
+                  <Text style={styles.savingsText}>{reel.stats.views} Views</Text>
+                </LinearGradient>
+                <Pressable
+                  style={styles.visitStoreButton}
+                  onPress={() => navigateTo(`/MainStorePage?storeId=${reel.store?.id}`)}
+                >
+                  <Text style={styles.visitStoreText}>Visit Store</Text>
+                  <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
+                </Pressable>
+              </View>
+            )}
+          </LinearGradient>
+        </View>
+
+        {/* Comments Section */}
+        <View style={styles.commentsSection}>
+          <Text style={styles.commentsTitle}>Comments ({comments.length})</Text>
+
+          <FlashList
+            contentContainerStyle={{ paddingBottom: 120 }}
+            data={comments}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
+            estimatedItemSize={80}
+            ListEmptyComponent={
+              <View style={styles.emptyComments}>
+                <Ionicons name="chatbubble-outline" size={32} color={colors.text.tertiary} />
+                <Text style={styles.emptyCommentsText}>No comments yet</Text>
+                <Text style={styles.emptyCommentsSubtext}>Be the first to comment!</Text>
+              </View>
+            }
+            renderItem={renderCommentItem}
+          />
+
+          {/* Comment Input */}
+          <View style={styles.commentInputContainer}>
+            <View
+              style={[
+                styles.myAvatar,
+                { backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center' },
+              ]}
             >
-              <Text style={styles.description} numberOfLines={showFullDescription ? undefined : 2}>
-                {reel.description}
-              </Text>
-              {reel.description.length > 100 && (
-                <Text style={styles.readMoreText}>
-                  {showFullDescription ? 'Show less' : 'Read more'}
-                </Text>
+              <Ionicons name="person" size={14} color={colors.text.tertiary} />
+            </View>
+            <TextInput
+              ref={commentInputRef}
+              style={styles.commentInput}
+              placeholder="Add a comment..."
+              placeholderTextColor={colors.text.tertiary}
+              value={comment}
+              onChangeText={setComment}
+              editable={!submittingComment}
+              multiline
+              maxLength={500}
+            />
+            <Pressable
+              style={[styles.sendButton, (!comment.trim() || submittingComment) && { opacity: 0.5 }]}
+              onPress={handleAddComment}
+              disabled={!comment.trim() || submittingComment}
+            >
+              {submittingComment ? (
+                <ActivityIndicator size="small" color={Colors.gold} />
+              ) : (
+                <Ionicons name="send" size={20} color={Colors.gold} />
               )}
             </Pressable>
-          )}
-
-          {/* Tags */}
-          {reel.tags && reel.tags.length > 0 && (
-          <View style={styles.tagsRow}>
-            {reel.tags.map((tag, index) => (
-              <Text key={index} style={styles.tag}>
-                {tag.startsWith('#') ? tag : `#${tag}`}
-              </Text>
-            ))}
           </View>
-          )}
-
-          {/* Savings Badge / Store Action */}
-          {reel.store && (
-          <View style={styles.savingsContainer}>
-            <LinearGradient
-              colors={[Colors.gold, colors.nileBlue]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.savingsBadge}
-            >
-              <Ionicons name="eye" size={16} color={colors.text.inverse} />
-              <Text style={styles.savingsText}>{reel.stats.views} Views</Text>
-            </LinearGradient>
-            <Pressable
-              style={styles.visitStoreButton}
-              onPress={() => navigateTo(`/MainStorePage?storeId=${reel.store?.id}`)}
-            >
-              <Text style={styles.visitStoreText}>Visit Store</Text>
-              <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
-            </Pressable>
-          </View>
-          )}
-        </LinearGradient>
-      </View>
-
-      {/* Comments Section */}
-      <View style={styles.commentsSection}>
-        <Text style={styles.commentsTitle}>Comments ({comments.length})</Text>
-
-        <FlashList
-        contentContainerStyle={{ paddingBottom: 120 }}
-          data={comments}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-          }
-          estimatedItemSize={80}
-          ListEmptyComponent={
-            <View style={styles.emptyComments}>
-              <Ionicons name="chatbubble-outline" size={32} color={colors.text.tertiary} />
-              <Text style={styles.emptyCommentsText}>No comments yet</Text>
-              <Text style={styles.emptyCommentsSubtext}>Be the first to comment!</Text>
-            </View>
-          }
-          renderItem={renderCommentItem}
-        />
-
-        {/* Comment Input */}
-        <View style={styles.commentInputContainer}>
-          <View style={[styles.myAvatar, { backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center' }]}>
-            <Ionicons name="person" size={14} color={colors.text.tertiary} />
-          </View>
-          <TextInput
-            ref={commentInputRef}
-            style={styles.commentInput}
-            placeholder="Add a comment..."
-            placeholderTextColor={colors.text.tertiary}
-            value={comment}
-            onChangeText={setComment}
-            editable={!submittingComment}
-            multiline
-            maxLength={500}
-          />
-          <Pressable
-            style={[styles.sendButton, (!comment.trim() || submittingComment) && { opacity: 0.5 }]}
-            onPress={handleAddComment}
-            disabled={!comment.trim() || submittingComment}
-          >
-            {submittingComment ? (
-              <ActivityIndicator size="small" color={Colors.gold} />
-            ) : (
-              <Ionicons name="send" size={20} color={Colors.gold} />
-            )}
-          </Pressable>
         </View>
-      </View>
       </SafeAreaView>
     </>
   );

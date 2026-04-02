@@ -69,7 +69,7 @@ const EventGallery = React.memo(function EventGallery({
             {rewardInfo.rewards.map((reward, index) => (
               <View
                 key={index}
-                style={[styles.rewardRow, index > 0 && styles.rewardRowBorder]}
+                style={[styles.rewardRow, index > 0 ? styles.rewardRowBorder : null]}
               >
                 <Ionicons
                   name={getRewardIcon(reward.action) as any}
@@ -101,7 +101,7 @@ const EventGallery = React.memo(function EventGallery({
           <DetailItem
             icon={eventDetails.isOnline ? 'globe-outline' : 'location-outline'}
             label="Location"
-            value={eventDetails.location}
+            value={eventDetails.location || ''}
           />
           <DetailItem icon="pricetag-outline" label="Category" value={eventDetails.category} />
         </View>

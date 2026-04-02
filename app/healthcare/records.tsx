@@ -93,7 +93,7 @@ const HealthRecordsPage: React.FC = () => {
         if (!isMounted()) return;
         setTypeCounts(response.data.typeCounts);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -129,7 +129,7 @@ const HealthRecordsPage: React.FC = () => {
           size: file.size,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -158,7 +158,7 @@ const HealthRecordsPage: React.FC = () => {
           size: 0,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -211,7 +211,6 @@ const HealthRecordsPage: React.FC = () => {
     platformAlertDestructive(
       'Delete Record',
       'Are you sure you want to delete this record? This action cannot be undone.',
-      'Delete',
       async () => {
         try {
           const response = await healthRecordsApi.deleteRecord(recordId);
@@ -222,10 +221,11 @@ const HealthRecordsPage: React.FC = () => {
             setSelectedRecord(null);
             fetchRecords();
           }
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to delete record');
         }
       },
+      'Delete',
     );
   };
 
@@ -240,7 +240,7 @@ const HealthRecordsPage: React.FC = () => {
         fetchRecords();
         platformAlertSimple('Success', isArchived ? 'Record unarchived' : 'Record archived');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to update record');
     }
   };
@@ -261,13 +261,13 @@ const HealthRecordsPage: React.FC = () => {
   const renderTypeFilters = () => (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeFilters}>
       <Pressable
-        style={[styles.typeFilterChip, !selectedType && styles.typeFilterChipActive]}
+        style={[styles.typeFilterChip, !selectedType ? styles.typeFilterChipActive : null]}
         onPress={() => setSelectedType(null)}
         accessibilityRole="radio"
         accessibilityLabel="All health records"
         accessibilityState={{ selected: !selectedType }}
       >
-        <Text style={[styles.typeFilterText, !selectedType && styles.typeFilterTextActive]}>
+        <Text style={[styles.typeFilterText, !selectedType ? styles.typeFilterTextActive : null]}>
           All ({Object.values(typeCounts).reduce((a, b) => a + b, 0)})
         </Text>
       </Pressable>
@@ -285,7 +285,7 @@ const HealthRecordsPage: React.FC = () => {
           accessibilityState={{ selected: selectedType === type }}
         >
           <Text style={styles.typeFilterEmoji}>{config.icon}</Text>
-          <Text style={[styles.typeFilterText, selectedType === type && styles.typeFilterTextActive]}>
+          <Text style={[styles.typeFilterText, selectedType === type ? styles.typeFilterTextActive : null]}>
             {config.label} ({typeCounts[type] || 0})
           </Text>
         </Pressable>
@@ -733,7 +733,7 @@ const HealthRecordsPage: React.FC = () => {
       <View style={styles.filterRow}>
         {renderTypeFilters()}
         <Pressable
-          style={[styles.archiveToggle, showArchived && styles.archiveToggleActive]}
+          style={[styles.archiveToggle, showArchived ? styles.archiveToggleActive : null]}
           onPress={() => setShowArchived(!showArchived)}
           accessibilityRole="button"
           accessibilityLabel={showArchived ? 'Hide archived records' : 'Show archived records'}
@@ -771,7 +771,7 @@ const HealthRecordsPage: React.FC = () => {
           renderItem={renderRecordItem}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-          contentContainerStyle={[styles.recordsList, { paddingBottom: 120 }]}
+          contentContainerStyle={[styles.recordsList, { paddingBottom: 120 }] as any}
           estimatedItemSize={80}
         />
       )}

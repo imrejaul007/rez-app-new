@@ -211,7 +211,7 @@ export function useStoreProductsPage(
     const loadCategories = async () => {
       try {
         setLoadingCategories(true);
-        const response = await apiClient.get('/categories', {
+        const response: any = await apiClient.get('/categories', {
           type: 'home_delivery',
         });
 
@@ -291,7 +291,7 @@ export function useStoreProductsPage(
       if (selectedCategory) queryParams.category = selectedCategory;
       if (sortBy) queryParams.sortBy = sortBy;
 
-      const response = await storesApi.getStoreProducts(storeId, queryParams);
+      const response: any = await storesApi.getStoreProducts(storeId, queryParams);
 
       if (response.success && response.data) {
         if (!response.data.products || !Array.isArray(response.data.products)) {
@@ -356,7 +356,7 @@ export function useStoreProductsPage(
             storeName: storeData?.name || storeName || 'Store',
             storeId: storeId,
           } as ProductItem;
-        }).filter((product): product is ProductItem => product !== null);
+        }).filter((product: any): product is ProductItem => product !== null);
 
         if (append) {
           setProducts(prev => [...prev, ...newProducts]);

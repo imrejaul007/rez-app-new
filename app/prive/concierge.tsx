@@ -41,7 +41,7 @@ function ConciergeScreen() {
       if (response.success && response.data) {
         setTickets(response.data.tickets || response.data || []);
       }
-    } catch (e) {
+    } catch (e: any) {
       catchAndReport(e, setError, 'Concierge/fetchTickets');
     } finally {
       setIsLoading(false);
@@ -76,7 +76,7 @@ function ConciergeScreen() {
         setShowForm(false);
         await fetchTickets();
       }
-    } catch (e) {
+    } catch (e: any) {
       catchAndReport(e, setError, 'Concierge/submitTicket');
     } finally {
       setIsSubmitting(false);

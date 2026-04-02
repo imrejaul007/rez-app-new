@@ -85,10 +85,10 @@ function EarningsCard({
   };
 
   const breakdownItems = [
-    { label: 'Projects', value: earnings.breakdown.projects, ...earningSources[0] },
-    { label: 'Referrals', value: earnings.breakdown.referrals, ...earningSources[1] },
-    { label: 'Share & earn', value: earnings.breakdown.shareAndEarn, ...earningSources[2] },
-    { label: 'Spin', value: earnings.breakdown.spin, ...earningSources[3] },
+    { ...earningSources[0], label: 'Projects', value: earnings.breakdown.projects },
+    { ...earningSources[1], label: 'Referrals', value: earnings.breakdown.referrals },
+    { ...earningSources[2], label: 'Share & earn', value: earnings.breakdown.shareAndEarn },
+    { ...earningSources[3], label: 'Spin', value: earnings.breakdown.spin },
   ];
 
   return (

@@ -111,7 +111,7 @@ class SpecialProgramApi {
   async listPrograms(): Promise<{ success: boolean; data?: ProgramListItem[]; message?: string }> {
     try {
       const response = await apiClient.get<ProgramListItem[]>('/special-programs');
-      return response;
+      return response as any;
     } catch (error) {
       return { success: false, message: 'Failed to load programs' };
     }
@@ -123,7 +123,7 @@ class SpecialProgramApi {
   async checkEligibility(slug: SpecialProgramSlug): Promise<{ success: boolean; data?: EligibilityResult; message?: string }> {
     try {
       const response = await apiClient.get<EligibilityResult>(`/special-programs/${slug}/check-eligibility`);
-      return response;
+      return response as any;
     } catch (error) {
       return { success: false, message: 'Failed to check eligibility' };
     }
@@ -134,8 +134,8 @@ class SpecialProgramApi {
    */
   async activate(slug: SpecialProgramSlug): Promise<{ success: boolean; data?: any; message?: string }> {
     try {
-      const response = await apiClient.post(`/special-programs/${slug}/activate`);
-      return response;
+      const response = await apiClient.post<any>(`/special-programs/${slug}/activate`);
+      return response as any;
     } catch (error) {
       return { success: false, message: 'Failed to activate program' };
     }
@@ -147,7 +147,7 @@ class SpecialProgramApi {
   async getDashboard(slug: SpecialProgramSlug): Promise<{ success: boolean; data?: DashboardData; message?: string }> {
     try {
       const response = await apiClient.get<DashboardData>(`/special-programs/${slug}/dashboard`);
-      return response;
+      return response as any;
     } catch (error) {
       return { success: false, message: 'Failed to load dashboard' };
     }
@@ -158,8 +158,8 @@ class SpecialProgramApi {
    */
   async getMyMemberships(): Promise<{ success: boolean; data?: any[]; message?: string }> {
     try {
-      const response = await apiClient.get('/special-programs/my-memberships');
-      return response;
+      const response = await apiClient.get<any>('/special-programs/my-memberships');
+      return response as any;
     } catch (error) {
       return { success: false, message: 'Failed to load memberships' };
     }

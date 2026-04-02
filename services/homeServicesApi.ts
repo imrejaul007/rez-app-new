@@ -112,7 +112,7 @@ class HomeServicesService {
   async getCategories(): Promise<ApiResponse<HomeServiceCategory[]>> {
     try {
       const response = await apiClient.get<HomeServiceCategory[]>('/home-services/categories');
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -127,7 +127,7 @@ class HomeServicesService {
   async getFeatured(limit: number = 6): Promise<ApiResponse<HomeService[]>> {
     try {
       const response = await apiClient.get<HomeService[]>(`/home-services/featured?limit=${limit}`);
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -142,7 +142,7 @@ class HomeServicesService {
   async getPopular(limit: number = 10): Promise<ApiResponse<HomeService[]>> {
     try {
       const response = await apiClient.get<HomeService[]>(`/home-services/popular?limit=${limit}`);
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -157,7 +157,7 @@ class HomeServicesService {
   async getStats(): Promise<ApiResponse<HomeServicesStats>> {
     try {
       const response = await apiClient.get<HomeServicesStats>('/home-services/stats');
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -191,10 +191,10 @@ class HomeServicesService {
 
       const response = await apiClient.get<HomeServicesByCategoryResponse>(
         `/home-services/category/${slug}`,
-        cleanParams
+        cleanParams as any
       );
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,

@@ -228,7 +228,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
           },
           operationalInfo: { deliveryTime: fetchedStoreData.operationalInfo?.deliveryTime || '' },
         }).catch(() => {}); // Silent: non-critical AsyncStorage write
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to transform store data'),
           { context: 'useMainStorePageData.transformStoreData' },
@@ -269,7 +269,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
           });
           setIsDynamic(true);
           setError(null);
-        } catch (err) {
+        } catch (err: any) {
           errorReporter.captureError(
             err instanceof Error ? err : new Error('Failed to parse store data from params'),
             { context: 'useMainStorePageData.parseStoreParams' },
@@ -297,7 +297,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
         try {
           setStoreData(JSON.parse(storeDataParam));
           setIsDynamic(true);
-        } catch (err) {
+        } catch (err: any) {
           errorReporter.captureError(
             err instanceof Error ? err : new Error('Failed to parse initial storeData param'),
             { context: 'useMainStorePageData.initStoreData' },
@@ -346,9 +346,9 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
         await Promise.allSettled([
           (async () => {
             try {
-              const response = await reviewApi.canUserReviewStore(reviewStoreId);
+              const response: any = await reviewApi.canUserReviewStore(reviewStoreId);
               if (response.success && response.data) setCanReview(response.data.canReview);
-            } catch (err) {
+            } catch (err: any) {
               errorReporter.captureError(
                 err instanceof Error ? err : new Error('Failed to check review eligibility'),
                 { context: 'useMainStorePageData.canUserReviewStore' },
@@ -360,7 +360,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
           (async () => {
             try {
               setUgcLoading(true);
-              const response = await apiClient.get(`/ugc/store/${reviewStoreId}`, { limit: 20, offset: 0 });
+              const response: any = await apiClient.get(`/ugc/store/${reviewStoreId}`, { limit: 20, offset: 0 });
               if (response.success && response.data) {
                 const content = (response.data as any).content || [];
                 setUgcContent(content.map((item: any) => ({
@@ -380,7 +380,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
                   productTags: item.tags || [],
                 })));
               }
-            } catch (err) {
+            } catch (err: any) {
               errorReporter.captureError(
                 err instanceof Error ? err : new Error('Failed to fetch UGC content'),
                 { context: 'useMainStorePageData.fetchUgcContent' },
@@ -440,9 +440,9 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
   // Review action handlers
   const handleReviewHelpful = useCallback(async (reviewId: string) => {
     try {
-      const response = await reviewsApi.markHelpful(reviewId);
+      const response: any = await reviewsApi.markHelpful(reviewId);
       if (response.success) await refetchReviews();
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to mark review as helpful'),
         { context: 'useMainStorePageData.handleReviewHelpful' },
@@ -453,11 +453,11 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
 
   const handleReviewReport = useCallback(async (reviewId: string) => {
     try {
-      const response = await reviewsApi.reportReview(reviewId, 'inappropriate');
+      const response: any = await reviewsApi.reportReview(reviewId, 'inappropriate');
       if (response.success) {
         platformAlertSimple('Success', 'Review reported successfully. Thank you for helping keep our community safe.');
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to report review'),
         { context: 'useMainStorePageData.handleReviewReport' },
@@ -575,7 +575,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
 
     const task = InteractionManager.runAfterInteractions(async () => {
       try {
-        const response = await storesApi.getUserStoreVisits(storeId);
+        const response: any = await storesApi.getUserStoreVisits(storeId);
         if (response.success && response.data) {
           setUserVisitsData({
             visitsCompleted: response.data.visitsCompleted,
@@ -586,7 +586,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
             hasCompletedMilestone: response.data.hasCompletedMilestone,
           });
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to fetch user store visits'),
           { context: 'useMainStorePageData.fetchUserVisits' },
@@ -631,14 +631,14 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
 
     try {
       if (wasFollowing) {
-        const response = await wishlistApi.removeFromWishlist('store', storeIdToUse);
+        const response: any = await wishlistApi.removeFromWishlist('store', storeIdToUse);
         if (response.success) {
           showAlert('Unfollowed', `You've unfollowed ${productData.title || productData.storeName}.`, undefined, 'info');
         } else {
           throw new Error(response.message || 'Failed to unfollow');
         }
       } else {
-        const response = await wishlistApi.addToWishlist({
+        const response: any = await wishlistApi.addToWishlist({
           itemType: 'store', itemId: storeIdToUse,
           notes: `Following ${productData.title || productData.storeName}`, priority: 'medium',
         });
@@ -648,7 +648,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
           throw new Error(response.message || 'Failed to follow');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to toggle store follow'),
         { context: 'useMainStorePageData.handleFavoritePress' },
@@ -693,7 +693,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
       } else {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to refresh store data'),
         { context: 'useMainStorePageData.onRefresh' },

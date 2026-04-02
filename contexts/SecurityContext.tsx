@@ -200,7 +200,7 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
           },
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       setBiometricAvailable(false);
       setBiometricEnrolled(false);
     }
@@ -360,7 +360,7 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
       });
 
       return result.success;
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Authentication Failed', 'Biometric authentication failed. Please try again.');
       return false;
     }
@@ -391,7 +391,7 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
         platformAlertSimple('Error', 'Failed to enable two-factor authentication.');
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to enable two-factor authentication.');
       return false;
     }
@@ -418,7 +418,7 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
         platformAlertSimple('Error', 'Failed to disable two-factor authentication.');
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to disable two-factor authentication.');
       return false;
     }

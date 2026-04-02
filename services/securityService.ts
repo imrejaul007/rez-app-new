@@ -225,7 +225,7 @@ export const performSecurityCheck = async (): Promise<SecurityCheckResult> => {
     let isBlacklisted = false;
 
     try {
-      const blacklistResponse = await apiClient.post(
+      const blacklistResponse = await apiClient.post<any>(
         SECURITY_CONFIG.CHECK_BLACKLIST_ENDPOINT,
         { deviceId: deviceFingerprint.id }
       );
@@ -260,7 +260,7 @@ export const performSecurityCheck = async (): Promise<SecurityCheckResult> => {
 
     // 5. Check for VPN/Proxy (backend check)
     try {
-      const ipInfoResponse = await apiClient.get(SECURITY_CONFIG.GET_IP_INFO_ENDPOINT);
+      const ipInfoResponse = await apiClient.get<any>(SECURITY_CONFIG.GET_IP_INFO_ENDPOINT);
 
       if (ipInfoResponse.success && ipInfoResponse.data) {
         const ipInfo: IPInfo = ipInfoResponse.data as IPInfo;
@@ -282,7 +282,7 @@ export const performSecurityCheck = async (): Promise<SecurityCheckResult> => {
 
     // 6. Multi-account detection
     try {
-      const multiAccountResponse = await apiClient.post(
+      const multiAccountResponse = await apiClient.post<any>(
         SECURITY_CONFIG.CHECK_MULTI_ACCOUNT_ENDPOINT,
         { deviceId: deviceFingerprint.id }
       );
@@ -340,7 +340,7 @@ export const reportSuspiciousActivity = async (
   try {
     const deviceFingerprint = await getDeviceFingerprint();
 
-    await apiClient.post(SECURITY_CONFIG.REPORT_SUSPICIOUS_ENDPOINT, {
+    await apiClient.post<any>(SECURITY_CONFIG.REPORT_SUSPICIOUS_ENDPOINT, {
       deviceId: deviceFingerprint.id,
       activityType,
       details,
@@ -349,7 +349,7 @@ export const reportSuspiciousActivity = async (
 
     // Update local flags
     const storedFlags = await AsyncStorage.getItem(SECURITY_CONFIG.SECURITY_FLAGS_KEY);
-    const flags = safeJsonParse(storedFlags, { suspiciousActivityCount: 0 });
+    const flags: { suspiciousActivityCount: number; lastActivity?: number } = safeJsonParse(storedFlags, { suspiciousActivityCount: 0 });
 
     flags.suspiciousActivityCount += 1;
     flags.lastActivity = Date.now();
@@ -405,7 +405,7 @@ export const isCaptchaRequired = async (failureCount: number = 0): Promise<boole
 export const verifyCaptcha = async (token: string): Promise<boolean> => {
   try {
 
-    const response = await apiClient.post(SECURITY_CONFIG.VERIFY_CAPTCHA_ENDPOINT, {
+    const response = await apiClient.post<any>(SECURITY_CONFIG.VERIFY_CAPTCHA_ENDPOINT, {
       token,
       deviceId: (await getDeviceFingerprint()).id,
     });
@@ -453,7 +453,7 @@ export const clearCaptcha = async (): Promise<void> => {
  */
 export const getIPInfo = async (): Promise<IPInfo> => {
   try {
-    const response = await apiClient.get(SECURITY_CONFIG.GET_IP_INFO_ENDPOINT);
+    const response = await apiClient.get<any>(SECURITY_CONFIG.GET_IP_INFO_ENDPOINT);
 
     if (response.success && response.data) {
       return response.data as IPInfo;

@@ -52,7 +52,7 @@ const DEFAULT_COIN_RULES: Record<string, { usageRules: string[]; earningMethods:
 };
 
 function CoinDetailPage() {
-  const { coinType } = useLocalSearchParams<{ coinType: string }>();
+  const { coinType } = useLocalSearchParams<any>();
   const router = useRouter();
   const walletData = useWalletData();
   const walletLoading = useWalletLoading();
@@ -63,27 +63,35 @@ function CoinDetailPage() {
   const type = (validTypes.includes(coinType || '') ? coinType : 'rez') as CoinType;
   const coinInfo = COIN_TYPES[type] || COIN_TYPES.rez;
 
-  const [dynamicRules, setDynamicRules] = useState<Record<string, { usageRules: string[]; earningMethods: string[] }> | null>(null);
+  const [dynamicRules, setDynamicRules] = useState<Record<
+    string,
+    { usageRules: string[]; earningMethods: string[] }
+  > | null>(null);
   const isMounted = useIsMounted();
 
   useEffect(() => {
-    walletApi.getCoinRules().then(res => {
-      if (res?.data?.coinRules) setDynamicRules(res.data.coinRules);
-    }).catch(() => { /* silently handle */ });
+    walletApi
+      .getCoinRules()
+      .then((res) => {
+        if (res?.data?.coinRules) setDynamicRules(res.data.coinRules);
+      })
+      .catch(() => {
+        /* silently handle */
+      });
   }, []);
 
   const ruleSource = dynamicRules || DEFAULT_COIN_RULES;
   const ruleKey = type === 'nuqta' ? 'rez' : type;
   const rules = ruleSource[ruleKey] || DEFAULT_COIN_RULES.rez;
 
-  const coin = walletData?.coins.find(c => c.type === type || (type === 'nuqta' && c.type === 'rez'));
-  const brandedTotal = type === 'branded' ? (walletData?.brandedCoinsTotal || 0) : 0;
-  const amount = type === 'branded' ? brandedTotal : (coin?.amount || 0);
+  const coin = walletData?.coins.find((c) => c.type === type || (type === 'nuqta' && c.type === 'rez'));
+  const brandedTotal = type === 'branded' ? walletData?.brandedCoinsTotal || 0 : 0;
+  const amount = type === 'branded' ? brandedTotal : coin?.amount || 0;
 
   const handleRefresh = useCallback(async () => {
     try {
       await refreshWallet();
-    } catch (error) {
+    } catch (error: any) {
       platformAlert('Refresh Failed', 'Unable to refresh data');
     }
   }, [refreshWallet]);
@@ -108,7 +116,13 @@ function CoinDetailPage() {
           Failed to load wallet data
         </ThemedText>
         <Pressable
-          style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, backgroundColor: coinInfo.amountColor, borderRadius: 8 }}
+          style={{
+            marginTop: 16,
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            backgroundColor: coinInfo.amountColor,
+            borderRadius: 8,
+          }}
           onPress={handleRefresh}
         >
           <ThemedText style={{ color: colors.background.primary, fontWeight: '600' }}>Retry</ThemedText>
@@ -122,12 +136,12 @@ function CoinDetailPage() {
       <StatusBar barStyle="light-content" backgroundColor={coinInfo.amountColor} />
 
       {/* Hero Header */}
-      <LinearGradient
-        colors={[colors.nileBlue, coinInfo.amountColor + '60'] as const}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.nileBlue, coinInfo.amountColor + '60'] as const} style={styles.header}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.background.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>{coinInfo.name}</Text>
@@ -139,14 +153,12 @@ function CoinDetailPage() {
             {type === 'rez' || type === 'nuqta' ? (
               <CachedImage source={nuqtaCoinImage} style={styles.heroCoinImage} contentFit="contain" />
             ) : (
-              <Ionicons
-                name={type === 'branded' ? 'storefront' : 'flash'}
-                size={28}
-                color={coinInfo.color}
-              />
+              <Ionicons name={type === 'branded' ? 'storefront' : 'flash'} size={28} color={coinInfo.color} />
             )}
           </View>
-          <Text style={styles.heroAmount}>{amount.toLocaleString()} {BRAND.CURRENCY_CODE}</Text>
+          <Text style={styles.heroAmount}>
+            {amount.toLocaleString()} {BRAND.CURRENCY_CODE}
+          </Text>
           <Text style={styles.heroLabel}>{coinInfo.description}</Text>
         </View>
       </LinearGradient>
@@ -166,7 +178,10 @@ function CoinDetailPage() {
             <View style={{ flex: 1, marginLeft: 10 }}>
               <ThemedText style={styles.warningTitle}>Expires Soon</ThemedText>
               <ThemedText style={styles.warningText}>
-                {coin.expiryCountdown || (coin.expiryDate ? `Expires ${new Date(coin.expiryDate).toLocaleDateString()}` : 'Check expiry details')}
+                {coin.expiryCountdown ||
+                  (coin.expiryDate
+                    ? `Expires ${new Date(coin.expiryDate).toLocaleDateString()}`
+                    : 'Check expiry details')}
               </ThemedText>
             </View>
           </View>
@@ -199,8 +214,13 @@ function CoinDetailPage() {
           <View style={styles.card}>
             <ThemedText style={styles.sectionTitle}>By Merchant</ThemedText>
             {walletData.brandedCoins.map((bc, i) => (
-              <View key={bc.merchantId} style={[styles.merchantRow, i < walletData.brandedCoins.length - 1 && styles.merchantBorder]}>
-                <View style={[styles.merchantIcon, { backgroundColor: (bc.merchantColor || colors.brand.indigo) + '15' }]}>
+              <View
+                key={bc.merchantId}
+                style={[styles.merchantRow, i < walletData.brandedCoins.length - 1 ? styles.merchantBorder : null]}
+              >
+                <View
+                  style={[styles.merchantIcon, { backgroundColor: (bc.merchantColor || colors.brand.indigo) + '15' }]}
+                >
                   <Ionicons name="storefront" size={16} color={bc.merchantColor || colors.brand.indigo} />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -245,15 +265,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backBtn: {
-    width: 36, height: 36, borderRadius: 18,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: { color: colors.background.primary, fontSize: 18, fontWeight: '700' },
   heroBalance: { alignItems: 'center' },
   heroIcon: {
-    width: 56, height: 56, borderRadius: 20,
-    alignItems: 'center', justifyContent: 'center',
+    width: 56,
+    height: 56,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 10,
   },
   heroCoinImage: {
@@ -264,12 +290,18 @@ const styles = StyleSheet.create({
   heroLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: '500', marginTop: 4, textAlign: 'center' },
   content: { flex: 1, paddingHorizontal: 22, paddingTop: 16 },
   card: {
-    backgroundColor: colors.background.primary, borderRadius: 16, padding: 16, marginBottom: 12,
+    backgroundColor: colors.background.primary,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   warningCard: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: colors.tint.amberLight, borderColor: 'rgba(245, 158, 11, 0.13)', borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.tint.amberLight,
+    borderColor: 'rgba(245, 158, 11, 0.13)',
+    borderWidth: 1,
   },
   warningTitle: { fontSize: 13, fontWeight: '700', color: colors.brand.amberDark },
   warningText: { fontSize: 11, color: colors.brand.amberDark, marginTop: 1 },
@@ -278,7 +310,14 @@ const styles = StyleSheet.create({
   ruleText: { fontSize: 13, color: colors.text.secondary, flex: 1 },
   merchantRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   merchantBorder: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F0F0F0' },
-  merchantIcon: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10 },
+  merchantIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
   merchantName: { fontSize: 13, fontWeight: '600', color: colors.text.primary },
   merchantAmount: { fontSize: 14, fontWeight: '800' },
   conversionText: { fontSize: 12, color: colors.text.tertiary, lineHeight: 18 },

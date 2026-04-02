@@ -102,7 +102,7 @@ export function useNavigation(): UseNavigationReturn {
   const canGoBack = useCallback(() => {
     try {
       return router.canGoBack();
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   }, [router]);
@@ -151,7 +151,7 @@ export function useNavigation(): UseNavigationReturn {
       });
       
       return { path, params };
-    } catch (error) {
+    } catch (error: any) {
       return null;
     }
   }, []);

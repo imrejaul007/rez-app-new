@@ -350,7 +350,7 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
 
     // Submit with retry mechanism
     const response = await retryWithBackoff(
-      async () => await apiClient.post('/social-media/submit', sanitizedData),
+      async () => await apiClient.post<any>('/social-media/submit', sanitizedData as any),
       3, // maxRetries
       1000 // initial delay in ms
     );
@@ -393,7 +393,7 @@ export const getUserEarnings = async (): Promise<EarningsData> => {
   devLog.log('📊 [SOCIAL MEDIA API] Fetching user earnings...');
   try {
     const response = await retryWithBackoff(
-      async () => await apiClient.get('/social-media/earnings'),
+      async () => await apiClient.get<any>('/social-media/earnings'),
       2, // maxRetries (fewer for GET requests)
       500 // initial delay in ms
     );
@@ -454,7 +454,7 @@ export const getUserPosts = async (params: GetPostsParams = {}): Promise<GetPost
     };
 
     const response = await retryWithBackoff(
-      async () => await apiClient.get('/social-media/posts', validatedParams),
+      async () => await apiClient.get<any>('/social-media/posts', validatedParams),
       2, // maxRetries
       500 // initial delay in ms
     );
@@ -510,7 +510,7 @@ export const getPostById = async (postId: string): Promise<SocialPost> => {
     }
 
     const response = await retryWithBackoff(
-      async () => await apiClient.get(`/social-media/posts/${postId}`),
+      async () => await apiClient.get<any>(`/social-media/posts/${postId}`),
       2,
       500
     );
@@ -534,7 +534,7 @@ export const deletePost = async (postId: string): Promise<void> => {
       throw new Error('Invalid post ID');
     }
 
-    await apiClient.delete(`/social-media/posts/${postId}`);
+    await apiClient.delete<any>(`/social-media/posts/${postId}`);
     devLog.log('✅ Post deleted successfully');
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
@@ -551,7 +551,7 @@ export const getPlatformStats = async (): Promise<{ stats: PlatformStats[] }> =>
   devLog.log('📈 [SOCIAL MEDIA API] Fetching platform stats...');
   try {
     const response = await retryWithBackoff(
-      async () => await apiClient.get('/social-media/stats'),
+      async () => await apiClient.get<any>('/social-media/stats'),
       2,
       500
     );

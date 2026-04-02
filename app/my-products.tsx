@@ -87,98 +87,103 @@ const MyProductsPage = () => {
 
   const mapOrderStatusToDelivery = (status: string): 'delivered' | 'in_transit' | 'cancelled' | 'pending' => {
     const statusMap: Record<string, 'delivered' | 'in_transit' | 'cancelled' | 'pending'> = {
-      'delivered': 'delivered',
-      'shipped': 'in_transit',
-      'dispatched': 'in_transit',
-      'processing': 'in_transit',
-      'cancelled': 'cancelled',
-      'refunded': 'cancelled',
-      'pending': 'pending',
-      'confirmed': 'pending',
+      delivered: 'delivered',
+      shipped: 'in_transit',
+      dispatched: 'in_transit',
+      processing: 'in_transit',
+      cancelled: 'cancelled',
+      refunded: 'cancelled',
+      pending: 'pending',
+      confirmed: 'pending',
     };
     return statusMap[status] || 'pending';
   };
 
-  const fetchProducts = useCallback(async (pageNum = 1, append = false) => {
-    try {
-      if (pageNum === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
+  const fetchProducts = useCallback(
+    async (pageNum = 1, append = false) => {
+      try {
+        if (pageNum === 1) {
+          setLoading(true);
+        } else {
+          setLoadingMore(true);
+        }
 
-      if (authLoading) {
-        return;
-      }
+        if (authLoading) {
+          return;
+        }
 
-      if (!isAuthenticated) {
-        setProducts([]);
-        setLoading(false);
-        return;
-      }
+        if (!isAuthenticated) {
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
 
-      const params: any = {
-        page: pageNum,
-        limit: 20
-      };
+        const params: any = {
+          page: pageNum,
+          limit: 20,
+        };
 
-      if (activeTab !== 'all') {
-        params.status = activeTab;
-      }
+        if (activeTab !== 'all') {
+          params.status = activeTab;
+        }
 
-      const response = await ordersService.getOrders(params);
+        const response = await ordersService.getOrders(params);
 
-      if (response.data?.orders) {
-        const mappedProducts: PurchasedProduct[] = response.data.orders.flatMap(order =>
-          order.items.map(item => ({
-            id: item.id,
-            productId: item.product.id,
-            orderId: order.orderNumber,
-            name: item.product.name,
-            image: item.product.images[0]?.url,
-            variant: item.variant ? {
-              type: Object.keys(item.variant.attributes || {})[0] || 'Variant',
-              value: Object.values(item.variant.attributes || {})[0]?.toString() || item.variant.name
-            } : undefined,
-            price: item.unitPrice,
-            quantity: item.quantity,
-            orderDate: order.createdAt,
-            deliveryStatus: mapOrderStatusToDelivery(order.status),
-            canReorder: order.status === 'delivered',
-            canReview: order.status === 'delivered'
-          }))
-        );
-        if (append) {
+        if (response.data?.orders) {
+          const mappedProducts: PurchasedProduct[] = response.data.orders.flatMap((order) =>
+            order.items.map((item) => ({
+              id: item.id,
+              productId: item.product.id,
+              orderId: order.orderNumber,
+              name: item.product.name,
+              image: item.product.images[0]?.url,
+              variant: item.variant
+                ? {
+                    type: Object.keys(item.variant.attributes || {})[0] || 'Variant',
+                    value: Object.values(item.variant.attributes || {})[0]?.toString() || item.variant.name,
+                  }
+                : undefined,
+              price: item.unitPrice,
+              quantity: item.quantity,
+              orderDate: order.createdAt,
+              deliveryStatus: mapOrderStatusToDelivery(order.status),
+              canReorder: order.status === 'delivered',
+              canReview: order.status === 'delivered',
+            })),
+          );
+          if (append) {
+            if (!isMounted()) return;
+            setProducts((prev) => [...prev, ...mappedProducts]);
+          } else {
+            if (!isMounted()) return;
+            setProducts(mappedProducts);
+          }
           if (!isMounted()) return;
-          setProducts(prev => [...prev, ...mappedProducts]);
+          setPage(pageNum);
+          if (!isMounted()) return;
+          setHasMore((response.data.orders?.length || 0) >= 20);
         } else {
           if (!isMounted()) return;
-          setProducts(mappedProducts);
+          if (!append) setProducts([]);
+          if (!isMounted()) return;
+          setHasMore(false);
         }
-        if (!isMounted()) return;
-        setPage(pageNum);
-        if (!isMounted()) return;
-        setHasMore((response.data.orders?.length || 0) >= 20);
-      } else {
+      } catch (error: any) {
         if (!isMounted()) return;
         if (!append) setProducts([]);
         if (!isMounted()) return;
         setHasMore(false);
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (error: any) {
-      if (!isMounted()) return;
-      if (!append) setProducts([]);
-      if (!isMounted()) return;
-      setHasMore(false);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [activeTab, authLoading, isAuthenticated]);
+    },
+    [activeTab, authLoading, isAuthenticated],
+  );
 
   useEffect(() => {
     // Only fetch when auth is ready
@@ -198,10 +203,14 @@ const MyProductsPage = () => {
     }
   }, [loadingMore, hasMore, loading, page, fetchProducts]);
 
-  const filteredProducts = useMemo(() => products.filter((product) => {
-    if (activeTab === 'all') return true;
-    return product.deliveryStatus === activeTab;
-  }), [products, activeTab]);
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((product) => {
+        if (activeTab === 'all') return true;
+        return product.deliveryStatus === activeTab;
+      }),
+    [products, activeTab],
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -233,205 +242,194 @@ const MyProductsPage = () => {
     }
   };
 
-  const handleReorder = useCallback(async (product: PurchasedProduct) => {
-    if (reordering) {
+  const handleReorder = useCallback(
+    async (product: PurchasedProduct) => {
+      if (reordering) {
+        return;
+      }
 
-      return;
-    }
+      try {
+        setReorderingProductId(product.orderId);
 
-    try {
-      setReorderingProductId(product.orderId);
+        // Show confirmation dialog
+        platformAlertConfirm(
+          'Reorder Confirmation',
+          `Would you like to reorder all items from order #${product.orderId}?`,
+          async () => {
+            try {
+              const success = await reorderFull(product.orderId);
 
-      // Show confirmation dialog
-      platformAlertConfirm(
-        'Reorder Confirmation',
-        `Would you like to reorder all items from order #${product.orderId}?`,
-        async () => {
-          try {
+              if (success && validation) {
+                // Refresh cart to show new items
+                await refreshCart();
 
-            const success = await reorderFull(product.orderId);
-
-            if (success && validation) {
-              // Refresh cart to show new items
-              await refreshCart();
-
-              // Show result modal with details
-              if (!isMounted()) return;
-              setReorderModalData({
-                addedCount: validation.items.filter(item => item.isAvailable).length,
-                skippedCount: validation.unavailableItems.length,
-                skippedItems: validation.unavailableItems.map(item => ({
-                  productId: item.productId,
-                  reason: item.reason
-                }))
-              });
-              if (!isMounted()) return;
-              setShowReorderModal(true);
-
-              // If all items were added, navigate to cart
-              if (validation.unavailableItems.length === 0) {
+                // Show result modal with details
                 if (!isMounted()) return;
-                setTimeout(() => {
+                setReorderModalData({
+                  addedCount: validation.items.filter((item) => item.isAvailable).length,
+                  skippedCount: validation.unavailableItems.length,
+                  skippedItems: validation.unavailableItems.map((item) => ({
+                    productId: item.productId,
+                    reason: item.reason,
+                  })),
+                });
+                if (!isMounted()) return;
+                setShowReorderModal(true);
+
+                // If all items were added, navigate to cart
+                if (validation.unavailableItems.length === 0) {
                   if (!isMounted()) return;
-                  setShowReorderModal(false);
-                  router.push('/cart' as any);
-                }, 2000);
+                  setTimeout(() => {
+                    if (!isMounted()) return;
+                    setShowReorderModal(false);
+                    router.push('/cart' as any);
+                  }, 2000);
+                }
+              } else {
+                // Show error
+                platformAlertSimple(
+                  'Reorder Failed',
+                  reorderError || 'Unable to reorder this order. Please try again.',
+                );
               }
-            } else {
-              // Show error
-              platformAlertSimple(
-                'Reorder Failed',
-                reorderError || 'Unable to reorder this order. Please try again.'
-              );
+            } catch (error: any) {
+              platformAlertSimple('Error', 'An unexpected error occurred while reordering.');
+            } finally {
+              if (!isMounted()) return;
+              setReorderingProductId(null);
             }
-          } catch (error) {
-            platformAlertSimple(
-              'Error',
-              'An unexpected error occurred while reordering.'
-            );
-          } finally {
-            if (!isMounted()) return;
-            setReorderingProductId(null);
-          }
-        },
-        'Reorder'
-      );
-    } catch (error) {
-      if (!isMounted()) return;
-      setReorderingProductId(null);
-    }
-  }, [reordering, reorderFull, validation, reorderError, refreshCart, router]);
+          },
+          'Reorder',
+        );
+      } catch (error: any) {
+        if (!isMounted()) return;
+        setReorderingProductId(null);
+      }
+    },
+    [reordering, reorderFull, validation, reorderError, refreshCart, router],
+  );
 
-  const handleReview = useCallback((product: PurchasedProduct) => {
-    const storeId = product.storeId || product.store?._id || product.store?.id;
-    if (storeId) {
-      router.push(`/reviews/${storeId}?productId=${product._id || product.id}` as any);
-    } else {
-      router.push('/ReviewPage' as any);
-    }
-  }, [router]);
+  const handleReview = useCallback(
+    (product: PurchasedProduct) => {
+      const storeId = product.storeId || product.store?._id || product.store?.id;
+      if (storeId) {
+        router.push(`/reviews/${storeId}?productId=${product._id || product.id}` as any);
+      } else {
+        router.push('/ReviewPage' as any);
+      }
+    },
+    [router],
+  );
 
-  const renderProduct = useCallback(({ item }: { item: PurchasedProduct }) => {
-    const productLabel = `${item.name}${item.variant ? `, ${item.variant.type}: ${item.variant.value}` : ''}. Price: ${item.price} rupees. Quantity: ${item.quantity}. Order number ${item.orderId}, placed on ${new Date(item.orderDate).toLocaleDateString()}. Status: ${getStatusText(item.deliveryStatus)}`;
+  const renderProduct = useCallback(
+    ({ item }: { item: PurchasedProduct }) => {
+      const productLabel = `${item.name}${item.variant ? `, ${item.variant.type}: ${item.variant.value}` : ''}. Price: ${item.price} rupees. Quantity: ${item.quantity}. Order number ${item.orderId}, placed on ${new Date(item.orderDate).toLocaleDateString()}. Status: ${getStatusText(item.deliveryStatus)}`;
 
-    return (
-      <Pressable
-        style={styles.productCard}
-        onPress={() => router.push(`/product-page?cardId=${item.productId}&cardType=product` as any)}
-       
-        accessibilityLabel={productLabel}
-        accessibilityRole="button"
-        accessibilityHint="Double tap to view product details"
-      >
-        <CachedImage
-          source={item.image}
-          style={styles.productImage}
-          accessibilityLabel={`Product image for ${item.name}`}
-          accessible={true}
-        />
+      return (
+        <Pressable
+          style={styles.productCard}
+          onPress={() => router.push(`/product-page?cardId=${item.productId}&cardType=product` as any)}
+          accessibilityLabel={productLabel}
+          accessibilityRole="button"
+          accessibilityHint="Double tap to view product details"
+        >
+          <CachedImage
+            source={item.image}
+            style={styles.productImage}
+            accessibilityLabel={`Product image for ${item.name}`}
+          />
 
-        <View style={styles.productInfo}>
-          <Text style={styles.productName} numberOfLines={2}>
-            {item.name}
-          </Text>
-
-          {item.variant && (
-            <Text style={styles.productVariant}>
-              {item.variant.type}: {item.variant.value}
+          <View style={styles.productInfo}>
+            <Text style={styles.productName} numberOfLines={2}>
+              {item.name}
             </Text>
-          )}
 
-          <View
-            style={styles.productDetails}
-            accessibilityLabel={`Price: ${item.price} rupees. Quantity: ${item.quantity}`}
-            accessibilityRole="text"
-          >
-            <Text style={styles.productPrice}>{currencySymbol}{item.price}</Text>
-            <Text style={styles.productQuantity}>Qty: {item.quantity}</Text>
-          </View>
+            {item.variant && (
+              <Text style={styles.productVariant}>
+                {item.variant.type}: {item.variant.value}
+              </Text>
+            )}
 
-          <Text
-            style={styles.orderInfo}
-            accessibilityLabel={`Order number ${item.orderId}, placed on ${new Date(item.orderDate).toLocaleDateString()}`}
-          >
-            Order #{item.orderId} • {new Date(item.orderDate).toLocaleDateString()}
-          </Text>
-
-          <View
-            style={styles.statusBadge}
-            accessibilityLabel={`Delivery status: ${getStatusText(item.deliveryStatus)}`}
-            accessibilityRole="text"
-          >
             <View
-              style={[
-                styles.statusDot,
-                { backgroundColor: getStatusColor(item.deliveryStatus) },
-              ]}
-            />
+              style={styles.productDetails}
+              accessibilityLabel={`Price: ${item.price} rupees. Quantity: ${item.quantity}`}
+              accessibilityRole="text"
+            >
+              <Text style={styles.productPrice}>
+                {currencySymbol}
+                {item.price}
+              </Text>
+              <Text style={styles.productQuantity}>Qty: {item.quantity}</Text>
+            </View>
+
             <Text
-              style={[
-                styles.statusText,
-                { color: getStatusColor(item.deliveryStatus) },
-              ]}
+              style={styles.orderInfo}
+              accessibilityLabel={`Order number ${item.orderId}, placed on ${new Date(item.orderDate).toLocaleDateString()}`}
             >
-              {getStatusText(item.deliveryStatus)}
+              Order #{item.orderId} • {new Date(item.orderDate).toLocaleDateString()}
             </Text>
+
+            <View
+              style={styles.statusBadge}
+              accessibilityLabel={`Delivery status: ${getStatusText(item.deliveryStatus)}`}
+              accessibilityRole="text"
+            >
+              <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.deliveryStatus) }]} />
+              <Text style={[styles.statusText, { color: getStatusColor(item.deliveryStatus) }]}>
+                {getStatusText(item.deliveryStatus)}
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.actionsContainer}>
-          {item.canReorder && (
-            <Pressable
-              style={[
-                styles.actionButton,
-                reorderingProductId === item.orderId && styles.actionButtonDisabled
-              ]}
-              onPress={() => handleReorder(item)}
-              disabled={reorderingProductId === item.orderId}
-              accessibilityLabel={reorderingProductId === item.orderId ? 'Reordering product' : 'Reorder this product'}
-              accessibilityRole="button"
-              accessibilityHint="Double tap to add all items from this order to your cart"
-              accessibilityState={{ disabled: reorderingProductId === item.orderId }}
-            >
-              {reorderingProductId === item.orderId ? (
-                <ActivityIndicator size="small" color={colors.brand.green} />
-              ) : (
-                <>
-                  <Ionicons name="repeat-outline" size={20} color={colors.brand.green} />
-                  <Text style={styles.actionText}>Reorder</Text>
-                </>
-              )}
-            </Pressable>
-          )}
+          <View style={styles.actionsContainer}>
+            {item.canReorder && (
+              <Pressable
+                style={[styles.actionButton, reorderingProductId === item.orderId && styles.actionButtonDisabled]}
+                onPress={() => handleReorder(item)}
+                disabled={reorderingProductId === item.orderId}
+                accessibilityLabel={
+                  reorderingProductId === item.orderId ? 'Reordering product' : 'Reorder this product'
+                }
+                accessibilityRole="button"
+                accessibilityHint="Double tap to add all items from this order to your cart"
+                accessibilityState={{ disabled: reorderingProductId === item.orderId }}
+              >
+                {reorderingProductId === item.orderId ? (
+                  <ActivityIndicator size="small" color={colors.brand.green} />
+                ) : (
+                  <>
+                    <Ionicons name="repeat-outline" size={20} color={colors.brand.green} />
+                    <Text style={styles.actionText}>Reorder</Text>
+                  </>
+                )}
+              </Pressable>
+            )}
 
-          {item.canReview && (
-            <Pressable
-              style={styles.actionButton}
-              onPress={() => handleReview(item)}
-              accessibilityLabel="Write a review for this product"
-              accessibilityRole="button"
-              accessibilityHint="Double tap to submit a product review"
-            >
-              <Ionicons name="star-outline" size={20} color={Colors.warning} />
-              <Text style={styles.actionText}>Review</Text>
-            </Pressable>
-          )}
-        </View>
-      </Pressable>
-    );
-  }, [router, currencySymbol, reorderingProductId, handleReorder, handleReview]);
+            {item.canReview && (
+              <Pressable
+                style={styles.actionButton}
+                onPress={() => handleReview(item)}
+                accessibilityLabel="Write a review for this product"
+                accessibilityRole="button"
+                accessibilityHint="Double tap to submit a product review"
+              >
+                <Ionicons name="star-outline" size={20} color={Colors.warning} />
+                <Text style={styles.actionText}>Review</Text>
+              </Pressable>
+            )}
+          </View>
+        </Pressable>
+      );
+    },
+    [router, currencySymbol, reorderingProductId, handleReorder, handleReview],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="cube-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyTitle}>No Products Yet</Text>
-      <Text style={styles.emptyText}>
-        Products you purchase will appear here
-      </Text>
-      <Pressable
-        style={styles.shopButton}
-        onPress={() => router.push('/(tabs)/explore' as any)}
-      >
+      <Text style={styles.emptyText}>Products you purchase will appear here</Text>
+      <Pressable style={styles.shopButton} onPress={() => router.push('/(tabs)/explore' as any)}>
         <Text style={styles.shopButtonText}>Start Shopping</Text>
       </Pressable>
     </View>
@@ -455,11 +453,7 @@ const MyProductsPage = () => {
       {/* Header */}
       <LinearGradient colors={[colors.brand.teal, colors.brand.green]} style={styles.header}>
         <View style={styles.headerContent}>
-          <HeaderBackButton
-            onPress={handleBackPress}
-            iconColor={colors.background.primary}
-            style={styles.backButton}
-          />
+          <HeaderBackButton onPress={handleBackPress} iconColor={colors.background.primary} style={styles.backButton} />
           <Text style={styles.headerTitle}>My Products</Text>
           <View style={styles.headerRight} />
         </View>
@@ -469,20 +463,10 @@ const MyProductsPage = () => {
           {tabs.map((tab) => (
             <Pressable
               key={tab.key}
-              style={[
-                styles.tab,
-                activeTab === tab.key && styles.activeTab,
-              ]}
+              style={[styles.tab, activeTab === tab.key && styles.activeTab]}
               onPress={() => setActiveTab(tab.key)}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab.key && styles.activeTabText,
-                ]}
-              >
-                {tab.label}
-              </Text>
+              <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
             </Pressable>
           ))}
         </View>
@@ -494,9 +478,7 @@ const MyProductsPage = () => {
         renderItem={renderProduct}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListEmptyComponent={renderEmptyState}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}
@@ -526,9 +508,7 @@ const MyProductsPage = () => {
                 <Ionicons name="alert-circle" size={48} color={Colors.warning} />
               )}
               <Text style={styles.modalTitle}>
-                {reorderModalData?.skippedCount === 0
-                  ? 'Reorder Successful!'
-                  : 'Reorder Completed'}
+                {reorderModalData?.skippedCount === 0 ? 'Reorder Successful!' : 'Reorder Completed'}
               </Text>
             </View>
 
@@ -536,9 +516,7 @@ const MyProductsPage = () => {
               {reorderModalData && reorderModalData.addedCount > 0 && (
                 <View style={styles.modalRow}>
                   <Ionicons name="checkmark-circle-outline" size={20} color={Colors.success} />
-                  <Text style={styles.modalSuccessText}>
-                    {reorderModalData.addedCount} item(s) added to cart
-                  </Text>
+                  <Text style={styles.modalSuccessText}>{reorderModalData.addedCount} item(s) added to cart</Text>
                 </View>
               )}
 
@@ -546,9 +524,7 @@ const MyProductsPage = () => {
                 <>
                   <View style={styles.modalRow}>
                     <Ionicons name="close-circle-outline" size={20} color={Colors.error} />
-                    <Text style={styles.modalErrorText}>
-                      {reorderModalData.skippedCount} item(s) unavailable
-                    </Text>
+                    <Text style={styles.modalErrorText}>{reorderModalData.skippedCount} item(s) unavailable</Text>
                   </View>
 
                   <View style={styles.skippedItemsList}>

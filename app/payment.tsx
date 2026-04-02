@@ -132,7 +132,7 @@ function PaymentPage() {
       if (response.success && response.data) {
         setFinancialService(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -192,7 +192,7 @@ function PaymentPage() {
         const availableMethods = response.data.filter((m) => m.type !== 'card');
         setPaymentMethods(availableMethods);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load payment methods. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -344,7 +344,7 @@ function PaymentPage() {
         // Navigate back (not to success) — user can check wallet history for status
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }
-    } catch (error) {
+    } catch (error: any) {
       const errorMsg = error instanceof Error ? error.message : 'Payment failed. Please try again.';
       if (!isMounted()) return;
       setPaymentError(errorMsg);
@@ -487,7 +487,7 @@ function PaymentPage() {
               />
             </View>
             <Pressable
-              style={[styles.payButton, !upiId && styles.disabledButton]}
+              style={[styles.payButton, !upiId ? styles.disabledButton : null]}
               onPress={handleUPIPayment}
               disabled={!upiId || isProcessing}
             >
@@ -510,7 +510,7 @@ function PaymentPage() {
               {['paytm', 'phonepe', 'gpay', 'amazonpay'].map((wallet) => (
                 <Pressable
                   key={wallet}
-                  style={[styles.walletOption, walletType === wallet && styles.selectedWalletOption]}
+                  style={[styles.walletOption, walletType === wallet ? styles.selectedWalletOption : null]}
                   onPress={() => setWalletType(wallet)}
                   accessibilityLabel={`${wallet.toUpperCase()}${walletType === wallet ? ', selected' : ''}`}
                   accessibilityRole="radio"
@@ -545,7 +545,7 @@ function PaymentPage() {
               ].map((bank) => (
                 <Pressable
                   key={bank.code}
-                  style={[styles.walletOption, bankCode === bank.code && styles.selectedWalletOption]}
+                  style={[styles.walletOption, bankCode === bank.code ? styles.selectedWalletOption : null]}
                   onPress={() => setBankCode(bank.code)}
                   accessibilityLabel={`${bank.name}${bankCode === bank.code ? ', selected' : ''}`}
                   accessibilityRole="radio"
@@ -559,7 +559,7 @@ function PaymentPage() {
             </View>
 
             <Pressable
-              style={[styles.payButton, !bankCode && styles.disabledButton]}
+              style={[styles.payButton, !bankCode ? styles.disabledButton : null]}
               onPress={() => handleNonCardPayment({ bankCode })}
               disabled={!bankCode || isProcessing}
             >

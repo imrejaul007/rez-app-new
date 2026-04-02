@@ -392,11 +392,17 @@ function StorePage() {
                 }
               : undefined,
             rating: {
-              value: updatedCardData.rating || 0,
+              value:
+                typeof updatedCardData.rating === 'number'
+                  ? updatedCardData.rating
+                  : (updatedCardData.rating as any)?.value || 0,
               count: updatedCardData.reviewCount || 0,
             },
-            cashback: updatedCardData.cashback,
-          })
+            cashback:
+              updatedCardData.cashback?.percentage !== undefined
+                ? { percentage: updatedCardData.cashback.percentage }
+                : undefined,
+          } as any)
           .catch(() => {});
 
         // Fire analytics + view tracking in parallel (non-blocking)
@@ -415,7 +421,7 @@ function StorePage() {
         if (!isMounted()) return;
         setError(response.message || 'Failed to load product');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Unable to load product. Please try again.');
     } finally {
@@ -447,7 +453,7 @@ function StorePage() {
         if (!isMounted()) return;
         setIsLocked(!!lockedItem);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [cardData?.id, cardData?._id, params.cardId, authLoading, isAuthenticated]);
@@ -474,7 +480,7 @@ function StorePage() {
 
           // Also fetch latest backend data in background to ensure freshness
           fetchBackendData(params.cardId as string);
-        } catch (error) {
+        } catch (error: any) {
           // Fallback: Create basic card data and fetch from backend
           const cardDataFromParams: DynamicCardData = {
             id: params.cardId as string,
@@ -536,7 +542,7 @@ function StorePage() {
           if (!isMounted()) return;
           setStoreReviews(formattedReviews);
         }
-      } catch (err) {
+      } catch (err: any) {
         // Keep empty array - component will show default reviews
       }
     };
@@ -587,7 +593,7 @@ function StorePage() {
       } else {
         showAlert('Error', cartResponse.message || 'Failed to add to cart', [{ text: 'OK' }], 'error');
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Unable to add to cart. Please try again.', [{ text: 'OK' }], 'error');
     }
   }, [
@@ -682,7 +688,7 @@ function StorePage() {
         await refreshCart();
         if (!isMounted()) return;
         setShowAddedToCartModal(true);
-      } catch (error) {
+      } catch (error: any) {
         platformAlertSimple('Error', 'Failed to add bundle to cart. Please try again.');
       }
     },
@@ -810,7 +816,7 @@ function StorePage() {
       {/* Sticky Header - Outside ScrollView */}
       <View style={styles.stickyHeader}>
         <StoreHeader
-          dynamicData={isDynamic ? cardData : null}
+          dynamicData={isDynamic ? (cardData as any) : null}
           cardType={params.cardType as string}
           isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
           showImage={false}
@@ -821,13 +827,15 @@ function StorePage() {
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          isWeb ? styles.webScrollContent : undefined,
-          {
-            paddingBottom: 100, // Space for sticky bottom bar
-            paddingTop: Platform.OS === 'ios' ? 120 : 75, // Space for sticky header
-          },
-        ]}
+        contentContainerStyle={
+          [
+            isWeb ? styles.webScrollContent : undefined,
+            {
+              paddingBottom: 100, // Space for sticky bottom bar
+              paddingTop: Platform.OS === 'ios' ? 120 : 75, // Space for sticky header
+            },
+          ] as any
+        }
       >
         <View
           style={[
@@ -837,7 +845,7 @@ function StorePage() {
         >
           {/* 1. Product Image Section */}
           <StoreHeader
-            dynamicData={isDynamic ? cardData : null}
+            dynamicData={isDynamic ? (cardData as any) : null}
             cardType={params.cardType as string}
             isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
             showImage={true}
@@ -918,9 +926,7 @@ function StorePage() {
           )}
 
           {/* 9. Pay with ReZ Section */}
-          {!isLoadingBackend && cardData && productPrice > 0 && (
-            <PayWithRezSection productPrice={productPrice} earnableCoins={earnableCoins} />
-          )}
+          {!isLoadingBackend && cardData && productPrice > 0 && <PayWithRezSection />}
 
           {/* 10. Delivery & Pickup Cards */}
           {!isLoadingBackend && cardData && <DeliveryPickupCards />}
@@ -1050,7 +1056,7 @@ function StorePage() {
             storeType={storeType}
             storeActionConfig={cardData?.store?.actionButtons}
             storeData={storeActionData}
-            dynamicData={isDynamic ? cardData : null}
+            dynamicData={isDynamic ? (cardData as any) : null}
             buttonGroup="store-actions"
           />
 

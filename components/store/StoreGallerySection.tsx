@@ -167,7 +167,7 @@ function StoreGallerySection({ storeId }: StoreGallerySectionProps) {
       const cats = await storeGalleryApi.getCategories(storeId);
       if (!isMounted()) return;
       setCategories(cats);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

@@ -46,7 +46,7 @@ function DeleteAccountPage() {
       'Delete Account',
       'Are you absolutely sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.',
       confirmDeleteAccount,
-      'Delete Account'
+      'Delete Account',
     );
   };
 
@@ -65,12 +65,15 @@ function DeleteAccountPage() {
             // AuthContext navigation guard handles redirect after logout
             await actions.logout();
           },
-          'OK'
+          'OK',
         );
       } else {
         const msg = data?.message || 'Failed to delete account';
         if (msg.toLowerCase().includes('active order')) {
-          platformAlertSimple('Cannot Delete', 'You have active orders. Please wait for them to complete before deleting your account.');
+          platformAlertSimple(
+            'Cannot Delete',
+            'You have active orders. Please wait for them to complete before deleting your account.',
+          );
         } else if (msg.toLowerCase().includes('wallet balance') || msg.toLowerCase().includes('pending')) {
           platformAlertSimple('Cannot Delete', 'Please withdraw your wallet balance before deleting your account.');
         } else {
@@ -80,8 +83,14 @@ function DeleteAccountPage() {
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Failed to delete account. Please try again.';
       if (errorMessage.toLowerCase().includes('active order')) {
-        platformAlertSimple('Cannot Delete', 'You have active orders. Please wait for them to complete before deleting your account.');
-      } else if (errorMessage.toLowerCase().includes('wallet balance') || errorMessage.toLowerCase().includes('pending')) {
+        platformAlertSimple(
+          'Cannot Delete',
+          'You have active orders. Please wait for them to complete before deleting your account.',
+        );
+      } else if (
+        errorMessage.toLowerCase().includes('wallet balance') ||
+        errorMessage.toLowerCase().includes('pending')
+      ) {
         platformAlertSimple('Cannot Delete', 'Please withdraw your wallet balance before deleting your account.');
       } else {
         platformAlertSimple('Error', errorMessage);
@@ -102,7 +111,7 @@ function DeleteAccountPage() {
       const fileName = `rez-data-export-${Date.now()}.json`;
       const fileUri = `${FileSystem.documentDirectory}${fileName}`;
       await FileSystem.writeAsStringAsync(fileUri, json, {
-        encoding: FileSystem.EncodingType.UTF8
+        encoding: FileSystem.EncodingType.UTF8,
       });
 
       await Sharing.shareAsync(fileUri, {
@@ -128,7 +137,7 @@ function DeleteAccountPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"
@@ -150,8 +159,8 @@ function DeleteAccountPage() {
             <ThemedText style={styles.warningTitle}>Warning</ThemedText>
           </View>
           <ThemedText style={styles.warningText}>
-            This action cannot be undone. Deleting your account will permanently remove all your data, 
-            including your profile, settings, and account history.
+            This action cannot be undone. Deleting your account will permanently remove all your data, including your
+            profile, settings, and account history.
           </ThemedText>
         </View>
 
@@ -198,7 +207,7 @@ function DeleteAccountPage() {
 
         {/* Export Data Button */}
         <Pressable
-          style={[styles.exportButton, isExporting && styles.exportButtonLoading]}
+          style={[styles.exportButton, isExporting ? styles.exportButtonLoading : null]}
           onPress={handleExportData}
           disabled={isExporting}
           accessibilityRole="button"
@@ -221,10 +230,7 @@ function DeleteAccountPage() {
 
         {/* Delete Button */}
         <Pressable
-          style={[
-            styles.deleteButton,
-            (confirmationText !== requiredText || isLoading) && styles.deleteButtonDisabled
-          ]}
+          style={[styles.deleteButton, (confirmationText !== requiredText || isLoading) && styles.deleteButtonDisabled]}
           onPress={handleDeleteAccount}
           disabled={confirmationText !== requiredText || isLoading}
           accessibilityRole="button"
@@ -245,9 +251,7 @@ function DeleteAccountPage() {
         {/* Alternative Options */}
         <View style={styles.alternativesCard}>
           <ThemedText style={styles.alternativesTitle}>Before you go...</ThemedText>
-          <ThemedText style={styles.alternativesText}>
-            Consider these alternatives to deleting your account:
-          </ThemedText>
+          <ThemedText style={styles.alternativesText}>Consider these alternatives to deleting your account:</ThemedText>
           <View style={styles.alternativesList}>
             <Pressable
               style={styles.alternativeItem}

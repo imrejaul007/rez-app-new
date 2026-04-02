@@ -31,7 +31,7 @@ export interface CheckInStatus {
  * on every app open.
  */
 export const checkIn = (): Promise<ApiResponse<CheckInResult>> =>
-  apiClient.post('/gamification/daily-checkin', {});
+  apiClient.post<any>('/gamification/daily-checkin', {});
 
 /**
  * GET /api/gamification/daily-checkin/status
@@ -40,4 +40,4 @@ export const checkIn = (): Promise<ApiResponse<CheckInResult>> =>
  * Use this to decide whether to show the "Check In" CTA or a "Checked In" badge.
  */
 export const getCheckinStatus = (): Promise<ApiResponse<CheckInStatus>> =>
-  apiClient.get('/gamification/daily-checkin/status');
+  apiClient.get<any>('/gamification/daily-checkin/status');

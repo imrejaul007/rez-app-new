@@ -223,7 +223,7 @@ const MyVouchersPage = () => {
         }
         setPage(pageNum);
         setHasMore(allVouchers.length >= 20);
-      } catch (error) {
+      } catch (error: any) {
         logger.error('Error fetching vouchers:', error);
         if (!isMounted()) return;
         if (!append) setVouchers([]);
@@ -291,7 +291,7 @@ const MyVouchersPage = () => {
           // Provide specific error message based on response
           const errorMessage =
             validationResult.message ||
-            validationResult.data?.message ||
+            (validationResult.data as any)?.message ||
             'This voucher cannot be applied. It may have expired or already been used.';
           platformAlertSimple('Voucher Not Valid', errorMessage);
           return;
@@ -340,7 +340,7 @@ const MyVouchersPage = () => {
             }),
           'Go to Checkout',
         );
-      } catch (error) {
+      } catch (error: any) {
         logger.error('Error validating voucher:', error);
         // Fallback to old behavior - just copy code
         if (!isMounted()) return;
@@ -370,7 +370,7 @@ const MyVouchersPage = () => {
           message,
           title: `${voucher.brandName} Voucher`,
         });
-      } catch (error) {
+      } catch (error: any) {
         logger.error('Error sharing voucher:', error);
       }
     },
@@ -417,7 +417,7 @@ const MyVouchersPage = () => {
         await realOffersApi.markRedemptionAsUsed(voucherId, {
           orderAmount: 0, // External usage - no order amount tracked
           usageType: 'external',
-        });
+        } as any);
       } else {
         // For gift cards, use the voucher service API
         await vouchersService.useVoucher(voucherId, {
@@ -427,7 +427,7 @@ const MyVouchersPage = () => {
 
       // Refresh vouchers list
       await fetchVouchers();
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error marking voucher as used:', error);
       throw error; // Re-throw to let modal handle error display
     }
@@ -444,7 +444,7 @@ const MyVouchersPage = () => {
       if (!isMounted()) return;
       setSelectedVoucher(null);
       fetchVouchers(); // Refresh vouchers list
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error marking voucher as used:', error);
       platformAlertSimple('Error', 'Failed to redeem voucher. Please try again.');
     }
@@ -457,7 +457,7 @@ const MyVouchersPage = () => {
       const isActive = item.status === 'active';
 
       return (
-        <Pressable style={[styles.voucherCard, isExpired && styles.expiredCard]} disabled={!isActive}>
+        <Pressable style={[styles.voucherCard, isExpired ? styles.expiredCard : null]} disabled={!isActive}>
           <LinearGradient
             colors={isActive ? [Colors.warning, colors.brand.orange] : [colors.border.default, colors.text.tertiary]}
             style={styles.voucherGradient}
@@ -683,10 +683,10 @@ const MyVouchersPage = () => {
           {tabs.map((tab) => (
             <Pressable
               key={tab.key}
-              style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+              style={[styles.tab, activeTab === tab.key ? styles.activeTab : null]}
               onPress={() => setActiveTab(tab.key)}
             >
-              <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
+              <Text style={[styles.tabText, activeTab === tab.key ? styles.activeTabText : null]}>{tab.label}</Text>
             </Pressable>
           ))}
         </View>

@@ -6,7 +6,7 @@ import type { ReviewFilters } from '@/types/review.types';
 export function useStoreReviews(storeId: string, filters?: ReviewFilters) {
   return useQuery({
     queryKey: queryKeys.reviews.byStore(storeId, filters),
-    queryFn: () => reviewApi.getStoreReviews(storeId, filters),
+    queryFn: () => reviewApi.getStoreReviews(storeId, filters as any),
     enabled: !!storeId,
   });
 }
@@ -14,7 +14,7 @@ export function useStoreReviews(storeId: string, filters?: ReviewFilters) {
 export function useUserReviews(filters?: ReviewFilters) {
   return useQuery({
     queryKey: ['reviews', 'user', filters] as const,
-    queryFn: () => reviewApi.getUserReviews(filters),
+    queryFn: () => reviewApi.getUserReviews(filters as any),
   });
 }
 

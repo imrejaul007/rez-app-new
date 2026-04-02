@@ -53,7 +53,7 @@ const RelatedTrainsSection: React.FC<RelatedTrainsSectionProps> = ({ currentTrai
         if (!isMounted()) return;
         setRelatedTrains(filtered);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

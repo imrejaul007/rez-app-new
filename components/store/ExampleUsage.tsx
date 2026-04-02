@@ -232,6 +232,7 @@ export const StoreDetailsPageExample = ({ storeData }: any) => {
 // ============================================================================
 
 export const APIIntegrationExample = ({ storeId }: { storeId: string }) => {
+  const isMounted = useIsMounted();
   const [policies, setPolicies] = useState<StorePolicy[]>([]);
   const [contact, setContact] = useState<StoreContactInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -254,7 +255,7 @@ export const APIIntegrationExample = ({ storeId }: { storeId: string }) => {
       if (!isMounted()) return;
       setContact(contactData);
 
-    } catch (error) {
+    } catch (error: any) {
       // Fallback to mock data
       if (!isMounted()) return;
       setPolicies(MOCK_POLICIES);

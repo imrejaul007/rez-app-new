@@ -33,7 +33,6 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-
 const COLORS = {
   white: colors.background.primary,
   navy: colors.brand.navyDark,
@@ -112,60 +111,66 @@ const MyDealsPage: React.FC = () => {
 
   // AuthContext navigation guard handles unauthenticated redirect
 
-  const fetchDeals = useCallback(async (reset = false) => {
-    if (!isAuthenticated) return;
+  const fetchDeals = useCallback(
+    async (reset = false) => {
+      if (!isAuthenticated) return;
 
-    try {
-      if (reset) {
-        setIsLoading(true);
-        setPage(1);
-      }
-
-      const currentPage = reset ? 1 : page;
-      const response = await campaignsApi.getMyDeals({
-        status: selectedFilter === 'all' ? undefined : selectedFilter,
-        page: currentPage,
-        limit: 20,
-      });
-
-      if (response.success && response.data) {
+      try {
         if (reset) {
-          if (!isMounted()) return;
-          setRedemptions(response.data.redemptions);
-        } else {
-          if (!isMounted()) return;
-          setRedemptions(prev => [...prev, ...response.data!.redemptions]);
+          setIsLoading(true);
+          setPage(1);
         }
 
-        const redemptionList = reset ? response.data.redemptions : [...redemptions, ...response.data.redemptions];
-        const calculatedSummary = redemptionList.reduce((acc, r) => {
-          if (r.status === 'active') acc.active++;
-          else if (r.status === 'used') acc.used++;
-          else if (r.status === 'expired') acc.expired++;
-          else if (r.status === 'cancelled') acc.cancelled++;
-          return acc;
-        }, { active: 0, used: 0, expired: 0, cancelled: 0 });
-        if (!isMounted()) return;
-        setSummary(calculatedSummary);
+        const currentPage = reset ? 1 : page;
+        const response = await campaignsApi.getMyDeals({
+          status: selectedFilter === 'all' ? undefined : selectedFilter,
+          page: currentPage,
+          limit: 20,
+        });
 
-        const { page: currentPg, totalPages } = response.data.pagination;
+        if (response.success && response.data) {
+          if (reset) {
+            if (!isMounted()) return;
+            setRedemptions(response.data.redemptions);
+          } else {
+            if (!isMounted()) return;
+            setRedemptions((prev) => [...prev, ...response.data!.redemptions]);
+          }
+
+          const redemptionList = reset ? response.data.redemptions : [...redemptions, ...response.data.redemptions];
+          const calculatedSummary = redemptionList.reduce(
+            (acc, r) => {
+              if (r.status === 'active') acc.active++;
+              else if (r.status === 'used') acc.used++;
+              else if (r.status === 'expired') acc.expired++;
+              else if (r.status === 'cancelled') acc.cancelled++;
+              return acc;
+            },
+            { active: 0, used: 0, expired: 0, cancelled: 0 },
+          );
+          if (!isMounted()) return;
+          setSummary(calculatedSummary);
+
+          const { page: currentPg, totalPages } = response.data.pagination;
+          if (!isMounted()) return;
+          setHasMore(currentPg < totalPages);
+          setError(null);
+        } else {
+          if (!isMounted()) return;
+          setError(response.message || 'Failed to load deals');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setHasMore(currentPg < totalPages);
-        setError(null);
-      } else {
+        setError(err.message || 'Failed to load deals');
+      } finally {
         if (!isMounted()) return;
-        setError(response.message || 'Failed to load deals');
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load deals');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, [isAuthenticated, selectedFilter, page]);
+    },
+    [isAuthenticated, selectedFilter, page],
+  );
 
   useEffect(() => {
     fetchDeals(true);
@@ -202,7 +207,7 @@ const MyDealsPage: React.FC = () => {
 
   const loadMore = useCallback(() => {
     if (hasMore && !isLoading) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
     }
   }, [hasMore, isLoading]);
 
@@ -213,7 +218,7 @@ const MyDealsPage: React.FC = () => {
         storeId,
         storeData: JSON.stringify({ id: storeId, name: storeName }),
         redemptionCode,
-      }
+      },
     } as any);
   };
 
@@ -257,9 +262,10 @@ const MyDealsPage: React.FC = () => {
   const renderDealCard = useCallback(({ item: redemption }: { item: DealRedemption }) => {
     const statusConfig = STATUS_CONFIG[redemption.status] || STATUS_CONFIG.active;
     const dealValue = getDealValue(redemption.dealSnapshot);
-    const gradientColors = redemption.campaignSnapshot?.gradientColors?.length >= 2
-      ? redemption.campaignSnapshot.gradientColors
-      : [colors.brand.orange, '#FB923C'];
+    const gradientColors =
+      (redemption.campaignSnapshot?.gradientColors?.length ?? 0) >= 2
+        ? redemption.campaignSnapshot.gradientColors
+        : [colors.brand.orange, '#FB923C'];
     const timeRemaining = redemption.status === 'active' ? getTimeRemaining(redemption.expiresAt) : null;
     const code = redemption.code || redemption.redemptionCode || '';
     const isCopied = copiedCode === code;
@@ -275,19 +281,14 @@ const MyDealsPage: React.FC = () => {
         >
           <View style={styles.cardHeaderContent}>
             <View style={styles.campaignBadge}>
-              <Text style={styles.campaignBadgeText}>
-                {redemption.campaignSnapshot?.badge || 'DEAL'}
-              </Text>
+              <Text style={styles.campaignBadgeText}>{redemption.campaignSnapshot?.badge || 'DEAL'}</Text>
             </View>
             <Text style={styles.campaignTitle} numberOfLines={1}>
               {redemption.campaignSnapshot?.title || 'Deal'}
             </Text>
           </View>
           {redemption.dealSnapshot?.image && (
-            <CachedImage
-              source={redemption.dealSnapshot.image}
-              style={styles.dealImage}
-            />
+            <CachedImage source={redemption.dealSnapshot.image} style={styles.dealImage} />
           )}
         </LinearGradient>
 
@@ -296,16 +297,14 @@ const MyDealsPage: React.FC = () => {
           {/* Store & Status Row */}
           <View style={styles.storeStatusRow}>
             <View style={styles.storeInfo}>
-              <Ionicons name="storefront" size={16} color={COLORS.navy} />
+              <Ionicons name="storefront" size={16} color={(COLORS as any).navy} />
               <Text style={styles.storeName} numberOfLines={1}>
                 {redemption.dealSnapshot?.store || 'Store'}
               </Text>
             </View>
             <View style={[styles.statusBadge, { backgroundColor: statusConfig.bgColor }]}>
               <Ionicons name={statusConfig.icon as any} size={12} color={statusConfig.color} />
-              <Text style={[styles.statusText, { color: statusConfig.color }]}>
-                {statusConfig.label}
-              </Text>
+              <Text style={[styles.statusText, { color: statusConfig.color }]}>{statusConfig.label}</Text>
             </View>
           </View>
 
@@ -315,9 +314,7 @@ const MyDealsPage: React.FC = () => {
               <Text style={styles.dealValueLabel}>{dealValue.type}</Text>
               <View style={styles.dealValueContainer}>
                 {dealValue.type === 'Coins' && <CoinIcon size={18} />}
-                <Text style={[styles.dealValueText, { color: dealValue.color }]}>
-                  {dealValue.value}
-                </Text>
+                <Text style={[styles.dealValueText, { color: dealValue.color }]}>{dealValue.value}</Text>
               </View>
             </View>
           )}
@@ -325,11 +322,7 @@ const MyDealsPage: React.FC = () => {
           {/* Redemption Code - Prominent Display */}
           <View style={styles.codeSection}>
             <Text style={styles.codeSectionLabel}>Redemption Code</Text>
-            <Pressable
-              style={styles.codeBox}
-              onPress={() => handleCopyCode(code)}
-             
-            >
+            <Pressable style={styles.codeBox} onPress={() => handleCopyCode(code)}>
               <Text style={styles.codeText}>{code}</Text>
               <View style={styles.copyButton}>
                 <Ionicons
@@ -344,13 +337,9 @@ const MyDealsPage: React.FC = () => {
 
           {/* Time Remaining for Active Deals */}
           {timeRemaining && (
-            <View style={[styles.timeRow, timeRemaining.urgent && styles.timeRowUrgent]}>
-              <Ionicons
-                name="time-outline"
-                size={14}
-                color={timeRemaining.urgent ? COLORS.amber600 : COLORS.gray600}
-              />
-              <Text style={[styles.timeText, timeRemaining.urgent && styles.timeTextUrgent]}>
+            <View style={[styles.timeRow, timeRemaining.urgent ? styles.timeRowUrgent : null]}>
+              <Ionicons name="time-outline" size={14} color={timeRemaining.urgent ? COLORS.amber600 : COLORS.gray600} />
+              <Text style={[styles.timeText, timeRemaining.urgent ? styles.timeTextUrgent : null]}>
                 {timeRemaining.text}
               </Text>
             </View>
@@ -360,12 +349,9 @@ const MyDealsPage: React.FC = () => {
           {redemption.status === 'active' && redemption.dealSnapshot?.storeId && (
             <Pressable
               style={styles.visitStoreButton}
-              onPress={() => handleVisitStore(
-                redemption.dealSnapshot.storeId!,
-                code,
-                redemption.dealSnapshot.store || 'Store'
-              )}
-             
+              onPress={() =>
+                handleVisitStore(redemption.dealSnapshot.storeId!, code, redemption.dealSnapshot.store || 'Store')
+              }
             >
               <Text style={styles.visitStoreText}>Visit Store</Text>
               <Ionicons name="arrow-forward" size={16} color={COLORS.white} />
@@ -420,8 +406,11 @@ const MyDealsPage: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.navy} />
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
+          <Ionicons name="arrow-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
         <Text style={styles.headerTitle}>My Deals</Text>
         <View style={styles.headerRight} />
@@ -454,46 +443,23 @@ const MyDealsPage: React.FC = () => {
 
       {/* Filter Tabs - FIXED: Horizontal chips, not stretched */}
       <View style={styles.filterSection}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersContent}>
           {[
             { key: 'all' as FilterStatus, label: 'All', count: totalDeals },
             { key: 'active' as FilterStatus, label: 'Active', count: summary.active },
             { key: 'used' as FilterStatus, label: 'Used', count: summary.used },
             { key: 'expired' as FilterStatus, label: 'Expired', count: summary.expired },
-          ].map(filter => (
+          ].map((filter) => (
             <Pressable
               key={filter.key}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.key && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.key && styles.filterChipActive]}
               onPress={() => handleFilterChange(filter.key)}
-             
             >
-              <Text
-                style={[
-                  styles.filterChipText,
-                  selectedFilter === filter.key && styles.filterChipTextActive,
-                ]}
-              >
+              <Text style={[styles.filterChipText, selectedFilter === filter.key && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
-              <View
-                style={[
-                  styles.filterBadge,
-                  selectedFilter === filter.key && styles.filterBadgeActive,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.filterBadgeText,
-                    selectedFilter === filter.key && styles.filterBadgeTextActive,
-                  ]}
-                >
+              <View style={[styles.filterBadge, selectedFilter === filter.key && styles.filterBadgeActive]}>
+                <Text style={[styles.filterBadgeText, selectedFilter === filter.key && styles.filterBadgeTextActive]}>
                   {filter.count}
                 </Text>
               </View>
@@ -519,12 +485,12 @@ const MyDealsPage: React.FC = () => {
         <FlashList
           data={redemptions}
           renderItem={renderDealCard}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => (item as any)._id || item.id}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={COLORS.green500} />
           }
-          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }]}
+          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }] as any}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           ListFooterComponent={
@@ -572,7 +538,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerRight: {
     width: 40,
@@ -631,7 +597,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   filterChipActive: {
-    backgroundColor: COLORS.navy,
+    backgroundColor: (COLORS as any).navy,
   },
   filterChipText: {
     ...Typography.body,
@@ -719,7 +685,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
@@ -819,7 +785,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.body,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     flex: 1,
   },
   statusBadge: {
@@ -885,7 +851,7 @@ const styles = StyleSheet.create({
   codeText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     letterSpacing: 1.5,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },

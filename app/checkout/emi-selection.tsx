@@ -203,7 +203,7 @@ function EMISelectionPage() {
             {banks.map((bank) => (
               <Pressable
                 key={bank.id}
-                style={[styles.bankCard, selectedBank?.id === bank.id && styles.bankCardSelected]}
+                style={[styles.bankCard, selectedBank?.id === bank.id ? styles.bankCardSelected : null]}
                 onPress={() => {
                   setSelectedBank(bank);
                   setSelectedTenure(null);
@@ -239,7 +239,7 @@ function EMISelectionPage() {
                 return (
                   <Pressable
                     key={tenure}
-                    style={[styles.tenureCard, selectedTenure === tenure && styles.tenureCardSelected]}
+                    style={[styles.tenureCard, selectedTenure === tenure ? styles.tenureCardSelected : null]}
                     onPress={() => setSelectedTenure(tenure)}
                   >
                     {option.isNoCost && (
@@ -247,10 +247,12 @@ function EMISelectionPage() {
                         <ThemedText style={styles.noCostBadgeText}>No Cost</ThemedText>
                       </View>
                     )}
-                    <ThemedText style={[styles.tenureMonths, selectedTenure === tenure && styles.tenureMonthsSelected]}>
+                    <ThemedText
+                      style={[styles.tenureMonths, selectedTenure === tenure ? styles.tenureMonthsSelected : null]}
+                    >
                       {tenure} Months
                     </ThemedText>
-                    <ThemedText style={[styles.tenureEMI, selectedTenure === tenure && styles.tenureEMISelected]}>
+                    <ThemedText style={[styles.tenureEMI, selectedTenure === tenure ? styles.tenureEMISelected : null]}>
                       {currencySymbol}
                       {option.emi.toLocaleString()}/mo
                     </ThemedText>

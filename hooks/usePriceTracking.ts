@@ -51,7 +51,7 @@ interface UsePriceTrackingReturn {
   createAlert: (data: Omit<CreatePriceAlertRequest, 'productId' | 'variantId'>) => Promise<void>;
   cancelAlert: (alertId: string) => Promise<void>;
   checkAlert: () => Promise<void>;
-  loadAlerts: (params?: { page?: number; status?: string }) => Promise<void>;
+  loadAlerts: (params?: { page?: number; status?: 'cancelled' | 'active' | 'expired' | 'triggered' }) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -88,7 +88,7 @@ export const usePriceTracking = ({
           ? new Date(Date.now() - options.days * 24 * 60 * 60 * 1000).toISOString()
           : undefined;
 
-        const response = await priceTrackingApi.getPriceHistory(productId, {
+        const response: any = await priceTrackingApi.getPriceHistory(productId, {
           variantId,
           limit: options?.limit || 30,
           startDate,
@@ -121,7 +121,7 @@ export const usePriceTracking = ({
 
         devLog.log('📈 [usePriceTracking] Loading price stats');
 
-        const response = await priceTrackingApi.getPriceStats(productId, {
+        const response: any = await priceTrackingApi.getPriceStats(productId, {
           variantId,
           days,
         });
@@ -149,7 +149,7 @@ export const usePriceTracking = ({
     try {
       devLog.log('🔍 [usePriceTracking] Checking alert status');
 
-      const response = await priceTrackingApi.checkAlert(productId, variantId);
+      const response: any = await priceTrackingApi.checkAlert(productId, variantId);
 
       if (response.success) {
         setHasActiveAlert(response.data.hasActiveAlert);
@@ -175,7 +175,7 @@ export const usePriceTracking = ({
 
         devLog.log('🔔 [usePriceTracking] Creating price alert');
 
-        const response = await priceTrackingApi.createPriceAlert({
+        const response: any = await priceTrackingApi.createPriceAlert({
           productId,
           variantId,
           ...data,
@@ -208,7 +208,7 @@ export const usePriceTracking = ({
 
       devLog.log('🔕 [usePriceTracking] Cancelling alert');
 
-      const response = await priceTrackingApi.cancelAlert(alertId);
+      const response: any = await priceTrackingApi.cancelAlert(alertId);
 
       if (response.success) {
         setHasActiveAlert(false);
@@ -230,14 +230,14 @@ export const usePriceTracking = ({
   /**
    * Load user's alerts
    */
-  const loadAlerts = useCallback(async (params?: { page?: number; status?: string }) => {
+  const loadAlerts = useCallback(async (params?: { page?: number; status?: 'cancelled' | 'active' | 'expired' | 'triggered' }) => {
     try {
       setIsLoadingAlerts(true);
       setError(null);
 
       devLog.log('📋 [usePriceTracking] Loading alerts');
 
-      const response = await priceTrackingApi.getMyAlerts(params);
+      const response: any = await priceTrackingApi.getMyAlerts(params);
 
       if (response.success) {
         setAlerts(response.data.alerts);

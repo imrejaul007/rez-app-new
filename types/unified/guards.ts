@@ -262,9 +262,10 @@ export function isOrder(obj: any): obj is Order {
 export function canCancelOrder(order: Order): boolean {
   if (order.canCancel === false) return false;
 
-  const nonCancellableStatuses: OrderStatus[] = [
+  const nonCancellableStatuses: string[] = [
     'shipped',
     'out_for_delivery',
+    'dispatched',
     'delivered',
     'cancelled',
     'refunded',

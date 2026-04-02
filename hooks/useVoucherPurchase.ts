@@ -61,17 +61,17 @@ export const useVoucherPurchase = () => {
         logger.log('🛒 [Purchase] API Response:', result);
 
         if (result.success && result.data) {
-          logger.log('✅ [Purchase] Success! Voucher:', result.data.voucher._id);
+          logger.log('✅ [Purchase] Success! Voucher:', (result.data as any).voucher._id);
 
           setPurchasing(false);
           return {
             success: true,
-            voucherId: result.data.voucher._id,
+            voucherId: (result.data as any).voucher._id,
           };
         } else {
           // API returned error
           const errorMsg = result.error || 'Failed to purchase voucher';
-          logger.error('❌ [Purchase] API Error:', errorMsg);
+          logger.error('❌ [Purchase] API Error:', undefined, errorMsg);
 
           setError(errorMsg);
 

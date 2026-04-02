@@ -107,7 +107,7 @@ const StoreExperiencesSection: React.FC<StoreExperiencesSectionProps> = memo(({
           if (!isMounted()) return;
           setExperiences(transformedExperiences);
         }
-      } catch (error) {
+      } catch (error: any) {
         // Keep using fallback data
       } finally {
         if (!isMounted()) return;

@@ -71,7 +71,7 @@ function PublicWishlistView({
 
       if (!isMounted()) return;
       setWishlist(response.data);
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load wishlist');
     } finally {
@@ -88,7 +88,7 @@ function PublicWishlistView({
         if (!isMounted()) return;
         setReservations(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   }, [shareCode]);
@@ -116,7 +116,7 @@ function PublicWishlistView({
           });
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       platformAlertSimple('Error', 'Failed to like wishlist');
     }
   }, [shareCode, isLiked, wishlist]);
@@ -140,7 +140,7 @@ function PublicWishlistView({
         setComment('');
         platformAlertSimple('Success', 'Comment posted!');
       }
-    } catch (err) {
+    } catch (err: any) {
       platformAlertSimple('Error', 'Failed to post comment');
     } finally {
       if (!isMounted()) return;
@@ -160,7 +160,7 @@ function PublicWishlistView({
           setReservations([...reservations, response.data]);
           platformAlertSimple('Success', 'Gift reserved! The owner will be notified.');
         }
-      } catch (err) {
+      } catch (err: any) {
         platformAlertSimple('Error', 'Failed to reserve gift');
       }
     },
@@ -175,7 +175,7 @@ function PublicWishlistView({
         if (response.success) {
           platformAlertSimple('Success', 'Item added to your wishlist!');
         }
-      } catch (err) {
+      } catch (err: any) {
         platformAlertSimple('Error', 'Failed to add to your wishlist');
       }
     },
@@ -252,7 +252,7 @@ function PublicWishlistView({
 
         <View style={styles.actionButtons}>
           <Pressable
-            style={[styles.actionButton, isLiked && styles.actionButtonLiked]}
+            style={[styles.actionButton, isLiked ? styles.actionButtonLiked : null]}
             onPress={handleLike}
           >
             <Ionicons
@@ -260,7 +260,7 @@ function PublicWishlistView({
               size={20}
               color={isLiked ? colors.error : colors.background.primary}
             />
-            <ThemedText style={[styles.actionButtonText, isLiked && styles.actionButtonTextLiked]}>
+            <ThemedText style={[styles.actionButtonText, isLiked ? styles.actionButtonTextLiked : null]}>
               {isLiked ? 'Liked' : 'Like'}
             </ThemedText>
           </Pressable>

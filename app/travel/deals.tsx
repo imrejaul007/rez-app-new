@@ -54,7 +54,7 @@ const HotDealsPage: React.FC = () => {
         if (!isMounted()) return;
         setDeals(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -78,7 +78,7 @@ const HotDealsPage: React.FC = () => {
     if (!serviceId) return;
 
     const category = service.serviceCategory?.slug || 'packages';
-    
+
     // Route to appropriate detail page based on category
     if (category === 'flights') {
       router.push(`/flight/${serviceId}` as any);
@@ -110,7 +110,10 @@ const HotDealsPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -138,12 +141,7 @@ const HotDealsPage: React.FC = () => {
               const rating = deal.ratings?.average || 0;
 
               return (
-                <Pressable
-                  key={dealId}
-                  style={styles.dealCard}
-                  onPress={() => handleDealPress(deal)}
-                 
-                >
+                <Pressable key={dealId} style={styles.dealCard} onPress={() => handleDealPress(deal)}>
                   <CachedImage source={imageUrl} style={styles.dealImage} />
                   {cashback > 0 && (
                     <View style={styles.cashbackBadge}>
@@ -151,7 +149,9 @@ const HotDealsPage: React.FC = () => {
                     </View>
                   )}
                   <View style={styles.dealInfo}>
-                    <Text style={styles.dealName} numberOfLines={2}>{deal.name}</Text>
+                    <Text style={styles.dealName} numberOfLines={2}>
+                      {deal.name}
+                    </Text>
                     <View style={styles.dealMeta}>
                       <View style={styles.ratingContainer}>
                         <Ionicons name="star" size={14} color={COLORS.amber500} />
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
     minHeight: 40,
   },
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   dealCategory: {
     ...Typography.caption,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

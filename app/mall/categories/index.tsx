@@ -6,15 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  Text,
-  Pressable,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, Text, Pressable, Dimensions, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -38,11 +30,7 @@ interface CategoryCardProps {
 
 const CategoryCard: React.FC<CategoryCardProps> = ({ category, onPress }) => {
   return (
-    <Pressable
-      style={styles.categoryCard}
-      onPress={() => onPress(category)}
-     
-    >
+    <Pressable style={styles.categoryCard} onPress={() => onPress(category)}>
       <LinearGradient
         colors={[category.color || colors.warningScale[700], `${category.color || colors.warningScale[700]}DD`]}
         start={{ x: 0, y: 0 }}
@@ -96,26 +84,30 @@ function AllCategoriesPage() {
     fetchCategories();
   }, [fetchCategories]);
 
-  const handleCategoryPress = useCallback((category: MallCategory) => {
-    const slug = category.slug || category._id || category.id;
-    if (slug) router.push(`/mall/category/${slug}` as any);
-  }, [router]);
+  const handleCategoryPress = useCallback(
+    (category: MallCategory) => {
+      const slug = category.slug || category._id || category.id;
+      if (slug) router.push(`/mall/category/${slug}` as any);
+    },
+    [router],
+  );
 
-  const renderItem = useCallback(({ item }: { item: MallCategory }) => (
-    <CategoryCard category={item} onPress={handleCategoryPress} />
-  ), [handleCategoryPress]);
+  const renderItem = useCallback(
+    ({ item }: { item: MallCategory }) => <CategoryCard category={item} onPress={handleCategoryPress} />,
+    [handleCategoryPress],
+  );
 
-  const keyExtractor = useCallback((item: MallCategory) =>
-    item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallCategory) => item.id || item._id, []);
 
-  const ListHeader = useCallback(() => (
-    <View style={styles.listHeader}>
-      <Text style={styles.headerTitle}>Shop by Category</Text>
-      <Text style={styles.headerSubtitle}>
-        {categories.length} categories with cashback rewards
-      </Text>
-    </View>
-  ), [categories.length]);
+  const ListHeader = useCallback(
+    () => (
+      <View style={styles.listHeader}>
+        <Text style={styles.headerTitle}>Shop by Category</Text>
+        <Text style={styles.headerSubtitle}>{categories.length} categories with cashback rewards</Text>
+      </View>
+    ),
+    [categories.length],
+  );
 
   if (isLoading) {
     return (
@@ -163,8 +155,7 @@ function AllCategoriesPage() {
               title="No categories available"
               message="Check back later for categories"
               icon="grid-outline"
-                    estimatedItemSize={80}
-          />
+            />
           }
           refreshControl={
             <RefreshControl

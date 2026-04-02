@@ -25,7 +25,7 @@ export class AnalyticsQueue {
   private queue: QueuedEvent[] = [];
   private isOnline: boolean = true;
   private isProcessing: boolean = false;
-  private retryTimer?: NodeJS.Timeout;
+  private retryTimer?: ReturnType<typeof setTimeout>;
   private networkUnsubscribe: (() => void) | null = null;
 
   private constructor() {

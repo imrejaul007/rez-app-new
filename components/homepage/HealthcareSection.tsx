@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   bottomTitle: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
   },
 });

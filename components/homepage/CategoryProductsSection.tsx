@@ -7,6 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
 import { productApi, HomepageProduct } from '@/services/productApi';
@@ -163,7 +164,7 @@ function CategoryProductsSection({
           </Pressable>
         </View>
       ) : (
-        <FlashList
+        <AnyFlashList
           data={products}
           renderItem={renderProduct}
           keyExtractor={keyExtractor}
@@ -171,9 +172,6 @@ function CategoryProductsSection({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent as any}
           estimatedItemSize={220}
-          initialNumToRender={4}
-          maxToRenderPerBatch={6}
-          windowSize={5}
         />
       )}
     </View>

@@ -64,15 +64,18 @@ function ImageDetailScreen() {
         setImage(parsedItem);
 
         // Set initial engagement state
-        const likes = typeof parsedItem.engagement?.likes === 'number'
-          ? parsedItem.engagement.likes
-          : (Array.isArray(parsedItem.engagement?.likes) ? parsedItem.engagement.likes.length : 0);
+        const likes =
+          typeof parsedItem.engagement?.likes === 'number'
+            ? parsedItem.engagement.likes
+            : Array.isArray(parsedItem.engagement?.likes)
+              ? parsedItem.engagement.likes.length
+              : 0;
         setLikesCount(likes);
         setIsLiked(parsedItem.engagement?.liked || false);
         setIsBookmarked(parsedItem.engagement?.bookmarked || false);
 
         setLoading(false);
-      } catch (err) {
+      } catch (err: any) {
         setError('Failed to load image');
         setLoading(false);
       }
@@ -88,16 +91,16 @@ function ImageDetailScreen() {
 
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
-    setLikesCount(prev => newLikedState ? prev + 1 : Math.max(0, prev - 1));
+    setLikesCount((prev) => (newLikedState ? prev + 1 : Math.max(0, prev - 1)));
 
     try {
       await realVideosApi.toggleVideoLike(image._id);
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setIsLiked(!newLikedState);
       if (!isMounted()) return;
-      setLikesCount(prev => newLikedState ? Math.max(0, prev - 1) : prev + 1);
+      setLikesCount((prev) => (newLikedState ? Math.max(0, prev - 1) : prev + 1));
     }
   }, [image, isLiked]);
 
@@ -110,7 +113,7 @@ function ImageDetailScreen() {
 
     try {
       await realVideosApi.toggleBookmark(image._id);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setIsBookmarked(!newBookmarkedState);
     }
@@ -125,27 +128,37 @@ function ImageDetailScreen() {
         message: `Check out this on ${BRAND.APP_NAME}! ${image.caption || ''}`,
         title: 'Share Image',
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [image]);
 
   // Navigate to product
-  const handleProductPress = useCallback((product: DiscoverProduct) => {
-    router.push(`/product-page?cardId=${product._id}&cardType=product&source=image`);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (product: DiscoverProduct) => {
+      router.push(`/product-page?cardId=${product._id}&cardType=product&source=image`);
+    },
+    [router],
+  );
 
   // Add to cart
-  const handleAddToCart = useCallback(async (product: DiscoverProduct) => {
-    try {
-      await addItem({
-        productId: product._id,
-        quantity: 1,
-      });
-    } catch (error) {
-      // silently handle
-    }
-  }, [addItem]);
+  const handleAddToCart = useCallback(
+    async (product: DiscoverProduct) => {
+      try {
+        await addItem({
+          id: product._id,
+          name: product.name || product.title || '',
+          price: product.salePrice || product.price || 0,
+          image: product.image || product.images?.[0] || '',
+          cashback: product.cashbackPercent ? `${product.cashbackPercent}%` : '0%',
+          category: 'products',
+        } as any);
+      } catch (error: any) {
+        // silently handle
+      }
+    },
+    [addItem],
+  );
 
   // Format count
   const formatCount = (num: number): string => {
@@ -194,7 +207,10 @@ function ImageDetailScreen() {
         <StatusBar barStyle="dark-content" />
         <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Image not found'}</Text>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.backButtonText}>Go Back</Text>
         </Pressable>
       </View>
@@ -209,19 +225,14 @@ function ImageDetailScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable
           style={styles.headerButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-         
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
 
         <Text style={styles.headerTitle}>Photo</Text>
 
-        <Pressable
-          style={styles.headerButton}
-          onPress={handleShare}
-         
-        >
+        <Pressable style={styles.headerButton} onPress={handleShare}>
           <Ionicons name="share-outline" size={24} color={colors.text.primary} />
         </Pressable>
       </View>
@@ -234,9 +245,7 @@ function ImageDetailScreen() {
       >
         {/* Creator Info */}
         <View style={styles.creatorSection}>
-          {creatorInfo.avatar && (
-            <CachedImage source={creatorInfo.avatar} style={styles.creatorAvatar} />
-          )}
+          {creatorInfo.avatar && <CachedImage source={creatorInfo.avatar} style={styles.creatorAvatar} />}
           <View style={styles.creatorInfo}>
             <Text style={styles.creatorName}>{creatorInfo.name || 'User'}</Text>
           </View>
@@ -258,7 +267,7 @@ function ImageDetailScreen() {
           {imageUrl && !imageError && (
             <CachedImage
               source={imageUrl}
-              style={[styles.mainImage, !imageLoaded && styles.hiddenImage]}
+              style={[styles.mainImage, !imageLoaded ? styles.hiddenImage : null]}
               contentFit="cover"
               onLoad={() => setImageLoaded(true)}
               onError={() => {
@@ -296,13 +305,9 @@ function ImageDetailScreen() {
         {/* Engagement Actions */}
         <View style={styles.engagementSection}>
           <View style={styles.actionRow}>
-            <Pressable
-              style={styles.actionButton}
-              onPress={handleLike}
-             
-            >
+            <Pressable style={styles.actionButton} onPress={handleLike}>
               <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
+                name={isLiked ? 'heart' : 'heart-outline'}
                 size={28}
                 color={isLiked ? colors.error : colors.text.primary}
               />
@@ -310,23 +315,15 @@ function ImageDetailScreen() {
             <Pressable style={styles.actionButton}>
               <Ionicons name="chatbubble-outline" size={26} color={colors.text.primary} />
             </Pressable>
-            <Pressable
-              style={styles.actionButton}
-              onPress={handleShare}
-             
-            >
+            <Pressable style={styles.actionButton} onPress={handleShare}>
               <Ionicons name="paper-plane-outline" size={26} color={colors.text.primary} />
             </Pressable>
 
             <View style={styles.actionSpacer} />
 
-            <Pressable
-              style={styles.actionButton}
-              onPress={handleBookmark}
-             
-            >
+            <Pressable style={styles.actionButton} onPress={handleBookmark}>
               <Ionicons
-                name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
                 size={26}
                 color={isBookmarked ? Colors.gold : colors.text.primary}
               />
@@ -348,9 +345,7 @@ function ImageDetailScreen() {
         )}
 
         {/* View Count */}
-        <Text style={styles.viewsText}>
-          {formatCount(image.engagement?.views || 0)} views
-        </Text>
+        <Text style={styles.viewsText}>{formatCount(image.engagement?.views || 0)} views</Text>
 
         {/* Products Section */}
         {hasProducts && (
@@ -370,10 +365,9 @@ function ImageDetailScreen() {
                   key={product._id || index}
                   style={styles.productCard}
                   onPress={() => handleProductPress(product)}
-                 
                 >
                   <CachedImage
-                    source={product.image || product.images?.[0]}
+                    source={product.image || product.images?.[0] || ''}
                     style={styles.productImage}
                     contentFit="cover"
                   />
@@ -383,27 +377,23 @@ function ImageDetailScreen() {
                     </Text>
                     <View style={styles.productPriceRow}>
                       <Text style={styles.productPrice}>
-                        {currencySymbol}{product.salePrice || product.price}
+                        {currencySymbol}
+                        {product.salePrice || product.price}
                       </Text>
                       {product.salePrice && product.price > product.salePrice && (
                         <Text style={styles.productOriginalPrice}>
-                          {currencySymbol}{product.price}
+                          {currencySymbol}
+                          {product.price}
                         </Text>
                       )}
                     </View>
                     {product.cashbackPercent && product.cashbackPercent > 0 && (
                       <View style={styles.cashbackBadge}>
-                        <Text style={styles.cashbackText}>
-                          {product.cashbackPercent}% Cashback
-                        </Text>
+                        <Text style={styles.cashbackText}>{product.cashbackPercent}% Cashback</Text>
                       </View>
                     )}
                   </View>
-                  <Pressable
-                    style={styles.addToCartButton}
-                    onPress={() => handleAddToCart(product)}
-                   
-                  >
+                  <Pressable style={styles.addToCartButton} onPress={() => handleAddToCart(product)}>
                     <Ionicons name="add" size={20} color={colors.text.inverse} />
                   </Pressable>
                 </Pressable>

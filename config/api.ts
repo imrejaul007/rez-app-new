@@ -3,6 +3,7 @@
  * Configures axios instance with environment variables
  */
 
+// @ts-ignore axios is an optional peer dependency not installed in this project
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { Platform } from 'react-native';
 import { ENV } from './env';

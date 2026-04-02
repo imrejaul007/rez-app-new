@@ -123,7 +123,7 @@ export function useHomeDeliverySection(): UseHomeDeliverySectionReturn {
     setError(null);
 
     try {
-      const response = await storesApi.getStoresBySubcategorySlug(
+      const response: any = await storesApi.getStoresBySubcategorySlug(
         subcategorySlug,
         HOME_DELIVERY_SECTION_CONFIG.storesPerCategory
       );

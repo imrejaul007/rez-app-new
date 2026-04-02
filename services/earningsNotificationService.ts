@@ -21,7 +21,7 @@ try {
       shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: true,
-    }),
+    } as any),
   });
 } catch (_e) {
   // silently handle
@@ -79,7 +79,7 @@ class EarningsNotificationService {
           });
 
           // Send token to backend to register for push notifications
-          await apiClient.post('/notifications/register-push-token', {
+          await apiClient.post<any>('/notifications/register-push-token', {
             token: token.data,
             platform: Platform.OS,
           }).catch(error => {

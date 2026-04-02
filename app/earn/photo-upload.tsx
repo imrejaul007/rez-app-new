@@ -61,9 +61,9 @@ function PhotoUploadPage() {
     try {
       const result = await photoUploadApi.getMyUploads(1, 20);
       if (result.success && result.data) {
-        setUploads(result.data.uploads);
+        setUploads((result.data as any).uploads);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -92,7 +92,7 @@ function PhotoUploadPage() {
           const stores = Array.isArray(response.data) ? response.data : response.data.stores || [];
           setStoreResults(stores.map((s: any) => ({ _id: s._id || s.id, name: s.name, logo: s.logo })));
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;

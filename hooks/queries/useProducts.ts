@@ -44,14 +44,14 @@ export function useProductsByStore(storeId: string, params?: Record<string, any>
 export function useProductRecommendations(params?: Record<string, any>) {
   return useQuery({
     queryKey: queryKeys.products.recommendations(),
-    queryFn: () => productsApi.getRecommendations(params),
+    queryFn: () => productsApi.getRecommendations(params as any),
   });
 }
 
 export function useRelatedProducts(productId: string, params?: Record<string, any>) {
   return useQuery({
     queryKey: ['products', 'related', productId] as const,
-    queryFn: () => productsApi.getRelatedProducts(productId, params),
+    queryFn: () => productsApi.getRelatedProducts(productId, params as any),
     enabled: !!productId,
   });
 }

@@ -5,15 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  Platform,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, Platform, TextInput } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,34 +16,36 @@ import { CardGridSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
-const BrandCard = ({
-  brand,
-  onPress,
-}: {
-  brand: Brand;
-  onPress: () => void;
-}) => (
+const BrandCard = ({ brand, onPress }: { brand: Brand; onPress: () => void }) => (
   <Pressable style={styles.brandCard} onPress={onPress}>
     <View style={styles.logoContainer}>
       <Text style={styles.logo}>{brand.logo}</Text>
     </View>
-    <Text style={styles.brandName} numberOfLines={1}>{brand.name}</Text>
+    <Text style={styles.brandName} numberOfLines={1}>
+      {brand.name}
+    </Text>
     <View style={styles.cashbackBadge}>
       <Text style={styles.cashbackText}>{brand.cashback}% cashback</Text>
     </View>
     {brand.tag && (
-      <View style={[
-        styles.tagBadge,
-        brand.tag === 'Premium' && styles.tagPremium,
-        brand.tag === 'Trending' && styles.tagTrending,
-        brand.tag === 'Popular' && styles.tagPopular,
-      ]}>
-        <Text style={[
-          styles.tagText,
-          brand.tag === 'Premium' && styles.tagTextPremium,
-          brand.tag === 'Trending' && styles.tagTextTrending,
-          brand.tag === 'Popular' && styles.tagTextPopular,
-        ]}>{brand.tag}</Text>
+      <View
+        style={[
+          styles.tagBadge,
+          brand.tag === 'Premium' && styles.tagPremium,
+          brand.tag === 'Trending' && styles.tagTrending,
+          brand.tag === 'Popular' && styles.tagPopular,
+        ]}
+      >
+        <Text
+          style={[
+            styles.tagText,
+            brand.tag === 'Premium' && styles.tagTextPremium,
+            brand.tag === 'Trending' && styles.tagTextTrending,
+            brand.tag === 'Popular' && styles.tagTextPopular,
+          ]}
+        >
+          {brand.tag}
+        </Text>
       </View>
     )}
     <View style={styles.ratingRow}>
@@ -82,13 +76,11 @@ function BrandsPage() {
     setLoading(true);
     try {
       // Get brands for category or all brands
-      const brandsList = categorySlug
-        ? getBrandsForCategory(categorySlug)
-        : getAllBrands();
+      const brandsList = categorySlug ? getBrandsForCategory(categorySlug) : getAllBrands();
 
       setBrands(brandsList);
       setFilteredBrands(brandsList);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       setLoading(false);
@@ -102,14 +94,12 @@ function BrandsPage() {
 
     // Search filter
     if (searchQuery.trim()) {
-      filtered = filtered.filter(brand =>
-        brand.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      filtered = filtered.filter((brand) => brand.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 
     // Tag filter
     if (selectedFilter !== 'all') {
-      filtered = filtered.filter(brand => {
+      filtered = filtered.filter((brand) => {
         if (selectedFilter === 'trending') return brand.tag === 'Trending';
         if (selectedFilter === 'premium') return brand.tag === 'Premium';
         if (selectedFilter === 'popular') return brand.tag === 'Popular';
@@ -125,16 +115,20 @@ function BrandsPage() {
     loadBrands();
   };
 
-  const handleBrandPress = useCallback((brand: Brand) => {
-    router.push({
-      pathname: '/brand/[name]',
-      params: { name: brand.id },
-    } as any);
-  }, [router]);
+  const handleBrandPress = useCallback(
+    (brand: Brand) => {
+      router.push({
+        pathname: '/brand/[name]',
+        params: { name: brand.id },
+      } as any);
+    },
+    [router],
+  );
 
-  const renderBrand = useCallback(({ item }: { item: Brand }) => (
-    <BrandCard brand={item} onPress={() => handleBrandPress(item)} />
-  ), [handleBrandPress]);
+  const renderBrand = useCallback(
+    ({ item }: { item: Brand }) => <BrandCard brand={item} onPress={() => handleBrandPress(item)} />,
+    [handleBrandPress],
+  );
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
@@ -160,18 +154,10 @@ function BrandsPage() {
         {(['all', 'popular', 'trending', 'premium'] as const).map((filter) => (
           <Pressable
             key={filter}
-            style={[
-              styles.filterPill,
-              selectedFilter === filter && styles.filterPillActive,
-            ]}
+            style={[styles.filterPill, selectedFilter === filter && styles.filterPillActive]}
             onPress={() => setSelectedFilter(filter)}
           >
-            <Text
-              style={[
-                styles.filterPillText,
-                selectedFilter === filter && styles.filterPillTextActive,
-              ]}
-            >
+            <Text style={[styles.filterPillText, selectedFilter === filter && styles.filterPillTextActive]}>
               {filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1)}
             </Text>
           </Pressable>
@@ -188,29 +174,24 @@ function BrandsPage() {
     <View style={styles.emptyContainer}>
       <Ionicons name="storefront-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyTitle}>No brands found</Text>
-      <Text style={styles.emptyText}>
-        Try adjusting your search or filters
-      </Text>
+      <Text style={styles.emptyText}>Try adjusting your search or filters</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.gold, '#e6b94e']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.gold, '#e6b94e']} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="chevron-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>
             {categorySlug
-              ? `${categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Brands`
+              ? `${categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())} Brands`
               : 'All Brands'}
           </Text>
           <View style={styles.placeholder} />

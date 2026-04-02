@@ -239,7 +239,7 @@ class CacheService {
     const expiredKeys: string[] = [];
 
     this.cacheIndex.forEach((entry, key) => {
-      if (this.isExpired(entry)) {
+      if (this.isExpired(entry as any)) {
         expiredKeys.push(key);
       }
     });
@@ -409,7 +409,7 @@ class CacheService {
       }
 
       // Check if expired
-      if (this.isExpired(indexEntry)) {
+      if (this.isExpired(indexEntry as any)) {
         this.misses++;
         await this.remove(key);
         return null;
@@ -468,7 +468,7 @@ class CacheService {
       return false;
     }
 
-    if (this.isExpired(indexEntry)) {
+    if (this.isExpired(indexEntry as any)) {
       await this.remove(key);
       return false;
     }

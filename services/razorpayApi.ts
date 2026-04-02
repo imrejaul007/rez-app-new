@@ -112,7 +112,7 @@ export const razorpayApi = {
    * Get Razorpay configuration
    */
   async getConfig(): Promise<ApiResponse<RazorpayConfig>> {
-    return apiClient.get('/razorpay/config');
+    return apiClient.get<any>('/razorpay/config');
   },
 
   /**
@@ -123,7 +123,7 @@ export const razorpayApi = {
     orderId?: string;
     notes?: Record<string, any>;
   }): Promise<ApiResponse<RazorpayOrderResponse>> {
-    return apiClient.post('/razorpay/create-order', data);
+    return apiClient.post<any>('/razorpay/create-order', data as any);
   },
 
   /**
@@ -135,7 +135,7 @@ export const razorpayApi = {
     razorpaySignature: string;
     orderData?: any;
   }): Promise<ApiResponse<RazorpayPaymentVerificationResponse>> {
-    return apiClient.post('/razorpay/verify-payment', data);
+    return apiClient.post<any>('/razorpay/verify-payment', data as any);
   },
 
   /**
@@ -162,7 +162,7 @@ export const razorpayApi = {
     amount?: number;
     notes?: Record<string, any>;
   }): Promise<ApiResponse<any>> {
-    return apiClient.post('/razorpay/refund', data);
+    return apiClient.post<any>('/razorpay/refund', data as any);
   },
 };
 

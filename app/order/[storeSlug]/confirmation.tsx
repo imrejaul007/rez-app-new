@@ -129,7 +129,7 @@ const trackerStyles = StyleSheet.create({
 
 export default function ConfirmationScreen() {
   const router = useRouter();
-  const { storeSlug, orderNumber } = useLocalSearchParams<{ storeSlug: string; orderNumber: string }>();
+  const { storeSlug, orderNumber } = useLocalSearchParams<any>();
 
   const [order, setOrder] = useState<WebOrderStatus | null>(null);
   const [loading, setLoading] = useState(true);

@@ -42,7 +42,7 @@ class StoreVisitService {
   async scheduleStoreVisit(
     request: ScheduleVisitRequest
   ): Promise<ApiResponse<ScheduleVisitResponse>> {
-    return apiClient.post('/store-visits/schedule', request);
+    return apiClient.post<any>('/store-visits/schedule', request as any);
   }
 
   /**
@@ -52,7 +52,7 @@ class StoreVisitService {
   async getQueueNumber(
     request: GetQueueNumberRequest
   ): Promise<ApiResponse<GetQueueNumberResponse>> {
-    return apiClient.post('/store-visits/queue', request);
+    return apiClient.post<any>('/store-visits/queue', request as any);
   }
 
   /**
@@ -64,7 +64,7 @@ class StoreVisitService {
     averageWaitTime: string;
     crowdLevel: 'Low' | 'Medium' | 'High';
   }>> {
-    return apiClient.get(`/store-visits/queue-status/${storeId}`);
+    return apiClient.get<any>(`/store-visits/queue-status/${storeId}`);
   }
 
   /**
@@ -83,7 +83,7 @@ class StoreVisitService {
     };
     status: 'pending' | 'checked_in' | 'completed' | 'cancelled';
   }>>> {
-    return apiClient.get('/store-visits/user');
+    return apiClient.get<any>('/store-visits/user');
   }
 
   /**
@@ -91,7 +91,7 @@ class StoreVisitService {
    * PUT /store-visits/:visitId/cancel
    */
   async cancelVisit(visitId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.put(`/store-visits/${visitId}/cancel`, {});
+    return apiClient.put<any>(`/store-visits/${visitId}/cancel`, {});
   }
 
   /**
@@ -107,7 +107,7 @@ class StoreVisitService {
     nextAvailableSlot: string;
     recommendedAction: string;
   }>> {
-    return apiClient.get(`/store-visits/availability/${storeId}`);
+    return apiClient.get<any>(`/store-visits/availability/${storeId}`);
   }
 
   /**
@@ -129,7 +129,7 @@ class StoreVisitService {
       customerName: string;
     }>;
   }>> {
-    return apiClient.get(`/store-visits/queue-status/${storeId}`);
+    return apiClient.get<any>(`/store-visits/queue-status/${storeId}`);
   }
   /**
    * Get available time slots for a date
@@ -142,7 +142,7 @@ class StoreVisitService {
   }>> {
     const params = new URLSearchParams({ date });
     if (duration) params.append('duration', duration.toString());
-    return apiClient.get(`/store-visits/available-slots/${storeId}?${params}`);
+    return apiClient.get<any>(`/store-visits/available-slots/${storeId}?${params}`);
   }
 
   /**
@@ -150,7 +150,7 @@ class StoreVisitService {
    * PUT /store-visits/:visitId/reschedule
    */
   async rescheduleVisit(visitId: string, visitDate: string, visitTime: string): Promise<ApiResponse<any>> {
-    return apiClient.put(`/store-visits/${visitId}/reschedule`, { visitDate, visitTime });
+    return apiClient.put<any>(`/store-visits/${visitId}/reschedule`, { visitDate, visitTime });
   }
 
   /**

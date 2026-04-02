@@ -34,7 +34,7 @@ export const useStoreComparison = (): UseStoreComparisonReturn => {
     try {
       // If this is the first store, create a new comparison
       if (comparisonStores.length === 0) {
-        const response = await storeSearchService.createComparison({
+        const response: any = await storeSearchService.createComparison({
           storeIds: [store._id],
           name: `Comparison ${new Date().toLocaleDateString()}`
         });
@@ -54,7 +54,7 @@ export const useStoreComparison = (): UseStoreComparisonReturn => {
         await AsyncStorage.setItem(COMPARISON_STORAGE_KEY, JSON.stringify(newComparisonStores));
         return true;
       }
-    } catch (error) {
+    } catch (error: any) {
       // Fallback to local storage only
       const newComparisonStores = [...comparisonStores, store];
       setComparisonStores(newComparisonStores);
@@ -115,7 +115,7 @@ export const useStoreComparison = (): UseStoreComparisonReturn => {
   const loadComparisonFromStorage = useCallback(async (): Promise<void> => {
     try {
       // Try to load from backend first
-      const response = await storeSearchService.getUserComparisons();
+      const response: any = await storeSearchService.getUserComparisons();
       if (response.success && response.data.comparisons.length > 0) {
         // Use the most recent comparison
         const latestComparison = response.data.comparisons[0];

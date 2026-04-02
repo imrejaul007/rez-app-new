@@ -414,6 +414,19 @@ const styles = StyleSheet.create({
     borderTopColor: colors.neutral[200],
     backgroundColor: colors.background.primary,
   },
+  viewBookingsButton: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.success,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  viewBookingsButtonText: {
+    color: colors.success,
+    fontSize: 16,
+    fontWeight: '600',
+  },
   primaryButton: {
     borderRadius: 12,
     overflow: 'hidden',

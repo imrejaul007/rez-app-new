@@ -81,7 +81,7 @@ export const useSocialProof = (options: UseSocialProofOptions = {}): UseSocialPr
       // No location available, try city-wide stats only
       if (city) {
         try {
-          const response = await socialProofApi.getCityWideStats(city);
+          const response: any = await socialProofApi.getCityWideStats(city);
           if (response.success && response.data) {
             setCityWideStats(response.data);
           }
@@ -97,7 +97,7 @@ export const useSocialProof = (options: UseSocialProofOptions = {}): UseSocialPr
       setIsLoading(true);
       setError(null);
 
-      const response = await socialProofApi.getNearbyActivity({
+      const response: any = await socialProofApi.getNearbyActivity({
         latitude: coordinates.latitude,
         longitude: coordinates.longitude,
         radius,

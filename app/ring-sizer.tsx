@@ -3,14 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Interactive tool to help users determine their ring size
 
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Dimensions,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -68,9 +61,8 @@ function RingSizerPage() {
     const measurement = parseFloat(value);
     if (!isNaN(measurement)) {
       // Find closest ring size based on circumference
-      const closestSize = RING_SIZES.reduce((prev, curr) => 
-        Math.abs(curr.circumference - measurement) < Math.abs(prev.circumference - measurement) 
-          ? curr : prev
+      const closestSize = RING_SIZES.reduce((prev, curr) =>
+        Math.abs(curr.circumference - measurement) < Math.abs(prev.circumference - measurement) ? curr : prev,
       );
       setSelectedSize(closestSize);
     } else {
@@ -93,83 +85,84 @@ function RingSizerPage() {
       if (response.success && response.data) {
         setSavedSize(response.data.size);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []);
 
-  const handleSaveRingSize = useCallback(async (size: RingSize) => {
-    if (saving) return;
+  const handleSaveRingSize = useCallback(
+    async (size: RingSize) => {
+      if (saving) return;
 
-    try {
-      setSaving(true);
+      try {
+        setSaving(true);
 
-      // Validate ring size before saving
-      if (!size.size || size.size.trim() === '') {
-        platformAlertSimple('Validation Error', 'Please select a valid ring size');
-        return;
-      }
+        // Validate ring size before saving
+        if (!size.size || size.size.trim() === '') {
+          platformAlertSimple('Validation Error', 'Please select a valid ring size');
+          return;
+        }
 
-      const response = await ringSizeApi.saveRingSize(size.size, selectedMethod);
+        const response = await ringSizeApi.saveRingSize(size.size, selectedMethod);
 
-      if (response.success) {
-        if (!isMounted()) return;
-        setSavedSize(size.size);
-        platformAlertSimple(
-          'Success',
-          response.message || 'Ring size saved to your profile!'
-        );
-      } else {
-        // Show error with retry option
+        if (response.success) {
+          if (!isMounted()) return;
+          setSavedSize(size.size);
+          platformAlertSimple('Success', response.message || 'Ring size saved to your profile!');
+        } else {
+          // Show error with retry option
+          platformAlertConfirm(
+            'Save Failed',
+            response.error || 'Failed to save ring size',
+            () => handleSaveRingSize(size),
+            'Retry',
+          );
+        }
+      } catch (error: any) {
         platformAlertConfirm(
-          'Save Failed',
-          response.error || 'Failed to save ring size',
+          'Error',
+          'An unexpected error occurred. Please try again.',
           () => handleSaveRingSize(size),
-          'Retry'
+          'Retry',
         );
+      } finally {
+        if (!isMounted()) return;
+        setSaving(false);
       }
-    } catch (error) {
+    },
+    [saving, selectedMethod],
+  );
+
+  const handleSizeSelect = useCallback(
+    async (size: RingSize) => {
+      setSelectedSize(size);
+
+      const isSaved = savedSize === size.size;
+
       platformAlertConfirm(
-        'Error',
-        'An unexpected error occurred. Please try again.',
+        'Ring Size Selected',
+        `You selected ring size ${size.size} (${size.description})\n\nDiameter: ${size.diameter}mm\nCircumference: ${size.circumference}mm${isSaved ? '\n\nThis size is already saved to your profile.' : ''}`,
         () => handleSaveRingSize(size),
-        'Retry'
+        isSaved ? 'Saved' : 'Save to Profile',
       );
-    } finally {
-      if (!isMounted()) return;
-      setSaving(false);
-    }
-  }, [saving, selectedMethod]);
-
-  const handleSizeSelect = useCallback(async (size: RingSize) => {
-    setSelectedSize(size);
-
-    const isSaved = savedSize === size.size;
-
-    platformAlertConfirm(
-      'Ring Size Selected',
-      `You selected ring size ${size.size} (${size.description})\n\nDiameter: ${size.diameter}mm\nCircumference: ${size.circumference}mm${isSaved ? '\n\nThis size is already saved to your profile.' : ''}`,
-      () => handleSaveRingSize(size),
-      isSaved ? 'Saved' : 'Save to Profile'
-    );
-  }, [savedSize, handleSaveRingSize]);
+    },
+    [savedSize, handleSaveRingSize],
+  );
 
   const renderMeasurementMethod = () => (
     <View style={styles.methodContainer}>
       <ThemedText style={styles.methodTitle}>Measure Your Finger</ThemedText>
       <ThemedText style={styles.methodDescription}>
-        Wrap a piece of string or paper around your finger, mark where it overlaps, 
-        then measure the length with a ruler.
+        Wrap a piece of string or paper around your finger, mark where it overlaps, then measure the length with a
+        ruler.
       </ThemedText>
-      
+
       <View style={styles.measurementInput}>
         <ThemedText style={styles.inputLabel}>Finger Circumference (mm):</ThemedText>
         <View style={styles.inputContainer}>
           <ThemedText style={styles.inputPrefix}>mm</ThemedText>
           <View style={styles.inputWrapper}>
-            <ThemedText style={styles.inputValue}>
-              {fingerMeasurement || '0'}
-            </ThemedText>
+            <ThemedText style={styles.inputValue}>{fingerMeasurement || '0'}</ThemedText>
           </View>
         </View>
       </View>
@@ -178,16 +171,15 @@ function RingSizerPage() {
         {[40, 45, 50, 55, 60, 65].map((value) => (
           <Pressable
             key={value}
-            style={[
-              styles.measurementButton,
-              fingerMeasurement === value.toString() && styles.measurementButtonActive
-            ]}
+            style={[styles.measurementButton, fingerMeasurement === value.toString() && styles.measurementButtonActive]}
             onPress={() => handleMeasurementChange(value.toString())}
           >
-            <ThemedText style={[
-              styles.measurementButtonText,
-              fingerMeasurement === value.toString() && styles.measurementButtonTextActive
-            ]}>
+            <ThemedText
+              style={[
+                styles.measurementButtonText,
+                fingerMeasurement === value.toString() && styles.measurementButtonTextActive,
+              ]}
+            >
               {value}
             </ThemedText>
           </Pressable>
@@ -197,10 +189,7 @@ function RingSizerPage() {
       {selectedSize && (
         <View style={styles.resultContainer}>
           <ThemedText style={styles.resultTitle}>Recommended Size:</ThemedText>
-          <Pressable
-            style={styles.resultButton}
-            onPress={() => handleSizeSelect(selectedSize)}
-          >
+          <Pressable style={styles.resultButton} onPress={() => handleSizeSelect(selectedSize)}>
             <ThemedText style={styles.resultSize}>Size {selectedSize.size}</ThemedText>
             <ThemedText style={styles.resultDescription}>{selectedSize.description}</ThemedText>
           </Pressable>
@@ -215,28 +204,20 @@ function RingSizerPage() {
       <ThemedText style={styles.methodDescription}>
         If you have a ring that fits well, place it on the chart below to find your size.
       </ThemedText>
-      
+
       <View style={styles.sizeChart}>
         <ThemedText style={styles.chartTitle}>Ring Size Chart</ThemedText>
         <View style={styles.chartContainer}>
           {RING_SIZES.map((size) => (
             <Pressable
               key={size.size}
-              style={[
-                styles.sizeItem,
-                selectedSize?.size === size.size && styles.sizeItemSelected
-              ]}
+              style={[styles.sizeItem, selectedSize?.size === size.size && styles.sizeItemSelected]}
               onPress={() => handleSizeSelect(size)}
             >
-              <ThemedText style={[
-                styles.sizeText,
-                selectedSize?.size === size.size && styles.sizeTextSelected
-              ]}>
+              <ThemedText style={[styles.sizeText, selectedSize?.size === size.size && styles.sizeTextSelected]}>
                 {size.size}
               </ThemedText>
-              <ThemedText style={styles.sizeDescription}>
-                {size.diameter}mm
-              </ThemedText>
+              <ThemedText style={styles.sizeDescription}>{size.diameter}mm</ThemedText>
             </Pressable>
           ))}
         </View>
@@ -247,7 +228,7 @@ function RingSizerPage() {
   const renderGuideMethod = () => (
     <View style={styles.methodContainer}>
       <ThemedText style={styles.methodTitle}>Ring Sizing Guide</ThemedText>
-      
+
       <View style={styles.guideSection}>
         <ThemedText style={styles.guideSectionTitle}>📏 How to Measure</ThemedText>
         <ThemedText style={styles.guideText}>
@@ -262,19 +243,16 @@ function RingSizerPage() {
       <View style={styles.guideSection}>
         <ThemedText style={styles.guideSectionTitle}>💡 Tips</ThemedText>
         <ThemedText style={styles.guideText}>
-          • Measure at the end of the day when fingers are largest{'\n'}
-          • Measure the finger you plan to wear the ring on{'\n'}
-          • If between sizes, choose the larger size{'\n'}
-          • Consider the width of the ring band
+          • Measure at the end of the day when fingers are largest{'\n'}• Measure the finger you plan to wear the ring
+          on{'\n'}• If between sizes, choose the larger size{'\n'}• Consider the width of the ring band
         </ThemedText>
       </View>
 
       <View style={styles.guideSection}>
         <ThemedText style={styles.guideSectionTitle}>⚠️ Important Notes</ThemedText>
         <ThemedText style={styles.guideText}>
-          • Ring sizes may vary between countries{'\n'}
-          • Wide bands may require a larger size{'\n'}
-          • This is a guide - professional sizing is recommended for expensive rings
+          • Ring sizes may vary between countries{'\n'}• Wide bands may require a larger size{'\n'}• This is a guide -
+          professional sizing is recommended for expensive rings
         </ThemedText>
       </View>
     </View>
@@ -310,23 +288,14 @@ function RingSizerPage() {
         {savedSize && (
           <View style={styles.savedSizeBanner}>
             <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
-            <ThemedText style={styles.savedSizeText}>
-              Your saved ring size: {savedSize}
-            </ThemedText>
+            <ThemedText style={styles.savedSizeText}>Your saved ring size: {savedSize}</ThemedText>
           </View>
         )}
 
         {/* Method Selection */}
-        <View
-          style={styles.methodSelection}
-          accessibilityLabel="Ring sizing methods"
-          accessibilityRole="radiogroup"
-        >
+        <View style={styles.methodSelection} accessibilityLabel="Ring sizing methods" accessibilityRole="radiogroup">
           <Pressable
-            style={[
-              styles.methodButton,
-              selectedMethod === 'measure' && styles.methodButtonActive
-            ]}
+            style={[styles.methodButton, selectedMethod === 'measure' && styles.methodButtonActive]}
             onPress={() => handleMethodSelect('measure')}
             accessibilityLabel="Measure method"
             accessibilityRole="radio"
@@ -338,19 +307,15 @@ function RingSizerPage() {
               size={24}
               color={selectedMethod === 'measure' ? Colors.brand.purple : colors.text.tertiary}
             />
-            <ThemedText style={[
-              styles.methodButtonText,
-              selectedMethod === 'measure' && styles.methodButtonTextActive
-            ]}>
+            <ThemedText
+              style={[styles.methodButtonText, selectedMethod === 'measure' && styles.methodButtonTextActive]}
+            >
               Measure
             </ThemedText>
           </Pressable>
 
           <Pressable
-            style={[
-              styles.methodButton,
-              selectedMethod === 'compare' && styles.methodButtonActive
-            ]}
+            style={[styles.methodButton, selectedMethod === 'compare' && styles.methodButtonActive]}
             onPress={() => handleMethodSelect('compare')}
             accessibilityLabel="Compare method"
             accessibilityRole="radio"
@@ -362,19 +327,15 @@ function RingSizerPage() {
               size={24}
               color={selectedMethod === 'compare' ? Colors.brand.purple : colors.text.tertiary}
             />
-            <ThemedText style={[
-              styles.methodButtonText,
-              selectedMethod === 'compare' && styles.methodButtonTextActive
-            ]}>
+            <ThemedText
+              style={[styles.methodButtonText, selectedMethod === 'compare' && styles.methodButtonTextActive]}
+            >
               Compare
             </ThemedText>
           </Pressable>
 
           <Pressable
-            style={[
-              styles.methodButton,
-              selectedMethod === 'guide' && styles.methodButtonActive
-            ]}
+            style={[styles.methodButton, selectedMethod === 'guide' && styles.methodButtonActive]}
             onPress={() => handleMethodSelect('guide')}
             accessibilityLabel="Guide method"
             accessibilityRole="radio"
@@ -386,10 +347,7 @@ function RingSizerPage() {
               size={24}
               color={selectedMethod === 'guide' ? Colors.brand.purple : colors.text.tertiary}
             />
-            <ThemedText style={[
-              styles.methodButtonText,
-              selectedMethod === 'guide' && styles.methodButtonTextActive
-            ]}>
+            <ThemedText style={[styles.methodButtonText, selectedMethod === 'guide' && styles.methodButtonTextActive]}>
               Guide
             </ThemedText>
           </Pressable>
@@ -479,7 +437,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   methodButtonActive: {
-    backgroundColor: colors.tint.pink,  // purple scale tint
+    backgroundColor: colors.tint.pink, // purple scale tint
   },
   methodButtonText: {
     fontSize: 14,

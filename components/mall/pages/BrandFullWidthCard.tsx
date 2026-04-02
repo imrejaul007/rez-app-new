@@ -84,7 +84,7 @@ const BrandFullWidthCard: React.FC<BrandFullWidthCardProps> = ({
       onPress={() => onPress(brand)}
      
     >
-      <View style={[styles.card, isTopThree && styles.topThreeCard]}>
+      <View style={[styles.card, isTopThree ? styles.topThreeCard : null]}>
         {/* Rank Badge (if showing rank) */}
         {showRank && rank > 0 && (
           <View style={styles.rankContainer}>

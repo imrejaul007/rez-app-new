@@ -33,7 +33,7 @@ export async function fetchAccountBadges(): Promise<AccountBadgeData> {
 
   const openTickets =
     ticketsResult.status === 'fulfilled' && ticketsResult.value?.data
-      ? (ticketsResult.value.data.openCount ?? ticketsResult.value.data.open ?? 0)
+      ? ((ticketsResult.value.data as any).openCount ?? (ticketsResult.value.data as any).open ?? 0)
       : 0;
 
   const activeCoupons =
@@ -43,7 +43,7 @@ export async function fetchAccountBadges(): Promise<AccountBadgeData> {
 
   const activeVouchers =
     vouchersResult.status === 'fulfilled' && vouchersResult.value?.data
-      ? (vouchersResult.value.data.vouchers?.length ?? 0)
+      ? ((vouchersResult.value.data as any).vouchers?.length ?? 0)
       : 0;
 
   return { unreadNotifications, openTickets, activeCoupons, activeVouchers };

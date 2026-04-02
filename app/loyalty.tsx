@@ -79,7 +79,7 @@ const LoyaltyPage = () => {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -92,7 +92,7 @@ const LoyaltyPage = () => {
         'Check-in Successful!',
         `You earned ${result.points} points!\n${result.bonus ? `Bonus: ${result.bonus.points} points - ${result.bonus.message}` : ''}`,
       );
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Check-in Failed', error instanceof Error ? error.message : 'Please try again.');
     }
   };
@@ -105,7 +105,7 @@ const LoyaltyPage = () => {
         'Challenge Completed!',
         `You earned ${result.points} points!${result.reward ? `\nBonus: ${result.reward.title}` : ''}`,
       );
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Claim Failed', error instanceof Error ? error.message : 'Please try again.');
     }
   };
@@ -137,7 +137,7 @@ const LoyaltyPage = () => {
 
         <View style={styles.actionsGrid}>
           <Pressable
-            style={[styles.actionCard, !canCheckIn && styles.actionCardDisabled]}
+            style={[styles.actionCard, !canCheckIn ? styles.actionCardDisabled : null]}
             onPress={handleDailyCheckIn}
             disabled={!canCheckIn}
             accessibilityLabel={`Daily check-in${checkInStatus ? `. ${checkInStatus.streak.currentStreak} day streak` : ''}${!canCheckIn ? '. Already checked in today' : ''}`}

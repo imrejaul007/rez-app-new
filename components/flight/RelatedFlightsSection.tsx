@@ -63,7 +63,7 @@ const RelatedFlightsSection: React.FC<RelatedFlightsSectionProps> = ({
         if (!isMounted()) return;
         setRelatedFlights(filtered);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

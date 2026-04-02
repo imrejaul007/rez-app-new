@@ -23,24 +23,24 @@ export function formatDate(
 
   if (isNaN(d.getTime())) return 'Invalid date';
 
-  const options: Intl.DateTimeFormatOptions = {
+  const options = ({
     short: {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
+      year: 'numeric' as const,
+      month: 'numeric' as const,
+      day: 'numeric' as const,
     },
     medium: {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      year: 'numeric' as const,
+      month: 'short' as const,
+      day: 'numeric' as const,
     },
     long: {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      weekday: 'long' as const,
+      year: 'numeric' as const,
+      month: 'long' as const,
+      day: 'numeric' as const,
     },
-  }[format];
+  } as Record<string, Intl.DateTimeFormatOptions>)[format];
 
   return d.toLocaleDateString('en-US', options);
 }

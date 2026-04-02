@@ -58,7 +58,7 @@ export const useSearch = () => {
 
     try {
 
-      const response = await searchService.searchProducts({
+      const response: any = await searchService.searchProducts({
         q: query,
         page: state.pagination.page,
         limit: state.pagination.limit,
@@ -82,7 +82,7 @@ export const useSearch = () => {
           },
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         loading: false,
@@ -103,7 +103,7 @@ export const useSearch = () => {
 
     try {
 
-      const response = await searchService.searchStores({
+      const response: any = await searchService.searchStores({
         q: query,
         page: state.pagination.page,
         limit: state.pagination.limit,
@@ -126,7 +126,7 @@ export const useSearch = () => {
           },
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         loading: false,
@@ -179,7 +179,7 @@ export const useSearch = () => {
           total: (productsResponse.data?.pagination?.total || 0) + (storesResponse.data?.pagination?.total || 0),
         },
       }));
-    } catch (error) {
+    } catch (error: any) {
       setState(prev => ({
         ...prev,
         loading: false,

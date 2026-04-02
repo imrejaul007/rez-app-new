@@ -38,7 +38,7 @@ export const SkeletonBox: React.FC<SkeletonBoxProps> = ({
           borderRadius,
           backgroundColor: colors.neutral[200],
           opacity,
-        },
+        } as any,
         style,
       ]}
     />

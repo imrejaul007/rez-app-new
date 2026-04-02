@@ -103,7 +103,7 @@ function ProductReviewForm({
       setWouldBuyAgain(true);
       setUsageTime('');
       setErrors({});
-    } catch (error) {
+    } catch (error: any) {
       // Error is handled in the parent hook
     } finally {
       if (!isMounted()) return;
@@ -144,7 +144,7 @@ function ProductReviewForm({
         setImages(prev => [...prev, imageUri]);
 
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to pick image. Please try again.');
     }
   };
@@ -292,7 +292,7 @@ function ProductReviewForm({
           </ThemedText>
           <View style={styles.optionRow}>
             <Pressable
-              style={[styles.optionButton, recommended && styles.optionButtonActive]}
+              style={[styles.optionButton, recommended ? styles.optionButtonActive : null]}
               onPress={() => setRecommended(true)}
              
             >
@@ -301,12 +301,12 @@ function ProductReviewForm({
                 size={20}
                 color={recommended ? colors.background.primary : colors.brand.purpleLight}
               />
-              <ThemedText style={[styles.optionText, recommended && styles.optionTextActive]}>
+              <ThemedText style={[styles.optionText, recommended ? styles.optionTextActive : null]}>
                 Yes
               </ThemedText>
             </Pressable>
             <Pressable
-              style={[styles.optionButton, !recommended && styles.optionButtonActive]}
+              style={[styles.optionButton, !recommended ? styles.optionButtonActive : null]}
               onPress={() => setRecommended(false)}
              
             >
@@ -315,7 +315,7 @@ function ProductReviewForm({
                 size={20}
                 color={!recommended ? colors.background.primary : colors.brand.purpleLight}
               />
-              <ThemedText style={[styles.optionText, !recommended && styles.optionTextActive]}>
+              <ThemedText style={[styles.optionText, !recommended ? styles.optionTextActive : null]}>
                 No
               </ThemedText>
             </Pressable>
@@ -329,7 +329,7 @@ function ProductReviewForm({
           </ThemedText>
           <View style={styles.optionRow}>
             <Pressable
-              style={[styles.optionButton, wouldBuyAgain && styles.optionButtonActive]}
+              style={[styles.optionButton, wouldBuyAgain ? styles.optionButtonActive : null]}
               onPress={() => setWouldBuyAgain(true)}
              
             >
@@ -338,12 +338,12 @@ function ProductReviewForm({
                 size={20}
                 color={wouldBuyAgain ? colors.background.primary : colors.brand.purpleLight}
               />
-              <ThemedText style={[styles.optionText, wouldBuyAgain && styles.optionTextActive]}>
+              <ThemedText style={[styles.optionText, wouldBuyAgain ? styles.optionTextActive : null]}>
                 Yes
               </ThemedText>
             </Pressable>
             <Pressable
-              style={[styles.optionButton, !wouldBuyAgain && styles.optionButtonActive]}
+              style={[styles.optionButton, !wouldBuyAgain ? styles.optionButtonActive : null]}
               onPress={() => setWouldBuyAgain(false)}
              
             >
@@ -352,7 +352,7 @@ function ProductReviewForm({
                 size={20}
                 color={!wouldBuyAgain ? colors.background.primary : colors.brand.purpleLight}
               />
-              <ThemedText style={[styles.optionText, !wouldBuyAgain && styles.optionTextActive]}>
+              <ThemedText style={[styles.optionText, !wouldBuyAgain ? styles.optionTextActive : null]}>
                 No
               </ThemedText>
             </Pressable>
@@ -418,7 +418,7 @@ function ProductReviewForm({
         )}
 
         <Pressable
-          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          style={[styles.submitButton, isSubmitting ? styles.submitButtonDisabled : null]}
           onPress={handleSubmit}
           disabled={isSubmitting}
          

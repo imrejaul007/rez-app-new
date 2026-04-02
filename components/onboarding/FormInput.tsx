@@ -87,7 +87,7 @@ function FormInput({
           <Text
             style={[
               styles.prefixText,
-              leftIcon && styles.prefixWithIcon
+              leftIcon ? styles.prefixWithIcon : null
             ]}
             accessible={false}
             importantForAccessibility="no"
@@ -100,7 +100,7 @@ function FormInput({
             styles.input,
             (leftIcon || prefix) ? styles.inputWithIcon : null,
             style
-          ]}
+          ] as any}
           placeholderTextColor={colors.neutral[400]}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -133,7 +133,7 @@ function FormInput({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<any>({
   container: {
     marginBottom: 16,
   },

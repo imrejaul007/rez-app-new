@@ -217,7 +217,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(
             />
           </View>
           <Text
-            style={[styles.label, isSelected && styles.labelSelected]}
+            style={[styles.label, isSelected ? styles.labelSelected : null]}
             numberOfLines={1}
           >
             {filter.name}

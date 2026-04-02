@@ -265,7 +265,7 @@ function DealList({
           {getPopularCategories().map((category) => (
             <Pressable
               key={category}
-              style={[styles.quickFilter, filterBy === category && styles.quickFilterActive]}
+              style={[styles.quickFilter, filterBy === category ? styles.quickFilterActive : null]}
               onPress={() => setFilterBy(category)}
             >
               <ThemedText 

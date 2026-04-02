@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Create and upload user-generated content (videos/images)
 
 import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  TextInput,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, TextInput, SafeAreaView, StatusBar, Platform } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -64,7 +55,7 @@ function UGCUploadScreen() {
     if (cameraPermission.status !== 'granted' || mediaPermission.status !== 'granted') {
       platformAlertSimple(
         'Permissions Required',
-        'Please grant camera and media library permissions to upload content.'
+        'Please grant camera and media library permissions to upload content.',
       );
     }
   };
@@ -73,7 +64,7 @@ function UGCUploadScreen() {
     try {
       const ImagePicker = await getImagePicker();
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'mixed',
+        mediaTypes: 'mixed' as any,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
@@ -88,7 +79,7 @@ function UGCUploadScreen() {
           mediaType: asset.type === 'video' ? 'video' : 'image',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to pick media. Please try again.');
     }
   };
@@ -111,7 +102,7 @@ function UGCUploadScreen() {
           mediaType: 'image',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to take photo. Please try again.');
     }
   };
@@ -129,7 +120,7 @@ function UGCUploadScreen() {
   const handleRemoveTag = (tag: string) => {
     setForm({
       ...form,
-      tags: form.tags.filter(t => t !== tag),
+      tags: form.tags.filter((t) => t !== tag),
     });
   };
 
@@ -156,7 +147,7 @@ function UGCUploadScreen() {
           fileName: `ugc_${Date.now()}.${form.mediaType === 'video' ? 'mp4' : 'jpg'}`,
           mimeType: form.mediaType === 'video' ? 'video/mp4' : 'image/jpeg',
         },
-        'ugc'
+        'ugc',
       );
 
       // Step 2: Create the UGC reel via backend API
@@ -172,9 +163,7 @@ function UGCUploadScreen() {
         throw new Error(response.error || 'Failed to create post');
       }
 
-      const coinMsg = response.data?.coinReward
-        ? `\nYou earned ${response.data.coinReward.coinsAwarded} coins!`
-        : '';
+      const coinMsg = response.data?.coinReward ? `\nYou earned ${response.data.coinReward.coinsAwarded} coins!` : '';
       platformAlertSimple('Success!', `Your content has been submitted for review.${coinMsg}`);
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } catch (error: any) {
@@ -191,8 +180,8 @@ function UGCUploadScreen() {
       platformAlertDestructive(
         'Discard Changes?',
         'Are you sure you want to discard this upload?',
+        () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
         'Discard',
-        () => router.canGoBack() ? router.back() : router.replace('/(tabs)')
       );
     } else {
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
@@ -221,14 +210,12 @@ function UGCUploadScreen() {
           style={[styles.postButton, (!form.mediaUri || !form.caption.trim()) && styles.postButtonDisabled]}
           onPress={handleSubmit}
           disabled={!form.mediaUri || !form.caption.trim() || uploading}
-          accessibilityLabel={uploading ? "Posting" : "Post"}
+          accessibilityLabel={uploading ? 'Posting' : 'Post'}
           accessibilityRole="button"
           accessibilityState={{ disabled: !form.mediaUri || !form.caption.trim() || uploading, busy: uploading }}
           accessibilityHint="Posts your content to the platform"
         >
-          <ThemedText style={styles.postButtonText}>
-            {uploading ? 'Posting...' : 'Post'}
-          </ThemedText>
+          <ThemedText style={styles.postButtonText}>{uploading ? 'Posting...' : 'Post'}</ThemedText>
         </Pressable>
       </View>
 
@@ -303,9 +290,7 @@ function UGCUploadScreen() {
             multiline
             maxLength={500}
           />
-          <ThemedText style={styles.charCount}>
-            {form.caption.length}/500
-          </ThemedText>
+          <ThemedText style={styles.charCount}>{form.caption.length}/500</ThemedText>
         </View>
 
         {/* Tags Section */}
@@ -366,13 +351,9 @@ function UGCUploadScreen() {
         {/* User Info */}
         <View style={styles.userInfo}>
           <View style={styles.userAvatarPlaceholder}>
-            <ThemedText style={styles.userAvatarText}>
-              {user?.profile?.fullName?.charAt(0) || 'U'}
-            </ThemedText>
+            <ThemedText style={styles.userAvatarText}>{(user?.profile as any)?.fullName?.charAt(0) || 'U'}</ThemedText>
           </View>
-          <ThemedText style={styles.userName}>
-            {user?.profile?.fullName || 'User'}
-          </ThemedText>
+          <ThemedText style={styles.userName}>{(user?.profile as any)?.fullName || 'User'}</ThemedText>
         </View>
       </ScrollView>
     </SafeAreaView>

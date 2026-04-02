@@ -110,7 +110,7 @@ class DiscountsApi {
   }): Promise<ApiResponse<{ discounts: Discount[]; total: number; page: number; limit: number }>> {
     try {
       const response = await apiClient.get<any>('/discounts', params);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -122,7 +122,7 @@ class DiscountsApi {
   async getDiscountById(id: string): Promise<ApiResponse<Discount>> {
     try {
       const response = await apiClient.get<Discount>(`/discounts/${id}`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -140,7 +140,7 @@ class DiscountsApi {
         `/discounts/product/${productId}`,
         orderValue ? { orderValue } : undefined
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -163,7 +163,7 @@ class DiscountsApi {
         '/discounts/bill-payment',
         Object.keys(params).length > 0 ? params : undefined
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -178,9 +178,9 @@ class DiscountsApi {
     try {
       const response = await apiClient.post<ValidateDiscountResponse>(
         '/discounts/validate',
-        data
+        data as any
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -193,8 +193,8 @@ class DiscountsApi {
     data: ApplyDiscountRequest
   ): Promise<ApiResponse<ApplyDiscountResponse>> {
     try {
-      const response = await apiClient.post<ApplyDiscountResponse>('/discounts/apply', data);
-      return response;
+      const response = await apiClient.post<ApplyDiscountResponse>('/discounts/apply', data as any);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -209,7 +209,7 @@ class DiscountsApi {
   }): Promise<ApiResponse<{ history: DiscountUsageHistory[]; total: number }>> {
     try {
       const response = await apiClient.get<any>('/discounts/my-history', params);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -221,7 +221,7 @@ class DiscountsApi {
   async getDiscountAnalytics(id: string): Promise<ApiResponse<any>> {
     try {
       const response = await apiClient.get<any>(`/discounts/${id}/analytics`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -245,7 +245,7 @@ class DiscountsApi {
       };
 
       const response = await apiClient.get<any>('/discounts', queryParams);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -260,8 +260,8 @@ class DiscountsApi {
     orderValue: number;
   }): Promise<ApiResponse<{ eligible: boolean; offers: Discount[]; bestOffer?: Discount }>> {
     try {
-      const response = await apiClient.post<any>('/discounts/card-offers/validate', data);
-      return response;
+      const response = await apiClient.post<any>('/discounts/card-offers/validate', data as any);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -276,8 +276,8 @@ class DiscountsApi {
     cardLast4?: string;
   }): Promise<ApiResponse<{ success: boolean; discountAmount: number }>> {
     try {
-      const response = await apiClient.post<any>('/discounts/card-offers/apply', data);
-      return response;
+      const response = await apiClient.post<any>('/discounts/card-offers/apply', data as any);
+      return response as any;
     } catch (error) {
       throw error;
     }

@@ -89,7 +89,7 @@ function TopStoreCard({ store, onPress, width = 180 }: TopStoreCardProps) {
   const handlePress = useCallback(() => {
     try {
       onPress(store);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onPress, store]);
@@ -108,8 +108,6 @@ function TopStoreCard({ store, onPress, width = 180 }: TopStoreCardProps) {
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-      delayPressIn={0}
-      delayPressOut={0}
       accessibilityLabel={storeA11yLabel}
       accessibilityRole="button"
       accessibilityHint="Double tap to view store and available offers"

@@ -74,7 +74,7 @@ const FriendsCommunity = () => {
 
         setFriendsShopping(friends);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load community activity');
     } finally {

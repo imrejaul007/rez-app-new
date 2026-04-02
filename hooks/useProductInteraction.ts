@@ -88,7 +88,7 @@ export function useProductInteraction(
       }
 
       // Add to cart via API
-      const response = await cartService.addToCart({
+      const response: any = await cartService.addToCart({
         productId,
         quantity,
         metadata: {
@@ -220,7 +220,7 @@ export function useProductInteraction(
       // - Google Analytics
       // - Firebase Analytics
       // - Custom analytics API
-    } catch (err) {
+    } catch (err: any) {
       // Don't show error to user for analytics failures
     }
   }, []);

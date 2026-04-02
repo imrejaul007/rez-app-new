@@ -6,7 +6,7 @@ export function useRedeemPriveOffer() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { offerId: string; idempotencyKey: string }) =>
-      priveApi.redeemOffer(data.offerId, data),
+      (priveApi as any).redeemOffer(data.offerId, data),
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.prive.all });

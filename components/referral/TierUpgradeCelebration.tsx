@@ -123,7 +123,7 @@ function TierUpgradeCelebration({
       await Share.share({
         message: `🎉 I just reached ${tierData.name} tier on REZ!\n\n${tierData.referralsRequired} referrals unlocked!\n\nEarning ${tierData.rewards.perReferral} coins per referral now! 🚀\n\nJoin me on REZ and start earning!`,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -148,7 +148,7 @@ function TierUpgradeCelebration({
             scaleStyle,
           ]}
         >
-          <LinearGradient colors={tierGradient} style={styles.gradient}>
+          <LinearGradient colors={tierGradient as [string, string]} style={styles.gradient}>
             {/* Close Button */}
             <Pressable style={styles.closeButton} onPress={onClose}>
               <Ionicons name="close" size={28} color={colors.background.primary} />

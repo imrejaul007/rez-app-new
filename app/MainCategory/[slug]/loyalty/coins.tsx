@@ -7,10 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Pressable,
-  RefreshControl, ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { TransactionListSkeleton } from '@/components/skeletons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -56,7 +53,7 @@ const TYPE_CONFIG: Record<string, { icon: string; color: string; prefix: string 
 function ElectronicsCoinsPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const theme = getCategoryTheme(slug || 'electronics');
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -81,7 +78,7 @@ function ElectronicsCoinsPage() {
         });
         setTotalBalance(catBal?.available ?? res.data.totalCoins ?? res.data.coins.available ?? 0);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -89,7 +86,9 @@ function ElectronicsCoinsPage() {
     }
   }, []);
 
-  useEffect(() => { fetchCoins(); }, [fetchCoins]);
+  useEffect(() => {
+    fetchCoins();
+  }, [fetchCoins]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -100,19 +99,11 @@ function ElectronicsCoinsPage() {
 
   const history = coins?.history || [];
 
-  const filteredHistory = history.filter(h =>
-    filter === 'all' ? true : h.type === filter
-  );
+  const filteredHistory = history.filter((h) => (filter === 'all' ? true : h.type === filter));
 
-  const totalEarned = history
-    .filter(h => h.type === 'earned')
-    .reduce((sum, h) => sum + h.amount, 0);
+  const totalEarned = history.filter((h) => h.type === 'earned').reduce((sum, h) => sum + h.amount, 0);
 
-  const totalSpent = Math.abs(
-    history
-      .filter(h => h.type === 'spent')
-      .reduce((sum, h) => sum + h.amount, 0)
-  );
+  const totalSpent = Math.abs(history.filter((h) => h.type === 'spent').reduce((sum, h) => sum + h.amount, 0));
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -125,21 +116,28 @@ function ElectronicsCoinsPage() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const renderTransaction = useCallback(({ item }: { item: CoinTransaction }) => {
-    const config = TYPE_CONFIG[item.type] || TYPE_CONFIG.earned;
-    return (
-      <View style={styles.txCard}>
-        <Ionicons name={config.icon as any} size={28} color={config.color} />
-        <View style={styles.txInfo}>
-          <Text style={styles.txDesc} numberOfLines={1}>{item.description}</Text>
-          <Text style={styles.txDate}>{formatDate(item.date)}</Text>
+  const renderTransaction = useCallback(
+    ({ item }: { item: CoinTransaction }) => {
+      const config = TYPE_CONFIG[item.type] || TYPE_CONFIG.earned;
+      return (
+        <View style={styles.txCard}>
+          <Ionicons name={config.icon as any} size={28} color={config.color} />
+          <View style={styles.txInfo}>
+            <Text style={styles.txDesc} numberOfLines={1}>
+              {item.description}
+            </Text>
+            <Text style={styles.txDate}>{formatDate(item.date)}</Text>
+          </View>
+          <Text style={[styles.txAmount, { color: config.color }]}>
+            {config.prefix}
+            {currencySymbol}
+            {Math.abs(item.amount)}
+          </Text>
         </View>
-        <Text style={[styles.txAmount, { color: config.color }]}>
-          {config.prefix}{currencySymbol}{Math.abs(item.amount)}
-        </Text>
-      </View>
-    );
-  }, [currencySymbol]);
+      );
+    },
+    [currencySymbol],
+  );
 
   if (isLoading) {
     return (
@@ -156,7 +154,10 @@ function ElectronicsCoinsPage() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <View style={{ flex: 1 }}>
@@ -183,7 +184,10 @@ function ElectronicsCoinsPage() {
               end={{ x: 1, y: 1 }}
             >
               <Text style={styles.balanceLabel}>Total Balance</Text>
-              <Text style={styles.balanceValue}>{currencySymbol}{totalBalance}</Text>
+              <Text style={styles.balanceValue}>
+                {currencySymbol}
+                {totalBalance}
+              </Text>
               <Text style={styles.balanceSubtext}>coins</Text>
             </LinearGradient>
 
@@ -193,12 +197,11 @@ function ElectronicsCoinsPage() {
                 <Ionicons name="warning-outline" size={20} color={SHARED_COLORS.red} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.expiringTitle}>
-                    {currencySymbol}{expiring} coins expiring soon
+                    {currencySymbol}
+                    {expiring} coins expiring soon
                   </Text>
                   {expiryDate && (
-                    <Text style={styles.expiringDate}>
-                      Expires on {new Date(expiryDate).toLocaleDateString()}
-                    </Text>
+                    <Text style={styles.expiringDate}>Expires on {new Date(expiryDate).toLocaleDateString()}</Text>
                   )}
                 </View>
                 <Pressable
@@ -214,14 +217,16 @@ function ElectronicsCoinsPage() {
             <View style={styles.statsRow}>
               <View style={styles.statItem}>
                 <Text style={[styles.statValue, { color: SHARED_COLORS.green }]}>
-                  {currencySymbol}{totalEarned}
+                  {currencySymbol}
+                  {totalEarned}
                 </Text>
                 <Text style={styles.statLabel}>Total Earned</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
                 <Text style={[styles.statValue, { color: SHARED_COLORS.red }]}>
-                  {currencySymbol}{totalSpent}
+                  {currencySymbol}
+                  {totalSpent}
                 </Text>
                 <Text style={styles.statLabel}>Total Spent</Text>
               </View>
@@ -231,13 +236,13 @@ function ElectronicsCoinsPage() {
             <View style={styles.filterRow}>
               <Text style={styles.historyTitle}>Transaction History</Text>
               <View style={styles.filters}>
-                {FILTERS.map(f => (
+                {FILTERS.map((f) => (
                   <Pressable
                     key={f.key}
-                    style={[styles.filterChip, filter === f.key && styles.filterChipActive]}
+                    style={[styles.filterChip, filter === f.key ? styles.filterChipActive : null]}
                     onPress={() => setFilter(f.key)}
                   >
-                    <Text style={[styles.filterText, filter === f.key && styles.filterTextActive]}>
+                    <Text style={[styles.filterText, filter === f.key ? styles.filterTextActive : null]}>
                       {f.label}
                     </Text>
                   </Pressable>
@@ -251,8 +256,7 @@ function ElectronicsCoinsPage() {
             <Ionicons name="receipt-outline" size={48} color={SHARED_COLORS.textSecondary} />
             <Text style={styles.emptyTitle}>No transactions</Text>
             <Text style={styles.emptySubtitle}>
-              {filter === 'all' ? 'Your coin history will appear here'
-                : `No ${filter} transactions found`}
+              {filter === 'all' ? 'Your coin history will appear here' : `No ${filter} transactions found`}
             </Text>
           </View>
         }
@@ -266,8 +270,14 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md,
-    backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default, gap: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+    gap: Spacing.md,
   },
   backBtn: { padding: Spacing.xs },
   headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.primary },
@@ -280,16 +290,30 @@ const styles = StyleSheet.create({
   balanceSubtext: { ...Typography.body, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   // Expiring
   expiringCard: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    padding: 14, borderRadius: BorderRadius.md, backgroundColor: Colors.errorScale[100], marginBottom: Spacing.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    padding: 14,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.errorScale[100],
+    marginBottom: Spacing.base,
   },
   expiringTitle: { ...Typography.body, fontWeight: '600', color: Colors.error },
   expiringDate: { ...Typography.caption, color: '#991B1B', marginTop: 2 },
-  useNowBtn: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: BorderRadius.sm, backgroundColor: Colors.error },
+  useNowBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.error,
+  },
   useNowText: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.inverse },
   // Stats
   statsRow: {
-    flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.lg, marginBottom: Spacing.base,
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.base,
   },
   statItem: { flex: 1, alignItems: 'center' },
   statValue: { ...Typography.h3, fontWeight: '700' },
@@ -300,16 +324,25 @@ const styles = StyleSheet.create({
   historyTitle: { ...Typography.h4, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.md },
   filters: { flexDirection: 'row', gap: Spacing.sm },
   filterChip: {
-    paddingHorizontal: 14, paddingVertical: 6, borderRadius: BorderRadius.lg,
-    backgroundColor: colors.background.primary, borderWidth: 1, borderColor: colors.border.default,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: colors.background.primary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   filterChipActive: { backgroundColor: Colors.info, borderColor: Colors.info },
   filterText: { ...Typography.bodySmall, fontWeight: '500', color: colors.text.tertiary },
   filterTextActive: { color: colors.text.inverse },
   // Transactions
   txCard: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    padding: 14, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, marginBottom: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    padding: 14,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.sm,
   },
   txInfo: { flex: 1 },
   txDesc: { ...Typography.body, fontWeight: '500', color: colors.text.primary },

@@ -62,7 +62,7 @@ export const PrivacyNotice: React.FC<PrivacyNoticeProps> = ({
     if (privacyPolicyUrl.startsWith('http')) {
       try {
         Linking.openURL(privacyPolicyUrl);
-      } catch (e) { catchAndWarn(e, 'PrivacyNotice/handlePrivacyPolicyPress'); }
+      } catch (e: any) { catchAndWarn(e, 'PrivacyNotice/handlePrivacyPolicyPress'); }
     } else {
       // For internal navigation, you would use your router here
     }

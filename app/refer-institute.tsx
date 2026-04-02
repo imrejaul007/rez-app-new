@@ -126,10 +126,10 @@ function ReferInstitutePage() {
               {(['college', 'company'] as InstituteType[]).map((t) => (
                 <Pressable
                   key={t}
-                  style={[styles.typeChip, instituteType === t && styles.typeChipActive]}
+                  style={[styles.typeChip, instituteType === t ? styles.typeChipActive : null]}
                   onPress={() => setInstituteType(t)}
                 >
-                  <ThemedText style={[styles.typeChipText, instituteType === t && styles.typeChipTextActive]}>
+                  <ThemedText style={[styles.typeChipText, instituteType === t ? styles.typeChipTextActive : null]}>
                     {t === 'college' ? 'College' : 'Company'}
                   </ThemedText>
                 </Pressable>
@@ -167,7 +167,7 @@ function ReferInstitutePage() {
           <Pressable
             onPress={handleSubmit}
             disabled={loading}
-            style={[styles.submitButton, loading && styles.submitButtonDisabled]}
+            style={[styles.submitButton, loading ? styles.submitButtonDisabled : null]}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />

@@ -65,7 +65,7 @@ export const WalletSnapshotSkeleton = React.memo(() => (
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    backgroundColor: colors.brand.nileBlue,
+    backgroundColor: colors.brand.nileBlueLight,
     borderRadius: 16,
     marginHorizontal: spacing.lg,
     marginBottom: spacing.lg,

@@ -55,7 +55,7 @@ function DeliveryEstimator({ productId, onCheckDelivery }: DeliveryEstimatorProp
         };
         setDeliveryInfo(mockInfo);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to check delivery. Please try again.');
     } finally {
@@ -83,7 +83,7 @@ function DeliveryEstimator({ productId, onCheckDelivery }: DeliveryEstimatorProp
           maxLength={6}
         />
         <Pressable
-          style={[styles.checkButton, loading && styles.buttonDisabled]}
+          style={[styles.checkButton, loading ? styles.buttonDisabled : null]}
           onPress={handleCheck}
           disabled={loading}
         >

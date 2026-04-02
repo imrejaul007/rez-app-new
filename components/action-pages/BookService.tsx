@@ -123,7 +123,7 @@ function BookServicePage() {
         if (!isMounted()) return;
         setProviders(bookable.length > 0 ? bookable : allStores.slice(0, 20));
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -157,7 +157,7 @@ function BookServicePage() {
         const firstAvailable = serviceSlots.find(s => s.available);
         if (firstAvailable) setSelectedTime(firstAvailable.time);
       }
-    } catch (err) {
+    } catch (err: any) {
       const fallback: TimeSlot[] = [
         '07:00', '08:00', '09:00', '10:00', '11:00',
         '12:00', '13:00', '14:00', '15:00', '16:00',
@@ -227,8 +227,8 @@ function BookServicePage() {
 
       if (res.success) {
         if (!isMounted()) return;
-        setBookingId(res.data?.id || res.data?._id || null);
-        setBookingNumber(res.data?.appointmentNumber || res.data?.bookingNumber || null);
+        setBookingId(res.data?.id || (res.data as any)?._id || null);
+        setBookingNumber((res.data as any)?.appointmentNumber || (res.data as any)?.bookingNumber || null);
         setStep('confirm');
       } else {
         platformAlertSimple('Booking Failed', res.message || 'Could not create booking. Please try again.');
@@ -288,7 +288,7 @@ function BookServicePage() {
             <Text style={styles.storeCuisine} numberOfLines={1}>{getServiceTags(store)}</Text>
             <View style={styles.storeMetaRow}>
               <View style={styles.storeRating}>
-                <Ionicons name="star" size={12} color={COLORS.goldDark} />
+                <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
                 <Text style={styles.storeRatingText}>{rating}</Text>
                 <Text style={styles.storeReviewCount}>({reviewCount})</Text>
               </View>
@@ -489,12 +489,12 @@ function BookServicePage() {
             return (
               <Pressable
                 key={service.id}
-                style={[styles.serviceChip, isSelected && styles.serviceChipActive]}
+                style={[styles.serviceChip, isSelected ? styles.serviceChipActive : null]}
                 onPress={() => setSelectedService(service.id)}
               >
                 <Text style={styles.serviceEmoji}>{service.icon}</Text>
-                <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelActive]}>{service.label}</Text>
-                <Text style={[styles.serviceDuration, isSelected && styles.serviceDurationActive]}>{service.duration}</Text>
+                <Text style={[styles.serviceLabel, isSelected ? styles.serviceLabelActive : null]}>{service.label}</Text>
+                <Text style={[styles.serviceDuration, isSelected ? styles.serviceDurationActive : null]}>{service.duration}</Text>
               </Pressable>
             );
           })}
@@ -507,12 +507,12 @@ function BookServicePage() {
             const isSelected = date.toDateString() === selectedDate.toDateString();
             const isToday = i === 0;
             return (
-              <Pressable key={i} style={[styles.dateChip, isSelected && styles.dateChipActive]} onPress={() => setSelectedDate(date)}>
-                <Text style={[styles.dateDay, isSelected && styles.dateDayActive]}>
+              <Pressable key={i} style={[styles.dateChip, isSelected ? styles.dateChipActive : null]} onPress={() => setSelectedDate(date)}>
+                <Text style={[styles.dateDay, isSelected ? styles.dateDayActive : null]}>
                   {isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'short' })}
                 </Text>
-                <Text style={[styles.dateNum, isSelected && styles.dateNumActive]}>{date.getDate()}</Text>
-                <Text style={[styles.dateMonth, isSelected && styles.dateDayActive]}>
+                <Text style={[styles.dateNum, isSelected ? styles.dateNumActive : null]}>{date.getDate()}</Text>
+                <Text style={[styles.dateMonth, isSelected ? styles.dateDayActive : null]}>
                   {date.toLocaleDateString(undefined, { month: 'short' })}
                 </Text>
               </Pressable>
@@ -543,14 +543,14 @@ function BookServicePage() {
               return (
                 <Pressable
                   key={slot.time}
-                  style={[styles.timeChip, isSelected && styles.timeChipActive, isUnavailable && styles.timeChipUnavailable]}
+                  style={[styles.timeChip, isSelected && styles.timeChipActive, isUnavailable ? styles.timeChipUnavailable : null]}
                   onPress={() => {
                     if (isUnavailable) { platformAlertSimple('Unavailable', 'This time slot is fully booked.'); return; }
                     setSelectedTime(slot.time);
                   }}
                  
                 >
-                  <Text style={[styles.timeText, isSelected && styles.timeTextActive, isUnavailable && styles.timeTextUnavailable]}>{slot.time}</Text>
+                  <Text style={[styles.timeText, isSelected && styles.timeTextActive, isUnavailable ? styles.timeTextUnavailable : null]}>{slot.time}</Text>
                   {isUnavailable && <Text style={styles.timeFullText}>Full</Text>}
                 </Pressable>
               );

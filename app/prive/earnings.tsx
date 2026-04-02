@@ -294,10 +294,10 @@ function EarningsScreen() {
         return (
           <Pressable
             key={opt.label}
-            style={[styles.filterChip, isActive && styles.filterChipActive]}
+            style={[styles.filterChip, isActive ? styles.filterChipActive : null]}
             onPress={() => handleTimeRangeChange(opt.value)}
           >
-            <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>{opt.label}</Text>
+            <Text style={[styles.filterChipText, isActive ? styles.filterChipTextActive : null]}>{opt.label}</Text>
           </Pressable>
         );
       })}
@@ -457,7 +457,7 @@ function EarningsScreen() {
                 earnings.map((item, index) => (
                   <View
                     key={item.id}
-                    style={[styles.earningRow, index === earnings.length - 1 && styles.earningRowLast]}
+                    style={[styles.earningRow, index === earnings.length - 1 ? styles.earningRowLast : null]}
                   >
                     <View style={styles.earningIcon}>
                       <Text style={styles.earningEmoji}>{getEarningIcon(item.type)}</Text>

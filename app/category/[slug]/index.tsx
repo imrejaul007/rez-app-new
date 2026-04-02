@@ -34,7 +34,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function CategoryPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const { state, actions } = useCategory();
   const { items, totalCount, filteredCount, hasMore, loading } = useCategoryItems();
   const cartActions = useCartActions();
@@ -69,7 +69,7 @@ function CategoryPage() {
       if (statsRes.success && statsRes.data) {
         setLoyaltyStats(statsRes.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertConfirm('Error', 'Failed to load category. Please try again.', loadCategoryData, 'Retry');
     }
   };
@@ -163,7 +163,7 @@ function CategoryPage() {
         type: 'success',
         duration: 3000,
       });
-    } catch (error) {
+    } catch (error: any) {
       // Fallback: Try using cart API directly
       try {
         const cartApi = (await import('@/services/cartApi')).default;
@@ -231,7 +231,7 @@ function CategoryPage() {
         // Analytics tracking available through actionResult if needed
         // User ID available via useAuthUser() hook if required
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle carousel action errors
     }
   };

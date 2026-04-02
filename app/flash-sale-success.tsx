@@ -32,12 +32,7 @@ function FlashSaleSuccessPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const { purchaseId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = useLocalSearchParams<{
-    purchaseId?: string;
-    razorpay_order_id?: string;
-    razorpay_payment_id?: string;
-    razorpay_signature?: string;
-  }>();
+  const { purchaseId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = useLocalSearchParams<any>();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

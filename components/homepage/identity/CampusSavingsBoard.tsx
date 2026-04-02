@@ -108,11 +108,11 @@ function CampusSavingsBoard({
         return (
           <View
             key={entry.rank}
-            style={[styles.row, isCurrentUser && styles.currentUserRow]}
+            style={[styles.row, isCurrentUser ? styles.currentUserRow : null]}
           >
             <ThemedText style={styles.rank}>#{entry.rank}</ThemedText>
             <ThemedText
-              style={[styles.name, isCurrentUser && styles.currentUserName]}
+              style={[styles.name, isCurrentUser ? styles.currentUserName : null]}
               numberOfLines={1}
             >
               {entry.name}

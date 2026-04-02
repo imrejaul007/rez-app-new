@@ -239,7 +239,7 @@ function DiscoverAndShopSection({
           return newSet;
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setLikedReels(prev => {
@@ -296,7 +296,7 @@ function DiscoverAndShopSection({
           return newSet;
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       // Revert on error
       if (!isMounted()) return;
       setBookmarkedReels(prev => {

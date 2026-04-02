@@ -65,8 +65,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           style={styles.focusBorder}
         />
       )}
-      <View style={[styles.container, isFocused && styles.containerFocused]}>
-        <View style={[styles.iconWrapper, isFocused && styles.iconWrapperFocused]}>
+      <View style={[styles.container, isFocused ? styles.containerFocused : null]}>
+        <View style={[styles.iconWrapper, isFocused ? styles.iconWrapperFocused : null]}>
           <Ionicons
             name="search"
             size={18}

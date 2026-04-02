@@ -104,7 +104,7 @@ function CompareDevicesPage() {
         if (!isMounted()) return;
         setProducts(prods);
       }
-    } catch (err) {
+    } catch (err: any) {
       // Fallback: try fetching stores if products endpoint fails
       try {
         const storeRes = await storesApi.getStoresBySubcategorySlug(categorySlug, 30);
@@ -307,8 +307,8 @@ function CompareDevicesPage() {
                     : false;
 
                   return (
-                    <View key={device._id || device.id || i} style={[styles.specValueCol, isBest && styles.specValueBest]}>
-                      <Text style={[styles.specValue, isBest && styles.specValueTextBest]}>{value}</Text>
+                    <View key={device._id || device.id || i} style={[styles.specValueCol, isBest ? styles.specValueBest : null]}>
+                      <Text style={[styles.specValue, isBest ? styles.specValueTextBest : null]}>{value}</Text>
                       {isBest && spec.key === 'rating' && (
                         <View style={styles.bestBadge}>
                           <Text style={styles.bestBadgeText}>Best</Text>
@@ -352,7 +352,7 @@ function CompareDevicesPage() {
 
     return (
       <Pressable
-        style={[styles.productCard, isSelected && styles.productCardSelected]}
+        style={[styles.productCard, isSelected ? styles.productCardSelected : null]}
         onPress={() => handleToggleDevice(product)}
        
       >
@@ -380,7 +380,7 @@ function CompareDevicesPage() {
           <Text style={styles.productStore} numberOfLines={1}>{product.store?.name || 'Store'}</Text>
           <View style={styles.productMetaRow}>
             <View style={styles.productRating}>
-              <Ionicons name="star" size={12} color={COLORS.goldDark} />
+              <Ionicons name="star" size={12} color={(COLORS as any).goldDark} />
               <Text style={styles.productRatingText}>{rating}</Text>
             </View>
             {price > 0 && (

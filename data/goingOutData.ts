@@ -286,11 +286,19 @@ export const initialGoingOutPageState: GoingOutPageState = {
   activeCategory: 'all',
   searchQuery: '',
   showSearchBar: false,
+  filters: {
+    priceRange: { min: 0, max: 10000 },
+    cashbackRange: { min: 0, max: 100 },
+    brands: [],
+    ratings: [],
+    availability: [],
+  },
   loading: false,
   error: null,
   hasMore: false,
   page: 1,
   sortBy: 'default',
+  wishlist: [],
 };
 
 // Helper Functions

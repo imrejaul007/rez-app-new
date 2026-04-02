@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@/components/common/CrossPlatformSlider';
+const AnySlider = Slider as any;
 
 import { ThemedText } from '@/components/ThemedText';
 import { CategoryFilter } from '@/types/category.types';
@@ -232,7 +233,7 @@ function CategoryFilters({
               <View style={styles.slidersContainer}>
                 <View style={styles.sliderContainer}>
                   <ThemedText style={styles.sliderLabel}>Min</ThemedText>
-                  <Slider
+                  <AnySlider
                     style={styles.slider}
                     minimumValue={filter.range?.min || 0}
                     maximumValue={activeValue.max}
@@ -240,18 +241,16 @@ function CategoryFilters({
                     step={filter.range?.step || 1}
                     minimumTrackTintColor={colors.lightMustard}
                     maximumTrackTintColor={colors.neutral[200]}
-                    onValueChange={(value) => {
+                    onValueChange={(value: number) => {
                       onFilterChange(filter.id, { ...activeValue, min: value });
                     }}
-                    accessibilityLabel="Minimum price"
-                    accessibilityValue={{ now: activeValue.min, min: filter.range?.min || 0, max: activeValue.max }}
-                    accessibilityHint="Adjust minimum price range"
+                    {...({ accessibilityLabel: "Minimum price", accessibilityHint: "Adjust minimum price range" } as any)}
                   />
                 </View>
                 
                 <View style={styles.sliderContainer}>
                   <ThemedText style={styles.sliderLabel}>Max</ThemedText>
-                  <Slider
+                  <AnySlider
                     style={styles.slider}
                     minimumValue={activeValue.min}
                     maximumValue={filter.range?.max || 100}
@@ -259,12 +258,10 @@ function CategoryFilters({
                     step={filter.range?.step || 1}
                     minimumTrackTintColor={colors.lightMustard}
                     maximumTrackTintColor={colors.neutral[200]}
-                    onValueChange={(value) => {
+                    onValueChange={(value: number) => {
                       onFilterChange(filter.id, { ...activeValue, max: value });
                     }}
-                    accessibilityLabel="Maximum price"
-                    accessibilityValue={{ now: activeValue.max, min: activeValue.min, max: filter.range?.max || 100 }}
-                    accessibilityHint="Adjust maximum price range"
+                    {...({ accessibilityLabel: "Maximum price", accessibilityHint: "Adjust maximum price range" } as any)}
                   />
                 </View>
               </View>

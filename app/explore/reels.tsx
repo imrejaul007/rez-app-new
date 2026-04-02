@@ -49,48 +49,51 @@ const ExploreReelsPage = () => {
   const [reels, setReels] = useState<Reel[]>([]);
 
   // Fetch reels based on active tab
-  const fetchReels = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchReels = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      let response;
-      if (activeTab === 'trending') {
-        response = await reelApi.getTrendingReels({ limit: 20 });
-      } else {
-        // For 'following' and 'nearby' tabs, use general reels endpoint
-        response = await reelApi.getReels({
-          sortBy: activeTab === 'following' ? 'newest' : 'popular',
-          limit: 20,
-        });
-      }
-
-      if (response?.success) {
+        let response;
         if (activeTab === 'trending') {
-          if (!isMounted()) return;
-          setReels(response.data || []);
+          response = await reelApi.getTrendingReels({ limit: 20 });
+        } else {
+          // For 'following' and 'nearby' tabs, use general reels endpoint
+          response = await reelApi.getReels({
+            sortBy: activeTab === 'following' ? 'newest' : 'popular',
+            limit: 20,
+          });
+        }
+
+        if (response?.success) {
+          if (activeTab === 'trending') {
+            if (!isMounted()) return;
+            setReels((response.data as any) || []);
+          } else {
+            if (!isMounted()) return;
+            setReels((response.data as any)?.reels || []);
+          }
         } else {
           if (!isMounted()) return;
-          setReels(response.data?.reels || []);
+          setError(response?.error || 'Failed to fetch reels');
         }
-      } else {
+      } catch (err: any) {
         if (!isMounted()) return;
-        setError(response?.error || 'Failed to fetch reels');
+        setError(err.message || 'Something went wrong');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [activeTab]);
+    },
+    [activeTab],
+  );
 
   // Initial fetch and refetch on tab change
   useEffect(() => {
@@ -102,82 +105,94 @@ const ExploreReelsPage = () => {
     fetchReels(true);
   }, [fetchReels]);
 
-  const navigateTo = useCallback((path: string) => {
-    router.push(path as any);
-  }, [router]);
+  const navigateTo = useCallback(
+    (path: string) => {
+      router.push(path as any);
+    },
+    [router],
+  );
 
   const formatCount = (count: number) => {
     if (!count || count < 0) return '0';
     return count >= 1000 ? `${(count / 1000).toFixed(1)}K` : String(count);
   };
 
-  const renderReel = useCallback(({ item }: { item: Reel }) => (
-    <Pressable
-      style={styles.reelCard}
-      onPress={() => navigateTo(`/explore/reel/${item.id}`)}
-    >
-      <CachedImage source={item.thumbnailUrl || item.videoUrl} style={styles.reelImage} />
+  const renderReel = useCallback(
+    ({ item }: { item: Reel }) => (
+      <Pressable style={styles.reelCard} onPress={() => navigateTo(`/explore/reel/${item.id}`)}>
+        <CachedImage source={item.thumbnailUrl || item.videoUrl} style={styles.reelImage} />
 
-      {/* User Badge */}
-      <View style={styles.userBadge}>
-        {item.creator?.avatar ? (
-          <CachedImage source={item.creator.avatar} style={styles.avatar} />
-        ) : (
-          <View style={[styles.avatar, { backgroundColor: colors.text.tertiary, justifyContent: 'center', alignItems: 'center' }]}>
-            <Ionicons name="person" size={10} color={colors.text.inverse} />
-          </View>
-        )}
-        <Text style={styles.userName}>{item.creator?.name || 'Creator'}</Text>
-      </View>
-
-      {/* Play Button */}
-      <View style={styles.playOverlay}>
-        <View style={styles.playButton}>
-          <Ionicons name="play" size={20} color={colors.text.inverse} />
+        {/* User Badge */}
+        <View style={styles.userBadge}>
+          {item.creator?.avatar ? (
+            <CachedImage source={item.creator.avatar} style={styles.avatar} />
+          ) : (
+            <View
+              style={[
+                styles.avatar,
+                { backgroundColor: colors.text.tertiary, justifyContent: 'center', alignItems: 'center' },
+              ]}
+            >
+              <Ionicons name="person" size={10} color={colors.text.inverse} />
+            </View>
+          )}
+          <Text style={styles.userName}>{item.creator?.name || 'Creator'}</Text>
         </View>
-      </View>
 
-      {/* Views Count */}
-      <View style={styles.viewsContainer}>
-        <Ionicons name="eye" size={12} color={colors.text.inverse} />
-        <Text style={styles.viewsText}>{formatCount(item.stats?.views || 0)}</Text>
-      </View>
-
-      {/* Bottom Gradient */}
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.8)']}
-        style={styles.gradient}
-      >
-        <Text style={styles.productName} numberOfLines={1}>
-          {item.title || 'Untitled'}
-        </Text>
-        {item.store?.name && (
-          <View style={styles.storeRow}>
-            <Ionicons name="storefront" size={10} color={colors.text.inverse} />
-            <Text style={styles.storeName}>{item.store.name}</Text>
-          </View>
-        )}
-
-        {item.products && item.products.length > 0 && item.products[0]?.price != null && (
-          <View style={styles.savedBadge}>
-            <Ionicons name="pricetag" size={10} color={colors.text.inverse} />
-            <Text style={styles.savedText}>{currencySymbol}{item.products[0].price}</Text>
-          </View>
-        )}
-
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Ionicons name={item.isLiked ? 'heart' : 'heart-outline'} size={14} color={item.isLiked ? Colors.error : colors.background.primary} />
-            <Text style={styles.statText}>{formatCount(item.stats?.likes || 0)}</Text>
-          </View>
-          <View style={styles.stat}>
-            <Ionicons name="chatbubble" size={14} color={colors.text.inverse} />
-            <Text style={styles.statText}>{formatCount(item.stats?.comments || 0)}</Text>
+        {/* Play Button */}
+        <View style={styles.playOverlay}>
+          <View style={styles.playButton}>
+            <Ionicons name="play" size={20} color={colors.text.inverse} />
           </View>
         </View>
-      </LinearGradient>
-    </Pressable>
-  ), [navigateTo, currencySymbol]);
+
+        {/* Views Count */}
+        <View style={styles.viewsContainer}>
+          <Ionicons name="eye" size={12} color={colors.text.inverse} />
+          <Text style={styles.viewsText}>{formatCount(item.stats?.views || 0)}</Text>
+        </View>
+
+        {/* Bottom Gradient */}
+        <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.gradient}>
+          <Text style={styles.productName} numberOfLines={1}>
+            {item.title || 'Untitled'}
+          </Text>
+          {item.store?.name && (
+            <View style={styles.storeRow}>
+              <Ionicons name="storefront" size={10} color={colors.text.inverse} />
+              <Text style={styles.storeName}>{item.store.name}</Text>
+            </View>
+          )}
+
+          {item.products && item.products.length > 0 && item.products[0]?.price != null && (
+            <View style={styles.savedBadge}>
+              <Ionicons name="pricetag" size={10} color={colors.text.inverse} />
+              <Text style={styles.savedText}>
+                {currencySymbol}
+                {item.products[0].price}
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.statsRow}>
+            <View style={styles.stat}>
+              <Ionicons
+                name={item.isLiked ? 'heart' : 'heart-outline'}
+                size={14}
+                color={item.isLiked ? Colors.error : colors.background.primary}
+              />
+              <Text style={styles.statText}>{formatCount(item.stats?.likes || 0)}</Text>
+            </View>
+            <View style={styles.stat}>
+              <Ionicons name="chatbubble" size={14} color={colors.text.inverse} />
+              <Text style={styles.statText}>{formatCount(item.stats?.comments || 0)}</Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </Pressable>
+    ),
+    [navigateTo, currencySymbol],
+  );
 
   return (
     <>
@@ -185,100 +200,86 @@ const ExploreReelsPage = () => {
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-        >
-          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
-        </Pressable>
-        <Text style={styles.headerTitle}>Reels & Reviews</Text>
-        <Pressable style={styles.createButton} onPress={() => navigateTo('/explore/search')}>
-          <Ionicons name="search" size={22} color={colors.nileBlue} />
-        </Pressable>
-      </View>
-
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        {tabs.map((tab) => (
+        {/* Header */}
+        <View style={styles.header}>
           <Pressable
-            key={tab.id}
-            style={[styles.tab, activeTab === tab.id && styles.tabActive]}
-            onPress={() => setActiveTab(tab.id)}
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
-            <Ionicons
-              name={tab.icon as any}
-              size={16}
-              color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
-            />
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab.id && styles.tabTextActive,
-              ]}
-            >
-              {tab.label}
-            </Text>
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
-        ))}
-      </View>
+          <Text style={styles.headerTitle}>Reels & Reviews</Text>
+          <Pressable style={styles.createButton} onPress={() => navigateTo('/explore/search')}>
+            <Ionicons name="search" size={22} color={colors.nileBlue} />
+          </Pressable>
+        </View>
 
-      {/* Create Reel CTA */}
-      <Pressable style={styles.createCTA} onPress={() => navigateTo('/create-reel')}>
-        <LinearGradient
-          colors={['#FEF9C3', colors.tint.amberLight]}
-          style={styles.createCTAGradient}
-        >
-          <View style={styles.createCTAIcon}>
-            <Ionicons name="videocam" size={24} color={Colors.gold} />
-          </View>
-          <View style={styles.createCTAContent}>
-            <Text style={styles.createCTATitle}>Share Your Experience</Text>
-            <Text style={styles.createCTASubtitle}>
-              Earn 50-200 coins per reel
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.gold} />
-        </LinearGradient>
-      </Pressable>
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
+          {tabs.map((tab) => (
+            <Pressable
+              key={tab.id}
+              style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
+              onPress={() => setActiveTab(tab.id)}
+            >
+              <Ionicons
+                name={tab.icon as any}
+                size={16}
+                color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
+              />
+              <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>{tab.label}</Text>
+            </Pressable>
+          ))}
+        </View>
 
-      {/* Reels Grid */}
-      <FlashList
-        ref={flatListRef}
-        data={reels}
-        renderItem={renderReel}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        estimatedItemSize={250}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-        }
-        ListHeaderComponent={
-          loading && !refreshing ? (
-            <CardGridSkeleton />
-          ) : error && reels.length === 0 ? (
-            <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle" size={48} color={Colors.error} />
-              <Text style={styles.errorText}>{error}</Text>
-              <Pressable style={styles.retryButton} onPress={() => fetchReels()}>
-                <Text style={styles.retryButtonText}>Try Again</Text>
-              </Pressable>
+        {/* Create Reel CTA */}
+        <Pressable style={styles.createCTA} onPress={() => navigateTo('/create-reel')}>
+          <LinearGradient colors={['#FEF9C3', colors.tint.amberLight]} style={styles.createCTAGradient}>
+            <View style={styles.createCTAIcon}>
+              <Ionicons name="videocam" size={24} color={Colors.gold} />
             </View>
-          ) : null
-        }
-        ListEmptyComponent={
-          !loading && !error ? (
-            <View style={styles.emptyContainer}>
-              <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
-              <Text style={styles.emptyText}>No reels yet</Text>
-              <Text style={styles.emptySubtext}>Be the first to share your experience!</Text>
+            <View style={styles.createCTAContent}>
+              <Text style={styles.createCTATitle}>Share Your Experience</Text>
+              <Text style={styles.createCTASubtitle}>Earn 50-200 coins per reel</Text>
             </View>
-          ) : null
-        }
-        ListFooterComponent={<View style={{ height: 100 }} />}
+            <Ionicons name="chevron-forward" size={20} color={Colors.gold} />
+          </LinearGradient>
+        </Pressable>
+
+        {/* Reels Grid */}
+        <FlashList
+          ref={flatListRef}
+          data={reels}
+          renderItem={renderReel}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={250}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
+          ListHeaderComponent={
+            loading && !refreshing ? (
+              <CardGridSkeleton />
+            ) : error && reels.length === 0 ? (
+              <View style={styles.errorContainer}>
+                <Ionicons name="alert-circle" size={48} color={Colors.error} />
+                <Text style={styles.errorText}>{error}</Text>
+                <Pressable style={styles.retryButton} onPress={() => fetchReels()}>
+                  <Text style={styles.retryButtonText}>Try Again</Text>
+                </Pressable>
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            !loading && !error ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
+                <Text style={styles.emptyText}>No reels yet</Text>
+                <Text style={styles.emptySubtext}>Be the first to share your experience!</Text>
+              </View>
+            ) : null
+          }
+          ListFooterComponent={<View style={{ height: 100 }} />}
         />
       </SafeAreaView>
     </>

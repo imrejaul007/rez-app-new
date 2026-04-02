@@ -48,8 +48,8 @@ export function useLeaderboardRealtime(
     recentChanges: [],
   });
 
-  const celebrationTimeoutRef = useRef<NodeJS.Timeout>();
-  const updateTimeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+  const celebrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const updateTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
   // Update entries when initial data changes
   useEffect(() => {
@@ -199,7 +199,7 @@ export function useLeaderboardRealtime(
       const changeType = payload.direction === 'up' ? 'rank_up' : 'rank_down';
       const newChange = {
         userId: payload.userId,
-        type: changeType as const,
+        type: changeType as 'rank_up' | 'rank_down',
         timestamp: new Date(),
       };
 

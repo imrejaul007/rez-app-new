@@ -38,7 +38,7 @@ export class DeepLinkHandler {
       // Handle referral links: /invite/ABC123 or /ref/ABC123
       if (hostname === 'invite' || hostname === 'ref' ||
           path?.includes('/invite/') || path?.includes('/ref/')) {
-        const raw = path?.split(/\/(?:invite|ref)\//)[1] || hostname;
+        const raw = path?.split(/\/(?:invite|ref)\//)[1] || hostname || undefined;
         const code = sanitizeReferralCode(raw);
         if (!code) return { type: 'unknown', data: { url } };
         return {
@@ -49,7 +49,7 @@ export class DeepLinkHandler {
 
       // Handle product links: rezapp://product/123
       if (hostname === 'product' || path?.includes('/product/')) {
-        const raw = path?.split('/product/')[1] || hostname;
+        const raw = path?.split('/product/')[1] || hostname || undefined;
         const productId = sanitizeMongoId(raw);
         if (!productId) return { type: 'unknown', data: { url } };
         return { type: 'product', data: { productId } };
@@ -57,7 +57,7 @@ export class DeepLinkHandler {
 
       // Handle store links: rezapp://store/456
       if (hostname === 'store' || path?.includes('/store/')) {
-        const raw = path?.split('/store/')[1] || hostname;
+        const raw = path?.split('/store/')[1] || hostname || undefined;
         const storeId = sanitizeMongoId(raw);
         if (!storeId) return { type: 'unknown', data: { url } };
         return { type: 'store', data: { storeId } };
@@ -65,7 +65,7 @@ export class DeepLinkHandler {
 
       // Handle offer links: rezapp://offer/789
       if (hostname === 'offer' || path?.includes('/offer/')) {
-        const raw = path?.split('/offer/')[1] || hostname;
+        const raw = path?.split('/offer/')[1] || hostname || undefined;
         const offerId = sanitizeMongoId(raw);
         if (!offerId) return { type: 'unknown', data: { url } };
         return { type: 'offer', data: { offerId } };

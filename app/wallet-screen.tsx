@@ -261,7 +261,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   const handleRefresh = useCallback(async () => {
     try {
       await refreshWallet();
-    } catch (error) {
+    } catch (error: any) {
       platformAlert('Refresh Failed', error instanceof Error ? error.message : 'Unable to refresh wallet data');
     }
   }, [refreshWallet]);
@@ -564,6 +564,33 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             isHidden={isBalanceHidden}
             segment={segment}
           />
+
+          {/* REZ Cash identity entry point */}
+          <Pressable
+            onPress={() => router.push('/rez-cash' as any)}
+            style={({ pressed }) => [
+              {
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginHorizontal: 16,
+                marginBottom: 10,
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                borderRadius: 12,
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.2)',
+                opacity: pressed ? 0.75 : 1,
+              },
+            ]}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Ionicons name="cash-outline" size={18} color="#fff" />
+              <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>REZ Cash — Your Savings Story</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
+          </Pressable>
         </LinearGradient>
 
         {/* Scrollable Content */}

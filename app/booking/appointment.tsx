@@ -137,7 +137,7 @@ function CancellationPolicyBadge({
 
 function AppointmentBookingPage() {
   const isMounted = useIsMounted();
-  const { storeId } = useLocalSearchParams<{ storeId: string }>();
+  const { storeId } = useLocalSearchParams<any>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -241,7 +241,7 @@ function AppointmentBookingPage() {
       } else {
         platformAlertSimple('Error', 'Failed to load store details');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load store details');
     } finally {
       if (!isMounted()) return;
@@ -256,7 +256,7 @@ function AppointmentBookingPage() {
       if (response.success && response.data?.services) {
         setServices(response.data.services);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -378,7 +378,7 @@ function AppointmentBookingPage() {
           const svc = (serviceResp.data as any)?.data || serviceResp.data;
           requiresUpfront = svc?.serviceDetails?.requiresPaymentUpfront || svc?.requiresPaymentUpfront || false;
           servicePrice = svc?.pricing?.selling || svc?.price || selectedService.price || 0;
-        } catch (e) {
+        } catch (e: any) {
           // If can't fetch, use existing service price
           servicePrice = selectedService.price || 0;
         }
@@ -417,7 +417,7 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
 
         platformAlertConfirm('Confirm Appointment', summary, () => submitBooking({}), 'Confirm');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to process booking');
     } finally {
       if (!isMounted()) return;
@@ -509,7 +509,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
       } else {
         platformAlertSimple('Booking Failed', response.error || 'Unable to create appointment. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to submit booking. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -604,12 +604,14 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                           setSelectedService(service);
                           setSelectedTime(null); // Reset time when service changes
                         }}
-                        style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+                        style={[styles.serviceCard, isSelected ? styles.serviceCardSelected : null]}
                         accessibilityRole="radio"
                         accessibilityLabel={`${service.name}${service.duration ? `, ${formatDuration(service.duration)}` : ''}`}
                         accessibilityState={{ selected: isSelected }}
                       >
-                        <View style={[styles.serviceIconContainer, isSelected && styles.serviceIconContainerSelected]}>
+                        <View
+                          style={[styles.serviceIconContainer, isSelected ? styles.serviceIconContainerSelected : null]}
+                        >
                           <Ionicons
                             name={iconName}
                             size={28}
@@ -617,17 +619,19 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                           />
                         </View>
                         <ThemedText
-                          style={[styles.serviceName, isSelected && styles.serviceNameSelected]}
+                          style={[styles.serviceName, isSelected ? styles.serviceNameSelected : null]}
                           numberOfLines={2}
                         >
                           {service.name}
                         </ThemedText>
                         {service.duration && (
-                          <ThemedText style={[styles.serviceDuration, isSelected && styles.serviceDurationSelected]}>
+                          <ThemedText
+                            style={[styles.serviceDuration, isSelected ? styles.serviceDurationSelected : null]}
+                          >
                             {formatDuration(service.duration)}
                           </ThemedText>
                         )}
-                        <ThemedText style={[styles.servicePrice, isSelected && styles.servicePriceSelected]}>
+                        <ThemedText style={[styles.servicePrice, isSelected ? styles.servicePriceSelected : null]}>
                           {currencySymbol}
                           {service.price}
                         </ThemedText>
@@ -694,7 +698,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                           setSelectedDate(date);
                           setSelectedTime(null); // Reset time when date changes
                         }}
-                        style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                        style={[styles.dateCard, isSelected ? styles.dateCardSelected : null]}
                         accessibilityRole="radio"
                         accessibilityLabel={`${isToday ? 'Today, ' : ''}${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`}
                         accessibilityState={{ selected: isSelected }}
@@ -704,13 +708,13 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                             <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
                           </View>
                         )}
-                        <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+                        <ThemedText style={[styles.dateDay, isSelected ? styles.dateTextSelected : null]}>
                           {date.toLocaleDateString('en-US', { weekday: 'short' })}
                         </ThemedText>
-                        <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
+                        <ThemedText style={[styles.dateNumber, isSelected ? styles.dateTextSelected : null]}>
                           {date.getDate()}
                         </ThemedText>
-                        <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
+                        <ThemedText style={[styles.dateMonth, isSelected ? styles.dateTextSelected : null]}>
                           {date.toLocaleDateString('en-US', { month: 'short' })}
                         </ThemedText>
                       </Pressable>
@@ -855,12 +859,12 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                 </View>
                 <Pressable
                   onPress={() => setIsGroupBooking(!isGroupBooking)}
-                  style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
+                  style={[styles.toggleSwitch, isGroupBooking ? styles.toggleSwitchActive : null]}
                   accessibilityRole="switch"
                   accessibilityLabel="Book for a group"
                   accessibilityState={{ checked: isGroupBooking }}
                 >
-                  <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
+                  <View style={[styles.toggleKnob, isGroupBooking ? styles.toggleKnobActive : null]} />
                 </Pressable>
               </View>
             )}

@@ -21,7 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useCurrentLocation } from '@/hooks/useLocation';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -84,7 +84,7 @@ function HotspotsPage() {
           if (!isMounted()) return;
           setHotspots([]);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load hotspots. Please try again.');
       } finally {
@@ -294,7 +294,7 @@ function HotspotsPage() {
               }
               apiClient
                 .get('/offers/hotspots', params)
-                .then((r) => {
+                .then((r: any) => {
                   setHotspots(Array.isArray(r.data) ? r.data : []);
                 })
                 .catch(() => setError('Failed to load hotspots.'))
@@ -395,7 +395,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: Spacing.base,
-    paddingBottom: Spacing['2xl'],
     paddingTop: Spacing.md,
     paddingBottom: 120,
   },

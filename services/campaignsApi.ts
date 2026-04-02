@@ -155,7 +155,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.campaigns?.length || 0} active campaigns`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error fetching active campaigns:', error);
       return {
@@ -185,7 +185,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.dealCategories?.length || 0} deal categories`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error fetching exciting deals:', error);
       return {
@@ -215,7 +215,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.campaigns?.length || 0} ${type} campaigns`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error(`❌ [CAMPAIGNS API] Error fetching ${type} campaigns:`, error);
       return {
@@ -239,7 +239,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Got campaign: ${response.data.title}`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error fetching campaign:', error);
       return {
@@ -288,7 +288,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.redemptions?.length || 0} redeemed deals`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error fetching my deals:', error);
       return {
@@ -313,7 +313,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Got redemption: ${response.data.redemptionCode}`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error fetching redemption:', error);
       return {
@@ -354,7 +354,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Redemption marked as used: ${response.data.redemptionCode}`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error marking redemption as used:', error);
       return {
@@ -383,7 +383,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Redemption cancelled`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error cancelling redemption:', error);
       return {
@@ -452,7 +452,7 @@ class CampaignsService {
         }
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error redeeming deal:', error);
       return {
@@ -501,7 +501,7 @@ class CampaignsService {
         devLog.log(`✅ [CAMPAIGNS API] Payment verified: ${response.data.redemption?.code}`);
       }
 
-      return response;
+      return response as any;
     } catch (error: any) {
       devLog.error('❌ [CAMPAIGNS API] Error verifying payment:', error);
       return {

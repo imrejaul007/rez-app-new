@@ -32,7 +32,7 @@ function AuthDebugger() {
         refreshToken: refreshToken ? 'exists' : 'missing',
         user: parsedUser
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

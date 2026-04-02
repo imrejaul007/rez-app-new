@@ -52,7 +52,7 @@ function EmptyState({
     >
       {imageSource ? (
         <CachedImage
-          source={imageSource}
+          source={imageSource as any}
           style={styles.image}
           contentFit="contain"
           transition={200}

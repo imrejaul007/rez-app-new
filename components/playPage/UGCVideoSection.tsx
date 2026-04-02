@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { UGCVideoItem, PLAY_PAGE_COLORS } from '@/types/playPage.types';
 import SectionHeader from './SectionHeader';
 import ThumbnailVideoCard from './ThumbnailVideoCard';
@@ -44,22 +45,17 @@ function UGCVideoSection({
         onViewAllPress={onViewAllPress}
       />
 
-      <FlashList
+      <AnyFlashList
         data={videos.slice(0, 4)}
         renderItem={renderItem}
-        keyExtractor={(item, index) => item.id || `ugc-video-${index}`}
+        keyExtractor={(item: any, index: number) => item.id || `ugc-video-${index}`}
         numColumns={2}
-        contentContainerStyle={styles.gridContainer}
+        contentContainerStyle={styles.gridContainer as any}
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
         estimatedItemSize={250}
 
         // Performance Optimizations
-        initialNumToRender={4} // Render first 4 videos (2 rows)
-        maxToRenderPerBatch={4} // Render 4 videos at a time for smoother experience
-        windowSize={5} // Keep 5 screen heights worth of content in memory
-        removeClippedSubviews={true} // Remove views outside viewport (Android)
-        updateCellsBatchingPeriod={50} // Batch view updates every 50ms
       />
     </View>
   );

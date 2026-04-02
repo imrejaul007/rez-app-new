@@ -9,6 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
@@ -126,7 +127,7 @@ function StoreCard({
     if (banners.length <= 1) return;
     if (!width || width <= 0) return; // Ensure width is valid
     
-    let intervalId: NodeJS.Timeout | null = null;
+    let intervalId: ReturnType<typeof setTimeout> | null = null;
     
     // Small delay to ensure FlatList is mounted and rendered
     const startTimeout = setTimeout(() => {
@@ -158,7 +159,7 @@ function StoreCard({
                 index: nextIndex, 
                 animated: true 
               });
-            } catch (error) {
+            } catch (error: any) {
               // Fallback: use scrollToOffset if scrollToIndex fails
               try {
                 const offset = nextIndex * width;
@@ -187,7 +188,7 @@ function StoreCard({
   
   // Track if scroll is from user interaction
   const isUserScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isAutoScrollingRef = useRef(false);
   
   // Handle banner scroll
@@ -315,7 +316,7 @@ function StoreCard({
   const handlePress = useCallback(() => {
     try {
       onPress(store);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onPress, store]);
@@ -349,8 +350,8 @@ function StoreCard({
       accessibilityLabel={storeA11yLabel}
       accessibilityRole="button"
       accessibilityHint="Double tap to view store details and products"
-      delayPressIn={0}
-      delayPressOut={0}
+      
+      
     >
       <ThemedView style={styles.card}>
         {/* Store Image/Banner Slider */}
@@ -359,18 +360,18 @@ function StoreCard({
             <>
               {banners.length > 1 ? (
                 <>
-                  <FlashList
-                    ref={flatListRef}
+                  <AnyFlashList
+                    ref={flatListRef as any}
                     data={banners}
                     renderItem={renderBannerItem}
-                    keyExtractor={(item, index) => `banner-${store.id || store.name}-${index}`}
+                    keyExtractor={(item: string, index: number) => `banner-${store.id || store.name}-${index}`}
                     horizontal
                     pagingEnabled
                     showsHorizontalScrollIndicator={false}
                     onScroll={handleBannerScroll}
                     onScrollBeginDrag={handleScrollBeginDrag}
                     onScrollEndDrag={handleScrollEndDrag}
-                    onMomentumScrollEnd={(event) => {
+                    onMomentumScrollEnd={(event: any) => {
                       // Update index when scroll ends
                       const scrollPosition = event.nativeEvent.contentOffset.x;
                       const index = Math.round(scrollPosition / width);
@@ -380,7 +381,7 @@ function StoreCard({
                     snapToInterval={width}
                     decelerationRate="fast"
                     estimatedItemSize={200}
-                    onScrollToIndexFailed={(info) => {
+                    onScrollToIndexFailed={(info: any) => {
                       // Handle scroll to index failure - scroll to offset instead
                       const wait = new Promise(resolve => setTimeout(resolve, 500));
                       wait.then(() => {
@@ -482,18 +483,18 @@ function StoreCard({
           {/* Quick Actions (optional, compact variant) */}
           {showQuickActions && (
             <View style={styles.quickActionsContainer}>
-              <QuickActions
-                storeId={store.id}
-                storeName={store.name}
-                storeType={derivedStoreType}
-                contact={contact}
-                location={locationProps}
-                hasMenu={storeType === 'RESTAURANT' || store.category === 'Restaurant'}
-                allowBooking={storeType === 'SERVICE' || storeType === 'HYBRID'}
-                variant="compact"
-                maxActions={4}
-                hideTitle={false}
-              />
+              {React.createElement(QuickActions as any, {
+                storeId: store.id,
+                storeName: store.name,
+                storeType: derivedStoreType,
+                contact,
+                location: locationProps,
+                hasMenu: storeType === 'RESTAURANT' || store.category === 'Restaurant',
+                allowBooking: storeType === 'SERVICE' || storeType === 'HYBRID',
+                variant: 'compact',
+                maxActions: 4,
+                hideTitle: false,
+              })}
             </View>
           )}
         </View>

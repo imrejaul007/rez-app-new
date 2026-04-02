@@ -334,7 +334,7 @@ class AnalyticsService {
     try {
       // Dynamic import to avoid circular dependency
       const { default: apiClient } = await import('./apiClient');
-      await apiClient.post('/analytics/batch', { events });
+      await apiClient.post<any>('/analytics/batch', { events });
     } catch {
       // Re-queue events on failure, capped to MAX_QUEUE_SIZE
       this.eventQueue = [...events, ...this.eventQueue].slice(-AnalyticsService.MAX_QUEUE_SIZE);

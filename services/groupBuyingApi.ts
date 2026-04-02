@@ -36,7 +36,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -55,7 +55,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -82,7 +82,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -101,7 +101,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -120,7 +120,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -139,7 +139,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -152,13 +152,13 @@ class GroupBuyingApi {
   async createGroup(data: CreateGroupRequest): Promise<ApiResponse<GroupBuyingGroup>> {
     try {
 
-      const response = await apiClient.post<GroupBuyingGroup>(`${BASE_PATH}/groups`, data);
+      const response = await apiClient.post<GroupBuyingGroup>(`${BASE_PATH}/groups`, data as any);
 
       if (response.success) {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -171,13 +171,13 @@ class GroupBuyingApi {
   async joinGroup(data: JoinGroupRequest): Promise<ApiResponse<GroupBuyingGroup>> {
     try {
 
-      const response = await apiClient.post<GroupBuyingGroup>(`${BASE_PATH}/groups/join`, data);
+      const response = await apiClient.post<GroupBuyingGroup>(`${BASE_PATH}/groups/join`, data as any);
 
       if (response.success) {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -196,7 +196,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -217,7 +217,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -236,7 +236,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -260,7 +260,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -279,7 +279,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -300,7 +300,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -320,7 +320,7 @@ class GroupBuyingApi {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,

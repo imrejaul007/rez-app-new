@@ -106,8 +106,8 @@ class PriceTrackingApi {
   ) {
     try {
 
-      const response = await apiClient.get(`${this.baseUrl}/history/${productId}`, {
-        params: options,
+      const response = await apiClient.get<any>(`${this.baseUrl}/history/${productId}`, {
+        params: options as any,
       });
 
       return response.data;
@@ -128,8 +128,8 @@ class PriceTrackingApi {
   ) {
     try {
 
-      const response = await apiClient.get(`${this.baseUrl}/stats/${productId}`, {
-        params: options,
+      const response = await apiClient.get<any>(`${this.baseUrl}/stats/${productId}`, {
+        params: options as any,
       });
 
       return response.data;
@@ -144,7 +144,7 @@ class PriceTrackingApi {
   async createPriceAlert(data: CreatePriceAlertRequest) {
     try {
 
-      const response = await apiClient.post(`${this.baseUrl}/alerts`, data);
+      const response = await apiClient.post<any>(`${this.baseUrl}/alerts`, data as any);
 
       return response.data;
     } catch (error: any) {
@@ -162,9 +162,7 @@ class PriceTrackingApi {
   }) {
     try {
 
-      const response = await apiClient.get(`${this.baseUrl}/alerts/my-alerts`, {
-        params,
-      });
+      const response = await apiClient.get<any>(`${this.baseUrl}/alerts/my-alerts`, params as any);
 
       return response.data;
     } catch (error: any) {
@@ -177,9 +175,7 @@ class PriceTrackingApi {
    */
   async checkAlert(productId: string, variantId?: string) {
     try {
-      const response = await apiClient.get(`${this.baseUrl}/alerts/check/${productId}`, {
-        params: variantId ? { variantId } : {},
-      });
+      const response = await apiClient.get<any>(`${this.baseUrl}/alerts/check/${productId}`, variantId ? { variantId } : undefined);
 
       return response.data;
     } catch (error: any) {
@@ -193,7 +189,7 @@ class PriceTrackingApi {
   async cancelAlert(alertId: string) {
     try {
 
-      const response = await apiClient.delete(`${this.baseUrl}/alerts/${alertId}`);
+      const response = await apiClient.delete<any>(`${this.baseUrl}/alerts/${alertId}`);
 
       return response.data;
     } catch (error: any) {
@@ -206,7 +202,7 @@ class PriceTrackingApi {
    */
   async getAlertStats(productId: string) {
     try {
-      const response = await apiClient.get(`${this.baseUrl}/alerts/stats/${productId}`);
+      const response = await apiClient.get<any>(`${this.baseUrl}/alerts/stats/${productId}`);
       return response.data;
     } catch (error: any) {
       throw error;

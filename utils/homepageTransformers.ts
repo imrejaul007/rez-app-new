@@ -82,7 +82,7 @@ export function transformRecommendation(
  * Batch transform products
  */
 export function transformProducts(rawProducts: RawProductData[]): ProductItem[] {
-  return rawProducts.map(transformProduct);
+  return rawProducts.map(transformProduct as any);
 }
 
 /**
@@ -180,7 +180,7 @@ export function transformEvent(raw: RawEventData, currencySymbol: string = '₹'
  * Batch transform events
  */
 export function transformEvents(rawEvents: RawEventData[]): EventItem[] {
-  return rawEvents.map(transformEvent);
+  return rawEvents.map(transformEvent as any);
 }
 
 // ============================================================================
@@ -257,7 +257,7 @@ export function transformFlashSale(raw: RawOfferData, currencySymbol: string = '
  * Batch transform offers
  */
 export function transformOffers(rawOffers: RawOfferData[]): ProductItem[] {
-  return rawOffers.map(transformOffer);
+  return rawOffers.map(transformOffer as any);
 }
 
 /**
@@ -266,7 +266,7 @@ export function transformOffers(rawOffers: RawOfferData[]): ProductItem[] {
 export function transformFlashSales(rawOffers: RawOfferData[]): ProductItem[] {
   return rawOffers
     .filter((offer) => offer.metadata?.flashSale?.isActive)
-    .map(transformFlashSale);
+    .map(transformFlashSale as any);
 }
 
 // ============================================================================

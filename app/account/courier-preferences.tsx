@@ -89,7 +89,7 @@ function CourierPreferencesScreen() {
         if (!isMounted()) return;
         setPreferences(getDefaultPreferences());
       }
-    } catch (error) {
+    } catch (error: any) {
       // Set default preferences on error
       if (!isMounted()) return;
       setPreferences(getDefaultPreferences());
@@ -145,7 +145,7 @@ function CourierPreferencesScreen() {
         setShowSuccessMessage(true);
         setTimeout(() => setShowSuccessMessage(false), 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to update courier preferences. Please check your connection and try again.');
       // Revert to previous state
       if (!isMounted()) return;
@@ -180,10 +180,10 @@ function CourierPreferencesScreen() {
     if (!preferences) return;
 
     let weekdays = [...preferences.deliveryTimePreference.weekdays];
-    
+
     if (value) {
       // Remove weekends when "Avoid Weekends" is enabled
-      weekdays = weekdays.filter(day => day !== 'SAT' && day !== 'SUN');
+      weekdays = weekdays.filter((day) => day !== 'SAT' && day !== 'SUN');
     } else {
       // Add weekends back when "Avoid Weekends" is disabled
       if (!weekdays.includes('SAT')) weekdays.push('SAT');
@@ -223,7 +223,7 @@ function CourierPreferencesScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -243,23 +243,14 @@ function CourierPreferencesScreen() {
             <Pressable
               key={courier.value}
               style={styles.radioItem}
-              onPress={() =>
-                savePreferences({ preferredCourier: courier.value as any })
-              }
+              onPress={() => savePreferences({ preferredCourier: courier.value as any })}
               accessibilityLabel={`${courier.label}${preferences.preferredCourier === courier.value ? ', selected' : ''}`}
               accessibilityRole="radio"
               accessibilityState={{ checked: preferences.preferredCourier === courier.value }}
               accessibilityHint="Double tap to select this courier"
             >
-              <View
-                style={[
-                  styles.radio,
-                  preferences.preferredCourier === courier.value && styles.radioSelected,
-                ]}
-              >
-                {preferences.preferredCourier === courier.value && (
-                  <View style={styles.radioDot} />
-                )}
+              <View style={[styles.radio, preferences.preferredCourier === courier.value && styles.radioSelected]}>
+                {preferences.preferredCourier === courier.value && <View style={styles.radioDot} />}
               </View>
               <Text style={styles.radioLabel}>{courier.label}</Text>
             </Pressable>
@@ -275,24 +266,14 @@ function CourierPreferencesScreen() {
               return (
                 <Pressable
                   key={day}
-                  style={[
-                    styles.weekdayButton,
-                    isEnabled && styles.weekdayButtonSelected,
-                  ]}
+                  style={[styles.weekdayButton, isEnabled && styles.weekdayButtonSelected]}
                   onPress={() => toggleWeekday(day)}
                   accessibilityLabel={`${day}${isEnabled ? ', enabled' : ', disabled'}`}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isEnabled }}
                   accessibilityHint={`Double tap to ${isEnabled ? 'disable' : 'enable'} delivery on ${day}`}
                 >
-                  <Text
-                    style={[
-                      styles.weekdayText,
-                      isEnabled && styles.weekdayTextSelected,
-                    ]}
-                  >
-                    {day}
-                  </Text>
+                  <Text style={[styles.weekdayText, isEnabled && styles.weekdayTextSelected]}>{day}</Text>
                 </Pressable>
               );
             })}
@@ -305,7 +286,9 @@ function CourierPreferencesScreen() {
               onValueChange={handleAvoidWeekendsToggle}
               disabled={saving}
               trackColor={{ false: colors.neutral[300], true: colors.infoScale[400] }}
-              thumbColor={preferences.deliveryTimePreference.avoidWeekends ? colors.background.primary : colors.neutral[100]}
+              thumbColor={
+                preferences.deliveryTimePreference.avoidWeekends ? colors.background.primary : colors.neutral[100]
+              }
               accessibilityLabel={`Avoid weekends${preferences.deliveryTimePreference.avoidWeekends ? ', enabled' : ', disabled'}`}
               accessibilityRole="switch"
               accessibilityState={{ checked: preferences.deliveryTimePreference.avoidWeekends, disabled: saving }}

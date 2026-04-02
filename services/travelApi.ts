@@ -111,7 +111,7 @@ class TravelServicesService {
   async getCategories(): Promise<ApiResponse<TravelServiceCategory[]>> {
     try {
       const response = await apiClient.get<TravelServiceCategory[]>('/travel-services/categories');
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -126,7 +126,7 @@ class TravelServicesService {
   async getFeatured(limit: number = 6): Promise<ApiResponse<TravelService[]>> {
     try {
       const response = await apiClient.get<TravelService[]>(`/travel-services/featured?limit=${limit}`);
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -141,7 +141,7 @@ class TravelServicesService {
   async getPopular(limit: number = 10): Promise<ApiResponse<TravelService[]>> {
     try {
       const response = await apiClient.get<TravelService[]>(`/travel-services/popular?limit=${limit}`);
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -156,7 +156,7 @@ class TravelServicesService {
   async getStats(): Promise<ApiResponse<TravelServicesStats>> {
     try {
       const response = await apiClient.get<TravelServicesStats>('/travel-services/stats');
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -190,10 +190,10 @@ class TravelServicesService {
 
       const response = await apiClient.get<TravelServicesByCategoryResponse>(
         `/travel-services/category/${slug}`,
-        cleanParams
+        cleanParams as any
       );
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -213,8 +213,8 @@ class TravelServicesService {
     defaultGateway: string;
   }>> {
     try {
-      const response = await apiClient.get(`/travel-payment/gateways?currency=${currency}`);
-      return response;
+      const response = await apiClient.get<any>(`/travel-payment/gateways?currency=${currency}`);
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -241,12 +241,12 @@ class TravelServicesService {
     bookingNumber: string;
   }>> {
     try {
-      const response = await apiClient.post('/travel-payment/create-order', {
+      const response = await apiClient.post<any>('/travel-payment/create-order', {
         bookingId,
         amount,
         currency,
       });
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -267,11 +267,11 @@ class TravelServicesService {
     }
   ): Promise<ApiResponse<{ verified: boolean; booking: any }>> {
     try {
-      const response = await apiClient.post('/travel-payment/verify', {
+      const response = await apiClient.post<any>('/travel-payment/verify', {
         bookingId,
         ...razorpayData,
       });
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,

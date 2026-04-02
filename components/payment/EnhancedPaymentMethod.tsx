@@ -31,13 +31,13 @@ export const EnhancedPaymentMethodCard: React.FC<EnhancedPaymentMethodProps> = (
 
   return (
     <Pressable
-      style={[styles.container, isSelected && styles.containerSelected]}
+      style={[styles.container, isSelected ? styles.containerSelected : null]}
       onPress={onSelect}
      
     >
       <View style={styles.mainRow}>
         {/* Icon */}
-        <View style={[styles.iconContainer, isSelected && styles.iconContainerSelected]}>
+        <View style={[styles.iconContainer, isSelected ? styles.iconContainerSelected : null]}>
           <Ionicons
             name={method.icon as any}
             size={24}

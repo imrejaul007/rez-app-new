@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Page for managing user's saved addresses, with Address History tab
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, Pressable, RefreshControl, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -124,7 +116,7 @@ function SavedAddressesPage() {
       } else {
         throw new Error(response.error || 'Failed to fetch addresses');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (isMounted()) {
         setError(err instanceof Error ? err.message : 'Failed to fetch addresses');
       }
@@ -191,7 +183,7 @@ function SavedAddressesPage() {
           setHistoryAddresses(history);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (isMounted()) {
         setHistoryError(err instanceof Error ? err.message : 'Failed to load history');
       }
@@ -222,50 +214,53 @@ function SavedAddressesPage() {
     );
   }, [isMounted]);
 
-  const handleSaveHistoryAddress = useCallback(async (hist: HistoryAddress) => {
-    const newAddress: AddressCreate = {
-      type: 'OTHER' as any,
-      title: hist.name || hist.addressLine1.split(' ').slice(0, 3).join(' '),
-      phone: hist.phone,
-      addressLine1: hist.addressLine1,
-      addressLine2: hist.addressLine2,
-      city: hist.city,
-      state: hist.state,
-      postalCode: hist.postalCode,
-      country: hist.country || 'India',
-      isDefault: false,
-    };
+  const handleSaveHistoryAddress = useCallback(
+    async (hist: HistoryAddress) => {
+      const newAddress: AddressCreate = {
+        type: 'OTHER' as any,
+        title: hist.name || hist.addressLine1.split(' ').slice(0, 3).join(' '),
+        phone: hist.phone,
+        addressLine1: hist.addressLine1,
+        addressLine2: hist.addressLine2,
+        city: hist.city,
+        state: hist.state,
+        postalCode: hist.postalCode,
+        country: hist.country || 'India',
+        isDefault: false,
+      };
 
-    try {
-      const response = await addressApi.createAddress(newAddress);
-      if (response.success && response.data) {
-        const saved: Address = {
-          id: response.data.id,
-          type: (response.data.type as AddressType) || 'OTHER',
-          title: response.data.title,
-          phone: response.data.phone,
-          addressLine1: response.data.addressLine1,
-          addressLine2: response.data.addressLine2,
-          city: response.data.city,
-          state: response.data.state,
-          postalCode: response.data.postalCode,
-          country: response.data.country,
-          isDefault: response.data.isDefault,
-          instructions: response.data.instructions,
-          createdAt: response.data.createdAt,
-          updatedAt: response.data.updatedAt,
-        };
-        if (isMounted()) {
-          setAddresses(prev => [...prev, saved]);
+      try {
+        const response = await addressApi.createAddress(newAddress);
+        if (response.success && response.data) {
+          const saved: Address = {
+            id: response.data.id,
+            type: (response.data.type as AddressType) || 'OTHER',
+            title: response.data.title,
+            phone: response.data.phone,
+            addressLine1: response.data.addressLine1,
+            addressLine2: response.data.addressLine2,
+            city: response.data.city,
+            state: response.data.state,
+            postalCode: response.data.postalCode,
+            country: response.data.country,
+            isDefault: response.data.isDefault,
+            instructions: response.data.instructions,
+            createdAt: response.data.createdAt,
+            updatedAt: response.data.updatedAt,
+          };
+          if (isMounted()) {
+            setAddresses((prev) => [...prev, saved]);
+          }
+          platformAlertSimple('Saved', 'Address added to your saved addresses');
+        } else {
+          platformAlertSimple('Error', response.error || 'Failed to save address');
         }
-        platformAlertSimple('Saved', 'Address added to your saved addresses');
-      } else {
-        platformAlertSimple('Error', response.error || 'Failed to save address');
+      } catch {
+        platformAlertSimple('Error', 'Failed to save address');
       }
-    } catch {
-      platformAlertSimple('Error', 'Failed to save address');
-    }
-  }, [isMounted]);
+    },
+    [isMounted],
+  );
 
   // ─── Saved address handlers ────────────────────────────────────────────────
   const handleRefresh = useCallback(() => {
@@ -286,260 +281,272 @@ function SavedAddressesPage() {
     setShowEditModal(true);
   }, []);
 
-  const handleAddAddressSubmit = useCallback(async (addressData: AddressCreate): Promise<boolean> => {
-    try {
-      const response = await addressApi.createAddress(addressData);
-
-      if (response.success && response.data) {
-        const newAddress: Address = {
-          id: response.data.id,
-          type: response.data.type as AddressType,
-          title: response.data.title,
-          phone: response.data.phone,
-          addressLine1: response.data.addressLine1,
-          addressLine2: response.data.addressLine2,
-          city: response.data.city,
-          state: response.data.state,
-          postalCode: response.data.postalCode,
-          country: response.data.country,
-          isDefault: response.data.isDefault,
-          instructions: response.data.instructions,
-          createdAt: response.data.createdAt,
-          updatedAt: response.data.updatedAt,
-        };
-
-        if (isMounted()) {
-          setAddresses(prev => [...prev, newAddress]);
-        }
-        return true;
-      }
-      platformAlertSimple('Error', response.error || 'Failed to add address');
-      return false;
-    } catch {
-      platformAlertSimple('Error', 'Failed to add address');
-      return false;
-    }
-  }, [isMounted]);
-
-  const handleUpdateAddressSubmit = useCallback(async (id: string, updateData: AddressUpdate): Promise<boolean> => {
-    try {
-      const response = await addressApi.updateAddress(id, updateData);
-
-      if (response.success && response.data) {
-        if (isMounted()) {
-          setAddresses(prev =>
-            prev.map(addr =>
-              addr.id === id
-                ? {
-                    ...addr,
-                    type: response.data!.type as AddressType,
-                    title: response.data!.title,
-                    phone: response.data!.phone,
-                    addressLine1: response.data!.addressLine1,
-                    addressLine2: response.data!.addressLine2,
-                    city: response.data!.city,
-                    state: response.data!.state,
-                    postalCode: response.data!.postalCode,
-                    country: response.data!.country,
-                    isDefault: response.data!.isDefault,
-                    instructions: response.data!.instructions,
-                    updatedAt: response.data!.updatedAt,
-                  }
-                : addr
-            )
-          );
-        }
-        return true;
-      }
-      platformAlertSimple('Error', response.error || 'Failed to update address');
-      return false;
-    } catch {
-      platformAlertSimple('Error', 'Failed to update address');
-      return false;
-    }
-  }, [isMounted]);
-
-  const handleDeleteAddress = useCallback(async (address: Address) => {
-    platformAlertDestructive('Delete Address', `Are you sure you want to delete ${address.title}?`, async () => {
+  const handleAddAddressSubmit = useCallback(
+    async (addressData: AddressCreate): Promise<boolean> => {
       try {
-        const response = await addressApi.deleteAddress(address.id);
+        const response = await addressApi.createAddress(addressData);
+
+        if (response.success && response.data) {
+          const newAddress: Address = {
+            id: response.data.id,
+            type: response.data.type as AddressType,
+            title: response.data.title,
+            phone: response.data.phone,
+            addressLine1: response.data.addressLine1,
+            addressLine2: response.data.addressLine2,
+            city: response.data.city,
+            state: response.data.state,
+            postalCode: response.data.postalCode,
+            country: response.data.country,
+            isDefault: response.data.isDefault,
+            instructions: response.data.instructions,
+            createdAt: response.data.createdAt,
+            updatedAt: response.data.updatedAt,
+          };
+
+          if (isMounted()) {
+            setAddresses((prev) => [...prev, newAddress]);
+          }
+          return true;
+        }
+        platformAlertSimple('Error', response.error || 'Failed to add address');
+        return false;
+      } catch {
+        platformAlertSimple('Error', 'Failed to add address');
+        return false;
+      }
+    },
+    [isMounted],
+  );
+
+  const handleUpdateAddressSubmit = useCallback(
+    async (id: string, updateData: AddressUpdate): Promise<boolean> => {
+      try {
+        const response = await addressApi.updateAddress(id, updateData);
+
+        if (response.success && response.data) {
+          if (isMounted()) {
+            setAddresses((prev) =>
+              prev.map((addr) =>
+                addr.id === id
+                  ? {
+                      ...addr,
+                      type: response.data!.type as AddressType,
+                      title: response.data!.title,
+                      phone: response.data!.phone,
+                      addressLine1: response.data!.addressLine1,
+                      addressLine2: response.data!.addressLine2,
+                      city: response.data!.city,
+                      state: response.data!.state,
+                      postalCode: response.data!.postalCode,
+                      country: response.data!.country,
+                      isDefault: response.data!.isDefault,
+                      instructions: response.data!.instructions,
+                      updatedAt: response.data!.updatedAt,
+                    }
+                  : addr,
+              ),
+            );
+          }
+          return true;
+        }
+        platformAlertSimple('Error', response.error || 'Failed to update address');
+        return false;
+      } catch {
+        platformAlertSimple('Error', 'Failed to update address');
+        return false;
+      }
+    },
+    [isMounted],
+  );
+
+  const handleDeleteAddress = useCallback(
+    async (address: Address) => {
+      platformAlertDestructive('Delete Address', `Are you sure you want to delete ${address.title}?`, async () => {
+        try {
+          const response = await addressApi.deleteAddress(address.id);
+
+          if (response.success) {
+            if (isMounted()) {
+              setAddresses((prev) => prev.filter((addr) => addr.id !== address.id));
+            }
+            platformAlertSimple('Success', 'Address deleted successfully');
+          } else {
+            platformAlertSimple('Error', response.error || 'Failed to delete address');
+          }
+        } catch {
+          platformAlertSimple('Error', 'Failed to delete address');
+        }
+      });
+    },
+    [isMounted],
+  );
+
+  const handleSetDefault = useCallback(
+    async (address: Address) => {
+      try {
+        const response = await addressApi.setDefaultAddress(address.id);
 
         if (response.success) {
           if (isMounted()) {
-            setAddresses(prev => prev.filter(addr => addr.id !== address.id));
+            setAddresses((prev) =>
+              prev.map((addr) => ({
+                ...addr,
+                isDefault: addr.id === address.id,
+              })),
+            );
           }
-          platformAlertSimple('Success', 'Address deleted successfully');
+          platformAlertSimple('Success', `${address.title} is now your default address`);
         } else {
-          platformAlertSimple('Error', response.error || 'Failed to delete address');
+          platformAlertSimple('Error', response.error || 'Failed to set default address');
         }
       } catch {
-        platformAlertSimple('Error', 'Failed to delete address');
+        platformAlertSimple('Error', 'Failed to set default address');
       }
-    });
-  }, [isMounted]);
-
-  const handleSetDefault = useCallback(async (address: Address) => {
-    try {
-      const response = await addressApi.setDefaultAddress(address.id);
-
-      if (response.success) {
-        if (isMounted()) {
-          setAddresses(prev =>
-            prev.map(addr => ({
-              ...addr,
-              isDefault: addr.id === address.id,
-            }))
-          );
-        }
-        platformAlertSimple('Success', `${address.title} is now your default address`);
-      } else {
-        platformAlertSimple('Error', response.error || 'Failed to set default address');
-      }
-    } catch {
-      platformAlertSimple('Error', 'Failed to set default address');
-    }
-  }, [isMounted]);
+    },
+    [isMounted],
+  );
 
   // ─── Helpers ──────────────────────────────────────────────────────────────────
   const getAddressTypeIcon = (type: string) => {
     switch (type) {
-      case 'HOME': return 'home-outline';
-      case 'OFFICE': return 'business-outline';
-      default: return 'location-outline';
+      case 'HOME':
+        return 'home-outline';
+      case 'OFFICE':
+        return 'business-outline';
+      default:
+        return 'location-outline';
     }
   };
 
   const getAddressTypeColor = (type: string) => {
     switch (type) {
-      case 'HOME': return Colors.primary[500];
-      case 'OFFICE': return colors.infoScale?.[400] ?? '#3B82F6';
-      default: return colors.text.secondary;
+      case 'HOME':
+        return Colors.primary[500];
+      case 'OFFICE':
+        return colors.infoScale?.[400] ?? '#3B82F6';
+      default:
+        return colors.text.secondary;
     }
   };
 
   // ─── Renderers ────────────────────────────────────────────────────────────────
-  const renderAddress = useCallback(({ item: address }: { item: Address }) => {
-    const fullAddress = `${address.addressLine1}, ${address.addressLine2 ? address.addressLine2 + ', ' : ''}${address.city}, ${address.state} ${address.postalCode}, ${address.country}`;
-    const addressLabel = `${address.title}. ${fullAddress}${address.isDefault ? '. Default address' : ''}${address.instructions ? '. Instructions: ' + address.instructions : ''}`;
+  const renderAddress = useCallback(
+    ({ item: address }: { item: Address }) => {
+      const fullAddress = `${address.addressLine1}, ${address.addressLine2 ? address.addressLine2 + ', ' : ''}${address.city}, ${address.state} ${address.postalCode}, ${address.country}`;
+      const addressLabel = `${address.title}. ${fullAddress}${address.isDefault ? '. Default address' : ''}${address.instructions ? '. Instructions: ' + address.instructions : ''}`;
 
-    return (
-      <View
-        style={styles.addressCard}
-        accessibilityRole="summary"
-        accessibilityLabel={addressLabel}
-      >
-        <View style={styles.addressHeader}>
-          <View style={styles.addressTitleContainer}>
-            <View style={[styles.typeIcon, { backgroundColor: getAddressTypeColor(address.type) }]}>
-              <Ionicons name={getAddressTypeIcon(address.type)} size={16} color={colors.text.inverse} />
+      return (
+        <View style={styles.addressCard} accessibilityRole="summary" accessibilityLabel={addressLabel}>
+          <View style={styles.addressHeader}>
+            <View style={styles.addressTitleContainer}>
+              <View style={[styles.typeIcon, { backgroundColor: getAddressTypeColor(address.type) }]}>
+                <Ionicons name={getAddressTypeIcon(address.type)} size={16} color={colors.text.inverse} />
+              </View>
+              <View style={styles.addressTitleInfo}>
+                <ThemedText style={styles.addressTitle}>{address.title}</ThemedText>
+                {address.isDefault && (
+                  <View style={styles.defaultBadge}>
+                    <ThemedText style={styles.defaultText}>Default</ThemedText>
+                  </View>
+                )}
+              </View>
             </View>
-            <View style={styles.addressTitleInfo}>
-              <ThemedText style={styles.addressTitle}>{address.title}</ThemedText>
-              {address.isDefault && (
-                <View style={styles.defaultBadge}>
-                  <ThemedText style={styles.defaultText}>Default</ThemedText>
-                </View>
+            <View style={styles.addressActions}>
+              <Pressable
+                style={styles.actionButton}
+                onPress={() => handleEditAddress(address)}
+                accessibilityRole="button"
+                accessibilityLabel={`Edit ${address.title}`}
+                accessibilityHint="Double tap to edit this address"
+              >
+                <Ionicons name="pencil-outline" size={18} color={colors.nileBlue} />
+              </Pressable>
+              <Pressable
+                style={styles.actionButton}
+                onPress={() => handleDeleteAddress(address)}
+                accessibilityRole="button"
+                accessibilityLabel={`Delete ${address.title}`}
+                accessibilityHint="Double tap to remove this address. This action requires confirmation"
+              >
+                <Ionicons name="trash-outline" size={18} color={Colors.error} />
+              </Pressable>
+            </View>
+          </View>
+
+          <View style={styles.addressDetails}>
+            {address.phone && (
+              <View style={styles.phoneContainer}>
+                <Ionicons name="call-outline" size={14} color={colors.text.secondary} />
+                <ThemedText style={styles.phoneText}>{address.phone}</ThemedText>
+              </View>
+            )}
+            <ThemedText style={styles.addressLine}>{address.addressLine1}</ThemedText>
+            {address.addressLine2 && <ThemedText style={styles.addressLine}>{address.addressLine2}</ThemedText>}
+            <ThemedText style={styles.addressLine}>
+              {address.city}, {address.state} {address.postalCode}
+            </ThemedText>
+            <ThemedText style={styles.addressLine}>{address.country}</ThemedText>
+
+            {address.instructions && (
+              <View style={styles.instructionsContainer}>
+                <Ionicons name="information-circle-outline" size={16} color={colors.text.secondary} />
+                <ThemedText style={styles.instructions}>{address.instructions}</ThemedText>
+              </View>
+            )}
+          </View>
+
+          {!address.isDefault && (
+            <Pressable
+              style={styles.setDefaultButton}
+              onPress={() => handleSetDefault(address)}
+              accessibilityRole="button"
+              accessibilityLabel={`Set ${address.title} as default address`}
+              accessibilityHint="Double tap to make this your default delivery address"
+            >
+              <ThemedText style={styles.setDefaultText}>Set as Default</ThemedText>
+            </Pressable>
+          )}
+        </View>
+      );
+    },
+    [handleEditAddress, handleDeleteAddress, handleSetDefault],
+  );
+
+  const renderHistoryItem = useCallback(
+    ({ item }: { item: HistoryAddress }) => {
+      const line2 = item.addressLine2 ? `, ${item.addressLine2}` : '';
+      const label = `${item.addressLine1}${line2}, ${item.city}, ${item.state} ${item.postalCode}`;
+      return (
+        <View style={styles.historyCard}>
+          <View style={styles.historyCardLeft}>
+            <View style={[styles.typeIcon, { backgroundColor: colors.text.secondary }]}>
+              <Ionicons name="time-outline" size={16} color={colors.text.inverse} />
+            </View>
+            <View style={styles.historyInfo}>
+              {item.name && <ThemedText style={styles.historyName}>{item.name}</ThemedText>}
+              <ThemedText style={styles.historyAddress}>{label}</ThemedText>
+              {item.phone && <ThemedText style={styles.historyPhone}>{item.phone}</ThemedText>}
+              {item.lastUsed && (
+                <ThemedText style={styles.historyDate}>Used: {new Date(item.lastUsed).toLocaleDateString()}</ThemedText>
               )}
             </View>
           </View>
-          <View style={styles.addressActions}>
-            <Pressable
-              style={styles.actionButton}
-              onPress={() => handleEditAddress(address)}
-              accessibilityRole="button"
-              accessibilityLabel={`Edit ${address.title}`}
-              accessibilityHint="Double tap to edit this address"
-            >
-              <Ionicons name="pencil-outline" size={18} color={colors.nileBlue} />
-            </Pressable>
-            <Pressable
-              style={styles.actionButton}
-              onPress={() => handleDeleteAddress(address)}
-              accessibilityRole="button"
-              accessibilityLabel={`Delete ${address.title}`}
-              accessibilityHint="Double tap to remove this address. This action requires confirmation"
-            >
-              <Ionicons name="trash-outline" size={18} color={Colors.error} />
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.addressDetails}>
-          {address.phone && (
-            <View style={styles.phoneContainer}>
-              <Ionicons name="call-outline" size={14} color={colors.text.secondary} />
-              <ThemedText style={styles.phoneText}>{address.phone}</ThemedText>
-            </View>
-          )}
-          <ThemedText style={styles.addressLine}>{address.addressLine1}</ThemedText>
-          {address.addressLine2 && (
-            <ThemedText style={styles.addressLine}>{address.addressLine2}</ThemedText>
-          )}
-          <ThemedText style={styles.addressLine}>
-            {address.city}, {address.state} {address.postalCode}
-          </ThemedText>
-          <ThemedText style={styles.addressLine}>{address.country}</ThemedText>
-
-          {address.instructions && (
-            <View style={styles.instructionsContainer}>
-              <Ionicons name="information-circle-outline" size={16} color={colors.text.secondary} />
-              <ThemedText style={styles.instructions}>{address.instructions}</ThemedText>
-            </View>
-          )}
-        </View>
-
-        {!address.isDefault && (
           <Pressable
-            style={styles.setDefaultButton}
-            onPress={() => handleSetDefault(address)}
+            style={styles.saveHistoryButton}
+            onPress={() => handleSaveHistoryAddress(item)}
             accessibilityRole="button"
-            accessibilityLabel={`Set ${address.title} as default address`}
-            accessibilityHint="Double tap to make this your default delivery address"
+            accessibilityLabel={`Save address ${label} to my addresses`}
+            accessibilityHint="Double tap to add this address to your saved addresses"
           >
-            <ThemedText style={styles.setDefaultText}>Set as Default</ThemedText>
+            <Ionicons name="bookmark-outline" size={16} color={colors.nileBlue} />
+            <ThemedText style={styles.saveHistoryText}>Save</ThemedText>
           </Pressable>
-        )}
-      </View>
-    );
-  }, [handleEditAddress, handleDeleteAddress, handleSetDefault]);
-
-  const renderHistoryItem = useCallback(({ item }: { item: HistoryAddress }) => {
-    const line2 = item.addressLine2 ? `, ${item.addressLine2}` : '';
-    const label = `${item.addressLine1}${line2}, ${item.city}, ${item.state} ${item.postalCode}`;
-    return (
-      <View style={styles.historyCard}>
-        <View style={styles.historyCardLeft}>
-          <View style={[styles.typeIcon, { backgroundColor: colors.text.secondary }]}>
-            <Ionicons name="time-outline" size={16} color={colors.text.inverse} />
-          </View>
-          <View style={styles.historyInfo}>
-            {item.name && (
-              <ThemedText style={styles.historyName}>{item.name}</ThemedText>
-            )}
-            <ThemedText style={styles.historyAddress}>{label}</ThemedText>
-            {item.phone && (
-              <ThemedText style={styles.historyPhone}>{item.phone}</ThemedText>
-            )}
-            {item.lastUsed && (
-              <ThemedText style={styles.historyDate}>
-                Used: {new Date(item.lastUsed).toLocaleDateString()}
-              </ThemedText>
-            )}
-          </View>
         </View>
-        <Pressable
-          style={styles.saveHistoryButton}
-          onPress={() => handleSaveHistoryAddress(item)}
-          accessibilityRole="button"
-          accessibilityLabel={`Save address ${label} to my addresses`}
-          accessibilityHint="Double tap to add this address to your saved addresses"
-        >
-          <Ionicons name="bookmark-outline" size={16} color={colors.nileBlue} />
-          <ThemedText style={styles.saveHistoryText}>Save</ThemedText>
-        </Pressable>
-      </View>
-    );
-  }, [handleSaveHistoryAddress]);
+      );
+    },
+    [handleSaveHistoryAddress],
+  );
 
   // ─── Header element (for skeleton / error screens) ────────────────────────
   const headerElement = (
@@ -565,12 +572,7 @@ function SavedAddressesPage() {
 
   if (error) {
     return (
-      <ScreenError
-        error={error}
-        onRetry={handleRefresh}
-        header={headerElement}
-        onSecondaryAction={handleBackPress}
-      />
+      <ScreenError error={error} onRetry={handleRefresh} header={headerElement} onSecondaryAction={handleBackPress} />
     );
   }
 
@@ -588,10 +590,7 @@ function SavedAddressesPage() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
-          <ThemedText
-            style={styles.headerTitle}
-            accessibilityRole="header"
-          >
+          <ThemedText style={styles.headerTitle} accessibilityRole="header">
             My Addresses
           </ThemedText>
           <Pressable
@@ -634,14 +633,12 @@ function SavedAddressesPage() {
 
       <View style={styles.content}>
         {/* ── Saved Addresses Tab ── */}
-        {activeTab === 'saved' && (
-          addresses.length === 0 ? (
+        {activeTab === 'saved' &&
+          (addresses.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Ionicons name="location-outline" size={80} color={colors.border.medium} />
               <ThemedText style={styles.emptyTitle}>No Addresses Saved</ThemedText>
-              <ThemedText style={styles.emptyDescription}>
-                Add your addresses to make checkout faster
-              </ThemedText>
+              <ThemedText style={styles.emptyDescription}>Add your addresses to make checkout faster</ThemedText>
               <Pressable
                 style={styles.addAddressButton}
                 onPress={handleAddAddress}
@@ -664,12 +661,11 @@ function SavedAddressesPage() {
               showsVerticalScrollIndicator={false}
               estimatedItemSize={160}
             />
-          )
-        )}
+          ))}
 
         {/* ── Address History Tab ── */}
-        {activeTab === 'history' && (
-          isHistoryLoading ? (
+        {activeTab === 'history' &&
+          (isHistoryLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.nileBlue} />
               <ThemedText style={styles.loadingText}>Loading address history...</ThemedText>
@@ -719,24 +715,23 @@ function SavedAddressesPage() {
                 </Pressable>
               }
             />
-          )
-        )}
+          ))}
       </View>
 
       {/* Add Address Modal */}
-      <AddAddressModal
-        visible={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAdd={handleAddAddressSubmit}
-      />
+      <AddAddressModal visible={showAddModal} onClose={() => setShowAddModal(false)} onAdd={handleAddAddressSubmit} />
 
       {/* Edit Address Modal */}
       <EditAddressModal
         visible={showEditModal}
-        address={selectedAddress ? {
-          ...selectedAddress,
-          type: selectedAddress.type as any,
-        } : null}
+        address={
+          selectedAddress
+            ? {
+                ...selectedAddress,
+                type: selectedAddress.type as any,
+              }
+            : null
+        }
         onClose={() => {
           setShowEditModal(false);
           setSelectedAddress(null);

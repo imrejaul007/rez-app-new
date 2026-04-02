@@ -3,13 +3,13 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  ListRenderItemInfo,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ProductGridProps, ProductItem } from '@/types/store-search';
 import ProductCard from './ProductCard';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { colors } from '@/constants/theme';
 import {
   COLORS,
@@ -38,7 +38,7 @@ const ProductGrid: React.FC<ProductGridProps> = memo(({
   const styles = createStyles(screenWidth, columns);
 
   // Memoized render function for FlatList items
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<ProductItem>) => (
+  const renderItem = useCallback(({ item }: { item: ProductItem }) => (
     <View style={styles.productContainer}>
       <ProductCard
         product={item}
@@ -68,7 +68,7 @@ const ProductGrid: React.FC<ProductGridProps> = memo(({
   return (
     <View style={styles.container}>
       {/* Virtualized Product Grid with FlatList */}
-      <FlashList
+      <AnyFlashList
         data={productsToShow}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -76,9 +76,7 @@ const ProductGrid: React.FC<ProductGridProps> = memo(({
         scrollEnabled={false} // Parent ScrollView handles scrolling
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.grid}
-        initialNumToRender={maxItems} // Only render visible items initially
         maxToRenderPerBatch={columns * 2} // Render 2 rows at a time
-        windowSize={3} // Keep 3 screens of content in memory
         removeClippedSubviews={true} // Unmount off-screen items (Android optimization)
         estimatedItemSize={220}
       />
@@ -107,8 +105,7 @@ const createStyles = (screenWidth: number, columns: number) => {
       alignItems: 'center', // Center the entire grid
     },
     grid: {
-      width: '100%',
-      alignItems: 'center', // Center grid content
+      paddingHorizontal: 0,
     },
     row: {
       flexDirection: 'row',

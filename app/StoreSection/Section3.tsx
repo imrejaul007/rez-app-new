@@ -1,23 +1,25 @@
 import React, { useState, useEffect, memo } from 'react';
-import { View, Pressable, StyleSheet, ActivityIndicator, Platform, Animated, Modal, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  Animated,
+  Modal,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import discountsApi, { Discount } from '@/services/discountsApi';
 import { useCartActions, useGetCurrencySymbol } from '@/stores/selectors';
 import { platformAlert } from '@/utils/platformAlert';
 import { RetryButton } from '@/components/common/RetryButton';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  IconSize,
-  Timing,
-} from '@/constants/DesignSystem';
+import { Colors, Spacing, Shadows, BorderRadius, Typography, IconSize, Timing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -60,7 +62,7 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
         if (!isMounted()) return;
         setDiscounts([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Unable to load discounts');
     } finally {
@@ -80,7 +82,10 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
     const validUntil = new Date(discount.validUntil);
 
     if (now < validFrom) {
-      platformAlert('Not Available Yet', `Available from ${validFrom.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}.`);
+      platformAlert(
+        'Not Available Yet',
+        `Available from ${validFrom.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}.`,
+      );
       return;
     }
 
@@ -107,13 +112,17 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
         await cartActions.applyCoupon(discount.code);
         triggerNotification('Success');
 
-        const discountAmount = discount.type === 'percentage' ? `${discount.value}%` : `${currencySymbol}${discount.value}`;
+        const discountAmount =
+          discount.type === 'percentage' ? `${discount.value}%` : `${currencySymbol}${discount.value}`;
         platformAlert('Discount Applied!', `You'll save ${discountAmount} on your order!`);
         if (!isMounted()) return;
         setShowDetailsModal(false);
       } else {
         if (productPrice && productPrice < discount.minOrderValue) {
-          platformAlert('Minimum Order Required', `Add ${currencySymbol}${discount.minOrderValue - productPrice} more to unlock this discount.`);
+          platformAlert(
+            'Minimum Order Required',
+            `Add ${currencySymbol}${discount.minOrderValue - productPrice} more to unlock this discount.`,
+          );
           if (!isMounted()) return;
           setIsApplying(false);
           return;
@@ -148,8 +157,7 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
     return (
       <Pressable
         key={discount._id || index}
-        style={[styles.discountCard, !meetsMinimum && styles.discountCardLocked]}
-       
+        style={[styles.discountCard, !meetsMinimum ? styles.discountCardLocked : null]}
         onPress={() => openDetailsModal(discount)}
         accessibilityRole="button"
         accessibilityLabel={`${discount.name}. ${discountValue} off${!meetsMinimum ? `. Add ${currencySymbol}${amountNeeded} more to unlock` : ''}`}
@@ -183,7 +191,8 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
             <View style={styles.minOrderRow}>
               <Ionicons name="receipt-outline" size={12} color="rgba(255,255,255,0.8)" />
               <ThemedText style={styles.minOrderText}>
-                Min. {currencySymbol}{discount.minOrderValue || 0}
+                Min. {currencySymbol}
+                {discount.minOrderValue || 0}
               </ThemedText>
             </View>
 
@@ -191,7 +200,8 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
               <View style={styles.unlockRow}>
                 <Ionicons name="add-circle-outline" size={12} color="#FCD34D" />
                 <ThemedText style={styles.unlockText}>
-                  Add {currencySymbol}{amountNeeded} more
+                  Add {currencySymbol}
+                  {amountNeeded} more
                 </ThemedText>
               </View>
             ) : (
@@ -297,12 +307,11 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
             {selectedDiscount && (
               <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
                 {/* Offer Header */}
-                <LinearGradient
-                  colors={[colors.lightMustard, colors.brand.goldRich]}
-                  style={styles.modalOfferHeader}
-                >
+                <LinearGradient colors={[colors.lightMustard, colors.brand.goldRich]} style={styles.modalOfferHeader}>
                   <ThemedText style={styles.modalOfferValue}>
-                    {selectedDiscount.type === 'percentage' ? `${selectedDiscount.value}%` : `${currencySymbol}${selectedDiscount.value}`}
+                    {selectedDiscount.type === 'percentage'
+                      ? `${selectedDiscount.value}%`
+                      : `${currencySymbol}${selectedDiscount.value}`}
                   </ThemedText>
                   <ThemedText style={styles.modalOfferLabel}>OFF</ThemedText>
                   <ThemedText style={styles.modalOfferName}>{selectedDiscount.name}</ThemedText>
@@ -317,7 +326,10 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
                     </View>
                     <View style={styles.modalDetailContent}>
                       <ThemedText style={styles.modalDetailLabel}>Minimum Order</ThemedText>
-                      <ThemedText style={styles.modalDetailValue}>{currencySymbol}{selectedDiscount.minOrderValue || 0}</ThemedText>
+                      <ThemedText style={styles.modalDetailValue}>
+                        {currencySymbol}
+                        {selectedDiscount.minOrderValue || 0}
+                      </ThemedText>
                     </View>
                   </View>
 
@@ -329,7 +341,10 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
                       </View>
                       <View style={styles.modalDetailContent}>
                         <ThemedText style={styles.modalDetailLabel}>Maximum Discount</ThemedText>
-                        <ThemedText style={styles.modalDetailValue}>{currencySymbol}{selectedDiscount.maxDiscountAmount}</ThemedText>
+                        <ThemedText style={styles.modalDetailValue}>
+                          {currencySymbol}
+                          {selectedDiscount.maxDiscountAmount}
+                        </ThemedText>
                       </View>
                     </View>
                   )}
@@ -343,7 +358,9 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
                       <ThemedText style={styles.modalDetailLabel}>Valid Until</ThemedText>
                       <ThemedText style={styles.modalDetailValue}>
                         {new Date(selectedDiscount.validUntil).toLocaleDateString('en-IN', {
-                          day: 'numeric', month: 'short', year: 'numeric'
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
                         })}
                       </ThemedText>
                     </View>
@@ -366,7 +383,8 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
                 </View>
 
                 {/* Terms */}
-                {(selectedDiscount.restrictions?.singleVoucherPerBill || selectedDiscount.restrictions?.isOfflineOnly) && (
+                {(selectedDiscount.restrictions?.singleVoucherPerBill ||
+                  selectedDiscount.restrictions?.isOfflineOnly) && (
                   <View style={styles.modalTermsSection}>
                     <ThemedText style={styles.modalTermsTitle}>Terms & Conditions</ThemedText>
                     {selectedDiscount.restrictions?.singleVoucherPerBill && (
@@ -409,7 +427,8 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
                     <View style={styles.lockedButton}>
                       <Ionicons name="lock-closed" size={16} color={Colors.gray[500]} />
                       <ThemedText style={styles.lockedButtonText}>
-                        Add {currencySymbol}{(selectedDiscount.minOrderValue || 0) - productPrice} more to unlock
+                        Add {currencySymbol}
+                        {(selectedDiscount.minOrderValue || 0) - productPrice} more to unlock
                       </ThemedText>
                     </View>
                   </View>

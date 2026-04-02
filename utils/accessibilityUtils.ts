@@ -412,7 +412,7 @@ export const hideFromScreenReader = (): any => {
  * Debounce accessibility announcements
  * Prevents rapid-fire announcements
  */
-let announcementTimeout: NodeJS.Timeout | null = null;
+let announcementTimeout: ReturnType<typeof setTimeout> | null = null;
 
 export const debouncedAnnounce = (message: string, delay: number = 500): void => {
   if (announcementTimeout) {

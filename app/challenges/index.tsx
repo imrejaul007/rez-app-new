@@ -184,12 +184,13 @@ function ChallengesPage() {
         totalCompleted: apiStats.challengesCompleted || 0,
         totalCoinsEarned: apiStats.totalCoins || 0,
         currentStreak: apiStats.streak || 0,
+        bestStreak: apiStats.bestStreak || 0,
         activeChallenges: apiStats.challengesActive || 0,
         completionRate: completionRate,
       });
 
       // Coin balance comes from WalletContext (refreshed above)
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error loading challenges data:', error);
       showAlert('Error', 'Failed to load challenges. Please try again.', undefined, 'error');
     } finally {
@@ -241,7 +242,7 @@ function ChallengesPage() {
       logger.debug('🎁 [Claim Reward] Response.success:', (response as any).success);
 
       // Handle both wrapped and unwrapped responses
-      const responseData = (response as any).success ? response : response.data;
+      const responseData: any = (response as any).success ? response : response.data;
       const isSuccess = responseData.success === true;
 
       logger.debug('🎁 [Claim Reward] Is success:', isSuccess);
@@ -287,7 +288,7 @@ function ChallengesPage() {
             await refreshWallet();
           } else {
             logger.error('⚠️ [Claim Reward] Sync failed but claim succeeded');
-            logger.error('⚠️ [Claim Reward] Sync error:', syncResult.error);
+            logger.error('⚠️ [Claim Reward] Sync error:', syncResult.error as any);
 
             showAlert(
               'Reward Claimed! 🎉',
@@ -387,7 +388,7 @@ function ChallengesPage() {
           }}
         >
           <LinearGradient
-            colors={isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors}
+            colors={(isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors) as any}
             style={styles.challengeGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -400,7 +401,7 @@ function ChallengesPage() {
               <View style={styles.challengeInfo}>
                 <View style={styles.challengeTitleRow}>
                   <Text style={styles.challengeTitle}>{challenge.challenge.title}</Text>
-                  <View style={[styles.typeBadge, isClaimed && styles.typeBadgeClaimed]}>
+                  <View style={[styles.typeBadge, isClaimed ? styles.typeBadgeClaimed : null]}>
                     <Ionicons name={getTypeIcon(challenge.challenge.type) as any} size={12} color="white" />
                     <Text style={styles.typeBadgeText}>{challenge.challenge.type}</Text>
                   </View>
@@ -553,7 +554,7 @@ function ChallengesPage() {
             {(['daily', 'weekly', 'monthly', 'completed'] as TabType[]).map((tab) => (
               <Pressable
                 key={tab}
-                style={[styles.tab, activeTab === tab && styles.activeTab]}
+                style={[styles.tab, activeTab === tab ? styles.activeTab : null]}
                 onPress={() => setActiveTab(tab)}
               >
                 <LinearGradient
@@ -569,7 +570,7 @@ function ChallengesPage() {
                     size={18}
                     color={activeTab === tab ? colors.text.inverse : colors.text.tertiary}
                   />
-                  <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+                  <Text style={[styles.tabText, activeTab === tab ? styles.activeTabText : null]}>
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </Text>
                 </LinearGradient>

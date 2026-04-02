@@ -20,7 +20,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function RegistrationScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<{ referralCode?: string }>();
+  const params = useLocalSearchParams<any>();
   const [authLoading, setAuthLoading] = useState(false);
   const [slowLoadingMsg, setSlowLoadingMsg] = useState('');
   const { actions } = useAuth();
@@ -49,7 +49,7 @@ function RegistrationScreen() {
           if (!isMounted()) return;
           setFormData((prev) => ({ ...prev, referralCode: storedReferral.code }));
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     };

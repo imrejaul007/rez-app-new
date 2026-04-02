@@ -110,7 +110,7 @@ export const OnlineRedemptionModal: React.FC<OnlineRedemptionModalProps> = ({
 
       // Reset copy success indicator after 3 seconds
       setTimeout(() => setCopySuccess(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to copy:', error);
       platformAlertSimple('Error', 'Failed to copy code to clipboard');
     }
@@ -134,7 +134,7 @@ export const OnlineRedemptionModal: React.FC<OnlineRedemptionModalProps> = ({
       } else {
         platformAlertSimple('Error', `Cannot open URL: ${url}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to open URL:', error);
       platformAlertSimple('Error', 'Failed to open website');
     }
@@ -152,7 +152,7 @@ export const OnlineRedemptionModal: React.FC<OnlineRedemptionModalProps> = ({
           await onMarkAsUsed(voucher._id);
           onClose();
           platformAlertSimple('Success', 'Voucher marked as used successfully');
-        } catch (error) {
+        } catch (error: any) {
           logger.error('Failed to mark as used:', error);
           platformAlertSimple('Error', 'Failed to mark voucher as used');
         } finally {
@@ -362,7 +362,7 @@ export const OnlineRedemptionModal: React.FC<OnlineRedemptionModalProps> = ({
             )}
 
             <Pressable
-              style={[styles.markUsedButton, marking && styles.buttonDisabled]}
+              style={[styles.markUsedButton, marking ? styles.buttonDisabled : null]}
               onPress={handleMarkAsUsed}
               disabled={marking}
              

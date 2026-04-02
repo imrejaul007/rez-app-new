@@ -99,9 +99,9 @@ const ZeroEMICard: React.FC<ZeroEMICardProps> = memo(({ onPress }) => {
           <View style={styles.decorativeCircle2} />
 
           {/* Decorative stars */}
-          <Star size={16} color={COLORS.goldLight} opacity={0.6} style={styles.star1} />
+          <Star size={16} color={(COLORS as any).goldLight} opacity={0.6} style={styles.star1} />
           <Star size={12} color={COLORS.white} opacity={0.4} style={styles.star2} />
-          <Star size={10} color={COLORS.goldLight} opacity={0.5} style={styles.star3} />
+          <Star size={10} color={(COLORS as any).goldLight} opacity={0.5} style={styles.star3} />
 
           {/* Glass overlay */}
           <View style={styles.glassOverlay}>
@@ -135,7 +135,7 @@ const ZeroEMICard: React.FC<ZeroEMICardProps> = memo(({ onPress }) => {
               onPress={handlePress}
             >
               <LinearGradient
-                colors={[COLORS.amber, COLORS.orange]}
+                colors={[COLORS.amber, (COLORS as any).orange]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.ctaGradient}
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.orange,
+        shadowColor: (COLORS as any).orange,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.4,
         shadowRadius: 8,

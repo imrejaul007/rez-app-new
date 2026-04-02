@@ -245,7 +245,7 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
       return [];
     }
 
-    return category.childCategories.map((child: any) => {
+    return (category.childCategories || []).map((child: any) => {
       const nameLower = (child.name || '').toLowerCase();
       const slugLower = (child.slug || '').toLowerCase();
 
@@ -256,7 +256,7 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
       for (const [key, value] of Object.entries(cuisineIconMap)) {
         if (nameLower.includes(key) || slugLower.includes(key)) {
           fallbackIcon = value.icon;
-          fallbackColor = value.color;
+          fallbackColor = value.color as any;
           break;
         }
       }

@@ -35,7 +35,7 @@ export const useRecentlyViewed = (): UseRecentlyViewedResult => {
       // Sort by viewedAt descending (most recent first)
       const sorted = [...data].sort((a, b) => b.viewedAt - a.viewedAt);
       setItems(sorted);
-    } catch (err) {
+    } catch (err: any) {
       setError(err as Error);
     } finally {
       setIsLoading(false);

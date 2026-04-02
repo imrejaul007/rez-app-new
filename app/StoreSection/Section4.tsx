@@ -1,24 +1,17 @@
 // Section4.tsx - Premium Glassmorphism Design
 // Card Offers Section - Green & Gold Theme
 
-import React, { useState, useEffect, memo} from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  Pressable} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  withSpring} from 'react-native-reanimated';
+import React, { useState, useEffect, memo } from 'react';
+import { View, StyleSheet, ActivityIndicator, Platform, Pressable } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { type ImageSource } from 'expo-image';
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatformBlurView';
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
-import discountsApi, { Discount } from "@/services/discountsApi";
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
+import discountsApi, { Discount } from '@/services/discountsApi';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -32,8 +25,8 @@ const GLASS = {
   tintedGreenBg: 'rgba(255, 205, 87, 0.08)',
   tintedGreenBorder: 'rgba(255, 205, 87, 0.2)',
   tintedGoldBg: 'rgba(255, 200, 87, 0.12)',
-  tintedGoldBorder: 'rgba(255, 200, 87, 0.35)' };
-
+  tintedGoldBorder: 'rgba(255, 200, 87, 0.35)',
+};
 
 interface Section4Props {
   title?: string;
@@ -49,14 +42,15 @@ interface Section4Props {
 const DEFAULT_CARD_IMAGE = require('@/assets/images/card.jpg');
 
 export default memo(function Section4({
-  title: initialTitle = "Upto 10% card offers",
-  subtitle: initialSubtitle = "On 3 card & payment offers",
-  icon = "card-outline",
+  title: initialTitle = 'Upto 10% card offers',
+  subtitle: initialSubtitle = 'On 3 card & payment offers',
+  icon = 'card-outline',
   cardImageUri = DEFAULT_CARD_IMAGE,
   productPrice = 1000,
   storeId,
   testID,
-  onPress }: Section4Props) {
+  onPress,
+}: Section4Props) {
   const isMounted = useIsMounted();
   const [loading, setLoading] = useState<boolean>(true);
   const [errored, setErrored] = useState<boolean>(false);
@@ -90,7 +84,8 @@ export default memo(function Section4({
         storeId,
         orderValue: productPrice,
         page: 1,
-        limit: 10 });
+        limit: 10,
+      });
 
       if (response.success && response.data?.discounts && response.data.discounts.length > 0) {
         if (!isMounted()) return;
@@ -115,7 +110,7 @@ export default memo(function Section4({
         if (!isMounted()) return;
         setCardOffers([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setTitle(initialTitle);
       if (!isMounted()) return;
@@ -129,14 +124,15 @@ export default memo(function Section4({
   };
 
   const resolvedSource: ImageSource =
-    typeof cardImageUri === "string" ? { uri: cardImageUri } : (cardImageUri as ImageSource);
+    typeof cardImageUri === 'string' ? { uri: cardImageUri } : (cardImageUri as ImageSource);
 
   const CardWrapper = onPress ? Pressable : View;
   const cardWrapperProps = onPress
     ? {
         onPress: handlePress,
         onPressIn: () => animatePress(0.97),
-        onPressOut: () => animatePress(1) }
+        onPressOut: () => animatePress(1),
+      }
     : {};
 
   return (
@@ -148,8 +144,8 @@ export default memo(function Section4({
             <CardWrapper
               style={styles.cardContent}
               accessibilityLabel={`${title}. ${subtitle}`}
-              accessibilityRole={onPress ? "button" : "summary"}
-              accessibilityHint={onPress ? "Double tap to view offer details" : undefined}
+              accessibilityRole={onPress ? 'button' : 'summary'}
+              accessibilityHint={onPress ? 'Double tap to view offer details' : undefined}
               {...cardWrapperProps}
             >
               {renderContent()}
@@ -160,8 +156,8 @@ export default memo(function Section4({
             <CardWrapper
               style={styles.cardContent}
               accessibilityLabel={`${title}. ${subtitle}`}
-              accessibilityRole={onPress ? "button" : "summary"}
-              accessibilityHint={onPress ? "Double tap to view offer details" : undefined}
+              accessibilityRole={onPress ? 'button' : 'summary'}
+              accessibilityHint={onPress ? 'Double tap to view offer details' : undefined}
               {...cardWrapperProps}
             >
               {renderContent()}
@@ -182,10 +178,7 @@ export default memo(function Section4({
         <View style={styles.glassHighlight} />
 
         {/* Left Icon */}
-        <LinearGradient
-          colors={[Colors.gold, Colors.warning]}
-          style={styles.iconContainer}
-        >
+        <LinearGradient colors={[Colors.gold, Colors.warning]} style={styles.iconContainer}>
           <Ionicons name={icon} size={24} color={colors.nileBlue} />
         </LinearGradient>
 
@@ -206,7 +199,7 @@ export default memo(function Section4({
 
             {!errored ? (
               <CachedImage
-                source={resolvedSource}
+                source={resolvedSource as any}
                 style={styles.couponImage}
                 contentFit="cover"
                 cachePolicy="memory-disk"
@@ -218,10 +211,7 @@ export default memo(function Section4({
                 accessibilityLabel="card-offer-image"
               />
             ) : (
-              <LinearGradient
-                colors={[Colors.gold, colors.nileBlue]}
-                style={styles.fallback}
-              >
+              <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.fallback}>
                 <ThemedText style={styles.fallbackPercent}>%</ThemedText>
               </LinearGradient>
             )}
@@ -240,7 +230,8 @@ export default memo(function Section4({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm },
+    paddingVertical: Spacing.sm,
+  },
 
   cardWrapper: {
     borderRadius: BorderRadius.lg,
@@ -251,129 +242,153 @@ const styles = StyleSheet.create({
         shadowColor: colors.lightMustard,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
-        shadowRadius: 12 },
+        shadowRadius: 12,
+      },
       android: {
-        elevation: 6 } }),
+        elevation: 6,
+      },
+    }),
     borderWidth: 1,
-    borderColor: colors.border.default },
+    borderColor: colors.border.default,
+  },
 
   card: {
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
 
   cardAndroid: {
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
 
   cardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 14 },
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+  },
 
   glassHighlight: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 0 },
+    height: 0,
+  },
 
   // Icon Container
   iconContainer: {
     width: 48,
     height: 48,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: Spacing.md,
     ...Platform.select({
       ios: {
         shadowColor: colors.lightMustard,
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.3,
-        shadowRadius: 6 },
+        shadowRadius: 6,
+      },
       android: {
-        elevation: 4 } }) },
+        elevation: 4,
+      },
+    }),
+  },
 
   // Text Container
   textContainer: {
     flex: 1,
-    justifyContent: "center" },
+    justifyContent: 'center',
+  },
 
   title: {
     ...Typography.body,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.primary,
     marginBottom: 3,
-    lineHeight: 20 },
+    lineHeight: 20,
+  },
 
   subtitle: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
     lineHeight: 18,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
 
   // Right Coupon Visual
   rightContainer: {
     width: 70,
     height: 70,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: Spacing.xs },
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: Spacing.xs,
+  },
 
   couponWrapper: {
     width: 60,
     height: 44,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    transform: [{ rotate: "6deg" }],
-    overflow: "hidden",
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '6deg' }],
+    overflow: 'hidden',
     backgroundColor: colors.background.secondary,
     ...Platform.select({
       ios: {
         shadowColor: colors.lightMustard,
         shadowOffset: { width: 2, height: 3 },
         shadowOpacity: 0.2,
-        shadowRadius: 8 },
+        shadowRadius: 8,
+      },
       android: {
-        elevation: 5 } }),
+        elevation: 5,
+      },
+    }),
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.15)' },
+    borderColor: 'rgba(255, 205, 87, 0.15)',
+  },
 
   couponImage: {
-    width: "100%",
-    height: "100%" },
+    width: '100%',
+    height: '100%',
+  },
 
   loaderContainer: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.gold },
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.gold,
+  },
 
   fallback: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center" },
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   fallbackPercent: {
     color: colors.text.inverse,
     ...Typography.h3,
-    fontWeight: "800" },
+    fontWeight: '800',
+  },
 
   // Badge
   couponBadge: {
-    position: "absolute",
+    position: 'absolute',
     right: -6,
     top: 2,
     width: 26,
     height: 26,
     borderRadius: BorderRadius.sm,
     backgroundColor: colors.background.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    transform: [{ rotate: "-6deg" }],
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '-6deg' }],
     borderWidth: 2,
     borderColor: colors.lightMustard,
     ...Platform.select({
@@ -381,18 +396,25 @@ const styles = StyleSheet.create({
         shadowColor: colors.lightMustard,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
-        shadowRadius: 4 },
+        shadowRadius: 4,
+      },
       android: {
-        elevation: 4 } }) },
+        elevation: 4,
+      },
+    }),
+  },
 
   couponBadgeText: {
     color: Colors.gold,
-    fontWeight: "800",
-    ...Typography.bodySmall },
+    ...Typography.bodySmall,
+    fontWeight: '800' as const,
+  },
 
   // Divider
   divider: {
     marginTop: Spacing.md,
     borderBottomWidth: 1,
-    borderStyle: "dashed",
-    borderColor: colors.border.default } });
+    borderStyle: 'dashed',
+    borderColor: colors.border.default,
+  },
+});

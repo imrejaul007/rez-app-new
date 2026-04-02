@@ -37,14 +37,14 @@ function BrandedStoreCard({
   const handlePress = useCallback(() => {
     try {
       onPress(store);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onPress, store]);
 
   // Memoize partner badge styles
   const partnerBadgeStyles = useMemo(() => {
-    const baseStyle = [styles.partnerBadge];
+    const baseStyle: any[] = [styles.partnerBadge];
     if (store.partnerLevel === 'gold') {
       baseStyle.push(styles.goldPartner);
     } else if (store.partnerLevel === 'silver') {
@@ -57,7 +57,7 @@ function BrandedStoreCard({
 
   // Memoize partner text styles
   const partnerTextStyles = useMemo(() => {
-    const baseStyle = [styles.partnerText];
+    const baseStyle: any[] = [styles.partnerText];
     if (store.partnerLevel === 'gold') {
       baseStyle.push(styles.goldPartnerText);
     } else if (store.partnerLevel === 'silver') {
@@ -72,9 +72,6 @@ function BrandedStoreCard({
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-     
-      delayPressIn={0}
-      delayPressOut={0}
       accessibilityLabel={storeLabel}
       accessibilityRole="button"
       accessibilityHint="Double tap to view store details and offers"

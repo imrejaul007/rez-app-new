@@ -53,7 +53,7 @@ const TIER_COLORS: Record<BrandTier, { gradient: string[]; badge: string }> = {
 };
 
 function BrandDetailPage() {
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<any>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -71,7 +71,7 @@ function BrandDetailPage() {
   const getInitials = (name: string) => {
     return name
       .split(' ')
-      .map(word => word[0])
+      .map((word) => word[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -169,7 +169,10 @@ function BrandDetailPage() {
         <Pressable style={styles.retryButton} onPress={fetchBrand}>
           <Text style={styles.retryButtonText}>Try Again</Text>
         </Pressable>
-        <Pressable style={styles.backLink} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backLink}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.backLinkText}>Go Back</Text>
         </Pressable>
       </View>
@@ -193,15 +196,11 @@ function BrandDetailPage() {
 
       <View style={styles.container}>
         <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.background.primary}
-            />
+            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.background.primary} />
           }
         >
           {/* Hero Section */}
@@ -213,18 +212,14 @@ function BrandDetailPage() {
           >
             {/* Banner Image Background */}
             {brand.banner && brand.banner[0] && (
-              <CachedImage
-                source={brand.banner[0]}
-                style={styles.heroBannerImage}
-                contentFit="cover"
-              />
+              <CachedImage source={brand.banner[0]} style={styles.heroBannerImage} contentFit="cover" />
             )}
             <View style={styles.heroOverlay} />
 
             {/* Back Button */}
             <Pressable
               style={[styles.backButton, { marginTop: 12 }]}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -259,12 +254,8 @@ function BrandDetailPage() {
               {(brand.ratings?.average ?? 0) > 0 && (
                 <View style={styles.ratingRow}>
                   <Ionicons name="star" size={18} color="#FFC107" />
-                  <Text style={styles.ratingText}>
-                    {(brand.ratings?.average ?? 0).toFixed(1)}
-                  </Text>
-                  <Text style={styles.ratingCount}>
-                    ({brand.ratings?.count ?? 0} reviews)
-                  </Text>
+                  <Text style={styles.ratingText}>{(brand.ratings?.average ?? 0).toFixed(1)}</Text>
+                  <Text style={styles.ratingCount}>({brand.ratings?.count ?? 0} reviews)</Text>
                 </View>
               )}
             </View>
@@ -277,16 +268,15 @@ function BrandDetailPage() {
               <Text style={styles.cashbackValue}>{cashbackDisplay}</Text>
               {(brand.cashback?.minPurchase ?? 0) > 0 && (
                 <Text style={styles.cashbackCondition}>
-                  Min. purchase {currencySymbol}{brand.cashback?.minPurchase}
+                  Min. purchase {currencySymbol}
+                  {brand.cashback?.minPurchase}
                 </Text>
               )}
             </View>
             {(brand.cashback?.earlyBirdBonus ?? 0) > 0 && (
               <View style={styles.bonusBadge}>
                 <Ionicons name="flash" size={16} color={Colors.warning} />
-                <Text style={styles.bonusText}>
-                  +{brand.cashback?.earlyBirdBonus ?? 0}% Early Bird
-                </Text>
+                <Text style={styles.bonusText}>+{brand.cashback?.earlyBirdBonus ?? 0}% Early Bird</Text>
               </View>
             )}
           </View>
@@ -328,10 +318,7 @@ function BrandDetailPage() {
                 {brand.badges?.map((badge) => (
                   <View
                     key={badge}
-                    style={[
-                      styles.badge,
-                      { backgroundColor: BADGE_COLORS[badge]?.bg || colors.neutral[500] },
-                    ]}
+                    style={[styles.badge, { backgroundColor: BADGE_COLORS[badge]?.bg || colors.neutral[500] }]}
                   >
                     <Text style={styles.badgeText}>
                       {badge.charAt(0).toUpperCase() + badge.slice(1).replace('-', ' ')}
@@ -348,7 +335,9 @@ function BrandDetailPage() {
               <Text style={styles.sectionTitle}>Category</Text>
               <Pressable
                 style={styles.categoryItem}
-                onPress={() => brand.mallCategory?.slug && router.push(`/mall/category/${brand.mallCategory.slug}` as any)}
+                onPress={() =>
+                  brand.mallCategory?.slug && router.push(`/mall/category/${brand.mallCategory.slug}` as any)
+                }
               >
                 <Text style={styles.categoryIcon}>{brand.mallCategory.icon}</Text>
                 <Text style={styles.categoryName}>{brand.mallCategory.name}</Text>
@@ -391,11 +380,7 @@ function BrandDetailPage() {
           {/* Shop Now CTA Button */}
           {brand.externalUrl && (
             <View style={styles.ctaContainer}>
-              <Pressable
-                style={styles.ctaButton}
-                onPress={handleShopNow}
-               
-              >
+              <Pressable style={styles.ctaButton} onPress={handleShopNow}>
                 <LinearGradient
                   colors={[colors.warningScale[400], colors.warningScale[700]]}
                   start={{ x: 0, y: 0 }}
@@ -405,9 +390,7 @@ function BrandDetailPage() {
                   <Ionicons name="cart-outline" size={22} color={colors.text.inverse} />
                   <Text style={styles.ctaText}>Shop Now</Text>
                   <View style={styles.ctaCashback}>
-                    <Text style={styles.ctaCashbackText}>
-                      Earn {brand.cashback.percentage}%
-                    </Text>
+                    <Text style={styles.ctaCashbackText}>Earn {brand.cashback.percentage}%</Text>
                   </View>
                 </LinearGradient>
               </Pressable>

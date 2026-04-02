@@ -63,7 +63,7 @@ function ProjectStatusCard({
           accessibilityHint={`Double tap to view ${label.toLowerCase()} projects`}
         >
           <LinearGradient
-            colors={Array.isArray(gradientColors) ? gradientColors : [colors.brand.purpleLight, colors.brand.purple]}
+            colors={(Array.isArray(gradientColors) ? gradientColors : [colors.brand.purpleLight, colors.brand.purple]) as [string, string]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.content}

@@ -137,7 +137,7 @@ function LoadingScreen({ duration = 5000, onComplete }: LoadingScreenProps) {
               ]}
             >
               <LinearGradient
-                colors={[COLORS.gold, COLORS.goldDark]}
+                colors={[COLORS.gold, (COLORS as any).goldDark]}
                 style={styles.coinGradient}
               >
                 <Text style={styles.coinText}>R</Text>

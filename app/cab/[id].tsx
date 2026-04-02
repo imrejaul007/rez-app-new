@@ -374,7 +374,7 @@ function CabDetailsPage() {
 
       if (!isMounted()) return;
       setCab(cabDetails);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load cab details. Please try again.');
     } finally {
@@ -422,7 +422,7 @@ function CabDetailsPage() {
       } else {
         await addToWishlist(cab.id as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -505,7 +505,10 @@ function CabDetailsPage() {
           {cab.images.length > 1 && (
             <View style={styles.imageIndicators}>
               {cab.images.map((_, index) => (
-                <View key={index} style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]} />
+                <View
+                  key={index}
+                  style={[styles.indicator, selectedImageIndex === index ? styles.indicatorActive : null]}
+                />
               ))}
             </View>
           )}

@@ -112,7 +112,7 @@ function SettingsItem({ category, onPress, style, isLast }: SettingsItemProps & 
         {/* Text content */}
         <View style={styles.textContainer}>
           <ThemedText
-            style={[styles.title, !category.isEnabled && styles.disabledText]}
+            style={[styles.title, !category.isEnabled ? styles.disabledText : null]}
             numberOfLines={1}
           >
             {category.title}

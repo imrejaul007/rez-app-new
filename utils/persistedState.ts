@@ -55,7 +55,7 @@ export function usePersistedState<T>(
   const [state, setState] = useState<T>(defaultValue);
   const [isRestored, setIsRestored] = useState(false);
 
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMounted = useRef(true);
 
   // Restore state on mount

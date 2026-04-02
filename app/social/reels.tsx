@@ -120,7 +120,7 @@ function ReelsPage() {
   const [activeTab, setActiveTab] = useState<FeedTab>('forYou');
   const [bookmarkedReels, setBookmarkedReels] = useState<Set<string>>(new Set());
   const [screenFocused, setScreenFocused] = useState(true);
-  const flatListRef = useRef<FlashList>(null);
+  const flatListRef = useRef<FlashList<any>>(null);
   const likeAnimations = useRef<Map<string, SharedValue<number>>>(new Map());
   const isMounted = useIsMounted();
 
@@ -143,15 +143,15 @@ function ReelsPage() {
 
       const result = await ugcApi.getReelFeed(pageNum, 10);
       if (result.success && result.data) {
-        const newReels = result.data.reels;
+        const newReels = (result.data as any).reels;
         setReels((prev) => (append ? [...prev, ...newReels] : newReels));
-        setHasMore(result.data.pagination.hasMore);
+        setHasMore((result.data as any).pagination.hasMore);
         setPage(pageNum);
       } else {
         if (!isMounted()) return;
         setHasMore(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setHasMore(false);
     } finally {
@@ -210,7 +210,7 @@ function ReelsPage() {
           });
           setReels((prev) => prev.map((r) => (r.id === reelId ? { ...r, likes: r.likes + (wasLiked ? 1 : -1) } : r)));
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     },
@@ -228,7 +228,7 @@ function ReelsPage() {
 
     try {
       await reelApi.toggleBookmark(reelId);
-    } catch (error) {
+    } catch (error: any) {
       // Revert
       if (!isMounted()) return;
       setBookmarkedReels((prev) => {
@@ -249,7 +249,7 @@ function ReelsPage() {
         message: `Check out "${reel.title}" on ${BRAND.APP_NAME}!`,
         title: reel.title,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []);

@@ -51,7 +51,7 @@ function ExperiencesPage() {
         if (!isMounted()) return;
         setExperiences(res.data.experiences);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load experiences. Pull down to refresh.');
     } finally {

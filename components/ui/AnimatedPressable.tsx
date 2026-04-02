@@ -89,7 +89,7 @@ const AnimatedPressableComponent = React.forwardRef<any, AnimatedPressableProps>
               await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
               break;
           }
-        } catch (e) {
+        } catch (e: any) {
           // Silent fail for haptics
         }
       }

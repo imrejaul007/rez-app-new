@@ -77,7 +77,7 @@ const StreakRewardsCard: React.FC<StreakRewardsCardProps> = ({
           </View>
 
           {/* Check-in Action */}
-          <View style={[styles.actionIndicator, todayCheckedIn && styles.actionCompleted]}>
+          <View style={[styles.actionIndicator, todayCheckedIn ? styles.actionCompleted : null]}>
             {todayCheckedIn ? (
               <>
                 <Ionicons name="checkmark-circle" size={14} color={COLORS.white} />

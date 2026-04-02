@@ -85,7 +85,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
         if (!isMounted()) return;
         await Brightness.setBrightnessAsync(1); // Max brightness
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -98,7 +98,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
           if (!isMounted()) return;
           await Brightness.setBrightnessAsync(originalBrightness);
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     }
@@ -113,7 +113,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
       if (!isMounted()) return;
       await Clipboard.setStringAsync(voucher.code);
       platformAlertSimple('Copied!', 'Voucher code copied to clipboard');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy code');
     }
   };
@@ -128,7 +128,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
         message: `${voucher.brandName} Voucher\nCode: ${voucher.code}\nValue: ${currencySymbol}${voucher.value}\nValid till: ${new Date(voucher.expiryDate).toLocaleDateString()}`,
         title: 'Share Voucher',
       });
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to share voucher');
     }
   };
@@ -143,7 +143,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
       if (!isMounted()) return;
       await Clipboard.setStringAsync(voucher.code);
       platformAlertSimple('Code Copied!', 'Voucher code has been copied to clipboard. You can save it for later use.');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy voucher code');
     }
   };

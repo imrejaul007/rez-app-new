@@ -160,7 +160,7 @@ function PopularServicesSection({
       } else {
         setError('Failed to load popular services');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load popular services');
     } finally {
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   listContainer: {
     gap: 12,

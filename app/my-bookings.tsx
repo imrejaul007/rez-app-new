@@ -162,7 +162,6 @@ const MyBookingsPage = () => {
       platformAlertDestructive(
         'Cancel Booking',
         'Are you sure you want to cancel this booking?',
-        'Yes, Cancel',
         async () => {
           // SS-D002 FIX: Lock this booking's Cancel button immediately so that:
           //  (a) a background refresh arriving mid-cancel cannot re-render the
@@ -197,7 +196,7 @@ const MyBookingsPage = () => {
               setBookings(previousBookings);
               platformAlertSimple('Error', response.error || 'Failed to cancel booking');
             }
-          } catch (error) {
+          } catch (error: any) {
             // SS-D002 FIX: Revert on network / unexpected error too.
             setBookings(previousBookings);
             platformAlertSimple('Error', 'Failed to cancel booking');
@@ -210,6 +209,7 @@ const MyBookingsPage = () => {
             });
           }
         },
+        'Yes, Cancel',
       );
     },
     [cancellingIds],

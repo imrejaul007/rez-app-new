@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from 'react-native';
+import React, { useMemo, useRef, useCallback } from 'react';
 import { View, StyleSheet, ViewStyle, Pressable } from 'react-native';
 import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
 import { spacing, borderRadius } from '@/constants/theme';

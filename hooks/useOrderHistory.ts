@@ -58,7 +58,7 @@ export const useOrderHistory = (): UseOrderHistoryReturn => {
       if (activeFilter.dateTo) query.dateTo = activeFilter.dateTo;
       if (activeFilter.sort) query.sort = activeFilter.sort as OrdersQuery['sort'];
 
-      const response = await ordersService.getOrders(query);
+      const response: any = await ordersService.getOrders(query);
 
       if (response.success && response.data) {
         const newOrders = response.data.orders || [];
@@ -76,7 +76,7 @@ export const useOrderHistory = (): UseOrderHistoryReturn => {
       } else {
         throw new Error(response.error || 'Failed to fetch orders');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to fetch orders');
     } finally {
       setIsLoading(false);

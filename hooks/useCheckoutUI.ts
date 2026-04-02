@@ -178,7 +178,7 @@ export function useCheckoutUI({
     }
     dispatch({ type: 'SET_FIELD', field: 'validatingRedemption', value: true });
     try {
-      const response = await apiClient.post<any>('/offers/redemptions/validate', { code: trimmedCode });
+      const response: any = await apiClient.post<any>('/offers/redemptions/validate', { code: trimmedCode });
       const respData = response.data;
       if (respData?.success !== false && (respData?.valid || respData?.data?.valid)) {
         const offer = respData?.offer || respData?.data?.offer;
@@ -257,7 +257,7 @@ export function useCheckoutUI({
     }
     dispatch({ type: 'SET_FIELD', field: 'validatingRedemption', value: true });
     try {
-      const response = await apiClient.get<any>(`/campaigns/redemptions/${uiState.redemptionCode.trim().toUpperCase()}`);
+      const response: any = await apiClient.get<any>(`/campaigns/redemptions/${uiState.redemptionCode.trim().toUpperCase()}`);
       if (!response.success || !response.data) {
         showAlert('Invalid Code', 'This redemption code is invalid or has expired.', undefined, 'error');
         return;
@@ -365,7 +365,7 @@ export function useCheckoutUI({
         case 'wallet': await checkoutHandlers.handleWalletPayment(coinPayload); break;
         case 'razorpay': await checkoutHandlers.handleRazorpayPayment(undefined, coinPayload); break;
       }
-    } catch (error) {
+    } catch (error: any) {
       dispatch({ type: 'SHOW_PAYMENT_FAILURE', method: uiState.selectedPaymentMethod, message: error instanceof Error ? error.message : 'Payment failed' });
     }
   };

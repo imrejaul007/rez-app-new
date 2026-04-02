@@ -3,14 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Manages user's profile visibility preferences
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform } from 'react-native';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -72,12 +65,9 @@ function ProfileVisibilityPage() {
     try {
       setSelectedVisibility(visibility);
       const success = await updatePrivacySettings({ profileVisibility: visibility });
-      
+
       if (success) {
-        platformAlertSimple(
-          'Profile Visibility Updated',
-          `Your profile is now ${visibility.toLowerCase()}.`
-        );
+        platformAlertSimple('Profile Visibility Updated', `Your profile is now ${visibility.toLowerCase()}.`);
       } else {
         platformAlertSimple('Error', 'Failed to update profile visibility. Please try again.');
         // Revert on failure
@@ -86,7 +76,7 @@ function ProfileVisibilityPage() {
           setSelectedVisibility(privacySettings.profileVisibility);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to update profile visibility. Please try again.');
       // Revert on failure
       if (privacySettings) {
@@ -99,12 +89,8 @@ function ProfileVisibilityPage() {
   const renderVisibilityOption = (option: VisibilityOptionData) => (
     <Pressable
       key={option.value}
-      style={[
-        styles.optionCard,
-        selectedVisibility === option.value && styles.selectedOption,
-      ]}
+      style={[styles.optionCard, selectedVisibility === option.value && styles.selectedOption]}
       onPress={() => handleVisibilityChange(option.value)}
-     
       accessibilityLabel={`${option.title}: ${option.description}${selectedVisibility === option.value ? ', selected' : ''}`}
       accessibilityRole="radio"
       accessibilityState={{ checked: selectedVisibility === option.value }}
@@ -135,7 +121,10 @@ function ProfileVisibilityPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purple} />
         <LinearGradient colors={[Colors.brand.purple, Colors.brand.purple]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Profile Visibility</ThemedText>
@@ -158,7 +147,7 @@ function ProfileVisibilityPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
@@ -179,8 +168,11 @@ function ProfileVisibilityPage() {
           <View style={styles.currentCard}>
             <ThemedText style={styles.currentLabel}>Profile Visibility</ThemedText>
             <ThemedText style={styles.currentValue}>
-              {selectedVisibility === 'PUBLIC' ? 'Public' :
-               selectedVisibility === 'FRIENDS' ? 'Friends Only' : 'Private'}
+              {selectedVisibility === 'PUBLIC'
+                ? 'Public'
+                : selectedVisibility === 'FRIENDS'
+                  ? 'Friends Only'
+                  : 'Private'}
             </ThemedText>
           </View>
         </View>
@@ -199,8 +191,8 @@ function ProfileVisibilityPage() {
               <ThemedText style={styles.infoTitle}>About Profile Visibility</ThemedText>
             </View>
             <ThemedText style={styles.infoText}>
-              Your profile visibility setting controls who can see your profile information, 
-              activity, and posts. You can change this setting at any time.
+              Your profile visibility setting controls who can see your profile information, activity, and posts. You
+              can change this setting at any time.
             </ThemedText>
           </View>
         </View>
@@ -370,6 +362,5 @@ const styles = StyleSheet.create({
     height: 20,
   },
 });
-
 
 export default withErrorBoundary(ProfileVisibilityPage, 'AccountProfileVisibility');

@@ -22,7 +22,7 @@ export class CustomAnalyticsProvider extends BaseAnalyticsProvider {
   private eventQueue: AnalyticsEvent[] = [];
   private userId?: string;
   private sessionId: string;
-  private flushTimer?: NodeJS.Timeout;
+  private flushTimer?: ReturnType<typeof setTimeout>;
   private readonly BATCH_SIZE = 50;
   private readonly FLUSH_INTERVAL = 30000; // 30 seconds
   private readonly STORAGE_KEY = '@analytics:custom:queue';

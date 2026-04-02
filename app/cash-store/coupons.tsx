@@ -117,7 +117,7 @@ function CouponsPage() {
           if (!isMounted()) return;
           setCoupons(rawCoupons.map(transformCoupon));
         }
-      } catch (err) {
+      } catch (err: any) {
         if (coupons.length === 0) {
           if (!isMounted()) return;
           setError('Unable to load coupons. Pull down to retry.');
@@ -170,7 +170,7 @@ function CouponsPage() {
       setCopiedCode(code);
       platformAlertSimple('Copied!', `Coupon code "${code}" copied to clipboard`);
       setTimeout(() => setCopiedCode(null), 3000);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   }, []);
@@ -243,7 +243,7 @@ function CouponsPage() {
               <Text style={styles.codeText}>{item.code}</Text>
             </View>
             <Pressable
-              style={[styles.copyButton, isCopied && styles.copyButtonCopied]}
+              style={[styles.copyButton, isCopied ? styles.copyButtonCopied : null]}
               onPress={() => handleCopyCoupon(item.code)}
             >
               <LinearGradient
@@ -285,10 +285,10 @@ function CouponsPage() {
       const isActive = selectedCategory === item.key;
       return (
         <Pressable
-          style={[styles.filterChip, isActive && styles.filterChipActive]}
+          style={[styles.filterChip, isActive ? styles.filterChipActive : null]}
           onPress={() => setSelectedCategory(item.key)}
         >
-          <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>{item.label}</Text>
+          <Text style={[styles.filterChipText, isActive ? styles.filterChipTextActive : null]}>{item.label}</Text>
         </Pressable>
       );
     },

@@ -223,7 +223,7 @@ class ServiceCategoriesService {
 
       // Backend returns: { data: { services, category, pagination } }
       // apiClient unwraps responseData.data, so response.data = { services, category, pagination }
-      const rawData = response.data || {};
+      const rawData = (response.data || {}) as any;
 
       return {
         success: true,

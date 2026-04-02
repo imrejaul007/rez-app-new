@@ -4,14 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import React, { useState } from 'react';
 import { Redirect } from 'expo-router';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -55,9 +48,7 @@ const PAGE_CATEGORIES: PageCategory[] = [
   {
     title: 'Authentication',
     color: colors.successScale[400],
-    pages: [
-      { name: 'Account Recovery', path: '/account-recovery', icon: 'key' },
-    ],
+    pages: [{ name: 'Account Recovery', path: '/account-recovery', icon: 'key' }],
   },
   {
     title: 'Search Pages',
@@ -111,16 +102,12 @@ const PAGE_CATEGORIES: PageCategory[] = [
   {
     title: 'Payments',
     color: colors.tealGreen,
-    pages: [
-      { name: 'Refund Initiated', path: '/payments/refund-initiated', icon: 'receipt' },
-    ],
+    pages: [{ name: 'Refund Initiated', path: '/payments/refund-initiated', icon: 'receipt' }],
   },
   {
     title: 'Checkout',
     color: colors.brand.orange,
-    pages: [
-      { name: 'EMI Selection', path: '/checkout/emi-selection', icon: 'calculator' },
-    ],
+    pages: [{ name: 'EMI Selection', path: '/checkout/emi-selection', icon: 'calculator' }],
   },
   {
     title: 'Social Pages',
@@ -152,7 +139,7 @@ const PAGE_CATEGORIES: PageCategory[] = [
 ];
 
 function TestPagesScreen() {
-  if (!__DEV__) return <Redirect href="/(tabs)/" />;
+  if (!__DEV__) return <Redirect href="/(tabs)" />;
 
   const router = useRouter();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -167,12 +154,12 @@ function TestPagesScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Test All Pages</ThemedText>
@@ -199,12 +186,10 @@ function TestPagesScreen() {
       >
         <View style={styles.infoCard}>
           <Ionicons name="flask" size={24} color={Colors.info} />
-          <ThemedText style={styles.infoText}>
-            Developer test screen. Tap any page to navigate and test.
-          </ThemedText>
+          <ThemedText style={styles.infoText}>Developer test screen. Tap any page to navigate and test.</ThemedText>
         </View>
 
-        {PAGE_CATEGORIES.map(category => (
+        {PAGE_CATEGORIES.map((category) => (
           <View key={category.title} style={styles.categoryContainer}>
             <Pressable
               style={[styles.categoryHeader, { borderLeftColor: category.color }]}
@@ -223,12 +208,8 @@ function TestPagesScreen() {
 
             {expandedCategory === category.title && (
               <View style={styles.pagesContainer}>
-                {category.pages.map(page => (
-                  <Pressable
-                    key={page.path}
-                    style={styles.pageItem}
-                    onPress={() => router.push(page.path as any)}
-                  >
+                {category.pages.map((page) => (
+                  <Pressable key={page.path} style={styles.pageItem} onPress={() => router.push(page.path as any)}>
                     <View style={[styles.pageIcon, { backgroundColor: category.color + '20' }]}>
                       <Ionicons name={page.icon as any} size={18} color={category.color} />
                     </View>
@@ -244,7 +225,7 @@ function TestPagesScreen() {
         <View style={styles.quickLinksSection}>
           <ThemedText style={styles.quickLinksTitle}>Quick Test All</ThemedText>
           <View style={styles.quickLinksGrid}>
-            {PAGE_CATEGORIES.slice(0, 6).map(category => (
+            {PAGE_CATEGORIES.slice(0, 6).map((category) => (
               <Pressable
                 key={category.title}
                 style={[styles.quickLinkCard, { borderColor: category.color }]}

@@ -45,7 +45,7 @@ class SearchDiscoveryService {
       if (region) {
         params.region = region;
       }
-      const response = await apiClient.get('/search/history/popular', params);
+      const response = await apiClient.get<any>('/search/history/popular', params);
       if (response.success && response.data) {
         const data = Array.isArray(response.data) ? response.data : response.data.searches || [];
         return data.map((item: any, index: number) => ({
@@ -61,7 +61,7 @@ class SearchDiscoveryService {
 
   async getPopularStores(limit: number = 10): Promise<StoreItem[]> {
     try {
-      const response = await apiClient.get('/stores/featured', { limit });
+      const response = await apiClient.get<any>('/stores/featured', { limit });
       if (response.success && response.data) {
         const stores = Array.isArray(response.data) ? response.data : response.data.stores || [];
         return stores.map((store: any) => ({

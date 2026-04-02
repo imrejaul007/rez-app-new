@@ -28,7 +28,7 @@ export const useAddresses = (autoFetch: boolean = true): UseAddressesReturn => {
     setError(null);
 
     try {
-      const response = await addressApi.getUserAddresses();
+      const response: any = await addressApi.getUserAddresses();
 
       if (response.success && response.data) {
         setAddresses(response.data);
@@ -47,7 +47,7 @@ export const useAddresses = (autoFetch: boolean = true): UseAddressesReturn => {
     setError(null);
 
     try {
-      const response = await addressApi.createAddress(data);
+      const response: any = await addressApi.createAddress(data);
 
       if (response.success && response.data) {
         await fetchAddresses(); // Refresh list
@@ -66,7 +66,7 @@ export const useAddresses = (autoFetch: boolean = true): UseAddressesReturn => {
     setError(null);
 
     try {
-      const response = await addressApi.updateAddress(id, data);
+      const response: any = await addressApi.updateAddress(id, data);
 
       if (response.success && response.data) {
         await fetchAddresses(); // Refresh list
@@ -85,7 +85,7 @@ export const useAddresses = (autoFetch: boolean = true): UseAddressesReturn => {
     setError(null);
 
     try {
-      const response = await addressApi.deleteAddress(id);
+      const response: any = await addressApi.deleteAddress(id);
 
       if (response.success) {
         await fetchAddresses(); // Refresh list
@@ -104,7 +104,7 @@ export const useAddresses = (autoFetch: boolean = true): UseAddressesReturn => {
     setError(null);
 
     try {
-      const response = await addressApi.setDefaultAddress(id);
+      const response: any = await addressApi.setDefaultAddress(id);
 
       if (response.success && response.data) {
         await fetchAddresses(); // Refresh list
@@ -123,7 +123,7 @@ export const useAddresses = (autoFetch: boolean = true): UseAddressesReturn => {
     setError(null);
 
     try {
-      const response = await addressApi.getAddressById(id);
+      const response: any = await addressApi.getAddressById(id);
 
       if (response.success && response.data) {
         return response.data;

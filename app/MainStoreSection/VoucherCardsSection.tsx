@@ -1,24 +1,12 @@
 // VoucherCardsSection.tsx - Magicpin-inspired horizontal voucher cards
-import React, { memo, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ListRenderItemInfo,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { triggerImpact } from "@/utils/haptics";
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  Gradients,
-} from "@/constants/DesignSystem";
+import React, { memo, useCallback } from 'react';
+import { FlashList } from '@shopify/flash-list';
+import { View, StyleSheet, Pressable, Dimensions, ListRenderItemInfo } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { triggerImpact } from '@/utils/haptics';
+import { Colors, Spacing, Shadows, BorderRadius, Typography, Gradients } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 
@@ -39,13 +27,13 @@ interface VoucherCardsSectionProps {
   onSeeAllPress?: () => void;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = 280;
 const CARD_GAP = Spacing.md;
 
 // Format currency - takes currency symbol as parameter
 const formatCurrency = (amount: number, currencySymbol: string): string => {
-  return `${currencySymbol}${amount.toLocaleString("en-IN")}`;
+  return `${currencySymbol}${amount.toLocaleString('en-IN')}`;
 };
 
 const VoucherCardItem = memo(function VoucherCardItem({
@@ -61,7 +49,6 @@ const VoucherCardItem = memo(function VoucherCardItem({
     <Pressable
       style={styles.voucherCard}
       onPress={onPress}
-     
       accessibilityRole="button"
       accessibilityLabel={`Pay ${formatCurrency(voucher.payAmount, currencySymbol)}, Get ${formatCurrency(voucher.getValue, currencySymbol)}. ${voucher.savingsPercent}% savings`}
     >
@@ -82,19 +69,14 @@ const VoucherCardItem = memo(function VoucherCardItem({
 
         {/* Savings Badge - Top Right */}
         <View style={styles.savingsBadge}>
-          <ThemedText style={styles.savingsText}>
-            {voucher.savingsPercent}% OFF
-          </ThemedText>
+          <ThemedText style={styles.savingsText}>{voucher.savingsPercent}% OFF</ThemedText>
         </View>
 
         {/* Voucher Content */}
         <View style={styles.voucherContent}>
           {/* Gift Icon */}
           <View style={styles.giftIconContainer}>
-            <LinearGradient
-              colors={Gradients.gold}
-              style={styles.giftIconGradient}
-            >
+            <LinearGradient colors={Gradients.gold} style={styles.giftIconGradient}>
               <Ionicons name="gift" size={28} color={colors.background.primary} />
             </LinearGradient>
           </View>
@@ -103,15 +85,11 @@ const VoucherCardItem = memo(function VoucherCardItem({
           <View style={styles.voucherDetails}>
             <View style={styles.amountRow}>
               <ThemedText style={styles.payLabel}>Pay</ThemedText>
-              <ThemedText style={styles.payAmount}>
-                {formatCurrency(voucher.payAmount, currencySymbol)}
-              </ThemedText>
+              <ThemedText style={styles.payAmount}>{formatCurrency(voucher.payAmount, currencySymbol)}</ThemedText>
             </View>
             <View style={styles.getRow}>
               <ThemedText style={styles.getLabel}>Get</ThemedText>
-              <ThemedText style={styles.getAmount}>
-                {formatCurrency(voucher.getValue, currencySymbol)}
-              </ThemedText>
+              <ThemedText style={styles.getAmount}>{formatCurrency(voucher.getValue, currencySymbol)}</ThemedText>
             </View>
           </View>
         </View>
@@ -120,14 +98,8 @@ const VoucherCardItem = memo(function VoucherCardItem({
         {voucher.validityDays && (
           <View style={styles.validityRow}>
             <Ionicons name="time-outline" size={12} color={Colors.gray[500]} />
-            <ThemedText style={styles.validityText}>
-              Valid for {voucher.validityDays} days
-            </ThemedText>
-            {voucher.termsCount && (
-              <ThemedText style={styles.termsText}>
-                • {voucher.termsCount} T&C apply
-              </ThemedText>
-            )}
+            <ThemedText style={styles.validityText}>Valid for {voucher.validityDays} days</ThemedText>
+            {voucher.termsCount && <ThemedText style={styles.termsText}>• {voucher.termsCount} T&C apply</ThemedText>}
           </View>
         )}
 
@@ -139,11 +111,7 @@ const VoucherCardItem = memo(function VoucherCardItem({
         </View>
 
         {/* Buy Now Button */}
-        <Pressable
-          style={styles.buyButton}
-          onPress={onPress}
-         
-        >
+        <Pressable style={styles.buyButton} onPress={onPress}>
           <LinearGradient
             colors={Gradients.primary}
             start={{ x: 0, y: 0 }}
@@ -173,23 +141,19 @@ export default memo(function VoucherCardsSection({
 
   const handleBuyVoucher = useCallback(
     (voucherId: string) => {
-      triggerImpact("Medium");
+      triggerImpact('Medium');
       if (onBuyVoucher) {
         onBuyVoucher(voucherId);
       }
     },
-    [onBuyVoucher]
+    [onBuyVoucher],
   );
 
   const renderVoucherCard = useCallback(
     ({ item }: ListRenderItemInfo<VoucherCard>) => (
-      <VoucherCardItem
-        voucher={item}
-        onPress={() => handleBuyVoucher(item.id)}
-        currencySymbol={currencySymbol}
-      />
+      <VoucherCardItem voucher={item} onPress={() => handleBuyVoucher(item.id)} currencySymbol={currencySymbol} />
     ),
-    [handleBuyVoucher, currencySymbol]
+    [handleBuyVoucher, currencySymbol],
   );
 
   const keyExtractor = useCallback((item: VoucherCard) => item.id, []);
@@ -204,17 +168,11 @@ export default memo(function VoucherCardsSection({
           </View>
           <View>
             <ThemedText style={styles.headerTitle}>Gift Vouchers</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>
-              Save more with prepaid vouchers
-            </ThemedText>
+            <ThemedText style={styles.headerSubtitle}>Save more with prepaid vouchers</ThemedText>
           </View>
         </View>
         {onSeeAllPress && vouchers.length > 2 && (
-          <Pressable
-            style={styles.seeAllButton}
-            onPress={onSeeAllPress}
-           
-          >
+          <Pressable style={styles.seeAllButton} onPress={onSeeAllPress}>
             <ThemedText style={styles.seeAllText}>See All</ThemedText>
             <Ionicons name="chevron-forward" size={14} color={Colors.primary[700]} />
           </Pressable>
@@ -224,7 +182,7 @@ export default memo(function VoucherCardsSection({
       {/* Voucher Cards Carousel */}
       <FlashList
         data={vouchers}
-        renderItem={renderVoucherCard}
+        renderItem={renderVoucherCard as any}
         keyExtractor={keyExtractor}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -243,15 +201,15 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: Spacing.md,
     paddingHorizontal: 0,
   },
   headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   headerIconContainer: {
@@ -259,8 +217,8 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     backgroundColor: colors.linen,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     ...Typography.h4,
@@ -272,8 +230,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   seeAllButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 2,
   },
   seeAllText: {
@@ -289,15 +247,15 @@ const styles = StyleSheet.create({
   voucherCard: {
     width: CARD_WIDTH,
     borderRadius: BorderRadius.xl,
-    overflow: "hidden",
+    overflow: 'hidden',
     ...Shadows.medium,
   },
   cardGradient: {
     padding: Spacing.base,
-    position: "relative",
+    position: 'relative',
   },
   popularBadge: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     backgroundColor: colors.nileBlue,
@@ -305,18 +263,18 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderTopLeftRadius: BorderRadius.xl,
     borderBottomRightRadius: BorderRadius.md,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   popularText: {
     fontSize: 9,
-    fontWeight: "800",
+    fontWeight: '800',
     color: colors.background.primary,
     letterSpacing: 0.5,
   },
   savingsBadge: {
-    position: "absolute",
+    position: 'absolute',
     top: Spacing.sm,
     right: Spacing.sm,
     backgroundColor: colors.nileBlue,
@@ -326,12 +284,12 @@ const styles = StyleSheet.create({
   },
   savingsText: {
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.background.primary,
   },
   voucherContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.md,
     marginTop: Spacing.xl,
     marginBottom: Spacing.md,
@@ -340,20 +298,20 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    overflow: "hidden",
+    overflow: 'hidden',
     ...Shadows.purpleSubtle,
   },
   giftIconGradient: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   voucherDetails: {
     flex: 1,
   },
   amountRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
+    flexDirection: 'row',
+    alignItems: 'baseline',
     gap: Spacing.xs,
   },
   payLabel: {
@@ -363,11 +321,11 @@ const styles = StyleSheet.create({
   payAmount: {
     ...Typography.h3,
     color: colors.text.primary,
-    fontWeight: "800",
+    fontWeight: '800',
   },
   getRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
+    flexDirection: 'row',
+    alignItems: 'baseline',
     gap: Spacing.xs,
     marginTop: 4,
   },
@@ -378,11 +336,11 @@ const styles = StyleSheet.create({
   getAmount: {
     ...Typography.h4,
     color: Colors.primary[700],
-    fontWeight: "700",
+    fontWeight: '700',
   },
   validityRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
     marginBottom: Spacing.md,
   },
@@ -397,8 +355,8 @@ const styles = StyleSheet.create({
 
   // Divider with circles (ticket style)
   dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: Spacing.sm,
   },
   circleLeft: {
@@ -425,18 +383,18 @@ const styles = StyleSheet.create({
   buyButton: {
     marginTop: Spacing.sm,
     borderRadius: BorderRadius.md,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   buyButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: Spacing.md,
     gap: Spacing.xs,
   },
   buyButtonText: {
     ...Typography.button,
     color: colors.background.primary,
-    fontWeight: "700",
+    fontWeight: '700',
   },
 });

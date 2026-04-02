@@ -311,7 +311,7 @@ function ProductReviewsSection({
         contentContainerStyle={[
           styles.listContent,
           reviews.length === 0 && styles.listContentEmpty
-        ]}
+        ] as any}
         showsVerticalScrollIndicator={false}
       />
 

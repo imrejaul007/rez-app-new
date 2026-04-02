@@ -110,7 +110,7 @@ export const useStoreSearch = (options: UseStoreSearchOptions): UseStoreSearchRe
       } else {
         throw new Error(response.message || 'Failed to fetch stores');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(errorMessage);
 
@@ -184,14 +184,14 @@ export const useStoreCategories = () => {
       setLoading(true);
       setError(null);
 
-      const response = await storeSearchService.getStoreCategories();
+      const response: any = await storeSearchService.getStoreCategories();
 
       if (response.success) {
         setCategories(response.data.categories);
       } else {
         throw new Error(response.message || 'Failed to fetch categories');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(errorMessage);
     } finally {
@@ -224,14 +224,14 @@ export const useStore = (storeId: string | null) => {
       setLoading(true);
       setError(null);
 
-      const response = await storeSearchService.getStoreById(storeId);
+      const response: any = await storeSearchService.getStoreById(storeId);
 
       if (response.success) {
         setStore(response.data);
       } else {
         throw new Error(response.message || 'Failed to fetch store');
       }
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(errorMessage);
     } finally {

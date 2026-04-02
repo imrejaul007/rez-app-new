@@ -67,7 +67,7 @@ export const useActivities = ({
       setError(null);
 
       try {
-        const response = await activityApi.getUserActivities(page, limit, type);
+        const response: any = await activityApi.getUserActivities(page, limit, type);
 
         if (response.success && response.data) {
           setActivities(response.data.activities);
@@ -90,7 +90,7 @@ export const useActivities = ({
     setError(null);
 
     try {
-      const response = await activityApi.getActivitySummary();
+      const response: any = await activityApi.getActivitySummary();
 
       if (response.success && response.data) {
         setSummary(response.data);
@@ -108,7 +108,7 @@ export const useActivities = ({
       setError(null);
 
       try {
-        const response = await activityApi.createActivity(data);
+        const response: any = await activityApi.createActivity(data);
 
         if (response.success && response.data) {
           await fetchActivities(1, currentLimit, currentType); // Refresh from page 1
@@ -131,7 +131,7 @@ export const useActivities = ({
       setError(null);
 
       try {
-        const response = await activityApi.batchCreateActivities(activitiesData);
+        const response: any = await activityApi.batchCreateActivities(activitiesData);
 
         if (response.success && response.data) {
           await fetchActivities(1, currentLimit, currentType); // Refresh from page 1
@@ -154,7 +154,7 @@ export const useActivities = ({
       setError(null);
 
       try {
-        const response = await activityApi.deleteActivity(id);
+        const response: any = await activityApi.deleteActivity(id);
 
         if (response.success) {
           await fetchActivities(currentPage, currentLimit, currentType); // Refresh current page
@@ -176,7 +176,7 @@ export const useActivities = ({
     setError(null);
 
     try {
-      const response = await activityApi.clearAllActivities();
+      const response: any = await activityApi.clearAllActivities();
 
       if (response.success) {
         setActivities([]);

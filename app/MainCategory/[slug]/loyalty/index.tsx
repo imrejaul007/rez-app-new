@@ -6,10 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View, Text, StyleSheet, Pressable, ScrollView,
-  RefreshControl, ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { SectionListSkeleton } from '@/components/skeletons';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -27,7 +24,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 function LoyaltyHubPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
   const theme = useMemo(() => getCategoryTheme(slug || 'electronics'), [slug]);
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -49,7 +46,7 @@ function LoyaltyHubPage() {
         setTotalCoins(res.data.categoryTotalCoins ?? res.data.totalCoins ?? 0);
         setWalletBalance(res.data.categoryBalance ?? res.data.walletBalance ?? 0);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -57,7 +54,9 @@ function LoyaltyHubPage() {
     }
   }, [slug, isMounted]);
 
-  useEffect(() => { fetchLoyalty(); }, [fetchLoyalty]);
+  useEffect(() => {
+    fetchLoyalty();
+  }, [fetchLoyalty]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -73,13 +72,10 @@ function LoyaltyHubPage() {
       if (res.success) {
         const coinsEarned = res.data?.coinsEarned || 10;
         const streakBonus = res.data?.streakBonus ? ' (streak bonus!)' : '';
-        platformAlertSimple(
-          'Checked In!',
-          `+${coinsEarned} coins earned${streakBonus}\n${res.data?.message || ''}`
-        );
+        platformAlertSimple('Checked In!', `+${coinsEarned} coins earned${streakBonus}\n${res.data?.message || ''}`);
         if (res.data?.loyalty) {
           setLoyalty(res.data.loyalty);
-          setTotalCoins(prev => prev + coinsEarned);
+          setTotalCoins((prev) => prev + coinsEarned);
         }
       } else {
         platformAlertSimple('Already Checked In', res.message || 'You already checked in today');
@@ -109,8 +105,8 @@ function LoyaltyHubPage() {
   const brands = loyalty?.brandLoyalty || [];
   const missions = loyalty?.missions || [];
   const coins = loyalty?.coins || { available: 0, expiring: 0, expiryDate: null, history: [] };
-  const activeMissions = missions.filter(m => !m.completedAt);
-  const completedMissions = missions.filter(m => m.completedAt);
+  const activeMissions = missions.filter((m) => !m.completedAt);
+  const completedMissions = missions.filter((m) => m.completedAt);
 
   const isCheckedInToday = streak.lastCheckin
     ? new Date(streak.lastCheckin).toDateString() === new Date().toDateString()
@@ -120,7 +116,10 @@ function LoyaltyHubPage() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <View style={{ flex: 1 }}>
@@ -137,20 +136,28 @@ function LoyaltyHubPage() {
       >
         {/* Daily Streak Section */}
         <View style={styles.streakCard}>
-          <LinearGradient colors={[theme.primaryColorLight + '20', theme.primaryColorLight + '40']} style={styles.streakGradient}>
+          <LinearGradient
+            colors={[theme.primaryColorLight + '20', theme.primaryColorLight + '40']}
+            style={styles.streakGradient}
+          >
             <View style={styles.streakHeader}>
               <Text style={styles.streakTitle}>Daily Streak</Text>
-              <Text style={[styles.streakCount, { color: theme.primaryColor }]}>{streak.current}/{streak.target} days</Text>
+              <Text style={[styles.streakCount, { color: theme.primaryColor }]}>
+                {streak.current}/{streak.target} days
+              </Text>
             </View>
 
             {/* Streak dots */}
             <View style={styles.streakDots}>
               {Array.from({ length: streak.target }, (_, i) => (
-                <View key={i} style={[
-                  styles.streakDot,
-                  i < streak.current && { ...styles.streakDotActive, backgroundColor: theme.primaryColor },
-                  i === streak.current && { ...styles.streakDotCurrent, borderColor: theme.primaryColor },
-                ]}>
+                <View
+                  key={i}
+                  style={[
+                    styles.streakDot,
+                    i < streak.current && { ...styles.streakDotActive, backgroundColor: theme.primaryColor },
+                    i === streak.current && { ...styles.streakDotCurrent, borderColor: theme.primaryColor },
+                  ]}
+                >
                   {i < streak.current ? (
                     <Ionicons name="checkmark" size={14} color={SHARED_COLORS.white} />
                   ) : (
@@ -162,7 +169,11 @@ function LoyaltyHubPage() {
 
             {/* Check-in button */}
             <Pressable
-              style={[styles.checkInBtn, { backgroundColor: theme.primaryColor }, isCheckedInToday && styles.checkInBtnDisabled]}
+              style={[
+                styles.checkInBtn,
+                { backgroundColor: theme.primaryColor },
+                isCheckedInToday ? styles.checkInBtnDisabled : null,
+              ]}
               onPress={handleCheckIn}
               disabled={isCheckedInToday || checkingIn}
             >
@@ -170,7 +181,11 @@ function LoyaltyHubPage() {
                 <ActivityIndicator size="small" color={SHARED_COLORS.white} />
               ) : (
                 <>
-                  <Ionicons name={isCheckedInToday ? 'checkmark-circle' : 'flash'} size={18} color={SHARED_COLORS.white} />
+                  <Ionicons
+                    name={isCheckedInToday ? 'checkmark-circle' : 'flash'}
+                    size={18}
+                    color={SHARED_COLORS.white}
+                  />
                   <Text style={styles.checkInBtnText}>
                     {isCheckedInToday ? 'Checked In Today' : 'Check In Now (+10 coins)'}
                   </Text>
@@ -189,17 +204,25 @@ function LoyaltyHubPage() {
             <Ionicons name="wallet" size={28} color={theme.primaryColor} />
             <View>
               <Text style={styles.coinLabel}>Total Coin Balance</Text>
-              <Text style={styles.coinValue}>{currencySymbol}{totalCoins}</Text>
+              <Text style={styles.coinValue}>
+                {currencySymbol}
+                {totalCoins}
+              </Text>
               {walletBalance > 0 && coins.available > 0 && (
                 <Text style={styles.coinBreakdown}>
-                  {currencySymbol}{coins.available} loyalty + {currencySymbol}{walletBalance} cashback
+                  {currencySymbol}
+                  {coins.available} loyalty + {currencySymbol}
+                  {walletBalance} cashback
                 </Text>
               )}
             </View>
           </View>
           {coins.expiring > 0 && (
             <View style={styles.expiringBadge}>
-              <Text style={styles.expiringText}>{currencySymbol}{coins.expiring} expiring soon</Text>
+              <Text style={styles.expiringText}>
+                {currencySymbol}
+                {coins.expiring} expiring soon
+              </Text>
             </View>
           )}
           <Ionicons name="chevron-forward" size={20} color={SHARED_COLORS.textSecondary} />
@@ -224,16 +247,24 @@ function LoyaltyHubPage() {
                 <View key={brand.brandId || i} style={styles.brandCard}>
                   <View style={styles.brandInfo}>
                     <Text style={styles.brandName}>{brand.brandName}</Text>
-                    <View style={[styles.tierBadge, { backgroundColor: tierColors.bg, borderColor: tiercolors.border }]}>
+                    <View
+                      style={[styles.tierBadge, { backgroundColor: tierColors.bg, borderColor: tierColors.border }]}
+                    >
                       <Text style={[styles.tierText, { color: tierColors.text }]}>{brand.tier}</Text>
                     </View>
                   </View>
                   <View style={styles.brandProgress}>
                     <View style={styles.progressBar}>
-                      <View style={[styles.progressFill, { backgroundColor: theme.primaryColor, width: `${brand.progress}%` }]} />
+                      <View
+                        style={[
+                          styles.progressFill,
+                          { backgroundColor: theme.primaryColor, width: `${brand.progress}%` },
+                        ]}
+                      />
                     </View>
                     <Text style={styles.progressText}>
-                      {brand.purchaseCount} purchases {brand.nextTierAt > 0 ? `(${brand.nextTierAt - brand.purchaseCount} to next tier)` : ''}
+                      {brand.purchaseCount} purchases{' '}
+                      {brand.nextTierAt > 0 ? `(${brand.nextTierAt - brand.purchaseCount} to next tier)` : ''}
                     </Text>
                   </View>
                 </View>
@@ -262,17 +293,27 @@ function LoyaltyHubPage() {
                   <Text style={styles.missionTitle}>{mission.title}</Text>
                   <View style={styles.missionProgress}>
                     <View style={styles.progressBar}>
-                      <View style={[styles.progressFill, {
-                        width: `${Math.min((mission.progress / mission.target) * 100, 100)}%`,
-                        backgroundColor: Colors.success,
-                      }]} />
+                      <View
+                        style={[
+                          styles.progressFill,
+                          {
+                            width: `${Math.min((mission.progress / mission.target) * 100, 100)}%`,
+                            backgroundColor: Colors.success,
+                          },
+                        ]}
+                      />
                     </View>
-                    <Text style={styles.progressText}>{mission.progress}/{mission.target}</Text>
+                    <Text style={styles.progressText}>
+                      {mission.progress}/{mission.target}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.missionReward}>
                   <Ionicons name="star" size={14} color={theme.primaryColor} />
-                  <Text style={[styles.missionRewardText, { color: theme.primaryColor }]}>{currencySymbol}{mission.reward}</Text>
+                  <Text style={[styles.missionRewardText, { color: theme.primaryColor }]}>
+                    {currencySymbol}
+                    {mission.reward}
+                  </Text>
                 </View>
               </View>
             ))
@@ -298,7 +339,10 @@ function LoyaltyHubPage() {
           </View>
           <View style={styles.statCard}>
             <Ionicons name="wallet" size={24} color={Colors.success} />
-            <Text style={styles.statValue}>{currencySymbol}{totalCoins}</Text>
+            <Text style={styles.statValue}>
+              {currencySymbol}
+              {totalCoins}
+            </Text>
             <Text style={styles.statLabel}>Coins</Text>
           </View>
         </View>
@@ -312,8 +356,14 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 12, fontSize: 14, color: SHARED_COLORS.textSecondary },
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12,
-    backgroundColor: SHARED_COLORS.white, borderBottomWidth: 1, borderBottomColor: SHARED_COLORS.border, gap: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: SHARED_COLORS.white,
+    borderBottomWidth: 1,
+    borderBottomColor: SHARED_COLORS.border,
+    gap: 12,
   },
   backBtn: { padding: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: SHARED_COLORS.textPrimary },
@@ -327,29 +377,47 @@ const styles = StyleSheet.create({
   streakCount: { fontSize: 14, fontWeight: '600' },
   streakDots: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
   streakDot: {
-    width: 36, height: 36, borderRadius: 18, backgroundColor: colors.border.default,
-    justifyContent: 'center', alignItems: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.border.default,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   streakDotActive: {},
   streakDotCurrent: { borderWidth: 2, backgroundColor: SHARED_COLORS.white },
   streakDotText: { fontSize: 12, fontWeight: '600', color: SHARED_COLORS.textSecondary },
   checkInBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    borderRadius: 12, paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 12,
+    paddingVertical: 12,
   },
   checkInBtnDisabled: { backgroundColor: colors.text.tertiary },
   checkInBtnText: { fontSize: 14, fontWeight: '600', color: SHARED_COLORS.white },
   // Coins
   coinCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    marginHorizontal: 16, marginBottom: 16, padding: 16,
-    backgroundColor: SHARED_COLORS.white, borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: SHARED_COLORS.white,
+    borderRadius: 16,
   },
   coinLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
   coinLabel: { fontSize: 12, color: SHARED_COLORS.textSecondary },
   coinValue: { fontSize: 22, fontWeight: '700', color: SHARED_COLORS.textPrimary },
   coinBreakdown: { fontSize: 10, color: SHARED_COLORS.textSecondary, marginTop: 2 },
-  expiringBadge: { backgroundColor: colors.errorScale[100], paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  expiringBadge: {
+    backgroundColor: colors.errorScale[100],
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
   expiringText: { ...Typography.caption, fontWeight: '600', color: Colors.error },
   // Section
   section: { marginHorizontal: 16, marginBottom: 16 },
@@ -360,20 +428,34 @@ const styles = StyleSheet.create({
   emptySmallText: { fontSize: 13, color: SHARED_COLORS.textSecondary },
   // Brand
   brandCard: {
-    padding: 14, backgroundColor: SHARED_COLORS.white, borderRadius: 12, marginBottom: 8,
+    padding: 14,
+    backgroundColor: SHARED_COLORS.white,
+    borderRadius: 12,
+    marginBottom: 8,
   },
   brandInfo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   brandName: { fontSize: 15, fontWeight: '600', color: SHARED_COLORS.textPrimary },
   tierBadge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12, borderWidth: 1 },
   tierText: { fontSize: 11, fontWeight: '600' },
   brandProgress: {},
-  progressBar: { height: 6, backgroundColor: colors.border.default, borderRadius: 3, overflow: 'hidden', marginBottom: Spacing.xs },
+  progressBar: {
+    height: 6,
+    backgroundColor: colors.border.default,
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginBottom: Spacing.xs,
+  },
   progressFill: { height: '100%', borderRadius: 3 },
   progressText: { fontSize: 11, color: SHARED_COLORS.textSecondary },
   // Mission
   missionCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    padding: 14, backgroundColor: SHARED_COLORS.white, borderRadius: 12, marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    backgroundColor: SHARED_COLORS.white,
+    borderRadius: 12,
+    marginBottom: 8,
   },
   missionIcon: { fontSize: 24 },
   missionTitle: { fontSize: 14, fontWeight: '600', color: SHARED_COLORS.textPrimary, marginBottom: 6 },
@@ -382,11 +464,18 @@ const styles = StyleSheet.create({
   missionRewardText: { fontSize: 13, fontWeight: '600' },
   // Stats
   statsGrid: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginHorizontal: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginHorizontal: 16,
   },
   statCard: {
-    width: '47%' as any, padding: 16, backgroundColor: SHARED_COLORS.white,
-    borderRadius: 16, alignItems: 'center', gap: 8,
+    width: '47%' as any,
+    padding: 16,
+    backgroundColor: SHARED_COLORS.white,
+    borderRadius: 16,
+    alignItems: 'center',
+    gap: 8,
   },
   statValue: { fontSize: 20, fontWeight: '700', color: SHARED_COLORS.textPrimary },
   statLabel: { fontSize: 12, color: SHARED_COLORS.textSecondary },

@@ -139,7 +139,7 @@ function MessageBubble({
   };
 
   return (
-    <View style={[styles.container, isOwnMessage && styles.ownMessageContainer]}>
+    <View style={[styles.container, isOwnMessage ? styles.ownMessageContainer : null]}>
       {/* Avatar */}
       {showAvatar && !isOwnMessage && (
         <View style={styles.avatarContainer}>

@@ -83,7 +83,7 @@ function CardOffersSection({
         } else {
           setCardOffers([]);
         }
-      } catch (error) {
+      } catch (error: any) {
         if (!isMounted()) return;
         setCardOffers([]);
       } finally {
@@ -119,7 +119,7 @@ function CardOffersSection({
       if (onOfferApplied) {
         onOfferApplied(offer);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, [onOfferApplied]);
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   offerBadgeText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.white,
+    color: Colors.white,
   },
   cardTypeBadge: {
     backgroundColor: Colors.gray[100],
@@ -438,12 +438,12 @@ const styles = StyleSheet.create({
   appliedOfferTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.white,
+    color: Colors.white,
     marginBottom: 2,
   },
   appliedOfferSubtitle: {
     ...Typography.caption,
-    color: Colors.text.white,
+    color: Colors.white,
     opacity: 0.9,
   },
   compactCard: {

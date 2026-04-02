@@ -4,8 +4,9 @@
  */
 
 // Environment configuration
-export { 
-  default as ENV,
+import ENV from './env';
+export { ENV };
+export {
   APP_CONFIG,
   API_CONFIG,
   ENDPOINTS,

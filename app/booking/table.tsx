@@ -102,7 +102,7 @@ function TableBookingPage() {
       } else {
         platformAlertSimple('Error', 'Failed to load store details');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load store details');
     } finally {
       if (!isMounted()) return;
@@ -432,7 +432,7 @@ function TableBookingPage() {
                         setSelectedDate(dateItem.fullDate);
                         setSelectedTime(null); // Reset time when date changes
                       }}
-                      style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                      style={[styles.dateCard, isSelected ? styles.dateCardSelected : null]}
                       accessibilityRole="radio"
                       accessibilityLabel={`${isToday ? 'Today, ' : ''}${dateItem.dayName} ${dateItem.dayNumber} ${dateItem.monthName}`}
                       accessibilityState={{ selected: isSelected }}
@@ -442,13 +442,13 @@ function TableBookingPage() {
                           <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
                         </View>
                       )}
-                      <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+                      <ThemedText style={[styles.dateDay, isSelected ? styles.dateTextSelected : null]}>
                         {dateItem.dayName}
                       </ThemedText>
-                      <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
+                      <ThemedText style={[styles.dateNumber, isSelected ? styles.dateTextSelected : null]}>
                         {dateItem.dayNumber}
                       </ThemedText>
-                      <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
+                      <ThemedText style={[styles.dateMonth, isSelected ? styles.dateTextSelected : null]}>
                         {dateItem.monthName}
                       </ThemedText>
                     </Pressable>
@@ -571,7 +571,7 @@ function TableBookingPage() {
                     <Pressable
                       key={size}
                       onPress={() => setPartySize(size)}
-                      style={[styles.quickSizeButton, partySize === size && styles.quickSizeButtonSelected]}
+                      style={[styles.quickSizeButton, partySize === size ? styles.quickSizeButtonSelected : null]}
                       accessibilityRole="radio"
                       accessibilityLabel={`${size} guests`}
                       accessibilityState={{ selected: partySize === size }}
@@ -581,7 +581,9 @@ function TableBookingPage() {
                         size={16}
                         color={partySize === size ? colors.text.inverse : Colors.brand.purple}
                       />
-                      <ThemedText style={[styles.quickSizeText, partySize === size && styles.quickSizeTextSelected]}>
+                      <ThemedText
+                        style={[styles.quickSizeText, partySize === size ? styles.quickSizeTextSelected : null]}
+                      >
                         {size}
                       </ThemedText>
                     </Pressable>

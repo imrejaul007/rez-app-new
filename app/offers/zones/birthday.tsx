@@ -4,23 +4,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Fetches real data from backend API
  */
 
-import React, { useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Dimensions
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -101,18 +94,12 @@ function BirthdayZonePage() {
   useEffect(() => {
     fetchZoneData();
     shimmerAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
+      withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
+      -1,
     );
     confettiAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 2000 }),
-        withTiming(0, { duration: 2000 })
-      ),
-      -1
+      withSequence(withTiming(1, { duration: 2000 }), withTiming(0, { duration: 2000 })),
+      -1,
     );
 
     return () => {
@@ -141,7 +128,8 @@ function BirthdayZonePage() {
             offersCount: zone.offersCount || 0,
             verificationRequired: zone.verificationRequired,
             eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible });
+            userEligible: zone.userEligible,
+          });
         }
       }
 
@@ -150,7 +138,7 @@ function BirthdayZonePage() {
         if (!isMounted()) return;
         setOffers(Array.isArray(offersData) ? offersData : []);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load offers. Please try again.');
     } finally {
@@ -169,9 +157,7 @@ function BirthdayZonePage() {
 
   const renderSkeletonCard = () => (
     <View style={styles.dealCard}>
-      <Animated.View
-        style={[styles.skeletonImage, shimmerOpacityStyle]}
-      />
+      <Animated.View style={[styles.skeletonImage, shimmerOpacityStyle]} />
       <View style={styles.dealContent}>
         <View style={[styles.skeletonText, { width: '40%', marginBottom: 8 }]} />
         <View style={[styles.skeletonText, { width: '80%', marginBottom: 8 }]} />
@@ -181,15 +167,8 @@ function BirthdayZonePage() {
   );
 
   const renderDealCard = (deal: ZoneOffer) => (
-    <Pressable
-      key={deal._id}
-      style={styles.dealCard}
-      onPress={() => handleDealPress(deal)}
-     
-    >
-      {deal.image && (
-        <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />
-      )}
+    <Pressable key={deal._id} style={styles.dealCard} onPress={() => handleDealPress(deal)}>
+      {deal.image && <CachedImage source={deal.image} style={styles.dealImage} contentFit="cover" />}
       <View style={styles.dealContent}>
         <View style={styles.dealHeader}>
           <View style={styles.dealInfo}>
@@ -239,14 +218,15 @@ function BirthdayZonePage() {
       >
         <SafeAreaView edges={['top']} style={styles.safeHeader}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
 
             <View style={styles.headerTitleContainer}>
-              <ThemedText style={styles.headerTitle}>
-                {zoneInfo?.name || 'Birthday Specials'}
-              </ThemedText>
+              <ThemedText style={styles.headerTitle}>{zoneInfo?.name || 'Birthday Specials'}</ThemedText>
               <ThemedText style={styles.headerSubtitle}>Celebrate with exclusive deals</ThemedText>
             </View>
 
@@ -259,7 +239,7 @@ function BirthdayZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -370,7 +350,12 @@ function BirthdayZonePage() {
       {!isEligible && !user?.profile?.dateOfBirth && (
         <View style={styles.fixedCTA}>
           <Pressable style={styles.ctaButton} onPress={handleUpdateProfile}>
-            <LinearGradient colors={[colors.warningScale[400], colors.warningScale[700]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaGradient}>
+            <LinearGradient
+              colors={[colors.warningScale[400], colors.warningScale[700]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.ctaGradient}
+            >
               <Ionicons name="calendar" size={20} color={colors.background.primary} />
               <ThemedText style={styles.ctaButtonText}>Add Birthday to Unlock Deals</ThemedText>
             </LinearGradient>
@@ -384,12 +369,28 @@ function BirthdayZonePage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  errorText: { ...Typography.body, color: colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
-  retryButton: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: BorderRadius.md },
+  errorText: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  retryButton: {
+    backgroundColor: colors.warningScale[400],
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: { ...Typography.button, color: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
   safeHeader: { paddingBottom: Spacing.base },
-  headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+  },
   backButton: { padding: Spacing.sm, marginRight: Spacing.sm },
   headerTitleContainer: { flex: 1, alignItems: 'center' },
   headerTitle: { ...Typography.h3, color: colors.background.primary, fontWeight: '700' },
@@ -399,49 +400,111 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: { paddingBottom: 150 },
   heroBanner: { margin: Spacing.base, borderRadius: BorderRadius['2xl'], overflow: 'hidden', ...Shadows.medium },
-  heroGradient: { padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(245, 158, 11, 0.3)', borderRadius: BorderRadius['2xl'], position: 'relative', overflow: 'hidden' },
+  heroGradient: {
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.3)',
+    borderRadius: BorderRadius['2xl'],
+    position: 'relative',
+    overflow: 'hidden',
+  },
   confetti: { position: 'absolute' },
   confetti1: { top: 10, right: 20 },
   confetti2: { top: 40, right: 60 },
   confetti3: { bottom: 20, right: 30 },
   confettiEmoji: { fontSize: 24 },
   heroContent: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.base },
-  heroIconContainer: { width: 64, height: 64, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(245, 158, 11, 0.3)', alignItems: 'center', justifyContent: 'center', marginRight: Spacing.base },
+  heroIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(245, 158, 11, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.base,
+  },
   heroEmoji: { fontSize: 32 },
   heroTextContainer: { flex: 1 },
   heroTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: 4 },
   heroSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
-  eligibilityCard: { marginTop: Spacing.base, padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.5)' },
+  eligibilityCard: {
+    marginTop: Spacing.base,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
   eligibleStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   eligibleLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   eligibleText: { ...Typography.label, color: colors.brand.amberDeep },
-  activeBadge: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  activeBadge: {
+    backgroundColor: colors.warningScale[400],
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   activeBadgeText: { ...Typography.caption, color: colors.background.primary, fontWeight: '600' },
   notEligibleStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   notEligibleLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flex: 1 },
   notEligibleText: { ...Typography.body, color: colors.text.secondary, flex: 1 },
-  updateButton: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
+  updateButton: {
+    backgroundColor: colors.warningScale[400],
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
   updateButtonText: { ...Typography.labelSmall, color: colors.background.primary, fontWeight: '600' },
   perksSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
   sectionTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: Spacing.md },
   perksGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  perkCard: { width: (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, alignItems: 'center', ...Shadows.subtle },
+  perkCard: {
+    width: (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    alignItems: 'center',
+    ...Shadows.subtle,
+  },
   perkIcon: { fontSize: 28, marginBottom: Spacing.xs },
   perkTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
   perkDesc: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center' },
   dealsSection: { paddingHorizontal: Spacing.base },
-  dealCard: { flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.md, ...Shadows.subtle },
+  dealCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.md,
+    ...Shadows.subtle,
+  },
   dealImage: { width: 96, height: 96 },
   dealContent: { flex: 1, padding: Spacing.base },
-  dealHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.xs },
+  dealHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.xs,
+  },
   dealInfo: { flex: 1, marginRight: Spacing.sm },
   dealStore: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: 2 },
   dealTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600' },
-  discountBadge: { backgroundColor: 'rgba(245, 158, 11, 0.15)', paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
+  discountBadge: {
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
   discountText: { ...Typography.labelSmall, color: colors.brand.amberDeep, fontWeight: '700' },
   dealDescription: { ...Typography.bodySmall, color: colors.text.secondary, marginBottom: Spacing.sm },
   dealTags: { flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap' },
-  tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.gray[100], paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm, gap: 4 },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.gray[100],
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+    gap: 4,
+  },
   tagText: { ...Typography.caption, color: colors.text.secondary },
   skeletonImage: { width: 96, height: 96, backgroundColor: Colors.gray[200] },
   skeletonText: { height: 12, borderRadius: 6, backgroundColor: Colors.gray[200] },
@@ -449,9 +512,26 @@ const styles = StyleSheet.create({
   emptyEmoji: { fontSize: 48, marginBottom: Spacing.md },
   emptyStateText: { ...Typography.body, color: colors.text.tertiary },
   emptyStateSubtext: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs },
-  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.light, ...Shadows.medium },
+  fixedCTA: {
+    position: 'absolute',
+    bottom: 70,
+    left: 0,
+    right: 0,
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    ...Shadows.medium,
+  },
   ctaButton: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
-  ctaGradient: { flexDirection: 'row', paddingVertical: Spacing.base, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
-  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' } });
+  ctaGradient: {
+    flexDirection: 'row',
+    paddingVertical: Spacing.base,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+  },
+  ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' },
+});
 
 export default withErrorBoundary(BirthdayZonePage, 'OffersZonesBirthday');

@@ -132,7 +132,7 @@ export function DynamicProductExample() {
         availabilityStatus: 'in_stock',
         tags: ['camera', 'photography', 'professional'],
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

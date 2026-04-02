@@ -56,7 +56,7 @@ export function useStoreReviews(
       setLoading(true);
       setError(null);
 
-      const response = await storesService.getStoreReviews(storeId, {
+      const response: any = await storesService.getStoreReviews(storeId, {
         page,
         limit: options.limit || 20,
         rating: options.rating,

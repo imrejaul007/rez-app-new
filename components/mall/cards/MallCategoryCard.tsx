@@ -183,7 +183,7 @@ const MallCategoryCard: React.FC<MallCategoryCardProps> = ({
             <View style={styles.iconContainer}>
               {CATEGORY_IMAGES[categoryKey] ? (
                 <CachedImage
-                  source={CATEGORY_IMAGES[categoryKey]}
+                  source={CATEGORY_IMAGES[categoryKey] as any}
                   style={styles.categoryImage}
                   contentFit="contain"
                 />

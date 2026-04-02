@@ -108,7 +108,7 @@ export const FinancialServiceShareModal: React.FC<FinancialServiceShareModalProp
       });
       setTimeout(() => setIsCopied(false), 2000);
       platformAlertSimple('Success', 'Link copied to clipboard!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy link. Please try again.');
     }
   };
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 });
 

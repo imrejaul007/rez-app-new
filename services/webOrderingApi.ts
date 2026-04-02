@@ -112,7 +112,7 @@ export async function fetchWebStore(storeSlug: string, table?: string): Promise<
 }
 
 export async function sendWebOtp(phone: string): Promise<void> {
-  const res = await apiClient.post('web-ordering/otp/send', { phone });
+  const res = await apiClient.post<any>('web-ordering/otp/send', { phone });
   if (!res.success) throw new Error(res.message || 'Failed to send OTP');
 }
 
@@ -123,7 +123,7 @@ export async function verifyWebOtp(phone: string, otp: string): Promise<string> 
 }
 
 export async function createWebOrder(payload: CreateOrderPayload): Promise<RazorpayOrderData> {
-  const res = await apiClient.post<RazorpayOrderData>('web-ordering/razorpay/create-order', payload);
+  const res = await apiClient.post<RazorpayOrderData>('web-ordering/razorpay/create-order', payload as any);
   if (res.success && res.data) return res.data;
   throw new Error(res.message || 'Failed to create order');
 }

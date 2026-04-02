@@ -86,9 +86,13 @@ const mapChallengeToMission = (cp: ChallengeProgress): Mission => {
     claimed: cp.rewardsClaimed,
     difficulty: challenge.difficulty as Mission['difficulty'],
     endsIn: challengesApi.getTimeRemaining(challenge.endDate),
+    endDate: challenge.endDate || '',
     type: challenge.type,
     special: challenge.type === 'special' || challenge.type === 'monthly',
     icon: challenge.icon,
+    userState:
+      (cp as any).userState ||
+      ((cp.completed ? 'completed' : cp.rewardsClaimed ? 'claimed' : 'in_progress') as Mission['userState']),
   };
 };
 
@@ -223,7 +227,7 @@ const MissionCard: React.FC<{
                 {/* Urgency badge for challenges ending within 2 hours */}
                 {mission.endDate &&
                   (() => {
-                    const msLeft = new Date(mission.endDate).getTime() - (Date.now() - serverTimeOffsetRef.current);
+                    const msLeft = new Date(mission.endDate).getTime() - Date.now();
                     if (msLeft > 0 && msLeft < 2 * 60 * 60 * 1000) {
                       return (
                         <View style={styles.urgencyBadge}>
@@ -533,14 +537,14 @@ const MissionsScreen: React.FC = () => {
               return (
                 <Pressable
                   key={tab.id}
-                  style={[styles.tab, isActive && styles.tabActive]}
+                  style={[styles.tab, isActive ? styles.tabActive : null]}
                   onPress={() => setActiveTab(tab.id)}
                 >
                   <Ionicons name={tab.icon} size={16} color={isActive ? THEME.purple600 : colors.background.primary} />
-                  <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{tab.label}</Text>
+                  <Text style={[styles.tabText, isActive ? styles.tabTextActive : null]}>{tab.label}</Text>
                   {count > 0 && (
-                    <View style={[styles.tabBadge, isActive && styles.tabBadgeActive]}>
-                      <Text style={[styles.tabBadgeText, isActive && styles.tabBadgeTextActive]}>{count}</Text>
+                    <View style={[styles.tabBadge, isActive ? styles.tabBadgeActive : null]}>
+                      <Text style={[styles.tabBadgeText, isActive ? styles.tabBadgeTextActive : null]}>{count}</Text>
                     </View>
                   )}
                 </Pressable>
@@ -692,7 +696,7 @@ const MissionsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (StyleSheet.create as any)({
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -813,10 +817,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     alignItems: 'center',
     backgroundColor: colors.background.primary,
-    ...Platform.select({
-      ios: shadows.sm,
+    ...(Platform.select({
+      ios: shadows.sm as any,
       android: { elevation: 2 },
-    }),
+    }) || {}),
   },
   statCardGreen: {
     backgroundColor: 'rgba(255, 205, 87, 0.1)',
@@ -868,10 +872,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     backgroundColor: colors.background.primary,
     marginBottom: spacing.sm,
-    ...Platform.select({
-      ios: shadows.md,
+    ...(Platform.select({
+      ios: shadows.md as any,
       android: { elevation: 4 },
-    }),
+    }) || {}),
   },
   missionCardCompleted: {
     backgroundColor: 'rgba(255, 205, 87, 0.08)',

@@ -160,7 +160,7 @@ class PushNotificationService {
       // MED-6: userId is NOT sent in the request body — the backend derives user
       // identity from the JWT in the Authorization header. Sending userId from the
       // client allows spoofing (a user could register another user's token).
-      const response = await apiClient.post('/notifications/register-token', {
+      const response = await apiClient.post<any>('/notifications/register-token', {
         token,
         platform: Platform.OS,
         deviceInfo: {
@@ -195,7 +195,7 @@ class PushNotificationService {
   async unregisterToken(): Promise<void> {
     try {
       if (this.expoPushToken) {
-        await apiClient.post('/notifications/unregister-token', {
+        await apiClient.post<any>('/notifications/unregister-token', {
           token: this.expoPushToken,
         });
 

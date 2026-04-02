@@ -42,7 +42,7 @@ function PollsPage() {
         if (!isMounted()) return;
         setDailyPoll(dailyPollRes.data.poll);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -54,9 +54,9 @@ function PollsPage() {
     try {
       const result = await pollApi.getMyVotes(1, 50);
       if (result.success && result.data) {
-        setVoteHistory(result.data.votes);
+        setVoteHistory((result.data as any).votes);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   }, []);
@@ -79,7 +79,7 @@ function PollsPage() {
     try {
       const result = await pollApi.vote(pollId, optionId);
       if (result.success && result.data) {
-        const coins = result.data.coinReward?.coinsAwarded;
+        const coins = (result.data as any).coinReward?.coinsAwarded;
 
         // Update local state optimistically
         setPolls((prev) =>
@@ -146,7 +146,7 @@ function PollsPage() {
     const isVoting = votingPollId === poll.id;
 
     return (
-      <View key={poll.id} style={[styles.pollCard, isDaily && styles.dailyPollCard]}>
+      <View key={poll.id} style={[styles.pollCard, isDaily ? styles.dailyPollCard : null]}>
         {/* Header */}
         <View style={styles.pollHeader}>
           <View style={styles.pollHeaderLeft}>
@@ -174,7 +174,11 @@ function PollsPage() {
             return (
               <Pressable
                 key={option.id}
-                style={[styles.optionButton, poll.hasVoted && styles.optionVoted, isSelected && styles.optionSelected]}
+                style={[
+                  styles.optionButton,
+                  poll.hasVoted && styles.optionVoted,
+                  isSelected ? styles.optionSelected : null,
+                ]}
                 onPress={() => !poll.hasVoted && !isVoting && handleVote(poll.id, option.id)}
                 disabled={poll.hasVoted || isVoting}
               >
@@ -192,7 +196,7 @@ function PollsPage() {
                     ) : (
                       <Ionicons name="radio-button-off" size={20} color={colors.text.tertiary} />
                     )}
-                    <ThemedText style={[styles.optionText, isSelected && styles.optionTextSelected]}>
+                    <ThemedText style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
                       {option.text}
                     </ThemedText>
                   </View>
@@ -268,10 +272,10 @@ function PollsPage() {
         {(['active', 'history'] as TabType[]).map((tab) => (
           <Pressable
             key={tab}
-            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            style={[styles.tab, activeTab === tab ? styles.tabActive : null]}
             onPress={() => handleTabChange(tab)}
           >
-            <ThemedText style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+            <ThemedText style={[styles.tabText, activeTab === tab ? styles.tabTextActive : null]}>
               {tab === 'active' ? 'Active Polls' : 'My Votes'}
             </ThemedText>
           </Pressable>

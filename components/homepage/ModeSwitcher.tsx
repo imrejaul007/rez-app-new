@@ -167,7 +167,7 @@ export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({
           onPriveLockedPress();
         } else {
           // Default: navigate to subscription/eligibility screen
-          router.push('/subscription');
+          router.push('/subscription' as any);
         }
         return;
       }

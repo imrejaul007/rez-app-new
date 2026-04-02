@@ -61,7 +61,7 @@ function GamesPage() {
           if (!isMounted()) return;
           setTodaysEarnings(gamesRes.data.todaysEarnings || 0);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!silent) platformAlert('Error', 'Failed to load games. Pull to refresh.');
       } finally {
         if (!isMounted()) return;
@@ -104,7 +104,7 @@ function GamesPage() {
       <Stack.Screen
         options={{
           title: 'Games',
-          headerStyle: { backgroundColor: COLORS.navy },
+          headerStyle: { backgroundColor: (COLORS as any).navy },
           headerTintColor: colors.text.inverse,
           headerTitleStyle: { fontWeight: 'bold' },
         }}
@@ -126,7 +126,7 @@ function GamesPage() {
         }
       >
         {/* Header Stats */}
-        <LinearGradient colors={[COLORS.navy, '#234B6B']} style={styles.header}>
+        <LinearGradient colors={[(COLORS as any).navy, '#234B6B']} style={styles.header}>
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.headerTitle}>Play & Earn</Text>
@@ -257,11 +257,11 @@ function GamesPage() {
                       {!isExhausted && (
                         <View style={[styles.gamePlayBtn, { backgroundColor: colors[0] }]}>
                           <Text style={styles.gamePlayBtnText}>Play Now</Text>
-                          <Ionicons name="arrow-forward" size={14} color={colors.text.inverse} />
+                          <Ionicons name="arrow-forward" size={14} color={'#FFFFFF'} />
                         </View>
                       )}
                       {isExhausted && (
-                        <View style={[styles.gamePlayBtn, { backgroundColor: colors.slateLight }]}>
+                        <View style={[styles.gamePlayBtn, { backgroundColor: '#E2E8F0' }]}>
                           <Text style={[styles.gamePlayBtnText, { color: '#94A3B8' }]}>Come Back Tomorrow</Text>
                         </View>
                       )}
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 14,
   },
   gamesGrid: {
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   gameTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   gameDescription: {

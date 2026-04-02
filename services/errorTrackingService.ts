@@ -138,8 +138,8 @@ class ErrorTrackingService {
 
       ErrorUtils.setGlobalHandler((error, isFatal) => {
         this.trackError(error, 'global', isFatal ? 'critical' : 'high', {
-          isFatal,
-        });
+          metadata: { isFatal },
+        } as any);
 
         // Call original handler
         if (originalHandler) {
@@ -162,8 +162,8 @@ class ErrorTrackingService {
           'global',
           'high',
           {
-            reason: event.reason,
-          }
+            metadata: { reason: event.reason },
+          } as any
         );
       };
 

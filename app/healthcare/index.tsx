@@ -121,26 +121,32 @@ const HealthcarePage: React.FC = () => {
       setStats({
         doctors:
           doctorsRes.status === 'fulfilled'
-            ? doctorsRes.value.data?.total || doctorsRes.value.data?.stores?.length || 30
+            ? (doctorsRes.value.data as any)?.total || (doctorsRes.value.data as any)?.stores?.length || 30
             : 30,
         pharmacies:
           pharmaciesRes.status === 'fulfilled'
-            ? pharmaciesRes.value.data?.total || pharmaciesRes.value.data?.stores?.length || 15
+            ? (pharmaciesRes.value.data as any)?.total || (pharmaciesRes.value.data as any)?.stores?.length || 15
             : 15,
         labs:
-          labsRes.status === 'fulfilled' ? labsRes.value.data?.total || labsRes.value.data?.stores?.length || 10 : 10,
+          labsRes.status === 'fulfilled'
+            ? (labsRes.value.data as any)?.total || (labsRes.value.data as any)?.stores?.length || 10
+            : 10,
         tests:
           productsRes.status === 'fulfilled'
-            ? productsRes.value.data?.total || productsRes.value.data?.products?.length || 48
+            ? (productsRes.value.data as any)?.total || (productsRes.value.data as any)?.products?.length || 48
             : 48,
       });
 
       // Get featured services/products
-      if (productsRes.status === 'fulfilled' && productsRes.value.success && productsRes.value.data?.products) {
+      if (
+        productsRes.status === 'fulfilled' &&
+        productsRes.value.success &&
+        (productsRes.value.data as any)?.products
+      ) {
         if (!isMounted()) return;
-        setFeaturedServices(productsRes.value.data.products.slice(0, 6));
+        setFeaturedServices((productsRes.value.data as any).products.slice(0, 6));
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -162,7 +168,7 @@ const HealthcarePage: React.FC = () => {
   const handleQuickCall = (phone: string) => {
     try {
       Linking.openURL(`tel:${phone}`);
-    } catch (e) {
+    } catch (e: any) {
       catchAndWarn(e, 'Healthcare/openURL');
     }
   };
@@ -339,11 +345,7 @@ const HealthcarePage: React.FC = () => {
                       router.push(route as any);
                     }}
                   >
-                    <CachedImage
-                      source={service.images?.[0] || undefined}
-                      style={styles.serviceImage}
-                      accessible={false}
-                    />
+                    <CachedImage source={service.images?.[0] || ''} style={styles.serviceImage} />
                     {cashback > 0 && (
                       <View style={styles.cashbackBadge}>
                         <Text style={styles.cashbackText}>{cashback}% CB</Text>
@@ -572,7 +574,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.md,
   },
   viewAllText: {
@@ -603,7 +605,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
     textAlign: 'center',
   },
@@ -672,7 +674,7 @@ const styles = StyleSheet.create({
   serviceName: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
     minHeight: 32,
   },

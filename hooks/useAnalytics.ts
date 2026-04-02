@@ -28,7 +28,7 @@ export const useAnalytics = () => {
         ...eventData,
         location: currentLocation ? {
           coordinates: [currentLocation.coordinates.longitude, currentLocation.coordinates.latitude] as [number, number],
-          address: currentLocation.address
+          address: typeof currentLocation.address === 'string' ? currentLocation.address : (currentLocation.address as any)?.city || undefined
         } : undefined
       };
 
@@ -37,7 +37,7 @@ export const useAnalytics = () => {
         eventType,
         eventData: enrichedEventData
       });
-    } catch (error) {
+    } catch (error: any) {
       // Don't throw error to avoid breaking user experience
     }
   }, [currentLocation]);

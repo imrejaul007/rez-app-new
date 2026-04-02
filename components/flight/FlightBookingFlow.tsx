@@ -272,11 +272,11 @@ const FlightBookingFlow: React.FC<FlightBookingFlowProps> = ({
         // Add booking ID and number from API response
         const bookingResponse: BookingData = {
           ...bookingData,
-          bookingId: response.data._id || response.data.id,
+          bookingId: (response.data as any)._id || (response.data as any).id,
           bookingNumber: response.data.bookingNumber,
         };
         // Pass payment requirement info for travel bookings
-        (bookingResponse as any).requiresPayment = response.requiresPayment || response.data?.requiresPaymentUpfront;
+        (bookingResponse as any).requiresPayment = (response as any).requiresPayment || response.data?.requiresPaymentUpfront;
         (bookingResponse as any).totalAmount = getTotalPrice();
         onComplete(bookingResponse);
       } else {
@@ -527,7 +527,7 @@ const FlightBookingFlow: React.FC<FlightBookingFlowProps> = ({
             onPress={() => setFlightClass(cls)}
           >
             <View style={styles.classOptionContent}>
-              <Text style={[styles.className, flightClass === cls && styles.classNameActive]}>
+              <Text style={[styles.className, flightClass === cls ? styles.classNameActive : null]}>
                 {cls.charAt(0).toUpperCase() + cls.slice(1)}
               </Text>
               <Text style={styles.classPrice}>

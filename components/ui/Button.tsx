@@ -134,11 +134,11 @@ function Button({
 
   // LUCA: Animated style for scale transform
   const animatedButtonStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scaleAnim }],
+    transform: [{ scale: scaleAnim.value }],
   }));
 
   return (
-    <Animated.View style={animatedButtonStyle}>
+    <Animated.View style={animatedButtonStyle as any}>
       <Pressable
         style={[containerStyle, style]}
         onPress={handlePress}

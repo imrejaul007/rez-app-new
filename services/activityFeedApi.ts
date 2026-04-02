@@ -283,7 +283,7 @@ export async function getSuggestedUsers(limit: number = 10): Promise<UserProfile
  */
 export async function shareActivity(activityId: string): Promise<void> {
   try {
-    await apiClient.post(`${API_PREFIX}/social/activities/${activityId}/share`);
+    await apiClient.post<any>(`${API_PREFIX}/social/activities/${activityId}/share`);
   } catch (error: any) {
     throw new Error(error.response?.data?.error || 'Failed to share activity');
   }

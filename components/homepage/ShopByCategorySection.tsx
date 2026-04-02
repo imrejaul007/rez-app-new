@@ -183,7 +183,7 @@ const ShopByCategorySection: React.FC = () => {
             setTotalCategories(allResponse.data.length);
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         // Keep using fallback data
       } finally {
         if (!isMounted()) return;
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,

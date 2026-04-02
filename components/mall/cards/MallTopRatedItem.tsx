@@ -65,7 +65,7 @@ const MallTopRatedItem: React.FC<MallTopRatedItemProps> = ({
       onPress={() => onPress(brand)}
      
     >
-      <View style={[styles.card, isTopThree && styles.topThreeCard]}>
+      <View style={[styles.card, isTopThree ? styles.topThreeCard : null]}>
         {/* Rank Badge */}
         {rank > 0 && (
           <View style={styles.rankBadgeContainer}>
@@ -92,7 +92,7 @@ const MallTopRatedItem: React.FC<MallTopRatedItemProps> = ({
         )}
 
         {/* Logo */}
-        <View style={[styles.logoContainer, isTopThree && styles.topThreeLogoContainer]}>
+        <View style={[styles.logoContainer, isTopThree ? styles.topThreeLogoContainer : null]}>
           {!imageError && brand.logo ? (
             <CachedImage
               source={brand.logo}
@@ -117,7 +117,7 @@ const MallTopRatedItem: React.FC<MallTopRatedItemProps> = ({
             <Text style={styles.brandName} numberOfLines={1}>
               {brand.name}
             </Text>
-            {brand.isVerified && (
+            {(brand as any).isVerified && (
               <View style={styles.verifiedBadge}>
                 <Ionicons name="checkmark-circle" size={14} color={colors.brand.sky} />
               </View>

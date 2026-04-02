@@ -321,7 +321,7 @@ function PaymentMethodsManagementPage() {
       if (!isMounted()) return;
       setModalMode(null);
       resetForm();
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setFormError('Failed to save payment method. Please try again.');
     } finally {
@@ -331,24 +331,21 @@ function PaymentMethodsManagementPage() {
   };
 
   const handleDeletePaymentMethod = (method: PaymentMethod) => {
-    const methodName = method.type === PaymentMethodType.CARD
-      ? `Card ending ${method.card?.lastFourDigits}`
-      : method.type === PaymentMethodType.UPI
-      ? method.upi?.vpa
-      : method.type === PaymentMethodType.BANK_ACCOUNT
-      ? `Bank account ${method.bankAccount?.bankName}`
-      : 'Payment method';
+    const methodName =
+      method.type === PaymentMethodType.CARD
+        ? `Card ending ${method.card?.lastFourDigits}`
+        : method.type === PaymentMethodType.UPI
+          ? method.upi?.vpa
+          : method.type === PaymentMethodType.BANK_ACCOUNT
+            ? `Bank account ${method.bankAccount?.bankName}`
+            : 'Payment method';
 
-    platformAlertDestructive(
-      'Delete Payment Method',
-      `Are you sure you want to delete ${methodName}?`,
-      async () => {
-        const success = await deletePaymentMethod(method.id);
-        if (success) {
-          platformAlertSimple('Success', 'Payment method deleted');
-        }
+    platformAlertDestructive('Delete Payment Method', `Are you sure you want to delete ${methodName}?`, async () => {
+      const success = await deletePaymentMethod(method.id);
+      if (success) {
+        platformAlertSimple('Success', 'Payment method deleted');
       }
-    );
+    });
   };
 
   const handleSetDefault = async (method: PaymentMethod) => {
@@ -376,21 +373,31 @@ function PaymentMethodsManagementPage() {
 
   const getCardBrandIcon = (brand?: CardBrand): string => {
     switch (brand) {
-      case CardBrand.VISA: return 'card';
-      case CardBrand.MASTERCARD: return 'card';
-      case CardBrand.AMEX: return 'card';
-      case CardBrand.RUPAY: return 'card';
-      default: return 'card-outline';
+      case CardBrand.VISA:
+        return 'card';
+      case CardBrand.MASTERCARD:
+        return 'card';
+      case CardBrand.AMEX:
+        return 'card';
+      case CardBrand.RUPAY:
+        return 'card';
+      default:
+        return 'card-outline';
     }
   };
 
   const getCardBrandColor = (brand?: CardBrand): string => {
     switch (brand) {
-      case CardBrand.VISA: return '#1A365D';
-      case CardBrand.MASTERCARD: return '#EB001B';
-      case CardBrand.AMEX: return '#006FCF';
-      case CardBrand.RUPAY: return '#097969';
-      default: return colors.neutral[500];
+      case CardBrand.VISA:
+        return '#1A365D';
+      case CardBrand.MASTERCARD:
+        return '#EB001B';
+      case CardBrand.AMEX:
+        return '#006FCF';
+      case CardBrand.RUPAY:
+        return '#097969';
+      default:
+        return colors.neutral[500];
     }
   };
 
@@ -400,26 +407,15 @@ function PaymentMethodsManagementPage() {
       const cardLabel = `${method.card.brand} card ending ${method.card.lastFourDigits}. Expires ${method.card.expiryMonth}/${method.card.expiryYear}. ${method.card.cardholderName}${method.card.nickname ? '. ' + method.card.nickname : ''}${method.isDefault ? '. Default payment method' : ''}`;
 
       return (
-        <View
-          key={method.id}
-          style={styles.paymentCard}
-          accessibilityRole="summary"
-          accessibilityLabel={cardLabel}
-        >
+        <View key={method.id} style={styles.paymentCard} accessibilityRole="summary" accessibilityLabel={cardLabel}>
           <View style={styles.cardHeader}>
             <View style={styles.cardIconRow}>
               <View style={[styles.cardIcon, { backgroundColor: `${brandColor}20` }]}>
-                <Ionicons
-                  name={getCardBrandIcon(method.card.brand) as any}
-                  size={24}
-                  color={brandColor}
-                />
+                <Ionicons name={getCardBrandIcon(method.card.brand) as any} size={24} color={brandColor} />
               </View>
               <View style={styles.cardInfo}>
                 <ThemedText style={styles.cardBrand}>{method.card.brand}</ThemedText>
-                <ThemedText style={styles.cardNumber}>
-                  •••• {method.card.lastFourDigits}
-                </ThemedText>
+                <ThemedText style={styles.cardNumber}>•••• {method.card.lastFourDigits}</ThemedText>
               </View>
             </View>
 
@@ -436,9 +432,7 @@ function PaymentMethodsManagementPage() {
             <ThemedText style={styles.cardExpiry}>
               Expires: {method.card.expiryMonth}/{method.card.expiryYear}
             </ThemedText>
-            {method.card.nickname && (
-              <ThemedText style={styles.cardNickname}>{method.card.nickname}</ThemedText>
-            )}
+            {method.card.nickname && <ThemedText style={styles.cardNickname}>{method.card.nickname}</ThemedText>}
           </View>
 
           <View style={styles.cardActions}>
@@ -483,12 +477,7 @@ function PaymentMethodsManagementPage() {
       const upiLabel = `UPI ${method.upi.vpa}${method.upi.nickname ? '. ' + method.upi.nickname : ''}${method.isDefault ? '. Default payment method' : ''}`;
 
       return (
-        <View
-          key={method.id}
-          style={styles.paymentCard}
-          accessibilityRole="summary"
-          accessibilityLabel={upiLabel}
-        >
+        <View key={method.id} style={styles.paymentCard} accessibilityRole="summary" accessibilityLabel={upiLabel}>
           <View style={styles.cardHeader}>
             <View style={styles.cardIconRow}>
               <View style={[styles.cardIcon, { backgroundColor: '#F59E0B20' }]}>
@@ -558,12 +547,7 @@ function PaymentMethodsManagementPage() {
       const bankLabel = `${method.bankAccount.bankName} ${method.bankAccount.accountType} account ending ${accountNumberDisplay}. IFSC ${method.bankAccount.ifscCode}${method.bankAccount.nickname ? '. ' + method.bankAccount.nickname : ''}${method.isDefault ? '. Default payment method' : ''}`;
 
       return (
-        <View
-          key={method.id}
-          style={styles.paymentCard}
-          accessibilityRole="summary"
-          accessibilityLabel={bankLabel}
-        >
+        <View key={method.id} style={styles.paymentCard} accessibilityRole="summary" accessibilityLabel={bankLabel}>
           <View style={styles.cardHeader}>
             <View style={styles.cardIconRow}>
               <View style={[styles.cardIcon, { backgroundColor: '#3B82F620' }]}>
@@ -571,9 +555,7 @@ function PaymentMethodsManagementPage() {
               </View>
               <View style={styles.cardInfo}>
                 <ThemedText style={styles.cardBrand}>{method.bankAccount.bankName}</ThemedText>
-                <ThemedText style={styles.cardNumber}>
-                  •••• {accountNumberDisplay}
-                </ThemedText>
+                <ThemedText style={styles.cardNumber}>•••• {accountNumberDisplay}</ThemedText>
               </View>
             </View>
 
@@ -645,7 +627,7 @@ function PaymentMethodsManagementPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"
@@ -720,24 +702,14 @@ function PaymentMethodsManagementPage() {
           <View style={styles.emptyContainer}>
             <Ionicons name="card-outline" size={64} color={colors.border.default} />
             <ThemedText style={styles.emptyText}>No payment methods saved</ThemedText>
-            <ThemedText style={styles.emptySubtext}>
-              Add a payment method to make checkout faster
-            </ThemedText>
+            <ThemedText style={styles.emptySubtext}>Add a payment method to make checkout faster</ThemedText>
           </View>
         )}
       </ScrollView>
 
       {/* Add/Edit Modal */}
-      <Modal
-        visible={modalMode !== null}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalMode(null)}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+      <Modal visible={modalMode !== null} transparent animationType="slide" onRequestClose={() => setModalMode(null)}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>
@@ -752,10 +724,7 @@ function PaymentMethodsManagementPage() {
               {modalMode === 'add' && (
                 <View style={styles.typeSelector}>
                   <Pressable
-                    style={[
-                      styles.typeOption,
-                      selectedType === PaymentMethodType.CARD && styles.typeOptionActive,
-                    ]}
+                    style={[styles.typeOption, selectedType === PaymentMethodType.CARD && styles.typeOptionActive]}
                     onPress={() => setSelectedType(PaymentMethodType.CARD)}
                   >
                     <Ionicons
@@ -773,10 +742,7 @@ function PaymentMethodsManagementPage() {
                     </ThemedText>
                   </Pressable>
                   <Pressable
-                    style={[
-                      styles.typeOption,
-                      selectedType === PaymentMethodType.UPI && styles.typeOptionActive,
-                    ]}
+                    style={[styles.typeOption, selectedType === PaymentMethodType.UPI && styles.typeOptionActive]}
                     onPress={() => setSelectedType(PaymentMethodType.UPI)}
                   >
                     <Ionicons
@@ -832,10 +798,7 @@ function PaymentMethodsManagementPage() {
                       <ThemedText style={styles.label}>Card Type *</ThemedText>
                       <View style={styles.cardTypeSelector}>
                         <Pressable
-                          style={[
-                            styles.cardTypeOption,
-                            cardType === CardType.CREDIT && styles.cardTypeOptionActive,
-                          ]}
+                          style={[styles.cardTypeOption, cardType === CardType.CREDIT && styles.cardTypeOptionActive]}
                           onPress={() => setCardType(CardType.CREDIT)}
                         >
                           <ThemedText
@@ -848,10 +811,7 @@ function PaymentMethodsManagementPage() {
                           </ThemedText>
                         </Pressable>
                         <Pressable
-                          style={[
-                            styles.cardTypeOption,
-                            cardType === CardType.DEBIT && styles.cardTypeOptionActive,
-                          ]}
+                          style={[styles.cardTypeOption, cardType === CardType.DEBIT && styles.cardTypeOptionActive]}
                           onPress={() => setCardType(CardType.DEBIT)}
                         >
                           <ThemedText
@@ -1048,7 +1008,7 @@ function PaymentMethodsManagementPage() {
               )}
 
               <Pressable
-                style={[styles.saveButton, actionLoading && styles.saveButtonDisabled]}
+                style={[styles.saveButton, actionLoading ? styles.saveButtonDisabled : null]}
                 onPress={handleSavePaymentMethod}
                 disabled={actionLoading}
               >
@@ -1065,7 +1025,7 @@ function PaymentMethodsManagementPage() {
         </KeyboardAvoidingView>
       </Modal>
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({

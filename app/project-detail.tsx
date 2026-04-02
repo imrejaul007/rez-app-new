@@ -1,17 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect,  useLayoutEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Platform,
-  TextInput
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming } from 'react-native-reanimated';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, Platform, TextInput } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -122,7 +112,8 @@ function ProjectDetailPage() {
   // Hide the default navigation header
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: false });
+      headerShown: false,
+    });
   }, [navigation]);
   const isMounted = useIsMounted();
 
@@ -135,7 +126,12 @@ function ProjectDetailPage() {
     if (autoOpenForm && project && !loading && isAuthenticated) {
       // Auto-open form - allow editing if user has a pending or under_review submission
       // Don't auto-open if submission is approved (user can view it instead)
-      if (!userSubmission || userSubmission.status === 'pending' || userSubmission.status === 'under_review' || userSubmission.status === 'rejected') {
+      if (
+        !userSubmission ||
+        userSubmission.status === 'pending' ||
+        userSubmission.status === 'under_review' ||
+        userSubmission.status === 'rejected'
+      ) {
         setShowSubmissionForm(true);
       }
     }
@@ -144,15 +140,13 @@ function ProjectDetailPage() {
   const loadProject = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get<{ project: Project; similarProjects?: Project[] }>(
-        `/projects/${projectId}`
-      );
+      const response = await apiClient.get<{ project: Project; similarProjects?: Project[] }>(`/projects/${projectId}`);
 
       if (response.success && response.data) {
-        const projectData = response.data.project || response.data as any;
+        const projectData = response.data.project || (response.data as any);
         if (!isMounted()) return;
         setProject(projectData);
-        
+
         // Check if user has a submission for this project
         if (isAuthenticated && user?.id && projectData.submissions) {
           const submission = projectData.submissions.find((sub: ProjectSubmission) => {
@@ -165,13 +159,13 @@ function ProjectDetailPage() {
           if (!isMounted()) return;
           setUserSubmission(null);
         }
-        
+
         fadeAnim.value = withTiming(1, { duration: 500 });
         slideAnim.value = withTiming(0, { duration: 500 });
       } else {
         throw new Error('Failed to load project');
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to load project details');
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } finally {
@@ -196,24 +190,25 @@ function ProjectDetailPage() {
         projectId,
         content: data.content,
         contentType: data.contentType,
-        metadata: data.metadata });
+        metadata: data.metadata,
+      });
 
       if (response.success) {
         // Check if this was an update or new submission
         const isUpdate = userSubmission !== null;
-        const message = isUpdate 
+        const message = isUpdate
           ? userSubmission?.status === 'rejected'
             ? 'Your submission has been updated and resubmitted! It is now under review.'
             : 'Your submission has been updated successfully!'
           : 'Your submission has been received and is under review!';
-        
+
         alertOk('Success', message);
         setShowSubmissionForm(false);
         loadProject(); // Reload to show updated status
       } else {
         throw new Error('Failed to submit project');
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to submit project. Please try again.');
     } finally {
       setSubmitting(false);
@@ -271,7 +266,10 @@ function ProjectDetailPage() {
         <View style={styles.centerContainer}>
           <Ionicons name="alert-circle" size={48} color={Colors.error} />
           <ThemedText style={styles.errorText}>Project not found</ThemedText>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
           </Pressable>
         </View>
@@ -286,15 +284,12 @@ function ProjectDetailPage() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <Animated.View
-          style={contentAnimStyle}
-        >
+        <Animated.View style={contentAnimStyle}>
           {/* Header */}
           <View style={styles.header}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               accessible={true}
               accessibilityLabel="Go back"
               accessibilityRole="button"
@@ -302,16 +297,15 @@ function ProjectDetailPage() {
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
-            <ThemedText style={styles.headerTitle} accessible={true} accessibilityRole="header">Project Details</ThemedText>
+            <ThemedText style={styles.headerTitle} accessible={true} accessibilityRole="header">
+              Project Details
+            </ThemedText>
             <View style={styles.headerRight} />
           </View>
 
           {/* Project Card */}
           <View style={styles.projectCard}>
-            <LinearGradient
-              colors={[colors.background.primary, colors.neutral[50]]}
-              style={styles.cardGradient}
-            >
+            <LinearGradient colors={[colors.background.primary, colors.neutral[50]]} style={styles.cardGradient}>
               {/* Title */}
               <View style={styles.titleRow}>
                 <ThemedText style={styles.projectTitle}>{project.title}</ThemedText>
@@ -326,30 +320,21 @@ function ProjectDetailPage() {
               {/* Meta Info */}
               <View style={styles.metaRow}>
                 <View
-                  style={[
-                    styles.difficultyBadge,
-                    { backgroundColor: `${getDifficultyColor(project.difficulty)}20` },
-                  ]}
+                  style={[styles.difficultyBadge, { backgroundColor: `${getDifficultyColor(project.difficulty)}20` }]}
                 >
-                  <ThemedText
-                    style={[
-                      styles.difficultyText,
-                      { color: getDifficultyColor(project.difficulty) },
-                    ]}
-                  >
+                  <ThemedText style={[styles.difficultyText, { color: getDifficultyColor(project.difficulty) }]}>
                     {project.difficulty}
                   </ThemedText>
                 </View>
                 <View style={styles.metaItem}>
                   <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-                  <ThemedText style={styles.metaText}>
-                    {project.estimatedTime || 0} min
-                  </ThemedText>
+                  <ThemedText style={styles.metaText}>{project.estimatedTime || 0} min</ThemedText>
                 </View>
                 <View style={styles.metaItem}>
                   <Ionicons name="cash" size={16} color={Colors.success} />
                   <ThemedText style={styles.rewardText}>
-                    {currencySymbol}{project.reward?.amount || 0}
+                    {currencySymbol}
+                    {project.reward?.amount || 0}
                   </ThemedText>
                 </View>
               </View>
@@ -364,9 +349,7 @@ function ProjectDetailPage() {
                   {project.instructions.map((instruction, index) => (
                     <View key={index} style={styles.instructionItem}>
                       <View style={styles.instructionNumber}>
-                        <ThemedText style={styles.instructionNumberText}>
-                          {index + 1}
-                        </ThemedText>
+                        <ThemedText style={styles.instructionNumberText}>{index + 1}</ThemedText>
                       </View>
                       <ThemedText style={styles.instructionText}>{instruction}</ThemedText>
                     </View>
@@ -395,23 +378,17 @@ function ProjectDetailPage() {
                   <View style={styles.statsRow}>
                     <View style={styles.statItem}>
                       <Ionicons name="eye-outline" size={20} color={colors.text.tertiary} />
-                      <ThemedText style={styles.statValue}>
-                        {project.analytics.totalViews || 0}
-                      </ThemedText>
+                      <ThemedText style={styles.statValue}>{project.analytics.totalViews || 0}</ThemedText>
                       <ThemedText style={styles.statLabel}>Views</ThemedText>
                     </View>
                     <View style={styles.statItem}>
                       <Ionicons name="document-text-outline" size={20} color={colors.text.tertiary} />
-                      <ThemedText style={styles.statValue}>
-                        {project.analytics.totalSubmissions || 0}
-                      </ThemedText>
+                      <ThemedText style={styles.statValue}>{project.analytics.totalSubmissions || 0}</ThemedText>
                       <ThemedText style={styles.statLabel}>Submissions</ThemedText>
                     </View>
                     <View style={styles.statItem}>
                       <Ionicons name="checkmark-circle-outline" size={20} color={Colors.success} />
-                      <ThemedText style={styles.statValue}>
-                        {project.analytics.approvedSubmissions || 0}
-                      </ThemedText>
+                      <ThemedText style={styles.statValue}>{project.analytics.approvedSubmissions || 0}</ThemedText>
                       <ThemedText style={styles.statLabel}>Approved</ThemedText>
                     </View>
                   </View>
@@ -422,42 +399,40 @@ function ProjectDetailPage() {
               {userSubmission && (
                 <View style={styles.submissionStatusContainer}>
                   <View style={[styles.statusBadge, { backgroundColor: getStatusColor(userSubmission.status) }]}>
-                    <Ionicons 
+                    <Ionicons
                       name={
-                        userSubmission.status === 'approved' ? 'checkmark-circle' :
-                        userSubmission.status === 'rejected' ? 'close-circle' :
-                        userSubmission.status === 'under_review' ? 'time' :
-                        'hourglass'
-                      } 
-                      size={16} 
-                      color={colors.text.inverse} 
+                        userSubmission.status === 'approved'
+                          ? 'checkmark-circle'
+                          : userSubmission.status === 'rejected'
+                            ? 'close-circle'
+                            : userSubmission.status === 'under_review'
+                              ? 'time'
+                              : 'hourglass'
+                      }
+                      size={16}
+                      color={colors.text.inverse}
                     />
-                    <ThemedText style={styles.statusBadgeText}>
-                      {getStatusLabel(userSubmission.status)}
-                    </ThemedText>
+                    <ThemedText style={styles.statusBadgeText}>{getStatusLabel(userSubmission.status)}</ThemedText>
                   </View>
                   {userSubmission.reviewComments && (
                     <View style={styles.reviewCommentsContainer}>
                       <ThemedText style={styles.reviewCommentsLabel}>Review Feedback:</ThemedText>
-                      <ThemedText style={styles.reviewCommentsText}>
-                        {userSubmission.reviewComments}
-                      </ThemedText>
+                      <ThemedText style={styles.reviewCommentsText}>{userSubmission.reviewComments}</ThemedText>
                     </View>
                   )}
                   {/* Only show quality score if submission has been reviewed (approved or rejected) and score is > 0 */}
                   {/* Do NOT show quality score for pending or under_review submissions */}
                   {(() => {
-                    const shouldShow = (userSubmission.status === 'approved' || userSubmission.status === 'rejected') &&
-                                      userSubmission.qualityScore !== undefined && 
-                                      userSubmission.qualityScore !== null && 
-                                      typeof userSubmission.qualityScore === 'number' &&
-                                      userSubmission.qualityScore > 0;
+                    const shouldShow =
+                      (userSubmission.status === 'approved' || userSubmission.status === 'rejected') &&
+                      userSubmission.qualityScore !== undefined &&
+                      userSubmission.qualityScore !== null &&
+                      typeof userSubmission.qualityScore === 'number' &&
+                      userSubmission.qualityScore > 0;
                     return shouldShow ? (
                       <View style={styles.qualityScoreContainer}>
                         <ThemedText style={styles.qualityScoreLabel}>Quality Score:</ThemedText>
-                        <ThemedText style={styles.qualityScoreText}>
-                          {userSubmission.qualityScore}/10
-                        </ThemedText>
+                        <ThemedText style={styles.qualityScoreText}>{userSubmission.qualityScore}/10</ThemedText>
                       </View>
                     ) : null;
                   })()}
@@ -465,7 +440,8 @@ function ProjectDetailPage() {
                     <View style={styles.paidAmountContainer}>
                       <Ionicons name="cash" size={16} color={Colors.success} />
                       <ThemedText style={styles.paidAmountText}>
-                        Paid: {currencySymbol}{userSubmission.paidAmount}
+                        Paid: {currencySymbol}
+                        {userSubmission.paidAmount}
                       </ThemedText>
                     </View>
                   )}
@@ -481,9 +457,14 @@ function ProjectDetailPage() {
                     setShowSubmissionForm(false);
                   }}
                   submitting={submitting}
-                  existingSubmission={userSubmission ? {
-                    content: userSubmission.content,
-                    status: userSubmission.status } : undefined}
+                  existingSubmission={
+                    userSubmission
+                      ? {
+                          content: userSubmission.content,
+                          status: userSubmission.status,
+                        }
+                      : undefined
+                  }
                 />
               ) : (
                 <View>
@@ -505,39 +486,49 @@ function ProjectDetailPage() {
                     accessible={true}
                     accessibilityLabel={
                       userSubmission
-                        ? userSubmission.status === 'approved' ? 'View Submission' :
-                          userSubmission.status === 'rejected' ? 'Edit and Resubmit Project' :
-                          'Edit Submission'
+                        ? userSubmission.status === 'approved'
+                          ? 'View Submission'
+                          : userSubmission.status === 'rejected'
+                            ? 'Edit and Resubmit Project'
+                            : 'Edit Submission'
                         : 'Start Project'
                     }
                     accessibilityRole="button"
                     accessibilityHint={
                       userSubmission
-                        ? userSubmission.status === 'approved' ? 'View your approved submission' :
-                          userSubmission.status === 'rejected' ? 'Edit and resubmit your rejected submission' :
-                          'Edit your pending submission'
+                        ? userSubmission.status === 'approved'
+                          ? 'View your approved submission'
+                          : userSubmission.status === 'rejected'
+                            ? 'Edit and resubmit your rejected submission'
+                            : 'Edit your pending submission'
                         : `Start working on ${project.title}`
                     }
                   >
-                    <Ionicons 
+                    <Ionicons
                       name={
-                        userSubmission 
-                          ? userSubmission.status === 'approved' ? 'checkmark-circle' :
-                            userSubmission.status === 'rejected' ? 'refresh' : 'time'
+                        userSubmission
+                          ? userSubmission.status === 'approved'
+                            ? 'checkmark-circle'
+                            : userSubmission.status === 'rejected'
+                              ? 'refresh'
+                              : 'time'
                           : 'send'
-                      } 
-                      size={20} 
-                      color={colors.text.inverse} 
+                      }
+                      size={20}
+                      color={colors.text.inverse}
                     />
                     <ThemedText style={styles.submitButtonText}>
-                      {userSubmission 
-                        ? userSubmission.status === 'approved' ? 'View Submission' :
-                          userSubmission.status === 'rejected' ? 'Edit & Resubmit' :
-                          userSubmission.status === 'under_review' ? 'Edit Submission' :
-                          userSubmission.status === 'pending' ? 'Edit Submission' :
-                          'Edit Submission'
-                        : 'Start Project'
-                      }
+                      {userSubmission
+                        ? userSubmission.status === 'approved'
+                          ? 'View Submission'
+                          : userSubmission.status === 'rejected'
+                            ? 'Edit & Resubmit'
+                            : userSubmission.status === 'under_review'
+                              ? 'Edit Submission'
+                              : userSubmission.status === 'pending'
+                                ? 'Edit Submission'
+                                : 'Edit Submission'
+                        : 'Start Project'}
                     </ThemedText>
                   </Pressable>
                   {userSubmission && (
@@ -548,7 +539,9 @@ function ProjectDetailPage() {
                           pathname: '/submission-detail',
                           params: {
                             submissionId: userSubmission._id,
-                            projectId: projectId } } as any);
+                            projectId: projectId,
+                          },
+                        } as any);
                       }}
                       accessible={true}
                       accessibilityLabel="View full submission details"
@@ -556,9 +549,7 @@ function ProjectDetailPage() {
                       accessibilityHint={`View complete details of your ${userSubmission.status} submission`}
                     >
                       <Ionicons name="eye-outline" size={18} color={Colors.brand.purple} />
-                      <ThemedText style={styles.viewSubmissionButtonText}>
-                        View Full Submission
-                      </ThemedText>
+                      <ThemedText style={styles.viewSubmissionButtonText}>View Full Submission</ThemedText>
                     </Pressable>
                   )}
                 </View>
@@ -574,25 +565,31 @@ function ProjectDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
-    paddingBottom: 40 },
+    paddingBottom: 40,
+  },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 40 },
+    paddingHorizontal: 40,
+  },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.error },
+    color: Colors.error,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -601,97 +598,118 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.base,
     backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.default },
+    borderBottomColor: colors.border.default,
+  },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   headerTitle: {
     ...Typography.h3,
     fontWeight: '800',
     color: colors.text.primary,
-    letterSpacing: -0.5 },
+    letterSpacing: -0.5,
+  },
   headerRight: {
-    width: 40 },
+    width: 40,
+  },
   backButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
     color: Colors.brand.purple,
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   projectCard: {
     margin: Spacing.lg,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    ...Shadows.strong },
+    ...Shadows.strong,
+  },
   cardGradient: {
-    padding: Spacing.lg },
+    padding: Spacing.lg,
+  },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   projectTitle: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.text.primary,
     flex: 1,
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   featuredBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.warningScale[50],
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   featuredText: {
     ...Typography.caption,
     fontWeight: '700',
     color: Colors.warning,
-    marginLeft: Spacing.xs },
+    marginLeft: Spacing.xs,
+  },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.lg,
-    flexWrap: 'wrap' },
+    flexWrap: 'wrap',
+  },
   difficultyBadge: {
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.md,
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   difficultyText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    textTransform: 'capitalize' },
+    textTransform: 'capitalize',
+  },
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: Spacing.base },
+    marginRight: Spacing.base,
+  },
   metaText: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginLeft: 6 },
+    marginLeft: 6,
+  },
   rewardText: {
     ...Typography.bodyLarge,
     fontWeight: '800',
     color: Colors.success,
-    marginLeft: 6 },
+    marginLeft: 6,
+  },
   description: {
     ...Typography.bodyLarge,
     color: colors.text.secondary,
     lineHeight: 24,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   section: {
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '800',
     color: colors.text.primary,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   instructionItem: {
     flexDirection: 'row',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   instructionNumber: {
     width: 28,
     height: 28,
@@ -699,54 +717,65 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand.purple,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   instructionNumberText: {
     ...Typography.body,
     fontWeight: '800',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   instructionText: {
     flex: 1,
     ...Typography.body,
     fontSize: 15,
     color: colors.text.secondary,
-    lineHeight: 22 },
+    lineHeight: 22,
+  },
   tagsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap' },
+    flexWrap: 'wrap',
+  },
   tag: {
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
     backgroundColor: colors.indigoMist,
     marginRight: Spacing.sm,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   tagText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.brand.purple },
+    color: Colors.brand.purple,
+  },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: Spacing.base,
     backgroundColor: colors.background.secondary,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   statItem: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   statValue: {
     ...Typography.h3,
     fontWeight: '800',
     color: colors.text.primary,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   statLabel: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
   submissionStatusContainer: {
     marginTop: Spacing.lg,
     padding: Spacing.base,
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -755,38 +784,46 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
     gap: 6,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   statusBadgeText: {
     ...Typography.body,
     fontWeight: '700',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   reviewCommentsContainer: {
     marginTop: Spacing.md,
     padding: Spacing.md,
     backgroundColor: colors.background.secondary,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   reviewCommentsLabel: {
     ...Typography.bodySmall,
     fontWeight: '700',
     color: colors.text.tertiary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   reviewCommentsText: {
     ...Typography.body,
     color: colors.text.primary,
-    lineHeight: 20 },
+    lineHeight: 20,
+  },
   qualityScoreContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: Spacing.sm,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   qualityScoreLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   qualityScoreText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.brand.purple },
+    color: Colors.brand.purple,
+  },
   paidAmountContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -794,13 +831,16 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
     backgroundColor: Colors.successScale[50],
     borderRadius: BorderRadius.sm,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   paidAmountText: {
     ...Typography.body,
     fontWeight: '700',
-    color: colors.successScale[700] },
+    color: colors.successScale[700],
+  },
   submissionForm: {
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   submitButton: {
     flex: 1,
     flexDirection: 'row',
@@ -809,13 +849,16 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.brand.purple,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   submitButtonDisabled: {
-    opacity: 0.6 },
+    opacity: 0.6,
+  },
   submitButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   viewSubmissionButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -824,11 +867,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.md,
     backgroundColor: colors.indigoMist,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   viewSubmissionButtonText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.brand.purple } });
-
+    color: Colors.brand.purple,
+  },
+});
 
 export default withErrorBoundary(ProjectDetailPage, 'ProjectDetail');

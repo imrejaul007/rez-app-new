@@ -1,15 +1,9 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // StoreQuickInfoCard.tsx - Store info card with description, hours, location
-import React from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  Linking,
-  Platform,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import React from 'react';
+import { View, Pressable, StyleSheet, Linking, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
 import { catchAndWarn } from '@/utils/catchAndReport';
 
@@ -107,10 +101,18 @@ function StoreQuickInfoCard({
         android: `google.navigation:q=${location.coordinates.lat},${location.coordinates.lng}`,
         default: `https://www.google.com/maps/dir/?api=1&destination=${location.coordinates.lat},${location.coordinates.lng}`,
       });
-      try { Linking.openURL(url); } catch (e) { catchAndWarn(e, 'StoreQuickInfoCard/openURL'); }
+      try {
+        Linking.openURL(url);
+      } catch (e: any) {
+        catchAndWarn(e, 'StoreQuickInfoCard/openURL');
+      }
     } else if (formattedAddress) {
       const encodedAddress = encodeURIComponent(formattedAddress);
-      try { Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`); } catch (e) { catchAndWarn(e, 'StoreQuickInfoCard/openURL'); }
+      try {
+        Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`);
+      } catch (e: any) {
+        catchAndWarn(e, 'StoreQuickInfoCard/openURL');
+      }
     }
   };
 
@@ -164,11 +166,7 @@ function StoreQuickInfoCard({
               {formattedAddress}
             </ThemedText>
           </View>
-          <Pressable
-            style={styles.openButton}
-            onPress={handleOpenMaps}
-           
-          >
+          <Pressable style={styles.openButton} onPress={handleOpenMaps}>
             <View style={styles.openDot} />
             <ThemedText style={styles.openButtonText}>Open</ThemedText>
           </Pressable>
@@ -186,23 +184,23 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 12,
     // Shadow
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.04)",
+    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
   headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     marginBottom: 6,
   },
   storeName: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.nileBlue,
     flex: 1,
   },
@@ -216,8 +214,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     marginBottom: 12,
   },
@@ -226,25 +224,25 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
   },
   openText: {
-    color: "#00875A",
-    fontWeight: "600",
+    color: '#00875A',
+    fontWeight: '600',
   },
   closedText: {
     color: colors.error,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: colors.neutral[50],
     borderRadius: 12,
     padding: 12,
     gap: 12,
   },
   locationInfo: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     flex: 1,
   },
@@ -254,8 +252,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   openButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
     backgroundColor: colors.background.primary,
     paddingHorizontal: 14,
@@ -272,7 +270,7 @@ const styles = StyleSheet.create({
   },
   openButtonText: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.lightMustard,
   },
 });

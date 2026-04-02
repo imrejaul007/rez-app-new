@@ -66,7 +66,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
       } else {
         platformAlertSimple('Error', 'Phone calls are not supported on this device');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open phone dialer');
     }
   };
@@ -83,7 +83,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
       } else {
         platformAlertSimple('Error', 'Email is not supported on this device');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open email app');
     }
   };
@@ -101,7 +101,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
       } else {
         platformAlertSimple('Error', 'WhatsApp is not installed on this device');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open WhatsApp');
     }
   };
@@ -121,7 +121,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
       } else {
         platformAlertSimple('Error', 'Cannot open website');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open website');
     }
   };
@@ -141,7 +141,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
       } else {
         platformAlertSimple('Error', `Cannot open ${platform}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', `Failed to open ${platform}`);
     }
   };
@@ -152,7 +152,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
     try {
       await Clipboard.setStringAsync(contact.address.fullAddress);
       platformAlertSimple('Success', 'Address copied to clipboard');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy address');
     }
   };
@@ -189,7 +189,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address.fullAddress)}`;
         await Linking.openURL(webUrl);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open maps');
     }
   };
@@ -207,7 +207,7 @@ const StoreContact: React.FC<StoreContactProps> = ({ contact, storeName }) => {
         message,
         title: `Contact - ${storeName}`,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

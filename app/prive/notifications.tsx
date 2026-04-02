@@ -1,9 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, SectionList,
-  RefreshControl, Pressable,
-} from 'react-native';
+import { View, Text, StyleSheet, SectionList, RefreshControl, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
@@ -40,13 +37,22 @@ function NotificationsScreen() {
         setNotifications(response.data.notifications || []);
         setCounts(response.data.counts || { critical: 0, warning: 0, info: 0 });
       }
-    } catch (e) { catchAndReport(e, setError, 'Notifications/fetchData'); }
-    finally { setIsLoading(false); setIsRefreshing(false); }
+    } catch (e: any) {
+      catchAndReport(e, setError, 'Notifications/fetchData');
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
   }, []);
 
   const isMounted = useIsMounted();
-  useEffect(() => { fetchData(); }, [fetchData]);
-  const onRefresh = () => { setIsRefreshing(true); fetchData(); };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+  };
 
   const getUrgencyColor = (urgency: string) => {
     if (urgency === 'critical') return PRIVE_COLORS.status.error;
@@ -65,26 +71,26 @@ function NotificationsScreen() {
     return icons[type] || '🔔';
   };
 
-  const renderNotificationItem = useCallback(({ item }: { item: NotificationItem }) => (
-    <Pressable
-      style={styles.notifCard}
-      onPress={() => item.deepLink && router.push(item.deepLink as any)}
-    >
-      <Text style={styles.notifIcon}>{getUrgencyIcon(item.type)}</Text>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.notifTitle}>{item.title}</Text>
-        <Text style={styles.notifMessage}>{item.message}</Text>
-      </View>
-      <View style={styles.notifRight}>
-        {item.daysRemaining != null && (
-          <Text style={[styles.countdown, { color: getUrgencyColor(item.urgency) }]}>
-            {item.daysRemaining <= 0 ? 'Today' : `${item.daysRemaining}d`}
-          </Text>
-        )}
-        {item.deepLink && <Text style={styles.arrow}>→</Text>}
-      </View>
-    </Pressable>
-  ), [router]);
+  const renderNotificationItem = useCallback(
+    ({ item }: { item: NotificationItem }) => (
+      <Pressable style={styles.notifCard} onPress={() => item.deepLink && router.push(item.deepLink as any)}>
+        <Text style={styles.notifIcon}>{getUrgencyIcon(item.type)}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.notifTitle}>{item.title}</Text>
+          <Text style={styles.notifMessage}>{item.message}</Text>
+        </View>
+        <View style={styles.notifRight}>
+          {item.daysRemaining != null && (
+            <Text style={[styles.countdown, { color: getUrgencyColor(item.urgency) }]}>
+              {item.daysRemaining <= 0 ? 'Today' : `${item.daysRemaining}d`}
+            </Text>
+          )}
+          {item.deepLink && <Text style={styles.arrow}>→</Text>}
+        </View>
+      </Pressable>
+    ),
+    [router],
+  );
 
   // Group by urgency timing
   const groupNotifications = () => {
@@ -92,7 +98,7 @@ function NotificationsScreen() {
     const thisWeek: NotificationItem[] = [];
     const later: NotificationItem[] = [];
 
-    notifications.forEach(n => {
+    notifications.forEach((n) => {
       if (n.daysRemaining != null && n.daysRemaining <= 1) today.push(n);
       else if (n.daysRemaining != null && n.daysRemaining <= 7) thisWeek.push(n);
       else later.push(n);
@@ -108,7 +114,10 @@ function NotificationsScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <NotificationListSkeleton />
       </View>
     );
@@ -118,7 +127,10 @@ function NotificationsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
 
       {/* Urgency Banner */}
       {counts.critical > 0 && (
@@ -135,12 +147,12 @@ function NotificationsScreen() {
         <SectionList
           sections={sections}
           keyExtractor={(item) => item.id}
-          renderSectionHeader={({ section }) => (
-            <Text style={styles.sectionHeader}>{section.title}</Text>
-          )}
+          renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
           renderItem={renderNotificationItem}
           contentContainerStyle={styles.listContent}
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+          }
           showsVerticalScrollIndicator={false}
         />
       )}

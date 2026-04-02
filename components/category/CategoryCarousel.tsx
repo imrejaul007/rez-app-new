@@ -52,7 +52,7 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ item, index, scrollX, onPre
       return item.cashback;
     }
     if (typeof item.cashback === 'object' && item.cashback !== null) {
-      return item.cashback.percentage || 0;
+      return (item.cashback as any).percentage || 0;
     }
     return 0;
   };

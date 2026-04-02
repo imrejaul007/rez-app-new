@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -9,7 +9,7 @@ import {
   RefreshControl,
   Platform,
   StatusBar,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -17,7 +17,8 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -124,42 +125,47 @@ function getStoreId(storeId: string | { _id: string }): string {
 }
 
 // ─── Skeleton Shimmer ───────────────────────────────────────
-const SkeletonBlock = React.memo(({ width: w, height: h, style, index = 0 }: {
-  width: number | string;
-  height: number;
-  style?: any;
-  index?: number;
-}) => {
-  const shimmer = useSharedValue(0);
+const SkeletonBlock = React.memo(
+  ({
+    width: w,
+    height: h,
+    style,
+    index = 0,
+  }: {
+    width: number | string;
+    height: number;
+    style?: any;
+    index?: number;
+  }) => {
+    const shimmer = useSharedValue(0);
 
-  useEffect(() => {
-    shimmer.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
+    useEffect(() => {
+      shimmer.value = withRepeat(
+        withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
+        -1,
+      );
+    }, [index]);
+
+    const shimmerStyle = useAnimatedStyle(() => ({
+      opacity: interpolate(shimmer.value, [0, 1], [0.3, 0.7]),
+    }));
+
+    return (
+      <Animated.View
+        style={[
+          {
+            width: w as any,
+            height: h,
+            borderRadius: 12,
+            backgroundColor: '#E8E2DB',
+          },
+          shimmerStyle,
+          style,
+        ]}
+      />
     );
-  }, [index]);
-
-  const shimmerStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(shimmer.value, [0, 1], [0.3, 0.7]),
-  }));
-
-  return (
-    <Animated.View
-      style={[
-        {
-          width: w as any,
-          height: h,
-          borderRadius: 12,
-          backgroundColor: '#E8E2DB' },
-        shimmerStyle,
-        style,
-      ]}
-    />
-  );
-});
+  },
+);
 
 // ─── Main Component ─────────────────────────────────────────
 function OffersPage() {
@@ -198,18 +204,14 @@ function OffersPage() {
       // 1. Double Cashback campaigns
       if (results[0].status === 'fulfilled') {
         if (!isMounted()) return;
-        setCampaigns(
-          (results[0].value || []).filter((c: Campaign) => c.isActive)
-        );
+        setCampaigns((results[0].value || []).filter((c: Campaign) => c.isActive));
       } else {
       }
 
       // 2. Coin drops
       if (results[1].status === 'fulfilled') {
         if (!isMounted()) return;
-        setCoinDrops(
-          (results[1].value || []).filter((d: CoinDrop) => d.isActive)
-        );
+        setCoinDrops((results[1].value || []).filter((d: CoinDrop) => d.isActive));
       } else {
       }
 
@@ -235,7 +237,7 @@ function OffersPage() {
       if (allFailed) {
         setError('Unable to load offers. Please try again.');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
     }
@@ -254,21 +256,26 @@ function OffersPage() {
   }, [fetchData]);
 
   // ─── Handlers ──────────────────────────────────────────────
-  const handleCoinDropPress = useCallback((drop: CoinDrop) => {
-    const storeId = getStoreId(drop.storeId);
-    if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as any);
-    }
-  }, [router]);
+  const handleCoinDropPress = useCallback(
+    (drop: CoinDrop) => {
+      const storeId = getStoreId(drop.storeId);
+      if (storeId) {
+        router.push(`/MainStorePage?storeId=${storeId}` as any);
+      }
+    },
+    [router],
+  );
 
   // ─── Computed ─────────────────────────────────────────────
   const headerTop = Platform.OS === 'web' ? 0 : insets.top;
   const totalOffers = campaigns.length + coinDrops.length + featuredCoupons.length + highCashbackBrands.length;
   const hasContent = totalOffers > 0;
-  const someFailed = !error && (
-    campaigns.length === 0 && coinDrops.length === 0 &&
-    featuredCoupons.length === 0 && highCashbackBrands.length === 0
-  );
+  const someFailed =
+    !error &&
+    campaigns.length === 0 &&
+    coinDrops.length === 0 &&
+    featuredCoupons.length === 0 &&
+    highCashbackBrands.length === 0;
 
   // ─── Loading Skeleton ─────────────────────────────────────
   if (isLoading) {
@@ -277,7 +284,10 @@ function OffersPage() {
         <StatusBar barStyle="dark-content" />
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backBtn}
+            >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Offers</Text>
@@ -307,7 +317,10 @@ function OffersPage() {
       {/* Sticky Header */}
       <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
         <View style={styles.headerRow}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
             <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Offers</Text>
@@ -335,10 +348,7 @@ function OffersPage() {
               <Ionicons name="cloud-offline-outline" size={32} color="#E8744F" />
             </View>
             <Text style={styles.errorTitle}>{error}</Text>
-            <Pressable
-              onPress={handleRefresh}
-              style={styles.retryBtn}
-            >
+            <Pressable onPress={handleRefresh} style={styles.retryBtn}>
               <Ionicons name="refresh" size={14} color={colors.text.inverse} />
               <Text style={styles.retryText}>Try Again</Text>
             </Pressable>
@@ -363,13 +373,8 @@ function OffersPage() {
               <Ionicons name="gift-outline" size={36} color="#C4956A" />
             </View>
             <Text style={styles.emptyTitle}>No offers right now</Text>
-            <Text style={styles.emptySubtitle}>
-              Check back soon for coupons, cashback deals & more!
-            </Text>
-            <Pressable
-              onPress={() => router.push('/cash-store' as any)}
-              style={styles.browseBtn}
-            >
+            <Text style={styles.emptySubtitle}>Check back soon for coupons, cashback deals & more!</Text>
+            <Pressable onPress={() => router.push('/cash-store' as any)} style={styles.browseBtn}>
               <Text style={styles.browseBtnText}>Browse Cash Store</Text>
               <Ionicons name="arrow-forward" size={14} color={colors.text.inverse} />
             </Pressable>
@@ -398,9 +403,7 @@ function OffersPage() {
                     )}
                   </View>
                   <Text style={styles.heroTitle}>All Offers</Text>
-                  <Text style={styles.heroSubtitle}>
-                    Coupons, cashback deals & boosted rewards — all in one place
-                  </Text>
+                  <Text style={styles.heroSubtitle}>Coupons, cashback deals & boosted rewards — all in one place</Text>
                 </View>
               </LinearGradient>
             </View>
@@ -413,19 +416,17 @@ function OffersPage() {
                     <Ionicons name="pricetag" size={15} color={colors.brand.pink} />
                   </View>
                   <Text style={styles.sectionTitle}>Featured Coupons</Text>
-                  <Pressable
-                    onPress={() => router.push('/account/coupons' as any)}
-                    style={styles.seeAllBtn}
-                  >
+                  <Pressable onPress={() => router.push('/account/coupons' as any)} style={styles.seeAllBtn}>
                     <Text style={styles.seeAllText}>See All</Text>
                     <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
                 </View>
 
                 {featuredCoupons.map((coupon) => {
-                  const discount = coupon.discountType === 'PERCENTAGE'
-                    ? `${coupon.discountValue}% Off`
-                    : `${currencySymbol}${coupon.discountValue} Off`;
+                  const discount =
+                    coupon.discountType === 'PERCENTAGE'
+                      ? `${coupon.discountValue}% Off`
+                      : `${currencySymbol}${coupon.discountValue} Off`;
                   const timeLeft = coupon.validTo ? formatTimeLeft(coupon.validTo) : '';
                   const isEnded = timeLeft === 'Ended';
 
@@ -433,7 +434,6 @@ function OffersPage() {
                     <Pressable
                       key={coupon._id}
                       onPress={() => router.push('/account/coupons' as any)}
-                     
                       style={styles.couponCard}
                     >
                       <View style={styles.couponLeft}>
@@ -443,9 +443,13 @@ function OffersPage() {
                       </View>
                       <View style={styles.couponDivider} />
                       <View style={styles.couponRight}>
-                        <Text style={styles.couponTitle} numberOfLines={1}>{coupon.title}</Text>
+                        <Text style={styles.couponTitle} numberOfLines={1}>
+                          {coupon.title}
+                        </Text>
                         {coupon.description ? (
-                          <Text style={styles.couponDesc} numberOfLines={1}>{coupon.description}</Text>
+                          <Text style={styles.couponDesc} numberOfLines={1}>
+                            {coupon.description}
+                          </Text>
                         ) : null}
                         <View style={styles.couponMeta}>
                           <View style={styles.couponCodeBadge}>
@@ -459,7 +463,10 @@ function OffersPage() {
                           ) : null}
                         </View>
                         {coupon.minOrderValue ? (
-                          <Text style={styles.couponMinOrder}>Min. order {currencySymbol}{coupon.minOrderValue}</Text>
+                          <Text style={styles.couponMinOrder}>
+                            Min. order {currencySymbol}
+                            {coupon.minOrderValue}
+                          </Text>
                         ) : null}
                       </View>
                     </Pressable>
@@ -476,10 +483,7 @@ function OffersPage() {
                     <Ionicons name="flame" size={15} color={Colors.warning} />
                   </View>
                   <Text style={styles.sectionTitle}>Double Cashback</Text>
-                  <Pressable
-                    onPress={() => router.push('/offers/double-cashback' as any)}
-                    style={styles.seeAllBtn}
-                  >
+                  <Pressable onPress={() => router.push('/offers/double-cashback' as any)} style={styles.seeAllBtn}>
                     <Text style={styles.seeAllText}>See All</Text>
                     <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
@@ -499,7 +503,6 @@ function OffersPage() {
                       <Pressable
                         key={campaign._id}
                         onPress={() => router.push('/offers/double-cashback' as any)}
-                       
                         style={styles.campaignCard}
                       >
                         <LinearGradient
@@ -513,24 +516,20 @@ function OffersPage() {
                             <View style={styles.multiplierBadge}>
                               <Text style={styles.multiplierText}>{campaign.multiplier}X</Text>
                             </View>
-                            <View style={[
-                              styles.campaignTimeBadge,
-                              isEnded && styles.campaignTimeBadgeEnded,
-                            ]}>
+                            <View style={[styles.campaignTimeBadge, isEnded && styles.campaignTimeBadgeEnded]}>
                               <Ionicons
                                 name="time-outline"
                                 size={11}
                                 color={isEnded ? Colors.error : 'rgba(255,255,255,0.9)'}
                               />
-                              <Text style={[
-                                styles.campaignTimeText,
-                                isEnded && { color: Colors.error },
-                              ]}>
+                              <Text style={[styles.campaignTimeText, isEnded && { color: Colors.error }]}>
                                 {timeLeft}
                               </Text>
                             </View>
                           </View>
-                          <Text style={styles.campaignTitle} numberOfLines={2}>{campaign.title}</Text>
+                          <Text style={styles.campaignTitle} numberOfLines={2}>
+                            {campaign.title}
+                          </Text>
                           {campaign.subtitle ? (
                             <Text style={styles.campaignSubtitle} numberOfLines={1}>
                               {campaign.subtitle}
@@ -571,7 +570,6 @@ function OffersPage() {
                     <Pressable
                       key={drop._id}
                       onPress={() => handleCoinDropPress(drop)}
-                     
                       style={styles.dropCard}
                       disabled={isEnded}
                     >
@@ -601,12 +599,8 @@ function OffersPage() {
                               </View>
                             ) : null}
                             <View style={styles.dropTimeRow}>
-                              <Ionicons
-                                name="time-outline"
-                                size={11}
-                                color={isEnded ? Colors.error : '#A0A8B1'}
-                              />
-                              <Text style={[styles.dropTimeText, isEnded && styles.dropTimeEnded]}>
+                              <Ionicons name="time-outline" size={11} color={isEnded ? Colors.error : '#A0A8B1'} />
+                              <Text style={[styles.dropTimeText, isEnded ? styles.dropTimeEnded : null]}>
                                 {timeLeft}
                               </Text>
                             </View>
@@ -635,10 +629,7 @@ function OffersPage() {
                     <Ionicons name="diamond" size={15} color={colors.brand.purpleLight} />
                   </View>
                   <Text style={styles.sectionTitle}>Top Cashback Brands</Text>
-                  <Pressable
-                    onPress={() => router.push('/cash-store/brands' as any)}
-                    style={styles.seeAllBtn}
-                  >
+                  <Pressable onPress={() => router.push('/cash-store/brands' as any)} style={styles.seeAllBtn}>
                     <Text style={styles.seeAllText}>See All</Text>
                     <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
@@ -655,7 +646,6 @@ function OffersPage() {
                       <Pressable
                         key={brand._id}
                         onPress={() => router.push(`/vouchers/brand/${brand._id}` as any)}
-                       
                         style={styles.brandCard}
                       >
                         <View style={styles.brandLogoWrap}>
@@ -667,14 +657,18 @@ function OffersPage() {
                             </View>
                           )}
                         </View>
-                        <Text style={styles.brandName} numberOfLines={1}>{brand.name}</Text>
+                        <Text style={styles.brandName} numberOfLines={1}>
+                          {brand.name}
+                        </Text>
                         {rate > 0 && (
                           <View style={styles.brandRateBadge}>
                             <Text style={styles.brandRateText}>{rate}% back</Text>
                           </View>
                         )}
                         {brand.category ? (
-                          <Text style={styles.brandCategory} numberOfLines={1}>{brand.category}</Text>
+                          <Text style={styles.brandCategory} numberOfLines={1}>
+                            {brand.category}
+                          </Text>
                         ) : null}
                       </Pressable>
                     );
@@ -687,17 +681,36 @@ function OffersPage() {
             <View style={styles.section}>
               <View style={styles.quickActionsGrid}>
                 {[
-                  { icon: 'gift-outline' as const, label: 'Gift Cards', route: '/cash-store/buy-coupons', color: colors.brand.purpleLight, bg: 'rgba(139,92,246,0.08)' },
-                  { icon: 'pricetag-outline' as const, label: 'My Coupons', route: '/account/coupons', color: colors.brand.pink, bg: 'rgba(236,72,153,0.08)' },
-                  { icon: 'flash-outline' as const, label: '2X Cashback', route: '/offers/double-cashback', color: Colors.warning, bg: 'rgba(245,158,11,0.08)' },
-                  { icon: 'wallet-outline' as const, label: 'My Cashback', route: '/account/cashback', color: Colors.success, bg: 'rgba(16,185,129,0.08)' },
+                  {
+                    icon: 'gift-outline' as const,
+                    label: 'Gift Cards',
+                    route: '/cash-store/buy-coupons',
+                    color: colors.brand.purpleLight,
+                    bg: 'rgba(139,92,246,0.08)',
+                  },
+                  {
+                    icon: 'pricetag-outline' as const,
+                    label: 'My Coupons',
+                    route: '/account/coupons',
+                    color: colors.brand.pink,
+                    bg: 'rgba(236,72,153,0.08)',
+                  },
+                  {
+                    icon: 'flash-outline' as const,
+                    label: '2X Cashback',
+                    route: '/offers/double-cashback',
+                    color: Colors.warning,
+                    bg: 'rgba(245,158,11,0.08)',
+                  },
+                  {
+                    icon: 'wallet-outline' as const,
+                    label: 'My Cashback',
+                    route: '/account/cashback',
+                    color: Colors.success,
+                    bg: 'rgba(16,185,129,0.08)',
+                  },
                 ].map((action, i) => (
-                  <Pressable
-                    key={i}
-                    onPress={() => router.push(action.route as any)}
-                   
-                    style={styles.quickActionCard}
-                  >
+                  <Pressable key={i} onPress={() => router.push(action.route as any)} style={styles.quickActionCard}>
                     <View style={[styles.quickActionIcon, { backgroundColor: action.bg }]}>
                       <Ionicons name={action.icon} size={20} color={action.color} />
                     </View>
@@ -719,12 +732,15 @@ function OffersPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F1ED' },
+    backgroundColor: '#F4F1ED',
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
 
   // ── Sticky Header ──
   stickyHeader: {
@@ -732,36 +748,42 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#EDEAE6' },
+    borderBottomColor: '#EDEAE6',
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: 10,
-    gap: 10 },
+    gap: 10,
+  },
   backBtn: {
     width: Spacing['2xl'],
     height: Spacing['2xl'],
     borderRadius: Spacing.base,
     backgroundColor: '#F4F1ED',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerTitle: {
     flex: 1,
     ...Typography.h4,
     fontWeight: '700',
     color: colors.nileBlue,
-    letterSpacing: -0.3 },
+    letterSpacing: -0.3,
+  },
 
   // ── Skeleton ──
   skeletonWrap: {
-    padding: Spacing.base },
+    padding: Spacing.base,
+  },
 
   // ── Error State ──
   errorContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 80,
-    paddingHorizontal: Spacing['2xl'] },
+    paddingHorizontal: Spacing['2xl'],
+  },
   errorIconWrap: {
     width: 72,
     height: 72,
@@ -769,13 +791,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(232,116,79,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 18 },
+    marginBottom: 18,
+  },
   errorTitle: {
     fontSize: 15,
     fontWeight: '600',
     color: colors.nileBlue,
     textAlign: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   retryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -783,12 +807,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
-    borderRadius: BorderRadius.xl },
+    borderRadius: BorderRadius.xl,
+  },
   retryText: {
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
 
   // ── Error Banner (partial failure) ──
   errorBanner: {
@@ -800,27 +826,32 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warningScale[50],
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   errorBannerText: {
     flex: 1,
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: colors.brand.amberDark },
+    color: colors.brand.amberDark,
+  },
   errorBannerRetry: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: colors.brand.amberDeep },
+    color: colors.brand.amberDeep,
+  },
 
   // ── Hero Banner ──
   heroBannerWrap: {
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.base,
-    paddingBottom: Spacing.xs },
+    paddingBottom: Spacing.xs,
+  },
   heroBanner: {
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     overflow: 'hidden',
-    position: 'relative' },
+    position: 'relative',
+  },
   heroDecorCircle: {
     position: 'absolute',
     top: -20,
@@ -828,7 +859,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: 'rgba(255,255,255,0.05)' },
+    backgroundColor: 'rgba(255,255,255,0.05)',
+  },
   heroDecorCircle2: {
     position: 'absolute',
     bottom: -30,
@@ -836,85 +868,101 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255,255,255,0.03)' },
+    backgroundColor: 'rgba(255,255,255,0.03)',
+  },
   heroContent: {
     position: 'relative',
-    zIndex: 1 },
+    zIndex: 1,
+  },
   heroIconRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 12 },
+    marginBottom: 12,
+  },
   heroIconBadge: {
     width: 36,
     height: 36,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.gold,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   heroCountBadge: {
     backgroundColor: 'rgba(255,255,255,0.15)',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 10 },
+    borderRadius: 10,
+  },
   heroCountText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.9)' },
+    color: 'rgba(255,255,255,0.9)',
+  },
   heroTitle: {
     fontSize: 22,
     fontWeight: '800',
     color: colors.text.inverse,
     marginBottom: Spacing.xs,
-    letterSpacing: -0.3 },
+    letterSpacing: -0.3,
+  },
   heroSubtitle: {
     fontSize: 13,
     color: 'rgba(255,255,255,0.7)',
-    lineHeight: 18 },
+    lineHeight: 18,
+  },
 
   // ── Sections ──
   section: {
     paddingHorizontal: Spacing.base,
-    marginTop: Spacing.lg },
+    marginTop: Spacing.lg,
+  },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    marginBottom: 14 },
+    marginBottom: 14,
+  },
   sectionIconWrap: {
     width: 30,
     height: 30,
     borderRadius: 10,
     backgroundColor: 'rgba(236,72,153,0.12)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   sectionTitle: {
     flex: 1,
     ...Typography.bodyLarge,
     fontWeight: '700',
     color: colors.nileBlue,
-    letterSpacing: -0.2 },
+    letterSpacing: -0.2,
+  },
   seeAllBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
     paddingVertical: Spacing.xs,
-    paddingHorizontal: 6 },
+    paddingHorizontal: 6,
+  },
   seeAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.nileBlue },
+    color: colors.nileBlue,
+  },
   sectionCountBadge: {
     backgroundColor: colors.background.primary,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: '#EDEAE6' },
+    borderColor: '#EDEAE6',
+  },
   sectionCountText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: '#7C8A97' },
+    color: '#7C8A97',
+  },
 
   // ── Featured Coupon Card ──
   couponCard: {
@@ -925,43 +973,52 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#EDEAE6',
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   couponLeft: {
     width: 90,
     backgroundColor: colors.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.md },
+    padding: Spacing.md,
+  },
   couponDiscountBadge: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   couponDiscountText: {
     ...Typography.bodyLarge,
     fontWeight: '800',
     color: Colors.gold,
     textAlign: 'center',
-    letterSpacing: -0.3 },
+    letterSpacing: -0.3,
+  },
   couponDivider: {
     width: 1,
-    backgroundColor: '#EDEAE6' },
+    backgroundColor: '#EDEAE6',
+  },
   couponRight: {
     flex: 1,
     padding: Spacing.md,
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   couponTitle: {
     ...Typography.body,
     fontWeight: '700',
     color: colors.nileBlue,
     marginBottom: 3,
-    letterSpacing: -0.2 },
+    letterSpacing: -0.2,
+  },
   couponDesc: {
     ...Typography.bodySmall,
     color: '#7C8A97',
-    marginBottom: 6 },
+    marginBottom: 6,
+  },
   couponMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   couponCodeBadge: {
     backgroundColor: '#F4F1ED',
     paddingHorizontal: Spacing.sm,
@@ -969,38 +1026,46 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: '#D5CFC8' },
+    borderColor: '#D5CFC8',
+  },
   couponCodeText: {
     ...Typography.caption,
     fontWeight: '700',
     color: colors.nileBlue,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' },
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
   couponTimeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3 },
+    gap: 3,
+  },
   couponTimeText: {
     fontSize: 10,
     fontWeight: '500',
-    color: '#7C8A97' },
+    color: '#7C8A97',
+  },
   couponMinOrder: {
     fontSize: 11,
-    color: '#A0A8B1' },
+    color: '#A0A8B1',
+  },
 
   // ── Campaign Cards (horizontal scroll) ──
   campaignScroll: {
-    paddingRight: Spacing.base },
+    paddingRight: Spacing.base,
+  },
   campaignCard: {
     width: SCREEN_WIDTH * 0.72,
     marginRight: Spacing.md,
     borderRadius: 18,
     overflow: 'hidden',
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   campaignGradient: {
     padding: 18,
     borderRadius: 18,
     overflow: 'hidden',
-    position: 'relative' },
+    position: 'relative',
+  },
   campaignDecorCircle: {
     position: 'absolute',
     top: -20,
@@ -1008,12 +1073,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255,255,255,0.06)' },
+    backgroundColor: 'rgba(255,255,255,0.06)',
+  },
   campaignTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12 },
+    marginBottom: 12,
+  },
   multiplierBadge: {
     width: 48,
     height: 48,
@@ -1025,12 +1092,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 4 },
+    elevation: 4,
+  },
   multiplierText: {
     fontSize: 19,
     fontWeight: '900',
     color: colors.nileBlue,
-    letterSpacing: -0.5 },
+    letterSpacing: -0.5,
+  },
   campaignTimeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1038,32 +1107,39 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     paddingHorizontal: 9,
     paddingVertical: 4,
-    borderRadius: 10 },
+    borderRadius: 10,
+  },
   campaignTimeBadgeEnded: {
-    backgroundColor: 'rgba(239,68,68,0.15)' },
+    backgroundColor: 'rgba(239,68,68,0.15)',
+  },
   campaignTimeText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.9)' },
+    color: 'rgba(255,255,255,0.9)',
+  },
   campaignTitle: {
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '800',
     color: colors.text.inverse,
     marginBottom: Spacing.xs,
-    letterSpacing: -0.2 },
+    letterSpacing: -0.2,
+  },
   campaignSubtitle: {
     ...Typography.bodySmall,
     color: 'rgba(255,255,255,0.65)',
-    marginBottom: 10 },
+    marginBottom: 10,
+  },
   campaignStoreCount: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5 },
+    gap: 5,
+  },
   campaignStoreCountText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.75)' },
+    color: 'rgba(255,255,255,0.75)',
+  },
 
   // ── Coin Drop Card ──
   dropCard: {
@@ -1075,12 +1151,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: '#EDEAE6',
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   dropLeft: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   dropLogoWrap: {
     width: 48,
     height: 48,
@@ -1090,66 +1168,81 @@ const styles = StyleSheet.create({
     borderColor: '#EDEAE6',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   dropLogo: {
     width: 40,
     height: 40,
-    resizeMode: 'contain' },
+    resizeMode: 'contain',
+  },
   dropLogoFallback: {
     width: 48,
     height: 48,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   dropInfo: {
-    flex: 1 },
+    flex: 1,
+  },
   dropStoreName: {
     fontSize: 15,
     fontWeight: '700',
     color: colors.nileBlue,
     marginBottom: Spacing.xs,
-    letterSpacing: -0.2 },
+    letterSpacing: -0.2,
+  },
   dropRatesRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 6 },
+    marginBottom: 6,
+  },
   dropNormalRate: {
     fontSize: 13,
     fontWeight: '500',
     color: '#B0A99F',
     textDecorationLine: 'line-through',
-    textDecorationColor: '#B0A99F' },
+    textDecorationColor: '#B0A99F',
+  },
   dropBoostedRate: {
     fontSize: 15,
     fontWeight: '800',
     color: colors.brand.sand,
-    letterSpacing: -0.2 },
+    letterSpacing: -0.2,
+  },
   dropMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   categoryTag: {
     backgroundColor: '#F4F1ED',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   categoryTagText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: '#7C8A97' },
+    color: '#7C8A97',
+  },
   dropTimeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3 },
+    gap: 3,
+  },
   dropTimeText: {
     fontSize: 11,
     fontWeight: '500',
-    color: '#A0A8B1' },
+    color: '#A0A8B1',
+  },
   dropTimeEnded: {
-    color: Colors.error },
+    color: Colors.error,
+  },
   dropRightArea: {
     marginLeft: 10,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   dropMultiplierBadge: {
     width: 44,
     height: 44,
@@ -1161,16 +1254,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 3 },
+    elevation: 3,
+  },
   dropMultiplierText: {
     ...Typography.bodyLarge,
     fontWeight: '900',
     color: colors.nileBlue,
-    letterSpacing: -0.3 },
+    letterSpacing: -0.3,
+  },
 
   // ── Brand Cards (horizontal scroll) ──
   brandsScroll: {
-    paddingRight: Spacing.base },
+    paddingRight: Spacing.base,
+  },
   brandCard: {
     width: 110,
     backgroundColor: colors.background.primary,
@@ -1180,7 +1276,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#EDEAE6',
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   brandLogoWrap: {
     width: 52,
     height: 52,
@@ -1189,46 +1286,54 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   brandLogo: {
     width: 44,
     height: 44,
-    resizeMode: 'contain' },
+    resizeMode: 'contain',
+  },
   brandLogoFallback: {
     width: 52,
     height: 52,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   brandName: {
     ...Typography.bodySmall,
     fontWeight: '700',
     color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: Spacing.xs,
-    letterSpacing: -0.2 },
+    letterSpacing: -0.2,
+  },
   brandRateBadge: {
     backgroundColor: 'rgba(16,185,129,0.1)',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: BorderRadius.sm,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   brandRateText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.success },
+    color: Colors.success,
+  },
   brandCategory: {
     ...Typography.overline,
     fontWeight: '500',
     color: '#A0A8B1',
     textAlign: 'center',
     letterSpacing: 0,
-    textTransform: 'none' },
+    textTransform: 'none',
+  },
 
   // ── Quick Actions ──
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10 },
+    gap: 10,
+  },
   quickActionCard: {
     width: (SCREEN_WIDTH - Spacing['2xl'] - 10) / 2,
     backgroundColor: colors.background.primary,
@@ -1238,18 +1343,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderWidth: 1,
-    borderColor: '#EDEAE6' },
+    borderColor: '#EDEAE6',
+  },
   quickActionIcon: {
     width: 38,
     height: 38,
     borderRadius: BorderRadius.md,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   quickActionLabel: {
     fontSize: 13,
     fontWeight: '600',
     color: colors.nileBlue,
-    flex: 1 },
+    flex: 1,
+  },
 
   // ── Empty State ──
   emptyContainer: {
@@ -1257,7 +1365,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 80,
-    paddingHorizontal: Spacing['2xl'] },
+    paddingHorizontal: Spacing['2xl'],
+  },
   emptyIconWrap: {
     width: 72,
     height: 72,
@@ -1265,19 +1374,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(196,149,106,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 18 },
+    marginBottom: 18,
+  },
   emptyTitle: {
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '700',
     color: colors.nileBlue,
     marginBottom: 6,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   emptySubtitle: {
     ...Typography.body,
     color: '#A0A8B1',
     textAlign: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   browseBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1285,14 +1397,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
-    borderRadius: BorderRadius.xl },
+    borderRadius: BorderRadius.xl,
+  },
   browseBtnText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
 
   // Extracted inline styles
   headerSpacer: { width: 32 },
-  bottomSpacer: { height: 100 } });
+  bottomSpacer: { height: 100 },
+});
 
 export default withErrorBoundary(OffersPage, 'CashStoreOffers');

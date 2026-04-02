@@ -1,20 +1,13 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  RefreshControl,
-  ActivityIndicator,
-  Pressable,
-  ScrollView
-} from 'react-native';
+import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable, ScrollView } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { FlashList } from '@shopify/flash-list';
@@ -42,7 +35,7 @@ const ActivityFeedPage = () => {
     likeActivity,
     commentOnActivity,
     suggestedUsers,
-    loadSuggestedUsers
+    loadSuggestedUsers,
   } = useSocial();
 
   const user = useAuthUser();
@@ -57,11 +50,7 @@ const ActivityFeedPage = () => {
   }));
 
   // Follow system
-  const {
-    suggestions: followSuggestions,
-    loadSuggestions,
-    followersCount,
-    followingCount } = useFollowSystem(user?.id);
+  const { suggestions: followSuggestions, loadSuggestions, followersCount, followingCount } = useFollowSystem(user?.id);
 
   // Real-time feed updates
   const {
@@ -69,14 +58,13 @@ const ActivityFeedPage = () => {
     newPostsCount,
     isConnected,
     loadPendingPosts,
-    clearNewPostsCount } = useFeedRealtime(activities, user?.id, {
+    clearNewPostsCount,
+  } = useFeedRealtime(activities, user?.id, {
     onNewPost: (activity) => {
-
       // Animate new posts banner
       newPostsBannerAnim.value = withSpring(1);
     },
     onFollowUpdate: (userId, isFollowing) => {
-
       // Refresh suggestions if needed
       loadSuggestions(10);
     },
@@ -109,21 +97,27 @@ const ActivityFeedPage = () => {
     }
   };
 
-  const handleLike = useCallback(async (activityId: string) => {
-    try {
-      await likeActivity(activityId);
-    } catch (error) {
-      toast.error('Could not save. Please try again.');
-    }
-  }, [likeActivity]);
+  const handleLike = useCallback(
+    async (activityId: string) => {
+      try {
+        await likeActivity(activityId);
+      } catch (error: any) {
+        toast.error('Could not save. Please try again.');
+      }
+    },
+    [likeActivity],
+  );
 
-  const handleComment = useCallback(async (activityId: string, comment: string) => {
-    try {
-      await commentOnActivity(activityId, comment);
-    } catch (error) {
-      toast.error('Could not save. Please try again.');
-    }
-  }, [commentOnActivity]);
+  const handleComment = useCallback(
+    async (activityId: string, comment: string) => {
+      try {
+        await commentOnActivity(activityId, comment);
+      } catch (error: any) {
+        toast.error('Could not save. Please try again.');
+      }
+    },
+    [commentOnActivity],
+  );
 
   const renderSuggestedUsers = () => {
     const displaySuggestions = followSuggestions.length > 0 ? followSuggestions : suggestedUsers;
@@ -152,9 +146,7 @@ const ActivityFeedPage = () => {
                   <CachedImage source={suggestedUser.profilePicture} style={styles.suggestedAvatarImage} />
                 ) : (
                   <View style={styles.suggestedAvatarPlaceholder}>
-                    <Text style={styles.suggestedAvatarText}>
-                      {suggestedUser.name.charAt(0).toUpperCase()}
-                    </Text>
+                    <Text style={styles.suggestedAvatarText}>{suggestedUser.name.charAt(0).toUpperCase()}</Text>
                   </View>
                 )}
               </View>
@@ -205,18 +197,14 @@ const ActivityFeedPage = () => {
 
   const renderEmpty = () => {
     if (isLoadingFeed) {
-      return (
-        <CardGridSkeleton />
-      );
+      return <CardGridSkeleton />;
     }
 
     return (
       <View style={styles.emptyContainer}>
         <Ionicons name="people-outline" size={64} color="#ccc" />
         <Text style={styles.emptyTitle}>No activities yet</Text>
-        <Text style={styles.emptyText}>
-          Follow people to see their activities in your feed
-        </Text>
+        <Text style={styles.emptyText}>Follow people to see their activities in your feed</Text>
         <Pressable
           style={styles.discoverButton}
           onPress={loadSuggestedUsers}
@@ -230,14 +218,12 @@ const ActivityFeedPage = () => {
     );
   };
 
-  const renderActivityItem = useCallback(({ item }: { item: any }) => (
-    <ActivityCard
-      activity={item}
-      onLike={handleLike}
-      onComment={handleComment}
-      currentUserId={user?.id}
-    />
-  ), [handleLike, handleComment, user?.id]);
+  const renderActivityItem = useCallback(
+    ({ item }: { item: any }) => (
+      <ActivityCard activity={item} onLike={handleLike} onComment={handleComment} currentUserId={user?.id} />
+    ),
+    [handleLike, handleComment, user?.id],
+  );
 
   // Use real-time activities
   const displayActivities = realtimeActivities.length > 0 ? realtimeActivities : activities;
@@ -285,9 +271,7 @@ const ActivityFeedPage = () => {
               setShowFilterMenu(false);
             }}
           >
-            <Text style={[styles.filterText, feedFilter === 'all' && styles.filterTextActive]}>
-              All Posts
-            </Text>
+            <Text style={[styles.filterText, feedFilter === 'all' && styles.filterTextActive]}>All Posts</Text>
           </Pressable>
           <Pressable
             style={[styles.filterOption, feedFilter === 'following' && styles.filterOptionActive]}
@@ -296,21 +280,14 @@ const ActivityFeedPage = () => {
               setShowFilterMenu(false);
             }}
           >
-            <Text style={[styles.filterText, feedFilter === 'following' && styles.filterTextActive]}>
-              Following
-            </Text>
+            <Text style={[styles.filterText, feedFilter === 'following' && styles.filterTextActive]}>Following</Text>
           </Pressable>
         </View>
       )}
 
       {/* New Posts Banner */}
       {newPostsCount > 0 && (
-        <Animated.View
-          style={[
-            styles.newPostsBanner,
-            newPostsBannerStyle,
-          ]}
-        >
+        <Animated.View style={[styles.newPostsBanner, newPostsBannerStyle]}>
           <Pressable
             style={styles.newPostsButton}
             onPress={handleLoadNewPosts}
@@ -334,11 +311,7 @@ const ActivityFeedPage = () => {
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmpty}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.brand.ios}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.brand.ios} />
         }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
@@ -353,7 +326,7 @@ const ActivityFeedPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -363,32 +336,36 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   headerTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: colors.text.primary
+    color: colors.text.primary,
   },
   liveIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#4CD964' },
+    backgroundColor: '#4CD964',
+  },
   liveDot: {
     width: '100%',
     height: '100%',
     borderRadius: 4,
-    backgroundColor: '#4CD964' },
+    backgroundColor: '#4CD964',
+  },
   headerRight: {
     flexDirection: 'row',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   headerButton: {
-    padding: Spacing.sm
+    padding: Spacing.sm,
   },
   filterMenu: {
     backgroundColor: colors.background.primary,
@@ -397,20 +374,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     flexDirection: 'row',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   filterOption: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   filterOptionActive: {
-    backgroundColor: colors.brand.ios },
+    backgroundColor: colors.brand.ios,
+  },
   filterText: {
     ...Typography.body,
     fontWeight: '600',
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   filterTextActive: {
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   newPostsBanner: {
     position: 'absolute',
     top: 60,
@@ -418,7 +400,8 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 100,
     alignItems: 'center',
-    paddingHorizontal: Spacing.base },
+    paddingHorizontal: Spacing.base,
+  },
   newPostsButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -427,33 +410,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: BorderRadius['2xl'],
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   newPostsText: {
     color: colors.text.inverse,
     ...Typography.body,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   listContent: {
     padding: Spacing.base,
     flexGrow: 1,
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
   suggestedSection: {
     backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderRadius: BorderRadius.md,
-    ...Shadows.medium
+    ...Shadows.medium,
   },
   suggestedHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   suggestedTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   suggestedScroll: {
-    marginHorizontal: -4
+    marginHorizontal: -4,
   },
   suggestedCard: {
     width: 120,
@@ -461,18 +449,18 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.sm,
     padding: Spacing.md,
     backgroundColor: '#f9f9f9',
-    borderRadius: BorderRadius.md
+    borderRadius: BorderRadius.md,
   },
   suggestedAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    marginBottom: Spacing.sm
+    marginBottom: Spacing.sm,
   },
   suggestedAvatarImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 30
+    borderRadius: 30,
   },
   suggestedAvatarPlaceholder: {
     width: '100%',
@@ -480,12 +468,12 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: colors.brand.ios,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   suggestedAvatarText: {
     color: colors.text.inverse,
     ...Typography.h2,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   suggestedName: {
     ...Typography.body,
@@ -493,7 +481,7 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
-    width: '100%'
+    width: '100%',
   },
   mutualBadge: {
     flexDirection: 'row',
@@ -503,60 +491,62 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
     gap: Spacing.xs,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   mutualText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: colors.brand.ios },
+    color: colors.brand.ios,
+  },
   suggestedFollowButton: {
     minWidth: 80,
     paddingHorizontal: Spacing.md,
-    paddingVertical: 6
+    paddingVertical: 6,
   },
   feedHeader: {
-    marginBottom: Spacing.md
+    marginBottom: Spacing.md,
   },
   feedTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: colors.text.primary
+    color: colors.text.primary,
   },
   footerLoader: {
     paddingVertical: Spacing.lg,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
-    paddingHorizontal: Spacing['2xl']
+    paddingHorizontal: Spacing['2xl'],
   },
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '600',
     color: colors.text.primary,
     marginTop: Spacing.base,
-    marginBottom: Spacing.sm
+    marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
     color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
-    lineHeight: 20
+    lineHeight: 20,
   },
   discoverButton: {
     backgroundColor: colors.brand.ios,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius['2xl']
+    borderRadius: BorderRadius['2xl'],
   },
   discoverButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default withErrorBoundary(ActivityFeedPage, 'FeedIndex');

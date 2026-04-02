@@ -27,7 +27,7 @@ type TabKey = 'all' | 'store' | 'bank' | 'rez';
 function OffersScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<OffersScreenParams>();
+  const params = useLocalSearchParams<any>();
   const { storeId, storeName, storeLogo, amount } = params;
   const numericAmount = parseFloat(amount || '0');
   const getCurrencySymbol = useGetCurrencySymbol();
@@ -176,13 +176,13 @@ function OffersScreen() {
           {tabs.map((tab) => (
             <Pressable
               key={tab.key}
-              style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+              style={[styles.tab, activeTab === tab.key ? styles.activeTab : null]}
               onPress={() => setActiveTab(tab.key)}
             >
-              <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
+              <Text style={[styles.tabText, activeTab === tab.key ? styles.activeTabText : null]}>{tab.label}</Text>
               {tab.count > 0 && (
-                <View style={[styles.tabBadge, activeTab === tab.key && styles.activeTabBadge]}>
-                  <Text style={[styles.tabBadgeText, activeTab === tab.key && styles.activeTabBadgeText]}>
+                <View style={[styles.tabBadge, activeTab === tab.key ? styles.activeTabBadge : null]}>
+                  <Text style={[styles.tabBadgeText, activeTab === tab.key ? styles.activeTabBadgeText : null]}>
                     {tab.count}
                   </Text>
                 </View>
@@ -317,7 +317,7 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
         return 'storefront';
       case 'BANK':
         return 'card';
-      case 'REZ':
+      case 'REZ' as OfferSource:
         return 'diamond';
       default:
         return 'pricetag';
@@ -330,7 +330,7 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
         return colors.primary[500];
       case 'BANK':
         return colors.infoScale[500];
-      case 'REZ':
+      case 'REZ' as OfferSource:
         return colors.secondary[500];
       default:
         return colors.neutral[500];
@@ -347,7 +347,7 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
 
   return (
     <Pressable
-      style={[styles.offerCard, isSelected && styles.offerCardSelected, !isEligible && styles.offerCardDisabled]}
+      style={[styles.offerCard, isSelected && styles.offerCardSelected, !isEligible ? styles.offerCardDisabled : null]}
       onPress={onPress}
       disabled={!isEligible}
     >
@@ -383,7 +383,7 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
 
         {/* Conditions */}
         {offer.minAmount && (
-          <Text style={[styles.offerCondition, !isEligible && styles.offerConditionUnmet]}>
+          <Text style={[styles.offerCondition, !isEligible ? styles.offerConditionUnmet : null]}>
             {isEligible
               ? `✓ Min. order ${currencySymbol}${offer.minAmount}`
               : `Add ${currencySymbol}${offer.minAmount - billAmount} more to unlock`}

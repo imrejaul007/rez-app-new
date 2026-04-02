@@ -221,17 +221,17 @@ export interface ProjectAnalytics {
 class ProjectsService {
   // Get projects with filtering and pagination
   async getProjects(query: ProjectsQuery = {}): Promise<ApiResponse<ProjectsResponse>> {
-    return apiClient.get('/projects', query);
+    return apiClient.get<any>('/projects', query as any);
   }
 
   // Get single project by ID
   async getProjectById(projectId: string): Promise<ApiResponse<Project>> {
-    return apiClient.get(`/projects/${projectId}`);
+    return apiClient.get<any>(`/projects/${projectId}`);
   }
 
   // Create new project
   async createProject(data: CreateProjectRequest): Promise<ApiResponse<Project>> {
-    return apiClient.post('/projects', data);
+    return apiClient.post<any>('/projects', data as any);
   }
 
   // Update project
@@ -239,12 +239,12 @@ class ProjectsService {
     projectId: string,
     updates: Partial<CreateProjectRequest>
   ): Promise<ApiResponse<Project>> {
-    return apiClient.patch(`/projects/${projectId}`, updates);
+    return apiClient.patch<any>(`/projects/${projectId}`, updates);
   }
 
   // Delete project
   async deleteProject(projectId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/projects/${projectId}`);
+    return apiClient.delete<any>(`/projects/${projectId}`);
   }
 
   // Update project status
@@ -252,7 +252,7 @@ class ProjectsService {
     projectId: string,
     status: Project['status']
   ): Promise<ApiResponse<Project>> {
-    return apiClient.patch(`/projects/${projectId}/status`, { status });
+    return apiClient.patch<any>(`/projects/${projectId}/status`, { status });
   }
 
   // Get project tasks
@@ -274,7 +274,7 @@ class ProjectsService {
       limit: number;
     };
   }>> {
-    return apiClient.get(`/projects/${projectId}/tasks`, query);
+    return apiClient.get<any>(`/projects/${projectId}/tasks`, query);
   }
 
   // Create project task
@@ -291,7 +291,7 @@ class ProjectsService {
       dependencies?: string[];
     }
   ): Promise<ApiResponse<ProjectTask>> {
-    return apiClient.post(`/projects/${projectId}/tasks`, task);
+    return apiClient.post<any>(`/projects/${projectId}/tasks`, task);
   }
 
   // Update task
@@ -308,12 +308,12 @@ class ProjectsService {
       dueDate: string;
     }>
   ): Promise<ApiResponse<ProjectTask>> {
-    return apiClient.patch(`/tasks/${taskId}`, updates);
+    return apiClient.patch<any>(`/tasks/${taskId}`, updates);
   }
 
   // Delete task
   async deleteTask(taskId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/tasks/${taskId}`);
+    return apiClient.delete<any>(`/tasks/${taskId}`);
   }
 
   // Add task comment
@@ -321,7 +321,7 @@ class ProjectsService {
     taskId: string,
     content: string
   ): Promise<ApiResponse<ProjectTask['comments'][0]>> {
-    return apiClient.post(`/tasks/${taskId}/comments`, { content });
+    return apiClient.post<any>(`/tasks/${taskId}/comments`, { content });
   }
 
   // Log time to task
@@ -331,7 +331,7 @@ class ProjectsService {
     description?: string,
     date?: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/tasks/${taskId}/time`, {
+    return apiClient.post<any>(`/tasks/${taskId}/time`, {
       hours,
       description,
       date
@@ -342,7 +342,7 @@ class ProjectsService {
   async getProjectMilestones(
     projectId: string
   ): Promise<ApiResponse<ProjectMilestone[]>> {
-    return apiClient.get(`/projects/${projectId}/milestones`);
+    return apiClient.get<any>(`/projects/${projectId}/milestones`);
   }
 
   // Create project milestone
@@ -356,7 +356,7 @@ class ProjectsService {
       deliverables?: Array<{ name: string; description?: string }>;
     }
   ): Promise<ApiResponse<ProjectMilestone>> {
-    return apiClient.post(`/projects/${projectId}/milestones`, milestone);
+    return apiClient.post<any>(`/projects/${projectId}/milestones`, milestone);
   }
 
   // Update milestone
@@ -369,7 +369,7 @@ class ProjectsService {
       status: ProjectMilestone['status'];
     }>
   ): Promise<ApiResponse<ProjectMilestone>> {
-    return apiClient.patch(`/milestones/${milestoneId}`, updates);
+    return apiClient.patch<any>(`/milestones/${milestoneId}`, updates);
   }
 
   // Add team member to project
@@ -378,7 +378,7 @@ class ProjectsService {
     userId: string,
     role: 'admin' | 'member' | 'viewer'
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post(`/projects/${projectId}/team`, {
+    return apiClient.post<any>(`/projects/${projectId}/team`, {
       userId,
       role
     });
@@ -389,7 +389,7 @@ class ProjectsService {
     projectId: string,
     userId: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/projects/${projectId}/team/${userId}`);
+    return apiClient.delete<any>(`/projects/${projectId}/team/${userId}`);
   }
 
   // Update team member role
@@ -398,7 +398,7 @@ class ProjectsService {
     userId: string,
     role: 'admin' | 'member' | 'viewer'
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/projects/${projectId}/team/${userId}`, {
+    return apiClient.patch<any>(`/projects/${projectId}/team/${userId}`, {
       role
     });
   }
@@ -421,7 +421,7 @@ class ProjectsService {
   async deleteAttachment(
     attachmentId: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete(`/attachments/${attachmentId}`);
+    return apiClient.delete<any>(`/attachments/${attachmentId}`);
   }
 
   // Get project analytics
@@ -432,7 +432,7 @@ class ProjectsService {
       to: string;
     }
   ): Promise<ApiResponse<ProjectAnalytics>> {
-    return apiClient.get(`/projects/${projectId}/analytics`, dateRange);
+    return apiClient.get<any>(`/projects/${projectId}/analytics`, dateRange);
   }
 
   // Get project categories
@@ -444,7 +444,7 @@ class ProjectsService {
     icon?: string;
     projectCount: number;
   }>>> {
-    return apiClient.get('/projects/categories');
+    return apiClient.get<any>('/projects/categories');
   }
 
   // Duplicate project
@@ -453,7 +453,7 @@ class ProjectsService {
     newTitle: string,
     includeTeam: boolean = false
   ): Promise<ApiResponse<Project>> {
-    return apiClient.post(`/projects/${projectId}/duplicate`, {
+    return apiClient.post<any>(`/projects/${projectId}/duplicate`, {
       title: newTitle,
       includeTeam
     });
@@ -461,12 +461,12 @@ class ProjectsService {
 
   // Archive project
   async archiveProject(projectId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/projects/${projectId}/archive`);
+    return apiClient.patch<any>(`/projects/${projectId}/archive`);
   }
 
   // Restore archived project
   async restoreProject(projectId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch(`/projects/${projectId}/restore`);
+    return apiClient.patch<any>(`/projects/${projectId}/restore`);
   }
 
   // Get project templates
@@ -479,7 +479,7 @@ class ProjectsService {
     estimatedDuration: string;
     thumbnail?: string;
   }>>> {
-    return apiClient.get('/projects/templates');
+    return apiClient.get<any>('/projects/templates');
   }
 
   // Create project from template
@@ -492,7 +492,7 @@ class ProjectsService {
       endDate?: string;
     }
   ): Promise<ApiResponse<Project>> {
-    return apiClient.post(`/projects/templates/${templateId}/create`, projectData);
+    return apiClient.post<any>(`/projects/templates/${templateId}/create`, projectData as any);
   }
 }
 

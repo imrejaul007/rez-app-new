@@ -99,7 +99,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch store services:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching store services:', error);
       return {
@@ -128,7 +128,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch service details:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching service details:', error);
       return {
@@ -162,7 +162,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch service availability:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching service availability:', error);
       return {
@@ -192,7 +192,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch service staff:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching service staff:', error);
       return {
@@ -222,7 +222,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch service categories:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching service categories:', error);
       return {
@@ -270,7 +270,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to search services:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error searching services:', error);
       return {
@@ -294,7 +294,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch popular services:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching popular services:', error);
       return {
@@ -318,7 +318,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch featured services:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching featured services:', error);
       return {
@@ -365,7 +365,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch services by category:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching services by category:', error);
       return {
@@ -400,7 +400,7 @@ class ServicesService {
         sortBy: params?.sortBy || 'newest'
       };
 
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `/services/${serviceId}/reviews`,
         queryParams
       );
@@ -409,7 +409,7 @@ class ServicesService {
         devLog.error('❌ [SERVICES API] Failed to fetch service reviews:', response.error);
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('❌ [SERVICES API] Error fetching service reviews:', error);
       return {
@@ -424,7 +424,7 @@ class ServicesService {
    */
   async isBackendAvailable(): Promise<boolean> {
     try {
-      const response = await apiClient.get('/services/featured', { limit: 1 });
+      const response = await apiClient.get<any>('/services/featured', { limit: 1 });
 
       if (response.success) {
         return true;

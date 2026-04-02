@@ -85,7 +85,7 @@ function CustomerPhotos({
         return false;
       }
       return true;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   };
@@ -109,7 +109,7 @@ function CustomerPhotos({
       if (!result.canceled && result.assets[0]) {
         await handleUpload(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to pick image. Please try again.');
     }
   };
@@ -127,7 +127,7 @@ function CustomerPhotos({
     try {
       await onUploadPhoto({ uri });
       platformAlertSimple('Success', 'Photo uploaded successfully!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to upload photo. Please try again.');
     } finally {
       if (!isMounted()) return;

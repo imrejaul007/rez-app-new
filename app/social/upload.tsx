@@ -60,7 +60,7 @@ function UploadPage() {
   const handlePickMedia = async () => {
     const ImagePicker = await getImagePicker();
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: contentType === 'reel' ? 'videos' : 'mixed',
+      mediaTypes: contentType === 'reel' ? ('videos' as any) : ('mixed' as any),
       allowsMultipleSelection: contentType === 'post',
       quality: 0.8,
       videoMaxDuration: 60,
@@ -301,7 +301,7 @@ function UploadPage() {
           </Pressable>
           <ThemedText style={styles.headerTitle}>Create</ThemedText>
           <Pressable
-            style={[styles.postButton, media.length === 0 && styles.postButtonDisabled]}
+            style={[styles.postButton, media.length === 0 ? styles.postButtonDisabled : null]}
             onPress={handlePost}
             disabled={media.length === 0 || uploading}
           >
@@ -332,7 +332,7 @@ function UploadPage() {
             {(['post', 'reel', 'story'] as ContentType[]).map((type) => (
               <Pressable
                 key={type}
-                style={[styles.typeButton, contentType === type && styles.typeButtonActive]}
+                style={[styles.typeButton, contentType === type ? styles.typeButtonActive : null]}
                 onPress={() => {
                   setContentType(type);
                   setMedia([]);
@@ -343,7 +343,7 @@ function UploadPage() {
                   size={20}
                   color={contentType === type ? Colors.primary[600] : colors.text.tertiary}
                 />
-                <ThemedText style={[styles.typeText, contentType === type && styles.typeTextActive]}>
+                <ThemedText style={[styles.typeText, contentType === type ? styles.typeTextActive : null]}>
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </ThemedText>
               </Pressable>

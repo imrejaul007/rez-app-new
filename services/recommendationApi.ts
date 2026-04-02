@@ -53,7 +53,7 @@ class RecommendationService {
   ): Promise<ApiResponse<SimilarProductsResponse>> {
     try {
 
-      const response = await apiClient.get(`/recommendations/products/similar/${productId}`, {
+      const response = await apiClient.get<any>(`/recommendations/products/similar/${productId}`, {
         limit
       });
 
@@ -77,7 +77,7 @@ class RecommendationService {
   ): Promise<ApiResponse<FrequentlyBoughtResponse>> {
     try {
 
-      const response = await apiClient.get(`/recommendations/products/frequently-bought/${productId}`, {
+      const response = await apiClient.get<any>(`/recommendations/products/frequently-bought/${productId}`, {
         limit
       });
 
@@ -101,7 +101,7 @@ class RecommendationService {
   ): Promise<ApiResponse<BundleDealsResponse>> {
     try {
 
-      const response = await apiClient.get(`/recommendations/products/bundle/${productId}`, {
+      const response = await apiClient.get<any>(`/recommendations/products/bundle/${productId}`, {
         limit
       });
 
@@ -130,7 +130,7 @@ class RecommendationService {
         params.excludeProducts = excludeProducts.join(',');
       }
 
-      const response = await apiClient.get('/recommendations/products/personalized', params);
+      const response = await apiClient.get<any>('/recommendations/products/personalized', params);
 
       if (response.success && response.data) {
 
@@ -166,7 +166,7 @@ class RecommendationService {
         params.location = `${location.longitude},${location.latitude}`;
       }
 
-      const response = await apiClient.get('/recommendations/picked-for-you', params);
+      const response = await apiClient.get<any>('/recommendations/picked-for-you', params);
 
       if (response.success && response.data) {
         return response as ApiResponse<{
@@ -191,7 +191,7 @@ class RecommendationService {
   async trackProductView(productId: string): Promise<ApiResponse<{ productId: string; tracked: boolean }>> {
     try {
 
-      const response = await apiClient.post(`/recommendations/products/${productId}/view`);
+      const response = await apiClient.post<any>(`/recommendations/products/${productId}/view`);
 
       if (response.success) {
 
@@ -238,7 +238,7 @@ class RecommendationService {
           : []
       };
 
-      return result;
+      return result as any;
     } catch (error) {
       return {
         similar: [],

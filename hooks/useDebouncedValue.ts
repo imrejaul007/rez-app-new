@@ -23,8 +23,8 @@ export function useDebouncedValue<T>(
   const { delay = 500, leading = false, trailing = true, maxWait } = options;
 
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const maxWaitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxWaitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousValueRef = useRef<T>(value);
   const leadingCalledRef = useRef<boolean>(false);
 
@@ -90,7 +90,7 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 500
 ): (...args: Parameters<T>) => void {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackRef = useRef<T>(callback);
 
   // Update callback ref when callback changes
@@ -127,7 +127,7 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
 export function useThrottledValue<T>(value: T, interval: number = 500): T {
   const [throttledValue, setThrottledValue] = useState<T>(value);
   const lastUpdatedRef = useRef<number>(Date.now());
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const now = Date.now();
@@ -169,7 +169,7 @@ export function useThrottledCallback<T extends (...args: any[]) => any>(
   interval: number = 500
 ): (...args: Parameters<T>) => void {
   const lastCalledRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackRef = useRef<T>(callback);
 
   // Update callback ref when callback changes

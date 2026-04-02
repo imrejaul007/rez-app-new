@@ -76,9 +76,9 @@ function PaymentSuccessModal({
 
   const tierName = tier === 'vip' ? 'VIP' : 'Premium';
   const tierColor = tier === 'vip' ? colors.warningScale[400] : colors.brand.purpleLight;
-  const tierGradient = tier === 'vip'
+  const tierGradient = (tier === 'vip'
     ? [colors.warningScale[400], colors.warningScale[400]]
-    : [colors.brand.purpleLight, colors.brand.purpleMedium, colors.brand.pink];
+    : [colors.brand.purpleLight, colors.brand.purpleMedium, colors.brand.pink]) as [string, string, ...string[]];
 
   return (
     <Modal

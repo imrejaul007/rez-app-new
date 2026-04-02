@@ -21,10 +21,15 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import { SearchFilters, StoreResult, ProductItem, SearchResults, SearchError, AvailableFilters } from '@/types/store-search';
 import {
-  defaultSearchFilters
-} from '@/utils/mock-store-search-data';
+  SearchFilters,
+  StoreResult,
+  ProductItem,
+  SearchResults,
+  SearchError,
+  AvailableFilters,
+} from '@/types/store-search';
+import { defaultSearchFilters } from '@/utils/mock-store-search-data';
 import { getSubSubCategories, SubSubCategory } from '@/config/subSubCategoryConfig';
 import SearchHeader from '@/components/store-search/SearchHeader';
 import FilterChips from '@/components/store-search/FilterChips';
@@ -48,7 +53,7 @@ const StoreListPage: React.FC = () => {
   const currencySymbol = getCurrencySymbol();
 
   // Parse sortBy from URL params (for Quick Buttons: Near me, Top rated)
-  const sortByFromParams = (params.sortBy as string) as 'rating' | 'distance' | 'name' | 'newest' | undefined;
+  const sortByFromParams = params.sortBy as string as 'rating' | 'distance' | 'name' | 'newest' | undefined;
   const validSortBy = ['rating', 'distance', 'name', 'newest'].includes(sortByFromParams || '')
     ? sortByFromParams
     : 'rating';
@@ -108,7 +113,7 @@ const StoreListPage: React.FC = () => {
     loadMoreStores,
     hasMore,
     setSortBy: setSortByInHook,
-    clearError
+    clearError,
   } = useStoreSearch({
     category: effectiveCategory,
     searchQuery: debouncedSearchQuery,
@@ -121,9 +126,9 @@ const StoreListPage: React.FC = () => {
     if (stores.length > 0) {
       // Extract unique payment methods from stores
       const paymentMethodsSet = new Set<string>();
-      stores.forEach(store => {
+      stores.forEach((store) => {
         if (store.operationalInfo?.paymentMethods) {
-          store.operationalInfo.paymentMethods.forEach(method => paymentMethodsSet.add(method));
+          store.operationalInfo.paymentMethods.forEach((method) => paymentMethodsSet.add(method));
         }
       });
 
@@ -145,10 +150,12 @@ const StoreListPage: React.FC = () => {
           id: method.toLowerCase().replace(/\s+/g, '-'),
           label: method,
           value: method.toLowerCase().replace(/\s+/g, '-'),
-          count: stores.filter(s => s.operationalInfo?.paymentMethods?.includes(method)).length,
-          icon: method.toLowerCase().includes('wallet') ? 'wallet-outline' :
-                method.toLowerCase().includes('cod') || method.toLowerCase().includes('cash') ? 'cash-outline' :
-                'card-outline',
+          count: stores.filter((s) => s.operationalInfo?.paymentMethods?.includes(method)).length,
+          icon: method.toLowerCase().includes('wallet')
+            ? 'wallet-outline'
+            : method.toLowerCase().includes('cod') || method.toLowerCase().includes('cash')
+              ? 'cash-outline'
+              : 'card-outline',
         })),
       };
 
@@ -166,17 +173,18 @@ const StoreListPage: React.FC = () => {
       // Filter products by subcategory if selected
       let filteredProducts = store.products || [];
       if (selectedSubcategory !== 'all' && filteredProducts.length > 0) {
-        filteredProducts = filteredProducts.filter((product: any) =>
-          product.subCategory === selectedSubcategory ||
-          product.subCategory?._id === selectedSubcategory ||
-          product.subcategory === selectedSubcategory
+        filteredProducts = filteredProducts.filter(
+          (product: any) =>
+            product.subCategory === selectedSubcategory ||
+            product.subCategory?._id === selectedSubcategory ||
+            product.subcategory === selectedSubcategory,
         );
       }
 
       // Filter products by sub-sub-category (cuisine/item type) if selected
       if (selectedSubSubCategory !== 'all' && filteredProducts.length > 0) {
         // Get the display name from config for the selected slug
-        const selectedSubSubConfig = availableSubSubCategories.find(s => s.slug === selectedSubSubCategory);
+        const selectedSubSubConfig = availableSubSubCategories.find((s) => s.slug === selectedSubSubCategory);
         const selectedSubSubName = selectedSubSubConfig?.name || '';
 
         filteredProducts = filteredProducts.filter((product: any) => {
@@ -198,9 +206,10 @@ const StoreListPage: React.FC = () => {
 
           // Also check product tags for matching sub-sub-category
           if (product.tags && Array.isArray(product.tags)) {
-            return product.tags.some((tag: string) =>
-              tag.toLowerCase().includes(slugAsWords) ||
-              (selectedSubSubName && tag.toLowerCase().includes(selectedSubSubName.toLowerCase()))
+            return product.tags.some(
+              (tag: string) =>
+                tag.toLowerCase().includes(slugAsWords) ||
+                (selectedSubSubName && tag.toLowerCase().includes(selectedSubSubName.toLowerCase())),
             );
           }
 
@@ -209,76 +218,82 @@ const StoreListPage: React.FC = () => {
       }
 
       return {
-      storeId: store._id,
-      storeName: store.name || 'Unnamed Store',
-      rating: store.ratings?.average || 0,
-      reviewCount: store.ratings?.count || 0,
-      distance: store.distance !== undefined ? store.distance : null,
-      location: store.location?.city || store.location?.address || 'Location not available',
-      isOpen: store.isActive !== false, // Default to true if not specified
-      hasOnlineDelivery: true, // Assume online delivery is available
-      hasFreeShipping: store.operationalInfo?.freeDeliveryAbove ? true : false,
-      estimatedDelivery: store.operationalInfo?.deliveryTime || null,
-      storeImage: Array.isArray(store.banner) ? store.banner[0] : store.banner || null, // Banner for main display (use first if array)
-      logo: store.logo || null, // Logo for overlay
-      description: store.description || '',
-      deliveryCategories: store.deliveryCategories || {},
-      hasNuqtaPay: (store as any).paymentSettings?.acceptRezCoins || store.operationalInfo?.acceptsWalletPayment || false,
-      cashbackPercent: (store as any).rewardRules?.baseCashbackPercent || 0,
-      products: filteredProducts.map((product: any) => {
-        // Handle both old and new product data structures
-        // New structure from backend transformation: { price: number, originalPrice: number, rating: number }
-        // Old structure: { price: { current, original }, rating: { value, count } }
-        const isNewStructure = typeof product.price === 'number';
+        storeId: store._id,
+        storeName: store.name || 'Unnamed Store',
+        rating: store.ratings?.average || 0,
+        reviewCount: store.ratings?.count || 0,
+        distance: store.distance !== undefined ? store.distance : null,
+        location: store.location?.city || store.location?.address || 'Location not available',
+        isOpen: store.isActive !== false, // Default to true if not specified
+        hasOnlineDelivery: true, // Assume online delivery is available
+        hasFreeShipping: store.operationalInfo?.freeDeliveryAbove ? true : false,
+        estimatedDelivery: store.operationalInfo?.deliveryTime || null,
+        storeImage: Array.isArray(store.banner) ? store.banner[0] : store.banner || null, // Banner for main display (use first if array)
+        logo: store.logo || null, // Logo for overlay
+        description: store.description || '',
+        deliveryCategories: store.deliveryCategories || {},
+        hasNuqtaPay:
+          (store as any).paymentSettings?.acceptRezCoins || store.operationalInfo?.acceptsWalletPayment || false,
+        cashbackPercent: (store as any).rewardRules?.baseCashbackPercent || 0,
+        products: filteredProducts.map((product: any) => {
+          // Handle both old and new product data structures
+          // New structure from backend transformation: { price: number, originalPrice: number, rating: number }
+          // Old structure: { price: { current, original }, rating: { value, count } }
+          const isNewStructure = typeof product.price === 'number';
 
-        // Safe price extraction with fallback
-        const getPrice = () => {
-          if (isNewStructure) {
-            return typeof product.price === 'number' ? product.price : 0;
-          }
-          return typeof product.price?.current === 'number' ? product.price.current : 0;
-        };
+          // Safe price extraction with fallback
+          const getPrice = () => {
+            if (isNewStructure) {
+              return typeof product.price === 'number' ? product.price : 0;
+            }
+            return typeof product.price?.current === 'number' ? product.price.current : 0;
+          };
 
-        // Safe rating extraction with fallback
-        const getRating = () => {
-          if (isNewStructure) {
-            return typeof product.rating === 'number' ? product.rating : 0;
-          }
-          if (typeof product.rating?.value === 'number') {
-            return product.rating.value;
-          }
-          if (typeof product.rating?.value === 'string') {
-            const parsed = parseFloat(product.rating.value);
-            return isNaN(parsed) ? 0 : parsed;
-          }
-          return 0;
-        };
+          // Safe rating extraction with fallback
+          const getRating = () => {
+            if (isNewStructure) {
+              return typeof product.rating === 'number' ? product.rating : 0;
+            }
+            if (typeof product.rating?.value === 'number') {
+              return product.rating.value;
+            }
+            if (typeof product.rating?.value === 'string') {
+              const parsed = parseFloat(product.rating.value);
+              return isNaN(parsed) ? 0 : parsed;
+            }
+            return 0;
+          };
 
-        const transformedProduct = {
-          productId: product._id || product.productId || '',
-          name: product.name || product.title || '',
-          description: product.description || '',
-          price: getPrice(),
-          originalPrice: isNewStructure ? (product.originalPrice || null) : (product.price?.original || null),
-          discountPercentage: isNewStructure ? (product.discountPercentage || null) : (product.price?.discount || null),
-          imageUrl: product.imageUrl || product.image,
-          imageAlt: product.imageAlt || product.name || product.title || 'Product image',
-          hasRezPay: product.hasRezPay !== undefined ? product.hasRezPay : false,
-          inStock: product.inStock !== undefined ? product.inStock : (product.inventory?.isAvailable !== undefined ? product.inventory.isAvailable : true),
-          category: product.category || '',
-          subcategory: product.subcategory || '',
-          brand: product.brand || '',
-          rating: getRating(),
-          reviewCount: isNewStructure ? (product.reviewCount || 0) : (product.rating?.count || 0),
-          sizes: Array.isArray(product.sizes) ? product.sizes : [],
-          colors: Array.isArray(product.colors) ? product.colors : [],
-          tags: Array.isArray(product.tags) ? product.tags : [],
-        };
+          const transformedProduct = {
+            productId: product._id || product.productId || '',
+            name: product.name || product.title || '',
+            description: product.description || '',
+            price: getPrice(),
+            originalPrice: isNewStructure ? product.originalPrice || null : product.price?.original || null,
+            discountPercentage: isNewStructure ? product.discountPercentage || null : product.price?.discount || null,
+            imageUrl: product.imageUrl || product.image,
+            imageAlt: product.imageAlt || product.name || product.title || 'Product image',
+            hasRezPay: product.hasRezPay !== undefined ? product.hasRezPay : false,
+            inStock:
+              product.inStock !== undefined
+                ? product.inStock
+                : product.inventory?.isAvailable !== undefined
+                  ? product.inventory.isAvailable
+                  : true,
+            category: product.category || '',
+            subcategory: product.subcategory || '',
+            brand: product.brand || '',
+            rating: getRating(),
+            reviewCount: isNewStructure ? product.reviewCount || 0 : product.rating?.count || 0,
+            sizes: Array.isArray(product.sizes) ? product.sizes : [],
+            colors: Array.isArray(product.colors) ? product.colors : [],
+            tags: Array.isArray(product.tags) ? product.tags : [],
+          };
 
-        return transformedProduct;
-      }),
-      totalProductsFound: filteredProducts.length,
-    };
+          return transformedProduct;
+        }),
+        totalProductsFound: filteredProducts.length,
+      };
     }),
     filters: availableFilters,
     pagination: {
@@ -295,15 +310,17 @@ const StoreListPage: React.FC = () => {
   const storeListData = useMemo(() => {
     const allStores = searchResults?.stores || [];
     if (!nuqtaPayFilter) return allStores;
-    return allStores.filter(store => store.hasNuqtaPay);
+    return allStores.filter((store) => store.hasNuqtaPay);
   }, [searchResults?.stores, nuqtaPayFilter]);
 
-  const error = errorMessage ? {
-    code: 'SERVER_ERROR' as const,
-    message: errorMessage,
-    timestamp: new Date(),
-    recoverable: true,
-  } : null;
+  const error = errorMessage
+    ? {
+        code: 'SERVER_ERROR' as const,
+        message: errorMessage,
+        timestamp: new Date(),
+        recoverable: true,
+      }
+    : null;
 
   // Screen dimensions
   const [screenData, setScreenData] = useState(Dimensions.get('window'));
@@ -357,31 +374,40 @@ const StoreListPage: React.FC = () => {
   }, [router]);
 
   // Handle product selection
-  const handleProductSelect = useCallback((product: ProductItem, store: StoreResult) => {
-    // Navigate to ProductPage (comprehensive product page)
-    // ✅ FIX: Use 'id' parameter instead of 'cardId' for consistency
-    router.push({
-      pathname: '/product-page',
-      params: {
-        id: product.productId,  // ✅ Changed from cardId to id
-        cardType: 'product',
-        storeId: store.storeId,
-      },
-    } as any);
-  }, [router]);
+  const handleProductSelect = useCallback(
+    (product: ProductItem, store: StoreResult) => {
+      // Navigate to ProductPage (comprehensive product page)
+      // ✅ FIX: Use 'id' parameter instead of 'cardId' for consistency
+      router.push({
+        pathname: '/product-page',
+        params: {
+          id: product.productId, // ✅ Changed from cardId to id
+          cardType: 'product',
+          storeId: store.storeId,
+        },
+      } as any);
+    },
+    [router],
+  );
 
   // Handle store selection
-  const handleStoreSelect = useCallback((store: StoreResult) => {
-    // Navigate to store page
-    router.push(`/MainStorePage?storeId=${store.storeId}`);
-  }, [router]);
+  const handleStoreSelect = useCallback(
+    (store: StoreResult) => {
+      // Navigate to store page
+      router.push(`/MainStorePage?storeId=${store.storeId}`);
+    },
+    [router],
+  );
 
   // Handle sort change
-  const handleSortChange = useCallback((newSortBy: 'rating' | 'distance' | 'name' | 'newest') => {
-    setSortByLocal(newSortBy);
-    setSortByInHook(newSortBy);
-    setShowSortModal(false);
-  }, [setSortByInHook]);
+  const handleSortChange = useCallback(
+    (newSortBy: 'rating' | 'distance' | 'name' | 'newest') => {
+      setSortByLocal(newSortBy);
+      setSortByInHook(newSortBy);
+      setShowSortModal(false);
+    },
+    [setSortByInHook],
+  );
 
   // Handle load more
   const handleLoadMore = useCallback(async () => {
@@ -393,17 +419,20 @@ const StoreListPage: React.FC = () => {
   // Create styles based on screen dimensions
   const styles = createStyles(screenData);
 
-  const renderStoreListItem = useCallback(({ item: store }: { item: StoreResult }) => (
-    <View style={styles.resultCardWrapper}>
-      <StoreCard
-        store={store}
-        onStoreSelect={handleStoreSelect}
-        onProductSelect={handleProductSelect}
-        showDistance={true}
-        maxProducts={4}
-      />
-    </View>
-  ), [handleStoreSelect, handleProductSelect, styles.resultCardWrapper]);
+  const renderStoreListItem = useCallback(
+    ({ item: store }: { item: StoreResult }) => (
+      <View style={styles.resultCardWrapper}>
+        <StoreCard
+          store={store}
+          onStoreSelect={handleStoreSelect}
+          onProductSelect={handleProductSelect}
+          showDistance={true}
+          maxProducts={4}
+        />
+      </View>
+    ),
+    [handleStoreSelect, handleProductSelect, styles.resultCardWrapper],
+  );
 
   return (
     <View style={styles.container}>
@@ -420,16 +449,16 @@ const StoreListPage: React.FC = () => {
             isLoading={isLoading}
             title={params.title ? decodeURIComponent(params.title as string) : undefined}
             rightElement={
-              <Pressable
-                style={styles.headerSortButton}
-                onPress={() => setShowSortModal(true)}
-               
-              >
+              <Pressable style={styles.headerSortButton} onPress={() => setShowSortModal(true)}>
                 <Ionicons name="swap-vertical" size={16} color={colors.background.primary} />
                 <Text style={styles.headerSortButtonText}>
-                  {sortBy === 'rating' ? 'Rating' :
-                   sortBy === 'distance' ? 'Distance' :
-                   sortBy === 'name' ? 'Name' : 'Newest'}
+                  {sortBy === 'rating'
+                    ? 'Rating'
+                    : sortBy === 'distance'
+                      ? 'Distance'
+                      : sortBy === 'name'
+                        ? 'Name'
+                        : 'Newest'}
                 </Text>
               </Pressable>
             }
@@ -465,15 +494,16 @@ const StoreListPage: React.FC = () => {
                 <Pressable
                   style={[
                     styles.subSubCategoryChip,
-                    selectedSubSubCategory === 'all' && styles.subSubCategoryChipActive
+                    selectedSubSubCategory === 'all' && styles.subSubCategoryChipActive,
                   ]}
                   onPress={() => setSelectedSubSubCategory('all')}
-                 
                 >
-                  <Text style={[
-                    styles.subSubCategoryChipText,
-                    selectedSubSubCategory === 'all' && styles.subSubCategoryChipTextActive
-                  ]}>
+                  <Text
+                    style={[
+                      styles.subSubCategoryChipText,
+                      selectedSubSubCategory === 'all' && styles.subSubCategoryChipTextActive,
+                    ]}
+                  >
                     All
                   </Text>
                 </Pressable>
@@ -484,10 +514,9 @@ const StoreListPage: React.FC = () => {
                     key={subSub.slug}
                     style={[
                       styles.subSubCategoryChip,
-                      selectedSubSubCategory === subSub.slug && styles.subSubCategoryChipActive
+                      selectedSubSubCategory === subSub.slug && styles.subSubCategoryChipActive,
                     ]}
                     onPress={() => setSelectedSubSubCategory(subSub.slug)}
-                   
                   >
                     {subSub.icon && (
                       <Ionicons
@@ -497,10 +526,12 @@ const StoreListPage: React.FC = () => {
                         style={styles.subSubCategoryChipIcon}
                       />
                     )}
-                    <Text style={[
-                      styles.subSubCategoryChipText,
-                      selectedSubSubCategory === subSub.slug && styles.subSubCategoryChipTextActive
-                    ]}>
+                    <Text
+                      style={[
+                        styles.subSubCategoryChipText,
+                        selectedSubSubCategory === subSub.slug && styles.subSubCategoryChipTextActive,
+                      ]}
+                    >
                       {subSub.name}
                     </Text>
                   </Pressable>
@@ -522,11 +553,7 @@ const StoreListPage: React.FC = () => {
         {/* Subcategory Filter Dropdown - Only show if subcategories exist */}
         {subcategories.length > 0 && (
           <View style={styles.subcategoryContainer}>
-            <Pressable
-              style={styles.subcategoryDropdown}
-              onPress={() => setShowSubcategoryModal(true)}
-             
-            >
+            <Pressable style={styles.subcategoryDropdown} onPress={() => setShowSubcategoryModal(true)}>
               <Text style={styles.subcategoryLabel}>
                 {selectedSubcategory === 'all'
                   ? 'All Subcategories'
@@ -550,15 +577,11 @@ const StoreListPage: React.FC = () => {
           >
             {/* Rez Pay filter */}
             <Pressable
-              style={[styles.quickFilterChip, nuqtaPayFilter && styles.quickFilterChipActive]}
-              onPress={() => setNuqtaPayFilter(prev => !prev)}
-             
+              style={[styles.quickFilterChip, nuqtaPayFilter ? styles.quickFilterChipActive : null]}
+              onPress={() => setNuqtaPayFilter((prev) => !prev)}
             >
-              <CachedImage
-                source={BRAND.COIN_IMAGE}
-                style={{ width: 15, height: 15, marginRight: 5 }}
-              />
-              <Text style={[styles.quickFilterChipText, nuqtaPayFilter && styles.quickFilterChipTextActive]}>
+              <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 15, height: 15, marginRight: 5 }} />
+              <Text style={[styles.quickFilterChipText, nuqtaPayFilter ? styles.quickFilterChipTextActive : null]}>
                 {BRAND.PAY_NAME}
               </Text>
             </Pressable>
@@ -567,9 +590,13 @@ const StoreListPage: React.FC = () => {
             <Pressable
               style={[styles.quickFilterChip, sortBy === 'distance' && styles.quickFilterChipActive]}
               onPress={() => handleSortChange('distance')}
-             
             >
-              <Ionicons name="navigate" size={13} color={sortBy === 'distance' ? colors.background.primary : colors.brand.green} style={{ marginRight: 5 }} />
+              <Ionicons
+                name="navigate"
+                size={13}
+                color={sortBy === 'distance' ? colors.background.primary : colors.brand.green}
+                style={{ marginRight: 5 }}
+              />
               <Text style={[styles.quickFilterChipText, sortBy === 'distance' && styles.quickFilterChipTextActive]}>
                 Nearby
               </Text>
@@ -579,9 +606,13 @@ const StoreListPage: React.FC = () => {
             <Pressable
               style={[styles.quickFilterChip, sortBy === 'rating' && styles.quickFilterChipActive]}
               onPress={() => handleSortChange('rating')}
-             
             >
-              <Ionicons name="star" size={13} color={sortBy === 'rating' ? colors.background.primary : '#FFB800'} style={{ marginRight: 5 }} />
+              <Ionicons
+                name="star"
+                size={13}
+                color={sortBy === 'rating' ? colors.background.primary : '#FFB800'}
+                style={{ marginRight: 5 }}
+              />
               <Text style={[styles.quickFilterChipText, sortBy === 'rating' && styles.quickFilterChipTextActive]}>
                 Top Rated
               </Text>
@@ -591,9 +622,13 @@ const StoreListPage: React.FC = () => {
             <Pressable
               style={[styles.quickFilterChip, sortBy === 'newest' && styles.quickFilterChipActive]}
               onPress={() => handleSortChange('newest')}
-             
             >
-              <Ionicons name="sparkles" size={13} color={sortBy === 'newest' ? colors.background.primary : colors.brand.purpleLight} style={{ marginRight: 5 }} />
+              <Ionicons
+                name="sparkles"
+                size={13}
+                color={sortBy === 'newest' ? colors.background.primary : colors.brand.purpleLight}
+                style={{ marginRight: 5 }}
+              />
               <Text style={[styles.quickFilterChipText, sortBy === 'newest' && styles.quickFilterChipTextActive]}>
                 Newest
               </Text>
@@ -631,12 +666,7 @@ const StoreListPage: React.FC = () => {
               {/* Error State */}
               {error && !isLoading && (
                 <View style={styles.section}>
-                  <ErrorState
-                    error={error}
-                    onRetry={handleRetry}
-                    onGoBack={handleBack}
-                    showBackButton={false}
-                  />
+                  <ErrorState error={error} onRetry={handleRetry} onGoBack={handleBack} showBackButton={false} />
                 </View>
               )}
 
@@ -666,141 +696,127 @@ const StoreListPage: React.FC = () => {
           }
         />
 
-      {/* Sort Modal */}
-      <Modal
-        visible={showSortModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowSortModal(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-         
-          onPress={() => setShowSortModal(false)}
-        >
-          <View style={styles.sortModalContent}>
-            {/* Drag handle */}
-            <View style={{ alignItems: 'center', paddingVertical: Spacing.sm }}>
-              <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border.default }} />
-            </View>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Sort By</Text>
-              <Pressable onPress={() => setShowSortModal(false)}>
-                <Ionicons name="close-circle" size={28} color={colors.border.default} />
-              </Pressable>
-            </View>
-
-            {([
-              { key: 'rating' as const, label: 'Rating (High to Low)', icon: 'star' as const, color: '#FFB800' },
-              { key: 'distance' as const, label: 'Distance (Near to Far)', icon: 'navigate' as const, color: colors.brand.green },
-              { key: 'name' as const, label: 'Name (A-Z)', icon: 'text' as const, color: colors.brand.indigo },
-              { key: 'newest' as const, label: 'Newest First', icon: 'sparkles' as const, color: colors.brand.purpleLight },
-            ]).map((option) => (
-              <Pressable
-                key={option.key}
-                style={[
-                  styles.sortOption,
-                  sortBy === option.key && styles.sortOptionActive,
-                ]}
-                onPress={() => handleSortChange(option.key)}
-               
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: sortBy === option.key ? option.color + '15' : colors.background.secondary, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons name={option.icon} size={16} color={sortBy === option.key ? option.color : colors.text.tertiary} />
-                  </View>
-                  <Text style={[
-                    styles.sortOptionText,
-                    sortBy === option.key && styles.sortOptionTextActive,
-                  ]}>
-                    {option.label}
-                  </Text>
-                </View>
-                {sortBy === option.key && (
-                  <Ionicons name="checkmark-circle" size={22} color={colors.brand.green} />
-                )}
-              </Pressable>
-            ))}
-          </View>
-        </Pressable>
-      </Modal>
-
-      {/* Subcategory Modal */}
-      <Modal
-        visible={showSubcategoryModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowSubcategoryModal(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-         
-          onPress={() => setShowSubcategoryModal(false)}
-        >
-          <View style={styles.sortModalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Subcategory</Text>
-              <Pressable onPress={() => setShowSubcategoryModal(false)}>
-                <Ionicons name="close" size={24} color={colors.text.tertiary} />
-              </Pressable>
-            </View>
-
-            {/* All Subcategories Option */}
-            <Pressable
-              style={[
-                styles.sortOption,
-                selectedSubcategory === 'all' && styles.sortOptionActive
-              ]}
-              onPress={() => {
-                setSelectedSubcategory('all');
-                setShowSubcategoryModal(false);
-              }}
-            >
-              <Text style={[
-                styles.sortOptionText,
-                selectedSubcategory === 'all' && styles.sortOptionTextActive
-              ]}>
-                All Subcategories
-              </Text>
-              {selectedSubcategory === 'all' && (
-                <Ionicons name="checkmark" size={20} color={colors.brand.green} />
-              )}
-            </Pressable>
-
-            {/* Individual Subcategory Options */}
-            {subcategories.map((sub: any) => {
-              // Safely extract string values
-              const subId = typeof sub._id === 'string' ? sub._id : String(sub._id || '');
-              const subName = typeof sub.name === 'string' ? sub.name : 'Subcategory';
-
-              return (
-                <Pressable
-                  key={subId}
-                  style={[
-                    styles.sortOption,
-                    selectedSubcategory === subId && styles.sortOptionActive
-                  ]}
-                  onPress={() => {
-                    setSelectedSubcategory(subId);
-                    setShowSubcategoryModal(false);
-                  }}
-                >
-                  <Text style={[
-                    styles.sortOptionText,
-                    selectedSubcategory === subId && styles.sortOptionTextActive
-                  ]}>
-                    {subName}
-                  </Text>
-                  {selectedSubcategory === subId && (
-                    <Ionicons name="checkmark" size={20} color={colors.brand.green} />
-                  )}
+        {/* Sort Modal */}
+        <Modal visible={showSortModal} transparent animationType="fade" onRequestClose={() => setShowSortModal(false)}>
+          <Pressable style={styles.modalOverlay} onPress={() => setShowSortModal(false)}>
+            <View style={styles.sortModalContent}>
+              {/* Drag handle */}
+              <View style={{ alignItems: 'center', paddingVertical: Spacing.sm }}>
+                <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border.default }} />
+              </View>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Sort By</Text>
+                <Pressable onPress={() => setShowSortModal(false)}>
+                  <Ionicons name="close-circle" size={28} color={colors.border.default} />
                 </Pressable>
-              );
-            })}
-          </View>
-        </Pressable>
-      </Modal>
+              </View>
 
+              {[
+                { key: 'rating' as const, label: 'Rating (High to Low)', icon: 'star' as const, color: '#FFB800' },
+                {
+                  key: 'distance' as const,
+                  label: 'Distance (Near to Far)',
+                  icon: 'navigate' as const,
+                  color: colors.brand.green,
+                },
+                { key: 'name' as const, label: 'Name (A-Z)', icon: 'text' as const, color: colors.brand.indigo },
+                {
+                  key: 'newest' as const,
+                  label: 'Newest First',
+                  icon: 'sparkles' as const,
+                  color: colors.brand.purpleLight,
+                },
+              ].map((option) => (
+                <Pressable
+                  key={option.key}
+                  style={[styles.sortOption, sortBy === option.key && styles.sortOptionActive]}
+                  onPress={() => handleSortChange(option.key)}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <View
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 10,
+                        backgroundColor: sortBy === option.key ? option.color + '15' : colors.background.secondary,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Ionicons
+                        name={option.icon}
+                        size={16}
+                        color={sortBy === option.key ? option.color : colors.text.tertiary}
+                      />
+                    </View>
+                    <Text style={[styles.sortOptionText, sortBy === option.key && styles.sortOptionTextActive]}>
+                      {option.label}
+                    </Text>
+                  </View>
+                  {sortBy === option.key && <Ionicons name="checkmark-circle" size={22} color={colors.brand.green} />}
+                </Pressable>
+              ))}
+            </View>
+          </Pressable>
+        </Modal>
+
+        {/* Subcategory Modal */}
+        <Modal
+          visible={showSubcategoryModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowSubcategoryModal(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setShowSubcategoryModal(false)}>
+            <View style={styles.sortModalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Select Subcategory</Text>
+                <Pressable onPress={() => setShowSubcategoryModal(false)}>
+                  <Ionicons name="close" size={24} color={colors.text.tertiary} />
+                </Pressable>
+              </View>
+
+              {/* All Subcategories Option */}
+              <Pressable
+                style={[styles.sortOption, selectedSubcategory === 'all' && styles.sortOptionActive]}
+                onPress={() => {
+                  setSelectedSubcategory('all');
+                  setShowSubcategoryModal(false);
+                }}
+              >
+                <Text style={[styles.sortOptionText, selectedSubcategory === 'all' && styles.sortOptionTextActive]}>
+                  All Subcategories
+                </Text>
+                {selectedSubcategory === 'all' && <Ionicons name="checkmark" size={20} color={colors.brand.green} />}
+              </Pressable>
+
+              {/* Individual Subcategory Options */}
+              {subcategories.map((sub: any) => {
+                // Safely extract string values
+                const subId = typeof sub._id === 'string' ? sub._id : String(sub._id || '');
+                const subName = typeof sub.name === 'string' ? sub.name : 'Subcategory';
+
+                return (
+                  <Pressable
+                    key={subId}
+                    style={[styles.sortOption, selectedSubcategory === subId && styles.sortOptionActive]}
+                    onPress={() => {
+                      setSelectedSubcategory(subId);
+                      setShowSubcategoryModal(false);
+                    }}
+                  >
+                    <Text style={[styles.sortOptionText, selectedSubcategory === subId && styles.sortOptionTextActive]}>
+                      {subName}
+                    </Text>
+                    {selectedSubcategory === subId && (
+                      <Ionicons name="checkmark" size={20} color={colors.brand.green} />
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Modal>
       </SafeAreaView>
     </View>
   );

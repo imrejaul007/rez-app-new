@@ -85,7 +85,7 @@ function ActivityTimeline({
                 </View>
                 {!isLast && <View style={styles.timelineLine} />}
               </View>
-              <View style={[styles.timelineRight, isLast && styles.timelineRightLast]}>
+              <View style={[styles.timelineRight, isLast ? styles.timelineRightLast : null]}>
                 <View style={styles.activityCard}>
                   <View style={styles.activityHeader}>
                     <Text style={styles.activityDescription}>{activity.description}</Text>

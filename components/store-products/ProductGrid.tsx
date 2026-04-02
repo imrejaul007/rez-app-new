@@ -386,7 +386,7 @@ function ProductGrid({
         analyticsService.track('add_to_cart_success', { productId: product.id, productName: product.name, price: product.price.current });
         showToast({ message: `${product.name} added to cart`, type: 'success', duration: 3000 });
       }
-    } catch (err) {
+    } catch (err: any) {
       analyticsService.track('add_to_cart_error', { productId: product.id, error: err instanceof Error ? err.message : 'Unknown error' });
       showToast({ message: 'Failed to add item to cart. Please try again.', type: 'error', duration: 3000 });
     }

@@ -21,7 +21,7 @@ const { width } = Dimensions.get('window');
 function BankOfferDetailScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const isAuthenticated = useIsAuthenticated();
 
   const [offer, setOffer] = useState<any>(null);
@@ -70,7 +70,7 @@ function BankOfferDetailScreen() {
       await Share.share({
         message: `Check out this bank offer: ${offer?.offerTitle || offer?.bankName} - ${offer?.discountPercentage}% discount!`,
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('[BankOfferDetail] Share error:', err instanceof Error ? err : undefined);
     }
   };

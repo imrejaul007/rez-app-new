@@ -93,7 +93,7 @@ function RedemptionFlow({
       if (!isMounted()) return;
       setRedemption(result);
       handleNext();
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to redeem voucher. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -325,7 +325,7 @@ function RedemptionFlow({
         style={styles.checkbox}
         onPress={() => setTermsAccepted(!termsAccepted)}
       >
-        <View style={[styles.checkboxBox, termsAccepted && styles.checkboxBoxChecked]}>
+        <View style={[styles.checkboxBox, termsAccepted ? styles.checkboxBoxChecked : null]}>
           {termsAccepted && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
         </View>
         <ThemedText style={styles.checkboxLabel}>

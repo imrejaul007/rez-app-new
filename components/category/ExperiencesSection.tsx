@@ -64,7 +64,7 @@ function ExperiencesSection({ categorySlug, pageConfig }: ExperiencesSectionProp
         if (!isMounted()) return;
         setExperiences(response.data.experiences);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

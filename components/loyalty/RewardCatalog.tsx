@@ -123,7 +123,7 @@ function RewardCatalog({
           data={CATEGORIES}
           keyExtractor={item => item.value}
           renderItem={renderCategoryChip}
-          contentContainerStyle={styles.categoryList}
+          contentContainerStyle={styles.categoryList as any}
           estimatedItemSize={44}
         />
       </View>

@@ -60,12 +60,12 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
       if (statusResponse.success && countsResponse.success) {
         setState(prev => ({
           ...prev,
-          isFollowing: statusResponse.data.isFollowing,
-          isFollower: statusResponse.data.isFollower,
-          isMutual: statusResponse.data.isMutual,
-          followersCount: countsResponse.data.followersCount,
-          followingCount: countsResponse.data.followingCount,
-          mutualCount: countsResponse.data.mutualCount,
+          isFollowing: (statusResponse.data as any).isFollowing,
+          isFollower: (statusResponse.data as any).isFollower,
+          isMutual: (statusResponse.data as any).isMutual,
+          followersCount: (countsResponse.data as any).followersCount,
+          followingCount: (countsResponse.data as any).followingCount,
+          mutualCount: (countsResponse.data as any).mutualCount,
           isLoading: false,
         }));
       }
@@ -96,13 +96,13 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
         followingCount: prev.followingCount + 1,
       }));
 
-      const response = await followApi.followUser(userId);
+      const response: any = await followApi.followUser(userId);
 
       if (response.success) {
         setState(prev => ({
           ...prev,
-          followersCount: response.data.followersCount,
-          followingCount: response.data.followingCount,
+          followersCount: (response.data as any).followersCount,
+          followingCount: (response.data as any).followingCount,
         }));
 
         // Trigger callback
@@ -110,7 +110,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
           options.onFollowChange(userId, true);
         }
         if (options.onFollowersChange) {
-          options.onFollowersChange(response.data.followersCount);
+          options.onFollowersChange((response.data as any).followersCount);
         }
 
         return true;
@@ -138,13 +138,13 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
         followingCount: Math.max(0, prev.followingCount - 1),
       }));
 
-      const response = await followApi.unfollowUser(userId);
+      const response: any = await followApi.unfollowUser(userId);
 
       if (response.success) {
         setState(prev => ({
           ...prev,
-          followersCount: response.data.followersCount,
-          followingCount: response.data.followingCount,
+          followersCount: (response.data as any).followersCount,
+          followingCount: (response.data as any).followingCount,
         }));
 
         // Trigger callback
@@ -152,7 +152,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
           options.onFollowChange(userId, false);
         }
         if (options.onFollowersChange) {
-          options.onFollowersChange(response.data.followersCount);
+          options.onFollowersChange((response.data as any).followersCount);
         }
 
         return true;
@@ -182,9 +182,9 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
   // Load follow suggestions
   const loadSuggestions = useCallback(async (limit: number = 10) => {
     try {
-      const response = await followApi.getFollowSuggestions(limit);
+      const response: any = await followApi.getFollowSuggestions(limit);
       if (response.success) {
-        setSuggestions(response.data.suggestions || []);
+        setSuggestions((response.data as any).suggestions || []);
       }
     } catch (error: any) {
       // silently handle
@@ -196,16 +196,16 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
     try {
       setState(prev => ({ ...prev, isLoading: true }));
 
-      const response = await followApi.getFollowers(userId, page, 50);
+      const response: any = await followApi.getFollowers(userId, page, 50);
 
       if (response.success) {
         if (page === 1) {
-          setFollowers(response.data.followers || []);
+          setFollowers((response.data as any).followers || []);
         } else {
-          setFollowers(prev => [...prev, ...(response.data.followers || [])]);
+          setFollowers(prev => [...prev, ...((response.data as any).followers || [])]);
         }
         setState(prev => ({ ...prev, isLoading: false }));
-        return response.data.pagination;
+        return (response.data as any).pagination;
       }
 
       setState(prev => ({ ...prev, isLoading: false }));
@@ -221,16 +221,16 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
     try {
       setState(prev => ({ ...prev, isLoading: true }));
 
-      const response = await followApi.getFollowing(userId, page, 50);
+      const response: any = await followApi.getFollowing(userId, page, 50);
 
       if (response.success) {
         if (page === 1) {
-          setFollowing(response.data.following || []);
+          setFollowing((response.data as any).following || []);
         } else {
-          setFollowing(prev => [...prev, ...(response.data.following || [])]);
+          setFollowing(prev => [...prev, ...((response.data as any).following || [])]);
         }
         setState(prev => ({ ...prev, isLoading: false }));
-        return response.data.pagination;
+        return (response.data as any).pagination;
       }
 
       setState(prev => ({ ...prev, isLoading: false }));
@@ -246,16 +246,16 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
     try {
       setState(prev => ({ ...prev, isLoading: true }));
 
-      const response = await followApi.getMutualFollowers(userId, page, 50);
+      const response: any = await followApi.getMutualFollowers(userId, page, 50);
 
       if (response.success) {
         if (page === 1) {
-          setMutuals(response.data.mutuals || []);
+          setMutuals((response.data as any).mutuals || []);
         } else {
-          setMutuals(prev => [...prev, ...(response.data.mutuals || [])]);
+          setMutuals(prev => [...prev, ...((response.data as any).mutuals || [])]);
         }
         setState(prev => ({ ...prev, isLoading: false }));
-        return response.data.pagination;
+        return (response.data as any).pagination;
       }
 
       setState(prev => ({ ...prev, isLoading: false }));
@@ -269,9 +269,9 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
   // Load pending follow requests
   const loadPendingRequests = useCallback(async () => {
     try {
-      const response = await followApi.getPendingFollowRequests();
+      const response: any = await followApi.getPendingFollowRequests();
       if (response.success) {
-        setPendingRequests(response.data.requests || []);
+        setPendingRequests((response.data as any).requests || []);
       }
     } catch (error: any) {
       // silently handle
@@ -281,7 +281,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
   // Accept follow request
   const acceptRequest = useCallback(async (requestId: string) => {
     try {
-      const response = await followApi.acceptFollowRequest(requestId);
+      const response: any = await followApi.acceptFollowRequest(requestId);
       if (response.success) {
         // Remove from pending
         setPendingRequests(prev => prev.filter(req => req._id !== requestId));
@@ -300,7 +300,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
   // Reject follow request
   const rejectRequest = useCallback(async (requestId: string) => {
     try {
-      const response = await followApi.rejectFollowRequest(requestId);
+      const response: any = await followApi.rejectFollowRequest(requestId);
       if (response.success) {
         // Remove from pending
         setPendingRequests(prev => prev.filter(req => req._id !== requestId));
@@ -315,7 +315,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
   // Remove follower
   const removeFollower = useCallback(async (userId: string) => {
     try {
-      const response = await followApi.removeFollower(userId);
+      const response: any = await followApi.removeFollower(userId);
       if (response.success) {
         // Remove from followers list
         setFollowers(prev => prev.filter(user => user._id !== userId));
@@ -337,14 +337,14 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
     try {
       setState(prev => ({ ...prev, isLoading: true }));
 
-      const response = await followApi.searchUsers(query, page, 20);
+      const response: any = await followApi.searchUsers(query, page, 20);
 
       setState(prev => ({ ...prev, isLoading: false }));
 
       if (response.success) {
         return {
-          users: response.data.users || [],
-          pagination: response.data.pagination,
+          users: (response.data as any).users || [],
+          pagination: (response.data as any).pagination,
         };
       }
       return null;

@@ -21,7 +21,7 @@
 export function migrateId<T extends Record<string, any>>(obj: T): T {
   if (!obj) return obj;
 
-  const migrated = { ...obj };
+  const migrated: any = { ...obj };
 
   // Convert _id to id at root level
   if ('_id' in migrated && !('id' in migrated)) {

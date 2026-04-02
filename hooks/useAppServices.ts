@@ -41,7 +41,7 @@ export function useAppServices(fontsLoaded: boolean) {
 
       if (previousState.match(/inactive|background/) && nextAppState === 'active') {
         import('@/services/cacheWarmingService').then(mod => {
-          mod.default.onAppForeground();
+          (mod.default as any).onAppForeground?.();
         }).catch(() => {});
       }
 
@@ -143,7 +143,7 @@ export function useAppServices(fontsLoaded: boolean) {
           });
         });
       }).catch(() => {});
-    } catch (error) {
+    } catch (error: any) {
       errorReporter.captureError(
         error instanceof Error ? error : new Error('App initialization failed'),
         { context: 'RootLayout.initializeApp' }

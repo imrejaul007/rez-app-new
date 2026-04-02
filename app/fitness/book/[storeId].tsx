@@ -202,12 +202,7 @@ const FitnessBookingPage: React.FC = () => {
   const insets = useSafeAreaInsets();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const { storeId, storeName, cashback, type } = useLocalSearchParams<{
-    storeId: string;
-    storeName?: string;
-    cashback?: string;
-    type?: string;
-  }>();
+  const { storeId, storeName, cashback, type } = useLocalSearchParams<any>();
 
   const [store, setStore] = useState<Store | null>(null);
   const [loading, setLoading] = useState(true);
@@ -289,7 +284,7 @@ const FitnessBookingPage: React.FC = () => {
           })),
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle — fallback data already set
     } finally {
       if (!isMounted()) return;
@@ -509,7 +504,7 @@ const FitnessBookingPage: React.FC = () => {
         ].map((tab) => (
           <Pressable
             key={tab.id}
-            style={[styles.tab, activeTab === tab.id && styles.tabActive]}
+            style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
             onPress={() => setActiveTab(tab.id)}
             accessibilityRole="tab"
             accessibilityLabel={`${tab.label} booking tab`}
@@ -520,7 +515,7 @@ const FitnessBookingPage: React.FC = () => {
               size={18}
               color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
             />
-            <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>{tab.label}</Text>
+            <Text style={[styles.tabText, activeTab === tab.id ? styles.tabTextActive : null]}>{tab.label}</Text>
           </Pressable>
         ))}
       </ScrollView>
@@ -594,17 +589,17 @@ const FitnessBookingPage: React.FC = () => {
         return (
           <Pressable
             key={index}
-            style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+            style={[styles.dateCard, isSelected ? styles.dateCardSelected : null]}
             onPress={() => onSelect(date)}
             accessibilityRole="radio"
             accessibilityLabel={`${isToday ? 'Today, ' : ''}${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`}
             accessibilityState={{ selected: isSelected }}
           >
-            <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+            <Text style={[styles.dateDay, isSelected ? styles.dateTextSelected : null]}>
               {date.toLocaleDateString('en-US', { weekday: 'short' })}
             </Text>
-            <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>{date.getDate()}</Text>
-            {isToday && <View style={[styles.todayDot, isSelected && styles.todayDotSelected]} />}
+            <Text style={[styles.dateNumber, isSelected ? styles.dateTextSelected : null]}>{date.getDate()}</Text>
+            {isToday && <View style={[styles.todayDot, isSelected ? styles.todayDotSelected : null]} />}
           </Pressable>
         );
       })}
@@ -623,7 +618,7 @@ const FitnessBookingPage: React.FC = () => {
         return (
           <Pressable
             key={cls.id}
-            style={[styles.classCard, isSelected && styles.classCardSelected, isFull && styles.classCardFull]}
+            style={[styles.classCard, isSelected && styles.classCardSelected, isFull ? styles.classCardFull : null]}
             onPress={() => !isFull && setSelectedClass(cls)}
             disabled={isFull}
             accessibilityRole="radio"
@@ -639,7 +634,7 @@ const FitnessBookingPage: React.FC = () => {
               <Text style={styles.classInstructor}>{cls.instructor}</Text>
               <View style={styles.spotsRow}>
                 <Ionicons name="people" size={14} color={isFull ? Colors.error : colors.text.tertiary} />
-                <Text style={[styles.spotsText, isFull && styles.spotsTextFull]}>
+                <Text style={[styles.spotsText, isFull ? styles.spotsTextFull : null]}>
                   {isFull ? 'Full' : `${cls.spots} spots left`}
                 </Text>
               </View>
@@ -668,7 +663,7 @@ const FitnessBookingPage: React.FC = () => {
         ].map((option) => (
           <Pressable
             key={option.id}
-            style={[styles.sessionOption, sessionType === option.id && styles.sessionOptionSelected]}
+            style={[styles.sessionOption, sessionType === option.id ? styles.sessionOptionSelected : null]}
             onPress={() => setSessionType(option.id)}
             accessibilityRole="radio"
             accessibilityLabel={`${option.label}, ${currencySymbol}${option.price.toLocaleString()}${option.save ? `, save ${option.save}` : ''}`}
@@ -679,10 +674,10 @@ const FitnessBookingPage: React.FC = () => {
                 <Text style={styles.saveBadgeText}>Save {option.save}</Text>
               </View>
             )}
-            <Text style={[styles.sessionLabel, sessionType === option.id && styles.sessionLabelSelected]}>
+            <Text style={[styles.sessionLabel, sessionType === option.id ? styles.sessionLabelSelected : null]}>
               {option.label}
             </Text>
-            <Text style={[styles.sessionPrice, sessionType === option.id && styles.sessionPriceSelected]}>
+            <Text style={[styles.sessionPrice, sessionType === option.id ? styles.sessionPriceSelected : null]}>
               {currencySymbol}
               {option.price.toLocaleString()}
             </Text>

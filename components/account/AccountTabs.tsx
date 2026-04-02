@@ -72,7 +72,7 @@ function AccountTabs({ tabs, activeTab, onTabPress }: AccountTabsProps) {
             accessibilityState={{ selected: isActive }}
           >
             <ThemedText
-              style={[styles.tabText, isActive && styles.activeTabText]}
+              style={[styles.tabText, isActive ? styles.activeTabText : null]}
               numberOfLines={1}
             >
               {tab.title}

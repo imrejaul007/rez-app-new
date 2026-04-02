@@ -323,6 +323,31 @@ export interface TransactionFilters {
   maxAmount?: number;
 }
 
+// ── REZ Cash Identity ─────────────────────────────────────────────────────────
+
+export interface RezCashMilestone {
+  id: string;
+  label: string;
+  threshold: number;
+  icon: string;
+  color: string;
+}
+
+export interface RezCashIdentity {
+  totalSaved: number;
+  thisMonth: number;
+  thisYear: number;
+  pendingCashback: number;
+  streak: number;
+  milestones: {
+    unlocked: RezCashMilestone[];
+    next: (RezCashMilestone & { remaining: number }) | null;
+  };
+  equivalents: Array<{ label: string; unit: number; icon: string; singular: string; count: number }>;
+  monthlyTrend: Array<{ label: string; amount: number }>;
+  topCategories: Array<{ category: string; total: number }>;
+}
+
 /**
  * Wallet API Service Class
  */
@@ -332,7 +357,7 @@ class WalletService {
    */
   async getBalance(): Promise<ApiResponse<WalletBalanceResponse>> {
     try {
-      return await apiClient.get('/wallet/balance');
+      return await apiClient.get<any>('/wallet/balance');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getBalance failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch balance', data: null } as any;
@@ -346,7 +371,7 @@ class WalletService {
     filters?: TransactionFilters
   ): Promise<ApiResponse<TransactionListResponse>> {
     try {
-      return await apiClient.get<TransactionListResponse>('/wallet/transactions', filters);
+      return await apiClient.get<TransactionListResponse>('/wallet/transactions', filters as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransactions failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch transactions', data: null } as any;
@@ -360,7 +385,7 @@ class WalletService {
     transactionId: string
   ): Promise<ApiResponse<{ transaction: TransactionResponse }>> {
     try {
-      return await apiClient.get(`/wallet/transaction/${transactionId}`);
+      return await apiClient.get<any>(`/wallet/transaction/${transactionId}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransactionById failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch transaction', data: null } as any;
@@ -386,7 +411,7 @@ class WalletService {
     data: WithdrawalRequest
   ): Promise<ApiResponse<WithdrawalResponse>> {
     try {
-      return await apiClient.post('/wallet/withdraw', data);
+      return await apiClient.post<any>('/wallet/withdraw', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] withdraw failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to withdraw funds', data: null } as any;
@@ -408,7 +433,7 @@ class WalletService {
       const key =
         idempotencyKey ||
         `wallet-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-      return await apiClient.post('/wallet/payment', data, {
+      return await apiClient.post<any>('/wallet/payment', data as any, {
         headers: { 'Idempotency-Key': key },
       });
     } catch (error: any) {
@@ -424,7 +449,7 @@ class WalletService {
     period: 'day' | 'week' | 'month' | 'year' = 'month'
   ): Promise<ApiResponse<TransactionSummaryResponse>> {
     try {
-      return await apiClient.get('/wallet/summary', { period });
+      return await apiClient.get<any>('/wallet/summary', { period });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getSummary failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch summary', data: null } as any;
@@ -438,7 +463,7 @@ class WalletService {
     settings: WalletSettingsRequest
   ): Promise<ApiResponse<{ settings: any }>> {
     try {
-      return await apiClient.put('/wallet/settings', settings);
+      return await apiClient.put<any>('/wallet/settings', settings as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] updateSettings failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to update settings', data: null } as any;
@@ -452,7 +477,7 @@ class WalletService {
     ApiResponse<CategoriesBreakdownResponse>
   > {
     try {
-      return await apiClient.get('/wallet/categories');
+      return await apiClient.get<any>('/wallet/categories');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getCategoriesBreakdown failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch categories breakdown', data: null } as any;
@@ -510,7 +535,7 @@ class WalletService {
       return { success: false, message: 'devTopup is only available in development builds', data: null } as any;
     }
     try {
-      return await apiClient.post('/wallet/dev-topup', { amount, type });
+      return await apiClient.post<any>('/wallet/dev-topup', { amount, type });
     } catch (error: any) {
       console.warn('[WalletAPI] devTopup failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to add test funds', data: null } as any;
@@ -543,7 +568,7 @@ class WalletService {
       return { success: false, message: 'syncBalance is only available in development builds', data: null } as any;
     }
     try {
-      return await apiClient.post('/wallet/sync-balance', {});
+      return await apiClient.post<any>('/wallet/sync-balance', {});
     } catch (error: any) {
       console.warn('[WalletAPI] syncBalance failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to sync balance', data: null } as any;
@@ -597,7 +622,7 @@ class WalletService {
     status?: string;
   }>> {
     try {
-      return await apiClient.post('/wallet/transfer/initiate', data);
+      return await apiClient.post<any>('/wallet/transfer/initiate', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] initiateTransfer failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to initiate transfer', data: null } as any;
@@ -614,7 +639,7 @@ class WalletService {
     coinType: string;
   }>> {
     try {
-      return await apiClient.post('/wallet/transfer/confirm', data);
+      return await apiClient.post<any>('/wallet/transfer/confirm', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] confirmTransfer failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to confirm transfer', data: null } as any;
@@ -634,7 +659,7 @@ class WalletService {
       if (params?.page) query.set('page', String(params.page));
       if (params?.limit) query.set('limit', String(params.limit));
       if (params?.type) query.set('type', params.type);
-      return await apiClient.get(`/wallet/transfer/history?${query.toString()}`);
+      return await apiClient.get<any>(`/wallet/transfer/history?${query.toString()}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransferHistory failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch transfer history', data: null } as any;
@@ -644,7 +669,7 @@ class WalletService {
   async getRecentRecipients(search?: string): Promise<ApiResponse<{ recipients: any[] }>> {
     try {
       const query = search ? `?search=${encodeURIComponent(search)}` : '';
-      return await apiClient.get(`/wallet/transfer/recipients${query}`);
+      return await apiClient.get<any>(`/wallet/transfer/recipients${query}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getRecentRecipients failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch recent recipients', data: null } as any;
@@ -677,7 +702,7 @@ class WalletService {
     };
   }>> {
     try {
-      return await apiClient.get('/wallet/gift/config');
+      return await apiClient.get<any>('/wallet/gift/config');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getGiftConfig failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch gift config', data: null } as any;
@@ -690,7 +715,7 @@ class WalletService {
     isSelf: boolean;
   }>> {
     try {
-      return await apiClient.post('/wallet/gift/validate-recipient', { phone });
+      return await apiClient.post<any>('/wallet/gift/validate-recipient', { phone });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] validateGiftRecipient failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to validate recipient', data: null } as any;
@@ -716,7 +741,7 @@ class WalletService {
     expiresAt: string;
   }>> {
     try {
-      return await apiClient.post('/wallet/gift/send', data);
+      return await apiClient.post<any>('/wallet/gift/send', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] sendGift failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to send gift', data: null } as any;
@@ -725,7 +750,7 @@ class WalletService {
 
   async getReceivedGifts(): Promise<ApiResponse<{ gifts: any[] }>> {
     try {
-      return await apiClient.get('/wallet/gift/received');
+      return await apiClient.get<any>('/wallet/gift/received');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getReceivedGifts failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch received gifts', data: null } as any;
@@ -734,7 +759,7 @@ class WalletService {
 
   async claimGift(giftId: string): Promise<ApiResponse<{ giftId: string; amount: number; status: string }>> {
     try {
-      return await apiClient.post(`/wallet/gift/${giftId}/claim`, {});
+      return await apiClient.post<any>(`/wallet/gift/${giftId}/claim`, {});
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] claimGift failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to claim gift', data: null } as any;
@@ -743,7 +768,7 @@ class WalletService {
 
   async getSentGifts(): Promise<ApiResponse<{ gifts: any[] }>> {
     try {
-      return await apiClient.get('/wallet/gift/sent');
+      return await apiClient.get<any>('/wallet/gift/sent');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getSentGifts failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch sent gifts', data: null } as any;
@@ -762,7 +787,7 @@ class WalletService {
       const query = new URLSearchParams();
       if (params?.category) query.set('category', params.category);
       if (params?.search) query.set('search', params.search);
-      return await apiClient.get(`/wallet/gift-cards/catalog?${query.toString()}`);
+      return await apiClient.get<any>(`/wallet/gift-cards/catalog?${query.toString()}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getGiftCardCatalog failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch gift card catalog', data: null } as any;
@@ -774,7 +799,7 @@ class WalletService {
     amount: number;
   }): Promise<ApiResponse<{ userGiftCard: any }>> {
     try {
-      return await apiClient.post('/wallet/gift-cards/purchase', data);
+      return await apiClient.post<any>('/wallet/gift-cards/purchase', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] purchaseGiftCard failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to purchase gift card', data: null } as any;
@@ -784,7 +809,7 @@ class WalletService {
   async getMyGiftCards(status?: string): Promise<ApiResponse<{ giftCards: any[] }>> {
     try {
       const query = status ? `?status=${status}` : '';
-      return await apiClient.get(`/wallet/gift-cards/mine${query}`);
+      return await apiClient.get<any>(`/wallet/gift-cards/mine${query}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getMyGiftCards failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch gift cards', data: null } as any;
@@ -793,7 +818,7 @@ class WalletService {
 
   async revealGiftCardCode(giftCardId: string): Promise<ApiResponse<{ code: string; pin?: string }>> {
     try {
-      return await apiClient.get(`/wallet/gift-cards/${giftCardId}/reveal`);
+      return await apiClient.get<any>(`/wallet/gift-cards/${giftCardId}/reveal`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] revealGiftCardCode failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to reveal gift card code', data: null } as any;
@@ -809,7 +834,7 @@ class WalletService {
     totalExpiring: number;
   }>> {
     try {
-      return await apiClient.get('/wallet/expiring-coins');
+      return await apiClient.get<any>('/wallet/expiring-coins');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getExpiringCoins failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch expiring coins', data: null } as any;
@@ -824,7 +849,7 @@ class WalletService {
     cappedAt: number | null;
   }>> {
     try {
-      return await apiClient.get(`/wallet/recharge/preview?amount=${amount}`);
+      return await apiClient.get<any>(`/wallet/recharge/preview?amount=${amount}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] previewRechargeCashback failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to preview recharge cashback', data: null } as any;
@@ -836,7 +861,7 @@ class WalletService {
     coinExpiryConfig: Record<string, { expiryDays: number; maxUsagePct: number }>;
   }>> {
     try {
-      return await apiClient.get('/wallet/coin-rules');
+      return await apiClient.get<any>('/wallet/coin-rules');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getCoinRules failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch coin rules', data: null } as any;
@@ -859,7 +884,7 @@ class WalletService {
     totalUpcoming: number;
   }>> {
     try {
-      return await apiClient.get('/wallet/scheduled-drops');
+      return await apiClient.get<any>('/wallet/scheduled-drops');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getScheduledDrops failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch scheduled drops', data: null } as any;
@@ -887,6 +912,24 @@ class WalletService {
       if (__DEV__) console.warn('[WalletAPI] grantWelcomeCoins failed:', error?.message);
       // Non-fatal — don't block the success screen if the coins call fails
       return { success: false };
+    }
+  }
+
+  /**
+   * getRezCashIdentity
+   *
+   * Returns savings identity: lifetime savings, monthly/yearly totals,
+   * 6-month trend, milestones, real-world equivalents, top categories.
+   * Powers the REZ Cash screen.
+   *
+   * Backend: GET /wallet/rez-cash
+   */
+  async getRezCashIdentity(): Promise<ApiResponse<RezCashIdentity>> {
+    try {
+      return await apiClient.get<RezCashIdentity>('/wallet/rez-cash');
+    } catch (error: any) {
+      if (__DEV__) console.warn('[WalletAPI] getRezCashIdentity failed:', error?.message);
+      return { success: false, message: error?.message || 'Failed to fetch REZ Cash identity', data: null } as any;
     }
   }
 }

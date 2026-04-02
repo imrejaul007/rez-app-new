@@ -92,7 +92,7 @@ export class EventValidator {
       // Check for unknown properties
       if (properties) {
         Object.keys(properties).forEach(prop => {
-          if (!schema.required.includes(prop) && schema.optional && !schema.optional.includes(prop)) {
+          if (!(schema.required as readonly string[]).includes(prop) && schema.optional && !(schema.optional as readonly string[]).includes(prop)) {
             warnings.push(`Unknown property: ${prop}`);
           }
         });

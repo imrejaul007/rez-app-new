@@ -40,7 +40,7 @@ class RingSizeApiService {
 
       // Try to save to backend
       try {
-        const response = await apiClient.post(`${this.baseUrl}/ring-size`, {
+        const response = await apiClient.post<any>(`${this.baseUrl}/ring-size`, {
           ringSize,
           method
         });
@@ -97,7 +97,7 @@ class RingSizeApiService {
         const response = await apiClient.get<RingSizeData>(`${this.baseUrl}/ring-size`);
         if (response.success && response.data) {
           this.localCache = response.data;
-          return response;
+          return response as any;
         }
       } catch (_apiError) {
         // silently handle
@@ -141,7 +141,7 @@ class RingSizeApiService {
       // Try to delete from backend
       try {
         const response = await apiClient.delete<void>(`${this.baseUrl}/ring-size`);
-        return response;
+        return response as any;
       } catch (apiError) {
         return {
           success: true,

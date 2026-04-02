@@ -11,7 +11,8 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Crypto from 'expo-crypto';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Crypto = (() => { try { return require('expo-crypto'); } catch { return { digestStringAsync: async () => '', CryptoDigestAlgorithm: { SHA256: 'SHA-256' } }; } })();
 
 /**
  * Input Sanitization

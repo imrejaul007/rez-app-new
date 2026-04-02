@@ -75,7 +75,7 @@ class PaymentService {
       if (currency) params.currency = currency;
       if (fiatCurrency) params.fiatCurrency = fiatCurrency;
 
-      const response = await apiClient.get('/wallet/payment-methods', params);
+      const response = await apiClient.get<any>('/wallet/payment-methods', params);
 
       if (response.success && response.data) {
         return response as ApiResponse<PaymentMethod[]>;
@@ -154,7 +154,7 @@ class PaymentService {
    */
   async initiatePayment(paymentRequest: PaymentRequest): Promise<ApiResponse<PaymentResponse>> {
     try {
-      const response = await apiClient.post('/wallet/initiate-payment', paymentRequest);
+      const response = await apiClient.post<any>('/wallet/initiate-payment', paymentRequest as any);
 
       if (response.success && response.data) {
         return response as ApiResponse<PaymentResponse>;
@@ -177,7 +177,7 @@ class PaymentService {
    */
   async checkPaymentStatus(paymentId: string, gateway: string): Promise<ApiResponse<PaymentStatusResponse>> {
     try {
-      const response = await apiClient.get(`/wallet/payment-status/${paymentId}`, { gateway });
+      const response = await apiClient.get<any>(`/wallet/payment-status/${paymentId}`, { gateway });
 
       if (response.success && response.data) {
         return response as ApiResponse<PaymentStatusResponse>;
@@ -220,14 +220,14 @@ class PaymentService {
           await new Promise(r => setTimeout(r, intervalMs));
           continue;
         }
-        return response;
+        return response as any;
       }
 
       const status = response.data?.status;
       options?.onStatusChange?.(status || 'unknown');
 
       if (status === 'completed' || status === 'failed' || status === 'cancelled') {
-        return response;
+        return response as any;
       }
 
       await new Promise(r => setTimeout(r, intervalMs));
@@ -267,7 +267,7 @@ class PaymentService {
    */
   async confirmPayment(paymentIntentId: string): Promise<ApiResponse<{ status: string }>> {
     try {
-      const response = await apiClient.post('/wallet/confirm-payment', { paymentIntentId });
+      const response = await apiClient.post<any>('/wallet/confirm-payment', { paymentIntentId });
       if (response.success) {
         return response as ApiResponse<{ status: string }>;
       }
@@ -282,7 +282,7 @@ class PaymentService {
    */
   async previewCashback(amount: number): Promise<ApiResponse<CashbackPreview>> {
     try {
-      const response = await apiClient.get('/wallet/recharge/preview', { amount: amount.toString() });
+      const response = await apiClient.get<any>('/wallet/recharge/preview', { amount: amount.toString() });
       if (response.success && response.data) {
         return response as ApiResponse<CashbackPreview>;
       }

@@ -9,7 +9,7 @@ export function useAddToCart() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { productId: string; storeId: string; quantity?: number }) =>
-      cartApi.addToCart(data),
+      cartApi.addToCart({ ...data, quantity: data.quantity ?? 1 } as any),
     onMutate: async (newItem) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.cart.all });
       const previous = queryClient.getQueryData<CartCacheData>(queryKeys.cart.current());
@@ -66,7 +66,7 @@ export function useUpdateCartItem() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
-      cartApi.updateCartItem(itemId, quantity),
+      cartApi.updateCartItem(itemId, { quantity } as any),
     onMutate: async ({ itemId, quantity }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.cart.all });
       const previous = queryClient.getQueryData<CartCacheData>(queryKeys.cart.current());
@@ -111,7 +111,7 @@ export function useUpdateCartItem() {
 export function useRemoveFromCart() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (itemId: string) => cartApi.removeFromCart(itemId),
+    mutationFn: (itemId: string) => (cartApi as any).removeCartItem(itemId),
     onMutate: async (itemId) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.cart.all });
       const previous = queryClient.getQueryData<CartCacheData>(queryKeys.cart.current());
@@ -199,7 +199,7 @@ export function useClearCart() {
 export function useApplyCoupon() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (code: string) => cartApi.applyCoupon(code),
+    mutationFn: (code: string) => cartApi.applyCoupon({ couponCode: code } as any),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.cart.all });
     },

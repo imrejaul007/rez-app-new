@@ -53,7 +53,6 @@ function TransactionCard({
           <CachedImage 
             source={transaction.merchantLogo} 
             style={styles.merchantLogo}
-            defaultSource={BRAND.COIN_IMAGE}
           />
         ) : (
           <View style={[styles.iconFallback, { backgroundColor: statusColor + '20' }]}>

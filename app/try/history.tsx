@@ -53,7 +53,7 @@ export default function TrialHistoryScreen() {
       try {
         const data = await tryApi.getHistory();
         setBookings(data);
-      } catch (err) {
+      } catch (err: any) {
         if (__DEV__) console.error('Failed to load history:', err);
       } finally {
         setLoading(false);
@@ -234,10 +234,10 @@ export default function TrialHistoryScreen() {
         {(['all', 'active', 'completed', 'expired'] as const).map((tab) => (
           <Pressable
             key={tab}
-            style={[styles.filterTab, activeFilter === tab && styles.filterTabActive]}
+            style={[styles.filterTab, activeFilter === tab ? styles.filterTabActive : null]}
             onPress={() => setActiveFilter(tab)}
           >
-            <Text style={[styles.filterTabText, activeFilter === tab && styles.filterTabTextActive]}>
+            <Text style={[styles.filterTabText, activeFilter === tab ? styles.filterTabTextActive : null]}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </Text>
           </Pressable>
@@ -301,7 +301,7 @@ export default function TrialHistoryScreen() {
 
             {/* Submit Button */}
             <Pressable
-              style={[styles.modalButton, reviewSubmitting && styles.modalButtonDisabled]}
+              style={[styles.modalButton, reviewSubmitting ? styles.modalButtonDisabled : null]}
               disabled={reviewSubmitting}
               onPress={async () => {
                 if (!reviewModal.bookingId) return;

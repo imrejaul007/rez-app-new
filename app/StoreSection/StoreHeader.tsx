@@ -104,7 +104,7 @@ function StoreHeader({
       }
       if (!isMounted()) return;
       setIsSaved(false);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setIsSaved(false);
     }
@@ -134,7 +134,7 @@ function StoreHeader({
         message: `Check out ${productName} on our app!`,
         title: productName,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -183,7 +183,7 @@ function StoreHeader({
           await refreshWishlist();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -220,7 +220,7 @@ function StoreHeader({
 
     // Check direct image field
     if (isValidImageUrl(dynamicData?.image)) {
-      urls.push(dynamicData.image!);
+      urls.push(dynamicData?.image!);
     }
 
     // Check images array
@@ -235,7 +235,7 @@ function StoreHeader({
 
     // Check store logo as fallback if no images
     if (urls.length === 0 && isValidImageUrl(dynamicData?.store?.logo)) {
-      urls.push(dynamicData.store.logo!);
+      urls.push(dynamicData?.store?.logo!);
     }
 
     return urls;
@@ -321,7 +321,7 @@ function StoreHeader({
             {/* Heart/Wishlist Button */}
             <Animated.View style={heartScaleStyle}>
               <Pressable
-                style={[styles.iconBtn, isSaved && styles.heartBtnActive]}
+                style={[styles.iconBtn, isSaved ? styles.heartBtnActive : null]}
                 onPress={handleFavoritePress}
                 onPressIn={() => animateScale(heartScaleAnim, 0.9)}
                 onPressOut={() => animateScale(heartScaleAnim, 1)}
@@ -386,7 +386,7 @@ function StoreHeader({
                     <Pressable
                       key={index}
                       onPress={() => handleDotPress(index)}
-                      style={[styles.paginationDot, index === currentImageIndex && styles.paginationDotActive]}
+                      style={[styles.paginationDot, index === currentImageIndex ? styles.paginationDotActive : null]}
                     />
                   ))}
                 </View>

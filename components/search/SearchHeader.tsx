@@ -74,7 +74,7 @@ function SearchHeader({
 
           {/* Search Container - Premium glass design */}
           <View style={styles.searchContainer}>
-            <View style={[styles.searchInputContainer, inputFocused && styles.searchInputFocused]}>
+            <View style={[styles.searchInputContainer, inputFocused ? styles.searchInputFocused : null]}>
               <LinearGradient
                 colors={[NUQTA.lightMustard, NUQTA.mustardDark]}
                 style={styles.searchIconWrapper}

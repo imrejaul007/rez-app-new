@@ -215,10 +215,10 @@ function BonusZoneHistoryPage() {
           {FILTER_TABS.map((tab) => (
             <Pressable
               key={tab.key}
-              style={[styles.filterTab, activeFilter === tab.key && styles.filterTabActive]}
+              style={[styles.filterTab, activeFilter === tab.key ? styles.filterTabActive : null]}
               onPress={() => onFilterChange(tab.key)}
             >
-              <Text style={[styles.filterTabText, activeFilter === tab.key && styles.filterTabTextActive]}>
+              <Text style={[styles.filterTabText, activeFilter === tab.key ? styles.filterTabTextActive : null]}>
                 {tab.label}
               </Text>
             </Pressable>

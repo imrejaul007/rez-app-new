@@ -62,7 +62,7 @@ const StoriesRow: React.FC<StoriesRowProps> = ({ variant = 'green' }) => {
       try {
         const res = await whatsNewApi.getStories(true);
         if (!isMounted()) return;
-        if (res.success && res.data?.length > 0) {
+        if (res.success && res.data && res.data.length > 0) {
           setStories(res.data);
         }
       } catch { /* non-blocking */ }

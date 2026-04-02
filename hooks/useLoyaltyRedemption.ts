@@ -113,7 +113,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       }
 
       setState(prev => ({ ...prev, ...newState, loading: false }));
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading loyalty data:', error);
       setState(prev => ({
         ...prev,
@@ -139,11 +139,11 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const loadPointHistory = useCallback(async () => {
     try {
-      const response = await loyaltyRedemptionApi.getPointHistory({ limit: 50 });
+      const response: any = await loyaltyRedemptionApi.getPointHistory({ limit: 50 });
       if (response.success && response.data) {
         setPointHistory(response.data.transactions);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading point history:', error);
     }
   }, []);
@@ -153,11 +153,11 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const loadExpiringPoints = useCallback(async () => {
     try {
-      const response = await loyaltyRedemptionApi.getExpiringPoints();
+      const response: any = await loyaltyRedemptionApi.getExpiringPoints();
       if (response.success && response.data) {
         setExpiryNotification(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading expiring points:', error);
     }
   }, []);
@@ -167,11 +167,11 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const loadChallenges = useCallback(async () => {
     try {
-      const response = await loyaltyRedemptionApi.getChallenges();
+      const response: any = await loyaltyRedemptionApi.getChallenges();
       if (response.success && response.data) {
         setChallenges(response.data.challenges);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading challenges:', error);
     }
   }, []);
@@ -181,14 +181,14 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const loadCheckInStatus = useCallback(async () => {
     try {
-      const response = await loyaltyRedemptionApi.getCheckInStatus();
+      const response: any = await loyaltyRedemptionApi.getCheckInStatus();
       if (response.success && response.data) {
         setCheckInStatus({
           checkIns: response.data.checkIns,
           streak: response.data.streak,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error loading check-in status:', error);
     }
   }, []);
@@ -200,7 +200,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const redeemReward = useCallback(async (request: RedemptionRequest) => {
     try {
-      const response = await loyaltyRedemptionApi.redeemReward(request);
+      const response: any = await loyaltyRedemptionApi.redeemReward(request);
 
       if (response.success && response.data) {
         // Update balance
@@ -222,7 +222,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       } else {
         throw new Error(response.error || 'Failed to redeem reward');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error redeeming reward:', error);
       throw error;
     }
@@ -233,14 +233,14 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const reserveReward = useCallback(async (request: RedemptionRequest) => {
     try {
-      const response = await loyaltyRedemptionApi.reserveReward(request);
+      const response: any = await loyaltyRedemptionApi.reserveReward(request);
 
       if (response.success && response.data) {
         return response.data;
       } else {
         throw new Error(response.error || 'Failed to reserve reward');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error reserving reward:', error);
       throw error;
     }
@@ -251,7 +251,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const cancelReservation = useCallback(async (reservationId: string) => {
     try {
-      const response = await loyaltyRedemptionApi.cancelReservation(reservationId);
+      const response: any = await loyaltyRedemptionApi.cancelReservation(reservationId);
 
       if (response.success) {
         await refresh();
@@ -259,7 +259,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       } else {
         throw new Error(response.error || 'Failed to cancel reservation');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error cancelling reservation:', error);
       throw error;
     }
@@ -272,13 +272,13 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const filterRewards = useCallback(async (filters: CatalogFilters) => {
     try {
-      const response = await loyaltyRedemptionApi.getRewardsCatalog(filters);
+      const response: any = await loyaltyRedemptionApi.getRewardsCatalog(filters);
 
       if (response.success && response.data) {
         setCatalog(response.data);
         setState(prev => ({ ...prev, rewards: response.data!.rewards }));
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error filtering rewards:', error);
     }
   }, []);
@@ -288,12 +288,12 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const searchRewards = useCallback(async (query: string) => {
     try {
-      const response = await loyaltyRedemptionApi.searchRewards(query);
+      const response: any = await loyaltyRedemptionApi.searchRewards(query);
 
       if (response.success && response.data) {
         setState(prev => ({ ...prev, rewards: response.data!.rewards }));
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error searching rewards:', error);
     }
   }, []);
@@ -305,7 +305,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const dailyCheckIn = useCallback(async () => {
     try {
-      const response = await loyaltyRedemptionApi.dailyCheckIn();
+      const response: any = await loyaltyRedemptionApi.dailyCheckIn();
 
       if (response.success && response.data) {
         // Update balance with new points
@@ -324,7 +324,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       } else {
         throw new Error(response.error || 'Failed to check in');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error during check-in:', error);
       throw error;
     }
@@ -335,7 +335,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const spinWheel = useCallback(async () => {
     try {
-      const response = await loyaltyRedemptionApi.spinWheel();
+      const response: any = await loyaltyRedemptionApi.spinWheel();
 
       if (response.success && response.data) {
         // Update balance
@@ -351,7 +351,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       } else {
         throw new Error(response.error || 'Failed to spin wheel');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error spinning wheel:', error);
       throw error;
     }
@@ -362,7 +362,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const revealScratchCard = useCallback(async (cardId: string) => {
     try {
-      const response = await loyaltyRedemptionApi.revealScratchCard(cardId);
+      const response: any = await loyaltyRedemptionApi.revealScratchCard(cardId);
 
       if (response.success && response.data) {
         // Update balance
@@ -378,7 +378,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       } else {
         throw new Error(response.error || 'Failed to reveal scratch card');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error revealing scratch card:', error);
       throw error;
     }
@@ -389,7 +389,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    */
   const claimChallenge = useCallback(async (challengeId: string) => {
     try {
-      const response = await loyaltyRedemptionApi.claimChallenge(challengeId);
+      const response: any = await loyaltyRedemptionApi.claimChallenge(challengeId);
 
       if (response.success && response.data) {
         // Update balance
@@ -408,7 +408,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       } else {
         throw new Error(response.error || 'Failed to claim challenge');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('Error claiming challenge:', error);
       throw error;
     }

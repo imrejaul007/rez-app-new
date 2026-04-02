@@ -46,7 +46,7 @@ const StoreInfoModal: React.FC<StoreInfoModalProps> = ({
 
     return (
       <Pressable
-        style={[styles.tabButton, isActive && styles.activeTabButton]}
+        style={[styles.tabButton, isActive ? styles.activeTabButton : null]}
         onPress={() => setActiveTab(tab)}
        
       >
@@ -55,7 +55,7 @@ const StoreInfoModal: React.FC<StoreInfoModalProps> = ({
           size={20}
           color={isActive ? colors.brand.purple : colors.midGray}
         />
-        <Text style={[styles.tabButtonText, isActive && styles.activeTabButtonText]}>
+        <Text style={[styles.tabButtonText, isActive ? styles.activeTabButtonText : null]}>
           {label}
         </Text>
       </Pressable>

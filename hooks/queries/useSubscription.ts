@@ -5,7 +5,7 @@ import subscriptionApi from '@/services/subscriptionApi';
 export function useSubscriptionPlans() {
   return useQuery({
     queryKey: queryKeys.subscription.plans(),
-    queryFn: () => subscriptionApi.getPlans(),
+    queryFn: () => (subscriptionApi as any).getPlans(),
   });
 }
 
@@ -19,7 +19,7 @@ export function useCurrentSubscription() {
 export function useSubscriptionBenefits(tier?: string) {
   return useQuery({
     queryKey: queryKeys.subscription.benefits(tier),
-    queryFn: () => subscriptionApi.getBenefits(tier),
+    queryFn: () => (subscriptionApi as any).getBenefits(tier),
     enabled: !!tier,
   });
 }

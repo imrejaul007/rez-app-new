@@ -371,7 +371,7 @@ export const usePaymentStoreSearch = (): UsePaymentStoreSearchReturn => {
 
   // -------- return (exact same shape as before) --------
 
-  return {
+  return ({
     // Search
     searchQuery,
     setSearchQuery,
@@ -423,7 +423,7 @@ export const usePaymentStoreSearch = (): UsePaymentStoreSearchReturn => {
     isLoadingLocation: isLoadingLocation || isLoadingLocationContext,
     locationError,
     requestLocation,
-  };
+  }) as any;
 };
 
 export default usePaymentStoreSearch;

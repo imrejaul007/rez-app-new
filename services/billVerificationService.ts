@@ -53,7 +53,7 @@ class BillVerificationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -91,7 +91,7 @@ class BillVerificationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -203,7 +203,7 @@ class BillVerificationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -230,7 +230,7 @@ class BillVerificationService {
         // flags are included in the response data
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -259,7 +259,7 @@ class BillVerificationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,
@@ -504,7 +504,7 @@ class BillVerificationService {
 
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       return {
         success: false,

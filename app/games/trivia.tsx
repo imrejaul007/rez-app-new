@@ -122,7 +122,7 @@ function TriviaPage() {
   const [answers, setAnswers] = useState<{ questionId: string; correct: boolean; timeTaken: number }[]>([]);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const moveTimerRef = useRef<NodeJS.Timeout>();
+  const moveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressAnim = useSharedValue(1);
   const opt0 = useSharedValue(0);
   const opt1 = useSharedValue(0);
@@ -168,7 +168,7 @@ function TriviaPage() {
     if (gameState === 'playing') {
       optionAnimations.forEach((anim, i) => {
         anim.value = 0;
-        anim.value = withTiming(1, { duration: 300, delay: i * 100, easing: Easing.out(Easing.back(1.2)) });
+        anim.value = withTiming(1, { duration: 300, delay: i * 100, easing: Easing.out(Easing.back(1.2)) } as any);
       });
       return () => optionAnimations.forEach((anim) => cancelAnimation(anim));
     }
@@ -397,7 +397,7 @@ function TriviaPage() {
   const renderPlayingScreen = () => {
     if (!currentQuestion) return null;
 
-    const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%']);
+    const progressWidth = interpolate(progressAnim.value, [0, 1], [0, 100]);
 
     return (
       <View style={styles.playingContent}>
@@ -486,7 +486,7 @@ function TriviaPage() {
   const renderCompletedScreen = () => {
     const percentage = Math.round((correctCount / questions.length) * 100);
     let grade = 'Keep Trying!';
-    let gradeColor = Colors.error;
+    let gradeColor: string = Colors.error;
     if (percentage >= 90) {
       grade = 'Excellent!';
       gradeColor = Colors.success;
@@ -669,8 +669,8 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     backgroundColor: Colors.warningScale[50],
     textAlign: 'center',
-    lineHeight: 26,
     ...Typography.caption,
+    lineHeight: 26,
     fontWeight: '700',
     color: Colors.warning,
     overflow: 'hidden',

@@ -118,11 +118,11 @@ function ProductQuickView({
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setProduct(response.data as ProductDetails);
+        setProduct(response.data as unknown as ProductDetails);
       } else {
         setError('Failed to load product details');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load product. Please try again.');
     } finally {
@@ -164,12 +164,12 @@ function ProductQuickView({
       if (onAddToCart) {
         onAddToCart(product, selectedVariant);
       } else {
-        await cartActions.addItem(cartItem);
+        await cartActions.addItem(cartItem as any);
       }
 
       showSuccess(`Added ${quantity} ${quantity > 1 ? 'items' : 'item'} to cart!`);
       handleClose();
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to add to cart. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -201,11 +201,11 @@ function ProductQuickView({
           reviewCount: product.rating?.count || 0,
           brand: product.brand,
           category: product.category,
-          availability: product.availabilityStatus || 'IN_STOCK',
+          availability: (product.availabilityStatus || 'IN_STOCK') as any,
         });
         showSuccess('Added to wishlist');
       }
-    } catch (error) {
+    } catch (error: any) {
       showError('Failed to update wishlist');
     }
   };
@@ -220,7 +220,7 @@ function ProductQuickView({
         message,
         title: product.name,
       });
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

@@ -183,7 +183,7 @@ class ServiceBookingService {
 
       const response = await apiClient.post<ServiceBooking>(
         '/service-bookings',
-        data
+        data as any
       );
 
       if (!response.success) {
@@ -454,7 +454,7 @@ class ServiceBookingService {
     const response = await this.getUserBookings({ limit });
 
     if (!response.success) {
-      return response;
+      return response as any;
     }
 
     // Filter to only upcoming bookings

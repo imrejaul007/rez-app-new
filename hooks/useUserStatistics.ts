@@ -100,7 +100,7 @@ export const useUserStatistics = (autoFetch: boolean = true): UseUserStatisticsR
         await AsyncStorage.removeItem(CACHE_KEY);
         return null;
       }
-    } catch (error) {
+    } catch (error: any) {
       return null;
     }
   }, []);
@@ -135,7 +135,7 @@ export const useUserStatistics = (autoFetch: boolean = true): UseUserStatisticsR
       }
 
       // Fetch fresh data from API
-      const response = await authService.getUserStatistics();
+      const response: any = await authService.getUserStatistics();
 
       if (response.success && response.data) {
         // Ensure all expected fields exist with defaults

@@ -77,7 +77,7 @@ function ZoomableImage({
 
       setImageSize({ width: displayWidth, height: displayHeight });
       onLoadEnd?.();
-    } catch (error) {
+    } catch (error: any) {
       // Error handling: fallback to screen dimensions
       setImageSize({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
       onLoadEnd?.();

@@ -222,7 +222,7 @@ function LoyaltyRewardsPage() {
       setMilestones(active);
       if (!isMounted()) return;
       setCompletedMilestones(completed);
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load loyalty milestones');
     } finally {
@@ -293,13 +293,13 @@ function LoyaltyRewardsPage() {
 
             {/* Next Milestone */}
             <View style={styles.milestoneContainer}>
-              <View style={[styles.milestoneBadge, isAlmostDone && styles.almostDoneBadge]}>
+              <View style={[styles.milestoneBadge, isAlmostDone ? styles.almostDoneBadge : null]}>
                 <Ionicons
                   name={isAlmostDone ? 'flash' : 'flag'}
                   size={12}
                   color={isAlmostDone ? colors.warningScale[400] : colors.text.secondary}
                 />
-                <ThemedText style={[styles.milestoneText, isAlmostDone && styles.almostDoneText]}>
+                <ThemedText style={[styles.milestoneText, isAlmostDone ? styles.almostDoneText : null]}>
                   {getRemainingLabel(milestone, currencySymbol)}
                 </ThemedText>
               </View>
@@ -391,7 +391,7 @@ function LoyaltyRewardsPage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.nileBlue]} />}
       >

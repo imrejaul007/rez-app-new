@@ -27,7 +27,7 @@ import { CardGridSkeleton } from '@/components/skeletons';
 import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { Colors } from '@/constants/theme';
+import { Colors } from '@/constants/DesignSystem';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Category configurations
@@ -304,7 +304,7 @@ const ProductsPage: React.FC = () => {
                 size={14}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
-              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id ? styles.filterChipTextActive : null]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -320,9 +320,9 @@ const ProductsPage: React.FC = () => {
             <Pressable
               key={option.id}
               onPress={() => setSortBy(option.id as any)}
-              style={[styles.sortChip, sortBy === option.id && styles.sortChipActive]}
+              style={[styles.sortChip, sortBy === option.id ? styles.sortChipActive : null]}
             >
-              <Text style={[styles.sortChipText, sortBy === option.id && styles.sortChipTextActive]}>
+              <Text style={[styles.sortChipText, sortBy === option.id ? styles.sortChipTextActive : null]}>
                 {option.label}
               </Text>
             </Pressable>

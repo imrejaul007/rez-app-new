@@ -120,7 +120,7 @@ class StoreVouchersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -132,7 +132,7 @@ class StoreVouchersApi {
   async getStoreVoucherById(id: string): Promise<ApiResponse<StoreVoucher>> {
     try {
       const response = await apiClient.get<StoreVoucher>(`/store-vouchers/${id}`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -147,10 +147,10 @@ class StoreVouchersApi {
     try {
       const response = await apiClient.post<ValidateVoucherResponse>(
         '/store-vouchers/validate',
-        data
+        data as any
       );
       
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -162,7 +162,7 @@ class StoreVouchersApi {
   async claimVoucher(id: string): Promise<ApiResponse<UserStoreVoucher>> {
     try {
       const response = await apiClient.post<UserStoreVoucher>(`/store-vouchers/${id}/claim`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -178,10 +178,10 @@ class StoreVouchersApi {
     try {
       const response = await apiClient.post<RedeemVoucherResponse>(
         `/store-vouchers/${id}/redeem`,
-        data
+        data as any
       );
       
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -197,7 +197,7 @@ class StoreVouchersApi {
   }): Promise<ApiResponse<{ vouchers: UserStoreVoucher[]; total: number }>> {
     try {
       const response = await apiClient.get<any>('/store-vouchers/my-vouchers', params);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -209,7 +209,7 @@ class StoreVouchersApi {
   async getMyVoucherById(id: string): Promise<ApiResponse<UserStoreVoucher>> {
     try {
       const response = await apiClient.get<UserStoreVoucher>(`/store-vouchers/my-vouchers/${id}`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -224,7 +224,7 @@ class StoreVouchersApi {
         `/store-vouchers/my-vouchers/${id}`
       );
       
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }

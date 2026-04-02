@@ -63,7 +63,7 @@ function PermissionDeniedScreen({ onClose, onManualEntry }: { onClose: () => voi
     <View style={styles.container}>
       <View style={styles.permissionContainer}>
         <View style={styles.permissionIcon}>
-          <Ionicons name="camera-off-outline" size={48} color={NUQTA_COLORS.orange} />
+          <Ionicons name="camera-outline" size={48} color={NUQTA_COLORS.orange} />
         </View>
         <Text style={styles.permissionTitle}>Camera Access Denied</Text>
         <Text style={styles.permissionSubtext}>
@@ -113,7 +113,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
 
       try {
         const qrData: QRCodeData = JSON.parse(data);
-        if (qrData.type !== 'REZ_STORE_PAYMENT' || !qrData.code) {
+        if (qrData.type !== 'NUQTA_STORE_PAYMENT' || !qrData.code) {
           showError(`Invalid QR code. Please scan a ${BRAND.APP_NAME} store QR.`);
           return;
         }
@@ -127,7 +127,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
           showError('Invalid QR code format.');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       showError('Failed to process QR code.');
     }
   };

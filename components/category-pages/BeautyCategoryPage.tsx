@@ -286,12 +286,12 @@ function BeautyCategoryPage() {
             <Text style={styles.chipIconText}>{filter.icon}</Text>
           )}
         </View>
-        <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
+        <Text style={[styles.chipLabel, isActive ? styles.chipLabelActive : null]}>
           {filter.label}
         </Text>
         {count > 0 && (
-          <View style={[styles.chipCount, isActive && styles.chipCountActive]}>
-            <Text style={[styles.chipCountText, isActive && styles.chipCountTextActive]}>
+          <View style={[styles.chipCount, isActive ? styles.chipCountActive : null]}>
+            <Text style={[styles.chipCountText, isActive ? styles.chipCountTextActive : null]}>
               {count}
             </Text>
           </View>
@@ -307,7 +307,7 @@ function BeautyCategoryPage() {
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.pink]} />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[(COLORS as any).pink]} />
       }
     >
       <CategoryHeader
@@ -386,7 +386,7 @@ function BeautyCategoryPage() {
 
       {/* Browse Category Grid - "Find Your Glow" */}
       <BrowseCategoryGrid
-        categories={subcategories}
+        categories={subcategories as any}
         title="Find Your Glow"
         onCategoryPress={handleCategoryPress}
       />
@@ -410,7 +410,7 @@ function BeautyCategoryPage() {
                
               >
                 <LinearGradient
-                  colors={[COLORS.pink, COLORS.pinkDark]}
+                  colors={[(COLORS as any).pink, COLORS.pinkDark]}
                   style={styles.trendingGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -591,7 +591,7 @@ function BeautyCategoryPage() {
         </View>
         <View style={styles.experienceBanner}>
           <LinearGradient
-            colors={[COLORS.pink, COLORS.pinkDark]}
+            colors={[(COLORS as any).pink, COLORS.pinkDark]}
             style={styles.experienceGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -612,7 +612,7 @@ function BeautyCategoryPage() {
       </View>
 
       {/* Streak & Loyalty */}
-      <StreakLoyaltySection categorySlug={slug} primaryColor={COLORS.pink} />
+      <StreakLoyaltySection categorySlug={slug} primaryColor={(COLORS as any).pink} />
 
       {/* UGC Social Proof */}
       <EnhancedUGCSocialProofSection
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
   filterEmptySubtitle: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, textAlign: 'center' },
   filterEmptyClearBtn: {
     marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20,
-    backgroundColor: COLORS.pink,
+    backgroundColor: (COLORS as any).pink,
   },
   filterEmptyClearText: { color: COLORS.white, fontWeight: '600', fontSize: 14 },
 

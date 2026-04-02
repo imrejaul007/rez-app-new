@@ -5,7 +5,7 @@ import {
   QueueStatus,
   SyncResult,
 } from '../services/billUploadQueueService';
-import type { BillUploadData } from '../types/billVerification.types';
+import type { BillUploadData } from '../services/billUploadService';
 
 export interface OfflineQueueStoreState {
   // State

@@ -186,17 +186,17 @@ export const useIsDark = () => {
 // ============================================================================
 
 /** Only re-renders when streak changes */
-export const useStreak = () => useGamificationStore((s) => s.state?.streak);
+export const useStreak = () => useGamificationStore((s) => s.state?.dailyStreak);
 
 /** Only re-renders when daily check-in status changes */
-export const useHasCheckedIn = () => useGamificationStore((s) => s.state?.hasCheckedInToday);
+export const useHasCheckedIn = () => useGamificationStore((s) => (s.state as any)?.hasCheckedInToday);
 
 // ============================================================================
 // SUBSCRIPTION SELECTORS — 10 imports
 // ============================================================================
 
 /** Only re-renders when subscription tier changes */
-export const useSubscriptionTier = () => useSubscriptionStore((s) => s.state?.currentTier);
+export const useSubscriptionTier = () => useSubscriptionStore((s) => s.state?.currentSubscription?.tier);
 
 /** Only re-renders when subscribed status changes */
 export const useIsSubscribed = () => useSubscriptionStore((s) => s.computed?.isSubscribed ?? false);

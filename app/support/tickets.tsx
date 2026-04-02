@@ -55,7 +55,7 @@ function TicketsPage() {
           }
           setTotalPages(response.data.pages);
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     },
@@ -97,7 +97,7 @@ function TicketsPage() {
         setTickets((prev) => [...prev, ...response.data!.tickets]);
         setTotalPages(response.data.pages);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -162,10 +162,12 @@ function TicketsPage() {
     return (
       <Pressable
         key={filter.key}
-        style={[styles.filterChip, isActive && styles.filterChipActive]}
+        style={[styles.filterChip, isActive ? styles.filterChipActive : null]}
         onPress={() => handleFilterChange(filter.key)}
       >
-        <ThemedText style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>{filter.label}</ThemedText>
+        <ThemedText style={[styles.filterChipText, isActive ? styles.filterChipTextActive : null]}>
+          {filter.label}
+        </ThemedText>
       </Pressable>
     );
   };
@@ -428,7 +430,7 @@ const styles = StyleSheet.create({
   ticketSubject: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
   },
   lastMessage: {
     fontSize: 13,

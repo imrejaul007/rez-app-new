@@ -2,7 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import { platformAlertSimple, platformAlert } from '@/utils/platformAlert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 
 // Types
 export interface ImagePickerOptions {
@@ -159,7 +159,7 @@ class CameraService {
       const mergedOptions = { ...DEFAULT_CAMERA_OPTIONS, ...options };
 
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: 'mixed',
+        mediaTypes: 'mixed' as any,
         allowsEditing: mergedOptions.allowsEditing,
         aspect: mergedOptions.aspect,
         quality: mergedOptions.quality,
@@ -298,10 +298,10 @@ class CameraService {
       }
 
       // Upload with progress tracking
-      const result = await apiClient.upload<{ url: string; id: string }>(
+      const result = await (apiClient as any).upload(
         '/upload/image',
         formData,
-        (percentage) => {
+        (percentage: number) => {
           if (onProgress) {
             onProgress({
               loaded: percentage,

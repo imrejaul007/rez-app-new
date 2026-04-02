@@ -56,7 +56,7 @@ export const useProductAvailability = ({
         // If we have variant locally, use it for quick check
         if (selectedVariant) {
           const status = getStockStatus(selectedVariant);
-          const available = selectedVariant.inventory.available &&
+          const available = selectedVariant.inventory.isAvailable &&
                            selectedVariant.inventory.quantity >= quantity;
 
           const availabilityStatus: IAvailabilityStatus = {
@@ -74,7 +74,7 @@ export const useProductAvailability = ({
         }
 
         // Call backend API for accurate stock check
-        const response = await productsApi.checkAvailability(
+        const response: any = await productsApi.checkAvailability(
           productId,
           variantId,
           quantity

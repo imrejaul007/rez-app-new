@@ -189,7 +189,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<OffersPageData>> {
     try {
       const response = await apiClient.get<OffersPageData>('/offers/page-data', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching offers page data:', error);
       throw error;
@@ -216,7 +216,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<PaginatedResponse<Offer> | Offer[]>> {
     try {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching offers:', error);
       throw error;
@@ -229,7 +229,7 @@ class RealOffersApi {
   async getMegaOffers(limit?: number): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/mega', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching mega offers:', error);
       throw error;
@@ -242,7 +242,7 @@ class RealOffersApi {
   async getStudentOffers(limit?: number): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/students', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching student offers:', error);
       throw error;
@@ -255,7 +255,7 @@ class RealOffersApi {
   async getNewArrivalOffers(limit?: number): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/new-arrivals', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching new arrival offers:', error);
       throw error;
@@ -268,7 +268,7 @@ class RealOffersApi {
   async getTrendingOffers(limit?: number): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/trending', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching trending offers:', error);
       throw error;
@@ -286,7 +286,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/nearby', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching nearby offers:', error);
       throw error;
@@ -299,7 +299,7 @@ class RealOffersApi {
   async getOfferById(id: string): Promise<ApiResponse<Offer>> {
     try {
       const response = await apiClient.get<Offer>(`/offers/${id}`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching offer ${id}:`, error);
       throw error;
@@ -319,7 +319,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<PaginatedResponse<Offer>>> {
     try {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers/search', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error searching offers:', error);
       throw error;
@@ -332,7 +332,7 @@ class RealOffersApi {
   async toggleOfferLike(id: string): Promise<ApiResponse<{ isLiked: boolean; likesCount: number }>> {
     try {
       const response = await apiClient.post<{ isLiked: boolean; likesCount: number }>(`/offers/${id}/like`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error toggling like for offer ${id}:`, error);
       throw error;
@@ -348,7 +348,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/share`, params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error sharing offer ${id}:`, error);
       throw error;
@@ -361,7 +361,7 @@ class RealOffersApi {
   async trackOfferView(id: string): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/view`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error tracking view for offer ${id}:`, error);
       throw error;
@@ -374,7 +374,7 @@ class RealOffersApi {
   async trackOfferClick(id: string): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/click`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error tracking click for offer ${id}:`, error);
       throw error;
@@ -387,7 +387,7 @@ class RealOffersApi {
   async getOfferCategories(): Promise<ApiResponse<OfferCategory[]>> {
     try {
       const response = await apiClient.get<OfferCategory[]>('/offer-categories');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching offer categories:', error);
       throw error;
@@ -400,7 +400,7 @@ class RealOffersApi {
   async getOfferCategoryBySlug(slug: string): Promise<ApiResponse<OfferCategory>> {
     try {
       const response = await apiClient.get<OfferCategory>(`/offer-categories/${slug}`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching category ${slug}:`, error);
       throw error;
@@ -420,7 +420,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<PaginatedResponse<Offer>>> {
     try {
       const response = await apiClient.get<PaginatedResponse<Offer>>(`/offer-categories/${slug}/offers`, params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching offers for category ${slug}:`, error);
       throw error;
@@ -436,7 +436,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<HeroBanner[]>> {
     try {
       const response = await apiClient.get<HeroBanner[]>('/hero-banners', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching hero banners:', error);
       throw error;
@@ -456,7 +456,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.post<{ success: boolean }>(`/hero-banners/${id}/view`, params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error tracking hero banner view ${id}:`, error);
       throw error;
@@ -476,7 +476,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.post<{ success: boolean }>(`/hero-banners/${id}/click`, params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error tracking hero banner click ${id}:`, error);
       throw error;
@@ -492,7 +492,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<PaginatedResponse<Offer>>> {
     try {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers/user/favorites', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching user favorite offers:', error);
       throw error;
@@ -505,7 +505,7 @@ class RealOffersApi {
   async addOfferToFavorites(id: string): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/favorite`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error adding offer ${id} to favorites:`, error);
       throw error;
@@ -518,7 +518,7 @@ class RealOffersApi {
   async removeOfferFromFavorites(id: string): Promise<ApiResponse<{ success: boolean }>> {
     try {
       const response = await apiClient.delete<{ success: boolean }>(`/offers/${id}/favorite`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error removing offer ${id} from favorites:`, error);
       throw error;
@@ -545,7 +545,7 @@ class RealOffersApi {
           expiresAt: string;
         };
       }>(`/offers/${id}/redeem`, { redemptionType });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error redeeming offer ${id}:`, error);
       throw error;
@@ -562,7 +562,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<any>> {
     try {
       const response = await apiClient.get<any>('/offers/user/redemptions', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching user redemptions:', error);
       throw error;
@@ -597,7 +597,7 @@ class RealOffersApi {
   }>> {
     try {
       const response = await apiClient.post<any>('/offers/redemptions/validate', { code });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error validating redemption code:', error);
       throw error;
@@ -630,8 +630,8 @@ class RealOffersApi {
     };
   }>> {
     try {
-      const response = await apiClient.post<any>(`/offers/redemptions/${redemptionId}/use`, params);
-      return response;
+      const response = await apiClient.post<any>(`/offers/redemptions/${redemptionId}/use`, params as any);
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error marking redemption as used:', error);
       throw error;
@@ -644,7 +644,7 @@ class RealOffersApi {
   async getRedemptionById(redemptionId: string): Promise<ApiResponse<any>> {
     try {
       const response = await apiClient.get<any>(`/offers/redemptions/${redemptionId}`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching redemption:', error);
       throw error;
@@ -719,8 +719,7 @@ class RealOffersApi {
           }
         },
         message: 'Store deals retrieved successfully (fallback)',
-        timestamp: new Date().toISOString()
-      };
+      } as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching store offers for ${storeId}:`, error);
       throw error;
@@ -1232,7 +1231,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/offers/hotspots', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching hotspots:', error);
       throw error;
@@ -1245,7 +1244,7 @@ class RealOffersApi {
   async getHotspotOffers(slug: string, limit?: number): Promise<ApiResponse<{ hotspot: any; offers: Offer[] }>> {
     try {
       const response = await apiClient.get<{ hotspot: any; offers: Offer[] }>(`/offers/hotspots/${slug}/offers`, { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching hotspot ${slug} offers:`, error);
       throw error;
@@ -1261,7 +1260,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/bogo', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching BOGO offers:', error);
       throw error;
@@ -1277,7 +1276,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/sales-clearance', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching sale offers:', error);
       throw error;
@@ -1290,7 +1289,7 @@ class RealOffersApi {
   async getFreeDeliveryOffers(limit?: number): Promise<ApiResponse<Offer[]>> {
     try {
       const response = await apiClient.get<Offer[]>('/offers/free-delivery', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching free delivery offers:', error);
       throw error;
@@ -1306,7 +1305,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/offers/bank-offers', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching bank offers:', error);
       throw error;
@@ -1331,7 +1330,7 @@ class RealOffersApi {
         headers['X-Rez-Region'] = region;
       }
       const response = await apiClient.get<any>('/offers/homepage-deals-section', {}, { headers });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching homepage deals section:', error);
       throw error;
@@ -1344,7 +1343,7 @@ class RealOffersApi {
   async getExclusiveZones(): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/offers/exclusive-zones');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching exclusive zones:', error);
       throw error;
@@ -1357,7 +1356,7 @@ class RealOffersApi {
   async getExclusiveZoneOffers(slug: string, limit?: number): Promise<ApiResponse<{ zone: any; offers: Offer[] }>> {
     try {
       const response = await apiClient.get<{ zone: any; offers: Offer[] }>(`/offers/exclusive-zones/${slug}/offers`, { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching exclusive zone ${slug} offers:`, error);
       throw error;
@@ -1370,7 +1369,7 @@ class RealOffersApi {
   async getSpecialProfiles(): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/offers/special-profiles');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching special profiles:', error);
       throw error;
@@ -1383,7 +1382,7 @@ class RealOffersApi {
   async getSpecialProfileOffers(slug: string, limit?: number): Promise<ApiResponse<{ profile: any; offers: Offer[] }>> {
     try {
       const response = await apiClient.get<{ profile: any; offers: Offer[] }>(`/offers/special-profiles/${slug}/offers`, { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error fetching special profile ${slug} offers:`, error);
       throw error;
@@ -1396,7 +1395,7 @@ class RealOffersApi {
   async getFriendsRedeemed(limit?: number): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/offers/friends-redeemed', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching friends redeemed:', error);
       throw error;
@@ -1409,7 +1408,7 @@ class RealOffersApi {
   async getDoubleCashbackCampaigns(limit?: number): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/cashback/double-campaigns', { limit });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching double cashback campaigns:', error);
       throw error;
@@ -1425,7 +1424,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/cashback/coin-drops', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching coin drops:', error);
       throw error;
@@ -1441,7 +1440,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/cashback/upload-bill-stores', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching upload bill stores:', error);
       throw error;
@@ -1457,7 +1456,7 @@ class RealOffersApi {
   }): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/cashback/super-cashback-stores', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching super cashback stores:', error);
       throw error;
@@ -1470,7 +1469,7 @@ class RealOffersApi {
   async getLoyaltyMilestones(): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/loyalty/milestones');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching loyalty milestones:', error);
       throw error;
@@ -1483,7 +1482,7 @@ class RealOffersApi {
   async getLoyaltyProgress(): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/loyalty/progress');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching loyalty progress:', error);
       throw error;
@@ -1521,7 +1520,7 @@ class RealOffersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching discount buckets:', error);
       throw error;
@@ -1563,7 +1562,7 @@ class RealOffersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching flash sales:', error);
       throw error;
@@ -1581,10 +1580,10 @@ class RealOffersApi {
 
       if (response.success && response.data) {
         devLog.log('✅ [OFFERS API] Got flash sale:', response.data.title);
-        return response;
+        return response as any;
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching flash sale by ID:', error);
       throw error;
@@ -1610,7 +1609,7 @@ class RealOffersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching new arrivals:', error);
       throw error;
@@ -1636,7 +1635,7 @@ class RealOffersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching recommended offers:', error);
       throw error;
@@ -1662,7 +1661,7 @@ class RealOffersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching expiring offers:', error);
       throw error;
@@ -1688,7 +1687,7 @@ class RealOffersApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching today\'s offers:', error);
       throw error;
@@ -1742,7 +1741,7 @@ class RealOffersApi {
       if (response.success) {
         devLog.log('✅ [OFFERS API] Flash sale purchase initiated:', response.data?.purchaseId);
       }
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error initiating flash sale purchase:', error);
       throw error;
@@ -1775,7 +1774,7 @@ class RealOffersApi {
       if (response.success) {
         devLog.log('✅ [OFFERS API] Flash sale payment verified, voucher:', response.data?.voucherCode);
       }
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error verifying flash sale payment:', error);
       throw error;
@@ -1789,7 +1788,7 @@ class RealOffersApi {
     try {
       devLog.log('❌ [OFFERS API] Marking flash sale purchase as failed:', purchaseId);
       const response = await apiClient.post<void>('/flash-sales/purchase/fail', { purchaseId, reason });
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error failing flash sale purchase:', error);
       throw error;
@@ -1824,7 +1823,7 @@ class RealOffersApi {
         devLog.log(`✅ [OFFERS API] Got ${purchases.length} flash sale purchases`);
         return { ...response, data: purchases };
       }
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching flash sale purchases:', error);
       throw error;
@@ -1838,7 +1837,7 @@ class RealOffersApi {
     try {
       devLog.log('🔍 [OFFERS API] Fetching flash sale purchase:', purchaseId);
       const response = await apiClient.get<any>(`/flash-sales/purchases/${purchaseId}`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching flash sale purchase:', error);
       throw error;
@@ -1869,7 +1868,7 @@ class RealOffersApi {
   }>> {
     try {
       const response = await apiClient.get<any>(`/zones/${slug}/eligibility`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error checking zone eligibility for ${slug}:`, error);
       throw error;
@@ -1892,8 +1891,8 @@ class RealOffersApi {
     createdAt: string;
   }>> {
     try {
-      const response = await apiClient.post<any>(`/zones/${slug}/verify`, data);
-      return response;
+      const response = await apiClient.post<any>(`/zones/${slug}/verify`, data as any);
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error submitting zone verification for ${slug}:`, error);
       throw error;
@@ -1913,7 +1912,7 @@ class RealOffersApi {
   }>> {
     try {
       const response = await apiClient.get<any>(`/zones/${slug}/status`);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error(`[OFFERS API] Error getting zone verification status for ${slug}:`, error);
       throw error;
@@ -1926,7 +1925,7 @@ class RealOffersApi {
   async getMyVerifications(): Promise<ApiResponse<any[]>> {
     try {
       const response = await apiClient.get<any[]>('/zones/my-verifications');
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error getting user verifications:', error);
       throw error;
@@ -1943,7 +1942,7 @@ class RealOffersApi {
     try {
       devLog.log('[OFFERS API] Fetching aggregated page data');
       const response = await apiClient.get<any>('/offers/page-data-v2', params);
-      return response;
+      return response as any;
     } catch (error) {
       devLog.error('[OFFERS API] Error fetching aggregated page data:', error);
       throw error;

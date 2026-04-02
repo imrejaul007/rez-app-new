@@ -23,7 +23,7 @@ export const getItemCount = (items: CartItem[]): number => {
 export const calculateLockedTotal = (items: LockedProduct[]): number => {
   return items.reduce((total, item) => {
     // For paid locks, subtract the lock fee since it's already paid
-    const lockFee = item.isPaidLock && item.lockFee ? item.lockFee : 0;
+    const lockFee = (item as any).isPaidLock && (item as any).lockFee ? (item as any).lockFee : 0;
     return total + (item.price - lockFee);
   }, 0);
 };

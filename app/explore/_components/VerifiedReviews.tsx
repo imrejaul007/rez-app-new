@@ -1,13 +1,6 @@
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import exploreApi, { VerifiedReview } from '@/services/exploreApi';
@@ -41,7 +34,7 @@ const VerifiedReviews = () => {
         if (!isMounted()) return;
         setReviews(response.data?.reviews || []);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load reviews');
     } finally {
@@ -61,17 +54,11 @@ const VerifiedReviews = () => {
 
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(
-          <Ionicons key={i} name="star" size={16} color={Colors.warning} />
-        );
+        stars.push(<Ionicons key={i} name="star" size={16} color={Colors.warning} />);
       } else if (i === fullStars && hasHalf) {
-        stars.push(
-          <Ionicons key={i} name="star-half" size={16} color={Colors.warning} />
-        );
+        stars.push(<Ionicons key={i} name="star-half" size={16} color={Colors.warning} />);
       } else {
-        stars.push(
-          <Ionicons key={i} name="star-outline" size={16} color={colors.border.default} />
-        );
+        stars.push(<Ionicons key={i} name="star-outline" size={16} color={colors.border.default} />);
       }
     }
     return stars;
@@ -123,62 +110,65 @@ const VerifiedReviews = () => {
 
   return (
     <FeatureErrorBoundary featureName="Verified Reviews" compact={true}>
-    <View style={styles.container}>
-      {/* Section Header */}
-      <View style={styles.sectionHeader}>
-        <View>
-          <Text style={styles.sectionTitle}>Top Reviews Near You</Text>
-          <Text style={styles.sectionSubtitle}>Trusted feedback from verified purchases</Text>
-        </View>
-        <Pressable onPress={() => navigateTo('/explore/reviews')}>
-          <Text style={styles.allReviewsText}>All Reviews</Text>
-        </Pressable>
-      </View>
-
-      {/* Reviews List */}
-      <View style={styles.reviewsList}>
-        {reviews.map((review) => (
-          <View key={review.id} style={styles.reviewCard}>
-            {/* Rating Row */}
-            <View style={styles.ratingRow}>
-              <View style={styles.starsContainer}>
-                {renderStars(review.rating)}
-                <Text style={styles.ratingNumber}>{review.rating}</Text>
-              </View>
-              {review.cashback > 0 && (
-                <View style={styles.cashbackBadge}>
-                  <View style={styles.cashbackIcon}>
-                    <Ionicons name="wallet-outline" size={12} color={colors.background.primary} />
-                  </View>
-                  <Text style={styles.cashbackText}>{currencySymbol}{review.cashback}</Text>
-                </View>
-              )}
-            </View>
-
-            {/* Review Text */}
-            <Text style={styles.reviewText}>"{review.review}"</Text>
-
-            {/* Store & Verified Row */}
-            <View style={styles.storeRow}>
-              <Text style={styles.storeName}>{review.store}</Text>
-              {review.verified && (
-                <View style={styles.verifiedBadge}>
-                  <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
-                  <Text style={styles.verifiedText}>Verified Purchase</Text>
-                </View>
-              )}
-            </View>
-
-            {/* User & Time */}
-            <View style={styles.userRow}>
-              <Text style={styles.userName}>{review.user}</Text>
-              <Text style={styles.dotSeparator}>•</Text>
-              <Text style={styles.timeText}>{review.time}</Text>
-            </View>
+      <View style={styles.container}>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>Top Reviews Near You</Text>
+            <Text style={styles.sectionSubtitle}>Trusted feedback from verified purchases</Text>
           </View>
-        ))}
+          <Pressable onPress={() => navigateTo('/explore/reviews')}>
+            <Text style={styles.allReviewsText}>All Reviews</Text>
+          </Pressable>
+        </View>
+
+        {/* Reviews List */}
+        <View style={styles.reviewsList}>
+          {reviews.map((review) => (
+            <View key={review.id} style={styles.reviewCard}>
+              {/* Rating Row */}
+              <View style={styles.ratingRow}>
+                <View style={styles.starsContainer}>
+                  {renderStars(review.rating)}
+                  <Text style={styles.ratingNumber}>{review.rating}</Text>
+                </View>
+                {review.cashback > 0 && (
+                  <View style={styles.cashbackBadge}>
+                    <View style={styles.cashbackIcon}>
+                      <Ionicons name="wallet-outline" size={12} color={colors.background.primary} />
+                    </View>
+                    <Text style={styles.cashbackText}>
+                      {currencySymbol}
+                      {review.cashback}
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              {/* Review Text */}
+              <Text style={styles.reviewText}>"{review.review}"</Text>
+
+              {/* Store & Verified Row */}
+              <View style={styles.storeRow}>
+                <Text style={styles.storeName}>{review.store}</Text>
+                {review.verified && (
+                  <View style={styles.verifiedBadge}>
+                    <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
+                    <Text style={styles.verifiedText}>Verified Purchase</Text>
+                  </View>
+                )}
+              </View>
+
+              {/* User & Time */}
+              <View style={styles.userRow}>
+                <Text style={styles.userName}>{review.user}</Text>
+                <Text style={styles.dotSeparator}>•</Text>
+                <Text style={styles.timeText}>{review.time}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
       </View>
-    </View>
     </FeatureErrorBoundary>
   );
 };

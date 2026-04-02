@@ -129,7 +129,7 @@ const FoodPage: React.FC = () => {
         if (!isMounted()) return;
         if (parentCat.maxCashback) setMaxCashback(parentCat.maxCashback);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load food categories. Please try again.');
       errorReporter.captureError(
@@ -189,7 +189,7 @@ const FoodPage: React.FC = () => {
             if (mc > maxCashback) setMaxCashback(mc);
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to fetch featured food stores'),
           { context: 'FoodPage.fetchStores' },
@@ -216,7 +216,7 @@ const FoodPage: React.FC = () => {
         if (!isMounted()) return;
         setCuisines(items.slice(0, 8)); // Show top 8 cuisines
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch cuisine counts'),
         { context: 'FoodPage.fetchCuisines' },
@@ -238,7 +238,7 @@ const FoodPage: React.FC = () => {
         if (!isMounted()) return;
         setOffers(items.slice(0, 6));
       }
-    } catch (err) {
+    } catch (err: any) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch food offers'),
         { context: 'FoodPage.fetchOffers' },
@@ -440,9 +440,9 @@ const FoodPage: React.FC = () => {
             <Pressable
               key={filter}
               onPress={() => setSelectedFilter(filter)}
-              style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}
+              style={[styles.filterChip, selectedFilter === filter ? styles.filterChipActive : null]}
             >
-              <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter ? styles.filterChipTextActive : null]}>
                 {filter === 'all' ? 'All' : filter}
               </Text>
             </Pressable>

@@ -34,7 +34,7 @@ class ReviewService {
 
       const response = await apiClient.get<ReviewsResponse>(endpoint);
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -51,9 +51,9 @@ class ReviewService {
 
       const response = await apiClient.post<{ review: Review }>(
         `/reviews/store/${storeId}`,
-        reviewData
+        reviewData as any
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -70,9 +70,9 @@ class ReviewService {
 
       const response = await apiClient.put<{ review: Review }>(
         `/reviews/${reviewId}`,
-        updates
+        updates as any
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -86,7 +86,7 @@ class ReviewService {
 
       const response = await apiClient.delete<null>(`/reviews/${reviewId}`);
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -101,7 +101,7 @@ class ReviewService {
       const response = await apiClient.post<{ helpful: number }>(
         `/reviews/${reviewId}/helpful`
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -135,7 +135,7 @@ class ReviewService {
           hasPrevPage: boolean;
         };
       }>(`/reviews/user/my-reviews?page=${page}&limit=${limit}`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -150,7 +150,7 @@ class ReviewService {
       const response = await apiClient.get<CanReviewResponse>(
         `/reviews/store/${storeId}/can-review`
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -170,7 +170,7 @@ class ReviewService {
         `/reviews/${reviewId}/report`,
         { reason }
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -206,7 +206,7 @@ class ReviewService {
         formData
       );
 
-      return result;
+      return result as any;
     } catch (error) {
       throw error;
     }

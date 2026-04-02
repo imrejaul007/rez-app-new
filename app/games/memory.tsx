@@ -151,7 +151,7 @@ function MemoryPage() {
         if (!isMounted()) return;
         setSessionId(response.data.sessionId || response.data._id || '');
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
 
@@ -197,7 +197,7 @@ function MemoryPage() {
           triggerNotification('Success');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -577,8 +577,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '22%',
     aspectRatio: 0.75,
-    perspective: 1000,
-  },
+  } as any,
   card: {
     position: 'absolute',
     width: '100%',

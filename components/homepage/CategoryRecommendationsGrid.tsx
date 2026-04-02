@@ -176,7 +176,7 @@ function CategoryRecommendationsGrid({
             });
 
           }
-        } catch (error) {
+        } catch (error: any) {
         }
       }
 
@@ -246,7 +246,7 @@ function CategoryRecommendationsGrid({
             });
 
           }
-        } catch (error) {
+        } catch (error: any) {
         }
       }
 
@@ -271,7 +271,7 @@ function CategoryRecommendationsGrid({
         // No data from backend
         setError('No recommendations available at the moment');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load recommendations');
     } finally {

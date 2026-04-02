@@ -82,7 +82,7 @@ function BillHistoryPage() {
         // Final fallback - replace current route with home
         router.replace('/');
       }
-    } catch (error) {
+    } catch (error: any) {
       // If all else fails, navigate to home
 
       if (router) {
@@ -154,7 +154,7 @@ function BillHistoryPage() {
             setStats({ total, pending, totalCashback });
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         // Only log if this response is still relevant
         if (myGen === requestGenRef.current && isMounted()) {
           // Non-critical — user can pull-to-refresh
@@ -265,14 +265,14 @@ function BillHistoryPage() {
         {(['all', 'pending', 'approved', 'rejected'] as FilterStatus[]).map((filter) => (
           <Pressable
             key={filter}
-            style={[styles.filterButton, activeFilter === filter && styles.filterButtonActive]}
+            style={[styles.filterButton, activeFilter === filter ? styles.filterButtonActive : null]}
             onPress={() => {
               setPage(1);
               setHasMore(true);
               setActiveFilter(filter);
             }}
           >
-            <Text style={[styles.filterButtonText, activeFilter === filter && styles.filterButtonTextActive]}>
+            <Text style={[styles.filterButtonText, activeFilter === filter ? styles.filterButtonTextActive : null]}>
               {filter.charAt(0).toUpperCase() + filter.slice(1)}
             </Text>
           </Pressable>

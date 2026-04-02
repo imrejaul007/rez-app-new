@@ -72,7 +72,7 @@ export function useProductReviews({
         query.rating = filterRating;
       }
 
-      const response = await reviewsApi.getTargetReviews('product', productId, query);
+      const response: any = await reviewsApi.getTargetReviews('product', productId, query);
 
       if (response.success && response.data) {
         const newReviews = response.data.reviews || [];
@@ -133,7 +133,7 @@ export function useProductReviews({
   }) => {
     try {
 
-      const response = await reviewsApi.createReview({
+      const response: any = await reviewsApi.createReview({
         targetType: 'product',
         targetId: productId,
         rating: data.rating,
@@ -168,7 +168,7 @@ export function useProductReviews({
   const updateReview = useCallback(async (reviewId: string, updates: Partial<Review>) => {
     try {
 
-      const response = await reviewsApi.updateReview(reviewId, updates as any);
+      const response: any = await reviewsApi.updateReview(reviewId, updates as any);
 
       if (response.success && response.data) {
 
@@ -190,7 +190,7 @@ export function useProductReviews({
   const deleteReview = useCallback(async (reviewId: string) => {
     try {
 
-      const response = await reviewsApi.deleteReview(reviewId);
+      const response: any = await reviewsApi.deleteReview(reviewId);
 
       if (response.success) {
 
@@ -218,7 +218,7 @@ export function useProductReviews({
   const markHelpful = useCallback(async (reviewId: string) => {
     try {
 
-      const response = await reviewsApi.markHelpful(reviewId);
+      const response: any = await reviewsApi.markHelpful(reviewId);
 
       if (response.success && response.data) {
 
@@ -247,9 +247,9 @@ export function useProductReviews({
 
   const canUserReview = useCallback(async (): Promise<boolean> => {
     try {
-      const response = await reviewsApi.canReview('product', productId);
+      const response: any = await reviewsApi.canReview('product', productId);
       return response.success && response.data?.canReview || false;
-    } catch (err) {
+    } catch (err: any) {
       return false;
     }
   }, [productId]);

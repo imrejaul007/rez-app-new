@@ -78,9 +78,12 @@ function AchievementsPage() {
       setAuthError(null);
       // Retry achievements fetch after auth refresh
       await refetch();
-    } catch (error) {
-      platformAlertDestructive('Authentication Error', 'Please log out and log back in to continue.', 'Logout', () =>
-        authActions.logout(),
+    } catch (error: any) {
+      platformAlertDestructive(
+        'Authentication Error',
+        'Please log out and log back in to continue.',
+        () => authActions.logout(),
+        'Logout',
       );
     }
   };
@@ -99,7 +102,7 @@ function AchievementsPage() {
     return (
       <Pressable
         key={achievement.id}
-        style={[styles.achievementCard, isLocked && styles.achievementCardLocked]}
+        style={[styles.achievementCard, isLocked ? styles.achievementCardLocked : null]}
         onPress={() => setSelectedAchievement(achievement)}
         accessibilityLabel={`${achievement.title}. ${achievement.description}. Progress: ${achievement.progress}%${achievement.unlocked ? '. Unlocked' : '. Locked'}`}
         accessibilityRole="button"
@@ -119,7 +122,10 @@ function AchievementsPage() {
           />
         </View>
 
-        <ThemedText style={[styles.achievementTitle, isLocked && styles.achievementTitleLocked]} numberOfLines={2}>
+        <ThemedText
+          style={[styles.achievementTitle, isLocked ? styles.achievementTitleLocked : null]}
+          numberOfLines={2}
+        >
           {achievement.title}
         </ThemedText>
 
@@ -283,7 +289,7 @@ function AchievementsPage() {
           renderItem={renderAchievementItem}
           numColumns={2}
           style={styles.content}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }] as any}
           refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>

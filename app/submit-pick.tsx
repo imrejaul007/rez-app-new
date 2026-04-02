@@ -252,7 +252,7 @@ function SubmitPickPage() {
           if (!isMounted()) return;
           setHasMore(page < total);
         }
-      } catch (err) {
+      } catch (err: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -533,7 +533,7 @@ function SubmitPickPage() {
           <View style={styles.mediaPickerRow}>
             {/* Photo picker */}
             <Pressable
-              style={[styles.mediaPickerBtn, photoUri && styles.mediaPickerBtnActive]}
+              style={[styles.mediaPickerBtn, photoUri ? styles.mediaPickerBtnActive : null]}
               onPress={() => pickMedia('image')}
               disabled={uploadingPhoto}
             >
@@ -562,7 +562,7 @@ function SubmitPickPage() {
 
             {/* Video picker */}
             <Pressable
-              style={[styles.mediaPickerBtn, videoUri && styles.mediaPickerBtnActive]}
+              style={[styles.mediaPickerBtn, videoUri ? styles.mediaPickerBtnActive : null]}
               onPress={() => pickMedia('video')}
               disabled={uploadingVideo}
             >

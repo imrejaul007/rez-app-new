@@ -101,6 +101,7 @@ export default function GroceryFastDeliveryPage() {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
+  const isMounted = useIsMounted();
   const [stores, setStores] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -126,7 +127,7 @@ export default function GroceryFastDeliveryPage() {
         if (!isMounted()) return;
         setStores(fastStores);
       }
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

@@ -85,7 +85,7 @@ function SmartSpendScreen() {
         } else {
           if (pageNum === 1) setError('Failed to load Smart Spend catalog');
         }
-      } catch (err) {
+      } catch (err: any) {
         if (pageNum === 1) setError('Something went wrong. Please try again.');
       } finally {
         if (!isMounted()) return;
@@ -127,13 +127,13 @@ function SmartSpendScreen() {
       // Track click analytics
       priveApi.trackSmartSpendClick(item._id).catch(() => {});
 
-      if (item.itemType === 'store' && (item.store?._id || item.store?.id)) {
+      if (item.itemType === 'store' && (item.store?._id || (item.store as any)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.store._id || item.store.id}&source=smart_spend&ssId=${item._id}` as any,
+          `/MainStorePage?storeId=${item.store!._id || (item.store as any).id}&source=smart_spend&ssId=${item._id}` as any,
         );
-      } else if (item.itemType === 'product' && (item.product?.store?._id || item.product?.store?.id)) {
+      } else if (item.itemType === 'product' && (item.product?.store?._id || (item.product?.store as any)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.product.store._id || item.product.store.id}&source=smart_spend&ssId=${item._id}` as any,
+          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as any).id}&source=smart_spend&ssId=${item._id}` as any,
         );
       } else if (item.itemType === 'product' && item.product?._id) {
         router.push(`/product-page?cardId=${item.product._id}&cardType=product` as any);
@@ -235,10 +235,12 @@ function SmartSpendScreen() {
             {allSections.map((tab) => (
               <Pressable
                 key={tab.label}
-                style={[styles.sectionTab, selectedSection === tab.label && styles.sectionTabActive]}
+                style={[styles.sectionTab, selectedSection === tab.label ? styles.sectionTabActive : null]}
                 onPress={() => handleSectionChange(tab.label)}
               >
-                <Text style={[styles.sectionTabText, selectedSection === tab.label && styles.sectionTabTextActive]}>
+                <Text
+                  style={[styles.sectionTabText, selectedSection === tab.label ? styles.sectionTabTextActive : null]}
+                >
                   {tab.label}
                 </Text>
               </Pressable>

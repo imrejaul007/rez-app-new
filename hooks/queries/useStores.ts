@@ -36,7 +36,7 @@ export function useFeaturedStores(limit = 10) {
 export function useNearbyStores(lat: number, lon: number, radius?: number) {
   return useQuery({
     queryKey: queryKeys.stores.nearby(lat, lon, radius),
-    queryFn: () => storesApi.getNearbyStores({ latitude: lat, longitude: lon, radius }),
+    queryFn: () => (storesApi as any).getNearbyStores({ latitude: lat, longitude: lon, radius }),
     enabled: !!lat && !!lon,
   });
 }
@@ -60,7 +60,7 @@ export function useStoreProducts(storeId: string, filters?: Record<string, any>)
 export function useStoreReviews(storeId: string, filters?: Record<string, any>) {
   return useQuery({
     queryKey: queryKeys.stores.reviews(storeId, filters),
-    queryFn: () => storesApi.getStoreReviews(storeId, filters),
+    queryFn: () => storesApi.getStoreReviews(storeId, filters as any),
     enabled: !!storeId,
   });
 }
@@ -83,7 +83,7 @@ export function useStoreCategories() {
 export function useFollowedStores(params?: { page?: number; limit?: number }) {
   return useQuery({
     queryKey: ['stores', 'followed', params] as const,
-    queryFn: () => storesApi.getFollowedStores(params),
+    queryFn: () => storesApi.getFollowedStores(params as any),
   });
 }
 

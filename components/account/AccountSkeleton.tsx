@@ -67,7 +67,7 @@ function ShimmerBlock({
 
 function SkeletonRow({ isLast }: { isLast: boolean }) {
   return (
-    <View style={[styles.row, !isLast && styles.rowBorder]}>
+    <View style={[styles.row, !isLast ? styles.rowBorder : null]}>
       <ShimmerBlock width={40} height={40} borderRadius={BorderRadius.md} />
       <View style={styles.textBlock}>
         <ShimmerBlock width={120} height={14} />

@@ -208,7 +208,7 @@ export const useFashionData = (): UseFashionDataResult => {
       setIsLoadingFeaturedStores(true);
       setStoresError(null);
 
-      const response = await storesApi.getFeaturedStores(10);
+      const response: any = await storesApi.getFeaturedStores(10);
       
       if (response.success && response.data) {
         // STRICT: Only show fashion stores
@@ -239,7 +239,7 @@ export const useFashionData = (): UseFashionDataResult => {
         devLog.log(`📦 Found ${fashionStoresData.length} fashion stores`);
         setFeaturedStores(fashionStoresData);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('[FASHION DATA] Error fetching featured stores:', error);
       setStoresError(error as Error);
     } finally {
@@ -253,9 +253,9 @@ export const useFashionData = (): UseFashionDataResult => {
       setIsLoadingFashionStores(true);
       setStoresError(null);
 
-      const response = await storesApi.getStores({
+      const response: any = await storesApi.getStores({
         limit: 20,
-        sortBy: 'rating'
+        sort: 'rating'
       });
       
       if (response.success && response.data) {
@@ -283,7 +283,7 @@ export const useFashionData = (): UseFashionDataResult => {
         devLog.log(`📦 Found ${fashionStoresData.length} fashion brands`);
         setFashionStores(fashionStoresData);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('[FASHION DATA] Error fetching fashion stores:', error);
       setStoresError(error as Error);
     } finally {
@@ -298,7 +298,7 @@ export const useFashionData = (): UseFashionDataResult => {
       setProductsError(null);
 
       devLog.log('🔍 [FASHION DATA] Fetching featured products...');
-      const response = await productsApi.getFeaturedProducts(20);
+      const response: any = await productsApi.getFeaturedProducts(20);
       
       devLog.log('📡 [FASHION DATA] API Response:', response);
       
@@ -379,7 +379,7 @@ export const useFashionData = (): UseFashionDataResult => {
       } else {
         devLog.log('⚠️ [FASHION DATA] No products data in response');
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [FASHION DATA] Error fetching featured products:', error);
       setProductsError(error as Error);
     } finally {
@@ -394,7 +394,7 @@ export const useFashionData = (): UseFashionDataResult => {
       setCategoriesError(null);
 
       devLog.log('🔍 [FASHION DATA] Fetching all categories...');
-      const response = await categoriesApi.getCategories();
+      const response: any = await categoriesApi.getCategories();
       
       if (response.success && response.data) {
         devLog.log(`📦 [FASHION DATA] Received ${response.data.length} total categories`);
@@ -494,7 +494,7 @@ export const useFashionData = (): UseFashionDataResult => {
         devLog.log('⚠️ [FASHION DATA] No categories data in response');
         setCategories([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       devLog.error('❌ [FASHION DATA] Error fetching categories:', error);
       setCategoriesError(error as Error);
       setCategories([]);

@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Earn coins by sharing content
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Share,
-  ActivityIndicator,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Share, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -59,10 +50,7 @@ function ShareToEarnPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, contentRes] = await Promise.all([
-          shareApi.getShareStats(),
-          shareApi.getShareableContent()
-        ]);
+        const [statsRes, contentRes] = await Promise.all([shareApi.getShareStats(), shareApi.getShareableContent()]);
 
         if (statsRes.data) {
           if (!isMounted()) return;
@@ -124,7 +112,7 @@ function ShareToEarnPage() {
           if (!isMounted()) return;
           setShareableContent(items);
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -139,26 +127,27 @@ function ShareToEarnPage() {
       const message = `Check out ${content.title} on ${BRAND.APP_NAME}! ${content.description}`;
 
       // Track share with backend
-      const platformMap: { [key: string]: 'whatsapp' | 'facebook' | 'twitter' | 'instagram' | 'copy_link' | 'other' } = {
-        'whatsapp': 'whatsapp',
-        'facebook': 'facebook',
-        'twitter': 'twitter',
-        'instagram': 'instagram',
-        'copy': 'copy_link',
-        'more': 'other'
-      };
+      const platformMap: { [key: string]: 'whatsapp' | 'facebook' | 'twitter' | 'instagram' | 'copy_link' | 'other' } =
+        {
+          whatsapp: 'whatsapp',
+          facebook: 'facebook',
+          twitter: 'twitter',
+          instagram: 'instagram',
+          copy: 'copy_link',
+          more: 'other',
+        };
 
       const contentTypeMap: { [key: string]: 'product' | 'store' | 'offer' | 'referral' } = {
-        'product': 'product',
-        'store': 'store',
-        'offer': 'offer',
-        'referral': 'referral'
+        product: 'product',
+        store: 'store',
+        offer: 'offer',
+        referral: 'referral',
       };
 
       await shareApi.createShare(
         contentTypeMap[content.type] || 'product',
         content.id,
-        platformMap[platform] || 'other'
+        platformMap[platform] || 'other',
       );
 
       if (platform === 'copy') {
@@ -171,63 +160,74 @@ function ShareToEarnPage() {
       }
 
       if (!isMounted()) return;
-      setTotalEarned(prev => prev + content.coins);
+      setTotalEarned((prev) => prev + content.coins);
       if (!isMounted()) return;
-      setTotalShares(prev => prev + 1);
+      setTotalShares((prev) => prev + 1);
       if (!isMounted()) return;
       setSelectedContent(null);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
 
-  const renderContent = useCallback(({ item }: { item: ShareableContent }) => (
-    <Pressable
-      style={styles.contentCard}
-      onPress={() => setSelectedContent(item)}
-    >
-      <View style={styles.contentImage}>
-        {item.image ? (
-          <CachedImage source={item.image} style={styles.contentImg} />
-        ) : (
-          <Ionicons
-            name={item.type === 'referral' ? 'people' : item.type === 'store' ? 'storefront' : item.type === 'offer' ? 'pricetag' : 'cube'}
-            size={28}
-            color={Colors.gray[400]}
-          />
-        )}
-      </View>
-      <View style={styles.contentInfo}>
-        <View style={styles.contentHeader}>
-          <View style={[styles.typeBadge, { backgroundColor: getTypeColor(item.type) + '20' }]}>
-            <ThemedText style={[styles.typeText, { color: getTypeColor(item.type) }]}>
-              {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-            </ThemedText>
-          </View>
-          {item.shares > 0 && (
-            <ThemedText style={styles.sharesText}>{item.shares} shares</ThemedText>
+  const renderContent = useCallback(
+    ({ item }: { item: ShareableContent }) => (
+      <Pressable style={styles.contentCard} onPress={() => setSelectedContent(item)}>
+        <View style={styles.contentImage}>
+          {item.image ? (
+            <CachedImage source={item.image} style={styles.contentImg} />
+          ) : (
+            <Ionicons
+              name={
+                item.type === 'referral'
+                  ? 'people'
+                  : item.type === 'store'
+                    ? 'storefront'
+                    : item.type === 'offer'
+                      ? 'pricetag'
+                      : 'cube'
+              }
+              size={28}
+              color={Colors.gray[400]}
+            />
           )}
         </View>
-        <ThemedText style={styles.contentTitle}>{item.title}</ThemedText>
-        <ThemedText style={styles.contentDesc}>{item.description}</ThemedText>
-        <View style={styles.coinsBadge}>
-          <Ionicons name="diamond" size={14} color={Colors.gold} />
-          <ThemedText style={styles.coinsText}>Earn {item.coins} RC</ThemedText>
+        <View style={styles.contentInfo}>
+          <View style={styles.contentHeader}>
+            <View style={[styles.typeBadge, { backgroundColor: getTypeColor(item.type) + '20' }]}>
+              <ThemedText style={[styles.typeText, { color: getTypeColor(item.type) }]}>
+                {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+              </ThemedText>
+            </View>
+            {item.shares > 0 && <ThemedText style={styles.sharesText}>{item.shares} shares</ThemedText>}
+          </View>
+          <ThemedText style={styles.contentTitle}>{item.title}</ThemedText>
+          <ThemedText style={styles.contentDesc}>{item.description}</ThemedText>
+          <View style={styles.coinsBadge}>
+            <Ionicons name="diamond" size={14} color={Colors.gold} />
+            <ThemedText style={styles.coinsText}>Earn {item.coins} RC</ThemedText>
+          </View>
         </View>
-      </View>
-      <Pressable style={styles.shareButton}>
-        <Ionicons name="share-social" size={20} color={Colors.primary[600]} />
+        <Pressable style={styles.shareButton}>
+          <Ionicons name="share-social" size={20} color={Colors.primary[600]} />
+        </Pressable>
       </Pressable>
-    </Pressable>
-  ), []);
+    ),
+    [],
+  );
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'referral': return Colors.gold;
-      case 'offer': return Colors.success;
-      case 'product': return Colors.primary[600];
-      case 'store': return Colors.info;
-      default: return Colors.gray[500];
+      case 'referral':
+        return Colors.gold;
+      case 'offer':
+        return Colors.success;
+      case 'product':
+        return Colors.primary[600];
+      case 'store':
+        return Colors.info;
+      default:
+        return Colors.gray[500];
     }
   };
 
@@ -236,12 +236,12 @@ function ShareToEarnPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Share & Earn</ThemedText>
@@ -265,50 +265,47 @@ function ShareToEarnPage() {
       {loading ? (
         <CardGridSkeleton />
       ) : (
-      <FlashList
-        data={shareableContent}
-        renderItem={renderContent}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View style={styles.howItWorks}>
-            <ThemedText style={styles.sectionTitle}>How it works</ThemedText>
-            <View style={styles.stepsContainer}>
-              <View style={styles.step}>
-                <View style={styles.stepNumber}>
-                  <ThemedText style={styles.stepNumberText}>1</ThemedText>
+        <FlashList
+          data={shareableContent}
+          renderItem={renderContent}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.howItWorks}>
+              <ThemedText style={styles.sectionTitle}>How it works</ThemedText>
+              <View style={styles.stepsContainer}>
+                <View style={styles.step}>
+                  <View style={styles.stepNumber}>
+                    <ThemedText style={styles.stepNumberText}>1</ThemedText>
+                  </View>
+                  <ThemedText style={styles.stepText}>Choose content to share</ThemedText>
                 </View>
-                <ThemedText style={styles.stepText}>Choose content to share</ThemedText>
-              </View>
-              <View style={styles.stepLine} />
-              <View style={styles.step}>
-                <View style={styles.stepNumber}>
-                  <ThemedText style={styles.stepNumberText}>2</ThemedText>
+                <View style={styles.stepLine} />
+                <View style={styles.step}>
+                  <View style={styles.stepNumber}>
+                    <ThemedText style={styles.stepNumberText}>2</ThemedText>
+                  </View>
+                  <ThemedText style={styles.stepText}>Share on social media</ThemedText>
                 </View>
-                <ThemedText style={styles.stepText}>Share on social media</ThemedText>
-              </View>
-              <View style={styles.stepLine} />
-              <View style={styles.step}>
-                <View style={styles.stepNumber}>
-                  <ThemedText style={styles.stepNumberText}>3</ThemedText>
+                <View style={styles.stepLine} />
+                <View style={styles.step}>
+                  <View style={styles.stepNumber}>
+                    <ThemedText style={styles.stepNumberText}>3</ThemedText>
+                  </View>
+                  <ThemedText style={styles.stepText}>{`Earn ${BRAND.COIN_NAME} instantly`}</ThemedText>
                 </View>
-                <ThemedText style={styles.stepText}>{`Earn ${BRAND.COIN_NAME} instantly`}</ThemedText>
               </View>
             </View>
-          </View>
-        }
-        estimatedItemSize={120}
-      />
+          }
+          estimatedItemSize={120}
+        />
       )}
 
       {/* Share Modal */}
       {selectedContent && (
         <View style={styles.modalOverlay}>
-          <Pressable
-            style={styles.modalBackdrop}
-            onPress={() => setSelectedContent(null)}
-          />
+          <Pressable style={styles.modalBackdrop} onPress={() => setSelectedContent(null)} />
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Share & Earn {selectedContent.coins} RC</ThemedText>
@@ -323,7 +320,15 @@ function ShareToEarnPage() {
                   <CachedImage source={selectedContent.image} style={styles.previewImg} />
                 ) : (
                   <Ionicons
-                    name={selectedContent.type === 'referral' ? 'people' : selectedContent.type === 'store' ? 'storefront' : selectedContent.type === 'offer' ? 'pricetag' : 'cube'}
+                    name={
+                      selectedContent.type === 'referral'
+                        ? 'people'
+                        : selectedContent.type === 'store'
+                          ? 'storefront'
+                          : selectedContent.type === 'offer'
+                            ? 'pricetag'
+                            : 'cube'
+                    }
                     size={32}
                     color={Colors.gray[400]}
                   />
@@ -334,7 +339,7 @@ function ShareToEarnPage() {
             </View>
 
             <View style={styles.platformsGrid}>
-              {SHARE_PLATFORMS.map(platform => (
+              {SHARE_PLATFORMS.map((platform) => (
                 <Pressable
                   key={platform.id}
                   style={styles.platformButton}

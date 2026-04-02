@@ -163,7 +163,7 @@ class ArticlesService {
   async getArticles(params?: ArticlesQuery): Promise<ApiResponse<ArticlesResponse>> {
     try {
       devLog.log('📰 [Articles API] Getting articles with params:', params);
-      return await apiClient.get('/articles', params);
+      return await apiClient.get<any>('/articles', params as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error getting articles:', error);
       throw error;
@@ -184,7 +184,7 @@ class ArticlesService {
   async getArticleById(articleId: string): Promise<ApiResponse<Article>> {
     try {
       devLog.log(`📰 [Articles API] Getting article by ID: ${articleId}`);
-      return await apiClient.get(`/articles/${articleId}`);
+      return await apiClient.get<any>(`/articles/${articleId}`);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error getting article ${articleId}:`, error);
       throw error;
@@ -213,7 +213,7 @@ class ArticlesService {
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
       devLog.log(`📰 [Articles API] Getting articles by category: ${category}`);
-      return await apiClient.get(`/articles/category/${category}`, params);
+      return await apiClient.get<any>(`/articles/category/${category}`, params as any);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error getting articles by category ${category}:`, error);
       throw error;
@@ -241,7 +241,7 @@ class ArticlesService {
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
       devLog.log(`📰 [Articles API] Getting articles by author: ${authorId}`);
-      return await apiClient.get(`/articles/author/${authorId}`, params);
+      return await apiClient.get<any>(`/articles/author/${authorId}`, params as any);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error getting articles by author ${authorId}:`, error);
       throw error;
@@ -266,7 +266,7 @@ class ArticlesService {
   ): Promise<ApiResponse<Article[]>> {
     try {
       devLog.log(`📰 [Articles API] Getting trending articles (limit: ${limit}, timeframe: ${timeframe})`);
-      return await apiClient.get('/articles/trending', { limit, timeframe });
+      return await apiClient.get<any>('/articles/trending', { limit, timeframe } as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error getting trending articles:', error);
       throw error;
@@ -287,7 +287,7 @@ class ArticlesService {
   async getFeaturedArticles(limit: number = 10): Promise<ApiResponse<Article[]>> {
     try {
       devLog.log(`📰 [Articles API] Getting featured articles (limit: ${limit})`);
-      return await apiClient.get('/articles/featured', { limit });
+      return await apiClient.get<any>('/articles/featured', { limit } as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error getting featured articles:', error);
       throw error;
@@ -316,10 +316,10 @@ class ArticlesService {
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
       devLog.log(`📰 [Articles API] Searching articles with query: "${query}"`);
-      return await apiClient.get('/articles/search', {
+      return await apiClient.get<any>('/articles/search', {
         search: query,
         ...filters
-      });
+      } as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error searching articles:', error);
       throw error;
@@ -366,7 +366,7 @@ class ArticlesService {
       }
 
       // Otherwise, use regular JSON post
-      return await apiClient.post('/articles', articleData);
+      return await apiClient.post<any>('/articles', articleData as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error creating article:', error);
       throw error;
@@ -414,7 +414,7 @@ class ArticlesService {
       }
 
       // Otherwise, use PATCH
-      return await apiClient.patch(`/articles/${articleId}`, articleData);
+      return await apiClient.patch<any>(`/articles/${articleId}`, articleData as any);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error updating article ${articleId}:`, error);
       throw error;
@@ -435,7 +435,7 @@ class ArticlesService {
   async deleteArticle(articleId: string): Promise<ApiResponse<{ message: string }>> {
     try {
       devLog.log(`📰 [Articles API] Deleting article: ${articleId}`);
-      return await apiClient.delete(`/articles/${articleId}`);
+      return await apiClient.delete<any>(`/articles/${articleId}`);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error deleting article ${articleId}:`, error);
       throw error;
@@ -460,7 +460,7 @@ class ArticlesService {
   ): Promise<ApiResponse<{ liked: boolean; likeCount: number }>> {
     try {
       devLog.log(`📰 [Articles API] Toggling like for article: ${articleId}`);
-      return await apiClient.post(`/articles/${articleId}/like`);
+      return await apiClient.post<any>(`/articles/${articleId}/like`);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error toggling like for article ${articleId}:`, error);
       throw error;
@@ -484,7 +484,7 @@ class ArticlesService {
   ): Promise<ApiResponse<{ bookmarked: boolean }>> {
     try {
       devLog.log(`📰 [Articles API] Toggling bookmark for article: ${articleId}`);
-      return await apiClient.post(`/articles/${articleId}/bookmark`);
+      return await apiClient.post<any>(`/articles/${articleId}/bookmark`);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error toggling bookmark for article ${articleId}:`, error);
       throw error;
@@ -509,7 +509,7 @@ class ArticlesService {
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
       devLog.log('📰 [Articles API] Getting bookmarked articles');
-      return await apiClient.get('/articles/bookmarks', { page, limit });
+      return await apiClient.get<any>('/articles/bookmarks', { page, limit } as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error getting bookmarked articles:', error);
       throw error;
@@ -535,7 +535,7 @@ class ArticlesService {
   ): Promise<ApiResponse<{ shareCount: number; shareUrl: string }>> {
     try {
       devLog.log(`📰 [Articles API] Sharing article: ${articleId} on ${platform || 'unknown'}`);
-      return await apiClient.post(`/articles/${articleId}/share`, { platform });
+      return await apiClient.post<any>(`/articles/${articleId}/share`, { platform });
     } catch (error) {
       devLog.error(`❌ [Articles API] Error sharing article ${articleId}:`, error);
       throw error;
@@ -560,7 +560,7 @@ class ArticlesService {
   ): Promise<ApiResponse<void>> {
     try {
       devLog.log(`📰 [Articles API] Recording view for article: ${articleId}`);
-      return await apiClient.post(`/articles/${articleId}/view`, { readTime });
+      return await apiClient.post<any>(`/articles/${articleId}/view`, { readTime });
     } catch (error) {
       devLog.error(`❌ [Articles API] Error recording view for article ${articleId}:`, error);
       throw error;
@@ -583,7 +583,7 @@ class ArticlesService {
   ): Promise<ApiResponse<ArticleEngagement>> {
     try {
       devLog.log(`📰 [Articles API] Getting engagement for article: ${articleId}`);
-      return await apiClient.get(`/articles/${articleId}/engagement`);
+      return await apiClient.get<any>(`/articles/${articleId}/engagement`);
     } catch (error) {
       devLog.error(`❌ [Articles API] Error getting engagement for article ${articleId}:`, error);
       throw error;
@@ -620,7 +620,7 @@ class ArticlesService {
   }>> {
     try {
       devLog.log(`📰 [Articles API] Getting comments for article: ${articleId}`);
-      return await apiClient.get(`/articles/${articleId}/comments`, {
+      return await apiClient.get<any>(`/articles/${articleId}/comments`, {
         page,
         limit,
         sort
@@ -651,7 +651,7 @@ class ArticlesService {
   ): Promise<ApiResponse<ArticleComment>> {
     try {
       devLog.log(`📰 [Articles API] Adding comment to article: ${articleId}`);
-      return await apiClient.post(`/articles/${articleId}/comments`, {
+      return await apiClient.post<any>(`/articles/${articleId}/comments`, {
         content,
         parentId
       });
@@ -679,7 +679,7 @@ class ArticlesService {
   ): Promise<ApiResponse<Article[]>> {
     try {
       devLog.log(`📰 [Articles API] Getting related articles for: ${articleId}`);
-      return await apiClient.get(`/articles/${articleId}/related`, { limit });
+      return await apiClient.get<any>(`/articles/${articleId}/related`, { limit });
     } catch (error) {
       devLog.error(`❌ [Articles API] Error getting related articles for ${articleId}:`, error);
       throw error;
@@ -702,7 +702,7 @@ class ArticlesService {
   ): Promise<ApiResponse<Article[]>> {
     try {
       devLog.log('📰 [Articles API] Getting recommended articles');
-      return await apiClient.get('/articles/recommendations', { limit });
+      return await apiClient.get<any>('/articles/recommendations', { limit } as any);
     } catch (error) {
       devLog.error('❌ [Articles API] Error getting recommended articles:', error);
       throw error;
@@ -729,7 +729,7 @@ class ArticlesService {
   }>>> {
     try {
       devLog.log('📰 [Articles API] Getting article categories');
-      return await apiClient.get('/articles/categories');
+      return await apiClient.get<any>('/articles/categories');
     } catch (error) {
       devLog.error('❌ [Articles API] Error getting article categories:', error);
       throw error;
@@ -760,7 +760,7 @@ class ArticlesService {
   ): Promise<ApiResponse<{ message: string }>> {
     try {
       devLog.log(`📰 [Articles API] Reporting article: ${articleId} for ${reason}`);
-      return await apiClient.post(`/articles/${articleId}/report`, {
+      return await apiClient.post<any>(`/articles/${articleId}/report`, {
         reason,
         details
       });

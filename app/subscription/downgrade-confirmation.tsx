@@ -38,8 +38,10 @@ function DowngradeConfirmationPage() {
     const tierConfig = state.availableTiers?.find((t: any) => t.tier === currentTier);
     const billingCycle = state.currentSubscription?.billingCycle || 'monthly';
     const currentPrice = tierConfig?.pricing
-      ? (billingCycle === 'yearly' ? tierConfig.pricing.yearly : tierConfig.pricing.monthly)
-      : (state.currentSubscription?.price || 0);
+      ? billingCycle === 'yearly'
+        ? tierConfig.pricing.yearly
+        : tierConfig.pricing.monthly
+      : state.currentSubscription?.price || 0;
     const totalDays = billingCycle === 'yearly' ? 365 : 30;
     const dailyRate = currentPrice / totalDays;
     return Math.round(dailyRate * daysRemaining);
@@ -51,7 +53,7 @@ function DowngradeConfirmationPage() {
     return date.toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -108,7 +110,10 @@ function DowngradeConfirmationPage() {
 
   const handleDowngrade = async () => {
     if (!understood) {
-      platformAlertSimple('Confirmation Required', 'Please confirm that you understand the consequences of downgrading.');
+      platformAlertSimple(
+        'Confirmation Required',
+        'Please confirm that you understand the consequences of downgrading.',
+      );
       return;
     }
 
@@ -119,7 +124,10 @@ function DowngradeConfirmationPage() {
 
       await actions.refreshSubscription();
 
-      platformAlertSimple('Downgrade Scheduled', `Your plan will change to ${TIER_NAMES[newTier]} on ${getEffectiveDate()}. ${calculateCredit() > 0 ? `${currencySymbol}${calculateCredit()} will be added to your wallet.` : ''}`);
+      platformAlertSimple(
+        'Downgrade Scheduled',
+        `Your plan will change to ${TIER_NAMES[newTier]} on ${getEffectiveDate()}. ${calculateCredit() > 0 ? `${currencySymbol}${calculateCredit()} will be added to your wallet.` : ''}`,
+      );
       router.push('/subscription/manage');
     } catch (error: any) {
       platformAlertSimple('Downgrade Failed', error.message || 'Failed to process downgrade');
@@ -139,7 +147,7 @@ function DowngradeConfirmationPage() {
       <LinearGradient colors={[Colors.warning, colors.warningScale[700]] as any} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -152,7 +160,11 @@ function DowngradeConfirmationPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         {/* Warning Banner */}
         <View style={styles.warningBanner}>
           <Ionicons name="warning" size={32} color={Colors.warning} />
@@ -176,9 +188,7 @@ function DowngradeConfirmationPage() {
 
             <View style={[styles.planBox, { borderColor: TIER_COLORS[newTier] }]}>
               <ThemedText style={styles.planLabel}>New Plan</ThemedText>
-              <ThemedText style={[styles.planName, { color: TIER_COLORS[newTier] }]}>
-                {TIER_NAMES[newTier]}
-              </ThemedText>
+              <ThemedText style={[styles.planName, { color: TIER_COLORS[newTier] }]}>{TIER_NAMES[newTier]}</ThemedText>
             </View>
           </View>
         </View>
@@ -220,7 +230,8 @@ function DowngradeConfirmationPage() {
             <View style={styles.creditContent}>
               <ThemedText style={styles.creditTitle}>Wallet Credit</ThemedText>
               <ThemedText style={styles.creditMessage}>
-                We'll add {currencySymbol}{creditAmount} to your wallet for unused days on your current plan
+                We'll add {currencySymbol}
+                {creditAmount} to your wallet for unused days on your current plan
               </ThemedText>
             </View>
           </View>
@@ -232,9 +243,7 @@ function DowngradeConfirmationPage() {
           <View style={styles.dateContent}>
             <ThemedText style={styles.dateLabel}>Effective Date</ThemedText>
             <ThemedText style={styles.dateValue}>{getEffectiveDate()}</ThemedText>
-            <ThemedText style={styles.dateNote}>
-              You'll keep {TIER_NAMES[currentTier]} benefits until then
-            </ThemedText>
+            <ThemedText style={styles.dateNote}>You'll keep {TIER_NAMES[currentTier]} benefits until then</ThemedText>
           </View>
         </View>
 
@@ -247,7 +256,7 @@ function DowngradeConfirmationPage() {
           accessibilityState={{ checked: understood }}
           accessibilityHint="Double tap to confirm you understand you will lose premium benefits"
         >
-          <View style={[styles.checkbox, understood && styles.checkboxChecked]}>
+          <View style={[styles.checkbox, understood ? styles.checkboxChecked : null]}>
             {understood && <Ionicons name="checkmark" size={20} color={colors.text.inverse} />}
           </View>
           <ThemedText style={styles.checkboxLabel}>
@@ -258,13 +267,15 @@ function DowngradeConfirmationPage() {
         {/* Actions */}
         <View style={styles.actionsContainer}>
           <Pressable
-            style={[styles.downgradeButton, !understood && styles.downgradeButtonDisabled]}
+            style={[styles.downgradeButton, !understood ? styles.downgradeButtonDisabled : null]}
             onPress={handleDowngrade}
             disabled={!understood || isDowngrading}
             accessibilityLabel={isDowngrading ? 'Processing downgrade' : 'Confirm downgrade'}
             accessibilityRole="button"
             accessibilityState={{ disabled: !understood || isDowngrading, busy: isDowngrading }}
-            accessibilityHint={understood ? 'Double tap to confirm downgrade' : 'Confirm checkbox first to enable this button'}
+            accessibilityHint={
+              understood ? 'Double tap to confirm downgrade' : 'Confirm checkbox first to enable this button'
+            }
           >
             {isDowngrading ? (
               <ActivityIndicator color={colors.text.inverse} />
@@ -275,7 +286,7 @@ function DowngradeConfirmationPage() {
 
           <Pressable
             style={styles.keepPlanButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             disabled={isDowngrading}
             accessibilityLabel="Keep my current plan"
             accessibilityRole="button"

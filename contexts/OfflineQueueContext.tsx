@@ -24,7 +24,7 @@ import {
   SyncResult,
   QueueEvent,
 } from '../services/billUploadQueueService';
-import type { BillUploadData } from '../types/billVerification.types';
+import type { BillUploadData } from '../services/billUploadService';
 // Lazy-loaded: netinfo not in synchronous dependency chain
 const getNetInfo = async () => (await import('@react-native-community/netinfo')).default;
 

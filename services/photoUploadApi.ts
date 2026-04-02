@@ -39,7 +39,7 @@ class PhotoUploadApiService {
    */
   async upload(data: PhotoUploadRequest): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const response = await apiClient.post<any>('/photos/upload', data);
+      const response = await apiClient.post<any>('/photos/upload', data as any);
       if (response.success) {
         return { success: true, data: response.data };
       }

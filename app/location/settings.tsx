@@ -1,15 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Switch,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Switch, Platform, SafeAreaView, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocationPermission, useCurrentLocation } from '@/hooks/useLocation';
@@ -41,10 +32,10 @@ function LocationSettingsScreen() {
       if (!granted) {
         platformAlertSimple(
           'Permission Required',
-          'Location permission is required for location-based features. You can enable it in Settings.'
+          'Location permission is required for location-based features. You can enable it in Settings.',
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to request location permission');
     }
   };
@@ -53,11 +44,11 @@ function LocationSettingsScreen() {
     platformAlertDestructive(
       'Clear Location Data',
       'This will clear all your location history and reset location preferences. Are you sure?',
-      'Clear',
       () => {
         // Implement clear location data
         platformAlertSimple('Success', 'Location data cleared successfully');
-      }
+      },
+      'Clear',
     );
   };
 
@@ -108,7 +99,7 @@ function LocationSettingsScreen() {
     value: boolean,
     onValueChange: (value: boolean) => void,
     icon: string,
-    disabled = false
+    disabled = false,
   ) => (
     <View style={styles.settingItem}>
       <View style={styles.settingContent}>
@@ -116,12 +107,8 @@ function LocationSettingsScreen() {
           <Ionicons name={icon as any} size={24} color={disabled ? '#C7C7CC' : colors.brand.ios} />
         </View>
         <View style={styles.settingText}>
-          <Text style={[styles.settingTitle, disabled && styles.disabledText]}>
-            {title}
-          </Text>
-          <Text style={[styles.settingSubtitle, disabled && styles.disabledText]}>
-            {subtitle}
-          </Text>
+          <Text style={[styles.settingTitle, disabled ? styles.disabledText : null]}>{title}</Text>
+          <Text style={[styles.settingSubtitle, disabled ? styles.disabledText : null]}>{subtitle}</Text>
         </View>
       </View>
       <Switch
@@ -137,23 +124,13 @@ function LocationSettingsScreen() {
   const renderLanguageOption = (code: 'en' | 'hi' | 'te' | 'ta' | 'bn') => (
     <Pressable
       key={code}
-      style={[
-        styles.languageOption,
-        customConfig.language === code && styles.selectedLanguageOption,
-      ]}
+      style={[styles.languageOption, customConfig.language === code && styles.selectedLanguageOption]}
       onPress={() => handleLanguageChange(code)}
     >
-      <Text
-        style={[
-          styles.languageText,
-          customConfig.language === code && styles.selectedLanguageText,
-        ]}
-      >
+      <Text style={[styles.languageText, customConfig.language === code && styles.selectedLanguageText]}>
         {getLanguageName(code)}
       </Text>
-      {customConfig.language === code && (
-        <Ionicons name="checkmark" size={20} color={colors.brand.ios} />
-      )}
+      {customConfig.language === code && <Ionicons name="checkmark" size={20} color={colors.brand.ios} />}
     </Pressable>
   );
 
@@ -161,7 +138,10 @@ function LocationSettingsScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Location Settings</Text>
@@ -187,12 +167,7 @@ function LocationSettingsScreen() {
         {/* Current Time */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Current Time</Text>
-          <TimeDisplay
-            showDate={true}
-            showTimezone={true}
-            showTimeOfDay={true}
-            style={styles.timeCard}
-          />
+          <TimeDisplay showDate={true} showTimezone={true} showTimeOfDay={true} style={styles.timeCard} />
         </View>
 
         {/* Permission Status */}
@@ -211,10 +186,7 @@ function LocationSettingsScreen() {
               </View>
             </View>
             {permissionStatus !== 'granted' && (
-              <Pressable
-                style={styles.permissionButton}
-                onPress={handlePermissionRequest}
-              >
+              <Pressable style={styles.permissionButton} onPress={handlePermissionRequest}>
                 <Text style={styles.permissionButtonText}>Enable</Text>
               </Pressable>
             )}
@@ -230,7 +202,7 @@ function LocationSettingsScreen() {
             autoUpdate,
             setAutoUpdate,
             'refresh',
-            permissionStatus !== 'granted'
+            permissionStatus !== 'granted',
           )}
           {renderSettingItem(
             'Background Updates',
@@ -238,7 +210,7 @@ function LocationSettingsScreen() {
             backgroundUpdates,
             setBackgroundUpdates,
             'phone-portrait',
-            permissionStatus !== 'granted'
+            permissionStatus !== 'granted',
           )}
           {renderSettingItem(
             'Share Location',
@@ -246,7 +218,7 @@ function LocationSettingsScreen() {
             shareLocation,
             setShareLocation,
             'share',
-            permissionStatus !== 'granted'
+            permissionStatus !== 'granted',
           )}
           {renderSettingItem(
             'Location History',
@@ -254,7 +226,7 @@ function LocationSettingsScreen() {
             locationHistory,
             setLocationHistory,
             'time',
-            permissionStatus !== 'granted'
+            permissionStatus !== 'granted',
           )}
         </View>
 
@@ -267,7 +239,7 @@ function LocationSettingsScreen() {
             customConfig.includeEmoji || false,
             setEmojiEnabled,
             'happy',
-            false
+            false,
           )}
           {renderSettingItem(
             'Personalized Greetings',
@@ -275,7 +247,7 @@ function LocationSettingsScreen() {
             customConfig.personalized || false,
             setPersonalized,
             'person',
-            false
+            false,
           )}
         </View>
 
@@ -300,26 +272,21 @@ function LocationSettingsScreen() {
             notifications,
             setNotifications,
             'notifications',
-            false
+            false,
           )}
         </View>
 
         {/* Data Management */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Data Management</Text>
-          <Pressable
-            style={styles.actionButton}
-            onPress={handleClearLocationData}
-          >
+          <Pressable style={styles.actionButton} onPress={handleClearLocationData}>
             <View style={styles.actionContent}>
               <View style={styles.actionIcon}>
                 <Ionicons name="trash-outline" size={24} color="#FF3B30" />
               </View>
               <View style={styles.actionText}>
                 <Text style={styles.actionTitle}>Clear Location Data</Text>
-                <Text style={styles.actionSubtitle}>
-                  Remove all location history and reset preferences
-                </Text>
+                <Text style={styles.actionSubtitle}>Remove all location history and reset preferences</Text>
               </View>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#C7C7CC" />

@@ -45,7 +45,7 @@ export default function LeaderboardScreen() {
     try {
       const data = await tryApi.getLeaderboard(city, period);
       setLeaderboard(data);
-    } catch (err) {
+    } catch (err: any) {
       if (__DEV__) console.error('Failed to load leaderboard:', err);
     } finally {
       setLoading(false);
@@ -134,20 +134,20 @@ export default function LeaderboardScreen() {
     const medal = MEDAL_EMOJIS[item.rank];
 
     return (
-      <View style={[styles.entry, item.isCurrentUser && styles.entryHighlighted]}>
+      <View style={[styles.entry, item.isCurrentUser ? styles.entryHighlighted : null]}>
         <View style={styles.entryRank}>
           {isMedal ? <Text style={styles.medal}>{medal}</Text> : <Text style={styles.rankNumber}>#{item.rank}</Text>}
         </View>
 
         <View style={styles.entryInfo}>
-          <Text style={[styles.entryName, item.isCurrentUser && styles.entryNameHighlighted]} numberOfLines={1}>
+          <Text style={[styles.entryName, item.isCurrentUser ? styles.entryNameHighlighted : null]} numberOfLines={1}>
             {item.isCurrentUser ? `${item.name} (You)` : item.name}
           </Text>
           <Text style={styles.entryTrials}>{item.trialCount} trials</Text>
         </View>
 
         <View style={styles.entryScore}>
-          <Text style={[styles.score, item.isCurrentUser && styles.scoreHighlighted]}>{item.score}</Text>
+          <Text style={[styles.score, item.isCurrentUser ? styles.scoreHighlighted : null]}>{item.score}</Text>
           <Text style={styles.scoreLabel}>pts</Text>
         </View>
       </View>
@@ -202,10 +202,10 @@ export default function LeaderboardScreen() {
               {['Mumbai', 'Delhi', 'Bangalore', 'Pune'].map((c) => (
                 <Pressable
                   key={c}
-                  style={[styles.cityChip, city === c && styles.cityChipActive]}
+                  style={[styles.cityChip, city === c ? styles.cityChipActive : null]}
                   onPress={() => setCity(c)}
                 >
-                  <Text style={[styles.cityChipText, city === c && styles.cityChipTextActive]}>{c}</Text>
+                  <Text style={[styles.cityChipText, city === c ? styles.cityChipTextActive : null]}>{c}</Text>
                 </Pressable>
               ))}
             </ScrollView>
@@ -215,10 +215,10 @@ export default function LeaderboardScreen() {
               {(Object.keys(PERIOD_LABELS) as Period[]).map((p) => (
                 <Pressable
                   key={p}
-                  style={[styles.periodTab, period === p && styles.periodTabActive]}
+                  style={[styles.periodTab, period === p ? styles.periodTabActive : null]}
                   onPress={() => setPeriod(p)}
                 >
-                  <Text style={[styles.periodTabText, period === p && styles.periodTabTextActive]}>
+                  <Text style={[styles.periodTabText, period === p ? styles.periodTabTextActive : null]}>
                     {PERIOD_LABELS[p]}
                   </Text>
                 </Pressable>

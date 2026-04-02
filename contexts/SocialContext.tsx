@@ -67,7 +67,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setHasMoreActivities(pagination.hasMore);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       setIsLoadingFeed(false);
@@ -107,7 +107,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
             : activity
         )
       );
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -127,7 +127,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
             : activity
         )
       );
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -141,7 +141,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
 
       // Reload suggested users
       await loadSuggestedUsers();
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -152,7 +152,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
   const unfollowUser = async (userId: string) => {
     try {
       await activityFeedApi.toggleFollow(userId);
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -164,7 +164,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { activities } = await activityFeedApi.getUserActivities(userId, 1, 20);
       return activities;
-    } catch (error) {
+    } catch (error: any) {
       return [];
     }
   };
@@ -176,7 +176,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { followers } = await activityFeedApi.getFollowers(userId, 1, 50);
       return followers;
-    } catch (error) {
+    } catch (error: any) {
       return [];
     }
   };
@@ -188,7 +188,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { following } = await activityFeedApi.getFollowing(userId, 1, 50);
       return following;
-    } catch (error) {
+    } catch (error: any) {
       return [];
     }
   };
@@ -200,7 +200,7 @@ export const SocialProvider = ({ children }: { children: ReactNode }) => {
     try {
       const users = await activityFeedApi.getSuggestedUsers(10);
       setSuggestedUsers(users);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

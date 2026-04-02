@@ -27,7 +27,7 @@ export const referralTierApi = {
     upcomingMilestones: ReferralMilestone[];
   }> {
     try {
-      const response = await apiClient.get('/api/referral/tier');
+      const response = await apiClient.get<any>('/api/referral/tier');
       return extractData(response);
     } catch (error) {
       throw error;
@@ -43,7 +43,7 @@ export const referralTierApi = {
     totalClaimableValue: number;
   }> {
     try {
-      const response = await apiClient.get('/api/referral/rewards');
+      const response = await apiClient.get<any>('/api/referral/rewards');
       return extractData(response) || { claimable: [], claimed: [], totalClaimableValue: 0 };
     } catch (error) {
       throw error;
@@ -55,7 +55,7 @@ export const referralTierApi = {
    */
   async claimReward(referralId: string, rewardIndex: number): Promise<any> {
     try {
-      const response = await apiClient.post('/api/referral/claim-reward', {
+      const response = await apiClient.post<any>('/api/referral/claim-reward', {
         referralId,
         rewardIndex
       });
@@ -76,9 +76,7 @@ export const referralTierApi = {
     };
   }> {
     try {
-      const response = await apiClient.get('/api/referral/leaderboard', {
-        params: { limit }
-      });
+      const response = await apiClient.get<any>('/api/referral/leaderboard', { limit });
       return extractData(response) || { leaderboard: [], userRank: null };
     } catch (error) {
       throw error;
@@ -94,7 +92,7 @@ export const referralTierApi = {
     referralCode: string;
   }> {
     try {
-      const response = await apiClient.post('/api/referral/generate-qr');
+      const response = await apiClient.post<any>('/api/referral/generate-qr');
       return extractData(response);
     } catch (error) {
       throw error;
@@ -109,7 +107,7 @@ export const referralTierApi = {
     upcoming: ReferralMilestone[];
   }> {
     try {
-      const response = await apiClient.get('/api/referral/milestones');
+      const response = await apiClient.get<any>('/api/referral/milestones');
       return extractData(response);
     } catch (error) {
       throw error;
@@ -129,7 +127,7 @@ export const referralTierApi = {
     qualifiedReferrals?: number;
   }> {
     try {
-      const response = await apiClient.get('/api/referral/check-upgrade');
+      const response = await apiClient.get<any>('/api/referral/check-upgrade');
       return extractData(response);
     } catch (error) {
       throw error;
@@ -145,7 +143,7 @@ export const referralTierApi = {
     referrerId: string;
   }> {
     try {
-      const response = await apiClient.post('/api/referral/validate-code', { code });
+      const response = await apiClient.post<any>('/api/referral/validate-code', { code });
       return extractData(response);
     } catch (error) {
       throw error;
@@ -162,7 +160,7 @@ export const referralTierApi = {
     message: string;
   }> {
     try {
-      const response = await apiClient.post('/api/referral/apply-code', {
+      const response = await apiClient.post<any>('/api/referral/apply-code', {
         code,
         metadata
       });
@@ -177,11 +175,9 @@ export const referralTierApi = {
    */
   async getAnalytics(startDate?: Date, endDate?: Date): Promise<any> {
     try {
-      const response = await apiClient.get('/api/referral/analytics', {
-        params: {
-          startDate: startDate?.toISOString(),
-          endDate: endDate?.toISOString()
-        }
+      const response = await apiClient.get<any>('/api/referral/analytics', {
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString()
       });
       return extractData(response);
     } catch (error) {

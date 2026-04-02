@@ -12,7 +12,7 @@ import {
   Dimensions,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
-import { platformAlertSimple } from '@/utils/platformAlert';
+import { platformAlertSimple, platformAlert } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -51,7 +51,7 @@ function CartValidation({
   const infoIssues = validationResult?.issues.filter(issue => issue.severity === 'info') || [];
 
   const handleRemoveInvalidItems = async () => {
-    platformAlertSimple('Remove Invalid Items', `This will remove ${validationResult?.invalidItems.length || 0} item(s) from your cart. Continue?`,
+    platformAlert('Remove Invalid Items', `This will remove ${validationResult?.invalidItems.length || 0} item(s) from your cart. Continue?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -62,7 +62,7 @@ function CartValidation({
             try {
               await onRemoveInvalidItems();
               onClose();
-            } catch (error) {
+            } catch (error: any) {
               // silently handle
             } finally {
               if (!isMounted()) return;

@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -63,7 +64,7 @@ function NearbyProductsSection({
       if (!isMounted()) return;
       setUserLocation(coords);
       return coords;
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setLocationError('Could not get your location');
       setLoading(false);
@@ -90,7 +91,7 @@ function NearbyProductsSection({
       } else {
         setError('Failed to load nearby products');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load nearby products');
     } finally {
@@ -191,7 +192,7 @@ function NearbyProductsSection({
           </Pressable>
         </View>
       ) : (
-        <FlashList
+        <AnyFlashList
           data={products}
           renderItem={renderProduct}
           keyExtractor={keyExtractor}
@@ -199,9 +200,6 @@ function NearbyProductsSection({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent as any}
           estimatedItemSize={220}
-          initialNumToRender={4}
-          maxToRenderPerBatch={6}
-          windowSize={5}
         />
       )}
     </View>

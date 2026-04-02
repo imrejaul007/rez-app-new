@@ -25,55 +25,62 @@ export default function ExpressScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
+    <SafeAreaView style={styles.safe as any} edges={['top']}>
+      <View style={styles.header as any}>
+        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.backBtn as any}>
           <Ionicons name="chevron-back" size={24} color={colors.text?.primary || '#111'} />
         </Pressable>
-        <Text style={styles.headerTitle}>Express ⚡</Text>
-        <View style={styles.headerRight} />
+        <Text style={styles.headerTitle as any}>Express ⚡</Text>
+        <View style={styles.headerRight as any} />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content as any}>
         {/* Hero */}
-        <LinearGradient colors={['#0EA5E9', '#38BDF8']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
-          <View style={styles.blobDecor} />
-          <View style={styles.heroInner}>
-            <View style={styles.heroText}>
-              <Text style={styles.heroTitle}>⚡ 30-Minute Delivery</Text>
-              <Text style={styles.heroSub}>Get anything you need delivered fast — lunch, coffee, meds & more</Text>
+        <LinearGradient
+          colors={['#0EA5E9', '#38BDF8']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.hero as any}
+        >
+          <View style={styles.blobDecor as any} />
+          <View style={styles.heroInner as any}>
+            <View style={styles.heroText as any}>
+              <Text style={styles.heroTitle as any}>⚡ 30-Minute Delivery</Text>
+              <Text style={styles.heroSub as any}>
+                Get anything you need delivered fast — lunch, coffee, meds & more
+              </Text>
             </View>
-            <Text style={styles.heroEmoji}>🏃</Text>
+            <Text style={styles.heroEmoji as any}>🏃</Text>
           </View>
-          <View style={styles.heroBadge}>
+          <View style={styles.heroBadge as any}>
             <Ionicons name="time" size={12} color="#fff" />
-            <Text style={styles.heroBadgeText}>Live ETA shown at checkout</Text>
+            <Text style={styles.heroBadgeText as any}>Live ETA shown at checkout</Text>
           </View>
         </LinearGradient>
 
         {/* How it works */}
-        <View style={styles.howItWorks}>
+        <View style={styles.howItWorks as any}>
           {[
             { icon: 'search', step: '1', text: 'Pick a category' },
             { icon: 'cart', step: '2', text: 'Add to cart' },
             { icon: 'bicycle', step: '3', text: 'Delivered in 30 min' },
           ].map((item, i) => (
-            <View key={i} style={styles.howStep}>
-              <View style={styles.howIconWrap}>
+            <View key={i} style={styles.howStep as any}>
+              <View style={styles.howIconWrap as any}>
                 <Ionicons name={item.icon as any} size={18} color="#0EA5E9" />
               </View>
-              <Text style={styles.howText}>{item.text}</Text>
+              <Text style={styles.howText as any}>{item.text}</Text>
             </View>
           ))}
         </View>
 
         {/* Category grid */}
-        <Text style={styles.sectionTitle}>What do you need?</Text>
-        <View style={styles.grid}>
+        <Text style={styles.sectionTitle as any}>What do you need?</Text>
+        <View style={styles.grid as any}>
           {EXPRESS_CATEGORIES.map((cat) => (
             <Pressable
               key={cat.id}
-              style={[styles.categoryCard, { backgroundColor: cat.color }]}
+              style={[styles.categoryCard as any, { backgroundColor: cat.color }]}
               onPress={() =>
                 router.push({
                   pathname: '/StoreListPage',
@@ -81,16 +88,16 @@ export default function ExpressScreen() {
                 } as any)
               }
             >
-              <Text style={styles.catEmoji}>{cat.emoji}</Text>
-              <Text style={styles.catLabel}>{cat.label}</Text>
-              <Text style={styles.catSublabel}>{cat.sublabel}</Text>
+              <Text style={styles.catEmoji as any}>{cat.emoji}</Text>
+              <Text style={styles.catLabel as any}>{cat.label}</Text>
+              <Text style={styles.catSublabel as any}>{cat.sublabel}</Text>
             </Pressable>
           ))}
         </View>
 
         {/* All express stores */}
         <Pressable
-          style={styles.allBtn}
+          style={styles.allBtn as any}
           onPress={() =>
             router.push({
               pathname: '/StoreListPage',
@@ -99,15 +106,15 @@ export default function ExpressScreen() {
           }
         >
           <Ionicons name="flash" size={18} color="#fff" />
-          <Text style={styles.allBtnText}>Browse all express stores</Text>
+          <Text style={styles.allBtnText as any}>Browse all express stores</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create<{ [key: string]: any }>({
-  safe: { flex: 1, backgroundColor: colors.background || '#fff' },
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background.primary || '#fff' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

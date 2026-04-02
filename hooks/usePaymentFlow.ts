@@ -236,14 +236,14 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       const currentOfferIds = selectedOfferIdsRef.current;
       if (currentOfferIds.length > 0) {
         const offersResponse = await apiClient.get(`/store-payment/offers/${storeId}`, {
-          params: { amount: billAmount },
+          amount: billAmount,
         });
 
         if (offersResponse.success && offersResponse.data) {
           const allOffers = [
-            ...(offersResponse.data.storeOffers || []),
-            ...(offersResponse.data.bankOffers || []),
-            ...(offersResponse.data.rezOffers || []),
+            ...((offersResponse.data as any).storeOffers || []),
+            ...((offersResponse.data as any).bankOffers || []),
+            ...((offersResponse.data as any).rezOffers || []),
           ];
           const selectedOffersList = allOffers.filter((o: any) =>
             currentOfferIds.includes(o.id)
@@ -378,7 +378,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       const resolvedKey = idempotencyKey ?? idempotencyKeyRef.current;
 
       // Map nuqtaCoins back to rezCoins for backend
-      const response = await apiClient.post('/store-payment/initiate', {
+      const response: any = await apiClient.post('/store-payment/initiate', {
         storeId,
         amount: billAmount,
         paymentMethod: amountToPay > 0 ? selectedPaymentMethod?.type : 'coins_only',

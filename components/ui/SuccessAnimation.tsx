@@ -88,7 +88,7 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
 
         // Call onDone after fade completes
         const doneTimer = setTimeout(() => {
-          runOnJS(onDone)?.();
+          if (onDone) runOnJS(onDone)();
         }, 300);
 
         return () => clearTimeout(doneTimer);
@@ -149,7 +149,7 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
           style={[
             styles.message,
             {
-              color: colors.text || '#1a3a52',
+              color: colors.text?.primary || '#1a3a52',
             },
           ]}
           numberOfLines={2}
@@ -172,7 +172,7 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
               style={[
                 styles.coinText,
                 {
-                  color: colors.text || '#1a3a52',
+                  color: colors.text?.primary || '#1a3a52',
                 },
               ]}
             >

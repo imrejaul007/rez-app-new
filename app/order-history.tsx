@@ -114,7 +114,7 @@ function OrderHistoryPage() {
     setRefreshing(true);
     try {
       await refresh(buildServerFilter(selectedFilter, searchQuery));
-    } catch (err) {
+    } catch (err: any) {
       platformAlertSimple('Error', 'Failed to refresh orders');
     } finally {
       if (!isMounted()) return;

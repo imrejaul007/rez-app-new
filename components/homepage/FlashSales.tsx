@@ -153,7 +153,7 @@ const FlashSales: React.FC<FlashSalesProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const earliestEndTime = useRef<Date | null>(null);
   const isMounted = useIsMounted();
 

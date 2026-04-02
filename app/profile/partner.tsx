@@ -202,7 +202,7 @@ function PartnerProfilePage() {
       } else {
         throw new Error(dashboardResponse.error || 'Failed to load partner data');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       // If dashboard fails, try loading just benefits as fallback
       try {
@@ -258,7 +258,7 @@ function PartnerProfilePage() {
       } else {
         platformAlertSimple('Error', response.error || 'Failed to join the Partner Program. Please try again.');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to join the Partner Program. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -318,7 +318,7 @@ function PartnerProfilePage() {
       } else {
         platformAlertSimple('Error', response.error || 'Failed to claim reward');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to claim reward. Please try again.');
     }
   };
@@ -340,7 +340,7 @@ function PartnerProfilePage() {
       } else {
         platformAlertSimple('Error', response.error || 'Failed to claim task reward');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to claim task reward. Please try again.');
     }
   };
@@ -370,7 +370,7 @@ function PartnerProfilePage() {
       } else {
         platformAlertSimple('Error', response.error || 'Failed to claim offer');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to claim offer. Please try again.');
     }
   };
@@ -417,7 +417,7 @@ function PartnerProfilePage() {
           } else {
             platformAlertSimple('Error', response.error || 'Failed to claim jackpot reward');
           }
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to claim jackpot reward. Please try again.');
         }
       },
@@ -585,7 +585,7 @@ function PartnerProfilePage() {
           </View>
 
           <Pressable
-            style={[styles.enrollButton, enrolling && styles.enrollButtonDisabled]}
+            style={[styles.enrollButton, enrolling ? styles.enrollButtonDisabled : null]}
             onPress={handleEnroll}
             disabled={enrolling}
           >
@@ -819,17 +819,17 @@ function PartnerProfilePage() {
               >
                 {level.current && <View style={styles.currentIndicator} />}
 
-                <Text style={[styles.levelCardLabel, level.current && styles.currentLevelText]}>
+                <Text style={[styles.levelCardLabel, level.current ? styles.currentLevelText : null]}>
                   Level {level.level}
                 </Text>
-                <Text style={[styles.levelCardName, level.current && styles.currentLevelText]}>{level.name}</Text>
+                <Text style={[styles.levelCardName, level.current ? styles.currentLevelText : null]}>{level.name}</Text>
 
                 {!level.future ? (
                   <View style={styles.levelRequirements}>
-                    <Text style={[styles.levelOrderCount, level.current && styles.currentLevelText]}>
+                    <Text style={[styles.levelOrderCount, level.current ? styles.currentLevelText : null]}>
                       {level.orders}
                     </Text>
-                    <Text style={[styles.levelDays, level.current && styles.currentLevelSubtext]}>
+                    <Text style={[styles.levelDays, level.current ? styles.currentLevelSubtext : null]}>
                       {level.days} days
                     </Text>
                   </View>

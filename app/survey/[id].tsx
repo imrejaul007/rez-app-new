@@ -1,6 +1,16 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, ActivityIndicator, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Platform,
+  StatusBar,
+  ActivityIndicator,
+  TextInput,
+} from 'react-native';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,21 +24,21 @@ import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 const categoryEmojis: Record<string, string> = {
-  'Shopping': '📦',
-  'Food': '🍔',
-  'Fashion': '👗',
-  'Finance': '🏦',
-  'Health': '💊',
-  'Technology': '📱',
-  'Travel': '✈️',
-  'Entertainment': '🎬',
-  'Lifestyle': '🏡',
-  'General': '📋',
+  Shopping: '📦',
+  Food: '🍔',
+  Fashion: '👗',
+  Finance: '🏦',
+  Health: '💊',
+  Technology: '📱',
+  Travel: '✈️',
+  Entertainment: '🎬',
+  Lifestyle: '🏡',
+  General: '📋',
 };
 
 function SurveyDetailPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const [survey, setSurvey] = useState<SurveyDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
@@ -49,7 +59,7 @@ function SurveyDetailPage() {
         if (!isMounted()) return;
         setCurrentQuestion(data.existingSession.currentQuestionIndex);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load survey. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -85,8 +95,8 @@ function SurveyDetailPage() {
   };
 
   const handleAnswer = (questionId: string, answer: string | string[] | number) => {
-    setAnswers(prev => {
-      const existing = prev.findIndex(a => a.questionId === questionId);
+    setAnswers((prev) => {
+      const existing = prev.findIndex((a) => a.questionId === questionId);
       if (existing >= 0) {
         const updated = [...prev];
         updated[existing] = { questionId, answer };
@@ -100,11 +110,11 @@ function SurveyDetailPage() {
     if (!survey) return;
 
     if (currentQuestion < survey.questions.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
       // Save progress
       try {
         await surveyApiService.saveProgress(id!, answers, currentQuestion + 1);
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     } else {
@@ -115,7 +125,7 @@ function SurveyDetailPage() {
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(prev => prev - 1);
+      setCurrentQuestion((prev) => prev - 1);
     }
   };
 
@@ -123,9 +133,7 @@ function SurveyDetailPage() {
     if (!survey) return;
 
     // Check required questions
-    const unanswered = survey.questions.filter(q =>
-      q.required && !answers.find(a => a.questionId === q.id)
-    );
+    const unanswered = survey.questions.filter((q) => q.required && !answers.find((a) => a.questionId === q.id));
 
     if (unanswered.length > 0) {
       platformAlertSimple('Incomplete', 'Please answer all required questions before submitting.');
@@ -155,22 +163,22 @@ function SurveyDetailPage() {
     platformAlertDestructive(
       'Abandon Survey?',
       'Your progress will be saved and you can continue later.',
-      'Leave',
       async () => {
         try {
           await surveyApiService.saveProgress(id!, answers, currentQuestion);
-        } catch (error) {
+        } catch (error: any) {
           // silently handle
         }
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
-      }
+      },
+      'Leave',
     );
   };
 
   const getCurrentAnswer = () => {
     if (!survey) return undefined;
     const question = survey.questions[currentQuestion];
-    const answer = answers.find(a => a.questionId === question.id);
+    const answer = answers.find((a) => a.questionId === question.id);
     return answer?.answer;
   };
 
@@ -191,7 +199,10 @@ function SurveyDetailPage() {
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
             <Text style={styles.errorText}>Survey not found</Text>
-            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backBtn}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Text style={styles.backBtnText}>Go Back</Text>
             </Pressable>
           </View>
@@ -234,86 +245,77 @@ function SurveyDetailPage() {
           </View>
 
           <ScrollView
-        style={styles.questionContainer}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+            style={styles.questionContainer}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 120 }}
+          >
             {/* Question */}
             <View style={styles.questionCard}>
               <Text style={styles.questionText}>{question.question}</Text>
-              {question.required && (
-                <Text style={styles.requiredText}>* Required</Text>
-              )}
+              {question.required && <Text style={styles.requiredText}>* Required</Text>}
             </View>
 
             {/* Answer Options */}
             <View style={styles.optionsContainer}>
-              {question.type === 'single_choice' && question.options?.map((option, index) => (
-                <Pressable
-                  key={index}
-                  style={[
-                    styles.optionButton,
-                    currentAnswerValue === option && styles.optionButtonSelected,
-                  ]}
-                  onPress={() => handleAnswer(question.id, option)}
-                >
-                  <View style={[
-                    styles.radioCircle,
-                    currentAnswerValue === option && styles.radioCircleSelected,
-                  ]}>
-                    {currentAnswerValue === option && <View style={styles.radioInner} />}
-                  </View>
-                  <Text style={[
-                    styles.optionText,
-                    currentAnswerValue === option && styles.optionTextSelected,
-                  ]}>
-                    {option}
-                  </Text>
-                </Pressable>
-              ))}
-
-              {question.type === 'multiple_choice' && question.options?.map((option, index) => {
-                const selected = Array.isArray(currentAnswerValue) && currentAnswerValue.includes(option);
-                return (
+              {question.type === 'single_choice' &&
+                question.options?.map((option, index) => (
                   <Pressable
                     key={index}
-                    style={[
-                      styles.optionButton,
-                      selected && styles.optionButtonSelected,
-                    ]}
-                    onPress={() => {
-                      const current = Array.isArray(currentAnswerValue) ? currentAnswerValue : [];
-                      if (selected) {
-                        handleAnswer(question.id, current.filter(o => o !== option));
-                      } else {
-                        handleAnswer(question.id, [...current, option]);
-                      }
-                    }}
+                    style={[styles.optionButton, currentAnswerValue === option && styles.optionButtonSelected]}
+                    onPress={() => handleAnswer(question.id, option)}
                   >
-                    <View style={[
-                      styles.checkbox,
-                      selected && styles.checkboxSelected,
-                    ]}>
-                      {selected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
+                    <View style={[styles.radioCircle, currentAnswerValue === option && styles.radioCircleSelected]}>
+                      {currentAnswerValue === option && <View style={styles.radioInner} />}
                     </View>
-                    <Text style={[
-                      styles.optionText,
-                      selected && styles.optionTextSelected,
-                    ]}>
+                    <Text style={[styles.optionText, currentAnswerValue === option && styles.optionTextSelected]}>
                       {option}
                     </Text>
                   </Pressable>
-                );
-              })}
+                ))}
+
+              {question.type === 'multiple_choice' &&
+                question.options?.map((option, index) => {
+                  const selected = Array.isArray(currentAnswerValue) && currentAnswerValue.includes(option);
+                  return (
+                    <Pressable
+                      key={index}
+                      style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                      onPress={() => {
+                        const current = Array.isArray(currentAnswerValue) ? currentAnswerValue : [];
+                        if (selected) {
+                          handleAnswer(
+                            question.id,
+                            current.filter((o) => o !== option),
+                          );
+                        } else {
+                          handleAnswer(question.id, [...current, option]);
+                        }
+                      }}
+                    >
+                      <View style={[styles.checkbox, selected && styles.checkboxSelected]}>
+                        {selected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
+                      </View>
+                      <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{option}</Text>
+                    </Pressable>
+                  );
+                })}
 
               {(question.type === 'rating' || question.type === 'scale') && (
                 <View style={styles.ratingContainer}>
                   <View style={styles.ratingLabels}>
                     <Text style={styles.ratingLabelText}>{question.minValue || 1}</Text>
-                    <Text style={styles.ratingLabelText}>{question.maxValue || (question.type === 'scale' ? 10 : 5)}</Text>
+                    <Text style={styles.ratingLabelText}>
+                      {question.maxValue || (question.type === 'scale' ? 10 : 5)}
+                    </Text>
                   </View>
                   <View style={styles.ratingButtons}>
-                    {Array.from({ length: (question.maxValue || (question.type === 'scale' ? 10 : 5)) - (question.minValue || 1) + 1 }, (_, i) => (question.minValue || 1) + i).map((value) => (
+                    {Array.from(
+                      {
+                        length:
+                          (question.maxValue || (question.type === 'scale' ? 10 : 5)) - (question.minValue || 1) + 1,
+                      },
+                      (_, i) => (question.minValue || 1) + i,
+                    ).map((value) => (
                       <Pressable
                         key={value}
                         style={[
@@ -323,11 +325,13 @@ function SurveyDetailPage() {
                         ]}
                         onPress={() => handleAnswer(question.id, value)}
                       >
-                        <Text style={[
-                          styles.ratingText,
-                          question.type === 'scale' && styles.scaleText,
-                          currentAnswerValue === value && styles.ratingTextSelected,
-                        ]}>
+                        <Text
+                          style={[
+                            styles.ratingText,
+                            question.type === 'scale' && styles.scaleText,
+                            currentAnswerValue === value && styles.ratingTextSelected,
+                          ]}
+                        >
                           {value}
                         </Text>
                       </Pressable>
@@ -350,7 +354,8 @@ function SurveyDetailPage() {
                     maxLength={question.maxLength || 500}
                   />
                   <Text style={styles.textInputHint}>
-                    {typeof currentAnswerValue === 'string' ? currentAnswerValue.length : 0}/{question.maxLength || 500} characters
+                    {typeof currentAnswerValue === 'string' ? currentAnswerValue.length : 0}/{question.maxLength || 500}{' '}
+                    characters
                     {question.minLength ? ` (min: ${question.minLength})` : ''}
                   </Text>
                 </View>
@@ -365,17 +370,17 @@ function SurveyDetailPage() {
               onPress={handlePrevious}
               disabled={currentQuestion === 0}
             >
-              <Ionicons name="chevron-back" size={20} color={currentQuestion === 0 ? colors.text.tertiary : colors.text.primary} />
-              <Text style={[styles.navButtonText, currentQuestion === 0 && styles.navButtonTextDisabled]}>
+              <Ionicons
+                name="chevron-back"
+                size={20}
+                color={currentQuestion === 0 ? colors.text.tertiary : colors.text.primary}
+              />
+              <Text style={[styles.navButtonText, currentQuestion === 0 ? styles.navButtonTextDisabled : null]}>
                 Previous
               </Text>
             </Pressable>
 
-            <Pressable
-              style={[styles.navButton, styles.navButtonPrimary]}
-              onPress={handleNext}
-              disabled={submitting}
-            >
+            <Pressable style={[styles.navButton, styles.navButtonPrimary]} onPress={handleNext} disabled={submitting}>
               {submitting ? (
                 <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
@@ -395,9 +400,8 @@ function SurveyDetailPage() {
 
   // Survey Detail View (before starting)
   const emoji = categoryEmojis[survey.subcategory || 'General'] || '📋';
-  const completionPercent = survey.targetResponses > 0
-    ? Math.round((survey.completedCount / survey.targetResponses) * 100)
-    : 0;
+  const completionPercent =
+    survey.targetResponses > 0 ? Math.round((survey.completedCount / survey.targetResponses) * 100) : 0;
 
   return (
     <>
@@ -407,7 +411,10 @@ function SurveyDetailPage() {
 
         {/* Header */}
         <View style={styles.header}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Survey Details</Text>
@@ -455,7 +462,9 @@ function SurveyDetailPage() {
               </View>
               <View style={styles.rewardContent}>
                 <Text style={styles.rewardLabel}>Complete to earn</Text>
-                <Text style={styles.rewardAmount}>+{survey.reward} {BRAND.COIN_NAME}</Text>
+                <Text style={styles.rewardAmount}>
+                  +{survey.reward} {BRAND.COIN_NAME}
+                </Text>
               </View>
             </LinearGradient>
           </View>
@@ -506,7 +515,11 @@ function SurveyDetailPage() {
             disabled={starting || survey.userStatus === 'completed'}
           >
             <LinearGradient
-              colors={survey.userStatus === 'completed' ? [colors.neutral[400], colors.neutral[400]] : [colors.infoScale[400], colors.brand.purpleLight]}
+              colors={
+                survey.userStatus === 'completed'
+                  ? [colors.neutral[400], colors.neutral[400]]
+                  : [colors.infoScale[400], colors.brand.purpleLight]
+              }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.startButtonGradient}
@@ -519,8 +532,8 @@ function SurveyDetailPage() {
                     {survey.userStatus === 'completed'
                       ? 'Already Completed'
                       : survey.userStatus === 'in_progress'
-                      ? 'Continue Survey'
-                      : 'Start Survey'}
+                        ? 'Continue Survey'
+                        : 'Start Survey'}
                   </Text>
                   {survey.userStatus !== 'completed' && (
                     <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />

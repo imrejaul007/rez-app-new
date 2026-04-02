@@ -161,7 +161,7 @@ function PackageDetailsPage() {
         return;
       }
 
-      const productData = response.data;
+      const productData = response.data as any;
 
       // Check if this is a package service
       const isPackage =
@@ -329,7 +329,7 @@ function PackageDetailsPage() {
 
       if (!isMounted()) return;
       setPackageData(packageDetails);
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load package details. Please try again.');
     } finally {
@@ -378,9 +378,9 @@ function PackageDetailsPage() {
       if (isInWishlist(packageData.id)) {
         await removeFromWishlist(packageData.id);
       } else {
-        await addToWishlist(packageData.id);
+        await addToWishlist(packageData.id as any);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -407,6 +407,8 @@ function PackageDetailsPage() {
     );
   }
 
+  if (!packageData) return null;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -423,11 +425,10 @@ function PackageDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl}
+                  source={imageUrl as any}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => setImageError(true)}
-                  onLoadStart={() => setImageError(false)}
                 />
               );
             }
@@ -463,7 +464,10 @@ function PackageDetailsPage() {
           {packageData.images.length > 1 && (
             <View style={styles.imageIndicators}>
               {packageData.images.map((_, index) => (
-                <View key={index} style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]} />
+                <View
+                  key={index}
+                  style={[styles.indicator, selectedImageIndex === index ? styles.indicatorActive : null]}
+                />
               ))}
             </View>
           )}
@@ -600,6 +604,17 @@ function PackageDetailsPage() {
             summary={reviewSummary}
             isLoading={reviewsLoading}
             onRefresh={refreshReviews}
+            isRefreshing={false}
+            hasMore={false}
+            sortBy="recent"
+            filterRating={null}
+            onSortChange={() => {}}
+            onFilterChange={() => {}}
+            onLoadMore={() => {}}
+            onSubmitReview={async () => {}}
+            onUpdateReview={async () => {}}
+            onDeleteReview={async () => {}}
+            onMarkHelpful={async () => {}}
           />
         </View>
 

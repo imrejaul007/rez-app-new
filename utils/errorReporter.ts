@@ -281,7 +281,7 @@ class ErrorReporter {
         try {
           Sentry.captureException(error, {
             level: severity === 'fatal' ? 'fatal' : severity === 'warning' ? 'warning' : 'error',
-            extra: context,
+            extra: context as any,
             tags: { category: capturedError.category },
           });
         } catch {}

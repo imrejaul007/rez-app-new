@@ -71,7 +71,7 @@ export const OfferCardLightning: React.FC<OfferCardLightningProps> = ({
     try {
       await Clipboard.setStringAsync(promoCode);
       platformAlertSimple('Copied!', `Promo code "${promoCode}" copied to clipboard`);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };

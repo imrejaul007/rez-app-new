@@ -11,14 +11,17 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 
 function CashStorePage() {
   const router = useRouter();
-  const { bonusCampaignSlug } = useLocalSearchParams<{ bonusCampaignSlug?: string }>();
+  const { bonusCampaignSlug } = useLocalSearchParams<any>();
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
@@ -30,10 +33,7 @@ function CashStorePage() {
             <Text style={styles.headerSubtitle}>Gift Cards, Coupons & More</Text>
           </View>
         </View>
-        <Pressable
-          style={styles.trackButton}
-          onPress={() => router.push('/account/cashback' as any)}
-        >
+        <Pressable style={styles.trackButton} onPress={() => router.push('/account/cashback' as any)}>
           <Ionicons name="time" size={20} color={colors.nileBlue} />
         </Pressable>
       </View>
@@ -60,19 +60,31 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.background.secondary,
   },
   backButton: {
-    width: 40, height: 40, borderRadius: BorderRadius.xl,
-    backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   headerIcon: {
-    width: 32, height: 32, borderRadius: 10,
-    backgroundColor: colors.nileBlue, justifyContent: 'center', alignItems: 'center',
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: colors.nileBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.primary },
   headerSubtitle: { ...Typography.caption, color: colors.text.tertiary, fontWeight: '500' },
   trackButton: {
-    width: 40, height: 40, borderRadius: BorderRadius.xl,
-    backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

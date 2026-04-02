@@ -89,7 +89,7 @@ const PickCard = React.memo(({ pick, onPress }: { pick: CreatorPick; onPress: ()
 function CreatorProfilePage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const user = useAuthUser();
 
   const [loading, setLoading] = useState(true);
@@ -128,7 +128,7 @@ function CreatorProfilePage() {
         if (!isOwnId) {
           const followResponse = await checkFollowStatus(id);
           if (followResponse.success && followResponse.data) {
-            setIsFollowing(followResponse.data.following);
+            setIsFollowing(followResponse.data.isFollowing);
           }
         }
       } else {
@@ -325,14 +325,14 @@ function CreatorProfilePage() {
               </Pressable>
             ) : (
               <Pressable
-                style={[styles.followButton, isFollowing && styles.followingButton]}
+                style={[styles.followButton, isFollowing ? styles.followingButton : null]}
                 onPress={handleFollow}
                 disabled={followLoading}
               >
                 {followLoading ? (
                   <ActivityIndicator size="small" color={isFollowing ? colors.text.tertiary : colors.text.inverse} />
                 ) : (
-                  <Text style={[styles.followButtonText, isFollowing && styles.followingButtonText]}>
+                  <Text style={[styles.followButtonText, isFollowing ? styles.followingButtonText : null]}>
                     {isFollowing ? 'Following' : 'Follow'}
                   </Text>
                 )}
@@ -412,7 +412,7 @@ function CreatorProfilePage() {
                     if (link.url) {
                       try {
                         Linking.openURL(link.url);
-                      } catch (e) {
+                      } catch (e: any) {
                         catchAndWarn(e, 'CreatorProfile/openURL');
                       }
                     }

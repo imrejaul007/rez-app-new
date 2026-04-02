@@ -175,7 +175,7 @@ function TransactionItem({
           {label}
         </Text>
         <Text style={styles.txnSubtitle} numberOfLines={1}>
-          {txn.source?.name || txn.category || 'Wallet'}
+          {(txn.source as any)?.name || txn.source?.type || txn.category || 'Wallet'}
         </Text>
         <Text style={styles.txnDate}>{formatDate(txn.createdAt)}</Text>
       </View>
@@ -424,7 +424,7 @@ function _Tabs({
         return (
           <Pressable
             key={tab.id}
-            style={[styles.tab, isActive && styles.tabActive]}
+            style={[styles.tab, isActive ? styles.tabActive : null]}
             onPress={() => onPress(tab.id)}
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}

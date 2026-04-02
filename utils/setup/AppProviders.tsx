@@ -65,7 +65,7 @@ const BottomNavigation = React.lazy(() => import('@/components/navigation/Bottom
 const IdentityHydrator = React.memo(function IdentityHydrator() {
   const isAuthenticated = useIsAuthenticated();
   const auth = useAuth();
-  const authLoading = auth?.loading ?? false;
+  const authLoading = auth?.state?.isLoading ?? false;
 
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
@@ -95,7 +95,7 @@ const IdentityHydrator = React.memo(function IdentityHydrator() {
 const WalletPrefetcher = React.memo(function WalletPrefetcher() {
   const isAuthenticated = useIsAuthenticated();
   const auth = useAuth();
-  const authLoading = auth?.loading ?? false;
+  const authLoading = auth?.state?.isLoading ?? false;
   const prefetchedRef = React.useRef(false);
 
   useEffect(() => {

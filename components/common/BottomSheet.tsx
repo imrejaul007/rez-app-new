@@ -130,7 +130,7 @@ function BottomSheet({
             sheetSlideStyle,
           ]}
           accessible={true}
-          accessibilityRole="dialog"
+          accessibilityRole={"dialog" as any}
           accessibilityLabel={title || 'Bottom sheet'}
           accessibilityViewIsModal={true}
         >
@@ -181,8 +181,8 @@ const styles = StyleSheet.create({
   },
   sheet: {
     backgroundColor: colors.background.primary,
-    borderTopLeftRadius: borderRadius.xxl,
-    borderTopRightRadius: borderRadius.xxl,
+    borderTopLeftRadius: borderRadius['2xl'],
+    borderTopRightRadius: borderRadius['2xl'],
     zIndex: zIndex.modal,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },

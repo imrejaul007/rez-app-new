@@ -112,7 +112,7 @@ const BeautyWellnessSection: React.FC = () => {
               maxCashback,
             };
           }
-        } catch (err) {
+        } catch (err: any) {
           // silently handle
         }
         return {
@@ -130,7 +130,7 @@ const BeautyWellnessSection: React.FC = () => {
       });
       if (!isMounted()) return;
       setCardData(dataMap);
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   cardSubtitle: {

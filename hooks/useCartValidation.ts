@@ -77,7 +77,7 @@ export function useCartValidation(
         error: null,
       }));
 
-      const response = await cartValidationService.validateCart();
+      const response: any = await cartValidationService.validateCart();
 
       if (response.success && response.data) {
         const result = cartValidationService.transformValidationResponse(response.data);
@@ -98,7 +98,7 @@ export function useCartValidation(
       } else {
         throw new Error(response.error || 'Validation failed');
       }
-    } catch (error) {
+    } catch (error: any) {
 
       const errorMessage = error instanceof Error ? error.message : 'Failed to validate cart';
 
@@ -164,7 +164,7 @@ export function useCartValidation(
         );
       }
 
-    } catch (error) {
+    } catch (error: any) {
 
       if (showToastNotifications) {
         platformAlertSimple('Error', 'Failed to remove some items. Please try again.');

@@ -60,57 +60,60 @@ function VouchersScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchVouchers = useCallback(async (pageNum: number = 1, refresh: boolean = false) => {
-    try {
-      if (refresh) {
-        setIsRefreshing(true);
-      } else if (pageNum === 1) {
-        setIsLoading(true);
-      }
-      setError(null);
+  const fetchVouchers = useCallback(
+    async (pageNum: number = 1, refresh: boolean = false) => {
+      try {
+        if (refresh) {
+          setIsRefreshing(true);
+        } else if (pageNum === 1) {
+          setIsLoading(true);
+        }
+        setError(null);
 
-      const params: { page: number; limit: number; status?: string } = {
-        page: pageNum,
-        limit: 15,
-      };
+        const params: { page: number; limit: number; status?: string } = {
+          page: pageNum,
+          limit: 15,
+        };
 
-      if (filter !== 'all') {
-        params.status = filter;
-      }
-
-      const response = await priveApi.getVouchers(params);
-
-      if (response.success && response.data) {
-        const { vouchers: newVouchers, stats, pagination } = response.data;
-
-        if (pageNum === 1) {
-          if (!isMounted()) return;
-          setVouchers(newVouchers);
-        } else {
-          if (!isMounted()) return;
-          setVouchers(prev => [...prev, ...newVouchers]);
+        if (filter !== 'all') {
+          params.status = filter;
         }
 
+        const response = await priveApi.getVouchers(params);
+
+        if (response.success && response.data) {
+          const { vouchers: newVouchers, stats, pagination } = response.data;
+
+          if (pageNum === 1) {
+            if (!isMounted()) return;
+            setVouchers(newVouchers);
+          } else {
+            if (!isMounted()) return;
+            setVouchers((prev) => [...prev, ...newVouchers]);
+          }
+
+          if (!isMounted()) return;
+          setActiveCount(stats.active);
+          if (!isMounted()) return;
+          setHasMore(pagination.page < pagination.pages);
+          if (!isMounted()) return;
+          setPage(pageNum);
+        } else {
+          if (!isMounted()) return;
+          setError('Failed to load vouchers');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setActiveCount(stats.active);
+        setError(err.message || 'Failed to load vouchers');
+      } finally {
         if (!isMounted()) return;
-        setHasMore(pagination.page < pagination.pages);
+        setIsLoading(false);
         if (!isMounted()) return;
-        setPage(pageNum);
-      } else {
-        if (!isMounted()) return;
-        setError('Failed to load vouchers');
+        setIsRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load vouchers');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, [filter]);
+    },
+    [filter],
+  );
   const isMounted = useIsMounted();
 
   useEffect(() => {
@@ -163,7 +166,10 @@ function VouchersScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>My Vouchers</Text>
@@ -173,7 +179,9 @@ function VouchersScreen() {
         {/* Active Count */}
         <View style={styles.activeBar}>
           <View style={styles.activeDot} />
-          <Text style={styles.activeText}>{activeCount} Active Voucher{activeCount !== 1 ? 's' : ''}</Text>
+          <Text style={styles.activeText}>
+            {activeCount} Active Voucher{activeCount !== 1 ? 's' : ''}
+          </Text>
         </View>
 
         {/* Filter Tabs */}
@@ -181,10 +189,10 @@ function VouchersScreen() {
           {(['all', 'active', 'used', 'expired'] as FilterStatus[]).map((f) => (
             <Pressable
               key={f}
-              style={[styles.filterTab, filter === f && styles.filterTabActive]}
+              style={[styles.filterTab, filter === f ? styles.filterTabActive : null]}
               onPress={() => handleFilterChange(f)}
             >
-              <Text style={[styles.filterTabText, filter === f && styles.filterTabTextActive]}>
+              <Text style={[styles.filterTabText, filter === f ? styles.filterTabTextActive : null]}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </Text>
             </Pressable>
@@ -202,7 +210,7 @@ function VouchersScreen() {
           </View>
         ) : (
           <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+            contentContainerStyle={{ paddingBottom: 120 }}
             style={styles.content}
             showsVerticalScrollIndicator={false}
             refreshControl={
@@ -225,25 +233,25 @@ function VouchersScreen() {
               <View style={styles.emptyState}>
                 <Text style={styles.emptyIcon}>🎫</Text>
                 <Text style={styles.emptyText}>
-                  {filter === 'all' ? 'No vouchers yet' :
-                   filter === 'active' ? 'No active vouchers' :
-                   filter === 'used' ? 'No used vouchers yet' :
-                   'No expired vouchers'}
+                  {filter === 'all'
+                    ? 'No vouchers yet'
+                    : filter === 'active'
+                      ? 'No active vouchers'
+                      : filter === 'used'
+                        ? 'No used vouchers yet'
+                        : 'No expired vouchers'}
                 </Text>
                 <Text style={styles.emptySubtext}>
                   {filter === 'all'
                     ? 'Earn Privé coins to unlock exclusive redemptions'
                     : filter === 'active'
-                    ? 'No active vouchers — your active ones will appear here'
-                    : filter === 'used'
-                    ? 'Vouchers you redeem will show here once used'
-                    : 'No expired vouchers to display'}
+                      ? 'No active vouchers — your active ones will appear here'
+                      : filter === 'used'
+                        ? 'Vouchers you redeem will show here once used'
+                        : 'No expired vouchers to display'}
                 </Text>
                 {filter === 'all' && (
-                  <Pressable
-                    style={styles.redeemCta}
-                    onPress={() => router.push('/prive/earnings' as any)}
-                  >
+                  <Pressable style={styles.redeemCta} onPress={() => router.push('/prive/earnings' as any)}>
                     <Text style={styles.redeemCtaText}>Start Earning</Text>
                   </Pressable>
                 )}
@@ -251,31 +259,31 @@ function VouchersScreen() {
             ) : (
               <>
                 {vouchers.map((voucher) => (
-                  <Pressable
-                    key={voucher.id}
-                    style={styles.voucherCard}
-                    onPress={() => handleVoucherPress(voucher)}
-                  >
+                  <Pressable key={voucher.id} style={styles.voucherCard} onPress={() => handleVoucherPress(voucher)}>
                     <View style={styles.voucherIcon}>
                       <Text style={styles.voucherEmoji}>{getVoucherIcon(voucher.type)}</Text>
                     </View>
                     <View style={styles.voucherInfo}>
                       <View style={styles.voucherHeader}>
-                        <Text style={styles.voucherCategory}>
-                          {voucher.category || voucher.type.replace('_', ' ')}
-                        </Text>
+                        <Text style={styles.voucherCategory}>{voucher.category || voucher.type.replace('_', ' ')}</Text>
                         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(voucher.status) }]}>
                           <Text style={styles.statusText}>{voucher.status}</Text>
                         </View>
                       </View>
-                      <Text style={styles.voucherValue}>{currencySymbol} {voucher.value}</Text>
+                      <Text style={styles.voucherValue}>
+                        {currencySymbol} {voucher.value}
+                      </Text>
                       <View style={styles.voucherMeta}>
                         <Text style={styles.voucherCode}>{voucher.code}</Text>
                         {voucher.status === 'active' && voucher.expiresIn && (
-                          <Text style={[
-                            styles.voucherExpiry,
-                            voucher.expiresIn.includes('hour') && { color: PRIVE_COLORS.status.error },
-                          ]}>Expires in {voucher.expiresIn}</Text>
+                          <Text
+                            style={[
+                              styles.voucherExpiry,
+                              voucher.expiresIn.includes('hour') && { color: PRIVE_COLORS.status.error },
+                            ]}
+                          >
+                            Expires in {voucher.expiresIn}
+                          </Text>
                         )}
                         {voucher.status === 'used' && voucher.usedAt && (
                           <Text style={styles.voucherUsed}>Used on {formatDate(voucher.usedAt)}</Text>
@@ -307,10 +315,7 @@ function VouchersScreen() {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Pressable
-                style={styles.modalClose}
-                onPress={() => setShowDetailModal(false)}
-              >
+              <Pressable style={styles.modalClose} onPress={() => setShowDetailModal(false)}>
                 <Ionicons name="close" size={24} color={PRIVE_COLORS.text.primary} />
               </Pressable>
 
@@ -332,7 +337,9 @@ function VouchersScreen() {
                   <View style={styles.detailsGrid}>
                     <View style={styles.detailItem}>
                       <Text style={styles.detailLabel}>Value</Text>
-                      <Text style={styles.detailValue}>{currencySymbol} {selectedVoucher.value}</Text>
+                      <Text style={styles.detailValue}>
+                        {currencySymbol} {selectedVoucher.value}
+                      </Text>
                     </View>
                     <View style={styles.detailItem}>
                       <Text style={styles.detailLabel}>Status</Text>
@@ -353,9 +360,7 @@ function VouchersScreen() {
                   {selectedVoucher.status === 'active' && selectedVoucher.expiresIn && (
                     <View style={styles.expiryBanner}>
                       <Ionicons name="time-outline" size={16} color={PRIVE_COLORS.status.warning} />
-                      <Text style={styles.expiryBannerText}>
-                        Expires in {selectedVoucher.expiresIn}
-                      </Text>
+                      <Text style={styles.expiryBannerText}>Expires in {selectedVoucher.expiresIn}</Text>
                     </View>
                   )}
 
@@ -404,10 +409,12 @@ function VouchersScreen() {
                               // Optimistic update
                               const usedAt = new Date().toISOString();
                               setSelectedVoucher({ ...selectedVoucher, status: 'used', usedAt });
-                              setVouchers(prev => prev.map(v =>
-                                v.id === selectedVoucher.id ? { ...v, status: 'used' as const, usedAt } : v
-                              ));
-                              setActiveCount(prev => Math.max(0, prev - 1));
+                              setVouchers((prev) =>
+                                prev.map((v) =>
+                                  v.id === selectedVoucher.id ? { ...v, status: 'used' as const, usedAt } : v,
+                                ),
+                              );
+                              setActiveCount((prev) => Math.max(0, prev - 1));
                               try {
                                 const response = await priveApi.markVoucherUsed(selectedVoucher.id);
                                 if (response.success) {
@@ -432,7 +439,7 @@ function VouchersScreen() {
                                 setSelectedVoucher(selectedVoucher);
                                 platformAlertSimple('Error', 'Failed to mark voucher as used');
                               }
-                            }
+                            },
                           );
                         }}
                       >

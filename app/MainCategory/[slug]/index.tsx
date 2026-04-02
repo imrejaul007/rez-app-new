@@ -10,7 +10,7 @@ import { useLocalSearchParams } from 'expo-router';
 import DynamicCategoryPage from '@/components/category-pages/DynamicCategoryPage';
 
 function CategoryPage() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug } = useLocalSearchParams<any>();
 
   if (!slug) return null;
 

@@ -91,7 +91,7 @@ export default function MissionsScreen() {
     try {
       const data = await tryApi.getMissions();
       setMissions(data);
-    } catch (err) {
+    } catch (err: any) {
       if (__DEV__) console.error('Failed to load missions:', err);
     } finally {
       setLoading(false);

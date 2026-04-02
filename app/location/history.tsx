@@ -44,14 +44,14 @@ function LocationHistoryScreen() {
     platformAlertDestructive(
       'Clear Location History',
       'Are you sure you want to clear all location history? This action cannot be undone.',
-      'Clear',
       async () => {
         try {
           await clearHistory();
-        } catch (error) {
+        } catch (error: any) {
           platformAlertSimple('Error', 'Failed to clear location history');
         }
-      }
+      },
+      'Clear',
     );
   };
 
@@ -97,49 +97,44 @@ function LocationHistoryScreen() {
     }
   };
 
-  const renderHistoryItem = useCallback(({ item }: { item: LocationHistoryEntry }) => (
-    <View style={styles.historyItem}>
-      <View style={styles.historyContent}>
-        <View style={styles.historyHeader}>
-          <View style={styles.sourceContainer}>
-            <Ionicons
-              name={getSourceIcon(item.source) as any}
-              size={16}
-              color={getSourceColor(item.source)}
-            />
-            <Text style={[styles.sourceText, { color: getSourceColor(item.source) }]}>
-              {item.source.toUpperCase()}
+  const renderHistoryItem = useCallback(
+    ({ item }: { item: LocationHistoryEntry }) => (
+      <View style={styles.historyItem}>
+        <View style={styles.historyContent}>
+          <View style={styles.historyHeader}>
+            <View style={styles.sourceContainer}>
+              <Ionicons name={getSourceIcon(item.source) as any} size={16} color={getSourceColor(item.source)} />
+              <Text style={[styles.sourceText, { color: getSourceColor(item.source) }]}>
+                {item.source.toUpperCase()}
+              </Text>
+            </View>
+            <Text style={styles.timeText}>{formatTime(item.timestamp)}</Text>
+          </View>
+
+          <Text style={styles.addressText} numberOfLines={2}>
+            {item.address}
+          </Text>
+
+          {item.city && <Text style={styles.cityText}>{item.city}</Text>}
+
+          <View style={styles.coordinatesContainer}>
+            <Text style={styles.coordinatesText}>
+              {item.coordinates.latitude.toFixed(6)}, {item.coordinates.longitude.toFixed(6)}
             </Text>
           </View>
-          <Text style={styles.timeText}>{formatTime(item.timestamp)}</Text>
+
+          <Text style={styles.dateText}>{formatDate(item.timestamp)}</Text>
         </View>
-
-        <Text style={styles.addressText} numberOfLines={2}>
-          {item.address}
-        </Text>
-
-        {item.city && (
-          <Text style={styles.cityText}>{item.city}</Text>
-        )}
-
-        <View style={styles.coordinatesContainer}>
-          <Text style={styles.coordinatesText}>
-            {item.coordinates.latitude.toFixed(6)}, {item.coordinates.longitude.toFixed(6)}
-          </Text>
-        </View>
-
-        <Text style={styles.dateText}>{formatDate(item.timestamp)}</Text>
       </View>
-    </View>
-  ), []);
+    ),
+    [],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name="location-outline" size={64} color="#C7C7CC" />
       <Text style={styles.emptyTitle}>No location history</Text>
-      <Text style={styles.emptySubtitle}>
-        Your location history will appear here as you use the app
-      </Text>
+      <Text style={styles.emptySubtitle}>Your location history will appear here as you use the app</Text>
     </View>
   );
 
@@ -158,20 +153,15 @@ function LocationHistoryScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color="#333333" />
         </Pressable>
         <Text style={styles.headerTitle}>Location History</Text>
-        <Pressable
-          style={styles.clearButton}
-          onPress={handleClearHistory}
-          disabled={locationHistory.length === 0}
-        >
-          <Ionicons
-            name="trash-outline"
-            size={20}
-            color={locationHistory.length === 0 ? '#C7C7CC' : '#FF3B30'}
-          />
+        <Pressable style={styles.clearButton} onPress={handleClearHistory} disabled={locationHistory.length === 0}>
+          <Ionicons name="trash-outline" size={20} color={locationHistory.length === 0 ? '#C7C7CC' : '#FF3B30'} />
         </Pressable>
       </View>
 
@@ -186,7 +176,6 @@ function LocationHistoryScreen() {
           renderErrorState()
         ) : (
           <FlashList
-        contentContainerStyle={{ paddingBottom: 120 }}
             data={locationHistory}
             renderItem={renderHistoryItem}
             keyExtractor={(item, index) => `${item.timestamp.getTime()}-${index}`}
@@ -201,7 +190,9 @@ function LocationHistoryScreen() {
             }
             ListEmptyComponent={renderEmptyState}
             contentContainerStyle={
-              locationHistory.length === 0 ? styles.emptyContainer : styles.listContainer
+              locationHistory.length === 0
+                ? { ...styles.emptyContainer, paddingBottom: 120 }
+                : { ...styles.listContainer, paddingBottom: 120 }
             }
             estimatedItemSize={80}
           />

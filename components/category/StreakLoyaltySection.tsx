@@ -122,7 +122,7 @@ const StreakLoyaltySection: React.FC<StreakLoyaltySectionProps> = ({
         } else {
           setApiData(null);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setApiData(null);
       } finally {

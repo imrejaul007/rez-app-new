@@ -149,7 +149,7 @@ export function useImageQuality(options: QualityCheckOptions = {}) {
         return fileInfo.size;
       }
       return 0;
-    } catch (error) {
+    } catch (error: any) {
       return 0;
     }
   }, []);
@@ -272,7 +272,7 @@ export function useImageQuality(options: QualityCheckOptions = {}) {
           score: Math.round(score),
           message,
         };
-      } catch (error) {
+      } catch (error: any) {
         return {
           passed: true,
           score: 50,
@@ -424,7 +424,7 @@ export function useImageQuality(options: QualityCheckOptions = {}) {
         setIsChecking(false);
 
         return qualityResult;
-      } catch (err) {
+      } catch (err: any) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to check image quality';
         setError(errorMessage);
         setIsChecking(false);

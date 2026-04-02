@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Displays all offers in a grid layout with the same header as offers page
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { View, FlatList, StyleSheet, Pressable, Dimensions, RefreshControl, ActivityIndicator } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,11 +31,7 @@ const COLUMN_WRAPPER_GAP = 10; // columnWrapper marginBottom
 function ViewAllOffersScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { category, discount, title } = useLocalSearchParams<{
-    category?: string;
-    discount?: string;
-    title?: string;
-  }>();
+  const { category, discount, title } = useLocalSearchParams<any>();
   const user = useAuthUser();
   const [allOffers, setAllOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,14 +53,14 @@ function ViewAllOffersScreen() {
     if (title) return title;
 
     const categoryMap: { [key: string]: string } = {
-      'mega': 'MEGA OFFERS',
-      'student': 'Offer for the students',
-      'new_arrival': 'New Arrivals',
-      'trending': 'Trending Now',
-      'discount': 'Discount Offers',
+      mega: 'MEGA OFFERS',
+      student: 'Offer for the students',
+      new_arrival: 'New Arrivals',
+      trending: 'Trending Now',
+      discount: 'Discount Offers',
       'free-delivery': 'Free Delivery',
-      'nearby': 'Nearby Offers',
-      'bogo': 'Buy One Get One',
+      nearby: 'Nearby Offers',
+      bogo: 'Buy One Get One',
     };
     return categoryMap[category || ''] || 'All Offers';
   };
@@ -82,9 +70,8 @@ function ViewAllOffersScreen() {
     try {
       const response = await realOffersApi.getOffersPageData();
       if (response.success && response.data) {
-        const points = response.data.userEngagement?.userPoints ||
-                       response.data.userPoints ||
-                       user?.wallet?.balance || 0;
+        const points =
+          response.data.userEngagement?.userPoints || (response.data as any).userPoints || user?.wallet?.balance || 0;
         if (!isMounted()) return;
         setUserPoints(points);
       }
@@ -95,108 +82,113 @@ function ViewAllOffersScreen() {
     }
   };
 
-  const fetchOffers = useCallback(async (pageNum: number, append: boolean = false) => {
-    try {
-      if (pageNum === 1) {
-        setLoading(true);
-        setError(null);
-      } else {
-        setLoadingMore(true);
-      }
-
-      // Capture filter state at the time of this request
-      const currentFilter = { category, discount };
-
-      const apiParams: Record<string, any> = {
-        page: pageNum,
-        limit: PAGE_LIMIT,
-      };
-
-      if (category) {
-        apiParams.category = category;
-      }
-
-      const response = await realOffersApi.getOffers(apiParams);
-
-      // If filters changed while we were fetching, discard this response
-      if (filterRef.current.category !== currentFilter.category ||
-          filterRef.current.discount !== currentFilter.discount) {
-        return;
-      }
-
-      if (response.success && response.data) {
-        const responseData = response.data as any;
-        let offers: Offer[] = [];
-
-        // Handle both paginated and array responses
-        if (Array.isArray(responseData)) {
-          offers = responseData;
-        } else if (responseData.items && Array.isArray(responseData.items)) {
-          offers = responseData.items;
-          if (!isMounted()) return;
-          setTotalCount(responseData.totalCount || 0);
-        } else if (responseData.data && Array.isArray(responseData.data)) {
-          offers = responseData.data;
-        }
-
-        // Apply client-side discount filter if needed
-        if (discount) {
-          offers = offers.filter((offer: any) => {
-            if (discount === 'free_delivery') {
-              return offer.isFreeDelivery === true;
-            }
-            const discountValue = parseInt(discount);
-            if (discountValue === 25) {
-              return offer.discountPercentage >= 25 && offer.discountPercentage < 50;
-            } else if (discountValue === 50) {
-              return offer.discountPercentage >= 50 && offer.discountPercentage < 80;
-            } else if (discountValue === 80) {
-              return offer.discountPercentage >= 80;
-            }
-            return offer.discountPercentage >= discountValue;
-          });
-        }
-
-        const newHasMore = offers.length >= PAGE_LIMIT;
-        if (!isMounted()) return;
-        setHasMore(newHasMore);
-
-        if (append) {
-          if (!isMounted()) return;
-          setAllOffers(prev => [...prev, ...offers]);
+  const fetchOffers = useCallback(
+    async (pageNum: number, append: boolean = false) => {
+      try {
+        if (pageNum === 1) {
+          setLoading(true);
+          setError(null);
         } else {
-          if (!isMounted()) return;
-          setAllOffers(offers);
+          setLoadingMore(true);
         }
 
-        if (!append && offers.length === 0) {
-          if (!isMounted()) return;
-          setError('No offers found');
+        // Capture filter state at the time of this request
+        const currentFilter = { category, discount };
+
+        const apiParams: Record<string, any> = {
+          page: pageNum,
+          limit: PAGE_LIMIT,
+        };
+
+        if (category) {
+          apiParams.category = category;
         }
-      } else {
+
+        const response = await realOffersApi.getOffers(apiParams);
+
+        // If filters changed while we were fetching, discard this response
+        if (
+          filterRef.current.category !== currentFilter.category ||
+          filterRef.current.discount !== currentFilter.discount
+        ) {
+          return;
+        }
+
+        if (response.success && response.data) {
+          const responseData = response.data as any;
+          let offers: Offer[] = [];
+
+          // Handle both paginated and array responses
+          if (Array.isArray(responseData)) {
+            offers = responseData;
+          } else if (responseData.items && Array.isArray(responseData.items)) {
+            offers = responseData.items;
+            if (!isMounted()) return;
+            setTotalCount(responseData.totalCount || 0);
+          } else if (responseData.data && Array.isArray(responseData.data)) {
+            offers = responseData.data;
+          }
+
+          // Apply client-side discount filter if needed
+          if (discount) {
+            offers = offers.filter((offer: any) => {
+              if (discount === 'free_delivery') {
+                return offer.isFreeDelivery === true;
+              }
+              const discountValue = parseInt(discount);
+              if (discountValue === 25) {
+                return offer.discountPercentage >= 25 && offer.discountPercentage < 50;
+              } else if (discountValue === 50) {
+                return offer.discountPercentage >= 50 && offer.discountPercentage < 80;
+              } else if (discountValue === 80) {
+                return offer.discountPercentage >= 80;
+              }
+              return offer.discountPercentage >= discountValue;
+            });
+          }
+
+          const newHasMore = offers.length >= PAGE_LIMIT;
+          if (!isMounted()) return;
+          setHasMore(newHasMore);
+
+          if (append) {
+            if (!isMounted()) return;
+            setAllOffers((prev) => [...prev, ...offers]);
+          } else {
+            if (!isMounted()) return;
+            setAllOffers(offers);
+          }
+
+          if (!append && offers.length === 0) {
+            if (!isMounted()) return;
+            setError('No offers found');
+          }
+        } else {
+          if (pageNum === 1) {
+            if (!isMounted()) return;
+            setError((response as any).message || 'Failed to load offers');
+          }
+          if (!isMounted()) return;
+          setHasMore(false);
+        }
+      } catch {
         if (pageNum === 1) {
           if (!isMounted()) return;
-          setError((response as any).message || 'Failed to load offers');
+          setError('Failed to load offers');
         }
         if (!isMounted()) return;
         setHasMore(false);
-      }
-    } catch {
-      if (pageNum === 1) {
+      } finally {
         if (!isMounted()) return;
-        setError('Failed to load offers');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-      if (!isMounted()) return;
-      setHasMore(false);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [category, discount]);
+    },
+    [category, discount],
+  );
 
   // Reset and refetch when filters change
   useEffect(() => {
@@ -238,18 +230,18 @@ function ViewAllOffersScreen() {
     setIsFavorited(!isFavorited);
   };
 
-  const handleOfferPress = useCallback((offer: Offer) => {
-    router.push(`/offers/${offer._id}` as any);
-  }, [router]);
+  const handleOfferPress = useCallback(
+    (offer: Offer) => {
+      router.push(`/offers/${offer._id}` as any);
+    },
+    [router],
+  );
 
   const ProductCard = React.memo(({ offer }: { offer: Offer }) => {
     const [imageError, setImageError] = React.useState(false);
 
     return (
-      <Pressable
-        style={styles.productCard}
-        onPress={() => handleOfferPress(offer)}
-      >
+      <Pressable style={styles.productCard} onPress={() => handleOfferPress(offer)}>
         {imageError || !offer.image ? (
           <View style={styles.productImagePlaceholder}>
             <Ionicons name="image-outline" size={32} color="#ccc" />
@@ -272,9 +264,7 @@ function ViewAllOffersScreen() {
           <ThemedText style={styles.productTitle} numberOfLines={2}>
             {offer.title}
           </ThemedText>
-          <ThemedText style={styles.cashBack}>
-            Upto {offer.cashbackPercentage}% cash back
-          </ThemedText>
+          <ThemedText style={styles.cashBack}>Upto {offer.cashbackPercentage}% cash back</ThemedText>
           {offer.store?.name && (
             <ThemedText style={styles.storeName} numberOfLines={1}>
               {offer.store.name}
@@ -291,37 +281,43 @@ function ViewAllOffersScreen() {
     );
   });
 
-  const renderItem = useCallback(({ item }: { item: Offer }) => (
-    <ProductCard offer={item} />
-  ), [handleOfferPress]);
+  const renderItem = useCallback(({ item }: { item: Offer }) => <ProductCard offer={item} />, [handleOfferPress]);
 
-  const ListHeader = useCallback(() => (
-    <>
-      {/* Section Header */}
-      <View style={styles.sectionHeader}>
-        <ThemedText style={styles.sectionTitle}>{getCategoryTitle()}</ThemedText>
-        <ThemedText style={styles.offersCount}>
-          {totalCount > 0 ? `${totalCount} offers` : `${allOffers.length} offers`}
-        </ThemedText>
-      </View>
-
-      {/* Loading State (initial load only) */}
-      {loading && (
-        <CardGridSkeleton />
-      )}
-
-      {/* Error State */}
-      {error && !loading && (
-        <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
-          <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={() => { setPage(1); setHasMore(true); fetchOffers(1, false); }}>
-            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-          </Pressable>
+  const ListHeader = useCallback(
+    () => (
+      <>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <ThemedText style={styles.sectionTitle}>{getCategoryTitle()}</ThemedText>
+          <ThemedText style={styles.offersCount}>
+            {totalCount > 0 ? `${totalCount} offers` : `${allOffers.length} offers`}
+          </ThemedText>
         </View>
-      )}
-    </>
-  ), [loading, error, allOffers.length, totalCount, category, title, discount]);
+
+        {/* Loading State (initial load only) */}
+        {loading && <CardGridSkeleton />}
+
+        {/* Error State */}
+        {error && !loading && (
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
+            <ThemedText style={styles.errorText}>{error}</ThemedText>
+            <Pressable
+              style={styles.retryButton}
+              onPress={() => {
+                setPage(1);
+                setHasMore(true);
+                fetchOffers(1, false);
+              }}
+            >
+              <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+            </Pressable>
+          </View>
+        )}
+      </>
+    ),
+    [loading, error, allOffers.length, totalCount, category, title, discount],
+  );
 
   const ListFooter = useCallback(() => {
     if (!loadingMore) return null;
@@ -358,20 +354,14 @@ function ViewAllOffersScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header - Same as Offers Page */}
-      <LinearGradient
-        colors={[colors.brand.purpleLight, colors.brand.purpleMedium]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purpleMedium]} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable onPress={handleBack} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={colors.text.inverse} />
           </Pressable>
 
           <View style={styles.headerCenter}>
-            <Pressable
-              style={styles.pointsContainer}
-              onPress={() => router.push('/coins')}
-            >
+            <Pressable style={styles.pointsContainer} onPress={() => router.push('/coins')}>
               <Ionicons name="star" size={16} color={colors.brand.goldBright} />
               <ThemedText style={styles.pointsText}>{userPoints}</ThemedText>
             </Pressable>
@@ -383,9 +373,9 @@ function ViewAllOffersScreen() {
             </Pressable>
             <Pressable onPress={handleFavorite} style={styles.headerButton}>
               <Ionicons
-                name={isFavorited ? "heart" : "heart-outline"}
+                name={isFavorited ? 'heart' : 'heart-outline'}
                 size={20}
-                color={isFavorited ? colors.error : "white"}
+                color={isFavorited ? colors.error : 'white'}
               />
             </Pressable>
           </View>
@@ -421,14 +411,8 @@ function ViewAllOffersScreen() {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}
         showsVerticalScrollIndicator={false}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={8}
-        windowSize={5}
-        initialNumToRender={6}
         getItemLayout={getItemLayout}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         style={styles.content}
       />
     </SafeAreaView>

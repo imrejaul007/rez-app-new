@@ -1,18 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Platform,
-  Dimensions,
-  Linking
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming } from 'react-native-reanimated';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, Platform, Dimensions, Linking } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -86,7 +75,8 @@ function SubmissionDetailPage() {
   // Hide the default navigation header
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: false });
+      headerShown: false,
+    });
   }, [navigation]);
 
   useEffect(() => {
@@ -102,27 +92,25 @@ function SubmissionDetailPage() {
   const loadSubmission = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch project with submissions
       const response = await apiClient.get<{ project: Project & { submissions?: ProjectSubmission[] } }>(
-        `/projects/${projectId}`
+        `/projects/${projectId}`,
       );
 
       if (response.success && response.data) {
-        const projectData = response.data.project || response.data as any;
+        const projectData = response.data.project || (response.data as any);
         if (!isMounted()) return;
         setProject(projectData);
 
         // Find the specific submission
         if (projectData.submissions) {
-          const foundSubmission = projectData.submissions.find(
-            (sub: ProjectSubmission) => sub._id === submissionId
-          );
-          
+          const foundSubmission = projectData.submissions.find((sub: ProjectSubmission) => sub._id === submissionId);
+
           if (foundSubmission) {
             if (!isMounted()) return;
             setSubmission(foundSubmission);
-            
+
             fadeAnim.value = withTiming(1, { duration: 500 });
             slideAnim.value = withTiming(0, { duration: 500 });
           } else {
@@ -136,7 +124,7 @@ function SubmissionDetailPage() {
       } else {
         throw new Error('Failed to load submission');
       }
-    } catch (error) {
+    } catch (error: any) {
       showAlert('Error', 'Failed to load submission details');
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } finally {
@@ -206,9 +194,7 @@ function SubmissionDetailPage() {
               </ThemedText>
             </View>
             {content.metadata?.wordCount && (
-              <ThemedText style={styles.metadataText}>
-                Word count: {content.metadata.wordCount}
-              </ThemedText>
+              <ThemedText style={styles.metadataText}>Word count: {content.metadata.wordCount}</ThemedText>
             )}
           </View>
         );
@@ -226,9 +212,7 @@ function SubmissionDetailPage() {
               ))}
             </ScrollView>
             {content.metadata?.imageCount && (
-              <ThemedText style={styles.metadataText}>
-                {content.metadata.imageCount} photo(s) submitted
-              </ThemedText>
+              <ThemedText style={styles.metadataText}>{content.metadata.imageCount} photo(s) submitted</ThemedText>
             )}
           </View>
         );
@@ -239,9 +223,9 @@ function SubmissionDetailPage() {
           <View style={styles.contentContainer}>
             <ThemedText style={styles.contentLabel}>Submitted Video</ThemedText>
             <View style={styles.videoContainer}>
-              <CachedImage 
-                source={content.metadata?.uploadedVideo?.thumbnailUrl || videoUrl} 
-                style={styles.videoThumbnail} 
+              <CachedImage
+                source={content.metadata?.uploadedVideo?.thumbnailUrl || videoUrl}
+                style={styles.videoThumbnail}
                 contentFit="cover"
               />
               <Pressable
@@ -250,7 +234,11 @@ function SubmissionDetailPage() {
                   if (Platform.OS === 'web') {
                     window.open(videoUrl, '_blank');
                   } else {
-                    try { Linking.openURL(videoUrl); } catch (e) { catchAndWarn(e, 'SubmissionDetail/openURL'); }
+                    try {
+                      Linking.openURL(videoUrl);
+                    } catch (e: any) {
+                      catchAndWarn(e, 'SubmissionDetail/openURL');
+                    }
                   }
                 }}
               >
@@ -258,9 +246,7 @@ function SubmissionDetailPage() {
               </Pressable>
             </View>
             {content.metadata?.uploadedVideo?.duration && (
-              <ThemedText style={styles.metadataText}>
-                Duration: {content.metadata.uploadedVideo.duration}s
-              </ThemedText>
+              <ThemedText style={styles.metadataText}>Duration: {content.metadata.uploadedVideo.duration}s</ThemedText>
             )}
           </View>
         );
@@ -282,9 +268,7 @@ function SubmissionDetailPage() {
             </View>
             <ThemedText style={styles.ratingText}>{rating} out of 5 stars</ThemedText>
             {content.metadata?.rating && (
-              <ThemedText style={styles.metadataText}>
-                Additional comments available
-              </ThemedText>
+              <ThemedText style={styles.metadataText}>Additional comments available</ThemedText>
             )}
           </View>
         );
@@ -297,8 +281,8 @@ function SubmissionDetailPage() {
               <View style={styles.locationContainer}>
                 <Ionicons name="location" size={20} color={colors.successScale[400]} />
                 <ThemedText style={styles.locationText}>
-                  {content.metadata.locationName || 
-                   `${content.metadata.location[1].toFixed(4)}, ${content.metadata.location[0].toFixed(4)}`}
+                  {content.metadata.locationName ||
+                    `${content.metadata.location[1].toFixed(4)}, ${content.metadata.location[0].toFixed(4)}`}
                 </ThemedText>
               </View>
             )}
@@ -344,7 +328,10 @@ function SubmissionDetailPage() {
         <View style={styles.centerContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
           <ThemedText style={styles.errorText}>Submission not found</ThemedText>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
           </Pressable>
         </View>
@@ -358,12 +345,9 @@ function SubmissionDetailPage() {
       <View style={styles.header}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <LinearGradient
-            colors={[colors.brand.purpleLight, colors.brand.purple]}
-            style={styles.backButtonGradient}
-          >
+          <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purple]} style={styles.backButtonGradient}>
             <Ionicons name="arrow-back" size={20} color={colors.background.primary} />
           </LinearGradient>
         </Pressable>
@@ -376,32 +360,26 @@ function SubmissionDetailPage() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Animated.View
-          style={[
-            styles.content,
-            contentAnimStyle,
-          ]}
-        >
+        <Animated.View style={[styles.content, contentAnimStyle]}>
           {/* Status Badge */}
           <View style={styles.statusSection}>
             <View style={[styles.statusBadge, { backgroundColor: getStatusColor(submission.status) }]}>
               <Ionicons
                 name={
-                  submission.status === 'approved' ? 'checkmark-circle' :
-                  submission.status === 'rejected' ? 'close-circle' :
-                  submission.status === 'under_review' ? 'time' :
-                  'hourglass'
+                  submission.status === 'approved'
+                    ? 'checkmark-circle'
+                    : submission.status === 'rejected'
+                      ? 'close-circle'
+                      : submission.status === 'under_review'
+                        ? 'time'
+                        : 'hourglass'
                 }
                 size={20}
                 color={colors.background.primary}
               />
-              <ThemedText style={styles.statusBadgeText}>
-                {getStatusLabel(submission.status)}
-              </ThemedText>
+              <ThemedText style={styles.statusBadgeText}>{getStatusLabel(submission.status)}</ThemedText>
             </View>
-            <ThemedText style={styles.submittedDate}>
-              Submitted {formatDate(submission.submittedAt)}
-            </ThemedText>
+            <ThemedText style={styles.submittedDate}>Submitted {formatDate(submission.submittedAt)}</ThemedText>
           </View>
 
           {/* Project Info */}
@@ -411,7 +389,8 @@ function SubmissionDetailPage() {
             <View style={styles.rewardContainer}>
               <Ionicons name="cash" size={16} color={colors.successScale[400]} />
               <ThemedText style={styles.rewardText}>
-                Reward: {currencySymbol}{project.reward?.amount || 0}
+                Reward: {currencySymbol}
+                {project.reward?.amount || 0}
               </ThemedText>
             </View>
           </View>
@@ -424,9 +403,7 @@ function SubmissionDetailPage() {
             <View style={styles.reviewSection}>
               <ThemedText style={styles.sectionTitle}>Review Feedback</ThemedText>
               <View style={styles.reviewCommentsContainer}>
-                <ThemedText style={styles.reviewCommentsText}>
-                  {submission.reviewComments}
-                </ThemedText>
+                <ThemedText style={styles.reviewCommentsText}>{submission.reviewComments}</ThemedText>
               </View>
             </View>
           )}
@@ -436,16 +413,9 @@ function SubmissionDetailPage() {
             <View style={styles.qualitySection}>
               <ThemedText style={styles.sectionTitle}>Quality Score</ThemedText>
               <View style={styles.qualityScoreContainer}>
-                <ThemedText style={styles.qualityScoreValue}>
-                  {submission.qualityScore}/10
-                </ThemedText>
+                <ThemedText style={styles.qualityScoreValue}>{submission.qualityScore}/10</ThemedText>
                 <View style={styles.qualityScoreBar}>
-                  <View
-                    style={[
-                      styles.qualityScoreFill,
-                      { width: `${(submission.qualityScore / 10) * 100}%` },
-                    ]}
-                  />
+                  <View style={[styles.qualityScoreFill, { width: `${(submission.qualityScore / 10) * 100}%` }]} />
                 </View>
               </View>
             </View>
@@ -459,12 +429,11 @@ function SubmissionDetailPage() {
                 <Ionicons name="cash" size={24} color={colors.successScale[400]} />
                 <View style={styles.paymentInfo}>
                   <ThemedText style={styles.paymentAmount}>
-                    {currencySymbol}{submission.paidAmount}
+                    {currencySymbol}
+                    {submission.paidAmount}
                   </ThemedText>
                   {submission.paidAt && (
-                    <ThemedText style={styles.paymentDate}>
-                      Paid on {formatDate(submission.paidAt)}
-                    </ThemedText>
+                    <ThemedText style={styles.paymentDate}>Paid on {formatDate(submission.paidAt)}</ThemedText>
                   )}
                 </View>
               </View>
@@ -477,9 +446,7 @@ function SubmissionDetailPage() {
               <ThemedText style={styles.sectionTitle}>Rejection Reason</ThemedText>
               <View style={styles.rejectionContainer}>
                 <Ionicons name="alert-circle" size={20} color={colors.error} />
-                <ThemedText style={styles.rejectionText}>
-                  {submission.rejectionReason}
-                </ThemedText>
+                <ThemedText style={styles.rejectionText}>{submission.rejectionReason}</ThemedText>
               </View>
             </View>
           )}
@@ -492,21 +459,25 @@ function SubmissionDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 40 },
+    paddingHorizontal: 40,
+  },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.error },
+    color: Colors.error,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -515,31 +486,40 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.base,
     backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.default },
+    borderBottomColor: colors.border.default,
+  },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   backButtonGradient: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '800',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   headerSpacer: {
-    width: 40 },
+    width: 40,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
   content: {
-    padding: Spacing.lg },
+    padding: Spacing.lg,
+  },
   statusSection: {
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -548,86 +528,104 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
     gap: Spacing.sm,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   statusBadgeText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   submittedDate: {
     ...Typography.body,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   projectInfoContainer: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   projectInfoLabel: {
     ...Typography.bodySmall,
     fontWeight: '700',
     color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textTransform: 'uppercase',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   projectTitle: {
     ...Typography.h4,
     fontWeight: '800',
     color: colors.text.primary,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   rewardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6 },
+    gap: 6,
+  },
   rewardText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.success },
+    color: Colors.success,
+  },
   contentContainer: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   contentLabel: {
     ...Typography.body,
     fontWeight: '700',
     color: colors.text.tertiary,
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   textContentContainer: {
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   textContent: {
     ...Typography.body,
     fontSize: 15,
     color: colors.text.primary,
-    lineHeight: 24 },
+    lineHeight: 24,
+  },
   metadataText: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   imageScrollView: {
-    marginVertical: Spacing.sm },
+    marginVertical: Spacing.sm,
+  },
   imageWrapper: {
     marginRight: Spacing.md,
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   submissionImage: {
     width: SCREEN_WIDTH * 0.7,
     height: 300,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   videoContainer: {
     position: 'relative',
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   videoThumbnail: {
     width: '100%',
     height: 300,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   playButton: {
     position: 'absolute',
     top: '50%',
@@ -635,19 +633,22 @@ const styles = StyleSheet.create({
     marginTop: -30,
     marginLeft: -30,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 30 },
+    borderRadius: 30,
+  },
   ratingContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.sm,
-    marginVertical: Spacing.base },
+    marginVertical: Spacing.base,
+  },
   ratingText: {
     ...Typography.h4,
     fontWeight: '700',
     color: colors.text.primary,
     textAlign: 'center',
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -655,102 +656,122 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.successScale[50],
     borderRadius: BorderRadius.sm,
     gap: Spacing.sm,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   locationText: {
     ...Typography.body,
     color: colors.successScale[700],
-    flex: 1 },
+    flex: 1,
+  },
   checkinImagesContainer: {
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   reviewSection: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '800',
     color: colors.text.primary,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   reviewCommentsContainer: {
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
-    padding: Spacing.base },
+    padding: Spacing.base,
+  },
   reviewCommentsText: {
     ...Typography.body,
     fontSize: 15,
     color: colors.text.primary,
-    lineHeight: 24 },
+    lineHeight: 24,
+  },
   qualitySection: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   qualityScoreContainer: {
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   qualityScoreValue: {
     ...Typography.display,
     color: Colors.brand.purple,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   qualityScoreBar: {
     height: 8,
     backgroundColor: colors.border.default,
     borderRadius: BorderRadius.xs,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   qualityScoreFill: {
     height: '100%',
     backgroundColor: Colors.brand.purple,
-    borderRadius: BorderRadius.xs },
+    borderRadius: BorderRadius.xs,
+  },
   paymentSection: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   paymentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.base,
     backgroundColor: Colors.successScale[50],
     borderRadius: BorderRadius.md,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   paymentInfo: {
-    flex: 1 },
+    flex: 1,
+  },
   paymentAmount: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.successScale[700],
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   paymentDate: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   rejectionSection: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   rejectionContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.base,
     backgroundColor: Colors.errorScale[50],
     borderRadius: BorderRadius.md,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   rejectionText: {
     flex: 1,
     ...Typography.body,
     fontSize: 15,
     color: '#991B1B',
-    lineHeight: 22 },
+    lineHeight: 22,
+  },
   backButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
     color: Colors.brand.purple,
-    marginTop: Spacing.base } });
-
-
+    marginTop: Spacing.base,
+  },
+});
 
 export default withErrorBoundary(SubmissionDetailPage, 'SubmissionDetail');

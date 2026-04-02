@@ -112,11 +112,11 @@ class MenuApi {
     try {
       devLog.log('🍽️ [MENU API] Fetching menu for store:', storeId);
 
-      const response = await apiClient.get(`${this.baseUrl}/store/${storeId}`);
+      const response = await apiClient.get<any>(`${this.baseUrl}/store/${storeId}`);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Menu loaded:', response.data.categories?.length, 'categories');
-        return response;
+        return response as any;
       }
 
       devLog.warn('⚠️ [MENU API] No menu data received');
@@ -142,11 +142,11 @@ class MenuApi {
     try {
       devLog.log('🍔 [MENU API] Fetching menu item:', menuItemId);
 
-      const response = await apiClient.get(`${this.baseUrl}/items/${menuItemId}`);
+      const response = await apiClient.get<any>(`${this.baseUrl}/items/${menuItemId}`);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Menu item loaded:', response.data.name);
-        return response;
+        return response as any;
       }
 
       return {
@@ -171,11 +171,11 @@ class MenuApi {
     try {
       devLog.log('🛒 [MENU API] Creating pre-order for store:', preOrderData.storeId);
 
-      const response = await apiClient.post(`${this.baseUrl}/pre-orders`, preOrderData);
+      const response = await apiClient.post<any>(`${this.baseUrl}/pre-orders`, preOrderData as any);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Pre-order created:', response.data.orderNumber);
-        return response;
+        return response as any;
       }
 
       return {
@@ -200,11 +200,11 @@ class MenuApi {
     try {
       devLog.log('📋 [MENU API] Fetching user pre-orders');
 
-      const response = await apiClient.get(`${this.baseUrl}/pre-orders/user`);
+      const response = await apiClient.get<any>(`${this.baseUrl}/pre-orders/user`);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Loaded', response.data.length, 'pre-orders');
-        return response;
+        return response as any;
       }
 
       return {
@@ -228,11 +228,11 @@ class MenuApi {
     try {
       devLog.log('🔍 [MENU API] Fetching pre-order:', preOrderId);
 
-      const response = await apiClient.get(`${this.baseUrl}/pre-orders/${preOrderId}`);
+      const response = await apiClient.get<any>(`${this.baseUrl}/pre-orders/${preOrderId}`);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Pre-order loaded:', response.data.orderNumber);
-        return response;
+        return response as any;
       }
 
       return {
@@ -257,11 +257,11 @@ class MenuApi {
     try {
       devLog.log('❌ [MENU API] Cancelling pre-order:', preOrderId);
 
-      const response = await apiClient.put(`${this.baseUrl}/pre-orders/${preOrderId}/cancel`);
+      const response = await apiClient.put<any>(`${this.baseUrl}/pre-orders/${preOrderId}/cancel`);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Pre-order cancelled successfully');
-        return response;
+        return response as any;
       }
 
       return {
@@ -289,11 +289,11 @@ class MenuApi {
       const params: any = { query };
       if (storeId) params.storeId = storeId;
 
-      const response = await apiClient.get(`${this.baseUrl}/search`, params);
+      const response = await apiClient.get<any>(`${this.baseUrl}/search`, params);
 
       if (response.success && response.data) {
         devLog.log('✅ [MENU API] Found', response.data.length, 'menu items');
-        return response;
+        return response as any;
       }
 
       return {

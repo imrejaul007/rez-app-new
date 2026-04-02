@@ -112,7 +112,7 @@ const WalletBalanceCardComponent: React.FC<WalletBalanceCardProps> = ({
     return (
       <View style={[styles.iconWrap, { backgroundColor: coin.backgroundColor }]}>
         <CachedImage
-          source={coin.iconPath}
+          source={coin.iconPath as any}
           style={styles.icon}
           contentFit="contain"
           onError={() => setImageError(true)}
@@ -212,7 +212,7 @@ const WalletBalanceCardComponent: React.FC<WalletBalanceCardProps> = ({
               {
                 transform: [
                   {
-                    rotate: interpolate(spinAnim.value, [0, 1], ['0deg', '360deg']),
+                    rotate: (interpolate as any)(spinAnim.value, [0, 1], ['0deg', '360deg']),
                   },
                 ],
               },

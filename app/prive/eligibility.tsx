@@ -7,15 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Animated,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Animated, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -53,7 +45,7 @@ const TierBadge: React.FC<{ tier: PriveTier; score: number }> = ({ tier, score }
       case 'entry':
         return {
           label: 'ENTRY',
-          colors: [COLORS.gold, COLORS.goldDark] as const,
+          colors: [COLORS.gold, (COLORS as any).goldDark] as const,
           icon: 'checkmark-circle' as const,
         };
       default:
@@ -70,14 +62,8 @@ const TierBadge: React.FC<{ tier: PriveTier; score: number }> = ({ tier, score }
   return (
     <View style={styles.tierBadgeContainer}>
       <LinearGradient colors={config.colors} style={styles.tierBadge}>
-        <Ionicons
-          name={config.icon}
-          size={24}
-          color={tier === 'none' ? '#888' : colors.background.primary}
-        />
-        <Text style={[styles.tierLabel, tier === 'none' && styles.tierLabelLocked]}>
-          {config.label}
-        </Text>
+        <Ionicons name={config.icon} size={24} color={tier === 'none' ? '#888' : colors.background.primary} />
+        <Text style={[styles.tierLabel, tier === 'none' && styles.tierLabelLocked]}>{config.label}</Text>
       </LinearGradient>
       <Text style={styles.scoreText}>{Math.round(score)} / 100</Text>
     </View>
@@ -117,10 +103,7 @@ const ProgressRing: React.FC<{
 };
 
 // Pillar card component
-const PillarCard: React.FC<{ pillar: PillarScore; onPress: () => void }> = ({
-  pillar,
-  onPress,
-}) => {
+const PillarCard: React.FC<{ pillar: PillarScore; onPress: () => void }> = ({ pillar, onPress }) => {
   const progressWidth = `${Math.min(100, pillar.score)}%`;
 
   return (
@@ -136,10 +119,7 @@ const PillarCard: React.FC<{ pillar: PillarScore; onPress: () => void }> = ({
 
       <View style={styles.pillarProgressBg}>
         <Animated.View
-          style={[
-            styles.pillarProgressFill,
-            { width: progressWidth, backgroundColor: pillar.color },
-          ]}
+          style={[styles.pillarProgressFill, { width: progressWidth, backgroundColor: pillar.color }] as any}
         />
       </View>
 
@@ -235,7 +215,10 @@ function PriveEligibilityScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle}>Privé Status</Text>
@@ -247,15 +230,10 @@ function PriveEligibilityScreen() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={COLORS.gold} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={COLORS.gold} />}
       >
         {/* Hero Section */}
-        <LinearGradient
-          colors={[COLORS.cardBg, COLORS.background]}
-          style={styles.heroSection}
-        >
+        <LinearGradient colors={[COLORS.cardBg, COLORS.background]} style={styles.heroSection}>
           <TierBadge tier={tier} score={eligibility.score} />
 
           <Text style={styles.heroHeadline}>{status.headline}</Text>
@@ -264,20 +242,15 @@ function PriveEligibilityScreen() {
           {status.showProgress && (
             <View style={styles.progressContainer}>
               <View style={styles.progressBarBg}>
-                <Animated.View
-                  style={[
-                    styles.progressBarFill,
-                    { width: `${Math.min(100, eligibility.score)}%` },
-                  ]}
-                />
+                <Animated.View style={[styles.progressBarFill, { width: `${Math.min(100, eligibility.score)}%` }]} />
               </View>
               <View style={styles.progressMarkers}>
                 <View style={styles.markerEntry}>
-                  <View style={[styles.markerDot, eligibility.score >= 70 && styles.markerDotActive]} />
+                  <View style={[styles.markerDot, eligibility.score >= 70 ? styles.markerDotActive : null]} />
                   <Text style={styles.markerLabel}>Entry</Text>
                 </View>
                 <View style={styles.markerElite}>
-                  <View style={[styles.markerDot, eligibility.score >= 85 && styles.markerDotElite]} />
+                  <View style={[styles.markerDot, eligibility.score >= 85 ? styles.markerDotElite : null]} />
                   <Text style={styles.markerLabel}>Elite</Text>
                 </View>
               </View>
@@ -312,8 +285,8 @@ function PriveEligibilityScreen() {
             <View style={styles.warningContent}>
               <Text style={styles.warningTitle}>Trust Score Too Low</Text>
               <Text style={styles.warningText}>
-                Your trust score ({eligibility.trustScore}) is below the minimum threshold ({ELIGIBILITY_THRESHOLDS.TRUST_MINIMUM}).
-                Focus on building trust to unlock Privé access.
+                Your trust score ({eligibility.trustScore}) is below the minimum threshold (
+                {ELIGIBILITY_THRESHOLDS.TRUST_MINIMUM}). Focus on building trust to unlock Privé access.
               </Text>
             </View>
           </View>
@@ -321,14 +294,9 @@ function PriveEligibilityScreen() {
 
         {/* CTA for eligible users */}
         {eligibility.isEligible && (
-          <Pressable
-            style={styles.ctaButton}
-            onPress={() => router.push('/(tabs)')}
-          >
-            <LinearGradient colors={[COLORS.gold, COLORS.goldDark]} style={styles.ctaGradient}>
-              <Text style={styles.ctaText}>
-                {tier === 'elite' ? 'Access Elite Exclusives' : 'Explore Privé Mode'}
-              </Text>
+          <Pressable style={styles.ctaButton} onPress={() => router.push('/(tabs)')}>
+            <LinearGradient colors={[COLORS.gold, (COLORS as any).goldDark]} style={styles.ctaGradient}>
+              <Text style={styles.ctaText}>{tier === 'elite' ? 'Access Elite Exclusives' : 'Explore Privé Mode'}</Text>
               <Ionicons name="arrow-forward" size={20} color={colors.text.primary} />
             </LinearGradient>
           </Pressable>
@@ -455,7 +423,7 @@ const styles = StyleSheet.create({
   },
   markerDotActive: {
     backgroundColor: COLORS.gold,
-    borderColor: COLORS.goldDark,
+    borderColor: (COLORS as any).goldDark,
   },
   markerDotElite: {
     backgroundColor: colors.brand.goldBright,

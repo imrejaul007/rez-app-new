@@ -1,13 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl } from 'react-native';
 import { SectionListSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -48,7 +41,7 @@ function PartnerLeaderboard() {
         if (!isMounted()) return;
         setError('Failed to load leaderboard data');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Unable to connect. Please try again.');
     } finally {
@@ -70,19 +63,27 @@ function PartnerLeaderboard() {
 
   const getRankColor = (rank: number) => {
     switch (rank) {
-      case 1: return Colors.gold;
-      case 2: return '#C0C0C0';
-      case 3: return '#CD7F32';
-      default: return colors.text.secondary;
+      case 1:
+        return Colors.gold;
+      case 2:
+        return '#C0C0C0';
+      case 3:
+        return '#CD7F32';
+      default:
+        return colors.text.secondary;
     }
   };
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
-      case 1: return 'trophy';
-      case 2: return 'medal';
-      case 3: return 'ribbon';
-      default: return 'star';
+      case 1:
+        return 'trophy';
+      case 2:
+        return 'medal';
+      case 3:
+        return 'ribbon';
+      default:
+        return 'star';
     }
   };
 
@@ -93,24 +94,14 @@ function PartnerLeaderboard() {
     return (
       <View
         key={performer._id}
-        style={[
-          styles.performerCard,
-          isTop3 && styles.topPerformerCard,
-          rank === 1 && styles.firstPlaceCard,
-        ]}
+        style={[styles.performerCard, isTop3 && styles.topPerformerCard, rank === 1 && styles.firstPlaceCard]}
       >
         {/* Rank Badge */}
         <View style={[styles.rankBadge, { backgroundColor: getRankColor(rank) + '20' }]}>
           {isTop3 ? (
-            <Ionicons
-              name={getRankIcon(rank) as any}
-              size={20}
-              color={getRankColor(rank)}
-            />
+            <Ionicons name={getRankIcon(rank) as any} size={20} color={getRankColor(rank)} />
           ) : (
-            <Text style={[styles.rankNumber, { color: getRankColor(rank) }]}>
-              #{rank}
-            </Text>
+            <Text style={[styles.rankNumber, { color: getRankColor(rank) }]}>#{rank}</Text>
           )}
         </View>
 
@@ -119,13 +110,8 @@ function PartnerLeaderboard() {
           {performer.avatar ? (
             <CachedImage source={performer.avatar} style={styles.avatar} />
           ) : (
-            <LinearGradient
-              colors={[Colors.gold, colors.nileBlue]}
-              style={styles.avatarPlaceholder}
-            >
-              <Text style={styles.avatarInitial}>
-                {performer.name?.charAt(0)?.toUpperCase() || 'P'}
-              </Text>
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.avatarPlaceholder}>
+              <Text style={styles.avatarInitial}>{performer.name?.charAt(0)?.toUpperCase() || 'P'}</Text>
             </LinearGradient>
           )}
           {rank === 1 && (
@@ -141,9 +127,7 @@ function PartnerLeaderboard() {
             {performer.name || 'Partner'}
           </Text>
           <View style={styles.levelBadge}>
-            <Text style={styles.levelText}>
-              {performer.currentLevel?.name || 'Partner'}
-            </Text>
+            <Text style={styles.levelText}>{performer.currentLevel?.name || 'Partner'}</Text>
           </View>
         </View>
 
@@ -172,14 +156,16 @@ function PartnerLeaderboard() {
       <View style={styles.header}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Leaderboard</Text>
         <Pressable
           style={styles.infoButton}
-          onPress={() => {/* Show info modal */}}
+          onPress={() => {
+            /* Show info modal */
+          }}
         >
           <Ionicons name="information-circle-outline" size={24} color={colors.text.secondary} />
         </Pressable>
@@ -209,20 +195,13 @@ function PartnerLeaderboard() {
         ) : (
           <>
             {/* Your Rank Card */}
-            <LinearGradient
-              colors={[Colors.gold, colors.nileBlue]}
-              style={styles.yourRankCard}
-            >
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.yourRankCard}>
               <View style={styles.yourRankContent}>
                 <View style={styles.yourRankLeft}>
                   <Text style={styles.yourRankLabel}>Your Rank</Text>
                   <View style={styles.yourRankRow}>
-                    <Text style={styles.yourRankNumber}>
-                      #{stats?.userRank || '-'}
-                    </Text>
-                    <Text style={styles.yourRankTotal}>
-                      of {stats?.totalPartners || 0} partners
-                    </Text>
+                    <Text style={styles.yourRankNumber}>#{stats?.userRank || '-'}</Text>
+                    <Text style={styles.yourRankTotal}>of {stats?.totalPartners || 0} partners</Text>
                   </View>
                 </View>
                 <View style={styles.yourRankRight}>
@@ -254,9 +233,7 @@ function PartnerLeaderboard() {
               </View>
 
               {stats?.topPerformers && stats.topPerformers.length > 0 ? (
-                stats.topPerformers.map((performer, index) =>
-                  renderTopPerformer(performer, index)
-                )
+                stats.topPerformers.map((performer, index) => renderTopPerformer(performer, index))
               ) : (
                 <View style={styles.emptyState}>
                   <Ionicons name="people-outline" size={48} color={colors.text.secondary} />
@@ -292,14 +269,8 @@ function PartnerLeaderboard() {
             </View>
 
             {/* CTA Button */}
-            <Pressable
-              style={styles.ctaButton}
-              onPress={() => router.push('/(tabs)')}
-            >
-              <LinearGradient
-                colors={[Colors.gold, colors.nileBlue]}
-                style={styles.ctaButtonGradient}
-              >
+            <Pressable style={styles.ctaButton} onPress={() => router.push('/(tabs)')}>
+              <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.ctaButtonGradient}>
                 <Text style={styles.ctaButtonText}>Shop Now & Climb Ranks</Text>
                 <Ionicons name="arrow-forward" size={20} color="white" />
               </LinearGradient>

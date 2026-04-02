@@ -30,7 +30,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 function EnterAmountScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<EnterAmountParams>();
+  const params = useLocalSearchParams<any>();
   const { storeId, storeName, storeLogo } = params;
   const getCurrencySymbol = useGetCurrencySymbol();
   const regionState = useRegionState();
@@ -92,7 +92,7 @@ function EnterAmountScreen() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-    } catch (err) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -414,11 +414,11 @@ function EnterAmountScreen() {
         {/* Proceed Button */}
         <View style={styles.proceedContainer}>
           <Pressable
-            style={[styles.proceedButton, numericAmount <= 0 && styles.proceedButtonDisabled]}
+            style={[styles.proceedButton, numericAmount <= 0 ? styles.proceedButtonDisabled : null]}
             onPress={handleProceed}
             disabled={numericAmount <= 0}
           >
-            <Text style={[styles.proceedText, numericAmount <= 0 && styles.proceedTextDisabled]}>Proceed</Text>
+            <Text style={[styles.proceedText, numericAmount <= 0 ? styles.proceedTextDisabled : null]}>Proceed</Text>
             <Ionicons
               name="chevron-forward"
               size={20}

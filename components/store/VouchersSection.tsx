@@ -45,7 +45,7 @@ const VouchersSection: React.FC<VouchersSectionProps> = ({ storeId, storeName })
         if (!isMounted()) return;
         setVouchers(response.data.vouchers || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       // Load mock vouchers as fallback
       if (!isMounted()) return;
       setVouchers(getMockVouchers(storeId));

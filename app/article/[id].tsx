@@ -47,7 +47,7 @@ function ArticleDetailPage() {
         if (!isMounted()) return;
         setError('Article not found');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load article');
     } finally {

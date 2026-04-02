@@ -58,8 +58,8 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
       const wishlistsResponse = await wishlistApi.getWishlists(1, 1);
       let wishlistId: string | undefined;
 
-      if (wishlistsResponse.data?.wishlists?.length > 0) {
-        wishlistId = wishlistsResponse.data.wishlists[0].id || (wishlistsResponse.data.wishlists[0] as any)._id;
+      if ((wishlistsResponse.data as any)?.wishlists?.length > 0) {
+        wishlistId = (wishlistsResponse.data as any).wishlists[0].id || ((wishlistsResponse.data as any).wishlists[0] as any)._id;
       } else {
         const newWishlistResponse = await wishlistApi.createWishlist({
           name: 'My Wishlist',
@@ -80,11 +80,11 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
         tags: [item.category],
       });
 
-      if (response.data) {
+      if ((response.data as any)) {
         set(s => ({
           wishlistItems: s.wishlistItems.map(i =>
             i.id === optimisticItem.id
-              ? { ...i, id: response.data.id || (response.data as any)._id }
+              ? { ...i, id: (response.data as any).id || ((response.data as any) as any)._id }
               : i
           ),
         }));
@@ -124,8 +124,8 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
     try {
       set({ error: null });
       const response = await wishlistApi.getDefaultWishlist();
-      if (response.data) {
-        await wishlistApi.clearWishlist(response.data.id);
+      if ((response.data as any)) {
+        await wishlistApi.clearWishlist((response.data as any).id);
       }
       set({ wishlistItems: [] });
     } catch (_err) {
@@ -153,7 +153,7 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
         return;
       }
 
-      const defaultWishlist = response.data.wishlists[0];
+      const defaultWishlist = (response.data as any).wishlists[0];
       if (!defaultWishlist.items?.length) {
         set({ wishlistItems: [], isLoading: false });
         return;

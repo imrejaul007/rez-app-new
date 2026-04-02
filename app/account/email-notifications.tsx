@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { FormPageSkeleton } from '@/components/skeletons';
@@ -52,7 +44,7 @@ function EmailNotificationsScreen() {
         if (!isMounted()) return;
         setSettings(getDefaultSettings());
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setSettings(getDefaultSettings());
     } finally {
@@ -90,8 +82,11 @@ function EmailNotificationsScreen() {
         setShowSuccessMessage(true);
         setTimeout(() => setShowSuccessMessage(false), 2000);
       }
-    } catch (error) {
-      platformAlertSimple('Error', 'Failed to update email notification settings. Please check your connection and try again.');
+    } catch (error: any) {
+      platformAlertSimple(
+        'Error',
+        'Failed to update email notification settings. Please check your connection and try again.',
+      );
       if (!isMounted()) return;
       setSettings(settings);
     } finally {
@@ -104,12 +99,10 @@ function EmailNotificationsScreen() {
     title: string,
     value: boolean,
     onValueChange: (value: boolean) => void,
-    disabled?: boolean
+    disabled?: boolean,
   ) => (
     <View style={styles.settingItem}>
-      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>
-        {title}
-      </Text>
+      <Text style={[styles.settingTitle, disabled ? styles.disabledText : null]}>{title}</Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
@@ -148,7 +141,7 @@ function EmailNotificationsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -167,52 +160,50 @@ function EmailNotificationsScreen() {
             <Text style={styles.sectionTitle}>Email Notification Settings</Text>
           </View>
 
-          {renderSettingItem(
-            'Enable Email Notifications',
-            settings.enabled,
-            (value) => updateSettings({ enabled: value })
+          {renderSettingItem('Enable Email Notifications', settings.enabled, (value) =>
+            updateSettings({ enabled: value }),
           )}
 
           {renderSettingItem(
             'Order Receipts',
             settings.orderReceipts,
             (value) => updateSettings({ orderReceipts: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Newsletters',
             settings.newsletters,
             (value) => updateSettings({ newsletters: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Weekly Digest',
             settings.weeklyDigest,
             (value) => updateSettings({ weeklyDigest: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Promotional Emails',
             settings.promotions,
             (value) => updateSettings({ promotions: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Account Updates',
             settings.accountUpdates,
             (value) => updateSettings({ accountUpdates: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Security Alerts',
             settings.securityAlerts,
             (value) => updateSettings({ securityAlerts: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
         </View>
       </ScrollView>

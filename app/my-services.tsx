@@ -153,7 +153,7 @@ const MyServicesPage = () => {
       <Pressable
         style={styles.projectCard}
         onPress={() => {
-          router.push(`/earn/my-submissions?projectId=${item._id || item.id}` as any);
+          router.push(`/earn/my-submissions?projectId=${(item as any)._id || item.id}` as any);
         }}
       >
         <View style={[styles.iconContainer, { backgroundColor: Colors.success + '20' }]}>

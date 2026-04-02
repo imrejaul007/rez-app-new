@@ -32,14 +32,7 @@ function LockConfirmPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentType, dealId, lockId } =
-    useLocalSearchParams<{
-      razorpay_order_id?: string;
-      razorpay_payment_id?: string;
-      razorpay_signature?: string;
-      paymentType?: string;
-      dealId?: string;
-      lockId?: string;
-    }>();
+    useLocalSearchParams<any>();
 
   const isBalancePayment = paymentType === 'balance';
 
@@ -509,4 +502,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withErrorBoundary(LockConfirmPage);
+export default withErrorBoundary(LockConfirmPage, 'LockConfirmPage');

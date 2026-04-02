@@ -1,14 +1,6 @@
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -106,8 +98,12 @@ const PlayEarn = () => {
         const data = playEarnResponse.data;
 
         // If API returns activities, use them
-        if (data.activities && Array.isArray(data.activities) && data.activities.length > 0) {
-          const transformedActivities = data.activities.map((activity: any) => ({
+        if (
+          (data as any).activities &&
+          Array.isArray((data as any).activities) &&
+          (data as any).activities.length > 0
+        ) {
+          const transformedActivities = (data as any).activities.map((activity: any) => ({
             id: activity.id || activity._id,
             title: activity.title || activity.name,
             description: activity.description,
@@ -126,9 +122,9 @@ const PlayEarn = () => {
         }
 
         // Extract stats if included
-        if (data.stats) {
+        if ((data as any).stats) {
           if (!isMounted()) return;
-          setStats(data.stats);
+          setStats((data as any).stats);
         }
       }
 
@@ -137,7 +133,7 @@ const PlayEarn = () => {
       if (statsResponse.success && statsResponse.data) {
         setStats(statsResponse.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load activities');
     } finally {
@@ -207,112 +203,101 @@ const PlayEarn = () => {
 
   return (
     <FeatureErrorBoundary featureName="Play & Earn" compact={true}>
-    <View style={styles.container}>
-      <View style={styles.sectionHeader}>
-        <View>
-          <View style={styles.titleRow}>
-            <Text style={styles.sectionTitle}>Play & Earn</Text>
-          </View>
-          <Text style={styles.sectionSubtitle}>Fun ways to earn more rewards</Text>
-        </View>
-        <Pressable onPress={() => navigateTo('/playandearn')}>
-          <Text style={styles.viewAllText}>View all →</Text>
-        </Pressable>
-      </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.activitiesContainer}
-      >
-        {activities.map((activity) => (
-          <Pressable
-            key={activity.id}
-            style={styles.activityCard}
-            onPress={() => navigateTo(activity.path)}
-          >
-            <LinearGradient
-              colors={activity.gradient as [string, string]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.cardGradient}
-            >
-              {/* Icon */}
-              <View style={styles.iconContainer}>
-                <Ionicons name={activity.icon as any} size={28} color={colors.text.inverse} />
-              </View>
-
-              {/* Content */}
-              <Text style={styles.activityTitle}>{activity.title}</Text>
-              <Text style={styles.activityDescription}>{activity.description}</Text>
-
-              {/* Reward Badge */}
-              <View style={styles.rewardBadge}>
-                <Ionicons name="gift-outline" size={12} color={colors.text.inverse} />
-                <Text style={styles.rewardText}>{activity.reward}</Text>
-              </View>
-
-              {/* Status Indicators */}
-              {activity.streak !== undefined && activity.streak > 0 && (
-                <View style={styles.statusBadge}>
-                  <Ionicons name="flame" size={12} color={colors.brand.orange} />
-                  <Text style={styles.statusText}>{activity.streak} day streak!</Text>
-                </View>
-              )}
-              {activity.spinsLeft !== undefined && activity.spinsLeft > 0 && (
-                <View style={styles.statusBadge}>
-                  <Ionicons name="refresh" size={12} color={colors.text.inverse} />
-                  <Text style={styles.statusText}>{activity.spinsLeft} spins left</Text>
-                </View>
-              )}
-              {activity.available && (
-                <View style={[styles.statusBadge, styles.availableBadge]}>
-                  <Ionicons name="checkmark-circle" size={12} color={Colors.gold} />
-                  <Text style={[styles.statusText, styles.availableText]}>Available now!</Text>
-                </View>
-              )}
-              {activity.pending !== undefined && activity.pending > 0 && (
-                <View style={styles.statusBadge}>
-                  <Ionicons name="time" size={12} color={colors.text.inverse} />
-                  <Text style={styles.statusText}>{activity.pending} pending</Text>
-                </View>
-              )}
-
-              {/* Play Button */}
-              <View style={styles.playButton}>
-                <Text style={styles.playButtonText}>Play Now</Text>
-                <Ionicons name="arrow-forward" size={14} color={activity.color} />
-              </View>
-            </LinearGradient>
-          </Pressable>
-        ))}
-      </ScrollView>
-
-      {/* Daily Coins Summary */}
-      <View style={styles.coinsSummary}>
-        <View style={styles.coinsLeft}>
-          <Text style={styles.coinsIcon}>🪙</Text>
+      <View style={styles.container}>
+        <View style={styles.sectionHeader}>
           <View>
-            <Text style={styles.coinsEarned}>
-              {coinsBalance > 0 ? `${coinsBalance} coins balance` : '0 coins earned'}
-            </Text>
-            <Text style={styles.coinsTarget}>
-              {coinsEarnedToday > 0
-                ? `${coinsEarnedToday} earned this week`
-                : 'Start earning coins today!'}
-            </Text>
+            <View style={styles.titleRow}>
+              <Text style={styles.sectionTitle}>Play & Earn</Text>
+            </View>
+            <Text style={styles.sectionSubtitle}>Fun ways to earn more rewards</Text>
+          </View>
+          <Pressable onPress={() => navigateTo('/playandearn')}>
+            <Text style={styles.viewAllText}>View all →</Text>
+          </Pressable>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.activitiesContainer}
+        >
+          {activities.map((activity) => (
+            <Pressable key={activity.id} style={styles.activityCard} onPress={() => navigateTo(activity.path)}>
+              <LinearGradient
+                colors={activity.gradient as [string, string]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.cardGradient}
+              >
+                {/* Icon */}
+                <View style={styles.iconContainer}>
+                  <Ionicons name={activity.icon as any} size={28} color={colors.text.inverse} />
+                </View>
+
+                {/* Content */}
+                <Text style={styles.activityTitle}>{activity.title}</Text>
+                <Text style={styles.activityDescription}>{activity.description}</Text>
+
+                {/* Reward Badge */}
+                <View style={styles.rewardBadge}>
+                  <Ionicons name="gift-outline" size={12} color={colors.text.inverse} />
+                  <Text style={styles.rewardText}>{activity.reward}</Text>
+                </View>
+
+                {/* Status Indicators */}
+                {activity.streak !== undefined && activity.streak > 0 && (
+                  <View style={styles.statusBadge}>
+                    <Ionicons name="flame" size={12} color={colors.brand.orange} />
+                    <Text style={styles.statusText}>{activity.streak} day streak!</Text>
+                  </View>
+                )}
+                {activity.spinsLeft !== undefined && activity.spinsLeft > 0 && (
+                  <View style={styles.statusBadge}>
+                    <Ionicons name="refresh" size={12} color={colors.text.inverse} />
+                    <Text style={styles.statusText}>{activity.spinsLeft} spins left</Text>
+                  </View>
+                )}
+                {activity.available && (
+                  <View style={[styles.statusBadge, styles.availableBadge]}>
+                    <Ionicons name="checkmark-circle" size={12} color={Colors.gold} />
+                    <Text style={[styles.statusText, styles.availableText]}>Available now!</Text>
+                  </View>
+                )}
+                {activity.pending !== undefined && activity.pending > 0 && (
+                  <View style={styles.statusBadge}>
+                    <Ionicons name="time" size={12} color={colors.text.inverse} />
+                    <Text style={styles.statusText}>{activity.pending} pending</Text>
+                  </View>
+                )}
+
+                {/* Play Button */}
+                <View style={styles.playButton}>
+                  <Text style={styles.playButtonText}>Play Now</Text>
+                  <Ionicons name="arrow-forward" size={14} color={activity.color} />
+                </View>
+              </LinearGradient>
+            </Pressable>
+          ))}
+        </ScrollView>
+
+        {/* Daily Coins Summary */}
+        <View style={styles.coinsSummary}>
+          <View style={styles.coinsLeft}>
+            <Text style={styles.coinsIcon}>🪙</Text>
+            <View>
+              <Text style={styles.coinsEarned}>
+                {coinsBalance > 0 ? `${coinsBalance} coins balance` : '0 coins earned'}
+              </Text>
+              <Text style={styles.coinsTarget}>
+                {coinsEarnedToday > 0 ? `${coinsEarnedToday} earned this week` : 'Start earning coins today!'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${Math.min((coinsBalance / 200) * 100, 100)}%` }]} />
           </View>
         </View>
-        <View style={styles.progressBar}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${Math.min((coinsBalance / 200) * 100, 100)}%` },
-            ]}
-          />
-        </View>
       </View>
-    </View>
     </FeatureErrorBoundary>
   );
 };

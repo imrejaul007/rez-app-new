@@ -129,8 +129,8 @@ const GroceryPage: React.FC = () => {
           (cat: any) => cat.slug === 'grocery' || cat.name?.toLowerCase().includes('grocery'),
         );
 
-        if (groceryCategory && groceryCategory.subcategories?.length > 0) {
-          const mappedCategories = groceryCategory.subcategories.map((sub: any) => {
+        if (groceryCategory && (groceryCategory as any).subcategories?.length > 0) {
+          const mappedCategories = (groceryCategory as any).subcategories.map((sub: any) => {
             const config = categoryConfig[sub.slug] || { icon: '🛒', color: colors.success };
             return {
               id: sub.slug,
@@ -203,7 +203,7 @@ const GroceryPage: React.FC = () => {
         if (!isMounted()) return;
         setQuickStores(getFallbackStores().slice(0, 3));
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setFeaturedStores(getFallbackStores());
       if (!isMounted()) return;
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   statsRow: {
     flexDirection: 'row',
@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   viewAllText: {
     ...Typography.body,
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
     textAlign: 'center',
   },
@@ -639,7 +639,7 @@ const styles = StyleSheet.create({
   quickActionTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   quickActionSubtitle: {
     ...Typography.overline,
@@ -681,7 +681,7 @@ const styles = StyleSheet.create({
   quickStoreName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
   },
   quickStoreCashback: {
@@ -723,7 +723,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
   },
   storeMeta: {
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   deliveryText: {
     ...Typography.bodySmall,

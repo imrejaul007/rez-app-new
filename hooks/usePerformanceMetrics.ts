@@ -288,7 +288,7 @@ export function useApiPerformance(): UseApiPerformanceResult {
         const result = await apiCall();
         performanceMonitor.end(name, { success: true });
         return result;
-      } catch (error) {
+      } catch (error: any) {
         performanceMonitor.end(name, { success: false, error: true });
         throw error;
       }

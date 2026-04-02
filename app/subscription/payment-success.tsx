@@ -2,14 +2,7 @@ import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Payment Success Page
 import React, { useEffect, useState, useLayoutEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  StatusBar,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useNavigation, useLocalSearchParams } from 'expo-router';
@@ -51,7 +44,7 @@ function PaymentSuccessPage() {
 
         if (!token) {
           // Wait for token to be restored from localStorage
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
           const tokenNow = await authStorage.getAuthToken();
           if (!tokenNow) {
@@ -89,7 +82,7 @@ function PaymentSuccessPage() {
 
           // If we got free-default, wait and retry
           if (i < retries - 1) {
-            await new Promise(resolve => setTimeout(resolve, (i + 1) * 1000));
+            await new Promise((resolve) => setTimeout(resolve, (i + 1) * 1000));
           }
         }
 
@@ -109,9 +102,13 @@ function PaymentSuccessPage() {
         setLoading(false);
 
         if (Platform.OS === 'web') {
-          showToast({ message: 'Payment successful! Your subscription is now active.', type: 'success', duration: 5000 });
+          showToast({
+            message: 'Payment successful! Your subscription is now active.',
+            type: 'success',
+            duration: 5000,
+          });
         }
-      } catch (error) {
+      } catch (error: any) {
         if (!isMounted()) return;
         setLoading(false);
       }
@@ -151,7 +148,11 @@ function PaymentSuccessPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={Colors.gold} />
@@ -199,16 +200,15 @@ function PaymentSuccessPage() {
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Next Billing:</ThemedText>
                 <ThemedText style={styles.detailValue}>
-                  {subscription?.endDate
-                    ? new Date(subscription.endDate).toLocaleDateString()
-                    : 'N/A'}
+                  {subscription?.endDate ? new Date(subscription.endDate).toLocaleDateString() : 'N/A'}
                 </ThemedText>
               </View>
 
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Amount:</ThemedText>
                 <ThemedText style={styles.detailValueHighlight}>
-                  {currencySymbol}{amount}
+                  {currencySymbol}
+                  {amount}
                 </ThemedText>
               </View>
             </View>
@@ -237,32 +237,24 @@ function PaymentSuccessPage() {
 
                 <View style={styles.benefitItem}>
                   <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
-                  <ThemedText style={styles.benefitText}>
-                    Priority customer support
-                  </ThemedText>
+                  <ThemedText style={styles.benefitText}>Priority customer support</ThemedText>
                 </View>
 
                 <View style={styles.benefitItem}>
                   <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
-                  <ThemedText style={styles.benefitText}>
-                    Exclusive deals & early access
-                  </ThemedText>
+                  <ThemedText style={styles.benefitText}>Exclusive deals & early access</ThemedText>
                 </View>
 
                 {tier === 'vip' && (
                   <>
                     <View style={styles.benefitItem}>
                       <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
-                      <ThemedText style={styles.benefitText}>
-                        Personal shopping assistant
-                      </ThemedText>
+                      <ThemedText style={styles.benefitText}>Personal shopping assistant</ThemedText>
                     </View>
 
                     <View style={styles.benefitItem}>
                       <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
-                      <ThemedText style={styles.benefitText}>
-                        Premium events access
-                      </ThemedText>
+                      <ThemedText style={styles.benefitText}>Premium events access</ThemedText>
                     </View>
                   </>
                 )}
@@ -276,7 +268,7 @@ function PaymentSuccessPage() {
                 <View style={styles.trialInfoContent}>
                   <ThemedText style={styles.trialInfoTitle}>7-Day Free Trial</ThemedText>
                   <ThemedText style={styles.trialInfoText}>
-                    Your trial is active! You won't be charged until {' '}
+                    Your trial is active! You won't be charged until{' '}
                     {subscription.trialEndDate
                       ? new Date(subscription.trialEndDate).toLocaleDateString()
                       : '7 days from now'}
@@ -296,9 +288,7 @@ function PaymentSuccessPage() {
                 </View>
                 <View style={styles.nextStepContent}>
                   <ThemedText style={styles.nextStepTitle}>Start Shopping</ThemedText>
-                  <ThemedText style={styles.nextStepText}>
-                    Explore stores and start earning cashback
-                  </ThemedText>
+                  <ThemedText style={styles.nextStepText}>Explore stores and start earning cashback</ThemedText>
                 </View>
               </Pressable>
 
@@ -308,9 +298,7 @@ function PaymentSuccessPage() {
                 </View>
                 <View style={styles.nextStepContent}>
                   <ThemedText style={styles.nextStepTitle}>Track Savings</ThemedText>
-                  <ThemedText style={styles.nextStepText}>
-                    Monitor your cashback and savings in your wallet
-                  </ThemedText>
+                  <ThemedText style={styles.nextStepText}>Monitor your cashback and savings in your wallet</ThemedText>
                 </View>
               </Pressable>
 
@@ -320,9 +308,7 @@ function PaymentSuccessPage() {
                 </View>
                 <View style={styles.nextStepContent}>
                   <ThemedText style={styles.nextStepTitle}>Manage Subscription</ThemedText>
-                  <ThemedText style={styles.nextStepText}>
-                    Update billing, cancel, or upgrade anytime
-                  </ThemedText>
+                  <ThemedText style={styles.nextStepText}>Update billing, cancel, or upgrade anytime</ThemedText>
                 </View>
               </Pressable>
             </View>

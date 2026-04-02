@@ -77,7 +77,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
       contentContainerStyle={[
         styles.contentContainer,
         reviews.length === 0 && styles.emptyContentContainer
-      ]}
+      ] as any}
       showsVerticalScrollIndicator={false}
       estimatedItemSize={200}
       refreshControl={

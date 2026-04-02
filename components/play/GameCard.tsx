@@ -25,7 +25,7 @@ function GameCard({
 }: GameCardProps) {
   return (
     <Pressable
-      style={[styles.gameCard, isLocked && styles.lockedCard]}
+      style={[styles.gameCard, isLocked ? styles.lockedCard : null]}
       onPress={onPress}
       disabled={isLocked}
       accessibilityLabel={`${title} game. ${description}. ${isLocked ? 'Locked' : `Reward: ${reward}`}`}
@@ -41,14 +41,14 @@ function GameCard({
           </View>
         )}
       </View>
-      <ThemedText style={[styles.gameTitle, isLocked && styles.lockedText]}>
+      <ThemedText style={[styles.gameTitle, isLocked ? styles.lockedText : null]}>
         {title}
       </ThemedText>
-      <ThemedText style={[styles.gameDescription, isLocked && styles.lockedText]}>
+      <ThemedText style={[styles.gameDescription, isLocked ? styles.lockedText : null]}>
         {description}
       </ThemedText>
-      <View style={[styles.rewardBadge, isLocked && styles.lockedBadge]}>
-        <ThemedText style={[styles.rewardText, isLocked && styles.lockedRewardText]}>
+      <View style={[styles.rewardBadge, isLocked ? styles.lockedBadge : null]}>
+        <ThemedText style={[styles.rewardText, isLocked ? styles.lockedRewardText : null]}>
           {isLocked ? 'Locked' : reward}
         </ThemedText>
       </View>

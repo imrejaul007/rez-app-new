@@ -360,7 +360,7 @@ export function usePlayAndEarnData() {
       else next.add(pickId);
       return next;
     });
-    const response = await creatorsApiService.togglePickLike(pickId);
+    const response: any = await creatorsApiService.togglePickLike(pickId);
     if (!response.success) {
       setLikedPicks(prev => {
         const next = new Set(prev);

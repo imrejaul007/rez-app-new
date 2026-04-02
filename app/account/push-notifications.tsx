@@ -59,7 +59,7 @@ function PushNotificationsScreen() {
         if (!isMounted()) return;
         setSettings(getDefaultSettings());
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setSettings(getDefaultSettings());
     } finally {
@@ -100,7 +100,7 @@ function PushNotificationsScreen() {
         setShowSuccessMessage(true);
         setTimeout(() => setShowSuccessMessage(false), 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple(
         'Error',
         'Failed to update push notification settings. Please check your connection and try again.',
@@ -120,7 +120,7 @@ function PushNotificationsScreen() {
     disabled?: boolean,
   ) => (
     <View style={styles.settingItem}>
-      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>{title}</Text>
+      <Text style={[styles.settingTitle, disabled ? styles.disabledText : null]}>{title}</Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
@@ -187,7 +187,7 @@ function PushNotificationsScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
       >
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

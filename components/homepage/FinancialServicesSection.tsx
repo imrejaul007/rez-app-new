@@ -47,7 +47,7 @@ const FinancialServicesSection: React.FC = () => {
         if (!isMounted()) return;
         setCategories(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   ottTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: 4,
   },
   ottSubtitle: {
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   specialText: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 
   // Bottom Row
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   bottomTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 });
 

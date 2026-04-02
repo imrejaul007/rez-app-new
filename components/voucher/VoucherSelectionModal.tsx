@@ -97,7 +97,7 @@ function VoucherSelectionModal({
           allVouchers.push(...coupons);
 
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
 
@@ -123,7 +123,7 @@ function VoucherSelectionModal({
           allVouchers.push(...vouchersList);
 
         }
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
 
@@ -137,7 +137,7 @@ function VoucherSelectionModal({
 
       if (!isMounted()) return;
       setVouchers(allVouchers);
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;

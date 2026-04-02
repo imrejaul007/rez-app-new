@@ -5,7 +5,7 @@ import notificationsApi from '@/services/notificationsApi';
 export function useNotifications(query?: { page?: number; limit?: number; type?: string; isRead?: boolean }) {
   return useQuery({
     queryKey: queryKeys.notifications.list(query),
-    queryFn: () => notificationsApi.getNotifications(query),
+    queryFn: () => notificationsApi.getNotifications(query as any),
   });
 }
 

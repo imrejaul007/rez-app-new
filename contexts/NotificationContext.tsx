@@ -254,7 +254,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
             shouldShowList: settings.inApp.enabled,
           }),
         });
-      } catch (e) {
+      } catch (e: any) {
         // silently handle
       }
     }

@@ -31,28 +31,28 @@ class ExclusiveOffersApiService {
    * Get all active exclusive offers
    */
   async getOffers(params?: GetExclusiveOffersParams): Promise<ApiResponse<{ offers: ExclusiveOffer[] }>> {
-    return apiClient.get(this.baseUrl, params);
+    return apiClient.get<any>(this.baseUrl, params as any);
   }
 
   /**
    * Get exclusive offer by ID
    */
   async getOfferById(id: string): Promise<ApiResponse<{ offer: ExclusiveOffer }>> {
-    return apiClient.get(`${this.baseUrl}/${id}`);
+    return apiClient.get<any>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Get exclusive offers for a specific category
    */
   async getOffersByCategory(categorySlug: string, limit: number = 10): Promise<ApiResponse<{ offers: ExclusiveOffer[] }>> {
-    return apiClient.get(this.baseUrl, { category: categorySlug, limit });
+    return apiClient.get<any>(this.baseUrl, { category: categorySlug, limit });
   }
 
   /**
    * Get exclusive offers for a specific target audience
    */
   async getOffersByAudience(targetAudience: string, limit: number = 10): Promise<ApiResponse<{ offers: ExclusiveOffer[] }>> {
-    return apiClient.get(this.baseUrl, { targetAudience, limit });
+    return apiClient.get<any>(this.baseUrl, { targetAudience, limit });
   }
 }
 

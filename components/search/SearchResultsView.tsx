@@ -17,7 +17,7 @@ import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { SearchResult, GroupedProductResult, SearchResultsSummary as SearchSummaryType } from '@/types/search.types';
 import { BRAND } from '@/constants/brand';
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 import SearchResultsSummary from './SearchResultsSummary';
 import FilterBar, { SortOption } from './FilterBar';
 import SearchSortChips from './SearchSortChips';
@@ -250,11 +250,10 @@ function SearchResultsView({
             <View style={styles.resultImageContainer}>
               {result.image ? (
                 <CachedImage
-                  source={result.image}
+                  source={result.image as any}
                   style={styles.resultImage}
                   contentFit="cover"
                   accessibilityLabel={`${result.title} image`}
-                  accessibilityRole="image"
                 />
               ) : (
                 <LinearGradient

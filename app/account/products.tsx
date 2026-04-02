@@ -40,7 +40,7 @@ function ProductsScreen() {
         if (!isMounted()) return;
         setProducts([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load products. Please check your connection and try again.');
       if (!isMounted()) return;
@@ -99,14 +99,16 @@ function ProductsScreen() {
 
   const renderFilterButton = (filter: 'all' | 'active' | 'warranty_expired', label: string) => (
     <Pressable
-      style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
+      style={[styles.filterButton, selectedFilter === filter ? styles.filterButtonActive : null]}
       onPress={() => setSelectedFilter(filter)}
       accessibilityLabel={`${label} products${selectedFilter === filter ? ', selected' : ''}`}
       accessibilityRole="tab"
       accessibilityState={{ selected: selectedFilter === filter }}
       accessibilityHint="Double tap to filter products by this category"
     >
-      <Text style={[styles.filterButtonText, selectedFilter === filter && styles.filterButtonTextActive]}>{label}</Text>
+      <Text style={[styles.filterButtonText, selectedFilter === filter ? styles.filterButtonTextActive : null]}>
+        {label}
+      </Text>
     </Pressable>
   );
 

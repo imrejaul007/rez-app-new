@@ -37,7 +37,7 @@ const REWARD_TYPE_LABELS: Record<string, string> = {
 };
 
 function PriveOfferDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -305,7 +305,7 @@ function PriveOfferDetailScreen() {
       {/* Sticky CTA */}
       <View style={styles.ctaContainer}>
         <Pressable
-          style={[styles.ctaButton, isOfferExpired && styles.ctaButtonDisabled]}
+          style={[styles.ctaButton, isOfferExpired ? styles.ctaButtonDisabled : null]}
           onPress={() => !isOfferExpired && router.push('/prive/redeem' as any)}
           disabled={isOfferExpired}
         >
@@ -314,7 +314,7 @@ function PriveOfferDetailScreen() {
             size={18}
             color={isOfferExpired ? PRIVE_COLORS.text.tertiary : PRIVE_COLORS.text.inverse}
           />
-          <Text style={[styles.ctaText, isOfferExpired && styles.ctaTextDisabled]}>
+          <Text style={[styles.ctaText, isOfferExpired ? styles.ctaTextDisabled : null]}>
             {isOfferExpired ? 'Offer Expired' : 'Redeem Now'}
           </Text>
         </Pressable>

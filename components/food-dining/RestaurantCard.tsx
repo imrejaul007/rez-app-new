@@ -76,13 +76,13 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
 
   return (
     <Pressable
-      style={[styles.restaurantCard, isCompact && styles.restaurantCardCompact]}
+      style={[styles.restaurantCard, isCompact ? styles.restaurantCardCompact : null]}
       onPress={() => router.push(`/MainStorePage?storeId=${restaurant._id || restaurant.id}` as any)}
      
       accessibilityLabel={`${restaurant.name}${hasRating ? `, rated ${ratingValue!.toFixed(1)}` : ', new restaurant'}${openStatus.isOpen ? ', open now' : ', currently closed'}`}
       accessibilityRole="button"
     >
-      <View style={[styles.restaurantImageContainer, isCompact && styles.restaurantImageContainerCompact]}>
+      <View style={[styles.restaurantImageContainer, isCompact ? styles.restaurantImageContainerCompact : null]}>
         {imageUri && !imageError ? (
           <CachedImage
             source={{ uri: imageUri }}
@@ -133,7 +133,7 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
           )}
           {restaurant.offers?.cashback && (
             <View style={styles.badgeCashbackPurple}>
-              <Text style={styles.badgeCashbackPurpleText}>{restaurant.offers.cashback}% cashback</Text>
+              <Text style={styles.badgeCashbackPurpleText}>{restaurant.offers?.cashback}% cashback</Text>
             </View>
           )}
         </View>
@@ -200,7 +200,7 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
         )}
 
         {/* Coins and Review Bonus Row */}
-        {(coinsEarned || reviewBonus || restaurant.offers?.cashback > 0) ? (
+        {(coinsEarned || reviewBonus || (restaurant.offers?.cashback ?? 0) > 0) ? (
           <View style={styles.restaurantRewardsRow}>
             <View style={styles.restaurantCoins}>
               <Ionicons name="star" size={14} color={COLORS.primaryGold} />

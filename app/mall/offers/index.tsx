@@ -53,18 +53,10 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
   const badgeStyle = offer.badge ? OFFER_BADGE_COLORS[offer.badge] : null;
 
   return (
-    <Pressable
-      style={styles.offerCard}
-      onPress={() => onPress(offer)}
-     
-    >
+    <Pressable style={styles.offerCard} onPress={() => onPress(offer)}>
       <View style={styles.offerImageContainer}>
         {offer.image ? (
-          <CachedImage
-            source={offer.image}
-            style={styles.offerImage}
-            contentFit="cover"
-          />
+          <CachedImage source={offer.image as any} style={styles.offerImage} contentFit="cover" />
         ) : (
           <View style={[styles.offerImage, { backgroundColor: colors.background.secondary }]} />
         )}
@@ -84,7 +76,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
         <View style={styles.brandRow}>
           {(offer.brand?.logo || offer.store?.logo) && (
             <CachedImage
-              source={offer.brand?.logo || offer.store?.logo}
+              source={offer.brand?.logo || offer.store?.logo || ('' as any)}
               style={styles.brandLogo}
               contentFit="contain"
             />
@@ -109,22 +101,16 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
               size={14}
               color={daysRemaining <= 3 ? Colors.error : colors.text.tertiary}
             />
-            <Text
-              style={[
-                styles.validityText,
-                daysRemaining <= 3 && styles.validityTextUrgent,
-              ]}
-            >
-              {daysRemaining === 0
-                ? 'Ends today!'
-                : daysRemaining === 1
-                ? '1 day left'
-                : `${daysRemaining} days left`}
+            <Text style={[styles.validityText, daysRemaining <= 3 && styles.validityTextUrgent]}>
+              {daysRemaining === 0 ? 'Ends today!' : daysRemaining === 1 ? '1 day left' : `${daysRemaining} days left`}
             </Text>
           </View>
 
           {(offer.minPurchase ?? 0) > 0 && (
-            <Text style={styles.minPurchase}>Min. {currencySymbol}{offer.minPurchase}</Text>
+            <Text style={styles.minPurchase}>
+              Min. {currencySymbol}
+              {offer.minPurchase}
+            </Text>
           )}
         </View>
 
@@ -156,10 +142,7 @@ function AllOffersPage() {
 
   const LIMIT = 20;
 
-  const fetchOffers = useCallback(async (
-    pageNum: number = 1,
-    append: boolean = false
-  ) => {
+  const fetchOffers = useCallback(async (pageNum: number = 1, append: boolean = false) => {
     try {
       setError(null);
       const result = await mallApi.getOffers(pageNum, LIMIT);
@@ -169,7 +152,7 @@ function AllOffersPage() {
 
       if (append) {
         if (!isMounted()) return;
-        setOffers(prev => [...prev, ...result.offers]);
+        setOffers((prev) => [...prev, ...result.offers]);
       } else {
         if (!isMounted()) return;
         setOffers(result.offers);
@@ -208,44 +191,50 @@ function AllOffersPage() {
     fetchOffers(nextPage, true);
   }, [page, total, isLoadingMore, fetchOffers]);
 
-  const handleOfferPress = useCallback((offer: MallOffer) => {
-    if (offer.store) {
-      router.push(`/MainStorePage?storeId=${offer.store._id}` as any);
-    } else if (offer.brand) {
-      router.push(`/mall/brand/${offer.brand.id || offer.brand._id}` as any);
-    } else {
-      // No specific target - stay on offers page (already here)
-    }
-  }, [router]);
+  const handleOfferPress = useCallback(
+    (offer: MallOffer) => {
+      if (offer.store) {
+        router.push(`/MainStorePage?storeId=${offer.store._id}` as any);
+      } else if (offer.brand) {
+        router.push(`/mall/brand/${offer.brand.id || offer.brand._id}` as any);
+      } else {
+        // No specific target - stay on offers page (already here)
+      }
+    },
+    [router],
+  );
 
-  const renderItem = useCallback(({ item }: { item: MallOffer }) => (
-    <OfferCard offer={item} onPress={handleOfferPress} currencySymbol={currencySymbol} />
-  ), [handleOfferPress, currencySymbol]);
+  const renderItem = useCallback(
+    ({ item }: { item: MallOffer }) => (
+      <OfferCard offer={item} onPress={handleOfferPress} currencySymbol={currencySymbol} />
+    ),
+    [handleOfferPress, currencySymbol],
+  );
 
-  const keyExtractor = useCallback((item: MallOffer) =>
-    item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id, []);
 
-  const ListHeader = useCallback(() => (
-    <View style={styles.listHeader}>
-      <LinearGradient
-        colors={[Colors.warning, colors.warningScale[700]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.headerGradient}
-      >
-        <Ionicons name="gift-outline" size={32} color={colors.text.inverse} />
-        <Text style={styles.headerTitle}>Exclusive Offers</Text>
-        <Text style={styles.headerSubtitle}>
-          Limited-time deals with extra cashback
-        </Text>
-      </LinearGradient>
-      <View style={styles.countRow}>
-        <Text style={styles.resultCount}>
-          {offers.length} of {total} offers
-        </Text>
+  const ListHeader = useCallback(
+    () => (
+      <View style={styles.listHeader}>
+        <LinearGradient
+          colors={[Colors.warning, colors.warningScale[700]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
+          <Ionicons name="gift-outline" size={32} color={colors.text.inverse} />
+          <Text style={styles.headerTitle}>Exclusive Offers</Text>
+          <Text style={styles.headerSubtitle}>Limited-time deals with extra cashback</Text>
+        </LinearGradient>
+        <View style={styles.countRow}>
+          <Text style={styles.resultCount}>
+            {offers.length} of {total} offers
+          </Text>
+        </View>
       </View>
-    </View>
-  ), [offers.length, total]);
+    ),
+    [offers.length, total],
+  );
 
   const ListFooter = useCallback(() => {
     if (isLoadingMore) {

@@ -5,7 +5,7 @@ import gamificationApi from '@/services/gamificationApi';
 export function useCheckIn() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => gamificationApi.checkIn(),
+    mutationFn: () => (gamificationApi as any).performCheckIn(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.gamification.checkIn() });
       queryClient.invalidateQueries({ queryKey: queryKeys.gamification.streak() });
@@ -17,7 +17,7 @@ export function useCheckIn() {
 export function useSpin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => gamificationApi.spin(),
+    mutationFn: () => (gamificationApi as any).executeSpin(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.gamification.spinWheel() });
       queryClient.invalidateQueries({ queryKey: queryKeys.wallet.balance() });

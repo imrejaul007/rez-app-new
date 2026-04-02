@@ -83,7 +83,7 @@ function CartLockedItemCard({
 
   // Update countdown every second
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
 
     const updateTime = () => {
       const time = getTimeRemaining(item.expiresAt);

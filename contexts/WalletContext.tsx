@@ -117,7 +117,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
       earnedDate: promoData?.earnedDate ? new Date(promoData.earnedDate) : safeDate,
       lastUsed: promoData?.lastUsed ? new Date(promoData.lastUsed) : safeDate,
       expiryDate: promoData?.expiryDate ? new Date(promoData.expiryDate) : undefined,
-      promoDetails: promoData?.promoDetails,
+      promoDetails: promoData?.promoDetails as any,
     }
   ];
 
@@ -156,7 +156,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
     currency: BRAND.CURRENCY_CODE,
     formattedTotalBalance: `${BRAND.CURRENCY_CODE} ${totalBalance}`,
     coins,
-    brandedCoins: brandedCoinsData,
+    brandedCoins: brandedCoinsData as any,
     brandedCoinsTotal,
     savingsInsights: backendData.savingsInsights || { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
     recentTransactions: [],
@@ -263,13 +263,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
         if (response.success && response.data) {
           const userId = authUser?._id || authUser?.id || 'unknown';
-          const rawData = response.data as RawWalletBackendData;
+          const rawData = response.data as unknown as RawWalletBackendData;
           const transformed = transformWalletResponse(rawData, userId);
           setWalletData(transformed);
           setRawBackendData(rawData);
           _walletLastFetch = Date.now();
         }
-      } catch (error) {
+      } catch (error: any) {
         if (abortRef.current?.signal.aborted) return;
         // CONS-013: Report wallet fetch failures to Sentry/errorReporter instead of swallowing
         errorReporter.captureError(

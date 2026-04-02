@@ -21,7 +21,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 function RescheduleBookingScreen() {
-  const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
+  const { bookingId } = useLocalSearchParams<any>();
   const router = useRouter();
   const isMounted = useIsMounted();
 
@@ -143,12 +143,12 @@ function RescheduleBookingScreen() {
               <Pressable
                 key={date}
                 onPress={() => setSelectedDate(date)}
-                style={[styles.dateButton, selectedDate === date && styles.dateButtonSelected]}
+                style={[styles.dateButton, selectedDate === date ? styles.dateButtonSelected : null]}
                 accessibilityRole="radio"
                 accessibilityLabel={`Select date ${formatDate(date)}`}
                 accessibilityState={{ selected: selectedDate === date }}
               >
-                <Text style={[styles.dateButtonText, selectedDate === date && styles.dateButtonTextSelected]}>
+                <Text style={[styles.dateButtonText, selectedDate === date ? styles.dateButtonTextSelected : null]}>
                   {formatDate(date)}
                 </Text>
               </Pressable>
@@ -165,12 +165,12 @@ function RescheduleBookingScreen() {
                 <Pressable
                   key={time}
                   onPress={() => setSelectedTime(time)}
-                  style={[styles.timeButton, selectedTime === time && styles.timeButtonSelected]}
+                  style={[styles.timeButton, selectedTime === time ? styles.timeButtonSelected : null]}
                   accessibilityRole="radio"
                   accessibilityLabel={`Select time ${formatTime(time)}`}
                   accessibilityState={{ selected: selectedTime === time }}
                 >
-                  <Text style={[styles.timeButtonText, selectedTime === time && styles.timeButtonTextSelected]}>
+                  <Text style={[styles.timeButtonText, selectedTime === time ? styles.timeButtonTextSelected : null]}>
                     {formatTime(time)}
                   </Text>
                 </Pressable>

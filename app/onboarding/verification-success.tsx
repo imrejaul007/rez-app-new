@@ -33,7 +33,7 @@ function VerificationSuccessPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { zone, type } = useLocalSearchParams<{ zone: string; type: string }>();
+  const { zone, type } = useLocalSearchParams<any>();
   const user = useAuthUser();
   const actions = useAuthActions();
   useBackButton(() => true); // Block back navigation

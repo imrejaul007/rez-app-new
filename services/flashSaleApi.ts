@@ -149,7 +149,7 @@ class FlashSaleApiService {
       if (response.success && response.data) {
         return {
           success: true,
-          data: response.data,
+          data: (response.data as any).data || response.data,
         };
       }
 

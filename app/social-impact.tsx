@@ -35,8 +35,8 @@ const getEventTypeIconBg = (eventType?: string): string => {
     'health-camp': 'rgba(6, 182, 212, 0.15)',
     'skill-training': 'rgba(236, 72, 153, 0.15)',
     'women-empowerment': 'rgba(236, 72, 153, 0.15)',
-    'education': 'rgba(99, 102, 241, 0.15)',
-    'environment': 'rgba(255, 205, 87, 0.15)',
+    education: 'rgba(99, 102, 241, 0.15)',
+    environment: 'rgba(255, 205, 87, 0.15)',
   };
   return bgMap[eventType || ''] || 'rgba(139, 92, 246, 0.15)';
 };
@@ -52,8 +52,8 @@ const getEventTypeEmoji = (eventType?: string): string => {
     'health-camp': '🏥',
     'skill-training': '👩‍💼',
     'women-empowerment': '👩‍💼',
-    'education': '📚',
-    'environment': '🌍',
+    education: '📚',
+    environment: '🌍',
   };
   return emojiMap[eventType || ''] || '✨';
 };
@@ -105,7 +105,7 @@ function SocialImpactPage() {
       // Fetch events and stats in parallel
       const [eventsResponse, statsResponse] = await Promise.all([
         socialImpactApi.getEvents(),
-        socialImpactApi.getMyStats()
+        socialImpactApi.getMyStats(),
       ]);
 
       if (eventsResponse.success && eventsResponse.data) {
@@ -140,10 +140,7 @@ function SocialImpactPage() {
   }, [fetchData]);
 
   // Filter events based on active tab
-  const filteredActivities =
-    activeTab === 'all'
-      ? events
-      : events.filter((e) => e.eventStatus === activeTab);
+  const filteredActivities = activeTab === 'all' ? events : events.filter((e) => e.eventStatus === activeTab);
 
   // Get count for each tab
   const getTabCount = (tabId: string) => {
@@ -167,366 +164,384 @@ function SocialImpactPage() {
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={22} color={colors.deepNavy} />
-        </Pressable>
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.headerTitle}>Social Impact</Text>
-          <Text style={styles.headerSubtitle}>Earn while making a difference</Text>
-        </View>
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[Colors.gold]}
-            tintColor={Colors.gold}
-          />
-        }
-      >
-        {/* Hero - CSR Focus */}
-        <View style={styles.heroSection}>
-          <LinearGradient
-            colors={['rgba(255, 205, 87, 0.08)', 'rgba(59, 130, 246, 0.08)', 'rgba(139, 92, 246, 0.08)']}
-            style={styles.heroGradient}
-          >
-            <View style={styles.heroIcon}>
-              <Ionicons name="business" size={28} color={colors.background.primary} />
-            </View>
-            <Text style={styles.heroTitle}>Corporate CSR Meets Social Impact</Text>
-            <Text style={styles.heroDesc}>
-              Companies sponsor events as CSR activities. You participate, make an impact, and earn both{' '}
-              <Text style={styles.heroHighlight}>{BRAND.COIN_NAME}</Text> +{' '}
-              <Text style={styles.heroHighlightPurple}>Brand Coins</Text>
-            </Text>
-
-            {/* CSR Benefits */}
-            <View style={styles.csrBenefits}>
-              <View style={styles.csrBenefitItem}>
-                <Text style={styles.csrEmoji}>🏢</Text>
-                <Text style={styles.csrBenefitText}>Corporate CSR</Text>
-              </View>
-              <View style={styles.csrBenefitItem}>
-                <Text style={styles.csrEmoji}>🤝</Text>
-                <Text style={styles.csrBenefitText}>Social Good</Text>
-              </View>
-              <View style={styles.csrBenefitItem}>
-                <Text style={styles.csrEmoji}>💰</Text>
-                <Text style={styles.csrBenefitText}>Dual Rewards</Text>
-              </View>
-            </View>
-          </LinearGradient>
-        </View>
-
-        {/* My Impact Stats */}
-        <View style={styles.statsSection}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="trophy" size={18} color={Colors.warning} />
-            <Text style={styles.sectionTitle}>Your Impact</Text>
-          </View>
-          <View style={styles.statsGrid}>
-            <View style={[styles.statCard, { backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
-              <View style={styles.statHeader}>
-                <Ionicons name="heart" size={16} color={Colors.error} />
-                <Text style={styles.statLabel}>Lives Impacted</Text>
-              </View>
-              <Text style={styles.statValue}>{stats.livesImpacted.toLocaleString()}</Text>
-            </View>
-            <View style={[styles.statCard, { backgroundColor: 'rgba(255, 205, 87, 0.08)', borderColor: 'rgba(255, 205, 87, 0.2)' }]}>
-              <View style={styles.statHeader}>
-                <Ionicons name="leaf" size={16} color={Colors.gold} />
-                <Text style={styles.statLabel}>Trees Planted</Text>
-              </View>
-              <Text style={styles.statValue}>{stats.treesPlanted}</Text>
-            </View>
-            <View style={[styles.statCard, { backgroundColor: 'rgba(255, 205, 87, 0.08)', borderColor: 'rgba(255, 205, 87, 0.2)' }]}>
-              <View style={styles.statHeader}>
-                <Ionicons name="wallet" size={16} color={Colors.gold} />
-                <Text style={styles.statLabel}>{BRAND.COIN_NAME}</Text>
-              </View>
-              <Text style={styles.statValue}>{stats.totalRezCoinsEarned.toLocaleString()}</Text>
-            </View>
-            <View style={[styles.statCard, { backgroundColor: 'rgba(139, 92, 246, 0.08)', borderColor: 'rgba(139, 92, 246, 0.2)' }]}>
-              <View style={styles.statHeader}>
-                <Ionicons name="sparkles" size={16} color={Colors.brand.purple} />
-                <Text style={styles.statLabel}>Branded Coins</Text>
-              </View>
-              <Text style={styles.statValue}>{stats.totalBrandCoinsEarned.toLocaleString()}</Text>
-            </View>
-          </View>
-
-          {/* My Participations Link */}
+        {/* Header */}
+        <View style={styles.header}>
           <Pressable
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingVertical: 10,
-              marginTop: Spacing.xs,
-              backgroundColor: 'rgba(255, 205, 87, 0.1)',
-              borderRadius: BorderRadius.md,
-              borderWidth: 1,
-              borderColor: 'rgba(255, 205, 87, 0.3)',
-            }}
-            onPress={() => router.push('/social-impact/my-events')}
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
-            <Ionicons name="list" size={16} color={'#e6b84e'} />
-            <Text style={{ marginLeft: 6, fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: '#e6b84e' }}>
-              View My Participations
-            </Text>
-            <Ionicons name="chevron-forward" size={14} color={'#e6b84e'} style={{ marginLeft: Spacing.xs }} />
+            <Ionicons name="arrow-back" size={22} color={colors.deepNavy} />
           </Pressable>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerTitle}>Social Impact</Text>
+            <Text style={styles.headerSubtitle}>Earn while making a difference</Text>
+          </View>
         </View>
 
-        {/* Tabs */}
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabsContainer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[Colors.gold]}
+              tintColor={Colors.gold}
+            />
+          }
         >
-          {tabs.map((tab) => (
-            <Pressable
-              key={tab.id}
-              style={[styles.tabButton, activeTab === tab.id && styles.tabButtonActive]}
-              onPress={() => setActiveTab(tab.id)}
+          {/* Hero - CSR Focus */}
+          <View style={styles.heroSection}>
+            <LinearGradient
+              colors={['rgba(255, 205, 87, 0.08)', 'rgba(59, 130, 246, 0.08)', 'rgba(139, 92, 246, 0.08)']}
+              style={styles.heroGradient}
             >
-              <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>
-                {tab.label} ({getTabCount(tab.id)})
+              <View style={styles.heroIcon}>
+                <Ionicons name="business" size={28} color={colors.background.primary} />
+              </View>
+              <Text style={styles.heroTitle}>Corporate CSR Meets Social Impact</Text>
+              <Text style={styles.heroDesc}>
+                Companies sponsor events as CSR activities. You participate, make an impact, and earn both{' '}
+                <Text style={styles.heroHighlight}>{BRAND.COIN_NAME}</Text> +{' '}
+                <Text style={styles.heroHighlightPurple}>Brand Coins</Text>
               </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
 
-        {/* Activities List */}
-        <View style={styles.activitiesContainer}>
-          {filteredActivities.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Ionicons name="calendar-outline" size={48} color={colors.text.tertiary} />
-              <Text style={styles.emptyStateTitle}>No events found</Text>
-              <Text style={styles.emptyStateText}>
-                {activeTab === 'all'
-                  ? 'Check back later for new social impact events'
-                  : `No ${activeTab} events at the moment`}
-              </Text>
-            </View>
-          ) : (
-            filteredActivities.map((event) => (
-              <View key={event._id} style={styles.activityCard}>
-                {/* Event Image Banner */}
-                {event.image && (
-                  <View style={styles.eventImageContainer}>
-                    <CachedImage
-                      source={event.image}
-                      style={styles.eventImage}
-                      contentFit="cover"
-                    />
-                    {event.eventStatus === 'ongoing' && (
-                      <View style={styles.liveIndicator}>
-                        <View style={styles.liveDot} />
-                        <Text style={styles.liveText}>LIVE</Text>
-                      </View>
-                    )}
-                  </View>
-                )}
-
-                {/* Header */}
-                <View style={styles.activityHeader}>
-                  <View style={[styles.activityIcon, { backgroundColor: getEventTypeIconBg(event.eventType) }]}>
-                    <Text style={styles.activityEmoji}>{getEventTypeEmoji(event.eventType)}</Text>
-                  </View>
-                  <View style={styles.activityHeaderContent}>
-                    <View style={styles.activityTitleRow}>
-                      <Text style={styles.activityTitle}>{event.name}</Text>
-                      {event.eventStatus === 'completed' && (
-                        <Ionicons name="checkmark-circle" size={16} color={Colors.gold} />
-                      )}
-                      {event.isEnrolled && (
-                        <View style={styles.enrolledBadge}>
-                          <Text style={styles.enrolledBadgeText}>Enrolled</Text>
-                        </View>
-                      )}
-                      {event.isCsrActivity && (
-                        <View style={styles.csrBadge}>
-                          <Text style={styles.csrBadgeText}>CSR</Text>
-                        </View>
-                      )}
-                    </View>
-                    <View style={styles.organizerRow}>
-                      {event.organizer?.logo && event.organizer.logo.startsWith('http') ? (
-                        <CachedImage
-                          source={event.organizer.logo}
-                          style={styles.organizerLogo}
-                          contentFit="contain"
-                        />
-                      ) : (
-                        <Text style={styles.organizerEmoji}>🏢</Text>
-                      )}
-                      <Text style={styles.organizerText}>{event.organizer?.name || 'Unknown Organizer'}</Text>
-                    </View>
-                    {event.sponsor && (
-                      <View style={styles.sponsorRow}>
-                        <Ionicons name="business" size={12} color={Colors.brand.purple} />
-                        <Text style={styles.sponsorText}>Sponsored by {event.sponsor.name}</Text>
-                      </View>
-                    )}
-                  </View>
+              {/* CSR Benefits */}
+              <View style={styles.csrBenefits}>
+                <View style={styles.csrBenefitItem}>
+                  <Text style={styles.csrEmoji}>🏢</Text>
+                  <Text style={styles.csrBenefitText}>Corporate CSR</Text>
                 </View>
+                <View style={styles.csrBenefitItem}>
+                  <Text style={styles.csrEmoji}>🤝</Text>
+                  <Text style={styles.csrBenefitText}>Social Good</Text>
+                </View>
+                <View style={styles.csrBenefitItem}>
+                  <Text style={styles.csrEmoji}>💰</Text>
+                  <Text style={styles.csrBenefitText}>Dual Rewards</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
 
-                {/* Details */}
-                <View style={styles.detailsGrid}>
-                  <View style={styles.detailRow}>
-                    <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
+          {/* My Impact Stats */}
+          <View style={styles.statsSection}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="trophy" size={18} color={Colors.warning} />
+              <Text style={styles.sectionTitle}>Your Impact</Text>
+            </View>
+            <View style={styles.statsGrid}>
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' },
+                ]}
+              >
+                <View style={styles.statHeader}>
+                  <Ionicons name="heart" size={16} color={Colors.error} />
+                  <Text style={styles.statLabel}>Lives Impacted</Text>
+                </View>
+                <Text style={styles.statValue}>{stats.livesImpacted.toLocaleString()}</Text>
+              </View>
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: 'rgba(255, 205, 87, 0.08)', borderColor: 'rgba(255, 205, 87, 0.2)' },
+                ]}
+              >
+                <View style={styles.statHeader}>
+                  <Ionicons name="leaf" size={16} color={Colors.gold} />
+                  <Text style={styles.statLabel}>Trees Planted</Text>
+                </View>
+                <Text style={styles.statValue}>{stats.treesPlanted}</Text>
+              </View>
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: 'rgba(255, 205, 87, 0.08)', borderColor: 'rgba(255, 205, 87, 0.2)' },
+                ]}
+              >
+                <View style={styles.statHeader}>
+                  <Ionicons name="wallet" size={16} color={Colors.gold} />
+                  <Text style={styles.statLabel}>{BRAND.COIN_NAME}</Text>
+                </View>
+                <Text style={styles.statValue}>{stats.totalRezCoinsEarned.toLocaleString()}</Text>
+              </View>
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: 'rgba(139, 92, 246, 0.08)', borderColor: 'rgba(139, 92, 246, 0.2)' },
+                ]}
+              >
+                <View style={styles.statHeader}>
+                  <Ionicons name="sparkles" size={16} color={Colors.brand.purple} />
+                  <Text style={styles.statLabel}>Branded Coins</Text>
+                </View>
+                <Text style={styles.statValue}>{stats.totalBrandCoinsEarned.toLocaleString()}</Text>
+              </View>
+            </View>
+
+            {/* My Participations Link */}
+            <Pressable
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 10,
+                marginTop: Spacing.xs,
+                backgroundColor: 'rgba(255, 205, 87, 0.1)',
+                borderRadius: BorderRadius.md,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 205, 87, 0.3)',
+              }}
+              onPress={() => router.push('/social-impact/my-events')}
+            >
+              <Ionicons name="list" size={16} color={'#e6b84e'} />
+              <Text
+                style={{ marginLeft: 6, fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: '#e6b84e' }}
+              >
+                View My Participations
+              </Text>
+              <Ionicons name="chevron-forward" size={14} color={'#e6b84e'} style={{ marginLeft: Spacing.xs }} />
+            </Pressable>
+          </View>
+
+          {/* Tabs */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsContainer}>
+            {tabs.map((tab) => (
+              <Pressable
+                key={tab.id}
+                style={[styles.tabButton, activeTab === tab.id ? styles.tabButtonActive : null]}
+                onPress={() => setActiveTab(tab.id)}
+              >
+                <Text style={[styles.tabText, activeTab === tab.id ? styles.tabTextActive : null]}>
+                  {tab.label} ({getTabCount(tab.id)})
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          {/* Activities List */}
+          <View style={styles.activitiesContainer}>
+            {filteredActivities.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Ionicons name="calendar-outline" size={48} color={colors.text.tertiary} />
+                <Text style={styles.emptyStateTitle}>No events found</Text>
+                <Text style={styles.emptyStateText}>
+                  {activeTab === 'all'
+                    ? 'Check back later for new social impact events'
+                    : `No ${activeTab} events at the moment`}
+                </Text>
+              </View>
+            ) : (
+              filteredActivities.map((event) => (
+                <View key={event._id} style={styles.activityCard}>
+                  {/* Event Image Banner */}
+                  {event.image && (
+                    <View style={styles.eventImageContainer}>
+                      <CachedImage source={event.image} style={styles.eventImage} contentFit="cover" />
+                      {event.eventStatus === 'ongoing' && (
+                        <View style={styles.liveIndicator}>
+                          <View style={styles.liveDot} />
+                          <Text style={styles.liveText}>LIVE</Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+
+                  {/* Header */}
+                  <View style={styles.activityHeader}>
+                    <View style={[styles.activityIcon, { backgroundColor: getEventTypeIconBg(event.eventType) }]}>
+                      <Text style={styles.activityEmoji}>{getEventTypeEmoji(event.eventType)}</Text>
+                    </View>
+                    <View style={styles.activityHeaderContent}>
+                      <View style={styles.activityTitleRow}>
+                        <Text style={styles.activityTitle}>{event.name}</Text>
+                        {event.eventStatus === 'completed' && (
+                          <Ionicons name="checkmark-circle" size={16} color={Colors.gold} />
+                        )}
+                        {event.isEnrolled && (
+                          <View style={styles.enrolledBadge}>
+                            <Text style={styles.enrolledBadgeText}>Enrolled</Text>
+                          </View>
+                        )}
+                        {event.isCsrActivity && (
+                          <View style={styles.csrBadge}>
+                            <Text style={styles.csrBadgeText}>CSR</Text>
+                          </View>
+                        )}
+                      </View>
+                      <View style={styles.organizerRow}>
+                        {event.organizer?.logo && event.organizer.logo.startsWith('http') ? (
+                          <CachedImage
+                            source={event.organizer.logo}
+                            style={styles.organizerLogo}
+                            contentFit="contain"
+                          />
+                        ) : (
+                          <Text style={styles.organizerEmoji}>🏢</Text>
+                        )}
+                        <Text style={styles.organizerText}>{event.organizer?.name || 'Unknown Organizer'}</Text>
+                      </View>
+                      {event.sponsor && (
+                        <View style={styles.sponsorRow}>
+                          <Ionicons name="business" size={12} color={Colors.brand.purple} />
+                          <Text style={styles.sponsorText}>Sponsored by {event.sponsor.name}</Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Details */}
+                  <View style={styles.detailsGrid}>
+                    <View style={styles.detailRow}>
+                      <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
+                      <Text style={styles.detailText}>
+                        {event.eventDate
+                          ? new Date(event.eventDate).toLocaleDateString('en-IN', {
+                              weekday: 'short',
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                          : 'TBD'}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
+                      <Text style={styles.detailText}>{formatEventTime(event.eventTime)}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.locationRow}>
+                    <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
                     <Text style={styles.detailText}>
-                      {event.eventDate
-                        ? new Date(event.eventDate).toLocaleDateString('en-IN', {
-                            weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
-                          })
-                        : 'TBD'}
+                      {event.location?.address || 'Location TBD'}
+                      {event.location?.city ? ` • ${event.location.city}` : ''}
                     </Text>
                   </View>
-                  <View style={styles.detailRow}>
-                    <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-                    <Text style={styles.detailText}>{formatEventTime(event.eventTime)}</Text>
-                  </View>
-                </View>
-                <View style={styles.locationRow}>
-                  <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
-                  <Text style={styles.detailText}>
-                    {event.location?.address || 'Location TBD'}
-                    {event.location?.city ? ` • ${event.location.city}` : ''}
-                  </Text>
-                </View>
 
-                {/* Impact & Progress */}
-                {(event.impact || event.capacity) && (
-                  <View style={styles.impactSection}>
-                    {event.impact?.description && (
-                      <View style={styles.impactHeader}>
-                        <Ionicons name="trending-up" size={14} color={Colors.info} />
-                        <Text style={styles.impactText}>{event.impact.description}</Text>
-                      </View>
-                    )}
-                    {event.capacity && event.capacity.goal > 0 && (
-                      <View style={styles.progressContainer}>
-                        <View style={styles.progressBar}>
-                          <View
-                            style={[
-                              styles.progressFill,
-                              { width: `${Math.min((event.capacity.enrolled / event.capacity.goal) * 100, 100)}%` },
-                            ]}
-                          />
-                        </View>
-                        <Text style={styles.progressText}>
-                          {event.capacity.enrolled}/{event.capacity.goal}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                )}
-
-                {/* Rewards */}
-                {event.rewards && (event.rewards.rezCoins > 0 || event.rewards.brandCoins > 0) && (
-                  <View style={styles.rewardsSection}>
-                    <Text style={styles.rewardsTitle}>Participation Rewards</Text>
-                    <View style={styles.rewardsGrid}>
-                      {event.rewards.rezCoins > 0 && (
-                        <View style={styles.rewardCard}>
-                          <View style={styles.rewardHeader}>
-                            <Ionicons name="wallet" size={14} color={Colors.gold} />
-                            <Text style={styles.rewardLabel}>{BRAND.COIN_NAME}</Text>
-                          </View>
-                          <Text style={styles.rewardValue}>+{event.rewards.rezCoins}</Text>
+                  {/* Impact & Progress */}
+                  {(event.impact || event.capacity) && (
+                    <View style={styles.impactSection}>
+                      {event.impact?.description && (
+                        <View style={styles.impactHeader}>
+                          <Ionicons name="trending-up" size={14} color={Colors.info} />
+                          <Text style={styles.impactText}>{event.impact.description}</Text>
                         </View>
                       )}
-                      {event.rewards.brandCoins > 0 && event.sponsor && (
-                        <View style={[styles.rewardCard, styles.rewardCardPurple]}>
-                          <View style={styles.rewardHeader}>
-                            <Ionicons name="sparkles" size={14} color={Colors.brand.purple} />
-                            <Text style={styles.rewardLabel}>Brand Coins</Text>
+                      {event.capacity && event.capacity.goal > 0 && (
+                        <View style={styles.progressContainer}>
+                          <View style={styles.progressBar}>
+                            <View
+                              style={[
+                                styles.progressFill,
+                                { width: `${Math.min((event.capacity.enrolled / event.capacity.goal) * 100, 100)}%` },
+                              ]}
+                            />
                           </View>
-                          <Text style={[styles.rewardValue, { color: Colors.brand.purple }]}>
-                            +{event.rewards.brandCoins}
+                          <Text style={styles.progressText}>
+                            {event.capacity.enrolled}/{event.capacity.goal}
                           </Text>
-                          <Text style={styles.brandName}>{event.sponsor.brandCoinName}</Text>
                         </View>
                       )}
                     </View>
-                  </View>
-                )}
+                  )}
 
-                {/* CTA */}
-                {event.eventStatus === 'completed' ? (
-                  <View style={styles.completedButton}>
-                    <Ionicons name="checkmark" size={16} color={colors.text.tertiary} />
-                    <Text style={styles.completedButtonText}>Completed</Text>
-                  </View>
-                ) : event.isEnrolled ? (
-                  <Pressable
-                    style={styles.viewDetailsButton}
-                    onPress={() => router.push(`/social-impact/${event._id}` as any)}
-                  >
-                    <Text style={styles.viewDetailsButtonText}>View Details</Text>
-                    <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
-                  </Pressable>
-                ) : (
-                  <Pressable
-                    style={styles.registerButton}
-                    onPress={() => router.push(`/social-impact/${event._id}` as any)}
-                  >
-                    <LinearGradient
-                      colors={[Colors.gold, '#e6b84e']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.registerButtonGradient}
+                  {/* Rewards */}
+                  {event.rewards && (event.rewards.rezCoins > 0 || event.rewards.brandCoins > 0) && (
+                    <View style={styles.rewardsSection}>
+                      <Text style={styles.rewardsTitle}>Participation Rewards</Text>
+                      <View style={styles.rewardsGrid}>
+                        {event.rewards.rezCoins > 0 && (
+                          <View style={styles.rewardCard}>
+                            <View style={styles.rewardHeader}>
+                              <Ionicons name="wallet" size={14} color={Colors.gold} />
+                              <Text style={styles.rewardLabel}>{BRAND.COIN_NAME}</Text>
+                            </View>
+                            <Text style={styles.rewardValue}>+{event.rewards.rezCoins}</Text>
+                          </View>
+                        )}
+                        {event.rewards.brandCoins > 0 && event.sponsor && (
+                          <View style={[styles.rewardCard, styles.rewardCardPurple]}>
+                            <View style={styles.rewardHeader}>
+                              <Ionicons name="sparkles" size={14} color={Colors.brand.purple} />
+                              <Text style={styles.rewardLabel}>Brand Coins</Text>
+                            </View>
+                            <Text style={[styles.rewardValue, { color: Colors.brand.purple }]}>
+                              +{event.rewards.brandCoins}
+                            </Text>
+                            <Text style={styles.brandName}>{event.sponsor.brandCoinName}</Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  )}
+
+                  {/* CTA */}
+                  {event.eventStatus === 'completed' ? (
+                    <View style={styles.completedButton}>
+                      <Ionicons name="checkmark" size={16} color={colors.text.tertiary} />
+                      <Text style={styles.completedButtonText}>Completed</Text>
+                    </View>
+                  ) : event.isEnrolled ? (
+                    <Pressable
+                      style={styles.viewDetailsButton}
+                      onPress={() => router.push(`/social-impact/${event._id}` as any)}
                     >
-                      <Text style={styles.registerButtonText}>Register Now</Text>
-                    </LinearGradient>
-                  </Pressable>
-                )}
-              </View>
-            ))
-          )}
-        </View>
+                      <Text style={styles.viewDetailsButtonText}>View Details</Text>
+                      <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
+                    </Pressable>
+                  ) : (
+                    <Pressable
+                      style={styles.registerButton}
+                      onPress={() => router.push(`/social-impact/${event._id}` as any)}
+                    >
+                      <LinearGradient
+                        colors={[Colors.gold, '#e6b84e']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.registerButtonGradient}
+                      >
+                        <Text style={styles.registerButtonText}>Register Now</Text>
+                      </LinearGradient>
+                    </Pressable>
+                  )}
+                </View>
+              ))
+            )}
+          </View>
 
-        {/* Bottom CTA */}
-        <View style={styles.bottomCTA}>
-          <LinearGradient
-            colors={['rgba(255, 205, 87, 0.08)', 'rgba(59, 130, 246, 0.08)']}
-            style={styles.bottomCTAGradient}
-          >
-            <Text style={styles.bottomCTATitle}>Every Action Counts</Text>
-            <Text style={styles.bottomCTADesc}>
-              Join thousands making an impact while earning dual rewards
-            </Text>
-            <View style={styles.bottomCTAStats}>
-              <View style={styles.bottomCTAStat}>
-                <Ionicons name="people" size={14} color={colors.text.tertiary} />
-                <Text style={styles.bottomCTAStatText}>
-                  {stats.totalEventsCompleted > 0 ? `${stats.totalEventsCompleted} completed` : 'Join now'}
-                </Text>
+          {/* Bottom CTA */}
+          <View style={styles.bottomCTA}>
+            <LinearGradient
+              colors={['rgba(255, 205, 87, 0.08)', 'rgba(59, 130, 246, 0.08)']}
+              style={styles.bottomCTAGradient}
+            >
+              <Text style={styles.bottomCTATitle}>Every Action Counts</Text>
+              <Text style={styles.bottomCTADesc}>Join thousands making an impact while earning dual rewards</Text>
+              <View style={styles.bottomCTAStats}>
+                <View style={styles.bottomCTAStat}>
+                  <Ionicons name="people" size={14} color={colors.text.tertiary} />
+                  <Text style={styles.bottomCTAStatText}>
+                    {stats.totalEventsCompleted > 0 ? `${stats.totalEventsCompleted} completed` : 'Join now'}
+                  </Text>
+                </View>
+                <View style={styles.bottomCTAStat}>
+                  <Ionicons name="heart" size={14} color={colors.text.tertiary} />
+                  <Text style={styles.bottomCTAStatText}>{events.length} events</Text>
+                </View>
+                <View style={styles.bottomCTAStat}>
+                  <Ionicons name="business" size={14} color={colors.text.tertiary} />
+                  <Text style={styles.bottomCTAStatText}>
+                    {new Set(events.filter((e) => e.sponsor).map((e) => e.sponsor?._id)).size || 0} CSR Partners
+                  </Text>
+                </View>
               </View>
-              <View style={styles.bottomCTAStat}>
-                <Ionicons name="heart" size={14} color={colors.text.tertiary} />
-                <Text style={styles.bottomCTAStatText}>{events.length} events</Text>
-              </View>
-              <View style={styles.bottomCTAStat}>
-                <Ionicons name="business" size={14} color={colors.text.tertiary} />
-                <Text style={styles.bottomCTAStatText}>
-                  {new Set(events.filter(e => e.sponsor).map(e => e.sponsor?._id)).size || 0} CSR Partners
-                </Text>
-              </View>
-            </View>
-          </LinearGradient>
-        </View>
+            </LinearGradient>
+          </View>
 
-        <View style={{ height: 40 }} />
-      </ScrollView>
+          <View style={{ height: 40 }} />
+        </ScrollView>
       </SafeAreaView>
     </>
   );

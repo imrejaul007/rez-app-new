@@ -53,7 +53,7 @@ const MyLocksPage: React.FC = () => {
         if (!isMounted()) return;
         setLocks(Array.isArray(response.data) ? response.data : response.data.data || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -69,71 +69,70 @@ const MyLocksPage: React.FC = () => {
   }, [activeTab]);
 
   const handlePayBalance = useCallback(
-    async (lock: UserLockDeal) => {
+    (lock: UserLockDeal) => {
       const currSymbol = getCurrencySymbol(lock.dealSnapshot.currency);
-      const confirmed = await platformAlertConfirm(
+      platformAlertConfirm(
         'Pay Balance?',
         `Pay ${currSymbol}${lock.balanceAmount} to complete your lock on "${lock.dealSnapshot.title}"?`,
+        async () => {
+          try {
+            if (!isMounted()) return;
+            setPayingBalanceId(lock._id);
+            const response = await lockDealApi.initiateBalancePayment(lock._id);
+
+            if (!isMounted()) return;
+            if (response?.data) {
+              router.push({
+                pathname: '/payment-razorpay' as any,
+                params: {
+                  bookingType: 'lock_deal',
+                  razorpayOrderId: response.data.razorpayOrderId,
+                  razorpayKeyId: response.data.razorpayKeyId,
+                  amount: lock.balanceAmount.toString(),
+                  currency: lock.dealSnapshot.currency,
+                  bookingId: lock._id, // lockId passed as bookingId for success routing
+                  paymentType: 'balance',
+                },
+              });
+            }
+          } catch (error: any) {
+            platformAlertSimple('Error', error?.message || 'Failed to initiate balance payment. Please try again.');
+          } finally {
+            if (!isMounted()) return;
+            setPayingBalanceId(null);
+          }
+        },
       );
-      if (!confirmed) return;
-
-      try {
-        if (!isMounted()) return;
-        setPayingBalanceId(lock._id);
-        const response = await lockDealApi.initiateBalancePayment(lock._id);
-
-        if (!isMounted()) return;
-        if (response?.data) {
-          router.push({
-            pathname: '/payment-razorpay' as any,
-            params: {
-              bookingType: 'lock_deal',
-              razorpayOrderId: response.data.razorpayOrderId,
-              razorpayKeyId: response.data.razorpayKeyId,
-              amount: lock.balanceAmount.toString(),
-              currency: lock.dealSnapshot.currency,
-              bookingId: lock._id, // lockId passed as bookingId for success routing
-              paymentType: 'balance',
-            },
-          });
-        }
-      } catch (error: any) {
-        platformAlertSimple('Error', error?.message || 'Failed to initiate balance payment. Please try again.');
-      } finally {
-        if (!isMounted()) return;
-        setPayingBalanceId(null);
-      }
     },
     [router, isMounted],
   );
 
   const handleCancelLock = useCallback(
-    async (lock: UserLockDeal) => {
-      const confirmed = await platformAlertConfirm(
+    (lock: UserLockDeal) => {
+      platformAlertConfirm(
         'Cancel Lock?',
         `Are you sure you want to cancel your lock on "${lock.dealSnapshot.title}"?\n\nYour deposit of ${getCurrencySymbol(lock.dealSnapshot.currency)}${lock.depositAmount} will be refunded.`,
+        async () => {
+          try {
+            if (!isMounted()) return;
+            setCancellingId(lock._id);
+            const response = await lockDealApi.cancelLock(lock._id, 'User cancelled');
+
+            if (response?.data?.cancelled) {
+              platformAlertSimple(
+                'Lock Cancelled',
+                `Refund of ${getCurrencySymbol(lock.dealSnapshot.currency)}${response.data.refundAmount} will be processed.`,
+              );
+              fetchLocks();
+            }
+          } catch (error: any) {
+            platformAlertSimple('Error', error?.message || 'Failed to cancel lock');
+          } finally {
+            if (!isMounted()) return;
+            setCancellingId(null);
+          }
+        },
       );
-
-      if (!confirmed) return;
-
-      try {
-        if (!isMounted()) return;
-        setCancellingId(lock._id);
-        const response = await lockDealApi.cancelLock(lock._id, 'User cancelled');
-
-        if (response?.data?.cancelled) {
-          platformAlertSimple(
-            'Lock Cancelled',
-            `Refund of ${getCurrencySymbol(lock.dealSnapshot.currency)}${response.data.refundAmount} will be processed.`,
-          );
-          fetchLocks();
-        }
-      } catch (error: any) {
-        platformAlertSimple('Error', error?.message || 'Failed to cancel lock');
-      } finally {
-        if (!isMounted()) return;
-        setCancellingId(null);
-      }
     },
     [fetchLocks],
   );
@@ -357,10 +356,10 @@ const MyLocksPage: React.FC = () => {
         {TABS.map((tab) => (
           <Pressable
             key={tab.key}
-            style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+            style={[styles.tab, activeTab === tab.key ? styles.tabActive : null]}
             onPress={() => setActiveTab(tab.key)}
           >
-            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>{tab.label}</Text>
+            <Text style={[styles.tabText, activeTab === tab.key ? styles.tabTextActive : null]}>{tab.label}</Text>
           </Pressable>
         ))}
       </View>

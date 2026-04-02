@@ -69,7 +69,7 @@ const COLORS = {
 
 function VoucherBrandDetailPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<any>();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const refreshWallet = useRefreshWallet();
@@ -106,7 +106,7 @@ function VoucherBrandDetailPage() {
         if (!isMounted()) return;
         setError('Brand not found');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load brand details');
     } finally {
@@ -210,7 +210,7 @@ function VoucherBrandDetailPage() {
 
   const brandGradient = brand?.backgroundColor
     ? [brand.backgroundColor, adjustColor(brand.backgroundColor, -20)]
-    : [COLORS.navy, colors.brand.nileBlueLight];
+    : [(COLORS as any).navy, colors.brand.nileBlueLight];
 
   if (isLoading) {
     return <DetailPageSkeleton />;
@@ -242,7 +242,7 @@ function VoucherBrandDetailPage() {
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.headerBackButton}
         >
-          <Ionicons name="arrow-back" size={24} color={COLORS.navy} />
+          <Ionicons name="arrow-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
         <Text style={styles.headerTitle} numberOfLines={1}>
           {brand.name}
@@ -256,7 +256,12 @@ function VoucherBrandDetailPage() {
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[COLORS.peach]} />}
       >
         {/* Brand Hero */}
-        <LinearGradient colors={brandGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.heroSection}>
+        <LinearGradient
+          colors={brandGradient as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroSection}
+        >
           <View style={styles.heroDecoCircle1} />
           <View style={styles.heroDecoCircle2} />
 
@@ -321,14 +326,14 @@ function VoucherBrandDetailPage() {
               return (
                 <Pressable
                   key={denom}
-                  style={[styles.denomCard, isSelected && styles.denomCardSelected]}
+                  style={[styles.denomCard, isSelected ? styles.denomCardSelected : null]}
                   onPress={() => setSelectedDenomination(denom)}
                 >
-                  <Text style={[styles.denomAmount, isSelected && styles.denomAmountSelected]}>
+                  <Text style={[styles.denomAmount, isSelected ? styles.denomAmountSelected : null]}>
                     {currencySymbol}
                     {denom.toLocaleString()}
                   </Text>
-                  <Text style={[styles.denomCashback, isSelected && styles.denomCashbackSelected]}>
+                  <Text style={[styles.denomCashback, isSelected ? styles.denomCashbackSelected : null]}>
                     Earn {currencySymbol}
                     {Math.round(denom * (brand.cashbackRate / 100))}
                   </Text>
@@ -384,7 +389,7 @@ function VoucherBrandDetailPage() {
           <View style={styles.section}>
             <Pressable style={styles.termsHeader} onPress={() => setShowTerms(!showTerms)}>
               <Text style={styles.sectionTitle}>Terms & Conditions</Text>
-              <Ionicons name={showTerms ? 'chevron-up' : 'chevron-down'} size={20} color={COLORS.navy} />
+              <Ionicons name={showTerms ? 'chevron-up' : 'chevron-down'} size={20} color={(COLORS as any).navy} />
             </Pressable>
             {showTerms && (
               <View style={styles.termsContent}>
@@ -472,7 +477,7 @@ function VoucherBrandDetailPage() {
                     ? COLORS.green
                     : confirmModal.type === 'error'
                       ? Colors.error
-                      : COLORS.navy
+                      : (COLORS as any).navy
                 }
               />
             </View>
@@ -583,7 +588,7 @@ const styles = StyleSheet.create({
   },
   backLinkText: {
     ...Typography.body,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     fontWeight: '500',
     textDecorationLine: 'underline',
   },
@@ -611,7 +616,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
     marginHorizontal: Spacing.md,
   },
@@ -662,7 +667,7 @@ const styles = StyleSheet.create({
   logoInitial: {
     fontSize: 32,
     fontWeight: '800',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   heroName: {
     ...Typography.h2,
@@ -728,7 +733,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.md,
   },
   descriptionText: {
@@ -760,11 +765,11 @@ const styles = StyleSheet.create({
   denomAmount: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
   },
   denomAmountSelected: {
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   denomCashback: {
     ...Typography.overline,
@@ -793,7 +798,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   paymentMethodCardSelected: {
-    borderColor: COLORS.purple,
+    borderColor: (COLORS as any).purple,
     backgroundColor: '#FAF5FF',
   },
   paymentMethodWalletSelected: {
@@ -815,7 +820,7 @@ const styles = StyleSheet.create({
     color: COLORS.gray500,
   },
   paymentMethodLabelSelected: {
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   paymentMethodCheck: {
     marginLeft: 'auto',
@@ -840,7 +845,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   summaryDivider: {
     height: 1,
@@ -875,12 +880,12 @@ const styles = StyleSheet.create({
   effectiveCostLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
   effectiveCostValue: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
   },
 
   // Terms
@@ -994,7 +999,7 @@ const styles = StyleSheet.create({
   alertTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -1043,7 +1048,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 14,
-    backgroundColor: COLORS.navy,
+    backgroundColor: (COLORS as any).navy,
     alignItems: 'center',
   },
   alertButtonOkText: {

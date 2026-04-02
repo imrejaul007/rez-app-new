@@ -90,8 +90,8 @@ function ProductPageSkeleton({
           <ShimmerEffect width={200} height={20} style={styles.sectionTitleSkeleton} />
           <View style={styles.frequentlyBoughtContainer}>
             <ShimmerEffect width={100} height={100} style={styles.productImageSkeleton} />
-            <ShimmerEffect width={100} height={100} style={[styles.productImageSkeleton, styles.marginLeft]} />
-            <ShimmerEffect width={100} height={100} style={[styles.productImageSkeleton, styles.marginLeft]} />
+            <ShimmerEffect width={100} height={100} style={[styles.productImageSkeleton, styles.marginLeft] as any} />
+            <ShimmerEffect width={100} height={100} style={[styles.productImageSkeleton, styles.marginLeft] as any} />
           </View>
         </View>
 
@@ -162,7 +162,7 @@ function ProductPageSkeleton({
         <ShimmerEffect width={100} height={40} style={styles.quantitySkeleton} />
         <View style={styles.actionButtons}>
           <ShimmerEffect width={120} height={48} style={styles.addToCartButton} />
-          <ShimmerEffect width={120} height={48} style={[styles.buyNowButton, styles.marginLeft]} />
+          <ShimmerEffect width={120} height={48} style={[styles.buyNowButton, styles.marginLeft] as any} />
         </View>
       </View>
     </SafeAreaView>

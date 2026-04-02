@@ -103,13 +103,13 @@ class ReorderService {
       params.itemIds = itemIds;
     }
 
-    return apiClient.get(`/orders/${orderId}/reorder/validate`, params);
+    return apiClient.get<any>(`/orders/${orderId}/reorder/validate`, params);
   }
 
   // Re-order full order
   async reorderFullOrder(orderId: string): Promise<ApiResponse<ReorderResult>> {
 
-    return apiClient.post(`/orders/${orderId}/reorder`, {});
+    return apiClient.post<any>(`/orders/${orderId}/reorder`, {});
   }
 
   // Re-order selected items
@@ -118,7 +118,7 @@ class ReorderService {
     itemIds: string[]
   ): Promise<ApiResponse<ReorderResult>> {
 
-    return apiClient.post(`/orders/${orderId}/reorder/items`, { itemIds });
+    return apiClient.post<any>(`/orders/${orderId}/reorder/items`, { itemIds });
   }
 
   // Get frequently ordered items
@@ -126,13 +126,13 @@ class ReorderService {
     limit: number = 10
   ): Promise<ApiResponse<FrequentlyOrderedItem[]>> {
 
-    return apiClient.get('/orders/reorder/frequently-ordered', { limit });
+    return apiClient.get<any>('/orders/reorder/frequently-ordered', { limit });
   }
 
   // Get reorder suggestions
   async getReorderSuggestions(): Promise<ApiResponse<ReorderSuggestion[]>> {
 
-    return apiClient.get('/orders/reorder/suggestions');
+    return apiClient.get<any>('/orders/reorder/suggestions');
   }
 }
 

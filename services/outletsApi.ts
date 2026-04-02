@@ -88,7 +88,7 @@ class OutletsApi {
   }): Promise<ApiResponse<{ outlets: Outlet[]; total: number }>> {
     try {
       const response = await apiClient.get<any>('/outlets', params);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -100,7 +100,7 @@ class OutletsApi {
   async getOutletById(id: string): Promise<ApiResponse<Outlet>> {
     try {
       const response = await apiClient.get<Outlet>(`/outlets/${id}`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -132,7 +132,7 @@ class OutletsApi {
         };
       }
 
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -146,7 +146,7 @@ class OutletsApi {
       const response = await apiClient.get<{ storeId: string; outletCount: number }>(
         `/outlets/store/${storeId}/count`
       );
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -164,7 +164,7 @@ class OutletsApi {
   }): Promise<ApiResponse<NearbyOutletsResponse>> {
     try {
       const response = await apiClient.get<NearbyOutletsResponse>('/outlets/nearby', params);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -180,8 +180,8 @@ class OutletsApi {
     limit?: number;
   }): Promise<ApiResponse<{ outlets: Outlet[]; total: number }>> {
     try {
-      const response = await apiClient.post<any>('/outlets/search', data);
-      return response;
+      const response = await apiClient.post<any>('/outlets/search', data as any);
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -193,7 +193,7 @@ class OutletsApi {
   async getOutletOpeningHours(id: string): Promise<ApiResponse<OpeningHoursInfo>> {
     try {
       const response = await apiClient.get<OpeningHoursInfo>(`/outlets/${id}/opening-hours`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }
@@ -205,7 +205,7 @@ class OutletsApi {
   async getOutletOffers(id: string): Promise<ApiResponse<OutletOffersResponse>> {
     try {
       const response = await apiClient.get<OutletOffersResponse>(`/outlets/${id}/offers`);
-      return response;
+      return response as any;
     } catch (error) {
       throw error;
     }

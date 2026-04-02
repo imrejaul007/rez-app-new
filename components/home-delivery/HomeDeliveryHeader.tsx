@@ -123,7 +123,7 @@ function _HomeDeliveryHeaderInner({
             accessibilityHint={`Double tap to ${isSearchVisible ? 'hide' : 'show'} the search bar`}
             accessibilityState={{ expanded: isSearchVisible }}
           >
-            <View style={[styles.glassButton, isSearchVisible && styles.glassButtonActive]}>
+            <View style={[styles.glassButton, isSearchVisible ? styles.glassButtonActive : null]}>
               <Ionicons name="search" size={20} color="white" />
             </View>
           </Pressable>
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: COLORS.navy,
+    color: (COLORS as any).navy,
     fontWeight: '500',
     paddingVertical: 0,
   },

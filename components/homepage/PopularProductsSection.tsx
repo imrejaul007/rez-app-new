@@ -49,7 +49,7 @@ function PopularProductsSection({
       } else {
         setError('Failed to load popular products');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load popular products');
     } finally {

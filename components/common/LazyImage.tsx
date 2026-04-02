@@ -14,7 +14,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 // Types
 // ============================================================================
 
-export interface LazyImageProps extends Omit<ImageProps, 'source'> {
+export interface LazyImageProps extends Omit<ImageProps, 'source' | 'onLoadStart' | 'onLoad' | 'onError'> {
   source: string | { uri: string } | number;
   placeholder?: string; // Low-quality placeholder URI
   blurhash?: string; // Blurhash string
@@ -110,7 +110,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 
         if (!isMounted()) return;
         setImageUri(uri);
-      } catch (err) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError(true);
         setLoading(false);

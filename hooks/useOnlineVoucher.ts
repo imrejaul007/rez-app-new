@@ -86,7 +86,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
         logger.warn('⚠️ [ONLINE VOUCHER] Hero carousel API returned empty data');
         setHeroCarousel([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('❌ [ONLINE VOUCHER] Failed to load hero carousel:', error);
       // Production: Don't fall back to mock data - show empty state
       setHeroCarousel([]);
@@ -105,13 +105,13 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
 
       // Validate API responses
       if (!categoriesRes.success || !categoriesRes.data) {
-        logger.error('❌ [ONLINE VOUCHER] Failed to load categories:', categoriesRes);
+        logger.error('❌ [ONLINE VOUCHER] Failed to load categories:', undefined);
         setState(prev => ({ ...prev, loading: false, error: 'Failed to load categories' }));
         return;
       }
 
       if (!brandsRes.success || !brandsRes.data) {
-        logger.error('❌ [ONLINE VOUCHER] Failed to load brands:', brandsRes);
+        logger.error('❌ [ONLINE VOUCHER] Failed to load brands:', undefined);
         setState(prev => ({ ...prev, loading: false, error: 'Failed to load brands' }));
         return;
       }
@@ -193,7 +193,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
           allBrands: brands, // Store all brands for local filtering
           error: null
         }));
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to load voucher data:', error);
       setState(prev => ({
         ...prev,
@@ -287,7 +287,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
           error: null // Show empty state instead of error
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       // If request was aborted, don't show error
       if ((error as any).name === 'AbortError') {
         logger.log('Search request cancelled');
@@ -349,7 +349,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
       });
 
       if (!brandsRes.success || !brandsRes.data) {
-        logger.error('❌ [ONLINE VOUCHER] Failed to load category brands:', brandsRes);
+        logger.error('❌ [ONLINE VOUCHER] Failed to load category brands:', undefined);
         setState(prev => ({
           ...prev,
           brands: [],
@@ -381,7 +381,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
           loading: false,
           error: null
         }));
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to load category brands:', error);
       setState(prev => ({
         ...prev,
@@ -433,7 +433,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
       });
 
       if (!brandsRes.success || !brandsRes.data) {
-        logger.error('❌ [ONLINE VOUCHER] Failed to apply filters:', brandsRes);
+        logger.error('❌ [ONLINE VOUCHER] Failed to apply filters:', undefined);
         setState(prev => ({
           ...prev,
           loading: false,
@@ -476,7 +476,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
           loading: false,
           error: null
         }));
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to apply filters:', error);
       setState(prev => ({
         ...prev,
@@ -547,7 +547,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
           title: brand ? brand.name : `${BRAND.APP_NAME} Vouchers`
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Share error:', error);
     }
   }, []);

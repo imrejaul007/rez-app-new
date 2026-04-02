@@ -101,7 +101,7 @@ export default function useAccountData(
 
   // Fetch user stats (orders count, savings, member since) for overview tab
   useEffect(() => {
-    if (activeTab === 'overview') {
+    if ((activeTab as string) === 'overview') {
       apiClient.get('/user/stats').then((res: any) => {
         if (res.success && res.data) {
           setUserStats(res.data);

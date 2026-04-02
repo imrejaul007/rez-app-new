@@ -21,6 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+// @ts-ignore - react-native-view-shot types not available
 import ViewShot from 'react-native-view-shot';
 import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
@@ -107,7 +108,7 @@ function ReferralQRModal({
       });
 
       platformAlertSimple('Success', 'QR code saved successfully!');
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to download QR code. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -127,7 +128,7 @@ function ReferralQRModal({
       } else {
         platformAlertSimple('Error', 'WhatsApp is not installed on your device');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open WhatsApp');
     }
   };
@@ -143,7 +144,7 @@ function ReferralQRModal({
       } else {
         platformAlertSimple('Error', 'Telegram is not installed on your device');
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open Telegram');
     }
   };
@@ -155,7 +156,7 @@ function ReferralQRModal({
       const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
       await Linking.openURL(emailUrl);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open email client');
     }
   };
@@ -168,7 +169,7 @@ function ReferralQRModal({
         : `sms:?body=${encodeURIComponent(message)}`;
 
       await Linking.openURL(smsUrl);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open SMS');
     }
   };
@@ -183,7 +184,7 @@ function ReferralQRModal({
         handleDownloadQR,
         'Download QR'
       );
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -199,7 +200,7 @@ function ReferralQRModal({
         // Fallback to web URL
         await Linking.openURL(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open Facebook');
     }
   };
@@ -216,7 +217,7 @@ function ReferralQRModal({
         // Fallback to web URL
         await Linking.openURL(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(referralLink)}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to open Twitter');
     }
   };

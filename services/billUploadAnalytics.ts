@@ -174,7 +174,7 @@ class BillUploadAnalytics {
   private events: AnalyticsEvent[] = [];
   private sessionId: string = '';
   private userId: string = '';
-  private flushTimer: NodeJS.Timeout | null = null;
+  private flushTimer: ReturnType<typeof setTimeout> | null = null;
   private sessionStartTime: number = 0;
   private uploadStartTimes: Map<string, number> = new Map();
 
@@ -555,7 +555,7 @@ class BillUploadAnalytics {
           };
 
       if (typeof funnel[step] === 'number') {
-        funnel[step] = (funnel[step] as number) + 1;
+        (funnel as any)[step] = (funnel[step] as number) + 1;
       }
 
       await AsyncStorage.setItem(STORAGE_KEYS.FUNNEL, JSON.stringify(funnel));

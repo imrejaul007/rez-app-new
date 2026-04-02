@@ -445,7 +445,7 @@ const sortStyles = StyleSheet.create({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 function CategoryProductsPage() {
-  const params = useLocalSearchParams<{ slug: string }>();
+  const params = useLocalSearchParams<any>();
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -495,7 +495,7 @@ function CategoryProductsPage() {
         );
         if (!isMounted()) return;
 
-        const fetchedProducts: Product[] = response.data || [];
+        const fetchedProducts: Product[] = (response.data as any) || [];
         const pagination = response.meta?.pagination;
 
         if (!isMounted()) return;
@@ -680,9 +680,9 @@ function CategoryProductsPage() {
                   >
                     <Text style={headerStyles.vibeEmoji}>{vibe.icon}</Text>
                     <Text style={[headerStyles.vibeLabel, isActive && headerStyles.vibeLabelActive]}>{vibe.name}</Text>
-                    {'discount' in vibe && vibe.discount && (
+                    {'discount' in vibe && (vibe as any).discount && (
                       <View style={headerStyles.vibeDiscountBadge}>
-                        <Text style={headerStyles.vibeDiscountText}>{vibe.discount}%</Text>
+                        <Text style={headerStyles.vibeDiscountText}>{(vibe as any).discount}%</Text>
                       </View>
                     )}
                   </Pressable>

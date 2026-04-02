@@ -41,7 +41,7 @@ class OrderApiService {
       if (params.dateTo) queryParams.append('dateTo', params.dateTo);
 
       const url = `${this.baseUrl}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-      return await apiClient.get(url);
+      return await apiClient.get<any>(url);
     } catch (error) {
       return {
         success: false,
@@ -56,7 +56,7 @@ class OrderApiService {
    */
   async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.get(`${this.baseUrl}/${orderId}`);
+      return await apiClient.get<any>(`${this.baseUrl}/${orderId}`);
     } catch (error) {
       return {
         success: false,
@@ -71,7 +71,7 @@ class OrderApiService {
    */
   async createOrder(orderData: CreateOrderData): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.post(this.baseUrl, orderData);
+      return await apiClient.post<any>(this.baseUrl, orderData as any);
     } catch (error) {
       return {
         success: false,
@@ -86,7 +86,7 @@ class OrderApiService {
    */
   async cancelOrder(orderId: string, reason?: string): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.patch(`${this.baseUrl}/${orderId}/cancel`, { reason });
+      return await apiClient.patch<any>(`${this.baseUrl}/${orderId}/cancel`, { reason });
     } catch (error) {
       return {
         success: false,
@@ -101,7 +101,7 @@ class OrderApiService {
    */
   async requestReturn(orderId: string, reason: string, items: string[]): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.post(`${this.baseUrl}/${orderId}/refund-request`, {
+      return await apiClient.post<any>(`${this.baseUrl}/${orderId}/refund-request`, {
         reason,
         refundItems: items.map(itemId => ({ itemId, quantity: 1 })),
       });
@@ -127,7 +127,7 @@ class OrderApiService {
     }[];
   }>> {
     try {
-      return await apiClient.get(`${this.baseUrl}/${orderId}/tracking`);
+      return await apiClient.get<any>(`${this.baseUrl}/${orderId}/tracking`);
     } catch (error) {
       return {
         success: false,
@@ -142,7 +142,7 @@ class OrderApiService {
    */
   async getOrderSummary(): Promise<ApiResponse<OrderSummary>> {
     try {
-      return await apiClient.get(`${this.baseUrl}/stats`);
+      return await apiClient.get<any>(`${this.baseUrl}/stats`);
     } catch (error) {
       return {
         success: false,
@@ -157,7 +157,7 @@ class OrderApiService {
    */
   async getOrderAnalytics(): Promise<ApiResponse<OrderAnalytics>> {
     try {
-      return await apiClient.get(`${this.baseUrl}/analytics`);
+      return await apiClient.get<any>(`${this.baseUrl}/analytics`);
     } catch (error) {
       return {
         success: false,
@@ -172,7 +172,7 @@ class OrderApiService {
    */
   async rateOrder(orderId: string, rating: number, review?: string): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.post(`${this.baseUrl}/${orderId}/rate`, {
+      return await apiClient.post<any>(`${this.baseUrl}/${orderId}/rate`, {
         rating,
         review,
       });
@@ -190,7 +190,7 @@ class OrderApiService {
    */
   async getOrderByNumber(orderNumber: string): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.get(`${this.baseUrl}/${orderNumber}`);
+      return await apiClient.get<any>(`${this.baseUrl}/${orderNumber}`);
     } catch (error) {
       return {
         success: false,

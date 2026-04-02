@@ -88,7 +88,7 @@ function TransferPage() {
           avatar: r.avatar,
         })),
       );
-    } catch (error) {
+    } catch (error: any) {
       setRecipients([]);
     } finally {
       setRecipientsLoading(false);
@@ -519,7 +519,7 @@ function TransferPage() {
 
       {/* Send Button */}
       <Pressable
-        style={[styles.sendButton, !isAmountValid && styles.sendButtonDisabled]}
+        style={[styles.sendButton, !isAmountValid ? styles.sendButtonDisabled : null]}
         onPress={handleSend}
         disabled={!isAmountValid || loading}
       >

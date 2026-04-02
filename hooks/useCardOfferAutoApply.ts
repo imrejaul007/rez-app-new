@@ -36,7 +36,7 @@ export function useCardOfferAutoApply({
       setError(null);
 
       // Validate card for offers
-      const response = await discountsApi.validateCardForOffers({
+      const response: any = await discountsApi.validateCardForOffers({
         cardNumber: cardNum,
         storeId,
         orderValue,

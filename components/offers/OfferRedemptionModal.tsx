@@ -108,7 +108,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
       platformAlertSimple('Copied!', `Promo code "${codeToCopy}" copied to clipboard`);
 
       setTimeout(() => setCopySuccess(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy code to clipboard');
     }
   };
@@ -124,7 +124,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
       if (response.success && response.data) {
         const { voucher } = response.data;
         if (!isMounted()) return;
-        setRedemptionCode(voucher.voucherCode || offer.promoCode);
+        setRedemptionCode(voucher.voucherCode || offer.promoCode || null);
 
         platformAlertSimple(
           'Offer Redeemed!',
@@ -143,7 +143,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
           platformAlertSimple('Error', 'Failed to redeem offer. Please try again.');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // Fallback to showing existing promo code
       if (offer.promoCode) {
         if (!isMounted()) return;
@@ -362,7 +362,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
           <View style={styles.footer}>
             {!promoCode ? (
               <Pressable
-                style={[styles.redeemButton, redeeming && styles.buttonDisabled]}
+                style={[styles.redeemButton, redeeming ? styles.buttonDisabled : null]}
                 onPress={handleRedeem}
                 disabled={redeeming}
                

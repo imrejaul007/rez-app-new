@@ -111,7 +111,7 @@ export const RetryButton: React.FC<RetryButtonProps> = ({
     if (hapticFeedback) {
       try {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } catch (error) {
+      } catch (error: any) {
         // silently handle
       }
     }
@@ -121,7 +121,7 @@ export const RetryButton: React.FC<RetryButtonProps> = ({
 
     try {
       await onRetry();
-    } catch (error) {
+    } catch (error: any) {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -249,7 +249,7 @@ export const RetryButton: React.FC<RetryButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{[key: string]: any}>({
   button: {
     flexDirection: 'row',
     alignItems: 'center',

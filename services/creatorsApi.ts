@@ -436,7 +436,7 @@ class CreatorsApiService {
 
   async trackPickView(pickId: string): Promise<void> {
     try {
-      await apiClient.post(`/creators/picks/${pickId}/view`, {});
+      await apiClient.post<any>(`/creators/picks/${pickId}/view`, {});
     } catch (error) {
       // Silent fail for tracking
     }
@@ -444,7 +444,7 @@ class CreatorsApiService {
 
   async trackPickClick(pickId: string): Promise<void> {
     try {
-      await apiClient.post(`/creators/picks/${pickId}/click`, {});
+      await apiClient.post<any>(`/creators/picks/${pickId}/click`, {});
     } catch (error) {
       // Silent fail for tracking
     }
@@ -498,7 +498,7 @@ class CreatorsApiService {
     socialLinks?: { platform: string; url: string }[];
   }): Promise<ApiResponse<any>> {
     try {
-      const response = await apiClient.post<any>('/creators/apply', data);
+      const response = await apiClient.post<any>('/creators/apply', data as any);
       if (response.success) {
         return { success: true, data: response.data };
       }
@@ -533,7 +533,7 @@ class CreatorsApiService {
     socialLinks?: { platform: string; url: string }[];
   }): Promise<ApiResponse<any>> {
     try {
-      const response = await apiClient.put<any>('/creators/my-profile', data);
+      const response = await apiClient.put<any>('/creators/my-profile', data as any);
       if (response.success) {
         return { success: true, data: response.data };
       }
@@ -557,7 +557,7 @@ class CreatorsApiService {
     videoId?: string;
   }): Promise<ApiResponse<any>> {
     try {
-      const response = await apiClient.post<any>('/creators/my-picks', data);
+      const response = await apiClient.post<any>('/creators/my-picks', data as any);
       if (response.success) {
         return { success: true, data: response.data };
       }
@@ -603,7 +603,7 @@ class CreatorsApiService {
     videoUrl?: string;
   }): Promise<ApiResponse<any>> {
     try {
-      const response = await apiClient.patch<any>(`/creators/my-picks/${pickId}`, data);
+      const response = await apiClient.patch<any>(`/creators/my-picks/${pickId}`, data as any);
       if (response.success) {
         return { success: true, data: response.data };
       }

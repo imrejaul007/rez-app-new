@@ -155,7 +155,7 @@ function UPIVerificationModal({
               </View>
 
               <Pressable
-                style={[styles.verifyButton, isLoading && styles.verifyButtonDisabled]}
+                style={[styles.verifyButton, isLoading ? styles.verifyButtonDisabled : null]}
                 onPress={handleVerify}
                 disabled={isLoading}
               >

@@ -277,7 +277,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onPress, countLab
         {imageSource ? (
           <>
             <CachedImage
-              source={imageSource}
+              source={imageSource as any}
               style={styles.itemImage}
               contentFit="contain"
               cachePolicy="memory-disk"
