@@ -26,8 +26,10 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import usePostOrderRewards from '@/hooks/usePostOrderRewards';
 import RewardsBreakdownCard from '@/components/rewards/RewardsBreakdownCard';
 import ConfettiOverlay from '@/components/ui/ConfettiOverlay';
+import SavingsCelebration from '@/components/ui/SavingsCelebration';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useSavingsInsights } from '@/stores/selectors';
 
 function OrderConfirmationPage() {
   const isMounted = useIsMounted();
@@ -42,6 +44,7 @@ function OrderConfirmationPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [showConfetti, setShowConfetti] = useState(false);
+  const savingsInsights = useSavingsInsights();
 
   // Cross-platform modal state (replaces Alert.alert for web compatibility)
   const [modalVisible, setModalVisible] = useState(false);
@@ -248,6 +251,17 @@ function OrderConfirmationPage() {
           <ThemedText style={styles.successTitle}>Order Placed Successfully!</ThemedText>
           <ThemedText style={styles.successSubtitle}>Thank you for your purchase</ThemedText>
         </Animated.View>
+
+        {/* Savings Celebration — dopamine hit: "You saved ₹X on this order!" */}
+        {order?.totals?.cashback > 0 && (
+          <SavingsCelebration
+            savedAmount={order.totals.cashback + (order.totals.discount || 0)}
+            currencySymbol={currencySymbol}
+            totalSavedAllTime={savingsInsights?.totalSaved}
+            delay={800}
+            onViewWallet={() => router.push('/wallet-screen' as any)}
+          />
+        )}
 
         {/* Order Details Card */}
         <Animated.View style={[styles.card, contentAnimStyle]}>

@@ -59,6 +59,7 @@ import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
 import StickySearchHeader from '@/components/homepage/StickySearchHeader';
 import HeroBanner from '@/components/homepage/HeroBanner';
+import SavingsDashboard from '@/components/homepage/SavingsDashboard';
 import type { TabId } from '@/components/homepage/HomeTabSection';
 import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
@@ -989,9 +990,12 @@ function HomeScreen() {
               fills the full screen width edge-to-edge. */}
           {activeTab === 'near-u' && (
             <View style={viewStyles.heroBannerBreakout}>
-              <FeatureErrorBoundary featureName="Hero Banner" compact={true}>
-                <HeroBanner
-                  totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
+              <FeatureErrorBoundary featureName="Savings Dashboard" compact={true}>
+                <SavingsDashboard
+                  totalSaved={savingsInsights?.totalSaved ?? 0}
+                  thisMonth={savingsInsights?.thisMonth ?? 0}
+                  avgPerVisit={savingsInsights?.avgPerVisit ?? 0}
+                  currencySymbol={getCurrencySymbol()}
                   onScanPayPress={handleSearchPress}
                   onViewWalletPress={handleCoinPress}
                 />

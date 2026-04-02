@@ -17,7 +17,7 @@ import { useCartValidation } from '@/hooks/useCartValidation';
 import StockWarningBanner from '@/components/cart/StockWarningBanner';
 import CartValidation from '@/components/cart/CartValidation';
 import CardOffersSection from '@/components/cart/CardOffersSection';
-import { useGetCurrencySymbol, useAuthUser } from '@/stores';
+import { useGetCurrencySymbol, useAuthUser, useSavingsInsights } from '@/stores';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing } from '@/constants/DesignSystem';
 
@@ -36,6 +36,7 @@ import OrderConfirmationModal from '@/components/checkout/OrderConfirmationModal
 import ProcessingOverlay from '@/components/checkout/ProcessingOverlay';
 import AddressSelectionModal from '@/components/checkout/AddressSelectionModal';
 import PaymentFailureModal from '@/components/checkout/PaymentFailureModal';
+import CheckoutSavingsNudge from '@/components/checkout/CheckoutSavingsNudge';
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { isSmallDevice } from '@/utils/responsive';
@@ -141,6 +142,7 @@ function CheckoutPage() {
   const currencySymbol = getCurrencySymbol();
   const authUser = useAuthUser();
   const userLoyaltyTier = (authUser as any)?.loyaltyTier || null;
+  const savingsInsights = useSavingsInsights();
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Core checkout state & logic
@@ -335,6 +337,13 @@ function CheckoutPage() {
           </View>
 
           <ServicesSummary serviceItems={serviceItems} currencySymbol={currencySymbol} />
+
+          {/* Pre-payment savings nudge — "You're saving ₹87 on this order!" */}
+          <CheckoutSavingsNudge
+            totalSavings={(state.billSummary?.savings || 0) + (uiState.appliedRedemption?.benefit || 0)}
+            avgPerVisit={savingsInsights?.avgPerVisit}
+            currencySymbol={currencySymbol}
+          />
 
           <BillSummarySection
             billSummary={state.billSummary}
