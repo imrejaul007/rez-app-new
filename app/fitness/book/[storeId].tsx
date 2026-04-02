@@ -828,7 +828,7 @@ const FitnessBookingPage: React.FC = () => {
   }
 
   const displayName = store?.name || storeName || 'Fitness Center';
-  const displayCashback = parseInt(cashback || '0') || store?.offers?.cashback || 15;
+  const displayCashback = parseInt(cashback || '0') || store?.offers?.cashback || 0;
 
   return (
     <>

@@ -442,7 +442,7 @@ function SocialMediaPage() {
                             <Text style={styles.orderAmount}>
                               {currencySymbol}
                               {order.totals?.total || 0} • Earn {currencySymbol}
-                              {Math.round((order.totals?.total || 0) * 0.05)}
+                              {order.totals?.cashback || 0}
                             </Text>
                           </View>
                         </View>
