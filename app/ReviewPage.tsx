@@ -1,15 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  TextInput,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Platform, ActivityIndicator } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -34,56 +25,54 @@ function ReviewPage() {
   const currencySymbol = getCurrencySymbol();
 
   // Get product data from params
-  const productId = params.productId as string || '';
-  const productTitle = params.productTitle as string || 'Product';
+  const productId = (params.productId as string) || '';
+  const productTitle = (params.productTitle as string) || 'Product';
   const productImage = params.productImage as string;
-  const productPrice = params.productPrice as string || '0';
-  const cashbackPercentage = params.cashbackPercentage as string || '10';
-  const productCashbackAmount = params.cashbackAmount as string || '0';
-  const storeId = params.storeId as string || '';
-  const fromPrive = params.fromPrive as string || '';
-  const fromStore = params.fromStore as string || '';
-  const reviewBonusCoinsParam = params.reviewBonusCoins as string || '5';
+  const productPrice = (params.productPrice as string) || '0';
+  const cashbackPercentage = (params.cashbackPercentage as string) || '0';
+  const productCashbackAmount = (params.cashbackAmount as string) || '0';
+  const storeId = (params.storeId as string) || '';
+  const fromPrive = (params.fromPrive as string) || '';
+  const fromStore = (params.fromStore as string) || '';
+  const reviewBonusCoinsParam = (params.reviewBonusCoins as string) || '5';
 
   // Auto-detect store review: explicit flag OR storeId present without productId
   const isStoreReview = fromStore === 'true' || (!!storeId && !productId);
 
   // Store details — from params or fetched from API
-  const [storeName, setStoreName] = useState(params.storeName as string || '');
-  const [storeLogo, setStoreLogo] = useState(params.storeLogo as string || '');
+  const [storeName, setStoreName] = useState((params.storeName as string) || '');
+  const [storeLogo, setStoreLogo] = useState((params.storeLogo as string) || '');
   const [loadingStore, setLoadingStore] = useState(false);
 
   const mountedRef = useRef(true);
-  useEffect(() => { return () => { mountedRef.current = false; }; }, []);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Fetch store details if we have storeId but no store name
   useEffect(() => {
     if (isStoreReview && storeId && !storeName) {
       setLoadingStore(true);
-      storesApi.getStoreById(storeId).then((res) => {
-        if (mountedRef.current && res.success && res.data) {
-          const store = res.data as any;
-          setStoreName(store.name || 'Store');
-          setStoreLogo(store.logo || '');
-        }
-      }).catch(() => {}).finally(() => { if (mountedRef.current) setLoadingStore(false); });
+      storesApi
+        .getStoreById(storeId)
+        .then((res) => {
+          if (mountedRef.current && res.success && res.data) {
+            const store = res.data as any;
+            setStoreName(store.name || 'Store');
+            setStoreLogo(store.logo || '');
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (mountedRef.current) setLoadingStore(false);
+        });
     }
   }, [storeId, isStoreReview]);
-  const {
-    reviewText,
-    setReviewText,
-    rating,
-    setRating,
-    isSubmitting,
-    submitReview,
-  } = useReviewState();
+  const { reviewText, setReviewText, rating, setRating, isSubmitting, submitReview } = useReviewState();
 
-  const {
-    isVisible: isModalVisible,
-    cashbackAmount,
-    showModal,
-    hideModal,
-  } = useCashbackModal();
+  const { isVisible: isModalVisible, cashbackAmount, showModal, hideModal } = useCashbackModal();
 
   // State for recent cashback from real API
   const [recentCashback, setRecentCashback] = useState<CashbackEarning[]>([]);
@@ -95,7 +84,6 @@ function ReviewPage() {
   }, []);
 
   const fetchRecentCashback = async () => {
-
     setLoadingCashback(true);
 
     try {
@@ -112,7 +100,9 @@ function ReviewPage() {
           id: txn._id || txn.id,
           userId: txn.user?._id || txn.user?.id || txn.userId,
           userName: txn.user?.profile?.name || txn.metadata?.userName || 'User',
-          userAvatar: txn.user?.profile?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(txn.user?.profile?.name || 'User'),
+          userAvatar:
+            txn.user?.profile?.avatar ||
+            'https://ui-avatars.com/api/?name=' + encodeURIComponent(txn.user?.profile?.name || 'User'),
           amount: txn.amount || 0,
           productId: txn.metadata?.productId || '',
           reviewId: txn.metadata?.reviewId || '',
@@ -121,7 +111,6 @@ function ReviewPage() {
         }));
 
         if (mountedRef.current) setRecentCashback(cashbackData);
-
       } else {
         if (mountedRef.current) setRecentCashback([]);
       }
@@ -139,7 +128,10 @@ function ReviewPage() {
   const handleSubmitReview = async () => {
     const targetId = isStoreReview ? storeId : productId;
     if (!targetId) {
-      platformAlertSimple('Error', isStoreReview ? 'Store information not available' : 'Product information not available');
+      platformAlertSimple(
+        'Error',
+        isStoreReview ? 'Store information not available' : 'Product information not available',
+      );
       return;
     }
 
@@ -169,11 +161,7 @@ function ReviewPage() {
     return (
       <View style={styles.starContainer}>
         {[1, 2, 3, 4, 5].map((star) => (
-          <Pressable
-            key={star}
-            onPress={() => setRating(star)}
-            style={styles.starButton}
-          >
+          <Pressable key={star} onPress={() => setRating(star)} style={styles.starButton}>
             <Ionicons
               name={star <= rating ? 'star' : 'star-outline'}
               size={28}
@@ -188,9 +176,7 @@ function ReviewPage() {
   const renderRecentCashback = () => {
     return (
       <View style={styles.recentCashbackSection}>
-        <ThemedText style={styles.recentCashbackTitle}>
-          Recent cashback
-        </ThemedText>
+        <ThemedText style={styles.recentCashbackTitle}>Recent cashback</ThemedText>
         {loadingCashback ? (
           <View style={styles.cashbackLoading}>
             <ActivityIndicator size="small" color={Colors.brand.purpleLight} />
@@ -202,7 +188,10 @@ function ReviewPage() {
               <CachedImage source={item.userAvatar} style={styles.userAvatar} />
               <View>
                 <Text style={styles.userName}>{item.userName} earned</Text>
-                <Text style={styles.amountText}>{currencySymbol}{item.amount.toFixed(2)}</Text>
+                <Text style={styles.amountText}>
+                  {currencySymbol}
+                  {item.amount.toFixed(2)}
+                </Text>
               </View>
             </View>
           ))
@@ -219,8 +208,7 @@ function ReviewPage() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={handleBackPress} style={styles.backButton}>
@@ -241,25 +229,17 @@ function ReviewPage() {
                   <ActivityIndicator size="small" color={colors.brand.green} />
                 </View>
               ) : storeLogo ? (
-                <CachedImage
-                  source={storeLogo}
-                  style={styles.storeLogoImage}
-                  contentFit="cover"
-                />
+                <CachedImage source={storeLogo} style={styles.storeLogoImage} contentFit="cover" />
               ) : (
                 <View style={styles.storeIconContainer}>
                   <Ionicons name="storefront" size={48} color={colors.brand.green} />
                 </View>
               )}
-              <Text style={styles.productTitle}>{loadingStore ? 'Loading...' : (storeName || 'Store')}</Text>
+              <Text style={styles.productTitle}>{loadingStore ? 'Loading...' : storeName || 'Store'}</Text>
             </>
           ) : (
             <>
-              <CachedImage
-                source={productImage}
-                style={styles.productImage}
-                contentFit="cover"
-              />
+              <CachedImage source={productImage} style={styles.productImage} contentFit="cover" />
               <Text style={styles.productTitle}>{productTitle}</Text>
             </>
           )}
@@ -270,68 +250,62 @@ function ReviewPage() {
           <ThemedText style={styles.cashbackText}>
             {isStoreReview ? (
               <>
-                <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 18, height: 18 }} />{' '}
-                Earn <Text style={{ fontWeight: '700' }}>{reviewBonusCoinsParam} {BRAND.COIN_NAME}</Text> by
-                reviewing {storeName || 'this store'}!
+                <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 18, height: 18 }} /> Earn{' '}
+                <Text style={{ fontWeight: '700' }}>
+                  {reviewBonusCoinsParam} {BRAND.COIN_NAME}
+                </Text>{' '}
+                by reviewing {storeName || 'this store'}!
               </>
             ) : fromPrive === 'true' ? (
               <>
-                <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 18, height: 18 }} />{' '}
-                Earn <Text style={{ fontWeight: '700' }}>{productCashbackAmount} {BRAND.COIN_NAME}</Text> by
-                leaving a review!
+                <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 18, height: 18 }} /> Earn{' '}
+                <Text style={{ fontWeight: '700' }}>
+                  {productCashbackAmount} {BRAND.COIN_NAME}
+                </Text>{' '}
+                by leaving a review!
               </>
             ) : (
               <>
-                {'💰 '}Earn <Text style={{ fontWeight: '700' }}>{cashbackPercentage}% cashback</Text> by
-                leaving a review for this product!
+                {'💰 '}Earn <Text style={{ fontWeight: '700' }}>{cashbackPercentage}% cashback</Text> by leaving a
+                review for this product!
               </>
             )}
           </ThemedText>
 
           {/* Review Card */}
           <View style={styles.reviewCard}>
-            <ThemedText style={styles.reviewCardTitle}>
-              Share your thoughts
-            </ThemedText>
+            <ThemedText style={styles.reviewCardTitle}>Share your thoughts</ThemedText>
 
             {/* Star Rating */}
             {renderStarRating()}
 
             {/* Review Input */}
             <View style={styles.reviewInputContainer}>
-              <Ionicons
-                name="create-outline"
-                size={20}
-                color={colors.brand.purpleDeep}
-                style={styles.writeIcon}
+              <Ionicons name="create-outline" size={20} color={colors.brand.purpleDeep} style={styles.writeIcon} />
+              <TextInput
+                style={
+                  {
+                    flex: 1,
+                    ...Typography.body,
+                    color: colors.text.secondary,
+                    lineHeight: 20,
+                    outlineStyle: 'none', // Web only
+                  } as any
+                }
+                placeholder="Write your experience here..."
+                placeholderTextColor={colors.neutral[400]}
+                multiline
+                numberOfLines={3}
+                value={reviewText}
+                onChangeText={setReviewText}
+                textAlignVertical="top"
+                underlineColorAndroid="transparent"
               />
-            <TextInput
-  style={{
-    flex: 1,
-    ...Typography.body,
-    color: colors.text.secondary,
-    lineHeight: 20,
-    outlineStyle: 'none', // Web only
-  } as any}
-  placeholder="Write your experience here..."
-  placeholderTextColor={colors.neutral[400]}
-  multiline
-  numberOfLines={3}
-  value={reviewText}
-  onChangeText={setReviewText}
-  textAlignVertical="top"
-  underlineColorAndroid="transparent"
-/>
-
             </View>
 
             {/* Submit Button */}
             <Pressable
-              style={[
-                styles.submitButton,
-                (!reviewText.trim() || isSubmitting) &&
-                  styles.submitButtonDisabled,
-              ]}
+              style={[styles.submitButton, (!reviewText.trim() || isSubmitting) && styles.submitButtonDisabled]}
               onPress={handleSubmitReview}
               disabled={!reviewText.trim() || isSubmitting}
             >
@@ -346,7 +320,14 @@ function ReviewPage() {
               </Text>
             </Pressable>
             {(isStoreReview || fromPrive === 'true') && (
-              <Text style={{ ...Typography.bodySmall, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm }}>
+              <Text
+                style={{
+                  ...Typography.bodySmall,
+                  color: colors.text.tertiary,
+                  textAlign: 'center',
+                  marginTop: Spacing.sm,
+                }}
+              >
                 Coins awarded after merchant approval
               </Text>
             )}
@@ -358,13 +339,9 @@ function ReviewPage() {
       </ScrollView>
 
       {/* Cashback Celebration Modal */}
-      <CashbackModal
-        visible={isModalVisible}
-        onClose={handleModalClose}
-        cashbackAmount={cashbackAmount}
-      />
+      <CashbackModal visible={isModalVisible} onClose={handleModalClose} cashbackAmount={cashbackAmount} />
     </ThemedView>
-);
+  );
 }
 
 const styles = StyleSheet.create({

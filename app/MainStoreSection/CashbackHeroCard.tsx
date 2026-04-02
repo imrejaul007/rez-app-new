@@ -1,15 +1,12 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // CashbackHeroCard.tsx - Green gradient cashback display card
-import React from "react";
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Spacing,
-  BorderRadius,
-} from "@/constants/DesignSystem";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useGetCurrencySymbol } from '@/stores/selectors';
@@ -20,11 +17,7 @@ export interface CashbackHeroCardProps {
   savingsAmount?: number;
 }
 
-function CashbackHeroCard({
-  cashbackPercentage = 20,
-  coinsToEarn = 50,
-  savingsAmount,
-}: CashbackHeroCardProps) {
+function CashbackHeroCard({ cashbackPercentage = 0, coinsToEarn = 50, savingsAmount }: CashbackHeroCardProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   return (
@@ -41,14 +34,22 @@ function CashbackHeroCard({
             {savingsAmount != null && savingsAmount > 0 ? (
               <>
                 <ThemedText style={styles.label}>You save</ThemedText>
-                <ThemedText style={styles.savingsHero}>{currencySymbol}{savingsAmount.toLocaleString('en-IN')}</ThemedText>
+                <ThemedText style={styles.savingsHero}>
+                  {currencySymbol}
+                  {savingsAmount.toLocaleString('en-IN')}
+                </ThemedText>
                 <ThemedText style={styles.percentageSecondary}>{cashbackPercentage}% Cashback</ThemedText>
               </>
             ) : (
               <>
                 <ThemedText style={styles.label}>Save up to</ThemedText>
-                <ThemedText style={styles.savingsHero}>~{currencySymbol}{Math.round((cashbackPercentage / 100) * 1000).toLocaleString('en-IN')}</ThemedText>
-                <ThemedText style={styles.percentageSecondary}>on {currencySymbol}1,000 spend ({cashbackPercentage}% Cashback)</ThemedText>
+                <ThemedText style={styles.savingsHero}>
+                  ~{currencySymbol}
+                  {Math.round((cashbackPercentage / 100) * 1000).toLocaleString('en-IN')}
+                </ThemedText>
+                <ThemedText style={styles.percentageSecondary}>
+                  on {currencySymbol}1,000 spend ({cashbackPercentage}% Cashback)
+                </ThemedText>
               </>
             )}
             <View style={styles.coinsRow}>
@@ -57,11 +58,7 @@ function CashbackHeroCard({
               <View style={styles.divider} />
             </View>
             <View style={styles.coinsContainer}>
-              <CachedImage
-                source={BRAND.COIN_IMAGE}
-                style={styles.coinIcon}
-                contentFit="contain"
-              />
+              <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
               <ThemedText style={styles.coinsText}>
                 Get {coinsToEarn} {BRAND.COIN_NAME} today
               </ThemedText>
@@ -80,59 +77,59 @@ const styles = StyleSheet.create({
   },
   gradient: {
     borderRadius: BorderRadius.lg,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   content: {
     padding: Spacing.lg,
-    alignItems: "center",
+    alignItems: 'center',
   },
   textContent: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   label: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.9)",
-    fontWeight: "500",
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '500',
     marginBottom: 4,
   },
   savingsHero: {
     fontSize: 34,
-    fontWeight: "800",
+    fontWeight: '800',
     color: colors.background.primary,
     marginBottom: 2,
   },
   percentageSecondary: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.8)",
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.8)',
     marginBottom: 4,
   },
   percentage: {
     fontSize: 34,
-    fontWeight: "800",
+    fontWeight: '800',
     color: colors.background.primary,
     letterSpacing: -0.5,
   },
   coinsRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: Spacing.sm,
     gap: Spacing.sm,
   },
   divider: {
     width: 40,
     height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   plus: {
     fontSize: 18,
-    color: "rgba(255, 255, 255, 0.8)",
-    fontWeight: "600",
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: '600',
   },
   coinsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
@@ -144,7 +141,7 @@ const styles = StyleSheet.create({
   },
   coinsText: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.background.primary,
   },
 });

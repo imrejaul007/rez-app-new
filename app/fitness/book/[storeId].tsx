@@ -354,7 +354,7 @@ const FitnessBookingPage: React.FC = () => {
   const getDayPassPrice = () => 499 * dayPassCount; // 499 is a fallback default per pass
 
   const getCashbackAmount = () => {
-    const cashbackPercent = parseInt(cashback || '0') || store?.offers?.cashback || 15;
+    const cashbackPercent = parseInt(cashback || '0') || store?.offers?.cashback || 0;
     let totalPrice = 0;
 
     switch (activeTab) {

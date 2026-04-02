@@ -68,7 +68,7 @@ function PopularProductsSection({
 
   // Calculate cashback amount
   const calculateCashback = (product: HomepageProduct) => {
-    const cashbackPercentage = product.cashbackPercentage || 5;
+    const cashbackPercentage = product.cashbackPercentage || 0;
     const price = product.price || 0;
     const amount = Math.round((price * cashbackPercentage) / 100);
     return { percentage: cashbackPercentage, amount };
