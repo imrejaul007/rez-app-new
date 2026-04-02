@@ -54,7 +54,7 @@ interface TimeSlot {
   id: string;
   time: string;
   available: boolean;
-  tablesLeft?: number;
+  tablesLeft: number | null;
 }
 
 interface DateItem {
@@ -81,6 +81,8 @@ function TableBookingPage() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  // tablesLeft: real-time availability not yet exposed by API. Show neutral state.
+  const [availabilityBySlot, setAvailabilityBySlot] = useState<Record<string, number | null>>({});
   const [partySize, setPartySize] = useState(2);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -92,6 +94,28 @@ function TableBookingPage() {
   useEffect(() => {
     loadStoreDetails();
   }, [storeId]);
+
+  useEffect(() => {
+    if (!storeId) return;
+    const dateString = selectedDate.toISOString().split('T')[0];
+    tableBookingApi
+      .checkAvailability(storeId as string, dateString)
+      .then((res) => {
+        if (!isMounted()) return;
+        if (res.success && res.data) {
+          // API returns a map of timeSlot (HH:MM) -> tablesLeft count
+          const slots: Record<string, number> = res.data.slots ?? res.data ?? {};
+          setAvailabilityBySlot(slots);
+        } else {
+          setAvailabilityBySlot({});
+        }
+      })
+      .catch(() => {
+        if (!isMounted()) return;
+        // tablesLeft: real-time availability not yet exposed by API. Show neutral state.
+        setAvailabilityBySlot({});
+      });
+  }, [storeId, selectedDate]);
 
   const loadStoreDetails = async () => {
     try {
@@ -131,7 +155,8 @@ function TableBookingPage() {
     return dates;
   }, [store]);
 
-  // Generate time slots based on store working hours (90-minute slots)
+  // Generate time slots based on store working hours (90-minute slots).
+  // tablesLeft is populated from checkAvailability API when available; null when API has no data.
   const generateTimeSlots = (): TimeSlot[] => {
     const slots: TimeSlot[] = [];
     const slotDuration = store?.bookingConfig?.slotDuration || 90; // default 90 minutes
@@ -164,7 +189,7 @@ function TableBookingPage() {
           id: timeString,
           time: displayTime,
           available: !isPast,
-          tablesLeft: undefined, // TODO: fetch real table availability from API
+          tablesLeft: availabilityBySlot[timeString] ?? null,
         });
 
         // Add slot duration
@@ -190,7 +215,7 @@ function TableBookingPage() {
           id: timeString,
           time: displayTime,
           available: !isPast,
-          tablesLeft: undefined, // TODO: fetch real table availability from API
+          tablesLeft: availabilityBySlot[timeString] ?? null,
         });
       }
     }
@@ -198,7 +223,7 @@ function TableBookingPage() {
     return slots;
   };
 
-  const timeSlots = useMemo(() => generateTimeSlots(), [selectedDate, store]);
+  const timeSlots = useMemo(() => generateTimeSlots(), [selectedDate, store, availabilityBySlot]);
 
   // Guard: storeId must be present (placed after all hooks to comply with Rules of Hooks)
   if (!storeId) {

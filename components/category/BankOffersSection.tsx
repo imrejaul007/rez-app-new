@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import bankOffersApi, { BankOffer } from '@/services/bankOffersApi';
-import { bankOffersData } from '@/data/categoryDummyData';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -101,13 +100,14 @@ const BankOffersSection: React.FC<BankOffersSectionProps> = ({
           if (!isMounted()) return;
           setApiOffers(response.data?.offers ?? []);
         } else {
-          // Fallback to dummy data if API returns empty
-          setApiOffers(bankOffersData as any);
+          // No bank offers available from API — show nothing
+          if (!isMounted()) return;
+          setApiOffers([]);
         }
       } catch (err: any) {
-        // Fallback to dummy data on error
+        // API error — show empty state rather than fake data
         if (!isMounted()) return;
-        setApiOffers(bankOffersData as any);
+        setApiOffers([]);
       } finally {
         if (!isMounted()) return;
         setLoading(false);

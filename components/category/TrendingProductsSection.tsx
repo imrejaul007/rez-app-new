@@ -16,14 +16,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getProductsForCategory, DummyProduct } from '@/data/categoryDummyData';
+import { DummyProduct } from '@/data/categoryDummyData';
 import CoinIcon from '@/components/ui/CoinIcon';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 
 interface TrendingProductsSectionProps {
   categorySlug: string;
-  products?: DummyProduct[];
+  products: DummyProduct[] | undefined;
   onProductPress?: (product: DummyProduct) => void;
   title?: string;
 }
@@ -108,6 +108,19 @@ const ProductCard = memo(({
 
 ProductCard.displayName = 'ProductCard';
 
+const ProductCardSkeleton = memo(() => (
+  <View style={[styles.productCard, styles.skeletonCard]}>
+    <View style={[styles.imageContainer, styles.skeletonBlock]} />
+    <View style={styles.productInfo}>
+      <View style={[styles.skeletonLine, { width: 64, marginBottom: 4 }]} />
+      <View style={[styles.skeletonLine, { width: 120, marginBottom: 6 }]} />
+      <View style={[styles.skeletonLine, { width: 80, marginBottom: 6 }]} />
+      <View style={[styles.skeletonLine, { width: 96, height: 18 }]} />
+    </View>
+  </View>
+));
+ProductCardSkeleton.displayName = 'ProductCardSkeleton';
+
 const TrendingProductsSection: React.FC<TrendingProductsSectionProps> = ({
   categorySlug,
   products,
@@ -115,7 +128,6 @@ const TrendingProductsSection: React.FC<TrendingProductsSectionProps> = ({
   title = 'Trending Now',
 }) => {
   const router = useRouter();
-  const displayProducts = products || getProductsForCategory(categorySlug);
 
   const handlePress = useCallback((product: DummyProduct) => {
     if (onProductPress) {
@@ -125,7 +137,33 @@ const TrendingProductsSection: React.FC<TrendingProductsSectionProps> = ({
     }
   }, [router, onProductPress]);
 
-  if (!displayProducts || displayProducts.length === 0) {
+  // Show skeleton while loading (products === undefined)
+  if (products === undefined) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.titleRow}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+            <View style={styles.trendingBadge}>
+              <Text style={styles.trendingIcon}>🔥</Text>
+            </View>
+          </View>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          scrollEnabled={false}
+        >
+          <ProductCardSkeleton />
+          <ProductCardSkeleton />
+          <ProductCardSkeleton />
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (products.length === 0) {
     return null;
   }
 
@@ -153,7 +191,7 @@ const TrendingProductsSection: React.FC<TrendingProductsSectionProps> = ({
         contentContainerStyle={styles.scrollContent}
         decelerationRate="fast"
       >
-        {displayProducts.map((product) => (
+        {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
@@ -367,6 +405,19 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '600',
     color: colors.lightMustard,
+  },
+  skeletonCard: {
+    backgroundColor: colors.neutral[100],
+    borderColor: colors.neutral[200],
+  },
+  skeletonBlock: {
+    backgroundColor: colors.neutral[200],
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.neutral[200],
+    marginBottom: 4,
   },
 });
 

@@ -14,12 +14,12 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { getBrandsForCategory, Brand } from '@/data/categoryDummyData';
+import { Brand } from '@/data/categoryDummyData';
 import { colors } from '@/constants/theme';
 
 interface TopBrandsSectionProps {
   categorySlug: string;
-  brands?: Brand[];
+  brands: Brand[] | undefined;
   onBrandPress?: (brand: Brand) => void;
 }
 
@@ -72,13 +72,22 @@ const BrandCard = memo(({
 
 BrandCard.displayName = 'BrandCard';
 
+const BrandCardSkeleton = memo(() => (
+  <View style={[styles.brandCard, styles.skeletonCard]}>
+    <View style={[styles.logoContainer, styles.skeletonBlock]} />
+    <View style={[styles.skeletonLine, { width: 72, marginBottom: 6 }]} />
+    <View style={[styles.skeletonLine, { width: 88, height: 22, marginBottom: 6 }]} />
+    <View style={[styles.skeletonLine, { width: 56 }]} />
+  </View>
+));
+BrandCardSkeleton.displayName = 'BrandCardSkeleton';
+
 const TopBrandsSection: React.FC<TopBrandsSectionProps> = ({
   categorySlug,
   brands,
   onBrandPress,
 }) => {
   const router = useRouter();
-  const displayBrands = brands || getBrandsForCategory(categorySlug);
 
   const handlePress = useCallback((brand: Brand) => {
     if (onBrandPress) {
@@ -92,7 +101,28 @@ const TopBrandsSection: React.FC<TopBrandsSectionProps> = ({
     }
   }, [router, onBrandPress]);
 
-  if (!displayBrands || displayBrands.length === 0) {
+  // Show skeleton while loading (brands === undefined)
+  if (brands === undefined) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.sectionTitle}>Top Brands</Text>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          scrollEnabled={false}
+        >
+          <BrandCardSkeleton />
+          <BrandCardSkeleton />
+          <BrandCardSkeleton />
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (brands.length === 0) {
     return null;
   }
 
@@ -115,7 +145,7 @@ const TopBrandsSection: React.FC<TopBrandsSectionProps> = ({
         contentContainerStyle={styles.scrollContent}
         decelerationRate="fast"
       >
-        {displayBrands.map((brand) => (
+        {brands.map((brand) => (
           <BrandCard
             key={brand.id}
             brand={brand}
@@ -271,6 +301,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     color: colors.neutral[500],
+  },
+  skeletonCard: {
+    backgroundColor: colors.neutral[100],
+    borderColor: colors.neutral[200],
+  },
+  skeletonBlock: {
+    backgroundColor: colors.neutral[200],
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.neutral[200],
+    marginBottom: 4,
   },
 });
 

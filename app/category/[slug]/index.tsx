@@ -28,6 +28,9 @@ import TrendingProductsSection from '@/components/category/TrendingProductsSecti
 import LoyaltyHubSection from '../../../components/category/LoyaltyHubSection';
 import { categoriesApi } from '@/services/categoriesApi';
 import { CardGridSkeleton } from '@/components/skeletons';
+import brandApiService from '@/services/brandApi';
+import productsApi from '@/services/productsApi';
+import { Brand, DummyProduct } from '@/data/categoryDummyData';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -41,6 +44,8 @@ function CategoryPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [loyaltyStats, setLoyaltyStats] = useState({ ordersCount: 0, brandsCount: 0 });
+  const [topBrands, setTopBrands] = useState<Brand[] | undefined>(undefined);
+  const [trendingProducts, setTrendingProducts] = useState<DummyProduct[] | undefined>(undefined);
 
   // Load category data when component mounts or slug changes
   useEffect(() => {
@@ -68,6 +73,55 @@ function CategoryPage() {
       const statsRes = await categoriesApi.getCategoryLoyaltyStats(slug);
       if (statsRes.success && statsRes.data) {
         setLoyaltyStats(statsRes.data);
+      }
+
+      // Fetch top brands for this category from real API
+      try {
+        const apiBrands = await brandApiService.getBrandsByCategory(slug, 8);
+        if (!isMounted()) return;
+        const mappedBrands: Brand[] = apiBrands.map((b) => ({
+          id: b.id,
+          name: b.name,
+          logo: b.logo || '',
+          cashback: typeof b.cashback === 'object' ? b.cashback.percentage : 0,
+          tag: b.badges?.[0] ?? null,
+          rating: b.rating,
+        }));
+        setTopBrands(mappedBrands);
+      } catch {
+        if (!isMounted()) return;
+        setTopBrands([]);
+      }
+
+      // Fetch trending products for this category from real API
+      try {
+        const productsRes = await productsApi.getProductsByCategory(slug, { limit: 8, sortBy: 'trending' } as any);
+        if (!isMounted()) return;
+        const productList: any[] = productsRes?.data?.products ?? [];
+        const mappedProducts: DummyProduct[] = productList.map((p) => {
+          const variant = p.variants?.[0];
+          const price = variant?.price ?? p.price ?? 0;
+          const comparePrice = variant?.comparePrice ?? p.comparePrice ?? price;
+          return {
+            id: p.id || p._id || '',
+            name: p.name || '',
+            brand: p.store?.name || p.brand?.name || '',
+            price,
+            originalPrice: comparePrice,
+            image: p.images?.[0] || p.image || '',
+            rating: p.ratings?.average ?? p.rating ?? 0,
+            reviews: p.ratings?.count ?? p.reviews ?? 0,
+            cashbackPercent: p.cashback?.percentage ?? 0,
+            coinsEarned: p.coins?.earned ?? 0,
+            tag: p.tags?.[0] ?? null,
+            is60Min: p.is60Min ?? false,
+            hasPickup: p.hasPickup ?? false,
+          };
+        });
+        setTrendingProducts(mappedProducts);
+      } catch {
+        if (!isMounted()) return;
+        setTrendingProducts([]);
       }
     } catch (error: any) {
       platformAlertConfirm('Error', 'Failed to load category. Please try again.', loadCategoryData, 'Retry');
@@ -332,7 +386,9 @@ function CategoryPage() {
           {/* New Rich Sections */}
           <ShopByVibeSection categorySlug={slug || ''} />
 
-          <TopBrandsSection categorySlug={slug || ''} />
+          <TopBrandsSection categorySlug={slug || ''} brands={topBrands} />
+
+          <TrendingProductsSection categorySlug={slug || ''} products={trendingProducts} />
 
           <ShopByOccasionSection categorySlug={slug || ''} />
 

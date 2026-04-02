@@ -15,12 +15,12 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getNearbyStoresForCategory, NearbyStore, nearbyStoresData } from '@/data/categoryDummyData';
+import { NearbyStore } from '@/data/categoryDummyData';
 import { colors } from '@/constants/theme';
 
 interface NearbyStoresSectionProps {
   categorySlug: string;
-  stores?: NearbyStore[];
+  stores: NearbyStore[] | undefined;
   onStorePress?: (store: NearbyStore) => void;
 }
 
@@ -101,13 +101,28 @@ const StoreCard = memo(({
 
 StoreCard.displayName = 'StoreCard';
 
+const StoreCardSkeleton = memo(() => (
+  <View style={[styles.storeCard, styles.skeletonCard]}>
+    <View style={styles.storeHeader}>
+      <View style={[styles.logoContainer, styles.skeletonBlock]} />
+      <View style={styles.headerInfo}>
+        <View style={[styles.skeletonLine, { width: 100, marginBottom: 6 }]} />
+        <View style={[styles.skeletonLine, { width: 64 }]} />
+      </View>
+    </View>
+    <View style={[styles.skeletonLine, { width: 80, marginBottom: 10 }]} />
+    <View style={[styles.skeletonLine, { width: 120, height: 24, marginBottom: 10 }]} />
+    <View style={[styles.skeletonLine, { width: 96 }]} />
+  </View>
+));
+StoreCardSkeleton.displayName = 'StoreCardSkeleton';
+
 const NearbyStoresSection: React.FC<NearbyStoresSectionProps> = ({
   categorySlug,
   stores,
   onStorePress,
 }) => {
   const router = useRouter();
-  const displayStores = stores || getNearbyStoresForCategory(categorySlug);
 
   const handlePress = useCallback((store: NearbyStore) => {
     if (onStorePress) {
@@ -120,10 +135,31 @@ const NearbyStoresSection: React.FC<NearbyStoresSectionProps> = ({
     }
   }, [router, onStorePress]);
 
-  // Always show some stores - use all nearby stores if category-specific is empty
-  const storestoShow = displayStores.length > 0 ? displayStores : nearbyStoresData;
+  // Show skeleton while loading (stores === undefined)
+  if (stores === undefined) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.titleRow}>
+            <Ionicons name="location" size={20} color={colors.lightMustard} />
+            <Text style={styles.sectionTitle}>Nearby Stores</Text>
+          </View>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          scrollEnabled={false}
+        >
+          <StoreCardSkeleton />
+          <StoreCardSkeleton />
+          <StoreCardSkeleton />
+        </ScrollView>
+      </View>
+    );
+  }
 
-  if (storestoShow.length === 0) {
+  if (stores.length === 0) {
     return null;
   }
 
@@ -149,7 +185,7 @@ const NearbyStoresSection: React.FC<NearbyStoresSectionProps> = ({
         contentContainerStyle={styles.scrollContent}
         decelerationRate="fast"
       >
-        {storestoShow.map((store) => (
+        {stores.map((store) => (
           <StoreCard
             key={store.id}
             store={store}
@@ -335,6 +371,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.neutral[500],
     textTransform: 'capitalize',
+  },
+  skeletonCard: {
+    backgroundColor: colors.neutral[100],
+    borderColor: colors.neutral[200],
+  },
+  skeletonBlock: {
+    backgroundColor: colors.neutral[200],
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.neutral[200],
+    marginBottom: 4,
   },
 });
 
