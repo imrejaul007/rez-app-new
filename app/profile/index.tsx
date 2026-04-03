@@ -939,6 +939,57 @@ function ProfilePage() {
             </View>
           </Pressable>
 
+          {/* REZ Premium Card */}
+          <Pressable
+            style={styles.premiumCard}
+            onPress={() => router.push('/premium' as any)}
+            accessibilityLabel="REZ Premium"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view and manage your REZ Premium subscription"
+          >
+            <LinearGradient
+              colors={['#0A1628', '#1A2E4A']}
+              style={styles.premiumGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.premiumContent}>
+                <View style={styles.premiumLeft}>
+                  <View style={styles.premiumIconContainer}>
+                    <Ionicons name="star" size={24} color="#FFD700" />
+                  </View>
+                  <View style={styles.premiumText}>
+                    <ThemedText style={styles.premiumTitle}>REZ Premium</ThemedText>
+                    <ThemedText style={styles.premiumSubtitle}>2x coins, no ads &amp; more</ThemedText>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#FFD700" />
+              </View>
+            </LinearGradient>
+          </Pressable>
+
+          {/* Transaction History Card */}
+          <Pressable
+            style={styles.transactionHistoryCard}
+            onPress={() => router.push('/transaction-history' as any)}
+            accessibilityLabel="Transaction History"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view your full coin transaction history"
+          >
+            <View style={styles.transactionHistoryContent}>
+              <View style={styles.transactionHistoryLeft}>
+                <View style={styles.transactionHistoryIcon}>
+                  <Ionicons name="receipt-outline" size={22} color={PROFILE_COLORS.primary} />
+                </View>
+                <View style={styles.transactionHistoryText}>
+                  <ThemedText style={styles.transactionHistoryTitle}>Transaction History</ThemedText>
+                  <ThemedText style={styles.transactionHistorySub}>View all coin earn &amp; redeem activity</ThemedText>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.neutral[400]} />
+            </View>
+          </Pressable>
+
           {/* Partner Program Card */}
           <Pressable
             style={styles.partnerCard}
@@ -1785,6 +1836,99 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: PROFILE_COLORS.goldDark,
+  },
+
+  // ── REZ Premium Card ────────────────────────────────────────────────────────
+  premiumCard: {
+    marginTop: Spacing.md,
+    borderRadius: 18,
+    overflow: 'hidden',
+    shadowColor: '#0A1628',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  premiumGradient: {
+    padding: Spacing.md,
+  },
+  premiumContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  premiumLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  premiumIconContainer: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 215, 0, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.4)',
+  },
+  premiumText: {
+    flex: 1,
+  },
+  premiumTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFD700',
+    marginBottom: 3,
+  },
+  premiumSubtitle: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+  },
+
+  // ── Transaction History Card ─────────────────────────────────────────────────
+  transactionHistoryCard: {
+    marginTop: Spacing.md,
+    borderRadius: 14,
+    backgroundColor: colors.background.primary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    overflow: 'hidden',
+  },
+  transactionHistoryContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 14,
+  },
+  transactionHistoryLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  transactionHistoryIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: `${PROFILE_COLORS.primary}15`,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+  transactionHistoryText: {
+    flex: 1,
+  },
+  transactionHistoryTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: PROFILE_COLORS.primaryDark,
+  },
+  transactionHistorySub: {
+    fontSize: 12,
+    color: colors.text.tertiary,
+    marginTop: 2,
   },
 
   // ── Icon Grid ──────────────────────────────────────────────────────────────

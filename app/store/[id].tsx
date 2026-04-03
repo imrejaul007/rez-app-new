@@ -15,6 +15,8 @@ import {
   ActivityIndicator,
   RefreshControl,
   Linking,
+  Modal,
+  Image,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
@@ -89,6 +91,8 @@ interface Store {
     hours: Record<string, { open: string; close: string; closed?: boolean }>;
     paymentMethods: string[];
   };
+  photos?: string[];
+  openingHours?: Record<string, { open: string; close: string; closed?: boolean }>;
   tags: string[];
   serviceTypes?: string[];
   bookingType?: string;
@@ -113,6 +117,10 @@ const StoreDetailPage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [currentDayHours, setCurrentDayHours] = useState<{ open: string; close: string } | null>(null);
+
+  // Photo gallery state
+  const [photoModalVisible, setPhotoModalVisible] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
   // Active redemptions for this store
   const [activeRedemptions, setActiveRedemptions] = useState<DealRedemption[]>([]);
@@ -261,6 +269,16 @@ const StoreDetailPage: React.FC = () => {
         catchAndWarn(e, 'StoreDetail/openURL');
       }
     }
+  };
+
+  const handleWriteReview = () => {
+    if (!store) return;
+    router.push({ pathname: '/store-reviews', params: { storeId: store._id, storeName: store.name } } as any);
+  };
+
+  const handleOpenPhoto = (index: number) => {
+    setSelectedPhotoIndex(index);
+    setPhotoModalVisible(true);
   };
 
   const handleBookNow = () => {
@@ -517,6 +535,33 @@ const StoreDetailPage: React.FC = () => {
               )}
             </View>
           </View>
+
+          {/* Photo Gallery Strip */}
+          {store.photos && store.photos.length > 0 && (
+            <View style={styles.photoSection}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="images-outline" size={20} color={(COLORS as any).navy} />
+                <Text style={styles.sectionTitle}>Photos</Text>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.photoStrip}>
+                {store.photos.map((photo, index) => (
+                  <Pressable key={index} onPress={() => handleOpenPhoto(index)} style={styles.photoThumb}>
+                    <CachedImage source={photo} style={styles.photoThumbImage} />
+                    <View style={styles.photoOverlay}>
+                      <Ionicons name="expand-outline" size={18} color={COLORS.white} />
+                    </View>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Write Review Button */}
+          <Pressable style={styles.writeReviewButton} onPress={handleWriteReview}>
+            <Ionicons name="star-outline" size={18} color={COLORS.amber500} />
+            <Text style={styles.writeReviewText}>Write a Review</Text>
+            <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
+          </Pressable>
 
           {/* Quick Actions */}
           <View style={styles.actionsCard}>
@@ -783,6 +828,34 @@ const StoreDetailPage: React.FC = () => {
           </Pressable>
         </View>
       </View>
+
+      {/* Full-Screen Photo Modal */}
+      <Modal
+        visible={photoModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPhotoModalVisible(false)}
+      >
+        <View style={styles.photoModalContainer}>
+          <Pressable style={styles.photoModalClose} onPress={() => setPhotoModalVisible(false)}>
+            <Ionicons name="close" size={28} color={COLORS.white} />
+          </Pressable>
+          {store?.photos && store.photos[selectedPhotoIndex] ? (
+            <Image
+              source={{ uri: store.photos[selectedPhotoIndex] }}
+              style={styles.photoModalImage}
+              resizeMode="contain"
+            />
+          ) : null}
+          {store?.photos && store.photos.length > 1 && (
+            <View style={styles.photoModalDots}>
+              {store.photos.map((_, i) => (
+                <View key={i} style={[styles.photoDot, i === selectedPhotoIndex && styles.photoDotActive]} />
+              ))}
+            </View>
+          )}
+        </View>
+      </Modal>
     </Animated.View>
   );
 };
@@ -1427,6 +1500,98 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.green600,
+  },
+
+  // Photo Gallery
+  photoSection: {
+    backgroundColor: COLORS.white,
+    marginHorizontal: 16,
+    marginTop: 12,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  photoStrip: {
+    paddingVertical: 4,
+    gap: 10,
+  },
+  photoThumb: {
+    width: 120,
+    height: 90,
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  photoThumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  photoOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+
+  // Write Review Button
+  writeReviewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    marginHorizontal: 16,
+    marginTop: 12,
+    borderRadius: 16,
+    padding: 16,
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  writeReviewText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    color: (COLORS as any).navy,
+  },
+
+  // Full-screen photo modal
+  photoModalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  photoModalClose: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 56 : 24,
+    right: 20,
+    zIndex: 10,
+    padding: 8,
+  },
+  photoModalImage: {
+    width: SCREEN_WIDTH,
+    height: SCREEN_WIDTH * 0.75,
+  },
+  photoModalDots: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 20,
+  },
+  photoDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+  },
+  photoDotActive: {
+    backgroundColor: COLORS.white,
+    width: 20,
   },
 });
 

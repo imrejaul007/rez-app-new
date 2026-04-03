@@ -241,6 +241,20 @@ const FinancialPage: React.FC = () => {
           </View>
         </View>
 
+        {/* Transaction History Entry */}
+        <View style={[styles.section, { paddingBottom: 0 }]}>
+          <Pressable style={styles.transactionHistoryLink} onPress={() => router.push('/transaction-history' as any)}>
+            <View style={[styles.categoryIcon, { backgroundColor: `${Colors.info}20` }]}>
+              <Ionicons name="receipt-outline" size={24} color={Colors.info} />
+            </View>
+            <View style={{ flex: 1, marginLeft: Spacing.md }}>
+              <Text style={styles.categoryTitle}>Transaction History</Text>
+              <Text style={styles.categoryCount}>View all coin transactions</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+          </Pressable>
+        </View>
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Pay</Text>
@@ -415,6 +429,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.border.default,
+  },
+  transactionHistoryLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
   },
   serviceImage: {
     width: '100%',
