@@ -36,6 +36,7 @@ import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { platformAlertConfirm } from '@/utils/platformAlert';
 import NetInfo from '@react-native-community/netinfo';
@@ -76,6 +77,7 @@ function RootLayout() {
 
   const [fontTimedOut, setFontTimedOut] = useState(false);
   const [isConnected, setIsConnected] = useState<boolean | null>(true);
+  const onboardingCheckedRef = useRef(false);
 
   // Offline detection — subscribe to network state changes
   useEffect(() => {
@@ -90,7 +92,22 @@ function RootLayout() {
     // in utils/logger.ts so it runs before any module-level logs. The call here
     // is removed to avoid double-installation.
     checkAppStatus();
+    checkOnboarding();
   }, []);
+
+  const checkOnboarding = async () => {
+    // Only run this redirect once per app session to prevent double-redirect.
+    if (onboardingCheckedRef.current) return;
+    onboardingCheckedRef.current = true;
+    try {
+      const done = await AsyncStorage.getItem('rez_onboarding_done');
+      if (!done) {
+        router.replace('/onboarding');
+      }
+    } catch {
+      // If AsyncStorage fails, do not block the app — proceed normally.
+    }
+  };
 
   const checkAppStatus = async () => {
     const controller = new AbortController();

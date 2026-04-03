@@ -8,6 +8,10 @@ export default function OnboardingLayout() {
         animation: 'slide_from_right',
       }}
     >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="interests" />
+      <Stack.Screen name="location" />
+      <Stack.Screen name="first-scan" />
       <Stack.Screen name="splash" />
       <Stack.Screen name="registration" />
       <Stack.Screen name="otp-verification" />

@@ -21,6 +21,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useStreakShield } from '@/hooks/useStreakShield';
 
 function GamificationDashboard() {
   const coinBalance = useRezBalance();
@@ -34,6 +35,17 @@ function GamificationDashboard() {
   const [achievements, setAchievements] = useState<any[]>([]);
   const [streaks, setStreaks] = useState<any>({});
   const [stats, setStats] = useState<any>({});
+  const [shieldUsedFeedback, setShieldUsedFeedback] = useState(false);
+
+  const { shieldAvailable, useShield, isLoading: shieldLoading } = useStreakShield();
+
+  const handleUseShield = async () => {
+    const success = await useShield();
+    if (success) {
+      setShieldUsedFeedback(true);
+      setTimeout(() => setShieldUsedFeedback(false), 2500);
+    }
+  };
 
   useEffect(() => {
     loadGamificationData();
@@ -186,6 +198,42 @@ function GamificationDashboard() {
               </View>
             ))}
           </View>
+
+          {/* Streak Shield — shown when the order streak is at zero */}
+          {(() => {
+            const orderStreak = (streaks as any)?.order?.current ?? null;
+            const streakIsBroken = orderStreak === 0;
+            if (!streakIsBroken) return null;
+            if (shieldUsedFeedback) {
+              return (
+                <View style={styles.shieldFeedback}>
+                  <Ionicons name="checkmark-circle" size={18} color="#16A34A" />
+                  <Text style={styles.shieldFeedbackText}>Streak Protected!</Text>
+                </View>
+              );
+            }
+            if (shieldAvailable) {
+              return (
+                <Pressable
+                  style={styles.shieldBtn}
+                  onPress={handleUseShield}
+                  disabled={shieldLoading}
+                  accessibilityLabel="Use streak shield to protect your streak"
+                  accessibilityRole="button"
+                >
+                  {shieldLoading ? (
+                    <ActivityIndicator size="small" color="#92400E" />
+                  ) : (
+                    <>
+                      <Text style={styles.shieldBtnIcon}>🛡️</Text>
+                      <Text style={styles.shieldBtnText}>Use Streak Shield</Text>
+                    </>
+                  )}
+                </Pressable>
+              );
+            }
+            return <Text style={styles.shieldResetText}>Shield resets Monday</Text>;
+          })()}
         </View>
 
         {/* Tabs */}
@@ -496,6 +544,47 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.background.primary,
     fontWeight: 'bold',
+  },
+  shieldBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: Spacing.base,
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1.5,
+    borderColor: '#F59E0B',
+    borderRadius: BorderRadius.lg,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  shieldBtnIcon: {
+    fontSize: 18,
+  },
+  shieldBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#92400E',
+  },
+  shieldResetText: {
+    marginTop: Spacing.base,
+    textAlign: 'center',
+    fontSize: 13,
+    color: colors.text.tertiary,
+    fontWeight: '500',
+  },
+  shieldFeedback: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: Spacing.base,
+    paddingVertical: 10,
+  },
+  shieldFeedbackText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#16A34A',
   },
   tabs: {
     flexDirection: 'row',

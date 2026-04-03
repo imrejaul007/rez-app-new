@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getScore } from '@/services/rezScoreApi';
 import { colors } from '@/constants/theme';
+import { shareAchievement } from '@/utils/shareAchievement';
 
 // ============================================================================
 // TIER DATA
@@ -138,7 +139,17 @@ const IMPROVEMENT_TIPS = [
 // TIER CARD
 // ============================================================================
 
-function TierCard({ tier, isCurrentTier, isLocked }: { tier: TierInfo; isCurrentTier: boolean; isLocked: boolean }) {
+function TierCard({
+  tier,
+  isCurrentTier,
+  isLocked,
+  currentScore,
+}: {
+  tier: TierInfo;
+  isCurrentTier: boolean;
+  isLocked: boolean;
+  currentScore: number;
+}) {
   const scaleAnim = useRef(new Animated.Value(isCurrentTier ? 1 : 0.96)).current;
 
   useEffect(() => {
@@ -167,6 +178,23 @@ function TierCard({ tier, isCurrentTier, isLocked }: { tier: TierInfo; isCurrent
         <View style={cardStyles.currentBadge}>
           <Text style={cardStyles.currentBadgeText}>YOUR TIER</Text>
         </View>
+      )}
+
+      {/* Share button — visible on all earned (non-locked) tiers */}
+      {!isLocked && (
+        <Pressable
+          style={cardStyles.shareBtn}
+          onPress={() => shareAchievement(`${tier.name} Tier`, currentScore)}
+          hitSlop={8}
+          accessibilityLabel={`Share ${tier.name} tier achievement`}
+          accessibilityRole="button"
+        >
+          <Ionicons
+            name="share-social-outline"
+            size={16}
+            color={isCurrentTier ? colors.brand.purple : colors.text.secondary}
+          />
+        </Pressable>
       )}
 
       {/* Header */}
@@ -306,6 +334,18 @@ const cardStyles = StyleSheet.create({
     marginLeft: 'auto',
   },
   lockText: { fontSize: 11, fontWeight: '600', color: '#6B7280' },
+  shareBtn: {
+    position: 'absolute',
+    bottom: 14,
+    right: 14,
+    zIndex: 10,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   benefitsWrap: {
     padding: 14,
     gap: 10,
@@ -475,7 +515,15 @@ export default function TierBenefitsScreen() {
           {TIERS.map((tier) => {
             const isCurrent = tier.name === currentTierName;
             const isLocked = !isLoading && scoreData != null && currentScore < tier.minScore;
-            return <TierCard key={tier.name} tier={tier} isCurrentTier={isCurrent} isLocked={isLocked} />;
+            return (
+              <TierCard
+                key={tier.name}
+                tier={tier}
+                isCurrentTier={isCurrent}
+                isLocked={isLocked}
+                currentScore={currentScore}
+              />
+            );
           })}
         </View>
 
