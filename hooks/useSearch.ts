@@ -5,6 +5,7 @@ import searchService, {
   ProductSearchResult,
   StoreSearchResult
 } from '@/services/searchApi';
+import { useUserId } from '@/stores/selectors';
 
 export interface SearchState {
   query: string;
@@ -46,6 +47,7 @@ const initialState: SearchState = {
 
 export const useSearch = () => {
   const [state, setState] = useState<SearchState>(initialState);
+  const userId = useUserId();
 
   // Search products
   const searchProducts = useCallback(async (query: string, filters?: Partial<ProductSearchParams>) => {
@@ -62,6 +64,7 @@ export const useSearch = () => {
         q: query,
         page: state.pagination.page,
         limit: state.pagination.limit,
+        ...(userId ? { userId } : {}),
         ...filters,
         ...state.filters,
       });
@@ -107,6 +110,7 @@ export const useSearch = () => {
         q: query,
         page: state.pagination.page,
         limit: state.pagination.limit,
+        ...(userId ? { userId } : {}),
         ...filters,
       });
 
@@ -152,11 +156,13 @@ export const useSearch = () => {
           q: query,
           page: 1,
           limit: 10,
+          ...(userId ? { userId } : {}),
         }),
         searchService.searchStores({
           q: query,
           page: 1,
           limit: 5,
+          ...(userId ? { userId } : {}),
         }),
       ]);
 

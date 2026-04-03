@@ -65,38 +65,23 @@ jest.mock('react-native/Libraries/Settings/NativeSettingsManager', () => ({
 // ============================================
 // Mock React Native modules
 // ============================================
-jest.mock('react-native', () => {
-  const RN = jest.requireActual('react-native');
+// NOTE: RN 0.79 uses TurboModules (DevMenu, etc.) that are unavailable in a
+// Node test environment. Calling jest.requireActual('react-native') or
+// jest.requireMock('react-native') inside a jest.mock('react-native') factory
+// causes either an Invariant Violation or infinite recursion.
+// The jest-expo preset provides a complete react-native mock — we rely on that
+// and patch individual sub-APIs where tests need specific behavior.
+jest.mock('react-native/Libraries/Share/Share', () => ({
+  share: jest.fn(() =>
+    Promise.resolve({ action: 'sharedAction', activityType: null })
+  ),
+  sharedAction: 'sharedAction',
+  dismissedAction: 'dismissedAction',
+}));
 
-  return {
-    ...RN,
-    Settings: {
-      get: jest.fn((key) => null),
-      set: jest.fn((settings) => {}),
-      watchKeys: jest.fn(() => ({
-        remove: jest.fn(),
-      })),
-    },
-    Share: {
-      share: jest.fn(() =>
-        Promise.resolve({
-          action: 'sharedAction',
-          activityType: null,
-        })
-      ),
-      sharedAction: 'sharedAction',
-      dismissedAction: 'dismissedAction',
-    },
-    Alert: {
-      alert: jest.fn(),
-    },
-    Platform: {
-      ...RN.Platform,
-      OS: 'ios',
-      select: jest.fn((obj) => obj.ios || obj.default),
-    },
-  };
-});
+jest.mock('react-native/Libraries/Alert/Alert', () => ({
+  alert: jest.fn(),
+}));
 
 // ============================================
 // Mock Expo Router

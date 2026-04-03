@@ -8,11 +8,12 @@ import apiClient from '@/services/apiClient';
 import searchService from '@/services/searchApi';
 import searchDiscoveryApi, { TrendingSearch, StoreItem } from '@/services/searchDiscoveryApi';
 import type { FilterState } from '@/components/search/FilterModal';
-import { useCurrentRegionId } from '@/stores/selectors';
+import { useCurrentRegionId, useUserId } from '@/stores/selectors';
 
 export const useSearchPage = () => {
   const { state: searchHookState, actions } = useSearch();
   const currentRegion = useCurrentRegionId();
+  const userId = useUserId();
   
   const [state, setState] = useState<SearchPageState>({
     query: '',
@@ -234,6 +235,7 @@ export const useSearchPage = () => {
         limit: 20,
         lat: userLocation?.latitude,
         lon: userLocation?.longitude,
+        ...(userId ? { userId } : {}),
       };
 
       // Add filter params if provided
@@ -307,7 +309,7 @@ export const useSearchPage = () => {
       setMatchingStores([]);
       setSearchSummary(null);
     }
-  }, [currentRegion]);
+  }, [currentRegion, userId]);
 
   // Perform search with debouncing and caching
   const performSearch = useCallback(async (query: string) => {

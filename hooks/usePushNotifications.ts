@@ -5,6 +5,7 @@
 
 import { useEffect, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
 import pushNotificationService from '@/services/pushNotificationService';
 import { handleNotificationDeepLink } from '@/utils/notificationDeepLinkHandler';
 import { useAuthUser, useIsAuthenticated, useRefreshWallet } from '@/stores/selectors';
@@ -74,6 +75,15 @@ export function usePushNotifications() {
 
   const initializePushNotifications = async () => {
     try {
+      // Handle cold-start: app was opened by tapping a notification while closed.
+      // getLastNotificationResponseAsync resolves with the tapped notification (if any)
+      // so we can deep-link to the right screen immediately after launch.
+      const lastResponse = await Notifications.getLastNotificationResponseAsync();
+      if (lastResponse) {
+        const data = lastResponse.notification.request.content.data;
+        handleNotificationDeepLink(data || {});
+      }
+
       // SS-003 FIX: On notification tap, refresh relevant data before navigating
       pushNotificationService.setNavigationHandler((data) => {
         const type: string = data?.type || '';

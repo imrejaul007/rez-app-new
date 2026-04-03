@@ -37,6 +37,7 @@ module.exports = {
       '@react-navigation|' +
       'react-native-.*|' +
       '@stripe/.*|' +
+      '@sentry/.*|' +
       'socket.io-client|' +
       'use-debounce|' +
       '@testing-library' +
@@ -46,6 +47,15 @@ module.exports = {
   // Path aliases matching tsconfig.json
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    // @stripe/stripe-react-native is not installed in this project — map to an
+    // inline mock so jest.setup.js can call jest.mock() on it without failing
+    '^@stripe/stripe-react-native$': '<rootDir>/__tests__/mocks/stripeMock.js',
+    // @sentry/react-native needs native modules unavailable in Node test env
+    '^@sentry/react-native$': '<rootDir>/__tests__/mocks/sentryMock.js',
+    // React Native 0.79 removed NativeAnimatedHelper — map to empty stub
+    '^react-native/Libraries/Animated/NativeAnimatedHelper$': '<rootDir>/__tests__/mocks/emptyMock.js',
+    // NativeEventEmitter path may not exist in all RN versions
+    '^react-native/Libraries/EventEmitter/NativeEventEmitter$': '<rootDir>/__tests__/mocks/emptyMock.js',
   },
 
   // Coverage configuration

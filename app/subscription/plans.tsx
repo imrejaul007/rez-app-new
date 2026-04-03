@@ -50,15 +50,15 @@ function SubscriptionPlansPage() {
   const currencySymbol = getCurrencySymbol();
   const currentTier = state.currentSubscription?.tier || 'free';
 
-  // Get DB-driven pricing from availableTiers with hardcoded fallbacks
+  // Prices are sourced from the backend (SubscriptionContext.availableTiers).
+  // Named constants are fallback values only — used when the API hasn't loaded yet
+  // or the tier is missing from the server response.
   const getTierPricing = (tier: string) => {
     const config = state.availableTiers?.find((t: any) => t.tier === tier);
     if (config?.pricing) return { monthly: config.pricing.monthly, yearly: config.pricing.yearly };
-    // TODO: Remove these hardcoded fallback prices once the subscription tiers API
-    // reliably returns pricing for all environments (staging + production).
-    if (tier === 'vip') return { monthly: SUBSCRIPTION_VIP_MONTHLY_FALLBACK, yearly: SUBSCRIPTION_VIP_YEARLY_FALLBACK }; // fallback default — VIP tier
+    if (tier === 'vip') return { monthly: SUBSCRIPTION_VIP_MONTHLY_FALLBACK, yearly: SUBSCRIPTION_VIP_YEARLY_FALLBACK };
     if (tier === 'premium')
-      return { monthly: SUBSCRIPTION_PREMIUM_MONTHLY_FALLBACK, yearly: SUBSCRIPTION_PREMIUM_YEARLY_FALLBACK }; // fallback default — Premium tier
+      return { monthly: SUBSCRIPTION_PREMIUM_MONTHLY_FALLBACK, yearly: SUBSCRIPTION_PREMIUM_YEARLY_FALLBACK };
     return { monthly: 0, yearly: 0 };
   };
   const getTierFeatures = (tier: string, fallback: string[]): string[] => {

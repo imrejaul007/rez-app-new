@@ -8,6 +8,7 @@ import { colors } from '@/constants/theme';
 
 export interface NotificationData {
   type?: string;
+  eventType?: string;
   screen?: string;
   deepLink?: string;
   orderId?: string;
@@ -41,8 +42,11 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       return;
     }
 
+    // Resolve the canonical type — backend may send either `type` or `eventType`
+    const notifType = data.type || data.eventType || '';
+
     // Handle based on notification type and data
-    switch (data.type) {
+    switch (notifType) {
       case 'order_update':
       case 'order_confirmed':
       case 'order_preparing':
@@ -112,13 +116,28 @@ export function handleNotificationDeepLink(data: NotificationData): void {
 
       case 'wallet_update':
       case 'cashback_received':
+      case 'cashback_earned':
       case 'coins_earned':
+      case 'coin_earned':
         if (data.walletAction === 'view_transactions') {
           router.push('/transactions/index' as any);
         } else if (data.walletAction === 'view_coins') {
           router.push('/coin-detail' as any);
         } else {
-          router.push('/wallet/index' as any);
+          router.push('/wallet-screen' as any);
+        }
+        break;
+
+      case 'streak_milestone':
+      case 'streak_at_risk':
+        router.push('/wallet-screen' as any);
+        break;
+
+      case 'new_offer':
+        if (data.offerId) {
+          router.push(`/offers/${data.offerId}` as any);
+        } else {
+          router.push('/offers/index' as any);
         }
         break;
 
@@ -219,7 +238,12 @@ export function getNotificationIcon(type: string): string {
     event_update: 'calendar',
     wallet_update: 'wallet',
     cashback_received: 'cash',
+    cashback_earned: 'cash',
     coins_earned: 'diamond',
+    coin_earned: 'diamond',
+    streak_milestone: 'trophy',
+    streak_at_risk: 'flame',
+    new_offer: 'gift',
     referral_reward: 'gift',
     referral_joined: 'people',
     social_mention: 'at',
@@ -272,7 +296,12 @@ export function getNotificationColor(type: string): string {
     event_update: '#3B82F6',
     wallet_update: '#10B981',
     cashback_received: '#10B981',
+    cashback_earned: '#10B981',
     coins_earned: '#F59E0B',
+    coin_earned: '#F59E0B',
+    streak_milestone: '#F59E0B',
+    streak_at_risk: '#EF4444',
+    new_offer: '#EC4899',
     referral_reward: '#EC4899',
     referral_joined: colors.brand.purpleLight,
     social_mention: colors.brand.purpleLight,

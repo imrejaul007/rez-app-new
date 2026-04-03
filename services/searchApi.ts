@@ -15,6 +15,7 @@ export interface ProductSearchParams {
   inStock?: boolean;
   page?: number;
   limit?: number;
+  userId?: string; // For personalised ranking
 }
 
 export interface ProductSearchResult {
@@ -75,6 +76,7 @@ export interface StoreSearchParams {
   q: string; // Search query
   page?: number;
   limit?: number;
+  userId?: string; // For personalised ranking
 }
 
 export interface AdvancedStoreSearchParams {
@@ -266,6 +268,7 @@ class SearchService {
       lat: number;
       radius?: number;
       limit?: number;
+      userId?: string; // For personalised ranking
     }
   ): Promise<ApiResponse<StoreSearchResponse>> {
 

@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback, useMemo, ReactNode } from 'react';
 import { OfferState, OffersPageData, OfferFilters } from '@/types/offers.types';
-import { offersApi } from '@/services/offersApi';
-// Note: Using offersApi which contains mock data since offers backend is not implemented yet
+import realOffersApi from '@/services/realOffersApi';
 
 // Action Types
 type OffersAction =
@@ -88,16 +87,25 @@ export function OffersProvider({ children }: OffersProviderProps) {
   const loadOffers = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      // Using mock API since offers backend is not implemented yet
-      const offersResponse = await offersApi.getOffers({ page: 1, pageSize: 50 });
-      const categoriesResponse = await (offersApi as any).getCategories();
+      // Try the single-call page-data endpoint first (most efficient)
+      const pageDataResponse = await realOffersApi.getOffersPageData();
 
-      if (!categoriesResponse.data || !offersResponse.data) {
-        throw new Error('Failed to fetch offers data');
+      if (pageDataResponse.success && pageDataResponse.data) {
+        dispatch({ type: 'SET_OFFERS', payload: pageDataResponse.data as unknown as OffersPageData });
+        return;
       }
 
-      // Transform API response to match OffersPageData structure
-      const offersPageData: OffersPageData = {
+      // Fallback: compose from individual endpoints if page-data is unavailable
+      const [offersResponse, trendingResponse] = await Promise.all([
+        realOffersApi.getOffers({ page: 1, limit: 30 }),
+        realOffersApi.getTrendingOffers(10).catch(() => ({ success: false, data: [] })),
+      ]);
+
+      if (!offersResponse.success || !offersResponse.data) {
+        throw new Error('Failed to fetch offers from backend');
+      }
+
+      const fallbackPageData: OffersPageData = {
         heroBanner: {
           id: 'hero-banner-1',
           title: 'Special Offers',
@@ -105,26 +113,35 @@ export function OffersProvider({ children }: OffersProviderProps) {
           image: '',
           ctaText: 'View All',
           ctaAction: '/offers',
-          backgroundColor: '#FF6B6B'
+          backgroundColor: '#FF6B6B',
         },
-        categories: categoriesResponse.data,
+        categories: [],
         sections: [
           {
             id: 'featured-offers',
             title: 'Featured Offers',
             subtitle: 'Best deals available now',
-            offers: (offersResponse.data as any)?.items as any,
-            viewAllEnabled: true
-          }
+            offers: (offersResponse.data as any)?.items ?? offersResponse.data ?? [],
+            viewAllEnabled: true,
+          },
+          ...(trendingResponse.success && (trendingResponse as any).data?.length
+            ? [{
+                id: 'trending-offers',
+                title: 'Trending Now',
+                subtitle: 'Popular with shoppers',
+                offers: (trendingResponse as any).data,
+                viewAllEnabled: true,
+              }]
+            : []),
         ],
-        userPoints: 0
+        userPoints: 0,
       };
 
-      dispatch({ type: 'SET_OFFERS', payload: offersPageData });
+      dispatch({ type: 'SET_OFFERS', payload: fallbackPageData });
     } catch (error: any) {
       dispatch({
         type: 'SET_ERROR',
-        payload: error instanceof Error ? error.message : 'Failed to load offers'
+        payload: error instanceof Error ? error.message : 'Failed to load offers',
       });
     }
   }, []);
