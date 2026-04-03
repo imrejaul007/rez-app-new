@@ -245,6 +245,12 @@ function ProfilePage() {
       case 'notification_preferences':
         router.push('/account/notifications' as any);
         break;
+      case 'checkin_history':
+        router.push('/checkin-history' as any);
+        break;
+      case 'settings':
+        router.push('/settings' as any);
+        break;
       case 'notifications_inbox':
         router.push('/notifications' as any);
         break;

@@ -486,6 +486,22 @@ export const profileMenuListItems: ProfileMenuListItem[] = [
     description: 'Control what alerts you receive',
     showArrow: true,
   },
+  {
+    id: 'checkin_history',
+    title: 'Check-in History',
+    icon: 'storefront-outline',
+    route: '/checkin-history',
+    description: 'View your store check-in history and earned coins',
+    showArrow: true,
+  },
+  {
+    id: 'settings',
+    title: 'Settings',
+    icon: 'settings-outline',
+    route: '/settings',
+    description: 'Notifications, privacy, and app preferences',
+    showArrow: true,
+  },
 ];
 
 // Profile Statistics (for display)
