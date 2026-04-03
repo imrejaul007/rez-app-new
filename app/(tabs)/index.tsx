@@ -65,6 +65,7 @@ import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
 import streakApi from '@/services/streakApi';
 import { getScore } from '@/services/rezScoreApi';
+import { getSpendingInsights } from '@/services/insightsApi';
 
 // NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
 // CoinExpiryUrgencyBanner are rendered inside NearUTabContent — not here.
@@ -265,6 +266,22 @@ function HomeScreen() {
     enabled: isAuthenticated,
     staleTime: 5 * 60_000, // score updates infrequently — 5-min cache is fine
   });
+
+  // Fetch spending insights — used by SavingsDashboard for month comparison + top stores
+  const { data: spendingInsightsData } = useQuery({
+    queryKey: ['insights', 'dashboard'],
+    queryFn: getSpendingInsights,
+    enabled: isAuthenticated,
+    staleTime: 5 * 60_000,
+  });
+
+  // Derive last month savings from 6-month trend array
+  const lastMonthSaved = React.useMemo(() => {
+    const trend = spendingInsightsData?.monthlyTrend;
+    if (!trend || trend.length < 2) return undefined;
+    // trend is sorted oldest→newest; second-to-last is previous month
+    return trend[trend.length - 2]?.totalSaved;
+  }, [spendingInsightsData]);
   // Zustand selectors for home tab — granular subscriptions
   const activeTab = useActiveTab();
   const setActiveTab = useSetActiveTab();
@@ -998,6 +1015,8 @@ function HomeScreen() {
                   currencySymbol={getCurrencySymbol()}
                   onScanPayPress={handleSearchPress}
                   onViewWalletPress={handleCoinPress}
+                  lastMonthSaved={lastMonthSaved}
+                  topMerchants={spendingInsightsData?.topMerchants}
                 />
               </FeatureErrorBoundary>
             </View>

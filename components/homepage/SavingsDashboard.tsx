@@ -41,6 +41,12 @@ function getTimeContext(): { emoji: string; nudge: string } {
   return { emoji: '🌙', nudge: 'Late night? Save on orders' };
 }
 
+// ── Top merchant shape (from insightsApi) ───────────────────────────────────
+export interface TopMerchantSnippet {
+  merchantName: string;
+  totalSaved: number;
+}
+
 // ── Props ────────────────────────────────────────────────────────────────────
 interface SavingsDashboardProps {
   totalSaved: number;
@@ -49,6 +55,9 @@ interface SavingsDashboardProps {
   currencySymbol?: string;
   onScanPayPress?: () => void;
   onViewWalletPress?: () => void;
+  // Sprint 2: spending intelligence extras (optional, backward-compatible)
+  lastMonthSaved?: number;
+  topMerchants?: TopMerchantSnippet[];
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -68,6 +77,8 @@ function SavingsDashboard({
   currencySymbol = '₹',
   onScanPayPress,
   onViewWalletPress,
+  lastMonthSaved,
+  topMerchants,
 }: SavingsDashboardProps) {
   const router = useRouter();
   const timeCtx = useMemo(() => getTimeContext(), []);
@@ -141,6 +152,46 @@ function SavingsDashboard({
             <Ionicons name="wallet-outline" size={18} color={MUSTARD} />
             <Text style={styles.statLabel}>My Wallet</Text>
           </Pressable>
+        </View>
+      )}
+
+      {/* Sprint 2: Month-over-month comparison */}
+      {hasHistory && lastMonthSaved !== undefined && (
+        <View style={styles.trendRow}>
+          {(() => {
+            const diff = thisMonth - lastMonthSaved;
+            const isUp = diff > 0;
+            const isDown = diff < 0;
+            const trendColor = isUp ? GREEN : isDown ? '#F87171' : WHITE_70;
+            const arrow = isUp ? '▲' : isDown ? '▼' : '—';
+            return (
+              <>
+                <Text style={[styles.trendArrow, { color: trendColor }]}>{arrow}</Text>
+                <Text style={[styles.trendText, { color: trendColor }]}>
+                  {isUp ? '+' : ''}{formatAmount(diff, currencySymbol)} vs last month
+                  {lastMonthSaved > 0 ? ` (${formatAmount(lastMonthSaved, currencySymbol)})` : ''}
+                </Text>
+              </>
+            );
+          })()}
+        </View>
+      )}
+
+      {/* Sprint 2: Top 3 stores */}
+      {hasHistory && topMerchants && topMerchants.length > 0 && (
+        <View style={styles.topStoresRow}>
+          <Text style={styles.topStoresLabel}>Top stores this month</Text>
+          <View style={styles.topStoresList}>
+            {topMerchants.slice(0, 3).map((m, i) => (
+              <View key={i} style={styles.topStoreChip}>
+                <Text style={styles.topStoreRank}>{i + 1}</Text>
+                <Text style={styles.topStoreName} numberOfLines={1}>
+                  {m.merchantName}
+                </Text>
+                <Text style={styles.topStoreSaved}>{formatAmount(m.totalSaved, currencySymbol)}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       )}
 
@@ -281,6 +332,68 @@ const styles = StyleSheet.create({
     width: 1,
     height: 28,
     backgroundColor: WHITE_15,
+  },
+
+  // Sprint 2: Month-over-month trend row
+  trendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 12,
+  },
+  trendArrow: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  trendText: {
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 16,
+  },
+
+  // Sprint 2: Top stores strip
+  topStoresRow: {
+    marginBottom: 14,
+    gap: 6,
+  },
+  topStoresLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: WHITE_50,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  topStoresList: {
+    flexDirection: 'row',
+    gap: 6,
+    flexWrap: 'wrap',
+  },
+  topStoreChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: WHITE_10,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: WHITE_15,
+  },
+  topStoreRank: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: MUSTARD,
+  },
+  topStoreName: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: WHITE,
+    maxWidth: 80,
+  },
+  topStoreSaved: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: GREEN,
   },
 
   // Subline
