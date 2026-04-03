@@ -92,11 +92,28 @@ const ACTIONS: QuickAction[] = [
     color: colors.brand.purpleLight,
     gradientColors: ['#1a3a52', '#FFC857'],
   },
+  {
+    id: 'redeem',
+    icon: 'star',
+    label: 'Redeem',
+    route: '/redeem-coins',
+    color: colors.brand.purple,
+    gradientColors: ['#7C3AED', '#6D28D9'],
+  },
+  {
+    id: 'wallet-history',
+    icon: 'list',
+    label: 'History',
+    route: '/wallet-history',
+    color: colors.brand.teal,
+    gradientColors: ['#1a3a52', '#00796B'],
+  },
 ];
 
-// Split into two rows of 4
+// Split into three rows of 4 (row 3 has 2 items)
 const ROW_1 = ACTIONS.slice(0, 4);
 const ROW_2 = ACTIONS.slice(4, 8);
+const ROW_3 = ACTIONS.slice(8);
 
 interface StickyQuickActionsProps {
   isSticky?: boolean;
@@ -146,6 +163,11 @@ export const StickyQuickActions: React.FC<StickyQuickActionsProps> = ({ isSticky
         <View style={styles.gridRow}>
           {ROW_2.map(renderAction)}
         </View>
+        {ROW_3.length > 0 && (
+          <View style={styles.gridRow}>
+            {ROW_3.map(renderAction)}
+          </View>
+        )}
       </View>
     </View>
   );

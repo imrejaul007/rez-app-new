@@ -889,6 +889,26 @@ function ProfilePage() {
               );
             })()}
 
+          {/* Tier Benefits Card */}
+          <Pressable
+            style={styles.tierBenefitsCard}
+            onPress={() => router.push('/tier-benefits' as any)}
+            accessibilityLabel="View tier benefits"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view all tier benefits and how to improve your score"
+          >
+            <View style={styles.tierBenefitsContent}>
+              <View style={styles.tierBenefitsIcon}>
+                <Ionicons name="trophy-outline" size={22} color={colors.brand.purple} />
+              </View>
+              <View style={styles.tierBenefitsText}>
+                <ThemedText style={styles.tierBenefitsTitle}>Tier Benefits</ThemedText>
+                <ThemedText style={styles.tierBenefitsSub}>See what perks your tier unlocks</ThemedText>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.gray[400]} />
+            </View>
+          </Pressable>
+
           {/* Partner Program Card */}
           <Pressable
             style={styles.partnerCard}
@@ -1550,6 +1570,42 @@ const styles = StyleSheet.create({
   },
 
   // Partner Program Card
+  tierBenefitsCard: {
+    marginTop: Spacing.sm,
+    borderRadius: 14,
+    backgroundColor: colors.tint.purpleLight,
+    borderWidth: 1,
+    borderColor: colors.brand.purpleSoft,
+    overflow: 'hidden',
+  },
+  tierBenefitsContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 14,
+    gap: 12,
+  },
+  tierBenefitsIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tierBenefitsText: {
+    flex: 1,
+  },
+  tierBenefitsTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.brand.purpleDeep,
+  },
+  tierBenefitsSub: {
+    fontSize: 12,
+    color: colors.brand.purple,
+    marginTop: 2,
+  },
   partnerCard: {
     marginTop: Spacing.md,
     borderRadius: 18,

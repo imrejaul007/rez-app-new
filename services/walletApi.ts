@@ -892,6 +892,30 @@ class WalletService {
   }
 
   /**
+   * Redeem coins for a discount
+   * POST /wallet/redeem-coins
+   * @param amount - Number of coins to redeem (min 50, max 500)
+   * @param orderId - Optional order to apply the discount to
+   * @param merchantId - Optional merchant to apply the discount at
+   */
+  async redeemCoins(data: {
+    amount: number;
+    orderId?: string;
+    merchantId?: string;
+  }): Promise<ApiResponse<{
+    success: boolean;
+    newBalance: number;
+    discountApplied: number;
+  }>> {
+    try {
+      return await apiClient.post<any>('/wallet/redeem-coins', data as any);
+    } catch (error: any) {
+      if (__DEV__) console.warn('[WalletAPI] redeemCoins failed:', error?.message);
+      return { success: false, message: error?.message || 'Failed to redeem coins', data: null } as any;
+    }
+  }
+
+  /**
    * grantWelcomeCoins
    *
    * Idempotent — safe to call multiple times for the same user.
