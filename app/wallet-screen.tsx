@@ -188,6 +188,18 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   >([]);
   const [minDaysLeft, setMinDaysLeft] = useState<number>(30); // Track minimum days to determine urgency
 
+  // Sprint 10: Lifetime stats from GET /api/wallet/balance
+  const [lifetimeEarned, setLifetimeEarned] = useState<number>(0);
+  const [lifetimeRedeemed, setLifetimeRedeemed] = useState<number>(0);
+  const [lifetimeExpired, setLifetimeExpired] = useState<number>(0);
+  const [expiringSoonAmount, setExpiringSoonAmount] = useState<number>(0);
+  const [expiringSoonDate, setExpiringSoonDate] = useState<string>('');
+
+  // Sprint 10: Recent transactions from GET /api/user/transactions?limit=5
+  const [recentTransactions, setRecentTransactions] = useState<import('@/services/walletApi').TransactionResponse[]>(
+    [],
+  );
+
   // Refresh wallet balance and expiring coins in parallel on screen focus.
   // Promise.all ensures both complete together — prevents the UI from showing
   // stale balance while expiry data has already updated (race condition fix).
@@ -256,6 +268,43 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         cancelled = true;
       };
     }, [refreshWallet, isAuthenticated, authLoading]),
+  );
+
+  // Sprint 10: Fetch lifetime stats + recent transactions on focus
+  useFocusEffect(
+    useCallback(() => {
+      if (!isAuthenticated || authLoading) return;
+      let cancelled = false;
+
+      // Fetch lifetime breakdown from GET /api/gamification/leaderboard/me (or wallet balance)
+      walletApi
+        .getBalance()
+        .then((res) => {
+          if (cancelled || !res.success || !res.data) return;
+          const data = res.data as any;
+          setLifetimeEarned(data.lifetimeEarned ?? 0);
+          setLifetimeRedeemed(data.lifetimeRedeemed ?? 0);
+          setLifetimeExpired(data.lifetimeExpired ?? 0);
+          if (data.expiringSoon?.amount > 0) {
+            setExpiringSoonAmount(data.expiringSoon.amount);
+            setExpiringSoonDate(data.expiringSoon.expiresAt ?? '');
+          }
+        })
+        .catch(() => {});
+
+      // Fetch recent 5 transactions
+      walletApi
+        .getTransactions({ limit: 5, page: 1 })
+        .then((res) => {
+          if (cancelled || !res.success || !res.data) return;
+          setRecentTransactions(res.data.transactions ?? []);
+        })
+        .catch(() => {});
+
+      return () => {
+        cancelled = true;
+      };
+    }, [isAuthenticated, authLoading]),
   );
 
   const handleRefresh = useCallback(async () => {
@@ -807,6 +856,134 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           {/* Wallet Insights */}
           <InsightSection walletData={walletData} currencySymbol={currencySymbol} segment={segment} />
 
+          {/* Sprint 10: Lifetime Breakdown Cards */}
+          <View style={sprint10Styles.breakdownSection}>
+            <Text style={sprint10Styles.breakdownTitle}>Lifetime Summary</Text>
+            <View style={sprint10Styles.breakdownRow}>
+              <View style={[sprint10Styles.breakdownCard, sprint10Styles.earnedCard]}>
+                <Ionicons name="arrow-down-circle" size={20} color="#16A34A" />
+                <Text style={sprint10Styles.breakdownCardLabel}>Total Earned</Text>
+                <Text style={[sprint10Styles.breakdownCardValue, { color: '#16A34A' }]}>
+                  {lifetimeEarned > 0
+                    ? lifetimeEarned.toLocaleString()
+                    : (walletData?.savingsInsights?.totalSaved ?? 0).toLocaleString()}
+                </Text>
+              </View>
+              <View style={[sprint10Styles.breakdownCard, sprint10Styles.redeemedCard]}>
+                <Ionicons name="arrow-up-circle" size={20} color="#DC2626" />
+                <Text style={sprint10Styles.breakdownCardLabel}>Total Redeemed</Text>
+                <Text style={[sprint10Styles.breakdownCardValue, { color: '#DC2626' }]}>
+                  {lifetimeRedeemed.toLocaleString()}
+                </Text>
+              </View>
+              <View style={[sprint10Styles.breakdownCard, sprint10Styles.expiredCard]}>
+                <Ionicons name="time-outline" size={20} color="#6B7280" />
+                <Text style={sprint10Styles.breakdownCardLabel}>Expired</Text>
+                <Text style={[sprint10Styles.breakdownCardValue, { color: '#6B7280' }]}>
+                  {lifetimeExpired.toLocaleString()}
+                </Text>
+              </View>
+            </View>
+
+            {/* Expiring Soon Banner */}
+            {expiringSoonAmount > 0 && (
+              <View style={sprint10Styles.expiringSoonBanner}>
+                <Ionicons name="warning-outline" size={16} color="#92400E" />
+                <Text style={sprint10Styles.expiringSoonText}>
+                  {expiringSoonAmount} coins expire on{' '}
+                  {expiringSoonDate
+                    ? new Date(expiringSoonDate).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })
+                    : 'soon'}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Sprint 10: Quick Actions Row */}
+          <View style={sprint10Styles.quickActionsSection}>
+            <Text style={sprint10Styles.breakdownTitle}>Quick Actions</Text>
+            <View style={sprint10Styles.quickActionsRow}>
+              <Pressable
+                style={sprint10Styles.quickActionBtn}
+                onPress={() => router.push('/redeem-coins' as any)}
+                accessibilityLabel="Redeem Coins"
+                accessibilityRole="button"
+              >
+                <View style={[sprint10Styles.quickActionIcon, { backgroundColor: '#F0FDF4' }]}>
+                  <Ionicons name="gift-outline" size={22} color="#16A34A" />
+                </View>
+                <Text style={sprint10Styles.quickActionLabel}>Redeem Coins</Text>
+              </Pressable>
+              <Pressable
+                style={sprint10Styles.quickActionBtn}
+                onPress={() => router.push('/group-buy' as any)}
+                accessibilityLabel="Group Buy"
+                accessibilityRole="button"
+              >
+                <View style={[sprint10Styles.quickActionIcon, { backgroundColor: '#EFF6FF' }]}>
+                  <Ionicons name="people-outline" size={22} color="#1D4ED8" />
+                </View>
+                <Text style={sprint10Styles.quickActionLabel}>Group Buy</Text>
+              </Pressable>
+              <Pressable
+                style={sprint10Styles.quickActionBtn}
+                onPress={() => router.push('/transaction-history' as any)}
+                accessibilityLabel="Transaction History"
+                accessibilityRole="button"
+              >
+                <View style={[sprint10Styles.quickActionIcon, { backgroundColor: '#FAF5FF' }]}>
+                  <Ionicons name="receipt-outline" size={22} color="#7C3AED" />
+                </View>
+                <Text style={sprint10Styles.quickActionLabel}>History</Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Sprint 10: Recent Transactions */}
+          {recentTransactions.length > 0 && (
+            <View style={sprint10Styles.recentTxSection}>
+              <View style={sprint10Styles.recentTxHeader}>
+                <Text style={sprint10Styles.breakdownTitle}>Recent Transactions</Text>
+                <Pressable
+                  onPress={() => router.push('/transaction-history' as any)}
+                  accessibilityLabel="View all transactions"
+                  accessibilityRole="button"
+                >
+                  <Text style={sprint10Styles.viewAllLink}>View All</Text>
+                </Pressable>
+              </View>
+              {recentTransactions.map((tx) => (
+                <View key={tx.id || tx.transactionId} style={sprint10Styles.txRow}>
+                  <View
+                    style={[sprint10Styles.txIcon, { backgroundColor: tx.type === 'credit' ? '#F0FDF4' : '#FEF2F2' }]}
+                  >
+                    <Ionicons
+                      name={tx.type === 'credit' ? 'arrow-down' : 'arrow-up'}
+                      size={16}
+                      color={tx.type === 'credit' ? '#16A34A' : '#DC2626'}
+                    />
+                  </View>
+                  <View style={sprint10Styles.txInfo}>
+                    <Text style={sprint10Styles.txDescription} numberOfLines={1}>
+                      {tx.description}
+                    </Text>
+                    <Text style={sprint10Styles.txDate}>
+                      {new Date(tx.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </Text>
+                  </View>
+                  <Text style={[sprint10Styles.txAmount, { color: tx.type === 'credit' ? '#16A34A' : '#DC2626' }]}>
+                    {tx.type === 'credit' ? '+' : '-'}
+                    {tx.amount}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+
           {/* Recharge with Discount */}
           <RechargeWalletCard
             cashbackText={WALLET_RECHARGE_CASHBACK_TEXT}
@@ -1274,5 +1451,162 @@ const createStyles = (
     },
   });
 };
+
+// Sprint 10: standalone styles for new breakdown/quick-actions/recent-tx sections
+const sprint10Styles = StyleSheet.create({
+  breakdownSection: {
+    marginHorizontal: 14,
+    marginTop: 16,
+    marginBottom: 4,
+  },
+  breakdownTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: 10,
+  },
+  breakdownRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  breakdownCard: {
+    flex: 1,
+    borderRadius: 14,
+    padding: 12,
+    alignItems: 'center',
+    gap: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  earnedCard: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+  },
+  redeemedCard: {
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+  },
+  expiredCard: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  breakdownCardLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  breakdownCardValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  expiringSoonBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    padding: 10,
+    marginTop: 10,
+    gap: 8,
+  },
+  expiringSoonText: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#92400E',
+  },
+  quickActionsSection: {
+    marginHorizontal: 14,
+    marginTop: 16,
+    marginBottom: 4,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  quickActionBtn: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 6,
+  },
+  quickActionIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    textAlign: 'center',
+  },
+  recentTxSection: {
+    marginHorizontal: 14,
+    marginTop: 16,
+    backgroundColor: colors.background.primary,
+    borderRadius: 16,
+    padding: 14,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  recentTxHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  viewAllLink: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.nileBlue,
+  },
+  txRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.background.secondary,
+    gap: 10,
+  },
+  txIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txInfo: {
+    flex: 1,
+  },
+  txDescription: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+  txDate: {
+    fontSize: 11,
+    color: colors.text.tertiary,
+    marginTop: 1,
+  },
+  txAmount: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+});
 
 export default withErrorBoundary(WalletScreen, 'Wallet');

@@ -3,7 +3,20 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Central hub for user assistance and support
 
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, SafeAreaView, TextInput } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  SafeAreaView,
+  TextInput,
+  ActivityIndicator,
+  Linking,
+  Alert,
+} from 'react-native';
+import supportApi from '@/services/supportApi';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -41,6 +54,12 @@ function HelpPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
+
+  // Support ticket form state
+  const [ticketSubject, setTicketSubject] = useState('');
+  const [ticketMessage, setTicketMessage] = useState('');
+  const [ticketSubmitting, setTicketSubmitting] = useState(false);
+  const [ticketSuccess, setTicketSuccess] = useState(false);
 
   const handleBackPress = () => {
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
@@ -139,40 +158,79 @@ function HelpPage() {
   const popularFAQs: FAQItem[] = [
     {
       id: 'faq1',
-      question: 'How do I track my order?',
+      question: 'How do I earn coins?',
       answer:
-        'You can track your order by going to the "Tracking" section in the app or by clicking on the order number in your order history. You\'ll see real-time updates on your order status, estimated delivery time, and delivery partner information.',
-      category: 'orders',
+        'You earn REZ coins by scanning the QR code at participating stores during checkout. Each eligible purchase gives you cashback in REZ coins — typically a percentage of your bill. You can also earn coins by completing challenges, referring friends, and through bonus zone offers.',
+      category: 'coins',
     },
     {
       id: 'faq2',
-      question: 'How do I cancel my order?',
+      question: 'When do my coins expire?',
       answer:
-        'You can cancel your order within 5 minutes of placing it by going to "My Orders" and clicking the cancel button. If it\'s been longer than 5 minutes, you can contact our support team for assistance.',
-      category: 'orders',
+        "REZ coins expire 12 months from the date they were earned. You can check your coin expiry timeline in the Wallet section of the app. Make sure to use your coins before they expire — you'll receive reminder notifications as your coins approach their expiry date.",
+      category: 'coins',
     },
     {
       id: 'faq3',
-      question: 'What payment methods do you accept?',
+      question: 'How do I redeem coins?',
       answer:
-        'We accept all major credit cards, debit cards, UPI, net banking, digital wallets, and cash on delivery. You can manage your payment methods in the "Payment Methods" section of your account.',
-      category: 'payments',
+        'You can redeem your REZ coins at checkout in any participating store. Simply show your QR code or enter your REZ ID at the counter. The conversion rate is 1 coin = ₹0.10, so 100 coins = ₹10 off your bill. Go to the Redeem Coins section in your Wallet to see your available balance.',
+      category: 'coins',
     },
     {
       id: 'faq4',
-      question: 'How do I get a refund?',
+      question: "Why didn't I get cashback?",
       answer:
-        'Refunds are processed automatically for cancelled orders. For other refund requests, please contact our support team with your order details. Refunds typically take 3-5 business days to reflect in your account.',
-      category: 'payments',
+        "Cashback is awarded when you check in at a store using the QR code within the eligible time window (typically during your visit). Common reasons for missing cashback: the store may not yet be listed as a REZ partner, the check-in was outside the store's eligible hours, or there was a network issue during scanning. If you believe cashback was missed in error, contact our support team with your visit details.",
+      category: 'coins',
     },
     {
       id: 'faq5',
-      question: 'How do I change my delivery address?',
+      question: 'How does group buy work?',
       answer:
-        'You can update your delivery address during checkout or manage saved addresses in your account settings. Note that address changes may not be possible after the order has been confirmed.',
-      category: 'account',
+        'Group Buy lets you pool purchases with friends to unlock higher discounts that are only available when buying together. Create or join a group buy from the Group Buy section, share the link with friends, and once the minimum number of participants is reached, everyone gets the discounted price. Coins earned from group buys follow the same rules as regular purchases.',
+      category: 'features',
+    },
+    {
+      id: 'faq6',
+      question: 'What is REZ Premium?',
+      answer:
+        'REZ Premium is our subscription plan at ₹99/month that gives you 2x coins on every purchase, access to exclusive member-only deals, no ads, priority customer support, and early access to new features. You can subscribe or manage your Premium membership from the Premium section in your profile.',
+      category: 'features',
     },
   ];
+
+  const handleTicketSubmit = async () => {
+    if (!ticketSubject.trim() || !ticketMessage.trim()) {
+      Alert.alert('Missing Information', 'Please enter both a subject and a message.');
+      return;
+    }
+    setTicketSubmitting(true);
+    try {
+      const response = await supportApi.createTicket({
+        subject: ticketSubject.trim(),
+        category: 'other',
+        message: ticketMessage.trim(),
+      });
+      if (response.success) {
+        setTicketSuccess(true);
+        setTicketSubject('');
+        setTicketMessage('');
+      } else {
+        Alert.alert('Error', 'Failed to submit your request. Please try again.');
+      }
+    } catch {
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    } finally {
+      setTicketSubmitting(false);
+    }
+  };
+
+  const handleEmailPress = () => {
+    Linking.openURL('mailto:support@rez.money').catch(() => {
+      Alert.alert('Error', 'Unable to open email client.');
+    });
+  };
 
   const filteredFAQs = popularFAQs.filter(
     (faq) =>
@@ -331,19 +389,76 @@ function HelpPage() {
           )}
         </View>
 
-        {/* Contact Info */}
-        <View style={styles.contactInfo}>
-          <ThemedText style={styles.contactTitle}>Still need help?</ThemedText>
-          <ThemedText style={styles.contactText}>Our support team is available 24/7 to assist you.</ThemedText>
+        {/* Contact Support Ticket Form */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Contact Support</ThemedText>
+          {ticketSuccess ? (
+            <View style={styles.ticketSuccess}>
+              <Ionicons name="checkmark-circle" size={40} color={Colors.success} />
+              <ThemedText style={styles.ticketSuccessTitle}>Message Sent!</ThemedText>
+              <ThemedText style={styles.ticketSuccessText}>We&apos;ll respond within 24 hours.</ThemedText>
+              <Pressable
+                style={styles.ticketSuccessReset}
+                onPress={() => setTicketSuccess(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Submit another request"
+              >
+                <ThemedText style={styles.ticketSuccessResetText}>Submit Another Request</ThemedText>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.ticketForm}>
+              <TextInput
+                style={styles.ticketInput}
+                placeholder="Subject"
+                placeholderTextColor={colors.text.tertiary}
+                value={ticketSubject}
+                onChangeText={setTicketSubject}
+                returnKeyType="next"
+                accessibilityLabel="Support ticket subject"
+                accessibilityHint="Enter the subject of your support request"
+              />
+              <TextInput
+                style={[styles.ticketInput, styles.ticketTextarea]}
+                placeholder="Describe your issue..."
+                placeholderTextColor={colors.text.tertiary}
+                value={ticketMessage}
+                onChangeText={(text) => setTicketMessage(text.slice(0, 500))}
+                multiline
+                numberOfLines={5}
+                textAlignVertical="top"
+                accessibilityLabel="Support ticket message"
+                accessibilityHint="Describe your issue in detail, maximum 500 characters"
+              />
+              <ThemedText style={styles.charCount}>{ticketMessage.length}/500</ThemedText>
+              <Pressable
+                style={[styles.submitButton, ticketSubmitting && styles.submitButtonDisabled]}
+                onPress={handleTicketSubmit}
+                disabled={ticketSubmitting}
+                accessibilityLabel="Submit support request"
+                accessibilityRole="button"
+                accessibilityState={{ disabled: ticketSubmitting }}
+              >
+                {ticketSubmitting ? (
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
+                ) : (
+                  <ThemedText style={styles.submitButtonText}>Submit Request</ThemedText>
+                )}
+              </Pressable>
+            </View>
+          )}
+        </View>
 
+        {/* Email Us */}
+        <View style={styles.emailSection}>
+          <ThemedText style={styles.emailLabel}>Or email us directly:</ThemedText>
           <Pressable
-            style={styles.contactButton}
-            onPress={() => router.push('/help/chat' as any)}
-            accessibilityLabel="Contact Support"
-            accessibilityRole="button"
-            accessibilityHint="Double tap to contact our 24/7 support team"
+            onPress={handleEmailPress}
+            accessibilityLabel="Email support at support@rez.money"
+            accessibilityRole="link"
+            accessibilityHint="Double tap to open your email app"
           >
-            <ThemedText style={styles.contactButtonText}>Contact Support</ThemedText>
+            <ThemedText style={styles.emailLink}>support@rez.money</ThemedText>
           </Pressable>
         </View>
 
@@ -570,43 +685,105 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // Contact Info
-  contactInfo: {
+  // Support Ticket Form
+  ticketForm: {
     backgroundColor: colors.background.primary,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.xl,
-    padding: Spacing.lg,
     borderRadius: BorderRadius.md,
+    padding: Spacing.base,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+    gap: Spacing.md,
+  },
+  ticketInput: {
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderRadius: BorderRadius.sm,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    ...Typography.body,
+    color: colors.text.secondary,
+    backgroundColor: colors.background.secondary,
+  },
+  ticketTextarea: {
+    minHeight: 120,
+    paddingTop: Spacing.md,
+  },
+  charCount: {
+    ...Typography.bodySmall,
+    color: colors.text.tertiary,
+    textAlign: 'right',
+    marginTop: -Spacing.sm,
+  },
+  submitButton: {
+    backgroundColor: Colors.brand.purpleLight,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  submitButtonDisabled: {
+    opacity: 0.6,
+  },
+  submitButtonText: {
+    color: colors.text.inverse,
+    ...Typography.bodyLarge,
+    fontWeight: '600' as const,
+  },
+
+  // Ticket Success
+  ticketSuccess: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.xl,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
+    gap: Spacing.md,
   },
-  contactTitle: {
+  ticketSuccessTitle: {
     ...Typography.h4,
     fontWeight: '700',
     color: colors.text.secondary,
-    marginBottom: Spacing.sm,
   },
-  contactText: {
+  ticketSuccessText: {
     ...Typography.body,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: Spacing.base,
-    lineHeight: 20,
   },
-  contactButton: {
-    backgroundColor: Colors.brand.purpleLight,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.sm,
+  ticketSuccessReset: {
+    marginTop: Spacing.sm,
   },
-  contactButtonText: {
-    color: colors.text.inverse,
-    ...Typography.bodyLarge,
-    fontWeight: '600' as const,
+  ticketSuccessResetText: {
+    ...Typography.body,
+    color: Colors.brand.purpleLight,
+    fontWeight: '600',
+  },
+
+  // Email Section
+  emailSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  emailLabel: {
+    ...Typography.body,
+    color: colors.text.tertiary,
+  },
+  emailLink: {
+    ...Typography.body,
+    color: Colors.brand.purpleLight,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 
   bottomSpace: {

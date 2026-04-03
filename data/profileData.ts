@@ -230,7 +230,7 @@ export const profileMenuSections: ProfileMenuSection[] = [
         id: 'help_support',
         title: 'Help & Support',
         icon: 'help-circle-outline',
-        route: '/support',
+        route: '/help',
         description: 'Get help and contact support',
         isEnabled: true,
         showArrow: true,
@@ -442,6 +442,14 @@ export const profileMenuListItems: ProfileMenuListItem[] = [
     icon: 'trophy-outline',
     route: '/profile/achievements',
     description: 'View your unlocked achievements and progress',
+    showArrow: true,
+  },
+  {
+    id: 'leaderboard',
+    title: 'Leaderboard',
+    icon: 'trophy-outline',
+    route: '/leaderboard',
+    description: 'See how you rank against other REZ users',
     showArrow: true,
   },
   {
