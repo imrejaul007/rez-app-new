@@ -25,6 +25,7 @@ export default function QRCheckinScreen() {
   const [loading, setLoading] = useState(false);
   const [loadingStore, setLoadingStore] = useState(false);
   const [result, setResult] = useState<{ coinsEarned: number; message: string } | null>(null);
+  const [streakCount, setStreakCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (storeId && !storeName) {
@@ -47,6 +48,15 @@ export default function QRCheckinScreen() {
     try {
       const res = await apiClient.post('/qr-checkin', { storeId, amount: amt, paymentMethod: 'cash' });
       setResult((res as any).data?.data);
+      // Refresh streak after successful check-in (non-blocking)
+      import('@/services/gamificationApi')
+        .then((mod) => mod.default.getStreakStatus())
+        .then((streakRes: any) => {
+          if (streakRes?.success && streakRes.data) {
+            setStreakCount(streakRes.data.currentStreak || streakRes.data.savings?.currentStreak || 0);
+          }
+        })
+        .catch(() => {});
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Check-in failed. Try again.';
       Alert.alert('Error', msg);
@@ -68,6 +78,11 @@ export default function QRCheckinScreen() {
             <View style={styles.coinsBadge}>
               <Ionicons name="sparkles" size={20} color="#F59E0B" />
               <Text style={styles.coinsText}>+{result.coinsEarned} REZ Coins</Text>
+            </View>
+          )}
+          {streakCount !== null && streakCount > 0 && (
+            <View style={styles.streakBadge}>
+              <Text style={styles.streakText}>🔥 Day {streakCount} Visit Streak</Text>
             </View>
           )}
           <Text style={styles.successMsg}>{result.message}</Text>
@@ -256,6 +271,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   coinsText: { fontSize: 20, fontWeight: '800', color: '#F59E0B' },
+  streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF8E1',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginBottom: 12,
+  },
+  streakText: { fontSize: 15, fontWeight: '700', color: '#F59E0B' },
   successMsg: { fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 24 },
   doneBtn: {
     backgroundColor: '#111827',
