@@ -34,6 +34,7 @@ interface Category {
 }
 
 const CATEGORIES: Category[] = [
+  { id: 'my-savings',  emoji: '💰',  label: 'My Savings',         route: '/savings' },
   { id: 'food',        emoji: '🍕',  label: 'Food & Dining',      route: '/MainCategory/food-dining' },
   { id: 'cafes',       emoji: '☕',  label: 'Cafes',              route: '/MainCategory/food-dining' },
   { id: 'shopping',    emoji: '🛍️',  label: 'Shopping',           route: '/(tabs)/categories' },

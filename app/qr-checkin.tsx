@@ -15,6 +15,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import apiClient from '@/services/apiClient';
+import RatingPrompt from '@/components/store/RatingPrompt';
 
 export default function QRCheckinScreen() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function QRCheckinScreen() {
   const [loadingStore, setLoadingStore] = useState(false);
   const [result, setResult] = useState<{ coinsEarned: number; message: string } | null>(null);
   const [streakCount, setStreakCount] = useState<number | null>(null);
+  const [ratingTrigger, setRatingTrigger] = useState(0);
 
   useEffect(() => {
     if (storeId && !storeName) {
@@ -48,6 +50,7 @@ export default function QRCheckinScreen() {
     try {
       const res = await apiClient.post('/qr-checkin', { storeId, amount: amt, paymentMethod: 'cash' });
       setResult((res as any).data?.data);
+      setRatingTrigger((t) => t + 1);
       // Refresh streak after successful check-in (non-blocking)
       import('@/services/gamificationApi')
         .then((mod) => mod.default.getStreakStatus())
@@ -68,6 +71,7 @@ export default function QRCheckinScreen() {
   if (result) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <RatingPrompt storeId={storeId} storeName={storeName} triggerCount={ratingTrigger} />
         <View style={styles.successCard}>
           <View style={styles.successIcon}>
             <Ionicons name="checkmark-circle" size={64} color="#10B981" />

@@ -159,6 +159,15 @@ export const profileMenuSections: ProfileMenuSection[] = [
         showArrow: true,
       },
       {
+        id: 'invite_friends',
+        title: 'Invite Friends',
+        icon: 'people-outline',
+        route: '/friends',
+        description: 'Invite friends and earn coins together',
+        isEnabled: true,
+        showArrow: true,
+      },
+      {
         id: 'games',
         title: 'Games',
         icon: 'game-controller-outline',
@@ -380,6 +389,14 @@ export const profileMenuListItems: ProfileMenuListItem[] = [
     icon: 'people-outline',
     route: '/group-buy',
     isNew: true,
+    showArrow: true,
+  },
+  {
+    id: 'invite_friends',
+    title: 'Invite Friends',
+    icon: 'person-add-outline',
+    route: '/friends',
+    description: 'Invite friends and earn coins together',
     showArrow: true,
   },
   {

@@ -25,6 +25,7 @@ interface OfferTileProps {
   expiryDate?: string;
   onPress: () => void;
   currencySymbol: string;
+  isPrive?: boolean;
 }
 
 const MAX_BADGES = 3;
@@ -39,14 +40,23 @@ const OfferTile: React.FC<OfferTileProps> = ({
   expiryDate,
   onPress,
   currencySymbol,
+  isPrive = false,
 }) => {
   const visibleBadges = badges?.slice(0, MAX_BADGES);
 
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+      style={({ pressed }) => [styles.card, isPrive && styles.cardPrive, pressed ? styles.cardPressed : null]}
     >
+      {/* Prive exclusive banner */}
+      {isPrive && (
+        <View style={styles.priveBanner}>
+          <Ionicons name="diamond" size={10} color="#1a3a52" />
+          <Text style={styles.priveBannerText}>PRIVE EXCLUSIVE</Text>
+        </View>
+      )}
+
       {/* Top row: logo + store name + distance */}
       <View style={styles.topRow}>
         <CachedImage
@@ -106,6 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 12,
+    overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowColor: colors.nuqta.nileBlue,
@@ -195,6 +206,29 @@ const styles = StyleSheet.create({
   expiryText: {
     fontSize: 11,
     color: colors.gray[500],
+  },
+
+  // Prive
+  cardPrive: {
+    borderWidth: 1.5,
+    borderColor: '#D4AF37',
+  },
+  priveBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#D4AF37',
+    marginHorizontal: -12,
+    marginTop: -12,
+    marginBottom: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  priveBannerText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#1a3a52',
+    letterSpacing: 0.8,
   },
 });
 

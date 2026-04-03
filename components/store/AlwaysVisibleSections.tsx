@@ -6,6 +6,8 @@ import Section2 from '@/app/StoreSection/Section2';
 import { colors } from '@/constants/theme';
 import {
   PeopleEarningSection,
+  StoreCreatorSection,
+  BillSimulator,
   LocationSection,
   NearbyStoresSection,
   TermsTransparencySection,
@@ -76,6 +78,16 @@ function AlwaysVisibleSections({
       {/* People Are Earning Here Section */}
       <View style={sectionCardStyle}>
         <PeopleEarningSection storeId={storeId} />
+      </View>
+
+      {/* Creator/UGC content — social proof at point of decision */}
+      <View style={sectionCardStyle}>
+        <StoreCreatorSection storeId={storeId} />
+      </View>
+
+      {/* Bill Simulator — interactive savings breakdown */}
+      <View style={sectionCardStyle}>
+        <BillSimulator cashbackPercent={storeData?.cashbackPercent ?? 10} />
       </View>
 
       {/* Location & Directions Section */}

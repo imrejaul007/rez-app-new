@@ -99,5 +99,12 @@ export { default as RewardsFooterBanner } from './RewardsFooterBanner';
 // Store Bottom Action Bar - Sticky bottom action bar
 export { default as StoreBottomActionBar } from './StoreBottomActionBar';
 
+// Store Creator Section - Creator/UGC content at point of purchase
+export { default as StoreCreatorSection } from './StoreCreatorSection';
+export type { CreatorPost } from './StoreCreatorSection';
+
+// Bill Simulator - Interactive "What will I actually pay?" card
+export { default as BillSimulator } from './BillSimulator';
+
 // Default export for the main component
 export { default } from './MainStoreHeader';

@@ -70,6 +70,7 @@ import { getSpendingInsights } from '@/services/insightsApi';
 // NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
 // CoinExpiryUrgencyBanner are rendered inside NearUTabContent — not here.
 import RebookingNudgeCard from '@/components/home/RebookingNudgeCard';
+import PersonalizedFeedSection, { PersonalizedFeedSectionHandle } from '@/components/homepage/PersonalizedFeedSection';
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -275,6 +276,36 @@ function HomeScreen() {
     staleTime: 5 * 60_000,
   });
 
+  // Fetch savings summary — streak, missed savings count, top category
+  const { data: savingsSummaryData } = useQuery({
+    queryKey: ['savings', 'summary'],
+    queryFn: async () => {
+      const { default: apiClient } = await import('@/services/apiClient');
+      const response = await apiClient.get<{
+        data: {
+          lifetimeSavedPaise: number;
+          thisMonthSavedPaise: number;
+          lastMonthSavedPaise: number;
+          avgPerVisitPaise: number;
+          topCategory: string;
+          missedSavingsCount: number;
+          savingsStreak: number;
+        };
+      }>('/api/user/savings/summary');
+      return (response.data as any).data as {
+        lifetimeSavedPaise: number;
+        thisMonthSavedPaise: number;
+        lastMonthSavedPaise: number;
+        avgPerVisitPaise: number;
+        topCategory: string;
+        missedSavingsCount: number;
+        savingsStreak: number;
+      };
+    },
+    enabled: isAuthenticated,
+    staleTime: 5 * 60_000,
+  });
+
   // Derive last month savings from 6-month trend array
   const lastMonthSaved = React.useMemo(() => {
     const trend = spendingInsightsData?.monthlyTrend;
@@ -345,6 +376,7 @@ function HomeScreen() {
   const [streakDisplay, setStreakDisplay] = React.useState({ emoji: '', text: '' });
   const sessionStartTimeRef = useRef<number>(0);
   const appStateRef = useRef<AppStateStatus>('active');
+  const personalizedFeedRef = useRef<PersonalizedFeedSectionHandle>(null);
 
   React.useEffect(() => {
     if (!currentLocation?.coordinates || serviceabilityChecked) return;
@@ -649,6 +681,9 @@ function HomeScreen() {
     try {
       // Refresh sections first (visual feedback) — force=true bypasses dedup
       await actions.refreshAllSections(true);
+
+      // Refresh personalized feed
+      personalizedFeedRef.current?.refresh();
 
       // Refresh all user data in background (non-blocking)
       if (authUser && isAuthenticated) {
@@ -1017,6 +1052,10 @@ function HomeScreen() {
                   onViewWalletPress={handleCoinPress}
                   lastMonthSaved={lastMonthSaved}
                   topMerchants={spendingInsightsData?.topMerchants}
+                  savingsStreak={savingsSummaryData?.savingsStreak ?? 0}
+                  missedSavingsCount={savingsSummaryData?.missedSavingsCount ?? 0}
+                  topCategory={savingsSummaryData?.topCategory}
+                  onMissedPress={() => router.push('/savings?tab=missed' as any)}
                 />
               </FeatureErrorBoundary>
             </View>
@@ -1167,6 +1206,13 @@ function HomeScreen() {
         {activeTab !== 'prive' && (
           <FeatureErrorBoundary featureName="Stories" compact={true}>
             <StoriesRow variant={tabStyles.whatsNewVariant} />
+          </FeatureErrorBoundary>
+        )}
+
+        {/* Personalized "For You" Feed — near-u tab only */}
+        {activeTab === 'near-u' && (
+          <FeatureErrorBoundary featureName="For You Feed" compact={true}>
+            <PersonalizedFeedSection ref={personalizedFeedRef} />
           </FeatureErrorBoundary>
         )}
 

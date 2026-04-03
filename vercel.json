@@ -6,8 +6,8 @@
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
-    "EXPO_PUBLIC_API_BASE_URL": "https://rez-backend-8dfu.onrender.com/api",
-    "EXPO_PUBLIC_API_URL": "https://rez-backend-8dfu.onrender.com/api",
+    "EXPO_PUBLIC_API_BASE_URL": "https://rez-api-gateway.onrender.com/api",
+    "EXPO_PUBLIC_API_URL": "https://rez-api-gateway.onrender.com/api",
     "EXPO_PUBLIC_SOCKET_URL": "https://rez-backend-8dfu.onrender.com",
     "EXPO_PUBLIC_ENVIRONMENT": "production",
     "EXPO_PUBLIC_RAZORPAY_KEY_ID": "rzp_test_yourkeyhere",

@@ -58,6 +58,11 @@ interface SavingsDashboardProps {
   // Sprint 2: spending intelligence extras (optional, backward-compatible)
   lastMonthSaved?: number;
   topMerchants?: TopMerchantSnippet[];
+  // Sprint 3: savings streak & missed savings
+  savingsStreak?: number;       // 0 means no streak
+  missedSavingsCount?: number;  // 0 means none
+  topCategory?: string;
+  onMissedPress?: () => void;   // navigate to missed savings
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -79,6 +84,10 @@ function SavingsDashboard({
   onViewWalletPress,
   lastMonthSaved,
   topMerchants,
+  savingsStreak = 0,
+  missedSavingsCount = 0,
+  topCategory,
+  onMissedPress,
 }: SavingsDashboardProps) {
   const router = useRouter();
   const timeCtx = useMemo(() => getTimeContext(), []);
@@ -125,6 +134,20 @@ function SavingsDashboard({
           </View>
           <Text style={styles.heroHeadline}>Start Saving{'\n'}With Every Visit</Text>
         </>
+      )}
+
+      {/* Sprint 3: Savings streak pill — only shown when streak > 0 */}
+      {hasHistory && savingsStreak > 0 && (
+        <View style={styles.streakRow}>
+          <Text style={styles.streakText}>🔥 {savingsStreak} day streak</Text>
+        </View>
+      )}
+
+      {/* Sprint 3: Missed savings alert — tappable, only shown when count > 0 */}
+      {missedSavingsCount > 0 && (
+        <Pressable style={styles.missedRow} onPress={onMissedPress}>
+          <Text style={styles.missedText}>⚡ {missedSavingsCount} missed savings this month</Text>
+        </Pressable>
       )}
 
       {/* Stats row — only when user has savings history */}
@@ -194,6 +217,13 @@ function SavingsDashboard({
           </View>
         </View>
       )}
+
+      {/* Sprint 3: Top category pill — only shown when topCategory is set */}
+      {topCategory ? (
+        <View style={styles.topCategoryPill}>
+          <Text style={styles.topCategoryText}>🏆 Top: {topCategory}</Text>
+        </View>
+      ) : null}
 
       {/* Contextual subline */}
       <Text style={styles.subline}>
@@ -394,6 +424,58 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: GREEN,
+  },
+
+  // Sprint 3: Savings streak pill
+  streakRow: {
+    alignSelf: 'flex-start',
+    backgroundColor: WHITE_15,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 8,
+  },
+  streakText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: MUSTARD,
+    letterSpacing: 0.2,
+  },
+
+  // Sprint 3: Missed savings alert row
+  missedRow: {
+    alignSelf: 'stretch',
+    backgroundColor: 'rgba(239,68,68,0.15)',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(239,68,68,0.30)',
+  },
+  missedText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FCA5A5',
+    letterSpacing: 0.1,
+  },
+
+  // Sprint 3: Top category pill
+  topCategoryPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: WHITE_10,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: WHITE_15,
+  },
+  topCategoryText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: WHITE_70,
+    letterSpacing: 0.2,
   },
 
   // Subline

@@ -264,7 +264,8 @@ const FinancialPage: React.FC = () => {
           </ScrollView>
         </View>
 
-        <View style={styles.promoBanner}>
+        {/* TODO: Gold savings feature disabled */}
+        {/* <View style={styles.promoBanner}>
           <LinearGradient
             colors={[Colors.warning, Colors.warning]}
             start={{ x: 0, y: 0 }}
@@ -278,7 +279,7 @@ const FinancialPage: React.FC = () => {
               <Text style={styles.promoButtonText}>Buy Gold</Text>
             </Pressable>
           </LinearGradient>
-        </View>
+        </View> */}
         <View style={{ height: 100 }} />
       </ScrollView>
     </View>

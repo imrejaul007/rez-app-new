@@ -1057,3 +1057,72 @@ const storesService = new StoresService();
 export { storesService as storesApi };
 
 export default storesService;
+
+// ── Personalized Feed ──────────────────────────────────────────────────────
+
+export interface PersonalizedFeedStore {
+  storeId: string;
+  name: string;
+  logo?: string;
+  category: string;
+  distance?: string;
+  offerSummary?: string;
+  relevanceScore: number;
+  rating?: number;
+  reviewCount?: number;
+}
+
+export interface PersonalizedFeedResponse {
+  stores: PersonalizedFeedStore[];
+}
+
+/**
+ * Fetch personalized store feed for the home screen "For You" section.
+ * Falls back to GET /search/trending when userId is not provided.
+ */
+export async function fetchPersonalizedFeed(params: {
+  userId?: string;
+  lat?: number;
+  lng?: number;
+  limit?: number;
+}): Promise<PersonalizedFeedStore[]> {
+  const { userId, lat, lng, limit = 10 } = params;
+
+  try {
+    if (userId) {
+      const qs = new URLSearchParams({ userId, limit: String(limit) });
+      if (lat !== undefined) qs.set('lat', String(lat));
+      if (lng !== undefined) qs.set('lng', String(lng));
+
+      const res = await apiClient.get<PersonalizedFeedResponse>(
+        `/stores/feed?${qs.toString()}`,
+      );
+      if (res.success && Array.isArray((res.data as any)?.stores)) {
+        return (res.data as any).stores as PersonalizedFeedStore[];
+      }
+    }
+
+    // Fallback: trending stores
+    const trendingRes = await apiClient.get<any>('/search/trending', {
+      limit,
+    });
+
+    const raw: any[] = (trendingRes.data as any)?.stores
+      || (trendingRes.data as any)?.results
+      || [];
+
+    return raw.map((s: any) => ({
+      storeId: s.id || s._id || s.storeId || '',
+      name: s.name || '',
+      logo: s.logo || s.image || undefined,
+      category: s.category?.name || s.category || '',
+      distance: s.distance,
+      offerSummary: s.offerSummary || s.offer || undefined,
+      relevanceScore: s.relevanceScore || s.score || 0,
+      rating: s.rating?.average || s.rating?.value || s.avgRating || undefined,
+      reviewCount: s.rating?.count || s.reviewCount || undefined,
+    }));
+  } catch {
+    return [];
+  }
+}

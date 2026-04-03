@@ -754,6 +754,30 @@ function ProfilePage() {
             </Pressable>
           )}
 
+          {/* Invite Friends card */}
+          <Pressable
+            style={styles.inviteFriendsCard}
+            onPress={() => router.push('/invite-friends' as any)}
+            accessibilityLabel="Invite Friends — earn bonus coins"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to invite friends and earn 100 bonus REZ coins"
+          >
+            <View style={styles.inviteFriendsContent}>
+              <View style={styles.inviteFriendsIcon}>
+                <Ionicons name="gift-outline" size={22} color={colors.lightMustard} />
+              </View>
+              <View style={styles.inviteFriendsText}>
+                <ThemedText style={styles.inviteFriendsTitle}>Invite Friends</ThemedText>
+                <ThemedText style={styles.inviteFriendsSub}>
+                  {referralCount !== null && referralCount > 0
+                    ? `You've invited ${referralCount} friend${referralCount !== 1 ? 's' : ''}`
+                    : 'Share your code and earn coins together'}
+                </ThemedText>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.neutral[400]} />
+            </View>
+          </Pressable>
+
           {/* Referral Program Card */}
           <Pressable
             style={styles.referralCard}
@@ -1368,6 +1392,47 @@ const styles = StyleSheet.create({
     color: PROFILE_COLORS.primaryDark,
     fontWeight: '600',
     flex: 1,
+  },
+
+  // Invite Friends Card
+  inviteFriendsCard: {
+    marginTop: Spacing.md,
+    borderRadius: 14,
+    backgroundColor: colors.background.primary,
+    borderWidth: 1,
+    borderColor: 'rgba(255,205,87,0.25)',
+    shadowColor: colors.nileBlue,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  inviteFriendsContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    gap: 12,
+  },
+  inviteFriendsIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,205,87,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inviteFriendsText: {
+    flex: 1,
+  },
+  inviteFriendsTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.nileBlue,
+  },
+  inviteFriendsSub: {
+    fontSize: 12,
+    color: colors.midGray,
+    marginTop: 2,
   },
 
   // Referral Card

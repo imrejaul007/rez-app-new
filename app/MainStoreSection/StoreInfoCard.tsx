@@ -1,24 +1,14 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // StoreInfoCard.tsx - Store info section with image, name, rating, tags, and status
-import React from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Dimensions, Platform } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows,
-} from "@/constants/DesignSystem";
+import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export interface StoreInfoCardProps {
   storeImage?: string;
@@ -32,6 +22,7 @@ export interface StoreInfoCardProps {
   isOpen?: boolean;
   closingTime?: string;
   acceptsCoins?: boolean;
+  hasKhata?: boolean; // store extends buy-now-pay-later via Khata
 }
 
 function StoreInfoCard({
@@ -39,13 +30,14 @@ function StoreInfoCard({
   storeName,
   rating = 0,
   ratingCount = 0,
-  distance = "",
+  distance = '',
   isVerified = false,
   hasInstantCashback = false,
   hasExtraCoins = false,
   isOpen = true,
-  closingTime = "10pm",
+  closingTime = '10pm',
   acceptsCoins = true,
+  hasKhata = false,
 }: StoreInfoCardProps) {
   // Format rating count
   const formatRatingCount = (count: number): string => {
@@ -60,11 +52,7 @@ function StoreInfoCard({
       {/* Store Image */}
       <View style={styles.imageContainer}>
         {storeImage ? (
-          <CachedImage
-            source={storeImage}
-            style={styles.storeImage}
-            contentFit="cover"
-          />
+          <CachedImage source={storeImage} style={styles.storeImage} contentFit="cover" />
         ) : (
           <View style={styles.placeholderImage}>
             <Ionicons name="storefront-outline" size={60} color={Colors.gray[300]} />
@@ -113,6 +101,12 @@ function StoreInfoCard({
               <ThemedText style={[styles.tagText, styles.tagTextGreen]}>Extra Coins</ThemedText>
             </View>
           )}
+          {hasKhata && (
+            <View style={[styles.tag, styles.tagKhata]}>
+              <Ionicons name="time-outline" size={14} color="#6C5CE7" />
+              <ThemedText style={[styles.tagText, styles.tagTextKhata]}>Pay Later</ThemedText>
+            </View>
+          )}
         </View>
 
         {/* Status Pills */}
@@ -120,7 +114,7 @@ function StoreInfoCard({
           <View style={[styles.statusPill, isOpen ? styles.statusOpen : styles.statusClosed]}>
             <View style={[styles.statusDot, isOpen ? styles.dotOpen : styles.dotClosed]} />
             <ThemedText style={[styles.statusText, isOpen ? styles.statusTextOpen : styles.statusTextClosed]}>
-              {isOpen ? `Open now · Closes ${closingTime}` : "Closed"}
+              {isOpen ? `Open now · Closes ${closingTime}` : 'Closed'}
             </ThemedText>
           </View>
           {acceptsCoins && (
@@ -143,51 +137,51 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: SCREEN_WIDTH,
     height: 200,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   storeImage: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   placeholderImage: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     backgroundColor: Colors.gray[100],
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   infoContainer: {
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.md,
   },
   nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   storeName: {
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.primary,
   },
   metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: Spacing.xs,
     gap: Spacing.md,
   },
   ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   ratingText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.text.primary,
   },
   distanceContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   distanceText: {
@@ -195,32 +189,32 @@ const styles = StyleSheet.create({
     color: colors.text.secondary,
   },
   tagsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.sm,
     marginTop: Spacing.md,
   },
   tag: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 6,
     borderRadius: BorderRadius.full,
     gap: 4,
   },
   tagGreen: {
-    backgroundColor: "rgba(255, 205, 87, 0.1)",
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
     borderWidth: 1,
-    borderColor: "rgba(255, 205, 87, 0.3)",
+    borderColor: 'rgba(255, 205, 87, 0.3)',
   },
   tagOrange: {
-    backgroundColor: "rgba(255, 205, 87, 0.1)",
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
     borderWidth: 1,
-    borderColor: "rgba(255, 205, 87, 0.3)",
+    borderColor: 'rgba(255, 205, 87, 0.3)',
   },
   tagText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   tagTextGreen: {
     color: colors.lightMustard,
@@ -228,28 +222,36 @@ const styles = StyleSheet.create({
   tagTextOrange: {
     color: colors.lightMustard,
   },
+  tagKhata: {
+    backgroundColor: 'rgba(108, 92, 231, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(108, 92, 231, 0.25)',
+  },
+  tagTextKhata: {
+    color: '#6C5CE7',
+  },
   statusRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.sm,
     marginTop: Spacing.md,
   },
   statusPill: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: 8,
     borderRadius: BorderRadius.full,
     gap: 6,
   },
   statusOpen: {
-    backgroundColor: "rgba(255, 205, 87, 0.1)",
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
   },
   statusClosed: {
-    backgroundColor: "rgba(26, 58, 82, 0.1)",
+    backgroundColor: 'rgba(26, 58, 82, 0.1)',
   },
   statusCoins: {
-    backgroundColor: "rgba(255, 205, 87, 0.1)",
+    backgroundColor: 'rgba(255, 205, 87, 0.1)',
   },
   statusDot: {
     width: 8,
@@ -264,7 +266,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   statusTextOpen: {
     color: colors.lightMustard,
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
   },
   statusTextCoins: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.lightMustard,
   },
 });
