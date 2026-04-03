@@ -53,6 +53,9 @@ import { getReferralStats } from '@/services/referralApi';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import authService from '@/services/authApi';
+import { useQuery } from '@tanstack/react-query';
+import { getScore } from '@/services/rezScoreApi';
+import { Animated } from 'react-native';
 
 function ProfilePage() {
   const router = useRouter();
@@ -125,6 +128,30 @@ function ProfilePage() {
   const [referralCount, setReferralCount] = useState<number | null>(null);
   const { segment: identitySegment, verificationSegment, instituteName, companyName } = useUserIdentityStore();
   const isMounted = useIsMounted();
+
+  // REZ Score for profile section
+  const { data: rezScoreData } = useQuery({
+    queryKey: ['rez-score'],
+    queryFn: getScore,
+    enabled: isAuthenticated && !authLoading,
+    staleTime: 5 * 60_000,
+  });
+
+  // Tier config for REZ Score display
+  const REZ_TIER_THRESHOLDS = [
+    { min: 801, max: 999, label: 'REZ Elite', color: '#B8860B', bg: 'rgba(255,200,87,0.15)' },
+    { min: 601, max: 800, label: 'Power Saver', color: '#2563EB', bg: 'rgba(37,99,235,0.10)' },
+    { min: 401, max: 600, label: 'Smart Saver', color: '#16A34A', bg: 'rgba(22,163,74,0.10)' },
+    { min: 201, max: 400, label: 'Regular', color: '#6B7280', bg: 'rgba(107,114,128,0.10)' },
+    { min: 0, max: 200, label: 'Starter', color: '#9CA3AF', bg: 'rgba(156,163,175,0.10)' },
+  ] as const;
+
+  const getRezTier = (score: number) => {
+    for (const t of REZ_TIER_THRESHOLDS) {
+      if (score >= t.min && score <= t.max) return t;
+    }
+    return REZ_TIER_THRESHOLDS[REZ_TIER_THRESHOLDS.length - 1];
+  };
 
   // Fetch referral stats for "Friends joined" count
   useEffect(() => {
@@ -786,6 +813,82 @@ function ProfilePage() {
             </View>
           </Pressable>
 
+          {/* REZ Score Card */}
+          {rezScoreData &&
+            (() => {
+              const score = rezScoreData.score;
+              const tier = getRezTier(score);
+              const trendPoints = rezScoreData.trendPoints ?? 0;
+              const isUp = trendPoints > 0;
+              const isDown = trendPoints < 0;
+              // Next tier threshold
+              const nextTier = REZ_TIER_THRESHOLDS.slice()
+                .reverse()
+                .find((t) => t.min > score);
+              const nextTierMin = nextTier?.min ?? 1000;
+              const progressInTier = score - tier.min;
+              const tierRange = tier.max - tier.min;
+              const progressPct = Math.min((progressInTier / tierRange) * 100, 100);
+              return (
+                <Pressable
+                  style={styles.rezScoreCard}
+                  onPress={() => router.push('/rez-score' as any)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`REZ Score ${score}. ${tier.label} tier. Tap for details.`}
+                >
+                  {/* Header row */}
+                  <View style={styles.rezScoreHeader}>
+                    <View>
+                      <ThemedText style={styles.rezScoreTitle}>REZ Score</ThemedText>
+                      <View style={[styles.rezTierBadge, { backgroundColor: tier.bg }]}>
+                        <ThemedText style={[styles.rezTierText, { color: tier.color }]}>
+                          {tier.label.toUpperCase()}
+                        </ThemedText>
+                      </View>
+                    </View>
+                    <View style={styles.rezScoreRight}>
+                      <ThemedText style={[styles.rezScoreNumber, { color: tier.color }]}>{score}</ThemedText>
+                      <ThemedText style={styles.rezScoreOutOf}>/ 1000</ThemedText>
+                    </View>
+                  </View>
+                  {/* Progress bar to next tier */}
+                  <View style={styles.rezProgressTrack}>
+                    <View
+                      style={[styles.rezProgressFill, { width: `${progressPct}%` as any, backgroundColor: tier.color }]}
+                    />
+                  </View>
+                  <View style={styles.rezProgressLabels}>
+                    <ThemedText style={styles.rezProgressLeft}>{tier.label}</ThemedText>
+                    {nextTier && (
+                      <ThemedText style={styles.rezProgressRight}>
+                        {nextTierMin - score} pts to {nextTier.label}
+                      </ThemedText>
+                    )}
+                  </View>
+                  {/* Trend */}
+                  <View style={styles.rezTrendRow}>
+                    <Ionicons
+                      name={isUp ? 'trending-up' : isDown ? 'trending-down' : 'remove'}
+                      size={14}
+                      color={isUp ? colors.success : isDown ? colors.error : colors.gray[400]}
+                    />
+                    <ThemedText
+                      style={[
+                        styles.rezTrendText,
+                        { color: isUp ? colors.success : isDown ? colors.error : colors.gray[400] },
+                      ]}
+                    >
+                      {isUp ? '+' : ''}
+                      {trendPoints} pts vs last month
+                    </ThemedText>
+                    <View style={{ flex: 1 }} />
+                    <ThemedText style={styles.rezWhatIs}>What is REZ Score?</ThemedText>
+                    <Ionicons name="chevron-forward" size={14} color={colors.gray[400]} />
+                  </View>
+                </Pressable>
+              );
+            })()}
+
           {/* Partner Program Card */}
           <Pressable
             style={styles.partnerCard}
@@ -1350,6 +1453,100 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: colors.brand.amberDark,
+  },
+
+  // REZ Score Card
+  rezScoreCard: {
+    marginTop: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderRadius: 18,
+    padding: Spacing.md,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  rezScoreHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  rezScoreTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: 4,
+  },
+  rezTierBadge: {
+    alignSelf: 'flex-start',
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+  },
+  rezTierText: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  rezScoreRight: {
+    alignItems: 'flex-end',
+  },
+  rezScoreNumber: {
+    fontSize: 36,
+    fontWeight: '900',
+    letterSpacing: -1,
+    lineHeight: 40,
+  },
+  rezScoreOutOf: {
+    fontSize: 12,
+    color: colors.gray[400],
+    fontWeight: '500',
+    marginTop: -2,
+  },
+  rezProgressTrack: {
+    height: 6,
+    backgroundColor: colors.gray[200],
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  rezProgressFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  rezProgressLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  rezProgressLeft: {
+    fontSize: 10,
+    color: colors.gray[500],
+    fontWeight: '500',
+  },
+  rezProgressRight: {
+    fontSize: 10,
+    color: colors.gray[500],
+    fontWeight: '500',
+  },
+  rezTrendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[100],
+  },
+  rezTrendText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  rezWhatIs: {
+    fontSize: 11,
+    color: colors.gray[400],
+    fontWeight: '500',
   },
 
   // Partner Program Card
