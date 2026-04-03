@@ -60,6 +60,7 @@ import { colors, spacing, borderRadius, shadows, typography } from '@/constants/
 import StickySearchHeader from '@/components/homepage/StickySearchHeader';
 import HeroBanner from '@/components/homepage/HeroBanner';
 import SavingsDashboard from '@/components/homepage/SavingsDashboard';
+import SmartTipsCard from '@/components/homepage/SmartTipsCard';
 import type { TabId } from '@/components/homepage/HomeTabSection';
 import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
@@ -1206,6 +1207,13 @@ function HomeScreen() {
         {activeTab !== 'prive' && (
           <FeatureErrorBoundary featureName="Stories" compact={true}>
             <StoriesRow variant={tabStyles.whatsNewVariant} />
+          </FeatureErrorBoundary>
+        )}
+
+        {/* Smart Tips Card — compact best nearby cashback offer */}
+        {activeTab === 'near-u' && (
+          <FeatureErrorBoundary featureName="Smart Tips" compact={true}>
+            <SmartTipsCard />
           </FeatureErrorBoundary>
         )}
 
