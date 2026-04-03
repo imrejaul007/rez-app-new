@@ -245,6 +245,12 @@ function ProfilePage() {
       case 'notification_preferences':
         router.push('/account/notifications' as any);
         break;
+      case 'notifications_inbox':
+        router.push('/notifications' as any);
+        break;
+      case 'nearby_map':
+        router.push('/map' as any);
+        break;
       default:
         if (item.route) {
           router.push(item.route as any);
@@ -986,6 +992,51 @@ function ProfilePage() {
         {/* Icon Grid Section */}
         <View style={styles.section}>
           <View style={styles.iconGrid}>{iconGridData.map(renderIconGridItem)}</View>
+        </View>
+
+        {/* Quick Access: Notifications Inbox + Nearby Map */}
+        <View style={styles.section}>
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => router.push('/notifications' as any)}
+            accessibilityLabel="Notifications"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view your notification inbox"
+          >
+            <View style={styles.menuItemLeft}>
+              <View style={styles.menuIconContainer}>
+                <Ionicons name="notifications-outline" size={22} color={PROFILE_COLORS.primary} />
+              </View>
+              <View style={styles.menuTextContainer}>
+                <ThemedText style={styles.menuTitle}>Notifications</ThemedText>
+                <ThemedText style={styles.menuDescription}>Your inbox — achievements, cashback & streaks</ThemedText>
+              </View>
+            </View>
+            <View style={styles.menuItemRight}>
+              <Ionicons name="chevron-forward" size={18} color={PROFILE_COLORS.textSecondary} />
+            </View>
+          </Pressable>
+
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => router.push('/map' as any)}
+            accessibilityLabel="Nearby Map"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view nearby stores on a map"
+          >
+            <View style={styles.menuItemLeft}>
+              <View style={styles.menuIconContainer}>
+                <Ionicons name="map-outline" size={22} color={PROFILE_COLORS.primary} />
+              </View>
+              <View style={styles.menuTextContainer}>
+                <ThemedText style={styles.menuTitle}>Nearby Map</ThemedText>
+                <ThemedText style={styles.menuDescription}>Find stores near you with cashback offers</ThemedText>
+              </View>
+            </View>
+            <View style={styles.menuItemRight}>
+              <Ionicons name="chevron-forward" size={18} color={PROFILE_COLORS.textSecondary} />
+            </View>
+          </Pressable>
         </View>
 
         {/* Menu List Section */}

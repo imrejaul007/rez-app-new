@@ -70,6 +70,7 @@ import { getSpendingInsights } from '@/services/insightsApi';
 
 // NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
 // CoinExpiryUrgencyBanner are rendered inside NearUTabContent — not here.
+import CoinExpiryBanner from '@/components/homepage/CoinExpiryBanner';
 import RebookingNudgeCard from '@/components/home/RebookingNudgeCard';
 import PersonalizedFeedSection, { PersonalizedFeedSectionHandle } from '@/components/homepage/PersonalizedFeedSection';
 
@@ -883,6 +884,11 @@ function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={MUSTARD} colors={[MUSTARD]} />
         }
       >
+        {/* Coin Expiry Banner — shown when user has coins expiring in next 7 days */}
+        <FeatureErrorBoundary featureName="Coin Expiry Banner" compact={true}>
+          <CoinExpiryBanner />
+        </FeatureErrorBoundary>
+
         {/* Header - Flat dark background (CRED-style, no gradient) */}
         <View style={viewStyles.header}>
           <View style={viewStyles.headerTop}>
