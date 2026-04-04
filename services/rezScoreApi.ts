@@ -63,8 +63,12 @@ export interface ScoreHistoryEntry {
  * GET /api/score
  */
 export async function getScore(): Promise<RezScore> {
-  const response = await apiClient.get<RezScore>('/score');
-  return response.data as RezScore;
+  try {
+    const response = await apiClient.get<RezScore>('/score');
+    return response.data as RezScore;
+  } catch {
+    throw new Error('Failed to fetch REZ Score');
+  }
 }
 
 /**
@@ -72,10 +76,12 @@ export async function getScore(): Promise<RezScore> {
  * GET /api/score/boosters
  */
 export async function getScoreBoosters(): Promise<ScoreBooster[]> {
-  const response = await apiClient.get<ScoreBooster[]>(
-    '/score/boosters',
-  );
-  return (response.data as ScoreBooster[]) ?? [];
+  try {
+    const response = await apiClient.get<ScoreBooster[]>('/score/boosters');
+    return (response.data as ScoreBooster[]) ?? [];
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -83,8 +89,10 @@ export async function getScoreBoosters(): Promise<ScoreBooster[]> {
  * GET /api/score/history
  */
 export async function getScoreHistory(): Promise<ScoreHistoryEntry[]> {
-  const response = await apiClient.get<ScoreHistoryEntry[]>(
-    '/score/history',
-  );
-  return (response.data as ScoreHistoryEntry[]) ?? [];
+  try {
+    const response = await apiClient.get<ScoreHistoryEntry[]>('/score/history');
+    return (response.data as ScoreHistoryEntry[]) ?? [];
+  } catch {
+    return [];
+  }
 }

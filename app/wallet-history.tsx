@@ -6,7 +6,17 @@
  */
 
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, StatusBar } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+  StatusBar,
+  Platform,
+  FlatList,
+} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
@@ -332,27 +342,47 @@ export default function WalletHistoryScreen() {
       )}
 
       {/* List */}
-      {!loading && (
-        <FlashList
-          data={transactions}
-          renderItem={({ item }) => <TransactionItem item={item} />}
-          keyExtractor={(item) => item.id || item.transactionId}
-          estimatedItemSize={72}
-          ListEmptyComponent={renderEmpty}
-          ListFooterComponent={renderFooter}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.3}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.nileBlue}
-              colors={[colors.nileBlue]}
-            />
-          }
-          contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
-        />
-      )}
+      {!loading &&
+        (Platform.OS === 'web' ? (
+          <FlatList
+            data={transactions}
+            renderItem={({ item }) => <TransactionItem item={item} />}
+            keyExtractor={(item) => item.id || item.transactionId}
+            ListEmptyComponent={renderEmpty}
+            ListFooterComponent={renderFooter}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.3}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor={colors.nileBlue}
+                colors={[colors.nileBlue]}
+              />
+            }
+            contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+          />
+        ) : (
+          <FlashList
+            data={transactions}
+            renderItem={({ item }) => <TransactionItem item={item} />}
+            keyExtractor={(item) => item.id || item.transactionId}
+            estimatedItemSize={72}
+            ListEmptyComponent={renderEmpty}
+            ListFooterComponent={renderFooter}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.3}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor={colors.nileBlue}
+                colors={[colors.nileBlue]}
+              />
+            }
+            contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+          />
+        ))}
     </View>
   );
 }

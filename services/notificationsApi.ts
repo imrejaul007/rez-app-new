@@ -197,8 +197,8 @@ class NotificationsService {
     message: string;
     deleted: number;
   }>> {
-    return apiClient.post<any>('/notifications/bulk-delete', {
-      ids: notificationIds
+    return apiClient.delete<any>('/notifications/bulk-delete', {
+      data: { ids: notificationIds },
     });
   }
 

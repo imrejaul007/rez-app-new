@@ -70,6 +70,7 @@ class AnalyticsService {
   private sessionStartTime: Date;
   private eventQueue: AnalyticsEvent[] = [];
   private isEnabled: boolean = true;
+  private isFlushing: boolean = false;
 
   constructor() {
     this.sessionId = this.generateSessionId();
@@ -326,8 +327,9 @@ class AnalyticsService {
   }
 
   async flush() {
-    if (this.eventQueue.length === 0) return;
+    if (this.eventQueue.length === 0 || this.isFlushing) return;
 
+    this.isFlushing = true;
     const events = [...this.eventQueue];
     this.eventQueue = [];
 
@@ -338,6 +340,8 @@ class AnalyticsService {
     } catch {
       // Re-queue events on failure, capped to MAX_QUEUE_SIZE
       this.eventQueue = [...events, ...this.eventQueue].slice(-AnalyticsService.MAX_QUEUE_SIZE);
+    } finally {
+      this.isFlushing = false;
     }
   }
 

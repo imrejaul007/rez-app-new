@@ -1,6 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { View, StyleSheet, StatusBar, Platform, Pressable } from 'react-native';
+import { View, StyleSheet, StatusBar, Platform, Pressable, FlatList } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -640,6 +640,25 @@ function CartPage() {
               </View>
             ))}
           </View>
+        ) : Platform.OS === 'web' ? (
+          <FlatList
+            data={currentItems as any[]}
+            renderItem={renderCartItem as any}
+            keyExtractor={(item: any) => `${item.id}`}
+            contentContainerStyle={listContentContainerStyle as any}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+                <CardOffersSection
+                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
+                  orderValue={overallTotal}
+                  onOfferApplied={handleCardOfferApplied}
+                />
+              ) : null
+            }
+          />
         ) : (
           <FlashList
             {...({

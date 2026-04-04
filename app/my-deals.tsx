@@ -17,6 +17,7 @@ import {
   RefreshControl,
   Dimensions,
   Clipboard,
+  FlatList,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -174,13 +175,13 @@ const MyDealsPage: React.FC = () => {
 
   useEffect(() => {
     fetchDeals(true);
-  }, [selectedFilter]);
+  }, [selectedFilter, fetchDeals]);
 
   useEffect(() => {
     if (page > 1) {
       fetchDeals(false);
     }
-  }, [page]);
+  }, [page, fetchDeals]);
 
   const onRefresh = () => {
     setIsRefreshing(true);
@@ -259,118 +260,125 @@ const MyDealsPage: React.FC = () => {
 
   const totalDeals = summary.active + summary.used + summary.expired + summary.cancelled;
 
-  const renderDealCard = useCallback(({ item: redemption }: { item: DealRedemption }) => {
-    const statusConfig = STATUS_CONFIG[redemption.status] || STATUS_CONFIG.active;
-    const dealValue = getDealValue(redemption.dealSnapshot);
-    const gradientColors =
-      (redemption.campaignSnapshot?.gradientColors?.length ?? 0) >= 2
-        ? redemption.campaignSnapshot.gradientColors
-        : [colors.brand.orange, '#FB923C'];
-    const timeRemaining = redemption.status === 'active' ? getTimeRemaining(redemption.expiresAt) : null;
-    const code = redemption.code || redemption.redemptionCode || '';
-    const isCopied = copiedCode === code;
+  const renderDealCard = useCallback(
+    ({ item: redemption }: { item: DealRedemption }) => {
+      const statusConfig = STATUS_CONFIG[redemption.status] || STATUS_CONFIG.active;
+      const dealValue = getDealValue(redemption.dealSnapshot);
+      const gradientColors =
+        (redemption.campaignSnapshot?.gradientColors?.length ?? 0) >= 2
+          ? redemption.campaignSnapshot.gradientColors
+          : [colors.brand.orange, '#FB923C'];
+      const timeRemaining = redemption.status === 'active' ? getTimeRemaining(redemption.expiresAt) : null;
+      const code = redemption.code || redemption.redemptionCode || '';
+      const isCopied = copiedCode === code;
 
-    return (
-      <View key={redemption.id} style={styles.dealCard}>
-        {/* Card Header with Gradient */}
-        <LinearGradient
-          colors={gradientColors as [string, string]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.cardHeader}
-        >
-          <View style={styles.cardHeaderContent}>
-            <View style={styles.campaignBadge}>
-              <Text style={styles.campaignBadgeText}>{redemption.campaignSnapshot?.badge || 'DEAL'}</Text>
-            </View>
-            <Text style={styles.campaignTitle} numberOfLines={1}>
-              {redemption.campaignSnapshot?.title || 'Deal'}
-            </Text>
-          </View>
-          {redemption.dealSnapshot?.image && (
-            <CachedImage source={redemption.dealSnapshot.image} style={styles.dealImage} />
-          )}
-        </LinearGradient>
-
-        {/* Card Body */}
-        <View style={styles.cardBody}>
-          {/* Store & Status Row */}
-          <View style={styles.storeStatusRow}>
-            <View style={styles.storeInfo}>
-              <Ionicons name="storefront" size={16} color={(COLORS as any).navy} />
-              <Text style={styles.storeName} numberOfLines={1}>
-                {redemption.dealSnapshot?.store || 'Store'}
+      return (
+        <View key={redemption.id} style={styles.dealCard}>
+          {/* Card Header with Gradient */}
+          <LinearGradient
+            colors={gradientColors as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.cardHeader}
+          >
+            <View style={styles.cardHeaderContent}>
+              <View style={styles.campaignBadge}>
+                <Text style={styles.campaignBadgeText}>{redemption.campaignSnapshot?.badge || 'DEAL'}</Text>
+              </View>
+              <Text style={styles.campaignTitle} numberOfLines={1}>
+                {redemption.campaignSnapshot?.title || 'Deal'}
               </Text>
             </View>
-            <View style={[styles.statusBadge, { backgroundColor: statusConfig.bgColor }]}>
-              <Ionicons name={statusConfig.icon as any} size={12} color={statusConfig.color} />
-              <Text style={[styles.statusText, { color: statusConfig.color }]}>{statusConfig.label}</Text>
-            </View>
-          </View>
+            {redemption.dealSnapshot?.image && (
+              <CachedImage source={redemption.dealSnapshot.image} style={styles.dealImage} />
+            )}
+          </LinearGradient>
 
-          {/* Deal Value */}
-          {dealValue && (
-            <View style={styles.dealValueRow}>
-              <Text style={styles.dealValueLabel}>{dealValue.type}</Text>
-              <View style={styles.dealValueContainer}>
-                {dealValue.type === 'Coins' && <CoinIcon size={18} />}
-                <Text style={[styles.dealValueText, { color: dealValue.color }]}>{dealValue.value}</Text>
+          {/* Card Body */}
+          <View style={styles.cardBody}>
+            {/* Store & Status Row */}
+            <View style={styles.storeStatusRow}>
+              <View style={styles.storeInfo}>
+                <Ionicons name="storefront" size={16} color={(COLORS as any).navy} />
+                <Text style={styles.storeName} numberOfLines={1}>
+                  {redemption.dealSnapshot?.store || 'Store'}
+                </Text>
+              </View>
+              <View style={[styles.statusBadge, { backgroundColor: statusConfig.bgColor }]}>
+                <Ionicons name={statusConfig.icon as any} size={12} color={statusConfig.color} />
+                <Text style={[styles.statusText, { color: statusConfig.color }]}>{statusConfig.label}</Text>
               </View>
             </View>
-          )}
 
-          {/* Redemption Code - Prominent Display */}
-          <View style={styles.codeSection}>
-            <Text style={styles.codeSectionLabel}>Redemption Code</Text>
-            <Pressable style={styles.codeBox} onPress={() => handleCopyCode(code)}>
-              <Text style={styles.codeText}>{code}</Text>
-              <View style={styles.copyButton}>
+            {/* Deal Value */}
+            {dealValue && (
+              <View style={styles.dealValueRow}>
+                <Text style={styles.dealValueLabel}>{dealValue.type}</Text>
+                <View style={styles.dealValueContainer}>
+                  {dealValue.type === 'Coins' && <CoinIcon size={18} />}
+                  <Text style={[styles.dealValueText, { color: dealValue.color }]}>{dealValue.value}</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Redemption Code - Prominent Display */}
+            <View style={styles.codeSection}>
+              <Text style={styles.codeSectionLabel}>Redemption Code</Text>
+              <Pressable style={styles.codeBox} onPress={() => handleCopyCode(code)}>
+                <Text style={styles.codeText}>{code}</Text>
+                <View style={styles.copyButton}>
+                  <Ionicons
+                    name={isCopied ? 'checkmark' : 'copy-outline'}
+                    size={16}
+                    color={isCopied ? COLORS.green500 : COLORS.gray600}
+                  />
+                </View>
+              </Pressable>
+              {isCopied && <Text style={styles.copiedText}>Copied!</Text>}
+            </View>
+
+            {/* Time Remaining for Active Deals */}
+            {timeRemaining && (
+              <View style={[styles.timeRow, timeRemaining.urgent ? styles.timeRowUrgent : null]}>
                 <Ionicons
-                  name={isCopied ? 'checkmark' : 'copy-outline'}
-                  size={16}
-                  color={isCopied ? COLORS.green500 : COLORS.gray600}
+                  name="time-outline"
+                  size={14}
+                  color={timeRemaining.urgent ? COLORS.amber600 : COLORS.gray600}
                 />
+                <Text style={[styles.timeText, timeRemaining.urgent ? styles.timeTextUrgent : null]}>
+                  {timeRemaining.text}
+                </Text>
               </View>
-            </Pressable>
-            {isCopied && <Text style={styles.copiedText}>Copied!</Text>}
-          </View>
+            )}
 
-          {/* Time Remaining for Active Deals */}
-          {timeRemaining && (
-            <View style={[styles.timeRow, timeRemaining.urgent ? styles.timeRowUrgent : null]}>
-              <Ionicons name="time-outline" size={14} color={timeRemaining.urgent ? COLORS.amber600 : COLORS.gray600} />
-              <Text style={[styles.timeText, timeRemaining.urgent ? styles.timeTextUrgent : null]}>
-                {timeRemaining.text}
+            {/* Action Button for Active Deals */}
+            {redemption.status === 'active' && redemption.dealSnapshot?.storeId && (
+              <Pressable
+                style={styles.visitStoreButton}
+                onPress={() =>
+                  handleVisitStore(redemption.dealSnapshot.storeId!, code, redemption.dealSnapshot.store || 'Store')
+                }
+              >
+                <Text style={styles.visitStoreText}>Visit Store</Text>
+                <Ionicons name="arrow-forward" size={16} color={COLORS.white} />
+              </Pressable>
+            )}
+
+            {/* Footer */}
+            <View style={styles.cardFooter}>
+              <Text style={styles.redeemedDate}>
+                {redemption.status === 'used' ? 'Used' : 'Redeemed'} {formatDate(redemption.redeemedAt)}
               </Text>
+              <Pressable onPress={() => handleDealPress(redemption)}>
+                <Text style={styles.viewDetailsLink}>View Deal</Text>
+              </Pressable>
             </View>
-          )}
-
-          {/* Action Button for Active Deals */}
-          {redemption.status === 'active' && redemption.dealSnapshot?.storeId && (
-            <Pressable
-              style={styles.visitStoreButton}
-              onPress={() =>
-                handleVisitStore(redemption.dealSnapshot.storeId!, code, redemption.dealSnapshot.store || 'Store')
-              }
-            >
-              <Text style={styles.visitStoreText}>Visit Store</Text>
-              <Ionicons name="arrow-forward" size={16} color={COLORS.white} />
-            </Pressable>
-          )}
-
-          {/* Footer */}
-          <View style={styles.cardFooter}>
-            <Text style={styles.redeemedDate}>
-              {redemption.status === 'used' ? 'Used' : 'Redeemed'} {formatDate(redemption.redeemedAt)}
-            </Text>
-            <Pressable onPress={() => handleDealPress(redemption)}>
-              <Text style={styles.viewDetailsLink}>View Deal</Text>
-            </Pressable>
           </View>
         </View>
-      </View>
-    );
-  }, []);
+      );
+    },
+    [copiedCode],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
@@ -481,6 +489,26 @@ const MyDealsPage: React.FC = () => {
         </View>
       ) : redemptions.length === 0 ? (
         renderEmptyState()
+      ) : Platform.OS === 'web' ? (
+        <FlatList
+          data={redemptions}
+          renderItem={renderDealCard as any}
+          keyExtractor={(item) => (item as any)._id || item.id}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={COLORS.green500} />
+          }
+          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }] as any}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            hasMore ? (
+              <View style={{ padding: Spacing.base, alignItems: 'center' }}>
+                <ActivityIndicator size="small" color={COLORS.green500} />
+              </View>
+            ) : null
+          }
+        />
       ) : (
         <FlashList
           data={redemptions}

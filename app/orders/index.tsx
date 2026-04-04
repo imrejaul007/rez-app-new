@@ -1,7 +1,17 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, Text, StyleSheet, Pressable, RefreshControl, TextInput, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  RefreshControl,
+  TextInput,
+  ScrollView,
+  Platform,
+  FlatList,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
 import { FlashList } from '@shopify/flash-list';
@@ -564,6 +574,26 @@ function OrdersListScreen() {
             <Text style={styles.retryButtonText}>Retry</Text>
           </Pressable>
         </View>
+      ) : Platform.OS === 'web' ? (
+        <FlatList
+          data={orders}
+          renderItem={renderOrderItem as any}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as any}
+          ListHeaderComponent={renderListHeader}
+          ListEmptyComponent={renderEmptyState}
+          ListFooterComponent={renderFooter}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={[Colors.secondary[600]]}
+              tintColor={Colors.secondary[600]}
+            />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+        />
       ) : (
         <FlashList
           data={orders}

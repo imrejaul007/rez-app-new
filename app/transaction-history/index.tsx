@@ -95,6 +95,7 @@ function TransactionHistoryScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
+  const cursorRef = useRef<string | undefined>(undefined);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -115,8 +116,8 @@ function TransactionHistoryScreen() {
         if (filter !== 'all') {
           params.type = filter;
         }
-        if (!reset && cursor) {
-          params.cursor = cursor;
+        if (!reset && cursorRef.current) {
+          params.cursor = cursorRef.current;
         }
 
         const response = await apiClient.get('/user/transactions', { params: params as any });
@@ -130,6 +131,7 @@ function TransactionHistoryScreen() {
         } else {
           setTransactions((prev) => [...prev, ...(data.transactions ?? [])]);
         }
+        cursorRef.current = data.cursor;
         setCursor(data.cursor);
         setHasMore(data.hasMore ?? false);
         if (reset && data.summary) {
@@ -144,17 +146,17 @@ function TransactionHistoryScreen() {
         setLoadingMore(false);
       }
     },
-    [filter, dateRange, cursor, isMounted],
+    [filter, dateRange, isMounted],
   );
 
   // Reset and reload when filter or date range changes
   useEffect(() => {
     setLoading(true);
+    cursorRef.current = undefined;
     setCursor(undefined);
     setTransactions([]);
     fetchTransactions({ reset: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, dateRange]);
+  }, [filter, dateRange, fetchTransactions]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
