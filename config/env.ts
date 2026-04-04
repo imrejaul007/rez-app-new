@@ -10,14 +10,11 @@ export const APP_CONFIG = {
   environment: process.env.EXPO_PUBLIC_ENVIRONMENT || 'development',
 } as const;
 
-// Production guard: critical URL env vars must be set in production.
-// Evaluated once at module load so misconfigured production builds fail fast.
+// Production guard: EXPO_PUBLIC_API_BASE_URL must be the API gateway URL.
+// All traffic routes through the gateway — never call the backend directly.
 if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production') {
   if (!process.env.EXPO_PUBLIC_API_BASE_URL) {
     throw new Error('[config/env] FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production.');
-  }
-  if (!process.env.EXPO_PUBLIC_PROD_API_URL) {
-    throw new Error('[config/env] FATAL: EXPO_PUBLIC_PROD_API_URL is not set in production.');
   }
 }
 
@@ -162,12 +159,13 @@ export const CACHE_CONFIG = {
 export const isDevelopment = () => APP_CONFIG.environment === 'development';
 export const isProduction = () => APP_CONFIG.environment === 'production';
 
-// Helper function to get the correct API URL based on environment
+// All traffic routes through the single API gateway.
+// In dev: use devUrl (localhost). In production: always use baseUrl (gateway).
 export const getApiUrl = () => {
   if (isDevelopment()) {
     return API_CONFIG.devUrl;
   }
-  return API_CONFIG.prodUrl;
+  return API_CONFIG.baseUrl; // always the gateway — never the direct backend
 };
 
 // Export all configs as a single object for easy access
