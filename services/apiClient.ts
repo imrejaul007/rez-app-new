@@ -402,7 +402,7 @@ class ApiClient {
 
         return {
           success: false,
-          error: responseData.message || `HTTP ${response.status}: ${response.statusText}`,
+          error: responseData.message || responseData.error || `HTTP ${response.status}: ${response.statusText}`,
           errors: responseData.errors
         };
       }
