@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-// App Settings Screen — Sprint 11
+// App Settings Screen — Sprint 11 / Sprint 12 (Dark Mode toggle added)
 // Notification prefs, Privacy (export/delete), About section
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -25,6 +25,7 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import apiClient from '@/services/apiClient';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const NOTIF_PREFS_KEY = 'rez_notif_prefs';
 
@@ -47,6 +48,7 @@ const DEFAULT_NOTIF_PREFS: NotifPrefs = {
 function SettingsScreen() {
   const router = useRouter();
   const isMounted = useIsMounted();
+  const { isDark, toggleTheme } = useTheme();
   const [notifPrefs, setNotifPrefs] = useState<NotifPrefs>(DEFAULT_NOTIF_PREFS);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [requestingExport, setRequestingExport] = useState(false);
@@ -197,6 +199,22 @@ function SettingsScreen() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Notifications</ThemedText>
           <View style={styles.sectionCard}>
+            {/* Sprint 12: Dark Mode toggle — top of Notifications section */}
+            <View style={[styles.toggleRow, styles.toggleRowBorder]}>
+              <View style={styles.darkModeRowLeft}>
+                <View style={[styles.actionIcon, { backgroundColor: '#1A2332' }]}>
+                  <Ionicons name={isDark ? 'moon' : 'sunny-outline'} size={20} color={isDark ? '#FFD700' : '#6B7280'} />
+                </View>
+                <ThemedText style={styles.toggleLabel}>Dark Mode</ThemedText>
+              </View>
+              <Switch
+                value={isDark}
+                onValueChange={toggleTheme}
+                trackColor={{ false: colors.border.default, true: colors.primary[300] }}
+                thumbColor={colors.background.primary}
+                accessibilityLabel="Toggle dark mode"
+              />
+            </View>
             {notifToggleRows.map((row, index) => (
               <View
                 key={row.key}
@@ -390,6 +408,11 @@ const styles = StyleSheet.create({
   toggleRowBorder: {
     borderBottomWidth: 1,
     borderBottomColor: colors.background.secondary,
+  },
+  darkModeRowLeft: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    flex: 1,
   },
   toggleLabel: {
     ...Typography.bodyLarge,

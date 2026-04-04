@@ -255,6 +255,20 @@ const FinancialPage: React.FC = () => {
           </Pressable>
         </View>
 
+        {/* Bill Simulator Entry */}
+        <View style={[styles.section, { paddingBottom: 0 }]}>
+          <Pressable style={styles.transactionHistoryLink} onPress={() => router.push('/bill-simulator' as any)}>
+            <View style={[styles.categoryIcon, { backgroundColor: '#FFF9E620' }]}>
+              <Ionicons name="calculator-outline" size={24} color="#B8860B" />
+            </View>
+            <View style={{ flex: 1, marginLeft: Spacing.md }}>
+              <Text style={styles.categoryTitle}>Bill Simulator</Text>
+              <Text style={styles.categoryCount}>Find the best store for your bill</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+          </Pressable>
+        </View>
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Pay</Text>

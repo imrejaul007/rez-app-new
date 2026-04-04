@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/services/apiClient';
+import { useTheme } from '@/contexts/ThemeContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -134,40 +135,54 @@ async function markAllRead(): Promise<void> {
 interface RowProps {
   item: NotificationItem;
   onPress: (item: NotificationItem) => void;
+  isDark?: boolean;
+  darkCardColor?: string;
+  darkTextColor?: string;
+  darkSubtextColor?: string;
 }
 
-const NotificationRow = React.memo(({ item, onPress }: RowProps) => {
-  const icon = getTypeIcon(item.type);
-  return (
-    <Pressable
-      style={({ pressed }) => [styles.row, pressed && styles.rowPressed, !item.isRead && styles.rowUnread]}
-      onPress={() => onPress(item)}
-      accessibilityRole="button"
-      accessibilityLabel={`${item.title}. ${item.isRead ? 'Read' : 'Unread'}`}
-    >
-      {/* Icon */}
-      <View style={[styles.iconBox, { backgroundColor: icon.bg }]}>
-        <Ionicons name={icon.name as any} size={20} color={icon.color} />
-      </View>
-
-      {/* Content */}
-      <View style={styles.rowContent}>
-        <View style={styles.rowHeader}>
-          <Text style={[styles.rowTitle, !item.isRead && styles.rowTitleBold]} numberOfLines={1}>
-            {item.title}
-          </Text>
-          <Text style={styles.rowTime}>{formatTime(item.createdAt)}</Text>
+const NotificationRow = React.memo(
+  ({ item, onPress, isDark: rowIsDark, darkCardColor, darkTextColor, darkSubtextColor }: RowProps) => {
+    const icon = getTypeIcon(item.type);
+    return (
+      <Pressable
+        style={({ pressed }) => [
+          styles.row,
+          rowIsDark && { backgroundColor: darkCardColor },
+          pressed && styles.rowPressed,
+          !item.isRead && styles.rowUnread,
+        ]}
+        onPress={() => onPress(item)}
+        accessibilityRole="button"
+        accessibilityLabel={`${item.title}. ${item.isRead ? 'Read' : 'Unread'}`}
+      >
+        {/* Icon */}
+        <View style={[styles.iconBox, { backgroundColor: icon.bg }]}>
+          <Ionicons name={icon.name as any} size={20} color={icon.color} />
         </View>
-        <Text style={styles.rowBody} numberOfLines={2}>
-          {item.body}
-        </Text>
-      </View>
 
-      {/* Unread dot */}
-      {!item.isRead && <View style={styles.unreadDot} />}
-    </Pressable>
-  );
-});
+        {/* Content */}
+        <View style={styles.rowContent}>
+          <View style={styles.rowHeader}>
+            <Text
+              style={[styles.rowTitle, !item.isRead && styles.rowTitleBold, rowIsDark && { color: darkTextColor }]}
+              numberOfLines={1}
+            >
+              {item.title}
+            </Text>
+            <Text style={[styles.rowTime, rowIsDark && { color: darkSubtextColor }]}>{formatTime(item.createdAt)}</Text>
+          </View>
+          <Text style={[styles.rowBody, rowIsDark && { color: darkSubtextColor }]} numberOfLines={2}>
+            {item.body}
+          </Text>
+        </View>
+
+        {/* Unread dot */}
+        {!item.isRead && <View style={styles.unreadDot} />}
+      </Pressable>
+    );
+  },
+);
 
 // ─── SectionHeader ────────────────────────────────────────────────────────────
 
@@ -183,6 +198,8 @@ export default function NotificationsScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
+  // Sprint 12: dark mode
+  const { isDark, sprintColors: themeColors } = useTheme();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['user-notifications'],
@@ -254,17 +271,31 @@ export default function NotificationsScreen() {
       if (item.kind === 'header') {
         return <SectionHeader title={item.title} />;
       }
-      return <NotificationRow item={item.item} onPress={handleNotificationPress} />;
+      return (
+        <NotificationRow
+          item={item.item}
+          onPress={handleNotificationPress}
+          isDark={isDark}
+          darkCardColor={themeColors.card}
+          darkTextColor={themeColors.text}
+          darkSubtextColor={themeColors.subtext}
+        />
+      );
     },
-    [handleNotificationPress],
+    [handleNotificationPress, isDark, themeColors],
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={CARD_BG} />
+    <SafeAreaView style={[styles.safeArea, isDark && { backgroundColor: themeColors.bg }]}>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={isDark ? themeColors.card : CARD_BG}
+      />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View
+        style={[styles.header, isDark && { backgroundColor: themeColors.card, borderBottomColor: themeColors.border }]}
+      >
         <Pressable
           style={styles.backBtn}
           onPress={() => router.back()}

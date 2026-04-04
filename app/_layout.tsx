@@ -35,7 +35,7 @@ import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import React, { useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { AppState, AppStateStatus, Linking, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { platformAlertConfirm } from '@/utils/platformAlert';
@@ -48,6 +48,7 @@ import AppProviders from '@/utils/setup/AppProviders';
 import logger, { installProductionConsoleGuard } from '@/utils/logger';
 import { colors } from '@/constants/theme';
 import { getActiveDraft } from '@/stores/checkoutDraftStore';
+import apiClient from '@/services/apiClient';
 
 const FONT_TIMEOUT_MS = 5000;
 
@@ -93,6 +94,141 @@ function RootLayout() {
     // is removed to avoid double-installation.
     checkAppStatus();
     checkOnboarding();
+  }, []);
+
+  // ── Sprint 12: Deep Link Handling ──────────────────────────────────────────
+
+  /**
+   * Extracts query params from a deep link URL.
+   * Supports both rezapp://path?key=val and https://rez.money/path?key=val
+   */
+  const parseDeepLink = (url: string): { path: string; params: Record<string, string> } => {
+    try {
+      // Normalise rezapp:// scheme to https:// for URL parsing
+      const normalised = url.replace(/^rezapp:\/\//, 'https://rezapp.internal/');
+      const parsed = new URL(normalised);
+      const params: Record<string, string> = {};
+      parsed.searchParams.forEach((value, key) => {
+        params[key] = value;
+      });
+      // Reconstruct path without leading slash for scheme URLs
+      const path = parsed.pathname.replace(/^\//, '');
+      return { path, params };
+    } catch {
+      return { path: '', params: {} };
+    }
+  };
+
+  const handleDeepLink = async (url: string) => {
+    if (!url) return;
+    const { path, params } = parseDeepLink(url);
+
+    // 1. Referral code links: rezapp://invite?code=ABC123 or https://rez.money/invite?code=ABC123
+    if (path === 'invite' && params.code) {
+      try {
+        await AsyncStorage.setItem('rez_pending_referral', params.code);
+        logger.debug('[DeepLink] Stored pending referral code', { code: params.code }, 'DeepLink');
+        // Attempt to auto-apply if user is already authenticated
+        const token = await AsyncStorage.getItem('rez_auth_token');
+        if (token) {
+          try {
+            await apiClient.post('/api/referral/apply', { code: params.code });
+            await AsyncStorage.removeItem('rez_pending_referral');
+            // Show success toast — lazy import the toast utility to avoid circular deps
+            import('@/contexts/ToastContext')
+              .then(({ showGlobalToast }) => {
+                if (typeof showGlobalToast === 'function') {
+                  showGlobalToast('Referral code applied! You earned 100 bonus coins');
+                }
+              })
+              .catch(() => {});
+          } catch {
+            // Will be retried on next login
+          }
+        }
+      } catch {
+        // Non-blocking
+      }
+      return;
+    }
+
+    // 2. Store check-in deep links: rezapp://checkin?storeId=XYZ
+    if (path === 'checkin' && params.storeId) {
+      try {
+        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}` as any);
+      } catch {
+        // If router isn't ready, navigate to tab root
+      }
+      return;
+    }
+
+    // 3. Generic route deep links (notification-tapped links, etc.)
+    if (path && path !== '') {
+      try {
+        router.push(`/${path}` as any);
+      } catch {
+        // Ignore navigation errors if route doesn't exist
+      }
+    }
+  };
+
+  // Handle deep links that open the app from cold start
+  useEffect(() => {
+    let mounted = true;
+
+    // Get the initial URL that launched the app
+    Linking.getInitialURL()
+      .then((url) => {
+        if (mounted && url) {
+          handleDeepLink(url);
+        }
+      })
+      .catch(() => {});
+
+    // Subscribe to new deep links while app is open
+    const subscription = Linking.addEventListener('url', (event) => {
+      if (mounted) {
+        handleDeepLink(event.url);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.remove();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle notification-response deep links from expo-notifications
+  useEffect(() => {
+    let mounted = true;
+
+    // Lazy import expo-notifications to avoid issues on web/environments without it
+    import('expo-notifications')
+      .then((Notifications) => {
+        if (!mounted) return;
+
+        const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+          const data = response.notification.request.content.data as Record<string, any>;
+          if (data?.route && typeof data.route === 'string') {
+            try {
+              router.push(data.route as any);
+            } catch {
+              // Ignore if route is invalid
+            }
+          } else if (data?.url && typeof data.url === 'string') {
+            handleDeepLink(data.url);
+          }
+        });
+
+        return () => subscription.remove();
+      })
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkOnboarding = async () => {

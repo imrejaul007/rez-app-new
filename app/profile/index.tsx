@@ -1,8 +1,9 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-// Profile Page
+// Profile Page — Sprint 12: dark mode applied
 // User profile page with icon grid and menu list
 
 import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import {
@@ -59,6 +60,8 @@ import { Animated } from 'react-native';
 
 function ProfilePage() {
   const router = useRouter();
+  // Sprint 12: dark mode
+  const { isDark, sprintColors: themeColors } = useTheme();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const { goBack, canGoBack } = useSafeNavigation();
@@ -256,6 +259,9 @@ function ProfilePage() {
         break;
       case 'nearby_map':
         router.push('/map' as any);
+        break;
+      case 'bill_simulator':
+        router.push('/bill-simulator' as any);
         break;
       default:
         if (item.route) {
@@ -518,7 +524,7 @@ function ProfilePage() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDark && { backgroundColor: themeColors.bg }]}>
       <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primary} translucent={true} />
 
       {/* Modern Profile Header */}
@@ -585,7 +591,7 @@ function ProfilePage() {
       >
         {/* User Info Section */}
         <View style={styles.userSection}>
-          <View style={styles.userCard}>
+          <View style={[styles.userCard, isDark && { backgroundColor: themeColors.card }]}>
             <Pressable
               style={styles.avatarContainer}
               onPress={handleImageUpload}
@@ -1088,6 +1094,28 @@ function ProfilePage() {
               <View style={styles.menuTextContainer}>
                 <ThemedText style={styles.menuTitle}>Nearby Map</ThemedText>
                 <ThemedText style={styles.menuDescription}>Find stores near you with cashback offers</ThemedText>
+              </View>
+            </View>
+            <View style={styles.menuItemRight}>
+              <Ionicons name="chevron-forward" size={18} color={PROFILE_COLORS.textSecondary} />
+            </View>
+          </Pressable>
+
+          {/* Sprint 12: Bill Simulator entry */}
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => router.push('/bill-simulator' as any)}
+            accessibilityLabel="Bill Simulator"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to simulate your bill and find the best saving nearby"
+          >
+            <View style={styles.menuItemLeft}>
+              <View style={styles.menuIconContainer}>
+                <Ionicons name="calculator-outline" size={22} color={PROFILE_COLORS.primary} />
+              </View>
+              <View style={styles.menuTextContainer}>
+                <ThemedText style={styles.menuTitle}>Bill Simulator</ThemedText>
+                <ThemedText style={styles.menuDescription}>See how much you can save at nearby stores</ThemedText>
               </View>
             </View>
             <View style={styles.menuItemRight}>

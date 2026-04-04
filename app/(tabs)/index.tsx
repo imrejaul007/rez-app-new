@@ -57,6 +57,7 @@ import RezScoreCard from '@/components/gamification/RezScoreCard';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import StickySearchHeader from '@/components/homepage/StickySearchHeader';
 import HeroBanner from '@/components/homepage/HeroBanner';
 import SavingsDashboard from '@/components/homepage/SavingsDashboard';
@@ -238,6 +239,8 @@ const FABFallback = () => null;
 function HomeScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  // Sprint 12: dark mode
+  const { isDark, sprintColors: themeColors } = useTheme();
   // Zustand selectors — each only re-renders when its specific value changes
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -869,10 +872,13 @@ function HomeScreen() {
   }
 
   return (
-    <ReAnimated.View style={viewStyles.mainContainer} entering={FadeIn.duration(250)}>
+    <ReAnimated.View
+      style={[viewStyles.mainContainer, isDark && { backgroundColor: themeColors.bg }]}
+      entering={FadeIn.duration(250)}
+    >
       <ReAnimated.ScrollView
         ref={scrollViewRef}
-        style={viewStyles.container}
+        style={[viewStyles.container, isDark && { backgroundColor: themeColors.bg }]}
         contentContainerStyle={viewStyles.scrollContentContainer}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={SCROLL_EVENT_THROTTLE}
@@ -890,7 +896,7 @@ function HomeScreen() {
         </FeatureErrorBoundary>
 
         {/* Header - Flat dark background (CRED-style, no gradient) */}
-        <View style={viewStyles.header}>
+        <View style={[viewStyles.header, isDark && { backgroundColor: themeColors.card }]}>
           <View style={viewStyles.headerTop}>
             {/* Modern Location Pill - Tap to expand details */}
             <Pressable
