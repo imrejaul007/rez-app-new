@@ -111,12 +111,11 @@ function ReviewsPage() {
         if (!isMounted()) return;
         setHasMore(false);
       } finally {
-        if (!isMounted()) return;
-        setLoading(false);
-        if (!isMounted()) return;
-        setRefreshing(false);
-        if (!isMounted()) return;
-        setLoadingMore(false);
+        if (isMounted()) {
+          setLoading(false);
+          setRefreshing(false);
+          setLoadingMore(false);
+        }
       }
     },
     [storeId],
@@ -127,13 +126,13 @@ function ReviewsPage() {
       fetchReviews(false, page + 1);
     }
   }, [loadingMore, hasMore, loading, page, fetchReviews]);
-  const isMounted = useIsMounted();
-
   useEffect(() => {
     if (storeId) {
       fetchReviews();
     }
   }, [storeId, fetchReviews]);
+
+  const isMounted = useIsMounted();
 
   // Filter and sort reviews
   const filteredAndSortedReviews = reviews
@@ -170,7 +169,7 @@ function ReviewsPage() {
 
   // Render review card
   const renderReview = (review: Review) => {
-    const userName = `${review.userId.profile.firstName} ${review.userId.profile.lastName}`;
+    const userName = `${review.userId?.profile?.firstName ?? 'User'} ${review.userId?.profile?.lastName ?? ''}`;
     const reviewDate = new Date(review.createdAt).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -186,8 +185,8 @@ function ReviewsPage() {
             ) : (
               <View style={[styles.userAvatar, styles.userAvatarPlaceholder]}>
                 <ThemedText style={styles.userAvatarText}>
-                  {review.userId.profile.firstName[0]}
-                  {review.userId.profile.lastName[0]}
+                  {review.userId?.profile?.firstName?.[0] ?? '?'}
+                  {review.userId?.profile?.lastName?.[0] ?? ''}
                 </ThemedText>
               </View>
             )}

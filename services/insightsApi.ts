@@ -87,10 +87,8 @@ export interface MissedSavingsSummary {
  * GET /api/insights/dashboard
  */
 export async function getSpendingInsights(): Promise<SpendingInsightsDashboard> {
-  const response = await apiClient.get<ApiResponse<SpendingInsightsDashboard>>(
-    '/insights/dashboard',
-  );
-  return (response.data as any).data;
+  const response = await apiClient.get<SpendingInsightsDashboard>('/insights/dashboard');
+  return (response.data ?? response) as unknown as SpendingInsightsDashboard;
 }
 
 /**
@@ -99,10 +97,8 @@ export async function getSpendingInsights(): Promise<SpendingInsightsDashboard> 
  * @param month - Format "YYYY-MM", e.g. "2026-03"
  */
 export async function getMonthlyReport(month: string): Promise<MonthlyReport> {
-  const response = await apiClient.get<ApiResponse<MonthlyReport>>(
-    `/insights/monthly/${month}`,
-  );
-  return (response.data as any).data;
+  const response = await apiClient.get<MonthlyReport>(`/insights/monthly/${month}`);
+  return (response.data ?? response) as unknown as MonthlyReport;
 }
 
 /**
@@ -110,8 +106,6 @@ export async function getMonthlyReport(month: string): Promise<MonthlyReport> {
  * GET /api/insights/missed-savings
  */
 export async function getMissedSavings(): Promise<MissedSavingsSummary> {
-  const response = await apiClient.get<ApiResponse<MissedSavingsSummary>>(
-    '/insights/missed-savings',
-  );
-  return (response.data as any).data;
+  const response = await apiClient.get<MissedSavingsSummary>('/insights/missed-savings');
+  return (response.data ?? response) as unknown as MissedSavingsSummary;
 }

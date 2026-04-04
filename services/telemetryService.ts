@@ -112,7 +112,7 @@ const DEFAULT_CONFIG: TelemetryConfig = {
   maxQueueSize: 1000,
   compressionEnabled: false,
   offlineQueueEnabled: true,
-  endpoint: '/api/telemetry',
+  endpoint: '/telemetry',
 };
 
 // ============================================================================

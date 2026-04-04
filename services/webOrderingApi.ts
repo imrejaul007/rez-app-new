@@ -106,24 +106,24 @@ export interface WebOrderStatus {
 
 export async function fetchWebStore(storeSlug: string, table?: string): Promise<WebStoreData> {
   const tableParam = table ? `?table=${encodeURIComponent(table)}` : '';
-  const res = await apiClient.get<WebStoreData>(`web-ordering/store/${storeSlug}${tableParam}`);
+  const res = await apiClient.get<WebStoreData>(`/web-ordering/store/${storeSlug}${tableParam}`);
   if (res.success && res.data) return res.data;
   throw new Error(res.message || 'Failed to load store menu');
 }
 
 export async function sendWebOtp(phone: string): Promise<void> {
-  const res = await apiClient.post<any>('web-ordering/otp/send', { phone });
+  const res = await apiClient.post<any>('/web-ordering/otp/send', { phone });
   if (!res.success) throw new Error(res.message || 'Failed to send OTP');
 }
 
 export async function verifyWebOtp(phone: string, otp: string): Promise<string> {
-  const res = await apiClient.post<{ sessionToken: string }>('web-ordering/otp/verify', { phone, otp });
+  const res = await apiClient.post<{ sessionToken: string }>('/web-ordering/otp/verify', { phone, otp });
   if (res.success && (res.data as any)?.sessionToken) return (res.data as any).sessionToken;
   throw new Error(res.message || 'OTP verification failed');
 }
 
 export async function createWebOrder(payload: CreateOrderPayload): Promise<RazorpayOrderData> {
-  const res = await apiClient.post<RazorpayOrderData>('web-ordering/razorpay/create-order', payload as any);
+  const res = await apiClient.post<RazorpayOrderData>('/web-ordering/razorpay/create-order', payload as any);
   if (res.success && res.data) return res.data;
   throw new Error(res.message || 'Failed to create order');
 }
@@ -134,13 +134,13 @@ export async function verifyWebPayment(params: {
   razorpay_payment_id: string;
   razorpay_signature: string;
 }): Promise<WebOrderStatus> {
-  const res = await apiClient.post<WebOrderStatus>('web-ordering/payment/verify', params);
+  const res = await apiClient.post<WebOrderStatus>('/web-ordering/payment/verify', params);
   if (res.success && res.data) return res.data;
   throw new Error(res.message || 'Payment verification failed');
 }
 
 export async function getWebOrder(orderNumber: string): Promise<WebOrderStatus> {
-  const res = await apiClient.get<WebOrderStatus>(`web-ordering/order/${orderNumber}`);
+  const res = await apiClient.get<WebOrderStatus>(`/web-ordering/order/${orderNumber}`);
   if (res.success && res.data) return res.data;
   throw new Error(res.message || 'Order not found');
 }

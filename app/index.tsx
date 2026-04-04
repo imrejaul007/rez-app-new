@@ -24,7 +24,9 @@ function AppEntry() {
   const lastRedirectRef = useRef<{ path: string; at: number } | null>(null);
   // Keep a ref to authLoading so checkAppState (memoized) always reads the latest value
   const authLoadingRef = useRef(authLoading);
-  useEffect(() => { authLoadingRef.current = authLoading; }, [authLoading]);
+  useEffect(() => {
+    authLoadingRef.current = authLoading;
+  }, [authLoading]);
 
   const clearPendingTimer = useCallback(() => {
     if (pendingTimerRef.current) {
@@ -33,18 +35,21 @@ function AppEntry() {
     }
   }, []);
 
-  const safeReplace = useCallback((targetPath: string) => {
-    const now = Date.now();
-    const last = lastRedirectRef.current;
+  const safeReplace = useCallback(
+    (targetPath: string) => {
+      const now = Date.now();
+      const last = lastRedirectRef.current;
 
-    // Avoid rapid repeated redirects to the same route.
-    if (last && last.path === targetPath && now - last.at < 1500) {
-      return;
-    }
+      // Avoid rapid repeated redirects to the same route.
+      if (last && last.path === targetPath && now - last.at < 1500) {
+        return;
+      }
 
-    lastRedirectRef.current = { path: targetPath, at: now };
-    router.replace(targetPath as any);
-  }, [router]);
+      lastRedirectRef.current = { path: targetPath, at: now };
+      router.replace(targetPath as any);
+    },
+    [router],
+  );
 
   const checkAppState = useCallback(async () => {
     try {
@@ -61,7 +66,7 @@ function AppEntry() {
         if (isOnboarded) {
           safeReplace('/(tabs)/');
         } else if (!pathname.includes('/onboarding/')) {
-          safeReplace('/onboarding/location-permission');
+          safeReplace('/onboarding/location');
         }
 
         if (!isMounted()) return;
@@ -71,10 +76,7 @@ function AppEntry() {
 
       // If we reach here, user is not authenticated.
       // Check storage briefly to avoid racing with AuthContext restoration.
-      const [storedToken, storedUser] = await Promise.all([
-        getAuthToken(),
-        getUser(),
-      ]);
+      const [storedToken, storedUser] = await Promise.all([getAuthToken(), getUser()]);
 
       // Wait for AuthContext to finish restoring the session.
       // If authLoading is still true, we have a stored token, OR we're within our retry window,

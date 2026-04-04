@@ -23,8 +23,12 @@ initSentry();
     EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
     EXPO_PUBLIC_RAZORPAY_KEY_ID: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID,
   };
+  const recommendedValues: Record<string, string | undefined> = {
+    EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
+    EXPO_PUBLIC_ENVIRONMENT: process.env.EXPO_PUBLIC_ENVIRONMENT,
+  };
   const missing = Object.entries(REQUIRED_CONFIGS).filter(([key]) => !runtimeValues[key]);
-  const missingRecommended = Object.entries(RECOMMENDED_CONFIGS).filter(([key]) => !process.env[key]);
+  const missingRecommended = Object.entries(RECOMMENDED_CONFIGS).filter(([key]) => !recommendedValues[key]);
   if (missing.length > 0) {
     const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;
     // Never throw on missing env — crashes the app before anything renders
