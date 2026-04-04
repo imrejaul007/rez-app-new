@@ -17,7 +17,13 @@ initSentry();
     EXPO_PUBLIC_SENTRY_DSN: 'Sentry crash reporting',
     EXPO_PUBLIC_ENVIRONMENT: 'Environment name (production/staging/development)',
   };
-  const missing = Object.entries(REQUIRED_CONFIGS).filter(([key]) => !process.env[key]);
+  // Use static access — Metro only inlines EXPO_PUBLIC_* vars via static string references,
+  // not via dynamic bracket notation (process.env[key] is always undefined in the bundle).
+  const runtimeValues: Record<string, string | undefined> = {
+    EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
+    EXPO_PUBLIC_RAZORPAY_KEY_ID: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID,
+  };
+  const missing = Object.entries(REQUIRED_CONFIGS).filter(([key]) => !runtimeValues[key]);
   const missingRecommended = Object.entries(RECOMMENDED_CONFIGS).filter(([key]) => !process.env[key]);
   if (missing.length > 0) {
     const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;

@@ -884,23 +884,43 @@ const ExplorePage = () => {
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
-        <FlashList
-          data={sectionData}
-          renderItem={renderSection}
-          keyExtractor={keyExtractor}
-          ListHeaderComponent={renderHeader}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120 }}
-          estimatedItemSize={300}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              colors={[Colors.gold]}
-              tintColor={Colors.gold}
-            />
-          }
-        />
+        {Platform.OS === 'web' ? (
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 120 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[Colors.gold]}
+                tintColor={Colors.gold}
+              />
+            }
+          >
+            {renderHeader()}
+            {sectionData.map((item) => (
+              <React.Fragment key={item}>{renderSection({ item } as { item: typeof item })}</React.Fragment>
+            ))}
+          </ScrollView>
+        ) : (
+          <FlashList
+            data={sectionData}
+            renderItem={renderSection}
+            keyExtractor={keyExtractor}
+            ListHeaderComponent={renderHeader}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 120 }}
+            estimatedItemSize={300}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[Colors.gold]}
+                tintColor={Colors.gold}
+              />
+            }
+          />
+        )}
 
         {/* Floating Map View Button */}
         <Pressable
