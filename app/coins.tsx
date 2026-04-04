@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import priveApi from '@/services/priveApi';
-import walletApi from '@/services/walletApi';
+import walletApi, { TransactionResponse } from '@/services/walletApi';
 import { useRezBalance } from '@/stores/selectors';
 
 // Default coin-to-rupee display rate — overridden by backend config on mount
@@ -21,71 +21,72 @@ interface CoinTransaction {
   source?: string;
 }
 
-const DUMMY_TRANSACTIONS: CoinTransaction[] = [
-  {
-    id: '1',
-    type: 'earn',
-    description: 'Shopping at Westside Mall',
-    amount: 250,
-    date: '2 hours ago',
-    source: 'Westside',
-  },
-  {
-    id: '2',
-    type: 'spend',
-    description: 'Redeemed for discount',
-    amount: -100,
-    date: '1 day ago',
-    source: 'Myntra',
-  },
-  {
-    id: '3',
-    type: 'earn',
-    description: 'Bill Payment - Electricity',
-    amount: 75,
-    date: '3 days ago',
-    source: 'Bill Payment',
-  },
-  {
-    id: '4',
-    type: 'earn',
-    description: 'Referral Bonus',
-    amount: 500,
-    date: '5 days ago',
-    source: 'Referral',
-  },
-  {
-    id: '5',
-    type: 'spend',
-    description: 'Cashback Redemption',
-    amount: -200,
-    date: '1 week ago',
-    source: 'Wallet',
-  },
-];
+function mapApiTransaction(t: TransactionResponse): CoinTransaction {
+  return {
+    id: t.id || t.transactionId,
+    type: t.type === 'credit' ? 'earn' : 'spend',
+    description: t.description || t.source?.description || 'Transaction',
+    amount: t.type === 'credit' ? Math.abs(t.amount) : -Math.abs(t.amount),
+    date: formatRelativeDate(t.createdAt),
+    source: t.source?.type,
+  };
+}
+
+function formatRelativeDate(dateStr: string): string {
+  const now = Date.now();
+  const diff = now - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return mins <= 1 ? 'Just now' : `${mins} minutes ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return days === 1 ? 'Yesterday' : `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+  return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
 
 function CoinsScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'all' | 'earn' | 'spend'>('all');
   const [coinConversionRate, setCoinConversionRate] = useState(DEFAULT_COIN_CONVERSION_RATE);
   const [expiringCoins, setExpiringCoins] = useState(0);
+  const [transactions, setTransactions] = useState<CoinTransaction[]>([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(true);
+  const [transactionsError, setTransactionsError] = useState(false);
 
   // Use live balance from wallet store instead of hardcoded value
   const coinBalance = useRezBalance() ?? 0;
+
+  const fetchTransactions = useCallback(async () => {
+    setTransactionsLoading(true);
+    setTransactionsError(false);
+    try {
+      const res = await walletApi.getTransactions({ limit: 50 });
+      if (res.success && res.data?.transactions) {
+        setTransactions(res.data.transactions.map(mapApiTransaction));
+      } else {
+        setTransactionsError(true);
+      }
+    } catch {
+      setTransactionsError(true);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  }, []);
 
   // Fetch the live conversion rate from backend redemption config
   useEffect(() => {
     priveApi
       .getRedeemConfig()
       .then((res) => {
-        if (res.success && res.data?.conversionRates?.bill_pay) {
-          // Use bill_pay rate as the general "coins value" indicator
+        if (res.success && res.data?.conversionRates?.coins_to_inr) {
+          setCoinConversionRate(res.data.conversionRates.coins_to_inr);
+        } else if (res.success && res.data?.conversionRates?.bill_pay) {
           setCoinConversionRate(res.data.conversionRates.bill_pay);
         }
       })
-      .catch(() => {
-        // Keep the default rate — not critical for display
-      });
+      .catch(() => {});
 
     // Fetch expiring coins total
     walletApi
@@ -96,13 +97,12 @@ function CoinsScreen() {
           setExpiringCoins(total);
         }
       })
-      .catch(() => {
-        // Non-critical — expiry info is supplementary
-      });
-  }, []);
+      .catch(() => {});
 
-  const filteredTransactions =
-    activeTab === 'all' ? DUMMY_TRANSACTIONS : DUMMY_TRANSACTIONS.filter((t) => t.type === activeTab);
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const filteredTransactions = activeTab === 'all' ? transactions : transactions.filter((t) => t.type === activeTab);
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
@@ -235,13 +235,30 @@ function CoinsScreen() {
         </View>
 
         {/* Transactions List */}
-        <FlatList
-          scrollEnabled={false}
-          data={filteredTransactions}
-          keyExtractor={(item) => item.id}
-          renderItem={renderTransaction}
-          contentContainerStyle={styles.transactionsList}
-        />
+        {transactionsLoading ? (
+          <View style={styles.centeredState}>
+            <ActivityIndicator size="small" color="#1a3a52" />
+            <Text style={styles.centeredStateText}>Loading transactions…</Text>
+          </View>
+        ) : transactionsError ? (
+          <TouchableOpacity style={styles.centeredState} onPress={fetchTransactions}>
+            <Ionicons name="refresh" size={24} color="#6b7280" />
+            <Text style={styles.centeredStateText}>Couldn't load transactions. Tap to retry.</Text>
+          </TouchableOpacity>
+        ) : filteredTransactions.length === 0 ? (
+          <View style={styles.centeredState}>
+            <Ionicons name="receipt-outline" size={40} color="#d1d5db" />
+            <Text style={styles.centeredStateText}>No transactions yet</Text>
+          </View>
+        ) : (
+          <FlatList
+            scrollEnabled={false}
+            data={filteredTransactions}
+            keyExtractor={(item) => item.id}
+            renderItem={renderTransaction}
+            contentContainerStyle={styles.transactionsList}
+          />
+        )}
 
         {/* Learn More Button */}
         <TouchableOpacity style={styles.learnBtn} onPress={() => router.push('/coin-system' as any)}>
@@ -339,6 +356,13 @@ const styles = StyleSheet.create({
   transactionDesc: { fontSize: 14, fontWeight: '500', color: '#1a1a1a' },
   transactionDate: { fontSize: 12, color: '#6b7280', marginTop: 2 },
   transactionAmount: { fontSize: 14, fontWeight: '600' },
+  centeredState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 32,
+    gap: 8,
+  },
+  centeredStateText: { fontSize: 13, color: '#6b7280', textAlign: 'center' },
   learnBtn: {
     backgroundColor: '#f3f4f6',
     borderRadius: 12,

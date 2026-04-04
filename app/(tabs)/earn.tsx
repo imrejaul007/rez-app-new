@@ -1,10 +1,8 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { Redirect } from 'expo-router';
 
-// Redirect to Play & Earn page synchronously — no spinner flash.
-// Uses Redirect component instead of useEffect + router.replace to avoid:
-// 1. The spinner flash on every tab tap
-// 2. Navigation loop when pressing back
+// The Earn tab routes to the Play & Earn page.
+// Uses Redirect (not useEffect+router.replace) to avoid spinner flash on tab tap.
 function EarnScreen() {
   return <Redirect href="/playandearn" />;
 }
