@@ -66,6 +66,12 @@ function compareVersions(a: string, b: string): number {
   return 0;
 }
 
+// Module-level guards — survive React remounts so startup checks run only once per page load.
+// Using refs inside the component would reset on remount and cause an infinite loop on web
+// where router.replace('/onboarding') triggers layout remounting.
+let _startupChecksRun = false;
+let _fontTimedOut = false;
+
 function RootLayout() {
   const router = useRouter();
   const [loaded, fontError] = useFonts({
@@ -76,13 +82,12 @@ function RootLayout() {
     'Inter-SemiBold': Inter_600SemiBold,
   });
 
-  const [fontTimedOut, setFontTimedOut] = useState(false);
-  const onboardingCheckedRef = useRef(false);
+  const [fontTimedOut, setFontTimedOut] = useState(_fontTimedOut);
 
   useEffect(() => {
-    // LOW-9: installProductionConsoleGuard() is now called at module load time
-    // in utils/logger.ts so it runs before any module-level logs. The call here
-    // is removed to avoid double-installation.
+    // Guard against repeated calls on remount (web router navigation remounts the layout).
+    if (_startupChecksRun) return;
+    _startupChecksRun = true;
     checkAppStatus();
     checkOnboarding();
   }, []);
@@ -223,13 +228,15 @@ function RootLayout() {
   }, []);
 
   const checkOnboarding = async () => {
-    // Only run this redirect once per app session to prevent double-redirect.
-    if (onboardingCheckedRef.current) return;
-    onboardingCheckedRef.current = true;
     try {
       const done = await AsyncStorage.getItem('rez_onboarding_done');
       if (!done) {
-        router.replace('/onboarding');
+        // On web, skip the replace if we're already at /onboarding — navigating to the
+        // same route remounts the layout and causes an infinite request loop.
+        const alreadyAtOnboarding = typeof window !== 'undefined' && window.location.pathname.startsWith('/onboarding');
+        if (!alreadyAtOnboarding) {
+          router.replace('/onboarding');
+        }
       }
     } catch {
       // If AsyncStorage fails, do not block the app — proceed normally.
@@ -279,6 +286,7 @@ function RootLayout() {
     if (loaded || fontError) return;
     const timer = setTimeout(() => {
       logger.warn('Font loading timed out after 5s, proceeding with system fonts', undefined, 'Fonts');
+      _fontTimedOut = true;
       setFontTimedOut(true);
     }, FONT_TIMEOUT_MS);
     return () => clearTimeout(timer);
