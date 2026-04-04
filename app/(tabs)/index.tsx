@@ -1226,6 +1226,48 @@ function HomeScreen() {
           </FeatureErrorBoundary>
         )}
 
+        {/* Missed Savings Teaser — shown below hero when user has missed savings */}
+        {activeTab === 'near-u' && (savingsSummaryData?.missedSavingsCount ?? 0) > 0 && (
+          <Pressable
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#fff9f0',
+              borderRadius: 14,
+              padding: 14,
+              marginHorizontal: 16,
+              marginBottom: 12,
+              borderWidth: 1,
+              borderColor: '#fcd34d',
+              gap: 12,
+            }}
+            onPress={() => router.push('/savings?tab=missed' as any)}
+            accessibilityRole="button"
+            accessibilityLabel={`You could have saved more this month: ${savingsSummaryData?.missedSavingsCount} missed savings`}
+            accessibilityHint="Tap to view missed savings opportunities"
+          >
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: '#fef3c7',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="alert-circle" size={22} color="#f59e0b" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400e' }}>You missed savings this month</Text>
+              <Text style={{ fontSize: 12, color: '#b45309', marginTop: 2 }}>
+                {savingsSummaryData?.missedSavingsCount} better deals were nearby — see where to save more
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color="#f59e0b" />
+          </Pressable>
+        )}
+
         {/* Smart Tips Card — compact best nearby cashback offer */}
         {activeTab === 'near-u' && (
           <FeatureErrorBoundary featureName="Smart Tips" compact={true}>

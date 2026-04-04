@@ -20,8 +20,10 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import MissedSavingsCard from '@/components/savings/MissedSavingsCard';
+import { useCurrentLocation } from '@/hooks/useLocation';
+import streakApi, { StreakData } from '@/services/streakApi';
 
-// TODO: Replace with real device location via expo-location when wired up.
+// Fallback coordinates (Delhi) — used only when device location is unavailable
 const DEFAULT_LAT = 28.6139;
 const DEFAULT_LNG = 77.209;
 
@@ -65,14 +67,14 @@ async function fetchSummary(): Promise<SavingsSummary | null> {
   const res = (await api.get('/user/savings/summary')) as any;
   return res.data?.data ?? null;
 }
-async function fetchMissed(): Promise<MissedItem[]> {
+async function fetchMissed(lat: number = DEFAULT_LAT, lng: number = DEFAULT_LNG): Promise<MissedItem[]> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get(`/user/savings/missed?lat=${DEFAULT_LAT}&lng=${DEFAULT_LNG}`)) as any;
+  const res = (await api.get(`/user/savings/missed?lat=${lat}&lng=${lng}`)) as any;
   return res.data?.data ?? [];
 }
-async function fetchBestNearby(): Promise<NearbyStore[]> {
+async function fetchBestNearby(lat: number = DEFAULT_LAT, lng: number = DEFAULT_LNG): Promise<NearbyStore[]> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get(`/user/savings/best-nearby?lat=${DEFAULT_LAT}&lng=${DEFAULT_LNG}`)) as any;
+  const res = (await api.get(`/user/savings/best-nearby?lat=${lat}&lng=${lng}`)) as any;
   return res.data?.data ?? [];
 }
 
@@ -151,7 +153,86 @@ function SpendingBreakdownCard({ summary }: { summary: SavingsSummary }) {
   );
 }
 
+function VisitStreakCard({ router }: { router: ReturnType<typeof useRouter> }) {
+  const [storeStreak, setStoreStreak] = React.useState<StreakData | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    streakApi
+      .getStreakStatus('order')
+      .then((res) => {
+        if (!cancelled && res.data) setStoreStreak(res.data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loading) return null;
+
+  const current = storeStreak?.current ?? 0;
+  const lastActivity = storeStreak?.lastActivity ? new Date(storeStreak.lastActivity) : null;
+  const daysSinceLast = lastActivity ? Math.floor((Date.now() - lastActivity.getTime()) / 86400000) : null;
+
+  return (
+    <View style={s.visitStreakCard}>
+      <View style={s.visitStreakHeader}>
+        <View style={s.visitStreakIconWrap}>
+          <Text style={s.visitStreakEmoji}>🏪</Text>
+        </View>
+        <View style={s.visitStreakInfo}>
+          <Text style={s.visitStreakTitle}>Store Visit Streak</Text>
+          {daysSinceLast !== null && (
+            <Text style={s.visitStreakSub}>
+              {daysSinceLast === 0
+                ? 'Visited today'
+                : daysSinceLast === 1
+                  ? 'Last visit: yesterday'
+                  : `Last visit: ${daysSinceLast} days ago`}
+            </Text>
+          )}
+        </View>
+        <View style={s.visitStreakCount}>
+          <Text style={s.visitStreakNum}>{current}</Text>
+          <Text style={s.visitStreakDays}>days</Text>
+        </View>
+      </View>
+      {current === 0 ? (
+        <Pressable
+          style={s.visitStreakCTA}
+          onPress={() => router.push('/explore' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Visit a REZ store today"
+        >
+          <Ionicons name="location-sharp" size={14} color="#fff" />
+          <Text style={s.visitStreakCTAText}>Visit a REZ store today to start your streak</Text>
+        </Pressable>
+      ) : (
+        <Pressable
+          style={[s.visitStreakCTA, { backgroundColor: '#059669' }]}
+          onPress={() => router.push('/explore' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Keep your streak going"
+        >
+          <Ionicons name="flame" size={14} color="#fff" />
+          <Text style={s.visitStreakCTAText}>
+            {daysSinceLast === 0
+              ? 'Great! Visit again tomorrow to keep going'
+              : 'Visit a REZ store today to keep your streak!'}
+          </Text>
+        </Pressable>
+      )}
+    </View>
+  );
+}
+
 function MySavingsTab({ summary, onMissedPress }: { summary: SavingsSummary; onMissedPress: () => void }) {
+  const router = useRouter();
   return (
     <View>
       <LinearGradient colors={['#059669', '#34d399']} style={s.heroCard}>
@@ -162,6 +243,8 @@ function MySavingsTab({ summary, onMissedPress }: { summary: SavingsSummary; onM
           <Text style={s.streakText}>{summary.savingsStreak} day streak</Text>
         </View>
       </LinearGradient>
+
+      <VisitStreakCard router={router} />
 
       <View style={s.statRow}>
         {(
@@ -308,6 +391,7 @@ function BestNearbyTab({
 function SavingsDashboard() {
   const router = useRouter();
   const isMounted = useIsMounted();
+  const { currentLocation } = useCurrentLocation();
   const [activeTab, setActiveTab] = useState<TabId>('my-savings');
   const [refreshing, setRefreshing] = useState(false);
   const [summary, setSummary] = useState<SavingsSummary | null>(null);
@@ -318,6 +402,10 @@ function SavingsDashboard() {
   const [nearby, setNearby] = useState<NearbyStore[]>([]);
   const [nearbyLoading, setNearbyLoading] = useState(false);
   const [nearbyFetched, setNearbyFetched] = useState(false);
+
+  // Resolve lat/lng from device location with Delhi fallback
+  const userLat = currentLocation?.coordinates?.latitude ?? DEFAULT_LAT;
+  const userLng = currentLocation?.coordinates?.longitude ?? DEFAULT_LNG;
 
   const loadSummary = useCallback(async () => {
     try {
@@ -341,7 +429,7 @@ function SavingsDashboard() {
     if (missedFetched) return;
     setMissedLoading(true);
     try {
-      const data = await fetchMissed();
+      const data = await fetchMissed(userLat, userLng);
       if (isMounted()) {
         setMissed(data);
         setMissedFetched(true);
@@ -354,13 +442,13 @@ function SavingsDashboard() {
         setRefreshing(false);
       }
     }
-  }, [isMounted, missedFetched]);
+  }, [isMounted, missedFetched, userLat, userLng]);
 
   const loadNearby = useCallback(async () => {
     if (nearbyFetched) return;
     setNearbyLoading(true);
     try {
-      const data = await fetchBestNearby();
+      const data = await fetchBestNearby(userLat, userLng);
       if (isMounted()) {
         setNearby(data);
         setNearbyFetched(true);
@@ -373,7 +461,7 @@ function SavingsDashboard() {
         setRefreshing(false);
       }
     }
-  }, [isMounted, nearbyFetched]);
+  }, [isMounted, nearbyFetched, userLat, userLng]);
 
   const handleTabSelect = useCallback(
     (id: TabId) => {
@@ -393,7 +481,7 @@ function SavingsDashboard() {
     if (activeTab === 'missed') {
       setMissedFetched(false);
       setMissedLoading(true);
-      fetchMissed()
+      fetchMissed(userLat, userLng)
         .then((d) => {
           if (isMounted()) {
             setMissed(d);
@@ -410,7 +498,7 @@ function SavingsDashboard() {
     } else {
       setNearbyFetched(false);
       setNearbyLoading(true);
-      fetchBestNearby()
+      fetchBestNearby(userLat, userLng)
         .then((d) => {
           if (isMounted()) {
             setNearby(d);
@@ -425,7 +513,7 @@ function SavingsDashboard() {
           }
         });
     }
-  }, [activeTab, loadSummary, isMounted]);
+  }, [activeTab, loadSummary, isMounted, userLat, userLng]);
 
   return (
     <View style={s.container}>
@@ -620,6 +708,40 @@ const s = StyleSheet.create({
   savingText: { fontSize: 13, fontWeight: '600', color: '#475569' },
   starsRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   ratingNum: { fontSize: 12, color: '#94a3b8', marginLeft: 4 },
+  // Visit Streak Card
+  visitStreakCard: {
+    ...card,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.base,
+    padding: Spacing.base,
+    overflow: 'hidden',
+  },
+  visitStreakHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  visitStreakIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fef3c7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  visitStreakEmoji: { fontSize: 22 },
+  visitStreakInfo: { flex: 1 },
+  visitStreakTitle: { fontSize: 14, fontWeight: '700', color: '#1e293b' },
+  visitStreakSub: { fontSize: 12, color: '#64748b', marginTop: 2 },
+  visitStreakCount: { alignItems: 'center' },
+  visitStreakNum: { fontSize: 28, fontWeight: '900', color: '#1a3a52', lineHeight: 32 },
+  visitStreakDays: { fontSize: 11, color: '#64748b', fontWeight: '600' },
+  visitStreakCTA: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#f59e0b',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  visitStreakCTAText: { fontSize: 12, fontWeight: '700', color: '#fff', flex: 1 },
 });
 
 export default withErrorBoundary(SavingsDashboard, 'SavingsDashboard');

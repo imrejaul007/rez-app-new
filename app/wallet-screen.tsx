@@ -614,6 +614,64 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             segment={segment}
           />
 
+          {/* Pending Cashback Banner — shown prominently when there are pending rewards */}
+          {(walletData.pendingRewards > 0 || walletData.cashbackBalance > 0) && (
+            <Pressable
+              onPress={() => router.push('/transaction-history' as any)}
+              style={({ pressed }) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginHorizontal: 16,
+                marginBottom: 10,
+                backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                borderRadius: 12,
+                paddingHorizontal: 14,
+                paddingVertical: 12,
+                borderWidth: 1,
+                borderColor: 'rgba(16, 185, 129, 0.35)',
+                gap: 10,
+                opacity: pressed ? 0.8 : 1,
+              })}
+              accessibilityLabel={`Pending cashback: ${currencySymbol}${(walletData.pendingRewards || walletData.cashbackBalance).toLocaleString('en-IN')}`}
+              accessibilityRole="button"
+              accessibilityHint="Tap to view transaction history"
+            >
+              <View
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  backgroundColor: 'rgba(16, 185, 129, 0.25)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Ionicons name="hourglass-outline" size={18} color="#10b981" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '600',
+                    color: 'rgba(255,255,255,0.75)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.4,
+                  }}
+                >
+                  Pending Cashback
+                </Text>
+                <Text style={{ fontSize: 20, fontWeight: '800', color: '#10b981', marginTop: 2 }}>
+                  {currencySymbol}
+                  {(walletData.pendingRewards || walletData.cashbackBalance).toLocaleString('en-IN')}
+                </Text>
+                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 1 }}>
+                  Crediting soon — tap to track
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.6)" />
+            </Pressable>
+          )}
+
           {/* REZ Cash identity entry point */}
           <Pressable
             onPress={() => router.push('/rez-cash' as any)}
