@@ -18,6 +18,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useTheme } from '@/contexts/ThemeContext';
+import apiClient from '@/services/apiClient';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -60,14 +61,11 @@ async function fetchBestNearby(budgetPaise: number): Promise<NearbyStore[]> {
     // fallback to 0,0
   }
 
-  const apiBase = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
-  const url = `${apiBase}/api/user/savings/best-nearby?lat=${lat}&lng=${lng}&budgetPaise=${budgetPaise}`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json: any = await res.json();
-  const payload = json?.data ?? json;
-  return (payload?.stores ?? []) as NearbyStore[];
+  const response = await apiClient.get<{ stores: NearbyStore[] }>(
+    `/user/savings/best-nearby?lat=${lat}&lng=${lng}&budgetPaise=${budgetPaise}`,
+  );
+  if (!response.success) throw new Error(response.error || 'Failed to fetch');
+  return (response.data?.stores ?? []) as NearbyStore[];
 }
 
 // ─── StoreCard ────────────────────────────────────────────────────────────────
