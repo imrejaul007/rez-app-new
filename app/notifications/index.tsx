@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import EmptyState from '@/components/ui/EmptyState';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/services/apiClient';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -345,11 +346,11 @@ export default function NotificationsScreen() {
           </Pressable>
         </View>
       ) : listData.length === 0 ? (
-        <View style={styles.centered}>
-          <Ionicons name="notifications-off-outline" size={64} color={TEXT_MUTED} />
-          <Text style={styles.emptyText}>No notifications yet</Text>
-          <Text style={styles.emptySubText}>You'll see updates about your coins, streaks, and cashback here.</Text>
-        </View>
+        <EmptyState
+          iconName="notifications-off-outline"
+          title="No notifications yet"
+          subtitle="You'll see updates about your coins, streaks, and cashback here."
+        />
       ) : (
         <FlatList
           data={listData}

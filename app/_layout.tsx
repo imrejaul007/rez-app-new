@@ -35,11 +35,11 @@ import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import React, { useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus, Linking, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { AppState, AppStateStatus, Linking, StyleSheet, View, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { OfflineBanner } from '@/components/common/OfflineBanner';
 import { platformAlertConfirm } from '@/utils/platformAlert';
-import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
@@ -77,16 +77,7 @@ function RootLayout() {
   });
 
   const [fontTimedOut, setFontTimedOut] = useState(false);
-  const [isConnected, setIsConnected] = useState<boolean | null>(true);
   const onboardingCheckedRef = useRef(false);
-
-  // Offline detection — subscribe to network state changes
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsConnected(state.isConnected);
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     // LOW-9: installProductionConsoleGuard() is now called at module load time
@@ -352,16 +343,13 @@ function RootLayout() {
   return (
     <ErrorBoundary>
       <View style={styles.rootContainer}>
-        {isConnected === false && (
-          <View style={styles.offlineBanner}>
-            <Text style={styles.offlineBannerText}>You&apos;re offline. Some features may be unavailable.</Text>
-          </View>
-        )}
         <AppProviders
           onErrorBoundaryError={handleErrorBoundaryError}
           onQueueSyncComplete={handleQueueSyncComplete}
           onQueueSyncError={handleQueueSyncError}
         />
+        {/* Animated offline/reconnect banner — uses OfflineBanner (absolute-positioned overlay) */}
+        <OfflineBanner />
       </View>
     </ErrorBoundary>
   );
@@ -370,23 +358,6 @@ function RootLayout() {
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
-  },
-  offlineBanner: {
-    backgroundColor: '#F59E0B',
-    // paddingTop accounts for the status-bar / notch so the banner is not hidden behind it.
-    // SafeAreaProvider lives inside AppProviders and is not available here, so we use a
-    // platform-specific constant as a safe fallback until we can hoist the provider.
-    paddingTop: Platform.OS === 'ios' ? 50 : Platform.OS === 'android' ? 30 : 6,
-    paddingBottom: 6,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    zIndex: 9999,
-  },
-  offlineBannerText: {
-    color: '#1C1C1E',
-    fontSize: 13,
-    fontWeight: '600',
-    textAlign: 'center',
   },
 });
 

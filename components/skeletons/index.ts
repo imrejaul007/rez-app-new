@@ -4,8 +4,8 @@
  * Organized by category for easy imports
  */
 
-// Base component
-export { default as SkeletonLoader } from './SkeletonLoader';
+// Base component + presets
+export { default as SkeletonLoader, SkeletonCard, SkeletonList } from './SkeletonLoader';
 
 // Individual card skeletons
 export { default as ProductCardSkeleton } from './ProductCardSkeleton';

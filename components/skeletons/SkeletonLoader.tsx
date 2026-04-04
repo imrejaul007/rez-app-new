@@ -92,6 +92,62 @@ function SkeletonLoader({
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  skeletonCardContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  skeletonCardRow: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+  },
+  skeletonCardLines: {
+    flex: 1,
+    gap: 8,
+  },
+});
+
+/**
+ * SkeletonCard — full-width card preset with a circle avatar and 3 text lines.
+ * Used as a drop-in replacement for list item placeholders during loading.
+ */
+export function SkeletonCard({ style }: { style?: any }) {
+  return (
+    <View style={[styles.skeletonCardContainer, style]}>
+      <View style={styles.skeletonCardRow}>
+        <SkeletonLoader width={44} height={44} borderRadius={22} />
+        <View style={styles.skeletonCardLines}>
+          <SkeletonLoader width="70%" height={14} borderRadius={6} />
+          <SkeletonLoader width="50%" height={12} borderRadius={6} />
+        </View>
+      </View>
+      <SkeletonLoader width="100%" height={12} borderRadius={6} />
+    </View>
+  );
+}
+
+/**
+ * SkeletonList — renders N SkeletonCard items stacked vertically.
+ * Swap for ActivityIndicator during feed/list data loading.
+ */
+export function SkeletonList({ count = 4, style }: { count?: number; style?: any }) {
+  return (
+    <View style={style}>
+      {Array.from({ length: count }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
+    </View>
+  );
+}
 
 export default React.memo(SkeletonLoader);

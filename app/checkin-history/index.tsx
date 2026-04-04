@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
+import EmptyState from '@/components/ui/EmptyState';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import apiClient from '@/services/apiClient';
@@ -305,11 +306,11 @@ function CheckInHistoryScreen() {
           </Pressable>
         </View>
       ) : transactions.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyEmoji}>🏪</ThemedText>
-          <ThemedText style={styles.emptyTitle}>No check-ins yet</ThemedText>
-          <ThemedText style={styles.emptyDescription}>Visit a REZ store and scan the QR code to earn coins!</ThemedText>
-        </View>
+        <EmptyState
+          icon="🏪"
+          title="No check-ins yet"
+          subtitle="Visit a REZ store and scan the QR code to earn coins!"
+        />
       ) : (
         <FlatList
           data={listItems}

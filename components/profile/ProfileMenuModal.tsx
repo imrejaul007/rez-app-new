@@ -21,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { platformAlertSimple, platformAlertDestructive } from '@/utils/platformAlert';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -378,6 +379,11 @@ function ProfileMenuModal({
                 <ThemedText style={styles.logoutTextBottom}>Sign Out</ThemedText>
               </Pressable>
 
+              {/* App version — small muted text at the very bottom of the drawer */}
+              <ThemedText style={styles.versionText}>
+                REZ v{Constants.expoConfig?.version ?? '1.0.0'}
+              </ThemedText>
+
               <View style={styles.footerSpace} />
             </ScrollView>
           </Animated.View>
@@ -679,8 +685,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
+  versionText: {
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.35)',
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+
   footerSpace: {
-    height: 40,
+    height: 24,
   },
 
 });

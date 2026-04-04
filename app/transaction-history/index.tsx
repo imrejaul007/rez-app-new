@@ -18,6 +18,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import CachedImage from '@/components/ui/CachedImage';
+import EmptyState from '@/components/ui/EmptyState';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import apiClient from '@/services/apiClient';
@@ -221,11 +222,11 @@ function TransactionHistoryScreen() {
       expired: 'No expired coins in this period',
     };
     return (
-      <View style={styles.emptyState}>
-        <Ionicons name="receipt-outline" size={56} color={colors.text.tertiary} />
-        <Text style={styles.emptyTitle}>{emptyMessages[filter]}</Text>
-        <Text style={styles.emptySubtitle}>Shop at partner stores to start earning coins</Text>
-      </View>
+      <EmptyState
+        iconName="receipt-outline"
+        title={emptyMessages[filter]}
+        subtitle="Shop at partner stores to start earning coins"
+      />
     );
   };
 
@@ -581,26 +582,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: colors.border.default,
     marginHorizontal: Spacing.base,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 80,
-    paddingHorizontal: Spacing.xl,
-  },
-  emptyTitle: {
-    fontSize: Typography.h4.fontSize,
-    fontWeight: '700',
-    color: colors.text.secondary,
-    marginTop: Spacing.base,
-    textAlign: 'center',
-  },
-  emptySubtitle: {
-    fontSize: Typography.bodySmall.fontSize,
-    color: colors.text.tertiary,
-    marginTop: Spacing.sm,
-    textAlign: 'center',
   },
   footerLoader: {
     paddingVertical: Spacing.lg,

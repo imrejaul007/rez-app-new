@@ -27,6 +27,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/constants/theme';
 
+// REZ brand colors for the root error boundary UI
+const REZ_NAVY = '#1a2b4a';
+const REZ_GOLD = '#c9a84c';
+
 interface FeatureErrorBoundaryProps {
   children: ReactNode;
   /** Label shown in the error title, e.g. "Wallet", "Gallery", "Scratch Card" */
@@ -135,7 +139,7 @@ class FeatureErrorBoundary extends Component<FeatureErrorBoundaryProps, State> {
             <Ionicons
               name={isNetworkError ? 'cloud-offline' : 'alert-circle'}
               size={64}
-              color={colors.error}
+              color={REZ_GOLD}
             />
           </View>
 
@@ -158,7 +162,7 @@ class FeatureErrorBoundary extends Component<FeatureErrorBoundaryProps, State> {
               accessibilityLabel="Try again"
             >
               <Ionicons name="refresh" size={20} color="white" />
-              <Text style={styles.primaryButtonText}>Try Again</Text>
+              <Text style={styles.primaryButtonText}>Retry</Text>
             </Pressable>
 
             {onSecondaryAction && (
@@ -170,7 +174,7 @@ class FeatureErrorBoundary extends Component<FeatureErrorBoundaryProps, State> {
                 <Ionicons
                   name={(secondaryActionIcon as any) ?? 'arrow-back'}
                   size={20}
-                  color={colors.brand.purpleLight}
+                  color={REZ_NAVY}
                 />
                 <Text style={styles.secondaryButtonText}>
                   {secondaryActionLabel ?? 'Go Back'}
@@ -188,7 +192,7 @@ const styles = StyleSheet.create({
   // Full-screen fallback
   container: {
     flex: 1,
-    backgroundColor: colors.neutral[50],
+    backgroundColor: '#F5F7FA',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -199,41 +203,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: REZ_NAVY,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 24,
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.gray[900],
+    color: REZ_NAVY,
     marginBottom: 12,
     textAlign: 'center',
   },
   message: {
     fontSize: 16,
-    color: colors.neutral[500],
+    color: '#64748B',
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 24,
   },
   errorDetails: {
-    backgroundColor: colors.gray[100],
+    backgroundColor: '#FEF3C7',
     padding: 12,
     borderRadius: 8,
     marginBottom: 24,
     maxWidth: 320,
     width: '100%',
     borderWidth: 1,
-    borderColor: colors.gray[200],
+    borderColor: REZ_GOLD,
   },
   errorDetailsTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.error,
+    color: REZ_GOLD,
     marginBottom: 4,
   },
   errorDetailsText: {
     fontSize: 12,
-    color: colors.neutral[500],
+    color: '#92400E',
     fontFamily: 'monospace',
   },
   buttonContainer: {
@@ -244,7 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.brand.purpleLight,
+    backgroundColor: REZ_NAVY,
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 12,
@@ -265,12 +275,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 8,
     borderWidth: 1,
-    borderColor: colors.brand.purpleLight,
+    borderColor: REZ_NAVY,
   },
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.brand.purpleLight,
+    color: REZ_NAVY,
   },
 
   // Compact mode
