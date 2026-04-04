@@ -297,7 +297,7 @@ function HomeScreen() {
           missedSavingsCount: number;
           savingsStreak: number;
         };
-      }>('/api/user/savings/summary');
+      }>('/user/savings/summary');
       return (response.data as any).data as {
         lifetimeSavedPaise: number;
         thisMonthSavedPaise: number;

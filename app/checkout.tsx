@@ -162,7 +162,7 @@ function AOVRewardNudge({
         const { default: api } = await import('@/services/apiClient');
         const amountPaise = Math.round(totalPayable * 100);
         const res = (await api.get(
-          `/api/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`,
+          `/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`,
         )) as any;
         const data = res.data?.data;
         if (!cancelled && data?.nextTier && data.amountToNextTierPaise > 0) {

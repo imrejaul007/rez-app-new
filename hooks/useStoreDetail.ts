@@ -69,7 +69,7 @@ export function useStoreDetail(storeId: string | null | undefined) {
       if (!storeId) throw new Error('Store ID is required');
 
       try {
-        const response: any = await apiClient.get(`/api/stores/${storeId}/full`);
+        const response: any = await apiClient.get(`/stores/${storeId}/full`);
         return response.data;
       } catch (error: any) {
         logger.error('[useStoreDetail]', error);
@@ -93,7 +93,7 @@ export function usePrefetchStoreDetail() {
     queryClient.prefetchQuery({
       queryKey: ['store', 'detail', storeId],
       queryFn: async () => {
-        const response: any = await apiClient.get(`/api/stores/${storeId}/full`);
+        const response: any = await apiClient.get(`/stores/${storeId}/full`);
         return response.data;
       },
       staleTime: 5 * 60 * 1000,

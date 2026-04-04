@@ -88,7 +88,7 @@ export interface MissedSavingsSummary {
  */
 export async function getSpendingInsights(): Promise<SpendingInsightsDashboard> {
   const response = await apiClient.get<ApiResponse<SpendingInsightsDashboard>>(
-    '/api/insights/dashboard',
+    '/insights/dashboard',
   );
   return (response.data as any).data;
 }
@@ -100,7 +100,7 @@ export async function getSpendingInsights(): Promise<SpendingInsightsDashboard> 
  */
 export async function getMonthlyReport(month: string): Promise<MonthlyReport> {
   const response = await apiClient.get<ApiResponse<MonthlyReport>>(
-    `/api/insights/monthly/${month}`,
+    `/insights/monthly/${month}`,
   );
   return (response.data as any).data;
 }
@@ -111,7 +111,7 @@ export async function getMonthlyReport(month: string): Promise<MonthlyReport> {
  */
 export async function getMissedSavings(): Promise<MissedSavingsSummary> {
   const response = await apiClient.get<ApiResponse<MissedSavingsSummary>>(
-    '/api/insights/missed-savings',
+    '/insights/missed-savings',
   );
   return (response.data as any).data;
 }

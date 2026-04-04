@@ -78,7 +78,7 @@ export async function getLunchDeals(
   lat: number,
   lng: number,
 ): Promise<ApiResponse<LunchDealsResponse>> {
-  return apiClient.get<LunchDealsResponse>('/api/homepage/lunch-deals', { lat, lng });
+  return apiClient.get<LunchDealsResponse>('/homepage/lunch-deals', { lat, lng });
 }
 
 /**
@@ -90,14 +90,14 @@ export async function getAfterWorkPicks(
   lat: number,
   lng: number,
 ): Promise<ApiResponse<AfterWorkResponse>> {
-  return apiClient.get<AfterWorkResponse>('/api/homepage/after-work', { lat, lng });
+  return apiClient.get<AfterWorkResponse>('/homepage/after-work', { lat, lng });
 }
 
 /**
  * Fetch smart value packs available for corporate employees.
  */
 export async function getValuePacks(): Promise<ApiResponse<ValuePacksResponse>> {
-  return apiClient.get<ValuePacksResponse>('/api/homepage/value-packs');
+  return apiClient.get<ValuePacksResponse>('/homepage/value-packs');
 }
 
 // ─── Default export ───────────────────────────────────────────────────────────

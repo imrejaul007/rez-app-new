@@ -245,8 +245,8 @@ export default function SmartSpendScreen() {
       const { lat, lng } = await getCoords();
 
       const [summaryRes, nearbyRes] = await Promise.allSettled([
-        apiClient.get<{ data: SavingsSummary }>('/api/user/savings/summary'),
-        apiClient.get<{ data: NearbyStore[] }>(`/api/user/savings/best-nearby?lat=${lat}&lng=${lng}&budgetPaise=50000`),
+        apiClient.get<{ data: SavingsSummary }>('/user/savings/summary'),
+        apiClient.get<{ data: NearbyStore[] }>(`/user/savings/best-nearby?lat=${lat}&lng=${lng}&budgetPaise=50000`),
       ]);
 
       if (summaryRes.status === 'fulfilled') {

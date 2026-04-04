@@ -63,7 +63,7 @@ export interface ScoreHistoryEntry {
  * GET /api/score
  */
 export async function getScore(): Promise<RezScore> {
-  const response = await apiClient.get<RezScore>('/api/score');
+  const response = await apiClient.get<RezScore>('/score');
   return response.data as RezScore;
 }
 
@@ -73,7 +73,7 @@ export async function getScore(): Promise<RezScore> {
  */
 export async function getScoreBoosters(): Promise<ScoreBooster[]> {
   const response = await apiClient.get<ScoreBooster[]>(
-    '/api/score/boosters',
+    '/score/boosters',
   );
   return (response.data as ScoreBooster[]) ?? [];
 }
@@ -84,7 +84,7 @@ export async function getScoreBoosters(): Promise<ScoreBooster[]> {
  */
 export async function getScoreHistory(): Promise<ScoreHistoryEntry[]> {
   const response = await apiClient.get<ScoreHistoryEntry[]>(
-    '/api/score/history',
+    '/score/history',
   );
   return (response.data as ScoreHistoryEntry[]) ?? [];
 }

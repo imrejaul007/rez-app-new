@@ -52,7 +52,7 @@ export async function onCheckin(storeId: string, location?: { latitude: number; 
     ...(location ?? {}),
   };
   const response = await apiClient.post<InstantRewardResult>(
-    '/api/rewards/instant/checkin',
+    '/rewards/instant/checkin',
     payload as unknown as Record<string, unknown>,
   );
   return response.data as InstantRewardResult;
@@ -65,7 +65,7 @@ export async function onCheckin(storeId: string, location?: { latitude: number; 
 export async function onQRScan(storeId: string, qrData?: string): Promise<InstantRewardResult> {
   const payload: QRScanPayload = { storeId, qrData };
   const response = await apiClient.post<InstantRewardResult>(
-    '/api/rewards/instant/scan',
+    '/rewards/instant/scan',
     payload as unknown as Record<string, unknown>,
   );
   return response.data as InstantRewardResult;

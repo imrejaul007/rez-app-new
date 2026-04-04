@@ -128,7 +128,7 @@ function RootLayout() {
         const token = await AsyncStorage.getItem('rez_auth_token');
         if (token) {
           try {
-            await apiClient.post('/api/referral/apply', { code: params.code });
+            await apiClient.post('/referral/apply', { code: params.code });
             await AsyncStorage.removeItem('rez_pending_referral');
             // Show success toast — lazy import the toast utility to avoid circular deps
             import('@/contexts/ToastContext')

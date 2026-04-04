@@ -62,7 +62,7 @@ export default function SmartTipsCard() {
       try {
         const { lat, lng } = await getCoords();
         const res = await apiClient.get<{ data: NearbyStore[] }>(
-          `/api/user/savings/best-nearby?lat=${lat}&lng=${lng}&budgetPaise=50000`,
+          `/user/savings/best-nearby?lat=${lat}&lng=${lng}&budgetPaise=50000`,
         );
         if (cancelled) return;
         const arr: NearbyStore[] = (res as any)?.data ?? (res as any);

@@ -71,7 +71,7 @@ export function useStreakShield(): UseStreakShieldResult {
 
     setIsLoading(true);
     try {
-      await (apiClient as any).post('/api/gamification/streak/use-shield');
+      await (apiClient as any).post('/gamification/streak/use-shield');
       const now = new Date().toISOString();
       const record: ShieldRecord = { usedAt: now };
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(record));

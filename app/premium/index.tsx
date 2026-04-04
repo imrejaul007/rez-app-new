@@ -51,7 +51,7 @@ function PremiumScreen() {
 
   const fetchSubscriptionStatus = useCallback(async () => {
     try {
-      const response = await apiClient.get('/api/user/subscription');
+      const response = await apiClient.get('/user/subscription');
       const data = (response.data as any)?.data ?? (response.data as any);
       if (!isMounted()) return;
       setSubscriptionStatus({
@@ -78,7 +78,7 @@ function PremiumScreen() {
     setSubscribing(true);
     setError(null);
     try {
-      await apiClient.post('/api/user/subscription/subscribe', { plan: 'premium_monthly' });
+      await apiClient.post('/user/subscription/subscribe', { plan: 'premium_monthly' });
       if (!isMounted()) return;
       setSuccess(true);
       setSubscriptionStatus((prev) => ({ ...prev, isActive: true, plan: 'premium_monthly' }));

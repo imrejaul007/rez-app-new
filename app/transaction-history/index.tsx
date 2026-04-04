@@ -119,7 +119,7 @@ function TransactionHistoryScreen() {
           params.cursor = cursor;
         }
 
-        const response = await apiClient.get('/api/user/transactions', { params: params as any });
+        const response = await apiClient.get('/user/transactions', { params: params as any });
         const data = (response.data as any)?.data as TransactionPage | undefined;
         if (!data) return;
 

@@ -62,17 +62,17 @@ interface NearbyStore {
 // API helpers — apiClient handles auth token automatically
 async function fetchSummary(): Promise<SavingsSummary | null> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get('/api/user/savings/summary')) as any;
+  const res = (await api.get('/user/savings/summary')) as any;
   return res.data?.data ?? null;
 }
 async function fetchMissed(): Promise<MissedItem[]> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get(`/api/user/savings/missed?lat=${DEFAULT_LAT}&lng=${DEFAULT_LNG}`)) as any;
+  const res = (await api.get(`/user/savings/missed?lat=${DEFAULT_LAT}&lng=${DEFAULT_LNG}`)) as any;
   return res.data?.data ?? [];
 }
 async function fetchBestNearby(): Promise<NearbyStore[]> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get(`/api/user/savings/best-nearby?lat=${DEFAULT_LAT}&lng=${DEFAULT_LNG}`)) as any;
+  const res = (await api.get(`/user/savings/best-nearby?lat=${DEFAULT_LAT}&lng=${DEFAULT_LNG}`)) as any;
   return res.data?.data ?? [];
 }
 
