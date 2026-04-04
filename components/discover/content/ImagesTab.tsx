@@ -138,7 +138,7 @@ function ImagesTab({
           {/* Creator info */}
           <View style={styles.creatorInfo}>
             <CachedImage
-              source={item.creator?.avatar || 'https://via.placeholder.com/20'}
+              source={item.creator?.avatar || 'https://placehold.co/20'}
               style={styles.creatorAvatar}
             />
             <Text style={styles.creatorName} numberOfLines={1}>
@@ -166,7 +166,7 @@ function ImagesTab({
         {productCount > 0 && item.products[0] && (
           <View style={styles.productPreview}>
             <CachedImage
-              source={item.products[0].image || 'https://via.placeholder.com/32?text=Product'}
+              source={item.products[0].image || 'https://placehold.co/32?text=Product'}
               style={styles.productImage}
             />
             <View style={styles.productInfo}>

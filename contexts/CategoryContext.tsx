@@ -328,7 +328,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                         id: store._id || store.id,
                         title: store.name || 'Store',
                         subtitle: store.description?.substring(0, 50) || store.location?.address || '',
-                        image: store.banner || store.logo || 'https://via.placeholder.com/300x200?text=No+Image',
+                        image: store.banner || store.logo || 'https://placehold.co/300x200?text=No+Image',
                         brand: store.name || 'Brand',
                         cashback: store.offers?.cashback || 8,
                         action: {
@@ -355,7 +355,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                           id: store._id || store.id,
                           title: store.name || 'Store',
                           subtitle: store.description?.substring(0, 50) || store.location?.address || '',
-                          image: store.banner || store.logo || 'https://via.placeholder.com/300x200?text=No+Image',
+                          image: store.banner || store.logo || 'https://placehold.co/300x200?text=No+Image',
                           brand: store.name || 'Brand',
                           cashback: store.offers?.cashback || 8,
                           action: {
@@ -381,7 +381,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
                     subtitle: product.description?.substring(0, 50) || '',
                     image: Array.isArray(product.images) && product.images.length > 0 
                       ? product.images[0] 
-                      : product.image || 'https://via.placeholder.com/300x200?text=No+Image',
+                      : product.image || 'https://placehold.co/300x200?text=No+Image',
                     brand: product.brand || product.store?.name || 'Brand',
                     cashback: product.offers?.cashback || product.cashback?.percentage || 8,
                     action: {

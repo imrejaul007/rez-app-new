@@ -129,7 +129,7 @@ function PostsTab({
           {/* Creator info */}
           <View style={styles.creatorInfo}>
             <CachedImage
-              source={item.creator?.avatar || 'https://via.placeholder.com/24'}
+              source={item.creator?.avatar || 'https://placehold.co/24'}
               style={styles.creatorAvatar}
             />
             <Text style={styles.creatorName} numberOfLines={1}>

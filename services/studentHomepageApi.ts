@@ -51,7 +51,7 @@ const PLACEHOLDER_CAMPUS_TRENDING: CampusTrendingItem[] = [
   {
     id: 'ct-1',
     name: 'Campus Bites',
-    thumbnail: 'https://via.placeholder.com/200x140/F97316/fff?text=Campus+Bites',
+    thumbnail: 'https://placehold.co/200x140/F97316/fff?text=Campus+Bites',
     studentVisitsToday: 142,
     cashbackPercent: 18,
     distanceFromCampus: 0.3,
@@ -62,7 +62,7 @@ const PLACEHOLDER_CAMPUS_TRENDING: CampusTrendingItem[] = [
   {
     id: 'ct-2',
     name: 'GameZone Arena',
-    thumbnail: 'https://via.placeholder.com/200x140/7C3AED/fff?text=GameZone',
+    thumbnail: 'https://placehold.co/200x140/7C3AED/fff?text=GameZone',
     studentVisitsToday: 89,
     cashbackPercent: 12,
     distanceFromCampus: 0.8,
@@ -72,7 +72,7 @@ const PLACEHOLDER_CAMPUS_TRENDING: CampusTrendingItem[] = [
   {
     id: 'ct-3',
     name: 'Print & Study Hub',
-    thumbnail: 'https://via.placeholder.com/200x140/0EA5E9/fff?text=Print+Hub',
+    thumbnail: 'https://placehold.co/200x140/0EA5E9/fff?text=Print+Hub',
     studentVisitsToday: 201,
     cashbackPercent: 10,
     distanceFromCampus: 0.2,
@@ -81,7 +81,7 @@ const PLACEHOLDER_CAMPUS_TRENDING: CampusTrendingItem[] = [
   {
     id: 'ct-4',
     name: 'Chai Corner',
-    thumbnail: 'https://via.placeholder.com/200x140/FBBF24/1a3a52?text=Chai+Corner',
+    thumbnail: 'https://placehold.co/200x140/FBBF24/1a3a52?text=Chai+Corner',
     studentVisitsToday: 312,
     cashbackPercent: 15,
     distanceFromCampus: 0.1,
@@ -92,7 +92,7 @@ const PLACEHOLDER_CAMPUS_TRENDING: CampusTrendingItem[] = [
   {
     id: 'ct-5',
     name: 'Freshly Laundry',
-    thumbnail: 'https://via.placeholder.com/200x140/34D399/fff?text=Laundry',
+    thumbnail: 'https://placehold.co/200x140/34D399/fff?text=Laundry',
     studentVisitsToday: 56,
     cashbackPercent: 8,
     distanceFromCampus: 0.5,

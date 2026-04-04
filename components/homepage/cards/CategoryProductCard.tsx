@@ -72,7 +72,7 @@ function CategoryProductCard({
             <View style={styles.imagePlaceholder} />
           ) : (
             <CachedImage
-              source={product.image || 'https://via.placeholder.com/160x140?text=No+Image'}
+              source={product.image || 'https://placehold.co/160x140?text=No+Image'}
               style={[styles.image, imageLoading ? styles.imageHidden : null]}
               contentFit="cover"
               onLoad={() => setImageLoading(false)}

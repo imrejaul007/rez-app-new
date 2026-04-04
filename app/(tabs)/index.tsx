@@ -56,6 +56,7 @@ import RezScoreCard from '@/components/gamification/RezScoreCard';
 
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
+import { StatusBar } from 'expo-status-bar';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import StickySearchHeader from '@/components/homepage/StickySearchHeader';
@@ -876,6 +877,9 @@ function HomeScreen() {
       style={[viewStyles.mainContainer, isDark && { backgroundColor: themeColors.bg }]}
       entering={FadeIn.duration(250)}
     >
+      {/* iOS fix: home tab has a white header, so status-bar icons must be dark to be visible.
+          This overrides the global 'light' default set in AppProviders. */}
+      <StatusBar style="dark" />
       <ReAnimated.ScrollView
         ref={scrollViewRef}
         style={[viewStyles.container, isDark && { backgroundColor: themeColors.bg }]}

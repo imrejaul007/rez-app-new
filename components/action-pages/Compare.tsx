@@ -348,7 +348,7 @@ function ComparePage() {
       {selectedProducts.map((p) => (
         <Pressable key={p._id} style={styles.slot} onPress={() => handleRemoveProduct(p._id)}>
           <CachedImage
-            source={p.images?.[0] || 'https://via.placeholder.com/60'}
+            source={p.images?.[0] || 'https://placehold.co/60'}
             style={styles.slotImage}
           />
           <View style={styles.slotRemove}>
@@ -370,7 +370,7 @@ function ComparePage() {
     return (
       <Pressable style={styles.searchResultItem} onPress={() => handleSelectProduct(item)}>
         <CachedImage
-          source={item.images?.[0] || 'https://via.placeholder.com/60'}
+          source={item.images?.[0] || 'https://placehold.co/60'}
           style={styles.searchResultImage}
         />
         <View style={{ flex: 1 }}>
@@ -544,7 +544,7 @@ function ComparePage() {
                     <Ionicons name="close-circle" size={22} color={COLORS.red} />
                   </Pressable>
                   <CachedImage
-                    source={p.images?.[0] || 'https://via.placeholder.com/100'}
+                    source={p.images?.[0] || 'https://placehold.co/100'}
                     style={styles.productImage}
                   />
                   <Text style={styles.productName} numberOfLines={2}>{p.name}</Text>

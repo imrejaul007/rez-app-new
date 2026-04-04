@@ -229,7 +229,10 @@ function ThemedNavigation() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+      {/* iOS fix: use 'light' (white icons) as the global default so status-bar icons
+          remain visible on the many dark/navy gradient headers throughout the app.
+          Screens with light backgrounds (e.g. home tab) can override per-screen. */}
+      <StatusBar style="light" />
       <ToastManager />
       <CrossPlatformAlertRenderer />
       <OfflineBanner />

@@ -81,7 +81,7 @@ const PopularServiceCard = memo(({
   service: PopularService;
   onPress: () => void;
 }) => {
-  const imageUrl = service.image || service.images?.[0] || 'https://via.placeholder.com/300x200';
+  const imageUrl = service.image || service.images?.[0] || 'https://placehold.co/300x200';
   const description = service.shortDescription || service.description || 'Professional service';
 
   // Safely get category name

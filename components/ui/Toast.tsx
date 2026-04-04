@@ -34,7 +34,7 @@ function Toast({
   onDismiss,
   actions,
 }: ToastProps) {
-  const { colors, shadows } = useTheme();
+  const { themeColors: colors, shadows } = useTheme();
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(-100);
 

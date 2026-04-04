@@ -165,7 +165,7 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
           id: backendItem._id || backendItem.id || String(Math.random()),
           productId: typeof backendItem.itemId === 'string' ? backendItem.itemId : (item._id || item.id || ''),
           productName: item.name || 'Unknown Product',
-          productImage: (item.images && item.images[0]) || item.image || 'https://via.placeholder.com/300',
+          productImage: (item.images && item.images[0]) || item.image || 'https://placehold.co/300',
           price: item.salePrice || item.basePrice || item.price || 0,
           originalPrice: item.basePrice || (item.salePrice ? item.salePrice * 1.2 : 0),
           discount: item.basePrice && item.salePrice

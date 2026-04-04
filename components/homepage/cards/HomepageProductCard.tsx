@@ -63,7 +63,7 @@ function HomepageProductCard({
         {/* Product Image */}
         <View style={styles.imageContainer}>
           <CachedImage
-            source={product.image || 'https://via.placeholder.com/160x120?text=No+Image'}
+            source={product.image || 'https://placehold.co/160x120?text=No+Image'}
             style={styles.image}
             contentFit="cover"
           />

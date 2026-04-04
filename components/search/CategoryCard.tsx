@@ -33,7 +33,7 @@ function CategoryCard({
     if (category.image && !imageError) {
       return (
         <CachedImage
-          source={category.image || 'https://via.placeholder.com/200x200?text=No+Image'}
+          source={category.image || 'https://placehold.co/200x200?text=No+Image'}
           style={[styles.categoryImage, { height: cardSize.imageHeight }]}
           contentFit="cover"
           onError={() => setImageError(true)}

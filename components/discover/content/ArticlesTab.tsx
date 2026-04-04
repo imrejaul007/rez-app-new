@@ -133,7 +133,7 @@ function ArticlesTab({
             {/* Author */}
             <View style={styles.authorInfo}>
               <CachedImage
-                source={item.author?.avatar || 'https://via.placeholder.com/20'}
+                source={item.author?.avatar || 'https://placehold.co/20'}
                 style={styles.authorAvatar}
               />
               <Text style={styles.authorName} numberOfLines={1}>

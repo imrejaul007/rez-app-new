@@ -44,7 +44,7 @@ function AppUpdatePage() {
       'Improved notification system',
     ],
     storeUrl: {
-      ios: 'https://apps.apple.com/app/rez/id123456789',
+      ios: process.env.EXPO_PUBLIC_IOS_APP_STORE_URL || 'https://apps.apple.com/search?term=rez+app',
       android: 'https://play.google.com/store/apps/details?id=com.rez.app',
     },
   });

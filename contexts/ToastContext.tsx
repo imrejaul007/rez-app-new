@@ -121,6 +121,12 @@ export function ToastProvider({ children }: ToastProviderProps) {
     [showToast]
   );
 
+  // Register imperative showGlobalToast for use outside React tree (e.g. _layout.tsx)
+  useEffect(() => {
+    _registerGlobalToast((msg) => showToast(msg, 'success'));
+    return () => { _registerGlobalToast(() => {}); };
+  }, [showToast]);
+
   // Dismiss all toasts
   const dismissAll = useCallback(() => {
     setCurrentToast(null);
@@ -151,6 +157,15 @@ export function ToastProvider({ children }: ToastProviderProps) {
       )}
     </ToastContext.Provider>
   );
+}
+
+// Module-level singleton for imperative toast calls (e.g. from _layout.tsx deep-link handler)
+let _showGlobalToastFn: ((msg: string) => void) | null = null;
+export function showGlobalToast(message: string): void {
+  _showGlobalToastFn?.(message);
+}
+export function _registerGlobalToast(fn: (msg: string) => void): void {
+  _showGlobalToastFn = fn;
 }
 
 const styles = StyleSheet.create({

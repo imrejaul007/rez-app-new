@@ -55,7 +55,7 @@ const getProductImage = (product: any): string => {
     const firstImg = product.images[0];
     return typeof firstImg === 'string' ? firstImg : firstImg?.url || '';
   }
-  return 'https://via.placeholder.com/100';
+  return 'https://placehold.co/100';
 };
 
 // Helper function to get product ID

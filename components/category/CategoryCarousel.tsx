@@ -131,7 +131,7 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ item, index, scrollX, onPre
     >
       <Animated.View style={[styles.productCard, animatedStyle, shadowStyle]}>
         <ImageBackground
-          source={{ uri: item.image || 'https://via.placeholder.com/300x200?text=No+Image' }}
+          source={{ uri: item.image || 'https://placehold.co/300x200?text=No+Image' }}
           style={styles.productImage}
           imageStyle={styles.imageStyle}
         >

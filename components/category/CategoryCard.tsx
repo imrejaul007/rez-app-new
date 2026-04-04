@@ -319,7 +319,7 @@ function CategoryCard({
     <Pressable style={getContainerStyle()} onPress={handlePress}>
       <View style={styles.imageContainer}>
         <CachedImage 
-          source={item.image || 'https://via.placeholder.com/200x200?text=No+Image'} 
+          source={item.image || 'https://placehold.co/200x200?text=No+Image'} 
           style={styles.image} 
           contentFit="cover" 
         />
@@ -428,7 +428,7 @@ function CategoryCard({
     <Pressable style={[getContainerStyle(), styles.detailedContainer]} onPress={handlePress}>
       <View style={styles.detailedImageContainer}>
         <CachedImage 
-          source={item.image || 'https://via.placeholder.com/200x200?text=No+Image'} 
+          source={item.image || 'https://placehold.co/200x200?text=No+Image'} 
           style={styles.detailedImage} 
           contentFit="cover" 
         />
@@ -471,7 +471,7 @@ function CategoryCard({
     <Pressable style={[getContainerStyle(), styles.featuredContainer]} onPress={handlePress}>
       <View style={styles.featuredImageContainer}>
         <CachedImage 
-          source={item.image || 'https://via.placeholder.com/200x200?text=No+Image'} 
+          source={item.image || 'https://placehold.co/200x200?text=No+Image'} 
           style={styles.featuredImage} 
           contentFit="cover" 
         />

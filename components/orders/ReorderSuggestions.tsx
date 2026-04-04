@@ -78,7 +78,7 @@ function ReorderSuggestions({ onAddToCart }: ReorderSuggestionsProps) {
         id: item.productId,
         name: item.productName,
         price: item.currentPrice,
-        image: item.productImage || 'https://via.placeholder.com/150',
+        image: item.productImage || 'https://placehold.co/150',
         cashback: '0',
         category: 'products',
         quantity: item.suggestedQuantity || 1,

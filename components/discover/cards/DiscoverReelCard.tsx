@@ -170,7 +170,7 @@ function DiscoverReelCard({
           {/* Creator avatar */}
           <View style={styles.creatorContainer}>
             <CachedImage
-              source={item.creator?.avatar || 'https://via.placeholder.com/32'}
+              source={item.creator?.avatar || 'https://placehold.co/32'}
               style={styles.creatorAvatar}
             />
           </View>

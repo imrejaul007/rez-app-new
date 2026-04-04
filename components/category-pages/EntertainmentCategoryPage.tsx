@@ -329,7 +329,7 @@ function EntertainmentCategoryPage() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
             {filteredTrending.map((show: any, index: number) => (
               <Pressable key={show.id || index} style={styles.trendingCard} onPress={() => router.push(`/MainStorePage?storeId=${show.id}` as any)}>
-                <CachedImage source={show.image || 'https://via.placeholder.com/140x100'} style={styles.trendingImage} />
+                <CachedImage source={show.image || 'https://placehold.co/140x100'} style={styles.trendingImage} />
                 <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.trendingGradient}>
                   <Text style={styles.trendingName} numberOfLines={1}>{show.name}</Text>
                   {show.rating && (

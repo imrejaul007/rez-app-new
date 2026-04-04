@@ -15,6 +15,7 @@
 
 import React, { Suspense, useCallback, useState } from 'react';
 import { View, StyleSheet, Pressable, StatusBar, Platform, TextInput, RefreshControl, Dimensions } from 'react-native';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -311,7 +312,8 @@ function CategoriesScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.primary[500]} />
+      {/* iOS fix: categories header is dark navy — use light icons to be visible */}
+      <ExpoStatusBar style="light" />
 
       {/* ── Header ── */}
       <View style={styles.header}>

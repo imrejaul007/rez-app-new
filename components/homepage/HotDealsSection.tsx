@@ -139,7 +139,7 @@ function HotDealsSection({
         {/* Product Image */}
         <View style={styles.imageContainer}>
           <CachedImage
-            source={item.image || 'https://via.placeholder.com/200'}
+            source={item.image || 'https://placehold.co/200'}
             style={styles.productImage}
             contentFit="cover"
           />

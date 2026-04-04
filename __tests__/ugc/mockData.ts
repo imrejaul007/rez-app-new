@@ -52,7 +52,7 @@ export const mockProducts: ProductSelectorProduct[] = [
     store: {
       _id: 'store-1',
       name: 'TechStore',
-      logo: 'https://via.placeholder.com/100',
+      logo: 'https://placehold.co/100',
     },
     rating: {
       average: 4.5,
@@ -72,7 +72,7 @@ export const mockProducts: ProductSelectorProduct[] = [
     store: {
       _id: 'store-2',
       name: 'WearableHub',
-      logo: 'https://via.placeholder.com/100',
+      logo: 'https://placehold.co/100',
     },
     rating: {
       average: 4.3,
@@ -92,7 +92,7 @@ export const mockProducts: ProductSelectorProduct[] = [
     store: {
       _id: 'store-3',
       name: 'BagWorld',
-      logo: 'https://via.placeholder.com/100',
+      logo: 'https://placehold.co/100',
     },
     rating: {
       average: 4.7,
@@ -112,7 +112,7 @@ export const mockProducts: ProductSelectorProduct[] = [
     store: {
       _id: 'store-4',
       name: 'SportShoes',
-      logo: 'https://via.placeholder.com/100',
+      logo: 'https://placehold.co/100',
     },
     rating: {
       average: 4.6,
@@ -132,7 +132,7 @@ export const mockProducts: ProductSelectorProduct[] = [
     store: {
       _id: 'store-1',
       name: 'TechStore',
-      logo: 'https://via.placeholder.com/100',
+      logo: 'https://placehold.co/100',
     },
     rating: {
       average: 4.4,

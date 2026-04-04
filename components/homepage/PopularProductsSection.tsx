@@ -107,7 +107,7 @@ function PopularProductsSection({
           {/* Product Image - Left Side (Smaller) */}
           <View style={styles.imageContainer}>
             <CachedImage
-              source={item.image || 'https://via.placeholder.com/70x70?text=No+Image'}
+              source={item.image || 'https://placehold.co/70x70?text=No+Image'}
               style={styles.productImage}
               contentFit="cover"
               cachePolicy="memory-disk"

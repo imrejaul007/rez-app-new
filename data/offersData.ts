@@ -4,7 +4,7 @@ const heroBanner: HeroBanner = {
   id: 'hero-1',
   title: 'MEGA OFFERS',
   subtitle: 'Amazing deals just for you!',
-  image: 'https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=Food+Deal',
+  image: 'https://placehold.co/300x200/FF6B6B/FFFFFF?text=Food+Deal',
   ctaText: 'ORDER NOW',
   ctaAction: 'order',
   backgroundColor: '#8B5CF6'

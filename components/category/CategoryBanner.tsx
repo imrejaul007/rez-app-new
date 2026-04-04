@@ -36,7 +36,7 @@ function CategoryBanner({ banner, onPress }: CategoryBannerProps) {
     >
       <View style={styles.imageContainer}>
         <CachedImage 
-          source={banner.image || 'https://via.placeholder.com/400x200?text=No+Image'} 
+          source={banner.image || 'https://placehold.co/400x200?text=No+Image'} 
           style={styles.backgroundImage} 
           contentFit="cover"
         />

@@ -103,7 +103,7 @@ const GroceryProductCard: React.FC<GroceryProductCardProps> = ({
   const productId = product.id || product._id || '';
   // Handle images as array of strings or array of objects with url
   const firstImage = product.images?.[0];
-  const productImage = (typeof firstImage === 'string' ? firstImage : firstImage?.url) || product.image || 'https://via.placeholder.com/200';
+  const productImage = (typeof firstImage === 'string' ? firstImage : firstImage?.url) || product.image || 'https://placehold.co/200';
   // Handle pricing - API uses original/selling, legacy uses basePrice/salePrice
   const basePrice = product.pricing?.original || product.pricing?.basePrice || product.price || 0;
   const salePrice = product.pricing?.selling || product.pricing?.salePrice || product.originalPrice || basePrice;

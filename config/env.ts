@@ -26,7 +26,7 @@ export const API_CONFIG = {
   baseUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
   timeout: parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || '30000'),
   devUrl: process.env.EXPO_PUBLIC_DEV_API_URL || 'http://localhost:5001/api',
-  prodUrl: process.env.EXPO_PUBLIC_PROD_API_URL || 'https://rez-api-gateway.onrender.com/api',
+  prodUrl: process.env.EXPO_PUBLIC_PROD_API_URL || 'https://rez-backend-8dfu.onrender.com/api',
 } as const;
 
 // API Endpoints
@@ -128,8 +128,8 @@ export const BUSINESS_CONFIG = {
   },
   app: {
     website: process.env.EXPO_PUBLIC_WEBSITE_URL || 'https://www.rezapp.com',
-    appStore: process.env.EXPO_PUBLIC_APP_STORE_URL || 'https://apps.apple.com/app/rez-app/id123456789',
-    playStore: process.env.EXPO_PUBLIC_PLAY_STORE_URL || 'https://play.google.com/store/apps/details?id=com.rezapp',
+    appStore: process.env.EXPO_PUBLIC_APP_STORE_URL || 'https://apps.apple.com/search?term=rez+app',
+    playStore: process.env.EXPO_PUBLIC_PLAY_STORE_URL || 'https://play.google.com/store/apps/details?id=com.rez.app',
     deepLinkScheme: process.env.EXPO_PUBLIC_DEEP_LINK_SCHEME || 'rezapp',
   },
 } as const;

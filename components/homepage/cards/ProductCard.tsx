@@ -274,7 +274,7 @@ function ProductCard({
           accessibilityRole="image"
         >
           <CachedImage
-            source={product.image || 'https://via.placeholder.com/200x200?text=No+Image'}
+            source={product.image || 'https://placehold.co/200x200?text=No+Image'}
             style={styles.image}
             contentFit="cover"
             priority="normal"

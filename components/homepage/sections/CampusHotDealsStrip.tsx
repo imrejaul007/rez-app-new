@@ -53,7 +53,7 @@ const TrendingCard: React.FC<TrendingCardProps> = memo(({ item, onPress }) => (
         source={{ uri: item.thumbnail }}
         style={styles.thumbnail}
         resizeMode="cover"
-        defaultSource={{ uri: `https://via.placeholder.com/${CARD_WIDTH}x110/f1f5f9/94a3b8?text=...` }}
+        defaultSource={{ uri: `https://placehold.co/${CARD_WIDTH}x110/f1f5f9/94a3b8?text=...` }}
       />
 
       {/* Cashback badge */}

@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useCheckout } from '@/hooks/useCheckout';
 import { useCheckoutUI } from '@/hooks/useCheckoutUI';
 import { useCartValidation } from '@/hooks/useCartValidation';
@@ -134,6 +135,87 @@ const DeliverySlotPickerImpl = memo(
 
 DeliverySlotPickerImpl.displayName = 'DeliverySlotPicker';
 const DeliverySlotPicker = DeliverySlotPickerImpl;
+
+// ── AOV Reward Nudge ──────────────────────────────────────────────────────────
+// Shows "Spend ₹X more → unlock ₹Y reward" above the bill summary.
+interface AovNudgeData {
+  amountToNextTierPaise: number;
+  nextTier: { rewardType: string; rewardValue: number; label: string } | null;
+}
+
+function AOVRewardNudge({
+  storeId,
+  totalPayable,
+  currencySymbol = '₹',
+}: {
+  storeId?: string;
+  totalPayable: number;
+  currencySymbol?: string;
+}) {
+  const [nudge, setNudge] = React.useState<AovNudgeData | null>(null);
+
+  React.useEffect(() => {
+    if (!storeId || totalPayable <= 0) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { default: api } = await import('@/services/apiClient');
+        const amountPaise = Math.round(totalPayable * 100);
+        const res = (await api.get(
+          `/api/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`,
+        )) as any;
+        const data = res.data?.data;
+        if (!cancelled && data?.nextTier && data.amountToNextTierPaise > 0) {
+          setNudge({ amountToNextTierPaise: data.amountToNextTierPaise, nextTier: data.nextTier });
+        }
+      } catch {
+        /* silent fail */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [storeId, Math.round(totalPayable)]);
+
+  if (!nudge?.nextTier) return null;
+  const moreRupees = Math.ceil(nudge.amountToNextTierPaise / 100);
+  const rewardLabel =
+    nudge.nextTier.label ||
+    (nudge.nextTier.rewardType === 'coins'
+      ? `${nudge.nextTier.rewardValue} coins`
+      : nudge.nextTier.rewardType === 'cashback'
+        ? `${nudge.nextTier.rewardValue}% cashback`
+        : `${nudge.nextTier.rewardValue}% off`);
+
+  return (
+    <View
+      style={{
+        backgroundColor: '#FFF7ED',
+        borderRadius: 10,
+        marginHorizontal: 16,
+        marginTop: 8,
+        marginBottom: 4,
+        paddingVertical: 10,
+        paddingHorizontal: 14,
+        borderWidth: 1,
+        borderColor: '#FED7AA',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+      }}
+    >
+      <Ionicons name="gift-outline" size={18} color="#EA580C" />
+      <Text style={{ flex: 1, fontSize: 13, color: '#9A3412', fontWeight: '500' }}>
+        Spend{' '}
+        <Text style={{ fontWeight: '700' }}>
+          {currencySymbol}
+          {moreRupees} more
+        </Text>{' '}
+        to unlock <Text style={{ fontWeight: '700', color: '#EA580C' }}>{rewardLabel}</Text>!
+      </Text>
+    </View>
+  );
+}
 
 function CheckoutPage() {
   const router = useRouter();
@@ -342,6 +424,13 @@ function CheckoutPage() {
           <CheckoutSavingsNudge
             totalSavings={(state.billSummary?.savings || 0) + (uiState.appliedRedemption?.benefit || 0)}
             avgPerVisit={savingsInsights?.avgPerVisit}
+            currencySymbol={currencySymbol}
+          />
+
+          {/* AOV tier nudge — "Spend ₹50 more to unlock ₹100 cashback!" */}
+          <AOVRewardNudge
+            storeId={state.store?.id}
+            totalPayable={state.billSummary?.totalPayable || 0}
             currencySymbol={currencySymbol}
           />
 

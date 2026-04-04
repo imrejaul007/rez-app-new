@@ -80,7 +80,7 @@ const GroceryStoreCard: React.FC<GroceryStoreCardProps> = ({
 
   // Normalize store data
   const storeId = store.id || store._id || '';
-  const storeImage = store.banner || store.logo || store.image || 'https://via.placeholder.com/400';
+  const storeImage = store.banner || store.logo || store.image || 'https://placehold.co/400';
   const rating = store.rating?.average || 0;
   const ratingCount = store.rating?.count || 0;
   const cashback = store.maxCashback || parseInt(store.cashback || '0') || 0;

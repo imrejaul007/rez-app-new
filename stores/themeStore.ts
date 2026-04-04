@@ -16,6 +16,9 @@ export type ThemeMode = 'system' | 'light' | 'dark';
 
 const THEME_STORAGE_KEY = '@nuqta_theme_mode';
 
+// Sprint 12: AsyncStorage key used by ThemeContext for persistence
+export const REZ_THEME_KEY = 'rez_theme';
+
 interface ThemeStoreState {
   themeMode: ThemeMode;
   _loaded: boolean;
@@ -27,25 +30,40 @@ interface ThemeStoreState {
 }
 
 export const useThemeStore = create<ThemeStoreState>((set, get) => ({
-  // Dark mode is disabled until all screens fully support it.
-  // Force 'light' at store level; stored preferences are ignored for now.
-  themeMode: 'light',
+  themeMode: 'system',
   _loaded: false,
 
   _initialize: () => {
     if (get()._loaded) return;
-    // Always resolve to light mode regardless of stored preference
-    set({ themeMode: 'light', _loaded: true });
+    // Load persisted theme from both storage keys (prefer rez_theme, fall back to legacy)
+    Promise.all([
+      AsyncStorage.getItem(REZ_THEME_KEY),
+      AsyncStorage.getItem(THEME_STORAGE_KEY),
+    ])
+      .then(([rezTheme, legacyTheme]) => {
+        const stored = rezTheme || legacyTheme;
+        if (stored === 'dark' || stored === 'light') {
+          set({ themeMode: stored as ThemeMode, _loaded: true });
+        } else {
+          set({ themeMode: 'system', _loaded: true });
+        }
+      })
+      .catch(() => {
+        set({ themeMode: 'system', _loaded: true });
+      });
   },
 
   setThemeMode: (mode: ThemeMode) => {
     set({ themeMode: mode });
-    AsyncStorage.setItem(THEME_STORAGE_KEY, mode).catch(() => {});
+    // Persist to both keys for compatibility
+    const value = mode === 'system' ? 'system' : mode;
+    AsyncStorage.setItem(THEME_STORAGE_KEY, value).catch(() => {});
+    AsyncStorage.setItem(REZ_THEME_KEY, value).catch(() => {});
   },
 
   toggleTheme: () => {
     const { themeMode, setThemeMode } = get();
-    setThemeMode(themeMode === 'dark' ? 'light' : themeMode === 'light' ? 'dark' : 'dark');
+    setThemeMode(themeMode === 'dark' ? 'light' : 'dark');
   },
 }));
 
@@ -58,20 +76,23 @@ useThemeStore.getState()._initialize();
  */
 export function useResolvedTheme() {
   const { themeMode, _loaded, setThemeMode, toggleTheme } = useThemeStore();
-  // Intentionally unused — dark mode is disabled until all screens support it.
-  // Keep the hook call so the component stays reactive to system changes without errors.
-  useColorScheme();
+  const systemScheme = useColorScheme();
 
-  // Dark mode is disabled: always resolve to light regardless of themeMode or system setting.
-  const isDark = false;
+  const isDark =
+    themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
+
+  const resolvedColors = isDark ? darkColors : colors;
+  const resolvedGradients = isDark ? darkGradients : gradients;
+  const resolvedShadows = isDark ? darkShadows : shadows;
+  const resolvedGlass = isDark ? darkGlass : glass;
 
   return {
     themeMode,
     isDark,
-    colors,
-    gradients,
-    shadows,
-    glass,
+    colors: resolvedColors,
+    gradients: resolvedGradients,
+    shadows: resolvedShadows,
+    glass: resolvedGlass,
     setThemeMode,
     toggleTheme,
     _loaded,

@@ -81,7 +81,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
       accessibilityRole="image"
     >
       <FastImage
-        source={product.image || 'https://via.placeholder.com/200x200?text=No+Image'}
+        source={product.image || 'https://placehold.co/200x200?text=No+Image'}
         style={styles.image}
         resizeMode="cover"
         showLoader={true}

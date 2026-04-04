@@ -15,7 +15,7 @@ import CachedImage from '@/components/ui/CachedImage';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 
-const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/150x150?text=No+Image';
+const PLACEHOLDER_IMAGE = 'https://placehold.co/150x150?text=No+Image';
 
 function ProductCard({
   product,

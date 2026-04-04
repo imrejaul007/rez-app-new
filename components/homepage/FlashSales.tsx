@@ -352,7 +352,7 @@ const FlashSales: React.FC<FlashSalesProps> = ({
                 {/* Image Container */}
                 <View style={styles.imageContainer}>
                   <CachedImage
-                    source={product.image || 'https://via.placeholder.com/150?text=Flash+Sale'}
+                    source={product.image || 'https://placehold.co/150?text=Flash+Sale'}
                     style={styles.productImage}
                     contentFit="cover"
                   />
