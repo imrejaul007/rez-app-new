@@ -139,10 +139,13 @@ function CoinsScreen() {
         <Text style={styles.transactionDesc}>{item.description}</Text>
         <Text style={styles.transactionDate}>{item.date}</Text>
       </View>
-      <Text style={[styles.transactionAmount, { color: getTransactionColor(item.type) }]}>
-        {item.amount > 0 ? '+' : ''}
-        {item.amount}
-      </Text>
+      <View style={styles.transactionAmountWrap}>
+        <Text style={[styles.transactionAmount, { color: getTransactionColor(item.type) }]}>
+          {item.amount > 0 ? '+' : ''}
+          {item.amount}
+        </Text>
+        <Text style={styles.transactionRupee}>≈ ₹{Math.floor(Math.abs(item.amount) * coinConversionRate)}</Text>
+      </View>
     </View>
   );
 
@@ -266,6 +269,12 @@ function CoinsScreen() {
           <Text style={styles.learnBtnText}>Learn More About Coins</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Sticky conversion rate footer */}
+      <View style={styles.conversionFooter}>
+        <Ionicons name="information-circle-outline" size={14} color="#6b7280" />
+        <Text style={styles.conversionFooterText}>1 coin = ₹{coinConversionRate} — redeemable at checkout</Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -355,7 +364,9 @@ const styles = StyleSheet.create({
   transactionInfo: { flex: 1 },
   transactionDesc: { fontSize: 14, fontWeight: '500', color: '#1a1a1a' },
   transactionDate: { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  transactionAmountWrap: { alignItems: 'flex-end' },
   transactionAmount: { fontSize: 14, fontWeight: '600' },
+  transactionRupee: { fontSize: 11, color: '#6b7280', marginTop: 2 },
   centeredState: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -375,4 +386,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   learnBtnText: { fontSize: 14, fontWeight: '600', color: '#1a3a52' },
+  conversionFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#f9fafb',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  conversionFooterText: { fontSize: 12, color: '#6b7280' },
 });
