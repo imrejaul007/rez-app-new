@@ -31,6 +31,14 @@ const hasFirebaseAndroid = fs.existsSync(path.join(__dirname, 'google-services.j
 const hasFirebaseIos = fs.existsSync(path.join(__dirname, 'GoogleService-Info.plist'));
 const hasFirebaseConfig = hasFirebaseAndroid || hasFirebaseIos;
 
+if (!hasFirebaseIos) {
+  // Log to stdout (not stderr) — EAS treats stderr output as config failure
+  console.log('[WARNING] GoogleService-Info.plist is MISSING. iOS Firebase/FCM push notifications will be DISABLED on this build. Add GoogleService-Info.plist to the project root before building for the App Store.');
+}
+if (!hasFirebaseAndroid) {
+  console.log('[WARNING] google-services.json is MISSING. Android Firebase/FCM push notifications will be DISABLED on this build. Add google-services.json to the project root before building for the Play Store.');
+}
+
 module.exports = {
   expo: {
     name: BRAND_NAME,
@@ -48,8 +56,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       userInterfaceStyle: 'light',
-      // TODO: Update to your production App Store bundle identifier before release (e.g. com.yourcompany.yourapp)
-      bundleIdentifier: 'com.rez.app', // App Store identifier
+      bundleIdentifier: 'money.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
       associatedDomains: ['applinks:rezapp.in'],
       infoPlist: {
@@ -68,9 +75,8 @@ module.exports = {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#1a3a52',
       },
-      edgeToEdgeEnabled: false,
-      // TODO: Update to your production Play Store package name before release (e.g. com.yourcompany.yourapp)
-      package: 'com.rez.app', // Play Store identifier
+      edgeToEdgeEnabled: true,
+      package: 'money.rez.app', // Play Store identifier
       versionCode: parseInt(process.env.VERSION_CODE || '1'),
       intentFilters: [
         {
@@ -180,6 +186,7 @@ module.exports = {
       typedRoutes: true,
     },
     extra: {
+      apiUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
       eas: {
         projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID || 'cf84e3b3-4a96-4c9b-a438-465c29fbf720',
       },
