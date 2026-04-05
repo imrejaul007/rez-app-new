@@ -916,6 +916,23 @@ class WalletService {
   }
 
   /**
+   * getConversionRate
+   * GET /wallet/conversion-rate
+   * Returns the live coin-to-rupee rate from the backend.
+   */
+  async getConversionRate(): Promise<{ coinToRupeeRate: number } | null> {
+    try {
+      const res = await apiClient.get<{ coinToRupeeRate: number }>('/wallet/conversion-rate');
+      if (res?.success && typeof res.data?.coinToRupeeRate === 'number') {
+        return { coinToRupeeRate: res.data.coinToRupeeRate };
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * grantWelcomeCoins
    *
    * Idempotent — safe to call multiple times for the same user.

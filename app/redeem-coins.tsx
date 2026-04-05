@@ -31,7 +31,9 @@ import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 // CONSTANTS
 // ============================================================================
 
-const COIN_TO_RUPEE_RATE = 0.1; // 1 coin = ₹0.10
+// Default rate — overridden by live backend rate fetched on mount.
+// Matches the wallet-service default COIN_TO_RUPEE_RATE.
+const DEFAULT_COIN_TO_RUPEE_RATE = 0.5;
 const MIN_REDEMPTION = 50;
 const MAX_REDEMPTION_CAP = 500;
 const PRIMARY = '#7C3AED';
@@ -41,8 +43,8 @@ const PRIMARY_LIGHT = '#EDE9FE';
 // HELPERS
 // ============================================================================
 
-function coinsToRupees(coins: number): number {
-  return Math.round(coins * COIN_TO_RUPEE_RATE * 100) / 100;
+function coinsToRupees(coins: number, rate: number): number {
+  return Math.round(coins * rate * 100) / 100;
 }
 
 // ============================================================================
@@ -56,6 +58,7 @@ export default function RedeemCoinsScreen() {
   const [balance, setBalance] = useState<number | null>(null);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [balanceError, setBalanceError] = useState<string | null>(null);
+  const [coinRate, setCoinRate] = useState(DEFAULT_COIN_TO_RUPEE_RATE);
 
   const [inputValue, setInputValue] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -66,7 +69,7 @@ export default function RedeemCoinsScreen() {
     redeemedCoins: number;
   } | null>(null);
 
-  // Fetch current coin balance on mount
+  // Fetch current coin balance and live conversion rate on mount
   useEffect(() => {
     let cancelled = false;
     setLoadingBalance(true);
@@ -87,6 +90,10 @@ export default function RedeemCoinsScreen() {
       .finally(() => {
         if (!cancelled) setLoadingBalance(false);
       });
+    // Fetch live conversion rate — fall back to DEFAULT_COIN_TO_RUPEE_RATE if unavailable
+    walletApi.getConversionRate().then((res) => {
+      if (!cancelled && res?.coinToRupeeRate) setCoinRate(res.coinToRupeeRate);
+    });
     return () => {
       cancelled = true;
     };
@@ -102,7 +109,7 @@ export default function RedeemCoinsScreen() {
     return isNaN(n) ? 0 : n;
   }, [inputValue]);
 
-  const rupeeDiscount = useMemo(() => coinsToRupees(parsedCoins), [parsedCoins]);
+  const rupeeDiscount = useMemo(() => coinsToRupees(parsedCoins, coinRate), [parsedCoins, coinRate]);
 
   const validationError = useMemo((): string | null => {
     if (parsedCoins === 0) return null;
@@ -159,7 +166,7 @@ export default function RedeemCoinsScreen() {
           <Text style={styles.successTitle}>Redemption Successful!</Text>
           <Text style={styles.successSubtitle}>
             {successData.redeemedCoins} coins redeemed for a{' '}
-            <Text style={styles.successAmount}>₹{coinsToRupees(successData.redeemedCoins).toFixed(2)}</Text> discount.
+            <Text style={styles.successAmount}>₹{successData.discountApplied.toFixed(2)}</Text> discount.
           </Text>
 
           <View style={styles.successCard}>
@@ -238,7 +245,7 @@ export default function RedeemCoinsScreen() {
           <View style={styles.rateCard}>
             <Ionicons name="information-circle-outline" size={18} color={PRIMARY} />
             <Text style={styles.rateText}>
-              Conversion rate: <Text style={styles.rateHighlight}>1 coin = ₹0.10</Text>
+              Conversion rate: <Text style={styles.rateHighlight}>1 coin = ₹{coinRate.toFixed(2)}</Text>
             </Text>
           </View>
 
@@ -299,7 +306,7 @@ export default function RedeemCoinsScreen() {
               <Text style={styles.previewLabel}>You will receive a discount of</Text>
               <Text style={styles.previewAmount}>₹{rupeeDiscount.toFixed(2)}</Text>
               <Text style={styles.previewSub}>
-                {parsedCoins} coins × ₹0.10 = ₹{rupeeDiscount.toFixed(2)} off
+                {parsedCoins} coins × ₹{coinRate.toFixed(2)} = ₹{rupeeDiscount.toFixed(2)} off
               </Text>
             </View>
           )}
