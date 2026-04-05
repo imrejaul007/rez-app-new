@@ -39,6 +39,8 @@ import {
 } from '@/components/payment';
 import { borderRadius, colors, shadows, spacing, typography } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+// Phase 1.6: Pre-payment summary showing balance, estimated earnings, streak
+import PrePaymentSummary from '@/components/payment/PrePaymentSummary';
 
 function PaymentScreen() {
   const isMounted = useIsMounted();
@@ -242,6 +244,24 @@ function PaymentScreen() {
           storeLogo={paymentFlow.store?.logo}
           storeCategory={paymentFlow.store?.category?.name}
           membership={paymentFlow.membership}
+        />
+
+        {/* Phase 1.6: Pre-payment summary — balance + estimated earnings + streak */}
+        <PrePaymentSummary
+          currentBalance={paymentFlow.appliedCoins.totalApplied}
+          estimatedEarnings={Math.round(billAmount * 0.05)}
+          currentStreak={0}
+          loyaltyProgress={
+            paymentFlow.membership
+              ? {
+                  merchantName: storeName || '',
+                  currentVisits: (paymentFlow.membership as any)?.visitsCompleted ?? 0,
+                  requiredVisits: (paymentFlow.membership as any)?.totalVisitsRequired ?? 5,
+                  currentTier: (paymentFlow.membership as any)?.tier ?? 'Bronze',
+                  nextTier: 'Silver',
+                }
+              : null
+          }
         />
 
         {/* Order Summary */}

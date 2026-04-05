@@ -28,6 +28,8 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { FREE_DELIVERY_THRESHOLD, DEFAULT_DELIVERY_FEE_PER_STORE } from '@/constants/appConstants';
 // CARLOS retention fix: show coins-earned popup immediately after purchase
 import { useRewardPopup } from '@/contexts/RewardPopupContext';
+// Phase 1.6: Post-payment summary showing coins earned + streak update
+import PostPaymentSummary from '@/components/payment/PostPaymentSummary';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -98,6 +100,8 @@ function PaymentSuccessPage() {
   // CARLOS retention fix: reward popup shown once orders load
   const rewardPopupShownRef = useRef(false);
   const { showCoinsEarned, showCashbackEarned } = useRewardPopup();
+  // Phase 1.6: track total coins earned across all orders for PostPaymentSummary
+  const [totalCoinsEarnedForSummary, setTotalCoinsEarnedForSummary] = useState(0);
   const isMounted = useIsMounted();
 
   // Parse multiple order IDs (comma-separated)
@@ -247,6 +251,8 @@ function PaymentSuccessPage() {
             (s, o) => s + ((o as any).rewards?.coinsEarned ?? 0),
             0,
           );
+          // Phase 1.6: surface coin total for PostPaymentSummary section
+          if (totalCoinsEarned > 0) setTotalCoinsEarnedForSummary(totalCoinsEarned);
           setTimeout(async () => {
             if (!isMounted()) return;
             // SS-D001 FIX: verify reward was actually credited before celebrating
@@ -761,6 +767,18 @@ function PaymentSuccessPage() {
               <ThemedText style={styles.homeButtonText}>Back to Home</ThemedText>
             </Pressable>
           </View>
+          {/* Phase 1.6: Post-payment summary — shown when coins were earned */}
+          {totalCoinsEarnedForSummary > 0 && (
+            <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+              <PostPaymentSummary
+                coinsEarned={totalCoinsEarnedForSummary}
+                newBalance={0}
+                lifetimeSavings={orders.reduce((s, o) => s + (o.totals?.cashback || 0), 0)}
+                streakDays={0}
+                nextMilestone="Keep shopping to level up!"
+              />
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
