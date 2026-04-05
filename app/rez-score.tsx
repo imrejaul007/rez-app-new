@@ -381,6 +381,19 @@ export default function RezScoreScreen() {
               <Ionicons name="share-social-outline" size={18} color={colors.background.dark} />
               <ThemedText style={styles.shareBtnText}>Share my score</ThemedText>
             </Pressable>
+
+            {/* View savings share card */}
+            <Pressable
+              style={({ pressed }) => [
+                styles.shareBtn,
+                styles.shareBtnSecondary,
+                pressed ? styles.shareBtnPressed : null,
+              ]}
+              onPress={() => router.push('/share-savings' as any)}
+            >
+              <Ionicons name="image-outline" size={18} color={colors.lightMustard} />
+              <ThemedText style={[styles.shareBtnText, styles.shareBtnTextSecondary]}>View savings card</ThemedText>
+            </Pressable>
           </>
         )}
       </ScrollView>
@@ -524,5 +537,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: colors.background.dark,
+  },
+  shareBtnSecondary: {
+    backgroundColor: colors.background.primary,
+    borderWidth: 1,
+    borderColor: colors.lightMustard,
+  },
+  shareBtnTextSecondary: {
+    color: colors.lightMustard,
   },
 });

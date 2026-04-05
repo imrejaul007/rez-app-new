@@ -53,6 +53,7 @@ import { useUserIdentityStore } from '@/stores/userIdentityStore';
 // Phase 1: Habit Engine components
 import StreakFireIcon from '@/components/gamification/StreakFireIcon';
 import RezScoreCard from '@/components/gamification/RezScoreCard';
+import RewardCelebrationModal from '@/components/gamification/RewardCelebrationModal';
 
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
@@ -343,6 +344,11 @@ function HomeScreen() {
   // Deferred location prompt — shown to users who skipped location during onboarding
   const { permissionStatus, requestPermission: requestLocPermission } = useLocationPermission();
   const [locationBannerDismissed, setLocationBannerDismissed] = React.useState(true); // default hidden
+  const [celebrationModal, setCelebrationModal] = React.useState<{
+    visible: boolean;
+    coinsEarned: number;
+    totalSaved: number;
+  } | null>(null);
   React.useEffect(() => {
     if (permissionStatus === 'granted' || permissionStatus === 'denied') return;
     // Check if user already dismissed the banner
@@ -1451,6 +1457,15 @@ function HomeScreen() {
           onSearchPress={handleSearchPress}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
+        />
+      )}
+
+      {celebrationModal && (
+        <RewardCelebrationModal
+          visible={celebrationModal.visible}
+          coinsEarned={celebrationModal.coinsEarned}
+          totalSaved={celebrationModal.totalSaved}
+          onDismiss={() => setCelebrationModal(null)}
         />
       )}
     </ReAnimated.View>

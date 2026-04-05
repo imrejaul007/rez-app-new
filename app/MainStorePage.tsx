@@ -29,6 +29,8 @@ import {
   PaymentMethodsCard,
   StoreBottomActionBar,
 } from './MainStoreSection';
+import MerchantLoyaltyCard from '@/components/gamification/MerchantLoyaltyCard';
+import { TierName } from '@/components/gamification/VisitProgressBar';
 import { MainStorePageProps } from '@/types/mainstore';
 import { StoreHeaderSkeleton, ProductGridSkeleton, PromotionBannerSkeleton } from '@/components/skeletons';
 import { Colors, Spacing } from '@/constants/DesignSystem';
@@ -458,6 +460,22 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                         params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
                       } as any)
                     }
+                  />
+                )}
+
+                {/* Merchant Loyalty Card — tier, multiplier, and progress visualization */}
+                {d.isDynamic && d.storeData && d.userVisitsData && (
+                  <MerchantLoyaltyCard
+                    merchantName={d.currentStoreName ?? ''}
+                    merchantLogo={d.currentStoreLogo || undefined}
+                    tier={'Bronze' as TierName}
+                    visitCount={d.userVisitsData.visitsCompleted}
+                    multiplier={1}
+                    progress={Math.min(
+                      d.userVisitsData.visitsCompleted / Math.max(d.userVisitsData.totalVisitsRequired, 1),
+                      1,
+                    )}
+                    nextTierAt={d.userVisitsData.totalVisitsRequired}
                   />
                 )}
 
