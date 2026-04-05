@@ -927,8 +927,15 @@ const CashbackHistoryCard = React.memo(
             <Text style={[styles.historySource, { color: statusColor }]}>{getSourceLabel(cashback.source)}</Text>
           </View>
 
-          {/* Pending: show expiry + days remaining */}
-          {cashback.status === 'pending' && cashback.expiryDate && (
+          {/* Pending: show estimated credit date (when hold clears) */}
+          {cashback.status === 'pending' && cashback.estimatedCreditDate && (
+            <View style={styles.historyExpiryRow}>
+              <Ionicons name="hourglass-outline" size={11} color={Colors.warning} />
+              <Text style={styles.historyExpiryText}>Credits on {formatDate(cashback.estimatedCreditDate)}</Text>
+            </View>
+          )}
+          {/* Fallback: expiry date if no estimatedCreditDate */}
+          {cashback.status === 'pending' && !cashback.estimatedCreditDate && cashback.expiryDate && (
             <View style={styles.historyExpiryRow}>
               <Ionicons name="time-outline" size={11} color={Colors.warning} />
               <Text style={styles.historyExpiryText}>Expires {formatDate(cashback.expiryDate)}</Text>

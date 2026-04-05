@@ -40,6 +40,7 @@ export interface UserCashback {
   transaction?: string;
   metadata: CashbackMetadata;
   pendingDays: number;
+  estimatedCreditDate?: string; // ISO date — when the hold period expires and cashback credits
   isRedeemed: boolean;
   redeemedAt?: string;
   createdAt: string;
