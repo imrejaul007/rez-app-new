@@ -41,7 +41,8 @@ function PaymentPage() {
   const params = useLocalSearchParams();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const amount = Number(params.amount) || 5000;
+  const rawAmount = Number(params.amount);
+  const amount = Number.isFinite(rawAmount) && rawAmount > 0 ? rawAmount : -1;
   const currency = ((params.currency as string) || 'INR').toUpperCase();
 
   // HIGH-10: Validate amount before rendering payment UI
