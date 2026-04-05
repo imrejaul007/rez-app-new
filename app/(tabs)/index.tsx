@@ -76,6 +76,7 @@ import { getSpendingInsights } from '@/services/insightsApi';
 import CoinExpiryBanner from '@/components/homepage/CoinExpiryBanner';
 import RebookingNudgeCard from '@/components/home/RebookingNudgeCard';
 import PersonalizedFeedSection, { PersonalizedFeedSectionHandle } from '@/components/homepage/PersonalizedFeedSection';
+import pushNotificationService from '@/services/pushNotificationService';
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -568,6 +569,22 @@ function HomeScreen() {
   React.useEffect(() => {
     const timer = setTimeout(() => setPushReady(true), 3000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Phase 1.2: Trigger RewardCelebrationModal when backend notifies coins earned
+  // Backend sends push with data: { type: 'coins_earned', amount: N, totalSaved: M }
+  // This covers instant rewards from store visits, check-ins, and gamification events.
+  React.useEffect(() => {
+    const unsubscribe = pushNotificationService.addDataRefreshListener((data: any) => {
+      if (data?.type === 'coins_earned' && typeof data.amount === 'number' && data.amount > 0) {
+        setCelebrationModal({
+          visible: true,
+          coinsEarned: data.amount,
+          totalSaved: typeof data.totalSaved === 'number' ? data.totalSaved : 0,
+        });
+      }
+    });
+    return unsubscribe;
   }, []);
 
   // Auto-complete onboarding for users who reached /(tabs) via shortcut path
