@@ -6,6 +6,8 @@ import { CartItem as ApiCartItemType, UnifiedCartItem } from '@/services/cartApi
 import cartService from '@/services/cartApi';
 import { mapBackendCartToFrontend } from '@/utils/dataMappers';
 import offlineQueueService from '@/services/offlineQueueService';
+import cartValidationService from '@/services/cartValidationService';
+import { useToastStore } from '@/stores/toastStore';
 import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { useAuthUser, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
@@ -671,6 +673,20 @@ export function CartProvider({ children }: CartProviderProps) {
 
       // Invalidate cache on cart add
       await (await getCacheService()).invalidateByEvent({ type: 'cart:add' });
+
+      // Check stock before adding
+      try {
+        const existingCartItem = state.items.find(i => i.id === item.id);
+        const requestedQty = (existingCartItem?.quantity ?? 0) + 1;
+        const stockCheck = await cartValidationService.checkProductStock(item.id, requestedQty);
+        if (stockCheck.success && stockCheck.data && !stockCheck.data.available) {
+          useToastStore.getState().showError(stockCheck.message || 'Item is out of stock');
+          return;
+        }
+      } catch (stockErr) {
+        // Don't block add-to-cart on stock check failure — the backend will catch it at checkout
+        if (__DEV__) console.log('[Cart] Stock check failed, proceeding:', stockErr);
+      }
 
       // Update UI optimistically - reducer will handle the state update
       // Make sure metadata is preserved - explicitly spread metadata

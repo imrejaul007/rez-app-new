@@ -364,13 +364,10 @@ class ApiClient {
             if (this.refreshTokenCallback && !this.isLoggingOut) {
               const refreshSuccess = await this.handleTokenRefresh();
               if (refreshSuccess) {
-                // Only retry idempotent methods (GET, HEAD) after a token refresh.
-                // For mutating methods (POST, PUT, PATCH, DELETE), the server may have
-                // partially processed the request before the 401 was returned, so
-                // retrying blindly risks duplicate mutations or inconsistent state.
-                if (method === 'GET' || (method as string) === 'HEAD') {
-                  return this.makeRequest<T>(endpoint, options);
-                }
+                // Retry the request after successful token refresh.
+                // All methods (including POST/PUT/PATCH/DELETE) are safe to retry
+                // because the idempotency key system prevents duplicate operations.
+                return this.makeRequest<T>(endpoint, options);
               }
             }
 

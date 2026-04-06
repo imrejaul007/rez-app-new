@@ -1,14 +1,16 @@
 // Order Types
 // Type definitions for order management system
 
-// Canonical order status — must match backend Order model schema
+// Canonical order status — must match rez-shared/src/orderStatuses.ts
 export type OrderStatus =
   | 'placed'
   | 'confirmed'
   | 'preparing'
   | 'ready'
   | 'dispatched'
+  | 'out_for_delivery'
   | 'delivered'
+  | 'cancelling'
   | 'cancelled'
   | 'returned'
   | 'refunded';

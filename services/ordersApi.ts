@@ -290,6 +290,19 @@ class OrdersService {
   async getOrders(query: OrdersQuery = {}): Promise<ApiResponse<OrdersResponse>> {
     try {
       const response = await apiClient.get<OrdersResponse>('/orders', query as any);
+
+      // Map backend pagination field names to the frontend interface.
+      // Backend sends { page, totalPages } but the consumer app expects { current, pages }.
+      if (response.success && response.data?.pagination) {
+        const pag = response.data.pagination as any;
+        response.data.pagination = {
+          current: pag.current ?? pag.page ?? 1,
+          pages: pag.pages ?? pag.totalPages ?? 1,
+          total: pag.total ?? 0,
+          limit: pag.limit ?? 20,
+        };
+      }
+
       return response as any;
     } catch (error: any) {
       return {

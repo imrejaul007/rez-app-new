@@ -37,6 +37,11 @@ if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !process.env.EXPO_PU
   throw new Error('[config/index] FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production.');
 }
 
+// Secondary guard: warn if EXPO_PUBLIC_API_URL is also missing in production
+if (!process.env.EXPO_PUBLIC_API_URL && !__DEV__) {
+  console.error('[CRITICAL] EXPO_PUBLIC_API_URL not set in production!');
+}
+
 // Export specific configurations for easy access
 export const Config = {
   // Environment

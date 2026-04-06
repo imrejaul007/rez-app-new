@@ -42,6 +42,27 @@ export interface CheckoutDraft {
   fulfillmentType: string | null;
   /** Unix ms timestamp when the draft was last saved — used for staleness check. */
   savedAt: number | null;
+
+  // ── Payment recovery fields (OG-D008 FIX) ──────────────────────────
+  // Persisted so that if the app is killed between payment capture and
+  // order creation, we can re-verify / recover on next launch.
+
+  /** Razorpay payment ID returned by the checkout SDK after capture. */
+  razorpayPaymentId: string | null;
+  /** Razorpay order ID used to initiate the checkout session. */
+  razorpayOrderId: string | null;
+  /** Razorpay signature returned alongside payment ID for verification. */
+  razorpaySignature: string | null;
+
+  /** True when a wallet debit succeeded but the order has not yet been created. */
+  walletPaymentPending: boolean;
+  /** Wallet transaction ID from the debit — needed for refund if order creation fails. */
+  walletTransactionId: string | null;
+  /** Amount charged in the pending wallet/razorpay transaction. */
+  pendingPaymentAmount: number | null;
+
+  /** Set to true once the order has been confirmed for this draft session. */
+  orderCreated: boolean;
 }
 
 interface CheckoutDraftState {
@@ -58,6 +79,13 @@ const emptyDraft: CheckoutDraft = {
   paymentMethod: null,
   fulfillmentType: null,
   savedAt: null,
+  razorpayPaymentId: null,
+  razorpayOrderId: null,
+  razorpaySignature: null,
+  walletPaymentPending: false,
+  walletTransactionId: null,
+  pendingPaymentAmount: null,
+  orderCreated: false,
 };
 
 export const useCheckoutDraftStore = create<CheckoutDraftState>()(

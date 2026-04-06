@@ -35,6 +35,8 @@ export interface RazorpayPaymentVerificationResponse {
   amount: number;
   status: string;
   transactionId: string;
+  /** Raw Razorpay signature — attached client-side for payment recovery persistence (OG-D008). */
+  signature?: string;
 }
 
 export interface RazorpayCheckoutOptions {
@@ -236,6 +238,9 @@ export async function createRazorpayPayment(config: {
           if (!verifyResponse.success || !verifyResponse.data) {
             throw new Error(verifyResponse.message || 'Payment verification failed');
           }
+          // OG-D008 FIX: Attach the raw Razorpay signature so the caller can
+          // persist it for payment recovery if the app is killed before order creation.
+          verifyResponse.data.signature = response.razorpay_signature;
           config.onSuccess(verifyResponse.data);
         } catch (error) {
           config.onError(error instanceof Error ? error : new Error('Payment verification failed'));

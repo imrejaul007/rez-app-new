@@ -254,6 +254,88 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     return () => subscription.remove();
   }, []);
 
+  // ── OG-D008 FIX: Payment recovery on mount ──────────────────────────
+  // If the app was killed between payment capture (Razorpay or wallet debit)
+  // and order creation, the draft store will contain a pending payment that
+  // was never completed. On mount, detect this and attempt recovery.
+  const hasAttemptedRecoveryRef = useRef(false);
+  useEffect(() => {
+    if (hasAttemptedRecoveryRef.current) return;
+    if (authLoading || !isAuthenticated) return;
+
+    const draft = getActiveDraft();
+    if (!draft) return;
+
+    const hasRazorpayPending = !!(draft.razorpayPaymentId && !draft.orderCreated);
+    const hasWalletPending = !!(draft.walletPaymentPending && draft.walletTransactionId && !draft.orderCreated);
+
+    if (!hasRazorpayPending && !hasWalletPending) return;
+
+    hasAttemptedRecoveryRef.current = true;
+    devLog.log('[Checkout] Detected pending payment recovery:', {
+      razorpay: hasRazorpayPending ? draft.razorpayPaymentId : null,
+      wallet: hasWalletPending ? draft.walletTransactionId : null,
+    });
+
+    (async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+
+        if (hasRazorpayPending && draft.razorpayPaymentId && draft.razorpayOrderId) {
+          // Attempt to verify the Razorpay payment with the backend.
+          // If the backend already created the order during verification,
+          // we get back the orderId and can navigate to success.
+          const verifyResponse = await razorpayApi.verifyPayment({
+            razorpayOrderId: draft.razorpayOrderId,
+            razorpayPaymentId: draft.razorpayPaymentId,
+            razorpaySignature: draft.razorpaySignature || '',
+          });
+
+          if (verifyResponse.success && verifyResponse.data) {
+            const { orderId, transactionId } = verifyResponse.data;
+            if (orderId) {
+              // Payment was verified and order exists — navigate to success.
+              devLog.log('[Checkout] Razorpay payment recovered, orderId:', orderId);
+              clearDraft();
+              showToast({ message: 'Your previous payment was recovered successfully!', type: 'success' });
+              router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId || draft.razorpayPaymentId}&paymentMethod=razorpay`);
+              return;
+            }
+          }
+
+          // Verification didn't return an order — payment may have been
+          // captured but order was never created. Show a support message
+          // and clear the draft so the user isn't stuck in a loop.
+          devLog.warn('[Checkout] Razorpay payment found but no order was created. Payment ID:', draft.razorpayPaymentId);
+          clearDraft();
+          showToast({
+            message: 'We found a previous payment that wasn\'t completed. If you were charged, please contact support with payment ID: ' + draft.razorpayPaymentId,
+            type: 'error',
+          });
+
+        } else if (hasWalletPending && draft.walletTransactionId) {
+          // Wallet was debited but order was never created.
+          // We cannot create the order from the client (we lost the checkout
+          // state), so inform the user and clear the draft.
+          devLog.warn('[Checkout] Wallet payment pending but order not created. Transaction ID:', draft.walletTransactionId);
+          clearDraft();
+          showToast({
+            message: 'A previous wallet payment was not completed. If your balance was deducted, please contact support with transaction ID: ' + draft.walletTransactionId,
+            type: 'error',
+          });
+        }
+      } catch (err) {
+        devLog.error('[Checkout] Payment recovery failed:', err);
+        // Clear the draft so the user isn't stuck in a recovery loop.
+        clearDraft();
+      } finally {
+        if (isMountedRef.current) {
+          setState(prev => ({ ...prev, loading: false }));
+        }
+      }
+    })();
+  }, [authLoading, isAuthenticated]);
+
   // Refresh wallet data when user returns to checkout (e.g., after failed payment or back from address screen)
   useFocusEffect(
     useCallback(() => {
@@ -1650,6 +1732,17 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         return;
       }
 
+      // OG-D008 FIX: Persist wallet transaction info immediately after debit
+      // so that if the app is killed before order creation, we can detect the
+      // orphaned payment on next launch and attempt recovery / refund.
+      saveDraft({
+        paymentMethod: 'wallet',
+        walletPaymentPending: true,
+        walletTransactionId: walletResponse.data.transaction.transactionId,
+        pendingPaymentAmount: totalPayable,
+        orderCreated: false,
+      });
+
       // Step 2: Create order with wallet payment method
       // Validate delivery address (required for delivery only)
       if (state.fulfillment.selectedType === 'delivery' && !state.selectedAddress) {
@@ -2153,11 +2246,18 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         },
         userInfo,
         onSuccess: async (paymentResponse) => {
-          // Persist the Razorpay payment ID immediately so it can be used for
-          // a refund if order creation subsequently fails (charged but order lost).
+          // OG-D008 FIX: Persist the full Razorpay payment credentials immediately
+          // so that if the app is killed before order creation, the payment can be
+          // recovered and verified on next launch.
           const razorpayPaymentId = paymentResponse.paymentId;
-          saveDraft({ paymentMethod: 'razorpay' });
-          (useCheckoutDraftStore.getState() as any).saveDraft?.({ razorpayPaymentId });
+          saveDraft({
+            paymentMethod: 'razorpay',
+            razorpayPaymentId: paymentResponse.paymentId,
+            razorpayOrderId: paymentResponse.orderId,
+            razorpaySignature: paymentResponse.signature || null,
+            pendingPaymentAmount: totalPayable,
+            orderCreated: false,
+          });
 
           try {
             // Auto-apply card offer if card payment was used
