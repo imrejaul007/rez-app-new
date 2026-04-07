@@ -272,12 +272,17 @@ function LoyaltyRewardsPage() {
                 <ThemedText style={styles.loyaltyStore}>{milestone.title}</ThemedText>
                 <ThemedText style={styles.loyaltyReward}>{milestone.reward}</ThemedText>
               </View>
-              {milestone.rewardCoins && (
+              {milestone.rewardCoins ? (
                 <View style={styles.rewardValueContainer}>
                   <ThemedText style={styles.rewardValueLabel}>Earn</ThemedText>
                   <ThemedText style={styles.rewardValue}>+{milestone.rewardCoins}</ThemedText>
                 </View>
-              )}
+              ) : milestone.rewardDiscount ? (
+                <View style={styles.rewardValueContainer}>
+                  <ThemedText style={styles.rewardValueLabel}>Save</ThemedText>
+                  <ThemedText style={styles.rewardValue}>{milestone.rewardDiscount}%</ThemedText>
+                </View>
+              ) : null}
             </View>
 
             {/* Progress */}
