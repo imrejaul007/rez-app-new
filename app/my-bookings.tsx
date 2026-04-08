@@ -217,25 +217,32 @@ const MyBookingsPage = () => {
     };
   }, [activeTab]);
 
+  // Keep a ref to the current bookings so the cancel handler can read it without
+  // adding bookings to the useCallback dep array (which would re-create the handler on every render)
+  const bookingsRef = useRef<ServiceBooking[]>([]);
+  useEffect(() => {
+    bookingsRef.current = bookings;
+  }, [bookings]);
+
   const handleCancelBooking = useCallback(
     async (bookingId: string) => {
       // SS-D002 FIX: If a cancel is already in-flight for this booking, ignore the
       // duplicate tap — prevents race where two PATCH requests race each other.
       if (cancellingIds.has(bookingId)) return;
 
+      // Determine whether this is a ServiceAppointment (Pattern A) or ServiceBooking (Pattern B)
+      // so we call the correct cancel endpoint.
+      const targetBooking = bookingsRef.current.find((b) => b._id === bookingId);
+      const isServiceAppt = (targetBooking as any)?._isServiceAppointment === true;
+
       platformAlertDestructive(
         'Cancel Booking',
         'Are you sure you want to cancel this booking?',
         async () => {
-          // SS-D002 FIX: Lock this booking's Cancel button immediately so that:
-          //  (a) a background refresh arriving mid-cancel cannot re-render the
-          //      button in its enabled state and
-          //  (b) a double-tap cannot create two simultaneous cancel requests.
+          // SS-D002 FIX: Lock this booking's Cancel button immediately.
           setCancellingIds((prev) => new Set(prev).add(bookingId));
 
-          // SS-D002 FIX: Optimistic local state update — immediately show the
-          // booking as 'cancelled' so the user sees instant feedback while the
-          // API call is in-flight.  If the call fails we revert.
+          // SS-D002 FIX: Optimistic local state update.
           let previousBookings: ServiceBooking[] = [];
           setBookings((prev) => {
             previousBookings = prev;
@@ -243,22 +250,29 @@ const MyBookingsPage = () => {
           });
 
           try {
-            const response = await serviceBookingApi.cancelBooking(bookingId);
+            // Route to the correct cancel API based on booking type.
+            const response = isServiceAppt
+              ? await serviceAppointmentApi.cancelServiceAppointment(bookingId)
+              : await serviceBookingApi.cancelBooking(bookingId);
+
             if (response.success) {
-              // SS-D002 FIX: Replace optimistic entry with authoritative server
-              // data so any server-side fields (refund amount, cancelledAt, etc.)
-              // are reflected without requiring a full list refresh.
-              if (response.data) {
-                setBookings((prev) => prev.map((b) => (b._id === bookingId ? response.data! : b)));
+              // For ServiceAppointment, response.data has shape { message, appointment }
+              const updatedRecord = isServiceAppt
+                ? ((response.data as any)?.appointment ?? response.data)
+                : response.data;
+
+              if (updatedRecord) {
+                setBookings((prev) =>
+                  prev.map((b) => (b._id === bookingId ? { ...b, ...updatedRecord, status: 'cancelled' as any } : b)),
+                );
               }
               platformAlertSimple('Success', 'Booking cancelled successfully');
               // Full refresh in the background to sync other fields (e.g. cashback reversal)
               fetchBookingsRef.current();
             } else {
-              // SS-D002 FIX: Revert optimistic update on API failure so the
-              // booking does not appear cancelled when it actually still is active.
+              // SS-D002 FIX: Revert optimistic update on API failure.
               setBookings(previousBookings);
-              platformAlertSimple('Error', response.error || 'Failed to cancel booking');
+              platformAlertSimple('Error', (response as any).error || 'Failed to cancel booking');
             }
           } catch (error: any) {
             // SS-D002 FIX: Revert on network / unexpected error too.
