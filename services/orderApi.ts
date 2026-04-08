@@ -214,4 +214,5 @@ function getOrderApiService(): OrderApiService {
   return new OrderApiService();
 }
 
-export default getOrderApiService();
+export const orderApi = getOrderApiService();
+export default orderApi;
