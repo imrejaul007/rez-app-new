@@ -4,7 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows user's service bookings with travel-specific enhancements
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
@@ -14,7 +14,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router';
 import serviceBookingApi, { ServiceBooking } from '@/services/serviceBookingApi';
+import serviceAppointmentApi from '@/services/serviceAppointmentApi';
 import CashbackStatusBadge from '@/components/travel/CashbackStatusBadge';
+import { getMyBookings, cancelBooking, OtaBooking } from '@/services/hotelOtaApi';
 import { useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -51,7 +53,9 @@ const MyBookingsPage = () => {
   const [bookings, setBookings] = useState<ServiceBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'courses'>('upcoming');
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'courses' | 'hotels'>('upcoming');
+  const [hotelBookings, setHotelBookings] = useState<OtaBooking[]>([]);
+  const [hotelLoading, setHotelLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // SS-D002 FIX: Track which booking IDs currently have a cancel in-flight so
   // the button is disabled (preventing double-tap race) and the UI shows a
@@ -74,13 +78,53 @@ const MyBookingsPage = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const response = await serviceBookingApi.getUserBookings({
-        page: 1,
-        limit: 50,
-      });
+      // Fetch both ServiceBooking (cart/checkout flow) and ServiceAppointment (direct booking flow) in parallel
+      const [response, appointmentsResponse] = await Promise.all([
+        serviceBookingApi.getUserBookings({ page: 1, limit: 50 }),
+        serviceAppointmentApi.getUserServiceAppointments(1, 50).catch(() => null),
+      ]);
 
       if (response.success && response.data) {
-        let filteredBookings = response.data;
+        // Normalize ServiceAppointment records into the ServiceBooking shape for unified rendering
+        const normalizedAppointments: ServiceBooking[] = appointmentsResponse?.data?.appointments
+          ? appointmentsResponse.data.appointments.map(
+              (appt: any) =>
+                ({
+                  _id: appt._id || appt.appointmentId || appt.id,
+                  bookingNumber: appt.appointmentNumber || appt.id,
+                  user: appt.userId || '',
+                  service: {
+                    _id: appt.serviceId || '',
+                    name: appt.serviceType || 'Appointment',
+                    images: [],
+                    pricing: { original: 0, selling: 0 },
+                  },
+                  serviceCategory: { _id: '', name: 'Appointment', slug: 'appointments', icon: 'calendar' },
+                  store: appt.store || { name: '' },
+                  merchantId: '',
+                  customerName: appt.customerName || '',
+                  customerPhone: appt.customerPhone || '',
+                  bookingDate: appt.appointmentDate || appt.date,
+                  timeSlot: { start: appt.appointmentTime || appt.time || '09:00', end: '' },
+                  duration: appt.duration || 60,
+                  serviceType: 'store' as const,
+                  pricing: { basePrice: 0, total: 0, currency: 'INR' },
+                  paymentStatus: 'pending' as const,
+                  status: appt.status === 'no-show' ? 'no_show' : appt.status,
+                  cashbackStatus: 'pending' as const,
+                  verificationDays: 0,
+                  isRescheduled: false,
+                  rescheduleCount: 0,
+                  maxReschedules: 2,
+                  requiresPaymentUpfront: false,
+                  createdAt: appt.createdAt || new Date().toISOString(),
+                  updatedAt: appt.updatedAt || new Date().toISOString(),
+                  _isServiceAppointment: true,
+                }) as any,
+            )
+          : [];
+
+        let filteredBookings = [...response.data, ...normalizedAppointments];
 
         if (activeTab === 'courses') {
           // ED-02: Filter education-related bookings
@@ -152,6 +196,26 @@ const MyBookingsPage = () => {
   useEffect(() => {
     fetchBookingsRef.current = fetchBookings;
   });
+
+  // Fetch hotel OTA bookings when Hotels tab is active
+  useEffect(() => {
+    if (activeTab !== 'hotels') return;
+    let cancelled = false;
+    setHotelLoading(true);
+    getMyBookings(1, 20)
+      .then((res) => {
+        if (!cancelled) setHotelBookings(res.bookings ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setHotelBookings([]);
+      })
+      .finally(() => {
+        if (!cancelled) setHotelLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
 
   const handleCancelBooking = useCallback(
     async (bookingId: string) => {
@@ -586,6 +650,12 @@ const MyBookingsPage = () => {
             >
               <Text style={[styles.tabText, activeTab === 'courses' && styles.activeTabText]}>Courses</Text>
             </Pressable>
+            <Pressable
+              style={[styles.tab, activeTab === 'hotels' && styles.activeTab]}
+              onPress={() => setActiveTab('hotels')}
+            >
+              <Text style={[styles.tabText, activeTab === 'hotels' && styles.activeTabText]}>Hotels</Text>
+            </Pressable>
           </View>
         </LinearGradient>
 
@@ -597,24 +667,195 @@ const MyBookingsPage = () => {
           </View>
         )}
 
-        {/* Bookings List */}
-        <FlashList
-          data={bookings}
-          renderItem={renderBooking}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={styles.listContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.nileBlue}
-              colors={[colors.nileBlue]}
+        {/* Hotel Bookings Tab */}
+        {activeTab === 'hotels' ? (
+          hotelLoading ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={colors.nileBlue} />
+            </View>
+          ) : hotelBookings.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="bed-outline" size={80} color={colors.border.default} />
+              <Text style={styles.emptyTitle}>No Hotel Bookings</Text>
+              <Text style={styles.emptyText}>Book a hotel to see your stays here</Text>
+              <Pressable style={styles.browseButton} onPress={() => router.push('/travel/hotels' as any)}>
+                <Ionicons name="bed-outline" size={20} color={colors.text.inverse} />
+                <Text style={styles.browseButtonText}>Browse Hotels</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <FlashList
+              data={hotelBookings}
+              keyExtractor={(item) => item.id}
+              estimatedItemSize={140}
+              contentContainerStyle={styles.listContainer}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }: { item: OtaBooking }) => {
+                const statusColor =
+                  { confirmed: '#0891B2', hold: '#F59E0B', cancelled: '#EF4444', completed: '#16A34A' }[item.status] ??
+                  '#6B7280';
+                const canCancel = item.status === 'confirmed' || item.status === 'hold';
+                const canReview = item.status === 'completed';
+                return (
+                  <Pressable
+                    style={{
+                      backgroundColor: '#fff',
+                      borderRadius: 14,
+                      marginBottom: 12,
+                      padding: 14,
+                      shadowColor: '#000',
+                      shadowOpacity: 0.06,
+                      shadowRadius: 6,
+                      shadowOffset: { width: 0, height: 2 },
+                      elevation: 2,
+                    }}
+                    onPress={() => router.push(`/travel/hotels/booking/${item.id}` as any)}
+                  >
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: 8,
+                      }}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F172A' }} numberOfLines={1}>
+                          {item.hotelName}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{item.roomTypeName}</Text>
+                      </View>
+                      <View
+                        style={{
+                          backgroundColor: `${statusColor}18`,
+                          borderRadius: 8,
+                          paddingHorizontal: 8,
+                          paddingVertical: 3,
+                        }}
+                      >
+                        <Text style={{ fontSize: 11, fontWeight: '700', color: statusColor }}>
+                          {item.status.toUpperCase()}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Ionicons name="calendar-outline" size={12} color="#64748B" />
+                        <Text style={{ fontSize: 12, color: '#64748B' }}>
+                          {item.checkinDate} → {item.checkoutDate}
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Ionicons name="people-outline" size={12} color="#64748B" />
+                        <Text style={{ fontSize: 12, color: '#64748B' }}>
+                          {item.numGuests} guests · {item.numRooms} room{item.numRooms !== 1 ? 's' : ''}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: canCancel || canReview ? 10 : 0,
+                      }}
+                    >
+                      <Text style={{ fontSize: 11, color: '#94A3B8' }}>Ref: {item.bookingRef}</Text>
+                      <Text style={{ fontSize: 15, fontWeight: '800', color: '#0F172A' }}>
+                        ₹{Math.round(item.totalValuePaise / 100).toLocaleString()}
+                      </Text>
+                    </View>
+                    {(canCancel || canReview) && (
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        {canReview && (
+                          <Pressable
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 6,
+                              backgroundColor: '#0891B2',
+                              borderRadius: 8,
+                              paddingVertical: 8,
+                            }}
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              router.push({
+                                pathname: '/travel/hotels/[id]/review',
+                                params: { id: item.hotelId, bookingRef: item.bookingRef, hotelName: item.hotelName },
+                              });
+                            }}
+                          >
+                            <Ionicons name="star" size={13} color="#fff" />
+                            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>Write Review</Text>
+                          </Pressable>
+                        )}
+                        {canCancel && (
+                          <Pressable
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 6,
+                              borderWidth: 1.5,
+                              borderColor: '#EF4444',
+                              borderRadius: 8,
+                              paddingVertical: 8,
+                            }}
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              Alert.alert('Cancel Booking', `Cancel booking at ${item.hotelName}?`, [
+                                { text: 'Keep', style: 'cancel' },
+                                {
+                                  text: 'Cancel',
+                                  style: 'destructive',
+                                  onPress: async () => {
+                                    try {
+                                      await cancelBooking(item.id, 'Cancelled by guest');
+                                      setHotelBookings((prev) =>
+                                        prev.map((b) => (b.id === item.id ? { ...b, status: 'cancelled' } : b)),
+                                      );
+                                    } catch (e2: any) {
+                                      Alert.alert('Error', e2.message ?? 'Cancellation failed');
+                                    }
+                                  },
+                                },
+                              ]);
+                            }}
+                          >
+                            <Ionicons name="close-circle-outline" size={13} color="#EF4444" />
+                            <Text style={{ color: '#EF4444', fontSize: 12, fontWeight: '700' }}>Cancel</Text>
+                          </Pressable>
+                        )}
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              }}
             />
-          }
-          ListEmptyComponent={renderEmptyState}
-          showsVerticalScrollIndicator={false}
-          estimatedItemSize={120}
-        />
+          )
+        ) : (
+          /* Regular Bookings List */
+          <FlashList
+            data={bookings}
+            renderItem={renderBooking}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.listContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor={colors.nileBlue}
+                colors={[colors.nileBlue]}
+              />
+            }
+            ListEmptyComponent={renderEmptyState}
+            showsVerticalScrollIndicator={false}
+            estimatedItemSize={120}
+          />
+        )}
       </Animated.View>
     </SafeAreaView>
   );

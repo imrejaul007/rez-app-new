@@ -407,6 +407,24 @@ function NotificationsScreen() {
           <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         </Pressable>
 
+        {/* Marketing Messages */}
+        <Pressable
+          style={styles.notificationSection}
+          onPress={() => router.push('/account/marketing-inbox')}
+          accessibilityLabel="Marketing messages"
+          accessibilityRole="button"
+          accessibilityHint="Navigate to view promotional and merchant broadcast messages"
+        >
+          <View style={styles.sectionIcon}>
+            <Ionicons name="megaphone" size={24} color={Colors.info} />
+          </View>
+          <View style={styles.sectionContent}>
+            <Text style={styles.notificationSectionTitle}>Marketing Messages</Text>
+            <Text style={styles.sectionDescription}>Promotions and merchant broadcasts</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+        </Pressable>
+
         {/* Notification History */}
         <Pressable
           style={styles.notificationSection}

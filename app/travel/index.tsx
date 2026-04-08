@@ -272,6 +272,11 @@ const TravelPage: React.FC = () => {
   }, [fetchTravelData]);
 
   const navigateToCategory = (slug: string) => {
+    // Hotels → Hotel OTA integration screen
+    if (slug === 'hotels') {
+      router.push('/travel/hotels' as any);
+      return;
+    }
     router.push(`/travel/${slug}` as any);
   };
 

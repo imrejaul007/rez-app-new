@@ -28,6 +28,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { sendWebOtp, verifyWebOtp, createWebOrder, verifyWebPayment, CartItem } from '@/services/webOrderingApi';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import financeApi, { ContextualOffer } from '@/services/financeApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -176,6 +177,23 @@ export default function CheckoutScreen() {
 
   // ── Placement ──
   const [placingOrder, setPlacingOrder] = useState(false);
+
+  // ── BNPL (Pay Later) ──
+  const [bnplOffer, setBnplOffer] = useState<ContextualOffer | null>(null);
+  const [useBnpl, setUseBnpl] = useState(false);
+
+  // Check BNPL eligibility when cart total is known
+  const cartTotal = cart.reduce((s, c) => s + c.item.price * c.quantity, 0);
+  useEffect(() => {
+    if (cartTotal > 0) {
+      financeApi
+        .checkBnpl(cartTotal, 'checkout_' + Date.now())
+        .then((res) => {
+          if ((res.data as any)?.eligible) setBnplOffer(res.data as any);
+        })
+        .catch(() => {});
+    }
+  }, [cartTotal]);
 
   // Countdown timer for OTP resend
   const startCountdown = useCallback(() => {
@@ -450,6 +468,22 @@ export default function CheckoutScreen() {
           <View style={{ height: 24 }} />
         </ScrollView>
 
+        {/* BNPL Pay Later banner */}
+        {bnplOffer?.eligible && !useBnpl && (
+          <TouchableOpacity style={styles.bnplBanner} onPress={() => setUseBnpl(true)}>
+            <Text style={styles.bnplText}>💳 {bnplOffer.message}</Text>
+            <Text style={styles.bnplAction}>Use Pay Later →</Text>
+          </TouchableOpacity>
+        )}
+        {useBnpl && (
+          <View style={[styles.bnplBanner, { backgroundColor: '#E8F8F0' }]}>
+            <Text style={styles.bnplText}>✅ Pay Later selected — pay in 30 days</Text>
+            <TouchableOpacity onPress={() => setUseBnpl(false)}>
+              <Text style={[styles.bnplAction, { color: '#E44' }]}>Remove</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Place Order button */}
         {sessionToken && (
           <Animated.View entering={FadeInDown.springify()} style={styles.placeOrderBar}>
@@ -571,6 +605,20 @@ const styles = StyleSheet.create({
   // Verified
   verifiedRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   verifiedText: { fontSize: 14, fontWeight: '600', color: '#059669' },
+
+  // BNPL banner
+  bnplBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F0F4FF',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E7FF',
+  },
+  bnplText: { flex: 1, fontSize: 13, color: '#334', fontWeight: '500' },
+  bnplAction: { fontSize: 13, color: '#4F46E5', fontWeight: '700', marginLeft: 8 },
 
   // Place order bar
   placeOrderBar: { padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#F3F4F6' },

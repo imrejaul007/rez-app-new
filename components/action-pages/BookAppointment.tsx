@@ -459,7 +459,7 @@ function BookAppointmentPage() {
 
           <Pressable
             style={styles.viewBookingsBtn}
-            onPress={() => router.push('/orders' as any)}
+            onPress={() => router.push('/my-bookings' as any)}
            
           >
             <Text style={styles.viewBookingsBtnText}>View My Bookings</Text>

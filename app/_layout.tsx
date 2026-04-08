@@ -251,6 +251,22 @@ function RootLayout() {
     } catch {
       // If AsyncStorage fails, do not block the app — proceed normally.
     }
+
+    // Non-blocking: establish Hotel OTA SSO session if REZ token exists and OTA token is absent.
+    // This ensures users who navigate directly to hotel screens (deep links, notifications) are pre-logged in.
+    try {
+      const [rezToken, otaToken] = await AsyncStorage.multiGet(['rez_auth_token', '@ota_access_token']);
+      const hasRez = !!rezToken[1];
+      const hasOta = !!otaToken[1];
+      if (hasRez && !hasOta) {
+        const { rezSsoLogin } = await import('@/services/hotelOtaApi');
+        await rezSsoLogin(rezToken[1]!).catch(() => {
+          /* Non-fatal */
+        });
+      }
+    } catch {
+      /* Non-blocking */
+    }
   };
 
   const checkAppStatus = async () => {

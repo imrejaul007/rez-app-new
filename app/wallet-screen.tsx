@@ -57,6 +57,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from '@/constants/DesignSystem';
 import walletApi from '@/services/walletApi';
 import { colors } from '@/constants/theme';
+import { getOtaWallet, OtaWalletHotelBrandCoin } from '@/services/hotelOtaApi';
 import { WALLET_RECHARGE_CASHBACK_TEXT } from '@/constants/appConstants';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Phase 1.3: Simplified wallet view for new/casual users
@@ -81,6 +82,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   const [screenData, setScreenData] = useState(Dimensions.get('window'));
   const [coinEducationVisible, setCoinEducationVisible] = useState(false);
   const [isBalanceHidden, setIsBalanceHidden] = useState(false);
+  const [hotelBrandCoins, setHotelBrandCoins] = useState<OtaWalletHotelBrandCoin[]>([]);
 
   const walletData = useWalletData();
   const walletLoading = useWalletLoading();
@@ -120,6 +122,21 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     });
     return () => subscription.remove();
   }, [isAuthenticated, refreshWallet]);
+
+  // Fetch hotel brand coins from OTA wallet (non-blocking)
+  useEffect(() => {
+    let cancelled = false;
+    getOtaWallet()
+      .then((wallet) => {
+        if (!cancelled && wallet?.hotel_brand_coins?.length) {
+          setHotelBrandCoins(wallet.hotel_brand_coins.filter((c) => c.balancePaise > 0));
+        }
+      })
+      .catch(() => {}); // non-fatal
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Sync balance hidden state from AsyncStorage (same key as BalanceDisplay)
   useEffect(() => {
@@ -916,6 +933,83 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               }}
               onPress={() => router.push('/BrandedCoinsScreen')}
             />
+          )}
+
+          {/* Hotel Brand Coins */}
+          {hotelBrandCoins.length > 0 && (
+            <View style={{ marginTop: 4, marginBottom: 4 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: Spacing.md,
+                  marginBottom: Spacing.xs,
+                }}
+              >
+                <Ionicons name="bed" size={16} color="#7C3AED" style={{ marginRight: 6 }} />
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text?.primary ?? '#0F172A' }}>
+                  Hotel Coins
+                </Text>
+              </View>
+              {hotelBrandCoins.map((hc) => (
+                <Pressable
+                  key={hc.hotelId}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/travel/hotels/coin-history',
+                      params: {
+                        hotelId: hc.hotelId,
+                        hotelName: hc.hotelName,
+                        coinName: hc.brandCoinName ?? hc.brandCoinSymbol ?? 'Hotel Coin',
+                      },
+                    } as any)
+                  }
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: '#fff',
+                    borderRadius: 14,
+                    marginHorizontal: Spacing.md,
+                    marginBottom: 10,
+                    padding: 14,
+                    shadowColor: '#7C3AED',
+                    shadowOpacity: 0.08,
+                    shadowRadius: 6,
+                    shadowOffset: { width: 0, height: 2 },
+                    elevation: 2,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      backgroundColor: '#F5F3FF',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>🏨</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#0F172A' }} numberOfLines={1}>
+                      {hc.hotelName}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: '#7C3AED', marginTop: 1 }}>
+                      {hc.brandCoinName ?? hc.brandCoinSymbol ?? 'Hotel Coin'}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: '800', color: '#7C3AED' }}>
+                      ₹{Math.round(hc.balancePaise / 100).toLocaleString()}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>available</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color="#CBD5E1" style={{ marginLeft: 8 }} />
+                </Pressable>
+              ))}
+            </View>
           )}
 
           {/* Wallet Insights */}

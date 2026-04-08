@@ -6,6 +6,7 @@ import { FlashList } from '@shopify/flash-list';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import notificationService from '../../services/notificationService';
+import marketingInboxApi from '../../services/marketingInboxApi';
 import { NotificationListSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -55,7 +56,11 @@ function NotificationHistoryScreen() {
         setLoadingMore(true);
       }
 
-      const response = await notificationService.getNotifications({ limit: PAGE_LIMIT, page: pageNum });
+      // Fetch both MongoDB notifications and Redis marketing inbox concurrently (first page only)
+      const [response, inboxRes] = await Promise.all([
+        notificationService.getNotifications({ limit: PAGE_LIMIT, page: pageNum }),
+        pageNum === 1 ? marketingInboxApi.getInbox().catch(() => null) : Promise.resolve(null),
+      ]);
 
       if (response.success && response.data) {
         const transformedNotifications: NotificationHistoryItem[] = response.data.notifications.map(
@@ -70,9 +75,27 @@ function NotificationHistoryScreen() {
           }),
         );
 
+        // Merge marketing inbox messages (Redis broadcast inbox) on first page
+        const marketingItems: NotificationHistoryItem[] =
+          pageNum === 1 && inboxRes?.success && inboxRes.data?.messages
+            ? inboxRes.data.messages.map((m: any) => ({
+                id: m.id,
+                title: m.title,
+                message: m.message,
+                type: 'push' as const,
+                timestamp: m.sentAt,
+                read: false,
+                category: 'promotion',
+              }))
+            : [];
+
+        const merged = [...marketingItems, ...transformedNotifications].sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        );
+
         if (pageNum === 1) {
           if (!isMounted()) return;
-          setNotifications(transformedNotifications);
+          setNotifications(merged);
         } else {
           if (!isMounted()) return;
           setNotifications((prev) => [...prev, ...transformedNotifications]);
@@ -92,12 +115,11 @@ function NotificationHistoryScreen() {
       if (!isMounted()) return;
       setHasMore(false);
     } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
+      if (isMounted()) {
+        setLoading(false);
+        setRefreshing(false);
+        setLoadingMore(false);
+      }
     }
   };
 

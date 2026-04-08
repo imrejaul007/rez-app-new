@@ -31,6 +31,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import apiClient from '@/services/apiClient';
+import serviceAppointmentApi from '@/services/serviceAppointmentApi';
 import { isSmallDevice, responsiveFontSize } from '@/utils/responsive';
 
 // Service type icon mapping
@@ -171,6 +172,9 @@ function AppointmentBookingPage() {
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [loadingStaff, setLoadingStaff] = useState(false);
 
+  // Backend slot availability — keyed by "HH:MM" → available boolean
+  const [backendAvailability, setBackendAvailability] = useState<Record<string, boolean>>({});
+
   // Customer details
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -215,6 +219,29 @@ function AppointmentBookingPage() {
       setPatchTestStatus(null);
     }
   }, [selectedService]);
+
+  // Fetch real-time slot availability from backend whenever the selected date changes.
+  // Without this, users can pick already-booked slots and only see an error on submit.
+  useEffect(() => {
+    if (!storeId) return;
+    const dateStr = selectedDate.toISOString().split('T')[0];
+    setBackendAvailability({});
+    setSelectedTime(null);
+    serviceAppointmentApi
+      .getAvailableSlots(storeId, dateStr)
+      .then((resp) => {
+        if (resp.success && Array.isArray(resp.data)) {
+          const map: Record<string, boolean> = {};
+          (resp.data as any[]).forEach((slot) => {
+            if (slot.time) map[slot.time] = slot.available;
+          });
+          if (isMounted()) setBackendAvailability(map);
+        }
+      })
+      .catch(() => {
+        // Backend unavailable — fall back to local past-time-only check (silent)
+      });
+  }, [selectedDate, storeId]);
 
   // Guard: storeId must be present (placed after all hooks to comply with Rules of Hooks)
   if (!storeId) {
@@ -310,11 +337,16 @@ function AppointmentBookingPage() {
       const isToday = selectedDate.toDateString() === new Date().toDateString();
       const isPast = isToday && hour <= new Date().getHours();
 
+      // If we have backend data, mark slot unavailable when backend says so.
+      // Fall back to !isPast only when no backend data has loaded yet.
+      const hasBackendData = Object.keys(backendAvailability).length > 0;
+      const isBooked = hasBackendData && backendAvailability[timeString] === false;
+
       slots.push({
         id: timeString,
         time: timeString,
         displayTime,
-        available: !isPast,
+        available: !isPast && !isBooked,
       });
     }
 
@@ -365,8 +397,8 @@ function AppointmentBookingPage() {
 
   const handleConfirmAppointment = async () => {
     if (!validateForm()) return;
+    if (submitting) return; // guard against double-tap
 
-    setSubmitting(true);
     try {
       // Fetch service details to check requiresPaymentUpfront
       let requiresUpfront = false;
@@ -379,14 +411,11 @@ function AppointmentBookingPage() {
           requiresUpfront = svc?.serviceDetails?.requiresPaymentUpfront || svc?.requiresPaymentUpfront || false;
           servicePrice = svc?.pricing?.selling || svc?.price || selectedService.price || 0;
         } catch (e: any) {
-          // If can't fetch, use existing service price
           servicePrice = selectedService.price || 0;
         }
       }
 
       if (requiresUpfront && servicePrice > 0) {
-        // Show confirmation with payment required message
-        // ETHAN: crash guard — selectedTime?.displayTime could be undefined; provide default
         const summary = `
 Service: ${selectedService?.name ?? 'Unknown'}
 Date: ${formatDate(selectedDate)}
@@ -405,8 +434,6 @@ Free cancellation available 24 hours before appointment.
           'Proceed to Payment',
         );
       } else {
-        // No upfront payment — show standard confirmation
-        // ETHAN: crash guard — selectedService?.price could be undefined/zero; use Math.max
         const summary = `
 Service: ${selectedService?.name ?? 'Unknown'}
 Date: ${formatDate(selectedDate)}
@@ -419,9 +446,6 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to process booking');
-    } finally {
-      if (!isMounted()) return;
-      setSubmitting(false);
     }
   };
 

@@ -58,7 +58,7 @@ export interface ServiceAppointment {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no-show';
+  status: 'pending' | 'confirmed' | 'in_progress' | 'cancelled' | 'completed' | 'no_show';
   confirmationCode?: string;
   staffMember?: {
     id: string;
