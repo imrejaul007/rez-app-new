@@ -126,6 +126,7 @@ export default function HotelCheckoutScreen() {
           const result = await confirmBooking({
             holdId,
             razorpayPaymentId: payData.razorpay_payment_id,
+            razorpayOrderId: payData.razorpay_order_id,
             razorpaySignature: payData.razorpay_signature,
           });
           navigateToSuccess(result);

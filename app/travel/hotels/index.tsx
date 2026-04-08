@@ -147,11 +147,23 @@ export default function HotelSearchScreen() {
   const [checkout, setCheckout] = useState(fmtDate(dayAfter));
   const [guests, setGuests] = useState(1);
 
-  // Auto-SSO into Hotel OTA with existing REZ token
+  // Auto-SSO into Hotel OTA with existing REZ token.
+  // Refresh OTA token if it is missing or within 5 minutes of expiry.
   useEffect(() => {
     if (!token) return;
     AsyncStorage.getItem('@ota_access_token').then(async (existing) => {
-      if (existing) return; // already linked
+      let needsRefresh = !existing;
+      if (existing && !needsRefresh) {
+        try {
+          // Decode expiry from JWT payload (base64url middle segment)
+          const payload = JSON.parse(atob(existing.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+          const expiresInMs = (payload.exp ?? 0) * 1000 - Date.now();
+          if (expiresInMs < 5 * 60 * 1000) needsRefresh = true; // refresh if < 5 min left
+        } catch {
+          needsRefresh = true; // unreadable token — refresh
+        }
+      }
+      if (!needsRefresh) return;
       setSsoLoading(true);
       try {
         await rezSsoLogin(token);

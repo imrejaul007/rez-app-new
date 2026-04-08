@@ -142,12 +142,13 @@ export default function HotelDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  // Use params from search, fall back to today/tomorrow
-  const today = new Date();
-  const tomorrow = new Date(today);
+  // Use params from search, fall back to tomorrow/day-after (same-day check-in is invalid)
+  const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const defaultCheckin = paramCheckin ?? today.toISOString().split('T')[0];
-  const defaultCheckout = paramCheckout ?? tomorrow.toISOString().split('T')[0];
+  const dayAfter = new Date();
+  dayAfter.setDate(dayAfter.getDate() + 2);
+  const defaultCheckin = paramCheckin ?? tomorrow.toISOString().split('T')[0];
+  const defaultCheckout = paramCheckout ?? dayAfter.toISOString().split('T')[0];
   const defaultGuests = parseInt(paramGuests ?? '2', 10) || 2;
 
   const [checkin] = useState(defaultCheckin);

@@ -280,6 +280,7 @@ export async function confirmBooking(params: {
   holdId: string;
   razorpayPaymentId: string;
   razorpaySignature: string;
+  razorpayOrderId?: string;
 }): Promise<{
   bookingId: string;
   bookingRef: string;
@@ -294,6 +295,7 @@ export async function confirmBooking(params: {
   const res = await otaFetch<any>('POST', '/v1/bookings/confirm', {
     hold_id: params.holdId,
     razorpay_payment_id: params.razorpayPaymentId,
+    razorpay_order_id: params.razorpayOrderId,
     razorpay_signature: params.razorpaySignature,
   });
   const d = res.data ?? res;
@@ -377,6 +379,6 @@ export async function getOtaWallet(): Promise<{
   rez_coin_balance_paise: number;
   hotel_brand_coins: OtaWalletHotelBrandCoin[];
 }> {
-  const res = await otaFetch<any>('GET', '/v1/wallet/');
+  const res = await otaFetch<any>('GET', '/v1/wallet');
   return res.data ?? res;
 }
