@@ -173,7 +173,6 @@ const MyBookingsPage = () => {
     } finally {
       if (!isMounted()) return;
       setLoading(false);
-      if (!isMounted()) return;
       setRefreshing(false);
     }
   }, [isAuthenticated, activeTab]);

@@ -319,7 +319,7 @@ const StoreDetailPage: React.FC = () => {
       } as any);
     } else {
       router.push({
-        pathname: '/booking',
+        pathname: '/booking/appointment',
         params: {
           ...baseParams,
           serviceType: store.bookingType || 'SERVICE',

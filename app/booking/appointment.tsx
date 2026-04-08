@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import { platformAlertSimple, platformAlertConfirm, platformAlert } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
@@ -194,8 +194,11 @@ function AppointmentBookingPage() {
 
   useEffect(() => {
     if (storeId) {
-      loadStoreDetails();
-      loadStoreServices();
+      // Run both fetches concurrently; loading stays true until both finish
+      setLoading(true);
+      Promise.all([loadStoreDetails(), loadStoreServices()]).finally(() => {
+        if (isMounted()) setLoading(false);
+      });
     }
   }, [storeId]);
 
@@ -265,18 +268,14 @@ function AppointmentBookingPage() {
 
   const loadStoreDetails = async () => {
     try {
-      setLoading(true);
       const response = await storesApi.getStoreById(storeId);
       if (response.success && response.data) {
-        setStore(response.data);
+        if (isMounted()) setStore(response.data);
       } else {
         platformAlertSimple('Error', 'Failed to load store details');
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load store details');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
     }
   };
 
@@ -402,6 +401,7 @@ function AppointmentBookingPage() {
   const handleConfirmAppointment = async () => {
     if (!validateForm()) return;
     if (submitting) return; // guard against double-tap
+    setSubmitting(true); // lock immediately to prevent double-tap between async calls
 
     try {
       // Fetch service details to check requiresPaymentUpfront
@@ -431,12 +431,10 @@ Payment Required: Full amount will be charged now.
 Free cancellation available 24 hours before appointment.
         `.trim();
 
-        platformAlertConfirm(
-          'Confirm Appointment',
-          summary,
-          () => handlePaymentGate(servicePrice),
-          'Proceed to Payment',
-        );
+        platformAlert('Confirm Appointment', summary, [
+          { text: 'Cancel', style: 'cancel', onPress: () => setSubmitting(false) },
+          { text: 'Proceed to Payment', onPress: () => handlePaymentGate(servicePrice) },
+        ]);
       } else {
         const summary = `
 Service: ${selectedService?.name ?? 'Unknown'}
@@ -446,10 +444,14 @@ Duration: ${selectedService?.duration ? formatDuration(selectedService.duration)
 Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         `.trim();
 
-        platformAlertConfirm('Confirm Appointment', summary, () => submitBooking({}), 'Confirm');
+        platformAlert('Confirm Appointment', summary, [
+          { text: 'Cancel', style: 'cancel', onPress: () => setSubmitting(false) },
+          { text: 'Confirm', onPress: () => submitBooking({}) },
+        ]);
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to process booking');
+      setSubmitting(false);
     }
   };
 
