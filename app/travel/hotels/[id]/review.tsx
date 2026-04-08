@@ -10,9 +10,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getOtaToken } from '@/services/hotelOtaApi';
-
-const OTA_BASE = process.env.EXPO_PUBLIC_HOTEL_OTA_URL || 'https://hotel-ota-api.onrender.com';
+import { submitHotelReview } from '@/services/hotelOtaApi';
 
 const RATINGS = [
   { key: 'overall', label: 'Overall' },
@@ -71,29 +69,17 @@ export default function HotelReviewScreen() {
     setError(null);
     setSubmitting(true);
     try {
-      const token = await getOtaToken();
-      const res = await fetch(`${OTA_BASE}/v1/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          hotel_id: id,
-          booking_ref: bookingRef,
-          overall_rating: ratings.overall,
-          cleanliness_rating: ratings.cleanliness || ratings.overall,
-          service_rating: ratings.service || ratings.overall,
-          location_rating: ratings.location || ratings.overall,
-          value_rating: ratings.value || ratings.overall,
-          title: title.trim() || undefined,
-          body: body.trim(),
-        }),
+      await submitHotelReview({
+        hotelId: id,
+        bookingRef: bookingRef || undefined,
+        overallRating: ratings.overall,
+        cleanlinessRating: ratings.cleanliness || ratings.overall,
+        serviceRating: ratings.service || ratings.overall,
+        locationRating: ratings.location || ratings.overall,
+        valueRating: ratings.value || ratings.overall,
+        title: title || undefined,
+        body,
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || 'Failed to submit review');
-      }
       setSubmitted(true);
     } catch (e: any) {
       setError(e.message);

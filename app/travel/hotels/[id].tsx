@@ -4,7 +4,7 @@
  * Params: id, checkin, checkout, guests (passed from search screen)
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -186,24 +186,32 @@ export default function HotelDetailScreen() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Recheck burn when room/coin toggles change
+  // Recheck burn when room/coin toggles change — debounced 300ms to avoid
+  // firing a network call on every toggle press.
+  const burnDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!id || !selectedRoom) return;
-    setBurnLoading(true);
-    checkBurnCoins({
-      hotelId: id,
-      roomTypeId: selectedRoom,
-      checkin,
-      checkout,
-      numRooms: 1,
-      numGuests,
-      otaCoinRequestedPaise: useOtaCoins ? 999999 : 0,
-      rezCoinRequestedPaise: useRezCoins ? 999999 : 0,
-      hotelBrandCoinRequestedPaise: useBrandCoins ? 999999 : 0,
-    })
-      .then((r) => setBurnResult(r))
-      .catch(() => setBurnResult(null))
-      .finally(() => setBurnLoading(false));
+    if (burnDebounceRef.current) clearTimeout(burnDebounceRef.current);
+    burnDebounceRef.current = setTimeout(() => {
+      setBurnLoading(true);
+      checkBurnCoins({
+        hotelId: id,
+        roomTypeId: selectedRoom,
+        checkin,
+        checkout,
+        numRooms: 1,
+        numGuests,
+        otaCoinRequestedPaise: useOtaCoins ? 999999 : 0,
+        rezCoinRequestedPaise: useRezCoins ? 999999 : 0,
+        hotelBrandCoinRequestedPaise: useBrandCoins ? 999999 : 0,
+      })
+        .then((r) => setBurnResult(r))
+        .catch(() => setBurnResult(null))
+        .finally(() => setBurnLoading(false));
+    }, 300);
+    return () => {
+      if (burnDebounceRef.current) clearTimeout(burnDebounceRef.current);
+    };
   }, [id, selectedRoom, useOtaCoins, useRezCoins, useBrandCoins]);
 
   const handleBookPress = useCallback(async () => {

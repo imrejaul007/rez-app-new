@@ -382,3 +382,27 @@ export async function getOtaWallet(): Promise<{
   const res = await otaFetch<any>('GET', '/v1/wallet');
   return res.data ?? res;
 }
+
+export async function submitHotelReview(params: {
+  hotelId: string;
+  bookingRef?: string;
+  overallRating: number;
+  cleanlinessRating?: number;
+  serviceRating?: number;
+  locationRating?: number;
+  valueRating?: number;
+  title?: string;
+  body: string;
+}): Promise<void> {
+  await otaFetch<any>('POST', '/v1/reviews', {
+    hotel_id: params.hotelId,
+    booking_ref: params.bookingRef,
+    overall_rating: params.overallRating,
+    cleanliness_rating: params.cleanlinessRating ?? params.overallRating,
+    service_rating: params.serviceRating ?? params.overallRating,
+    location_rating: params.locationRating ?? params.overallRating,
+    value_rating: params.valueRating ?? params.overallRating,
+    title: params.title?.trim() || undefined,
+    body: params.body.trim(),
+  });
+}
