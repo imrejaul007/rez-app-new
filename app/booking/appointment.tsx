@@ -493,23 +493,27 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
     try {
       setSubmitting(true);
 
-      const bookingData = {
-        serviceId: selectedService.id,
-        storeId: storeId,
-        date: selectedDate.toISOString().split('T')[0],
-        timeSlot: selectedTime.time,
-        notes: specialInstructions.trim() || undefined,
+      // Use serviceAppointmentApi (POST /service-appointments) — NOT bookingApi (POST /bookings
+      // which maps to ServiceBooking/Pattern B and doesn't exist for this flow).
+      const appointmentData = {
+        storeId: storeId as string,
+        serviceType: selectedService.name,
+        appointmentDate: selectedDate.toISOString().split('T')[0],
+        appointmentTime: selectedTime.time,
+        duration: selectedService.duration,
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
         customerEmail: customerEmail.trim() || undefined,
-        ...(paymentData || {}),
+        specialInstructions: specialInstructions.trim() || undefined,
+        ...(selectedStaffId ? { staffId: selectedStaffId } : {}),
+        ...(paymentData?.paymentId ? { paymentId: paymentData.paymentId } : {}),
       };
 
-      const response = await bookingApi.createBooking(bookingData);
+      const response = await serviceAppointmentApi.createServiceAppointment(appointmentData);
 
       if (response.success) {
-        // Get appointment number/ID from response
-        const appointmentNumber = response.data?.id || 'N/A';
+        // Show appointmentNumber if available, fall back to id
+        const appointmentNumber = (response.data as any)?.appointmentNumber || response.data?.id || 'N/A';
 
         // Success alert with appointment details
         const successMessage = `
@@ -531,7 +535,10 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           'OK',
         );
       } else {
-        platformAlertSimple('Booking Failed', response.error || 'Unable to create appointment. Please try again.');
+        platformAlertSimple(
+          'Booking Failed',
+          (response as any).error || 'Unable to create appointment. Please try again.',
+        );
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to submit booking. Please try again.');
