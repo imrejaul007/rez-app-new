@@ -155,6 +155,13 @@ export function useOrderTracking(
           timeline: response.data.timeline || null,
           loading: false,
         }));
+      } else {
+        // C08: Non-success API response must still clear loading state
+        setTrackingState(prev => ({
+          ...prev,
+          loading: false,
+          error: response.error || response.message || 'Failed to fetch order',
+        }));
       }
     } catch (error: any) {
       setTrackingState(prev => ({

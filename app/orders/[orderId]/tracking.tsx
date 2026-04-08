@@ -21,6 +21,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { orderApi } from '@/services/orderApi';
 
 function OrderTrackingScreen() {
   const { orderId } = useLocalSearchParams<any>();
@@ -58,8 +59,12 @@ function OrderTrackingScreen() {
       'Cancel Order',
       'Are you sure you want to cancel this order?',
       async () => {
-        // Call cancel order API
-        // ordersService.cancelOrder(orderId);
+        try {
+          await orderApi.cancelOrder(orderId as string, 'Cancelled by customer');
+          refresh();
+        } catch (err: any) {
+          platformAlertSimple('Cancel Failed', err?.message || 'Could not cancel order. Please try again.');
+        }
       },
       'Yes, Cancel',
     );
@@ -246,7 +251,7 @@ function OrderTrackingScreen() {
             </Text>
             <Text style={styles.itemsTotal}>
               {currencySymbol}
-              {order.totals.total}
+              {order.totals?.total ?? 0}
             </Text>
           </View>
           {order.items.slice(0, 3).map((item: any, index: number) => (

@@ -586,6 +586,9 @@ export default function HotelDetailScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: C.bg },
   center: { justifyContent: 'center', alignItems: 'center' },
+  heroContainer: { height: 300, position: 'relative', overflow: 'hidden' },
+  heroImage: { width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 },
+  heroOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'space-between', paddingBottom: 0 },
   heroGrad: { paddingBottom: 24 },
   backBtn: { padding: 12 },
   heroContent: { alignItems: 'center', paddingHorizontal: 16, paddingTop: 8 },

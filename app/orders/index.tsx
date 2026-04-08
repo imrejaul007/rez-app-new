@@ -234,9 +234,9 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
         {item.items.slice(0, 3).map((orderItem: any, index) => {
           const itemName = orderItem.name || orderItem.product?.name || 'Product';
           const itemImage =
-            orderItem.images[0]?.url ||
-            orderItem.product?.images[0]?.urls?.[0]?.url ||
-            orderItem.product?.images[0]?.url;
+            orderItem.images?.[0]?.url ||
+            orderItem.product?.images?.[0]?.urls?.[0]?.url ||
+            orderItem.product?.images?.[0]?.url;
           const itemTotal = orderItem.subtotal || orderItem.totalPrice || orderItem.price * orderItem.quantity || 0;
 
           return (
