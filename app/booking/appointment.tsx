@@ -154,6 +154,10 @@ function AppointmentBookingPage() {
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
   }, [fadeAnim]);
+  // Rules of Hooks: useAnimatedStyle must be declared before any conditional return
+  const fadeAnimStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+  }));
 
   // State management
   const [store, setStore] = useState<Store | null>(null);
@@ -531,7 +535,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
         platformAlertConfirm(
           'Appointment Confirmed!',
           successMessage,
-          () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+          () => router.replace('/(tabs)/my-bookings'),
           'OK',
         );
       } else {
@@ -571,10 +575,6 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
       </ThemedView>
     );
   }
-
-  const fadeAnimStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-  }));
 
   return (
     <Animated.View style={[styles.container, fadeAnimStyle]}>

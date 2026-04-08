@@ -71,6 +71,15 @@ interface TimeSlot {
   remainingCapacity: number;
 }
 
+/** Format "HH:MM" 24-hour string to "H:MM AM/PM" */
+function formatTimeAMPM(time: string): string {
+  if (!time) return time;
+  const [h, m] = time.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const hour = h % 12 || 12;
+  return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
+}
+
 function BookAppointmentPage() {
   const router = useRouter();
   const params = useLocalSearchParams<{ storeId?: string; storeName?: string }>();
@@ -235,7 +244,14 @@ function BookAppointmentPage() {
         appointmentTime: selectedTime,
         duration: selectedDuration,
         customerName: customerName.trim(),
-        customerPhone: `${selectedCountry.dialCode}${customerPhone.trim()}`,
+        customerPhone: (() => {
+          // Strip dial code if user already typed it (e.g. "+91 98765…" → avoid "+91+91…")
+          const dialDigits = selectedCountry.dialCode.replace(/\D/g, '');
+          const stripped = digitsOnly.startsWith(dialDigits)
+            ? digitsOnly.slice(dialDigits.length)
+            : digitsOnly;
+          return `${selectedCountry.dialCode}${stripped}`;
+        })(),
         specialInstructions: specialRequests.trim() || undefined,
         staffMember: staffPreference.trim() || undefined,
       });
@@ -437,7 +453,7 @@ function BookAppointmentPage() {
               </View>
               <View>
                 <Text style={styles.confirmRowLabel}>Date & Time</Text>
-                <Text style={styles.confirmRowValue}>{formatDate(selectedDate)} at {selectedTime}</Text>
+                <Text style={styles.confirmRowValue}>{formatDate(selectedDate)} at {formatTimeAMPM(selectedTime)}</Text>
               </View>
             </View>
           </View>
@@ -692,7 +708,7 @@ function BookAppointmentPage() {
             <Text style={styles.summaryTitle}>Booking Summary</Text>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>
-                {SERVICE_TYPES.find(s => s.id === selectedService)?.label} · {formatDate(selectedDate)} at {selectedTime}
+                {SERVICE_TYPES.find(s => s.id === selectedService)?.label} · {formatDate(selectedDate)} at {formatTimeAMPM(selectedTime)}
               </Text>
             </View>
           </View>

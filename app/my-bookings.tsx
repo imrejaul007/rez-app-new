@@ -63,6 +63,8 @@ const MyBookingsPage = () => {
   const [cancellingIds, setCancellingIds] = useState<Set<string>>(new Set());
   // Ref that keeps fetchBookings stable across the cancel handler closure
   const fetchBookingsRef = useRef<() => void>(() => {});
+  // Skip the first render in the activeTab useEffect — useFocusEffect handles initial mount fetch
+  const isFirstTabRender = useRef(true);
 
   const fetchBookings = useCallback(async () => {
     try {
@@ -183,6 +185,11 @@ const MyBookingsPage = () => {
   );
 
   useEffect(() => {
+    // Skip initial mount — useFocusEffect already handles the first fetch
+    if (isFirstTabRender.current) {
+      isFirstTabRender.current = false;
+      return;
+    }
     fetchBookings();
   }, [fetchBookings, activeTab]);
 
