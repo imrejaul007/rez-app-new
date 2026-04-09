@@ -21,6 +21,10 @@ export interface ServiceAppointmentRequest {
   customerEmail?: string;
   specialInstructions?: string;
   staffMember?: string;
+  /** Staff MongoDB ObjectId — passed through to backend Joi schema */
+  staffId?: string;
+  /** Staff display name — passed alongside staffId */
+  staffName?: string;
   /** @deprecated Use serviceType instead */
   serviceId?: string;
   /** @deprecated Use appointmentDate instead */

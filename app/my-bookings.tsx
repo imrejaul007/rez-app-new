@@ -82,51 +82,56 @@ const MyBookingsPage = () => {
 
       // Fetch both ServiceBooking (cart/checkout flow) and ServiceAppointment (direct booking flow) in parallel
       const [response, appointmentsResponse] = await Promise.all([
-        serviceBookingApi.getUserBookings({ page: 1, limit: 50 }),
+        serviceBookingApi.getUserBookings({ page: 1, limit: 50 }).catch(() => null),
         serviceAppointmentApi.getUserServiceAppointments(1, 50).catch(() => null),
       ]);
 
-      if (response.success && response.data) {
-        // Normalize ServiceAppointment records into the ServiceBooking shape for unified rendering
-        const normalizedAppointments: ServiceBooking[] = appointmentsResponse?.data?.appointments
-          ? appointmentsResponse.data.appointments.map(
-              (appt: any) =>
-                ({
-                  _id: appt._id || appt.appointmentId || appt.id,
-                  bookingNumber: appt.appointmentNumber || appt.id,
-                  user: appt.userId || '',
-                  service: {
-                    _id: appt.serviceId || '',
-                    name: appt.serviceType || 'Appointment',
-                    images: [],
-                    pricing: { original: 0, selling: 0 },
-                  },
-                  serviceCategory: { _id: '', name: 'Appointment', slug: 'appointments', icon: 'calendar' },
-                  store: appt.store || { name: '' },
-                  merchantId: '',
-                  customerName: appt.customerName || '',
-                  customerPhone: appt.customerPhone || '',
-                  bookingDate: appt.appointmentDate || appt.date,
-                  timeSlot: { start: appt.appointmentTime || appt.time || '09:00', end: '' },
-                  duration: appt.duration || 60,
-                  serviceType: 'store' as const,
-                  pricing: { basePrice: 0, total: 0, currency: 'INR' },
-                  paymentStatus: 'pending' as const,
-                  status: appt.status === 'no-show' ? 'no_show' : appt.status,
-                  cashbackStatus: 'pending' as const,
-                  verificationDays: 0,
-                  isRescheduled: false,
-                  rescheduleCount: 0,
-                  maxReschedules: 2,
-                  requiresPaymentUpfront: false,
-                  createdAt: appt.createdAt || new Date().toISOString(),
-                  updatedAt: appt.updatedAt || new Date().toISOString(),
-                  _isServiceAppointment: true,
-                }) as any,
-            )
-          : [];
+      // BUG 1 FIX: Normalize appointments independently so they always appear,
+      // even when the ServiceBooking API fails or returns no data.
+      const rawAppointments: any[] =
+        appointmentsResponse?.data?.appointments ??
+        (Array.isArray(appointmentsResponse?.data as any) ? (appointmentsResponse?.data as any) : []);
 
-        let filteredBookings = [...response.data, ...normalizedAppointments];
+      const normalizedAppointments: ServiceBooking[] = rawAppointments.map(
+        (appt: any) =>
+          ({
+            _id: appt._id || appt.appointmentId || appt.id,
+            bookingNumber: appt.appointmentNumber || appt.id,
+            user: appt.userId || '',
+            service: {
+              _id: appt.serviceId || '',
+              name: appt.serviceType || 'Appointment',
+              images: [],
+              pricing: { original: 0, selling: 0 },
+            },
+            serviceCategory: { _id: '', name: 'Appointment', slug: 'appointments', icon: 'calendar' },
+            store: appt.store || { name: '' },
+            merchantId: '',
+            customerName: appt.customerName || '',
+            customerPhone: appt.customerPhone || '',
+            bookingDate: appt.appointmentDate || appt.date,
+            timeSlot: { start: appt.appointmentTime || appt.time || '09:00', end: '' },
+            duration: appt.duration || 60,
+            serviceType: 'store' as const,
+            pricing: { basePrice: 0, total: 0, currency: 'INR' },
+            paymentStatus: 'pending' as const,
+            status: appt.status === 'no-show' ? 'no_show' : appt.status,
+            cashbackStatus: 'pending' as const,
+            verificationDays: 0,
+            isRescheduled: false,
+            rescheduleCount: 0,
+            maxReschedules: 2,
+            requiresPaymentUpfront: false,
+            createdAt: appt.createdAt || new Date().toISOString(),
+            updatedAt: appt.updatedAt || new Date().toISOString(),
+            _isServiceAppointment: true,
+          }) as any,
+      );
+
+      const serviceBookings: ServiceBooking[] = response?.success && Array.isArray(response.data) ? response.data : [];
+
+      if (serviceBookings.length > 0 || normalizedAppointments.length > 0) {
+        let filteredBookings = [...serviceBookings, ...normalizedAppointments];
 
         if (activeTab === 'courses') {
           // ED-02: Filter education-related bookings
@@ -164,6 +169,7 @@ const MyBookingsPage = () => {
         if (!isMounted()) return;
         setBookings(filteredBookings);
       } else {
+        // No bookings or appointments found
         if (!isMounted()) return;
         setBookings([]);
       }

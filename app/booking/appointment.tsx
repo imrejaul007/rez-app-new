@@ -511,7 +511,15 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         customerPhone: customerPhone.trim(),
         customerEmail: customerEmail.trim() || undefined,
         specialInstructions: specialInstructions.trim() || undefined,
-        ...(selectedStaffId ? { staffId: selectedStaffId } : {}),
+        ...(selectedStaffId
+          ? {
+              staffId: selectedStaffId,
+              // BUG 5 FIX: also pass staffName so backend Joi schema receives it
+              staffName:
+                availableStaff.find((s: any) => s._id === selectedStaffId || s.id === selectedStaffId)?.name ||
+                undefined,
+            }
+          : {}),
         ...(paymentData?.paymentId ? { paymentId: paymentData.paymentId } : {}),
       };
 
