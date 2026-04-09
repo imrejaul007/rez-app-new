@@ -56,10 +56,18 @@ function TxRow({ tx }: { tx: OtaCoinTransaction }) {
 export default function HotelCoinHistoryScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { hotelId, hotelName, coinName } = useLocalSearchParams<{
+  const {
+    hotelId,
+    hotelName,
+    coinName,
+    lifetimeEarned: lifetimeEarnedParam,
+    lifetimeBurned: lifetimeBurnedParam,
+  } = useLocalSearchParams<{
     hotelId: string;
     hotelName: string;
     coinName: string;
+    lifetimeEarned?: string;
+    lifetimeBurned?: string;
   }>();
 
   const [transactions, setTransactions] = useState<OtaCoinTransaction[]>([]);
@@ -67,8 +75,12 @@ export default function HotelCoinHistoryScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [totalEarned, setTotalEarned] = useState(0);
-  const [totalBurned, setTotalBurned] = useState(0);
+
+  // Use server-provided lifetime totals (passed via nav params from wallet screen).
+  // These are authoritative — do not accumulate from loaded pages, which would
+  // only reflect the current page subset and double-count on re-mount.
+  const totalEarned = parseInt(lifetimeEarnedParam ?? '0', 10);
+  const totalBurned = parseInt(lifetimeBurnedParam ?? '0', 10);
 
   const load = useCallback(
     async (p: number, replace = false) => {
@@ -80,22 +92,6 @@ export default function HotelCoinHistoryScreen() {
         setTransactions((prev) => (replace ? txs : [...prev, ...txs]));
         setHasMore(res.hasMore);
         setPage(p);
-        // Accumulate totals from current page
-        if (replace) {
-          let earned = 0,
-            burned = 0;
-          txs.forEach((t) => {
-            if (t.direction === 'earn') earned += t.amountPaise;
-            else burned += t.amountPaise;
-          });
-          setTotalEarned(earned);
-          setTotalBurned(burned);
-        } else {
-          txs.forEach((t) => {
-            if (t.direction === 'earn') setTotalEarned((prev) => prev + t.amountPaise);
-            else setTotalBurned((prev) => prev + t.amountPaise);
-          });
-        }
       } catch {
         /* silently fail */
       } finally {

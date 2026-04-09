@@ -961,6 +961,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                         hotelId: hc.hotelId,
                         hotelName: hc.hotelName,
                         coinName: hc.brandCoinName ?? hc.brandCoinSymbol ?? 'Hotel Coin',
+                        lifetimeEarned: String(hc.lifetimeEarnedPaise ?? 0),
+                        lifetimeBurned: String(hc.lifetimeBurnedPaise ?? 0),
                       },
                     } as any)
                   }
