@@ -171,8 +171,8 @@ const StudentEntertainmentSection: React.FC = () => {
   };
 
   const handleGroupInvite = () => {
-    // TODO: Route to group booking / invite flow once implemented
-    router.push('/near-u/student-offers' as any);
+    // L-11 FIX: Route to group booking flow with the student zone context
+    router.push('/booking/group?zone=student' as any);
   };
 
   return (

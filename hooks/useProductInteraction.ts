@@ -214,12 +214,14 @@ export function useProductInteraction(
         timestamp: new Date().toISOString(),
       };
 
-      // TODO: Integrate with analytics service
-
-      // Could integrate with:
-      // - Google Analytics
-      // - Firebase Analytics
-      // - Custom analytics API
+      // M-9 FIX: Integrate with analytics service
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const analytics = require('@/services/analytics/AnalyticsService').default as {
+          trackEvent: (name: string, props: object) => void;
+        };
+        analytics.trackEvent(analyticsData.event, analyticsData);
+      } catch { /* analytics unavailable */ }
     } catch (err: any) {
       // Don't show error to user for analytics failures
     }

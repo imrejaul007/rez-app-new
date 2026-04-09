@@ -76,7 +76,8 @@ export const RelatedProductsSection: React.FC<RelatedProductsSectionProps> = ({
           <Pressable
             style={styles.viewAllButton}
             onPress={() => {
-              // TODO: Navigate to category/search page with filter
+              // L-12 FIX: Navigate to the search/category page using the component-level router
+              router.push('/search' as any);
             }}
            
           >

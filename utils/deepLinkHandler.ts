@@ -152,7 +152,17 @@ export class DeepLinkHandler {
         '@rez_attribution',
         JSON.stringify(attribution)
       );
-      // TODO: Send to analytics
+
+      // M-5 FIX: Send deep-link attribution event to analytics service
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const analytics = require('@/services/analytics/AnalyticsService').default as {
+          trackEvent: (name: string, props: object) => void;
+        };
+        analytics.trackEvent('deep_link_attribution', { type, ...data });
+      } catch {
+        // Analytics not available — attribution is stored locally
+      }
 
     } catch (_error) {
       // silently handle

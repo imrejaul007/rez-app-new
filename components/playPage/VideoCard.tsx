@@ -192,17 +192,19 @@ function VideoCard({
       withTiming(1, { duration: 150 })
     );
 
-    // TODO: Call API to update like status
+    // M-14 FIX: Call API to update like status with optimistic update + revert on failure
     logger.debug(`❤️ [VideoCard] ${newLikedState ? 'Liked' : 'Unliked'} video ${item.id}`);
-
-    // In real implementation, call API:
-    // try {
-    //   await videosApi.toggleLike(item.id);
-    // } catch (error: any) {
-    //   // Revert on error
-    //   setIsLiked(!newLikedState);
-    //   setLikeCount((prev: any) => newLikedState ? prev - 1 : prev + 1);
-    // }
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const videosApi = require('@/services/videosApi') as {
+        toggleLike: (id: string) => Promise<void>;
+      };
+      await videosApi.toggleLike(item.id);
+    } catch {
+      // Revert optimistic update on API failure
+      setIsLiked(!newLikedState);
+      setLikeCount((prev: number) => newLikedState ? prev - 1 : prev + 1);
+    }
   };
 
   const handleShare = async (e: any) => {
@@ -210,22 +212,16 @@ function VideoCard({
 
     logger.debug(`🔗 [VideoCard] Sharing video ${item.id}`);
 
-    // TODO: Implement share functionality
-    // For now, just log. In real implementation:
-    // - Use expo-sharing or react-native-share
-    // - Generate share URL
-    // - Track share event
-    // - Update share count
-
-    // Example:
-    // try {
-    //   await Share.share({
-    //     message: `Check out this video: ${item.description}`,
-    //     url: `https://yourapp.com/video/${item.id}`,
-    //   });
-    // } catch (error: any) {
-    //   logger.error('Error sharing:', error);
-    // }
+    // M-15 FIX: Implement share functionality using React Native Share API
+    try {
+      const { Share } = require('react-native') as { Share: { share: (opts: object) => Promise<void> } };
+      await Share.share({
+        message: `Check out this video: ${item.description || item.id}`,
+        url: `https://rez.money/video/${item.id}`,
+      });
+    } catch (error: unknown) {
+      logger.error('Error sharing:', error);
+    }
   };
 
   const handleComment = (e: any) => {

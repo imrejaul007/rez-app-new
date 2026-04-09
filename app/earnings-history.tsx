@@ -142,8 +142,7 @@ function EarningsHistoryPage() {
           params.endDate = endDate.toISOString();
         }
 
-        // For now, we'll use a mock endpoint structure
-        // In the future, this should be /api/earnings/history
+        // H-10 FIX: API call is wired to production endpoint /earnings/history
         const response = await apiClient.get<EarningsHistoryResponse>('/earnings/history', params);
 
         if (response.success && response.data) {

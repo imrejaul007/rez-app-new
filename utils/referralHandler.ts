@@ -171,8 +171,12 @@ class ReferralHandler {
   static async trackReferralSource(source: string, metadata?: any): Promise<void> {
     try {
 
-      // TODO: Implement analytics tracking
-      // Example: analytics.track('referral_source', { source, ...metadata });
+      // M-8 FIX: Track referral source in analytics service
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const analytics = require('@/services/analytics/AnalyticsService').default as {
+        trackEvent: (name: string, props: object) => void;
+      };
+      analytics.trackEvent('referral_source', { source, ...metadata });
     } catch (_error) {
       // silently handle
     }

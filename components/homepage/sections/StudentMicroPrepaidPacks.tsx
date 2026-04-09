@@ -102,8 +102,9 @@ const StudentMicroPrepaidPacks: React.FC = () => {
   }, []);
 
   const handlePackPress = (pack: StudentMicroPack) => {
-    // TODO: Route to pack purchase / deal flow once the payment flow accepts pack IDs
-    router.push(`/near-u/student-offers?pack=${pack.id}` as any);
+    // L-10 FIX: Route to pack purchase flow passing the pack ID so the payment
+    // screen can load the correct pack details.
+    router.push(`/checkout/pack-purchase?packId=${pack.id}` as any);
   };
 
   if (!loading && packs.length === 0) return null;

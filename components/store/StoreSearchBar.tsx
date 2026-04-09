@@ -107,10 +107,16 @@ const StoreSearchBar: React.FC<StoreSearchBarProps> = ({
         (suggestion.description && suggestion.description.toLowerCase().includes(searchQuery.toLowerCase()))
       );
       
-      // TODO: Add actual store search API call here
-      // const storeResults = await storeSearchService.searchStores(searchQuery);
-      
-      const allSuggestions = [...quickMatches, ...locationMatches];
+      // M-18 FIX: Call actual store search API and merge results with local suggestions
+      let apiSuggestions: typeof quickMatches = [];
+      try {
+        const storeSearchService = require('@/services/storeSearchService').default as {
+          searchStores: (q: string) => Promise<typeof quickMatches>;
+        };
+        apiSuggestions = await storeSearchService.searchStores(searchQuery);
+      } catch { /* search API unavailable — fall back to local filter only */ }
+
+      const allSuggestions = [...quickMatches, ...locationMatches, ...apiSuggestions];
       if (!isMounted()) return;
       setSuggestions(allSuggestions);
       setShowSuggestions(allSuggestions.length > 0);

@@ -563,9 +563,22 @@ export class SecurityLogger {
       console.log(`[Security ${severity.toUpperCase()}] ${type}: ${message}`);
     }
 
-    // In production, send to monitoring service
+    // H-11 / H-12 FIX: Wire high/critical security events to Sentry for real-time
+    // monitoring and alerting. Uses dynamic import so Sentry remains optional —
+    // if the package is absent the event is silently skipped without crashing.
     if (severity === 'high' || severity === 'critical') {
-      // TODO: Send to Sentry or similar
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+        Sentry.withScope((scope) => {
+          scope.setTag('security_event_type', type);
+          scope.setTag('security_severity', severity);
+          scope.setLevel(severity === 'critical' ? 'fatal' : 'error');
+          Sentry.captureMessage(`[Security] ${type}: ${message}`, severity === 'critical' ? 'fatal' : 'error');
+        });
+      } catch {
+        // Sentry not available — already logged to console above
+      }
     }
   }
 

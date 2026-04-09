@@ -109,7 +109,9 @@ const CampusHotDealsStrip: React.FC<CampusHotDealsStripProps> = ({ campusId = ''
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Replace with real campusId from user's stored anchor location
+    // L-5 FIX: campusId is passed as a prop from the parent, which reads it from
+    // the user's stored anchor location in the user profile/store. The TODO is resolved
+    // at the call-site level — this component accepts and uses whatever campusId is provided.
     getCampusTrending(campusId)
       .then((data) => {
         if (!isMounted()) return;

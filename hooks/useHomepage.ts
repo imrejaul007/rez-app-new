@@ -75,11 +75,25 @@ export function useHomepage(): UseHomepageDataResult {
     updateUserPreferences: (_preferences: string[]) => {
       // Preferences are stored locally — no API call needed
     },
-    trackSectionView: (_sectionId: string) => {
-      // TODO: Send analytics event to backend
+    trackSectionView: (sectionId: string) => {
+      // M-6 FIX: Wire section-view event to analytics service
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const analytics = require('@/services/analytics/AnalyticsService').default as {
+          trackEvent: (name: string, props: object) => void;
+        };
+        analytics.trackEvent('homepage_section_view', { sectionId });
+      } catch { /* analytics unavailable */ }
     },
-    trackItemClick: (_sectionId: string, _itemId: string) => {
-      // TODO: Send analytics event to backend
+    trackItemClick: (sectionId: string, itemId: string) => {
+      // M-6 FIX: Wire item-click event to analytics service
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const analytics = require('@/services/analytics/AnalyticsService').default as {
+          trackEvent: (name: string, props: object) => void;
+        };
+        analytics.trackEvent('homepage_item_click', { sectionId, itemId });
+      } catch { /* analytics unavailable */ }
     },
   }), [refetch]);
 

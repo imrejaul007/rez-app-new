@@ -150,9 +150,19 @@ export const getPrivacySafeText = (
  * @returns Consent status
  */
 export const hasDataSharingConsent = async (userId: string): Promise<boolean> => {
-  // TODO: Integrate with actual consent management system
-  // For now, default to false (always anonymize)
-  return false;
+  // M-10 FIX: Read consent from SecureStore / consent management system
+  // Default remains false (deny-by-default) when consent record is absent.
+  try {
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default as {
+      getItem: (key: string) => Promise<string | null>;
+    };
+    const raw = await AsyncStorage.getItem(`@rez_consent_${userId}`);
+    if (!raw) return false;
+    const consent = JSON.parse(raw) as { dataSharingConsent?: boolean };
+    return consent.dataSharingConsent === true;
+  } catch {
+    return false; // fail-safe: deny consent on error
+  }
 };
 
 /**
@@ -168,7 +178,7 @@ export const logPrivacyEvent = (
   dataType: 'email' | 'phone' | 'name' | 'referral_code',
   userId?: string
 ): void => {
-  // TODO: Send to analytics/audit system
+  // M-11 FIX: Send privacy audit event to analytics/audit system in production
   if (__DEV__) {
     console.log('[Privacy Audit]', {
       action,
@@ -176,5 +186,17 @@ export const logPrivacyEvent = (
       userId: userId || 'unknown',
       timestamp: new Date().toISOString(),
     });
+  } else {
+    try {
+      const analytics = require('@/services/analytics/AnalyticsService').default as {
+        trackEvent: (name: string, props: object) => void;
+      };
+      analytics.trackEvent('privacy_audit', {
+        action,
+        dataType,
+        userId: userId || 'anonymous',
+        timestamp: new Date().toISOString(),
+      });
+    } catch { /* analytics unavailable */ }
   }
 };

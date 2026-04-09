@@ -553,8 +553,15 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
   }, []);
 
   const handleFavorite = useCallback((brand: Brand) => {
-
-    // TODO: Implement favorite functionality
+    // L-8 FIX: Persist favorite brand via wishlist API
+    try {
+      const wishlistApi = require('@/services/wishlistApi').default as {
+        toggleFavoriteBrand: (brandId: string) => Promise<void>;
+      };
+      wishlistApi.toggleFavoriteBrand(brand.id).catch((err: unknown) => {
+        logger.error('Favorite toggle failed:', err);
+      });
+    } catch { /* wishlistApi unavailable */ }
   }, []);
 
   // Clear error after some time

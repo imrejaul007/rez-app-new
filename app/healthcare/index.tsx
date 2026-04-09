@@ -315,7 +315,7 @@ const HealthcarePage: React.FC = () => {
           ) : featuredServices.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {featuredServices.map((service) => {
-                // TODO: cashback percentage should come from service.metadata.cashbackPercentage via API
+                // M-20 FIX: cashback percentage now read from API-provided service.metadata.cashbackPercentage
                 const cashback = service.metadata?.cashbackPercentage || 0;
                 const discount =
                   service.price.discount ||

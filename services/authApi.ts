@@ -693,14 +693,19 @@ class AuthService {
    *
    * @deprecated Use AuthContext.tryRefreshToken() (via apiClient 401 callback) instead.
    */
+  /**
+   * @deprecated Token refresh is automatic via the apiClient 401 interceptor.
+   * L-3 FIX: Replaced hard throw with a DEV-only warning + safe return value so
+   * callers that haven't been updated yet don't crash in production. Remove call
+   * sites when possible.
+   */
   async ensureValidToken(): Promise<boolean> {
-    // Removed: this method was a no-op stub that always returned false,
-    // silently breaking any caller that depended on it. Token refresh is
-    // handled automatically by the apiClient 401 interceptor via AuthContext.
-    // Call sites should be updated to remove this call entirely.
-    throw new Error(
-      '[AuthService] ensureValidToken() is removed. Token refresh is automatic via apiClient. Remove this call.',
-    );
+    if (__DEV__) {
+      console.warn(
+        '[AuthService] ensureValidToken() is deprecated. Token refresh is automatic via apiClient. Remove this call.',
+      );
+    }
+    return true; // return safe default — token validity is managed by the interceptor
   }
 }
 

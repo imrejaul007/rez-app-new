@@ -174,6 +174,16 @@ export const useWallet = ({
   autoFetch = true,
   refreshInterval
 }: UseWalletOptions): UseWalletReturn => {
+  // L-4 FIX: Emit a DEV warning once per render to guide developers to the replacement.
+  // useEffect is already imported at the top of this file.
+  useEffect(() => {
+    if (__DEV__) {
+      console.warn(
+        '[useWallet] This hook is deprecated. Use useWalletContext() from @/contexts/WalletContext instead.'
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [walletState, setWalletState] = useState<WalletState>({
     data: null,
     isLoading: false,

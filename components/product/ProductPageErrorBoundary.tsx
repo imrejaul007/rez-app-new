@@ -54,9 +54,19 @@ class ProductPageErrorBoundary extends Component<Props, State> {
       errorInfo,
     });
 
-    // Log error to analytics or error tracking service
-    // TODO: Integrate with error tracking service (e.g., Sentry)
+    // M-4 FIX: Wire ProductPageErrorBoundary to Sentry for production error tracking
     if (__DEV__) {
+      console.error('[ProductPageErrorBoundary]', error, errorInfo?.componentStack);
+    } else {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+        Sentry.captureException(error, {
+          extra: { componentStack: errorInfo?.componentStack, context: 'ProductPageErrorBoundary' },
+        });
+      } catch {
+        // Sentry not available
+      }
     }
   }
 

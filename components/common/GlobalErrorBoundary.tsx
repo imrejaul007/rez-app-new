@@ -97,7 +97,18 @@ class GlobalErrorBoundary extends Component<Props, State> {
   };
 
   handleReportIssue = () => {
-    // TODO: Implement issue reporting
+    // M-3 FIX: Wire issue reporting to Sentry user feedback
+    const { error, errorInfo } = this.state;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+      const eventId = Sentry.captureException(error, {
+        extra: { componentStack: errorInfo?.componentStack },
+      });
+      Sentry.showReportDialog({ eventId });
+    } catch {
+      // Sentry not available — silently skip user feedback dialog
+    }
   };
 
   render() {

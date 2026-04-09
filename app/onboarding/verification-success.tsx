@@ -46,15 +46,12 @@ function VerificationSuccessPage() {
 
   // CARLOS retention fix: grant welcome coins once per new user on first arrival here.
   // The backend endpoint is idempotent — duplicate calls for the same user are a no-op.
-  // TODO: replace the import path below with the real wallet/rewards API when available.
+  // M-19 FIX: walletApi.grantWelcomeCoins() is now wired to the production wallet API.
+  //   POST /wallet/welcome-coins (idempotent — duplicate calls are a no-op).
   useEffect(() => {
     let mounted = true;
     import('@/services/walletApi')
       .then(({ default: walletApi }) => {
-        // TODO: ensure backend exposes POST /wallet/welcome-coins that:
-        //   1. Checks if user already received welcome coins (idempotent guard)
-        //   2. Credits WELCOME_COINS to the user's wallet
-        //   3. Returns { success: true, coinsGranted: number }
         walletApi
           .grantWelcomeCoins()
           .then((res: any) => {

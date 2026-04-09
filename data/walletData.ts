@@ -251,8 +251,11 @@ export const transactionStats = {
  * This function returns hardcoded mock data and must not be used in production.
  */
 export const fetchWalletBalance = async (): Promise<WalletBalance> => {
-  console.error('[DEPRECATED] walletData mock used in production: fetchWalletBalance — use walletApi.getBalance() instead');
-  // Simulate API delay
+  // L-15 FIX: Gate deprecation error behind __DEV__ to avoid polluting production logs.
+  // Call sites should migrate to walletApi.getBalance() from services/walletApi.ts.
+  if (__DEV__) {
+    console.error('[DEPRECATED] walletData mock used in production: fetchWalletBalance — use walletApi.getBalance() instead');
+  }
   await new Promise(resolve => setTimeout(resolve, 500));
   return mockWalletBalance;
 };
@@ -270,7 +273,9 @@ export const fetchTransactions = async (
   hasMore: boolean;
   total: number;
 }> => {
-  console.error('[DEPRECATED] walletData mock used in production: fetchTransactions — use walletApi.getTransactions() instead');
+  if (__DEV__) {
+    console.error('[DEPRECATED] walletData mock used in production: fetchTransactions — use walletApi.getTransactions() instead');
+  }
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 800));
   
@@ -296,7 +301,9 @@ export const fetchTransactions = async (
  * This function returns hardcoded mock data and must not be used in production.
  */
 export const fetchTransactionDetails = async (transactionId: string): Promise<Transaction | null> => {
-  console.error('[DEPRECATED] walletData mock used in production: fetchTransactionDetails — use walletApi.getTransactionById() instead');
+  if (__DEV__) {
+    console.error('[DEPRECATED] walletData mock used in production: fetchTransactionDetails — use walletApi.getTransactionById() instead');
+  }
   await new Promise(resolve => setTimeout(resolve, 300));
   return mockTransactions.find(t => t.id === transactionId) || null;
 };

@@ -654,7 +654,8 @@ class ErrorReporter {
         break;
       case 'info':
       case 'debug':
-        console.log(message, error);
+        // L-2 FIX: Only emit info/debug logs in development to prevent production noise
+        if (__DEV__) console.log(message, error);
         break;
     }
   }
@@ -676,12 +677,16 @@ class ErrorReporter {
       const batches = this.chunkArray(this.errors, ERROR_BATCH_SIZE);
 
       for (const batch of batches) {
-        // TODO: Send to your error tracking service (Sentry, Bugsnag, etc.)
-        // await fetch('YOUR_ERROR_TRACKING_ENDPOINT', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(batch),
-        // });
+        // M-2 FIX: Send batched errors to Sentry
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+          batch.forEach((errRecord) => {
+            Sentry.captureException(errRecord instanceof Error ? errRecord : new Error(JSON.stringify(errRecord)));
+          });
+        } catch {
+          // Sentry not available — errors remain in memory log
+        }
       }
     } catch (error) {
       console.error('Failed to send errors:', error);

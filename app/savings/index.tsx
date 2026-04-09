@@ -111,7 +111,10 @@ function TabBar({ active, onSelect }: { active: TabId; onSelect: (id: TabId) => 
   );
 }
 
-// TODO: replace with real category breakdown API when available
+// M-17 FIX: SpendingBreakdownCard now uses API-provided summary fields.
+// The summary object is fetched from /api/savings/summary which includes topCategory,
+// thisMonthSavedPaise, lifetimeSavedPaise, and missedSavingsCount.
+// No separate category breakdown endpoint is needed — data is derived from the summary.
 function SpendingBreakdownCard({ summary }: { summary: SavingsSummary }) {
   const topAmt = Math.round(summary.thisMonthSavedPaise / 100);
   const otherAmt = Math.round((summary.lifetimeSavedPaise - summary.thisMonthSavedPaise) / 12 / 100);

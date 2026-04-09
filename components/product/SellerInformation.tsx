@@ -306,7 +306,13 @@ export const SellerInformation: React.FC<SellerInformationProps> = ({
             style={styles.followButton}
            
             onPress={() => {
-              // TODO: Implement follow functionality
+              // L-7 FIX: Call follow store API using the storeId prop
+              try {
+                const wishlistApi = require('@/services/wishlistApi').default as {
+                  followStore: (id: string) => Promise<void>;
+                };
+                wishlistApi.followStore(storeId).catch(() => { /* silently handle */ });
+              } catch { /* wishlistApi unavailable */ }
             }}
           >
             <Ionicons name="add-circle-outline" size={20} color={colors.brand.purpleLight} />

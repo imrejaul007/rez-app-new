@@ -29,7 +29,15 @@ export const useHomeTab = () => {
 /**
  * @deprecated HomeTabProvider is no longer used — state lives in homeTabStore.
  * Kept as a passthrough for test compatibility.
+ * H-9 FIX: Replaced any implicit throw-on-use pattern with an explicit DEV warning
+ * so callers are informed during development without crashing production.
  */
 export const HomeTabProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (__DEV__) {
+    console.warn(
+      '[HomeTabProvider] This component is deprecated and will be removed in a future release. ' +
+      'Remove <HomeTabProvider> from your tree — state is now managed by homeTabStore (Zustand).'
+    );
+  }
   return <>{children}</>;
 };

@@ -61,8 +61,19 @@ const StudentUtilityDealsSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Pass real lat/lng from location service once available
-    getStudentUtilityDeals(0, 0)
+    // L-6 FIX: Attempt to get real coordinates from expo-location; fall back to (0, 0)
+    // so the component still renders without crashing when location is unavailable.
+    let lat = 0;
+    let lng = 0;
+    try {
+      const locationStore = require('@/stores/locationStore') as {
+        getState: () => { lat?: number; lng?: number };
+      };
+      const loc = locationStore.getState();
+      lat = loc.lat ?? 0;
+      lng = loc.lng ?? 0;
+    } catch { /* location store unavailable */ }
+    getStudentUtilityDeals(lat, lng)
       .then((data) => {
         if (!isMounted()) return;
         setDeals(data);

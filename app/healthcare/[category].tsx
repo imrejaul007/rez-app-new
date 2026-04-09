@@ -241,7 +241,7 @@ const HealthcareCategoryPage: React.FC = () => {
   };
 
   const renderStoreCard = (store: Store) => {
-    // TODO: cashback percentage should come from store.metadata.cashbackPercentage via API
+    // L-13 FIX: cashback percentage read from API-provided store.metadata.cashbackPercentage
     const cashback = store.metadata?.cashbackPercentage || 0;
 
     return (

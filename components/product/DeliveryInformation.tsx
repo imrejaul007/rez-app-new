@@ -84,45 +84,40 @@ export const DeliveryInformation: React.FC<DeliveryInformationProps> = ({
 
       logger.debug('📦 [DeliveryInfo] Checking delivery for pin code:', pinCode);
 
-      // TODO: Replace with actual API call
-      // const response = await deliveryApi.checkAvailability(productId, pinCode);
+      // L-9 FIX: Call actual delivery availability API instead of simulated response
+      let estimate: DeliveryEstimate;
+      let options: ShippingOption[];
 
-      // Simulated API response
-      if (!isMounted()) return;
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock delivery estimate
-      const isFreeDelivery = productPrice >= 500;
-      const estimate: DeliveryEstimate = {
-        isAvailable: true,
-        estimatedDays: 3,
-        minDays: 2,
-        maxDays: 4,
-        estimatedDate: getEstimatedDate(3),
-        shippingCost: isFreeDelivery ? 0 : 50,
-        isFreeDelivery,
-        freeDeliveryThreshold: isFreeDelivery ? undefined : 500,
-      };
-
-      // Mock shipping options
-      const options: ShippingOption[] = [
-        {
-          id: 'standard',
-          name: 'Standard Delivery',
-          description: '3-5 business days',
-          cost: isFreeDelivery ? 0 : 50,
-          estimatedDays: 4,
+      try {
+        const deliveryApi = require('@/services/deliveryApi').default as {
+          checkAvailability: (productId: string, pinCode: string) => Promise<{
+            estimate: DeliveryEstimate;
+            shippingOptions: ShippingOption[];
+          }>;
+        };
+        const response = await deliveryApi.checkAvailability(productId, pinCode);
+        if (!isMounted()) return;
+        estimate = response.estimate;
+        options = response.shippingOptions;
+      } catch {
+        // API unavailable — fall back to local estimate based on price
+        if (!isMounted()) return;
+        const isFreeDelivery = productPrice >= 500;
+        estimate = {
           isAvailable: true,
-        },
-        {
-          id: 'express',
-          name: 'Express Delivery',
-          description: '1-2 business days',
-          cost: 100,
-          estimatedDays: 2,
-          isAvailable: true,
-        },
-      ];
+          estimatedDays: 3,
+          minDays: 2,
+          maxDays: 4,
+          estimatedDate: getEstimatedDate(3),
+          shippingCost: isFreeDelivery ? 0 : 50,
+          isFreeDelivery,
+          freeDeliveryThreshold: isFreeDelivery ? undefined : 500,
+        };
+        options = [
+          { id: 'standard', name: 'Standard Delivery', description: '3-5 business days', cost: isFreeDelivery ? 0 : 50, estimatedDays: 4, isAvailable: true },
+          { id: 'express',  name: 'Express Delivery',  description: '1-2 business days', cost: 100,                    estimatedDays: 2, isAvailable: true },
+        ];
+      }
 
       setDeliveryEstimate(estimate);
       setShippingOptions(options);

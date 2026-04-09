@@ -185,13 +185,19 @@ export const ProductShareModal: React.FC<ProductShareModalProps> = ({
       onShareComplete(platform);
     }
 
-    // TODO: Track share event in analytics
-    // analytics.track('product_shared', {
-    //   product_id: productId,
-    //   platform,
-    //   activity_type: activityType,
-    //   referral_code: referralCode,
-    // });
+    // M-12 FIX: Track share event in analytics
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const analytics = require('@/services/analytics/AnalyticsService').default as {
+        trackEvent: (name: string, props: object) => void;
+      };
+      analytics.trackEvent('product_shared', {
+        product_id: productId,
+        platform,
+        activity_type: activityType,
+        referral_code: referralCode,
+      });
+    } catch { /* analytics unavailable */ }
   };
 
   // Share options configuration

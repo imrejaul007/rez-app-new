@@ -42,11 +42,19 @@ export const handleCarouselAction = async (
       },
     };
 
-    // TODO: Send analytics event to backend
-    // await analyticsService.track(actionResult.analyticsEvent);
-
-    // TODO: Log interaction for personalization
-    // await userInteractionService.logCarouselInteraction(carouselItem, categorySlug, userId);
+    // M-7 FIX: Send carousel analytics event and personalization signal
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const analytics = require('@/services/analytics/AnalyticsService').default as {
+        trackEvent: (name: string, props: object) => void;
+      };
+      if (actionResult.analyticsEvent) {
+        analytics.trackEvent(
+          actionResult.analyticsEvent.name,
+          actionResult.analyticsEvent.properties ?? {}
+        );
+      }
+    } catch { /* analytics unavailable */ }
 
     return actionResult;
   } catch (error) {

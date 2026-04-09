@@ -9,13 +9,14 @@ import { useIsAuthenticated, useIsOnboarded } from '@/stores/selectors';
 import { useWalletContext } from './WalletContext';
 import { useGamificationStore } from '@/stores/gamificationStore';
 
-// Feature flags for gradual rollout
+// L-1 FIX: Feature flags now read from environment variables for runtime control.
+// Set EXPO_PUBLIC_FEAT_* in .env to override defaults without a code change.
 const GAMIFICATION_FLAGS = {
-  ENABLE_ACHIEVEMENTS: true,
-  ENABLE_COINS: true,
-  ENABLE_CHALLENGES: true,
-  ENABLE_LEADERBOARD: true,
-  ENABLE_NOTIFICATIONS: true,
+  ENABLE_ACHIEVEMENTS: process.env.EXPO_PUBLIC_FEAT_ACHIEVEMENTS !== 'false',
+  ENABLE_COINS: process.env.EXPO_PUBLIC_FEAT_COINS !== 'false',
+  ENABLE_CHALLENGES: process.env.EXPO_PUBLIC_FEAT_CHALLENGES !== 'false',
+  ENABLE_LEADERBOARD: process.env.EXPO_PUBLIC_FEAT_LEADERBOARD !== 'false',
+  ENABLE_NOTIFICATIONS: process.env.EXPO_PUBLIC_FEAT_NOTIFICATIONS !== 'false',
 };
 
 // Types - Use PointsBalance from API but SOURCE from Wallet API

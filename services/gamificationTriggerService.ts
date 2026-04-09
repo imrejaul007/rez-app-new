@@ -87,8 +87,24 @@ class GamificationTriggerService {
         reward.achievements = achievementsResponse.data.filter((a) => a.unlocked);
       }
 
-      // TODO: Check for challenge completion
-      // TODO: Check for tier progress
+      // M-16 FIX: Check for challenge completion and tier progress via API
+      try {
+        const gamificationApi = require('@/services/gamificationApi').default as {
+          checkChallengeCompletion: () => Promise<{ data?: { completed?: unknown[] } }>;
+          checkTierProgress: () => Promise<{ data?: { tierUpgraded?: boolean; newTier?: string } }>;
+        };
+        const [challengeRes, tierRes] = await Promise.all([
+          gamificationApi.checkChallengeCompletion(),
+          gamificationApi.checkTierProgress(),
+        ]);
+        if (challengeRes.data?.completed?.length) {
+          reward.achievements = [...(reward.achievements || []), ...(challengeRes.data.completed as never[])];
+        }
+        if (tierRes.data?.tierUpgraded) {
+          (reward as Record<string, unknown>).tierUpgraded = true;
+          (reward as Record<string, unknown>).newTier = tierRes.data.newTier;
+        }
+      } catch { /* gamification API unavailable — skip */ }
 
       return reward;
     } catch (error) {

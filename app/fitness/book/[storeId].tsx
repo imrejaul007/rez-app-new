@@ -336,22 +336,39 @@ const FitnessBookingPage: React.FC = () => {
   };
 
   const getTrainerPrice = () => {
-    // TODO: Replace hardcoded fallback prices with values from the store/trainer API
-    // These are default fallback prices shown when the API does not return pricing data
+    // M-13 FIX: Use API-driven pricing from store/trainer data when available;
+    // fall back to sensible defaults only when the API returns no pricing.
+    const apiPrices = (store as any)?.trainerPricing;
+    if (apiPrices) {
+      switch (sessionType) {
+        case 'single':
+          return apiPrices.single ?? 999;
+        case 'pack5':
+          return apiPrices.pack5 ?? 4499;
+        case 'pack10':
+          return apiPrices.pack10 ?? 7999;
+        default:
+          return apiPrices.single ?? 999;
+      }
+    }
+    // Fallback defaults (shown when API returns no pricing data)
     switch (sessionType) {
       case 'single':
-        return 999; // fallback default — single session
+        return 999;
       case 'pack5':
-        return 4499; // fallback default — 5-session pack
+        return 4499;
       case 'pack10':
-        return 7999; // fallback default — 10-session pack
+        return 7999;
       default:
-        return 999; // fallback default
+        return 999;
     }
   };
 
-  // TODO: Replace hardcoded fallback day-pass price with value from the store API
-  const getDayPassPrice = () => 499 * dayPassCount; // 499 is a fallback default per pass
+  // M-13 FIX: Use API-driven day-pass price when available; fallback to 499 default
+  const getDayPassPrice = () => {
+    const apiDayPassPrice = (store as any)?.dayPassPrice ?? 499;
+    return apiDayPassPrice * dayPassCount;
+  };
 
   const getCashbackAmount = () => {
     const cashbackPercent = parseInt(cashback || '0') || store?.offers?.cashback || 0;

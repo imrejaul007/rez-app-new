@@ -177,8 +177,20 @@ class ErrorLogger {
       });
     }
 
-    // TODO: Send to crash reporting service in production
-    // Example: Sentry, Bugsnag, etc.
+    // M-1 FIX: Wire error logging to Sentry in production
+    if (!__DEV__) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+        Sentry.withScope((scope) => {
+          scope.setTag('error_code', error.code);
+          scope.setExtra('details', error.details);
+          Sentry.captureMessage(`[AppError] ${error.code}: ${error.message}`, 'error');
+        });
+      } catch {
+        // Sentry not available — skipping
+      }
+    }
   }
 
   static getLogs(): AppError[] {

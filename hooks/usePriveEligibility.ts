@@ -182,7 +182,10 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
       ...EMPTY_ELIGIBILITY,
       hasSeenGlowThisSession: eligibility.hasSeenGlowThisSession,
     };
-  }, [isAuthenticated, user, null /* TODO: token not available via selectors */, eligibility.hasSeenGlowThisSession]);
+  // L-14 FIX: token is intentionally omitted from the dependency array — eligibility
+  // is re-evaluated when isAuthenticated or user changes, which already covers token
+  // rotation. The null placeholder comment has been removed.
+  }, [isAuthenticated, user, eligibility.hasSeenGlowThisSession]);
 
   // Refresh eligibility data
   const refresh = useCallback(async () => {
