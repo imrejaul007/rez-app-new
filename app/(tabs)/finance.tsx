@@ -24,12 +24,16 @@ export default function FinanceScreen() {
   }, []);
 
   async function handleScoreCheck() {
-    const res = await financeApi.checkScoreAndEarnCoins();
-    const data = res.data as any;
-    if (data?.coinsAwarded > 0) {
-      // show toast: `+${data.coinsAwarded} coins earned!`
+    try {
+      const res = await financeApi.checkScoreAndEarnCoins();
+      const data = res.data as any;
+      if (data?.coinsAwarded > 0) {
+        // show toast: `+${data.coinsAwarded} coins earned!`
+      }
+      load();
+    } catch {
+      // silently ignore — score check is non-critical
     }
-    load();
   }
 
   if (loading) {

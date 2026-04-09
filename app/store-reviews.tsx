@@ -92,7 +92,7 @@ function ReviewCard({ review }: { review: Review }) {
 
 function RatingHeader({ stats }: { stats: ReviewStats }) {
   const total = stats.count || 1;
-  const dist = stats.distribution;
+  const dist = stats.distribution ?? {};
 
   // distribution keys may be "1"-"5" or 1-5
   const pct = (star: number) => {
@@ -157,8 +157,8 @@ export default function StoreReviewsScreen() {
       } catch {
         // silent
       } finally {
-        setLoading(false);
-        setLoadingMore(false);
+        if (pageNum === 1) setLoading(false);
+        else setLoadingMore(false);
       }
     },
     [storeId],
