@@ -101,8 +101,8 @@ class GamificationTriggerService {
           reward.achievements = [...(reward.achievements || []), ...(challengeRes.data.completed as never[])];
         }
         if (tierRes.data?.tierUpgraded) {
-          (reward as Record<string, unknown>).tierUpgraded = true;
-          (reward as Record<string, unknown>).newTier = tierRes.data.newTier;
+          (reward as unknown as Record<string, unknown>).tierUpgraded = true;
+          (reward as unknown as Record<string, unknown>).newTier = tierRes.data.newTier;
         }
       } catch { /* gamification API unavailable — skip */ }
 

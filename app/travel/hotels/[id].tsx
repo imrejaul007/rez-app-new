@@ -253,7 +253,7 @@ export default function HotelDetailScreen() {
       });
 
       router.push({
-        pathname: '/travel/hotels/checkout',
+        pathname: '/travel/hotels/checkout' as any,
         params: {
           holdId: hold.holdId,
           bookingRef: hold.bookingRef,
@@ -375,13 +375,13 @@ export default function HotelDetailScreen() {
             <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={styles.savingsBannerTitle}>You save {paise(totalSaving)} with coins!</Text>
               <View style={styles.savingsBreakdownRow}>
-                {((useOtaCoins && burnResult?.ota_coin_applicable_paise) ?? 0) > 0 && (
+                {useOtaCoins && (burnResult?.ota_coin_applicable_paise ?? 0) > 0 && (
                   <Text style={styles.savingsChip}>OTA {paise(burnResult!.ota_coin_applicable_paise)}</Text>
                 )}
-                {((useRezCoins && burnResult?.rez_coin_applicable_paise) ?? 0) > 0 && (
+                {useRezCoins && (burnResult?.rez_coin_applicable_paise ?? 0) > 0 && (
                   <Text style={styles.savingsChip}>REZ {paise(burnResult!.rez_coin_applicable_paise)}</Text>
                 )}
-                {((useBrandCoins && burnResult?.hotel_brand_coin_applicable_paise) ?? 0) > 0 && (
+                {useBrandCoins && (burnResult?.hotel_brand_coin_applicable_paise ?? 0) > 0 && (
                   <Text style={[styles.savingsChip, { backgroundColor: 'rgba(167,139,250,0.2)', color: '#C4B5FD' }]}>
                     {hotel.brandCoinName ?? 'Brand'} {paise(burnResult!.hotel_brand_coin_applicable_paise)}
                   </Text>
@@ -762,4 +762,25 @@ const styles = StyleSheet.create({
   modalCancelText: { fontSize: 15, fontWeight: '600', color: C.slate },
   modalConfirm: { flex: 2, paddingVertical: 14, borderRadius: 12, backgroundColor: C.cyan, alignItems: 'center' },
   modalConfirmText: { fontSize: 15, fontWeight: '800', color: '#fff' },
+
+  mapCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: C.white,
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: C.slate200,
+    gap: 12,
+  },
+  mapIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: '#ECFDF5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapCity: { fontSize: 14, fontWeight: '600', color: C.navy },
+  mapNote: { fontSize: 12, color: C.slate, marginTop: 2 },
 });

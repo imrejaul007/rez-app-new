@@ -168,7 +168,7 @@ export default function HotelCheckoutScreen() {
 
   const navigateToSuccess = (result: any) => {
     router.replace({
-      pathname: '/travel/hotels/booking-confirmed',
+      pathname: '/travel/hotels/booking-confirmed' as any,
       params: {
         bookingId: result.bookingId,
         bookingRef: result.bookingRef,

@@ -808,7 +808,7 @@ const MyBookingsPage = () => {
                             onPress={(e) => {
                               e.stopPropagation();
                               router.push({
-                                pathname: '/travel/hotels/[id]/review',
+                                pathname: '/travel/hotels/[id]/review' as any,
                                 params: { id: item.hotelId, bookingRef: item.bookingRef, hotelName: item.hotelName },
                               });
                             }}

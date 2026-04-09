@@ -449,7 +449,7 @@ function CartPage() {
   const handleBuyNow = async () => {
     // C06: Guard — unauthenticated users must log in before checkout
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push('/onboarding/splash');
       return;
     }
 

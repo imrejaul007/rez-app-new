@@ -50,7 +50,7 @@ export const handleCarouselAction = async (
       };
       if (actionResult.analyticsEvent) {
         analytics.trackEvent(
-          actionResult.analyticsEvent.name,
+          actionResult.analyticsEvent.event,
           actionResult.analyticsEvent.properties ?? {}
         );
       }

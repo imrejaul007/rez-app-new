@@ -220,7 +220,7 @@ function VideoCard({
         url: `https://rez.money/video/${item.id}`,
       });
     } catch (error: unknown) {
-      logger.error('Error sharing:', error);
+      logger.error('Error sharing:', error instanceof Error ? error : undefined);
     }
   };
 

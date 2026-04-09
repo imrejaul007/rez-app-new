@@ -559,7 +559,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
         toggleFavoriteBrand: (brandId: string) => Promise<void>;
       };
       wishlistApi.toggleFavoriteBrand(brand.id).catch((err: unknown) => {
-        logger.error('Favorite toggle failed:', err);
+        logger.error('Favorite toggle failed:', err instanceof Error ? err : undefined);
       });
     } catch { /* wishlistApi unavailable */ }
   }, []);

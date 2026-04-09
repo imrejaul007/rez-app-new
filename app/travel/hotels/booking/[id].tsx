@@ -220,7 +220,7 @@ export default function HotelBookingDetailScreen() {
             style={styles.reviewBtn}
             onPress={() =>
               router.push({
-                pathname: '/travel/hotels/[id]/review',
+                pathname: '/travel/hotels/[id]/review' as any,
                 params: { id: booking.hotelId, bookingRef: booking.bookingRef, hotelName: booking.hotelName },
               })
             }

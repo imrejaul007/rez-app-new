@@ -105,7 +105,7 @@ class GlobalErrorBoundary extends Component<Props, State> {
       const eventId = Sentry.captureException(error, {
         extra: { componentStack: errorInfo?.componentStack },
       });
-      Sentry.showReportDialog({ eventId });
+      (Sentry as any).showReportDialog?.({ eventId });
     } catch {
       // Sentry not available — silently skip user feedback dialog
     }

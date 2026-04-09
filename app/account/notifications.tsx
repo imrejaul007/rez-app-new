@@ -410,7 +410,7 @@ function NotificationsScreen() {
         {/* Marketing Messages */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/marketing-inbox')}
+          onPress={() => router.push('/account/marketing-inbox' as any)}
           accessibilityLabel="Marketing messages"
           accessibilityRole="button"
           accessibilityHint="Navigate to view promotional and merchant broadcast messages"

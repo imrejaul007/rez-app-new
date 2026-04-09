@@ -4,7 +4,7 @@
  */
 
 // @ts-ignore axios is an optional peer dependency not installed in this project
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { Platform } from 'react-native';
 import { ENV } from './env';
 import { getAuthToken, clearAuthData } from '../utils/authStorage';
@@ -23,7 +23,7 @@ export const apiClient: AxiosInstance = axios.create({
 
 // Request interceptor to add authentication token
 apiClient.interceptors.request.use(
-  async (config: AxiosRequestConfig) => {
+  async (config: InternalAxiosRequestConfig) => {
     try {
       // Phase 6: on web, auth is via httpOnly cookies (withCredentials:true above).
       // Bearer injection from localStorage is native-only to avoid dual-auth paths.

@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, withSpring, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import * as Notifications from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from 'expo-notifications';
 
 const C = {
   bg: '#F8FAFC',
@@ -93,7 +94,7 @@ export default function HotelBookingConfirmedScreen() {
             body: `Your stay at ${hotelName ?? 'your hotel'} starts tomorrow. Check-in time is usually from 2 PM.`,
             data: { bookingId, screen: 'hotel_booking' },
           },
-          trigger: { date: reminderDate },
+          trigger: { type: SchedulableTriggerInputTypes.DATE, date: reminderDate },
         });
       }
 
