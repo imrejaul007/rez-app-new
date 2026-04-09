@@ -31,6 +31,7 @@ import {
   BottomCTA,
 } from '@/components/earn/sections';
 import RendezPartnerSection from '@/components/earn/sections/RendezPartnerSection';
+import ExperienceMilestoneSection from '@/components/earn/sections/ExperienceMilestoneSection';
 
 const PlayAndEarn = () => {
   const data = usePlayAndEarnData();
@@ -78,6 +79,9 @@ const PlayAndEarn = () => {
 
           {/* REZ × Rendez Partner — earn coins on verified social meetups */}
           <RendezPartnerSection />
+
+          {/* Spending Milestone / Experience Reward Progress */}
+          <ExperienceMilestoneSection />
 
           {/* Earn from Social Media */}
           <SocialMediaBanner navigateTo={data.navigateTo} />

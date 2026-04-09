@@ -18,3 +18,4 @@ export { default as AchievementsSection } from './AchievementsSection';
 export { default as LeaderboardPreviewSection } from './LeaderboardPreviewSection';
 export { default as WhyRezSection } from './WhyRezSection';
 export { default as BottomCTA } from './BottomCTA';
+export { default as ExperienceMilestoneSection } from './ExperienceMilestoneSection';
