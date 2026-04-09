@@ -142,16 +142,47 @@ export const razorpayApi = {
 
   /**
    * Open Razorpay checkout
+   * C11: On native (iOS/Android) use react-native-razorpay SDK.
+   * On web use the dynamically-loaded checkout.js script.
    */
   async openCheckout(options: RazorpayCheckoutOptions): Promise<void> {
-    // Load script if not already loaded
+    if (Platform.OS !== 'web') {
+      // Native path — react-native-razorpay SDK
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const RazorpayCheckout = require('react-native-razorpay').default;
+      return new Promise<void>((resolve, reject) => {
+        RazorpayCheckout.open({
+          key: options.key,
+          amount: options.amount,
+          currency: options.currency,
+          name: options.name,
+          description: options.description,
+          image: options.image,
+          order_id: options.order_id,
+          prefill: options.prefill,
+          notes: options.notes,
+          theme: options.theme,
+        })
+          .then((response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+            options.handler(response);
+            resolve();
+          })
+          .catch((error: { code: number; description: string }) => {
+            if (error.description === 'Payment cancelled by user' || error.code === 0) {
+              options.modal?.ondismiss?.();
+            } else {
+              reject(new Error(error.description || 'Payment failed'));
+            }
+            resolve(); // always resolve — errors are surfaced via handler/ondismiss
+          });
+      });
+    }
+
+    // Web path — dynamically-loaded checkout.js
     const scriptLoaded = await loadRazorpayScript();
-    
     if (!scriptLoaded) {
       throw new Error('Failed to load Razorpay checkout script');
     }
-
-    // Create Razorpay instance and open checkout
     const razorpay = new window.Razorpay(options);
     razorpay.open();
   },

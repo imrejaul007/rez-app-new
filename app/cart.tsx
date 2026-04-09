@@ -447,6 +447,12 @@ function CartPage() {
   }, [lockedProducts.length]); // Safe to ignore timeLeft changes
 
   const handleBuyNow = async () => {
+    // C06: Guard — unauthenticated users must log in before checkout
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
     // Validate cart before proceeding to checkout
     const validationResult = await validateCart();
 
