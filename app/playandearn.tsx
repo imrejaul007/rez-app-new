@@ -1,12 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React from 'react';
-import {
-  View,
-  ScrollView,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { Stack } from 'expo-router';
 import LearnMaximiseSection from '../components/earn/LearnMaximiseSection';
 import { ProgramDetailModal } from '@/components/earn/ProgramDetailModal';
@@ -35,6 +30,7 @@ import {
   WhyRezSection,
   BottomCTA,
 } from '@/components/earn/sections';
+import RendezPartnerSection from '@/components/earn/sections/RendezPartnerSection';
 
 const PlayAndEarn = () => {
   const data = usePlayAndEarnData();
@@ -55,7 +51,7 @@ const PlayAndEarn = () => {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -78,10 +74,10 @@ const PlayAndEarn = () => {
           />
 
           {/* Quick Earn Actions */}
-          <QuickEarnSection
-            quickActions={data.resolvedQuickActions}
-            navigateTo={data.navigateTo}
-          />
+          <QuickEarnSection quickActions={data.resolvedQuickActions} navigateTo={data.navigateTo} />
+
+          {/* REZ × Rendez Partner — earn coins on verified social meetups */}
+          <RendezPartnerSection />
 
           {/* Earn from Social Media */}
           <SocialMediaBanner navigateTo={data.navigateTo} />
@@ -106,22 +102,13 @@ const PlayAndEarn = () => {
           />
 
           {/* Shopping & Payment Earnings */}
-          <ShoppingEarnSection
-            shoppingMethods={data.shoppingMethods}
-            navigateTo={data.navigateTo}
-          />
+          <ShoppingEarnSection shoppingMethods={data.shoppingMethods} navigateTo={data.navigateTo} />
 
           {/* Social & Community Earnings */}
-          <ShareEngageSection
-            socialActions={data.socialActions}
-            navigateTo={data.navigateTo}
-          />
+          <ShareEngageSection socialActions={data.socialActions} navigateTo={data.navigateTo} />
 
           {/* Social Impact Section */}
-          <SocialImpactSection
-            socialImpactPreview={data.socialImpactPreview}
-            navigateTo={data.navigateTo}
-          />
+          <SocialImpactSection socialImpactPreview={data.socialImpactPreview} navigateTo={data.navigateTo} />
 
           {/* Special Programs */}
           <SpecialProgramsSection
@@ -133,10 +120,7 @@ const PlayAndEarn = () => {
           />
 
           {/* Exclusive Zones */}
-          <ExclusiveZonesSection
-            zones={data.exclusiveZones}
-            navigateTo={data.navigateTo}
-          />
+          <ExclusiveZonesSection zones={data.exclusiveZones} navigateTo={data.navigateTo} />
 
           {/* Program Detail Modal */}
           <ProgramDetailModal
@@ -171,26 +155,16 @@ const PlayAndEarn = () => {
           <LearnMaximiseSection />
 
           {/* Daily Games Section */}
-          <GamesGridSection
-            allGames={data.allGames}
-            navigateTo={data.navigateTo}
-          />
+          <GamesGridSection allGames={data.allGames} navigateTo={data.navigateTo} />
 
           {/* Active Challenges Section */}
-          <ChallengesSection
-            challenges={data.challenges}
-            loading={data.loading}
-            navigateTo={data.navigateTo}
-          />
+          <ChallengesSection challenges={data.challenges} loading={data.loading} navigateTo={data.navigateTo} />
 
           {/* Below-fold sections: lazy loaded after interactions complete */}
           {data.belowFoldReady ? (
             <>
               {/* Live Tournaments Section */}
-              <TournamentsSection
-                tournaments={data.tournaments}
-                navigateTo={data.navigateTo}
-              />
+              <TournamentsSection tournaments={data.tournaments} navigateTo={data.navigateTo} />
 
               {/* Achievements Section */}
               <AchievementsSection
@@ -200,16 +174,10 @@ const PlayAndEarn = () => {
               />
 
               {/* Leaderboard Preview */}
-              <LeaderboardPreviewSection
-                myRank={data.myRank}
-                navigateTo={data.navigateTo}
-              />
+              <LeaderboardPreviewSection myRank={data.myRank} navigateTo={data.navigateTo} />
 
               {/* Why ReZ Pays More */}
-              <WhyRezSection
-                valueCards={data.valueCards}
-                navigateTo={data.navigateTo}
-              />
+              <WhyRezSection valueCards={data.valueCards} navigateTo={data.navigateTo} />
             </>
           ) : (
             <View style={{ paddingVertical: 40, alignItems: 'center' }}>
