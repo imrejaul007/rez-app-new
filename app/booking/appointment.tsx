@@ -542,12 +542,7 @@ Store: ${store?.name}
 You will receive a confirmation message at ${customerPhone}${customerEmail ? ` and ${customerEmail}` : ''}.
         `.trim();
 
-        platformAlertConfirm(
-          'Appointment Confirmed!',
-          successMessage,
-          () => router.replace('/(tabs)/my-bookings'),
-          'OK',
-        );
+        platformAlertConfirm('Appointment Confirmed!', successMessage, () => router.replace('/my-bookings'), 'OK');
       } else {
         platformAlertSimple(
           'Booking Failed',
