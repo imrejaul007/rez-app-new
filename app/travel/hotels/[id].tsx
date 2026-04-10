@@ -158,6 +158,7 @@ export default function HotelDetailScreen() {
   const [hotel, setHotel] = useState<OtaHotel | null>(null);
   const [rooms, setRooms] = useState<OtaRoomType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [burnResult, setBurnResult] = useState<OtaCheckBurnResult | null>(null);
   const [burnLoading, setBurnLoading] = useState(false);
@@ -182,7 +183,7 @@ export default function HotelDetailScreen() {
         setRooms(r);
         if (r.length) setSelectedRoom(r[0].id);
       })
-      .catch(() => {})
+      .catch((e: any) => setLoadError(e?.message ?? 'Failed to load hotel details'))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -301,7 +302,27 @@ export default function HotelDetailScreen() {
   if (!hotel) {
     return (
       <View style={[styles.center, { flex: 1 }]}>
-        <Text style={{ color: C.slate }}>Hotel not found</Text>
+        <Text style={{ color: C.slate, marginBottom: 12 }}>{loadError ?? 'Hotel not found'}</Text>
+        {loadError && (
+          <Pressable
+            onPress={() => {
+              setLoadError(null);
+              setLoading(true);
+              if (id)
+                Promise.all([getHotelById(id), getHotelRoomTypes(id)])
+                  .then(([h, r]) => {
+                    setHotel(h);
+                    setRooms(r);
+                    if (r.length) setSelectedRoom(r[0].id);
+                  })
+                  .catch((e: any) => setLoadError(e?.message ?? 'Failed to load'))
+                  .finally(() => setLoading(false));
+            }}
+            style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: '#06B6D4', borderRadius: 10 }}
+          >
+            <Text style={{ color: '#fff', fontWeight: '700' }}>Retry</Text>
+          </Pressable>
+        )}
       </View>
     );
   }
@@ -336,7 +357,7 @@ export default function HotelDetailScreen() {
             <View style={styles.heroRatingRow}>
               <Ionicons name="star" size={14} color={C.gold} />
               <Text style={styles.heroRating}>{hotel.rating?.toFixed(1) ?? '—'}</Text>
-              <Text style={styles.heroReviews}>({hotel.reviewCount} reviews)</Text>
+              <Text style={styles.heroReviews}>({hotel.reviewCount ?? 0} reviews)</Text>
               {'  ·  '}
               {[...Array(Math.min(hotel.starRating ?? 3, 5))].map((_, i) => (
                 <Ionicons key={i} name="star" size={11} color={C.gold} />
