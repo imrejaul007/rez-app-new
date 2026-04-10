@@ -47,6 +47,7 @@ export default function HotelBookingConfirmedScreen() {
     coinsSavedPaise: savedStr,
     otaCoinEarnedPaise: otaEarnStr,
     rezCoinEarnedPaise: rezEarnStr,
+    hotelBrandCoinEarnedPaise: brandEarnStr,
   } = useLocalSearchParams<{
     bookingId: string;
     bookingRef: string;
@@ -57,12 +58,14 @@ export default function HotelBookingConfirmedScreen() {
     coinsSavedPaise: string;
     otaCoinEarnedPaise: string;
     rezCoinEarnedPaise: string;
+    hotelBrandCoinEarnedPaise?: string;
   }>();
 
   const totalPaise = parseInt(totalStr ?? '0', 10);
   const coinsSaved = parseInt(savedStr ?? '0', 10);
   const otaEarned = parseInt(otaEarnStr ?? '0', 10);
   const rezEarned = parseInt(rezEarnStr ?? '0', 10);
+  const brandEarned = parseInt(brandEarnStr ?? '0', 10);
 
   const scaleAnim = useSharedValue(0);
   const fadeAnim = useSharedValue(0);
@@ -194,7 +197,7 @@ export default function HotelBookingConfirmedScreen() {
           </View>
 
           {/* Coins earned */}
-          {(otaEarned > 0 || rezEarned > 0) && (
+          {(otaEarned > 0 || rezEarned > 0 || brandEarned > 0) && (
             <LinearGradient colors={['#1E3A8A', '#1D4ED8']} style={styles.earnCard}>
               <Ionicons name="gift" size={22} color="#FCD34D" />
               <View style={{ flex: 1, marginLeft: 12 }}>
@@ -204,6 +207,11 @@ export default function HotelBookingConfirmedScreen() {
                   {rezEarned > 0 && (
                     <Text style={[styles.earnChip, { backgroundColor: 'rgba(167,139,250,0.3)' }]}>
                       REZ +{paise(rezEarned)}
+                    </Text>
+                  )}
+                  {brandEarned > 0 && (
+                    <Text style={[styles.earnChip, { backgroundColor: 'rgba(124,58,237,0.3)' }]}>
+                      Hotel +{paise(brandEarned)}
                     </Text>
                   )}
                 </View>

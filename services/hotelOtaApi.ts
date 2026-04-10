@@ -290,6 +290,7 @@ export async function confirmBooking(params: {
   checkoutDate: string;
   otaCoinEarnedPaise: number;
   rezCoinEarnedPaise: number;
+  hotelBrandCoinEarnedPaise: number;
   otaCoinNewBalancePaise: number;
 }> {
   const res = await otaFetch<any>('POST', '/v1/bookings/confirm', {
@@ -308,6 +309,7 @@ export async function confirmBooking(params: {
     checkoutDate: d.checkout_date,
     otaCoinEarnedPaise: d.ota_coin_earned_paise ?? 0,
     rezCoinEarnedPaise: d.rez_coin_earned_paise ?? 0,
+    hotelBrandCoinEarnedPaise: d.hotel_brand_coin_earned_paise ?? 0,
     otaCoinNewBalancePaise: d.ota_coin_new_balance_paise ?? 0,
   };
 }

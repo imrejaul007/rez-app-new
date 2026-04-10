@@ -179,6 +179,7 @@ export default function HotelCheckoutScreen() {
         coinsSavedPaise: String(coinsSaved),
         otaCoinEarnedPaise: String(result.otaCoinEarnedPaise ?? 0),
         rezCoinEarnedPaise: String(result.rezCoinEarnedPaise ?? 0),
+        hotelBrandCoinEarnedPaise: String(result.hotelBrandCoinEarnedPaise ?? 0),
       },
     });
   };
