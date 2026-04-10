@@ -152,7 +152,8 @@ export default function ConfirmationScreen() {
       if (!isMountedRef.current) return;
       setOrder(data);
       // Stop polling when terminal status reached
-      if (data.status === 'completed' || data.status === 'cancelled') {
+      const TERMINAL_STATUSES = ['completed', 'cancelled', 'failed', 'delivered'];
+      if (TERMINAL_STATUSES.includes(data.status as string)) {
         if (pollRef.current) clearInterval(pollRef.current);
       }
     } catch (e: any) {

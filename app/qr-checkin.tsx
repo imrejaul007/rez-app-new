@@ -34,7 +34,7 @@ export default function QRCheckinScreen() {
       setLoadingStore(true);
       apiClient
         .get(`/qr-checkin/store/${storeId}`)
-        .then((r) => setStoreName((r as any).data?.data?.name || ''))
+        .then((r) => setStoreName((r as any).data?.name || ''))
         .catch(() => {})
         .finally(() => setLoadingStore(false));
     }

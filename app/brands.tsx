@@ -10,7 +10,8 @@ import { FlashList } from '@shopify/flash-list';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getBrandsForCategory, Brand, getAllBrands } from '@/data/categoryDummyData';
+import { Brand } from '@/data/categoryDummyData';
+import brandApiService from '@/services/brandApi';
 import { CardGridSkeleton } from '@/components/skeletons';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -75,13 +76,32 @@ function BrandsPage() {
   const loadBrands = async () => {
     setLoading(true);
     try {
-      // Get brands for category or all brands
-      const brandsList = categorySlug ? getBrandsForCategory(categorySlug) : getAllBrands();
+      // Fetch from real API — getBrandsByCategory for a specific category, or getFeaturedBrands for all
+      const apiResults = categorySlug
+        ? await brandApiService.getBrandsByCategory(categorySlug)
+        : await brandApiService.getFeaturedBrands(50);
 
-      setBrands(brandsList);
-      setFilteredBrands(brandsList);
+      if (apiResults && apiResults.length > 0) {
+        // Adapt API shape (BrandPartnership) → local Brand shape used by BrandCard
+        const brandsList: Brand[] = apiResults.map((b) => ({
+          id: b.id,
+          name: b.name,
+          logo: b.logo,
+          cashback: typeof b.cashback === 'object' ? b.cashback.percentage : (b.cashback as any),
+          tag: b.badges?.[0] ?? null,
+          rating: b.rating,
+        }));
+        setBrands(brandsList);
+        setFilteredBrands(brandsList);
+      } else {
+        // API returned empty — leave brands empty (no stale dummy data)
+        setBrands([]);
+        setFilteredBrands([]);
+      }
     } catch (error: any) {
-      // silently handle
+      console.error('[BrandsPage] Failed to load brands:', error);
+      setBrands([]);
+      setFilteredBrands([]);
     } finally {
       setLoading(false);
       setRefreshing(false);

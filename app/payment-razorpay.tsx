@@ -102,7 +102,7 @@ function PaymentPage() {
           setIsProcessing(false);
           setCurrentStep('methods');
           platformAlertConfirm(
-            'Payment ReturnType<typeof setTimeout>',
+            'Payment Session Expired',
             'Your payment session has expired. Please try again.',
             () => setPaymentStartedAt(null),
             'Retry',
