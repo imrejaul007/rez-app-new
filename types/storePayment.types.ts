@@ -344,6 +344,8 @@ export interface StorePaymentInitResponse {
   offersApplied: string[];
   status: PaymentStatus;
   expiresAt: string;
+  razorpayOrderId?: string;
+  razorpayKeyId?: string;
 }
 
 export type PaymentStatus = 'INITIATED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'EXPIRED';

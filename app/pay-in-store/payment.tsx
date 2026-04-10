@@ -13,7 +13,15 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * - Rewards preview
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+
+// Load native Razorpay SDK — not available in Expo Go / web
+let RazorpayCheckout: any = null;
+try {
+  RazorpayCheckout = require('react-native-razorpay').default;
+} catch {
+  // silently unavailable in Expo Go
+}
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Platform, Modal, TextInput } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -124,9 +132,15 @@ function PaymentScreen() {
     const selectedType = paymentFlow.selectedPaymentMethod?.type;
 
     if (paymentData.paymentMethod === 'upi' || selectedType === 'upi') {
-      setCurrentPaymentData(paymentData);
-      setUpiId('');
-      setShowUpiModal(true);
+      if (RazorpayCheckout && paymentData.razorpayOrderId) {
+        // Native app: open Razorpay checkout — user selects UPI/card inside the SDK
+        openRazorpayCheckout(paymentData);
+      } else {
+        // Web / Expo Go fallback: manual UPI ID entry (cannot verify server-side)
+        setCurrentPaymentData(paymentData);
+        setUpiId('');
+        setShowUpiModal(true);
+      }
     } else {
       // Net banking, pay later, etc. — not yet integrated
       showToast({
@@ -137,7 +151,66 @@ function PaymentScreen() {
     }
   };
 
+  const openRazorpayCheckout = (paymentData: StorePaymentInitResponse) => {
+    const options = {
+      description: `Payment to ${storeName}`,
+      currency: 'INR',
+      key: paymentData.razorpayKeyId || process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+      amount: Math.round(paymentData.remainingAmount * 100), // paise
+      order_id: paymentData.razorpayOrderId,
+      name: 'REZ App',
+      prefill: {
+        email: user?.email || '',
+        contact: user?.phoneNumber || '',
+      },
+      theme: { color: '#1a3a52' },
+      modal: {
+        ondismiss: () => {
+          // User closed the Razorpay bottom sheet without paying
+          showToast({ message: 'Payment cancelled.', type: 'info', duration: 3000 });
+        },
+      },
+    };
+
+    RazorpayCheckout.open(options)
+      .then(async (data: any) => {
+        // data contains: razorpay_payment_id, razorpay_order_id, razorpay_signature
+        try {
+          const confirmResponse = await apiClient.post('/store-payment/confirm', {
+            paymentId: paymentData.paymentId,
+            transactionId: data.razorpay_payment_id,
+            idempotencyKey: idempotencyKeyRef.current,
+          });
+
+          if (!isMounted()) return;
+          if (confirmResponse.success && confirmResponse.data) {
+            navigateToSuccess(confirmResponse.data);
+          } else {
+            showToast({
+              message: confirmResponse.error || 'Payment received but confirmation failed. Contact support.',
+              type: 'error',
+              duration: 5000,
+            });
+          }
+        } catch (err: any) {
+          if (!isMounted()) return;
+          showToast({
+            message: 'Payment received but could not be confirmed. Please contact support.',
+            type: 'error',
+            duration: 5000,
+          });
+        }
+      })
+      .catch((error: any) => {
+        const msg = error?.description || error?.message || 'Payment failed. Please try again.';
+        showToast({ message: msg, type: 'error', duration: 4000 });
+      });
+  };
+
   const handleUpiPayment = async () => {
+    // Fallback path: Expo Go / web — cannot do real Razorpay, so we collect UPI ID
+    // and ask the user to pay manually. The backend will reject with UPI_PAYMENT_ID_MISSING
+    // if it tries to verify. Show a clear error so the user knows to use the native app.
     if (upiProcessing) return;
     setUpiError(null);
 
@@ -158,33 +231,7 @@ function PaymentScreen() {
       return;
     }
 
-    try {
-      setUpiProcessing(true);
-
-      const confirmResponse = await apiClient.post('/store-payment/confirm', {
-        paymentId: currentPaymentData.paymentId,
-        transactionId: `UPI_${Date.now()}`,
-        upiId: upiId.trim(),
-      });
-
-      if (confirmResponse.success && confirmResponse.data) {
-        if (!isMounted()) return;
-        setShowUpiModal(false);
-        if (!isMounted()) return;
-        setUpiId('');
-        setUpiError(null);
-        navigateToSuccess(confirmResponse.data);
-      } else {
-        if (!isMounted()) return;
-        setUpiError(confirmResponse.error || 'Payment failed. Please try again.');
-      }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setUpiError(err.message || 'Payment failed. Please try again.');
-    } finally {
-      if (!isMounted()) return;
-      setUpiProcessing(false);
-    }
+    setUpiError('UPI payments require the REZ native app. Please open the REZ app to complete payment.');
   };
 
   const navigateToSuccess = async (paymentResult: any) => {
