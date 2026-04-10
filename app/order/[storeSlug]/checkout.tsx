@@ -174,6 +174,7 @@ export default function CheckoutScreen() {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpResendCountdown, setOtpResendCountdown] = useState(0);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isMountedRef = useRef(true);
 
   // ── Placement ──
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -212,6 +213,7 @@ export default function CheckoutScreen() {
 
   useEffect(
     () => () => {
+      isMountedRef.current = false;
       if (countdownRef.current) clearInterval(countdownRef.current);
     },
     [],
@@ -226,6 +228,7 @@ export default function CheckoutScreen() {
     setOtpLoading(true);
     try {
       await sendWebOtp(cleaned);
+      if (!isMountedRef.current) return;
       setOtpSent(true);
       startCountdown();
     } catch (e: any) {
