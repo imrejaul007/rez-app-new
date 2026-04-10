@@ -26,6 +26,7 @@ import Animated, {
   withRepeat,
   withSequence,
   interpolate,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
@@ -102,6 +103,9 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
 
     return () => {
       StatusBar.setBarStyle('dark-content');
+      // Cancel the infinite animation to prevent "set value on cancelled animation"
+      // warnings (and potential crashes on some Reanimated versions) after unmount.
+      cancelAnimation(scanLineAnim);
     };
   }, []);
 

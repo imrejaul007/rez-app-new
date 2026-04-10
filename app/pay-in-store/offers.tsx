@@ -42,11 +42,8 @@ function OffersScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authLoading || !isAuthenticated) return;
-    loadOffers();
-  }, [storeId, amount, authLoading, isAuthenticated]);
-
+  // useFocusEffect covers the initial mount case — the standalone useEffect was
+  // causing a duplicate concurrent request every time this screen mounted.
   useFocusEffect(
     useCallback(() => {
       if (authLoading || !isAuthenticated) return;

@@ -419,6 +419,8 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
     // resets — this represents a new payment intent, not a retry.
     idempotencyKeyRef.current = `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     isSubmittingRef.current = false;
+    // Allow loadPaymentData to be called again after a reset (new payment intent).
+    hasLoadedRef.current = false;
   }, []);
 
   const clearError = useCallback(() => {
