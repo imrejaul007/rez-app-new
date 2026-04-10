@@ -557,6 +557,11 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
   // --- Empty/Loading State (no data yet) ---
   if (!walletData && !walletLoading) {
+    // If the authenticated user has not completed onboarding, their wallet has
+    // not been provisioned on the backend yet. Show a clear CTA instead of a
+    // generic error so they know what action to take.
+    const isNotOnboarded = isAuthenticated && user && !user.isOnboarded;
+
     return (
       <View style={styles.root}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
@@ -569,19 +574,37 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <View style={styles.headerRight} />
           </View>
         </LinearGradient>
-        <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
-          <Text style={styles.errorTitle}>Unable to load wallet</Text>
-          <Text style={styles.errorDetails}>Please check your connection and try again.</Text>
-          <Pressable
-            style={styles.retryButton}
-            onPress={handleRetry}
-            accessibilityLabel="Try again"
-            accessibilityRole="button"
-          >
-            <Text style={styles.retryButtonText}>Try Again</Text>
-          </Pressable>
-        </View>
+        {isNotOnboarded ? (
+          <View style={styles.errorContainer}>
+            <Ionicons name="wallet-outline" size={56} color={Colors.brand.purple} />
+            <Text style={styles.errorTitle}>Activate Your Wallet</Text>
+            <Text style={styles.errorDetails}>
+              Complete your profile to activate your wallet and start earning REZ coins.
+            </Text>
+            <Pressable
+              style={[styles.retryButton, { backgroundColor: Colors.brand.purple }]}
+              onPress={() => router.push('/onboarding/profile' as any)}
+              accessibilityLabel="Complete your profile"
+              accessibilityRole="button"
+            >
+              <Text style={styles.retryButtonText}>Complete Profile</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
+            <Text style={styles.errorTitle}>Unable to load wallet</Text>
+            <Text style={styles.errorDetails}>Please check your connection and try again.</Text>
+            <Pressable
+              style={styles.retryButton}
+              onPress={handleRetry}
+              accessibilityLabel="Try again"
+              accessibilityRole="button"
+            >
+              <Text style={styles.retryButtonText}>Try Again</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     );
   }

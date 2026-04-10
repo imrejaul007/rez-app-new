@@ -11,6 +11,7 @@
 
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import { showAlert } from '@/utils/alert';
 import apiClient from '@/services/apiClient';
 
@@ -74,8 +75,12 @@ class EarningsNotificationService {
       // Get push token (best-effort, don't block on failure)
       if (Platform.OS !== 'web') {
         try {
+          const projectId =
+            process.env.EXPO_PUBLIC_PROJECT_ID ||
+            Constants.expoConfig?.extra?.eas?.projectId ||
+            Constants.easConfig?.projectId;
           const token = await Notifications.getExpoPushTokenAsync({
-            projectId: process.env.EXPO_PUBLIC_PROJECT_ID || '58b80355-a254-4d4a-80ce-d2bc3272b144',
+            ...(projectId ? { projectId } : {}),
           });
 
           // Send token to backend to register for push notifications

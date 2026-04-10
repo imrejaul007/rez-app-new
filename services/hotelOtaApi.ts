@@ -7,10 +7,35 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 const OTA_BASE = process.env.EXPO_PUBLIC_HOTEL_OTA_URL || 'https://hotel-ota-api.onrender.com';
-const OTA_TOKEN_KEY = '@ota_access_token';
-const OTA_REFRESH_KEY = '@ota_refresh_token';
+// These keys hold OTA JWTs. Use SecureStore on native (Android Keystore / iOS Keychain)
+// and fall back to AsyncStorage on web where SecureStore is unavailable.
+const OTA_TOKEN_KEY = 'ota_access_token';
+const OTA_REFRESH_KEY = 'ota_refresh_token';
+
+async function secureGet(key: string): Promise<string | null> {
+  if (Platform.OS === 'web') return AsyncStorage.getItem(`@${key}`);
+  return SecureStore.getItemAsync(key);
+}
+
+async function secureSet(key: string, value: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    await AsyncStorage.setItem(`@${key}`, value);
+  } else {
+    await SecureStore.setItemAsync(key, value);
+  }
+}
+
+async function secureDelete(key: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    await AsyncStorage.removeItem(`@${key}`);
+  } else {
+    await SecureStore.deleteItemAsync(key);
+  }
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -94,18 +119,21 @@ export interface OtaWalletHotelBrandCoin {
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 
 export async function getOtaToken(): Promise<string | null> {
-  return AsyncStorage.getItem(OTA_TOKEN_KEY);
+  return secureGet(OTA_TOKEN_KEY);
 }
 
 export async function saveOtaTokens(accessToken: string, refreshToken: string): Promise<void> {
-  await AsyncStorage.multiSet([
-    [OTA_TOKEN_KEY, accessToken],
-    [OTA_REFRESH_KEY, refreshToken],
+  await Promise.all([
+    secureSet(OTA_TOKEN_KEY, accessToken),
+    secureSet(OTA_REFRESH_KEY, refreshToken),
   ]);
 }
 
 export async function clearOtaTokens(): Promise<void> {
-  await AsyncStorage.multiRemove([OTA_TOKEN_KEY, OTA_REFRESH_KEY]);
+  await Promise.all([
+    secureDelete(OTA_TOKEN_KEY),
+    secureDelete(OTA_REFRESH_KEY),
+  ]);
 }
 
 // ─── HTTP helper ──────────────────────────────────────────────────────────────

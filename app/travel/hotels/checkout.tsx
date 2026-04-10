@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { confirmBooking } from '@/services/hotelOtaApi';
+import { useAuth } from '@/contexts/AuthContext';
 
 const C = {
   bg: '#F8FAFC',
@@ -43,6 +44,8 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
 export default function HotelCheckoutScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { state: authState } = useAuth();
+  const authUser = authState.user;
 
   const {
     holdId,
@@ -119,7 +122,13 @@ export default function HotelCheckoutScreen() {
             amount: pgAmountPaise,
             order_id: razorpayOrderId,
             name: 'REZ Hotels',
-            prefill: { contact: '', email: '' },
+            prefill: {
+              contact: authUser?.phoneNumber || '',
+              email: authUser?.email || '',
+              name: authUser?.profile
+                ? `${authUser.profile.firstName || ''} ${authUser.profile.lastName || ''}`.trim()
+                : '',
+            },
             theme: { color: '#06B6D4' },
           };
           const payData = await RazorpayCheckout.open(options);
