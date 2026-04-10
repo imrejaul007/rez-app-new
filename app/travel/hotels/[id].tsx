@@ -195,6 +195,9 @@ export default function HotelDetailScreen() {
     if (burnDebounceRef.current) clearTimeout(burnDebounceRef.current);
     burnDebounceRef.current = setTimeout(() => {
       setBurnLoading(true);
+      const selectedRoomObj = rooms.find((r) => r.id === selectedRoom);
+      const nights = Math.max(1, Math.round((new Date(checkout).getTime() - new Date(checkin).getTime()) / 86400000));
+      const bookingValuePaise = (selectedRoomObj?.baseRatePaise ?? 0) * nights;
       checkBurnCoins({
         hotelId: id,
         roomTypeId: selectedRoom,
@@ -202,6 +205,7 @@ export default function HotelDetailScreen() {
         checkout,
         numRooms: 1,
         numGuests,
+        bookingValuePaise,
         otaCoinRequestedPaise: useOtaCoins ? 999999 : 0,
         rezCoinRequestedPaise: useRezCoins ? 999999 : 0,
         hotelBrandCoinRequestedPaise: useBrandCoins ? 999999 : 0,
@@ -332,8 +336,10 @@ export default function HotelDetailScreen() {
     ((useRezCoins ? burnResult?.rez_coin_applicable_paise : 0) ?? 0) +
     ((useBrandCoins ? burnResult?.hotel_brand_coin_applicable_paise : 0) ?? 0);
 
+  // Use pg_amount_paise from check-burn result (what user actually pays after coin discounts).
+  // Fall back to room base rate when no burn result is available.
   const effectivePay = burnResult
-    ? burnResult.effective_amount_paise
+    ? burnResult.pg_amount_paise
     : (rooms.find((r) => r.id === selectedRoom)?.baseRatePaise ?? 0);
 
   return (

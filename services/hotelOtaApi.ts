@@ -83,8 +83,10 @@ export interface OtaCheckBurnResult {
   ota_coin_applicable_paise: number;
   rez_coin_applicable_paise: number;
   hotel_brand_coin_applicable_paise: number;
-  max_discount_paise: number;
-  effective_amount_paise: number;
+  total_discount_paise: number;
+  pg_amount_paise: number;
+  ota_cap_applied?: boolean;
+  ota_cap_reason?: string;
 }
 
 export interface OtaBooking {
@@ -233,6 +235,7 @@ export async function checkBurnCoins(params: {
   checkout: string;
   numRooms: number;
   numGuests: number;
+  bookingValuePaise: number;  // total booking value = roomRatePaise × nights × numRooms
   otaCoinRequestedPaise?: number;
   rezCoinRequestedPaise?: number;
   hotelBrandCoinRequestedPaise?: number;
@@ -244,6 +247,7 @@ export async function checkBurnCoins(params: {
     checkout_date: params.checkout,
     num_rooms: params.numRooms,
     num_guests: params.numGuests,
+    booking_value_paise: params.bookingValuePaise,
     ota_coin_requested_paise: params.otaCoinRequestedPaise ?? 0,
     rez_coin_requested_paise: params.rezCoinRequestedPaise ?? 0,
     hotel_brand_coin_requested_paise: params.hotelBrandCoinRequestedPaise ?? 0,
