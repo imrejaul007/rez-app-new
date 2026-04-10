@@ -59,6 +59,7 @@ import logger, { installProductionConsoleGuard } from '@/utils/logger';
 import { colors } from '@/constants/theme';
 import { getActiveDraft } from '@/stores/checkoutDraftStore';
 import apiClient from '@/services/apiClient';
+import * as authStorage from '@/utils/authStorage';
 
 const FONT_TIMEOUT_MS = 5000;
 
@@ -135,7 +136,7 @@ function RootLayout() {
         await AsyncStorage.setItem('rez_pending_referral', params.code);
         logger.debug('[DeepLink] Stored pending referral code', { code: params.code }, 'DeepLink');
         // Attempt to auto-apply if user is already authenticated
-        const token = await AsyncStorage.getItem('rez_auth_token');
+        const token = await authStorage.getAuthToken();
         if (token) {
           try {
             await apiClient.post('/referral/apply', { code: params.code });
@@ -255,12 +256,13 @@ function RootLayout() {
     // Non-blocking: establish Hotel OTA SSO session if REZ token exists and OTA token is absent.
     // This ensures users who navigate directly to hotel screens (deep links, notifications) are pre-logged in.
     try {
-      const [rezToken, otaToken] = await AsyncStorage.multiGet(['rez_auth_token', '@ota_access_token']);
-      const hasRez = !!rezToken[1];
-      const hasOta = !!otaToken[1];
+      const rezTokenVal = await authStorage.getAuthToken();
+      const otaTokenRaw = await AsyncStorage.getItem('@ota_access_token');
+      const hasRez = !!rezTokenVal;
+      const hasOta = !!otaTokenRaw;
       if (hasRez && !hasOta) {
         const { rezSsoLogin } = await import('@/services/hotelOtaApi');
-        await rezSsoLogin(rezToken[1]!).catch(() => {
+        await rezSsoLogin(rezTokenVal!).catch(() => {
           /* Non-fatal */
         });
       }
