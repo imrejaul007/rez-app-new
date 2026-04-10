@@ -138,6 +138,7 @@ function PaymentScreen() {
   };
 
   const handleUpiPayment = async () => {
+    if (upiProcessing) return;
     setUpiError(null);
 
     if (!upiId.trim()) {

@@ -60,6 +60,7 @@ import { colors } from '@/constants/theme';
 import { getActiveDraft } from '@/stores/checkoutDraftStore';
 import apiClient from '@/services/apiClient';
 import * as authStorage from '@/utils/authStorage';
+import { lookupStoreBySlug } from '@/services/storePaymentApi';
 
 const FONT_TIMEOUT_MS = 5000;
 
@@ -128,6 +129,31 @@ function RootLayout() {
 
   const handleDeepLink = async (url: string) => {
     if (!url) return;
+
+    // 0. Universal links from menu.rez.money/<slug>[?table=N]
+    //    Pattern: https://menu.rez.money/<storeSlug>
+    const menuMatch = url.match(/https?:\/\/menu\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)(?:\?(.*))?$/i);
+    if (menuMatch) {
+      const slug = menuMatch[1].toLowerCase();
+      const queryStr = menuMatch[2] || '';
+      const tableNumber = new URLSearchParams(queryStr).get('table') || undefined;
+      const store = await lookupStoreBySlug(slug);
+      if (store) {
+        router.push({
+          pathname: '/pay-in-store/enter-amount',
+          params: {
+            storeId: (store as any)._id || (store as any).id,
+            storeName: store.name,
+            storeLogo: store.logo || '',
+            ...(tableNumber ? { tableNumber } : {}),
+          },
+        } as any);
+      } else {
+        router.push('/pay-in-store' as any);
+      }
+      return;
+    }
+
     const { path, params } = parseDeepLink(url);
 
     // 1. Referral code links: rezapp://invite?code=ABC123 or https://rez.money/invite?code=ABC123

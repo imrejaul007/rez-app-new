@@ -456,3 +456,21 @@ export const {
   getCoinBalances,
   calculatePaymentSummary,
 } = storePaymentApi;
+
+/**
+ * Lookup a store by its URL slug (e.g. from menu.rez.money/<slug>).
+ * Returns null when the store is not found or the request fails.
+ */
+export const lookupStoreBySlug = async (storeSlug: string): Promise<StorePaymentInfo | null> => {
+  try {
+    const response = await apiClient.get<{ store: StorePaymentInfo }>(
+      `${STORE_PAYMENT_BASE}/lookup-by-slug/${encodeURIComponent(storeSlug)}`
+    );
+    if (response.success && response.data) {
+      return response.data as unknown as StorePaymentInfo;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
