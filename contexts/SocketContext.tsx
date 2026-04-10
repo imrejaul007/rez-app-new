@@ -228,7 +228,16 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
           error: error instanceof Error ? error.message : 'Failed to initialize socket',
         }));
       }
-    }).catch(() => { /* silently handle */ });
+    }).catch((err: Error) => {
+      if (!cancelled) {
+        setSocketState(prev => ({
+          ...prev,
+          connected: false,
+          reconnecting: false,
+          error: err?.message ?? 'Failed to initialize socket',
+        }));
+      }
+    });
 
     // Pause/resume socket on app background/foreground (native only)
     const handleAppState = (nextAppState: AppStateStatus) => {

@@ -131,7 +131,7 @@ export const SocketEvents = {
   // Flash sale events
   FLASH_SALE_STARTED: 'flashsale:started',
   FLASH_SALE_ENDING_SOON: 'flashsale:ending_soon',
-  FLASH_SALE_ENDED: 'flashsale:ended',
+  FLASH_SALE_ENDED: 'flashsale:batch_ended',
   FLASH_SALE_STOCK_UPDATED: 'flashsale:stock_updated',
   FLASH_SALE_STOCK_LOW: 'flashsale:stock_low',
   FLASH_SALE_SOLD_OUT: 'flashsale:sold_out',
