@@ -17,6 +17,7 @@ export const OrderSocketEvents = {
   ORDER_PARTNER_ASSIGNED: 'order:partner_assigned',
   ORDER_PARTNER_ARRIVED: 'order:partner_arrived',
   ORDER_TIMELINE_UPDATED: 'order:timeline_updated',
+  ORDER_ETA_UPDATED: 'order:eta_updated',
   SUBSCRIBE_ORDER: 'subscribe:order',
   UNSUBSCRIBE_ORDER: 'unsubscribe:order',
 } as const;
@@ -271,10 +272,47 @@ export function useOrderTracking(
       }
     };
 
+    // ETA update handler
+    const handleEtaUpdate = (payload: { orderId: string; estimatedDeliveryTime?: Date; etaMinutes?: number }) => {
+      if (payload.orderId === orderId) {
+        setTrackingState(prev => ({
+          ...prev,
+          order: prev.order
+            ? {
+                ...prev.order,
+                delivery: {
+                  ...prev.order.delivery,
+                  estimatedTime: payload.estimatedDeliveryTime ?? prev.order.delivery?.estimatedTime,
+                  etaMinutes: payload.etaMinutes,
+                },
+              }
+            : prev.order,
+        }));
+      }
+    };
+
+    // Partner arrived handler
+    const handlePartnerArrived = (payload: { orderId: string; orderNumber: string; timestamp: Date }) => {
+      if (payload.orderId === orderId) {
+        setTrackingState(prev => ({
+          ...prev,
+          statusUpdate: {
+            orderId: payload.orderId,
+            orderNumber: payload.orderNumber,
+            status: 'partner_arrived',
+            message: 'Delivery partner has arrived',
+            timestamp: payload.timestamp,
+          },
+        }));
+      }
+    };
+
     // Register event listeners
     socket.on(OrderSocketEvents.ORDER_STATUS_UPDATED, handleStatusUpdate);
     socket.on(OrderSocketEvents.ORDER_LOCATION_UPDATED, handleLocationUpdate);
     socket.on(OrderSocketEvents.ORDER_PARTNER_ASSIGNED, handlePartnerAssigned);
+    socket.on(OrderSocketEvents.ORDER_PARTNER_ARRIVED, handlePartnerArrived);
+    socket.on(OrderSocketEvents.ORDER_ETA_UPDATED, handleEtaUpdate);
     socket.on(OrderSocketEvents.ORDER_TIMELINE_UPDATED, handleTimelineUpdate);
     socket.on(OrderSocketEvents.ORDER_DELIVERED, handleDelivered);
 
@@ -291,6 +329,8 @@ export function useOrderTracking(
       socket.off(OrderSocketEvents.ORDER_STATUS_UPDATED, handleStatusUpdate);
       socket.off(OrderSocketEvents.ORDER_LOCATION_UPDATED, handleLocationUpdate);
       socket.off(OrderSocketEvents.ORDER_PARTNER_ASSIGNED, handlePartnerAssigned);
+      socket.off(OrderSocketEvents.ORDER_PARTNER_ARRIVED, handlePartnerArrived);
+      socket.off(OrderSocketEvents.ORDER_ETA_UPDATED, handleEtaUpdate);
       socket.off(OrderSocketEvents.ORDER_TIMELINE_UPDATED, handleTimelineUpdate);
       socket.off(OrderSocketEvents.ORDER_DELIVERED, handleDelivered);
       socket.off(OrderSocketEvents.ORDER_CONFIRMED, handleStatusUpdate);
