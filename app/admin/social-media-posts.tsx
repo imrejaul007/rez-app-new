@@ -82,9 +82,13 @@ function AdminSocialMediaPosts() {
   const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
-    if (!isAuthenticated || authLoading) return;
+    if (authLoading) return;
+    if (!isAuthenticated || !user || user.role !== 'admin') {
+      router.replace('/');
+      return;
+    }
     loadPosts(1);
-  }, [isAuthenticated, authLoading, selectedStatus]);
+  }, [isAuthenticated, authLoading, user, selectedStatus]);
 
   const loadPosts = async (pageNum = 1) => {
     if (pageNum === 1) {

@@ -149,13 +149,17 @@ export const apiMethods = {
 export const API_ENDPOINTS = {
   // Authentication
   AUTH: {
+    // DEPRECATED: consumer auth is OTP-based; this endpoint does not exist on the consumer backend.
     LOGIN: `${ENV.ENDPOINTS.auth}/login`,
+    // DEPRECATED: consumer auth is OTP-based; this endpoint does not exist on the consumer backend.
     REGISTER: `${ENV.ENDPOINTS.auth}/register`,
     VERIFY_OTP: `${ENV.ENDPOINTS.auth}/verify-otp`,
     RESEND_OTP: `${ENV.ENDPOINTS.auth}/resend-otp`,
     LOGOUT: `${ENV.ENDPOINTS.auth}/logout`,
     REFRESH_TOKEN: `${ENV.ENDPOINTS.auth}/refresh-token`,
+    // DEPRECATED: consumer auth is OTP-based; this endpoint does not exist on the consumer backend.
     FORGOT_PASSWORD: `${ENV.ENDPOINTS.auth}/forgot-password`,
+    // DEPRECATED: consumer auth is OTP-based; this endpoint does not exist on the consumer backend.
     RESET_PASSWORD: `${ENV.ENDPOINTS.auth}/reset-password`,
   },
 

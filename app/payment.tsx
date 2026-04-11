@@ -433,6 +433,10 @@ function PaymentPage() {
       <ThemedText style={styles.stepTitle}>Choose Payment Method</ThemedText>
       <ThemedText style={styles.stepSubtitle}>Select your preferred payment method to continue</ThemedText>
 
+      {paymentMethods.length === 0 && !isLoading && (
+        <ThemedText style={styles.emptyMethodsText}>No payment methods available. Please try again later.</ThemedText>
+      )}
+
       <View style={styles.methodsGrid}>
         {paymentMethods.map((method) => {
           const methodColor = getMethodColor(method.type);
@@ -879,6 +883,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.text.tertiary,
     marginBottom: Spacing.base,
+  },
+  emptyMethodsText: {
+    ...Typography.body,
+    color: colors.text.tertiary,
+    textAlign: 'center' as const,
+    paddingVertical: Spacing.lg,
   },
   methodsGrid: {
     gap: 10,

@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import { useSocketStore } from '@/stores/socketStore';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import { getAuthToken, getUser } from '@/utils/authStorage';
+import { useAuthStore } from '@/stores/authStore';
 import {
   SocketEvents,
   SocketState,
@@ -116,6 +117,9 @@ interface SocketProviderProps {
 }
 
 export function SocketProvider({ children, config }: SocketProviderProps) {
+  // Reactive token from auth store — triggers socket reconnect when token refreshes
+  const authToken = useAuthStore((s) => s.state.token);
+
   const [socketState, setSocketState] = useState<SocketState>({
     connected: false,
     reconnecting: false,
@@ -132,13 +136,18 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
 
   // Initialize socket connection (deferred: socket.io-client loaded on demand)
   // FIXED: Properly cleanup event listeners to prevent memory leaks
+  // FIXED: Re-runs when authToken changes (token refresh every ~2min) so the socket
+  //        always carries a valid Bearer token. Cleanup disconnects the old socket first.
   useEffect(() => {
     let cancelled = false;
     const socketUrl = getSocketUrl();
     const socketConfig = { ...DEFAULT_CONFIG, ...config };
 
-    Promise.all([getIO(), getAuthToken(), getUser()]).then(([io, token, user]) => {
+    Promise.all([getIO(), getAuthToken(), getUser()]).then(([io, storageToken, user]) => {
       if (cancelled) return;
+      // Prefer the reactive authStore token (always up-to-date after refresh);
+      // fall back to the async storage value for the initial mount before the store is populated.
+      const token = authToken ?? storageToken;
       if (!token) {
         return;
       }
@@ -278,7 +287,7 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
         socketRef.current = null;
       }
     };
-  }, []); // Empty deps - only run once
+  }, [authToken]); // Re-run when token refreshes so socket auth stays current
 
   // Re-subscribe to all products, stores, and orders after reconnection
   const resubscribeAll = useCallback(() => {

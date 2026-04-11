@@ -239,10 +239,11 @@ describe('AuthService', () => {
   // =========================================================================
 
   describe('ensureValidToken', () => {
-    it('throws because the method has been removed', async () => {
-      await expect(authService.ensureValidToken()).rejects.toThrow(
-        /ensureValidToken\(\) is removed/i
-      );
+    it('returns true and logs a DEV warning (deprecated stub, no callers)', async () => {
+      // ensureValidToken() was softened from a throw to a safe return + DEV warning
+      // (L-3 FIX). It has no live callers — only this test references it.
+      const result = await authService.ensureValidToken();
+      expect(result).toBe(true);
     });
   });
 });

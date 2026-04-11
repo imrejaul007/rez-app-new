@@ -270,19 +270,8 @@ class EventAnalyticsService {
     this.eventsQueue = [];
 
     try {
-      // Try to send to backend
-      const response = await fetch(`${this.baseUrl}/events/analytics/track`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ events: eventsToFlush }),
-      });
-
-      if (!response.ok) {
-        // If backend call fails, re-queue events (with limit)
-        this.eventsQueue = [...eventsToFlush.slice(-this.BATCH_SIZE), ...this.eventsQueue].slice(-this.MAX_QUEUE_SIZE);
-      }
+      // Use apiClient so the auth token is injected automatically via the request interceptor
+      await apiClient.post('/events/analytics/track', { events: eventsToFlush });
     } catch (error) {
       // Re-queue events on error (with limit)
       this.eventsQueue = [...eventsToFlush.slice(-this.BATCH_SIZE), ...this.eventsQueue].slice(-this.MAX_QUEUE_SIZE);

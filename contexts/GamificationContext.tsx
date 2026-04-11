@@ -239,7 +239,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
   const [state, dispatch] = useReducer(gamificationReducer, initialState);
   const isAuthenticated = useIsAuthenticated();
   const isOnboarded = useIsOnboarded();
-  const { availableBalance, refreshWallet: refreshSharedWallet } = useWalletContext();
+  const { availableBalance, totalBalance, cashbackBalance, pendingRewards, refreshWallet: refreshSharedWallet } = useWalletContext();
 
   // CRITICAL: Queue for coin operations to prevent race conditions
   const coinOperationQueue = useRef<Array<() => Promise<void>>>([]);
@@ -333,21 +333,23 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       }
 
       // Update gamification coin balance from shared context
-      // Note: availableBalance comes from the WalletContext closure
+      // Note: availableBalance/totalBalance/cashbackBalance/pendingRewards come from the WalletContext closure.
+      // WalletData does not expose earned/spent/lifetime totals — those are not surfaced by the
+      // wallet API endpoint. Map what is available; leave lifetime fields as 0 (no source data).
       const coinBalance: CoinBalance = {
         total: availableBalance,
-        earned: 0,
-        spent: 0,
-        pending: 0,
-        lifetimeEarned: 0,
-        lifetimeSpent: 0,
+        earned: cashbackBalance,     // cashback accumulated = earned rewards component
+        spent: totalBalance > availableBalance ? totalBalance - availableBalance : 0, // inferred
+        pending: pendingRewards,
+        lifetimeEarned: 0,           // not available from wallet endpoint
+        lifetimeSpent: 0,            // not available from wallet endpoint
       };
 
       dispatch({ type: 'COINS_LOADED', payload: coinBalance });
     } catch (error: any) {
       // silently handle
     }
-  }, [refreshSharedWallet, availableBalance]);
+  }, [refreshSharedWallet, availableBalance, totalBalance, cashbackBalance, pendingRewards]);
 
   // Load gamification data
   const loadGamificationData = useCallback(async (forceRefresh = false) => {

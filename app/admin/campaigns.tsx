@@ -89,9 +89,13 @@ function AdminCampaigns() {
   const [expandedCampaign, setExpandedCampaign] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated || authLoading) return;
+    if (authLoading) return;
+    if (!isAuthenticated || !user || user.role !== 'admin') {
+      router.replace('/');
+      return;
+    }
     loadData();
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated, authLoading, user]);
 
   const loadData = async () => {
     setLoading(true);

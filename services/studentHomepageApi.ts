@@ -165,9 +165,8 @@ export async function getCampusTrending(campusId: string): Promise<CampusTrendin
   if (response.success && response.data?.items) {
     return response.data.items;
   }
-  // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/campus-trending is deployed.
-  console.warn('[StudentHomepage] Using placeholder data for campus-trending — backend endpoint not returning data');
-  return PLACEHOLDER_CAMPUS_TRENDING;
+  if (__DEV__) console.warn('[StudentHomepage] Backend returned no data for campus-trending — showing empty state');
+  return [];
 }
 
 /**
@@ -183,9 +182,8 @@ export async function getStudentUtilityDeals(lat: number, lng: number): Promise<
   if (response.success && response.data?.items) {
     return response.data.items;
   }
-  // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/student-utility is deployed.
-  console.warn('[StudentHomepage] Using placeholder data for student-utility — backend endpoint not returning data');
-  return PLACEHOLDER_UTILITY_DEALS;
+  if (__DEV__) console.warn('[StudentHomepage] Backend returned no data for student-utility — showing empty state');
+  return [];
 }
 
 /**
@@ -200,9 +198,8 @@ export async function getStudentMicroPacks(): Promise<StudentMicroPack[]> {
   if (response.success && response.data?.packs) {
     return response.data.packs;
   }
-  // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/student-packs is deployed.
-  console.warn('[StudentHomepage] Using placeholder data for student-packs — backend endpoint not returning data');
-  return PLACEHOLDER_MICRO_PACKS;
+  if (__DEV__) console.warn('[StudentHomepage] Backend returned no data for student-packs — showing empty state');
+  return [];
 }
 
 export default {
