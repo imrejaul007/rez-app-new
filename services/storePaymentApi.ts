@@ -175,6 +175,54 @@ const storePaymentApi = {
   },
 
   /**
+   * Get POS-only transaction history for the authenticated consumer.
+   *
+   * BUG FIX (P2-C3): Consumers who pay a POS bill at a physical store
+   * had zero visibility into that transaction — the regular `getHistory`
+   * endpoint only returns StorePayment records, not PosBill. This hits
+   * the new `/store-payment/history/pos` endpoint which returns POS
+   * bills linked to the consumer via `coinsCreditedUserId` (resolved
+   * from the phone number entered at the POS register).
+   */
+  async getPosHistory(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<PaymentHistoryResponse> {
+    try {
+      const response = await apiClient.get<PaymentHistoryApiResponse>(
+        `${STORE_PAYMENT_BASE}/history/pos`,
+        params,
+      );
+      if (!response.success || !response.data) {
+        return {
+          transactions: [],
+          pagination: {
+            page: 1,
+            limit: params?.limit || 20,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrev: false,
+          },
+        };
+      }
+      return response.data as any;
+    } catch {
+      return {
+        transactions: [],
+        pagination: {
+          page: 1,
+          limit: params?.limit || 20,
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
+      };
+    }
+  },
+
+  /**
    * Get payment transaction history
    */
   async getHistory(params?: {
