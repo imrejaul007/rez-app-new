@@ -38,7 +38,13 @@ function PaymentPage() {
   const getCurrency = useGetCurrency();
   const regionCurrency = getCurrencySymbol();
   const params = useLocalSearchParams();
-  const amount = Number(params.amount) || 5000;
+  // BUG-FIX: `Number(x) || 5000` silently defaulted to ₹5000 when deep-link
+  // passed amount=0 or any falsy number, and also when no upper-bound guard was
+  // present a crafted negative value would reach the backend.  Use an explicit
+  // finite/positive check so only valid positive values are accepted; invalid
+  // params redirect away before any API call is made.
+  const rawAmount = Number(params.amount);
+  const amount = Number.isFinite(rawAmount) && rawAmount > 0 ? rawAmount : -1;
   const currency = (params.currency as string) || 'INR';
   const fiatCurrency = (params.fiatCurrency as string) || getCurrency();
 
@@ -91,6 +97,18 @@ function PaymentPage() {
     return () => {
       pollingAbortedRef.current = true;
     };
+  }, []);
+
+  // BUG-FIX: Guard against invalid amounts arriving via deep link.
+  // Redirect immediately so no API call is made with a bad amount.
+  useEffect(() => {
+    if (amount <= 0 || amount > 1_000_000) {
+      platformAlertSimple('Invalid Amount', 'The payment amount is invalid. Please go back and try again.');
+      const t = setTimeout(() => {
+        router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
+      }, 300);
+      return () => clearTimeout(t);
+    }
   }, []);
 
   // Animation values
@@ -258,6 +276,13 @@ function PaymentPage() {
    */
   const createPaymentIntent = async (extraMetadata?: Record<string, any>): Promise<PaymentResponse | null> => {
     if (!selectedMethod) return null;
+
+    // BUG-FIX: Validate amount before sending to backend — catches negative/zero/
+    // out-of-range values that slipped past the URL-param check above.
+    const amountValidation = PaymentValidator.validateAmount(amount);
+    if (!amountValidation.isValid) {
+      throw new Error(amountValidation.errors[0] || 'Invalid payment amount');
+    }
 
     // FR-D004 FIX: map mobile-recharge to its own purpose so the backend
     // Razorpay order notes carry type='recharge' and the webhook handler
