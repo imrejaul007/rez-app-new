@@ -202,7 +202,7 @@ function PaymentPage() {
     setIsLoading(true);
     try {
       const response = await paymentService.getPaymentMethods(currency, fiatCurrency);
-      if (response.success && response.data) {
+      if (response.success && Array.isArray(response.data)) {
         // Filter out 'card' until the card payment flow is fully implemented.
         // Cards require PCI-DSS compliant tokenisation (Razorpay Cards / Stripe
         // Elements) which is not yet wired up on this screen.  Showing the

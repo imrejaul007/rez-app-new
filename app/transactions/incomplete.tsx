@@ -54,7 +54,7 @@ const IncompleteTransactionsPage = () => {
 
         if (!isMounted()) return;
 
-        if (response.success && response.data) {
+        if (response.success && response.data?.orders) {
           // Filter for incomplete orders
           const incompleteOrders = response.data.orders.filter((order: Order) =>
             INCOMPLETE_STATUSES.includes(order.status as any),

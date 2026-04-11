@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-const OTA_BASE = process.env.EXPO_PUBLIC_HOTEL_OTA_URL || 'https://hotel-ota-api.onrender.com';
+const OTA_BASE = process.env.EXPO_PUBLIC_HOTEL_OTA_URL ?? (__DEV__ ? 'http://localhost:3008' : (() => { throw new Error('[HotelOTA] EXPO_PUBLIC_HOTEL_OTA_URL is not configured'); })());
 // These keys hold OTA JWTs. Use SecureStore on native (Android Keystore / iOS Keychain)
 // and fall back to AsyncStorage on web where SecureStore is unavailable.
 const OTA_TOKEN_KEY = 'ota_access_token';

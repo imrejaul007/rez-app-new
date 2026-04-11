@@ -403,7 +403,7 @@ class EventsApiService {
         success: true,
         booking: response.data?.booking || response.data,
         payment: response.data?.payment || null,
-        message: response.message,
+        message: response.message ?? 'Booking successful',
       };
     } catch (error) {
       devLog.error('❌ [eventsApi] Error booking event:', error);

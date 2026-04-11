@@ -38,7 +38,7 @@ const DealStorePage: React.FC = () => {
       setIsLoading(true);
       const response = await campaignsApi.getExcitingDeals(20); // Get more for deal store
 
-      if (response.success && response.data && response.data.dealCategories.length > 0) {
+      if (response.success && response.data?.dealCategories?.length > 0) {
         // Remove duplicates by ID and title
         const uniqueCategories = response.data.dealCategories.filter((cat, index, self) => {
           const firstIndex = self.findIndex((c) => {

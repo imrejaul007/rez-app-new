@@ -8,7 +8,7 @@ import apiClient, { ApiResponse } from './apiClient';
  * Coin Balance from Backend (new schema)
  */
 export interface BackendCoinBalance {
-  type: 'rez' | 'promo' | 'branded';
+  type: 'rez' | 'promo' | 'branded' | 'prive';
   amount: number;
   isActive: boolean;
   color?: string;
@@ -609,7 +609,7 @@ class WalletService {
     recipientPhone?: string;
     recipientId?: string;
     amount: number;
-    coinType: 'rez' | 'promo' | 'branded';
+    coinType: 'rez' | 'promo' | 'branded' | 'prive';
     merchantId?: string;
     note?: string;
     idempotencyKey?: string;

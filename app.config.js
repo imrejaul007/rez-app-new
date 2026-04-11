@@ -49,10 +49,6 @@ module.exports = {
     scheme: 'rezapp', // Deep link scheme — must match EXPO_PUBLIC_DEEP_LINK_SCHEME=rezapp
     userInterfaceStyle: 'light',
     newArchEnabled: true,
-    notification: {
-      vapidPublicKey: process.env.EXPO_PUBLIC_VAPID_KEY,
-      serviceWorkerPath: '/expo-service-worker.js',
-    },
     ios: {
       supportsTablet: true,
       userInterfaceStyle: 'light',
@@ -66,6 +62,7 @@ module.exports = {
         NSLocationAlwaysAndWhenInUseUsageDescription: `${BRAND_NAME} needs your location to show nearby stores and offers`,
         NSMicrophoneUsageDescription: `${BRAND_NAME} needs microphone access for video features`,
         NSPhotoLibraryAddUsageDescription: `${BRAND_NAME} needs permission to save media to your photo library`,
+        NSFaceIDUsageDescription: `${BRAND_NAME} uses Face ID to securely authenticate your identity`,
       },
     },
     android: {
@@ -100,6 +97,8 @@ module.exports = {
         'android.permission.ACCESS_COARSE_LOCATION',
         'android.permission.READ_MEDIA_IMAGES',
         'android.permission.READ_MEDIA_VIDEO',
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.WRITE_EXTERNAL_STORAGE',
         'android.permission.VIBRATE',
         'android.permission.POST_NOTIFICATIONS',
       ],

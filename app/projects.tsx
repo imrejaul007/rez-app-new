@@ -192,7 +192,7 @@ function AllProjectsPage() {
             pagination: any;
           }>('/projects/my-submissions', params);
 
-          if (submissionsResponse.success && submissionsResponse.data) {
+          if (submissionsResponse.success && submissionsResponse.data?.submissions) {
             // Transform submissions to projects format
             const transformedProjects = submissionsResponse.data.submissions.map((sub: any) => ({
               _id: sub.project._id,

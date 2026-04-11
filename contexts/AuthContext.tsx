@@ -352,6 +352,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       authService.setAuthToken(response.data.tokens.accessToken);
       apiClient.setAuthToken(response.data.tokens.accessToken);
 
+      // Connect realTimeService socket now that we have a valid token.
+      // Fire-and-forget — a connection failure must not block the login flow.
+      try {
+        const { default: realTimeService } = await import('@/services/realTimeService');
+        await realTimeService.updateAuthToken(response.data.tokens.accessToken);
+      } catch {}
 
       dispatch({ type: 'AUTH_SUCCESS', payload: { user: response.data.user, token: response.data.tokens.accessToken } });
 

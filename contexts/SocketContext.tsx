@@ -34,6 +34,8 @@ import {
   FlashSaleSoldOutCallback,
   ConnectionCallback,
   ErrorCallback,
+  OrderStatusUpdateCallback,
+  OrderListUpdatedCallback,
 } from '@/types/socket.types';
 
 // Get Socket URL from environment
@@ -98,6 +100,12 @@ interface SocketContextType {
   unsubscribeFromProduct: (productId: string) => void;
   subscribeToStore: (storeId: string) => void;
   unsubscribeFromStore: (storeId: string) => void;
+
+  // Order tracking subscription methods
+  subscribeToOrder: (orderId: string, userId?: string) => void;
+  unsubscribeFromOrder: (orderId: string) => void;
+  onOrderStatusUpdate: (callback: OrderStatusUpdateCallback) => () => void;
+  onOrderListUpdated: (callback: OrderListUpdatedCallback) => () => void;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -119,6 +127,8 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
   const socketRef = useRef<Socket | null>(null);
   const subscribedProducts = useRef<Set<string>>(new Set());
   const subscribedStores = useRef<Set<string>>(new Set());
+  // Tracks orderId -> userId pairs so we can re-subscribe after reconnect
+  const subscribedOrders = useRef<Map<string, string | undefined>>(new Map());
 
   // Initialize socket connection (deferred: socket.io-client loaded on demand)
   // FIXED: Properly cleanup event listeners to prevent memory leaks
@@ -270,7 +280,7 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     };
   }, []); // Empty deps - only run once
 
-  // Re-subscribe to all products and stores after reconnection
+  // Re-subscribe to all products, stores, and orders after reconnection
   const resubscribeAll = useCallback(() => {
     if (!socketRef.current) return;
 
@@ -280,6 +290,10 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
 
     subscribedStores.current.forEach(storeId => {
       socketRef.current?.emit(SocketEvents.SUBSCRIBE_STORE, { storeId });
+    });
+
+    subscribedOrders.current.forEach((userId, orderId) => {
+      socketRef.current?.emit(SocketEvents.SUBSCRIBE_ORDER, { orderId, userId });
     });
   }, []);
 
@@ -481,6 +495,57 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     subscribedStores.current.delete(storeId);
   }, []);
 
+  // Subscribe to a specific order room for live tracking.
+  // The server validates ownership before allowing the join.
+  // We store the orderId so resubscribeAll can re-join after reconnect.
+  const subscribeToOrder = useCallback((orderId: string, userId?: string) => {
+    subscribedOrders.current.set(orderId, userId);
+    if (!socketRef.current || !socketRef.current.connected) {
+      return;
+    }
+    socketRef.current.emit(SocketEvents.SUBSCRIBE_ORDER, { orderId, userId });
+  }, []);
+
+  const unsubscribeFromOrder = useCallback((orderId: string) => {
+    subscribedOrders.current.delete(orderId);
+    if (!socketRef.current || !socketRef.current.connected) {
+      return;
+    }
+    socketRef.current.emit(SocketEvents.UNSUBSCRIBE_ORDER, { orderId });
+  }, []);
+
+  // Listen for order:status_updated events (emitted to the order-${orderId} room).
+  // Also fires for status-specific sub-events (order:confirmed, order:preparing, etc.).
+  const onOrderStatusUpdate = useCallback((callback: OrderStatusUpdateCallback) => {
+    if (!socketRef.current) return () => {};
+
+    const events = [
+      SocketEvents.ORDER_STATUS_UPDATED,
+      SocketEvents.ORDER_CONFIRMED,
+      SocketEvents.ORDER_PREPARING,
+      SocketEvents.ORDER_READY,
+      SocketEvents.ORDER_DISPATCHED,
+      SocketEvents.ORDER_OUT_FOR_DELIVERY,
+      SocketEvents.ORDER_DELIVERED,
+      SocketEvents.ORDER_CANCELLED,
+    ];
+    events.forEach(ev => socketRef.current?.on(ev, callback));
+    return () => {
+      events.forEach(ev => socketRef.current?.off(ev, callback));
+    };
+  }, []);
+
+  // Listen for order:list_updated events (emitted to the user-${userId} room).
+  // Useful for the orders list screen to update badges/statuses without a full refetch.
+  const onOrderListUpdated = useCallback((callback: OrderListUpdatedCallback) => {
+    if (!socketRef.current) return () => {};
+
+    socketRef.current.on(SocketEvents.ORDER_LIST_UPDATED, callback);
+    return () => {
+      socketRef.current?.off(SocketEvents.ORDER_LIST_UPDATED, callback);
+    };
+  }, []);
+
   // OPTIMIZED: Separate stable actions (empty deps) from volatile state so that
   // consumers who only use actions are not re-rendered on every connection change.
   const stableActions = useMemo(() => ({
@@ -504,6 +569,10 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     unsubscribeFromProduct,
     subscribeToStore,
     unsubscribeFromStore,
+    subscribeToOrder,
+    unsubscribeFromOrder,
+    onOrderStatusUpdate,
+    onOrderListUpdated,
   }), []); // all action callbacks have stable identity (empty deps on each useCallback)
 
   const contextValue: SocketContextType = useMemo(() => ({
@@ -553,6 +622,10 @@ const SOCKET_DEFAULTS: SocketContextType = {
   unsubscribeFromProduct: () => {},
   subscribeToStore: () => {},
   unsubscribeFromStore: () => {},
+  subscribeToOrder: () => {},
+  unsubscribeFromOrder: () => {},
+  onOrderStatusUpdate: () => noopUnsubscribe,
+  onOrderListUpdated: () => noopUnsubscribe,
 };
 
 // Hook — falls back to Zustand store (connection state only) for crash safety when outside Provider

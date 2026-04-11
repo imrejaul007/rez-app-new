@@ -399,7 +399,7 @@ function App() {
       setCategoriesError(null);
       const response = await storeSearchService.getStoreCategories();
 
-      if (response.success && response.data.categories) {
+      if (response.success && response.data?.categories) {
         // Map backend categories to UI store format and add currency to badges
         const mappedCategories = response.data.categories.map(mapCategoryToStore).map((store) => ({
           ...store,
