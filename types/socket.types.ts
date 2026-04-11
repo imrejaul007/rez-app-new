@@ -156,6 +156,25 @@ export const SocketEvents = {
   JOIN_CONVERSATION: 'join:conversation',
   LEAVE_CONVERSATION: 'leave:conversation',
 
+  // Order tracking events (server -> client)
+  ORDER_STATUS_UPDATED: 'order:status_updated',
+  ORDER_CONFIRMED: 'order:confirmed',
+  ORDER_PREPARING: 'order:preparing',
+  ORDER_READY: 'order:ready',
+  ORDER_DISPATCHED: 'order:dispatched',
+  ORDER_OUT_FOR_DELIVERY: 'order:out_for_delivery',
+  ORDER_DELIVERED: 'order:delivered',
+  ORDER_CANCELLED: 'order:cancelled',
+  ORDER_LOCATION_UPDATED: 'order:location_updated',
+  ORDER_PARTNER_ASSIGNED: 'order:partner_assigned',
+  ORDER_PARTNER_ARRIVED: 'order:partner_arrived',
+  ORDER_TIMELINE_UPDATED: 'order:timeline_updated',
+  ORDER_ETA_UPDATED: 'order:eta_updated',
+  ORDER_LIST_UPDATED: 'order:list_updated',
+  // Order subscription events (client -> server)
+  SUBSCRIBE_ORDER: 'subscribe:order',
+  UNSUBSCRIBE_ORDER: 'unsubscribe:order',
+
   // Leaderboard events
   LEADERBOARD_UPDATE: 'leaderboard:update',
   LEADERBOARD_USER_SCORED: 'leaderboard:user_scored',
@@ -194,6 +213,27 @@ export interface SubscriptionOptions {
   storeId?: string;
 }
 
+// Order socket event payload types
+export interface OrderStatusUpdatePayload {
+  orderId: string;
+  orderNumber: string;
+  status: string;
+  previousStatus?: string;
+  message: string;
+  timestamp: Date;
+  estimatedDeliveryTime?: Date;
+  metadata?: any;
+}
+
+export interface OrderListUpdatedPayload {
+  orderId: string;
+  orderNumber: string;
+  newStatus: string;
+  previousStatus?: string;
+  counts?: { active: number; past: number };
+  timestamp: Date;
+}
+
 // Callback types for event listeners
 export type StockUpdateCallback = (payload: StockUpdatePayload) => void;
 export type LowStockCallback = (payload: LowStockPayload) => void;
@@ -202,6 +242,8 @@ export type PriceUpdateCallback = (payload: PriceUpdatePayload) => void;
 export type ProductAvailabilityCallback = (payload: ProductAvailabilityPayload) => void;
 export type ConnectionCallback = () => void;
 export type ErrorCallback = (error: Error) => void;
+export type OrderStatusUpdateCallback = (payload: OrderStatusUpdatePayload) => void;
+export type OrderListUpdatedCallback = (payload: OrderListUpdatedPayload) => void;
 
 // Flash sale callback types
 export type FlashSaleStartedCallback = (payload: FlashSaleStartedPayload) => void;
