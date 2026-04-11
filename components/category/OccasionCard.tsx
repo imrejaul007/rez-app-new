@@ -52,7 +52,7 @@ const OccasionCard: React.FC<OccasionCardProps> = ({ occasion, onPress }) => {
         )}
 
         {/* Icon */}
-        <View style={[styles.iconContainer, { backgroundColor: occasion.color + '30' || undefined }]}>
+        <View style={[styles.iconContainer, { backgroundColor: occasion.color ? `${occasion.color}30` : '#F3F4F6' }]}>
           <Text style={styles.icon}>{occasion.icon}</Text>
         </View>
 

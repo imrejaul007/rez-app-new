@@ -15,7 +15,8 @@ export interface Offer {
   description?: string;
   image: string;
   category: 'mega' | 'student' | 'new_arrival' | 'trending' | 'food' | 'fashion' | 'electronics' | 'general';
-  type: 'cashback' | 'discount' | 'voucher' | 'combo' | 'special';
+  // 'walk_in' is the backend default — must match merchantroutes/offers.ts createOfferSchema
+  type: 'cashback' | 'discount' | 'voucher' | 'combo' | 'special' | 'walk_in';
   cashbackPercentage: number;
   originalPrice?: number;
   discountedPrice?: number;

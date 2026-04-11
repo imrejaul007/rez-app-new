@@ -1,6 +1,11 @@
 /**
- * API Client Configuration
- * Configures axios instance with environment variables
+ * API Client Configuration (DEAD CODE — NOT IMPORTED ANYWHERE)
+ *
+ * This file is NOT used by the app. The active API client is services/apiClient.ts
+ * (fetch-based singleton). axios is not installed in this project, so this file
+ * would crash the Metro bundler if imported. Do NOT import this file.
+ *
+ * Kept as reference only — delete when no longer needed.
  */
 
 // @ts-ignore axios is an optional peer dependency not installed in this project

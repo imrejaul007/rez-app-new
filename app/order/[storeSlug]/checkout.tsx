@@ -26,6 +26,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RazorpayCheckout from 'react-native-razorpay';
 import { sendWebOtp, verifyWebOtp, createWebOrder, verifyWebPayment, CartItem } from '@/services/webOrderingApi';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import financeApi, { ContextualOffer } from '@/services/financeApi';
@@ -146,21 +148,10 @@ export default function CheckoutScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<any>();
 
-  const cart: CartItem[] = React.useMemo(() => {
-    try {
-      return JSON.parse(params.cartJson || '[]');
-    } catch {
-      return [];
-    }
-  }, [params.cartJson]);
-
-  const store: StoreInfo | null = React.useMemo(() => {
-    try {
-      return JSON.parse(params.storeJson || 'null');
-    } catch {
-      return null;
-    }
-  }, [params.storeJson]);
+  // Cart and store are loaded from AsyncStorage on mount to avoid URL length
+  // limits that can corrupt large carts with long customisation strings (P3-12).
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [store, setStore] = useState<StoreInfo | null>(null);
 
   // ── Customer fields ──
   const [name, setName] = useState('');
@@ -175,6 +166,31 @@ export default function CheckoutScreen() {
   const [otpResendCountdown, setOtpResendCountdown] = useState(0);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isMountedRef = useRef(true);
+
+  // Load cart and store from AsyncStorage written by the menu screen.
+  useEffect(() => {
+    const slug = params.storeSlug as string;
+    if (!slug) return;
+    Promise.all([AsyncStorage.getItem(`web_order_cart_${slug}`), AsyncStorage.getItem(`web_order_store_${slug}`)]).then(
+      ([cartData, storeData]) => {
+        if (!isMountedRef.current) return;
+        if (cartData) {
+          try {
+            setCart(JSON.parse(cartData));
+          } catch {
+            /* malformed — leave empty */
+          }
+        }
+        if (storeData) {
+          try {
+            setStore(JSON.parse(storeData));
+          } catch {
+            /* malformed — leave null */
+          }
+        }
+      },
+    );
+  }, [params.storeSlug]);
 
   // ── Placement ──
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -302,14 +318,39 @@ export default function CheckoutScreen() {
           'Cancel',
         );
       } else {
-        // PRODUCTION: Real Razorpay integration required here.
-        // Use react-native-razorpay or Razorpay Web Checkout via WebBrowser.
-        // Pass orderData.razorpay options to the Razorpay SDK and call
-        // verifyWebPayment() with the returned payment credentials.
-        platformAlertSimple(
-          'Payment Unavailable',
-          'Online payment is not yet configured for this platform. Please contact support or pay at the counter.',
-        );
+        // Production Razorpay payment
+        try {
+          const razorpayData = await RazorpayCheckout.open({
+            key: orderData.razorpay.keyId,
+            amount: orderData.razorpay.amount, // already in paise from backend
+            currency: orderData.razorpay.currency,
+            order_id: orderData.razorpay.orderId,
+            name: 'REZ',
+            description: `Order #${orderData.orderNumber}`,
+            prefill: { name: name.trim() },
+            theme: { color: '#16C266' },
+          });
+          // Verify payment signature with backend
+          await verifyWebPayment({
+            orderNumber: orderData.orderNumber,
+            razorpay_order_id: razorpayData.razorpay_order_id,
+            razorpay_payment_id: razorpayData.razorpay_payment_id,
+            razorpay_signature: razorpayData.razorpay_signature,
+          });
+          router.replace({
+            pathname: '/order/[storeSlug]/confirmation',
+            params: { storeSlug: store.slug, orderNumber: orderData.orderNumber },
+          });
+        } catch (paymentErr: any) {
+          // User cancelled — don't show an error, just let them retry
+          if (paymentErr?.code === 0 || paymentErr?.description === 'Payment cancelled by user.') {
+            return; // Silent cancel
+          }
+          platformAlertSimple(
+            'Payment Failed',
+            paymentErr?.description || paymentErr?.message || 'Payment could not be completed. Please try again.',
+          );
+        }
       }
     } catch (e: any) {
       platformAlertSimple('Order Failed', e.message || 'Could not place order. Try again.');

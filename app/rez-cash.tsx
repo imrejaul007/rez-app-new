@@ -47,10 +47,13 @@ function fmt(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
 }
 
+// Only bank transfer is implemented; other voucher options are coming soon.
+// Setting available: false renders the disabled "Soon" badge and prevents misleading
+// "will be available shortly" alerts on press for unimplemented options.
 const VOUCHER_OPTIONS = [
-  { id: 'amazon', label: 'Amazon Pay', icon: 'cart-outline', color: '#FF9900', available: true },
-  { id: 'flipkart', label: 'Flipkart', icon: 'storefront-outline', color: '#2874F0', available: true },
-  { id: 'zomato', label: 'Zomato Credits', icon: 'restaurant-outline', color: '#E23744', available: true },
+  { id: 'amazon', label: 'Amazon Pay', icon: 'cart-outline', color: '#FF9900', available: false },
+  { id: 'flipkart', label: 'Flipkart', icon: 'storefront-outline', color: '#2874F0', available: false },
+  { id: 'zomato', label: 'Zomato Credits', icon: 'restaurant-outline', color: '#E23744', available: false },
   { id: 'bank', label: 'Bank Transfer', icon: 'business-outline', color: '#10B981', available: true },
 ];
 

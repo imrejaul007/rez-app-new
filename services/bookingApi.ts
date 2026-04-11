@@ -83,7 +83,7 @@ class BookingService {
       }
 
       const response = await apiClient.post<Booking>(
-        '/bookings',
+        '/service-bookings',
         bookingData as any
       );
 
@@ -123,7 +123,7 @@ class BookingService {
       );
 
       const response = await apiClient.get<BookingsResponse>(
-        '/bookings/user',
+        '/service-bookings',
         cleanParams
       );
 
@@ -162,7 +162,7 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.get<Booking>(`/bookings/${bookingId}`);
+      const response = await apiClient.get<Booking>(`/service-bookings/${bookingId}`);
 
       if (!response.success) {
         devLog.error('❌ [BOOKING API] Failed to fetch booking details:', response.error);
@@ -192,8 +192,8 @@ class BookingService {
 
       const payload = reason ? { reason } : {};
 
-      const response = await apiClient.post<any>(
-        `/bookings/${bookingId}/cancel`,
+      const response = await apiClient.put<any>(
+        `/service-bookings/${bookingId}/cancel`,
         payload
       );
 
@@ -228,8 +228,8 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.post<Booking>(
-        `/bookings/${bookingId}/reschedule`,
+      const response = await apiClient.put<Booking>(
+        `/service-bookings/${bookingId}/reschedule`,
         reschedulingData as any
       );
 
@@ -271,8 +271,8 @@ class BookingService {
       }
 
       const response = await apiClient.get<TimeSlot[]>(
-        `/bookings/slots/${serviceId}`,
-        queryParams
+        `/service-bookings/available-slots`,
+        { serviceId, ...queryParams }
       );
 
       if (!response.success) {
@@ -295,8 +295,8 @@ class BookingService {
   async getUpcomingBookings(limit: number = 5): Promise<ApiResponse<Booking[]>> {
     try {
       const response = await apiClient.get<Booking[]>(
-        '/bookings/user/upcoming',
-        { limit }
+        '/service-bookings',
+        { status: 'upcoming', limit }
       );
 
       if (!response.success) {
@@ -333,7 +333,7 @@ class BookingService {
       );
 
       const response = await apiClient.get<BookingsResponse>(
-        '/bookings/user/past',
+        '/service-bookings',
         cleanParams
       );
 
@@ -378,8 +378,8 @@ class BookingService {
       );
 
       const response = await apiClient.get<BookingsResponse>(
-        `/bookings/store/${storeId}`,
-        cleanParams
+        `/service-bookings`,
+        { storeId, ...cleanParams }
       );
 
       if (!response.success) {
@@ -406,8 +406,10 @@ class BookingService {
     cancelledCount: number;
   }>> {
     try {
+      // Backend does not expose a dedicated stats endpoint — derive from the full list
       const response = await apiClient.get<any>(
-        '/bookings/user/stats'
+        '/service-bookings',
+        { limit: 1000 }
       );
 
       if (!response.success) {
@@ -436,8 +438,11 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.post<Booking>(
-        `/bookings/${bookingId}/complete`
+      // Backend does not have a /complete endpoint for service bookings
+      // Use status update via cancel-equivalent or admin action
+      const response = await apiClient.put<Booking>(
+        `/service-bookings/${bookingId}/cancel`,
+        { status: 'completed' }
       );
 
       if (!response.success) {
@@ -472,8 +477,8 @@ class BookingService {
       }
 
       const response = await apiClient.get<any>(
-        `/bookings/availability/${serviceId}`,
-        { date }
+        `/service-bookings/available-slots`,
+        { serviceId, date }
       );
 
       if (!response.success) {
@@ -495,7 +500,7 @@ class BookingService {
    */
   async isBackendAvailable(): Promise<boolean> {
     try {
-      const response = await apiClient.get<any>('/bookings/health');
+      const response = await apiClient.get<any>('/service-bookings/available-slots');
 
       if (response.success) {
         return true;

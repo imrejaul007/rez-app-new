@@ -65,10 +65,14 @@ export interface WalletBalanceResponse {
   breakdown: {
     // API returns breakdown.rezCoins as an object with amount
     rezCoins: { amount: number; color: string; expiryDate?: string };
-    // API returns cashback as breakdown.cashback (not cashbackBalance)
+    // Backend sends breakdown.cashbackBalance (walletBalanceController line ~273).
+    // breakdown.cashback is NOT sent — cashback lives under balance.cashback (legacy field).
+    // Both variants kept optional so useWallet.ts fallback chain can handle either shape.
     cashback?: number;
     cashbackBalance?: number;
-    // API returns pending as breakdown.pending (not pendingRewards)
+    // Backend sends breakdown.pendingRewards (walletBalanceController line ~275).
+    // breakdown.pending is NOT sent — pending lives under balance.pending (legacy field).
+    // Both variants kept optional so useWallet.ts fallback chain can handle either shape.
     pending?: number;
     pendingRewards?: number;
   };
