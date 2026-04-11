@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use ordersApi.ts instead. This file is only kept for
+ * app/orders/[orderId]/tracking.tsx which should be migrated.
+ * Marked: 2026-04-11
+ */
+
 // Order API Service
 // API service for order-related operations
 

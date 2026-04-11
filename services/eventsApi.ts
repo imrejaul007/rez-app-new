@@ -215,45 +215,33 @@ class EventsApiService {
 
   /**
    * Get all events with filters
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient so the 401-refresh-logout
+   * interceptor fires on token expiry rather than silently failing.
    */
   async getEvents(filters: EventFilters = {}, limit = 20, offset = 0): Promise<EventSearchResult> {
     try {
-      const queryParams = new URLSearchParams();
-      
-      // Add filters to query params
+      const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, value.toString());
+          params[key] = value as string | number | boolean;
         }
       });
-      
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
 
-      const response = await fetch(`${this.baseUrl}/events?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>('/events', params);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch events');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        // Transform backend events to frontend format
-        const events = data.data.events.map(this.transformEventToFrontend);
-        
-        return {
-          events,
-          total: data.data.total,
-          hasMore: data.data.hasMore,
-          suggestions: data.data.suggestions
-        };
-      } else {
-        throw new Error(data.message || 'Failed to fetch events');
-      }
+      const events = response.data.events.map(this.transformEventToFrontend);
+
+      return {
+        events,
+        total: response.data.total,
+        hasMore: response.data.hasMore,
+        suggestions: response.data.suggestions,
+      };
     } catch (error) {
       devLog.error('❌ Error fetching events:', error);
       throw error;
@@ -262,28 +250,22 @@ class EventsApiService {
 
   /**
    * Get event by ID
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getEventById(id: string): Promise<EventItem | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/events/${id}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>(`/events/${id}`);
 
-      if (!response.ok) {
-        if (response.status === 404) {
+      if (!response.success) {
+        const errStr = (response.error || '').toLowerCase();
+        if (errStr.includes('404') || errStr.includes('not found')) {
           return null;
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(response.error || 'Failed to fetch event');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        return this.transformEventToFrontend(data.data);
-      } else {
-        throw new Error(data.message || 'Failed to fetch event');
-      }
+      return this.transformEventToFrontend(response.data);
     } catch (error) {
       devLog.error('❌ Error fetching event:', error);
       throw error;
@@ -294,51 +276,45 @@ class EventsApiService {
    * Get events by category
    * Maps frontend display categories (movies, concerts, etc.) to backend categories (Entertainment, Music, etc.)
    * Also sends the original category as a tag filter for more specific results
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getEventsByCategory(category: string, limit = 20, offset = 0, dateFilter?: string): Promise<EventSearchResult> {
     try {
       // Map frontend category to backend category
       const backendCategory = mapCategoryToBackend(category);
       const originalCategory = category.toLowerCase();
-      devLog.log(`📂 [eventsApi] Mapping category: ${category} -> ${backendCategory}, filtering by tag: ${originalCategory}`);
+      devLog.log(`[eventsApi] Mapping category: ${category} -> ${backendCategory}, filtering by tag: ${originalCategory}`);
 
-      const queryParams = new URLSearchParams();
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
+      const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
 
       // Add date filter if specified
       if (dateFilter && dateFilter !== 'all') {
-        queryParams.append('dateFilter', dateFilter);
+        params.dateFilter = dateFilter;
       }
 
       // Add the original category as a tag filter for more specific results
       // This ensures "movies" shows only movies, not all Entertainment events
       if (backendCategory !== originalCategory && CATEGORY_MAP[originalCategory]) {
-        queryParams.append('tags', originalCategory);
+        params.tags = originalCategory;
       }
 
-      const response = await fetch(`${this.baseUrl}/events/category/${encodeURIComponent(backendCategory)}?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>(
+        `/events/category/${encodeURIComponent(backendCategory)}`,
+        params,
+      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch events by category');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        const events = data.data.events.map(this.transformEventToFrontend);
-        
-        return {
-          events,
-          total: data.data.total,
-          hasMore: data.data.hasMore
-        };
-      } else {
-        throw new Error(data.message || 'Failed to fetch events by category');
-      }
+      const events = response.data.events.map(this.transformEventToFrontend);
+
+      return {
+        events,
+        total: response.data.total,
+        hasMore: response.data.hasMore,
+      };
     } catch (error) {
       devLog.error('❌ Error fetching events by category:', error);
       throw error;
@@ -347,46 +323,34 @@ class EventsApiService {
 
   /**
    * Search events
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async searchEvents(query: string, filters: EventFilters = {}, limit = 20, offset = 0): Promise<EventSearchResult> {
     try {
+      const params: Record<string, string | number | boolean | undefined | null> = { q: query, limit, offset };
 
-      const queryParams = new URLSearchParams();
-      queryParams.append('q', query);
-      
       // Add additional filters
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, value.toString());
+          params[key] = value as string | number | boolean;
         }
       });
-      
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
 
-      const response = await fetch(`${this.baseUrl}/events/search?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>('/events/search', params);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to search events');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        const events = data.data.events.map(this.transformEventToFrontend);
-        
-        return {
-          events,
-          total: data.data.total,
-          hasMore: data.data.hasMore,
-          suggestions: data.data.suggestions
-        };
-      } else {
-        throw new Error(data.message || 'Failed to search events');
-      }
+      const events = response.data.events.map(this.transformEventToFrontend);
+
+      return {
+        events,
+        total: response.data.total,
+        hasMore: response.data.hasMore,
+        suggestions: response.data.suggestions,
+      };
     } catch (error) {
       devLog.error('❌ Error searching events:', error);
       throw error;
@@ -395,30 +359,23 @@ class EventsApiService {
 
   /**
    * Get featured events for homepage
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getFeaturedEvents(limit = 10): Promise<EventItem[]> {
     try {
+      const response = await apiClient.get<any>('/events/featured', { limit });
 
-      const response = await fetch(`${this.baseUrl}/events/featured?limit=${limit}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch featured events');
       }
 
-      const data = await response.json();
+      // Handle both response shapes: data (array) or data.events (object)
+      const rawEvents = Array.isArray(response.data)
+        ? response.data
+        : (response.data?.events || response.data?.results || []);
 
-      if (data.success) {
-        // Handle both response shapes: data.data (array) or data.data.events (object)
-        const rawEvents = Array.isArray(data.data)
-          ? data.data
-          : (data.data?.events || data.data?.results || []);
-        return rawEvents.map(this.transformEventToFrontend);
-      } else {
-        throw new Error(data.message || 'Failed to fetch featured events');
-      }
+      return rawEvents.map(this.transformEventToFrontend);
     } catch (error) {
       devLog.error('❌ Error fetching featured events:', error);
       throw error;

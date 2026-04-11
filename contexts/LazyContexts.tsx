@@ -1,4 +1,10 @@
 /**
+ * @deprecated This file is unused. All exports are dead code.
+ * Safe to delete once confirmed no external references.
+ * Marked: 2026-04-11
+ */
+
+/**
  * Lazy Context Initialization
  *
  * Defer loading of non-critical contexts to reduce initial bundle size

@@ -247,11 +247,17 @@ function PaymentSuccessPage() {
         if (fetchedOrders.length > 0 && !rewardPopupShownRef.current) {
           rewardPopupShownRef.current = true;
           const totalCashback = fetchedOrders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
+          // Coins are only awarded at delivery, not at order creation.
+          // rewards.coinsEarned will be 0 or absent at this point — use cashback
+          // estimate to determine if coins are pending, and show a pending message
+          // instead of a false "0 coins earned" celebration.
           const totalCoinsEarned: number = fetchedOrders.reduce(
             (s, o) => s + ((o as any).rewards?.coinsEarned ?? 0),
             0,
           );
-          // Phase 1.6: surface coin total for PostPaymentSummary section
+          // Phase 1.6: surface coin total for PostPaymentSummary section.
+          // If coinsEarned is populated (awarded immediately), show it. Otherwise
+          // the PostPaymentSummary will show the pending delivery message.
           if (totalCoinsEarned > 0) setTotalCoinsEarnedForSummary(totalCoinsEarned);
           setTimeout(async () => {
             if (!isMounted()) return;
@@ -767,18 +773,39 @@ function PaymentSuccessPage() {
               <ThemedText style={styles.homeButtonText}>Back to Home</ThemedText>
             </Pressable>
           </View>
-          {/* Phase 1.6: Post-payment summary — shown when coins were earned */}
-          {totalCoinsEarnedForSummary > 0 && (
-            <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
-              <PostPaymentSummary
-                coinsEarned={totalCoinsEarnedForSummary}
-                newBalance={0}
-                lifetimeSavings={orders.reduce((s, o) => s + (o.totals?.cashback || 0), 0)}
-                streakDays={0}
-                nextMilestone="Keep shopping to level up!"
-              />
-            </View>
-          )}
+          {/* Phase 1.6: Post-payment summary — shown when coins were earned or are pending */}
+          {(() => {
+            const pendingCashback = orders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
+            if (totalCoinsEarnedForSummary > 0) {
+              return (
+                <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+                  <PostPaymentSummary
+                    coinsEarned={totalCoinsEarnedForSummary}
+                    newBalance={0}
+                    lifetimeSavings={pendingCashback}
+                    streakDays={0}
+                    nextMilestone="Keep shopping to level up!"
+                  />
+                </View>
+              );
+            }
+            if (pendingCashback > 0) {
+              // Coins are only credited when your order is delivered — show pending state
+              return (
+                <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+                  <PostPaymentSummary
+                    coinsEarned={0}
+                    newBalance={0}
+                    lifetimeSavings={pendingCashback}
+                    streakDays={0}
+                    nextMilestone="Coins will be credited when your order is delivered"
+                    coinsPending
+                  />
+                </View>
+              );
+            }
+            return null;
+          })()}
         </View>
       </ScrollView>
     </View>

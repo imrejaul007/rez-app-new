@@ -4,8 +4,12 @@
  * Provides campus-specific and student-targeted data for homepage sections.
  * All endpoints are student-persona scoped.
  *
- * TODO: Replace placeholder data with real API calls once backend endpoints
- * are live (Agents 1 & 4).
+ * Backend endpoints exist in personaHomepageRoutes.ts:
+ *   GET /api/homepage/campus-trending
+ *   GET /api/homepage/student-utility
+ *   GET /api/homepage/student-packs
+ * Each function calls the real endpoint and falls back to placeholder data
+ * when the backend returns an error or empty response.
  */
 
 import apiClient from './apiClient';
@@ -162,6 +166,7 @@ export async function getCampusTrending(campusId: string): Promise<CampusTrendin
     return response.data.items;
   }
   // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/campus-trending is deployed.
+  console.warn('[StudentHomepage] Using placeholder data for campus-trending — backend endpoint not returning data');
   return PLACEHOLDER_CAMPUS_TRENDING;
 }
 
@@ -179,6 +184,7 @@ export async function getStudentUtilityDeals(lat: number, lng: number): Promise<
     return response.data.items;
   }
   // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/student-utility is deployed.
+  console.warn('[StudentHomepage] Using placeholder data for student-utility — backend endpoint not returning data');
   return PLACEHOLDER_UTILITY_DEALS;
 }
 
@@ -195,6 +201,7 @@ export async function getStudentMicroPacks(): Promise<StudentMicroPack[]> {
     return response.data.packs;
   }
   // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/student-packs is deployed.
+  console.warn('[StudentHomepage] Using placeholder data for student-packs — backend endpoint not returning data');
   return PLACEHOLDER_MICRO_PACKS;
 }
 

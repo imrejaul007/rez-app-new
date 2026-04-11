@@ -35,8 +35,8 @@ const SECTION_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 const ENDPOINTS = {
   HOMEPAGE: '/homepage',
   SECTION: (id: string) => `/homepage/sections/${id}`,
-  ANALYTICS: '/analytics/homepage',
-  USER_PREFERENCES: '/users/preferences',
+  ANALYTICS: '/analytics/homepage', // TODO: backend endpoint not yet implemented
+  USER_PREFERENCES: '/user-settings/preferences',
 } as const;
 
 // Custom API Error class

@@ -919,6 +919,7 @@ class WalletService {
    * getConversionRate
    * GET /wallet/conversion-rate
    * Returns the live coin-to-rupee rate from the backend.
+   * Backend endpoint created - see rezbackend walletRoutes.ts
    */
   async getConversionRate(): Promise<{ coinToRupeeRate: number } | null> {
     try {

@@ -6,7 +6,6 @@ import { FILE_SIZE_LIMITS, UPLOAD_TIMEOUTS, formatFileSize } from '@/utils/fileU
 import { getAuthToken } from '@/utils/authStorage';
 import apiClient from './apiClient';
 
-const API_URL = apiClient.getBaseURL();
 const UPLOAD_TIMEOUT = UPLOAD_TIMEOUTS.IMAGE; // Use centralized timeout
 
 interface UploadResult {
@@ -62,33 +61,19 @@ export const uploadProfileImage = async (imageUri: string, token?: string): Prom
       } as any);
     }
 
-    
-    // Create AbortController for timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, UPLOAD_TIMEOUT);
 
-    const response = await fetch(`${API_URL}/user/auth/upload-avatar`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        // Don't set Content-Type, let browser/fetch set it with boundary
-      },
-      body: formData,
-      signal: controller.signal,
-    });
+    const data = await apiClient.post<{ profile?: { avatar?: string }; avatar?: string }>(
+      '/user/auth/upload-avatar',
+      formData,
+      { timeout: UPLOAD_TIMEOUT }
+    );
 
-    clearTimeout(timeoutId);
-    
     const uploadTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
-    const data = await response.json();
-
-    if (!response.ok) {
+    if (!data.success) {
       return {
         success: false,
-        error: data.message || 'Upload failed'
+        error: (data as any).message || 'Upload failed'
       };
     }
 

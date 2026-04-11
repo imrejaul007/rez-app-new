@@ -37,7 +37,7 @@ class ProfileService {
   async getProfile(): Promise<ApiResponse<ProfileData>> {
     try {
       return await withRetry(
-        () => apiClient.get<ProfileData>('/user/auth/profile'),
+        () => apiClient.get<ProfileData>('/user/profile'),
         { maxRetries: 3 }
       );
     } catch (error: any) {
@@ -51,7 +51,7 @@ class ProfileService {
   async updateProfile(updates: Partial<ProfileData>): Promise<ApiResponse<ProfileData>> {
     try {
       return await withRetry(
-        () => apiClient.put<ProfileData>('/user/auth/update-profile', updates),
+        () => apiClient.put<ProfileData>('/user/profile', updates),
         { maxRetries: 3 }
       );
     } catch (error: any) {
@@ -65,7 +65,7 @@ class ProfileService {
   async getProfileCompletion(): Promise<ApiResponse<ProfileCompletionStatus>> {
     try {
       return await withRetry(
-        () => apiClient.get<ProfileCompletionStatus>('/user/auth/profile'),
+        () => apiClient.get<ProfileCompletionStatus>('/user/profile'),
         { maxRetries: 3 }
       );
     } catch (error: any) {
@@ -86,7 +86,7 @@ class ProfileService {
       } as any);
 
       return await withRetry(
-        () => apiClient.post<{ profilePicture: string }>('/user/auth/profile/picture', formData),
+        () => apiClient.post<{ profilePicture: string }>('/user/profile/picture', formData),
         { maxRetries: 3 }
       );
     } catch (error: any) {
@@ -100,7 +100,7 @@ class ProfileService {
   async deleteProfilePicture(): Promise<ApiResponse<{ success: boolean }>> {
     try {
       return await withRetry(
-        () => apiClient.delete<{ success: boolean }>('/user/auth/profile/picture'),
+        () => apiClient.delete<{ success: boolean }>('/user/profile/picture'),
         { maxRetries: 3 }
       );
     } catch (error: any) {
@@ -118,7 +118,7 @@ class ProfileService {
   }): Promise<ApiResponse<{ verificationStatus: 'pending' | 'approved' | 'rejected' }>> {
     try {
       return await withRetry(
-        () => apiClient.post<{ verificationStatus: 'pending' | 'approved' | 'rejected' }>('/user/auth/profile/verify', verificationData),
+        () => apiClient.post<{ verificationStatus: 'pending' | 'approved' | 'rejected' }>('/user/profile/verify', verificationData),
         { maxRetries: 3 }
       );
     } catch (error: any) {

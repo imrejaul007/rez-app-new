@@ -1,3 +1,11 @@
+/**
+ * @deprecated Superseded by realOffersApi.ts for most use cases.
+ * Only hooks/useStorePromotions.ts still imports this file (via getStorePromotions,
+ * which has no equivalent in realOffersApi yet). Migrate getStorePromotions to
+ * realOffersApi.ts and delete this file once done.
+ * Marked: 2026-04-11
+ */
+
 // Offers API Service
 // Handles offer operations, search, filtering, favorites, and redemption
 // Enhanced with comprehensive error handling, validation, retry logic, and logging
