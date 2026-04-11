@@ -154,6 +154,39 @@ function RootLayout() {
       return;
     }
 
+    // 0b. Universal links from now.rez.money/<slug>[?table=N&scan=1]
+    //     Without ?table= → Scan & Pay in-app
+    //     With ?table=N   → Order & Pay, let browser handle it (don't intercept)
+    const nowMatch = url.match(/https?:\/\/now\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)(?:\?(.*))?$/i);
+    if (nowMatch) {
+      const slug = nowMatch[1].toLowerCase();
+      const queryStr = nowMatch[2] || '';
+      const urlParams = new URLSearchParams(queryStr);
+      const tableNumber = urlParams.get('table') || undefined;
+      const scanMode = urlParams.get('scan');
+
+      // If table= is set (Order & Pay dine-in), don't intercept — open in browser
+      if (tableNumber && !scanMode) {
+        return;
+      }
+
+      // Scan & Pay — route to pay-in-store screen
+      const store = await lookupStoreBySlug(slug);
+      if (store) {
+        router.push({
+          pathname: '/pay-in-store/enter-amount',
+          params: {
+            storeId: (store as any)._id || (store as any).id,
+            storeName: store.name,
+            storeLogo: store.logo || '',
+          },
+        } as any);
+      } else {
+        router.push('/pay-in-store' as any);
+      }
+      return;
+    }
+
     const { path, params } = parseDeepLink(url);
 
     // 1. Referral code links: rezapp://invite?code=ABC123 or https://rez.money/invite?code=ABC123

@@ -54,7 +54,7 @@ module.exports = {
       userInterfaceStyle: 'light',
       bundleIdentifier: 'money.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
-      associatedDomains: ['applinks:rezapp.in', 'applinks:menu.rez.money'],
+      associatedDomains: ['applinks:rezapp.in', 'applinks:menu.rez.money', 'applinks:now.rez.money'],
       infoPlist: {
         NSCameraUsageDescription: `${BRAND_NAME} needs camera access to scan QR codes for store payments`,
         NSLocationWhenInUseUsageDescription: `${BRAND_NAME} needs your location to show nearby stores and offers`,
@@ -86,6 +86,12 @@ module.exports = {
           action: 'VIEW',
           autoVerify: true,
           data: [{ scheme: 'https', host: 'menu.rez.money', pathPrefix: '/' }],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [{ scheme: 'https', host: 'now.rez.money', pathPrefix: '/' }],
           category: ['BROWSABLE', 'DEFAULT'],
         },
       ],
