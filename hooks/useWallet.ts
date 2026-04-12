@@ -10,6 +10,7 @@ import {
 } from '@/types/wallet';
 import walletApi from '@/services/walletApi';
 import { BRAND } from '@/constants/brand';
+import { setCoinConversionRate } from '@/config/checkout.config';
 
 function classifyError(error: any): { code: WalletErrorCode; recoverable: boolean } {
   // Check for ApiResponse error shape (from apiClient fetch)
@@ -244,6 +245,13 @@ export const useWallet = ({
       }
 
       const walletData = transformWalletResponse(response.data, userId || 'unknown');
+
+      // Fire-and-forget: refresh the live coin-to-rupee conversion rate from admin config.
+      // Non-blocking — failure must not prevent wallet from loading.
+      walletApi.getCoinRules().then((rulesRes: any) => {
+        const rate = rulesRes?.data?.coinConversion?.rezToInr;
+        if (rate) setCoinConversionRate(rate);
+      }).catch(() => { /* non-critical */ });
 
       setWalletState({
         data: walletData,

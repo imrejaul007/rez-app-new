@@ -35,7 +35,7 @@ import {
   REZ_COIN_MAX_USAGE_PERCENTAGE,
   PROMO_COIN_MAX_USAGE_PERCENTAGE,
   STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE,
-  COIN_CONVERSION_RATE,
+  getCoinConversionRate,
 } from '@/config/checkout.config';
 import analyticsService from '@/services/analyticsService';
 import analytics from '@/services/analytics/AnalyticsService';
@@ -585,19 +585,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             rezCoin: {
               available: 0,
               used: 0,
-              conversionRate: COIN_CONVERSION_RATE,
+              conversionRate: getCoinConversionRate(),
               maxUsagePercentage: REZ_COIN_MAX_USAGE_PERCENTAGE
             },
             promoCoin: {
               available: 0,
               used: 0,
-              conversionRate: COIN_CONVERSION_RATE,
+              conversionRate: getCoinConversionRate(),
               maxUsagePercentage: PROMO_COIN_MAX_USAGE_PERCENTAGE
             },
             storePromoCoin: {
               available: 0,
               used: 0,
-              conversionRate: COIN_CONVERSION_RATE,
+              conversionRate: getCoinConversionRate(),
               maxUsagePercentage: STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE // Store promo coins limited to 30% of order value
             }
           };
@@ -687,19 +687,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 rezCoin: {
                   available: rezAvailable,
                   used: 0,
-                  conversionRate: COIN_CONVERSION_RATE,
+                  conversionRate: getCoinConversionRate(),
                   maxUsagePercentage: REZ_COIN_MAX_USAGE_PERCENTAGE
                 },
                 promoCoin: {
                   available: promoCoin?.amount || 0,
                   used: 0,
-                  conversionRate: COIN_CONVERSION_RATE,
+                  conversionRate: getCoinConversionRate(),
                   maxUsagePercentage: PROMO_COIN_MAX_USAGE_PERCENTAGE
                 },
                 storePromoCoin: {
                   available: storeBrandedCoin?.amount || 0,
                   used: 0,
-                  conversionRate: COIN_CONVERSION_RATE,
+                  conversionRate: getCoinConversionRate(),
                   maxUsagePercentage: STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE,
                   storeId: storeId,
                   storeName: storeBrandedCoin?.merchantName,
@@ -912,19 +912,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         rezCoin: {
           available: 0,
           used: 0,
-          conversionRate: COIN_CONVERSION_RATE,
+          conversionRate: getCoinConversionRate(),
           maxUsagePercentage: REZ_COIN_MAX_USAGE_PERCENTAGE
         },
         promoCoin: {
           available: 0,
           used: 0,
-          conversionRate: COIN_CONVERSION_RATE,
+          conversionRate: getCoinConversionRate(),
           maxUsagePercentage: PROMO_COIN_MAX_USAGE_PERCENTAGE
         },
         storePromoCoin: {
           available: 0,
           used: 0,
-          conversionRate: COIN_CONVERSION_RATE,
+          conversionRate: getCoinConversionRate(),
           maxUsagePercentage: STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE
         }
       };
@@ -950,13 +950,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             rezCoin: {
               available: fallbackRezAvailable,
               used: 0,
-              conversionRate: COIN_CONVERSION_RATE,
+              conversionRate: getCoinConversionRate(),
               maxUsagePercentage: REZ_COIN_MAX_USAGE_PERCENTAGE
             },
             promoCoin: {
               available: promoCoin?.amount || 0,
               used: 0,
-              conversionRate: COIN_CONVERSION_RATE,
+              conversionRate: getCoinConversionRate(),
               maxUsagePercentage: PROMO_COIN_MAX_USAGE_PERCENTAGE
             }
           };

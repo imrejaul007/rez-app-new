@@ -35,9 +35,26 @@ export const PROMO_COIN_MAX_USAGE_PERCENTAGE = 20;
 export const STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE = 30;
 
 /**
- * Conversion rate for coins to currency (1 coin = 1 currency unit)
+ * Default conversion rate for coins to currency (1 coin = ₹1).
+ * This is the static fallback used before the live rate is fetched.
+ * The live rate is fetched from GET /api/wallet/coin-rules → coinConversion.rezToInr
+ * and applied via getCoinConversionRate() / setCoinConversionRate().
  */
 export const COIN_CONVERSION_RATE = 1;
+
+// In-memory cache for the live admin-configured rate.
+// Shared across the app lifetime; updated once on first wallet load.
+let _liveCoinConversionRate: number = COIN_CONVERSION_RATE;
+
+/** Returns the current (possibly live-fetched) coin-to-rupee rate. */
+export function getCoinConversionRate(): number {
+  return _liveCoinConversionRate;
+}
+
+/** Called by wallet/checkout hooks when the live rate is received from the API. */
+export function setCoinConversionRate(rate: number): void {
+  if (rate > 0) _liveCoinConversionRate = rate;
+}
 
 /**
  * Checkout configuration object for convenient access to all values

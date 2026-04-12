@@ -863,6 +863,7 @@ class WalletService {
   async getCoinRules(): Promise<ApiResponse<{
     coinRules: Record<string, { usageRules: string[]; earningMethods: string[] }>;
     coinExpiryConfig: Record<string, { expiryDays: number; maxUsagePct: number }>;
+    coinConversion?: { rezToInr: number };
   }>> {
     try {
       return await apiClient.get<any>('/wallet/coin-rules');
