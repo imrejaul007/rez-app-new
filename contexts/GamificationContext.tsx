@@ -339,7 +339,10 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       const coinBalance: CoinBalance = {
         total: availableBalance,
         earned: cashbackBalance,     // cashback accumulated = earned rewards component
-        spent: totalBalance > availableBalance ? totalBalance - availableBalance : 0, // inferred
+        // Don't infer spent from balance arithmetic — it's inaccurate when pending rewards exist
+        // (totalBalance - availableBalance includes pending rewards, not just spent coins).
+        // spent = 0 until backend exposes a lifetimeSpent field.
+        spent: 0,
         pending: pendingRewards,
         lifetimeEarned: 0,           // not available from wallet endpoint
         lifetimeSpent: 0,            // not available from wallet endpoint
