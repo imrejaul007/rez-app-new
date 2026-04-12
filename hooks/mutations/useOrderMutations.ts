@@ -21,8 +21,12 @@ export function useCancelOrder() {
     mutationFn: ({ orderId, reason }: { orderId: string; reason: string }) =>
       ordersApi.cancelOrder(orderId, reason),
     onSuccess: (_data, variables) => {
+      // Invalidate the specific order detail and the list view
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(variables.orderId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.list() });
+      // Broad invalidation covers counts, tracking, and any other order sub-queries
+      // (fixes: useOrderHistory not refreshing after cancel)
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.wallet.balance() });
     },
   });

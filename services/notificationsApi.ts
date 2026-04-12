@@ -19,7 +19,7 @@ export interface Notification {
     url?: string;
     action?: string;
   }>;
-  read: boolean;
+  isRead: boolean;
   readAt?: string;
   priority: 'low' | 'normal' | 'high' | 'urgent';
   scheduled?: boolean;

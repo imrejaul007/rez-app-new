@@ -23,6 +23,8 @@ interface WalletStoreState extends WalletStoreData {
   _setFromProvider: (data: WalletStoreData) => void;
   /** Optimistic balance adjustment — adds delta to rez/total/available balances */
   adjustBalance: (delta: number) => void;
+  /** Reset all wallet data on logout to prevent stale balance showing for next user */
+  resetWallet: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -53,6 +55,9 @@ export const useWalletStore = create<WalletStoreState>()(
       _setFromProvider: (data: WalletStoreData) => {
         set(data);
       },
+
+      // Clears all persisted wallet data on logout.
+      resetWallet: () => set({ ...defaults }),
 
       // Optimistic balance adjustment for instant UI feedback after earning coins.
       // Server truth is restored by the next refreshWallet() call.

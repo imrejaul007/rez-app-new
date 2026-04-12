@@ -12,6 +12,8 @@ import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import {
   validateUser,
 } from '@/types/unified';
+import { queryClient } from '@/lib/queryClient';
+import { useWalletStore } from '@/stores/walletStore';
 
 // Use types from unified type system
 interface AuthState {
@@ -475,6 +477,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Clear auth token from API client
       authService.setAuthToken(null);
       apiClient.setAuthToken(null);
+
+      // Clear persisted wallet balance so a subsequent user does not see stale data
+      useWalletStore.getState().resetWallet();
+
+      // Clear all React Query cached data to prevent stale data leaking across sessions
+      queryClient.clear();
 
       dispatch({ type: 'AUTH_LOGOUT' });
 
