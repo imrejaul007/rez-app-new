@@ -406,11 +406,7 @@ class BookingService {
     cancelledCount: number;
   }>> {
     try {
-      // Backend does not expose a dedicated stats endpoint — derive from the full list
-      const response = await apiClient.get<any>(
-        '/service-bookings',
-        { limit: 1000 }
-      );
+      const response = await apiClient.get<any>('/service-bookings/stats');
 
       if (!response.success) {
         devLog.error('❌ [BOOKING API] Failed to fetch booking statistics:', response.error);
