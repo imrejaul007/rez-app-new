@@ -15,6 +15,31 @@ import { UserAddress, UserPaymentMethod } from './User';
 import { ProductVariantSelection } from './Product';
 
 // ============================================================================
+// BACKEND CANONICAL TOTALS (mirrors IOrderTotals in rezbackend/src/models/Order.ts)
+// ============================================================================
+
+/**
+ * Canonical order totals — field names mirror IOrderTotals in the backend model.
+ * Use these names when reading from API responses.
+ */
+export interface IOrderTotals {
+  subtotal: number;
+  tax: number;
+  /** Delivery fee — backend field name is 'delivery', NOT 'deliveryFee' */
+  delivery: number;
+  discount: number;
+  lockFeeDiscount?: number;
+  cashback: number;
+  total: number;
+  paidAmount: number;
+  refundAmount?: number;
+  /** 15% of subtotal — platform commission */
+  platformFee: number;
+  /** subtotal - platformFee — what merchant receives */
+  merchantPayout: number;
+}
+
+// ============================================================================
 // CORE ORDER INTERFACE
 // ============================================================================
 
@@ -34,7 +59,14 @@ export interface Order {
   items: OrderItem[];
 
   // ========== PRICING ==========
-  /** Pricing breakdown */
+  /**
+   * Backend canonical totals — primary source of truth.
+   * Field names match IOrderTotals in rezbackend/src/models/Order.ts.
+   * Prefer reading from this field over `pricing`.
+   */
+  totals?: IOrderTotals;
+
+  /** Pricing breakdown (legacy/UI-facing shape — use `totals` for financial data) */
   pricing: OrderPricing;
 
   // ========== STATUS ==========
@@ -564,3 +596,72 @@ export type OrderForTracking = Pick<
   | 'tracking'
   | 'estimatedDeliveryDate'
 >;
+
+// ============================================================================
+// ORDER TOTALS UTILITY FUNCTIONS
+//
+// These read from `order.totals` (backend canonical) first, then fall back to
+// `order.pricing` (legacy UI shape) for backward compatibility.
+// Always use these helpers in components instead of accessing fields directly.
+// ============================================================================
+
+type OrderLike = { totals?: IOrderTotals; pricing?: Partial<OrderPricing> & {
+  shippingAmount?: number;
+  taxAmount?: number;
+  totalAmount?: number;
+}};
+
+/**
+ * Get the delivery/shipping fee from an order.
+ * Reads totals.delivery (canonical) → pricing.shipping → pricing.shippingAmount → 0
+ */
+export function getOrderShipping(order: OrderLike): number {
+  return (
+    order.totals?.delivery ??
+    order.pricing?.shipping ??
+    order.pricing?.shippingAmount ??
+    0
+  );
+}
+
+/**
+ * Get the tax amount from an order.
+ * Reads totals.tax (canonical) → pricing.tax → pricing.taxAmount → 0
+ */
+export function getOrderTax(order: OrderLike): number {
+  return (
+    order.totals?.tax ??
+    order.pricing?.tax ??
+    order.pricing?.taxAmount ??
+    0
+  );
+}
+
+/**
+ * Get the grand total from an order.
+ * Reads totals.total (canonical) → pricing.total → pricing.totalAmount → 0
+ */
+export function getOrderTotal(order: OrderLike): number {
+  return (
+    order.totals?.total ??
+    order.pricing?.total ??
+    order.pricing?.totalAmount ??
+    0
+  );
+}
+
+/**
+ * Get the subtotal from an order.
+ * Reads totals.subtotal (canonical) → pricing.subtotal → 0
+ */
+export function getOrderSubtotal(order: OrderLike): number {
+  return order.totals?.subtotal ?? order.pricing?.subtotal ?? 0;
+}
+
+/**
+ * Get the discount from an order.
+ * Reads totals.discount (canonical) → pricing.discount → 0
+ */
+export function getOrderDiscount(order: OrderLike): number {
+  return order.totals?.discount ?? order.pricing?.discount ?? 0;
+}

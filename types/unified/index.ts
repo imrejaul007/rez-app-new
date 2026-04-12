@@ -95,9 +95,15 @@ import {
   Order,
   OrderItem,
   OrderPricing,
+  IOrderTotals,
   OrderStatus,
   PaymentStatus,
   DeliveryStatus,
+  getOrderShipping,
+  getOrderTax,
+  getOrderTotal,
+  getOrderSubtotal,
+  getOrderDiscount,
 } from './Order';
 
 import {
@@ -194,6 +200,18 @@ export const MigrationUtils = {
   migrateToUnifiedType,
   batchMigrate,
   generateMigrationReport,
+};
+
+/**
+ * Order totals helpers — read from totals.* (canonical) with pricing.* fallback.
+ * Import: import { OrderTotalsUtils } from '@/types/unified'
+ */
+export const OrderTotalsUtils = {
+  getOrderShipping,
+  getOrderTax,
+  getOrderTotal,
+  getOrderSubtotal,
+  getOrderDiscount,
 };
 
 // ============================================================================
