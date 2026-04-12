@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import financeApi, { CreditScore, PartnerOffer } from '@/services/financeApi';
+import { useToast } from '@/hooks/useToast';
 
 export default function FinanceScreen() {
+  const { showSuccess } = useToast();
   const [score, setScore] = useState<CreditScore | null>(null);
   const [offers, setOffers] = useState<PartnerOffer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export default function FinanceScreen() {
       const res = await financeApi.checkScoreAndEarnCoins();
       const data = res.data as any;
       if (data?.coinsAwarded > 0) {
-        // show toast: `+${data.coinsAwarded} coins earned!`
+        showSuccess(`+${data.coinsAwarded} coins earned!`);
       }
       load();
     } catch {

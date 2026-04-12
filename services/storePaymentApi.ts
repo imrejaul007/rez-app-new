@@ -511,11 +511,11 @@ export const {
  */
 export const lookupStoreBySlug = async (storeSlug: string): Promise<StorePaymentInfo | null> => {
   try {
-    const response = await apiClient.get<{ store: StorePaymentInfo }>(
+    const response = await apiClient.get<StorePaymentInfo>(
       `${STORE_PAYMENT_BASE}/lookup-by-slug/${encodeURIComponent(storeSlug)}`
     );
     if (response.success && response.data) {
-      return response.data as unknown as StorePaymentInfo;
+      return response.data;
     }
     return null;
   } catch {

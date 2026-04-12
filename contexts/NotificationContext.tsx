@@ -153,7 +153,8 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated, user]); // BUG-048: dependency array for useCallback
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user?._id]); // BUG-048: use user._id instead of full user object to prevent reference churn
 
   // Load from local storage
   const loadFromStorage = async () => {
