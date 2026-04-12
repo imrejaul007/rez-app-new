@@ -130,7 +130,7 @@ function MessageInput({
             )}
 
             <Pressable
-              style={styles.attachmentOption}
+              style={[styles.attachmentOption, { opacity: 0.5 }]}
               onPress={() => {
                 setShowAttachments(false);
                 platformAlertSimple('Coming Soon', 'Location sharing feature will be available soon');

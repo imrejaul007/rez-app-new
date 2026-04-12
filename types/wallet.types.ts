@@ -56,7 +56,7 @@ export type TransactionCategory =
   | 'ALL'
   | 'HOME_DELIVERY'
   | 'VOUCHER'
-  | 'NUQTA_PAY'
+  | 'REZ_PAY'
   | 'RESTAURANT'
   | 'GROCERY'
   | 'SHOPPING'
@@ -268,7 +268,7 @@ export const DEFAULT_WALLET_TABS: WalletTab[] = [
   { id: 'ALL', title: 'All', isActive: true },
   { id: 'HOME_DELIVERY', title: 'Home Delivery', isActive: false },
   { id: 'VOUCHER', title: 'Voucher', isActive: false },
-  { id: 'NUQTA_PAY', title: BRAND.PAY_NAME, isActive: false },
+  { id: 'REZ_PAY', title: BRAND.PAY_NAME, isActive: false },
 ];
 
 // Validation Types

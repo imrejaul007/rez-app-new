@@ -497,7 +497,6 @@ const GroceryCategoryPage: React.FC = () => {
 
 // Fallback data when API fails
 function getFallbackProducts(category: string): Product[] {
-  const image = undefined;
   const config = categoryConfig[category];
   const title = config?.title || 'Product';
 
@@ -505,7 +504,7 @@ function getFallbackProducts(category: string): Product[] {
     id: `fallback-${category}-${i}`,
     name: `${title} Item ${i + 1}`,
     description: 'Fresh quality product',
-    images: [{ url: image, alt: title }],
+    images: [], // no fallback image URI — let GroceryProductCard handle the no-image state
     pricing: { basePrice: 50 + i * 20, salePrice: 45 + i * 18 },
     unit: '1 kg',
     rating: { average: 0, count: 0 }, // TODO: use real rating from API; fallback data has no valid rating
