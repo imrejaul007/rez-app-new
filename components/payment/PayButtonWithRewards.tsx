@@ -38,13 +38,13 @@ export const PayButtonWithRewards: React.FC<PayButtonWithRewardsProps> = ({
       {/* Rewards Preview Banner */}
       {hasRewards && (
         <LinearGradient
-          colors={[colors.nuqta.lavender, colors.nuqta.linen]}
+          colors={[colors.rez.lavender, colors.rez.linen]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.rewardsPreview}
         >
           <View style={styles.rewardsIconWrapper}>
-            <Ionicons name="gift" size={14} color={colors.nuqta.mustard} />
+            <Ionicons name="gift" size={14} color={colors.rez.mustard} />
           </View>
           <Text style={styles.rewardsText}>
             You'll earn{' '}
@@ -80,8 +80,8 @@ export const PayButtonWithRewards: React.FC<PayButtonWithRewardsProps> = ({
               isProcessing || disabled
                 ? [colors.neutral[400], colors.neutral[500]]
                 : isFreePayment
-                ? [colors.nuqta.nileBlue, colors.brand.nileBlueLight]
-                : [colors.nuqta.mustard, colors.nuqta.peach]
+                ? [colors.rez.nileBlue, colors.brand.nileBlueLight]
+                : [colors.rez.mustard, colors.rez.peach]
             }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -93,7 +93,7 @@ export const PayButtonWithRewards: React.FC<PayButtonWithRewardsProps> = ({
               <>
                 <Text style={[
                   styles.buttonText,
-                  !isFreePayment && { color: colors.nuqta.nileBlue }
+                  !isFreePayment && { color: colors.rez.nileBlue }
                 ]}>
                   {isFreePayment ? 'Confirm Payment' : `Pay ${currencySymbol}${amountToPay.toFixed(0)}`}
                 </Text>
@@ -109,7 +109,7 @@ export const PayButtonWithRewards: React.FC<PayButtonWithRewardsProps> = ({
                   <Ionicons
                     name="arrow-forward"
                     size={18}
-                    color={isFreePayment ? colors.background.primary : colors.nuqta.nileBlue}
+                    color={isFreePayment ? colors.background.primary : colors.rez.nileBlue}
                   />
                 </View>
               </>
@@ -120,7 +120,7 @@ export const PayButtonWithRewards: React.FC<PayButtonWithRewardsProps> = ({
 
       {/* Security Note */}
       <View style={styles.securityNote}>
-        <Ionicons name="shield-checkmark" size={12} color={colors.nuqta.mustard} />
+        <Ionicons name="shield-checkmark" size={12} color={colors.rez.mustard} />
         <Text style={styles.securityText}>
           Secured by 256-bit encryption
         </Text>
@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? spacing.xl : spacing.md,
     backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: colors.nuqta.linen,
+    borderTopColor: colors.rez.linen,
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.nileBlue,
+        shadowColor: colors.rez.nileBlue,
         shadowOffset: { width: 0, height: -4 },
         shadowOpacity: 0.08,
         shadowRadius: 8,
@@ -169,11 +169,11 @@ const styles = StyleSheet.create({
   },
   rewardsText: {
     ...typography.caption,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
   },
   rewardsHighlight: {
     fontWeight: '700',
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   amountValue: {
     ...typography.h3,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '800',
   },
   buttonWrapper: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.mustard,
+        shadowColor: colors.rez.mustard,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   earnText: {
     ...typography.caption,
     fontSize: 10,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '600',
   },
   arrowWrapper: {

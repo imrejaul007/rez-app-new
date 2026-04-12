@@ -31,7 +31,7 @@ const COLORS = {
   mustard: colors.lightMustard,
 };
 
-// Category style configurations - Nuqta palette
+// Category style configurations - REZ palette
 const CATEGORY_STYLES: Record<string, {
   gradientColors: string[];
   icon: string;
@@ -96,7 +96,7 @@ interface CategoryData {
   badgeType?: 'trending' | 'popular';
 }
 
-// Fallback categories - Nuqta palette
+// Fallback categories - REZ palette
 const FALLBACK_CATEGORIES: CategoryData[] = [
   {
     id: '1',

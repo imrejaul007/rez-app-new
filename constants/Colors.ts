@@ -1,7 +1,7 @@
 /**
- * Nuqta Color System - SINGLE SOURCE OF TRUTH
+ * REZ Color System - SINGLE SOURCE OF TRUTH
  *
- * Color palette based on Nuqta brand identity:
+ * Color palette based on REZ brand identity:
  * - Nile Blue: #1a3a52 (Primary dark)
  * - Light Mustard: #ffcd57 (Primary accent)
  * - Linen: #faf1e0 (Light background)
@@ -17,7 +17,7 @@
 // CORE BRAND COLORS - IMMUTABLE ACROSS ALL REZ APPS
 // ============================================================================
 
-export const NuqtaColors = {
+export const RezColors = {
   nileBlue: '#1a3a52',
   lightMustard: '#ffcd57',
   linen: '#faf1e0',
@@ -64,21 +64,21 @@ export const SharedBrandColors = {
   lavender: '#dfebf7',
 } as const;
 
-const tintColorLight = '#ffcd57'; // Nuqta Mustard
+const tintColorLight = '#ffcd57'; // REZ Mustard
 const tintColorDark = '#ffcd57';
 
 export const Colors = {
   light: {
     text: '#1a3a52', // Nile Blue
     background: '#FFFFFF',
-    tint: '#ffcd57', // Nuqta Mustard
+    tint: '#ffcd57', // REZ Mustard
     icon: '#9AA7B2', // Cool Gray
     tabIconDefault: '#9AA7B2',
-    tabIconSelected: '#ffcd57', // Nuqta Mustard
+    tabIconSelected: '#ffcd57', // REZ Mustard
     surface: '#FFFFFF',
     surfaceSecondary: '#faf1e0', // Linen
     border: '#E8DCC4',
-    primary: '#ffcd57', // Nuqta Mustard
+    primary: '#ffcd57', // REZ Mustard
     secondary: '#1a3a52', // Nile Blue
     accent: '#1a3a52', // Nile Blue
     success: '#2ECC71',
@@ -86,8 +86,8 @@ export const Colors = {
     error: '#E74C3C',
     textSecondary: '#2A5577', // Lighter Nile Blue
     textMuted: '#9AA7B2',
-    gold: '#ffcd57', // Nuqta Mustard
-    // Nuqta specific
+    gold: '#ffcd57', // REZ Mustard
+    // REZ specific
     nileBlue: '#1a3a52',
     mustard: '#ffcd57',
     linen: '#faf1e0',
@@ -113,7 +113,7 @@ export const Colors = {
     textSecondary: '#A0AEC0',
     textMuted: '#6B7280',
     gold: '#ffcd57',
-    // Nuqta specific
+    // REZ specific
     nileBlue: '#7599B7',
     mustard: '#ffcd57',
     linen: '#1E1E1E',

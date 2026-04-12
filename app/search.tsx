@@ -17,7 +17,7 @@ import SearchResultsView from '@/components/search/SearchResultsView';
 import SearchEmptyState from '@/components/search/SearchEmptyState';
 import SearchErrorState from '@/components/search/SearchErrorState';
 import SearchHintView from '@/components/search/SearchHintView';
-import { NUQTA } from '@/components/search/searchTheme';
+import { REZ_THEME } from '@/components/search/searchTheme';
 import { useSearchPage } from '@/hooks/useSearchPage';
 import useDebouncedSearch from '@/hooks/useDebouncedSearch';
 import { useCurrentLocation } from '@/hooks/useLocation';
@@ -424,7 +424,7 @@ function SearchPage() {
       />
       {searchState.error && searchState.sections.length > 0 && (
         <View style={styles.errorBanner} accessibilityLabel={`Warning: ${searchState.error}`} accessibilityRole="alert">
-          <Ionicons name="warning-outline" size={16} color={NUQTA.lightMustard} accessibilityLabel="Warning icon" />
+          <Ionicons name="warning-outline" size={16} color={REZ_THEME.lightMustard} accessibilityLabel="Warning icon" />
           <Text style={styles.errorBannerText}>{searchState.error}</Text>
         </View>
       )}
@@ -449,22 +449,22 @@ function SearchPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     gap: 10,
     borderBottomWidth: 1,
-    borderBottomColor: NUQTA.peachDark,
+    borderBottomColor: REZ_THEME.peachDark,
   },
   errorBannerText: {
     flex: 1,
     fontSize: 13,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '500',
   },
 });

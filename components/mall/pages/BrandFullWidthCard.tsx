@@ -54,7 +54,7 @@ const BrandFullWidthCard: React.FC<BrandFullWidthCardProps> = ({
   const currencySymbol = getCurrencySymbol();
   const [imageError, setImageError] = useState(false);
 
-  // For in-app stores (no externalUrl), show Nuqta Coins. For external brands, show cashback.
+  // For in-app stores (no externalUrl), show REZ Coins. For external brands, show cashback.
   const isInAppStore = !brand.externalUrl;
   const rewardPercentage = brand.cashback.percentage || 0;
 

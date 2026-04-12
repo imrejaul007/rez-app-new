@@ -16,7 +16,7 @@ import ReferralHandler from '@/utils/referralHandler';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-// Nuqta Design System Colors
+// REZ Design System Colors
 function RegistrationScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();

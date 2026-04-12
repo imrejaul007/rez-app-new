@@ -18,7 +18,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width } = Dimensions.get('window');
 
-// Nuqta Brand Colors
+// REZ Brand Colors
 const COLORS = {
   primary: colors.lightMustard,
   primaryDark: colors.brand.goldRich,

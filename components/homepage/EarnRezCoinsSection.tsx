@@ -24,7 +24,7 @@ const MUTED   = '#94A3B8';
 const LIGHT   = '#F8F9FA';
 const CARD_BG = '#FFFFFF';
 
-const EarnNuqtaCoinsSection: React.FC = () => {
+const EarnRezCoinsSection: React.FC = () => {
   const router = useRouter();
   const homeTab = useHomeTab();
   const setActiveTab = homeTab?.setActiveTab;
@@ -454,4 +454,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(EarnNuqtaCoinsSection);
+export default React.memo(EarnRezCoinsSection);

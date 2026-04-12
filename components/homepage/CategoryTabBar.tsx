@@ -22,7 +22,7 @@ import { colors } from '@/constants/theme';
 // Module-level variable to persist scroll position across re-renders
 let persistedScrollPosition = 0;
 
-// Nuqta Brand Colors
+// REZ Brand Colors
 const COLORS = {
   primary: colors.lightMustard,
   primaryLight: 'rgba(255, 205, 87, 0.1)',

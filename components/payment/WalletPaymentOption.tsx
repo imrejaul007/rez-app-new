@@ -43,7 +43,7 @@ export const WalletPaymentOption: React.FC<WalletPaymentOptionProps> = ({
       {/* Selected State Gradient Border Effect */}
       {isSelected && (
         <LinearGradient
-          colors={[colors.nuqta.mustard, colors.nuqta.peach]}
+          colors={[colors.rez.mustard, colors.rez.peach]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.selectedGradientBorder}
@@ -61,7 +61,7 @@ export const WalletPaymentOption: React.FC<WalletPaymentOptionProps> = ({
         {wallet.isLinked ? (
           <View style={styles.linkedRow}>
             <View style={styles.linkedBadge}>
-              <Ionicons name="checkmark-circle" size={10} color={colors.nuqta.mustard} />
+              <Ionicons name="checkmark-circle" size={10} color={colors.rez.mustard} />
               <Text style={styles.linkedText}>
                 {wallet.linkedPhone || wallet.linkedEmail || 'Linked'}
               </Text>
@@ -83,10 +83,10 @@ export const WalletPaymentOption: React.FC<WalletPaymentOptionProps> = ({
 
       {isSelected ? (
         <LinearGradient
-          colors={[colors.nuqta.mustard, colors.nuqta.peach]}
+          colors={[colors.rez.mustard, colors.rez.peach]}
           style={styles.checkmarkWrapper}
         >
-          <Ionicons name="checkmark" size={14} color={colors.nuqta.nileBlue} />
+          <Ionicons name="checkmark" size={14} color={colors.rez.nileBlue} />
         </LinearGradient>
       ) : wallet.isLinked ? (
         <View style={styles.radioOuter}>
@@ -94,13 +94,13 @@ export const WalletPaymentOption: React.FC<WalletPaymentOptionProps> = ({
         </View>
       ) : (
         <View style={styles.addIconWrapper}>
-          <Ionicons name="add" size={16} color={colors.nuqta.mustard} />
+          <Ionicons name="add" size={16} color={colors.rez.mustard} />
         </View>
       )}
 
       {!wallet.isLinked && (
         <LinearGradient
-          colors={[colors.nuqta.lavender, colors.nuqta.linen]}
+          colors={[colors.rez.lavender, colors.rez.linen]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.comingSoonBadge}
@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.nuqta.linen,
+    borderColor: colors.rez.linen,
     padding: spacing.md,
     marginBottom: spacing.sm,
     position: 'relative',
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.nileBlue,
+        shadowColor: colors.rez.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 4,
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     }),
   },
   containerSelected: {
-    borderColor: colors.nuqta.mustard,
-    backgroundColor: colors.nuqta.linen,
+    borderColor: colors.rez.mustard,
+    backgroundColor: colors.rez.linen,
   },
   selectedGradientBorder: {
     position: 'absolute',
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   walletName: {
     ...typography.button,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '600',
   },
   textDisabled: {
@@ -186,12 +186,12 @@ const styles = StyleSheet.create({
   linkedText: {
     ...typography.caption,
     fontSize: 10,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '500',
   },
   linkText: {
     ...typography.caption,
-    color: colors.nuqta.mustard,
+    color: colors.rez.mustard,
     fontWeight: '600',
     marginTop: 2,
   },
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: colors.nuqta.peach,
+    borderColor: colors.rez.peach,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
   },
   addIconWrapper: {
     width: 24,
@@ -248,12 +248,12 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: borderRadius.full,
     borderWidth: 1,
-    borderColor: colors.nuqta.peach,
+    borderColor: colors.rez.peach,
   },
   comingSoonText: {
     fontSize: 9,
     fontWeight: '600',
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
   },
 });
 

@@ -1,7 +1,7 @@
 /**
  * Mall API Service
  *
- * API integration layer for Nuqta Mall feature
+ * API integration layer for REZ Mall feature
  */
 
 import apiClient from '@/services/apiClient';
@@ -524,7 +524,7 @@ class MallApiService {
 
   // ==================== STORE-BASED MALL METHODS ====================
   // These methods fetch from Store model where deliveryCategories.mall === true
-  // For the in-app delivery marketplace (users earn Nuqta Coins)
+  // For the in-app delivery marketplace (users earn REZ Coins)
 
   /**
    * Get ALL mall homepage data in one call (batch endpoint)

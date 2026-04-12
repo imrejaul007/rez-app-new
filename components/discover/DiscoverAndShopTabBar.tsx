@@ -1,5 +1,5 @@
 // DiscoverAndShopTabBar.tsx - Modern glassy tab navigation for Discover & Shop
-// Nuqta Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57)
+// REZ Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57)
 import React from 'react';
 import {
   View,
@@ -15,7 +15,7 @@ import { DiscoverTabType } from '@/types/discover.types';
 import { colors } from '@/constants/theme';
 
 // Nuqta Brand Colors
-const NUQTA_COLORS = {
+const REZ_COLORS = {
   nileBlue: colors.nileBlue,
   nileBlueLight: '#2a4a62',
   mustard: colors.lightMustard,
@@ -86,7 +86,7 @@ function DiscoverAndShopTabBar({
             >
               {isActive ? (
                 <LinearGradient
-                  colors={[NUQTA_COLORS.nileBlue, NUQTA_COLORS.nileBlueLight]}
+                  colors={[REZ_COLORS.nileBlue, REZ_COLORS.nileBlueLight]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.activeTabGradient}
@@ -103,7 +103,7 @@ function DiscoverAndShopTabBar({
                   <Ionicons
                     name={tab.icon as any}
                     size={16}
-                    color={NUQTA_COLORS.gray}
+                    color={REZ_COLORS.gray}
                   />
                   <Text style={styles.tabLabel}>{tab.label}</Text>
                 </View>
@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: NUQTA_COLORS.lightGray,
+    borderBottomColor: REZ_COLORS.lightGray,
   },
   tabsWrapper: {
     flexDirection: 'row',
-    backgroundColor: NUQTA_COLORS.lightGray,
+    backgroundColor: REZ_COLORS.lightGray,
     borderRadius: 12,
     padding: 4,
     gap: 4,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   activeTab: {
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA_COLORS.nileBlue,
+        shadowColor: REZ_COLORS.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: NUQTA_COLORS.gray,
+    color: REZ_COLORS.gray,
   },
   activeTabLabel: {
     fontSize: 12,

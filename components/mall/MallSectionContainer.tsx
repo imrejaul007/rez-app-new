@@ -4,9 +4,9 @@
  * Main container that orchestrates all mall sections
  * with pull-to-refresh and loading states.
  *
- * Nuqta Mall = In-app delivery marketplace
+ * REZ Mall = In-app delivery marketplace
  * - Fetches stores with deliveryCategories.mall === true
- * - Users browse stores, order products, earn Nuqta Coins
+ * - Users browse stores, order products, earn REZ Coins
  * - Navigates to /store/[storeId] for store pages
  *
  * NOTE: This is different from Cash Store (affiliate cashback for external websites)
@@ -148,8 +148,8 @@ const MallSectionContainer: React.FC<MallSectionContainerProps> = ({
       const storeId = brand.id || brand._id;
       trackBrandClick(storeId);
 
-      // Nuqta Mall navigates to in-app store page (not external brand page)
-      // The store page shows products, allows ordering, and users earn Nuqta Coins
+      // REZ Mall navigates to in-app store page (not external brand page)
+      // The store page shows products, allows ordering, and users earn REZ Coins
       router.push(`/MainStorePage?storeId=${storeId}` as any);
     },
     [router, trackBrandClick]
@@ -283,7 +283,7 @@ const MallSectionContainer: React.FC<MallSectionContainerProps> = ({
   return (
     <View style={styles.outerContainer}>
       {/* Gradient Background - Continues from HomeTabSection's blue gradient for seamless transition */}
-      {/* Nile Blue gradient for Nuqta Mall theme */}
+      {/* Nile Blue gradient for REZ Mall theme */}
       <LinearGradient
         colors={[colors.lavenderMist, '#e4eef8', '#edf3fa', '#f5f8fc', '#fafcfe', colors.background.primary]}
         locations={[0, 0.08, 0.18, 0.35, 0.55, 1]}

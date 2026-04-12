@@ -42,7 +42,7 @@ const HomeTabBar: React.FC<HomeTabBarProps> = ({
           </View>
         </Pressable>
 
-        {/* Tab 2: Nuqta Mall */}
+        {/* Tab 2: REZ Mall */}
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('nuqta-mall')}

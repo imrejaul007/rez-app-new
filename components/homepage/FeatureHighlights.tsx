@@ -1,5 +1,5 @@
 // Feature Highlights Component
-// Displays prominent feature cards - Nuqta brand style
+// Displays prominent feature cards - REZ brand style
 
 import React from 'react';
 import { View, ScrollView, Pressable, StyleSheet, Platform } from 'react-native';

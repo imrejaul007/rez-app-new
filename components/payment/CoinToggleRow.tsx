@@ -166,11 +166,11 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
                 <Ionicons
                   name={expiryBadge.urgent ? 'warning' : 'time'}
                   size={10}
-                  color={expiryBadge.urgent ? colors.background.primary : colors.nuqta.nileBlue}
+                  color={expiryBadge.urgent ? colors.background.primary : colors.rez.nileBlue}
                 />
                 <Text style={[
                   styles.expiryText,
-                  !expiryBadge.urgent && { color: colors.nuqta.nileBlue }
+                  !expiryBadge.urgent && { color: colors.rez.nileBlue }
                 ]}>{expiryBadge.text}</Text>
               </View>
             )}
@@ -354,13 +354,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
     borderWidth: 1,
-    borderColor: colors.nuqta.peach,
+    borderColor: colors.rez.peach,
   },
   quickSelectActive: {
-    backgroundColor: colors.nuqta.mustard,
-    borderColor: colors.nuqta.mustard,
+    backgroundColor: colors.rez.mustard,
+    borderColor: colors.rez.mustard,
   },
   quickSelectText: {
     ...typography.caption,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   quickSelectTextActive: {
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
   },
 });
 

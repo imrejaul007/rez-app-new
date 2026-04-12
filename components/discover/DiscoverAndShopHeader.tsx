@@ -1,5 +1,5 @@
 // DiscoverAndShopHeader.tsx - Header with category cards for Discover & Shop
-// Nuqta Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57) with modern glassy UI
+// REZ Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57) with modern glassy UI
 import React from 'react';
 import {
   View,
@@ -31,8 +31,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = 140;
 const CARD_HEIGHT = 165;
 
-// Nuqta Brand Color Palette - Nile Blue/Mustard with different shades
-const NUQTA_COLORS = {
+// REZ Brand Color Palette - Nile Blue/Mustard with different shades
+const REZ_COLORS = {
   // Primary Nile Blues
   nileBlue: colors.nileBlue,
   nileBlueLight: '#2a4a62',
@@ -229,12 +229,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: NUQTA_COLORS.nileBlue,
+    backgroundColor: REZ_COLORS.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA_COLORS.nileBlue,
+        shadowColor: REZ_COLORS.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 6,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: NUQTA_COLORS.navy,
+    color: REZ_COLORS.navy,
     letterSpacing: -0.3,
   },
   reelsButton: {
@@ -257,10 +257,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: NUQTA_COLORS.nileBlue,
+    backgroundColor: REZ_COLORS.nileBlue,
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA_COLORS.nileBlue,
+        shadowColor: REZ_COLORS.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: NUQTA_COLORS.gray,
+    color: REZ_COLORS.gray,
     paddingHorizontal: 16,
     marginBottom: 16,
   },

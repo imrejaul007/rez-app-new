@@ -35,26 +35,26 @@ export const SavingsSummaryCard: React.FC<SavingsSummaryCardProps> = ({
       label: 'Coins Used',
       value: savings.coinsUsed,
       icon: 'diamond',
-      gradient: [colors.nuqta.mustard, colors.nuqta.peach],
+      gradient: [colors.rez.mustard, colors.rez.peach],
     },
     {
       label: 'Bank/UPI Offers',
       value: savings.bankOffers,
       icon: 'card',
-      gradient: [colors.nuqta.lavender, colors.nuqta.nileBlue],
+      gradient: [colors.rez.lavender, colors.rez.nileBlue],
     },
     {
       label: 'Loyalty Benefit',
       value: savings.loyaltyBenefit,
       icon: 'star',
-      gradient: [colors.nuqta.peach, colors.nuqta.mustard],
+      gradient: [colors.rez.peach, colors.rez.mustard],
     },
   ].filter(item => item.value > 0);
 
   return (
     <View style={styles.cardWrapper}>
       <LinearGradient
-        colors={[colors.nuqta.lavender, colors.nuqta.linen, colors.background.primary]}
+        colors={[colors.rez.lavender, colors.rez.linen, colors.background.primary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.container}
@@ -73,12 +73,12 @@ export const SavingsSummaryCard: React.FC<SavingsSummaryCardProps> = ({
           </View>
           {showCelebration && savings.totalSaved >= 100 && (
             <LinearGradient
-              colors={[colors.nuqta.mustard, colors.nuqta.peach]}
+              colors={[colors.rez.mustard, colors.rez.peach]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.amazingBadge}
             >
-              <Ionicons name="sparkles" size={12} color={colors.nuqta.nileBlue} />
+              <Ionicons name="sparkles" size={12} color={colors.rez.nileBlue} />
               <Text style={styles.amazingText}>Amazing!</Text>
             </LinearGradient>
           )}
@@ -88,7 +88,7 @@ export const SavingsSummaryCard: React.FC<SavingsSummaryCardProps> = ({
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabel}>Total Saved</Text>
           <LinearGradient
-            colors={[colors.nuqta.mustard, colors.nuqta.peach]}
+            colors={[colors.rez.mustard, colors.rez.peach]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.totalAmountWrapper}
@@ -118,7 +118,7 @@ export const SavingsSummaryCard: React.FC<SavingsSummaryCardProps> = ({
         {/* Footer Note */}
         <View style={styles.footer}>
           <View style={styles.footerIconWrapper}>
-            <Ionicons name="checkmark-circle" size={14} color={colors.nuqta.mustard} />
+            <Ionicons name="checkmark-circle" size={14} color={colors.rez.mustard} />
           </View>
           <Text style={styles.footerText}>
             {`Smart savings automatically applied by ${BRAND.APP_NAME}`}
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.nileBlue,
+        shadowColor: colors.rez.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 12,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.xl,
     padding: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.nuqta.peach,
+    borderColor: colors.rez.peach,
     position: 'relative',
     overflow: 'hidden',
   },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.h4,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '700',
   },
   amazingBadge: {
@@ -201,19 +201,19 @@ const styles = StyleSheet.create({
   },
   amazingText: {
     ...typography.caption,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '700',
   },
   totalContainer: {
     alignItems: 'center',
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.nuqta.peach,
+    borderBottomColor: colors.rez.peach,
     marginBottom: spacing.md,
   },
   totalLabel: {
     ...typography.caption,
-    color: colors.nuqta.mustard,
+    color: colors.rez.mustard,
     fontWeight: '600',
     marginBottom: 8,
     textTransform: 'uppercase',
@@ -246,18 +246,18 @@ const styles = StyleSheet.create({
   },
   breakdownLabel: {
     ...typography.bodySmall,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     flex: 1,
   },
   breakdownValue: {
     ...typography.body,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '700',
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
     padding: spacing.sm,
     borderRadius: borderRadius.md,
     gap: spacing.xs,
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...typography.caption,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     flex: 1,
   },
 });

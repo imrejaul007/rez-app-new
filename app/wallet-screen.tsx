@@ -150,7 +150,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   // Compute coin balances for CoinProportionBar
   const rezBalance = useMemo(() => {
     // ETHAN: crash guard — walletData?.coins could be undefined; filter safely
-    const rezCoin = walletData?.coins?.find((c) => c?.type === 'rez' || c?.type === 'nuqta');
+    const rezCoin = walletData?.coins?.find((c) => c?.type === 'rez' || c?.type === 'nuqta'); // 'nuqta' is legacy DB alias
     return rezCoin?.amount ?? 0;
   }, [walletData?.coins]);
 

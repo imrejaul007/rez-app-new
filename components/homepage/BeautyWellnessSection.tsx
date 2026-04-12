@@ -28,7 +28,7 @@ const COLORS = {
   lightMustard: colors.lightMustard,
 };
 
-// Card configurations with API tags - Nuqta palette
+// Card configurations with API tags - REZ palette
 const cardConfigs = [
   {
     id: 'salon',

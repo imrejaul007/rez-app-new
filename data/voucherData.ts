@@ -111,7 +111,7 @@ export const VoucherData = {
         discount: '50-90%'
       },
       extraOffers: ['+ Extra 10% off on Select Cards'],
-      nuqtaRewards: {
+      rezRewards: {
         percentage: 10,
         description: `Upto 10% ${BRAND.APP_NAME} Rewards`
       },

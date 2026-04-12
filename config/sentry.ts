@@ -27,7 +27,7 @@ export function initSentry() {
   Sentry.init({
     dsn,
     environment: APP_CONFIG.environment,
-    release: `nuqta@${APP_CONFIG.version}`,
+    release: `rez@${APP_CONFIG.version}`,
     enabled: !__DEV__,
 
     // Performance — 20% of transactions in production, none in dev

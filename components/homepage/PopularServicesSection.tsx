@@ -14,7 +14,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const PARENT_PADDING = 16;
 
-// Nuqta minimal colors
+// REZ minimal colors
 const COLORS = {
   primary: colors.lightMustard,
   navy: colors.nileBlue,

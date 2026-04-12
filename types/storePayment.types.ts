@@ -63,7 +63,7 @@ export interface StorePaymentSettings {
   acceptPayLater: boolean;
 
   // Coin Settings
-  acceptNuqtaCoins: boolean;
+  acceptRezCoins: boolean;
   acceptPromoCoins: boolean;
   maxCoinRedemptionPercent: number;
 
@@ -288,7 +288,7 @@ export interface CoinRedemption {
 // ==================== OFFER TYPES ====================
 
 export type OfferType = 'CASHBACK' | 'DISCOUNT' | 'BONUS_COINS' | 'FLAT_OFF' | 'PERCENTAGE_OFF' | 'BOGO';
-export type OfferSource = 'STORE' | 'BANK' | 'NUQTA';
+export type OfferSource = 'STORE' | 'BANK' | 'REZ';
 export type OfferValueType = 'PERCENTAGE' | 'FIXED' | 'FIXED_COINS';
 
 export interface StorePaymentOffer {

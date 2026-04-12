@@ -30,7 +30,7 @@ function CartHeader({ onBack, title = 'Cart' }: CartHeaderProps) {
 
   return (
     <LinearGradient
-      colors={[colors.nuqta.mustard, colors.nuqta.peach]}
+      colors={[colors.rez.mustard, colors.rez.peach]}
       style={[styles.container, { paddingTop: statusBarHeight + 10 }]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
@@ -48,7 +48,7 @@ function CartHeader({ onBack, title = 'Cart' }: CartHeaderProps) {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={22} color={colors.nuqta.nileBlue} />
+          <Ionicons name="arrow-back" size={22} color={colors.rez.nileBlue} />
         </Pressable>
 
         {/* Title */}
@@ -63,7 +63,7 @@ function CartHeader({ onBack, title = 'Cart' }: CartHeaderProps) {
             {title}
           </ThemedText>
           <View style={styles.cartIconWrapper}>
-            <Ionicons name="cart" size={16} color={colors.nuqta.mustard} />
+            <Ionicons name="cart" size={16} color={colors.rez.mustard} />
           </View>
         </View>
 
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    shadowColor: colors.nuqta.mustard,
+    shadowColor: colors.rez.mustard,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 16,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.85)',
     borderWidth: 1,
     borderColor: 'rgba(26, 58, 82, 0.1)',
-    shadowColor: colors.nuqta.nileBlue,
+    shadowColor: colors.rez.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontWeight: '700',
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     letterSpacing: 1,
   },
   cartIconWrapper: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.nuqta.nileBlue,
+    backgroundColor: colors.rez.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },

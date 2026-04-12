@@ -7,7 +7,7 @@ const APP_CONFIG = {
   name: 'Rez',
   deepLinkPrefix: 'rez://',
   webUrl: 'https://www.rezapp.com',
-  playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nuqta.app',
+  playStoreUrl: 'https://play.google.com/store/apps/details?id=com.rezapp.app',
   appStoreUrl: 'https://apps.apple.com/app/rez/id6744404883'
 };
 

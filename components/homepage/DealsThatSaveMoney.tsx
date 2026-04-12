@@ -33,7 +33,7 @@ import OfferTile from '@/components/offers/OfferTile';
 import { calculateSaveAmount } from '@/utils/savingsCalculator';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-// Nuqta Brand Colors
+// REZ Brand Colors
 const COLORS = {
   primary: colors.lightMustard,
   primaryDark: colors.brand.goldRich,

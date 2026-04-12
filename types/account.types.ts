@@ -346,7 +346,7 @@ export interface UpdateAccountSettingsRequest {
   preferences?: Partial<AppPreferences>;
 }
 
-// Constants - Nuqta Brand Colors (sourced from DesignSystem)
+// Constants - REZ Brand Colors (sourced from DesignSystem)
 export const ACCOUNT_COLORS = {
   primary: '#ffcd57',        // Colors.primary[500]
   primaryLight: '#FFE799',   // Colors.primary[200]

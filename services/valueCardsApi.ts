@@ -1,5 +1,5 @@
 // Value Cards API Service
-// Fetches admin-configurable "Why Nuqta Pays You More" value cards
+// Fetches admin-configurable "Why REZ Pays You More" value cards
 
 import apiClient, { ApiResponse } from './apiClient';
 

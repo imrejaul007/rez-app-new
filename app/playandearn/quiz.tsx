@@ -25,7 +25,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width } = Dimensions.get('window');
 
-// Nuqta App Theme Colors - mapped to DesignSystem tokens
+// REZ App Theme Colors - mapped to DesignSystem tokens
 const COLORS = {
   primary: Colors.gold,
   primaryLight: Colors.primary[200],

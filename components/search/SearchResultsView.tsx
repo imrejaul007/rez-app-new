@@ -23,7 +23,7 @@ import FilterBar, { SortOption } from './FilterBar';
 import SearchSortChips from './SearchSortChips';
 import ProductGroupHeader from './ProductGroupHeader';
 import SellerComparisonCard from './SellerComparisonCard';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -54,10 +54,10 @@ function StoreCard({ store }: { store: any }) {
           <CachedImage source={store.logo} style={styles.storeResultLogo} />
         ) : (
           <LinearGradient
-            colors={[NUQTA.lavenderMist, NUQTA.lavenderDark]}
+            colors={[REZ_THEME.lavenderMist, REZ_THEME.lavenderDark]}
             style={[styles.storeResultLogo, styles.storeResultLogoPlaceholder]}
           >
-            <Ionicons name="storefront" size={24} color={NUQTA.nileBlue} />
+            <Ionicons name="storefront" size={24} color={REZ_THEME.nileBlue} />
           </LinearGradient>
         )}
         <View style={styles.storeResultInfo}>
@@ -65,7 +65,7 @@ function StoreCard({ store }: { store: any }) {
             <Text style={styles.storeResultName} numberOfLines={1}>{store.name}</Text>
             {store.isVerified && (
               <View style={styles.verifiedBadge}>
-                <Ionicons name="checkmark-circle" size={14} color={NUQTA.lightMustard} />
+                <Ionicons name="checkmark-circle" size={14} color={REZ_THEME.lightMustard} />
               </View>
             )}
           </View>
@@ -75,7 +75,7 @@ function StoreCard({ store }: { store: any }) {
           <View style={styles.storeResultMeta}>
             {store.rating > 0 && (
               <View style={styles.storeResultRating}>
-                <Ionicons name="star" size={12} color={NUQTA.lightMustard} />
+                <Ionicons name="star" size={12} color={REZ_THEME.lightMustard} />
                 <Text style={styles.storeResultRatingText}>{store.rating.toFixed(1)}</Text>
                 {store.reviewCount > 0 && (
                   <Text style={styles.storeResultReviewCount}>({store.reviewCount})</Text>
@@ -84,7 +84,7 @@ function StoreCard({ store }: { store: any }) {
             )}
             {store.location ? (
               <View style={styles.storeResultLocation}>
-                <Ionicons name="location-outline" size={12} color={NUQTA.text.muted} />
+                <Ionicons name="location-outline" size={12} color={REZ_THEME.text.muted} />
                 <Text style={styles.storeResultLocationText}>{store.location}</Text>
               </View>
             ) : null}
@@ -96,7 +96,7 @@ function StoreCard({ store }: { store: any }) {
           </View>
         </View>
         <View style={styles.storeArrowContainer}>
-          <Ionicons name="chevron-forward" size={20} color={NUQTA.nileBlue} />
+          <Ionicons name="chevron-forward" size={20} color={REZ_THEME.nileBlue} />
         </View>
       </View>
     </Pressable>
@@ -148,7 +148,7 @@ function SearchResultsView({
           <View style={styles.matchingStoresSection}>
             <View style={styles.matchingStoresHeader}>
               <View style={styles.matchingStoresIconContainer}>
-                <Ionicons name="storefront-outline" size={18} color={NUQTA.nileBlue} />
+                <Ionicons name="storefront-outline" size={18} color={REZ_THEME.nileBlue} />
               </View>
               <Text style={styles.matchingStoresTitle}>Matching Stores</Text>
               <View style={styles.matchingStoresCountBadge}>
@@ -164,19 +164,19 @@ function SearchResultsView({
         {/* Premium Promotional Banner */}
         {groupedProducts.length > 0 && (
           <LinearGradient
-            colors={[NUQTA.linen, NUQTA.lightPeach + '40']}
+            colors={[REZ_THEME.linen, REZ_THEME.lightPeach + '40']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.promoBanner}
           >
             <View style={styles.promoIconContainer}>
-              <Ionicons name="wallet-outline" size={20} color={NUQTA.nileBlue} />
+              <Ionicons name="wallet-outline" size={20} color={REZ_THEME.nileBlue} />
             </View>
             <Text style={styles.promoText}>
               Cashback & coins auto-applied at checkout for maximum savings
             </Text>
             <View style={styles.promoSparkle}>
-              <Ionicons name="sparkles" size={18} color={NUQTA.lightMustard} />
+              <Ionicons name="sparkles" size={18} color={REZ_THEME.lightMustard} />
             </View>
           </LinearGradient>
         )}
@@ -222,7 +222,7 @@ function SearchResultsView({
       <View style={styles.searchResultsHeader}>
         <View style={styles.searchResultsTitleContainer}>
           <View style={styles.searchResultsIconContainer}>
-            <Ionicons name="search" size={20} color={NUQTA.nileBlue} />
+            <Ionicons name="search" size={20} color={REZ_THEME.nileBlue} />
           </View>
           <Text style={styles.searchResultsTitle}>
             Search Results
@@ -257,7 +257,7 @@ function SearchResultsView({
                 />
               ) : (
                 <LinearGradient
-                  colors={[NUQTA.lavenderMist, NUQTA.lavenderDark]}
+                  colors={[REZ_THEME.lavenderMist, REZ_THEME.lavenderDark]}
                   style={styles.resultImagePlaceholder}
                   accessibilityLabel={`${result.title ?? 'Product'} placeholder image`}
                 >
@@ -278,10 +278,10 @@ function SearchResultsView({
               )}
               <View style={styles.resultMeta}>
                 <LinearGradient
-                  colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
+                  colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]}
                   style={styles.resultCashback}
                 >
-                  <Ionicons name="wallet-outline" size={12} color={NUQTA.lightMustard} />
+                  <Ionicons name="wallet-outline" size={12} color={REZ_THEME.lightMustard} />
                   <Text style={styles.resultCashbackText}>{result.cashbackPercentage}%</Text>
                 </LinearGradient>
                 <View style={styles.categoryTag}>
@@ -319,20 +319,20 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
   },
   matchingStoresTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     flex: 1,
   },
   matchingStoresCountBadge: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    backgroundColor: NUQTA.nileBlue,
+    backgroundColor: REZ_THEME.nileBlue,
     borderRadius: BorderRadius.md,
   },
   matchingStoresCount: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 10,
@@ -385,19 +385,19 @@ const styles = StyleSheet.create({
   storeResultName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   verifiedBadge: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: NUQTA.nileBlue,
+    backgroundColor: REZ_THEME.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
   storeResultDescription: {
     ...Typography.bodySmall,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     lineHeight: 18,
     marginBottom: 6,
   },
@@ -415,11 +415,11 @@ const styles = StyleSheet.create({
   storeResultRatingText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   storeResultReviewCount: {
     ...Typography.bodySmall,
-    color: NUQTA.text.muted,
+    color: REZ_THEME.text.muted,
   },
   storeResultLocation: {
     flexDirection: 'row',
@@ -428,10 +428,10 @@ const styles = StyleSheet.create({
   },
   storeResultLocationText: {
     ...Typography.bodySmall,
-    color: NUQTA.text.muted,
+    color: REZ_THEME.text.muted,
   },
   distanceBadge: {
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: BorderRadius.sm,
@@ -439,13 +439,13 @@ const styles = StyleSheet.create({
   storeResultDistance: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   storeArrowContainer: {
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: NUQTA.peachDark + '40',
+    borderColor: REZ_THEME.peachDark + '40',
   },
   promoIconContainer: {
     width: 40,
@@ -471,12 +471,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: NUQTA.peachDark,
+    borderColor: REZ_THEME.peachDark,
   },
   promoText: {
     flex: 1,
     ...Typography.bodySmall,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '600',
     lineHeight: 19,
   },
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: NUQTA.nileBlue,
+    backgroundColor: REZ_THEME.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderLeftWidth: 4,
-    borderLeftColor: NUQTA.lightMustard,
+    borderLeftColor: REZ_THEME.lightMustard,
     marginHorizontal: Spacing.base,
     marginTop: 10,
     borderRadius: BorderRadius.md,
@@ -514,18 +514,18 @@ const styles = StyleSheet.create({
   productGroupSectionTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: Spacing.xs,
   },
   productGroupSectionSubtitle: {
     ...Typography.bodySmall,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
   },
   brandAccent: {
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: NUQTA.lightMustard,
+    backgroundColor: REZ_THEME.lightMustard,
     marginLeft: Spacing.md,
   },
 
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 12,
@@ -563,24 +563,24 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: BorderRadius.md,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
   },
   searchResultsTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   searchResultsCount: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: NUQTA.lightMustard,
+    color: REZ_THEME.lightMustard,
     marginBottom: Spacing.xs,
   },
   searchQueryText: {
     ...Typography.body,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     fontStyle: 'italic',
   },
   resultsGrid: {
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 12,
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
   resultImageText: {
     ...Typography.h1,
     fontWeight: '800',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   resultInfo: {
     padding: 14,
@@ -636,13 +636,13 @@ const styles = StyleSheet.create({
   resultTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: 6,
     lineHeight: 20,
   },
   resultDescription: {
     ...Typography.bodySmall,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     marginBottom: Spacing.md,
     lineHeight: 17,
   },
@@ -671,15 +671,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   categoryTag: {
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: NUQTA.peachDark,
+    borderColor: REZ_THEME.peachDark,
   },
   categoryTagText: {
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     ...Typography.caption,
     fontWeight: '600',
   },

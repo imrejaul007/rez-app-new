@@ -1,7 +1,7 @@
 /**
  * ZeroEMICard Component
  * Promotional card displaying 0% EMI payment option
- * Styled with Nuqta brand colors (nile blue + mustard accents)
+ * Styled with REZ brand colors (nile blue + mustard accents)
  */
 
 import React, { memo } from 'react';
@@ -20,7 +20,7 @@ import { colors } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
 
-// Nuqta Brand Colors
+// REZ Brand Colors
 const COLORS = {
   primary: colors.lightMustard,
   primaryDark: colors.brand.goldRich,

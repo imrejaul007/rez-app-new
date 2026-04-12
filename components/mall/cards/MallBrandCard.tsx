@@ -27,7 +27,7 @@ interface MallBrandCardProps {
   showCategory?: boolean;
 }
 
-// Nuqta palette gradient colors for fallback backgrounds
+// REZ palette gradient colors for fallback backgrounds
 const GRADIENT_COLORS: string[][] = [
   [colors.nileBlue, colors.brand.nileBlueLight],
   [colors.brand.sky, colors.brand.skyDark],
@@ -58,7 +58,7 @@ const MallBrandCard: React.FC<MallBrandCardProps> = ({
   const currencySymbol = getCurrencySymbol();
   const [imageError, setImageError] = useState(false);
 
-  // For in-app stores (no externalUrl), show Nuqta Coins. For external brands, show cashback.
+  // For in-app stores (no externalUrl), show REZ Coins. For external brands, show cashback.
   const isInAppStore = !brand.externalUrl;
   const rewardPercent = brand.cashback?.percentage ?? 0;
 

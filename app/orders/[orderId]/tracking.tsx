@@ -77,7 +77,7 @@ function OrderTrackingScreen() {
       () => {
         // Support phone number
         Linking.openURL('tel:+918001234567').catch(() => {
-          platformAlertSimple('Unable to Call', 'Please try again or email us at support@nuqta.app');
+          platformAlertSimple('Unable to Call', 'Please try again or email us at support@rezapp.com');
         });
       },
       'Call Support',

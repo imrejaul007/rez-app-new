@@ -295,8 +295,8 @@ class AnalyticsService {
     });
   }
 
-  trackNuqtaPayFilter(enabled: boolean, resultCount: number) {
-    this.track('nuqta_pay_filter', {
+  trackRezPayFilter(enabled: boolean, resultCount: number) {
+    this.track('nuqta_pay_filter', { // event name kept for analytics backward compat
       enabled,
       result_count: resultCount,
     });

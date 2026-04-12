@@ -11,7 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 import { colors } from '@/constants/theme';
 
 interface SearchHeaderProps {
@@ -42,7 +42,7 @@ function SearchHeader({
   return (
     <View style={styles.headerWrapper}>
       <LinearGradient
-        colors={[NUQTA.nileBlue, NUQTA.nileBlueLight, NUQTA.nileBlue]}
+        colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight, REZ_THEME.nileBlue]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -68,7 +68,7 @@ function SearchHeader({
               colors={['rgba(255, 205, 87, 0.25)', 'rgba(255, 205, 87, 0.15)']}
               style={styles.backButtonGradient}
             >
-              <Ionicons name="arrow-back" size={22} color={NUQTA.lightMustard} />
+              <Ionicons name="arrow-back" size={22} color={REZ_THEME.lightMustard} />
             </LinearGradient>
           </Pressable>
 
@@ -76,10 +76,10 @@ function SearchHeader({
           <View style={styles.searchContainer}>
             <View style={[styles.searchInputContainer, inputFocused ? styles.searchInputFocused : null]}>
               <LinearGradient
-                colors={[NUQTA.lightMustard, NUQTA.mustardDark]}
+                colors={[REZ_THEME.lightMustard, REZ_THEME.mustardDark]}
                 style={styles.searchIconWrapper}
               >
-                <Ionicons name="search" size={16} color={NUQTA.nileBlue} />
+                <Ionicons name="search" size={16} color={REZ_THEME.nileBlue} />
               </LinearGradient>
               <TextInput
                 style={[
@@ -94,7 +94,7 @@ function SearchHeader({
                     : undefined,
                 ]}
                 placeholder="Search for a service, store or category"
-                placeholderTextColor={NUQTA.text.muted}
+                placeholderTextColor={REZ_THEME.text.muted}
                 value={query}
                 onChangeText={onQueryChange}
                 onFocus={onFocus}
@@ -119,7 +119,7 @@ function SearchHeader({
                   accessibilityHint="Clears the current search text"
                 >
                   <View style={styles.clearButtonInner}>
-                    <Ionicons name="close" size={14} color={NUQTA.text.secondary} />
+                    <Ionicons name="close" size={14} color={REZ_THEME.text.secondary} />
                   </View>
                 </Pressable>
               )}
@@ -140,14 +140,14 @@ function SearchHeader({
           >
             <LinearGradient
               colors={activeFilterCount > 0
-                ? [NUQTA.lightMustard, NUQTA.mustardDark]
+                ? [REZ_THEME.lightMustard, REZ_THEME.mustardDark]
                 : ['rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)']}
               style={styles.filterButtonGradient}
             >
               <Ionicons
                 name="options-outline"
                 size={18}
-                color={activeFilterCount > 0 ? NUQTA.nileBlue : NUQTA.lightMustard}
+                color={activeFilterCount > 0 ? REZ_THEME.nileBlue : REZ_THEME.lightMustard}
               />
             </LinearGradient>
             {activeFilterCount > 0 && (
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   headerWrapper: {
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.2,
         shadowRadius: 24,
@@ -267,10 +267,10 @@ const styles = StyleSheet.create({
   },
   searchInputFocused: {
     borderWidth: 2,
-    borderColor: NUQTA.lightMustard,
+    borderColor: REZ_THEME.lightMustard,
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.lightMustard,
+        shadowColor: REZ_THEME.lightMustard,
         shadowOpacity: 0.2,
         shadowRadius: 16,
       },
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '500',
     borderWidth: 0,
     padding: 0,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: NUQTA.lightPeach,
+    backgroundColor: REZ_THEME.lightPeach,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -335,10 +335,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 6,
     borderWidth: 2,
-    borderColor: NUQTA.nileBlue,
+    borderColor: REZ_THEME.nileBlue,
   },
   filterBadgeText: {
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     ...Typography.caption,
     fontWeight: '800',
   },

@@ -1,9 +1,9 @@
 /**
  * MallRewardBoosters Component
  *
- * Section highlighting stores with the highest Nuqta Coin rewards.
+ * Section highlighting stores with the highest REZ Coin rewards.
  * Drives purchases to high-reward stores with prominent coin percentages.
- * Blue-gold gradient container matching the Nuqta Coins theme.
+ * Blue-gold gradient container matching the REZ Coins theme.
  */
 
 import React, { memo, useCallback } from 'react';

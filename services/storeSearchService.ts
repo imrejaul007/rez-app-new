@@ -87,7 +87,7 @@ export interface StoreSearchParams {
   page?: number;
   limit?: number;
   sortBy?: 'rating' | 'distance' | 'name' | 'newest';
-  nuqtaPay?: boolean;
+  rezPayFilter?: boolean;
 }
 
 export interface StoreSearchResponse {
@@ -292,7 +292,7 @@ class StoreSearchService {
       page = 1,
       limit = 20,
       sortBy = 'rating',
-      nuqtaPay
+      rezPayFilter
     } = params;
 
     // If category is a MongoDB ObjectId, use the category endpoint
@@ -305,7 +305,7 @@ class StoreSearchService {
       const qs = buildQueryString({
         page, limit, sortBy,
         ...(location && { location, radius }),
-        ...(nuqtaPay && { nuqtaPay: 'true' }),
+        ...(rezPayFilter && { nuqtaPay: 'true' }), // API contract: backend param is 'nuqtaPay'
       });
 
       const response = await apiClient.get<StoreSearchResponse>(`/stores/search-by-category/${category}?${qs}`);
@@ -473,7 +473,7 @@ class StoreSearchService {
     priceRange?: { min: number; max: number };
     rating?: number;
     paymentMethods?: string[];
-    nuqtaPay?: boolean;
+    rezPayFilter?: boolean;
     features?: {
       freeDelivery?: boolean;
       walletPayment?: boolean;
@@ -488,7 +488,7 @@ class StoreSearchService {
   }): Promise<StoreSearchResponse> {
     const {
       search, category, deliveryTime, priceRange, rating,
-      paymentMethods, nuqtaPay, features,
+      paymentMethods, rezPayFilter, features,
       sortBy = 'rating', location, radius = 10, page = 1, limit = 20
     } = params;
 
@@ -520,7 +520,7 @@ class StoreSearchService {
       if (features.verified) featuresList.push('verified');
       if (features.featured) featuresList.push('featured');
     }
-    if (nuqtaPay) featuresList.push('nuqtaPay');
+    if (rezPayFilter) featuresList.push('nuqtaPay'); // API contract: backend feature string is 'nuqtaPay'
     if (featuresList.length > 0) {
       queryParams.append('features', featuresList.join(','));
     }
@@ -1003,7 +1003,7 @@ class StoreSearchService {
 }
 
 // Singleton pattern using globalThis to persist across SSR module re-evaluations
-const STORE_SEARCH_SERVICE_KEY = '__nuqtaStoreSearchService__';
+const STORE_SEARCH_SERVICE_KEY = '__rezStoreSearchService__';
 
 function getStoreSearchService(): StoreSearchService {
   // Use globalThis to persist across module re-evaluations in SSR

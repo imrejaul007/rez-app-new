@@ -52,18 +52,18 @@ export type TransactionStatus =
   | 'PROCESSING'
   | 'REFUNDED';
 
-export type TransactionCategory = 
+export type TransactionCategory =
   | 'ALL'
   | 'HOME_DELIVERY'
   | 'VOUCHER'
-  | 'NUQTA_PAY'
+  | 'REZ_PAY'
   | 'RESTAURANT'
   | 'GROCERY'
   | 'SHOPPING'
   | 'ENTERTAINMENT';
 
-export type PaymentMethod = 
-  | 'NUQTA_COIN'
+export type PaymentMethod =
+  | 'REZ_COIN'
   | 'CREDIT_CARD'
   | 'DEBIT_CARD'
   | 'BANK_TRANSFER'

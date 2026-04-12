@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { SearchSuggestion } from '@/types/search.types';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 
 const TYPE_LABELS: Record<string, { label: string; icon: string }> = {
   product: { label: 'Products', icon: 'cube-outline' },
@@ -55,7 +55,7 @@ function SearchSuggestionsView({
     >
       <View style={styles.suggestionsHeader}>
         <View style={styles.suggestionsIconContainer}>
-          <Ionicons name="bulb-outline" size={18} color={NUQTA.lightMustard} />
+          <Ionicons name="bulb-outline" size={18} color={REZ_THEME.lightMustard} />
         </View>
         <Text style={styles.suggestionsTitle}>Suggestions</Text>
       </View>
@@ -66,7 +66,7 @@ function SearchSuggestionsView({
               <Ionicons
                 name={(TYPE_LABELS[type]?.icon || 'search-outline') as any}
                 size={14}
-                color={NUQTA.text.muted}
+                color={REZ_THEME.text.muted}
               />
               <Text style={styles.suggestionGroupTitle}>
                 {TYPE_LABELS[type]?.label || 'Results'}
@@ -113,7 +113,7 @@ function SuggestionItem({
       accessibilityRole="button"
     >
       <View style={styles.suggestionIconWrapper}>
-        <Ionicons name={icon as any} size={16} color={NUQTA.nileBlue} />
+        <Ionicons name={icon as any} size={16} color={REZ_THEME.nileBlue} />
       </View>
       <Text style={styles.suggestionText}>{suggestion.text}</Text>
       {suggestion.resultCount ? (
@@ -121,7 +121,7 @@ function SuggestionItem({
           <Text style={styles.suggestionCount}>{suggestion.resultCount}</Text>
         </View>
       ) : null}
-      <Ionicons name="arrow-forward" size={16} color={NUQTA.text.muted} />
+      <Ionicons name="arrow-forward" size={16} color={REZ_THEME.text.muted} />
     </Pressable>
   );
 }
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 16,
@@ -159,14 +159,14 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: NUQTA.nileBlue,
+    backgroundColor: REZ_THEME.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
   suggestionsTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   suggestionItem: {
     flexDirection: 'row',
@@ -175,33 +175,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderRadius: 14,
     marginBottom: 6,
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
     gap: Spacing.md,
   },
   suggestionIconWrapper: {
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
   },
   suggestionText: {
     flex: 1,
     ...Typography.body,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '500',
   },
   suggestionCountBadge: {
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
-    backgroundColor: NUQTA.lightMustard,
+    backgroundColor: REZ_THEME.lightMustard,
     borderRadius: BorderRadius.md,
   },
   suggestionCount: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   suggestionGroupHeader: {
     flexDirection: 'row',
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   suggestionGroupTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: NUQTA.text.muted,
+    color: REZ_THEME.text.muted,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
   },

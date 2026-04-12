@@ -25,7 +25,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 2 cards per row with padding
 
-// Nuqta Brand Colors
+// REZ Brand Colors
 const COLORS = {
   primary: colors.lightMustard,
   primaryDark: colors.brand.goldRich,

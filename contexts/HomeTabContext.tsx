@@ -7,7 +7,7 @@
  *
  * Tab configurations:
  * - near-u (default): Rewards Near You - local offers, everyday savings
- * - mall: Nuqta Mall - curated brands, premium shopping
+ * - mall: REZ Mall - curated brands, premium shopping
  * - cash: Cash Store - cashback focus, money-back deals
  * - prive: Privé - exclusive, reputation-based access (6-pillar system)
  */

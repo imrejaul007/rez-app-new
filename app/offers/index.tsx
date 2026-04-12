@@ -16,7 +16,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { OffersThemeProvider } from '@/contexts/OffersThemeContext';
 import { OffersPageContent } from '@/components/offers/OffersPageContent';
 import { useAuthUser, useIsAuthenticated, useRezBalance, useRefreshWallet } from '@/stores/selectors';
-import { NuqtaCoin as ReZCoin } from '@/components/homepage/ReZCoin';
+import { RezCoin as ReZCoin } from '@/components/homepage/ReZCoin';
 import { Colors, Spacing, Typography, Shadows, BorderRadius } from '@/constants/DesignSystem';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { BRAND } from '@/constants/brand';
@@ -106,7 +106,7 @@ function OffersScreen() {
       const result = await Share.share({
         message:
           'Check out amazing offers on ${BRAND.APP_NAME}! Get up to 50% off + extra cashback on your favorite stores. Download now!',
-        url: 'https://nuqta.app/offers',
+        url: 'https://rezapp.com/offers',
         title: `${BRAND.APP_NAME} Offers`,
       });
 

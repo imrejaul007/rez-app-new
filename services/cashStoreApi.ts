@@ -5,8 +5,8 @@
  * Cash Store = Affiliate cashback for external websites (Amazon, Myntra, etc.)
  * Users earn real cashback (rupees) by shopping through tracking links.
  *
- * This is different from Nuqta Mall which is an in-app delivery marketplace
- * where users earn Nuqta Coins.
+ * This is different from REZ Mall which is an in-app delivery marketplace
+ * where users earn REZ Coins.
  */
 
 import apiClient from '@/services/apiClient';

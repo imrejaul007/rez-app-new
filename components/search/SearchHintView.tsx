@@ -8,7 +8,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 
 function SearchHintView() {
   return (
@@ -18,7 +18,7 @@ function SearchHintView() {
       accessibilityRole="alert"
     >
       <View style={styles.searchHintIconContainer}>
-        <Ionicons name="information-circle-outline" size={48} color={NUQTA.nileBlue} accessibilityLabel="Information icon" />
+        <Ionicons name="information-circle-outline" size={48} color={REZ_THEME.nileBlue} accessibilityLabel="Information icon" />
       </View>
       <Text style={styles.searchHintTitle}>Keep typing...</Text>
       <Text style={styles.searchHintText}>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 16,
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.lg,
@@ -64,12 +64,12 @@ const styles = StyleSheet.create({
   searchHintTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: Spacing.sm,
   },
   searchHintText: {
     ...Typography.body,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     textAlign: 'center',
     lineHeight: 20,
   },

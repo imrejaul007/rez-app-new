@@ -30,7 +30,7 @@ const steps: Step[] = [
   { id: 4, icon: 'swap-horizontal-outline', label: 'Redeem', color: colors.brand.goldRich },
 ];
 
-const HowNuqtaWorksCard: React.FC = () => {
+const HowRezWorksCard: React.FC = () => {
   const router = useRouter();
 
   const handleNavigateToPage = () => {
@@ -366,4 +366,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(HowNuqtaWorksCard);
+export default React.memo(HowRezWorksCard);

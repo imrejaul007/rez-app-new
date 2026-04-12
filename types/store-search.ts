@@ -50,7 +50,7 @@ export interface StoreResult {
     mall?: boolean;
     cashStore?: boolean;
   };
-  hasNuqtaPay?: boolean;
+  hasRezPay?: boolean;
   cashbackPercent?: number;
   maxCoinRedemptionPercent?: number;
   products: ProductItem[];

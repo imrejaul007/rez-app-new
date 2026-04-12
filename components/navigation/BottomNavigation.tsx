@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-// Import the Pay in Store icon (Nuqta animated coin)
+// Import the Pay in Store icon (REZ animated coin)
 const payInStoreIcon = require('@/assets/images/nuqta-coin-animated.gif');
 import Svg, { Path } from 'react-native-svg';
 import logger from '@/utils/logger';
@@ -264,7 +264,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         return 'Profile';
       }
     }
-    // Nuqta Mall tabs: Home, Search, Pay at Store, Offers, Profile
+    // REZ Mall tabs: Home, Search, Pay at Store, Offers, Profile
     else if (isRezMallActive) {
       // Check for Search tab - multiple formats (search, categories)
       if (
@@ -499,13 +499,13 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   }
 
   // =====================================================
-  // NUQTA MALL / DEFAULT LAYOUT - 5 tabs with center floating button
+  // REZ MALL / DEFAULT LAYOUT - 5 tabs with center floating button
   // =====================================================
 
   // Different tabs based on active home tab
   const tabs = isRezMallActive
     ? [
-        // Nuqta Mall tabs: Home, Search, Pay at Store, Offers, Profile
+        // REZ Mall tabs: Home, Search, Pay at Store, Offers, Profile
         {
           name: 'Home',
           route: '/(tabs)',
@@ -659,7 +659,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
 
 const styles = StyleSheet.create({
   // =====================================================
-  // DEFAULT / NUQTA MALL STYLES (with floating center button)
+  // DEFAULT / REZ MALL STYLES (with floating center button)
   // =====================================================
 
   // Main container - holds everything

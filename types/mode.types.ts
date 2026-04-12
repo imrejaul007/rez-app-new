@@ -1,9 +1,9 @@
 /**
- * Mode Types for Nuqta Mode Switcher
+ * Mode Types for REZ Mode Switcher
  *
  * Defines the 4-mode intent selector system:
  * - near-u: Rewards Near You (everyday, local)
- * - mall: Nuqta Mall (curated brands)
+ * - mall: REZ Mall (curated brands)
  * - cash: Cash Store (cashback focus)
  * - prive: Privé (exclusive, reputation-based)
  */
@@ -97,7 +97,7 @@ export interface ModeContextType extends ModeContextState, ModeContextActions {
   isCashActive: boolean;
   isPriveActive: boolean;
   // Backward compatibility with old API
-  isNuqtaMallActive: boolean;
+  isRezMallActive: boolean;
   isCashStoreActive: boolean;
 }
 

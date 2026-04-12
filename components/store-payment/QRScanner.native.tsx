@@ -39,8 +39,8 @@ import { colors } from '@/constants/theme';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const SCANNER_SIZE = SCREEN_WIDTH * 0.75;
 
-// Nuqta Brand Colors
-const NUQTA_COLORS = {
+// REZ Brand Colors
+const REZ_COLORS = {
   primary: colors.lightMustard,
   primaryGlow: 'rgba(255, 205, 87, 0.5)',
   orange: colors.brand.orange,
@@ -64,7 +64,7 @@ function PermissionDeniedScreen({ onClose, onManualEntry }: { onClose: () => voi
     <View style={styles.container}>
       <View style={styles.permissionContainer}>
         <View style={styles.permissionIcon}>
-          <Ionicons name="camera-outline" size={48} color={NUQTA_COLORS.orange} />
+          <Ionicons name="camera-outline" size={48} color={REZ_COLORS.orange} />
         </View>
         <Text style={styles.permissionTitle}>Camera Access Denied</Text>
         <Text style={styles.permissionSubtext}>
@@ -155,7 +155,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
     return (
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Ionicons name="camera" size={64} color={NUQTA_COLORS.primary} />
+          <Ionicons name="camera" size={64} color={REZ_COLORS.primary} />
           <Text style={styles.permissionText}>Initializing camera...</Text>
         </View>
       </View>
@@ -167,7 +167,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
           <View style={styles.permissionIcon}>
-            <Ionicons name="camera-outline" size={48} color={NUQTA_COLORS.primary} />
+            <Ionicons name="camera-outline" size={48} color={REZ_COLORS.primary} />
           </View>
           <Text style={styles.permissionTitle}>Camera Access Required</Text>
           <Text style={styles.permissionSubtext}>
@@ -269,7 +269,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
             <Ionicons
               name={flashOn ? 'flash' : 'flash-outline'}
               size={24}
-              color={flashOn ? NUQTA_COLORS.primary : colors.background.primary}
+              color={flashOn ? REZ_COLORS.primary : colors.background.primary}
             />
           </Pressable>
 
@@ -283,7 +283,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
           <Text style={styles.infoText}>Scan any store QR code to pay</Text>
           <View style={styles.infoDivider} />
           <View style={styles.infoIcons}>
-            <View style={[styles.paymentIcon, { backgroundColor: NUQTA_COLORS.primary }]}>
+            <View style={[styles.paymentIcon, { backgroundColor: REZ_COLORS.primary }]}>
               <Text style={styles.paymentIconText}>R</Text>
             </View>
             <Text style={styles.infoSubtext}>{BRAND.PAY_NAME}</Text>
@@ -300,14 +300,14 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
 
           <View style={styles.securityBadges}>
             <View style={styles.securityBadge}>
-              <Ionicons name="shield-checkmark" size={14} color={NUQTA_COLORS.primary} />
+              <Ionicons name="shield-checkmark" size={14} color={REZ_COLORS.primary} />
               <View>
                 <Text style={styles.badgeTitle}>PCI DSS</Text>
                 <Text style={styles.badgeSubtitle}>COMPLIANT</Text>
               </View>
             </View>
             <View style={styles.securityBadge}>
-              <Ionicons name="globe-outline" size={14} color={NUQTA_COLORS.primary} />
+              <Ionicons name="globe-outline" size={14} color={REZ_COLORS.primary} />
               <View>
                 <Text style={styles.badgeTitle}>256-BIT</Text>
                 <Text style={styles.badgeSubtitle}>ENCRYPTED</Text>
@@ -323,14 +323,14 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA_COLORS.background,
+    backgroundColor: REZ_COLORS.background,
   },
   permissionContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
-    backgroundColor: NUQTA_COLORS.background,
+    backgroundColor: REZ_COLORS.background,
   },
   permissionIcon: {
     width: 100,
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   grantButton: {
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 30,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: NUQTA_COLORS.orange,
+    backgroundColor: REZ_COLORS.orange,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 45,
     height: 45,
-    borderColor: NUQTA_COLORS.primary,
+    borderColor: REZ_COLORS.primary,
     borderWidth: 4,
   },
   topLeft: {
@@ -486,9 +486,9 @@ const styles = StyleSheet.create({
     left: 8,
     right: 8,
     height: 3,
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     borderRadius: 2,
-    shadowColor: NUQTA_COLORS.primary,
+    shadowColor: REZ_COLORS.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 20,
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rezLogo: {
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,

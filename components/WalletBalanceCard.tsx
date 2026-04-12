@@ -20,7 +20,7 @@ import { colors } from '@/constants/theme';
 // Coin type color mapping for expiry indicators
 const COIN_TYPE_COLORS: Record<string, { color: string; label: string }> = {
   rez: { color: colors.brand.greenDark, label: 'Never expires' },
-  nuqta: { color: colors.brand.greenDark, label: 'Never expires' },
+  nuqta: { color: colors.brand.greenDark, label: 'Never expires' }, // legacy DB alias
   promo: { color: colors.warningScale[700], label: '' }, // dynamic based on campaign
   branded: { color: colors.brand.blue, label: '' }, // dynamic per brand
 };
@@ -41,7 +41,7 @@ const isExpiringSoon = (expiryDate: Date | undefined, withinDays: number = 7): b
  * Get human-readable expiry label
  */
 const getExpiryLabel = (expiryDate: Date | undefined, coinType: string): string => {
-  if (coinType === 'rez' || coinType === 'nuqta') return 'Never expires';
+  if (coinType === 'rez' || coinType === 'nuqta') return 'Never expires'; // 'nuqta' is legacy DB alias
   if (!expiryDate) {
     if (coinType === 'promo') return 'Per campaign';
     if (coinType === 'branded') return 'Check store details';

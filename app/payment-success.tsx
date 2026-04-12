@@ -425,7 +425,7 @@ function PaymentSuccessPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
-      {/* Fixed Header - Nuqta Colors */}
+      {/* Fixed Header - REZ Colors */}
       <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.headerGradient}>
         {/* Success Icon */}
         <View style={styles.iconCircle}>
@@ -823,8 +823,8 @@ function PaymentSuccessPage() {
   );
 }
 
-// Nuqta Color Palette - using DesignSystem tokens
-const NUQTA_COLORS = {
+// REZ Color Palette - using DesignSystem tokens
+const REZ_COLORS = {
   nileBlue: colors.nileBlue,
   lightMustard: Colors.gold,
   linen: colors.background.secondary,
@@ -835,7 +835,7 @@ const NUQTA_COLORS = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA_COLORS.linen,
+    backgroundColor: REZ_COLORS.linen,
   },
   scrollView: {
     flex: 1,
@@ -858,7 +858,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: NUQTA_COLORS.lightMustard,
+    backgroundColor: REZ_COLORS.lightMustard,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 14,
@@ -951,7 +951,7 @@ const styles = StyleSheet.create({
   multiOrderAmount: {
     fontSize: 14,
     fontWeight: '700',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
 
   // --- Details Card ---
@@ -990,7 +990,7 @@ const styles = StyleSheet.create({
   methodBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: NUQTA_COLORS.lavenderMist,
+    backgroundColor: REZ_COLORS.lavenderMist,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -999,12 +999,12 @@ const styles = StyleSheet.create({
   methodText: {
     fontSize: 12,
     fontWeight: '600',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
   coinsValue: {
     fontSize: 13,
     fontWeight: '700',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
   separator: {
     height: 1,
@@ -1014,14 +1014,14 @@ const styles = StyleSheet.create({
   amountValue: {
     fontSize: 16,
     fontWeight: '800',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
 
   // --- Delivery Card ---
   deliveryCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: NUQTA_COLORS.lavenderMist,
+    backgroundColor: REZ_COLORS.lavenderMist,
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -1046,7 +1046,7 @@ const styles = StyleSheet.create({
   deliveryTime: {
     fontSize: 14,
     fontWeight: '700',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
 
   // --- Email Notice ---
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   trackButton: {
-    backgroundColor: NUQTA_COLORS.lightMustard,
+    backgroundColor: REZ_COLORS.lightMustard,
     borderRadius: 14,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -1077,7 +1077,7 @@ const styles = StyleSheet.create({
     gap: 8,
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA_COLORS.lightMustard,
+        shadowColor: REZ_COLORS.lightMustard,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -1087,7 +1087,7 @@ const styles = StyleSheet.create({
     }),
   },
   trackButtonText: {
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },
@@ -1100,10 +1100,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: NUQTA_COLORS.nileBlue,
+    borderColor: REZ_COLORS.nileBlue,
   },
   reviewButtonText: {
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },
@@ -1116,10 +1116,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: NUQTA_COLORS.nileBlue,
+    borderColor: REZ_COLORS.nileBlue,
   },
   homeButtonText: {
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },

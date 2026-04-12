@@ -47,11 +47,11 @@ const SIZES = {
 };
 
 /**
- * NuqtaCoin Component
+ * RezCoin Component
  *
- * Renders the branded Rez coin with gradient ring and Rez mark
+ * Renders the branded REZ coin with gradient ring and REZ mark
  */
-export const NuqtaCoin: React.FC<ReZCoinProps> = ({
+export const RezCoin: React.FC<ReZCoinProps> = ({
   balance,
   size = 'small',
   onPress,
@@ -146,4 +146,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(NuqtaCoin);
+// backward compat alias
+export const NuqtaCoin = RezCoin;
+export default React.memo(RezCoin);
