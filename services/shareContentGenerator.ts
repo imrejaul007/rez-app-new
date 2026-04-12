@@ -209,14 +209,18 @@ export class ShareContentGenerator {
   generateShareableImage(
     referralCode: string,
     tierName: string,
-    userName: string
+    userName: string,
+    rewardPerReferral?: number
   ): {
     text: string;
     backgroundColor: string;
     textColor: string;
   } {
+    const rewardText = rewardPerReferral
+      ? `Get ${rewardPerReferral} coins on your first order`
+      : 'Get coins on your first order';
     return {
-      text: `Join me on REZ!\n\nUse code: ${referralCode}\n\nGet ₹30 off your first order\n\n- ${userName}\n${tierName} Member`,
+      text: `Join me on REZ!\n\nUse code: ${referralCode}\n\n${rewardText}\n\n- ${userName}\n${tierName} Member`,
       backgroundColor: '#7c3aed',
       textColor: '#ffffff'
     };

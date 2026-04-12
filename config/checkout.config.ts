@@ -11,9 +11,10 @@
 export const TAX_RATE = 0.05;
 
 /**
- * Fixed platform fee charged per order (in currency units)
+ * Platform fee is NOT charged to consumers — it is deducted from merchant payouts on the backend.
+ * This constant exists for reference only and must not be applied to consumer order totals.
  */
-export const PLATFORM_FEE = 2;
+export const PLATFORM_FEE = 0;
 
 /**
  * Maximum percentage of order value that can be paid using REZ coins (100%)

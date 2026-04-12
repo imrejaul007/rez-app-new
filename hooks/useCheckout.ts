@@ -1252,8 +1252,10 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       const subtotalAfterRezCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used;
 
-      // Promo coins have 1:1 conversion and can be used up to configured max percentage of remaining amount or available coins
-      const maxPromoUsage = Math.floor(subtotalAfterRezCoins * prev.coinSystem.promoCoin.maxUsagePercentage / 100);
+      // Promo coins capped at configured max percentage of the GROSS bill (before any coin discounts)
+      // This matches backend WalletConfig.coinExpiryConfig.promo.maxUsagePct which is applied against gross total
+      const subtotalBeforeCoins = itemTotal + prev.store.deliveryFee + taxes - promoDiscount;
+      const maxPromoUsage = Math.floor(subtotalBeforeCoins * prev.coinSystem.promoCoin.maxUsagePercentage / 100);
       const coinsToUse = enabled ? Math.min(prev.coinSystem.promoCoin.available, maxPromoUsage, subtotalAfterRezCoins) : 0;
 
       const newCoinSystem = {
