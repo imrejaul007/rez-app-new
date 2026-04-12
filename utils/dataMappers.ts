@@ -230,7 +230,11 @@ export function mapBackendOrderToFrontend(backendOrder: BackendOrder): any {
   return {
     id: backendOrder.id || (backendOrder as any)._id,
     orderNumber: backendOrder.orderNumber,
-    userId: backendOrder.userId || (backendOrder as any).user,
+    userId: backendOrder.userId || (backendOrder as any).user?._id || (backendOrder as any).user,
+    // FM-02 FIX: Backend sends populated user as 'user'; some components access 'customer'.
+    // Expose both so either access pattern works without a type error.
+    user: (backendOrder as any).user || null,
+    customer: (backendOrder as any).user || (backendOrder as any).customer || null,
     status: mapOrderStatus(backendOrder.status),
     items: (backendOrder.items || []).map((item: any) => ({
       id: item._id || item.id,
@@ -263,6 +267,11 @@ export function mapBackendOrderToFrontend(backendOrder: BackendOrder): any {
     },
     // Deal redemption info
     redemption: (backendOrder as any).redemption || undefined,
+    // FM-01 FIX: Expose delivery fee under all known alias names at root level so
+    // any component using order.deliveryFee / order.delivery_fee / order.shippingCost resolves correctly.
+    deliveryFee: deliveryFee,
+    delivery_fee: deliveryFee,
+    shippingCost: deliveryFee,
     // Keep at root level for backwards compatibility
     deliveryAddress: mappedDeliveryAddress,
     // Also provide legacy summary field
@@ -318,6 +327,20 @@ function mapOrderStatus(backendStatus: string): string {
   };
 
   return statusMap[backendStatus] || backendStatus;
+}
+
+/**
+ * FM-19 FIX: Normalize booking type discriminants from backend suffixed form to short form.
+ * Backend sends 'table_booking' | 'service_booking' | 'event_booking' etc.
+ * Frontend type tabs and components expect 'table' | 'service' | 'event'.
+ * Strips '_booking' and '_reservation' suffixes; passes through already-short values unchanged.
+ *
+ * @example normalizeBookingType('table_booking') === 'table'
+ * @example normalizeBookingType('service')       === 'service'
+ */
+export function normalizeBookingType(rawType: string | undefined | null): string {
+  if (!rawType) return 'table';
+  return rawType.replace(/_booking$/, '').replace(/_reservation$/, '');
 }
 
 /**

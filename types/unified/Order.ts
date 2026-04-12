@@ -157,6 +157,23 @@ export interface Order {
   /** Invoice URL */
   invoiceUrl?: string;
 
+  // ========== LEGACY FIELD ALIASES (FM-01, FM-02) ==========
+  /**
+   * FM-01: Delivery fee aliases for backward compatibility.
+   * Prefer totals.delivery (canonical backend field).
+   * Resolution order for display: totals.delivery ?? deliveryFee ?? delivery_fee ?? shippingCost ?? 0
+   */
+  deliveryFee?: number;
+  delivery_fee?: number;
+  shippingCost?: number;
+
+  /**
+   * FM-02: Backend sends `user` (populated ObjectId ref); some components used `customer`.
+   * Both are accepted — dataMappers.ts sets both fields from the API response.
+   */
+  user?: { id?: string; name?: string; email?: string; phone?: string } | string;
+  customer?: { id?: string; name?: string; email?: string; phone?: string } | string;
+
   // ========== METADATA ==========
   /** Order source */
   source?: 'web' | 'mobile' | 'app' | 'pos';
@@ -616,16 +633,31 @@ type OrderLike = { totals?: IOrderTotals; pricing?: Partial<OrderPricing> & {
 
 /**
  * Get the delivery/shipping fee from an order.
- * Reads totals.delivery (canonical) → pricing.shipping → pricing.shippingAmount → 0
+ * FM-01 FIX: Reads all known field name variants in canonical-first priority order.
+ * totals.delivery (backend canonical) → pricing.shipping → pricing.shippingAmount →
+ * deliveryFee → delivery_fee → shippingCost → 0
  */
-export function getOrderShipping(order: OrderLike): number {
+export function getOrderShipping(order: OrderLike & {
+  deliveryFee?: number;
+  delivery_fee?: number;
+  shippingCost?: number;
+}): number {
   return (
     order.totals?.delivery ??
     order.pricing?.shipping ??
     order.pricing?.shippingAmount ??
+    order.deliveryFee ??
+    order.delivery_fee ??
+    order.shippingCost ??
     0
   );
 }
+
+/**
+ * Alias for getOrderShipping — accepts the same order shape.
+ * Use this name when the call-site semantics are "delivery fee" rather than "shipping".
+ */
+export const getOrderDeliveryFee = getOrderShipping;
 
 /**
  * Get the tax amount from an order.

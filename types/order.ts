@@ -93,6 +93,16 @@ export interface Order {
   tax: number;
   /** @deprecated Use totals.delivery */
   shipping: number;
+  /**
+   * Delivery fee aliases — backend uses 'totals.delivery' as the canonical field.
+   * Components should prefer totals.delivery but these aliases exist for backward
+   * compatibility with older code that uses deliveryFee / delivery_fee / shippingCost.
+   * FM-01 FIX: normalised to a single resolution order so display components can
+   * use: order.totals?.delivery ?? order.deliveryFee ?? order.delivery_fee ?? order.shippingCost ?? 0
+   */
+  deliveryFee?: number;
+  delivery_fee?: number;
+  shippingCost?: number;
   /** @deprecated Use totals.discount */
   discount: number;
   /** @deprecated Use totals.total */
@@ -113,6 +123,14 @@ export interface Order {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  /**
+   * FM-02 FIX: Backend populates the user reference as 'user' (ObjectId ref).
+   * Some components used order.customer expecting a populated user object.
+   * Both aliases are present here so TypeScript accepts either access pattern;
+   * the mapper in dataMappers.ts normalises the value onto both fields.
+   */
+  user?: { id?: string; name?: string; email?: string; phone?: string } | string;
+  customer?: { id?: string; name?: string; email?: string; phone?: string } | string;
 }
 
 export interface OrderFilter {
