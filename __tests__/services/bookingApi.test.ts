@@ -18,8 +18,8 @@ const mockBooking = {
   userId: 'u1',
   serviceId: 'svc1',
   storeId: 'store1',
-  date: '2026-04-10',
-  timeSlot: '10:00',
+  bookingDate: '2026-04-10',
+  timeSlot: { start: '10:00', end: '11:00' },
   status: 'confirmed' as const,
   createdAt: '2026-04-05T00:00:00Z',
 };
@@ -33,8 +33,8 @@ describe('bookingApi', () => {
       const res = await bookingApi.createBooking({
         serviceId: 'svc1',
         storeId: 'store1',
-        date: '2026-04-10',
-        timeSlot: '10:00',
+        bookingDate: '2026-04-10',
+        timeSlot: { start: '10:00', end: '11:00' },
       });
       expect(res.success).toBe(true);
       expect(res.data?.id).toBe('book1');
@@ -42,14 +42,14 @@ describe('bookingApi', () => {
 
     it('handles slot unavailable error', async () => {
       mockClient.post.mockResolvedValueOnce({ success: false, message: 'Slot not available' });
-      const res = await bookingApi.createBooking({ serviceId: 'svc1', storeId: 's1', date: '2026-04-10', timeSlot: '10:00' });
+      const res = await bookingApi.createBooking({ serviceId: 'svc1', storeId: 's1', bookingDate: '2026-04-10', timeSlot: { start: '10:00', end: '11:00' } });
       expect(res.success).toBe(false);
     });
   });
 
   describe('getUserBookings', () => {
     it('returns user bookings', async () => {
-      mockClient.get.mockResolvedValueOnce({ success: true, data: { bookings: [mockBooking], pagination: { current: 1, pages: 1, total: 1, limit: 10 } } });
+      mockClient.get.mockResolvedValueOnce({ success: true, data: { bookings: [mockBooking], pagination: { page: 1, pages: 1, total: 1, limit: 10 } } });
       const res = await bookingApi.getUserBookings({ status: 'upcoming' });
       expect(res.success).toBe(true);
       expect(res.data?.bookings).toHaveLength(1);
@@ -82,7 +82,7 @@ describe('bookingApi', () => {
 
   describe('rescheduleBooking', () => {
     it('reschedules to new date and slot', async () => {
-      mockClient.post.mockResolvedValueOnce({ success: true, data: { ...mockBooking, date: '2026-04-15', timeSlot: '14:00' } });
+      mockClient.post.mockResolvedValueOnce({ success: true, data: { ...mockBooking, bookingDate: '2026-04-15', timeSlot: { start: '14:00', end: '15:00' } } });
       const res = await bookingApi.rescheduleBooking('book1', { newDate: '2026-04-15', newTimeSlot: '14:00' });
       expect(res.success).toBe(true);
     });
