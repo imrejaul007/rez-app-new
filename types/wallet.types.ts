@@ -35,16 +35,21 @@ export interface Transaction {
   refund?: RefundDetails;
 }
 
-export type TransactionType = 
-  | 'PAYMENT'
-  | 'REFUND' 
-  | 'CASHBACK'
-  | 'REWARD'
-  | 'TRANSFER'
-  | 'TOPUP'
-  | 'WITHDRAWAL';
+// TF-02 fix: TransactionType must match backend CoinTransaction.type lowercase values.
+// UPPERCASE variants ('PAYMENT', 'REWARD', etc.) do not exist in DB and will never match.
+export type TransactionType =
+  | 'earned'
+  | 'spent'
+  | 'expired'
+  | 'refunded'
+  | 'bonus'
+  | 'branded_award';
 
+// FM-03 / ENUM-02 FIX: Backend canonical status is 'completed', not 'success'.
+// 'completed' is the primary value; 'success' kept for backward compatibility
+// with legacy data or finance-service responses.
 export type TransactionStatus =
+  | 'completed'
   | 'success'
   | 'pending'
   | 'failed'
@@ -238,7 +243,8 @@ export const WALLET_COLORS = {
 } as const;
 
 export const TRANSACTION_STATUS_COLORS = {
-  success: WALLET_COLORS.success,
+  completed: WALLET_COLORS.success,  // FM-03 FIX: canonical backend status
+  success: WALLET_COLORS.success,    // legacy alias
   pending: WALLET_COLORS.pending,
   failed: WALLET_COLORS.error,
   cancelled: WALLET_COLORS.error,
@@ -247,7 +253,8 @@ export const TRANSACTION_STATUS_COLORS = {
 } as const;
 
 export const TRANSACTION_STATUS_BACKGROUNDS = {
-  success: WALLET_COLORS.successLight,
+  completed: WALLET_COLORS.successLight,  // FM-03 FIX: canonical backend status
+  success: WALLET_COLORS.successLight,    // legacy alias
   pending: WALLET_COLORS.pendingLight,
   failed: WALLET_COLORS.errorLight,
   cancelled: WALLET_COLORS.errorLight,

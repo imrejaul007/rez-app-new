@@ -188,7 +188,15 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
     const effectiveCashbackPercent = baseCashbackPercent + memberBonus;
 
     const cashback = Math.floor((billAmount * effectiveCashbackPercent) / 100);
-    const coinsToEarn = Math.floor(billAmount / 10); // 1 coin per ₹10
+    // C12 fix: The flat ₹10/coin formula does not match the backend cashbackEngine which applies
+    // category baseRate (2.5–6%), subscription multiplier (1×–3×), Privé multiplier (1×–2×),
+    // and a 15% hard cap. A flat formula over- or under-estimates by up to 50%.
+    // TODO: Replace with a server-side preview call:
+    //   GET /api/wallet/cashback-preview?billAmount=X&storeId=Y&category=Z
+    //   → { estimatedCoins, appliedRate, multiplier }
+    // For now, use the store's baseCashbackPercent as a best-effort approximation.
+    const baseRatePct = store?.rewardRules?.baseCashbackPercent ?? 2.5; // default 2.5%
+    const coinsToEarn = Math.floor((billAmount * baseRatePct) / 100);
 
     return { cashback, coinsToEarn };
   }, [billAmount, store, membership]);

@@ -197,7 +197,8 @@ function OfferDetailPage() {
           const currentOfferIdStr = String(currentOfferId).replace(/['"]/g, '');
 
           const offerMatch = rOfferIdStr === currentOfferIdStr;
-          const statusMatch = r.status === 'active' || r.status === 'pending';
+          // FL-02 fix: backend offer status is 'pending_approval', not 'pending'
+          const statusMatch = r.status === 'active' || r.status === 'pending_approval';
 
           logger.log('🔎 [REDEMPTION CHECK] Comparing:', {
             rOfferId: rOfferIdStr,

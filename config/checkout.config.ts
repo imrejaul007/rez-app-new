@@ -29,10 +29,12 @@ export const REZ_COIN_MAX_USAGE_PERCENTAGE = 100;
 export const PROMO_COIN_MAX_USAGE_PERCENTAGE = 20;
 
 /**
- * Maximum percentage of order value that can be paid using store promo coins (30%)
- * Store promo coins are limited to 30% of the remaining order value
+ * Maximum percentage of order value that can be paid using store promo coins.
+ * H30 fix: Aligned to 20% — backend CURRENCY_RULES.promo.maxUsagePct = 20.
+ * The previous 30% value was rejected silently by the backend on every store promo redemption.
+ * NOTE: Cap enforcement is authoritative on the backend. This constant is display-only.
  */
-export const STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE = 30;
+export const STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE = 20;
 
 /**
  * Default conversion rate for coins to currency (1 coin = ₹1).

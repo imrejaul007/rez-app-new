@@ -139,9 +139,11 @@ const MyDealsPage: React.FC = () => {
           }
 
           const redemptionList = reset ? response.data.redemptions : [...redemptions, ...response.data.redemptions];
+          // FL-06 fix: 'pending' status (paid deal awaiting payment confirmation) now counted
+          // in active so users see their pending paid deals reflected in the total.
           const calculatedSummary = redemptionList.reduce(
             (acc, r) => {
-              if (r.status === 'active') acc.active++;
+              if (r.status === 'active' || r.status === 'pending') acc.active++;
               else if (r.status === 'used') acc.used++;
               else if (r.status === 'expired') acc.expired++;
               else if (r.status === 'cancelled') acc.cancelled++;

@@ -365,7 +365,8 @@ function BillPaymentPage() {
             try {
               const statusRes = await getPaymentHistory(1, 5);
               const updated = statusRes.data?.payments?.find((p) => p._id === payment._id);
-              if (updated?.status === 'completed' || updated?.status === 'failed') {
+              // FL-05 fix: rez-finance-service returns 'success' as terminal status (not 'completed')
+              if (updated?.status === 'completed' || updated?.status === 'success' || updated?.status === 'failed') {
                 if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
                 if (isMounted()) setPaymentPolling(false);
                 if (updated.status === 'failed') {

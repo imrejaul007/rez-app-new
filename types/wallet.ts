@@ -1,8 +1,8 @@
 import { ImageSourcePropType } from 'react-native';
 import { BRAND } from '@/constants/brand';
 
-// Core Coin Types - Updated for new wallet design
-export type CoinType = 'rez' | 'branded' | 'promo' | 'prive';
+// Core Coin Types — must match rez-shared COIN_TYPES and backend CoinTransaction.type (TF-01 fix)
+export type CoinType = 'rez' | 'branded' | 'promo' | 'prive' | 'cashback' | 'referral';
 
 // Branded Coin Details (merchant-specific)
 export interface BrandedCoinDetails {
@@ -75,7 +75,9 @@ export interface SmartAlert {
 
 export interface WalletTransaction {
   id: string;
-  type: 'earned' | 'spent' | 'expired' | 'bonus' | 'transfer' | 'gift';
+  // FL-07/TF-02 fix: match backend CoinTransaction.type lowercase values exactly.
+  // 'transfer' and 'gift' do not exist in DB; added 'refunded' and 'branded_award'.
+  type: 'earned' | 'spent' | 'expired' | 'bonus' | 'refunded' | 'branded_award';
   coinType: CoinType;
   amount: number;
   currency: string;
@@ -155,8 +157,8 @@ export interface RefreshWalletRequest {
   forceRefresh?: boolean;
 }
 
-// Utility Types
-export type TransactionType = 'earned' | 'spent' | 'expired' | 'bonus' | 'transfer' | 'gift';
+// Utility Types — FL-07/TF-02 fix: match backend CoinTransaction.type lowercase values
+export type TransactionType = 'earned' | 'spent' | 'expired' | 'bonus' | 'refunded' | 'branded_award';
 export type TransactionStatus = 'completed' | 'pending' | 'failed';
 export type WalletErrorCode = 'NETWORK_ERROR' | 'SERVER_ERROR' | 'PARSING_ERROR' | 'UNAUTHORIZED' | 'TIMEOUT' | 'REAUTH_REQUIRED' | 'FEATURE_DISABLED' | 'VELOCITY_LIMIT' | 'WALLET_FROZEN' | 'INSUFFICIENT_BALANCE' | 'UNKNOWN';
 

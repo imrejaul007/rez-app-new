@@ -91,12 +91,15 @@ export function getPagination(
 
 // ── Coin Types (from rez-shared/src/constants/coins.ts) ─────────────────────
 
+// TF-01 fix: 'category' does not exist in any backend enum — replaced with 'cashback' and 'referral'.
+// Canonical list is in rez-shared/src/constants/coins.ts (6 types).
 export const COIN_TYPES = {
-  PRIMARY: 'rez' as const,
-  PRIVE: 'prive' as const,
-  BRANDED: 'branded' as const,
-  PROMO: 'promo' as const,
-  CATEGORY: 'category' as const,
+  PRIMARY:  'rez'      as const,
+  PRIVE:    'prive'    as const,
+  BRANDED:  'branded'  as const,
+  PROMO:    'promo'    as const,
+  CASHBACK: 'cashback' as const,
+  REFERRAL: 'referral' as const,
 } as const;
 
 export type CoinType = typeof COIN_TYPES[keyof typeof COIN_TYPES];
@@ -108,7 +111,8 @@ export interface WalletBalance {
   prive: number;
   promo: number;
   branded: number;
-  category: number;
+  cashback: number;
+  referral: number;
   total: number;
 }
 
