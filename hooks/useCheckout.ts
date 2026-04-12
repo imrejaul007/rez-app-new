@@ -879,18 +879,28 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             };
           }
 
+          // Auto-apply coins in priority order (Promo → StorePromo → REZ) so the
+          // checkout opens with coins pre-applied, matching backend debitInPriorityOrder.
+          const autoAppliedCoinSystem = autoApplyCoinsInOrder(realCoinSystem, adjustedBillSummary.totalPayable);
+          const autoAppliedBillSummary = CheckoutData.helpers.calculateBillSummary(
+            checkoutItems,
+            realStore,
+            appliedPromoCode,
+            { rez: autoAppliedCoinSystem.rezCoin.used, promo: autoAppliedCoinSystem.promoCoin.used },
+          );
+
           if (!isMountedRef.current) return;
           setState(prev => ({
             ...prev,
             items: checkoutItems,
             store: realStore,
             fulfillment: fulfillmentState,
-            billSummary: adjustedBillSummary,
+            billSummary: autoAppliedBillSummary,
             selectedAddress: defaultAddress,
             availableAddresses: userAddresses,
             appliedPromoCode,
             availablePromoCodes: realAvailableCoupons,
-            coinSystem: realCoinSystem,
+            coinSystem: autoAppliedCoinSystem,
             availablePaymentMethods: mockData.paymentMethods,
             recentPaymentMethods: mockData.paymentMethods.filter(m => m.isRecent),
             showAddressSection: fulfillmentState.selectedType === 'delivery',
@@ -1013,6 +1023,10 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       }
 
       const data = fallbackMockResult.status === 'fulfilled' ? fallbackMockResult.value : await CheckoutData.api.initializeCheckout();
+
+      // Auto-apply coins in priority order on fallback path too
+      const fallbackAutoCoins = autoApplyCoinsInOrder(realCoinSystem, data.billSummary?.totalPayable ?? 0);
+
       if (!isMountedRef.current) return;
       setState(prev => ({
         ...prev,
@@ -1020,7 +1034,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         store: data.store,
         billSummary: data.billSummary,
         availablePromoCodes: realAvailableCoupons,
-        coinSystem: realCoinSystem,
+        coinSystem: fallbackAutoCoins,
         availablePaymentMethods: data.paymentMethods,
         recentPaymentMethods: data.paymentMethods.filter(m => m.isRecent),
         loading: false,
@@ -1168,6 +1182,43 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       };
     });
   }, []);
+
+  // ── Auto-apply coins in priority order (Promo → StorePromo → REZ) ────────────
+  // Called on checkout load so the bill summary reflects the correct deduction
+  // order from the moment the checkout screen opens — matching what the backend
+  // does via debitInPriorityOrder when the order is actually placed.
+  //
+  // Priority:
+  //   1. Promo  — capped at promo.maxUsagePct % of gross bill
+  //   2. StorePromo — capped at storePromo.maxUsagePct % of remaining
+  //   3. REZ    — covers the rest up to full available balance
+  function autoApplyCoinsInOrder(coinSystem: CoinSystem, grossTotal: number): CoinSystem {
+    if (grossTotal <= 0) return coinSystem;
+
+    const promoAvailable = coinSystem.promoCoin.available;
+    const storePromoAvailable = coinSystem.storePromoCoin?.available ?? 0;
+    const rezAvailable = coinSystem.rezCoin.available;
+
+    // Step 1 — Promo (cap = % of gross)
+    const maxPromo = Math.floor(grossTotal * (coinSystem.promoCoin.maxUsagePercentage / 100));
+    const promoToUse = Math.min(promoAvailable, maxPromo, grossTotal);
+    let remaining = grossTotal - promoToUse;
+
+    // Step 2 — Store/Branded promo (cap = % of remaining)
+    const maxStorePromo = Math.floor(remaining * (coinSystem.storePromoCoin?.maxUsagePercentage ?? STORE_PROMO_COIN_MAX_USAGE_PERCENTAGE) / 100);
+    const storePromoToUse = Math.min(storePromoAvailable, maxStorePromo, remaining);
+    remaining -= storePromoToUse;
+
+    // Step 3 — REZ covers the rest
+    const rezToUse = Math.min(rezAvailable, remaining);
+
+    return {
+      ...coinSystem,
+      promoCoin: { ...coinSystem.promoCoin, used: promoToUse },
+      storePromoCoin: { ...coinSystem.storePromoCoin, used: storePromoToUse },
+      rezCoin: { ...coinSystem.rezCoin, used: rezToUse },
+    };
+  }
 
   const toggleRezCoin = useCallback((enabled: boolean) => {
     setState(prev => {
