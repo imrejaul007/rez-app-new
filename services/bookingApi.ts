@@ -16,11 +16,11 @@ export interface Booking {
   userId: string;
   serviceId: string;
   storeId: string;
-  date: string;
-  timeSlot: string;
+  bookingDate: string;
+  timeSlot: { start: string; end: string };
   staffId?: string;
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
-  notes?: string;
+  customerNotes?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -28,10 +28,10 @@ export interface Booking {
 export interface CreateBookingRequest {
   serviceId: string;
   storeId: string;
-  date: string;
-  timeSlot: string;
+  bookingDate: string;
+  timeSlot: { start: string; end: string };
   staffId?: string;
-  notes?: string;
+  customerNotes?: string;
   customerName?: string;
   customerPhone?: string;
   customerEmail?: string;
@@ -53,7 +53,7 @@ export interface BookingsQueryParams {
 export interface BookingsResponse {
   bookings: Booking[];
   pagination: {
-    current: number;
+    page: number;
     pages: number;
     total: number;
     limit: number;
@@ -75,10 +75,10 @@ class BookingService {
   async createBooking(bookingData: CreateBookingRequest): Promise<ApiResponse<Booking>> {
     try {
       // Validate required fields
-      if (!bookingData.serviceId || !bookingData.storeId || !bookingData.date || !bookingData.timeSlot) {
+      if (!bookingData.serviceId || !bookingData.storeId || !bookingData.bookingDate || !bookingData.timeSlot) {
         return {
           success: false,
-          error: 'Service ID, Store ID, date, and time slot are required'
+          error: 'Service ID, Store ID, booking date, and time slot are required'
         };
       }
 
