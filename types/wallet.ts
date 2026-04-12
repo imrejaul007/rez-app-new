@@ -173,10 +173,11 @@ export const COIN_TYPES: Record<CoinType, { name: string; color: string; amountC
     icon: 'nuqta-coin.png',
     description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`
   },
+  // @deprecated legacy DB alias — 'nuqta' coin type maps to 'rez' config
   nuqta: {
     name: BRAND.COIN_NAME,
-    color: '#ffcd57', // Mustard (icon/badge use only)
-    amountColor: '#B45309', // Dark amber for text (WCAG AA compliant)
+    color: '#ffcd57',
+    amountColor: '#B45309',
     backgroundColor: '#FFF9E6',
     icon: 'nuqta-coin.png',
     description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`

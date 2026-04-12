@@ -46,10 +46,11 @@ const COIN_STYLES: Record<CoinType, { color: string; bgColor: string; gradientCo
     icon: 'diamond',
     description: 'Usable across all stores',
   },
+  // @deprecated legacy alias — 'nuqta' DB coin type maps to 'rez' style
   nuqta: {
-    color: colors.lightMustard, // Mustard
-    bgColor: colors.linen, // Linen
-    gradientColors: [colors.lightMustard, colors.lightPeach], // Mustard to Peach
+    color: colors.lightMustard,
+    bgColor: colors.linen,
+    gradientColors: [colors.lightMustard, colors.lightPeach],
     icon: 'diamond',
     description: 'Usable across all stores',
   },
@@ -86,7 +87,7 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
 }) => {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const defaultStyle = COIN_STYLES[type] || COIN_STYLES.nuqta; // Fallback to nuqta style
+  const defaultStyle = COIN_STYLES[type] || COIN_STYLES.rez; // Fallback to rez style
   // Always use palette colors - ignore custom colors to maintain design consistency
   const style = {
     ...defaultStyle,
