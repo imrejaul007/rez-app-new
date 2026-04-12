@@ -20,8 +20,8 @@ export interface User {
   /** Primary identifier */
   id: string;
 
-  /** Email address (unique) */
-  email: string;
+  /** Email address (unique). Optional — users who signed up via phone only may not have one. */
+  email?: string;
 
   /** Username (unique) */
   username?: string;
@@ -70,7 +70,7 @@ export interface User {
 
   // ========== LOYALTY & REWARDS ==========
   /** Loyalty tier */
-  loyaltyTier?: 'bronze' | 'silver' | 'gold' | 'platinum';
+  loyaltyTier?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
 
   /** Loyalty points */
   loyaltyPoints?: number;
@@ -105,8 +105,8 @@ export interface User {
   followedStores?: string[];
 
   // ========== PERMISSIONS ==========
-  /** User role */
-  role: 'user' | 'merchant' | 'admin' | 'moderator';
+  /** User role — matches rez-shared User.role and DB User.role enum (TF-03 fix) */
+  role: 'user' | 'merchant' | 'admin' | 'support' | 'operator' | 'super_admin';
 
   /** Permissions */
   permissions?: string[];
@@ -115,10 +115,10 @@ export interface User {
   /** Is account active? */
   isActive: boolean;
 
-  /** Is account banned? */
-  isBanned?: boolean;
+  /** Is account suspended? (canonical backend field — TF-09 fix: was isBanned, backend sends isSuspended) */
+  isSuspended?: boolean;
 
-  /** Ban reason */
+  /** Suspension reason */
   banReason?: string;
 
   // ========== METADATA ==========
