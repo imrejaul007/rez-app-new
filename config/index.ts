@@ -24,13 +24,6 @@ export {
   getApiUrl
 } from './env';
 
-// API client configuration
-export {
-  apiMethods,
-  buildEndpoint,
-  API_ENDPOINTS
-} from './api';
-
 // Production guard: EXPO_PUBLIC_API_BASE_URL must never fall back to localhost in production.
 // (Primary guard lives in config/env.ts; this mirrors it for the Config shortcut object.)
 if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !process.env.EXPO_PUBLIC_API_BASE_URL) {

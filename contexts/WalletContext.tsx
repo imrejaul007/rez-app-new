@@ -176,6 +176,8 @@ interface WalletDataContextType {
   rezBalance: number;
   totalBalance: number;
   availableBalance: number;
+  cashbackBalance: number;
+  pendingRewards: number;
   brandedCoins: BrandedCoinEntry[];
   savingsInsights: { totalSaved: number; thisMonth: number; avgPerVisit: number };
   refreshWallet: () => Promise<void>;
@@ -197,6 +199,8 @@ const WALLET_DATA_DEFAULTS: WalletDataContextType = {
   rezBalance: 0,
   totalBalance: 0,
   availableBalance: 0,
+  cashbackBalance: 0,
+  pendingRewards: 0,
   brandedCoins: [] as BrandedCoinEntry[],
   savingsInsights: { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
   refreshWallet: async () => {},
@@ -375,11 +379,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     const rezBalance = walletData?.coins?.find(c => c.type === 'rez')?.amount ?? 0;
     const totalBalance = walletData?.totalBalance ?? 0;
     const availableBalance = walletData?.availableBalance ?? 0;
+    const cashbackBalance = walletData?.cashbackBalance ?? 0;
+    const pendingRewards = walletData?.pendingRewards ?? 0;
     const brandedCoins = walletData?.brandedCoins ?? [];
     const savingsInsights = walletData?.savingsInsights ?? { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 };
 
     return {
       walletData, rezBalance, totalBalance, availableBalance,
+      cashbackBalance, pendingRewards,
       brandedCoins, savingsInsights, refreshWallet, rawBackendData,
       error: walletError,
     };
@@ -445,6 +452,8 @@ export function useWalletContext(): WalletContextType {
     rezBalance: storeRezBalance,
     totalBalance: storeTotalBalance,
     availableBalance: storeAvailableBalance,
+    cashbackBalance: storeWalletData?.cashbackBalance ?? 0,
+    pendingRewards: storeWalletData?.pendingRewards ?? 0,
     brandedCoins: storeBrandedCoins,
     savingsInsights: storeSavingsInsights,
     refreshWallet: storeRefreshWallet,

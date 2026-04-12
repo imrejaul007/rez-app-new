@@ -101,7 +101,9 @@ function PaymentSuccessPage() {
   // CARLOS retention fix: reward popup shown once orders load
   const rewardPopupShownRef = useRef(false);
   const { showCoinsEarned, showCashbackEarned } = useRewardPopup();
-  const { clearCart } = useCart();
+  const {
+    actions: { clearCart },
+  } = useCart();
   const cartClearedRef = useRef(false);
   // Phase 1.6: track total coins earned across all orders for PostPaymentSummary
   const [totalCoinsEarnedForSummary, setTotalCoinsEarnedForSummary] = useState(0);

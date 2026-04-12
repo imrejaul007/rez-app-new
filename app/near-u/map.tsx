@@ -217,7 +217,7 @@ function StoreMapScreen() {
       />
       <MapView ref={setMapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation followsUserLocation>
         {stores.map((store) => {
-          const coords = store.address?.coordinates;
+          const coords = store.location?.coordinates;
           if (!coords) return null;
           return (
             <Marker
