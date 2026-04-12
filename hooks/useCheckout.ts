@@ -1173,7 +1173,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     setState(prev => {
       // Check if user has any coins
       if (enabled && prev.coinSystem.rezCoin.available === 0) {
-
         // Don't toggle if no coins
         return prev;
       }
@@ -1198,34 +1197,46 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       const subtotalBeforeCoins = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + taxes - promoDiscount);
 
-      // REZ coins have 1:1 conversion (1 coin = 1 rupee) and can be used up to available amount
-      const coinsToUse = enabled ? Math.min(Number(prev.coinSystem.rezCoin.available) || 0, subtotalBeforeCoins) : 0;
+      if (!enabled) {
+        // Disabling REZ: also clear promo and storePromo to reset priority state
+        const newCoinSystem = {
+          ...prev.coinSystem,
+          rezCoin: { ...prev.coinSystem.rezCoin, used: 0 },
+          promoCoin: { ...prev.coinSystem.promoCoin, used: 0 },
+          storePromoCoin: { ...prev.coinSystem.storePromoCoin, used: 0 },
+        };
+        const coinUsage = { rez: 0, promo: 0 };
+        const newBillSummary = CheckoutData.helpers.calculateBillSummary(prev.items, prev.store, prev.appliedPromoCode, coinUsage);
+        return { ...prev, coinSystem: newCoinSystem, billSummary: newBillSummary };
+      }
+
+      // Priority order: Promo → StorePromo → REZ (matches backend debitInPriorityOrder)
+      // Auto-apply promo coins first (up to their cap), then cover remainder with REZ
+      const promoAvailable = Number(prev.coinSystem.promoCoin.available) || 0;
+      const promoMaxPct = prev.coinSystem.promoCoin.maxUsagePercentage || 20;
+      const maxPromoUsage = Math.floor(subtotalBeforeCoins * promoMaxPct / 100);
+      const promoToUse = Math.min(promoAvailable, maxPromoUsage, subtotalBeforeCoins);
+
+      const remainingAfterPromo = Math.max(0, subtotalBeforeCoins - promoToUse);
+
+      // REZ coins cover whatever promo didn't
+      const rezToUse = Math.min(Number(prev.coinSystem.rezCoin.available) || 0, remainingAfterPromo);
 
       const newCoinSystem = {
         ...prev.coinSystem,
-        rezCoin: {
-          ...prev.coinSystem.rezCoin,
-          used: coinsToUse,
-        },
+        rezCoin: { ...prev.coinSystem.rezCoin, used: rezToUse },
+        promoCoin: { ...prev.coinSystem.promoCoin, used: promoToUse },
       };
 
-      const coinUsage = {
-        rez: coinsToUse,
-        promo: prev.coinSystem.promoCoin.used,
-      };
-      
+      const coinUsage = { rez: rezToUse, promo: promoToUse };
       const newBillSummary = CheckoutData.helpers.calculateBillSummary(
         prev.items,
         prev.store,
         prev.appliedPromoCode,
         coinUsage
       );
-      
-      return {
-        ...prev,
-        coinSystem: newCoinSystem,
-        billSummary: newBillSummary,
-      };
+
+      return { ...prev, coinSystem: newCoinSystem, billSummary: newBillSummary };
     });
   }, []);
 

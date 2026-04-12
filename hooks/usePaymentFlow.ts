@@ -183,7 +183,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
 
   const rewardsPreview = useMemo<RewardsPreview>(() => {
     // Base cashback from store reward rules
-    const baseCashbackPercent = store?.rewardRules?.baseCashbackPercent || 5;
+    const baseCashbackPercent = store?.rewardRules?.baseCashbackPercent ?? 0;
     const memberBonus = membership?.benefits.cashbackBonus || 0;
     const effectiveCashbackPercent = baseCashbackPercent + memberBonus;
 
