@@ -306,7 +306,7 @@ const StoreListPage: React.FC = () => {
     suggestions: [],
   };
 
-  // Filter stores by nuqtaPay (API contract) if filter is active
+  // Filter stores by rezPay if filter is active
   const storeListData = useMemo(() => {
     const allStores = searchResults?.stores || [];
     if (!rezPayFilter) return allStores;

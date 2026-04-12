@@ -18,7 +18,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { borderRadius, colors, spacing, typography } from '@/constants/theme';
 
-export type CoinType = 'rez' | 'nuqta' | 'promo' | 'branded';
+export type CoinType = 'rez' | 'promo' | 'branded';
 
 interface CoinToggleRowProps {
   type: CoinType;
@@ -43,14 +43,6 @@ const COIN_STYLES: Record<CoinType, { color: string; bgColor: string; gradientCo
     color: colors.lightMustard, // Mustard
     bgColor: colors.linen, // Linen
     gradientColors: [colors.lightMustard, colors.lightPeach], // Mustard to Peach
-    icon: 'diamond',
-    description: 'Usable across all stores',
-  },
-  // @deprecated legacy alias — 'nuqta' DB coin type maps to 'rez' style
-  nuqta: {
-    color: colors.lightMustard,
-    bgColor: colors.linen,
-    gradientColors: [colors.lightMustard, colors.lightPeach],
     icon: 'diamond',
     description: 'Usable across all stores',
   },
@@ -107,7 +99,7 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
   };
 
   const getSubtitle = () => {
-    if (type === 'rez' || type === 'nuqta') return 'Usable across all stores';
+    if (type === 'rez') return 'Usable across all stores';
     if (type === 'branded' && storeName) return `Usable only at ${storeName}`;
     if (type === 'promo' && redemptionCap) return `Max ${redemptionCap}% per bill`;
     return defaultStyle?.description || '';
@@ -130,7 +122,7 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
     <View style={styles.container}>
       <View style={styles.mainRow}>
         <View style={[styles.iconContainer, { backgroundColor: style.bgColor }]}>
-          {(type === 'rez' || type === 'nuqta') ? (
+          {type === 'rez' ? (
             <CachedImage
               source={BRAND.COIN_IMAGE}
               style={styles.coinIcon}

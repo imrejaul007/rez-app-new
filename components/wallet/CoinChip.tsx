@@ -20,7 +20,7 @@ export const CoinChip: React.FC<CoinChipProps> = React.memo(({ type, amount, onP
   const coinInfo = COIN_TYPES[type] || COIN_TYPES.rez;
   const chipBg = coinInfo.backgroundColor;
   const textColor = coinInfo.amountColor;
-  const label = type === 'rez' || type === 'nuqta' ? BRAND.APP_NAME : type === 'promo' ? 'Promo' : 'Branded';
+  const label = type === 'rez' ? BRAND.APP_NAME : type === 'promo' ? 'Promo' : 'Branded';
 
   const content = (
     <View style={[styles.chip, { backgroundColor: chipBg }, compact ? styles.chipCompact : null]}>

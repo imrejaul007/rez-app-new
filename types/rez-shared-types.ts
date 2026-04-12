@@ -110,8 +110,6 @@ export interface WalletBalance {
   branded: number;
   category: number;
   total: number;
-  /** @deprecated Use `rez` instead */
-  nuqta?: number;
 }
 
 export interface CoinTransaction {

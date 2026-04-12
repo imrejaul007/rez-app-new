@@ -14,7 +14,7 @@ import {
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
-const THEME_STORAGE_KEY = '@nuqta_theme_mode';
+const THEME_STORAGE_KEY = '@rez_theme_mode';
 
 // Sprint 12: AsyncStorage key used by ThemeContext for persistence
 export const REZ_THEME_KEY = 'rez_theme';

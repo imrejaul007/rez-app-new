@@ -53,7 +53,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
       }
     }
     // No expiryDate = admin configured 0 days = never expires
-    if (coin.type === 'rez' || coin.type === 'nuqta') return 'Never expires';
+    if (coin.type === 'rez') return 'Never expires';
     if (coin.type === 'promo') {
       if (coin.expiryCountdown) return coin.expiryCountdown;
       return 'Max 20% per bill';
@@ -82,7 +82,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
         accessibilityRole="button"
       >
         <View style={[styles.iconContainer, { backgroundColor: coinInfo.backgroundColor }]}>
-          {coin.type === 'rez' || coin.type === 'nuqta' ? (
+          {coin.type === 'rez' ? (
             <CachedImage source={rezCoinImage} style={styles.coinImage} contentFit="contain" transition={200} />
           ) : (
             <Ionicons

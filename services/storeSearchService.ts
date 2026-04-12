@@ -305,7 +305,7 @@ class StoreSearchService {
       const qs = buildQueryString({
         page, limit, sortBy,
         ...(location && { location, radius }),
-        ...(rezPayFilter && { nuqtaPay: 'true' }), // API contract: backend param is 'nuqtaPay'
+        ...(rezPayFilter && { rezPay: 'true' }),
       });
 
       const response = await apiClient.get<StoreSearchResponse>(`/stores/search-by-category/${category}?${qs}`);
@@ -520,7 +520,7 @@ class StoreSearchService {
       if (features.verified) featuresList.push('verified');
       if (features.featured) featuresList.push('featured');
     }
-    if (rezPayFilter) featuresList.push('nuqtaPay'); // API contract: backend feature string is 'nuqtaPay'
+    if (rezPayFilter) featuresList.push('rezPay');
     if (featuresList.length > 0) {
       queryParams.append('features', featuresList.join(','));
     }

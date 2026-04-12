@@ -86,7 +86,6 @@ const mapBackendUserToProfileUser = (backendUser: BackendUser): User => {
     subscriptionTier: (backendUser as any).priveTier
       || (backendUser as any).subscriptionTier
       || (backendUser as any).rezPlusTier
-      || (backendUser as any).nuqtaPlusTier // legacy DB field name
       || undefined,
     creatorLevel: (backendUser as any).creatorLevel
       || (backendUser as any).partner?.level
@@ -94,9 +93,7 @@ const mapBackendUserToProfileUser = (backendUser: BackendUser): User => {
     tier: (() => {
       const priveTier = (backendUser as any).priveTier
         || (backendUser as any).rezPlus?.tier
-        || (backendUser as any).nuqtaPlus?.tier // legacy DB field name
         || (backendUser as any).rezPlusTier
-        || (backendUser as any).nuqtaPlusTier // legacy DB field name
         || (backendUser as any).subscriptionTier;
       if (priveTier === 'elite') return 'Privé Elite';
       if (priveTier === 'prive' || priveTier === 'premium') return 'Privé';

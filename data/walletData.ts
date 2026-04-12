@@ -98,7 +98,7 @@ export const mockTransactions: Transaction[] = [
     merchantName: `${BRAND.PAY_NAME}`,
     merchantLogo: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=50&h=50&fit=crop',
     paymentMethod: 'NUQTA_COIN',
-    category: 'NUQTA_PAY',
+    category: 'REZ_PAY',
     metadata: {
       originalTransaction: 'txn_001',
       cashbackRate: '6%',
@@ -163,10 +163,10 @@ export const walletTabs: WalletTab[] = [
     count: mockTransactions.filter(t => t.category === 'VOUCHER').length 
   },
   {
-    id: 'NUQTA_PAY',
+    id: 'REZ_PAY',
     title: BRAND.PAY_NAME,
     isActive: false,
-    count: mockTransactions.filter(t => t.category === 'NUQTA_PAY').length
+    count: mockTransactions.filter(t => t.category === 'REZ_PAY').length
   },
 ];
 
@@ -179,7 +179,7 @@ export const mockTransactionSummary: TransactionSummary = {
     ALL: 8225,
     HOME_DELIVERY: 6350,
     VOUCHER: 850,
-    NUQTA_PAY: 125,
+    REZ_PAY: 125,
     RESTAURANT: 900,
     GROCERY: 0,
     SHOPPING: 0,
@@ -240,7 +240,7 @@ export const transactionStats = {
     { category: 'HOME_DELIVERY', amount: 6350, percentage: 77 },
     { category: 'VOUCHER', amount: 850, percentage: 10 },
     { category: 'RESTAURANT', amount: 900, percentage: 11 },
-    { category: 'NUQTA_PAY', amount: 125, percentage: 2 },
+    { category: 'REZ_PAY', amount: 125, percentage: 2 },
   ],
 };
 

@@ -9,7 +9,7 @@ import apiClient from './apiClient';
 
 // Types
 
-export type SpecialProgramSlug = 'student_zone' | 'corporate_perks' | 'nuqta_prive';
+export type SpecialProgramSlug = 'student_zone' | 'corporate_perks' | 'rez_prive';
 
 export type EligibilityState =
   | 'eligible'

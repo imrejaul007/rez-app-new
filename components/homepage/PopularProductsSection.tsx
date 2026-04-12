@@ -74,7 +74,7 @@ function PopularProductsSection({
     return { percentage: cashbackPercentage, amount };
   };
 
-  // Calculate nuqta coins (5% of price, minimum 1)
+  // Calculate rez coins (5% of price, minimum 1)
   const calculateRezCoins = (product: HomepageProduct) => {
     const price = product.price || 0;
     return price > 0 ? Math.max(1, Math.round((price * 5) / 100)) : 0;

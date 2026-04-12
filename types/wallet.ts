@@ -2,7 +2,7 @@ import { ImageSourcePropType } from 'react-native';
 import { BRAND } from '@/constants/brand';
 
 // Core Coin Types - Updated for new wallet design
-export type CoinType = 'rez' | 'nuqta' | 'branded' | 'promo' | 'prive';
+export type CoinType = 'rez' | 'branded' | 'promo' | 'prive';
 
 // Branded Coin Details (merchant-specific)
 export interface BrandedCoinDetails {
@@ -170,16 +170,7 @@ export const COIN_TYPES: Record<CoinType, { name: string; color: string; amountC
     color: '#ffcd57', // Mustard (icon/badge use only)
     amountColor: '#B45309', // Dark amber for text (WCAG AA compliant)
     backgroundColor: '#FFF9E6',
-    icon: 'nuqta-coin.png',
-    description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`
-  },
-  // @deprecated legacy DB alias — 'nuqta' coin type maps to 'rez' config
-  nuqta: {
-    name: BRAND.COIN_NAME,
-    color: '#ffcd57',
-    amountColor: '#B45309',
-    backgroundColor: '#FFF9E6',
-    icon: 'nuqta-coin.png',
+    icon: 'rez-coin.png',
     description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`
   },
   branded: {

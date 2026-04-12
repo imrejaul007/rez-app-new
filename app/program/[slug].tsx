@@ -20,12 +20,12 @@ import { DetailPageSkeleton } from '@/components/skeletons';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const VALID_SLUGS: SpecialProgramSlug[] = ['student_zone', 'corporate_perks', 'nuqta_prive'];
+const VALID_SLUGS: SpecialProgramSlug[] = ['student_zone', 'corporate_perks', 'rez_prive'];
 
 const PROGRAM_ICONS: Record<string, { name: string; color: string; bgColor: string }> = {
   student_zone: { name: 'school', color: colors.infoScale[400], bgColor: colors.tint.blueLight },
   corporate_perks: { name: 'briefcase', color: colors.warningScale[400], bgColor: colors.tint.amberLight },
-  nuqta_prive: { name: 'diamond', color: colors.brand.goldAccent, bgColor: colors.deepNavy },
+  rez_prive: { name: 'diamond', color: colors.brand.goldAccent, bgColor: colors.deepNavy },
 };
 
 function ProgramDetailScreen() {
@@ -39,7 +39,7 @@ function ProgramDetailScreen() {
   const programSlug = VALID_SLUGS.includes(slug as SpecialProgramSlug) ? (slug as SpecialProgramSlug) : null;
 
   const iconConfig = programSlug ? PROGRAM_ICONS[programSlug] : PROGRAM_ICONS.student_zone;
-  const isPrive = programSlug === 'nuqta_prive';
+  const isPrive = programSlug === 'rez_prive';
 
   const fetchEligibility = useCallback(async () => {
     if (!programSlug) return;

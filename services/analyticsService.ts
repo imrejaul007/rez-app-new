@@ -296,7 +296,7 @@ class AnalyticsService {
   }
 
   trackRezPayFilter(enabled: boolean, resultCount: number) {
-    this.track('nuqta_pay_filter', { // event name kept for analytics backward compat
+    this.track('rez_pay_filter', {
       enabled,
       result_count: resultCount,
     });

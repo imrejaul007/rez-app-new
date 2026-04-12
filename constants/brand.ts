@@ -5,9 +5,8 @@
  * All user-facing strings, images, and links are derived from here.
  *
  * DO NOT change:
- * - Model enums ('nuqta', 'rez', 'promo', 'branded') — internal DB identifiers
- * - API query params (nuqtaPay=true) — API contracts
- * - Asset filenames (nuqta-coin.png) — referenced only via BRAND.COIN_IMAGE
+ * - Model enums ('rez', 'promo', 'branded') — internal DB identifiers
+ * - Asset filenames (rez-coin.png) — referenced only via BRAND.COIN_IMAGE
  */
 
 export const BRAND = {
@@ -36,8 +35,8 @@ export const BRAND = {
   WEBSITE: 'https://www.rezapp.com',
 
   // Images — update require() paths here to swap visuals
-  COIN_IMAGE: require('@/assets/images/nuqta-coin.png'),
-  LOGO_IMAGE: require('@/assets/images/nuqta-logo.png'),
+  COIN_IMAGE: require('@/assets/images/rez-coin.png'),
+  LOGO_IMAGE: require('@/assets/images/rez-logo.png'),
 
   // Default currency display code (shown in UI, not stored in DB)
   CURRENCY_CODE: 'RC',

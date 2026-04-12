@@ -89,7 +89,7 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
             onPress={() => setSelectedProgramSlug(
               program.id === 'student' ? 'student_zone'
                 : program.id === 'corporate' ? 'corporate_perks'
-                : 'nuqta_prive'
+                : 'rez_prive'
             )}
           >
             <View style={styles.programHeader}>
@@ -117,7 +117,7 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
               setSelectedProgramSlug(
                 program.id === 'student' ? 'student_zone'
                   : program.id === 'corporate' ? 'corporate_perks'
-                  : 'nuqta_prive'
+                  : 'rez_prive'
               );
             }}>
               <Text style={styles.eligibilityText}>Check Eligibility</Text>

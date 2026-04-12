@@ -9,7 +9,7 @@ import {
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
-export type TabId = 'nuqta' | 'nuqta-mall' | 'cash-store';
+export type TabId = 'rez' | 'rez-mall' | 'cash-store';
 
 interface HomeTabBarProps {
   activeTab: TabId;
@@ -23,21 +23,21 @@ const HomeTabBar: React.FC<HomeTabBarProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.gridContainer}>
-        {/* Tab 1: nuqta */}
+        {/* Tab 1: rez */}
         <Pressable
           style={styles.tabItem}
-          onPress={() => onTabChange('nuqta')}
+          onPress={() => onTabChange('rez')}
           accessibilityRole="tab"
           accessibilityLabel={`${BRAND.APP_NAME} tab`}
-          accessibilityState={{ selected: activeTab === 'nuqta' }}
+          accessibilityState={{ selected: activeTab === 'rez' }}
         >
           <View style={[
             styles.tab,
-            activeTab === 'nuqta' ? styles.tabActive : styles.tabInactive
+            activeTab === 'rez' ? styles.tabActive : styles.tabInactive
           ]}>
             <Text style={[
               styles.tabTextSingle,
-              activeTab === 'nuqta' ? styles.tabTextActive : styles.tabTextInactive
+              activeTab === 'rez' ? styles.tabTextActive : styles.tabTextInactive
             ]}>{BRAND.APP_NAME}</Text>
           </View>
         </Pressable>
@@ -45,22 +45,22 @@ const HomeTabBar: React.FC<HomeTabBarProps> = ({
         {/* Tab 2: REZ Mall */}
         <Pressable
           style={styles.tabItem}
-          onPress={() => onTabChange('nuqta-mall')}
+          onPress={() => onTabChange('rez-mall')}
           accessibilityRole="tab"
           accessibilityLabel={`${BRAND.APP_NAME} Mall tab`}
-          accessibilityState={{ selected: activeTab === 'nuqta-mall' }}
+          accessibilityState={{ selected: activeTab === 'rez-mall' }}
         >
           <View style={[
             styles.tab,
-            activeTab === 'nuqta-mall' ? styles.tabActive : styles.tabInactive
+            activeTab === 'rez-mall' ? styles.tabActive : styles.tabInactive
           ]}>
             <Text style={[
               styles.tabTextSmall,
-              activeTab === 'nuqta-mall' ? styles.tabTextActive : styles.tabTextInactive
+              activeTab === 'rez-mall' ? styles.tabTextActive : styles.tabTextInactive
             ]}>{BRAND.APP_NAME}</Text>
             <Text style={[
               styles.tabTextLarge,
-              activeTab === 'nuqta-mall' ? styles.tabTextActive : styles.tabTextInactive
+              activeTab === 'rez-mall' ? styles.tabTextActive : styles.tabTextInactive
             ]}>Mall.</Text>
           </View>
         </Pressable>

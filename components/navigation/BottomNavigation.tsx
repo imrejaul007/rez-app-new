@@ -17,7 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 // Import the Pay in Store icon (REZ animated coin)
-const payInStoreIcon = require('@/assets/images/nuqta-coin-animated.gif');
+const payInStoreIcon = require('@/assets/images/rez-coin-animated.gif');
 import Svg, { Path } from 'react-native-svg';
 import logger from '@/utils/logger';
 import { useHomeTab } from '@/contexts/HomeTabContext';
@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
     }),
   },
 
-  // Pay in Store icon (Nuqta coin) - fills the circle
+  // Pay in Store icon (REZ coin) - fills the circle
   payInStoreGif: {
     width: 50,
     height: 50,
