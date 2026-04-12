@@ -580,9 +580,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           } : undefined;
 
           // NEW: Fetch real wallet data
-          // Note: Backend uses 'rez' coins, frontend displays as 'nuqta' coins
+          // Note: Backend uses 'rez' coins, displayed as REZ Coins in UI
           let realCoinSystem: CoinSystem = {
-            nuqtaCoin: {
+            rezCoin: {
               available: 0,
               used: 0,
               conversionRate: COIN_CONVERSION_RATE,
@@ -680,12 +680,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 : null;
 
               // Global ReZ coin balance (may be overridden later with category-specific balance)
-              const nuqtaAvailable = rezCoin?.amount || 0;
+              const rezAvailable = rezCoin?.amount || 0;
 
               realCoinSystem = {
                 ...realCoinSystem,
-                nuqtaCoin: {
-                  available: nuqtaAvailable,
+                rezCoin: {
+                  available: rezAvailable,
                   used: 0,
                   conversionRate: COIN_CONVERSION_RATE,
                   maxUsagePercentage: REZ_COIN_MAX_USAGE_PERCENTAGE
@@ -708,7 +708,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               };
 
               devLog.log('💰 [Checkout] Wallet coins loaded from context:', {
-                nuqtaCoins: realCoinSystem.nuqtaCoin.available,
+                rezCoins: realCoinSystem.rezCoin.available,
                 promoCoins: realCoinSystem.promoCoin.available,
                 brandedCoinsAvailable: realCoinSystem.storePromoCoin?.available || 0,
                 storeName: storeBrandedCoin?.merchantName,
@@ -790,11 +790,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             devLog.warn('Failed to fetch store details, using defaults:', storeResult.reason);
           }
 
-          // Override nuqta coin balance with category-specific amount if available
+          // Override rez coin balance with category-specific amount if available
           if (realStore?.categorySlug && walletCategoryBalances) {
             const catBal = walletCategoryBalances[realStore.categorySlug];
             if (catBal && catBal.available > 0) {
-              realCoinSystem.nuqtaCoin.available = catBal.available;
+              realCoinSystem.rezCoin.available = catBal.available;
               devLog.log('💰 [Checkout] Category coin balance applied:', realStore.categorySlug, catBal.available);
             }
           }
@@ -907,9 +907,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       }
 
       // Fallback to mock data + real wallet
-      // Note: Backend uses 'rez' coins, frontend displays as 'nuqta' coins
+      // Note: Backend uses 'rez' coins, displayed as REZ Coins in UI
       let realCoinSystem: CoinSystem = {
-        nuqtaCoin: {
+        rezCoin: {
           available: 0,
           used: 0,
           conversionRate: COIN_CONVERSION_RATE,
@@ -943,12 +943,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           const fallbackCategoryBalances = (currentWalletRawData as any)?.categoryBalances;
           const fallbackCatSlug = (state as any)?.store?.categorySlug;
           const fallbackCatBal = fallbackCatSlug && fallbackCategoryBalances ? fallbackCategoryBalances[fallbackCatSlug] : null;
-          const fallbackNuqtaAvailable = fallbackCatBal?.available ?? (rezCoin?.amount || 0);
+          const fallbackRezAvailable = fallbackCatBal?.available ?? (rezCoin?.amount || 0);
 
           realCoinSystem = {
             ...realCoinSystem,
-            nuqtaCoin: {
-              available: fallbackNuqtaAvailable,
+            rezCoin: {
+              available: fallbackRezAvailable,
               used: 0,
               conversionRate: COIN_CONVERSION_RATE,
               maxUsagePercentage: REZ_COIN_MAX_USAGE_PERCENTAGE
@@ -962,7 +962,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           };
 
           devLog.log('💳 [Checkout] Loaded wallet coins from context:', {
-            nuqta: realCoinSystem.nuqtaCoin.available,
+            rez: realCoinSystem.rezCoin.available,
             promo: realCoinSystem.promoCoin.available,
             categoryBalance: fallbackCatBal
           });
@@ -1037,7 +1037,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
   const updateBillSummary = useCallback(() => {
     const coinUsage = {
-      rez: state.coinSystem.nuqtaCoin.used,
+      rez: state.coinSystem.rezCoin.used,
       promo: state.coinSystem.promoCoin.used,
     };
     
@@ -1084,7 +1084,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       if (response.success && response.data) {
         // Calculate new bill summary with coupon discount
         const coinUsage = {
-          rez: state.coinSystem.nuqtaCoin.used,
+          rez: state.coinSystem.rezCoin.used,
           promo: state.coinSystem.promoCoin.used,
         };
 
@@ -1149,7 +1149,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   const removePromoCode = useCallback(() => {
     setState(prev => {
       const coinUsage = {
-        rez: prev.coinSystem.nuqtaCoin.used,
+        rez: prev.coinSystem.rezCoin.used,
         promo: prev.coinSystem.promoCoin.used,
       };
       
@@ -1169,10 +1169,10 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     });
   }, []);
 
-  const toggleNuqtaCoin = useCallback((enabled: boolean) => {
+  const toggleRezCoin = useCallback((enabled: boolean) => {
     setState(prev => {
       // Check if user has any coins
-      if (enabled && prev.coinSystem.nuqtaCoin.available === 0) {
+      if (enabled && prev.coinSystem.rezCoin.available === 0) {
 
         // Don't toggle if no coins
         return prev;
@@ -1198,13 +1198,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       const subtotalBeforeCoins = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + taxes - promoDiscount);
 
-      // Nuqta coins have 1:1 conversion (1 coin = 1 rupee) and can be used up to available amount
-      const coinsToUse = enabled ? Math.min(Number(prev.coinSystem.nuqtaCoin.available) || 0, subtotalBeforeCoins) : 0;
+      // REZ coins have 1:1 conversion (1 coin = 1 rupee) and can be used up to available amount
+      const coinsToUse = enabled ? Math.min(Number(prev.coinSystem.rezCoin.available) || 0, subtotalBeforeCoins) : 0;
 
       const newCoinSystem = {
         ...prev.coinSystem,
-        nuqtaCoin: {
-          ...prev.coinSystem.nuqtaCoin,
+        rezCoin: {
+          ...prev.coinSystem.rezCoin,
           used: coinsToUse,
         },
       };
@@ -1250,11 +1250,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount || Infinity)
       ) : 0;
 
-      const subtotalAfterNuqtaCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.nuqtaCoin.used;
+      const subtotalAfterRezCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used;
 
       // Promo coins have 1:1 conversion and can be used up to configured max percentage of remaining amount or available coins
-      const maxPromoUsage = Math.floor(subtotalAfterNuqtaCoins * prev.coinSystem.promoCoin.maxUsagePercentage / 100);
-      const coinsToUse = enabled ? Math.min(prev.coinSystem.promoCoin.available, maxPromoUsage, subtotalAfterNuqtaCoins) : 0;
+      const maxPromoUsage = Math.floor(subtotalAfterRezCoins * prev.coinSystem.promoCoin.maxUsagePercentage / 100);
+      const coinsToUse = enabled ? Math.min(prev.coinSystem.promoCoin.available, maxPromoUsage, subtotalAfterRezCoins) : 0;
 
       const newCoinSystem = {
         ...prev.coinSystem,
@@ -1265,7 +1265,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       };
       
       const coinUsage = {
-        rez: prev.coinSystem.nuqtaCoin.used,
+        rez: prev.coinSystem.rezCoin.used,
         promo: coinsToUse,
       };
 
@@ -1304,8 +1304,8 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount || Infinity)
       ) : 0;
 
-      // Calculate remaining after other coins (Nuqta and regular promo)
-      const subtotalAfterOtherCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.nuqtaCoin.used - prev.coinSystem.promoCoin.used;
+      // Calculate remaining after other coins (REZ and regular promo)
+      const subtotalAfterOtherCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used - prev.coinSystem.promoCoin.used;
 
       // Store promo coins can be used up to configured max percentage of remaining amount or available coins
       const maxStorePromoUsage = Math.floor(subtotalAfterOtherCoins * prev.coinSystem.storePromoCoin.maxUsagePercentage / 100);
@@ -1320,7 +1320,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       };
       
       const coinUsage = {
-        rez: prev.coinSystem.nuqtaCoin.used,
+        rez: prev.coinSystem.rezCoin.used,
         promo: prev.coinSystem.promoCoin.used,
         storePromo: coinsToUse,
       };
@@ -1345,9 +1345,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     setState(prev => {
 
       const coinSystem = prev.coinSystem;
-      const isNuqta = coinType === 'rez';  // 'rez' in handlers maps to nuqtaCoin internally
+      const isRezCoin = coinType === 'rez';  // 'rez' in handlers maps to rezCoin internally
       const isStorePromo = coinType === 'storePromo';
-      const coin = isNuqta ? coinSystem.nuqtaCoin : (isStorePromo ? coinSystem.storePromoCoin : coinSystem.promoCoin);
+      const coin = isRezCoin ? coinSystem.rezCoin : (isStorePromo ? coinSystem.storePromoCoin : coinSystem.promoCoin);
 
       devLog.log('🎚️ [handleCustomCoinAmount] Coin state:', { available: coin.available, currentUsed: coin.used });
 
@@ -1377,9 +1377,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       let maxAllowed = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + taxes - promoDiscount);
 
-      if (!isNuqta) {
-        // For promo/store promo coins, subtract nuqta coins already used
-        maxAllowed -= coinSystem.nuqtaCoin.used;
+      if (!isRezCoin) {
+        // For promo/store promo coins, subtract rez coins already used
+        maxAllowed -= coinSystem.rezCoin.used;
 
         if (isStorePromo) {
           // Store promo coins: also subtract regular promo coins and apply 30% limit
@@ -1402,17 +1402,17 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       const newCoinSystem = {
         ...coinSystem,
-        [isNuqta ? 'nuqtaCoin' : (isStorePromo ? 'storePromoCoin' : 'promoCoin')]: {
+        [isRezCoin ? 'rezCoin' : (isStorePromo ? 'storePromoCoin' : 'promoCoin')]: {
           ...coin,
           used: finalAmount,
         },
       };
 
-      devLog.log('🎚️ [handleCustomCoinAmount] ✅ STATE UPDATED - newCoinSystem.nuqtaCoin.used:', newCoinSystem.nuqtaCoin.used);
+      devLog.log('🎚️ [handleCustomCoinAmount] ✅ STATE UPDATED - newCoinSystem.rezCoin.used:', newCoinSystem.rezCoin.used);
 
       const coinUsage = {
-        rez: isNuqta ? finalAmount : coinSystem.nuqtaCoin.used,
-        promo: (isNuqta || isStorePromo) ? coinSystem.promoCoin.used : finalAmount,
+        rez: isRezCoin ? finalAmount : coinSystem.rezCoin.used,
+        promo: (isRezCoin || isStorePromo) ? coinSystem.promoCoin.used : finalAmount,
         storePromo: isStorePromo ? finalAmount : (coinSystem.storePromoCoin?.used || 0),
       };
       
@@ -1570,12 +1570,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         },
       });
 
-      // Add coinsUsed to order data - map nuqtaCoin back to rezCoins for backend
+      // Add coinsUsed to order data - map rezCoin back to rezCoins for backend
       const coinsUsed = {
-        rezCoins: state.coinSystem.nuqtaCoin.used || 0,  // Frontend nuqtaCoin → Backend rezCoins
+        rezCoins: state.coinSystem.rezCoin.used || 0,  // Frontend rezCoin → Backend rezCoins
         promoCoins: state.coinSystem.promoCoin.used || 0,
         storePromoCoins: state.coinSystem.storePromoCoin.used || 0,
-        totalCoinsValue: (state.coinSystem.nuqtaCoin.used || 0) +
+        totalCoinsValue: (state.coinSystem.rezCoin.used || 0) +
           (state.coinSystem.promoCoin.used || 0) +
           (state.coinSystem.storePromoCoin.used || 0)
       };
@@ -1655,19 +1655,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     const totalPayable = state.billSummary.totalPayable;
 
     // Calculate total available balance
-    const totalAvailableBalance = state.coinSystem.nuqtaCoin.available + state.coinSystem.promoCoin.available;
+    const totalAvailableBalance = state.coinSystem.rezCoin.available + state.coinSystem.promoCoin.available;
 
     // Calculate coins that will be used (use toggled amounts, or calculate if not toggled)
-    const nuqtaCoinsUsed = state.coinSystem.nuqtaCoin.used > 0
-      ? state.coinSystem.nuqtaCoin.used
-      : Math.min(state.coinSystem.nuqtaCoin.available, totalPayable);
+    const rezCoinsUsed = state.coinSystem.rezCoin.used > 0
+      ? state.coinSystem.rezCoin.used
+      : Math.min(state.coinSystem.rezCoin.available, totalPayable);
 
-    const remainingAfterNuqta = Math.max(0, totalPayable - nuqtaCoinsUsed);
+    const remainingAfterRez = Math.max(0, totalPayable - rezCoinsUsed);
     const promoCoinsUsed = state.coinSystem.promoCoin.used > 0
       ? state.coinSystem.promoCoin.used
-      : Math.min(state.coinSystem.promoCoin.available, remainingAfterNuqta);
+      : Math.min(state.coinSystem.promoCoin.available, remainingAfterRez);
 
-    const totalCoinsToUse = nuqtaCoinsUsed + promoCoinsUsed;
+    const totalCoinsToUse = rezCoinsUsed + promoCoinsUsed;
 
     // Validate sufficient balance (check total available, not just used)
     if (totalPayable > 0 && totalAvailableBalance < totalPayable) {
@@ -1698,53 +1698,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     setState(prev => ({ ...prev, loading: true, currentStep: 'processing' }));
 
     try {
-      // Step 1: Process wallet payment
-
-      const paymentData = {
-        amount: totalPayable,
-        orderId: undefined, // Will be set after order creation
-        storeId: state.store.id,
-        storeName: state.store.name,
-        description: `Purchase of ${state.items.length} item(s) from ${state.store.name}`,
-        items: state.items.map(item => ({
-          productId: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price
-        }))
-      };
-
-      // OG-001 FIX: Pass the session-scoped idempotency key so the backend
-      // wallet route can de-duplicate if this fires twice on reconnect.
-      const walletResponse = await walletApi.processPayment(
-        paymentData,
-        walletIdempotencyKeyRef.current
-      );
-
-      if (!walletResponse.success || !walletResponse.data) {
-        devLog.error('💳 [Checkout] Wallet payment failed:', walletResponse.error);
-        setState(prev => ({
-          ...prev,
-          loading: false,
-          error: walletResponse.error || 'Wallet payment failed',
-          currentStep: 'checkout'
-        }));
-        return;
-      }
-
-      // OG-D008 FIX: Persist wallet transaction info immediately after debit
-      // so that if the app is killed before order creation, we can detect the
-      // orphaned payment on next launch and attempt recovery / refund.
-      saveDraft({
-        paymentMethod: 'wallet',
-        walletPaymentPending: true,
-        walletTransactionId: walletResponse.data.transaction.transactionId,
-        pendingPaymentAmount: totalPayable,
-        orderCreated: false,
-      });
-
-      // Step 2: Create order with wallet payment method
-      // Validate delivery address (required for delivery only)
+      // Step 1: Validate delivery address (required for delivery only)
       if (state.fulfillment.selectedType === 'delivery' && !state.selectedAddress) {
         setState(prev => ({ ...prev, loading: false, error: 'Please select a delivery address', currentStep: 'checkout' }));
         return;
@@ -1775,27 +1729,27 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // Add redemption code if provided (for deal redemptions)
       if (coinValuesOverride?.redemptionCode) {
         (orderData as any).redemptionCode = coinValuesOverride.redemptionCode;
-        devLog.log('👛 [Wallet] Redemption code added to order:', coinValuesOverride.redemptionCode);
+        devLog.log('[Wallet] Redemption code added to order:', coinValuesOverride.redemptionCode);
       }
 
       // Add offer redemption code if provided (for cashback vouchers RED-xxx)
       if (coinValuesOverride?.offerRedemptionCode) {
         (orderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-        devLog.log('👛 [Wallet] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
+        devLog.log('[Wallet] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
       }
 
       // Add lock fee discount if applicable
       if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) {
         (orderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
-        devLog.log('👛 [Wallet] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
+        devLog.log('[Wallet] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
       }
 
-      // Add coinsUsed to order data - map nuqtaCoin back to rezCoins for backend
+      // Add coinsUsed to order data - map rezCoin back to rezCoins for backend
       // Use override values if provided (passed from checkout.tsx to avoid stale closure)
       // Ensure all values are numbers (not strings)
       const rezCoinsValue = coinValuesOverride
         ? Number(coinValuesOverride.rezCoins) || 0
-        : Number(state.coinSystem.nuqtaCoin.used) || 0;
+        : Number(state.coinSystem.rezCoin.used) || 0;
       const promoCoinsValue = coinValuesOverride
         ? Number(coinValuesOverride.promoCoins) || 0
         : Number(state.coinSystem.promoCoin.used) || 0;
@@ -1809,8 +1763,14 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         storePromoCoins: storePromoCoinsValue,
         totalCoinsValue: rezCoinsValue + promoCoinsValue + storePromoCoinsValue,
       };
-      devLog.log('👛 [Wallet] coinsUsed being sent to backend:', JSON.stringify(coinsUsedData));
+      devLog.log('[Wallet] coinsUsed being sent to backend:', JSON.stringify(coinsUsedData));
       (orderData as any).coinsUsed = coinsUsedData;
+
+      // ATOMIC WALLET CHECKOUT FIX: Include the wallet payment amount in the
+      // createOrder request body. The backend will debit the wallet and create
+      // the order in a single MongoDB transaction, eliminating the race window
+      // that previously left orders stuck in payment_pending on crash/network drop.
+      (orderData as any).walletPayment = { amount: totalPayable };
 
       // OG-001 FIX: pass the session idempotency key so reconnect retries
       // reuse the same key and the backend de-duplication fires correctly.
@@ -1820,44 +1780,58 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       );
 
       if (!orderResponse.success || !orderResponse.data) {
-        devLog.error('💳 [Checkout] Order creation failed after payment:', orderResponse.error);
+        devLog.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error);
+        setState(prev => ({
+          ...prev,
+          loading: false,
+          error: orderResponse.error || 'Checkout failed. Please try again.',
+          currentStep: 'checkout'
+        }));
+        return;
+      }
 
-        // CRITICAL: Payment succeeded but order failed - attempt refund
-        try {
-          devLog.log('💳 [Checkout] Attempting to refund wallet payment...');
-          const refundResponse = await walletApi.refundPayment({
-            transactionId: walletResponse.data.transaction.transactionId,
-            amount: totalPayable,
-            reason: 'order_creation_failed',
-          });
+      // Determine transaction ID — prefer the atomic result returned by the backend.
+      // Fall back to the legacy separate-payment path for older backend versions that
+      // don't yet return walletPaymentResult.
+      let transactionId: string | undefined = (orderResponse.data as any).walletPaymentResult?.transactionId;
 
-          if (refundResponse.success) {
-            devLog.log('✅ [Checkout] Wallet payment refunded successfully');
-            setState(prev => ({
-              ...prev,
-              loading: false,
-              error: 'Order creation failed. Your payment has been refunded.',
-              currentStep: 'checkout'
-            }));
-          } else {
-            devLog.error('❌ [Checkout] Refund failed:', refundResponse.error);
-            setState(prev => ({
-              ...prev,
-              loading: false,
-              error: 'Order creation failed and refund could not be processed. Please contact support with transaction ID: ' + walletResponse.data!.transaction.transactionId,
-              currentStep: 'checkout'
-            }));
-          }
-        } catch (refundError) {
-          devLog.error('❌ [Checkout] Refund error:', refundError);
+      if (!transactionId) {
+        // Fallback: backend is an older version without atomic wallet support.
+        // Run the separate wallet debit as before so we don't break in mixed deploys.
+        devLog.warn('[Wallet] Backend did not return walletPaymentResult — falling back to separate payment call');
+        const paymentData = {
+          amount: totalPayable,
+          orderId: orderResponse.data.id || orderResponse.data._id,
+          storeId: state.store.id,
+          storeName: state.store.name,
+          description: `Purchase of ${state.items.length} item(s) from ${state.store.name}`,
+          items: state.items.map(item => ({
+            productId: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        };
+
+        // OG-001 FIX: Pass the session-scoped idempotency key so the backend
+        // wallet route can de-duplicate if this fires twice on reconnect.
+        const walletResponse = await walletApi.processPayment(
+          paymentData,
+          walletIdempotencyKeyRef.current
+        );
+
+        if (!walletResponse.success || !walletResponse.data) {
+          devLog.error('[Checkout] Fallback wallet payment failed:', walletResponse.error);
           setState(prev => ({
             ...prev,
             loading: false,
-            error: 'Order creation failed and refund could not be processed. Please contact support with transaction ID: ' + walletResponse.data!.transaction.transactionId,
+            error: walletResponse.error || 'Wallet payment failed',
             currentStep: 'checkout'
           }));
+          return;
         }
-        return;
+
+        transactionId = walletResponse.data.transaction.transactionId;
       }
 
       // Step 3: Clear cart (both API and context state)
@@ -1865,7 +1839,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         await cartService.clearCart();
         await cartActions.clearCart();
       } catch (clearError) {
-        devLog.error('💳 [Checkout] Failed to clear cart:', clearError);
+        devLog.error('[Checkout] Failed to clear cart:', clearError);
         // Non-critical error, continue
       }
 
@@ -1873,7 +1847,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       setState(prev => ({ ...prev, currentStep: 'success', loading: false }));
 
       const orderId = orderResponse.data.id || orderResponse.data._id;
-      const transactionId = walletResponse.data.transaction.transactionId;
 
       // Non-blocking analytics
       try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId, cartValue: state.billSummary.itemTotal, paymentMethod: 'wallet' }); } catch {} // Silent: non-critical analytics
@@ -1956,7 +1929,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // Calculate total coins to distribute
       const rezCoinsValue = coinValuesOverride
         ? Number(coinValuesOverride.rezCoins) || 0
-        : Number(state.coinSystem.nuqtaCoin.used) || 0;
+        : Number(state.coinSystem.rezCoin.used) || 0;
       const promoCoinsValue = coinValuesOverride
         ? Number(coinValuesOverride.promoCoins) || 0
         : Number(state.coinSystem.promoCoin.used) || 0;
@@ -2208,12 +2181,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     setState(prev => ({ ...prev, loading: true, currentStep: 'processing' }));
 
     try {
-      // Calculate coins used - map nuqtaCoin back to rezCoins for backend
+      // Calculate coins used - map rezCoin back to rezCoins for backend
       // Use override values if provided (passed from checkout.tsx to avoid stale closure)
       // Ensure all values are numbers (not strings)
       const rezCoinsValue = coinValuesOverride
         ? Number(coinValuesOverride.rezCoins) || 0
-        : Number(state.coinSystem.nuqtaCoin.used) || 0;
+        : Number(state.coinSystem.rezCoin.used) || 0;
       const promoCoinsValue = coinValuesOverride
         ? Number(coinValuesOverride.promoCoins) || 0
         : Number(state.coinSystem.promoCoin.used) || 0;
@@ -2530,7 +2503,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
           // Calculate new bill summary with coupon discount
           const coinUsage = {
-            rez: state.coinSystem.nuqtaCoin.used,
+            rez: state.coinSystem.rezCoin.used,
             promo: state.coinSystem.promoCoin.used,
           };
 
@@ -2584,13 +2557,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
   const handleCoinToggle = useCallback((coinType: 'rez' | 'promo' | 'storePromo', enabled: boolean) => {
     if (coinType === 'rez') {
-      toggleNuqtaCoin(enabled);  // 'rez' in handlers maps to nuqtaCoin internally
+      toggleRezCoin(enabled);  // 'rez' in handlers maps to rezCoin internally
     } else if (coinType === 'promo') {
       togglePromoCoin(enabled);
     } else if (coinType === 'storePromo') {
       toggleStorePromoCoin(enabled);
     }
-  }, [toggleNuqtaCoin, togglePromoCoin, toggleStorePromoCoin]);
+  }, [toggleRezCoin, togglePromoCoin, toggleStorePromoCoin]);
 
   const handlePaymentMethodSelect = useCallback((method: PaymentMethod) => {
     selectPaymentMethod(method);
@@ -2694,7 +2667,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     actions: {
       applyPromoCode,
       removePromoCode,
-      toggleNuqtaCoin,
+      toggleRezCoin,
       togglePromoCoin,
       selectPaymentMethod,
       selectAddress,

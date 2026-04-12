@@ -240,7 +240,7 @@ function CheckoutPage() {
   const hasServiceItems = serviceItems.length > 0;
   const productItems = state.items?.filter((item: any) => item.itemType !== 'service') || [];
   const totalWalletBalance =
-    state.coinSystem.nuqtaCoin.available +
+    state.coinSystem.rezCoin.available +
     state.coinSystem.promoCoin.available +
     (state.coinSystem.storePromoCoin?.available || 0);
 
