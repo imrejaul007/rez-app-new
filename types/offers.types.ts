@@ -5,8 +5,8 @@ export interface Offer {
   image: string;
   originalPrice?: number;
   discountedPrice?: number;
-  cashBackPercentage: number;
-  distance: string;
+  cashbackPercentage: number;
+  distance: number;
   category: string;
   isNew?: boolean;
   isTrending?: boolean;
@@ -14,6 +14,7 @@ export interface Offer {
   isSpecial?: boolean;
   description?: string;
   store: {
+    id?: string;
     name: string;
     rating?: number;
     verified?: boolean;
