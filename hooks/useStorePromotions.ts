@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import offersApi from '@/services/offersApi';
+import realOffersApi from '@/services/realOffersApi';
 import { errorReporter } from '@/utils/errorReporter';
 
 interface UseStorePromotionsResult {
@@ -55,7 +55,7 @@ export function useStorePromotions(storeId: string): UseStorePromotionsResult {
       setLoading(true);
       setError(null);
 
-      const response: any = await (offersApi as any).getStorePromotions(storeId);
+      const response: any = await realOffersApi.getStorePromotions(storeId);
 
       // Handle different response formats
       if (response.success) {

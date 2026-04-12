@@ -197,13 +197,7 @@ class NotificationsService {
     message: string;
     deleted: number;
   }>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.delete<any>('/notifications/bulk-delete', { ids: notificationIds } as any);
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: bulk delete notifications — backend endpoint pending');
   }
 
   // Clear all notifications
@@ -213,26 +207,14 @@ class NotificationsService {
 
   // Get notification preferences
   async getNotificationPreferences(): Promise<ApiResponse<NotificationPreferences>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.get<any>('/notifications/preferences');
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: get notification preferences — backend endpoint pending');
   }
 
   // Update notification preferences
   async updateNotificationPreferences(
     preferences: Partial<NotificationPreferences>
   ): Promise<ApiResponse<NotificationPreferences>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.patch<any>('/notifications/preferences', preferences);
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: update notification preferences — backend endpoint pending');
   }
 
   // Subscribe to push notifications
@@ -259,13 +241,7 @@ class NotificationsService {
 
   // Get push subscriptions
   async getPushSubscriptions(): Promise<ApiResponse<PushSubscription[]>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.get<any>('/notifications/push/subscriptions');
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: get push subscriptions — backend endpoint pending');
   }
 
   // Test push notification
@@ -273,13 +249,7 @@ class NotificationsService {
     subscriptionId: string,
     message: string
   ): Promise<ApiResponse<{ message: string }>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.post<any>(`/notifications/push/test/${subscriptionId}`, { message });
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: test push notification — backend endpoint pending');
   }
 
   // Send notification (admin/system use)
@@ -336,13 +306,7 @@ class NotificationsService {
 
   // Get notification templates (admin use)
   async getNotificationTemplates(): Promise<ApiResponse<NotificationTemplate[]>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.get<any>('/notifications/templates');
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: get notification templates — backend endpoint pending');
   }
 
   // Create notification template (admin use)
@@ -355,13 +319,7 @@ class NotificationsService {
     variables?: string[];
     channels: ('push' | 'email' | 'sms' | 'inApp')[];
   }): Promise<ApiResponse<NotificationTemplate>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.post<any>('/notifications/templates', template);
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: create notification template — backend endpoint pending');
   }
 
   // Update notification template (admin use)
@@ -376,13 +334,7 @@ class NotificationsService {
       active: boolean;
     }>
   ): Promise<ApiResponse<NotificationTemplate>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.patch<any>(`/notifications/templates/${templateId}`, updates);
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: update notification template — backend endpoint pending');
   }
 
   // Send notification using template
@@ -400,13 +352,7 @@ class NotificationsService {
     sent: number;
     failed: number;
   }>> {
-    // Backend endpoint pending implementation
-    try {
-      return await apiClient.post<any>(`/notifications/templates/${templateId}/send`, data as any);
-    } catch (e) {
-      console.warn('Notification endpoint not yet implemented:', e);
-      return [] as any;
-    }
+    throw new Error('Not implemented: send from notification template — backend endpoint pending');
   }
 
   // Get unread notifications count

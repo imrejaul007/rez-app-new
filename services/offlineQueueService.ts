@@ -68,6 +68,22 @@ class OfflineQueueService {
       status: 'pending'
     };
 
+    // Deduplicate: merge quantity into an existing pending 'add' for the same product/variant
+    if (operation.type === 'add') {
+      const existing = this.queue.find(
+        op =>
+          op.type === 'add' &&
+          op.status === 'pending' &&
+          op.data.productId === operation.data.productId &&
+          op.data.variantId === operation.data.variantId
+      );
+      if (existing) {
+        existing.data.quantity = (existing.data.quantity || 1) + (operation.data.quantity || 1);
+        await this.saveQueue();
+        return existing.id;
+      }
+    }
+
     this.queue.push(operation);
     await this.saveQueue();
 

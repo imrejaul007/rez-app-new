@@ -1949,6 +1949,33 @@ class RealOffersApi {
       throw error;
     }
   }
+
+  /**
+   * Get promotions for a specific store
+   * Backend route: GET /api/offers/store/:storeId
+   */
+  async getStorePromotions(storeId: string): Promise<ApiResponse<{
+    promotions: any[];
+    totalCount: number;
+    activeCount: number;
+  }>> {
+    if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
+      return {
+        success: false,
+        error: 'Store ID is required',
+        message: 'Please provide a valid store ID',
+        timestamp: new Date().toISOString(),
+      } as any;
+    }
+    try {
+      devLog.log(`[OFFERS API] Fetching promotions for store: ${storeId}`);
+      const response = await apiClient.get<any>(`/offers/store/${storeId}`);
+      return response as any;
+    } catch (error) {
+      devLog.error('[OFFERS API] Error fetching store promotions:', error);
+      throw error;
+    }
+  }
 }
 
 // Create and export singleton instance
