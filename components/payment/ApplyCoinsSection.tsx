@@ -163,10 +163,10 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
               />
             )}
 
-            {/* Nuqta Coins - Third priority (universal, no cap) */}
+            {/* REZ Coins - Third priority (universal, no cap) */}
             {(rezCoins.available || 0) > 0 && (
               <CoinToggleRow
-                type="nuqta"
+                type="rez"
                 name={BRAND.COIN_NAME}
                 available={rezCoins.available || 0}
                 using={rezCoins.using || 0}
