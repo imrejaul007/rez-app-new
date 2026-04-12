@@ -18,7 +18,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { borderRadius, colors, spacing, typography } from '@/constants/theme';
 
-export type CoinType = 'rez' | 'nuqta' | 'promo' | 'branded';
+export type CoinType = 'rez' | 'promo' | 'branded';
 
 interface CoinToggleRowProps {
   type: CoinType;
@@ -40,13 +40,6 @@ interface CoinToggleRowProps {
 // All colors must follow the palette: Nile Blue, Mustard, Linen, Peach, Lavender
 const COIN_STYLES: Record<CoinType, { color: string; bgColor: string; gradientColors: string[]; icon: string; description: string }> = {
   rez: {
-    color: colors.lightMustard, // Mustard
-    bgColor: colors.linen, // Linen
-    gradientColors: [colors.lightMustard, colors.lightPeach], // Mustard to Peach
-    icon: 'diamond',
-    description: 'Usable across all stores',
-  },
-  nuqta: {
     color: colors.lightMustard, // Mustard
     bgColor: colors.linen, // Linen
     gradientColors: [colors.lightMustard, colors.lightPeach], // Mustard to Peach
@@ -86,7 +79,7 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
 }) => {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const defaultStyle = COIN_STYLES[type] || COIN_STYLES.nuqta; // Fallback to nuqta style
+  const defaultStyle = COIN_STYLES[type] || COIN_STYLES.rez; // Fallback to rez style
   // Always use palette colors - ignore custom colors to maintain design consistency
   const style = {
     ...defaultStyle,
@@ -106,7 +99,7 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
   };
 
   const getSubtitle = () => {
-    if (type === 'rez' || type === 'nuqta') return 'Usable across all stores';
+    if (type === 'rez') return 'Usable across all stores';
     if (type === 'branded' && storeName) return `Usable only at ${storeName}`;
     if (type === 'promo' && redemptionCap) return `Max ${redemptionCap}% per bill`;
     return defaultStyle?.description || '';
@@ -129,7 +122,7 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
     <View style={styles.container}>
       <View style={styles.mainRow}>
         <View style={[styles.iconContainer, { backgroundColor: style.bgColor }]}>
-          {(type === 'rez' || type === 'nuqta') ? (
+          {type === 'rez' ? (
             <CachedImage
               source={BRAND.COIN_IMAGE}
               style={styles.coinIcon}
@@ -166,11 +159,11 @@ export const CoinToggleRow: React.FC<CoinToggleRowProps> = ({
                 <Ionicons
                   name={expiryBadge.urgent ? 'warning' : 'time'}
                   size={10}
-                  color={expiryBadge.urgent ? colors.background.primary : colors.nuqta.nileBlue}
+                  color={expiryBadge.urgent ? colors.background.primary : colors.rez.nileBlue}
                 />
                 <Text style={[
                   styles.expiryText,
-                  !expiryBadge.urgent && { color: colors.nuqta.nileBlue }
+                  !expiryBadge.urgent && { color: colors.rez.nileBlue }
                 ]}>{expiryBadge.text}</Text>
               </View>
             )}
@@ -354,13 +347,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
     borderWidth: 1,
-    borderColor: colors.nuqta.peach,
+    borderColor: colors.rez.peach,
   },
   quickSelectActive: {
-    backgroundColor: colors.nuqta.mustard,
-    borderColor: colors.nuqta.mustard,
+    backgroundColor: colors.rez.mustard,
+    borderColor: colors.rez.mustard,
   },
   quickSelectText: {
     ...typography.caption,
@@ -368,7 +361,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   quickSelectTextActive: {
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
   },
 });
 

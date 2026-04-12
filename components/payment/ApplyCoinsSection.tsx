@@ -41,19 +41,19 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
   const maxCoinsAllowed = Math.floor((billAmount * maxCoinRedemptionPercent) / 100);
 
   // Defensive null checks for coin data
-  const nuqtaCoins = appliedCoins?.nuqtaCoins || { available: 0, using: 0, enabled: false };
+  const rezCoins = appliedCoins?.rezCoins || { available: 0, using: 0, enabled: false };
   const promoCoins = appliedCoins?.promoCoins || { available: 0, using: 0, enabled: false, expiringToday: false };
   const brandedCoins = appliedCoins?.brandedCoins;
 
   const totalAvailable =
-    (nuqtaCoins.available || 0) +
+    (rezCoins.available || 0) +
     (promoCoins.available || 0) +
     (brandedCoins?.available || 0);
 
   // Calculate max usable for each coin type considering others
   const getMaxUsable = (coinType: 'rez' | 'promo' | 'branded'): number => {
     const otherCoinsUsed =
-      (coinType !== 'rez' ? (nuqtaCoins.using || 0) : 0) +
+      (coinType !== 'rez' ? (rezCoins.using || 0) : 0) +
       (coinType !== 'promo' ? (promoCoins.using || 0) : 0) +
       (coinType !== 'branded' ? (brandedCoins?.using || 0) : 0);
 
@@ -61,7 +61,7 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
 
     switch (coinType) {
       case 'rez':
-        return Math.min(nuqtaCoins.available || 0, Math.max(0, remaining));
+        return Math.min(rezCoins.available || 0, Math.max(0, remaining));
       case 'promo':
         return Math.min(promoCoins.available || 0, Math.max(0, remaining));
       case 'branded':
@@ -94,8 +94,8 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
           >
             <LinearGradient
               colors={isAutoOptimized
-                ? [colors.nuqta.mustard, colors.nuqta.peach]
-                : [colors.nuqta.lavender, colors.background.primary]
+                ? [colors.rez.mustard, colors.rez.peach]
+                : [colors.rez.lavender, colors.background.primary]
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -104,7 +104,7 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
               <Ionicons
                 name={isAutoOptimized ? 'checkmark-circle' : 'sparkles'}
                 size={14}
-                color={isAutoOptimized ? colors.nuqta.nileBlue : colors.nuqta.mustard}
+                color={isAutoOptimized ? colors.rez.nileBlue : colors.rez.mustard}
               />
               <Text style={[
                 styles.autoOptimizeText,
@@ -124,7 +124,7 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
         {totalAvailable === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrapper}>
-              <Ionicons name="wallet-outline" size={32} color={colors.nuqta.nileBlue} />
+              <Ionicons name="wallet-outline" size={32} color={colors.rez.nileBlue} />
             </View>
             <Text style={styles.emptyText}>No coins available</Text>
             <Text style={styles.emptySubtext}>Earn coins by making purchases!</Text>
@@ -163,14 +163,14 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
               />
             )}
 
-            {/* Nuqta Coins - Third priority (universal, no cap) */}
-            {(nuqtaCoins.available || 0) > 0 && (
+            {/* REZ Coins - Third priority (universal, no cap) */}
+            {(rezCoins.available || 0) > 0 && (
               <CoinToggleRow
-                type="nuqta"
+                type="rez"
                 name={BRAND.COIN_NAME}
-                available={nuqtaCoins.available || 0}
-                using={nuqtaCoins.using || 0}
-                enabled={nuqtaCoins.enabled || false}
+                available={rezCoins.available || 0}
+                using={rezCoins.using || 0}
+                enabled={rezCoins.enabled || false}
                 maxUsable={getMaxUsable('rez')}
                 onToggle={(enabled) => onCoinToggle('rez', enabled)}
                 onAmountChange={(amount) => onCoinAmountChange('rez', amount)}
@@ -182,13 +182,13 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
         {/* Coins Applied Total Banner */}
         {(appliedCoins?.totalApplied || 0) > 0 && (
           <LinearGradient
-            colors={[colors.nuqta.lavender, colors.nuqta.linen]}
+            colors={[colors.rez.lavender, colors.rez.linen]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.appliedBanner}
           >
             <View style={styles.appliedIconWrapper}>
-              <Ionicons name="checkmark-circle" size={18} color={colors.nuqta.mustard} />
+              <Ionicons name="checkmark-circle" size={18} color={colors.rez.mustard} />
             </View>
             <Text style={styles.appliedText}>
               Coins Applied: <Text style={styles.appliedAmount}>{currencySymbol}{appliedCoins?.totalApplied || 0}</Text>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.nileBlue,
+        shadowColor: colors.rez.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
         shadowRadius: 8,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.xl,
     padding: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.nuqta.linen,
+    borderColor: colors.rez.linen,
   },
   header: {
     flexDirection: 'row',
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...typography.h4,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '700',
   },
   autoOptimizeButton: {
@@ -263,16 +263,16 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: borderRadius.full,
     borderWidth: 1,
-    borderColor: colors.nuqta.peach,
+    borderColor: colors.rez.peach,
     gap: 4,
   },
   autoOptimizeText: {
     ...typography.caption,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '600',
   },
   autoOptimizeActiveText: {
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '700',
   },
   subtitle: {
@@ -291,14 +291,14 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: colors.nuqta.lavender,
+    backgroundColor: colors.rez.lavender,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
   emptyText: {
     ...typography.body,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '600',
     marginTop: spacing.sm,
   },
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   },
   appliedText: {
     ...typography.body,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
   },
   appliedAmount: {
     fontWeight: '700',

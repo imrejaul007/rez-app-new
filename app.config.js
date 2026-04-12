@@ -49,16 +49,12 @@ module.exports = {
     scheme: 'rezapp', // Deep link scheme — must match EXPO_PUBLIC_DEEP_LINK_SCHEME=rezapp
     userInterfaceStyle: 'light',
     newArchEnabled: true,
-    notification: {
-      vapidPublicKey: process.env.EXPO_PUBLIC_VAPID_KEY,
-      serviceWorkerPath: '/expo-service-worker.js',
-    },
     ios: {
       supportsTablet: true,
       userInterfaceStyle: 'light',
       bundleIdentifier: 'money.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
-      associatedDomains: ['applinks:rezapp.in', 'applinks:menu.rez.money'],
+      associatedDomains: ['applinks:rezapp.in', 'applinks:menu.rez.money', 'applinks:now.rez.money'],
       infoPlist: {
         NSCameraUsageDescription: `${BRAND_NAME} needs camera access to scan QR codes for store payments`,
         NSLocationWhenInUseUsageDescription: `${BRAND_NAME} needs your location to show nearby stores and offers`,
@@ -66,6 +62,7 @@ module.exports = {
         NSLocationAlwaysAndWhenInUseUsageDescription: `${BRAND_NAME} needs your location to show nearby stores and offers`,
         NSMicrophoneUsageDescription: `${BRAND_NAME} needs microphone access for video features`,
         NSPhotoLibraryAddUsageDescription: `${BRAND_NAME} needs permission to save media to your photo library`,
+        NSFaceIDUsageDescription: `${BRAND_NAME} uses Face ID to securely authenticate your identity`,
       },
     },
     android: {
@@ -91,6 +88,12 @@ module.exports = {
           data: [{ scheme: 'https', host: 'menu.rez.money', pathPrefix: '/' }],
           category: ['BROWSABLE', 'DEFAULT'],
         },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [{ scheme: 'https', host: 'now.rez.money', pathPrefix: '/' }],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
       ],
       permissions: [
         'android.permission.INTERNET',
@@ -100,6 +103,8 @@ module.exports = {
         'android.permission.ACCESS_COARSE_LOCATION',
         'android.permission.READ_MEDIA_IMAGES',
         'android.permission.READ_MEDIA_VIDEO',
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.WRITE_EXTERNAL_STORAGE',
         'android.permission.VIBRATE',
         'android.permission.POST_NOTIFICATIONS',
       ],

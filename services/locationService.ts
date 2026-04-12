@@ -379,7 +379,7 @@ class LocationService {
     limit: number = 20
   ): Promise<any[]> {
     try {
-      const response = await this.apiClient.get('/nearby-stores', {
+      const response = await this.apiClient.get('/location/nearby-stores', {
         latitude: coordinates.latitude,
         longitude: coordinates.longitude,
         radius,
@@ -397,7 +397,7 @@ class LocationService {
    */
   async getLocationStats(): Promise<LocationStats> {
     try {
-      const response = await this.apiClient.get('/stats');
+      const response = await this.apiClient.get('/location/stats');
       const data = response.data?.stats;
       
       return {

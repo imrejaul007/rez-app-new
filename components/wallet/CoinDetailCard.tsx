@@ -16,7 +16,7 @@ import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 import { BRAND } from '@/constants/brand';
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface CoinDetailCardProps {
   coin: CoinBalance;
@@ -53,7 +53,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
       }
     }
     // No expiryDate = admin configured 0 days = never expires
-    if (coin.type === 'rez' || coin.type === 'nuqta') return 'Never expires';
+    if (coin.type === 'rez') return 'Never expires';
     if (coin.type === 'promo') {
       if (coin.expiryCountdown) return coin.expiryCountdown;
       return 'Max 20% per bill';
@@ -82,8 +82,8 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
         accessibilityRole="button"
       >
         <View style={[styles.iconContainer, { backgroundColor: coinInfo.backgroundColor }]}>
-          {coin.type === 'rez' || coin.type === 'nuqta' ? (
-            <CachedImage source={nuqtaCoinImage} style={styles.coinImage} contentFit="contain" transition={200} />
+          {coin.type === 'rez' ? (
+            <CachedImage source={rezCoinImage} style={styles.coinImage} contentFit="contain" transition={200} />
           ) : (
             <Ionicons
               name={coin.type === 'branded' ? 'storefront' : 'flash'}

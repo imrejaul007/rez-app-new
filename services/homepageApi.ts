@@ -36,7 +36,7 @@ const ENDPOINTS = {
   HOMEPAGE: '/homepage',
   SECTION: (id: string) => `/homepage/sections/${id}`,
   ANALYTICS: '/analytics/homepage',
-  USER_PREFERENCES: '/users/preferences',
+  USER_PREFERENCES: '/user-settings/preferences',
 } as const;
 
 // Custom API Error class

@@ -14,4 +14,4 @@ export { default as SearchResultsView } from './SearchResultsView';
 export { default as SearchEmptyState } from './SearchEmptyState';
 export { default as SearchErrorState } from './SearchErrorState';
 export { default as SearchHintView } from './SearchHintView';
-export { NUQTA, COLORS } from './searchTheme';
+export { REZ_THEME, COLORS } from './searchTheme';

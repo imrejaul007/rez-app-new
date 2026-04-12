@@ -16,11 +16,11 @@ export interface Booking {
   userId: string;
   serviceId: string;
   storeId: string;
-  date: string;
-  timeSlot: string;
+  bookingDate: string;
+  timeSlot: { start: string; end: string };
   staffId?: string;
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
-  notes?: string;
+  customerNotes?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -28,10 +28,10 @@ export interface Booking {
 export interface CreateBookingRequest {
   serviceId: string;
   storeId: string;
-  date: string;
-  timeSlot: string;
+  bookingDate: string;
+  timeSlot: { start: string; end: string };
   staffId?: string;
-  notes?: string;
+  customerNotes?: string;
   customerName?: string;
   customerPhone?: string;
   customerEmail?: string;
@@ -53,7 +53,7 @@ export interface BookingsQueryParams {
 export interface BookingsResponse {
   bookings: Booking[];
   pagination: {
-    current: number;
+    page: number;
     pages: number;
     total: number;
     limit: number;
@@ -75,15 +75,15 @@ class BookingService {
   async createBooking(bookingData: CreateBookingRequest): Promise<ApiResponse<Booking>> {
     try {
       // Validate required fields
-      if (!bookingData.serviceId || !bookingData.storeId || !bookingData.date || !bookingData.timeSlot) {
+      if (!bookingData.serviceId || !bookingData.storeId || !bookingData.bookingDate || !bookingData.timeSlot) {
         return {
           success: false,
-          error: 'Service ID, Store ID, date, and time slot are required'
+          error: 'Service ID, Store ID, booking date, and time slot are required'
         };
       }
 
       const response = await apiClient.post<Booking>(
-        '/bookings',
+        '/service-bookings',
         bookingData as any
       );
 
@@ -123,7 +123,7 @@ class BookingService {
       );
 
       const response = await apiClient.get<BookingsResponse>(
-        '/bookings/user',
+        '/service-bookings',
         cleanParams
       );
 
@@ -162,7 +162,7 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.get<Booking>(`/bookings/${bookingId}`);
+      const response = await apiClient.get<Booking>(`/service-bookings/${bookingId}`);
 
       if (!response.success) {
         devLog.error('❌ [BOOKING API] Failed to fetch booking details:', response.error);
@@ -192,8 +192,8 @@ class BookingService {
 
       const payload = reason ? { reason } : {};
 
-      const response = await apiClient.post<any>(
-        `/bookings/${bookingId}/cancel`,
+      const response = await apiClient.put<any>(
+        `/service-bookings/${bookingId}/cancel`,
         payload
       );
 
@@ -228,8 +228,8 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.post<Booking>(
-        `/bookings/${bookingId}/reschedule`,
+      const response = await apiClient.put<Booking>(
+        `/service-bookings/${bookingId}/reschedule`,
         reschedulingData as any
       );
 
@@ -271,8 +271,8 @@ class BookingService {
       }
 
       const response = await apiClient.get<TimeSlot[]>(
-        `/bookings/slots/${serviceId}`,
-        queryParams
+        `/service-bookings/available-slots`,
+        { serviceId, ...queryParams }
       );
 
       if (!response.success) {
@@ -295,8 +295,8 @@ class BookingService {
   async getUpcomingBookings(limit: number = 5): Promise<ApiResponse<Booking[]>> {
     try {
       const response = await apiClient.get<Booking[]>(
-        '/bookings/user/upcoming',
-        { limit }
+        '/service-bookings',
+        { status: 'upcoming', limit }
       );
 
       if (!response.success) {
@@ -333,7 +333,7 @@ class BookingService {
       );
 
       const response = await apiClient.get<BookingsResponse>(
-        '/bookings/user/past',
+        '/service-bookings',
         cleanParams
       );
 
@@ -378,8 +378,8 @@ class BookingService {
       );
 
       const response = await apiClient.get<BookingsResponse>(
-        `/bookings/store/${storeId}`,
-        cleanParams
+        `/service-bookings`,
+        { storeId, ...cleanParams }
       );
 
       if (!response.success) {
@@ -406,9 +406,7 @@ class BookingService {
     cancelledCount: number;
   }>> {
     try {
-      const response = await apiClient.get<any>(
-        '/bookings/user/stats'
-      );
+      const response = await apiClient.get<any>('/service-bookings/stats');
 
       if (!response.success) {
         devLog.error('❌ [BOOKING API] Failed to fetch booking statistics:', response.error);
@@ -436,8 +434,9 @@ class BookingService {
         };
       }
 
-      const response = await apiClient.post<Booking>(
-        `/bookings/${bookingId}/complete`
+      const response = await apiClient.put<Booking>(
+        `/service-bookings/${bookingId}/complete`,
+        {}
       );
 
       if (!response.success) {
@@ -472,8 +471,8 @@ class BookingService {
       }
 
       const response = await apiClient.get<any>(
-        `/bookings/availability/${serviceId}`,
-        { date }
+        `/service-bookings/available-slots`,
+        { serviceId, date }
       );
 
       if (!response.success) {
@@ -495,7 +494,7 @@ class BookingService {
    */
   async isBackendAvailable(): Promise<boolean> {
     try {
-      const response = await apiClient.get<any>('/bookings/health');
+      const response = await apiClient.get<any>('/service-bookings/available-slots');
 
       if (response.success) {
         return true;

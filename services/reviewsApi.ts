@@ -1,3 +1,4 @@
+// DEPRECATED: Use reviewApi.ts instead. This file has incorrect API paths.
 // Reviews API Service
 // Handles product and store reviews, ratings, and feedback
 

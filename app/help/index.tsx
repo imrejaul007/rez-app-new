@@ -167,7 +167,7 @@ function HelpPage() {
       id: 'faq2',
       question: 'When do my coins expire?',
       answer:
-        "REZ coins expire 12 months from the date they were earned. You can check your coin expiry timeline in the Wallet section of the app. Make sure to use your coins before they expire — you'll receive reminder notifications as your coins approach their expiry date.",
+        "REZ coins never expire — they stay in your wallet indefinitely. Promo coins expire after 90 days and Privé coins expire after 12 months. You can check expiry details for each coin type in the Wallet section. You'll receive reminder notifications as expiring coins approach their expiry date.",
       category: 'coins',
     },
     {

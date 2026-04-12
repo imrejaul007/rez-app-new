@@ -15,7 +15,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { OffersThemeProvider } from '@/contexts/OffersThemeContext';
 import { OffersPageContent } from '@/components/offers/OffersPageContent';
 import { useAuthUser, useIsAuthenticated, useRezBalance, useRefreshWallet } from '@/stores/selectors';
-import { NuqtaCoin as ReZCoin } from '@/components/homepage/ReZCoin';
+import { RezCoin as ReZCoin } from '@/components/homepage/ReZCoin';
 import { Spacing, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { BRAND } from '@/constants/brand';

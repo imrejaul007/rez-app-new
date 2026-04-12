@@ -1,9 +1,9 @@
 import { colors } from '@/constants/theme';
 
 // ============================================
-// NUQTA DESIGN SYSTEM - Premium Color Palette
+// REZ DESIGN SYSTEM - Premium Color Palette
 // ============================================
-export const NUQTA = {
+export const REZ_THEME = {
   // Primary Colors
   nileBlue: colors.nileBlue,
   lightMustard: colors.gold,
@@ -41,16 +41,16 @@ export const NUQTA = {
 
 // Legacy COLORS for compatibility
 export const COLORS = {
-  primary: NUQTA.lightMustard,
-  primaryDark: NUQTA.nileBlue,
-  gold: NUQTA.lightMustard,
-  navy: NUQTA.nileBlue,
-  slate: NUQTA.nileBlue,
-  muted: NUQTA.text.muted,
-  surface: NUQTA.linen,
-  error: NUQTA.nileBlue,
-  warning: NUQTA.lightMustard,
-  glassWhite: NUQTA.glass.white,
-  glassBorder: NUQTA.glass.whiteBorder,
+  primary: REZ_THEME.lightMustard,
+  primaryDark: REZ_THEME.nileBlue,
+  gold: REZ_THEME.lightMustard,
+  navy: REZ_THEME.nileBlue,
+  slate: REZ_THEME.nileBlue,
+  muted: REZ_THEME.text.muted,
+  surface: REZ_THEME.linen,
+  error: REZ_THEME.nileBlue,
+  warning: REZ_THEME.lightMustard,
+  glassWhite: REZ_THEME.glass.white,
+  glassBorder: REZ_THEME.glass.whiteBorder,
   glassHighlight: 'rgba(255, 255, 255, 0.6)',
 };

@@ -42,7 +42,7 @@ function PriceSection({
     <View style={styles.container}>
       {/* Top Border Gradient */}
       <LinearGradient
-        colors={[colors.nuqta.mustard, colors.nuqta.peach, colors.nuqta.linen]}
+        colors={[colors.rez.mustard, colors.rez.peach, colors.rez.linen]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.topBorderGradient}
@@ -88,7 +88,7 @@ function PriceSection({
             accessibilityState={{ disabled: loading || totalPrice === 0, busy: loading }}
           >
             <LinearGradient
-              colors={loading || totalPrice === 0 ? [colors.neutral[400], colors.neutral[500]] : [colors.nuqta.mustard, colors.nuqta.peach]}
+              colors={loading || totalPrice === 0 ? [colors.neutral[400], colors.neutral[500]] : [colors.rez.mustard, colors.rez.peach]}
               style={styles.gradientButton}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -98,19 +98,19 @@ function PriceSection({
                   <Ionicons
                     name="bag"
                     size={isSmallScreen ? 16 : 18}
-                    color={loading || totalPrice === 0 ? colors.background.primary : colors.nuqta.nileBlue}
+                    color={loading || totalPrice === 0 ? colors.background.primary : colors.rez.nileBlue}
                   />
                 </View>
                 <ThemedText style={[
                   styles.buttonText,
                   { fontSize: isSmallScreen ? 15 : 16 },
-                  !(loading || totalPrice === 0) && { color: colors.nuqta.nileBlue }
+                  !(loading || totalPrice === 0) && { color: colors.rez.nileBlue }
                 ]}>
                   {loading ? 'Processing...' : 'Checkout'}
                 </ThemedText>
                 {!loading && totalPrice > 0 && (
                   <View style={styles.arrowWrapper}>
-                    <Ionicons name="arrow-forward" size={16} color={colors.nuqta.nileBlue} />
+                    <Ionicons name="arrow-forward" size={16} color={colors.rez.nileBlue} />
                   </View>
                 )}
               </View>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.nileBlue,
+        shadowColor: colors.rez.nileBlue,
         shadowOffset: { width: 0, height: -4 },
         shadowOpacity: 0.08,
         shadowRadius: 12,
@@ -164,13 +164,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   totalPrice: {
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '800',
     letterSpacing: -0.5,
   },
   itemCountBadge: {
     marginTop: 4,
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: borderRadius.full,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   itemCount: {
     ...typography.caption,
     fontSize: 11,
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '600',
   },
   buttonContainer: {
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.mustard,
+        shadowColor: colors.rez.mustard,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.35,
         shadowRadius: 12,

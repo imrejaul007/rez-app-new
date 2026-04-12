@@ -1,5 +1,5 @@
 /**
- * Nuqta Design System - Single Source of Truth
+ * REZ Design System - Single Source of Truth
  *
  * All design tokens for the entire app. Every UI component imports from here.
  * Legacy files (DesignTokens.ts, DesignSystem.ts) re-export from this file.
@@ -231,8 +231,8 @@ export const colors = {
     darker: 'rgba(26, 58, 82, 0.7)',
   },
 
-  // Nuqta-specific (backward compat with DesignTokens COLORS.nuqta)
-  nuqta: {
+  // REZ-specific color shortcuts
+  rez: {
     nileBlue: '#1a3a52',
     mustard: '#ffcd57',
     linen: '#faf1e0',
@@ -729,7 +729,7 @@ export const getGradient = (type: keyof typeof gradients) => ({
 export const getDisabledOpacity = () => opacity.disabled;
 
 // ============================================================================
-// DARK MODE COLORS (Material Design 3 inspired, Nuqta-branded)
+// DARK MODE COLORS (Material Design 3 inspired, REZ-branded)
 // ============================================================================
 
 export const darkColors = {
@@ -879,8 +879,8 @@ export const darkColors = {
     darker: 'rgba(0, 0, 0, 0.8)',
   },
 
-  // Nuqta-specific
-  nuqta: {
+  // REZ-specific
+  rez: {
     nileBlue: '#7599B7',
     mustard: '#ffcd57',
     linen: '#1E1E1E',

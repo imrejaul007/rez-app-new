@@ -41,8 +41,8 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SCANNER_SIZE = Math.min(SCREEN_WIDTH * 0.7, 280);
 
-// Nuqta Brand Colors
-const NUQTA_COLORS = {
+// REZ Brand Colors
+const REZ_COLORS = {
   primary: colors.lightMustard,
   primaryGlow: 'rgba(255, 205, 87, 0.5)',
   orange: colors.brand.orange,
@@ -284,7 +284,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
-        colors={['rgba(0,0,0,0.9)', NUQTA_COLORS.background, NUQTA_COLORS.background]}
+        colors={['rgba(0,0,0,0.9)', REZ_COLORS.background, REZ_COLORS.background]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -356,7 +356,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
             <View style={styles.frameContent}>
               {isScanning ? (
                 <>
-                  <ActivityIndicator size="large" color={NUQTA_COLORS.primary} />
+                  <ActivityIndicator size="large" color={REZ_COLORS.primary} />
                   <Text style={styles.scanningText}>Starting camera...</Text>
                 </>
               ) : (
@@ -466,7 +466,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
           <Text style={styles.infoText}>{`Pay securely at any ${BRAND.APP_NAME} store`}</Text>
           <View style={styles.infoDivider} />
           <View style={styles.infoIcons}>
-            <View style={[styles.paymentIcon, { backgroundColor: NUQTA_COLORS.primary }]}>
+            <View style={[styles.paymentIcon, { backgroundColor: REZ_COLORS.primary }]}>
               <Text style={styles.paymentIconText}>R</Text>
             </View>
             <Text style={styles.infoSubtext}>{BRAND.PAY_NAME}</Text>
@@ -480,14 +480,14 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
 
           <View style={styles.securityBadges}>
             <View style={styles.securityBadge}>
-              <Ionicons name="shield-checkmark" size={14} color={NUQTA_COLORS.primary} />
+              <Ionicons name="shield-checkmark" size={14} color={REZ_COLORS.primary} />
               <View>
                 <Text style={styles.badgeTitle}>PCI DSS</Text>
                 <Text style={styles.badgeSubtitle}>COMPLIANT</Text>
               </View>
             </View>
             <View style={styles.securityBadge}>
-              <Ionicons name="lock-closed" size={14} color={NUQTA_COLORS.primary} />
+              <Ionicons name="lock-closed" size={14} color={REZ_COLORS.primary} />
               <View>
                 <Text style={styles.badgeTitle}>256-BIT</Text>
                 <Text style={styles.badgeSubtitle}>ENCRYPTED</Text>
@@ -503,7 +503,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA_COLORS.background,
+    backgroundColor: REZ_COLORS.background,
   },
   header: {
     flexDirection: 'row',
@@ -538,14 +538,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: NUQTA_COLORS.border,
+    borderColor: REZ_COLORS.border,
     gap: 10,
   },
   promoIcon: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: NUQTA_COLORS.orange,
+    backgroundColor: REZ_COLORS.orange,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 40,
     height: 40,
-    borderColor: NUQTA_COLORS.primary,
+    borderColor: REZ_COLORS.primary,
     borderWidth: 4,
     zIndex: 10,
   },
@@ -617,10 +617,10 @@ const styles = StyleSheet.create({
     left: 8,
     right: 8,
     height: 3,
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     borderRadius: 2,
     zIndex: 10,
-    shadowColor: NUQTA_COLORS.primary,
+    shadowColor: REZ_COLORS.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 15,
@@ -674,9 +674,9 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 15,
     color: colors.background.primary,
-    backgroundColor: NUQTA_COLORS.surface,
+    backgroundColor: REZ_COLORS.surface,
     borderWidth: 1,
-    borderColor: NUQTA_COLORS.border,
+    borderColor: REZ_COLORS.border,
     borderRadius: 14,
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     flexDirection: 'row',
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: 'center',
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     paddingVertical: 16,
     borderRadius: 14,
     gap: 10,
@@ -755,7 +755,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: NUQTA_COLORS.border,
+    borderColor: REZ_COLORS.border,
     marginBottom: 16,
     gap: 10,
   },
@@ -766,7 +766,7 @@ const styles = StyleSheet.create({
   infoDivider: {
     width: 1,
     height: 14,
-    backgroundColor: NUQTA_COLORS.border,
+    backgroundColor: REZ_COLORS.border,
   },
   infoIcons: {
     flexDirection: 'row',
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rezLogo: {
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
@@ -838,7 +838,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   statusScanning: {
-    backgroundColor: NUQTA_COLORS.primary,
+    backgroundColor: REZ_COLORS.primary,
   },
   statusError: {
     backgroundColor: colors.error,

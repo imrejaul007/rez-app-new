@@ -355,32 +355,32 @@ class ApiClient {
             };
           }
 
-          // Check if the error is due to expired/revoked token
-          const errorMessage = responseData.message?.toLowerCase() || '';
-          const isTokenIssue = errorMessage.includes('expired') || errorMessage.includes('invalid') || errorMessage.includes('jwt') || errorMessage.includes('token') || errorMessage.includes('revoked');
-
-          // Only try to refresh if we have a refresh callback and token appears expired/revoked
-          if (isTokenIssue) {
-            if (this.refreshTokenCallback && !this.isLoggingOut) {
-              const refreshSuccess = await this.handleTokenRefresh();
-              if (refreshSuccess) {
-                // Retry the request after successful token refresh.
-                // All methods (including POST/PUT/PATCH/DELETE) are safe to retry
-                // because the idempotency key system prevents duplicate operations.
-                return this.makeRequest<T>(endpoint, options);
-              }
+          // Attempt refresh for any 401 — do not gate on error message keywords.
+          // Generic 401 responses like "Authentication required" or "Unauthorized"
+          // would have been missed by keyword checks. Infinite loops are prevented
+          // by the isRefreshing/refreshPromise deduplication inside handleTokenRefresh,
+          // and by isLoggingOut which blocks re-entry after a failed refresh.
+          if (this.refreshTokenCallback && !this.isLoggingOut) {
+            const refreshSuccess = await this.handleTokenRefresh();
+            if (refreshSuccess) {
+              // Retry the request after successful token refresh.
+              // All methods (including POST/PUT/PATCH/DELETE) are safe to retry
+              // because the idempotency key system prevents duplicate operations.
+              return this.makeRequest<T>(endpoint, options);
             }
-
+            // Token refresh failed. The refreshTokenCallback (tryRefreshToken in
+            // AuthContext) returns false for both network errors AND auth rejections,
+            // but only dispatches AUTH_FAILURE and sets shouldRedirectToSignIn for
+            // genuine auth failures. We rely on that callback to handle logout state.
+          } else if (!this.refreshTokenCallback) {
+            // No refresh callback registered — fall back to direct logout handling.
             // Token refresh failed. Only force logout if the refresh endpoint itself
             // returned an auth rejection (401/403 from the refresh endpoint, handled
             // inside the refreshTokenCallback). Network errors during refresh should NOT
             // log the user out — they're transient and the token may still be valid.
-            // The refreshTokenCallback (tryRefreshToken in AuthContext) returns false for
-            // both network errors AND auth rejections, but only dispatches AUTH_FAILURE
-            // and sets shouldRedirectToSignIn for genuine auth failures. We therefore rely
-            // on that callback to handle logout state; the logoutCallback here is a last-
-            // resort for when no refreshTokenCallback is registered at all.
-            if (!this.refreshTokenCallback && this.logoutCallback && !this.isLoggingOut) {
+            // The logoutCallback here is a last-resort for when no refreshTokenCallback
+            // is registered at all.
+            if (this.logoutCallback && !this.isLoggingOut) {
               this.isLoggingOut = true;
               try {
                 await this.logoutCallback();
@@ -390,7 +390,7 @@ class ApiClient {
               } finally {
                 this.isLoggingOut = false;
               }
-            } else if (!this.refreshTokenCallback && !this.logoutCallback) {
+            } else if (!this.logoutCallback) {
               // No callbacks at all — at minimum clear the in-memory token
               this.setAuthToken(null);
             }

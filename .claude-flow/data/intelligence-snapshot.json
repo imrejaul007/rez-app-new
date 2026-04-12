@@ -798,5 +798,505 @@
         "accessCount": 0
       }
     ]
+  },
+  {
+    "timestamp": 1775609163635,
+    "nodes": 9,
+    "edges": 3,
+    "pageRankSum": 0.9999999999999999,
+    "confidences": [
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.475
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "mem-project_overview-current-state--phase-1-built-",
+        "summary": "Current State (Phase 1 built)",
+        "confidence": 0.47,
+        "pageRank": 0.2096149665053827,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview-tech-stack",
+        "summary": "Tech Stack",
+        "confidence": 0.47,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp-rez-consumer-app--nuqta-master",
+        "summary": "ReZ Consumer App (nuqta-master)",
+        "confidence": 0.47,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1775103205739-q133",
+        "summary": "Frequently edited: unknown (18x)",
+        "confidence": 0.475,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rez_strategy----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-user_founder----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1775628894490,
+    "nodes": 9,
+    "edges": 3,
+    "pageRankSum": 0.9999999999999999,
+    "confidences": [
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47,
+      0.47
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "mem-project_overview-current-state--phase-1-built-",
+        "summary": "Current State (Phase 1 built)",
+        "confidence": 0.47,
+        "pageRank": 0.2096149665053827,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview-tech-stack",
+        "summary": "Tech Stack",
+        "confidence": 0.47,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp-rez-consumer-app--nuqta-master",
+        "summary": "ReZ Consumer App (nuqta-master)",
+        "confidence": 0.47,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rez_strategy----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-user_founder----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp----",
+        "summary": "---",
+        "confidence": 0.47,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1775715345939,
+    "nodes": 9,
+    "edges": 3,
+    "pageRankSum": 0.9999999999999999,
+    "confidences": [
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997,
+      0.46499999999999997
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "mem-project_overview-current-state--phase-1-built-",
+        "summary": "Current State (Phase 1 built)",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.2096149665053827,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview-tech-stack",
+        "summary": "Tech Stack",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp-rez-consumer-app--nuqta-master",
+        "summary": "ReZ Consumer App (nuqta-master)",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview----",
+        "summary": "---",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rez_strategy----",
+        "summary": "---",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-user_founder----",
+        "summary": "---",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp----",
+        "summary": "---",
+        "confidence": 0.46499999999999997,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1775981244895,
+    "nodes": 9,
+    "edges": 3,
+    "pageRankSum": 0.9999999999999999,
+    "confidences": [
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "mem-project_overview-current-state--phase-1-built-",
+        "summary": "Current State (Phase 1 built)",
+        "confidence": 0.45,
+        "pageRank": 0.2096149665053827,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview-tech-stack",
+        "summary": "Tech Stack",
+        "confidence": 0.45,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp-rez-consumer-app--nuqta-master",
+        "summary": "ReZ Consumer App (nuqta-master)",
+        "confidence": 0.45,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rez_strategy----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-user_founder----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1775985402397,
+    "nodes": 9,
+    "edges": 3,
+    "pageRankSum": 0.9999999999999999,
+    "confidences": [
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45,
+      0.45
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "mem-project_overview-current-state--phase-1-built-",
+        "summary": "Current State (Phase 1 built)",
+        "confidence": 0.45,
+        "pageRank": 0.2096149665053827,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview-tech-stack",
+        "summary": "Tech Stack",
+        "confidence": 0.45,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp-rez-consumer-app--nuqta-master",
+        "summary": "ReZ Consumer App (nuqta-master)",
+        "confidence": 0.45,
+        "pageRank": 0.15074352167990007,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_overview----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rez_strategy----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-user_founder----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY-memory-index",
+        "summary": "Memory Index",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-project_rezapp----",
+        "summary": "---",
+        "confidence": 0.45,
+        "pageRank": 0.08148299835580283,
+        "accessCount": 0
+      }
+    ]
   }
 ]

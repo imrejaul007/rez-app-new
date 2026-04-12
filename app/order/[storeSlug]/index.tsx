@@ -26,6 +26,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp, SlideInUp } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWebStore, WebMenuItem, WebMenuCategory, WebStoreData, CartItem } from '@/services/webOrderingApi';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { colors as themeColors } from '@/constants/theme';
@@ -278,16 +279,18 @@ function WebOrderMenuScreen() {
     });
   }, []);
 
-  const handleCheckout = useCallback(() => {
+  const handleCheckout = useCallback(async () => {
     if (!cart.length) return;
-    // Serialize cart to pass via router params (small enough)
+    // Persist cart and store to AsyncStorage to avoid URL length limits with
+    // large carts or long customisation strings (P3-12).
+    const slug = storeSlug as string;
+    await AsyncStorage.setItem(`web_order_cart_${slug}`, JSON.stringify(cart));
+    await AsyncStorage.setItem(`web_order_store_${slug}`, JSON.stringify(storeData?.store));
     router.push({
       pathname: '/order/[storeSlug]/checkout',
       params: {
-        storeSlug: storeSlug as string,
+        storeSlug: slug,
         table: table || '',
-        cartJson: JSON.stringify(cart),
-        storeJson: JSON.stringify(storeData?.store),
       },
     });
   }, [cart, router, storeSlug, table, storeData]);

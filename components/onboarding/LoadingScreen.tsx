@@ -9,7 +9,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, withRepeat, wit
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/theme';
 
-// Nuqta Design System Colors
+// REZ Design System Colors
 const COLORS = {
   primary: colors.lightMustard,        // Light Mustard
   primaryDark: colors.nileBlue,    // Nile Blue

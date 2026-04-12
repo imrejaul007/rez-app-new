@@ -34,6 +34,9 @@ export interface PostPaymentSummaryProps {
   lifetimeSavings: number;
   streakDays: number;
   nextMilestone?: string;
+  /** When true, coins have not been credited yet — display a pending message
+   * instead of the animated zero counter */
+  coinsPending?: boolean;
 }
 
 // ============================================================================
@@ -46,6 +49,7 @@ const PostPaymentSummary: React.FC<PostPaymentSummaryProps> = ({
   lifetimeSavings,
   streakDays,
   nextMilestone,
+  coinsPending = false,
 }) => {
   const [displayCount, setDisplayCount] = useState(0);
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -113,15 +117,32 @@ const PostPaymentSummary: React.FC<PostPaymentSummaryProps> = ({
         <ThemedText style={styles.successTitle}>Payment Complete!</ThemedText>
       </View>
 
-      {/* Coins earned */}
+      {/* Coins earned — or pending if coins have not been credited yet */}
       <View style={styles.earnedSection}>
-        <ThemedText style={styles.earnedLabel}>Coins Earned</ThemedText>
-        <View style={styles.earnedRow}>
-          <ThemedText style={styles.earnedEmoji}>🪙</ThemedText>
-          <ThemedText style={styles.earnedCount}>
-            +{displayCount.toLocaleString('en-IN')}
-          </ThemedText>
-        </View>
+        {coinsPending ? (
+          <>
+            <ThemedText style={styles.earnedLabel}>Coins Pending</ThemedText>
+            <View style={styles.earnedRow}>
+              <ThemedText style={styles.earnedEmoji}>🪙</ThemedText>
+              <ThemedText style={[styles.earnedCount, styles.earnedPendingText]}>
+                Pending
+              </ThemedText>
+            </View>
+            <ThemedText style={styles.earnedPendingNote}>
+              Coins will be credited when your order is delivered
+            </ThemedText>
+          </>
+        ) : (
+          <>
+            <ThemedText style={styles.earnedLabel}>Coins Earned</ThemedText>
+            <View style={styles.earnedRow}>
+              <ThemedText style={styles.earnedEmoji}>🪙</ThemedText>
+              <ThemedText style={styles.earnedCount}>
+                +{displayCount.toLocaleString('en-IN')}
+              </ThemedText>
+            </View>
+          </>
+        )}
       </View>
 
       {/* Stats grid */}
@@ -246,6 +267,19 @@ const styles = StyleSheet.create({
     color: colors.lightMustard,
     lineHeight: 50,
     letterSpacing: -1,
+  },
+  earnedPendingText: {
+    fontSize: 28,
+    color: colors.lightPeach,
+    letterSpacing: 0,
+  },
+  earnedPendingNote: {
+    fontSize: 12,
+    color: colors.lightPeach,
+    textAlign: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+    opacity: 0.85,
   },
   statsGrid: {
     flexDirection: 'row',

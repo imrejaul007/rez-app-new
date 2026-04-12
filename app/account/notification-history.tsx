@@ -62,7 +62,7 @@ function NotificationHistoryScreen() {
         pageNum === 1 ? marketingInboxApi.getInbox().catch(() => null) : Promise.resolve(null),
       ]);
 
-      if (response.success && response.data) {
+      if (response.success && response.data?.notifications) {
         const transformedNotifications: NotificationHistoryItem[] = response.data.notifications.map(
           (notification: any) => ({
             id: notification._id,

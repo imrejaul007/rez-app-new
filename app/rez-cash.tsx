@@ -16,7 +16,20 @@
  */
 
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Share, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+  Share,
+  Animated,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,6 +48,8 @@ function fmt(n: number) {
 }
 
 // Only bank transfer is implemented; other voucher options are coming soon.
+// Setting available: false renders the disabled "Soon" badge and prevents misleading
+// "will be available shortly" alerts on press for unimplemented options.
 const VOUCHER_OPTIONS = [
   { id: 'amazon', label: 'Amazon Pay', icon: 'cart-outline', color: '#FF9900', available: false },
   { id: 'flipkart', label: 'Flipkart', icon: 'storefront-outline', color: '#2874F0', available: false },
@@ -86,6 +101,14 @@ function RezCashScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  // Bank transfer modal state
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [bankAmount, setBankAmount] = useState('');
+  const [bankAccountNo, setBankAccountNo] = useState('');
+  const [bankIfsc, setBankIfsc] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [bankSubmitting, setBankSubmitting] = useState(false);
+
   const load = useCallback(async () => {
     try {
       const res = await walletService.getRezCashIdentity();
@@ -123,15 +146,75 @@ function RezCashScreen() {
     }
   };
 
+  const handleBankTransfer = async () => {
+    const amount = parseFloat(bankAmount);
+    if (!bankAmount || isNaN(amount) || amount <= 0) {
+      platformAlertSimple('Invalid Amount', 'Please enter a valid amount greater than 0');
+      return;
+    }
+    if (!bankAccountNo.trim() || !bankIfsc.trim() || !bankName.trim()) {
+      platformAlertSimple('Missing Details', 'Please fill in all bank account details');
+      return;
+    }
+    setBankSubmitting(true);
+    try {
+      const idempotencyKey = `bank-withdraw-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const res = await walletService.withdraw({
+        amount,
+        method: 'bank',
+        accountDetails: JSON.stringify({
+          accountNumber: bankAccountNo.trim(),
+          ifsc: bankIfsc.trim().toUpperCase(),
+          accountName: bankName.trim(),
+        }),
+      });
+      if (res.success) {
+        setShowBankModal(false);
+        setBankAmount('');
+        setBankAccountNo('');
+        setBankIfsc('');
+        setBankName('');
+        platformAlertSimple(
+          'Transfer Initiated',
+          `Bank transfer of ₹${amount} initiated. Processing time: ${(res.data as any)?.estimatedProcessingTime || '2-3 business days'}.`,
+        );
+        // Refresh identity data
+        load();
+      } else {
+        const msg = (res as any).message || 'Transfer failed';
+        if ((res as any).requiresReAuth) {
+          platformAlertSimple(
+            'Verification Required',
+            'Please complete OTP verification before initiating a bank transfer. This is a security requirement for fund withdrawals.',
+          );
+        } else {
+          platformAlertSimple('Transfer Failed', msg);
+        }
+      }
+    } catch (err: any) {
+      platformAlertSimple('Error', err?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setBankSubmitting(false);
+    }
+  };
+
   const handleVoucherPress = (option: (typeof VOUCHER_OPTIONS)[0]) => {
     if (!option.available) {
-      platformAlertSimple('Coming Soon', 'Bank transfer is coming soon. Stay tuned!');
+      platformAlertSimple('Coming Soon', 'This option is coming soon. Stay tuned!');
+      return;
+    }
+    if (option.id === 'bank') {
+      setBankAmount('');
+      setBankAccountNo('');
+      setBankIfsc('');
+      setBankName('');
+      setShowBankModal(true);
       return;
     }
     platformAlertSimple('Redeem Voucher', `Voucher redemption for ${option.label} will be available shortly.`);
   };
 
-  const maxTrend = identity ? Math.max(...identity.monthlyTrend.map((t) => t.amount), 1) : 1;
+  const maxTrend = identity?.monthlyTrend?.length ? Math.max(...identity.monthlyTrend.map((t) => t.amount), 1) : 1;
 
   return (
     <>
@@ -194,7 +277,7 @@ function RezCashScreen() {
               </View>
 
               {/* 6-month trend */}
-              {identity && identity.monthlyTrend.length > 0 && (
+              {identity && identity.monthlyTrend?.length > 0 && (
                 <View style={styles.trendRow}>
                   {identity.monthlyTrend.map((t, i) => (
                     <TrendBar key={i} amount={t.amount} max={maxTrend} label={t.label} />
@@ -212,7 +295,7 @@ function RezCashScreen() {
             </LinearGradient>
 
             {/* Real-world equivalents */}
-            {identity && identity.equivalents.length > 0 && (
+            {identity && identity.equivalents?.length > 0 && (
               <View style={styles.card}>
                 <Text style={styles.cardTitle}>That's equivalent to…</Text>
                 <View style={styles.equivGrid}>
@@ -230,17 +313,17 @@ function RezCashScreen() {
             )}
 
             {/* Milestones */}
-            {identity && (
+            {identity && identity.milestones && (
               <View style={styles.card}>
                 <Text style={styles.cardTitle}>Your Savings Badges</Text>
                 <View style={styles.milestoneRow}>
-                  {identity.milestones.unlocked.map((m) => (
+                  {(identity.milestones.unlocked ?? []).map((m) => (
                     <View key={m.id} style={[styles.badge, { borderColor: m.color }]}>
                       <Ionicons name={m.icon as any} size={20} color={m.color} />
                       <Text style={[styles.badgeLabel, { color: m.color }]}>{m.label}</Text>
                     </View>
                   ))}
-                  {identity.milestones.unlocked.length === 0 && (
+                  {(identity.milestones.unlocked ?? []).length === 0 && (
                     <Text style={styles.milestoneEmpty}>Save ₹100 to earn your first badge!</Text>
                   )}
                 </View>
@@ -256,7 +339,7 @@ function RezCashScreen() {
             )}
 
             {/* Top categories */}
-            {identity && identity.topCategories.length > 0 && (
+            {identity && identity.topCategories?.length > 0 && (
               <View style={styles.card}>
                 <Text style={styles.cardTitle}>Top Saving Categories</Text>
                 {identity.topCategories.map((c, i) => {
@@ -322,6 +405,102 @@ function RezCashScreen() {
           </Animated.ScrollView>
         )}
       </View>
+
+      {/* Bank Transfer Modal */}
+      <Modal visible={showBankModal} animationType="slide" transparent onRequestClose={() => setShowBankModal(false)}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={bankStyles.overlay}>
+          <View style={bankStyles.sheet}>
+            <View style={bankStyles.header}>
+              <Text style={bankStyles.title}>Bank Transfer</Text>
+              <Pressable onPress={() => setShowBankModal(false)} disabled={bankSubmitting}>
+                <Ionicons name="close" size={24} color="#6b7280" />
+              </Pressable>
+            </View>
+            <Text style={bankStyles.subtitle}>2% processing fee applies. Funds arrive in 2-3 business days.</Text>
+
+            <View style={bankStyles.group}>
+              <Text style={bankStyles.label}>Amount (REZ Coins)</Text>
+              <TextInput
+                style={bankStyles.input}
+                placeholder="e.g. 500"
+                placeholderTextColor="#9ca3af"
+                keyboardType="decimal-pad"
+                value={bankAmount}
+                onChangeText={setBankAmount}
+                editable={!bankSubmitting}
+              />
+            </View>
+
+            <View style={bankStyles.group}>
+              <Text style={bankStyles.label}>Account Holder Name</Text>
+              <TextInput
+                style={bankStyles.input}
+                placeholder="Full name as per bank"
+                placeholderTextColor="#9ca3af"
+                value={bankName}
+                onChangeText={setBankName}
+                editable={!bankSubmitting}
+              />
+            </View>
+
+            <View style={bankStyles.group}>
+              <Text style={bankStyles.label}>Account Number</Text>
+              <TextInput
+                style={bankStyles.input}
+                placeholder="Enter account number"
+                placeholderTextColor="#9ca3af"
+                keyboardType="number-pad"
+                value={bankAccountNo}
+                onChangeText={setBankAccountNo}
+                editable={!bankSubmitting}
+              />
+            </View>
+
+            <View style={bankStyles.group}>
+              <Text style={bankStyles.label}>IFSC Code</Text>
+              <TextInput
+                style={bankStyles.input}
+                placeholder="e.g. HDFC0001234"
+                placeholderTextColor="#9ca3af"
+                autoCapitalize="characters"
+                value={bankIfsc}
+                onChangeText={setBankIfsc}
+                editable={!bankSubmitting}
+              />
+            </View>
+
+            {bankAmount && !isNaN(parseFloat(bankAmount)) && parseFloat(bankAmount) > 0 && (
+              <View style={bankStyles.feeRow}>
+                <Text style={bankStyles.feeText}>
+                  Net amount after 2% fee:{' '}
+                  <Text style={bankStyles.feeValue}>₹{(parseFloat(bankAmount) * 0.98).toFixed(2)}</Text>
+                </Text>
+              </View>
+            )}
+
+            <View style={bankStyles.actions}>
+              <Pressable
+                style={[bankStyles.btn, bankStyles.btnCancel]}
+                onPress={() => setShowBankModal(false)}
+                disabled={bankSubmitting}
+              >
+                <Text style={bankStyles.btnCancelText}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={[bankStyles.btn, bankStyles.btnConfirm]}
+                onPress={handleBankTransfer}
+                disabled={bankSubmitting}
+              >
+                {bankSubmitting ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={bankStyles.btnConfirmText}>Transfer</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </>
   );
 }
@@ -445,6 +624,60 @@ const styles = StyleSheet.create({
   shareCardText: { flex: 1 },
   shareCardTitle: { fontSize: 14, fontWeight: '700', color: '#5B21B6' },
   shareCardSub: { fontSize: 12, color: '#7C3AED', marginTop: 2 },
+});
+
+const bankStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  sheet: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  title: { fontSize: 18, fontWeight: '700', color: '#111827' },
+  subtitle: { fontSize: 12, color: '#9ca3af', marginBottom: 16 },
+  group: { marginBottom: 14 },
+  label: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 6 },
+  input: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#111827',
+    backgroundColor: '#F9FAFB',
+  },
+  feeRow: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 16,
+  },
+  feeText: { fontSize: 13, color: '#374151' },
+  feeValue: { fontWeight: '700', color: '#059669' },
+  actions: { flexDirection: 'row', gap: 12, paddingTop: 8 },
+  btn: {
+    flex: 1,
+    paddingVertical: 13,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnCancel: { backgroundColor: '#F3F4F6' },
+  btnCancelText: { fontWeight: '600', color: '#374151' },
+  btnConfirm: { backgroundColor: '#7C3AED' },
+  btnConfirmText: { fontWeight: '700', color: '#fff' },
 });
 
 export default withErrorBoundary(RezCashScreen, 'RezCashScreen');

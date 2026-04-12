@@ -74,7 +74,7 @@ const mapOrderToTracking = (order: Order): TrackingOrder => {
 
   const trackingStatus = statusMap[order.status] || 'PREPARING';
 
-  // Map status to color - using Nuqta palette
+  // Map status to color - using REZ palette
   const colorMap = {
     PREPARING: colors.lightMustard, // Light Mustard
     ON_THE_WAY: colors.nileBlue, // Nile Blue
@@ -680,7 +680,7 @@ function OrderTrackingScreen() {
   );
 }
 
-// Nuqta Color Palette - mapped to DesignSystem tokens
+// REZ Color Palette - mapped to DesignSystem tokens
 const COLORS = {
   primary: colors.nileBlue,
   primaryLight: colors.background.tertiary,

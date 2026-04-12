@@ -32,35 +32,33 @@ import {
 const STORE_PAYMENT_BASE = '/store-payment';
 
 /**
- * Map backend rezCoins to frontend nuqtaCoins
- * Backend uses 'rezCoins', frontend uses 'nuqtaCoins'
+ * Map backend rezCoins response to frontend AppliedCoins shape
  */
-function mapRezToNuqtaCoins(backendData: any): AppliedCoins {
+function mapBackendToRezCoins(backendData: any): AppliedCoins {
   // Handle if data is null/undefined
   if (!backendData) {
     return {
-      nuqtaCoins: { available: 0, using: 0, enabled: true },
+      rezCoins: { available: 0, using: 0, enabled: true },
       promoCoins: { available: 0, using: 0, enabled: true, expiringToday: false },
       brandedCoins: null,
       totalApplied: 0,
     };
   }
 
-  // Map rezCoins to nuqtaCoins
-  const nuqtaCoins = backendData.rezCoins || backendData.nuqtaCoins || { available: 0, using: 0, enabled: true };
+  const rezCoins = backendData.rezCoins || { available: 0, using: 0, enabled: true };
   const promoCoins = backendData.promoCoins || { available: 0, using: 0, enabled: true, expiringToday: false };
   const brandedCoins = backendData.brandedCoins || null;
 
   return {
-    nuqtaCoins: {
-      available: nuqtaCoins.available || 0,
-      using: nuqtaCoins.using || 0,
-      enabled: nuqtaCoins.enabled !== false,
-      color: nuqtaCoins.color || '#ffcd57',
-      icon: nuqtaCoins.icon,
-      description: nuqtaCoins.description,
-      expiryDays: nuqtaCoins.expiryDays,
-      redemptionCap: nuqtaCoins.redemptionCap,
+    rezCoins: {
+      available: rezCoins.available || 0,
+      using: rezCoins.using || 0,
+      enabled: rezCoins.enabled !== false,
+      color: rezCoins.color || '#ffcd57',
+      icon: rezCoins.icon,
+      description: rezCoins.description,
+      expiryDays: rezCoins.expiryDays,
+      redemptionCap: rezCoins.redemptionCap,
     },
     promoCoins: {
       available: promoCoins.available || 0,
@@ -172,6 +170,54 @@ const storePaymentApi = {
     }
 
     return response.data as any;
+  },
+
+  /**
+   * Get POS-only transaction history for the authenticated consumer.
+   *
+   * BUG FIX (P2-C3): Consumers who pay a POS bill at a physical store
+   * had zero visibility into that transaction — the regular `getHistory`
+   * endpoint only returns StorePayment records, not PosBill. This hits
+   * the new `/store-payment/history/pos` endpoint which returns POS
+   * bills linked to the consumer via `coinsCreditedUserId` (resolved
+   * from the phone number entered at the POS register).
+   */
+  async getPosHistory(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<PaymentHistoryResponse> {
+    try {
+      const response = await apiClient.get<PaymentHistoryApiResponse>(
+        `${STORE_PAYMENT_BASE}/history/pos`,
+        params,
+      );
+      if (!response.success || !response.data) {
+        return {
+          transactions: [],
+          pagination: {
+            page: 1,
+            limit: params?.limit || 20,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrev: false,
+          },
+        };
+      }
+      return response.data as any;
+    } catch {
+      return {
+        transactions: [],
+        pagination: {
+          page: 1,
+          limit: params?.limit || 20,
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
+      };
+    }
   },
 
   /**
@@ -348,20 +394,20 @@ const storePaymentApi = {
 
   /**
    * Get all available coins for user at a specific store
-   * Maps backend rezCoins to frontend nuqtaCoins
+   * Maps backend rezCoins to frontend rezCoins
    */
   async getCoinsForStore(storeId: string): Promise<AppliedCoins> {
     try {
       const response = await apiClient.get<any>(`${STORE_PAYMENT_BASE}/coins/${storeId}`);
 
       if (!response.success || !response.data) {
-        return mapRezToNuqtaCoins(null);
+        return mapBackendToRezCoins(null);
       }
 
-      // Map rezCoins from backend to nuqtaCoins for frontend
-      return mapRezToNuqtaCoins(response.data);
+      // Map rezCoins from backend to rezCoins for frontend
+      return mapBackendToRezCoins(response.data);
     } catch (error) {
-      return mapRezToNuqtaCoins(null);
+      return mapBackendToRezCoins(null);
     }
   },
 
@@ -387,11 +433,11 @@ const storePaymentApi = {
 
   /**
    * Auto-optimize coin allocation for maximum savings
-   * Maps backend rezCoins to frontend nuqtaCoins
+   * Maps backend rezCoins to frontend rezCoins
    */
   async autoOptimizeCoins(storeId: string, billAmount: number): Promise<AutoOptimizeResponse> {
     const defaultResponse: AutoOptimizeResponse = {
-      nuqtaCoins: { available: 0, using: 0, enabled: false },
+      rezCoins: { available: 0, using: 0, enabled: false },
       promoCoins: { available: 0, using: 0, enabled: false, expiringToday: false },
       brandedCoins: null,
       totalApplied: 0,
@@ -410,8 +456,8 @@ const storePaymentApi = {
         return defaultResponse;
       }
 
-      // Map rezCoins from backend to nuqtaCoins for frontend
-      const mappedCoins = mapRezToNuqtaCoins(response.data);
+      // Map rezCoins from backend to rezCoins for frontend
+      const mappedCoins = mapBackendToRezCoins(response.data);
       return {
         ...mappedCoins,
         maxAllowed: response.data.maxAllowed || 0,
@@ -463,11 +509,11 @@ export const {
  */
 export const lookupStoreBySlug = async (storeSlug: string): Promise<StorePaymentInfo | null> => {
   try {
-    const response = await apiClient.get<{ store: StorePaymentInfo }>(
+    const response = await apiClient.get<StorePaymentInfo>(
       `${STORE_PAYMENT_BASE}/lookup-by-slug/${encodeURIComponent(storeSlug)}`
     );
     if (response.success && response.data) {
-      return response.data as unknown as StorePaymentInfo;
+      return response.data;
     }
     return null;
   } catch {

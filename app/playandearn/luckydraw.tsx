@@ -24,7 +24,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width } = Dimensions.get('window');
 
-// Nuqta App Theme Colors
+// REZ App Theme Colors
 const COLORS = {
   primary: colors.lightMustard,
   primaryLight: '#ffe082',

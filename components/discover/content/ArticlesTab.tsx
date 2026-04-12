@@ -1,5 +1,5 @@
 // ArticlesTab.tsx - Articles grid for Discover & Shop
-// Nuqta Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57)
+// REZ Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57)
 import React, { useCallback } from 'react';
 import {
   View,
@@ -18,8 +18,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { DiscoverArticle } from '@/types/discover.types';
 import { colors } from '@/constants/theme';
 
-// Nuqta Brand Colors
-const NUQTA_COLORS = {
+// REZ Brand Colors
+const REZ_COLORS = {
   nileBlue: colors.nileBlue,
   nileBlueLight: '#2a4a62',
   mustard: colors.lightMustard,
@@ -201,7 +201,7 @@ function ArticlesTab({
       return (
         <View style={styles.emptyContainer}>
           <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={NUQTA_COLORS.nileBlue} />
+            <ActivityIndicator size="large" color={REZ_COLORS.nileBlue} />
           </View>
           <Text style={styles.loadingText}>Loading articles...</Text>
         </View>
@@ -211,7 +211,7 @@ function ArticlesTab({
     return (
       <View style={styles.emptyContainer}>
         <LinearGradient
-          colors={[NUQTA_COLORS.nileBlue, NUQTA_COLORS.nileBlueLight]}
+          colors={[REZ_COLORS.nileBlue, REZ_COLORS.nileBlueLight]}
           style={styles.emptyIconContainer}
         >
           <Ionicons name="document-text" size={40} color={colors.background.primary} />
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: NUQTA_COLORS.gray,
+    color: REZ_COLORS.gray,
     fontWeight: '500',
   },
   emptyIconContainer: {
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    shadowColor: NUQTA_COLORS.nileBlue,
+    shadowColor: REZ_COLORS.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -429,12 +429,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: NUQTA_COLORS.navy,
+    color: REZ_COLORS.navy,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,
-    color: NUQTA_COLORS.gray,
+    color: REZ_COLORS.gray,
     textAlign: 'center',
     lineHeight: 20,
   },

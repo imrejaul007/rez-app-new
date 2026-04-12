@@ -154,6 +154,53 @@ function RootLayout() {
       return;
     }
 
+    // 0b. Universal links from now.rez.money
+    //
+    //   Pattern A — order status deep link (from push notifications):
+    //     https://now.rez.money/<storeSlug>/order/<orderNumber>
+    //     → Open in in-app browser so the user can see their live order status.
+    //
+    //   Pattern B — store landing page:
+    //     https://now.rez.money/<slug>[?table=N&scan=1]
+    //     Without ?table= → Scan & Pay in-app
+    //     With ?table=N   → Order & Pay dine-in, let browser handle it
+    const nowOrderMatch = url.match(/https?:\/\/now\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)\/order\/([^/?#]+)/i);
+    if (nowOrderMatch) {
+      // Open the order detail page in an in-app browser
+      import('expo-web-browser').then(({ openBrowserAsync }) => openBrowserAsync(url)).catch(() => {});
+      return;
+    }
+
+    const nowMatch = url.match(/https?:\/\/now\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)(?:\?(.*))?$/i);
+    if (nowMatch) {
+      const slug = nowMatch[1].toLowerCase();
+      const queryStr = nowMatch[2] || '';
+      const urlParams = new URLSearchParams(queryStr);
+      const tableNumber = urlParams.get('table') || undefined;
+      const scanMode = urlParams.get('scan');
+
+      // If table= is set (Order & Pay dine-in), don't intercept — open in browser
+      if (tableNumber && !scanMode) {
+        return;
+      }
+
+      // Scan & Pay — route to pay-in-store screen
+      const store = await lookupStoreBySlug(slug);
+      if (store) {
+        router.push({
+          pathname: '/pay-in-store/enter-amount',
+          params: {
+            storeId: (store as any)._id || (store as any).id,
+            storeName: store.name,
+            storeLogo: store.logo || '',
+          },
+        } as any);
+      } else {
+        router.push('/pay-in-store' as any);
+      }
+      return;
+    }
+
     const { path, params } = parseDeepLink(url);
 
     // 1. Referral code links: rezapp://invite?code=ABC123 or https://rez.money/invite?code=ABC123
@@ -243,6 +290,15 @@ function RootLayout() {
 
         const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
           const data = response.notification.request.content.data as Record<string, any>;
+
+          // REZ Now order status notifications carry type='order_status' and a url
+          // pointing to https://now.rez.money/<storeSlug>/order/<orderNumber>.
+          // Route through handleDeepLink which opens the order in an in-app browser.
+          if (data?.type === 'order_status' && typeof data.url === 'string') {
+            handleDeepLink(data.url);
+            return;
+          }
+
           if (data?.route && typeof data.route === 'string') {
             try {
               router.push(data.route as any);

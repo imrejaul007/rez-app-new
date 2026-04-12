@@ -120,11 +120,13 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
     ?? backendData?.breakdown?.pendingRewards
     ?? 0;
 
-  // Use API totalValue as authoritative total — avoids double-counting
+  // Use API totalValue as authoritative total — avoids double-counting.
+  // Fallback excludes cashbackBalance: it is rupee-denominated (not coins) so adding
+  // it to coin amounts would inflate the displayed total.
   const totalBalance =
     typeof backendData.totalValue === 'number' && backendData.totalValue > 0
       ? backendData.totalValue
-      : (rezAmount + promoAmount + cashbackBalance + brandedCoinsTotal);
+      : (rezAmount + promoAmount + brandedCoinsTotal);
 
   return {
     userId: userId || 'unknown',

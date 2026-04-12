@@ -1,7 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // P2P Coin Transfer Page
-// Send Nuqta Coins to other users
+// Send REZ Coins to other users
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSecurity } from '@/contexts/SecurityContext';
@@ -33,7 +33,7 @@ import { generateIdempotencyKey } from '@/utils/idempotencyKey';
 import { handleWalletError, parseWalletError } from '@/utils/walletErrorHandler';
 import { BRAND } from '@/constants/brand';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface RecentRecipient {
   id: string;
@@ -47,7 +47,7 @@ const QUICK_AMOUNTS = [50, 100, 250, 500];
 function TransferPage() {
   const router = useRouter();
 
-  const nuqtaBalance = useRezBalance();
+  const rezBalance = useRezBalance();
   const refreshWallet = useRefreshWallet();
   const { authenticateWithBiometric, biometricAvailable, biometricEnrolled } = useSecurity();
   const [permission, requestPermission] = useCameraPermissions();
@@ -177,8 +177,8 @@ function TransferPage() {
     const numAmount = Number(amount);
     if (!selectedRecipient || !amount || isNaN(numAmount) || numAmount <= 0) return;
     if (submittingRef.current) return;
-    if (numAmount > nuqtaBalance) {
-      platformAlertSimple('Insufficient Balance', `You only have ${nuqtaBalance} ${BRAND.CURRENCY_CODE} available.`);
+    if (numAmount > rezBalance) {
+      platformAlertSimple('Insufficient Balance', `You only have ${rezBalance} ${BRAND.CURRENCY_CODE} available.`);
       return;
     }
 
@@ -311,7 +311,7 @@ function TransferPage() {
   };
 
   const numAmount = Number(amount) || 0;
-  const isAmountValid = numAmount > 0 && numAmount <= nuqtaBalance;
+  const isAmountValid = numAmount > 0 && numAmount <= rezBalance;
 
   const renderRecipientStep = () => (
     <>
@@ -452,11 +452,11 @@ function TransferPage() {
 
       {/* Balance Card */}
       <View style={styles.balanceCard}>
-        <CachedImage source={nuqtaCoinImage} style={styles.coinImage} />
+        <CachedImage source={rezCoinImage} style={styles.coinImage} />
         <View style={styles.balanceInfo}>
           <ThemedText style={styles.balanceLabel}>Available Balance</ThemedText>
           <ThemedText style={styles.balanceValue}>
-            {nuqtaBalance.toLocaleString()} {BRAND.CURRENCY_CODE}
+            {rezBalance.toLocaleString()} {BRAND.CURRENCY_CODE}
           </ThemedText>
         </View>
       </View>
@@ -508,11 +508,11 @@ function TransferPage() {
       </View>
 
       {/* Insufficient balance warning */}
-      {numAmount > 0 && numAmount > nuqtaBalance && (
+      {numAmount > 0 && numAmount > rezBalance && (
         <View style={styles.warningContainer}>
           <Ionicons name="warning" size={16} color={Colors.error} />
           <ThemedText style={styles.warningText}>
-            Insufficient balance. You have {nuqtaBalance.toLocaleString()} {BRAND.CURRENCY_CODE} available.
+            Insufficient balance. You have {rezBalance.toLocaleString()} {BRAND.CURRENCY_CODE} available.
           </ThemedText>
         </View>
       )}
@@ -527,7 +527,7 @@ function TransferPage() {
           <ActivityIndicator color={colors.background.primary} />
         ) : (
           <View style={styles.sendButtonContent}>
-            <CachedImage source={nuqtaCoinImage} style={styles.sendButtonIcon} />
+            <CachedImage source={rezCoinImage} style={styles.sendButtonIcon} />
             <ThemedText style={styles.sendButtonText}>
               Send {numAmount > 0 ? `${numAmount.toLocaleString()} ${BRAND.CURRENCY_CODE}` : ''}
             </ThemedText>
@@ -597,7 +597,7 @@ function TransferPage() {
         <View style={styles.transactionRow}>
           <ThemedText style={styles.transactionLabel}>Amount</ThemedText>
           <View style={styles.transactionAmountRow}>
-            <CachedImage source={nuqtaCoinImage} style={styles.transactionCoinIcon} />
+            <CachedImage source={rezCoinImage} style={styles.transactionCoinIcon} />
             <ThemedText style={styles.transactionValue}>
               {Number(amount).toLocaleString()} {BRAND.CURRENCY_CODE}
             </ThemedText>

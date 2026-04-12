@@ -1,17 +1,9 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-// About Nuqta Screen
+// About REZ Screen
 // Company information and app details
 
 import React from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Linking,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Linking } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,10 +15,10 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
 const SOCIAL_LINKS = {
-  facebook: 'https://facebook.com/nuqtaapp',
-  instagram: 'https://instagram.com/nuqtaapp',
-  twitter: 'https://twitter.com/nuqtaapp',
-  linkedin: 'https://linkedin.com/company/nuqtaapp',
+  facebook: 'https://facebook.com/rezapp',
+  instagram: 'https://instagram.com/rezapp',
+  twitter: 'https://twitter.com/rezapp',
+  linkedin: 'https://linkedin.com/company/rezapp',
 };
 
 function AboutPage() {
@@ -41,15 +33,25 @@ function AboutPage() {
       if (canOpen) {
         await Linking.openURL(url);
       }
-    } catch (_e) { /* silently handle */ }
+    } catch (_e) {
+      /* silently handle */
+    }
   };
 
   const handleEmailPress = async () => {
-    try { await Linking.openURL('mailto:support@nuqtaapp.com'); } catch (_e) { /* silently handle */ }
+    try {
+      await Linking.openURL('mailto:support@rezapp.com');
+    } catch (_e) {
+      /* silently handle */
+    }
   };
 
   const handleWebsitePress = async () => {
-    try { await Linking.openURL('https://nuqtaapp.com'); } catch (_e) { /* silently handle */ }
+    try {
+      await Linking.openURL('https://rezapp.com');
+    } catch (_e) {
+      /* silently handle */
+    }
   };
 
   return (
@@ -57,14 +59,11 @@ function AboutPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessible={true}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -84,11 +83,7 @@ function AboutPage() {
         {/* Logo Section */}
         <View style={styles.logoSection}>
           <View style={styles.logoContainer}>
-            <CachedImage
-              source={require('@/assets/images/icon.png')}
-              style={styles.logo}
-              contentFit="contain"
-            />
+            <CachedImage source={require('@/assets/images/icon.png')} style={styles.logo} contentFit="contain" />
           </View>
           <ThemedText style={styles.tagline}>Shop Smart. Earn More.</ThemedText>
         </View>
@@ -101,9 +96,8 @@ function AboutPage() {
           </View>
           <ThemedText style={styles.cardDescription}>
             {`${BRAND.APP_NAME} is revolutionizing the way you shop by rewarding every purchase.`}
-            We believe that every rupee you spend should earn you something back.
-            Our mission is to create a seamless shopping experience where rewards,
-            savings, and convenience come together.
+            We believe that every rupee you spend should earn you something back. Our mission is to create a seamless
+            shopping experience where rewards, savings, and convenience come together.
           </ThemedText>
         </View>
 
@@ -180,7 +174,7 @@ function AboutPage() {
             accessibilityRole="link"
           >
             <Ionicons name="mail-outline" size={20} color={colors.text.secondary} />
-            <ThemedText style={styles.contactText}>support@nuqtaapp.com</ThemedText>
+            <ThemedText style={styles.contactText}>support@rezapp.com</ThemedText>
           </Pressable>
           <Pressable
             style={styles.contactItem}
@@ -190,18 +184,14 @@ function AboutPage() {
             accessibilityRole="link"
           >
             <Ionicons name="globe-outline" size={20} color={colors.text.secondary} />
-            <ThemedText style={styles.contactText}>nuqtaapp.com</ThemedText>
+            <ThemedText style={styles.contactText}>rezapp.com</ThemedText>
           </Pressable>
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
-          <ThemedText style={styles.copyright}>
-            © 2024 ${BRAND.APP_NAME} Technologies Pvt Ltd
-          </ThemedText>
-          <ThemedText style={styles.madeWith}>
-            Made with ❤️ in India
-          </ThemedText>
+          <ThemedText style={styles.copyright}>© 2024 ${BRAND.APP_NAME} Technologies Pvt Ltd</ThemedText>
+          <ThemedText style={styles.madeWith}>Made with ❤️ in India</ThemedText>
         </View>
       </ScrollView>
     </View>

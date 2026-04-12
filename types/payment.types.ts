@@ -1,7 +1,11 @@
-// Payment Types and Interfaces for Nuqta App
+// Payment Types and Interfaces for REZ App
 // Comprehensive payment system types
 
-export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'nuqtacoins';
+// NOTE: 'rezcoins' is a UI/display concept only.
+// When sending payment method to the backend Order API, 'rezcoins' maps to 'wallet'.
+// The /wallet/initiate-payment endpoint uses gateway names (e.g. 'razorpay'), not this type.
+// Transform rule: rezcoins → 'wallet' before any API call that sends payment method to backend.
+export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'rezcoins';
 export type PaymentGateway = 'razorpay' | 'internal' | 'none';
 export type PaymentStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
 export type CardType = 'visa' | 'mastercard' | 'amex' | 'rupay' | 'unknown';
@@ -200,9 +204,13 @@ export interface PaymentTransaction {
   bankName?: string; // For net banking
 
   // Fees and taxes
-  processingFee: number;
-  gatewayFee: number;
-  taxes: number;
+  // Backend canonical field names (Transaction.ts: fees, tax, netAmount)
+  fees?: number;           // backend canonical: total transaction fees
+  tax?: number;            // backend canonical: tax deducted
+  // Legacy consumer field names kept for backward compatibility
+  processingFee?: number;
+  gatewayFee?: number;
+  taxes?: number;
   netAmount: number;
 
   // Metadata

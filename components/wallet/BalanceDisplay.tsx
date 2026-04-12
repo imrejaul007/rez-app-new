@@ -152,7 +152,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
     }, [isHidden, isMounted]);
 
     // Derive per-type coin amounts from the coins array
-    const rezCoin = walletData.coins?.find((c) => c.type === 'rez' || c.type === 'nuqta');
+    const rezCoin = walletData.coins?.find((c) => c.type === 'rez');
     const priveCoin = walletData.coins?.find((c) => c.type === 'prive');
     const promoCoin = walletData.coins?.find((c) => c.type === 'promo');
     const brandedTotal =

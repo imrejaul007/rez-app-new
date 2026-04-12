@@ -1,5 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react';
+import { useSocket } from '@/contexts/SocketContext';
 import { useFocusEffect } from 'expo-router';
 import {
   View,
@@ -352,6 +353,17 @@ function OrdersListScreen() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { onOrderListUpdated } = useSocket();
+
+  // Subscribe to ORDER_LIST_UPDATED so the list refreshes when an external session
+  // or the merchant changes an order status without the user navigating away.
+  useEffect(() => {
+    const unsubscribe = onOrderListUpdated(() => {
+      loadOrders(1, false);
+    });
+    return unsubscribe;
+  }, [onOrderListUpdated]);
 
   // SS-010 FIX: Only load on filter/sort changes (not on mount — useFocusEffect handles mount + focus).
   // Previously, both this useEffect and useFocusEffect fired on mount, causing duplicate API calls.

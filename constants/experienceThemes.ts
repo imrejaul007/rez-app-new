@@ -2,10 +2,10 @@
 import { BRAND } from '@/constants/brand';
 
 /**
- * Experience Themes & Configuration - Nuqta Design
+ * Experience Themes & Configuration - REZ Design
  * Centralized source of truth for experience styles and metadata
  *
- * Nuqta Colors:
+ * REZ Colors:
  * - Nile Blue: #1a3a52
  * - Light Mustard: #ffcd57
  * - Linen: #faf1e0

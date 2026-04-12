@@ -23,7 +23,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-// Nuqta Brand Colors
+// REZ Brand Colors
 // Helper function for event type icon background colors
 const getEventTypeIconBg = (eventType?: string): string => {
   const bgMap: Record<string, string> = {

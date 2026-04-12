@@ -3,14 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Social proof - what friends bought
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -96,7 +89,7 @@ function FriendsRedeemedPage() {
   // Build friend filter list from loaded offers
   const friendFilters = useCallback(() => {
     const seen = new Map<string, { id: string; name: string; avatar: string }>();
-    offers.forEach(o => {
+    offers.forEach((o) => {
       if (!seen.has(o.friend.id)) {
         seen.set(o.friend.id, o.friend);
       }
@@ -104,64 +97,65 @@ function FriendsRedeemedPage() {
     return [{ id: 'all', name: 'Everyone', avatar: '' }, ...Array.from(seen.values())];
   }, [offers]);
 
-  const fetchOffers = useCallback(async (pageNum: number, append = false) => {
-    if (authLoading) return;
-    try {
-      if (pageNum === 1) setLoading(true);
-      else setLoadingMore(true);
-      setError(null);
+  const fetchOffers = useCallback(
+    async (pageNum: number, append = false) => {
+      if (authLoading) return;
+      try {
+        if (pageNum === 1) setLoading(true);
+        else setLoadingMore(true);
+        setError(null);
 
-      const response = await apiClient.get<{
-        redemptions: any[];
-        pagination: {
-          currentPage: number;
-          totalPages: number;
-          totalItems: number;
-          hasNextPage: boolean;
-          hasPrevPage: boolean;
-        };
-      }>(`/offers/friends-redeemed?page=${pageNum}&limit=${PAGE_LIMIT}`);
+        const response = await apiClient.get<{
+          redemptions: any[];
+          pagination: {
+            currentPage: number;
+            totalPages: number;
+            totalItems: number;
+            hasNextPage: boolean;
+            hasPrevPage: boolean;
+          };
+        }>(`/offers/friends-redeemed?page=${pageNum}&limit=${PAGE_LIMIT}`);
 
-      if (response.success && response.data) {
-        const mapped = response.data.redemptions.map((r: any) =>
-          mapRedemptionToFriendOffer(r, currencySymbol)
-        );
-        if (!isMounted()) return;
-        setOffers(prev => append ? [...prev, ...mapped] : mapped);
-        if (!isMounted()) return;
-        setHasMore(response.data.pagination.hasNextPage);
-        if (!isMounted()) return;
-        setTotalItems(response.data.pagination.totalItems);
-
-        // Compute total saved from all loaded offers
-        if (!append) {
-          const saved = mapped.reduce((sum: number, o: FriendOffer) => {
-            const amount = parseFloat(o.savedAmount.replace(/[^0-9.]/g, '')) || 0;
-            return sum + amount;
-          }, 0);
+        if (response.success && response.data?.redemptions) {
+          const mapped = response.data.redemptions.map((r: any) => mapRedemptionToFriendOffer(r, currencySymbol));
           if (!isMounted()) return;
-          setTotalSaved(saved);
-        } else {
+          setOffers((prev) => (append ? [...prev, ...mapped] : mapped));
           if (!isMounted()) return;
-          setTotalSaved(prev => {
-            const newSaved = mapped.reduce((sum: number, o: FriendOffer) => {
+          setHasMore(response.data.pagination.hasNextPage);
+          if (!isMounted()) return;
+          setTotalItems(response.data.pagination.totalItems);
+
+          // Compute total saved from all loaded offers
+          if (!append) {
+            const saved = mapped.reduce((sum: number, o: FriendOffer) => {
               const amount = parseFloat(o.savedAmount.replace(/[^0-9.]/g, '')) || 0;
               return sum + amount;
             }, 0);
-            return prev + newSaved;
-          });
+            if (!isMounted()) return;
+            setTotalSaved(saved);
+          } else {
+            if (!isMounted()) return;
+            setTotalSaved((prev) => {
+              const newSaved = mapped.reduce((sum: number, o: FriendOffer) => {
+                const amount = parseFloat(o.savedAmount.replace(/[^0-9.]/g, '')) || 0;
+                return sum + amount;
+              }, 0);
+              return prev + newSaved;
+            });
+          }
         }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err?.message || 'Failed to load friend offers');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err?.message || 'Failed to load friend offers');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [authLoading, currencySymbol]);
+    },
+    [authLoading, currencySymbol],
+  );
 
   useEffect(() => {
     if (authLoading) return;
@@ -181,81 +175,74 @@ function FriendsRedeemedPage() {
     fetchOffers(1);
   }, [fetchOffers]);
 
-  const filteredOffers = selectedFriend === 'all'
-    ? offers
-    : offers.filter(o => o.friend.id === selectedFriend);
+  const filteredOffers = selectedFriend === 'all' ? offers : offers.filter((o) => o.friend.id === selectedFriend);
 
   const FRIENDS = friendFilters();
 
-  const renderFriendFilter = useCallback(({ item }: { item: typeof FRIENDS[0] }) => (
-    <Pressable
-      style={[
-        styles.friendFilter,
-        selectedFriend === item.id && styles.friendFilterActive,
-      ]}
-      onPress={() => setSelectedFriend(item.id)}
-    >
-      <ThemedText style={styles.friendAvatar}>
-        {item.id === 'all' ? '\uD83D\uDC65' : item.avatar}
-      </ThemedText>
-      <ThemedText style={[
-        styles.friendFilterName,
-        selectedFriend === item.id && styles.friendFilterNameActive,
-      ]}>
-        {item.name}
-      </ThemedText>
-    </Pressable>
-  ), [selectedFriend]);
+  const renderFriendFilter = useCallback(
+    ({ item }: { item: (typeof FRIENDS)[0] }) => (
+      <Pressable
+        style={[styles.friendFilter, selectedFriend === item.id && styles.friendFilterActive]}
+        onPress={() => setSelectedFriend(item.id)}
+      >
+        <ThemedText style={styles.friendAvatar}>{item.id === 'all' ? '\uD83D\uDC65' : item.avatar}</ThemedText>
+        <ThemedText style={[styles.friendFilterName, selectedFriend === item.id && styles.friendFilterNameActive]}>
+          {item.name}
+        </ThemedText>
+      </Pressable>
+    ),
+    [selectedFriend],
+  );
 
-  const renderOffer = useCallback(({ item }: { item: FriendOffer }) => (
-    <Pressable
-      style={styles.offerCard}
-      onPress={() => router.push(`/offers/${item.id}` as any)}
-    >
-      <View style={styles.friendInfo}>
-        <View style={styles.friendAvatarLarge}>
-          <ThemedText style={styles.friendAvatarText}>{item.friend.avatar}</ThemedText>
-        </View>
-        <View style={styles.friendDetails}>
-          <ThemedText style={styles.friendName}>{item.friend.name}</ThemedText>
-          <ThemedText style={styles.redeemedTime}>{item.redeemedAt}</ThemedText>
-        </View>
-      </View>
-
-      <View style={styles.offerInfo}>
-        <View style={styles.offerImage}>
-          <ThemedText style={styles.offerEmoji}>{item.offer.image}</ThemedText>
-        </View>
-        <View style={styles.offerDetails}>
-          <ThemedText style={styles.offerTitle}>{item.offer.title}</ThemedText>
-          <ThemedText style={styles.offerStore}>{item.offer.store}</ThemedText>
-          <View style={styles.offerMeta}>
-            <View style={styles.discountBadge}>
-              <ThemedText style={styles.discountText}>{item.offer.discount} OFF</ThemedText>
-            </View>
-            <View style={styles.savedBadge}>
-              <Ionicons name="wallet-outline" size={12} color={Colors.success} />
-              <ThemedText style={styles.savedText}>Saved {item.savedAmount}</ThemedText>
-            </View>
+  const renderOffer = useCallback(
+    ({ item }: { item: FriendOffer }) => (
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any)}>
+        <View style={styles.friendInfo}>
+          <View style={styles.friendAvatarLarge}>
+            <ThemedText style={styles.friendAvatarText}>{item.friend.avatar}</ThemedText>
+          </View>
+          <View style={styles.friendDetails}>
+            <ThemedText style={styles.friendName}>{item.friend.name}</ThemedText>
+            <ThemedText style={styles.redeemedTime}>{item.redeemedAt}</ThemedText>
           </View>
         </View>
-        <Pressable style={styles.useButton}>
-          <ThemedText style={styles.useButtonText}>Use</ThemedText>
-        </Pressable>
-      </View>
-    </Pressable>
-  ), [router]);
+
+        <View style={styles.offerInfo}>
+          <View style={styles.offerImage}>
+            <ThemedText style={styles.offerEmoji}>{item.offer.image}</ThemedText>
+          </View>
+          <View style={styles.offerDetails}>
+            <ThemedText style={styles.offerTitle}>{item.offer.title}</ThemedText>
+            <ThemedText style={styles.offerStore}>{item.offer.store}</ThemedText>
+            <View style={styles.offerMeta}>
+              <View style={styles.discountBadge}>
+                <ThemedText style={styles.discountText}>{item.offer.discount} OFF</ThemedText>
+              </View>
+              <View style={styles.savedBadge}>
+                <Ionicons name="wallet-outline" size={12} color={Colors.success} />
+                <ThemedText style={styles.savedText}>Saved {item.savedAmount}</ThemedText>
+              </View>
+            </View>
+          </View>
+          <Pressable style={styles.useButton}>
+            <ThemedText style={styles.useButtonText}>Use</ThemedText>
+          </Pressable>
+        </View>
+      </Pressable>
+    ),
+    [router],
+  );
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>People Saving Near You</ThemedText>
@@ -269,7 +256,10 @@ function FriendsRedeemedPage() {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <ThemedText style={styles.statValue}>{currencySymbol}{totalSaved.toFixed(2)}</ThemedText>
+            <ThemedText style={styles.statValue}>
+              {currencySymbol}
+              {totalSaved.toFixed(2)}
+            </ThemedText>
             <ThemedText style={styles.statLabel}>Total Saved</ThemedText>
           </View>
         </View>
@@ -293,7 +283,7 @@ function FriendsRedeemedPage() {
         <FlashList
           data={filteredOffers}
           renderItem={renderOffer}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           onEndReached={selectedFriend === 'all' ? handleLoadMore : undefined}
@@ -307,7 +297,7 @@ function FriendsRedeemedPage() {
                 <FlashList
                   data={FRIENDS}
                   renderItem={renderFriendFilter}
-                  keyExtractor={item => item.id}
+                  keyExtractor={(item) => item.id}
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.filtersContainer}

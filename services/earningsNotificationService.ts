@@ -84,7 +84,7 @@ class EarningsNotificationService {
           });
 
           // Send token to backend to register for push notifications
-          await apiClient.post<any>('/notifications/register-push-token', {
+          await apiClient.post<any>('/notifications/register-token', {
             token: token.data,
             platform: Platform.OS,
           }).catch(error => {

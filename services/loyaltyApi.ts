@@ -97,7 +97,7 @@ class LoyaltyApiService {
    */
   async getPoints(): Promise<ApiResponse<LoyaltyPoints>> {
 
-    return apiClient.get<any>(`${this.baseUrl}/points`);
+    return apiClient.get<any>(`${this.baseUrl}/points/balance`);
   }
 
   /**
@@ -105,7 +105,7 @@ class LoyaltyApiService {
    */
   async getStats(): Promise<ApiResponse<LoyaltyStats>> {
 
-    return apiClient.get<any>(`${this.baseUrl}/stats`);
+    return apiClient.get<any>(`${this.baseUrl}/tier`);
   }
 
   /**
@@ -113,7 +113,7 @@ class LoyaltyApiService {
    */
   async getRewards(category?: string): Promise<ApiResponse<{ rewards: Reward[]; total: number }>> {
 
-    return apiClient.get<any>(`${this.baseUrl}/rewards`, category ? { category } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/catalog`, category ? { category } : undefined);
   }
 
   /**
@@ -141,7 +141,7 @@ class LoyaltyApiService {
     offset?: number;
   }): Promise<ApiResponse<{ transactions: PointsTransaction[]; total: number; hasMore: boolean }>> {
 
-    return apiClient.get<any>(`${this.baseUrl}/transactions`, filters);
+    return apiClient.get<any>(`${this.baseUrl}/points/history`, filters);
   }
 
   /**
@@ -204,7 +204,7 @@ class LoyaltyApiService {
     total: number;
   }>> {
 
-    return apiClient.get<any>(`${this.baseUrl}/my-rewards`, status ? { status } : undefined);
+    return apiClient.get<any>(`${this.baseUrl}/redemptions`, status ? { status } : undefined);
   }
 
   /**

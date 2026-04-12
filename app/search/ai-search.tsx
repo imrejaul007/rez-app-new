@@ -25,8 +25,8 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-// Nuqta Design System
-const NUQTA = {
+// REZ Design System
+const REZ_THEME = {
   nileBlue: colors.nileBlue,
   nileBlueLight: '#243f55',
   lightMustard: Colors.gold,
@@ -117,7 +117,7 @@ function AISearchPage() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'product':
-        return NUQTA.nileBlue;
+        return REZ_THEME.nileBlue;
       case 'store':
         return Colors.info;
       case 'offer':
@@ -147,7 +147,7 @@ function AISearchPage() {
               <Ionicons
                 name={item.type === 'store' ? 'storefront' : item.type === 'offer' ? 'pricetag' : 'cube'}
                 size={24}
-                color={NUQTA.nileBlue}
+                color={REZ_THEME.nileBlue}
               />
             </View>
           )}
@@ -174,9 +174,9 @@ function AISearchPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={NUQTA.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={REZ_THEME.nileBlue} />
 
-      <LinearGradient colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]} style={styles.header}>
+      <LinearGradient colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
@@ -190,7 +190,7 @@ function AISearchPage() {
 
         <View style={styles.searchContainer}>
           <View style={styles.searchInputWrapper}>
-            <Ionicons name="sparkles" size={20} color={NUQTA.lightMustard} />
+            <Ionicons name="sparkles" size={20} color={REZ_THEME.lightMustard} />
             <TextInput
               ref={inputRef}
               style={styles.searchInput}
@@ -211,7 +211,7 @@ function AISearchPage() {
             {searching ? (
               <ActivityIndicator color={colors.text.inverse} size="small" />
             ) : (
-              <Ionicons name="search" size={20} color={NUQTA.nileBlue} />
+              <Ionicons name="search" size={20} color={REZ_THEME.nileBlue} />
             )}
           </Pressable>
         </View>
@@ -221,7 +221,7 @@ function AISearchPage() {
         <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
           <View style={styles.aiInfoCard}>
             <View style={styles.aiIconContainer}>
-              <Ionicons name="sparkles" size={32} color={NUQTA.lightMustard} />
+              <Ionicons name="sparkles" size={32} color={REZ_THEME.lightMustard} />
             </View>
             <ThemedText style={styles.aiTitle}>AI-Powered Search</ThemedText>
             <ThemedText style={styles.aiText}>
@@ -233,7 +233,7 @@ function AISearchPage() {
           <View style={styles.promptsContainer}>
             {getExamplePrompts(currencySymbol).map((prompt, index) => (
               <Pressable key={index} style={styles.promptCard} onPress={() => handlePromptSelect(prompt)}>
-                <Ionicons name="chatbubble-outline" size={16} color={NUQTA.nileBlue} />
+                <Ionicons name="chatbubble-outline" size={16} color={REZ_THEME.nileBlue} />
                 <ThemedText style={styles.promptText}>{prompt}</ThemedText>
               </Pressable>
             ))}
@@ -242,7 +242,7 @@ function AISearchPage() {
           <View style={styles.featuresSection}>
             <ThemedText style={styles.featuresTitle}>What AI Search can do</ThemedText>
             <View style={styles.featureItem}>
-              <Ionicons name="bulb-outline" size={20} color={NUQTA.lightMustard} />
+              <Ionicons name="bulb-outline" size={20} color={REZ_THEME.lightMustard} />
               <View style={styles.featureContent}>
                 <ThemedText style={styles.featureLabel}>Understand Context</ThemedText>
                 <ThemedText style={styles.featureText}>
@@ -270,7 +270,7 @@ function AISearchPage() {
         </ScrollView>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={NUQTA.nileBlue} />
+          <Ionicons name="alert-circle-outline" size={48} color={REZ_THEME.nileBlue} />
           <ThemedText style={styles.loadingTitle}>Something went wrong</ThemedText>
           <ThemedText style={styles.loadingText}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={() => handleSearch()}>
@@ -280,7 +280,7 @@ function AISearchPage() {
       ) : searching ? (
         <View style={styles.loadingContainer}>
           <View style={styles.loadingAnimation}>
-            <Ionicons name="sparkles" size={48} color={NUQTA.lightMustard} />
+            <Ionicons name="sparkles" size={48} color={REZ_THEME.lightMustard} />
           </View>
           <ThemedText style={styles.loadingTitle}>Finding perfect matches...</ThemedText>
           <ThemedText style={styles.loadingText}>
@@ -322,7 +322,7 @@ function AISearchPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     maxHeight: 80,
   },
   searchButton: {
-    backgroundColor: NUQTA.lightMustard,
+    backgroundColor: REZ_THEME.lightMustard,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
   },
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   aiTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: Spacing.sm,
   },
   aiText: {
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   },
   promptText: {
     ...Typography.body,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     flex: 1,
   },
   featuresSection: {
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   featuresTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: Spacing.base,
   },
   featureItem: {
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   featureLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: 2,
   },
   featureText: {
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   loadingTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: Spacing.sm,
   },
   loadingText: {
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   resultsTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   parsedText: {
     ...Typography.bodySmall,
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
   },
   relevanceText: {
     ...Typography.overline,
-    color: NUQTA.mustardDark,
+    color: REZ_THEME.mustardDark,
     fontWeight: '700',
   },
   resultImage: {
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   resultImgPlaceholder: {
     width: 56,
     height: 56,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   resultTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   resultSubtitle: {
     ...Typography.bodySmall,
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: NUQTA.nileBlue,
+    backgroundColor: REZ_THEME.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 10,
     borderRadius: BorderRadius.md,

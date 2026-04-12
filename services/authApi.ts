@@ -704,6 +704,10 @@ class AuthService {
       console.warn(
         '[AuthService] ensureValidToken() is deprecated. Token refresh is automatic via apiClient. Remove this call.',
       );
+      console.error(
+        '[AuthService] ensureValidToken() has no callers — this call should be removed. ' +
+        'Token refresh is handled automatically by the apiClient 401 interceptor via AuthContext.tryRefreshToken().',
+      );
     }
     return true; // return safe default — token validity is managed by the interceptor
   }

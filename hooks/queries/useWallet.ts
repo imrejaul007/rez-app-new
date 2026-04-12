@@ -2,6 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/queryKeys';
 import walletApi from '@/services/walletApi';
 
+// TODO: This duplicates WalletContext. Refactor to read from useWalletContext() instead of
+// making independent API calls. WalletContext (contexts/WalletContext.tsx) is the single
+// source of truth for wallet balance across the app — consumers of this hook should migrate
+// to useWalletContext() to avoid redundant /wallet/balance fetches. Track: sprint cleanup.
+
 export function useWalletBalance() {
   return useQuery({
     queryKey: queryKeys.wallet.balance(),

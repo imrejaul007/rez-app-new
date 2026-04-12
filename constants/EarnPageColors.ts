@@ -44,9 +44,9 @@ export const CATEGORY_SOLID_COLORS = {
   orange: '#F59E0B',
 } as const;
 
-// Earn Page Color Palette - Nuqta Design System
+// Earn Page Color Palette - REZ Design System
 export const EARN_COLORS = {
-  // Primary Colors - Nuqta Mustard
+  // Primary Colors - REZ Mustard
   primary: '#ffcd57',
   primaryLight: '#FFE799',
   primaryDark: '#E6B84E',
@@ -56,7 +56,7 @@ export const EARN_COLORS = {
   secondaryLight: '#2A5577',
   secondaryDark: '#0E1F33',
 
-  // Gold Accent - for rewards/coins (same as primary for Nuqta)
+  // Gold Accent - for rewards/coins (same as primary for REZ)
   gold: '#ffcd57',
   goldLight: '#FFE799',
   goldDark: '#E6B84E',
@@ -71,7 +71,7 @@ export const EARN_COLORS = {
   slate: '#2A5577',
   muted: '#9AA7B2',
 
-  // Background Colors - Nuqta
+  // Background Colors - REZ
   background: '#faf1e0',       // Linen
   backgroundSecondary: '#FFFFFF',
   backgroundCard: '#FFFFFF',
@@ -81,7 +81,7 @@ export const EARN_COLORS = {
   glassBorder: 'rgba(255, 255, 255, 0.4)',
   glassHighlight: 'rgba(255, 255, 255, 0.5)',
 
-  // Text Colors - Nuqta
+  // Text Colors - REZ
   textPrimary: '#1a3a52',      // Nile Blue
   textSecondary: '#2A5577',
   textTertiary: '#9AA7B2',

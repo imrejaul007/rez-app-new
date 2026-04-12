@@ -85,15 +85,15 @@ const mapBackendUserToProfileUser = (backendUser: BackendUser): User => {
     // Map subscription/creator tier fields
     subscriptionTier: (backendUser as any).priveTier
       || (backendUser as any).subscriptionTier
-      || (backendUser as any).nuqtaPlusTier
+      || (backendUser as any).rezPlusTier
       || undefined,
     creatorLevel: (backendUser as any).creatorLevel
       || (backendUser as any).partner?.level
       || undefined,
     tier: (() => {
       const priveTier = (backendUser as any).priveTier
-        || (backendUser as any).nuqtaPlus?.tier
-        || (backendUser as any).nuqtaPlusTier
+        || (backendUser as any).rezPlus?.tier
+        || (backendUser as any).rezPlusTier
         || (backendUser as any).subscriptionTier;
       if (priveTier === 'elite') return 'Privé Elite';
       if (priveTier === 'prive' || priveTier === 'premium') return 'Privé';

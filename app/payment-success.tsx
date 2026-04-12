@@ -18,7 +18,7 @@ import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/ThemedText';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import ordersApi from '@/services/ordersApi';
-import { useGetCurrencySymbol } from '@/stores/selectors';
+import { useGetCurrencySymbol, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import analytics from '@/services/analytics/AnalyticsService';
@@ -28,6 +28,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { FREE_DELIVERY_THRESHOLD, DEFAULT_DELIVERY_FEE_PER_STORE } from '@/constants/appConstants';
 // CARLOS retention fix: show coins-earned popup immediately after purchase
 import { useRewardPopup } from '@/contexts/RewardPopupContext';
+import { useCart } from '@/contexts/CartContext';
 // Phase 1.6: Post-payment summary showing coins earned + streak update
 import PostPaymentSummary from '@/components/payment/PostPaymentSummary';
 
@@ -100,6 +101,8 @@ function PaymentSuccessPage() {
   // CARLOS retention fix: reward popup shown once orders load
   const rewardPopupShownRef = useRef(false);
   const { showCoinsEarned, showCashbackEarned } = useRewardPopup();
+  const { clearCart } = useCart();
+  const cartClearedRef = useRef(false);
   // Phase 1.6: track total coins earned across all orders for PostPaymentSummary
   const [totalCoinsEarnedForSummary, setTotalCoinsEarnedForSummary] = useState(0);
   const isMounted = useIsMounted();
@@ -205,6 +208,14 @@ function PaymentSuccessPage() {
         if (!isMounted()) return;
         setOrders(fetchedOrders);
 
+        // Clear cart on confirmed payment success (deep-link path).
+        // useCheckout clears on its own code path; this guards the Razorpay
+        // callback / deep-link path where useCheckout never ran.
+        if (fetchedOrders.length > 0 && !cartClearedRef.current) {
+          cartClearedRef.current = true;
+          clearCart().catch(() => {});
+        }
+
         // Track purchase event (once per page visit)
         if (fetchedOrders.length > 0 && !analyticsTrackedRef.current) {
           analyticsTrackedRef.current = true;
@@ -247,11 +258,17 @@ function PaymentSuccessPage() {
         if (fetchedOrders.length > 0 && !rewardPopupShownRef.current) {
           rewardPopupShownRef.current = true;
           const totalCashback = fetchedOrders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
+          // Coins are only awarded at delivery, not at order creation.
+          // rewards.coinsEarned will be 0 or absent at this point — use cashback
+          // estimate to determine if coins are pending, and show a pending message
+          // instead of a false "0 coins earned" celebration.
           const totalCoinsEarned: number = fetchedOrders.reduce(
             (s, o) => s + ((o as any).rewards?.coinsEarned ?? 0),
             0,
           );
-          // Phase 1.6: surface coin total for PostPaymentSummary section
+          // Phase 1.6: surface coin total for PostPaymentSummary section.
+          // If coinsEarned is populated (awarded immediately), show it. Otherwise
+          // the PostPaymentSummary will show the pending delivery message.
           if (totalCoinsEarned > 0) setTotalCoinsEarnedForSummary(totalCoinsEarned);
           setTimeout(async () => {
             if (!isMounted()) return;
@@ -408,7 +425,7 @@ function PaymentSuccessPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
-      {/* Fixed Header - Nuqta Colors */}
+      {/* Fixed Header - REZ Colors */}
       <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.headerGradient}>
         {/* Success Icon */}
         <View style={styles.iconCircle}>
@@ -767,26 +784,47 @@ function PaymentSuccessPage() {
               <ThemedText style={styles.homeButtonText}>Back to Home</ThemedText>
             </Pressable>
           </View>
-          {/* Phase 1.6: Post-payment summary — shown when coins were earned */}
-          {totalCoinsEarnedForSummary > 0 && (
-            <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
-              <PostPaymentSummary
-                coinsEarned={totalCoinsEarnedForSummary}
-                newBalance={0}
-                lifetimeSavings={orders.reduce((s, o) => s + (o.totals?.cashback || 0), 0)}
-                streakDays={0}
-                nextMilestone="Keep shopping to level up!"
-              />
-            </View>
-          )}
+          {/* Phase 1.6: Post-payment summary — shown when coins were earned or are pending */}
+          {(() => {
+            const pendingCashback = orders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
+            if (totalCoinsEarnedForSummary > 0) {
+              return (
+                <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+                  <PostPaymentSummary
+                    coinsEarned={totalCoinsEarnedForSummary}
+                    newBalance={0}
+                    lifetimeSavings={pendingCashback}
+                    streakDays={0}
+                    nextMilestone="Keep shopping to level up!"
+                  />
+                </View>
+              );
+            }
+            if (pendingCashback > 0) {
+              // Coins are only credited when your order is delivered — show pending state
+              return (
+                <View style={{ marginHorizontal: 16, marginBottom: 16 }}>
+                  <PostPaymentSummary
+                    coinsEarned={0}
+                    newBalance={0}
+                    lifetimeSavings={pendingCashback}
+                    streakDays={0}
+                    nextMilestone="Coins will be credited when your order is delivered"
+                    coinsPending
+                  />
+                </View>
+              );
+            }
+            return null;
+          })()}
         </View>
       </ScrollView>
     </View>
   );
 }
 
-// Nuqta Color Palette - using DesignSystem tokens
-const NUQTA_COLORS = {
+// REZ Color Palette - using DesignSystem tokens
+const REZ_COLORS = {
   nileBlue: colors.nileBlue,
   lightMustard: Colors.gold,
   linen: colors.background.secondary,
@@ -797,7 +835,7 @@ const NUQTA_COLORS = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA_COLORS.linen,
+    backgroundColor: REZ_COLORS.linen,
   },
   scrollView: {
     flex: 1,
@@ -820,7 +858,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: NUQTA_COLORS.lightMustard,
+    backgroundColor: REZ_COLORS.lightMustard,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 14,
@@ -913,7 +951,7 @@ const styles = StyleSheet.create({
   multiOrderAmount: {
     fontSize: 14,
     fontWeight: '700',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
 
   // --- Details Card ---
@@ -952,7 +990,7 @@ const styles = StyleSheet.create({
   methodBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: NUQTA_COLORS.lavenderMist,
+    backgroundColor: REZ_COLORS.lavenderMist,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -961,12 +999,12 @@ const styles = StyleSheet.create({
   methodText: {
     fontSize: 12,
     fontWeight: '600',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
   coinsValue: {
     fontSize: 13,
     fontWeight: '700',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
   separator: {
     height: 1,
@@ -976,14 +1014,14 @@ const styles = StyleSheet.create({
   amountValue: {
     fontSize: 16,
     fontWeight: '800',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
 
   // --- Delivery Card ---
   deliveryCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: NUQTA_COLORS.lavenderMist,
+    backgroundColor: REZ_COLORS.lavenderMist,
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -1008,7 +1046,7 @@ const styles = StyleSheet.create({
   deliveryTime: {
     fontSize: 14,
     fontWeight: '700',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
 
   // --- Email Notice ---
@@ -1030,7 +1068,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   trackButton: {
-    backgroundColor: NUQTA_COLORS.lightMustard,
+    backgroundColor: REZ_COLORS.lightMustard,
     borderRadius: 14,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -1039,7 +1077,7 @@ const styles = StyleSheet.create({
     gap: 8,
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA_COLORS.lightMustard,
+        shadowColor: REZ_COLORS.lightMustard,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -1049,7 +1087,7 @@ const styles = StyleSheet.create({
     }),
   },
   trackButtonText: {
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },
@@ -1062,10 +1100,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: NUQTA_COLORS.nileBlue,
+    borderColor: REZ_COLORS.nileBlue,
   },
   reviewButtonText: {
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },
@@ -1078,10 +1116,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: NUQTA_COLORS.nileBlue,
+    borderColor: REZ_COLORS.nileBlue,
   },
   homeButtonText: {
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },

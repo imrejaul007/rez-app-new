@@ -115,8 +115,8 @@ const getCashbackPercentage = (product: any): number => {
   return product.cashback?.percentage || product.cashbackPercentage || 5;
 };
 
-// Helper function to calculate Nuqta coins for a product (10% of price)
-const getProductNuqtaCoins = (product: any): number => {
+// Helper function to calculate REZ coins for a product (10% of price)
+const getProductRezCoins = (product: any): number => {
   const price = getProductPrice(product);
   return Math.floor(price * 0.1);
 };
@@ -141,9 +141,9 @@ function BundleDealCard({ bundle, onAddToCart, onProductPress }: BundleDealCardP
     ? Math.round((bundle.savings / originalPrice) * 100)
     : 0;
 
-  // Calculate total Nuqta coins and cashback for the entire bundle
-  const totalNuqtaCoins = bundle.products.reduce(
-    (sum, p) => sum + getProductNuqtaCoins(p),
+  // Calculate total REZ coins and cashback for the entire bundle
+  const totalRezCoins = bundle.products.reduce(
+    (sum, p) => sum + getProductRezCoins(p),
     0
   );
 
@@ -230,7 +230,7 @@ function BundleDealCard({ bundle, onAddToCart, onProductPress }: BundleDealCardP
             <View style={styles.bundleRewardsRow}>
               <View style={styles.bundleRewardItem}>
                 <Ionicons name="wallet-outline" size={14} color={colors.lightMustard} />
-                <Text style={styles.bundleRewardText}>{totalNuqtaCoins} {BRAND.COIN_NAME}</Text>
+                <Text style={styles.bundleRewardText}>{totalRezCoins} {BRAND.COIN_NAME}</Text>
               </View>
               <View style={styles.rewardsDivider} />
               <View style={styles.bundleRewardItem}>

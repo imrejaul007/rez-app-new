@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSocket } from '@/contexts/SocketContext';
 import ordersService from '@/services/ordersApi';
+import type { OrderStatusUpdatePayload, OrderListUpdatedPayload } from '@/types/socket.types';
 
 // Order tracking event types
 export const OrderSocketEvents = {
@@ -120,7 +121,12 @@ export function useOrderTracking(
   userId?: string,
   autoSubscribe: boolean = true
 ) {
-  const { socket, state: socketState } = useSocket();
+  const {
+    socket,
+    state: socketState,
+    subscribeToOrder: contextSubscribeToOrder,
+    unsubscribeFromOrder: contextUnsubscribeFromOrder,
+  } = useSocket();
   const [trackingState, setTrackingState] = useState<OrderTrackingState>({
     order: null,
     loading: true,
@@ -173,23 +179,23 @@ export function useOrderTracking(
     }
   }, [orderId]);
 
-  // Subscribe to order updates
+  // Subscribe to order updates via SocketContext (handles reconnect re-subscription automatically)
   const subscribeToOrder = useCallback(() => {
-    if (!socket || !orderId || subscriptionRef.current) return;
+    if (!orderId || subscriptionRef.current) return;
 
-    socket.emit(OrderSocketEvents.SUBSCRIBE_ORDER, { orderId, userId });
+    contextSubscribeToOrder(orderId, userId);
     subscriptionRef.current = true;
     setTrackingState(prev => ({ ...prev, isLive: true }));
-  }, [socket, orderId, userId]);
+  }, [contextSubscribeToOrder, orderId, userId]);
 
   // Unsubscribe from order updates
   const unsubscribeFromOrder = useCallback(() => {
-    if (!socket || !orderId || !subscriptionRef.current) return;
+    if (!orderId || !subscriptionRef.current) return;
 
-    socket.emit(OrderSocketEvents.UNSUBSCRIBE_ORDER, { orderId });
+    contextUnsubscribeFromOrder(orderId);
     subscriptionRef.current = false;
     setTrackingState(prev => ({ ...prev, isLive: false }));
-  }, [socket, orderId]);
+  }, [contextUnsubscribeFromOrder, orderId]);
 
   // Setup socket event listeners
   useEffect(() => {

@@ -540,7 +540,9 @@ export function CartProvider({ children }: CartProviderProps) {
           return;
         }
       } catch (apiError) {
-
+        console.error('[Cart] Failed to load cart from backend:', apiError);
+        dispatch({ type: 'CART_ERROR', payload: 'Failed to sync cart' });
+        // Fallback to AsyncStorage already happens below
       }
 
       // Fallback to AsyncStorage cache

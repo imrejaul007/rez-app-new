@@ -49,7 +49,7 @@ interface MallCategoryCardProps {
   index?: number;
 }
 
-// Blue-family gradients using Nuqta palette - cohesive but visually distinct
+// Blue-family gradients using REZ palette - cohesive but visually distinct
 const CATEGORY_THEMES: Record<string, {
   gradient: [string, string];
   icon: keyof typeof Ionicons.glyphMap;

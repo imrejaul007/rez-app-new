@@ -134,7 +134,7 @@ const MallFeaturedBrands: React.FC<MallFeaturedBrandsProps> = ({
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>Featured Stores</Text>
             <Text style={styles.subtitle}>
-              Earn Nuqta Coins on every purchase
+              Earn REZ Coins on every purchase
             </Text>
           </View>
           {onViewAllPress && (

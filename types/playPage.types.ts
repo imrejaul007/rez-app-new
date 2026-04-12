@@ -237,12 +237,12 @@ export const VIDEO_CARD_SIZES = {
   }
 };
 
-// Nuqta Design System Color scheme for Play Page
+// REZ Design System Color scheme for Play Page
 export const PLAY_PAGE_COLORS = {
-  primary: '#ffcd57', // Nuqta Mustard
+  primary: '#ffcd57', // REZ Mustard
   secondary: '#1a3a52', // Nile Blue
   gold: '#ffcd57', // Light Mustard
-  background: '#faf1e0', // Nuqta Linen
+  background: '#faf1e0', // REZ Linen
   cardBackground: '#FFFFFF',
   text: '#1a3a52', // Nile Blue
   textSecondary: '#1F2D3D', // Slate
@@ -250,12 +250,12 @@ export const PLAY_PAGE_COLORS = {
   textOverlay: '#FFFFFF',
   shadow: '#1a3a52',
   like: '#ffcd57', // Mustard for likes
-  share: '#ffcd57', // Nuqta Mustard
+  share: '#ffcd57', // REZ Mustard
   overlay: 'rgba(0, 0, 0, 0.2)',
   border: '#E5E7EB',
   accent: '#dfebf7', // Lavender Mist
   gradient: {
-    header: ['#1a3a52', '#2d5a7b', '#3d6a8b'], // Nuqta Blue gradient
+    header: ['#1a3a52', '#2d5a7b', '#3d6a8b'], // REZ Blue gradient
     heroGold: ['#1a3a52', '#2d5a7b', '#ffcd57'], // Blue to Mustard
     videoOverlay: ['transparent', 'rgba(0, 0, 0, 0.3)', 'rgba(0, 0, 0, 0.7)'],
     cardOverlay: ['transparent', 'rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.5)'],

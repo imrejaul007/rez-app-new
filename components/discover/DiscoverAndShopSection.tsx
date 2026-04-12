@@ -1,6 +1,6 @@
 // DiscoverAndShopSection.tsx - Main container for Discover & Shop feature
 // Updated to match "Real people. Real savings." design
-// Nuqta Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57)
+// REZ Brand Colors: Nile Blue (#1a3a52) and Mustard (#ffcd57)
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { BRAND } from '@/constants/brand';
 import {
@@ -27,8 +27,8 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Nuqta Brand Colors
-const NUQTA_COLORS = {
+// REZ Brand Colors
+const REZ_COLORS = {
   nileBlue: colors.nileBlue,
   nileBlueLight: '#2a4a62',
   mustard: colors.lightMustard,
@@ -465,7 +465,7 @@ function DiscoverAndShopSection({
                     <Ionicons
                       name={bookmarkedReels.has(reel._id) ? "bookmark" : "bookmark-outline"}
                       size={18}
-                      color={bookmarkedReels.has(reel._id) ? NUQTA_COLORS.mustard : colors.neutral[700]}
+                      color={bookmarkedReels.has(reel._id) ? REZ_COLORS.mustard : colors.neutral[700]}
                     />
                   </Pressable>
                   <Pressable
@@ -601,7 +601,7 @@ function DiscoverAndShopSection({
                   <View style={styles.cardBorder} />
                   <View style={styles.patternOverlay}>
                     <View style={[styles.glowCircle, { top: -40, right: -40, backgroundColor: colors.brand.purpleLight }]} />
-                    <View style={[styles.glowCircle, { bottom: -30, left: -30, backgroundColor: NUQTA_COLORS.mustard }]} />
+                    <View style={[styles.glowCircle, { bottom: -30, left: -30, backgroundColor: REZ_COLORS.mustard }]} />
                   </View>
 
                   <LinearGradient
@@ -749,7 +749,7 @@ function DiscoverAndShopSection({
                   <View style={styles.cardBorder} />
                   <View style={styles.patternOverlay}>
                     <View style={[styles.glowCircle, { top: -40, right: -40, backgroundColor: colors.infoScale[400] }]} />
-                    <View style={[styles.glowCircle, { bottom: -30, left: -30, backgroundColor: NUQTA_COLORS.nileBlue }]} />
+                    <View style={[styles.glowCircle, { bottom: -30, left: -30, backgroundColor: REZ_COLORS.nileBlue }]} />
                   </View>
 
                   <LinearGradient
@@ -778,7 +778,7 @@ function DiscoverAndShopSection({
                       {productCount > 0 && (
                         <>
                           <Text style={styles.separator}> • </Text>
-                          <Ionicons name="bag-handle" size={10} color={NUQTA_COLORS.mustard} />
+                          <Ionicons name="bag-handle" size={10} color={REZ_COLORS.mustard} />
                           <Text style={styles.viewsText}>{productCount}</Text>
                         </>
                       )}
@@ -881,8 +881,8 @@ function DiscoverAndShopSection({
                 >
                   <View style={styles.cardBorder} />
                   <View style={styles.patternOverlay}>
-                    <View style={[styles.glowCircle, { top: -40, right: -40, backgroundColor: NUQTA_COLORS.mustard }]} />
-                    <View style={[styles.glowCircle, { bottom: -30, left: -30, backgroundColor: NUQTA_COLORS.nileBlue }]} />
+                    <View style={[styles.glowCircle, { top: -40, right: -40, backgroundColor: REZ_COLORS.mustard }]} />
+                    <View style={[styles.glowCircle, { bottom: -30, left: -30, backgroundColor: REZ_COLORS.nileBlue }]} />
                   </View>
 
                   <LinearGradient
@@ -978,7 +978,7 @@ function DiscoverAndShopSection({
          
         >
           <Text style={styles.viewAllText}>View all</Text>
-          <Ionicons name="chevron-forward" size={16} color={NUQTA_COLORS.nileBlue} />
+          <Ionicons name="chevron-forward" size={16} color={REZ_COLORS.nileBlue} />
         </Pressable>
       </View>
 
@@ -1042,7 +1042,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     fontSize: 15,
     fontWeight: '600',
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
   },
   reelsContainer: {
     backgroundColor: colors.neutral[50],
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA_COLORS.nileBlue,
+        shadowColor: REZ_COLORS.nileBlue,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.18,
         shadowRadius: 16,
@@ -1220,7 +1220,7 @@ const styles = StyleSheet.create({
   },
   storePrefix: {
     fontSize: 11,
-    color: NUQTA_COLORS.nileBlue,
+    color: REZ_COLORS.nileBlue,
     fontWeight: '700',
   },
   storeName: {
@@ -1245,7 +1245,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: NUQTA_COLORS.gray,
+    color: REZ_COLORS.gray,
   },
   emptyContainer: {
     padding: 40,
@@ -1253,7 +1253,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: NUQTA_COLORS.gray,
+    color: REZ_COLORS.gray,
   },
   userAvatarImage: {
     width: 28,

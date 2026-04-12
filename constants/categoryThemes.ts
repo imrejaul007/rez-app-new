@@ -1,8 +1,8 @@
 /**
- * Category-based theme configuration for EventPage - Nuqta Design
- * Each category uses Nuqta palette variations for brand consistency
+ * Category-based theme configuration for EventPage - REZ Design
+ * Each category uses REZ palette variations for brand consistency
  *
- * Nuqta Colors:
+ * REZ Colors:
  * - Nile Blue: #1a3a52
  * - Light Mustard: #ffcd57
  * - Linen: #faf1e0
@@ -23,7 +23,7 @@ export interface CategoryTheme {
 }
 
 export const CATEGORY_THEMES: Record<string, CategoryTheme> = {
-  // Nuqta-themed lowercase categories
+  // REZ-themed lowercase categories
   movies: {
     primaryColor: '#1a3a52',     // Nile Blue
     secondaryColor: '#ffd7b5',   // Light Peach
@@ -102,7 +102,7 @@ export const CATEGORY_THEMES: Record<string, CategoryTheme> = {
     buttonGradient: ['#ffd7b5', '#ffcd57'],
   },
 
-  // Legacy title case categories - Nuqta themed
+  // Legacy title case categories - REZ themed
   Music: {
     primaryColor: '#ffcd57',     // Light Mustard
     secondaryColor: '#1a3a52',
@@ -215,7 +215,7 @@ export const CATEGORY_THEMES: Record<string, CategoryTheme> = {
   },
 };
 
-// Default theme for unknown categories - Nuqta branded
+// Default theme for unknown categories - REZ branded
 export const DEFAULT_THEME: CategoryTheme = {
   primaryColor: '#1a3a52',     // Nile Blue
   secondaryColor: '#ffcd57',   // Light Mustard

@@ -97,7 +97,7 @@ function SlidingTabs({
                   <Ionicons
                     name={tab.icon as any}
                     size={tabIconSize}
-                    color={isActive ? colors.nuqta.nileBlue : colors.neutral[400]}
+                    color={isActive ? colors.rez.nileBlue : colors.neutral[400]}
                   />
                 </View>
                 <ThemedText style={[
@@ -122,7 +122,7 @@ function SlidingTabs({
         ]}
       >
         <LinearGradient
-          colors={[colors.nuqta.mustard, colors.nuqta.peach]}
+          colors={[colors.rez.mustard, colors.rez.peach]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.underlineGradient}
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.nuqta.linen,
+    borderBottomColor: colors.rez.linen,
     position: 'relative',
   },
   tabsContainer: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   tabContentActive: {
-    backgroundColor: colors.nuqta.linen,
+    backgroundColor: colors.rez.linen,
   },
   iconWrapper: {
     width: 28,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   activeTabText: {
-    color: colors.nuqta.nileBlue,
+    color: colors.rez.nileBlue,
     fontWeight: '600',
   },
   inactiveTabText: {

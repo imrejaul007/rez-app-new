@@ -21,7 +21,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const CARD_EMOJIS = ['🍎', '🍋', '🍇', '🍒', '🌟', '🎯', '🎨', '🎵'];
 const GRID_SIZE = 4; // 4x4 = 16 cards = 8 pairs
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface Card {
   id: number;
@@ -356,7 +356,7 @@ function MemoryPage() {
 
       {coinsEarned > 0 && (
         <View style={styles.coinsEarnedCard}>
-          <CachedImage source={nuqtaCoinImage} style={styles.coinIcon} />
+          <CachedImage source={rezCoinImage} style={styles.coinIcon} />
           <ThemedText style={styles.coinsEarnedText}>
             +{coinsEarned} {BRAND.CURRENCY_CODE} earned!
           </ThemedText>

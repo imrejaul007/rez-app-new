@@ -10,7 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 
 interface SearchErrorStateProps {
   error: string;
@@ -33,7 +33,7 @@ function SearchErrorState({ error, onRetry }: SearchErrorStateProps) {
         <Ionicons
           name={isNetworkError ? 'cloud-offline-outline' : 'alert-circle-outline'}
           size={64}
-          color={NUQTA.nileBlue}
+          color={REZ_THEME.nileBlue}
           accessibilityLabel="Error icon"
         />
       </View>
@@ -53,7 +53,7 @@ function SearchErrorState({ error, onRetry }: SearchErrorStateProps) {
         accessibilityHint="Retries the failed operation"
       >
         <LinearGradient
-          colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
+          colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]}
           style={styles.retryButtonGradient}
         >
           <Ionicons name="refresh" size={18} color={colors.text.inverse} />
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 30,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.xl,
@@ -83,13 +83,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: 10,
     textAlign: 'center',
   },
   errorMessage: {
     ...Typography.body,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     textAlign: 'center',
     marginBottom: 28,
     lineHeight: 22,

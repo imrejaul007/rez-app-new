@@ -14,11 +14,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Linking, Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAuthToken } from '@/utils/authStorage';
-
-// ── Constants ────────────────────────────────────────────────────────────────
-
-const API_BASE = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+import apiClient from '@/services/apiClient';
 
 const RENDEZ_SCHEME = 'rendez://';
 const RENDEZ_APP_STORE = 'https://apps.apple.com/app/rendez/id0000000000';
@@ -95,17 +91,8 @@ export default function ExperienceMilestoneSection() {
 
     async function fetchProgress() {
       try {
-        const token = await getAuthToken();
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        const response = await fetch(`${API_BASE}/experience-rewards/progress`, { headers });
-        if (!response.ok) return;
-
-        const json: MilestoneProgress = await response.json();
-        if (!cancelled) setData(json);
+        const res = await apiClient.get<MilestoneProgress>('/experience-rewards/progress');
+        if (res.success && res.data && !cancelled) setData(res.data);
       } catch {
         // API unavailable — component returns null below
       }

@@ -74,8 +74,8 @@ function PopularProductsSection({
     return { percentage: cashbackPercentage, amount };
   };
 
-  // Calculate nuqta coins (5% of price, minimum 1)
-  const calculateNuqtaCoins = (product: HomepageProduct) => {
+  // Calculate rez coins (5% of price, minimum 1)
+  const calculateRezCoins = (product: HomepageProduct) => {
     const price = product.price || 0;
     return price > 0 ? Math.max(1, Math.round((price * 5) / 100)) : 0;
   };
@@ -93,7 +93,7 @@ function PopularProductsSection({
 
   const renderProduct = useCallback(({ item }: { item: HomepageProduct }) => {
     const cashback = calculateCashback(item);
-    const nuqtaCoins = calculateNuqtaCoins(item);
+    const rezCoins = calculateRezCoins(item);
     const deliveryFee = item.store?.deliveryFee || 0;
     const category = item.category || item.store?.name || '';
 
@@ -142,7 +142,7 @@ function PopularProductsSection({
               <View style={styles.coinsBadge}>
                 <Ionicons name="star-outline" size={10} color={colors.lightMustard} />
                 <ThemedText style={styles.coinsText}>
-                  {`Earn ${nuqtaCoins} ${BRAND.COIN_NAME}`}
+                  {`Earn ${rezCoins} ${BRAND.COIN_NAME}`}
                 </ThemedText>
               </View>
             </View>

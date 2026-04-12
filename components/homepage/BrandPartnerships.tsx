@@ -19,7 +19,7 @@ interface BrandPartnershipsProps {
   onBrandPress?: (brandId: string) => void;
 }
 
-// Fallback gradient colors if not provided by backend - Nuqta palette
+// Fallback gradient colors if not provided by backend - REZ palette
 const DEFAULT_GRADIENTS: Record<string, [string, string]> = {
   luxury: [colors.nileBlue, '#243f55'],
   exclusive: [colors.nileBlue, '#2d4a5f'],

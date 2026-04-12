@@ -1,3 +1,11 @@
+/**
+ * @deprecated Superseded by realOffersApi.ts for most use cases.
+ * Only hooks/useStorePromotions.ts still imports this file (via getStorePromotions,
+ * which has no equivalent in realOffersApi yet). Migrate getStorePromotions to
+ * realOffersApi.ts and delete this file once done.
+ * Marked: 2026-04-11
+ */
+
 // Offers API Service
 // Handles offer operations, search, filtering, favorites, and redemption
 // Enhanced with comprehensive error handling, validation, retry logic, and logging
@@ -130,7 +138,7 @@ function validateOffer(offer: any): boolean {
     return false as any;
   }
 
-  if (typeof offer.cashBackPercentage !== 'number' || offer.cashBackPercentage < 0) {
+  if (typeof offer.cashbackPercentage !== 'number' || offer.cashbackPercentage < 0) {
     devLog.warn('[OFFERS API] Offer has invalid cashback percentage');
     return false as any;
   }
@@ -482,13 +490,13 @@ class MockOffersApi implements OffersApiEndpoints {
 
         if (minCashBack !== undefined) {
           allOffers = allOffers.filter(offer =>
-            offer.cashBackPercentage >= minCashBack
+            offer.cashbackPercentage >= minCashBack
           );
         }
 
         if (cashBackMin !== undefined) {
           allOffers = allOffers.filter(offer =>
-            offer.cashBackPercentage >= cashBackMin
+            offer.cashbackPercentage >= cashBackMin
           );
         }
 
@@ -508,7 +516,7 @@ class MockOffersApi implements OffersApiEndpoints {
       if (params.sortBy) {
         switch (params.sortBy as string) {
           case 'cashback':
-            allOffers.sort((a, b) => b.cashBackPercentage - a.cashBackPercentage);
+            allOffers.sort((a, b) => b.cashbackPercentage - a.cashbackPercentage);
             break;
           case 'price':
             allOffers.sort((a, b) => {

@@ -1,5 +1,5 @@
 /**
- * NuqtaPlusUpsellCard — Homepage upsell for free users
+ * RezPlusUpsellCard — Homepage upsell for free users
  *
  * Shows missed cashback to encourage subscription upgrade.
  * Only visible to free-tier users with 3+ orders.
@@ -12,13 +12,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useUserIdentity } from '@/hooks/useUserIdentity';
 import { useAuthStore } from '@/stores/authStore';
 
-const NuqtaPlusUpsellCard = React.memo(function NuqtaPlusUpsellCard() {
-  const { isNuqtaFree } = useUserIdentity();
+const RezPlusUpsellCard = React.memo(function RezPlusUpsellCard() {
+  const { isRezFree } = useUserIdentity();
   const user = useAuthStore((s) => s.state.user);
   const router = useRouter();
 
   const orderCount = (user as any)?.totalOrders ?? 0;
-  if (!isNuqtaFree || orderCount < 3) return null;
+  if (!isRezFree || orderCount < 3) return null;
 
   const lastMonthSpend = (user as any)?.totalSpent ?? 0;
   const missedCashback = Math.floor(lastMonthSpend * 0.05);
@@ -35,7 +35,7 @@ const NuqtaPlusUpsellCard = React.memo(function NuqtaPlusUpsellCard() {
           You missed {'\u20B9'}{missedCashback.toLocaleString()} in cashback
         </Text>
         <Text style={styles.sub}>
-          Nuqta Plus Premium gives 2x on every purchase
+          REZ Plus Premium gives 2x on every purchase
         </Text>
         <Text style={styles.cta}>Upgrade for {'\u20B9'}199/mo {'\u2192'}</Text>
       </View>
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NuqtaPlusUpsellCard;
+export default RezPlusUpsellCard;

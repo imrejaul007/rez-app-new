@@ -28,8 +28,8 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Nuqta Design System
-const NUQTA = {
+// REZ Design System
+const REZ_THEME = {
   nileBlue: colors.nileBlue,
   nileBlueLight: '#243f55',
   lightMustard: Colors.gold,
@@ -152,7 +152,7 @@ function HotspotsPage() {
             <CachedImage source={item.image} style={styles.hotspotImg} contentFit="cover" />
           ) : (
             <View style={styles.hotspotImgPlaceholder}>
-              <Ionicons name="location" size={28} color={NUQTA.nileBlue} />
+              <Ionicons name="location" size={28} color={REZ_THEME.nileBlue} />
             </View>
           )}
         </View>
@@ -162,7 +162,7 @@ function HotspotsPage() {
             <ThemedText style={styles.hotspotName}>{item.name}</ThemedText>
             {item.distance !== undefined && (
               <View style={styles.distanceBadge}>
-                <Ionicons name="navigate" size={12} color={NUQTA.nileBlue} />
+                <Ionicons name="navigate" size={12} color={REZ_THEME.nileBlue} />
                 <ThemedText style={styles.distanceText}>{formatDistance(item.distance)}</ThemedText>
               </View>
             )}
@@ -175,7 +175,7 @@ function HotspotsPage() {
 
           <View style={styles.hotspotStats}>
             <View style={styles.statItem}>
-              <Ionicons name="pricetag-outline" size={14} color={NUQTA.lightMustard} />
+              <Ionicons name="pricetag-outline" size={14} color={REZ_THEME.lightMustard} />
               <ThemedText style={styles.statText}>{item.totalDeals} deals</ThemedText>
             </View>
           </View>
@@ -188,7 +188,7 @@ function HotspotsPage() {
             openDirections(item);
           }}
         >
-          <Ionicons name="navigate-circle" size={32} color={NUQTA.nileBlue} />
+          <Ionicons name="navigate-circle" size={32} color={REZ_THEME.nileBlue} />
         </Pressable>
       </Pressable>
     ),
@@ -219,7 +219,7 @@ function HotspotsPage() {
                   contentFit="cover"
                 />
               ) : (
-                <Ionicons name="location" size={24} color={NUQTA.nileBlue} />
+                <Ionicons name="location" size={24} color={REZ_THEME.nileBlue} />
               )}
             </View>
             <View style={styles.mapCardInfo}>
@@ -236,9 +236,9 @@ function HotspotsPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={NUQTA.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={REZ_THEME.nileBlue} />
 
-      <LinearGradient colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]} style={styles.header}>
+      <LinearGradient colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
@@ -255,32 +255,36 @@ function HotspotsPage() {
               <Ionicons
                 name="list"
                 size={18}
-                color={viewMode === 'list' ? NUQTA.nileBlue : colors.background.primary}
+                color={viewMode === 'list' ? REZ_THEME.nileBlue : colors.background.primary}
               />
             </Pressable>
             <Pressable
               style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]}
               onPress={() => setViewMode('map')}
             >
-              <Ionicons name="map" size={18} color={viewMode === 'map' ? NUQTA.nileBlue : colors.background.primary} />
+              <Ionicons
+                name="map"
+                size={18}
+                color={viewMode === 'map' ? REZ_THEME.nileBlue : colors.background.primary}
+              />
             </Pressable>
           </View>
         </View>
 
         <View style={styles.locationBar}>
-          <Ionicons name="location" size={18} color={NUQTA.lightMustard} />
+          <Ionicons name="location" size={18} color={REZ_THEME.lightMustard} />
           <ThemedText style={styles.locationText}>{locationText}</ThemedText>
         </View>
       </LinearGradient>
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={NUQTA.nileBlue} />
+          <ActivityIndicator size="large" color={REZ_THEME.nileBlue} />
           <ThemedText style={styles.loadingText}>Finding hotspots near you...</ThemedText>
         </View>
       ) : error ? (
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={NUQTA.nileBlue} />
+          <Ionicons name="alert-circle-outline" size={48} color={REZ_THEME.nileBlue} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
           <Pressable
             style={styles.retryButton}
@@ -343,7 +347,7 @@ function HotspotsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -413,7 +417,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 22,
     fontWeight: '800',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   summaryLabel: {
     ...Typography.bodySmall,
@@ -442,7 +446,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: NUQTA.lightMustard,
+    backgroundColor: REZ_THEME.lightMustard,
     borderBottomLeftRadius: 6,
     borderBottomRightRadius: 6,
     paddingHorizontal: Spacing.sm,
@@ -450,7 +454,7 @@ const styles = StyleSheet.create({
   },
   trendingText: {
     ...Typography.overline,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '700',
   },
   hotspotImage: {
@@ -466,7 +470,7 @@ const styles = StyleSheet.create({
   hotspotImgPlaceholder: {
     width: 60,
     height: 60,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: BorderRadius.md,
@@ -483,7 +487,7 @@ const styles = StyleSheet.create({
   hotspotName: {
     ...Typography.body,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     flex: 1,
   },
   distanceBadge: {
@@ -493,7 +497,7 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     ...Typography.bodySmall,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '600',
   },
   cityBadge: {
@@ -545,7 +549,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: NUQTA.nileBlue,
+    backgroundColor: REZ_THEME.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 10,
     borderRadius: BorderRadius.md,
@@ -609,7 +613,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.sm,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -621,11 +625,11 @@ const styles = StyleSheet.create({
   mapCardName: {
     ...Typography.body,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   mapCardDistance: {
     ...Typography.bodySmall,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '500',
   },
 });

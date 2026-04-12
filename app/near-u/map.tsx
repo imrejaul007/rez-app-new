@@ -94,10 +94,10 @@ function StoreMapScreen() {
 
   const handleMarkerPress = useCallback(
     (store: NearbyStore) => {
-      if (mapRef && store.address?.coordinates) {
+      if (mapRef && store.location?.coordinates) {
         mapRef.animateToRegion({
-          latitude: store.address.coordinates[0],
-          longitude: store.address.coordinates[1],
+          latitude: store.location.coordinates[0],
+          longitude: store.location.coordinates[1],
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         });

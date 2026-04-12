@@ -1,9 +1,9 @@
 /**
  * ModeSwitcher Component
  *
- * 4-mode intent selector for Nuqta app:
+ * 4-mode intent selector for REZ app:
  * - Near U: Rewards near you (local, everyday)
- * - Mall: Nuqta Mall (curated brands)
+ * - Mall: REZ Mall (curated brands)
  * - Cash: Cash Store (cashback focus)
  * - Privé: Exclusive (reputation-based)
  *
@@ -48,7 +48,7 @@ const MODES: ModeConfig[] = [
     id: 'near-u',
     label: 'Near U',
     icon: '📍',
-    activeColor: colors.lightMustard, // Nuqta Gold
+    activeColor: colors.lightMustard, // REZ Gold
     microcopy: 'Save around you',
   },
   {

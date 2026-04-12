@@ -2,8 +2,7 @@ import { ImageSourcePropType } from 'react-native';
 import { BRAND } from '@/constants/brand';
 
 // Core Coin Types - Updated for new wallet design
-// Note: Backend uses 'rez', frontend displays as 'nuqta' for branding consistency
-export type CoinType = 'rez' | 'nuqta' | 'branded' | 'promo' | 'prive';
+export type CoinType = 'rez' | 'branded' | 'promo' | 'prive';
 
 // Branded Coin Details (merchant-specific)
 export interface BrandedCoinDetails {
@@ -162,25 +161,16 @@ export type TransactionStatus = 'completed' | 'pending' | 'failed';
 export type WalletErrorCode = 'NETWORK_ERROR' | 'SERVER_ERROR' | 'PARSING_ERROR' | 'UNAUTHORIZED' | 'TIMEOUT' | 'REAUTH_REQUIRED' | 'FEATURE_DISABLED' | 'VELOCITY_LIMIT' | 'WALLET_FROZEN' | 'INSUFFICIENT_BALANCE' | 'UNKNOWN';
 
 // Coin Usage Order - Promo > Branded > Rez (automatic)
-export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'prive', 'nuqta'];
+export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'prive', 'rez'];
 
 // Constants - Updated for new wallet design
-// Note: 'rez' and 'nuqta' are aliases - backend uses 'rez', frontend displays 'nuqta'
 export const COIN_TYPES: Record<CoinType, { name: string; color: string; amountColor: string; backgroundColor: string; icon: string; description: string }> = {
   rez: {
     name: BRAND.COIN_NAME,  // Display name for backend 'rez' type
     color: '#ffcd57', // Mustard (icon/badge use only)
     amountColor: '#B45309', // Dark amber for text (WCAG AA compliant)
     backgroundColor: '#FFF9E6',
-    icon: 'nuqta-coin.png',
-    description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`
-  },
-  nuqta: {
-    name: BRAND.COIN_NAME,
-    color: '#ffcd57', // Mustard (icon/badge use only)
-    amountColor: '#B45309', // Dark amber for text (WCAG AA compliant)
-    backgroundColor: '#FFF9E6',
-    icon: 'nuqta-coin.png',
+    icon: 'rez-coin.png',
     description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`
   },
   branded: {

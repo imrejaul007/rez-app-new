@@ -1,7 +1,7 @@
 /**
  * MallHeroCarousel Component
  *
- * Auto-rotating carousel for Nuqta Mall tab header
+ * Auto-rotating carousel for REZ Mall tab header
  * Replaces HeroBanner when Mall tab is selected
  * Same dimensions as HeroBanner for seamless transition
  */
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   paginationDotActive: {
     width: 20,
-    backgroundColor: colors.nileBlue, // Nile Blue for active dot (Nuqta Mall theme)
+    backgroundColor: colors.nileBlue, // Nile Blue for active dot (REZ Mall theme)
   },
 });
 

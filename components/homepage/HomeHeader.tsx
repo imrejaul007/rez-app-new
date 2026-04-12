@@ -23,7 +23,7 @@ import GreetingDisplay from '@/components/location/GreetingDisplay';
 import LocationDisplay from '@/components/location/LocationDisplay';
 import TierBadge from '@/components/subscription/TierBadge';
 import NotificationBell from '@/components/common/NotificationBell';
-import NuqtaCoin from './ReZCoin';
+import RezCoin from './ReZCoin';
 import { colors } from '@/constants/theme';
 
 /**
@@ -177,8 +177,8 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
             <TierBadge tier={subscriptionTier as any} size="small" />
           </Pressable>
 
-          {/* Nuqta Coins - Branded coin display */}
-          <NuqtaCoin
+          {/* REZ Coins - Branded coin display */}
+          <RezCoin
             balance={userPoints}
             size="small"
             onPress={handleWalletPress}

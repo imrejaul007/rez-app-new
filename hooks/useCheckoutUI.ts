@@ -353,7 +353,7 @@ export function useCheckoutUI({
     };
     dispatch({ type: 'CONFIRM_ORDER_START', message: messages[uiState.selectedPaymentMethod] || 'Processing...' });
     const coinPayload = {
-      rezCoins: checkoutState.coinSystem.nuqtaCoin.used || 0,
+      rezCoins: checkoutState.coinSystem.rezCoin.used || 0,
       promoCoins: checkoutState.coinSystem.promoCoin.used || 0,
       storePromoCoins: checkoutState.coinSystem.storePromoCoin.used || 0,
       redemptionCode: uiState.appliedRedemption?.code,

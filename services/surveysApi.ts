@@ -100,55 +100,23 @@ export interface SurveyHistoryItem {
 }
 
 class SurveysApiService {
-  private baseUrl: string;
-
-  constructor() {
-    this.baseUrl = apiClient.getBaseURL();
-  }
-
-  /**
-   * Get authentication token from auth storage
-   */
-  private async getAuthToken(): Promise<string | null> {
-    try {
-      const { getAuthToken } = await import('@/utils/authStorage');
-      const token = await getAuthToken();
-      return token;
-    } catch (error) {
-      return null;
-    }
-  }
-
   /**
    * Get all surveys with optional filters
    */
   async getSurveys(category?: string, limit = 50, offset = 0): Promise<Survey[]> {
     try {
-      const queryParams = new URLSearchParams();
+      const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
       if (category && category !== 'All') {
-        queryParams.append('category', category);
-      }
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
-
-      const response = await fetch(`${this.baseUrl}/surveys?${queryParams}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        params.category = category;
       }
 
-      const data = await response.json();
+      const response = await apiClient.get<any>('/surveys', params);
 
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to fetch surveys');
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch surveys');
       }
+
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -159,24 +127,13 @@ class SurveysApiService {
    */
   async getCategories(): Promise<SurveyCategory[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/surveys/categories`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiClient.get<any>('/surveys/categories');
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch categories');
       }
 
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to fetch categories');
-      }
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -187,30 +144,13 @@ class SurveysApiService {
    */
   async getUserStats(): Promise<UserSurveyStats> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.get<any>('/surveys/user/stats');
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch user stats');
       }
 
-      const response = await fetch(`${this.baseUrl}/surveys/user/stats`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to fetch user stats');
-      }
+      return response.data;
     } catch (error) {
       // Return default stats if error
       return {
@@ -228,30 +168,13 @@ class SurveysApiService {
    */
   async getSurveyById(id: string): Promise<SurveyDetail> {
     try {
-      const token = await this.getAuthToken();
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      const response = await apiClient.get<any>(`/surveys/${id}`);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch survey');
       }
 
-      const response = await fetch(`${this.baseUrl}/surveys/${id}`, {
-        method: 'GET',
-        headers,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to fetch survey');
-      }
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -262,31 +185,13 @@ class SurveysApiService {
    */
   async startSurvey(surveyId: string): Promise<SurveySessionResult> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.post<any>(`/surveys/${surveyId}/start`);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to start survey');
       }
 
-      const response = await fetch(`${this.baseUrl}/surveys/${surveyId}/start`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to start survey');
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to start survey');
-      }
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -297,32 +202,13 @@ class SurveysApiService {
    */
   async submitSurvey(surveyId: string, answers: SurveyAnswer[]): Promise<SurveySubmitResult> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.post<any>(`/surveys/${surveyId}/submit`, { answers } as Record<string, unknown>);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to submit survey');
       }
 
-      const response = await fetch(`${this.baseUrl}/surveys/${surveyId}/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ answers }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit survey');
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to submit survey');
-      }
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -333,24 +219,7 @@ class SurveysApiService {
    */
   async saveProgress(surveyId: string, answers: SurveyAnswer[], currentQuestionIndex: number): Promise<void> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
-      }
-
-      const response = await fetch(`${this.baseUrl}/surveys/${surveyId}/save-progress`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ answers, currentQuestionIndex }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save progress');
-      }
+      await apiClient.post<any>(`/surveys/${surveyId}/save-progress`, { answers, currentQuestionIndex } as Record<string, unknown>);
     } catch (error) {
       // Don't throw - progress saving is not critical
     }
@@ -361,18 +230,7 @@ class SurveysApiService {
    */
   async abandonSurvey(surveyId: string): Promise<void> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        return; // Silently fail if not authenticated
-      }
-
-      await fetch(`${this.baseUrl}/surveys/${surveyId}/abandon`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      await apiClient.post<any>(`/surveys/${surveyId}/abandon`);
     } catch (error) {
       // Don't throw - abandoning is not critical
     }
@@ -383,34 +241,13 @@ class SurveysApiService {
    */
   async getUserHistory(limit = 50, offset = 0): Promise<{ surveys: SurveyHistoryItem[], total: number, hasMore: boolean }> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.get<any>('/surveys/user/history', { limit, offset });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch history');
       }
 
-      const queryParams = new URLSearchParams();
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
-
-      const response = await fetch(`${this.baseUrl}/surveys/user/history?${queryParams}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || 'Failed to fetch history');
-      }
+      return response.data;
     } catch (error) {
       return { surveys: [], total: 0, hasMore: false };
     }

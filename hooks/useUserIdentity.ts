@@ -45,7 +45,7 @@ export type GatedFeature =
 
 export interface UserIdentity {
   // Subscription tier
-  isNuqtaFree: boolean;
+  isRezFree: boolean;
   isPremium: boolean;
   isVIP: boolean;
   cashbackMultiplier: number;
@@ -113,7 +113,7 @@ export function useUserIdentity(): UserIdentity {
 
     return {
       // Subscription
-      isNuqtaFree: !isSubscribed,
+      isRezFree: !isSubscribed,
       isPremium,
       isVIP,
       cashbackMultiplier,

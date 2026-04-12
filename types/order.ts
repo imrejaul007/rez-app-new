@@ -17,6 +17,8 @@ export type OrderStatus =
 
 export type PaymentStatus =
   | 'pending'
+  | 'awaiting_payment'
+  | 'authorized'
   | 'processing'
   | 'paid'
   | 'failed'
@@ -67,10 +69,33 @@ export interface Order {
   orderNumber: string;
   userId: string;
   items: OrderItem[];
+  /**
+   * Backend canonical totals (IOrderTotals).
+   * Prefer this over the flat deprecated fields below.
+   */
+  totals?: {
+    subtotal: number;
+    tax: number;
+    /** Backend field name is 'delivery', NOT 'deliveryFee' */
+    delivery: number;
+    discount: number;
+    lockFeeDiscount?: number;
+    cashback: number;
+    total: number;
+    paidAmount: number;
+    refundAmount?: number;
+    platformFee: number;
+    merchantPayout: number;
+  };
+  /** @deprecated Use totals.subtotal */
   subtotal: number;
+  /** @deprecated Use totals.tax */
   tax: number;
+  /** @deprecated Use totals.delivery */
   shipping: number;
+  /** @deprecated Use totals.discount */
   discount: number;
+  /** @deprecated Use totals.total */
   total: number;
   currency: string;
   status: OrderStatus;

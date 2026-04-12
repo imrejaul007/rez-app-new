@@ -92,7 +92,7 @@ export function getPagination(
 // ── Coin Types (from rez-shared/src/constants/coins.ts) ─────────────────────
 
 export const COIN_TYPES = {
-  PRIMARY: 'nuqta' as const,
+  PRIMARY: 'rez' as const,
   PRIVE: 'prive' as const,
   BRANDED: 'branded' as const,
   PROMO: 'promo' as const,
@@ -104,14 +104,12 @@ export type CoinType = typeof COIN_TYPES[keyof typeof COIN_TYPES];
 // ── Wallet Balance (from rez-shared/src/types/wallet.ts) ────────────────────
 
 export interface WalletBalance {
-  nuqta: number;
+  rez: number;
   prive: number;
   promo: number;
   branded: number;
   category: number;
   total: number;
-  /** @deprecated Use `nuqta` instead */
-  rez?: number;
 }
 
 export interface CoinTransaction {

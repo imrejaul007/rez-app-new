@@ -24,7 +24,7 @@ export interface TermsTransparencySectionProps {
 
 function TermsTransparencySection({
   cashbackRules = 'Cashback is credited within 24 hours of purchase. Valid on all payment methods.',
-  coinExpiry = 'Earned coins expire after 90 days. Branded coins expire as per store policy.',
+  coinExpiry = 'Promo coins expire after 90 days. REZ coins never expire. Branded coins expire in 6 months.',
   returnImpact = 'Returns will deduct earned cashback and coins from your wallet.',
   supportEmail = 'support@rez.app',
 }: TermsTransparencySectionProps) {

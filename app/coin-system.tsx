@@ -316,7 +316,7 @@ const CoinSystemPage = () => {
     item.answer === '__DYNAMIC_EXPIRY__'
       ? {
           ...item,
-          answer: `It depends on the coin type. ReZ Coins: ${getExpiryText('rez', 'Never expires')}. Privé Coins: ${getExpiryText('prive', '12 months')}. Branded Coins: ${getExpiryText('branded', 'Set by merchant')}. Promo Coins expire based on the specific campaign end date. Check expiry in your Wallet.`,
+          answer: `It depends on the coin type. ReZ Coins: ${getExpiryText('rez', 'Never expire')}. Privé Coins: ${getExpiryText('prive', '12 months')}. Branded Coins: ${getExpiryText('branded', '6 months')}. Promo Coins expire after 90 days. Check expiry in your Wallet.`,
         }
       : item,
   );

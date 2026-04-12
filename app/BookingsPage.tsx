@@ -1,5 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useSocket } from '@/contexts/SocketContext';
 import {
   View,
   Text,
@@ -453,6 +454,16 @@ function BookingsPage() {
       else setLoading(false);
     }, [isAuthenticated]),
   );
+
+  // Subscribe to booking socket events so the list refreshes when a booking is
+  // cancelled or updated externally (hotel system, merchant, or another session).
+  const { onOrderListUpdated } = useSocket();
+  useEffect(() => {
+    const unsubscribe = onOrderListUpdated(() => {
+      loadBookings(true);
+    });
+    return unsubscribe;
+  }, [onOrderListUpdated, loadBookings]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

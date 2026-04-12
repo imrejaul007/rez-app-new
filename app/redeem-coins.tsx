@@ -78,7 +78,7 @@ export default function RedeemCoinsScreen() {
       .then((res) => {
         if (cancelled) return;
         if (res.success && res.data) {
-          const rezCoin = res.data.coins?.find((c) => c.type === 'rez' || (c.type as string) === 'nuqta');
+          const rezCoin = res.data.coins?.find((c) => c.type === 'rez');
           setBalance(rezCoin?.amount ?? res.data.balance?.available ?? 0);
         } else {
           setBalanceError('Could not load your coin balance.');

@@ -25,8 +25,8 @@ const HORIZONTAL_PADDING = 16;
 const CARD_GAP = 12;
 const CARD_WIDTH = (SCREEN_WIDTH - (HORIZONTAL_PADDING * 2) - CARD_GAP) / 2;
 
-// Nuqta Color Palette - Cash Store Peach Theme
-const NUQTA_COLORS = {
+// REZ Color Palette - Cash Store Peach Theme
+const REZ_COLORS = {
   nileBlue: colors.nileBlue,
   nileBlueLight: '#2A5577',
   linen: colors.linen,
@@ -35,7 +35,7 @@ const NUQTA_COLORS = {
   peachDarker: colors.brand.caramel,
 };
 
-// Default 4 quick actions - strategic use of all Nuqta palette colors
+// Default 4 quick actions - strategic use of all REZ palette colors
 const DEFAULT_QUICK_ACTIONS: CashStoreQuickAction[] = [
   {
     id: 'buy-coupons',
@@ -51,7 +51,7 @@ const DEFAULT_QUICK_ACTIONS: CashStoreQuickAction[] = [
     title: `Extra ${BRAND.COIN_NAME}`,
     subtitle: 'Double rewards',
     icon: 'wallet',
-    backgroundColor: NUQTA_COLORS.nileBlue,
+    backgroundColor: REZ_COLORS.nileBlue,
     gradientColors: [colors.nileBlue, colors.brand.nileBlueLight],
     action: 'extra-coins',
     badge: '2X',

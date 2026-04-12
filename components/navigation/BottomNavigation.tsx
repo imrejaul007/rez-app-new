@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Platform,
   Dimensions,
   Animated,
+  AppState,
+  AppStateStatus,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { useRouter, usePathname } from 'expo-router';
@@ -14,14 +16,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-// Import the Pay in Store icon (Nuqta animated coin)
-const payInStoreIcon = require('@/assets/images/nuqta-coin-animated.gif');
+// Import the Pay in Store icon (REZ animated coin)
+const payInStoreIcon = require('@/assets/images/rez-coin-animated.gif');
 import Svg, { Path } from 'react-native-svg';
 import logger from '@/utils/logger';
 import { useHomeTab } from '@/contexts/HomeTabContext';
 import { useTheme } from '@/hooks/useTheme';
 import { colors } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
+import { getActiveWebOrderCount } from '@/services/webOrderApi';
 
 // ─── Icon pairs: filled (active) / outline (inactive) ────────────────────────
 const ICON_MAP: Record<string, { active: string; inactive: string }> = {
@@ -156,6 +159,34 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const insets = useSafeAreaInsets();
   const [imageError, setImageError] = useState(false);
 
+  // REZ Now active order badge count
+  const [activeWebOrderCount, setActiveWebOrderCount] = useState(0);
+  const lastFetchRef = useRef<number>(0);
+
+  const refreshWebOrderBadge = useCallback(async () => {
+    // Throttle: at most once every 30 seconds to avoid hammering the API
+    const now = Date.now();
+    if (now - lastFetchRef.current < 30_000) return;
+    lastFetchRef.current = now;
+    try {
+      const count = await getActiveWebOrderCount();
+      setActiveWebOrderCount(count);
+    } catch {
+      // non-fatal — badge simply stays at previous value
+    }
+  }, []);
+
+  // Fetch on mount and every time app comes to foreground
+  useEffect(() => {
+    refreshWebOrderBadge();
+    const sub = AppState.addEventListener('change', (state: AppStateStatus) => {
+      if (state === 'active') {
+        refreshWebOrderBadge();
+      }
+    });
+    return () => sub.remove();
+  }, [refreshWebOrderBadge]);
+
   // Get active home tab from Zustand store (never throws — safe to call unconditionally).
   // Previously wrapped in try/catch which violated React rules of hooks.
   const homeTabContext = useHomeTab();
@@ -233,7 +264,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         return 'Profile';
       }
     }
-    // Nuqta Mall tabs: Home, Search, Pay at Store, Offers, Profile
+    // REZ Mall tabs: Home, Search, Pay at Store, Offers, Profile
     else if (isRezMallActive) {
       // Check for Search tab - multiple formats (search, categories)
       if (
@@ -347,7 +378,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   };
 
   // Render a regular tab item
-  const renderTab = (tab: { name: string; route: string; icon: string; isActive: boolean; showBadge?: boolean }, index?: number) => {
+  const renderTab = (tab: { name: string; route: string; icon: string; isActive: boolean; showBadge?: boolean; badgeCount?: number }, index?: number) => {
     // Theme-aware tab colors
     const activeColor   = isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : colors.nileBlue;
     const inactiveColor = isPriveActive ? '#A0A0A0'               : isDark ? colors.neutral[400] : '#94A3B8';
@@ -382,9 +413,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
             size={22}
             color={tab.isActive ? activeColor : inactiveColor}
           />
-          {tab.showBadge && (
+          {(tab.badgeCount != null && tab.badgeCount > 0) ? (
+            <View style={styles.badgeCount}>
+              <Text style={styles.badgeCountText}>
+                {tab.badgeCount > 9 ? '9+' : String(tab.badgeCount)}
+              </Text>
+            </View>
+          ) : tab.showBadge ? (
             <View style={styles.badgeDot} />
-          )}
+          ) : null}
         </View>
 
         {/* Label */}
@@ -440,6 +477,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         route: '/account',
         icon: 'person-outline',
         isActive: activeTab === 'Profile',
+        badgeCount: activeWebOrderCount > 0 ? activeWebOrderCount : undefined,
       },
     ];
 
@@ -461,13 +499,13 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   }
 
   // =====================================================
-  // NUQTA MALL / DEFAULT LAYOUT - 5 tabs with center floating button
+  // REZ MALL / DEFAULT LAYOUT - 5 tabs with center floating button
   // =====================================================
 
   // Different tabs based on active home tab
   const tabs = isRezMallActive
     ? [
-        // Nuqta Mall tabs: Home, Search, Pay at Store, Offers, Profile
+        // REZ Mall tabs: Home, Search, Pay at Store, Offers, Profile
         {
           name: 'Home',
           route: '/(tabs)',
@@ -502,6 +540,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
           icon: 'person',
           isActive: activeTab === 'Profile',
           isCenter: false,
+          badgeCount: activeWebOrderCount > 0 ? activeWebOrderCount : undefined,
         },
       ]
     : [
@@ -541,6 +580,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
           isActive: activeTab === 'You',
           isCenter: false,
           showBadge: segment === 'normal' && !!statedIdentity && statedIdentity !== 'general',
+          badgeCount: activeWebOrderCount > 0 ? activeWebOrderCount : undefined,
         },
       ];
 
@@ -619,7 +659,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
 
 const styles = StyleSheet.create({
   // =====================================================
-  // DEFAULT / NUQTA MALL STYLES (with floating center button)
+  // DEFAULT / REZ MALL STYLES (with floating center button)
   // =====================================================
 
   // Main container - holds everything
@@ -707,7 +747,7 @@ const styles = StyleSheet.create({
     }),
   },
 
-  // Pay in Store icon (Nuqta coin) - fills the circle
+  // Pay in Store icon (REZ coin) - fills the circle
   payInStoreGif: {
     width: 50,
     height: 50,
@@ -824,6 +864,28 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: '#FFC857',
+  },
+
+  // Numeric badge bubble for REZ Now active order count
+  badgeCount: {
+    position: 'absolute',
+    top: -4,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#EF4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+  },
+  badgeCountText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    lineHeight: 12,
   },
 
   // =====================================================

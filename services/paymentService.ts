@@ -262,19 +262,16 @@ class PaymentService {
   }
 
   /**
-   * Confirm payment after payment gateway processing succeeds
-   * This tells the backend to verify the payment and credit the wallet
+   * Confirm payment after Stripe payment gateway processing succeeds.
+   * NOTE: Stripe is not currently active. This endpoint is disabled on the backend
+   * and will return a 404. Do not call this method until Stripe is enabled.
+   * Razorpay payments use lockDealApi.confirmBalancePayment instead.
    */
-  async confirmPayment(paymentIntentId: string): Promise<ApiResponse<{ status: string }>> {
-    try {
-      const response = await apiClient.post<any>('/wallet/confirm-payment', { paymentIntentId });
-      if (response.success) {
-        return response as ApiResponse<{ status: string }>;
-      }
-      return { success: false, error: response.error || 'Failed to confirm payment' };
-    } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Failed to confirm payment' };
-    }
+  async confirmPayment(_paymentIntentId: string): Promise<ApiResponse<{ status: string }>> {
+    return {
+      success: false,
+      error: 'Stripe payments are not currently available. Please use Razorpay or wallet payment.',
+    };
   }
 
   /**

@@ -1,7 +1,7 @@
 /**
  * Mall Types
  *
- * TypeScript interfaces for Nuqta Mall feature
+ * TypeScript interfaces for REZ Mall feature
  */
 
 // Brand tier type

@@ -895,6 +895,51 @@ function HomeScreen() {
     return <HomepageSkeleton />;
   }
 
+  // Show error state when homepage data fails to load and there is nothing to display
+  if (state.error && !state.loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.background.primary,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: spacing.xl,
+        }}
+      >
+        <Ionicons name="cloud-offline-outline" size={56} color={colors.text.tertiary} />
+        <Text
+          style={{
+            marginTop: spacing.base,
+            fontSize: 17,
+            fontWeight: '600',
+            color: colors.text.primary,
+            textAlign: 'center',
+          }}
+        >
+          Could not load your feed
+        </Text>
+        <Text style={{ marginTop: spacing.sm, fontSize: 14, color: colors.text.tertiary, textAlign: 'center' }}>
+          {state.error}
+        </Text>
+        <Pressable
+          onPress={handleRefresh}
+          style={{
+            marginTop: spacing.lg,
+            paddingHorizontal: spacing.xl,
+            paddingVertical: spacing.md,
+            backgroundColor: colors.primary[500] ?? colors.brand.goldWarm,
+            borderRadius: borderRadius.md,
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Retry loading homepage"
+        >
+          <Text style={{ color: colors.text.inverse, fontWeight: '600', fontSize: 15 }}>Try Again</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <ReAnimated.View
       style={[viewStyles.mainContainer, isDark && { backgroundColor: themeColors.bg }]}

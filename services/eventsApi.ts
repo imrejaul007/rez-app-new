@@ -215,45 +215,33 @@ class EventsApiService {
 
   /**
    * Get all events with filters
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient so the 401-refresh-logout
+   * interceptor fires on token expiry rather than silently failing.
    */
   async getEvents(filters: EventFilters = {}, limit = 20, offset = 0): Promise<EventSearchResult> {
     try {
-      const queryParams = new URLSearchParams();
-      
-      // Add filters to query params
+      const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, value.toString());
+          params[key] = value as string | number | boolean;
         }
       });
-      
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
 
-      const response = await fetch(`${this.baseUrl}/events?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>('/events', params);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch events');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        // Transform backend events to frontend format
-        const events = data.data.events.map(this.transformEventToFrontend);
-        
-        return {
-          events,
-          total: data.data.total,
-          hasMore: data.data.hasMore,
-          suggestions: data.data.suggestions
-        };
-      } else {
-        throw new Error(data.message || 'Failed to fetch events');
-      }
+      const events = response.data.events.map(this.transformEventToFrontend);
+
+      return {
+        events,
+        total: response.data.total,
+        hasMore: response.data.hasMore,
+        suggestions: response.data.suggestions,
+      };
     } catch (error) {
       devLog.error('❌ Error fetching events:', error);
       throw error;
@@ -262,28 +250,22 @@ class EventsApiService {
 
   /**
    * Get event by ID
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getEventById(id: string): Promise<EventItem | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/events/${id}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>(`/events/${id}`);
 
-      if (!response.ok) {
-        if (response.status === 404) {
+      if (!response.success) {
+        const errStr = (response.error || '').toLowerCase();
+        if (errStr.includes('404') || errStr.includes('not found')) {
           return null;
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(response.error || 'Failed to fetch event');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        return this.transformEventToFrontend(data.data);
-      } else {
-        throw new Error(data.message || 'Failed to fetch event');
-      }
+      return this.transformEventToFrontend(response.data);
     } catch (error) {
       devLog.error('❌ Error fetching event:', error);
       throw error;
@@ -294,51 +276,45 @@ class EventsApiService {
    * Get events by category
    * Maps frontend display categories (movies, concerts, etc.) to backend categories (Entertainment, Music, etc.)
    * Also sends the original category as a tag filter for more specific results
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getEventsByCategory(category: string, limit = 20, offset = 0, dateFilter?: string): Promise<EventSearchResult> {
     try {
       // Map frontend category to backend category
       const backendCategory = mapCategoryToBackend(category);
       const originalCategory = category.toLowerCase();
-      devLog.log(`📂 [eventsApi] Mapping category: ${category} -> ${backendCategory}, filtering by tag: ${originalCategory}`);
+      devLog.log(`[eventsApi] Mapping category: ${category} -> ${backendCategory}, filtering by tag: ${originalCategory}`);
 
-      const queryParams = new URLSearchParams();
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
+      const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
 
       // Add date filter if specified
       if (dateFilter && dateFilter !== 'all') {
-        queryParams.append('dateFilter', dateFilter);
+        params.dateFilter = dateFilter;
       }
 
       // Add the original category as a tag filter for more specific results
       // This ensures "movies" shows only movies, not all Entertainment events
       if (backendCategory !== originalCategory && CATEGORY_MAP[originalCategory]) {
-        queryParams.append('tags', originalCategory);
+        params.tags = originalCategory;
       }
 
-      const response = await fetch(`${this.baseUrl}/events/category/${encodeURIComponent(backendCategory)}?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>(
+        `/events/category/${encodeURIComponent(backendCategory)}`,
+        params,
+      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch events by category');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        const events = data.data.events.map(this.transformEventToFrontend);
-        
-        return {
-          events,
-          total: data.data.total,
-          hasMore: data.data.hasMore
-        };
-      } else {
-        throw new Error(data.message || 'Failed to fetch events by category');
-      }
+      const events = response.data.events.map(this.transformEventToFrontend);
+
+      return {
+        events,
+        total: response.data.total,
+        hasMore: response.data.hasMore,
+      };
     } catch (error) {
       devLog.error('❌ Error fetching events by category:', error);
       throw error;
@@ -347,46 +323,34 @@ class EventsApiService {
 
   /**
    * Search events
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async searchEvents(query: string, filters: EventFilters = {}, limit = 20, offset = 0): Promise<EventSearchResult> {
     try {
+      const params: Record<string, string | number | boolean | undefined | null> = { q: query, limit, offset };
 
-      const queryParams = new URLSearchParams();
-      queryParams.append('q', query);
-      
       // Add additional filters
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, value.toString());
+          params[key] = value as string | number | boolean;
         }
       });
-      
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
 
-      const response = await fetch(`${this.baseUrl}/events/search?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const response = await apiClient.get<any>('/events/search', params);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to search events');
       }
 
-      const data = await response.json();
-      
-      if (data.success) {
-        const events = data.data.events.map(this.transformEventToFrontend);
-        
-        return {
-          events,
-          total: data.data.total,
-          hasMore: data.data.hasMore,
-          suggestions: data.data.suggestions
-        };
-      } else {
-        throw new Error(data.message || 'Failed to search events');
-      }
+      const events = response.data.events.map(this.transformEventToFrontend);
+
+      return {
+        events,
+        total: response.data.total,
+        hasMore: response.data.hasMore,
+        suggestions: response.data.suggestions,
+      };
     } catch (error) {
       devLog.error('❌ Error searching events:', error);
       throw error;
@@ -395,30 +359,23 @@ class EventsApiService {
 
   /**
    * Get featured events for homepage
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getFeaturedEvents(limit = 10): Promise<EventItem[]> {
     try {
+      const response = await apiClient.get<any>('/events/featured', { limit });
 
-      const response = await fetch(`${this.baseUrl}/events/featured?limit=${limit}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch featured events');
       }
 
-      const data = await response.json();
+      // Handle both response shapes: data (array) or data.events (object)
+      const rawEvents = Array.isArray(response.data)
+        ? response.data
+        : (response.data?.events || response.data?.results || []);
 
-      if (data.success) {
-        // Handle both response shapes: data.data (array) or data.data.events (object)
-        const rawEvents = Array.isArray(data.data)
-          ? data.data
-          : (data.data?.events || data.data?.results || []);
-        return rawEvents.map(this.transformEventToFrontend);
-      } else {
-        throw new Error(data.message || 'Failed to fetch featured events');
-      }
+      return rawEvents.map(this.transformEventToFrontend);
     } catch (error) {
       devLog.error('❌ Error fetching featured events:', error);
       throw error;
@@ -427,90 +384,89 @@ class EventsApiService {
 
   /**
    * Book event slot
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient so the 401-refresh-logout
+   * interceptor fires on token expiry rather than silently returning a failed booking.
    */
   async bookEventSlot(eventId: string, bookingData: BookingRequest): Promise<BookingResult> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.post<any>(
+        `/events/${eventId}/book`,
+        bookingData as unknown as Record<string, unknown>,
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to book event');
       }
-
-      const url = `${this.baseUrl}/events/${eventId}/book`;
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: this.getHeaders({ 'Authorization': `Bearer ${token}` }),
-        body: JSON.stringify(bookingData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to book event');
-      }
-
-      const data = await response.json();
 
       return {
-        success: data.success,
-        booking: data.data?.booking || data.data, // Handle both old and new response format
-        payment: data.data?.payment || null, // Payment data from backend
-        message: data.message
+        success: true,
+        booking: response.data?.booking || response.data,
+        payment: response.data?.payment || null,
+        message: response.message ?? 'Booking successful',
       };
     } catch (error) {
       devLog.error('❌ [eventsApi] Error booking event:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to book event'
+        message: error instanceof Error ? error.message : 'Failed to book event',
       };
     }
   }
 
   /**
    * Get related events (similar events based on category, location, or date)
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient so the 401-refresh-logout
+   * interceptor fires on token expiry instead of silently returning an empty list.
    */
   async getRelatedEvents(eventId: string, limit = 6): Promise<EventItem[]> {
     try {
+      const response = await apiClient.get<any>(
+        `/events/${eventId}/related`,
+        { limit },
+      );
 
-      const response = await fetch(`${this.baseUrl}/events/${eventId}/related?limit=${limit}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        // If endpoint doesn't exist yet, fall back to same category
-        if (response.status === 404) {
+      if (!response.success) {
+        // If the endpoint is not yet deployed (backend 404), fall back to category.
+        const errStr = (response.error || '').toLowerCase();
+        if (errStr.includes('404') || errStr.includes('not found')) {
           devLog.warn('⚠️ [RELATED EVENTS] Related events endpoint not found, using category fallback');
-          // Get event first to find category
           const event = await this.getEventById(eventId);
           if (event) {
-            return this.getEventsByCategory(event.category, limit, 0).then(result => result.events.filter(e => e.id !== eventId));
+            return this.getEventsByCategory(event.category, limit, 0).then(result =>
+              result.events.filter(e => e.id !== eventId),
+            );
           }
           return [];
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(response.error || 'Failed to fetch related events');
       }
 
-      const data = await response.json();
-      
-      if (data.success && data.data) {
-        return Array.isArray(data.data) 
-          ? data.data.map(this.transformEventToFrontend)
-          : (data.data.events || []).map(this.transformEventToFrontend);
-      } else {
-        // Fallback to category-based events
-        const event = await this.getEventById(eventId);
-        if (event) {
-          return this.getEventsByCategory(event.category, limit, 0).then(result => result.events.filter(e => e.id !== eventId));
-        }
-        return [];
+      const data = response.data;
+      if (data) {
+        return Array.isArray(data)
+          ? data.map(this.transformEventToFrontend)
+          : (data.events || []).map(this.transformEventToFrontend);
       }
+
+      // Empty success — fall back to category
+      const event = await this.getEventById(eventId);
+      if (event) {
+        return this.getEventsByCategory(event.category, limit, 0).then(result =>
+          result.events.filter(e => e.id !== eventId),
+        );
+      }
+      return [];
     } catch (error) {
       devLog.error('❌ Error fetching related events:', error);
       // Fallback to category-based events
       try {
         const event = await this.getEventById(eventId);
         if (event) {
-          return this.getEventsByCategory(event.category, limit, 0).then(result => result.events.filter(e => e.id !== eventId));
+          return this.getEventsByCategory(event.category, limit, 0).then(result =>
+            result.events.filter(e => e.id !== eventId),
+          );
         }
       } catch (fallbackError) {
         devLog.error('❌ Error in related events fallback:', fallbackError);
@@ -521,40 +477,25 @@ class EventsApiService {
 
   /**
    * Get user's event bookings
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async getUserBookings(status?: string, limit = 20, offset = 0): Promise<{ bookings: UserBooking[], total: number, hasMore: boolean }> {
     try {
+      const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
+      if (status) params.status = status;
 
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.get<any>('/events/my-bookings', params);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch user bookings');
       }
 
-      const queryParams = new URLSearchParams();
-      if (status) queryParams.append('status', status);
-      queryParams.append('limit', limit.toString());
-      queryParams.append('offset', offset.toString());
-
-      const response = await fetch(`${this.baseUrl}/events/my-bookings?${queryParams}`, {
-        method: 'GET',
-        headers: this.getHeaders({ 'Authorization': `Bearer ${token}` }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.success) {
-        return {
-          bookings: data.data.bookings,
-          total: data.data.total,
-          hasMore: data.data.hasMore
-        };
-      } else {
-        throw new Error(data.message || 'Failed to fetch user bookings');
-      }
+      return {
+        bookings: response.data?.bookings ?? [],
+        total: response.data?.total ?? 0,
+        hasMore: response.data?.hasMore ?? false,
+      };
     } catch (error) {
       devLog.error('❌ Error fetching user bookings:', error);
       throw error;
@@ -563,145 +504,109 @@ class EventsApiService {
 
   /**
    * Confirm booking after payment
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async confirmBooking(bookingId: string, paymentIntentId?: string): Promise<{ success: boolean, message: string }> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.put<any>(
+        `/events/bookings/${bookingId}/confirm`,
+        { paymentIntentId } as Record<string, unknown>,
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to confirm booking');
       }
 
-      const response = await fetch(`${this.baseUrl}/events/bookings/${bookingId}/confirm`, {
-        method: 'PUT',
-        headers: this.getHeaders({ 'Authorization': `Bearer ${token}` }),
-        body: JSON.stringify({ paymentIntentId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to confirm booking');
-      }
-
-      const data = await response.json();
-      
       return {
-        success: data.success,
-        message: data.message || 'Booking confirmed successfully'
+        success: true,
+        message: response.message || 'Booking confirmed successfully',
       };
     } catch (error) {
       devLog.error('❌ Error confirming booking:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to confirm booking'
+        message: error instanceof Error ? error.message : 'Failed to confirm booking',
       };
     }
   }
 
   /**
    * Cancel event booking
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async cancelBooking(bookingId: string): Promise<{ success: boolean, message: string }> {
     try {
+      const response = await apiClient.delete<any>(`/events/bookings/${bookingId}`);
 
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to cancel booking');
       }
 
-      const response = await fetch(`${this.baseUrl}/events/bookings/${bookingId}`, {
-        method: 'DELETE',
-        headers: this.getHeaders({ 'Authorization': `Bearer ${token}` }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to cancel booking');
-      }
-
-      const data = await response.json();
-      
       return {
-        success: data.success,
-        message: data.message
+        success: true,
+        message: response.message || 'Booking cancelled successfully',
       };
     } catch (error) {
       devLog.error('❌ Error cancelling booking:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to cancel booking'
+        message: error instanceof Error ? error.message : 'Failed to cancel booking',
       };
     }
   }
 
   /**
    * Toggle event favorite
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async toggleEventFavorite(eventId: string): Promise<{ success: boolean, message: string, isFavorited?: boolean }> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const response = await apiClient.post<any>(`/events/${eventId}/favorite`);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to toggle favorite');
       }
-
-      const response = await fetch(`${this.baseUrl}/events/${eventId}/favorite`, {
-        method: 'POST',
-        headers: this.getHeaders({ 'Authorization': `Bearer ${token}` }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to toggle favorite');
-      }
-
-      const data = await response.json();
 
       return {
-        success: data.success,
-        message: data.message,
-        isFavorited: data.data?.isFavorited,
+        success: true,
+        message: response.message || '',
+        isFavorited: response.data?.isFavorited,
       };
     } catch (error) {
       devLog.error('Error toggling favorite:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to toggle favorite'
+        message: error instanceof Error ? error.message : 'Failed to toggle favorite',
       };
     }
   }
 
   /**
    * Share event (sends auth token for reward eligibility)
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient (401 interceptor).
    */
   async shareEvent(eventId: string): Promise<{ success: boolean, message: string, reward?: { coinsAwarded: number } }> {
     try {
-      const token = await this.getAuthToken();
-      const headers: Record<string, string> = this.getHeaders();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      const response = await apiClient.post<any>(`/events/${eventId}/share`);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to share event');
       }
-
-      const response = await fetch(`${this.baseUrl}/events/${eventId}/share`, {
-        method: 'POST',
-        headers,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to share event');
-      }
-
-      const data = await response.json();
 
       return {
-        success: data.success,
-        message: data.message,
-        reward: data.data?.reward || undefined,
+        success: true,
+        message: response.message || '',
+        reward: response.data?.reward || undefined,
       };
     } catch (error) {
       devLog.error('❌ Error sharing event:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to share event'
+        message: error instanceof Error ? error.message : 'Failed to share event',
       };
     }
   }
@@ -738,21 +643,6 @@ class EventsApiService {
   };
 
   /**
-   * Get authentication token from auth storage
-   */
-  private async getAuthToken(): Promise<string | null> {
-    try {
-      // Use authStorage utility which handles both web (localStorage) and native (AsyncStorage)
-      const { getAuthToken } = await import('@/utils/authStorage');
-      const token = await getAuthToken();
-      return token;
-    } catch (error) {
-      devLog.error('❌ [EVENTS API] Error getting auth token:', error);
-      return null;
-    }
-  }
-
-  /**
    * Force refresh backend availability check
    */
   async refreshBackendStatus(): Promise<boolean> {
@@ -781,54 +671,52 @@ class EventsApiService {
   /**
    * Helper for authenticated requests
    */
+  /**
+   * BUG-FIX: authenticatedFetch replaced by direct apiClient calls in every
+   * method below so the 401 interceptor fires on token expiry.
+   * This method is kept as a private shim that delegates to apiClient.post()
+   * to avoid re-writing call-sites that pass a body.
+   */
   private async authenticatedFetch(path: string, options: RequestInit = {}): Promise<any> {
-    const { getAuthToken } = await import('@/utils/authStorage');
-    const token = await getAuthToken();
-
-    const headers: any = {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    const method = (options.method || 'GET').toUpperCase() as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    let body: Record<string, unknown> | undefined;
+    if (options.body) {
+      try { body = JSON.parse(options.body as string); } catch { body = undefined; }
     }
 
-    const region = getRegionFn?.();
-    if (region) {
-      headers['X-Rez-Region'] = region;
+    let response;
+    if (method === 'GET') {
+      response = await apiClient.get<any>(path);
+    } else if (method === 'POST') {
+      response = await apiClient.post<any>(path, body);
+    } else if (method === 'PUT') {
+      response = await apiClient.put<any>(path, body);
+    } else if (method === 'DELETE') {
+      response = await apiClient.delete<any>(path, body);
+    } else {
+      response = await apiClient.get<any>(path);
     }
 
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      ...options,
-      headers,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Request failed: ${response.status}`);
+    if (!response.success) {
+      throw new Error(response.error || `Request failed: ${path}`);
     }
-
-    return response.json();
+    return response;
   }
 
   /**
    * Get dynamic event categories from backend
    * Backend returns: { success, data: { categories: [{slug, name, icon, color, eventCount}] } }
    * or: { success, data: [{slug, name, icon, color}] }
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient.
    */
   async getCategories(featured?: boolean): Promise<any[]> {
     try {
-      const params = featured ? '?featured=true' : '';
-      const response = await fetch(`${this.baseUrl}/events/categories${params}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
+      const params: Record<string, string | number | boolean | undefined | null> = {};
+      if (featured) params.featured = true;
+      const response = await apiClient.get<any>('/events/categories', params);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = response.success ? { success: true, data: response.data } : { success: false };
       if (data.success) {
         // Handle both response shapes
         const cats: any[] = Array.isArray(data.data)
@@ -853,23 +741,16 @@ class EventsApiService {
 
   /**
    * Get global reward config (for "Ways to earn" display)
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient.
    */
   async getGlobalRewardConfig(): Promise<{
     rewards: Array<{ action: string; coins: number; description: string }>;
     totalPotential: number;
   } | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/events/reward-config`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.success ? data.data : null;
+      const response = await apiClient.get<any>('/events/reward-config');
+      return response.success ? response.data : null;
     } catch (error) {
       devLog.error('[EventsApi] Error fetching reward config:', error);
       return null;
@@ -878,23 +759,16 @@ class EventsApiService {
 
   /**
    * Get reward info for a specific event
+   *
+   * BUG-FIX: Migrated from raw fetch() to apiClient.
    */
   async getEventRewardInfo(eventId: string): Promise<{
     rewards: Array<{ action: string; coins: number; description: string }>;
     totalPotential: number;
   } | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/events/${eventId}/rewards`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.success ? data.data : null;
+      const response = await apiClient.get<any>(`/events/${eventId}/rewards`);
+      return response.success ? response.data : null;
     } catch (error) {
       devLog.error('[EventsApi] Error fetching event reward info:', error);
       return null;
@@ -945,14 +819,14 @@ class EventsApiService {
 
   /**
    * Check if user has favorited an event
+   *
+   * BUG-FIX: Removed manual token guard; apiClient returns success:false when
+   * unauthenticated so the boolean false fallback handles that case cleanly.
    */
   async isFavorited(eventId: string): Promise<boolean> {
     try {
-      const token = await this.getAuthToken();
-      if (!token) return false;
-
-      const response = await this.authenticatedFetch(`/events/${eventId}/favorite-status`);
-      return response?.data?.isFavorited === true;
+      const response = await apiClient.get<any>(`/events/${eventId}/favorite-status`);
+      return response.success && response.data?.isFavorited === true;
     } catch {
       return false;
     }

@@ -152,5 +152,13 @@ export const validateCloudinaryConfig = (): {
   };
 };
 
+// Startup validation — warn loudly if placeholder values are still in place
+const _startupValidation = validateCloudinaryConfig();
+if (_startupValidation.errors.length > 0) {
+  _startupValidation.errors.forEach((err) => {
+    console.error(`[Cloudinary] ${err}`);
+  });
+}
+
 // Default export
 export default CLOUDINARY_CONFIG;

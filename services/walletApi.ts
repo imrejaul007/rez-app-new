@@ -8,7 +8,7 @@ import apiClient, { ApiResponse } from './apiClient';
  * Coin Balance from Backend (new schema)
  */
 export interface BackendCoinBalance {
-  type: 'rez' | 'promo' | 'branded';
+  type: 'rez' | 'promo' | 'branded' | 'prive';
   amount: number;
   isActive: boolean;
   color?: string;
@@ -65,10 +65,14 @@ export interface WalletBalanceResponse {
   breakdown: {
     // API returns breakdown.rezCoins as an object with amount
     rezCoins: { amount: number; color: string; expiryDate?: string };
-    // API returns cashback as breakdown.cashback (not cashbackBalance)
+    // Backend sends breakdown.cashbackBalance (walletBalanceController line ~273).
+    // breakdown.cashback is NOT sent — cashback lives under balance.cashback (legacy field).
+    // Both variants kept optional so useWallet.ts fallback chain can handle either shape.
     cashback?: number;
     cashbackBalance?: number;
-    // API returns pending as breakdown.pending (not pendingRewards)
+    // Backend sends breakdown.pendingRewards (walletBalanceController line ~275).
+    // breakdown.pending is NOT sent — pending lives under balance.pending (legacy field).
+    // Both variants kept optional so useWallet.ts fallback chain can handle either shape.
     pending?: number;
     pendingRewards?: number;
   };
@@ -609,7 +613,7 @@ class WalletService {
     recipientPhone?: string;
     recipientId?: string;
     amount: number;
-    coinType: 'rez' | 'promo' | 'branded';
+    coinType: 'rez' | 'promo' | 'branded' | 'prive';
     merchantId?: string;
     note?: string;
     idempotencyKey?: string;
@@ -919,6 +923,7 @@ class WalletService {
    * getConversionRate
    * GET /wallet/conversion-rate
    * Returns the live coin-to-rupee rate from the backend.
+   * Backend endpoint created - see rezbackend walletRoutes.ts
    */
   async getConversionRate(): Promise<{ coinToRupeeRate: number } | null> {
     try {

@@ -19,7 +19,7 @@ export interface Notification {
     url?: string;
     action?: string;
   }>;
-  read: boolean;
+  isRead: boolean;
   readAt?: string;
   priority: 'low' | 'normal' | 'high' | 'urgent';
   scheduled?: boolean;
@@ -197,9 +197,7 @@ class NotificationsService {
     message: string;
     deleted: number;
   }>> {
-    return apiClient.delete<any>('/notifications/bulk-delete', {
-      data: { ids: notificationIds },
-    });
+    return apiClient.delete<any>('/notifications/bulk-delete', { ids: notificationIds });
   }
 
   // Clear all notifications
@@ -216,7 +214,16 @@ class NotificationsService {
   async updateNotificationPreferences(
     preferences: Partial<NotificationPreferences>
   ): Promise<ApiResponse<NotificationPreferences>> {
-    return apiClient.patch<any>('/notifications/preferences', preferences);
+    const { channels } = preferences;
+    const body: Record<string, any> = {};
+    if (channels) {
+      for (const ch of ['push', 'email', 'sms', 'inApp'] as const) {
+        if (typeof channels[ch] === 'boolean') {
+          body[ch] = { enabled: channels[ch] };
+        }
+      }
+    }
+    return apiClient.patch<any>('/notifications/preferences', body);
   }
 
   // Subscribe to push notifications
@@ -233,20 +240,17 @@ class NotificationsService {
       version?: string;
     };
   }): Promise<ApiResponse<PushSubscription>> {
-    return apiClient.post<any>('/notifications/push/subscribe', subscription);
+    return apiClient.post<any>('/notifications/register-token', subscription);
   }
 
   // Unsubscribe from push notifications
   async unsubscribeFromPush(subscriptionId?: string): Promise<ApiResponse<{ message: string }>> {
-    if (subscriptionId) {
-      return apiClient.delete<any>(`/notifications/push/subscribe/${subscriptionId}`);
-    }
-    return apiClient.delete<any>('/notifications/push/subscribe');
+    return apiClient.post<any>('/notifications/unregister-token', subscriptionId ? { subscriptionId } : {});
   }
 
   // Get push subscriptions
   async getPushSubscriptions(): Promise<ApiResponse<PushSubscription[]>> {
-    return apiClient.get<any>('/notifications/push/subscriptions');
+    throw new Error('Not implemented: get push subscriptions — backend endpoint pending');
   }
 
   // Test push notification
@@ -254,9 +258,7 @@ class NotificationsService {
     subscriptionId: string,
     message: string
   ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post<any>(`/notifications/push/test/${subscriptionId}`, {
-      message
-    });
+    throw new Error('Not implemented: test push notification — backend endpoint pending');
   }
 
   // Send notification (admin/system use)
@@ -313,7 +315,7 @@ class NotificationsService {
 
   // Get notification templates (admin use)
   async getNotificationTemplates(): Promise<ApiResponse<NotificationTemplate[]>> {
-    return apiClient.get<any>('/notifications/templates');
+    throw new Error('Not implemented: get notification templates — backend endpoint pending');
   }
 
   // Create notification template (admin use)
@@ -326,7 +328,7 @@ class NotificationsService {
     variables?: string[];
     channels: ('push' | 'email' | 'sms' | 'inApp')[];
   }): Promise<ApiResponse<NotificationTemplate>> {
-    return apiClient.post<any>('/notifications/templates', template);
+    throw new Error('Not implemented: create notification template — backend endpoint pending');
   }
 
   // Update notification template (admin use)
@@ -341,7 +343,7 @@ class NotificationsService {
       active: boolean;
     }>
   ): Promise<ApiResponse<NotificationTemplate>> {
-    return apiClient.patch<any>(`/notifications/templates/${templateId}`, updates);
+    throw new Error('Not implemented: update notification template — backend endpoint pending');
   }
 
   // Send notification using template
@@ -359,7 +361,7 @@ class NotificationsService {
     sent: number;
     failed: number;
   }>> {
-    return apiClient.post<any>(`/notifications/templates/${templateId}/send`, data as any);
+    throw new Error('Not implemented: send from notification template — backend endpoint pending');
   }
 
   // Get unread notifications count

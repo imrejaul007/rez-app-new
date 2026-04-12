@@ -304,7 +304,7 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
                   colors={['rgba(0,0,0,0.45)', 'rgba(0,0,0,0.3)']}
                   style={styles.coinGradient}
                 >
-                  <CachedImage source={BRAND.COIN_IMAGE} style={styles.nuqtaCoinIcon} contentFit="contain" transition={200} />
+                  <CachedImage source={BRAND.COIN_IMAGE} style={styles.rezCoinIcon} contentFit="contain" transition={200} />
                   <Text style={styles.coinText}>{userPoints}</Text>
                 </LinearGradient>
               </Pressable>
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.2)',
     gap: 4,
   },
-  nuqtaCoinIcon: {
+  rezCoinIcon: {
     width: 20,
     height: 20,
   },

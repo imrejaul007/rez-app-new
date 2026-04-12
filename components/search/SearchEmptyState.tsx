@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 
 interface SearchEmptyStateProps {
   query: string;
@@ -44,7 +44,7 @@ function SearchEmptyState({
         accessibilityRole="alert"
       >
         <View style={styles.emptyIconContainer}>
-          <Ionicons name="search-outline" size={64} color={NUQTA.nileBlue} accessibilityLabel="Search icon" />
+          <Ionicons name="search-outline" size={64} color={REZ_THEME.nileBlue} accessibilityLabel="Search icon" />
         </View>
         <Text style={styles.emptyTitle}>No results found</Text>
         <Text style={styles.emptyMessage}>
@@ -65,7 +65,7 @@ function SearchEmptyState({
                   style={styles.didYouMeanChip}
                   onPress={() => onDidYouMeanPress(suggestion)}
                 >
-                  <Ionicons name="bulb-outline" size={14} color={NUQTA.lightMustard} />
+                  <Ionicons name="bulb-outline" size={14} color={REZ_THEME.lightMustard} />
                   <Text style={styles.didYouMeanChipText}>{suggestion}</Text>
                 </Pressable>
               ))}
@@ -83,7 +83,7 @@ function SearchEmptyState({
                   style={styles.emptyTrendingChip}
                   onPress={() => onTrendingPress(t.query)}
                 >
-                  <Ionicons name="trending-up" size={14} color={NUQTA.nileBlue} />
+                  <Ionicons name="trending-up" size={14} color={REZ_THEME.nileBlue} />
                   <Text style={styles.emptyTrendingChipText}>{t.query}</Text>
                 </Pressable>
               ))}
@@ -99,7 +99,7 @@ function SearchEmptyState({
           accessibilityHint="Clears search and shows all available categories"
         >
           <LinearGradient
-            colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
+            colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]}
             style={styles.emptyActionButtonGradient}
           >
             <Text style={styles.emptyActionText}>Browse Categories</Text>
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 16,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 30,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.xl,
@@ -187,20 +187,20 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: 10,
     textAlign: 'center',
   },
   emptyMessage: {
     ...Typography.body,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.sm,
   },
   emptySuggestion: {
     ...Typography.body,
-    color: NUQTA.text.muted,
+    color: REZ_THEME.text.muted,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   emptyTrendingTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
@@ -227,13 +227,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: NUQTA.linen,
+    backgroundColor: REZ_THEME.linen,
     gap: 6,
   },
   emptyTrendingChipText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   emptyActionButton: {
     borderRadius: BorderRadius.lg,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   didYouMeanTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   didYouMeanChipText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
   },
   popularProductsSection: {
     marginTop: Spacing.lg,
@@ -289,14 +289,14 @@ const styles = StyleSheet.create({
   sectionAccentBar: {
     width: 4,
     height: 24,
-    backgroundColor: NUQTA.lightMustard,
+    backgroundColor: REZ_THEME.lightMustard,
     borderRadius: 2,
     marginRight: Spacing.md,
   },
   popularProductsTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginLeft: Spacing.sm,
   },
   popularProductsList: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: NUQTA.nileBlue, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8 },
+      ios: { shadowColor: REZ_THEME.nileBlue, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8 },
       android: { elevation: 3 },
       web: { boxShadow: '0 2px 8px rgba(26, 58, 82, 0.06)' } as any,
     }),
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   popularProductName: {
     fontSize: 13,
     fontWeight: '600',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: 4,
     minHeight: 34,
   },

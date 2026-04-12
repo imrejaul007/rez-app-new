@@ -1,10 +1,10 @@
 {
-  "id": "session-1775378253247",
-  "startedAt": "2026-04-05T08:37:33.247Z",
+  "id": "session-1775985552090",
+  "startedAt": "2026-04-12T09:19:12.090Z",
   "cwd": "/Users/rejaulkarim/Documents/ReZ Full App/rezapp/nuqta-master",
   "context": {},
   "metrics": {
-    "edits": 10,
+    "edits": 2,
     "commands": 0,
     "tasks": 0,
     "errors": 0

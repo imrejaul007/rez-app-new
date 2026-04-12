@@ -159,7 +159,7 @@ interface NewStore {
 }
 
 
-const NewOnNuqtaSection: React.FC = () => {
+const NewOnRezSection: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [featuredStore, setFeaturedStore] = useState<NewStore | null>(null);
@@ -1151,4 +1151,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(NewOnNuqtaSection);
+export default React.memo(NewOnRezSection);

@@ -30,7 +30,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { catchAndWarn } from '@/utils/catchAndReport';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-// Nuqta Brand Colors
+// REZ Brand Colors
 const COLORS = {
   primary: Colors.gold,
   primaryDark: '#e6b84e',

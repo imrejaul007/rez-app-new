@@ -113,9 +113,9 @@ const GroceryComparePage: React.FC = () => {
             name: product.name,
             image: productImage || undefined,
             stores: storeComparisons.sort((a, b) => a.price - b.price),
-            lowestPrice: Math.min(...prices),
-            highestPrice: Math.max(...prices),
-            averagePrice: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length),
+            lowestPrice: prices.length > 0 ? Math.min(...prices) : 0,
+            highestPrice: prices.length > 0 ? Math.max(...prices) : 0,
+            averagePrice: prices.length > 0 ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0,
           };
         });
 
@@ -355,9 +355,9 @@ function getFallbackCompareItems(): CompareItem[] {
       name: product.name,
       image: product.image,
       stores: storeComparisons,
-      lowestPrice: Math.min(...prices),
-      highestPrice: Math.max(...prices),
-      averagePrice: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length),
+      lowestPrice: prices.length > 0 ? Math.min(...prices) : 0,
+      highestPrice: prices.length > 0 ? Math.max(...prices) : 0,
+      averagePrice: prices.length > 0 ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0,
     };
   });
 }

@@ -129,10 +129,10 @@ const StoreCard: React.FC<StoreCardProps & {
 
           {/* Badges Row */}
           <View style={styles.badgesRow}>
-            {store.hasNuqtaPay && (
-              <View style={styles.nuqtaPayBadge}>
+            {store.hasRezPay && (
+              <View style={styles.rezPayBadge}>
                 <CachedImage source={BRAND.COIN_IMAGE} width={13} height={13} showShimmer={false} />
-                <ThemedText style={styles.nuqtaPayText}>{BRAND.PAY_NAME}</ThemedText>
+                <ThemedText style={styles.rezPayText}>{BRAND.PAY_NAME}</ThemedText>
               </View>
             )}
             {store.distance != null && (
@@ -323,7 +323,7 @@ const createStyles = (screenWidth: number) => {
       marginBottom: 4,
       marginTop: 2,
     },
-    nuqtaPayBadge: {
+    rezPayBadge: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.tint.orange,
@@ -334,7 +334,7 @@ const createStyles = (screenWidth: number) => {
       borderWidth: 1,
       borderColor: '#FED7AA',
     },
-    nuqtaPayText: {
+    rezPayText: {
       fontSize: 10.5,
       fontWeight: '700',
       color: '#C2410C',

@@ -4,7 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Composes all eager and deferred context providers in the correct nesting order.
  *
  * Removed providers (now Zustand stores):
- * - NuqtaThemeProvider → themeStore
+ * - RezThemeProvider → themeStore
  * - CrossPlatformAlertProvider → alertStore
  * - ToastProvider → toastStore
  * - DeferredOfflineQueue → offlineQueueStore
@@ -49,6 +49,9 @@ import {
   DeferredGamification,
   DeferredCart,
 } from './DeferredProviders';
+import { WishlistProvider } from '@/contexts/WishlistContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
+import { ProfileProvider } from '@/contexts/ProfileContext';
 import { useIsAuthenticated } from '@/stores/selectors';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
@@ -150,7 +153,13 @@ function AppProviders({
               <LocationRegionSync />
               <DeferredSocket>
                 <DeferredCart>
-                  <ThemedNavigation />
+                  <WishlistProvider>
+                    <NotificationProvider>
+                      <ProfileProvider>
+                        <ThemedNavigation />
+                      </ProfileProvider>
+                    </NotificationProvider>
+                  </WishlistProvider>
                 </DeferredCart>
               </DeferredSocket>
             </LocationProvider>

@@ -239,7 +239,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
   const [state, dispatch] = useReducer(gamificationReducer, initialState);
   const isAuthenticated = useIsAuthenticated();
   const isOnboarded = useIsOnboarded();
-  const { availableBalance, refreshWallet: refreshSharedWallet } = useWalletContext();
+  const { availableBalance, totalBalance, cashbackBalance, pendingRewards, refreshWallet: refreshSharedWallet } = useWalletContext();
 
   // CRITICAL: Queue for coin operations to prevent race conditions
   const coinOperationQueue = useRef<Array<() => Promise<void>>>([]);
@@ -333,21 +333,26 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       }
 
       // Update gamification coin balance from shared context
-      // Note: availableBalance comes from the WalletContext closure
+      // Note: availableBalance/totalBalance/cashbackBalance/pendingRewards come from the WalletContext closure.
+      // WalletData does not expose earned/spent/lifetime totals — those are not surfaced by the
+      // wallet API endpoint. Map what is available; leave lifetime fields as 0 (no source data).
       const coinBalance: CoinBalance = {
         total: availableBalance,
-        earned: 0,
+        earned: cashbackBalance,     // cashback accumulated = earned rewards component
+        // Don't infer spent from balance arithmetic — it's inaccurate when pending rewards exist
+        // (totalBalance - availableBalance includes pending rewards, not just spent coins).
+        // spent = 0 until backend exposes a lifetimeSpent field.
         spent: 0,
-        pending: 0,
-        lifetimeEarned: 0,
-        lifetimeSpent: 0,
+        pending: pendingRewards,
+        lifetimeEarned: 0,           // not available from wallet endpoint
+        lifetimeSpent: 0,            // not available from wallet endpoint
       };
 
       dispatch({ type: 'COINS_LOADED', payload: coinBalance });
     } catch (error: any) {
       // silently handle
     }
-  }, [refreshSharedWallet, availableBalance]);
+  }, [refreshSharedWallet, availableBalance, totalBalance, cashbackBalance, pendingRewards]);
 
   // Load gamification data
   const loadGamificationData = useCallback(async (forceRefresh = false) => {
@@ -383,13 +388,17 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
         }
       }
 
-      // Fetch fresh data — all API calls in parallel
+      // Fetch fresh data — all API calls in parallel.
+      // Use Promise.allSettled so a single API failure doesn't suppress the others,
+      // and errors are dispatched rather than silently swallowed.
       {
-        const fetches: Promise<void>[] = [];
+        type FetchDescriptor = { key: string; promise: Promise<void> };
+        const fetches: FetchDescriptor[] = [];
 
         if (state.featureFlags.ENABLE_ACHIEVEMENTS) {
-          fetches.push(
-            achievementApi.getAchievementProgress().then(progressResponse => {
+          fetches.push({
+            key: 'achievements',
+            promise: achievementApi.getAchievementProgress().then(progressResponse => {
               if (progressResponse.data) {
                 dispatch({
                   type: 'ACHIEVEMENTS_LOADED',
@@ -399,17 +408,18 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
                   },
                 });
               }
-            }).catch(() => {})
-          );
+            }),
+          });
         }
 
         if (state.featureFlags.ENABLE_COINS) {
-          fetches.push(syncCoinsFromWallet().catch(() => {}));
+          fetches.push({ key: 'coins', promise: syncCoinsFromWallet() });
         }
 
         if (state.featureFlags.ENABLE_CHALLENGES) {
-          fetches.push(
-            challengesApi.getMyProgress().then(challengesResponse => {
+          fetches.push({
+            key: 'challenges',
+            promise: challengesApi.getMyProgress().then(challengesResponse => {
               if (challengesResponse.success && challengesResponse.data) {
                 const mappedChallenges: Challenge[] = challengesResponse.data.map((cp) => ({
                   id: cp.challenge._id,
@@ -424,11 +434,24 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
                 }));
                 dispatch({ type: 'CHALLENGES_LOADED', payload: mappedChallenges });
               }
-            }).catch(() => {})
-          );
+            }),
+          });
         }
 
-        await Promise.all(fetches);
+        const results = await Promise.allSettled(fetches.map(f => f.promise));
+        const failedKeys: string[] = [];
+        results.forEach((result, i) => {
+          if (result.status === 'rejected') {
+            failedKeys.push(fetches[i].key);
+          }
+        });
+        if (failedKeys.length > 0) {
+          dispatch({
+            type: 'GAMIFICATION_ERROR',
+            payload: `Failed to load: ${failedKeys.join(', ')}. Some data may be unavailable.`,
+          });
+          // Do not return early — partial data already dispatched above is usable.
+        }
       }
 
       dispatch({ type: 'GAMIFICATION_LOADING', payload: false });

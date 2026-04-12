@@ -180,6 +180,7 @@ interface WalletDataContextType {
   savingsInsights: { totalSaved: number; thisMonth: number; avgPerVisit: number };
   refreshWallet: () => Promise<void>;
   rawBackendData: RawWalletBackendData | null;
+  error: string | null;
 }
 
 // Loading context — changes on loading transitions only
@@ -200,6 +201,7 @@ const WALLET_DATA_DEFAULTS: WalletDataContextType = {
   savingsInsights: { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
   refreshWallet: async () => {},
   rawBackendData: null,
+  error: null,
 };
 
 const WALLET_LOADING_DEFAULTS: WalletLoadingContextType = {
@@ -230,6 +232,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [rawBackendData, setRawBackendData] = useState<RawWalletBackendData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [walletError, setWalletError] = useState<string | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -267,6 +270,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           const transformed = transformWalletResponse(rawData, userId);
           setWalletData(transformed);
           setRawBackendData(rawData);
+          setWalletError(null);
           _walletLastFetch = Date.now();
         }
       } catch (error: any) {
@@ -277,6 +281,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           { context: 'WalletContext.fetchWallet', userId: authUser?._id || 'unknown' },
           'warning'
         );
+        setWalletError('Failed to load wallet. Please try again.');
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -309,6 +314,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       // Clear on logout
       setWalletData(null);
       setRawBackendData(null);
+      setWalletError(null);
       _walletLastFetch = 0;
       if (abortRef.current) abortRef.current.abort();
     }
@@ -375,8 +381,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     return {
       walletData, rezBalance, totalBalance, availableBalance,
       brandedCoins, savingsInsights, refreshWallet, rawBackendData,
+      error: walletError,
     };
-  }, [walletData, refreshWallet, rawBackendData]);
+  }, [walletData, refreshWallet, rawBackendData, walletError]);
 
   const loadingValue = useMemo<WalletLoadingContextType>(() => ({
     isLoading, isRefreshing,
@@ -426,6 +433,7 @@ export function useWalletContext(): WalletContextType {
   const storeRawBackendData = useWalletStore((s) => s.rawBackendData);
   const storeIsLoading = useWalletStore((s) => s.isLoading);
   const storeIsRefreshing = useWalletStore((s) => s.isRefreshing);
+  const storeError = useWalletStore((s) => s.error);
 
   if (dataCtx && loadingCtx) {
     return { ...dataCtx, ...loadingCtx };
@@ -443,6 +451,7 @@ export function useWalletContext(): WalletContextType {
     rawBackendData: storeRawBackendData,
     isLoading: storeIsLoading,
     isRefreshing: storeIsRefreshing,
+    error: storeError,
   };
 }
 

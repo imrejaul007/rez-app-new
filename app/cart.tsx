@@ -262,7 +262,7 @@ function CartPage() {
   const loadLockedItems = useCallback(async () => {
     try {
       const response = await cartApi.getLockedItems();
-      if (response.success && response.data) {
+      if (response.success && response.data?.lockedItems) {
         const formattedLockedItems = response.data.lockedItems.map((item: any) => {
           const productId = item.product?._id || item.product;
           const lockedAt = new Date(item.lockedAt);

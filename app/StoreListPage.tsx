@@ -62,7 +62,7 @@ const StoreListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState((params.query as string) || (params.search as string) || '');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [searchFilters, setSearchFilters] = useState<SearchFilters>(defaultSearchFilters);
-  const [nuqtaPayFilter, setNuqtaPayFilter] = useState(false);
+  const [rezPayFilter, setRezPayFilter] = useState(false);
   const [showSortModal, setShowSortModal] = useState(false);
   const [sortBy, setSortByLocal] = useState<'rating' | 'distance' | 'name' | 'newest'>(validSortBy!);
   const [availableFilters, setAvailableFilters] = useState<AvailableFilters>({
@@ -232,7 +232,7 @@ const StoreListPage: React.FC = () => {
         logo: store.logo || null, // Logo for overlay
         description: store.description || '',
         deliveryCategories: store.deliveryCategories || {},
-        hasNuqtaPay:
+        hasRezPay:
           (store as any).paymentSettings?.acceptRezCoins || store.operationalInfo?.acceptsWalletPayment || false,
         cashbackPercent: (store as any).rewardRules?.baseCashbackPercent || 0,
         products: filteredProducts.map((product: any) => {
@@ -306,12 +306,12 @@ const StoreListPage: React.FC = () => {
     suggestions: [],
   };
 
-  // Filter stores by nuqtaPay if filter is active
+  // Filter stores by rezPay if filter is active
   const storeListData = useMemo(() => {
     const allStores = searchResults?.stores || [];
-    if (!nuqtaPayFilter) return allStores;
-    return allStores.filter((store) => store.hasNuqtaPay);
-  }, [searchResults?.stores, nuqtaPayFilter]);
+    if (!rezPayFilter) return allStores;
+    return allStores.filter((store) => store.hasRezPay);
+  }, [searchResults?.stores, rezPayFilter]);
 
   const error = errorMessage
     ? {
@@ -470,7 +470,7 @@ const StoreListPage: React.FC = () => {
               <Text style={styles.resultsSummaryText}>
                 {storeListData.length} store{storeListData.length !== 1 ? 's' : ''} found
               </Text>
-              {nuqtaPayFilter && (
+              {rezPayFilter && (
                 <View style={styles.activeFilterIndicator}>
                   <View style={styles.activeFilterDot} />
                   <Text style={styles.activeFilterText}>{BRAND.PAY_NAME}</Text>
@@ -577,11 +577,11 @@ const StoreListPage: React.FC = () => {
           >
             {/* Rez Pay filter */}
             <Pressable
-              style={[styles.quickFilterChip, nuqtaPayFilter ? styles.quickFilterChipActive : null]}
-              onPress={() => setNuqtaPayFilter((prev) => !prev)}
+              style={[styles.quickFilterChip, rezPayFilter ? styles.quickFilterChipActive : null]}
+              onPress={() => setRezPayFilter((prev) => !prev)}
             >
               <CachedImage source={BRAND.COIN_IMAGE} style={{ width: 15, height: 15, marginRight: 5 }} />
-              <Text style={[styles.quickFilterChipText, nuqtaPayFilter ? styles.quickFilterChipTextActive : null]}>
+              <Text style={[styles.quickFilterChipText, rezPayFilter ? styles.quickFilterChipTextActive : null]}>
                 {BRAND.PAY_NAME}
               </Text>
             </Pressable>

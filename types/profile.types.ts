@@ -176,9 +176,9 @@ export interface MenuItemCardProps {
   style?: any;
 }
 
-// Constants - Nuqta Brand Colors
+// Constants - REZ Brand Colors
 export const PROFILE_COLORS = {
-  primary: '#ffcd57', // Nuqta Mustard
+  primary: '#ffcd57', // REZ Mustard
   primaryLight: '#ffdc7a',
   primaryDark: '#1a3a52', // Nile Blue
   secondary: '#ffcd57', // Light Mustard
@@ -198,7 +198,7 @@ export const PROFILE_COLORS = {
 } as const;
 
 export const PROFILE_GRADIENTS = {
-  primary: ['#1a3a52', '#2d5a7b'], // Nuqta Blue gradient
+  primary: ['#1a3a52', '#2d5a7b'], // REZ Blue gradient
   secondary: ['#ffcd57', '#ffd7b5'], // Mustard gradient
   card: ['transparent', 'rgba(0, 0, 0, 0.1)'],
   referral: ['#ffcd57', '#ffd7b5'], // Mustard for referral

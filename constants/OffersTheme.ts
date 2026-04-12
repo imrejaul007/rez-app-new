@@ -1,7 +1,7 @@
 /**
- * Offers Theme System - Nuqta
+ * Offers Theme System - REZ
  *
- * Light theme for "Near U" page (/offers) - Uses Nuqta colors
+ * Light theme for "Near U" page (/offers) - Uses REZ colors
  * Dark theme for "Prive" page (/prive-offers) - Keeps premium gold theme
  */
 
@@ -88,7 +88,7 @@ export const LightTheme: OffersTheme = {
       success: '#2ECC71',
       warning: '#FF9F1C',
       error: '#E74C3C',
-      cashback: '#ffcd57',     // Mustard (matches Nuqta)
+      cashback: '#ffcd57',     // Mustard (matches REZ)
     },
     gradient: {
       primary: ['#ffcd57', '#E6B84E'],       // Mustard gradient
@@ -122,7 +122,7 @@ export const DarkTheme: OffersTheme = {
       primary: '#FFFFFF',
       secondary: '#A1A1A6',
       tertiary: '#636366',
-      accent: '#ffcd57',       // Mustard (Nuqta)
+      accent: '#ffcd57',       // Mustard (REZ)
       inverse: '#000000',
     },
     border: {
@@ -131,8 +131,8 @@ export const DarkTheme: OffersTheme = {
       dark: '#48484A',
     },
     accent: {
-      primary: '#ffcd57',      // Mustard (Nuqta)
-      secondary: '#1a3a52',    // Nile Blue (Nuqta)
+      primary: '#ffcd57',      // Mustard (REZ)
+      secondary: '#1a3a52',    // Nile Blue (REZ)
       success: '#34D399',
       warning: '#FBBF24',
       error: '#F87171',

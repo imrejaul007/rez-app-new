@@ -1,6 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
- * Coin Detail Page - Shows detailed info for each coin type (nuqta/promo/branded)
+ * Coin Detail Page - Shows detailed info for each coin type (rez/promo/branded)
  * Route: /wallet/coin-detail/[coinType]
  */
 import React, { useCallback, useState, useEffect } from 'react';
@@ -30,14 +30,10 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 const DEFAULT_COIN_RULES: Record<string, { usageRules: string[]; earningMethods: string[] }> = {
   rez: {
-    usageRules: [`Use anywhere on ${BRAND.APP_NAME}`, 'No usage cap per transaction', 'Never expires'],
-    earningMethods: ['Purchases & Orders', 'Referrals', 'Daily Check-in', 'Games & Challenges', 'Reviews & Social'],
-  },
-  nuqta: {
     usageRules: [`Use anywhere on ${BRAND.APP_NAME}`, 'No usage cap per transaction', 'Never expires'],
     earningMethods: ['Purchases & Orders', 'Referrals', 'Daily Check-in', 'Games & Challenges', 'Reviews & Social'],
   },
@@ -59,7 +55,7 @@ function CoinDetailPage() {
   const walletRefreshing = useWalletRefreshing();
   const refreshWallet = useRefreshWallet();
 
-  const validTypes = ['rez', 'nuqta', 'promo', 'branded'];
+  const validTypes = ['rez', 'promo', 'branded'];
   const type = (validTypes.includes(coinType || '') ? coinType : 'rez') as CoinType;
   const coinInfo = COIN_TYPES[type] || COIN_TYPES.rez;
 
@@ -81,10 +77,10 @@ function CoinDetailPage() {
   }, []);
 
   const ruleSource = dynamicRules || DEFAULT_COIN_RULES;
-  const ruleKey = type === 'nuqta' ? 'rez' : type;
+  const ruleKey = type;
   const rules = ruleSource[ruleKey] || DEFAULT_COIN_RULES.rez;
 
-  const coin = walletData?.coins.find((c) => c.type === type || (type === 'nuqta' && c.type === 'rez'));
+  const coin = walletData?.coins.find((c) => c.type === type);
   const brandedTotal = type === 'branded' ? walletData?.brandedCoinsTotal || 0 : 0;
   const amount = type === 'branded' ? brandedTotal : coin?.amount || 0;
 
@@ -150,8 +146,8 @@ function CoinDetailPage() {
 
         <View style={styles.heroBalance}>
           <View style={[styles.heroIcon, { backgroundColor: coinInfo.backgroundColor }]}>
-            {type === 'rez' || type === 'nuqta' ? (
-              <CachedImage source={nuqtaCoinImage} style={styles.heroCoinImage} contentFit="contain" />
+            {type === 'rez' ? (
+              <CachedImage source={rezCoinImage} style={styles.heroCoinImage} contentFit="contain" />
             ) : (
               <Ionicons name={type === 'branded' ? 'storefront' : 'flash'} size={28} color={coinInfo.color} />
             )}

@@ -18,7 +18,7 @@ import { SearchSection, SearchCategory } from '@/types/search.types';
 import RecentSearches from './RecentSearches';
 import TrendingSearchesSection from './TrendingSearchesSection';
 import PopularStoresSection from './PopularStoresSection';
-import { NUQTA } from './searchTheme';
+import { REZ_THEME } from './searchTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -59,14 +59,14 @@ function CategoriesView({
           onPress={() => router.push('/search/ai-search')}
         >
           <LinearGradient
-            colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
+            colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]}
             style={styles.quickSearchGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
             <View style={styles.quickSearchAccent} />
             <View style={styles.quickSearchIconContainer}>
-              <Ionicons name="sparkles" size={26} color={NUQTA.lightMustard} />
+              <Ionicons name="sparkles" size={26} color={REZ_THEME.lightMustard} />
             </View>
             <Text style={styles.quickSearchText}>AI Search</Text>
             <Text style={styles.quickSearchSubtext}>Natural language</Text>
@@ -79,16 +79,16 @@ function CategoriesView({
           onPress={() => router.push('/search/hotspots')}
         >
           <LinearGradient
-            colors={[NUQTA.lightMustard, NUQTA.mustardDark]}
+            colors={[REZ_THEME.lightMustard, REZ_THEME.mustardDark]}
             style={styles.quickSearchGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
             <View style={[styles.quickSearchAccent, { backgroundColor: 'rgba(26, 58, 82, 0.1)' }]} />
             <View style={[styles.quickSearchIconContainer, { backgroundColor: 'rgba(26, 58, 82, 0.15)' }]}>
-              <Ionicons name="location" size={26} color={NUQTA.nileBlue} />
+              <Ionicons name="location" size={26} color={REZ_THEME.nileBlue} />
             </View>
-            <Text style={[styles.quickSearchText, { color: NUQTA.nileBlue }]}>Hotspots</Text>
+            <Text style={[styles.quickSearchText, { color: REZ_THEME.nileBlue }]}>Hotspots</Text>
             <Text style={[styles.quickSearchSubtext, { color: 'rgba(26, 58, 82, 0.7)' }]}>Nearby deals</Text>
           </LinearGradient>
         </Pressable>
@@ -139,7 +139,7 @@ function CategoriesView({
               accessibilityHint={`Opens full list of ${section.title} categories`}
             >
               <Text style={styles.viewAllText}>View all</Text>
-              <Ionicons name="arrow-forward" size={16} color={NUQTA.nileBlue} style={{ marginLeft: Spacing.xs }} />
+              <Ionicons name="arrow-forward" size={16} color={REZ_THEME.nileBlue} style={{ marginLeft: Spacing.xs }} />
             </Pressable>
           </View>
 
@@ -165,11 +165,11 @@ function CategoriesView({
                     />
                   ) : (
                     <LinearGradient
-                      colors={[NUQTA.lavenderMist, NUQTA.lavenderDark]}
+                      colors={[REZ_THEME.lavenderMist, REZ_THEME.lavenderDark]}
                       style={styles.categoryImagePlaceholder}
                       accessibilityLabel={`${category.name} category placeholder`}
                     >
-                      <Ionicons name="image-outline" size={32} color={NUQTA.nileBlue} />
+                      <Ionicons name="image-outline" size={32} color={REZ_THEME.nileBlue} />
                     </LinearGradient>
                   )}
                   {/* Premium overlay gradient */}
@@ -184,7 +184,7 @@ function CategoriesView({
                   <Text style={styles.categoryName}>{category.name}</Text>
                   <View style={styles.cashbackRow}>
                     <LinearGradient
-                      colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
+                      colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]}
                       style={styles.cashbackBadge}
                     >
                       <Text style={styles.cashbackBadgeText}>Upto {category.cashbackPercentage}%</Text>
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.15,
         shadowRadius: 16,
@@ -291,19 +291,19 @@ const styles = StyleSheet.create({
   sectionAccentBar: {
     width: 4,
     height: 24,
-    backgroundColor: NUQTA.lightMustard,
+    backgroundColor: REZ_THEME.lightMustard,
     borderRadius: 2,
     marginRight: Spacing.md,
   },
   sectionTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     letterSpacing: -0.3,
   },
   sectionSubtitle: {
     ...Typography.body,
-    color: NUQTA.text.secondary,
+    color: REZ_THEME.text.secondary,
     fontWeight: '500',
     marginLeft: Spacing.base,
   },
@@ -312,14 +312,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: Spacing.base,
-    backgroundColor: NUQTA.lavenderMist,
+    backgroundColor: REZ_THEME.lavenderMist,
     borderRadius: BorderRadius['2xl'],
     borderWidth: 1,
-    borderColor: NUQTA.lavenderDark,
+    borderColor: REZ_THEME.lavenderDark,
   },
   viewAllText: {
     ...Typography.body,
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     fontWeight: '700',
     letterSpacing: 0.2,
   },
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(26, 58, 82, 0.06)',
     ...Platform.select({
       ios: {
-        shadowColor: NUQTA.nileBlue,
+        shadowColor: REZ_THEME.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 16,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   categoryName: {
     ...Typography.body,
     fontWeight: '700',
-    color: NUQTA.nileBlue,
+    color: REZ_THEME.nileBlue,
     marginBottom: 10,
   },
   cashbackRow: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   },
   categoryCashback: {
     ...Typography.bodySmall,
-    color: NUQTA.lightMustard,
+    color: REZ_THEME.lightMustard,
     fontWeight: '600',
   },
 });

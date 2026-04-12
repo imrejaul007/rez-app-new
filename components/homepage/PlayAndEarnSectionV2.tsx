@@ -1,6 +1,6 @@
 /**
  * Play & Earn Section - Converted from V2 Web
- * Exact match to Nuqta_v-2-main/src/components/home/PlayAndEarnSection.jsx
+ * Exact match to REZ_v-2-main/src/components/home/PlayAndEarnSection.jsx
  */
 
 import React, { useState, useEffect } from 'react';
@@ -21,7 +21,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Colors matching Nuqta design
+// Colors matching REZ design
 const COLORS = {
   // Light mode
   white: colors.background.primary,

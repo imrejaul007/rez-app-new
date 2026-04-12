@@ -2,16 +2,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import HowNuqtaWorksFlow from '@/components/how-rez-works-flow';
+import HowRezWorksFlow from '@/components/how-rez-works-flow'; // component file: how-rez-works-flow
 import { colors } from '@/constants/theme';
 
-const HowNuqtaWorksPage: React.FC = () => {
+const HowRezWorksPage: React.FC = () => {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
-      <HowNuqtaWorksFlow />
+      <HowRezWorksFlow />
     </View>
   );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withErrorBoundary(HowNuqtaWorksPage, 'HowRezWorks');
+export default withErrorBoundary(HowRezWorksPage, 'HowRezWorks');

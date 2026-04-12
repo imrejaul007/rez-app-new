@@ -1,8 +1,8 @@
 /**
- * Event Colors - Nuqta Design System
+ * Event Colors - REZ Design System
  * Shared color constants for Events & Experiences section
  *
- * Nuqta Colors:
+ * REZ Colors:
  * - Nile Blue: #1a3a52
  * - Light Mustard: #ffcd57
  * - Linen: #faf1e0
@@ -11,7 +11,7 @@
  */
 
 export const EVENT_COLORS = {
-  // Primary brand colors - Nuqta
+  // Primary brand colors - REZ
   primary: '#ffcd57',           // Light Mustard
   primaryDark: '#E6B84E',
   primaryLight: '#FFF9E6',
@@ -21,18 +21,18 @@ export const EVENT_COLORS = {
   accent: '#1a3a52',
   accentLight: '#dfebf7',       // Lavender Mist
 
-  // Background colors - Nuqta
+  // Background colors - REZ
   background: '#FFFFFF',
   surface: '#faf1e0',           // Linen
   surfaceElevated: '#FFFFFF',
 
-  // Text colors - Nuqta
+  // Text colors - REZ
   text: '#1a3a52',              // Nile Blue
   textSecondary: '#2A5577',
   textMuted: '#6B7280',
   textLight: '#9CA3AF',
 
-  // Border colors - Nuqta
+  // Border colors - REZ
   border: '#E8DCC4',
   borderLight: '#faf1e0',       // Linen
 
@@ -46,13 +46,13 @@ export const EVENT_COLORS = {
   info: '#1a3a52',              // Nile Blue
   infoLight: '#dfebf7',         // Lavender Mist
 
-  // Special colors - Nuqta
+  // Special colors - REZ
   star: '#ffcd57',              // Mustard for ratings
   starEmpty: '#E8DCC4',
   cashback: '#ffcd57',          // Mustard
   verified: '#1a3a52',          // Nile Blue
 
-  // Category-specific gradients - Nuqta themed
+  // Category-specific gradients - REZ themed
   categoryGradients: {
     movies: ['#1a3a52', '#ffd7b5'] as const,
     concerts: ['#ffcd57', '#1a3a52'] as const,

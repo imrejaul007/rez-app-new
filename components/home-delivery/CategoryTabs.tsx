@@ -13,7 +13,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { CategoryTabsProps } from '@/types/home-delivery.types';
 import { colors } from '@/constants/theme';
 
-// Nuqta Design System Colors
+// REZ Design System Colors
 const COLORS = {
   primary: colors.nileBlue,
   primaryDark: colors.nileBlue,

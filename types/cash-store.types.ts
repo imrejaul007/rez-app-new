@@ -1,7 +1,7 @@
 /**
  * Cash Store Types
  *
- * TypeScript interfaces for Nuqta Cash Store feature.
+ * TypeScript interfaces for REZ Cash Store feature.
  *
  * Cash Store = Affiliate Cashback System
  * - External brand websites (Amazon, Myntra, Flipkart, etc.)
@@ -9,7 +9,7 @@
  * - Brand sends webhook when purchase is made
  * - Users earn real cashback (rupees)
  *
- * NOTE: This is different from Nuqta Mall (in-app delivery marketplace with Nuqta Coins)
+ * NOTE: This is different from REZ Mall (in-app delivery marketplace with REZ Coins)
  */
 
 // Re-export from existing services for convenience
@@ -428,7 +428,7 @@ export function formatCurrency(amount: number): string {
 }
 
 export function getBadgeColor(badge: DealBadge): string {
-  // Nuqta palette badge colors
+  // REZ palette badge colors
   const colors: Record<DealBadge, string> = {
     'trending': '#ffd7b5',    // Light Peach
     'hot': '#E8B896',         // Peach Dark
@@ -441,7 +441,7 @@ export function getBadgeColor(badge: DealBadge): string {
 }
 
 export function getTravelDealGradient(category: TravelDealCategory): string[] {
-  // Nuqta palette travel gradients
+  // REZ palette travel gradients
   const gradients: Record<TravelDealCategory, string[]> = {
     'flights': ['#1a3a52', '#243f55'],           // Nile Blue shades
     'hotels': ['#ffd7b5', '#E8B896'],            // Light Peach shades
