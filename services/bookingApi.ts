@@ -438,11 +438,9 @@ class BookingService {
         };
       }
 
-      // Backend does not have a /complete endpoint for service bookings
-      // Use status update via cancel-equivalent or admin action
       const response = await apiClient.put<Booking>(
-        `/service-bookings/${bookingId}/cancel`,
-        { status: 'completed' }
+        `/service-bookings/${bookingId}/complete`,
+        {}
       );
 
       if (!response.success) {
