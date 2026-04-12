@@ -28,7 +28,14 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RazorpayCheckout from 'react-native-razorpay';
-import { sendWebOtp, verifyWebOtp, createWebOrder, verifyWebPayment, CartItem } from '@/services/webOrderingApi';
+import {
+  sendWebOtp,
+  verifyWebOtp,
+  createWebOrder,
+  verifyWebPayment,
+  creditWebOrderCoins,
+  CartItem,
+} from '@/services/webOrderingApi';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import financeApi, { ContextualOffer } from '@/services/financeApi';
 
@@ -330,13 +337,17 @@ export default function CheckoutScreen() {
             prefill: { name: name.trim() },
             theme: { color: '#16C266' },
           });
-          // Verify payment signature with backend
+          // Verify payment signature with backend.
+          // sessionToken is required so the backend can confirm the caller owns this order.
           await verifyWebPayment({
-            orderNumber: orderData.orderNumber,
+            orderId: orderData.orderId,
             razorpay_order_id: razorpayData.razorpay_order_id,
             razorpay_payment_id: razorpayData.razorpay_payment_id,
             razorpay_signature: razorpayData.razorpay_signature,
+            sessionToken,
           });
+          // Credit REZ Coins for this order (best-effort — non-blocking).
+          creditWebOrderCoins({ orderNumber: orderData.orderNumber, sessionToken }).catch(() => {});
           router.replace({
             pathname: '/order/[storeSlug]/confirmation',
             params: { storeSlug: store.slug, orderNumber: orderData.orderNumber },

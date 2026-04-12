@@ -133,10 +133,20 @@ export async function verifyWebPayment(params: {
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
+  sessionToken?: string;
 }): Promise<WebOrderStatus> {
   const res = await apiClient.post<WebOrderStatus>('/web-ordering/payment/verify', params);
   if (res.success && res.data) return res.data;
   throw new Error(res.message || 'Payment verification failed');
+}
+
+export async function creditWebOrderCoins(params: {
+  orderNumber: string;
+  sessionToken?: string;
+}): Promise<{ coinsEarned: number }> {
+  const res = await apiClient.post<{ coinsEarned: number }>('/web-ordering/coins/credit', params);
+  if (res.success && res.data) return res.data;
+  return { coinsEarned: 0 };
 }
 
 export async function getWebOrder(orderNumber: string): Promise<WebOrderStatus> {

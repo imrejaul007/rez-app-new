@@ -65,7 +65,7 @@ class ProfileService {
   async getProfileCompletion(): Promise<ApiResponse<ProfileCompletionStatus>> {
     try {
       return await withRetry(
-        () => apiClient.get<ProfileCompletionStatus>('/user/profile'),
+        () => apiClient.get<ProfileCompletionStatus>('/user/profile/completion'),
         { maxRetries: 3 }
       );
     } catch (error: any) {
