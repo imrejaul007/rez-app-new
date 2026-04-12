@@ -588,7 +588,9 @@ function DetailedOrderTrackingPage() {
               </View>
             )}
             {order.payment?.coinsUsed &&
-              (order.payment.coinsUsed.wasilCoins > 0 ||
+              // FM-05 FIX: 'wasilCoins' is the old name for REZ coins. Backend only
+              // populates 'rezCoins'. Removed dead wasilCoins fallback.
+              ((order.payment.coinsUsed.rezCoins || 0) > 0 ||
                 order.payment.coinsUsed.promoCoins > 0 ||
                 order.payment.coinsUsed.storePromoCoins > 0) && (
                 <View style={styles.summaryRow}>
@@ -614,18 +616,19 @@ function DetailedOrderTrackingPage() {
 
         {/* Payment Breakdown - detailed coin usage */}
         {order.payment?.coinsUsed &&
-          ((order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0) > 0 ||
+          // FM-05 FIX: Removed dead wasilCoins fallback — backend only populates rezCoins.
+          ((order.payment.coinsUsed.rezCoins || 0) > 0 ||
             (order.payment.coinsUsed.promoCoins || 0) > 0 ||
             (order.payment.coinsUsed.storePromoCoins || 0) > 0) && (
             <View style={styles.itemsCard}>
               <ThemedText style={styles.cardTitle}>Payment Breakdown</ThemedText>
               <View style={styles.orderSummary}>
-                {(order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0) > 0 && (
+                {(order.payment.coinsUsed.rezCoins || 0) > 0 && (
                   <View style={styles.summaryRow}>
                     <ThemedText style={styles.summaryLabel}>{BRAND.COIN_NAME}</ThemedText>
                     <ThemedText style={[styles.summaryValue, { color: Colors.brand.purple }]}>
                       -{currencySymbol}
-                      {(order.payment.coinsUsed.rezCoins || order.payment.coinsUsed.wasilCoins || 0).toLocaleString()}
+                      {(order.payment.coinsUsed.rezCoins || 0).toLocaleString()}
                     </ThemedText>
                   </View>
                 )}

@@ -717,10 +717,13 @@ const MyBookingsPage = () => {
               contentContainerStyle={styles.listContainer}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }: { item: OtaBooking }) => {
+                // ENUM-10 FIX: 'hold' is not a real ServiceBooking status — removed from
+                // status map and canCancel check. OTA bookings start at 'pending' or 'confirmed'.
                 const statusColor =
-                  { confirmed: '#0891B2', hold: '#F59E0B', cancelled: '#EF4444', completed: '#16A34A' }[item.status] ??
-                  '#6B7280';
-                const canCancel = item.status === 'confirmed' || item.status === 'hold';
+                  { pending: '#F59E0B', confirmed: '#0891B2', cancelled: '#EF4444', completed: '#16A34A' }[
+                    item.status
+                  ] ?? '#6B7280';
+                const canCancel = item.status === 'confirmed' || item.status === 'pending';
                 const canReview = item.status === 'completed';
                 return (
                   <Pressable

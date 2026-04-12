@@ -201,7 +201,8 @@ function EarnFromSocialMediaPage() {
       // Normalize completed store payments
       if (paymentsResponse.transactions && paymentsResponse.transactions.length > 0) {
         paymentsResponse.transactions.forEach((txn) => {
-          if (txn.status === 'COMPLETED') {
+          // ENUM-13 FIX: Backend uses lowercase 'completed', not 'COMPLETED'.
+          if (txn.status === 'completed') {
             items.push({
               id: txn.paymentId || txn.id,
               orderNumber: txn.paymentId || txn.id,

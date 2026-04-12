@@ -477,9 +477,11 @@ function OrderConfirmationPage() {
             )}
 
             {(order.payment as any)?.coinsUsed &&
-              ((order.payment as any).coinsUsed.wasilCoins > 0 ||
-                (order.payment as any).coinsUsed.promoCoins > 0 ||
-                (order.payment as any).coinsUsed.storePromoCoins > 0) && (
+              // FM-05 FIX: 'wasilCoins' is the old name for REZ coins — never populated by backend.
+              // Replaced with 'rezCoins' (the correct canonical field name).
+              (((order.payment as any).coinsUsed.rezCoins || 0) > 0 ||
+                ((order.payment as any).coinsUsed.promoCoins || 0) > 0 ||
+                ((order.payment as any).coinsUsed.storePromoCoins || 0) > 0) && (
                 <View style={styles.summaryRow}>
                   <ThemedText style={[styles.summaryLabel, { color: Colors.brand.purpleLight }]}>
                     💎 Coins Used
