@@ -197,7 +197,7 @@ class NotificationsService {
     message: string;
     deleted: number;
   }>> {
-    throw new Error('Not implemented: bulk delete notifications — backend endpoint pending');
+    return apiClient.delete<any>('/notifications/bulk-delete', { ids: notificationIds });
   }
 
   // Clear all notifications
@@ -207,14 +207,23 @@ class NotificationsService {
 
   // Get notification preferences
   async getNotificationPreferences(): Promise<ApiResponse<NotificationPreferences>> {
-    throw new Error('Not implemented: get notification preferences — backend endpoint pending');
+    return apiClient.get<any>('/notifications/preferences');
   }
 
   // Update notification preferences
   async updateNotificationPreferences(
     preferences: Partial<NotificationPreferences>
   ): Promise<ApiResponse<NotificationPreferences>> {
-    throw new Error('Not implemented: update notification preferences — backend endpoint pending');
+    const { channels } = preferences;
+    const body: Record<string, any> = {};
+    if (channels) {
+      for (const ch of ['push', 'email', 'sms', 'inApp'] as const) {
+        if (typeof channels[ch] === 'boolean') {
+          body[ch] = { enabled: channels[ch] };
+        }
+      }
+    }
+    return apiClient.patch<any>('/notifications/preferences', body);
   }
 
   // Subscribe to push notifications
