@@ -1,4 +1,4 @@
-appId: com.nuqta.app
+appId: money.rez.app
 name: "Helper - Login with test user"
 
 # Reusable login flow. Import from other tests via:

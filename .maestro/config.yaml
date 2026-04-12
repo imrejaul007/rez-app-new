@@ -8,7 +8,7 @@
 # To run all flows in directory (alphabetical order):
 #   maestro test .maestro/
 
-appId: com.nuqta.app
+appId: money.rez.app
 name: "Full E2E Suite"
 tags:
   - suite
