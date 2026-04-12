@@ -2,7 +2,8 @@
  * Web Order API Service
  *
  * Handles REZ Now web ordering history and pending order counts.
- * Endpoint: GET /api/web-ordering/orders/history
+ * Endpoint: GET /web-ordering/orders/history
+ * Note: apiClient.baseURL already includes /api — do NOT prefix paths with /api here.
  */
 
 import apiClient from './apiClient';
@@ -39,7 +40,7 @@ export async function getWebOrderHistory(
       params.page = page;
     }
     const response = await apiClient.get<WebOrderHistoryApiResponse>(
-      '/api/web-ordering/orders/history',
+      '/web-ordering/orders/history',
       params as any,
     );
     if (response.success && response.data) {
