@@ -113,19 +113,19 @@ export interface PaymentMethod {
 /**
  * Applied Coins Structure
  *
- * Three coin types per Nuqta Wallet design:
- * 1. Nuqta Coins (Mustard #ffcd57) - Universal, 30-day expiry, no redemption cap
+ * Three coin types per REZ Wallet design:
+ * 1. REZ Coins (Mustard #ffcd57) - Universal, 30-day expiry, no redemption cap
  * 2. Promo Coins (Gold #FFC857) - Limited-time, expiry countdown, max 20% per bill
  * 3. Branded Coins (Merchant color) - Store-specific, no expiry, no cap
  *
- * Usage Order: Promo → Branded → Nuqta (for maximum savings)
+ * Usage Order: Promo → Branded → REZ (for maximum savings)
  */
 export interface AppliedCoins {
-  nuqtaCoins: {
+  rezCoins: {
     available: number;
     using: number;
     enabled: boolean;
-    color?: string; // #ffcd57 (Nuqta Mustard)
+    color?: string; // #ffcd57 (REZ Mustard)
     icon?: string;
     description?: string;
     expiryDays?: number | null; // 30 days default
@@ -137,7 +137,7 @@ export interface AppliedCoins {
     enabled: boolean;
     expiringToday: boolean;
     expiresIn?: number | null; // Days until expiry
-    color?: string; // #ffcd57 (Nuqta Mustard)
+    color?: string; // #ffcd57 (REZ Mustard)
     icon?: string;
     description?: string;
     redemptionCap?: number; // Max 20% per bill default
@@ -251,10 +251,10 @@ export interface ExternalWallet {
 
 /**
  * Auto-optimization response
- * Note: Backend sends rezCoins, frontend maps to nuqtaCoins
+ * Note: Backend sends rezCoins, frontend maps to rezCoins
  */
 export interface AutoOptimizeResponse {
-  nuqtaCoins: AppliedCoins['nuqtaCoins'];
+  rezCoins: AppliedCoins['rezCoins'];
   promoCoins: AppliedCoins['promoCoins'];
   brandedCoins: AppliedCoins['brandedCoins'];
   totalApplied: number;

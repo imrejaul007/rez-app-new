@@ -86,7 +86,7 @@ interface UsePaymentFlowReturn extends PaymentFlowState {
 // ==================== DEFAULT VALUES ====================
 
 const DEFAULT_APPLIED_COINS: AppliedCoins = {
-  nuqtaCoins: { available: 0, using: 0, enabled: true },
+  rezCoins: { available: 0, using: 0, enabled: true },
   promoCoins: { available: 0, using: 0, enabled: true, expiringToday: false },
   brandedCoins: null,
   totalApplied: 0,
@@ -274,7 +274,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
     try {
       const optimizedCoins = await storePaymentApi.autoOptimizeCoins(storeId, billAmount);
       setAppliedCoins({
-        nuqtaCoins: optimizedCoins.nuqtaCoins,
+        rezCoins: optimizedCoins.rezCoins,
         promoCoins: optimizedCoins.promoCoins,
         brandedCoins: optimizedCoins.brandedCoins,
         totalApplied: optimizedCoins.totalApplied,
@@ -294,10 +294,10 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       const newCoins = { ...prev };
 
       if (coinType === 'rez') {
-        newCoins.nuqtaCoins = {
-          ...prev.nuqtaCoins,
+        newCoins.rezCoins = {
+          ...prev.rezCoins,
           enabled,
-          using: enabled ? Math.min(prev.nuqtaCoins.available, maxAllowed) : 0,
+          using: enabled ? Math.min(prev.rezCoins.available, maxAllowed) : 0,
         };
       } else if (coinType === 'promo') {
         newCoins.promoCoins = {
@@ -315,7 +315,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
 
       // Recalculate total
       newCoins.totalApplied =
-        newCoins.nuqtaCoins.using +
+        newCoins.rezCoins.using +
         newCoins.promoCoins.using +
         (newCoins.brandedCoins?.using || 0);
 
@@ -329,7 +329,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       const newCoins = { ...prev };
 
       if (coinType === 'rez') {
-        newCoins.nuqtaCoins = { ...prev.nuqtaCoins, using: Math.floor(amount) };
+        newCoins.rezCoins = { ...prev.rezCoins, using: Math.floor(amount) };
       } else if (coinType === 'promo') {
         newCoins.promoCoins = { ...prev.promoCoins, using: Math.floor(amount) };
       } else if (coinType === 'branded' && prev.brandedCoins) {
@@ -338,7 +338,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
 
       // Recalculate total
       newCoins.totalApplied =
-        newCoins.nuqtaCoins.using +
+        newCoins.rezCoins.using +
         newCoins.promoCoins.using +
         (newCoins.brandedCoins?.using || 0);
 
@@ -377,13 +377,13 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       // that retries after a reconnect always carry the same idempotency key.
       const resolvedKey = idempotencyKey ?? idempotencyKeyRef.current;
 
-      // Map nuqtaCoins back to rezCoins for backend
+      // Map rezCoins back to rezCoins for backend
       const response: any = await apiClient.post('/store-payment/initiate', {
         storeId,
         amount: billAmount,
         paymentMethod: amountToPay > 0 ? selectedPaymentMethod?.type : 'coins_only',
         coinsToRedeem: {
-          rezCoins: appliedCoins.nuqtaCoins.using,  // Backend expects rezCoins
+          rezCoins: appliedCoins.rezCoins.using,  // Backend expects rezCoins
           promoCoins: appliedCoins.promoCoins.using,
           brandedCoins: appliedCoins.brandedCoins?.using || 0,
           totalAmount: appliedCoins.totalApplied,

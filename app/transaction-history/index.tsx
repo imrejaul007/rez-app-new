@@ -44,8 +44,8 @@ interface TransactionPage {
   cursor?: string;
   hasMore: boolean;
   summary: {
-    earnedThisMonth: number;
-    redeemedThisMonth: number;
+    totalEarned: number;
+    totalRedeemed: number;
   };
 }
 
@@ -100,7 +100,7 @@ function TransactionHistoryScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [summary, setSummary] = useState({ earnedThisMonth: 0, redeemedThisMonth: 0 });
+  const [summary, setSummary] = useState({ totalEarned: 0, totalRedeemed: 0 });
 
   const fetchTransactions = useCallback(
     async (opts: { reset?: boolean } = {}) => {
@@ -121,7 +121,7 @@ function TransactionHistoryScreen() {
         }
 
         const response = await apiClient.get('/user/transactions', { params: params as any });
-        const data = (response.data as any)?.data as TransactionPage | undefined;
+        const data = response.data as TransactionPage | undefined;
         if (!data) return;
 
         if (!isMounted()) return;
@@ -259,12 +259,12 @@ function TransactionHistoryScreen() {
       <View style={styles.summaryBanner}>
         <View style={styles.summaryItem}>
           <Text style={styles.summaryLabel}>Earned this month</Text>
-          <Text style={[styles.summaryValue, { color: Colors.success }]}>+{summary.earnedThisMonth}</Text>
+          <Text style={[styles.summaryValue, { color: Colors.success }]}>+{summary.totalEarned}</Text>
         </View>
         <View style={styles.summaryDivider} />
         <View style={styles.summaryItem}>
           <Text style={styles.summaryLabel}>Redeemed</Text>
-          <Text style={[styles.summaryValue, { color: Colors.error }]}>-{summary.redeemedThisMonth}</Text>
+          <Text style={[styles.summaryValue, { color: Colors.error }]}>-{summary.totalRedeemed}</Text>
         </View>
       </View>
 

@@ -69,10 +69,10 @@ export interface PromoCode {
 }
 
 export interface CoinSystem {
-  nuqtaCoin: {
+  rezCoin: {
     available: number;
     used: number;
-    conversionRate: number; // 1 Rupee = X Nuqta Coins
+    conversionRate: number; // 1 Rupee = X REZ Coins
     maxUsagePercentage: number;
   };
   promoCoin: {
@@ -288,7 +288,7 @@ export interface UseCheckoutReturn {
   actions: {
     applyPromoCode: (code: PromoCode) => Promise<{ success: boolean; message: string; discount?: number }>;
     removePromoCode: () => void;
-    toggleNuqtaCoin: (enabled: boolean) => void;
+    toggleRezCoin: (enabled: boolean) => void;
     togglePromoCoin: (enabled: boolean) => void;
     selectPaymentMethod: (method: PaymentMethod) => void;
     selectAddress: (address: CheckoutDeliveryAddress) => void;

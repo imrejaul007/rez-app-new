@@ -1,10 +1,12 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Order History Page
 // Displays user's order history with server-side filtering, search, and pagination.
+// Tab 1: regular delivery/store orders.  Tab 2: REZ Now web orders.
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   Pressable,
   StatusBar,
@@ -14,6 +16,7 @@ import {
   Dimensions,
   Platform,
   KeyboardAvoidingView,
+  FlatList,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -29,8 +32,135 @@ import { OrderFilter } from '@/types/order';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { getWebOrderHistory, WebOrderHistoryItem } from '@/services/webOrderApi';
 
 const { width } = Dimensions.get('window');
+
+type HistoryTab = 'orders' | 'web_orders';
+
+/** Status chip colours for REZ Now order statuses */
+function webOrderStatusColor(status: string): { bg: string; text: string } {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return { bg: '#FFF7ED', text: '#C2410C' };
+    case 'confirmed':
+    case 'preparing':
+      return { bg: '#EFF6FF', text: '#1D4ED8' };
+    case 'ready':
+      return { bg: '#F0FDF4', text: '#15803D' };
+    case 'delivered':
+    case 'completed':
+      return { bg: '#F0FDF4', text: '#166534' };
+    case 'cancelled':
+      return { bg: '#FEF2F2', text: '#B91C1C' };
+    default:
+      return { bg: colors.background.secondary, text: colors.text.secondary };
+  }
+}
+
+function formatWebOrderDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/** Row component for a single REZ Now web order */
+const WebOrderRow = ({
+  item,
+  onPress,
+}: {
+  item: WebOrderHistoryItem;
+  onPress: (item: WebOrderHistoryItem) => void;
+}) => {
+  const chipColors = webOrderStatusColor(item.status);
+  const itemSummary = item.items
+    .slice(0, 2)
+    .map((i) => `${i.name}${i.quantity > 1 ? ` x${i.quantity}` : ''}`)
+    .join(', ')
+    .concat(item.items.length > 2 ? ` +${item.items.length - 2} more` : '');
+
+  return (
+    <Pressable
+      style={webOrderStyles.row}
+      onPress={() => onPress(item)}
+      accessibilityRole="button"
+      accessibilityLabel={`REZ Now order from ${item.storeName}`}
+    >
+      <View style={webOrderStyles.rowLeft}>
+        <Text style={webOrderStyles.storeName} numberOfLines={1}>
+          {item.storeName}
+        </Text>
+        <Text style={webOrderStyles.itemsSummary} numberOfLines={1}>
+          {itemSummary}
+        </Text>
+        <Text style={webOrderStyles.dateText}>{formatWebOrderDate(item.createdAt)}</Text>
+      </View>
+      <View style={webOrderStyles.rowRight}>
+        <Text style={webOrderStyles.totalText}>
+          {'\u20B9'}
+          {item.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </Text>
+        <View style={[webOrderStyles.statusChip, { backgroundColor: chipColors.bg }]}>
+          <Text style={[webOrderStyles.statusChipText, { color: chipColors.text }]}>
+            {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+};
+
+const webOrderStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.base,
+    marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  rowLeft: {
+    flex: 1,
+    marginRight: Spacing.md,
+  },
+  storeName: {
+    ...Typography.bodyLarge,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: 2,
+  },
+  itemsSummary: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    marginBottom: 2,
+  },
+  dateText: {
+    ...Typography.caption,
+    color: colors.text.tertiary,
+  },
+  rowRight: {
+    alignItems: 'flex-end',
+    gap: Spacing.xs,
+  },
+  totalText: {
+    ...Typography.bodyLarge,
+    fontWeight: '700',
+    color: colors.text.primary,
+  },
+  statusChip: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.full,
+  },
+  statusChipText: {
+    ...Typography.caption,
+    fontWeight: '600',
+  },
+});
 
 // Skeleton loader for order cards
 const OrderSkeleton = () => (
@@ -83,6 +213,7 @@ function dateRangeToISO(dateRange: string): { dateFrom?: string; dateTo?: string
 function OrderHistoryPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<HistoryTab>('orders');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<OrderFilter>({
@@ -92,6 +223,13 @@ function OrderHistoryPage() {
   });
   const [refreshing, setRefreshing] = useState(false);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // REZ Now web orders state
+  const [webOrders, setWebOrders] = useState<WebOrderHistoryItem[]>([]);
+  const [webOrdersLoading, setWebOrdersLoading] = useState(false);
+  const [webOrdersHasNext, setWebOrdersHasNext] = useState(false);
+  const [webOrdersPage, setWebOrdersPage] = useState(1);
+  const [webOrdersRefreshing, setWebOrdersRefreshing] = useState(false);
 
   const { orders, isLoading, error, hasMore, loadMore, refresh } = useOrderHistory();
 
@@ -104,6 +242,64 @@ function OrderHistoryPage() {
       dateTo: dates.dateTo,
       sort: filter.sortBy as OrderFilterParams['sort'],
     };
+  }, []);
+
+  // Fetch REZ Now web orders
+  const fetchWebOrders = useCallback(
+    async (page: number, reset: boolean) => {
+      if (reset) {
+        setWebOrdersLoading(true);
+      }
+      try {
+        const result = await getWebOrderHistory(page);
+        if (!isMounted()) return;
+        if (reset) {
+          setWebOrders(result.orders);
+        } else {
+          setWebOrders((prev) => [...prev, ...result.orders]);
+        }
+        setWebOrdersHasNext(result.hasNext);
+        setWebOrdersPage(page);
+      } catch {
+        // silently keep existing data
+      } finally {
+        if (!isMounted()) return;
+        setWebOrdersLoading(false);
+        setWebOrdersRefreshing(false);
+      }
+    },
+    [isMounted],
+  );
+
+  // Load web orders when tab becomes active (lazy — only fetch on first switch)
+  const webOrdersFetchedRef = useRef(false);
+  useEffect(() => {
+    if (activeTab === 'web_orders' && !webOrdersFetchedRef.current) {
+      webOrdersFetchedRef.current = true;
+      fetchWebOrders(1, true);
+    }
+  }, [activeTab, fetchWebOrders]);
+
+  const handleWebOrdersRefresh = useCallback(() => {
+    setWebOrdersRefreshing(true);
+    webOrdersFetchedRef.current = true;
+    fetchWebOrders(1, true);
+  }, [fetchWebOrders]);
+
+  const handleWebOrdersLoadMore = useCallback(() => {
+    if (webOrdersHasNext && !webOrdersLoading) {
+      fetchWebOrders(webOrdersPage + 1, false);
+    }
+  }, [webOrdersHasNext, webOrdersLoading, webOrdersPage, fetchWebOrders]);
+
+  const handleWebOrderPress = useCallback((item: WebOrderHistoryItem) => {
+    // Open the order detail in the REZ Now in-app browser
+    const url = `https://now.rez.money/${item.storeSlug}/order/${item.orderNumber}`;
+    import('expo-web-browser')
+      .then(({ openBrowserAsync }) => {
+        openBrowserAsync(url).catch(() => {});
+      })
+      .catch(() => {});
   }, []);
 
   const handleBackPress = useCallback(() => {
@@ -277,70 +473,136 @@ function OrderHistoryPage() {
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Order History</ThemedText>
-            <Pressable
-              style={styles.filterButton}
-              onPress={() => setShowFilterModal(true)}
-              accessibilityLabel="Open filter options"
-              accessibilityRole="button"
-            >
-              <Ionicons name="filter-outline" size={24} color={colors.text.inverse} />
-            </Pressable>
+            {activeTab === 'orders' ? (
+              <Pressable
+                style={styles.filterButton}
+                onPress={() => setShowFilterModal(true)}
+                accessibilityLabel="Open filter options"
+                accessibilityRole="button"
+              >
+                <Ionicons name="filter-outline" size={24} color={colors.text.inverse} />
+              </Pressable>
+            ) : (
+              <View style={styles.headerRight} />
+            )}
           </View>
         </LinearGradient>
 
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={20} color={colors.text.tertiary} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search orders..."
-              value={searchQuery}
-              onChangeText={handleSearchChange}
-              placeholderTextColor={colors.neutral[400]}
-              accessibilityLabel="Search orders"
-              accessibilityHint="Enter order number, product name, or store name"
-            />
-            {searchQuery.length > 0 && (
-              <Pressable
-                onPress={() => handleSearchChange('')}
-                accessibilityLabel="Clear search"
-                accessibilityRole="button"
-              >
-                <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
-              </Pressable>
-            )}
-          </View>
+        {/* Tab bar */}
+        <View style={styles.tabBar}>
+          <Pressable
+            style={[styles.tabItem, activeTab === 'orders' && styles.tabItemActive]}
+            onPress={() => setActiveTab('orders')}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: activeTab === 'orders' }}
+          >
+            <Text style={[styles.tabItemText, activeTab === 'orders' && styles.tabItemTextActive]}>Store Orders</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.tabItem, activeTab === 'web_orders' && styles.tabItemActive]}
+            onPress={() => setActiveTab('web_orders')}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: activeTab === 'web_orders' }}
+          >
+            <Text style={[styles.tabItemText, activeTab === 'web_orders' && styles.tabItemTextActive]}>REZ Now</Text>
+          </Pressable>
         </View>
 
-        {/* Skeleton or Orders List */}
-        {isLoading && orders.length === 0 ? (
+        {activeTab === 'orders' ? (
+          <>
+            {/* Search Bar */}
+            <View style={styles.searchContainer}>
+              <View style={styles.searchBar}>
+                <Ionicons name="search-outline" size={20} color={colors.text.tertiary} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search orders..."
+                  value={searchQuery}
+                  onChangeText={handleSearchChange}
+                  placeholderTextColor={colors.neutral[400]}
+                  accessibilityLabel="Search orders"
+                  accessibilityHint="Enter order number, product name, or store name"
+                />
+                {searchQuery.length > 0 && (
+                  <Pressable
+                    onPress={() => handleSearchChange('')}
+                    accessibilityLabel="Clear search"
+                    accessibilityRole="button"
+                  >
+                    <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+                  </Pressable>
+                )}
+              </View>
+            </View>
+
+            {/* Skeleton or Orders List */}
+            {isLoading && orders.length === 0 ? (
+              renderSkeletons()
+            ) : (
+              <FlashList
+                data={orders}
+                keyExtractor={(item: any) => item.id || item._id || item.orderNumber}
+                renderItem={renderOrderItem}
+                contentContainerStyle={styles.listContainer}
+                showsVerticalScrollIndicator={false}
+                estimatedItemSize={120}
+                keyboardShouldPersistTaps="handled"
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    tintColor={colors.nileBlue}
+                    colors={[colors.nileBlue]}
+                  />
+                }
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.1}
+                ListEmptyComponent={renderEmptyState}
+                ListFooterComponent={renderFooter}
+              />
+            )}
+          </>
+        ) : /* REZ Now web orders list */
+        webOrdersLoading && webOrders.length === 0 ? (
           renderSkeletons()
         ) : (
-          <FlashList
-            data={orders}
-            keyExtractor={(item: any) => item.id || item._id || item.orderNumber}
-            renderItem={renderOrderItem}
+          <FlatList
+            data={webOrders}
+            keyExtractor={(item) => item.orderNumber}
+            renderItem={({ item }) => <WebOrderRow item={item} onPress={handleWebOrderPress} />}
             contentContainerStyle={styles.listContainer}
             showsVerticalScrollIndicator={false}
-            estimatedItemSize={120}
             keyboardShouldPersistTaps="handled"
             refreshControl={
               <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
+                refreshing={webOrdersRefreshing}
+                onRefresh={handleWebOrdersRefresh}
                 tintColor={colors.nileBlue}
                 colors={[colors.nileBlue]}
               />
             }
-            onEndReached={handleLoadMore}
+            onEndReached={handleWebOrdersLoadMore}
             onEndReachedThreshold={0.1}
-            ListEmptyComponent={renderEmptyState}
-            ListFooterComponent={renderFooter}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons name="fast-food-outline" size={80} color={colors.neutral[200]} />
+                <ThemedText style={styles.emptyTitle}>No REZ Now Orders</ThemedText>
+                <ThemedText style={styles.emptyDescription}>
+                  Your REZ Now food and delivery orders will appear here
+                </ThemedText>
+              </View>
+            }
+            ListFooterComponent={
+              webOrdersLoading && webOrders.length > 0 ? (
+                <View style={styles.loadingFooter}>
+                  <ActivityIndicator size="small" color={colors.nileBlue} />
+                </View>
+              ) : null
+            }
           />
         )}
 
-        {/* Filter Modal */}
+        {/* Filter Modal (only relevant for store orders tab) */}
         <OrderFilterModal
           visible={showFilterModal}
           onClose={() => setShowFilterModal(false)}
@@ -389,6 +651,31 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     width: 40,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border?.default ?? '#E2E8F0',
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  tabItemActive: {
+    borderBottomColor: colors.nileBlue,
+  },
+  tabItemText: {
+    ...Typography.bodyLarge,
+    fontWeight: '500',
+    color: colors.text.tertiary,
+  },
+  tabItemTextActive: {
+    fontWeight: '700',
+    color: colors.nileBlue,
   },
   searchContainer: {
     paddingHorizontal: Spacing.lg,

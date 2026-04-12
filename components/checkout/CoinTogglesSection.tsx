@@ -12,7 +12,7 @@ import { colors } from '@/constants/theme';
 const { width } = Dimensions.get('window');
 
 interface CoinSystem {
-  nuqtaCoin: { available: number; used: number };
+  rezCoin: { available: number; used: number };
   promoCoin: { available: number; used: number };
   storePromoCoin: { available: number; used: number; storeName?: string };
 }
@@ -41,7 +41,7 @@ function CoinTogglesSection({
   onCustomCoinAmount,
 }: CoinTogglesSectionProps) {
   const maxRezCoin = Math.max(1, Math.min(
-    coinSystem.nuqtaCoin.available,
+    coinSystem.rezCoin.available,
     Math.floor(totalBeforeCoinDiscount || totalPayable || 0)
   ));
 
@@ -50,7 +50,7 @@ function CoinTogglesSection({
     Math.floor((totalPayable || 0) * 0.3)
   ));
 
-  const rezCoinPercent = (coinSystem.nuqtaCoin.used / maxRezCoin) * 100;
+  const rezCoinPercent = (coinSystem.rezCoin.used / maxRezCoin) * 100;
   const storePromoPercent = (coinSystem.storePromoCoin.used / maxStorePromo) * 100;
 
   return (
@@ -106,14 +106,14 @@ function CoinTogglesSection({
                   </View>
                   <View style={styles.coinAvailableRow}>
                     <ThemedText style={styles.coinAvailableTextWhite}>
-                      {coinSystem.nuqtaCoin.available} available
+                      {coinSystem.rezCoin.available} available
                     </ThemedText>
                   </View>
                 </View>
-                {coinSystem.nuqtaCoin.used > 0 && (
+                {coinSystem.rezCoin.used > 0 && (
                   <View style={styles.coinUsedBadgeWhite}>
                     <ThemedText style={styles.coinUsedTextPurple}>
-                      {coinSystem.nuqtaCoin.used}
+                      {coinSystem.rezCoin.used}
                     </ThemedText>
                   </View>
                 )}
@@ -124,7 +124,7 @@ function CoinTogglesSection({
                   type="range"
                   min="0"
                   max={maxRezCoin}
-                  value={coinSystem.nuqtaCoin.used}
+                  value={coinSystem.rezCoin.used}
                   onChange={(e) => {
                     const amount = parseInt(e.target.value);
                     if (amount === 0) {
@@ -162,18 +162,18 @@ function CoinTogglesSection({
                 <ThemedText style={styles.sliderLabelTextWhite}>{currencySymbol}0</ThemedText>
                 <ThemedText style={styles.sliderLabelTextWhite}>
                   {currencySymbol}{Math.min(
-                    coinSystem.nuqtaCoin.available,
+                    coinSystem.rezCoin.available,
                     Math.floor(totalBeforeCoinDiscount || totalPayable || 0)
                   )}
                 </ThemedText>
               </View>
 
-              {coinSystem.nuqtaCoin.used > 0 && (
+              {coinSystem.rezCoin.used > 0 && (
                 <View style={styles.coinSavingContainerEnhanced}>
                   <View style={styles.savingBadge}>
                     <Ionicons name="gift" size={16} color={colors.gold} />
                     <ThemedText style={styles.coinSavingTextEnhanced}>
-                      You'll save {currencySymbol}{coinSystem.nuqtaCoin.used} on this order!
+                      You'll save {currencySymbol}{coinSystem.rezCoin.used} on this order!
                     </ThemedText>
                   </View>
                 </View>

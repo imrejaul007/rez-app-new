@@ -111,10 +111,10 @@ export const availablePromoCodes: PromoCode[] = [
 
 // Sample Coin System
 export const coinSystem: CoinSystem = {
-  nuqtaCoin: {
+  rezCoin: {
     available: 32,
     used: 0,
-    conversionRate: 1, // 1 Rupee = 1 Nuqta Coin
+    conversionRate: 1, // 1 Rupee = 1 REZ Coin
     maxUsagePercentage: 10,
   },
   promoCoin: {
@@ -133,7 +133,7 @@ export const coinSystem: CoinSystem = {
 };
 
 // Calculate Bill Summary
-// Note: coinUsage.rez maps to Nuqta Coins (backend uses 'rez', frontend displays 'nuqta')
+// Note: coinUsage.rez maps to REZ Coins
 export const calculateBillSummary = (
   items: CheckoutItem[],
   store: CheckoutStore,
@@ -170,7 +170,7 @@ export const calculateBillSummary = (
     }
   }
 
-  // Calculate coin discount: rez (nuqta) + promo + storePromo
+  // Calculate coin discount: rez + promo + storePromo
   const coinDiscount = (coinUsage?.rez || 0) + (coinUsage?.promo || 0) + (coinUsage?.storePromo || 0);
 
   // Calculate subtotal before discounts (matching backend: subtotal + tax + deliveryFee)

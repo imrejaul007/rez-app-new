@@ -154,9 +154,23 @@ function RootLayout() {
       return;
     }
 
-    // 0b. Universal links from now.rez.money/<slug>[?table=N&scan=1]
+    // 0b. Universal links from now.rez.money
+    //
+    //   Pattern A — order status deep link (from push notifications):
+    //     https://now.rez.money/<storeSlug>/order/<orderNumber>
+    //     → Open in in-app browser so the user can see their live order status.
+    //
+    //   Pattern B — store landing page:
+    //     https://now.rez.money/<slug>[?table=N&scan=1]
     //     Without ?table= → Scan & Pay in-app
-    //     With ?table=N   → Order & Pay, let browser handle it (don't intercept)
+    //     With ?table=N   → Order & Pay dine-in, let browser handle it
+    const nowOrderMatch = url.match(/https?:\/\/now\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)\/order\/([^/?#]+)/i);
+    if (nowOrderMatch) {
+      // Open the order detail page in an in-app browser
+      import('expo-web-browser').then(({ openBrowserAsync }) => openBrowserAsync(url)).catch(() => {});
+      return;
+    }
+
     const nowMatch = url.match(/https?:\/\/now\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)(?:\?(.*))?$/i);
     if (nowMatch) {
       const slug = nowMatch[1].toLowerCase();
@@ -276,6 +290,15 @@ function RootLayout() {
 
         const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
           const data = response.notification.request.content.data as Record<string, any>;
+
+          // REZ Now order status notifications carry type='order_status' and a url
+          // pointing to https://now.rez.money/<storeSlug>/order/<orderNumber>.
+          // Route through handleDeepLink which opens the order in an in-app browser.
+          if (data?.type === 'order_status' && typeof data.url === 'string') {
+            handleDeepLink(data.url);
+            return;
+          }
+
           if (data?.route && typeof data.route === 'string') {
             try {
               router.push(data.route as any);
