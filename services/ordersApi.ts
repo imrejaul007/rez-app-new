@@ -51,6 +51,18 @@ export interface Order {
     logo?: string;
     location?: any;
   } | string; // Can be populated object or just ID string
+  /**
+   * Order status from the backend FSM.
+   * Canonical values: 'placed' | 'confirmed' | 'preparing' | 'ready' | 'dispatched' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'refunded'
+   *
+   * @deprecated 'pending' — use 'placed' (backend FSM never emits 'pending')
+   * @deprecated 'processing' — use 'preparing' (backend FSM never emits 'processing')
+   * @deprecated 'shipped' — use 'dispatched' (backend FSM never emits 'shipped')
+   *
+   * Legacy values are retained in the union to avoid breaking existing switch/case guards
+   * in UI components. Any new code must use canonical values only.
+   * Mapping: pending→placed, processing→preparing, shipped→dispatched
+   */
   status: 'placed' | 'confirmed' | 'preparing' | 'ready' | 'dispatched' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'refunded' | 'pending' | 'processing' | 'shipped';
   paymentStatus?: 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded';
   items: OrderItem[];

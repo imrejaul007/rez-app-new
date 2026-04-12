@@ -17,6 +17,7 @@ interface WalletStoreData {
   rawBackendData: any | null;
   isLoading: boolean;
   isRefreshing: boolean;
+  error: string | null;
 }
 
 interface WalletStoreState extends WalletStoreData {
@@ -41,6 +42,7 @@ const defaults: WalletStoreData = {
   rawBackendData: null,
   isLoading: false,
   isRefreshing: false,
+  error: null,
 };
 
 // ---------------------------------------------------------------------------

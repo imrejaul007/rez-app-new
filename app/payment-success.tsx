@@ -28,6 +28,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { FREE_DELIVERY_THRESHOLD, DEFAULT_DELIVERY_FEE_PER_STORE } from '@/constants/appConstants';
 // CARLOS retention fix: show coins-earned popup immediately after purchase
 import { useRewardPopup } from '@/contexts/RewardPopupContext';
+import { useCart } from '@/contexts/CartContext';
 // Phase 1.6: Post-payment summary showing coins earned + streak update
 import PostPaymentSummary from '@/components/payment/PostPaymentSummary';
 
@@ -100,6 +101,8 @@ function PaymentSuccessPage() {
   // CARLOS retention fix: reward popup shown once orders load
   const rewardPopupShownRef = useRef(false);
   const { showCoinsEarned, showCashbackEarned } = useRewardPopup();
+  const { clearCart } = useCart();
+  const cartClearedRef = useRef(false);
   // Phase 1.6: track total coins earned across all orders for PostPaymentSummary
   const [totalCoinsEarnedForSummary, setTotalCoinsEarnedForSummary] = useState(0);
   const isMounted = useIsMounted();
@@ -204,6 +207,14 @@ function PaymentSuccessPage() {
 
         if (!isMounted()) return;
         setOrders(fetchedOrders);
+
+        // Clear cart on confirmed payment success (deep-link path).
+        // useCheckout clears on its own code path; this guards the Razorpay
+        // callback / deep-link path where useCheckout never ran.
+        if (fetchedOrders.length > 0 && !cartClearedRef.current) {
+          cartClearedRef.current = true;
+          clearCart().catch(() => {});
+        }
 
         // Track purchase event (once per page visit)
         if (fetchedOrders.length > 0 && !analyticsTrackedRef.current) {

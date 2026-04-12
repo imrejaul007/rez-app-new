@@ -21,6 +21,7 @@ import CardOffersSection from '@/components/cart/CardOffersSection';
 import { useGetCurrencySymbol, useAuthUser, useSavingsInsights } from '@/stores';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing } from '@/constants/DesignSystem';
+import { normalizeUserTier } from '@/constants/loyalty';
 
 import CheckoutHeader from '@/components/checkout/CheckoutHeader';
 import OrderItemsPreview from '@/components/checkout/OrderItemsPreview';
@@ -223,7 +224,8 @@ function CheckoutPage() {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const authUser = useAuthUser();
-  const userLoyaltyTier = (authUser as any)?.loyaltyTier || null;
+  // normalizeUserTier handles both backend UPPERCASE (referralTier) and frontend lowercase (loyaltyTier)
+  const userLoyaltyTier = normalizeUserTier((authUser as any)?.loyaltyTier || (authUser as any)?.referralTier);
   const savingsInsights = useSavingsInsights();
   const scrollViewRef = useRef<ScrollView>(null);
 
