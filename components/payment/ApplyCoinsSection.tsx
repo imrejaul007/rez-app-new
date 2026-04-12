@@ -41,19 +41,19 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
   const maxCoinsAllowed = Math.floor((billAmount * maxCoinRedemptionPercent) / 100);
 
   // Defensive null checks for coin data
-  const nuqtaCoins = appliedCoins?.nuqtaCoins || { available: 0, using: 0, enabled: false };
+  const rezCoins = appliedCoins?.rezCoins || { available: 0, using: 0, enabled: false };
   const promoCoins = appliedCoins?.promoCoins || { available: 0, using: 0, enabled: false, expiringToday: false };
   const brandedCoins = appliedCoins?.brandedCoins;
 
   const totalAvailable =
-    (nuqtaCoins.available || 0) +
+    (rezCoins.available || 0) +
     (promoCoins.available || 0) +
     (brandedCoins?.available || 0);
 
   // Calculate max usable for each coin type considering others
   const getMaxUsable = (coinType: 'rez' | 'promo' | 'branded'): number => {
     const otherCoinsUsed =
-      (coinType !== 'rez' ? (nuqtaCoins.using || 0) : 0) +
+      (coinType !== 'rez' ? (rezCoins.using || 0) : 0) +
       (coinType !== 'promo' ? (promoCoins.using || 0) : 0) +
       (coinType !== 'branded' ? (brandedCoins?.using || 0) : 0);
 
@@ -61,7 +61,7 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
 
     switch (coinType) {
       case 'rez':
-        return Math.min(nuqtaCoins.available || 0, Math.max(0, remaining));
+        return Math.min(rezCoins.available || 0, Math.max(0, remaining));
       case 'promo':
         return Math.min(promoCoins.available || 0, Math.max(0, remaining));
       case 'branded':
@@ -164,13 +164,13 @@ export const ApplyCoinsSection: React.FC<ApplyCoinsSectionProps> = ({
             )}
 
             {/* Nuqta Coins - Third priority (universal, no cap) */}
-            {(nuqtaCoins.available || 0) > 0 && (
+            {(rezCoins.available || 0) > 0 && (
               <CoinToggleRow
                 type="nuqta"
                 name={BRAND.COIN_NAME}
-                available={nuqtaCoins.available || 0}
-                using={nuqtaCoins.using || 0}
-                enabled={nuqtaCoins.enabled || false}
+                available={rezCoins.available || 0}
+                using={rezCoins.using || 0}
+                enabled={rezCoins.enabled || false}
                 maxUsable={getMaxUsable('rez')}
                 onToggle={(enabled) => onCoinToggle('rez', enabled)}
                 onAmountChange={(amount) => onCoinAmountChange('rez', amount)}

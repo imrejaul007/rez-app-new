@@ -16,7 +16,7 @@ import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 import { BRAND } from '@/constants/brand';
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface CoinDetailCardProps {
   coin: CoinBalance;
@@ -83,7 +83,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
       >
         <View style={[styles.iconContainer, { backgroundColor: coinInfo.backgroundColor }]}>
           {coin.type === 'rez' || coin.type === 'nuqta' ? (
-            <CachedImage source={nuqtaCoinImage} style={styles.coinImage} contentFit="contain" transition={200} />
+            <CachedImage source={rezCoinImage} style={styles.coinImage} contentFit="contain" transition={200} />
           ) : (
             <Ionicons
               name={coin.type === 'branded' ? 'storefront' : 'flash'}

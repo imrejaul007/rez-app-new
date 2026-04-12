@@ -36,7 +36,7 @@ export interface TopStoreCardProps {
 
 // Calculate Nuqta coins based on cashback percentage and average order
 // Nuqta coins are typically 1 coin per ₹2 cashback earned
-const calculateNuqtaCoins = (cashbackPercentage: number): number => {
+const calculateRezCoins = (cashbackPercentage: number): number => {
   const avgOrderAmount = 1200; // Estimated average order amount in INR
   const cashbackAmount = (cashbackPercentage / 100) * avgOrderAmount;
   const coinsPerRupee = 0.5; // 1 coin per ₹2 cashback = 0.5 coins per ₹1
@@ -81,8 +81,8 @@ function TopStoreCard({ store, onPress, width = 180 }: TopStoreCardProps) {
   }, [store.cashback?.percentage]);
 
   // Calculate Nuqta coins
-  const nuqtaCoins = useMemo(() => {
-    return calculateNuqtaCoins(cashbackPercentage);
+  const rezCoins = useMemo(() => {
+    return calculateRezCoins(cashbackPercentage);
   }, [cashbackPercentage]);
 
   // Handle press
@@ -100,9 +100,9 @@ function TopStoreCard({ store, onPress, width = 180 }: TopStoreCardProps) {
     if (store.rating?.value) parts.push(`${formattedRating} stars`);
     if (store.distance) parts.push(store.distance);
     parts.push(`${cashbackPercentage}% cashback`);
-    parts.push(`Earn ${nuqtaCoins} coins`);
+    parts.push(`Earn ${rezCoins} coins`);
     return parts.join('. ');
-  }, [store.name, formattedRating, store.rating?.value, store.distance, cashbackPercentage, nuqtaCoins]);
+  }, [store.name, formattedRating, store.rating?.value, store.distance, cashbackPercentage, rezCoins]);
 
   return (
     <Pressable
@@ -165,7 +165,7 @@ function TopStoreCard({ store, onPress, width = 180 }: TopStoreCardProps) {
             {/* Earn Nuqta Coins Badge - Right */}
             <View style={styles.earnBadge}>
               <ThemedText style={styles.earnText}>
-                {`Earn ${nuqtaCoins} ${BRAND.COIN_SINGLE}`}
+                {`Earn ${rezCoins} ${BRAND.COIN_SINGLE}`}
               </ThemedText>
             </View>
           </View>

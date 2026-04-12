@@ -33,7 +33,7 @@ import { generateIdempotencyKey } from '@/utils/idempotencyKey';
 import { handleWalletError, parseWalletError } from '@/utils/walletErrorHandler';
 import { BRAND } from '@/constants/brand';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface RecentRecipient {
   id: string;
@@ -452,7 +452,7 @@ function TransferPage() {
 
       {/* Balance Card */}
       <View style={styles.balanceCard}>
-        <CachedImage source={nuqtaCoinImage} style={styles.coinImage} />
+        <CachedImage source={rezCoinImage} style={styles.coinImage} />
         <View style={styles.balanceInfo}>
           <ThemedText style={styles.balanceLabel}>Available Balance</ThemedText>
           <ThemedText style={styles.balanceValue}>
@@ -527,7 +527,7 @@ function TransferPage() {
           <ActivityIndicator color={colors.background.primary} />
         ) : (
           <View style={styles.sendButtonContent}>
-            <CachedImage source={nuqtaCoinImage} style={styles.sendButtonIcon} />
+            <CachedImage source={rezCoinImage} style={styles.sendButtonIcon} />
             <ThemedText style={styles.sendButtonText}>
               Send {numAmount > 0 ? `${numAmount.toLocaleString()} ${BRAND.CURRENCY_CODE}` : ''}
             </ThemedText>
@@ -597,7 +597,7 @@ function TransferPage() {
         <View style={styles.transactionRow}>
           <ThemedText style={styles.transactionLabel}>Amount</ThemedText>
           <View style={styles.transactionAmountRow}>
-            <CachedImage source={nuqtaCoinImage} style={styles.transactionCoinIcon} />
+            <CachedImage source={rezCoinImage} style={styles.transactionCoinIcon} />
             <ThemedText style={styles.transactionValue}>
               {Number(amount).toLocaleString()} {BRAND.CURRENCY_CODE}
             </ThemedText>

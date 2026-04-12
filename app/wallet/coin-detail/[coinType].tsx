@@ -30,7 +30,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 const DEFAULT_COIN_RULES: Record<string, { usageRules: string[]; earningMethods: string[] }> = {
   rez: {
@@ -151,7 +151,7 @@ function CoinDetailPage() {
         <View style={styles.heroBalance}>
           <View style={[styles.heroIcon, { backgroundColor: coinInfo.backgroundColor }]}>
             {type === 'rez' || type === 'nuqta' ? (
-              <CachedImage source={nuqtaCoinImage} style={styles.heroCoinImage} contentFit="contain" />
+              <CachedImage source={rezCoinImage} style={styles.heroCoinImage} contentFit="contain" />
             ) : (
               <Ionicons name={type === 'branded' ? 'storefront' : 'flash'} size={28} color={coinInfo.color} />
             )}

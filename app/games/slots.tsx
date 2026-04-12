@@ -25,7 +25,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 const SYMBOLS = ['🍒', '🍋', '🍇', '💎', '⭐', '🔔', '7️⃣'];
 const SPIN_COST = 5;
@@ -177,7 +177,7 @@ function SlotsPage() {
       {/* Balance Display */}
       <View style={styles.balanceBar}>
         <View style={styles.balanceLeft}>
-          <CachedImage source={nuqtaCoinImage} style={styles.balanceCoin} />
+          <CachedImage source={rezCoinImage} style={styles.balanceCoin} />
           <Text style={styles.balanceText}>
             {balance} {BRAND.CURRENCY_CODE}
           </Text>

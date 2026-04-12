@@ -19,7 +19,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface Question {
   id: string;
@@ -516,7 +516,7 @@ function TriviaPage() {
 
         {coinsEarned > 0 && (
           <View style={styles.coinsEarnedCard}>
-            <CachedImage source={nuqtaCoinImage} style={styles.coinIcon} />
+            <CachedImage source={rezCoinImage} style={styles.coinIcon} />
             <ThemedText style={styles.coinsEarnedText}>
               +{coinsEarned} {BRAND.CURRENCY_CODE} earned!
             </ThemedText>

@@ -33,7 +33,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const nuqtaCoinImage = BRAND.COIN_IMAGE;
+const rezCoinImage = BRAND.COIN_IMAGE;
 
 // Fallback values used while config is loading or if fetch fails
 const FALLBACK_THEMES = [
@@ -280,7 +280,7 @@ function GiftPage() {
             <LinearGradient colors={successData.theme.colors as any} style={styles.successGiftCard}>
               <ThemedText style={styles.successEmoji}>{successData.theme.emoji}</ThemedText>
               <View style={styles.successAmountRow}>
-                <CachedImage source={nuqtaCoinImage} style={styles.successCoinIcon} />
+                <CachedImage source={rezCoinImage} style={styles.successCoinIcon} />
                 <ThemedText style={styles.successAmount}>
                   {successData.amount.toLocaleString()} {BRAND.CURRENCY_CODE}
                 </ThemedText>
@@ -311,7 +311,7 @@ function GiftPage() {
             <View style={styles.transactionRow}>
               <ThemedText style={styles.transactionLabel}>Amount</ThemedText>
               <View style={styles.transactionAmountRow}>
-                <CachedImage source={nuqtaCoinImage} style={styles.transactionCoinIcon} />
+                <CachedImage source={rezCoinImage} style={styles.transactionCoinIcon} />
                 <ThemedText style={styles.transactionValue}>
                   {successData.amount.toLocaleString()} {BRAND.CURRENCY_CODE}
                 </ThemedText>
@@ -386,7 +386,7 @@ function GiftPage() {
         </View>
         {/* Balance chip */}
         <View style={styles.balanceChip}>
-          <CachedImage source={nuqtaCoinImage} style={styles.balanceCoinIcon} />
+          <CachedImage source={rezCoinImage} style={styles.balanceCoinIcon} />
           <ThemedText style={styles.balanceChipAmount}>
             {walletBalance.toLocaleString()} {BRAND.CURRENCY_CODE}
           </ThemedText>
@@ -449,7 +449,7 @@ function GiftPage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Amount</ThemedText>
             <View style={styles.amountContainer}>
-              <CachedImage source={nuqtaCoinImage} style={styles.amountCoinIcon} />
+              <CachedImage source={rezCoinImage} style={styles.amountCoinIcon} />
               <TextInput
                 style={styles.amountInput}
                 value={amount}

@@ -140,10 +140,10 @@ const WalletSnapshotCard: React.FC = () => {
           <View style={styles.coinsGrid}>
             {/* Rez Coins */}
             <View style={styles.coinCard}>
-              <View style={styles.nuqtaCoinIconContainer}>
+              <View style={styles.rezCoinIconContainer}>
                 <CachedImage
                   source={BRAND.COIN_IMAGE}
-                  style={styles.nuqtaCoinImage}
+                  style={styles.rezCoinImage}
                   contentFit="contain"
                 />
               </View>
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     }),
   },
   // Nuqta Coin Icon Container
-  nuqtaCoinIconContainer: {
+  rezCoinIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  nuqtaCoinImage: {
+  rezCoinImage: {
     width: 32,
     height: 32,
   },
