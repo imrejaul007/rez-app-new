@@ -29,13 +29,14 @@ export interface Store {
     phone: string;
     website?: string;
   };
-  address: {
-    street: string;
+  location: {
+    address: string;
     city: string;
     state: string;
-    zipCode: string;
-    country: string;
+    pincode?: string;
+    country?: string;
     coordinates?: [number, number];
+    landmark?: string;
   };
   category: {
     id: string;
@@ -45,7 +46,7 @@ export interface Store {
   mainCategorySlug?: string;
   settings: {
     isActive: boolean;
-    acceptsOrders: boolean;
+    acceptsOrders?: boolean;
     minOrderAmount?: number;
     deliveryRadius?: number;
     processingTime: string;
@@ -55,11 +56,11 @@ export interface Store {
     count: number;
     breakdown: Record<number, number>;
   };
-  stats: {
-    totalProducts: number;
-    totalSales: number;
+  analytics: {
     totalOrders: number;
-    joinedDate: string;
+    totalRevenue: number;
+    avgOrderValue: number;
+    repeatCustomers: number;
   };
   socialMedia?: {
     facebook?: string;
@@ -632,7 +633,7 @@ class StoresService {
       name: string;
       description: string;
       contact: Store['contact'];
-      address: Store['address'];
+      location: Store['location'];
       settings: Store['settings'];
       hours: Store['hours'];
       policies: Store['policies'];

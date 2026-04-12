@@ -118,8 +118,8 @@ interface Store {
   description?: string;
   logo?: string;
   banner?: string;
-  address: {
-    street?: string;
+  location: {
+    address?: string;
     city: string;
     state: string;
     pincode?: string;
@@ -250,7 +250,7 @@ const HealthcareCategoryPage: React.FC = () => {
         style={styles.itemCard}
         onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as any)}
         accessibilityRole="button"
-        accessibilityLabel={`${store.name}${store.metadata?.specialization ? `, ${store.metadata.specialization}` : ''}, ${store.address.city}, rating ${store.ratings.average.toFixed(1)}${cashback > 0 ? `, ${cashback}% cashback` : ''}`}
+        accessibilityLabel={`${store.name}${store.metadata?.specialization ? `, ${store.metadata.specialization}` : ''}, ${store.location.city}, rating ${store.ratings.average.toFixed(1)}${cashback > 0 ? `, ${cashback}% cashback` : ''}`}
       >
         <View style={styles.cardHeader}>
           <View style={styles.storeImageContainer}>
@@ -289,7 +289,7 @@ const HealthcareCategoryPage: React.FC = () => {
           <View style={styles.locationRow}>
             <Ionicons name="location-outline" size={14} color={COLORS.gray600} />
             <Text style={styles.locationText}>
-              {store.address.city}, {store.address.state}
+              {store.location.city}, {store.location.state}
             </Text>
           </View>
 
