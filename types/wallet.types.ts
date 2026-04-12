@@ -44,13 +44,13 @@ export type TransactionType =
   | 'TOPUP'
   | 'WITHDRAWAL';
 
-export type TransactionStatus = 
-  | 'SUCCESS'
-  | 'PENDING'
-  | 'FAILED'
-  | 'CANCELLED'
-  | 'PROCESSING'
-  | 'REFUNDED';
+export type TransactionStatus =
+  | 'success'
+  | 'pending'
+  | 'failed'
+  | 'cancelled'
+  | 'processing'
+  | 'refunded';
 
 export type TransactionCategory =
   | 'ALL'
@@ -238,21 +238,21 @@ export const WALLET_COLORS = {
 } as const;
 
 export const TRANSACTION_STATUS_COLORS = {
-  SUCCESS: WALLET_COLORS.success,
-  PENDING: WALLET_COLORS.pending,
-  FAILED: WALLET_COLORS.error,
-  CANCELLED: WALLET_COLORS.error,
-  PROCESSING: WALLET_COLORS.warning,
-  REFUNDED: WALLET_COLORS.warning,
+  success: WALLET_COLORS.success,
+  pending: WALLET_COLORS.pending,
+  failed: WALLET_COLORS.error,
+  cancelled: WALLET_COLORS.error,
+  processing: WALLET_COLORS.warning,
+  refunded: WALLET_COLORS.warning,
 } as const;
 
 export const TRANSACTION_STATUS_BACKGROUNDS = {
-  SUCCESS: WALLET_COLORS.successLight,
-  PENDING: WALLET_COLORS.pendingLight,
-  FAILED: WALLET_COLORS.errorLight,
-  CANCELLED: WALLET_COLORS.errorLight,
-  PROCESSING: WALLET_COLORS.warningLight,
-  REFUNDED: WALLET_COLORS.warningLight,
+  success: WALLET_COLORS.successLight,
+  pending: WALLET_COLORS.pendingLight,
+  failed: WALLET_COLORS.errorLight,
+  cancelled: WALLET_COLORS.errorLight,
+  processing: WALLET_COLORS.warningLight,
+  refunded: WALLET_COLORS.warningLight,
 } as const;
 
 // Default Values

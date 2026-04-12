@@ -541,6 +541,9 @@ export type OrderStatus =
 
 export type PaymentStatus =
   | 'pending'
+  | 'awaiting_payment'
+  | 'processing'
+  | 'authorized'
   | 'paid'
   | 'failed'
   | 'refunded'

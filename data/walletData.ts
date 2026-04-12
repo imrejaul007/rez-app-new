@@ -28,7 +28,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'txn_001',
     type: 'PAYMENT',
-    status: 'SUCCESS',
+    status: 'success',
     amount: 2075,
     currency: BRAND.CURRENCY_CODE,
     title: 'Payment Success',
@@ -38,7 +38,7 @@ export const mockTransactions: Transaction[] = [
     merchantName: 'Myntra',
     merchantLogo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=50&h=50&fit=crop',
     orderId: 'MYN_ORD_12345',
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: 'HOME_DELIVERY',
     metadata: {
       items: ['Casual T-Shirt', 'Denim Jeans'],
@@ -49,7 +49,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'txn_002',
     type: 'PAYMENT',
-    status: 'SUCCESS',
+    status: 'success',
     amount: 2075,
     currency: BRAND.CURRENCY_CODE,
     title: 'Payment Success',
@@ -59,7 +59,7 @@ export const mockTransactions: Transaction[] = [
     merchantName: 'Myntra',
     merchantLogo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=50&h=50&fit=crop',
     orderId: 'MYN_ORD_12346',
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: 'HOME_DELIVERY',
     metadata: {
       items: ['Wireless Headphones', 'Phone Case'],
@@ -68,7 +68,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'txn_003',
     type: 'PAYMENT',
-    status: 'SUCCESS',
+    status: 'success',
     amount: 2075,
     currency: BRAND.CURRENCY_CODE,
     title: 'Payment Success',
@@ -78,7 +78,7 @@ export const mockTransactions: Transaction[] = [
     merchantName: 'Myntra',
     merchantLogo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=50&h=50&fit=crop',
     orderId: 'MYN_ORD_12347',
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: 'HOME_DELIVERY',
     metadata: {
       items: ['Fresh Vegetables', 'Dairy Products', 'Snacks'],
@@ -88,7 +88,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'txn_004',
     type: 'CASHBACK',
-    status: 'SUCCESS',
+    status: 'success',
     amount: 125,
     currency: BRAND.CURRENCY_CODE,
     title: 'Cashback Received',
@@ -97,7 +97,7 @@ export const mockTransactions: Transaction[] = [
     timestamp: Date.now() - 345600000, // 4 days ago
     merchantName: `${BRAND.PAY_NAME}`,
     merchantLogo: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=50&h=50&fit=crop',
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: 'REZ_PAY',
     metadata: {
       originalTransaction: 'txn_001',
@@ -107,7 +107,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'txn_005',
     type: 'PAYMENT',
-    status: 'SUCCESS',
+    status: 'success',
     amount: 850,
     currency: BRAND.CURRENCY_CODE,
     title: 'Voucher Purchase',
@@ -117,7 +117,7 @@ export const mockTransactions: Transaction[] = [
     merchantName: 'CineMax',
     merchantLogo: 'https://images.unsplash.com/photo-1489599317328-1e39089ba640?w=50&h=50&fit=crop',
     orderId: 'CIN_VCH_7890',
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: 'VOUCHER',
     metadata: {
       voucherType: 'Movie Tickets',
@@ -128,7 +128,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'txn_006',
     type: 'PAYMENT',
-    status: 'PENDING',
+    status: 'pending',
     amount: 1200,
     currency: BRAND.CURRENCY_CODE,
     title: 'Payment Processing',
@@ -138,7 +138,7 @@ export const mockTransactions: Transaction[] = [
     merchantName: 'Tasty Bites',
     merchantLogo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=50&h=50&fit=crop',
     orderId: 'TB_ORD_5678',
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: 'HOME_DELIVERY',
     metadata: {
       items: ['Pizza Margherita', 'Garlic Bread', 'Coke'],
@@ -199,7 +199,7 @@ export const recentTransactions = mockTransactions.slice(0, 3);
 export const savedPaymentMethods = [
   {
     id: 'pm_001',
-    type: 'NUQTA_COIN',
+    type: 'REZ_COIN',
     title: `${BRAND.COIN_SINGLE} Wallet`,
     subtitle: `${mockWalletBalance.availableCoins} ${BRAND.CURRENCY_CODE} available`,
     icon: 'wallet',
@@ -314,7 +314,7 @@ export const createTransaction = async (transactionData: any): Promise<Transacti
   const newTransaction: Transaction = {
     id: `txn_${Date.now()}`,
     type: transactionData.type || 'PAYMENT',
-    status: 'SUCCESS',
+    status: 'success',
     amount: transactionData.amount,
     currency: BRAND.CURRENCY_CODE,
     title: transactionData.title,
@@ -322,7 +322,7 @@ export const createTransaction = async (transactionData: any): Promise<Transacti
     date: new Date().toISOString(),
     timestamp: Date.now(),
     merchantName: transactionData.merchantName,
-    paymentMethod: 'NUQTA_COIN',
+    paymentMethod: 'REZ_COIN',
     category: transactionData.category || 'ALL',
     metadata: transactionData.metadata || {},
   };
@@ -374,12 +374,12 @@ export const getTransactionIcon = (type: TransactionType): string => {
 
 export const getStatusColor = (status: TransactionStatus): string => {
   const colorMap = {
-    SUCCESS: '#ffcd57',
-    PENDING: '#F59E0B',
-    FAILED: '#EF4444',
-    CANCELLED: '#6B7280',
-    PROCESSING: '#3B82F6',
-    REFUNDED: '#8B5CF6',
+    success: '#ffcd57',
+    pending: '#F59E0B',
+    failed: '#EF4444',
+    cancelled: '#6B7280',
+    processing: '#3B82F6',
+    refunded: '#8B5CF6',
   };
   
   return colorMap[status] || '#6B7280';
