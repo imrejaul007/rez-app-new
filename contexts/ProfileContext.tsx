@@ -71,16 +71,14 @@ const mapBackendUserToProfileUser = (backendUser: BackendUser): User => {
     joinDate: backendUser.createdAt,
     isVerified: backendUser.isVerified,
     isOnboarded: backendUser.isOnboarded,
-    // Map wallet data from backend
+    // NOTE: DM-L4 — User.wallet sub-doc removed from backend schema.
+    // Wallet data is in the Wallet collection. walletOverride (from walletApi.getBalance)
+    // is applied after mapping via the walletOverride state in ProfileProvider.
     wallet: {
-      balance: typeof backendUser.wallet?.balance === 'object'
-        ? (backendUser.wallet.balance as any).available || (backendUser.wallet.balance as any).total || 0
-        : backendUser.wallet?.balance || 0,
-      totalEarned: backendUser.wallet?.totalEarned || 0,
-      totalSpent: backendUser.wallet?.totalSpent || 0,
-      pendingAmount: typeof backendUser.wallet?.pendingAmount === 'object'
-        ? (backendUser.wallet.pendingAmount as any).pending || 0
-        : backendUser.wallet?.pendingAmount || 0,
+      balance: 0,
+      totalEarned: 0,
+      totalSpent: 0,
+      pendingAmount: 0,
     },
     // Map subscription/creator tier fields
     subscriptionTier: (backendUser as any).priveTier
@@ -151,8 +149,9 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
   const user = useMemo(() => {
     if (authUser) {
       const mappedUser = mapBackendUserToProfileUser(authUser);
-      // Use wallet override if the mapped wallet data looks empty
-      if (walletOverride && (!mappedUser.wallet?.balance && !mappedUser.wallet?.totalEarned)) {
+      // DM-L4: User.wallet sub-doc removed from backend. Always use wallet data
+      // from the real Wallet collection (fetched via walletApi.getBalance).
+      if (walletOverride) {
         mappedUser.wallet = walletOverride;
       }
       return mappedUser;
@@ -160,21 +159,20 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     return null;
   }, [authUser, isAuthenticated, walletOverride]);
 
-  // Fetch wallet balance separately if user's wallet data seems empty
+  // Fetch real wallet balance from the Wallet collection via API.
+  // DM-L4: User.wallet sub-doc has been removed from the backend schema.
+  // The Wallet collection (GET /wallet/balance) is the sole source of truth.
   useEffect(() => {
     if (!authUser || !isAuthenticated || authLoading) return;
-    const w = authUser.wallet;
-    const balance = typeof w?.balance === 'object' ? (w.balance as any).available || (w.balance as any).total || 0 : w?.balance || 0;
-    if (balance || w?.totalEarned) return; // wallet data looks populated
 
     let mounted = true;
     walletApi.getBalance().then((res) => {
       if (mounted && res.success && res.data) {
         setWalletOverride({
-          balance: (res.data as any).balance?.available || (res.data as any).balance || 0,
-          totalEarned: (res.data as any).totalEarned || 0,
-          totalSpent: (res.data as any).totalSpent || 0,
-          pendingAmount: (res.data as any).pendingAmount || 0,
+          balance: (res.data as any).balance?.available ?? (res.data as any).balance ?? 0,
+          totalEarned: (res.data as any).totalEarned ?? (res.data as any).statistics?.totalEarned ?? 0,
+          totalSpent: (res.data as any).totalSpent ?? (res.data as any).statistics?.totalSpent ?? 0,
+          pendingAmount: (res.data as any).balance?.pending ?? (res.data as any).pendingAmount ?? 0,
         });
       }
     }).catch(() => { /* non-blocking */ });
