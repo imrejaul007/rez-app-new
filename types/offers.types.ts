@@ -258,7 +258,7 @@ export interface SaleOffer {
   salePrice: number;
   discountPercentage: number;
   cashbackPercentage: number;
-  tag: 'clearance' | 'sale' | 'last_pieces';
+  tag: 'clearance' | 'sale' | 'last_pieces' | 'mega_sale';  // ENUM-17 FIX: added mega_sale to match DB schema
 }
 
 // Buy 1 Get 1 Offer
@@ -269,7 +269,7 @@ export interface BOGOOffer {
   image: string;
   store: StoreInfo;
   originalPrice: number;
-  bogoType: 'buy1get1' | 'buy2get1' | 'buy1get50';
+  bogoType: 'buy1get1' | 'buy2get1' | 'buy1get50' | 'buy2get50';  // ENUM-17 FIX: added buy2get50 to match DB schema
   cashbackPercentage: number;
   validUntil: string;
 }

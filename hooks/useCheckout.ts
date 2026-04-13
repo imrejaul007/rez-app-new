@@ -1110,13 +1110,15 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         );
 
         // Override promo discount with actual backend value and recalculate totalPayable
-        newBillSummary.promoDiscount = response.data.discount;
-        newBillSummary.savings = (newBillSummary.savings || 0) + response.data.discount;
+        // GF-05 FIX: Guard against undefined discount field in partial/error responses.
+        const discountAmount = response.data.discount ?? 0;
+        newBillSummary.promoDiscount = discountAmount;
+        newBillSummary.savings = (newBillSummary.savings || 0) + discountAmount;
 
         // Recalculate totalPayable with promo discount and lock fee
         const subtotal = newBillSummary.itemTotal + newBillSummary.getAndItemTotal;
         const totalBeforeDiscount = subtotal + newBillSummary.platformFee + newBillSummary.deliveryFee + newBillSummary.taxes;
-        const totalAfterDiscount = totalBeforeDiscount - (newBillSummary.lockFeeDiscount || 0) - response.data.discount - coinUsage.rez - coinUsage.promo;
+        const totalAfterDiscount = totalBeforeDiscount - (newBillSummary.lockFeeDiscount || 0) - discountAmount - coinUsage.rez - coinUsage.promo;
         newBillSummary.totalPayable = Math.max(0, Math.round(totalAfterDiscount));
 
         devLog.log('🎟️ [Checkout] New bill summary after coupon:', newBillSummary);
@@ -1137,7 +1139,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           return newState;
         });
 
-        return { success: true, message: `${code.code} applied! You save ${currencySymbol}${response.data.discount}`, discount: response.data.discount };
+        return { success: true, message: `${code.code} applied! You save ${currencySymbol}${discountAmount}`, discount: discountAmount };
       } else {
         devLog.error('💳 [Checkout] Coupon invalid:', response.message);
         const errorMsg = response.message || 'Invalid coupon code';

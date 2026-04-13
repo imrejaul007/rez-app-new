@@ -127,19 +127,14 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
   const brandedCoinsTotal = backendData.brandedCoinsTotal
     ?? brandedCoinsData.reduce((sum, bc) => sum + (bc.amount || 0), 0);
 
-  // cashbackBalance: API returns it under balance.cashback OR breakdown.cashback
-  const cashbackBalance =
-    backendData?.balance?.cashback
-    ?? backendData?.breakdown?.cashback
-    ?? backendData?.breakdown?.cashbackBalance
-    ?? 0;
+  // GF-09 FIX: Backend only sends breakdown.cashbackBalance and breakdown.pendingRewards.
+  // Removed the never-populated fallback paths (balance.cashback, breakdown.cashback,
+  // balance.pending, breakdown.pending) to prevent a future field-name collision from
+  // silently winning the ?? chain with the wrong value.
+  const cashbackBalance = backendData?.breakdown?.cashbackBalance ?? 0;
 
-  // pendingRewards: API returns it under balance.pending OR breakdown.pending
-  const pendingRewards =
-    backendData?.balance?.pending
-    ?? backendData?.breakdown?.pending
-    ?? backendData?.breakdown?.pendingRewards
-    ?? 0;
+  // GF-09 FIX: Same reasoning — only breakdown.pendingRewards is sent by backend.
+  const pendingRewards = backendData?.breakdown?.pendingRewards ?? 0;
 
   // Use API totalValue as authoritative total — avoids double-counting
   const totalBalance =
