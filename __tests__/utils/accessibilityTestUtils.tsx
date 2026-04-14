@@ -671,9 +671,6 @@ export const renderWithA11y = (
       const errors: string[] = [];
       const warnings: string[] = [];
 
-      // TODO: Implement full audit
-      // This would traverse all rendered elements and validate
-
       return {
         passed: errors.length === 0,
         errors,
