@@ -68,9 +68,9 @@ class ReelApiService {
     page?: number;
     limit?: number;
     sortBy?: 'newest' | 'popular' | 'trending';
-  }): Promise<ApiResponse<{ reels: Reel[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ reels: Reel[]; pagination: Record<string, unknown> }>> {
     try {
-      const response = await apiClient.get<any>('/videos', params);
+      const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>('/videos', params);
 
       if (response.success && response.data) {
         const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
@@ -98,7 +98,7 @@ class ReelApiService {
     timeframe?: '1d' | '7d' | '30d';
   }): Promise<ApiResponse<Reel[]>> {
     try {
-      const response = await apiClient.get<any>('/videos/trending', params);
+      const response = await apiClient.get<unknown[]>('/videos/trending', params);
 
       if (response.success && response.data) {
         const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
@@ -118,9 +118,9 @@ class ReelApiService {
     page?: number;
     limit?: number;
     sortBy?: 'newest' | 'popular' | 'trending';
-  }): Promise<ApiResponse<{ reels: Reel[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ reels: Reel[]; pagination: Record<string, unknown> }>> {
     try {
-      const response = await apiClient.get<any>(`/videos/category/${category}`, params);
+      const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/category/${category}`, params);
 
       if (response.success && response.data) {
         const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
@@ -145,7 +145,7 @@ class ReelApiService {
    */
   async getReelById(reelId: string): Promise<ApiResponse<Reel>> {
     try {
-      const response = await apiClient.get<any>(`/videos/${reelId}`);
+      const response = await apiClient.get<Record<string, unknown>>(`/videos/${reelId}`);
 
       if (response.success && response.data) {
         const reel = this.transformVideoToReel(response.data.video || response.data);
@@ -164,9 +164,9 @@ class ReelApiService {
   async getReelsByCreator(creatorId: string, params?: {
     page?: number;
     limit?: number;
-  }): Promise<ApiResponse<{ reels: Reel[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ reels: Reel[]; pagination: Record<string, unknown> }>> {
     try {
-      const response = await apiClient.get<any>(`/videos/creator/${creatorId}`, params);
+      const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/creator/${creatorId}`, params);
 
       if (response.success && response.data) {
         const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
@@ -194,7 +194,7 @@ class ReelApiService {
     offset?: number;
   }): Promise<ApiResponse<Reel[]>> {
     try {
-      const response = await apiClient.get<any>(`/videos/store/${storeId}`, params);
+      const response = await apiClient.get<unknown[]>(`/videos/store/${storeId}`, params);
 
       if (response.success && response.data) {
         const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
@@ -214,9 +214,9 @@ class ReelApiService {
     category?: string;
     page?: number;
     limit?: number;
-  }): Promise<ApiResponse<{ reels: Reel[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ reels: Reel[]; pagination: Record<string, unknown> }>> {
     try {
-      const response = await apiClient.get<any>('/videos/search', { q: query, ...params });
+      const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>('/videos/search', { q: query, ...params });
 
       if (response.success && response.data) {
         const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
@@ -241,7 +241,7 @@ class ReelApiService {
    */
   async toggleLike(reelId: string): Promise<ApiResponse<{ liked: boolean; likesCount: number }>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/like`);
+      const response = await apiClient.post<{ liked: boolean; likesCount: number }>(`/videos/${reelId}/like`);
 
       if (response.success && response.data) {
         return {
@@ -264,7 +264,7 @@ class ReelApiService {
    */
   async toggleBookmark(reelId: string): Promise<ApiResponse<{ bookmarked: boolean }>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/bookmark`);
+      const response = await apiClient.post<{ bookmarked: boolean }>(`/videos/${reelId}/bookmark`);
 
       if (response.success && response.data) {
         return {
@@ -286,7 +286,7 @@ class ReelApiService {
    */
   async trackView(reelId: string): Promise<ApiResponse<{ viewsCount: number }>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/view`);
+      const response = await apiClient.post<{ viewsCount: number }>(`/videos/${reelId}/view`);
 
       if (response.success) {
         return {
@@ -309,9 +309,9 @@ class ReelApiService {
   async getComments(reelId: string, params?: {
     page?: number;
     limit?: number;
-  }): Promise<ApiResponse<{ comments: ReelComment[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ comments: ReelComment[]; pagination: Record<string, unknown> }>> {
     try {
-      const response = await apiClient.get<any>(`/videos/${reelId}/comments`, params);
+      const response = await apiClient.get<{ comments?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/${reelId}/comments`, params);
 
       if (response.success && response.data) {
         const comments = (response.data.comments || response.data || []).map((comment: any) => ({
@@ -345,7 +345,7 @@ class ReelApiService {
    */
   async addComment(reelId: string, comment: string): Promise<ApiResponse<ReelComment>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/comments`, { comment });
+      const response = await apiClient.post<Record<string, unknown>>(`/videos/${reelId}/comments`, { comment });
 
       if (response.success && response.data) {
         const newComment = response.data.comment || response.data;
@@ -375,7 +375,7 @@ class ReelApiService {
    */
   async shareReel(reelId: string): Promise<ApiResponse<{ shares: number }>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/share`);
+      const response = await apiClient.post<{ shares: number }>(`/videos/${reelId}/share`);
 
       if (response.success && response.data) {
         return {
@@ -397,7 +397,7 @@ class ReelApiService {
    */
   async toggleCommentLike(reelId: string, commentId: string): Promise<ApiResponse<{ isLiked: boolean; likesCount: number }>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/comments/${commentId}/like`);
+      const response = await apiClient.post<{ isLiked: boolean; likesCount: number }>(`/videos/${reelId}/comments/${commentId}/like`);
 
       if (response.success && response.data) {
         return {
@@ -420,7 +420,7 @@ class ReelApiService {
    */
   async reportReel(reelId: string, reason: string, details?: string): Promise<ApiResponse<{ reported: boolean }>> {
     try {
-      const response = await apiClient.post<any>(`/videos/${reelId}/report`, { reason, details });
+      const response = await apiClient.post<{ reported: boolean }>(`/videos/${reelId}/report`, { reason, details });
 
       if (response.success) {
         return { success: true, data: { reported: true } };

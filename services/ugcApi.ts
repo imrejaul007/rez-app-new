@@ -134,37 +134,49 @@ export interface UgcPagination {
   hasMore: boolean;
 }
 
+// Response payload types
+type UGCFeedResponse = { content: UGCMedia[]; total: number; hasMore: boolean };
+type UGCContentResponse = { content: UGCMedia; message?: string };
+type UGCListResponse = { content: UGCMedia[]; total: number };
+type UGCLikeResponse = { isLiked: boolean; likes: number };
+type UGCBookmarkResponse = { isBookmarked: boolean };
+type UGCShareResponse = { shares: number };
+type UGCCommentsResponse = { comments: UGCComment[]; total: number; hasMore: boolean };
+type UGCCommentResponse = { comment: UGCComment };
+type CommentLikeResponse = { isLiked: boolean; likes: number };
+type MessageResponse = { message: string };
+type ReelListResponse = { reels: UgcReel[]; pagination: UgcPagination };
+type ReelCreateResponse = { id: string; title: string; moderationStatus: string; coinReward?: { coinsAwarded: number; status: string; message: string } | null };
+type PostCreateResponse = {
+  id?: string;
+  type?: string;
+  caption?: string;
+  tags?: string[];
+  imageUrls?: string[];
+  [key: string]: unknown;
+};
+
 class UGCApiService {
   private baseUrl = '/ugc';
 
   /**
    * Get UGC feed
    */
-  async getFeed(filters?: UGCFilters): Promise<ApiResponse<{
-    content: UGCMedia[];
-    total: number;
-    hasMore: boolean;
-  }>> {
-
-    return apiClient.get<any>(this.baseUrl, filters as any);
+  async getFeed(filters?: UGCFilters): Promise<ApiResponse<UGCFeedResponse>> {
+    return apiClient.get<UGCFeedResponse>(this.baseUrl, filters as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   /**
    * Get UGC by ID
    */
   async getById(id: string): Promise<ApiResponse<{ content: UGCMedia }>> {
-
-    return apiClient.get<any>(`${this.baseUrl}/${id}`);
+    return apiClient.get<{ content: UGCMedia }>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Create new UGC (upload)
    */
-  async create(data: CreateUGCRequest, file: FormData): Promise<ApiResponse<{
-    content: UGCMedia;
-    message: string;
-  }>> {
-
+  async create(data: CreateUGCRequest, file: FormData): Promise<ApiResponse<UGCContentResponse>> {
     // Add metadata to FormData
     for (const key in data) {
       if (data[key as keyof CreateUGCRequest] !== undefined) {
@@ -182,172 +194,126 @@ class UGCApiService {
     caption?: string;
     tags?: string[];
   }): Promise<ApiResponse<{ content: UGCMedia }>> {
-
-    return apiClient.put<any>(`${this.baseUrl}/${id}`, data as any);
+    return apiClient.put<{ content: UGCMedia }>(`${this.baseUrl}/${id}`, data);
   }
 
   /**
    * Delete UGC
    */
-  async delete(id: string): Promise<ApiResponse<{ message: string }>> {
-
-    return apiClient.delete<any>(`${this.baseUrl}/${id}`);
+  async delete(id: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.delete<MessageResponse>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Like UGC content
    */
-  async likeContent(id: string): Promise<ApiResponse<{
-    isLiked: boolean;
-    likes: number;
-  }>> {
-    return apiClient.post<any>(`${this.baseUrl}/${id}/like`);
+  async likeContent(id: string): Promise<ApiResponse<UGCLikeResponse>> {
+    return apiClient.post<UGCLikeResponse>(`${this.baseUrl}/${id}/like`);
   }
 
   /**
    * Unlike UGC content
    */
-  async unlikeContent(id: string): Promise<ApiResponse<{
-    isLiked: boolean;
-    likes: number;
-  }>> {
-    return apiClient.delete<any>(`${this.baseUrl}/${id}/like`);
+  async unlikeContent(id: string): Promise<ApiResponse<UGCLikeResponse>> {
+    return apiClient.delete<UGCLikeResponse>(`${this.baseUrl}/${id}/like`);
   }
 
   /**
    * Like/Unlike UGC (toggle)
    */
-  async toggleLike(id: string): Promise<ApiResponse<{
-    isLiked: boolean;
-    likes: number;
-  }>> {
-    return apiClient.post<any>(`${this.baseUrl}/${id}/like`);
+  async toggleLike(id: string): Promise<ApiResponse<UGCLikeResponse>> {
+    return apiClient.post<UGCLikeResponse>(`${this.baseUrl}/${id}/like`);
   }
 
   /**
    * Bookmark UGC content
    */
-  async bookmarkContent(id: string): Promise<ApiResponse<{
-    isBookmarked: boolean;
-  }>> {
-    return apiClient.post<any>(`${this.baseUrl}/${id}/bookmark`);
+  async bookmarkContent(id: string): Promise<ApiResponse<UGCBookmarkResponse>> {
+    return apiClient.post<UGCBookmarkResponse>(`${this.baseUrl}/${id}/bookmark`);
   }
 
   /**
    * Remove bookmark from UGC content
    */
-  async removeBookmark(id: string): Promise<ApiResponse<{
-    isBookmarked: boolean;
-  }>> {
-    return apiClient.delete<any>(`${this.baseUrl}/${id}/bookmark`);
+  async removeBookmark(id: string): Promise<ApiResponse<UGCBookmarkResponse>> {
+    return apiClient.delete<UGCBookmarkResponse>(`${this.baseUrl}/${id}/bookmark`);
   }
 
   /**
    * Bookmark/Unbookmark UGC (toggle)
    */
-  async toggleBookmark(id: string): Promise<ApiResponse<{
-    isBookmarked: boolean;
-  }>> {
-    return apiClient.post<any>(`${this.baseUrl}/${id}/bookmark`);
+  async toggleBookmark(id: string): Promise<ApiResponse<UGCBookmarkResponse>> {
+    return apiClient.post<UGCBookmarkResponse>(`${this.baseUrl}/${id}/bookmark`);
   }
 
   /**
    * Check if user liked content
    */
-  async checkLikeStatus(id: string): Promise<ApiResponse<{
-    isLiked: boolean;
-  }>> {
-    return apiClient.get<any>(`${this.baseUrl}/${id}/like/status`);
+  async checkLikeStatus(id: string): Promise<ApiResponse<{ isLiked: boolean }>> {
+    return apiClient.get<{ isLiked: boolean }>(`${this.baseUrl}/${id}/like/status`);
   }
 
   /**
    * Check if user bookmarked content
    */
-  async checkBookmarkStatus(id: string): Promise<ApiResponse<{
-    isBookmarked: boolean;
-  }>> {
-    return apiClient.get<any>(`${this.baseUrl}/${id}/bookmark/status`);
+  async checkBookmarkStatus(id: string): Promise<ApiResponse<{ isBookmarked: boolean }>> {
+    return apiClient.get<{ isBookmarked: boolean }>(`${this.baseUrl}/${id}/bookmark/status`);
   }
 
   /**
    * Share UGC
    */
-  async share(id: string): Promise<ApiResponse<{ shares: number }>> {
-
-    return apiClient.post<any>(`${this.baseUrl}/${id}/share`);
+  async share(id: string): Promise<ApiResponse<UGCShareResponse>> {
+    return apiClient.post<UGCShareResponse>(`${this.baseUrl}/${id}/share`);
   }
 
   /**
    * Get comments for UGC
    */
-  async getComments(id: string, limit = 20, offset = 0): Promise<ApiResponse<{
-    comments: UGCComment[];
-    total: number;
-    hasMore: boolean;
-  }>> {
-
-    return apiClient.get<any>(`${this.baseUrl}/${id}/comments`, { limit, offset });
+  async getComments(id: string, limit = 20, offset = 0): Promise<ApiResponse<UGCCommentsResponse>> {
+    return apiClient.get<UGCCommentsResponse>(`${this.baseUrl}/${id}/comments`, { limit, offset });
   }
 
   /**
    * Add comment to UGC
    */
-  async addComment(id: string, comment: string, parentId?: string): Promise<ApiResponse<{
-    comment: UGCComment;
-  }>> {
-
-    return apiClient.post<any>(`${this.baseUrl}/${id}/comments`, { comment, parentId });
+  async addComment(id: string, comment: string, parentId?: string): Promise<ApiResponse<UGCCommentResponse>> {
+    return apiClient.post<UGCCommentResponse>(`${this.baseUrl}/${id}/comments`, { comment, parentId });
   }
 
   /**
    * Like/Unlike comment
    */
-  async toggleCommentLike(ugcId: string, commentId: string): Promise<ApiResponse<{
-    isLiked: boolean;
-    likes: number;
-  }>> {
-
-    return apiClient.post<any>(`${this.baseUrl}/${ugcId}/comments/${commentId}/like`);
+  async toggleCommentLike(ugcId: string, commentId: string): Promise<ApiResponse<CommentLikeResponse>> {
+    return apiClient.post<CommentLikeResponse>(`${this.baseUrl}/${ugcId}/comments/${commentId}/like`);
   }
 
   /**
    * Delete comment
    */
-  async deleteComment(ugcId: string, commentId: string): Promise<ApiResponse<{ message: string }>> {
-
-    return apiClient.delete<any>(`${this.baseUrl}/${ugcId}/comments/${commentId}`);
+  async deleteComment(ugcId: string, commentId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.delete<MessageResponse>(`${this.baseUrl}/${ugcId}/comments/${commentId}`);
   }
 
   /**
    * Report comment
    */
-  async reportComment(ugcId: string, commentId: string, reason: string, description?: string): Promise<ApiResponse<{
-    message: string;
-  }>> {
-
-    return apiClient.post<any>(`${this.baseUrl}/${ugcId}/comments/${commentId}/report`, { reason, description });
+  async reportComment(ugcId: string, commentId: string, reason: string, description?: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.post<MessageResponse>(`${this.baseUrl}/${ugcId}/comments/${commentId}/report`, { reason, description });
   }
 
   /**
    * Get user's UGC
    */
-  async getUserContent(userId?: string, type?: 'photo' | 'video'): Promise<ApiResponse<{
-    content: UGCMedia[];
-    total: number;
-  }>> {
-
-    return apiClient.get<any>(`${this.baseUrl}/user/${userId || 'me'}`, type ? { type } : undefined);
+  async getUserContent(userId?: string, type?: 'photo' | 'video'): Promise<ApiResponse<UGCListResponse>> {
+    return apiClient.get<UGCListResponse>(`${this.baseUrl}/user/${userId || 'me'}`, type ? { type } : undefined);
   }
 
   /**
    * Get UGC for product
    */
-  async getProductContent(productId: string): Promise<ApiResponse<{
-    content: UGCMedia[];
-    total: number;
-  }>> {
-
-    return apiClient.get<any>(`${this.baseUrl}/product/${productId}`);
+  async getProductContent(productId: string): Promise<ApiResponse<UGCListResponse>> {
+    return apiClient.get<UGCListResponse>(`${this.baseUrl}/product/${productId}`);
   }
 
   /**
@@ -357,16 +323,12 @@ class UGCApiService {
     type?: 'photo' | 'video';
     limit?: number;
     offset?: number;
-  }): Promise<ApiResponse<{
-    content: UGCMedia[];
-    total: number;
-  }>> {
-
+  }): Promise<ApiResponse<UGCListResponse>> {
     try {
       // First, try to get videos from the videos endpoint
-      const videosResponse = await apiClient.get<any>(`/videos/store/${storeId}`, {
+      const videosResponse = await apiClient.get<UGCFeedResponse>(`/videos/store/${storeId}`, {
         limit: params?.limit || 20,
-        offset: params?.offset || 0
+        offset: params?.offset || 0,
       });
 
       let allContent: UGCMedia[] = [];
@@ -374,33 +336,28 @@ class UGCApiService {
       // Process videos if available
       if (videosResponse.success && videosResponse.data?.content) {
         allContent = [...videosResponse.data.content];
-      } else {
       }
 
       // Then try to get UGC content
-      const ugcResponse = await apiClient.get<any>(`${this.baseUrl}/store/${storeId}`, params);
+      const ugcResponse = await apiClient.get<UGCFeedResponse>(`${this.baseUrl}/store/${storeId}`, params);
 
       // Add UGC content if available (deduplicate by _id)
       if (ugcResponse.success && ugcResponse.data?.content) {
-
         // Get existing IDs to avoid duplicates
         const existingIds = new Set(allContent.map(item => item._id));
-        const uniqueUGC = ugcResponse.data.content.filter((item: any) => !existingIds.has(item._id));
+        const uniqueUGC = ugcResponse.data.content.filter((item) => !existingIds.has(item._id));
 
         allContent = [...allContent, ...uniqueUGC];
-      } else {
       }
-
 
       // Return combined content (NO MOCK DATA)
       return {
         success: true,
         data: {
           content: allContent,
-          total: allContent.length
-        }
+          total: allContent.length,
+        },
       };
-
     } catch (error) {
       // Return empty array on error (NO MOCK DATA)
       return {
@@ -408,12 +365,11 @@ class UGCApiService {
         error: error instanceof Error ? error.message : 'Failed to fetch content',
         data: {
           content: [],
-          total: 0
-        }
+          total: 0,
+        },
       };
     }
   }
-
 
   // ── Reel-specific methods ─────────────────────────
 
@@ -422,11 +378,11 @@ class UGCApiService {
    */
   async createReel(data: CreateReelRequest): Promise<{ success: boolean; data?: CreateReelResponse; message?: string; error?: string }> {
     try {
-      const response = await apiClient.post<any>('/ugc/create', data as any);
+      const response = await apiClient.post<ReelCreateResponse>('/ugc/create', data as unknown as Record<string, unknown>);
       if (response.success && response.data) {
-        return { success: true, data: response.data as CreateReelResponse, message: (response as any).message };
+        return { success: true, data: response.data as CreateReelResponse, message: response.message };
       }
-      return { success: false, error: (response as any).message || 'Failed to create reel' };
+      return { success: false, error: response.message || 'Failed to create reel' };
     } catch (error: any) {
       return { success: false, error: error.message || 'Failed to create reel' };
     }
@@ -443,13 +399,13 @@ class UGCApiService {
     taggedProducts?: string[];
     taggedStores?: string[];
     storeId?: string;
-  }): Promise<{ success: boolean; data?: any; message?: string; error?: string }> {
+  }): Promise<{ success: boolean; data?: PostCreateResponse; message?: string; error?: string }> {
     try {
-      const response = await apiClient.post<any>('/ugc/create-post', data as any);
+      const response = await apiClient.post<PostCreateResponse>('/ugc/create-post', data);
       if (response.success && response.data) {
-        return { success: true, data: response.data, message: (response as any).message };
+        return { success: true, data: response.data, message: response.message };
       }
-      return { success: false, error: (response as any).message || 'Failed to create post' };
+      return { success: false, error: response.message || 'Failed to create post' };
     } catch (error: any) {
       return { success: false, error: error.message || 'Failed to create post' };
     }
@@ -461,13 +417,13 @@ class UGCApiService {
   async getMyReels(
     page: number = 1,
     limit: number = 20
-  ): Promise<{ success: boolean; data?: { reels: UgcReel[]; pagination: UgcPagination }; error?: string }> {
+  ): Promise<{ success: boolean; data?: ReelListResponse; error?: string }> {
     try {
-      const response = await apiClient.get<any>(`/ugc/my-reels?page=${page}&limit=${limit}`);
+      const response = await apiClient.get<ReelListResponse>(`/ugc/my-reels?page=${page}&limit=${limit}`);
       if (response.success && response.data) {
-        return { success: true, data: response.data as { reels: UgcReel[]; pagination: UgcPagination } };
+        return { success: true, data: response.data as ReelListResponse };
       }
-      return { success: false, error: (response as any).message || 'Failed to fetch reels' };
+      return { success: false, error: response.message || 'Failed to fetch reels' };
     } catch (error: any) {
       return { success: false, error: error.message || 'Failed to fetch reels' };
     }
@@ -479,13 +435,13 @@ class UGCApiService {
   async getReelFeed(
     page: number = 1,
     limit: number = 20
-  ): Promise<{ success: boolean; data?: { reels: UgcReel[]; pagination: UgcPagination }; error?: string }> {
+  ): Promise<{ success: boolean; data?: ReelListResponse; error?: string }> {
     try {
-      const response = await apiClient.get<any>(`/ugc/feed?page=${page}&limit=${limit}`);
+      const response = await apiClient.get<ReelListResponse>(`/ugc/feed?page=${page}&limit=${limit}`);
       if (response.success && response.data) {
-        return { success: true, data: response.data as { reels: UgcReel[]; pagination: UgcPagination } };
+        return { success: true, data: response.data as ReelListResponse };
       }
-      return { success: false, error: (response as any).message || 'Failed to fetch UGC feed' };
+      return { success: false, error: response.message || 'Failed to fetch UGC feed' };
     } catch (error: any) {
       return { success: false, error: error.message || 'Failed to fetch UGC feed' };
     }
@@ -494,22 +450,15 @@ class UGCApiService {
   /**
    * Get bookmarked UGC
    */
-  async getBookmarked(type?: 'photo' | 'video'): Promise<ApiResponse<{
-    content: UGCMedia[];
-    total: number;
-  }>> {
-
-    return apiClient.get<any>(`${this.baseUrl}/bookmarked`, type ? { type } : undefined);
+  async getBookmarked(type?: 'photo' | 'video'): Promise<ApiResponse<UGCListResponse>> {
+    return apiClient.get<UGCListResponse>(`${this.baseUrl}/bookmarked`, type ? { type } : undefined);
   }
 
   /**
    * Report UGC
    */
-  async report(id: string, reason: string, description?: string): Promise<ApiResponse<{
-    message: string;
-  }>> {
-
-    return apiClient.post<any>(`${this.baseUrl}/${id}/report`, { reason, description });
+  async report(id: string, reason: string, description?: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.post<MessageResponse>(`${this.baseUrl}/${id}/report`, { reason, description });
   }
 }
 

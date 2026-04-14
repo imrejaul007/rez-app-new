@@ -162,7 +162,7 @@ class EarningProjectsApi {
    */
   async getProjectById(projectId: string): Promise<ApiResponse<EarningProject>> {
     try {
-      return await apiClient.get<any>(`/earning-projects/${projectId}`);
+      return await apiClient.get<EarningProject>(`/earning-projects/${projectId}`);
     } catch (error) {
       throw error;
     }
@@ -182,7 +182,7 @@ class EarningProjectsApi {
 
     try {
       // Send empty body for "start" - content is optional
-      return await apiClient.post<any>(`/earning-projects/${projectId}/start`, {});
+      return await apiClient.post<{ message: string; projectStatus: string }>(`/earning-projects/${projectId}/start`, {});
     } catch (error) {
       throw error; // Re-throw to let the caller handle it
     }
@@ -196,7 +196,7 @@ class EarningProjectsApi {
     earnedAmount: number;
   }>> {
     try {
-      return await apiClient.post<any>(`/earning-projects/${projectId}/complete`, data as any);
+      return await apiClient.post<{ message: string; earnedAmount: number }>(`/earning-projects/${projectId}/complete`, data ?? {});
     } catch (error) {
       throw error;
     }
@@ -207,7 +207,7 @@ class EarningProjectsApi {
    */
   async getUserEarnings(): Promise<ApiResponse<UserEarnings>> {
     try {
-      return await apiClient.get<any>('/earnings/summary');
+      return await apiClient.get<UserEarnings>('/earnings/summary');
     } catch (error) {
       throw error; // Re-throw to let the caller handle it
     }
@@ -218,7 +218,7 @@ class EarningProjectsApi {
    */
   async getProjectStats(): Promise<ApiResponse<ProjectStats>> {
     try {
-      return await apiClient.get<any>('/earnings/project-stats');
+      return await apiClient.get<ProjectStats>('/earnings/project-stats');
     } catch (error) {
       throw error; // Re-throw to let the caller handle it
     }
@@ -232,7 +232,7 @@ class EarningProjectsApi {
     limit?: number;
   }): Promise<ApiResponse<EarningNotification[]>> {
     try {
-      return await apiClient.get<any>('/earnings/notifications', params);
+      return await apiClient.get<EarningNotification[]>(`/earnings/notifications`, params);
     } catch (error) {
       throw error; // Re-throw to let the caller handle it
     }
@@ -245,7 +245,7 @@ class EarningProjectsApi {
     message: string;
   }>> {
     try {
-      return await apiClient.patch<any>(`/earnings/notifications/${notificationId}/read`);
+      return await apiClient.patch<{ message: string }>(`/earnings/notifications/${notificationId}/read`);
     } catch (error) {
       return {
         success: true,
@@ -260,7 +260,7 @@ class EarningProjectsApi {
    */
   async getCategories(): Promise<ApiResponse<EarningCategory[]>> {
     try {
-      return await apiClient.get<any>('/earning-projects/categories');
+      return await apiClient.get<EarningCategory[]>('/earning-projects/categories');
     } catch (error) {
       throw error; // Re-throw to let the caller handle it
     }
@@ -271,7 +271,7 @@ class EarningProjectsApi {
    */
   async getReferralInfo(): Promise<ApiResponse<ReferralInfo>> {
     try {
-      return await apiClient.get<any>('/earnings/referral-info');
+      return await apiClient.get<ReferralInfo>('/earnings/referral-info');
     } catch (error) {
       throw error; // Re-throw to let the caller handle it
     }
@@ -285,7 +285,7 @@ class EarningProjectsApi {
     transactionId: string;
   }>> {
     try {
-      return await apiClient.post<any>('/earnings/withdraw', { amount, method });
+      return await apiClient.post<{ message: string; transactionId: string }>('/earnings/withdraw', { amount, method });
     } catch (error) {
       throw error;
     }

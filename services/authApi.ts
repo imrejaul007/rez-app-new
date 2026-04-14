@@ -635,16 +635,23 @@ class AuthService {
       logApiRequest('GET', '/user/auth/statistics');
 
       const response = await withRetry(
-        () => apiClient.get<any>('/user/auth/statistics'),
+        () => apiClient.get<{
+    reviews: { total: number; approved: number; rejected: number; avgRating: number };
+    videos: { totalCreated: number; totalViews: number; totalLikes: number; totalShares: number };
+    projects: { totalParticipated: number; approved: number; rejected: number; totalEarned: number };
+    offers: { totalRedeemed: number };
+    vouchers: { total: number; used: number; active: number };
+    summary: { totalActivity: number; totalEarnings: number; totalSpendings: number };
+  }>('/user/auth/statistics'),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', '/user/auth/statistics', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[AUTH API] Error fetching user statistics:', error);
-      return createErrorResponse(error, 'Failed to load statistics. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load statistics. Please try again.');
     }
   }
 

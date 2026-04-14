@@ -149,7 +149,15 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get<any>(`${this.baseUrl}/transactions`, {
+      return await apiClient.get<{
+        transactions: PointTransaction[];
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+        };
+      }>(`${this.baseUrl}/transactions`, {
         page,
         limit,
         ...filters,
@@ -165,7 +173,7 @@ class PointsApiService {
   async getStats(): Promise<ApiResponse<PointsStats>> {
     try {
 
-      return await apiClient.get<any>(`${this.baseUrl}/stats`);
+      return await apiClient.get<PointsStats>(`${this.baseUrl}/stats`);
     } catch (error) {
       throw error;
     }
@@ -177,7 +185,7 @@ class PointsApiService {
   async earnPoints(data: EarnPointsRequest): Promise<ApiResponse<PointsReward>> {
     try {
 
-      return await apiClient.post<any>(`${this.baseUrl}/earn`, data as any);
+      return await apiClient.post<PointsReward>(`${this.baseUrl}/earn`, data as unknown as Record<string, unknown>);
     } catch (error) {
       throw error;
     }
@@ -196,7 +204,12 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post<any>(`${this.baseUrl}/spend`, data as any);
+      return await apiClient.post<{
+        success: boolean;
+        pointsSpent: number;
+        newBalance: number;
+        transaction: PointTransaction;
+      }>(`${this.baseUrl}/spend`, data as unknown as Record<string, unknown>);
     } catch (error) {
       throw error;
     }
@@ -211,7 +224,7 @@ class PointsApiService {
   ): Promise<ApiResponse<{ estimatedPoints: number; multiplier: number; breakdown: any }>> {
     try {
 
-      return await apiClient.post<any>(`${this.baseUrl}/calculate`, {
+      return await apiClient.post<{ estimatedPoints: number; multiplier: number; breakdown: unknown }>(`${this.baseUrl}/calculate`, {
         source,
         metadata,
       });
@@ -232,7 +245,11 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post<any>(`${this.baseUrl}/claim`, {
+      return await apiClient.post<{
+        claimedAmount: number;
+        claimedTransactions: PointTransaction[];
+        newBalance: number;
+      }>(`${this.baseUrl}/claim`, {
         transactionIds,
       });
     } catch (error) {
@@ -260,7 +277,17 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get<any>(`${this.baseUrl}/opportunities`);
+      return await apiClient.get<Array<{
+        id: string;
+        title: string;
+        description: string;
+        points: number;
+        action: string;
+        icon: string;
+        category: string;
+        difficulty: 'easy' | 'medium' | 'hard';
+        estimatedTime: string;
+      }>>(`${this.baseUrl}/opportunities`);
     } catch (error) {
       throw error;
     }
@@ -290,7 +317,20 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get<any>(`${this.baseUrl}/leaderboard`, {
+      return await apiClient.get<{
+        entries: Array<{
+          rank: number;
+          userId: string;
+          username: string;
+          fullName: string;
+          avatar?: string;
+          points: number;
+          level: number;
+          isCurrentUser?: boolean;
+        }>;
+        userRank?: number;
+        totalUsers: number;
+      }>(`${this.baseUrl}/leaderboard`, {
         period,
         limit,
       });
@@ -316,11 +356,20 @@ class PointsApiService {
   > {
     try {
       // Use gamification streaks endpoint
-      const response = await apiClient.get<any>('/gamification/streaks');
+      const response = await apiClient.get<unknown>('/gamification/streaks');
       
       // Transform the response to match expected format
       if (response.success && response.data) {
-        const streak = response.data;
+        const streak = response.data as {
+          checkedInToday?: boolean;
+          lastCheckIn?: string | null;
+          currentStreak?: number;
+          longestStreak?: number;
+          totalCheckIns?: number;
+          todayReward?: number;
+          streakBonus?: number;
+          nextReward?: number;
+        };
         return {
           success: true,
           data: {
@@ -370,7 +419,14 @@ class PointsApiService {
   > {
     try {
       // Use gamification streak checkin endpoint
-      return await apiClient.post<any>('/gamification/streak/checkin');
+      return await apiClient.post<{
+        success: boolean;
+        pointsEarned: number;
+        streak: number;
+        bonus: number;
+        nextReward: number;
+        message: string;
+      }>('/gamification/streak/checkin');
     } catch (error) {
       throw error;
     }
@@ -394,7 +450,17 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get<any>(`${this.baseUrl}/multiplier`);
+      return await apiClient.get<{
+        baseMultiplier: number;
+        tierMultiplier: number;
+        eventMultiplier: number;
+        totalMultiplier: number;
+        activeEvents: Array<{
+          name: string;
+          multiplier: number;
+          endsAt: string;
+        }>;
+      }>(`${this.baseUrl}/multiplier`);
     } catch (error) {
       throw error;
     }
@@ -416,7 +482,11 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post<any>(`${this.baseUrl}/transfer`, {
+      return await apiClient.post<{
+        success: boolean;
+        transaction: PointTransaction;
+        newBalance: number;
+      }>(`${this.baseUrl}/transfer`, {
         recipientId,
         amount,
         message,
@@ -442,7 +512,12 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.post<any>(`${this.baseUrl}/redeem`, {
+      return await apiClient.post<{
+        success: boolean;
+        reward: unknown;
+        pointsSpent: number;
+        newBalance: number;
+      }>(`${this.baseUrl}/redeem`, {
         rewardId,
         pointsCost,
       });
@@ -470,7 +545,16 @@ class PointsApiService {
   > {
     try {
 
-      return await apiClient.get<any>(`${this.baseUrl}/rewards`);
+      return await apiClient.get<Array<{
+        id: string;
+        title: string;
+        description: string;
+        pointsCost: number;
+        category: string;
+        icon: string;
+        availability: number;
+        expiresAt?: string;
+      }>>(`${this.baseUrl}/rewards`);
     } catch (error) {
       throw error;
     }

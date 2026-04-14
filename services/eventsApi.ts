@@ -1,5 +1,5 @@
 import { EventItem } from '@/types/homepage.types';
-import apiClient from './apiClient';
+import apiClient, { ApiResponse } from './apiClient';
 
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},
@@ -104,7 +104,7 @@ export interface BookingRequest {
 
 export interface BookingResult {
   success: boolean;
-  booking?: any;
+  booking?: Record<string, unknown>;
   payment?: {
     paymentIntentId?: string;
     clientSecret?: string;
@@ -114,15 +114,76 @@ export interface BookingResult {
   error?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Response wrapper interfaces (mirrors ApiResponse<T> from apiClient)
+// ---------------------------------------------------------------------------
+export interface BackendEventListData {
+  events: Record<string, unknown>[];
+  total: number;
+  hasMore: boolean;
+  suggestions?: string[];
+}
+
+export interface BackendEventData {
+  event: Record<string, unknown>;
+}
+
+export interface BackendFeaturedEventsData {
+  events?: Record<string, unknown>[];
+  results?: Record<string, unknown>[];
+}
+
+export interface BackendBookingData {
+  booking?: Record<string, unknown>;
+  payment?: BookingResult['payment'];
+}
+
+export interface BackendUserBookingsData {
+  bookings: UserBooking[];
+  total: number;
+  hasMore: boolean;
+}
+
+export interface BackendFavoriteData {
+  isFavorited?: boolean;
+}
+
+export interface BackendShareRewardData {
+  reward?: { coinsAwarded: number };
+}
+
+export interface BackendCategoryData {
+  categories?: BackendCategory[];
+}
+
+export interface BackendCategory {
+  _id?: string;
+  slug: string;
+  name: string;
+  icon?: string;
+  color?: string;
+  eventCount?: number;
+  count?: number;
+}
+
+export interface BackendRewardConfigData {
+  rewards: Array<{ action: string; coins: number; description: string }>;
+  totalPotential: number;
+}
+
+export interface BackendFavoriteStatusData {
+  isFavorited?: boolean;
+}
+
 export interface UserBooking {
   _id: string;
-  eventId: any;
+  eventId: string;
   slotId?: string;
   bookingDate: string;
   status: string;
   amount: number;
   currency: string;
-  attendeeInfo: any;
+  attendeeInfo: Record<string, unknown>;
   bookingReference: string;
   createdAt: string;
 }
@@ -228,19 +289,19 @@ class EventsApiService {
         }
       });
 
-      const response = await apiClient.get<any>('/events', params);
+      const response = await apiClient.get<BackendEventListData>('/events', params);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to fetch events');
       }
 
-      const events = response.data.events.map(this.transformEventToFrontend);
+      const events = (response.data?.events ?? []).map(this.transformEventToFrontend);
 
       return {
         events,
-        total: response.data.total,
-        hasMore: response.data.hasMore,
-        suggestions: response.data.suggestions,
+        total: response.data?.total ?? 0,
+        hasMore: response.data?.hasMore ?? false,
+        suggestions: response.data?.suggestions ?? [],
       };
     } catch (error) {
       devLog.error('❌ Error fetching events:', error);
@@ -255,7 +316,7 @@ class EventsApiService {
    */
   async getEventById(id: string): Promise<EventItem | null> {
     try {
-      const response = await apiClient.get<any>(`/events/${id}`);
+      const response = await apiClient.get<BackendEventData>(`/events/${id}`);
 
       if (!response.success) {
         const errStr = (response.error || '').toLowerCase();
@@ -265,7 +326,7 @@ class EventsApiService {
         throw new Error(response.error || 'Failed to fetch event');
       }
 
-      return this.transformEventToFrontend(response.data);
+      return this.transformEventToFrontend((response.data?.event ?? response.data ?? {}) as Record<string, unknown>);
     } catch (error) {
       devLog.error('❌ Error fetching event:', error);
       throw error;
@@ -299,7 +360,7 @@ class EventsApiService {
         params.tags = originalCategory;
       }
 
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<BackendEventListData>(
         `/events/category/${encodeURIComponent(backendCategory)}`,
         params,
       );
@@ -308,12 +369,12 @@ class EventsApiService {
         throw new Error(response.error || 'Failed to fetch events by category');
       }
 
-      const events = response.data.events.map(this.transformEventToFrontend);
+      const events = (response.data?.events ?? []).map(this.transformEventToFrontend);
 
       return {
         events,
-        total: response.data.total,
-        hasMore: response.data.hasMore,
+        total: response.data?.total ?? 0,
+        hasMore: response.data?.hasMore ?? false,
       };
     } catch (error) {
       devLog.error('❌ Error fetching events by category:', error);
@@ -337,19 +398,19 @@ class EventsApiService {
         }
       });
 
-      const response = await apiClient.get<any>('/events/search', params);
+      const response = await apiClient.get<BackendEventListData>('/events/search', params);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to search events');
       }
 
-      const events = response.data.events.map(this.transformEventToFrontend);
+      const events = (response.data?.events ?? []).map(this.transformEventToFrontend);
 
       return {
         events,
-        total: response.data.total,
-        hasMore: response.data.hasMore,
-        suggestions: response.data.suggestions,
+        total: response.data?.total ?? 0,
+        hasMore: response.data?.hasMore ?? false,
+        suggestions: response.data?.suggestions ?? [],
       };
     } catch (error) {
       devLog.error('❌ Error searching events:', error);
@@ -364,7 +425,7 @@ class EventsApiService {
    */
   async getFeaturedEvents(limit = 10): Promise<EventItem[]> {
     try {
-      const response = await apiClient.get<any>('/events/featured', { limit });
+      const response = await apiClient.get<BackendFeaturedEventsData>('/events/featured', { limit });
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to fetch featured events');
@@ -390,7 +451,7 @@ class EventsApiService {
    */
   async bookEventSlot(eventId: string, bookingData: BookingRequest): Promise<BookingResult> {
     try {
-      const response = await apiClient.post<any>(
+      const response = await apiClient.post<BackendBookingData>(
         `/events/${eventId}/book`,
         bookingData as unknown as Record<string, unknown>,
       );
@@ -401,7 +462,7 @@ class EventsApiService {
 
       return {
         success: true,
-        booking: response.data?.booking || response.data,
+        booking: response.data?.booking || (response.data as Record<string, unknown> | undefined),
         payment: response.data?.payment || null,
         message: response.message ?? 'Booking successful',
       };
@@ -422,7 +483,7 @@ class EventsApiService {
    */
   async getRelatedEvents(eventId: string, limit = 6): Promise<EventItem[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<BackendFeaturedEventsData>(
         `/events/${eventId}/related`,
         { limit },
       );
@@ -485,7 +546,7 @@ class EventsApiService {
       const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
       if (status) params.status = status;
 
-      const response = await apiClient.get<any>('/events/my-bookings', params);
+      const response = await apiClient.get<BackendUserBookingsData>('/events/my-bookings', params);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to fetch user bookings');
@@ -509,7 +570,7 @@ class EventsApiService {
    */
   async confirmBooking(bookingId: string, paymentIntentId?: string): Promise<{ success: boolean, message: string }> {
     try {
-      const response = await apiClient.put<any>(
+      const response = await apiClient.put<Record<string, unknown>>(
         `/events/bookings/${bookingId}/confirm`,
         { paymentIntentId } as Record<string, unknown>,
       );
@@ -538,7 +599,7 @@ class EventsApiService {
    */
   async cancelBooking(bookingId: string): Promise<{ success: boolean, message: string }> {
     try {
-      const response = await apiClient.delete<any>(`/events/bookings/${bookingId}`);
+      const response = await apiClient.delete<Record<string, unknown>>(`/events/bookings/${bookingId}`);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to cancel booking');
@@ -564,7 +625,7 @@ class EventsApiService {
    */
   async toggleEventFavorite(eventId: string): Promise<{ success: boolean, message: string, isFavorited?: boolean }> {
     try {
-      const response = await apiClient.post<any>(`/events/${eventId}/favorite`);
+      const response = await apiClient.post<BackendFavoriteData>(`/events/${eventId}/favorite`);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to toggle favorite');
@@ -591,7 +652,7 @@ class EventsApiService {
    */
   async shareEvent(eventId: string): Promise<{ success: boolean, message: string, reward?: { coinsAwarded: number } }> {
     try {
-      const response = await apiClient.post<any>(`/events/${eventId}/share`);
+      const response = await apiClient.post<BackendShareRewardData>(`/events/${eventId}/share`);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to share event');
@@ -614,31 +675,40 @@ class EventsApiService {
   /**
    * Transform backend event to frontend format
    */
-  private transformEventToFrontend = (backendEvent: any): EventItem => {
+  private transformEventToFrontend = (backendEvent: Record<string, unknown>): EventItem => {
+    const ev = backendEvent as {
+      _id?: string; title?: string; subtitle?: string; description?: string; image?: string;
+      price?: { amount?: number; currency?: string; isFree?: boolean };
+      isOnline?: boolean; location?: { name?: string }; date?: string; time?: string;
+      category?: string; organizer?: { name?: string }; registrationRequired?: boolean;
+      bookingUrl?: string; availableSlots?: Array<{ id: string; time: string; available: boolean; maxCapacity: number; bookedCount: number }>;
+      rating?: number; reviewCount?: number; analytics?: { averageRating?: number; reviews?: number };
+      cashback?: number;
+    };
     return {
-      id: backendEvent._id,
+      id: ev._id ?? '',
       type: 'event',
-      title: backendEvent.title,
-      subtitle: backendEvent.subtitle || `${backendEvent.price?.isFree ? 'Free' : `${backendEvent.price?.currency || '₹'}${backendEvent.price?.amount || 0}`} • ${backendEvent.isOnline ? 'Online' : 'Venue'}`,
-      description: backendEvent.description,
-      image: backendEvent.image,
+      title: ev.title ?? '',
+      subtitle: ev.subtitle || `${ev.price?.isFree ? 'Free' : `${ev.price?.currency || '₹'}${ev.price?.amount || 0}`} • ${ev.isOnline ? 'Online' : 'Venue'}`,
+      description: ev.description ?? '',
+      image: ev.image ?? '',
       price: {
-        amount: backendEvent.price?.amount || 0,
-        currency: backendEvent.price?.currency || '₹',
-        isFree: backendEvent.price?.isFree || false
+        amount: ev.price?.amount || 0,
+        currency: ev.price?.currency || '₹',
+        isFree: ev.price?.isFree || false
       },
-      location: backendEvent.isOnline ? 'Online' : (backendEvent.location?.name || 'Venue'),
-      date: backendEvent.date ? backendEvent.date.split('T')[0] : '', // Convert to YYYY-MM-DD format
-      time: backendEvent.time || '',
-      category: backendEvent.category,
-      organizer: backendEvent.organizer?.name || 'Event Organizer',
-      isOnline: backendEvent.isOnline,
-      registrationRequired: backendEvent.registrationRequired,
-      bookingUrl: backendEvent.bookingUrl,
-      availableSlots: backendEvent.availableSlots,
-      rating: backendEvent.rating || backendEvent.analytics?.averageRating || 0,
-      reviewCount: backendEvent.reviewCount || backendEvent.analytics?.reviews || 0,
-      cashback: backendEvent.cashback || 0,
+      location: ev.isOnline ? 'Online' : (ev.location?.name || 'Venue'),
+      date: ev.date ? ev.date.split('T')[0] : '',
+      time: ev.time || '',
+      category: ev.category ?? '',
+      organizer: ev.organizer?.name || 'Event Organizer',
+      isOnline: ev.isOnline ?? false,
+      registrationRequired: ev.registrationRequired ?? false,
+      bookingUrl: ev.bookingUrl,
+      availableSlots: ev.availableSlots,
+      rating: ev.rating || ev.analytics?.averageRating || 0,
+      reviewCount: ev.reviewCount || ev.analytics?.reviews || 0,
+      cashback: ev.cashback || 0,
     };
   };
 
@@ -677,24 +747,24 @@ class EventsApiService {
    * This method is kept as a private shim that delegates to apiClient.post()
    * to avoid re-writing call-sites that pass a body.
    */
-  private async authenticatedFetch(path: string, options: RequestInit = {}): Promise<any> {
+  private async authenticatedFetch(path: string, options: RequestInit = {}): Promise<ApiResponse<Record<string, unknown>>> {
     const method = (options.method || 'GET').toUpperCase() as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     let body: Record<string, unknown> | undefined;
     if (options.body) {
       try { body = JSON.parse(options.body as string); } catch { body = undefined; }
     }
 
-    let response;
+    let response: ApiResponse<Record<string, unknown>>;
     if (method === 'GET') {
-      response = await apiClient.get<any>(path);
+      response = await apiClient.get<Record<string, unknown>>(path);
     } else if (method === 'POST') {
-      response = await apiClient.post<any>(path, body);
+      response = await apiClient.post<Record<string, unknown>>(path, body);
     } else if (method === 'PUT') {
-      response = await apiClient.put<any>(path, body);
+      response = await apiClient.put<Record<string, unknown>>(path, body);
     } else if (method === 'DELETE') {
-      response = await apiClient.delete<any>(path, body);
+      response = await apiClient.delete<Record<string, unknown>>(path, body);
     } else {
-      response = await apiClient.get<any>(path);
+      response = await apiClient.get<Record<string, unknown>>(path);
     }
 
     if (!response.success) {
@@ -710,26 +780,26 @@ class EventsApiService {
    *
    * BUG-FIX: Migrated from raw fetch() to apiClient.
    */
-  async getCategories(featured?: boolean): Promise<any[]> {
+  async getCategories(featured?: boolean): Promise<BackendCategory[]> {
     try {
       const params: Record<string, string | number | boolean | undefined | null> = {};
       if (featured) params.featured = true;
-      const response = await apiClient.get<any>('/events/categories', params);
+      const response = await apiClient.get<BackendCategoryData>('/events/categories', params);
 
       const data = response.success ? { success: true, data: response.data } : { success: false };
       if (data.success) {
         // Handle both response shapes
-        const cats: any[] = Array.isArray(data.data)
+        const cats: BackendCategory[] = Array.isArray(data.data)
           ? data.data
-          : (data.data?.categories || []);
+          : (data.data?.categories ?? []);
         // Normalize: ensure slug, name, icon, color exist
-        return cats.map((c: any) => ({
+        return cats.map((c: BackendCategory) => ({
           _id: c._id,
-          slug: c.slug || c.name?.toLowerCase(),
-          name: c.name || c.slug,
+          slug: c.slug || (c.name?.toLowerCase() ?? ''),
+          name: c.name || (c.slug ?? ''),
           icon: c.icon || '🎫',
           color: c.color || '#1A3A52',
-          eventCount: c.eventCount ?? c.count ?? undefined,
+          eventCount: c.eventCount ?? c.count,
         }));
       }
       return [];
@@ -749,8 +819,8 @@ class EventsApiService {
     totalPotential: number;
   } | null> {
     try {
-      const response = await apiClient.get<any>('/events/reward-config');
-      return response.success ? response.data : null;
+      const response = await apiClient.get<BackendRewardConfigData>('/events/reward-config');
+      return response.success ? (response.data ?? null) : null;
     } catch (error) {
       devLog.error('[EventsApi] Error fetching reward config:', error);
       return null;
@@ -767,8 +837,8 @@ class EventsApiService {
     totalPotential: number;
   } | null> {
     try {
-      const response = await apiClient.get<any>(`/events/${eventId}/rewards`);
-      return response.success ? response.data : null;
+      const response = await apiClient.get<BackendRewardConfigData>(`/events/${eventId}/rewards`);
+      return response.success ? (response.data ?? null) : null;
     } catch (error) {
       devLog.error('[EventsApi] Error fetching event reward info:', error);
       return null;
@@ -778,13 +848,13 @@ class EventsApiService {
   /**
    * Check in to event
    */
-  async checkInToEvent(eventId: string, bookingId: string, method: string, location?: { lat: number; lng: number }): Promise<any> {
+  async checkInToEvent(eventId: string, bookingId: string, method: string, location?: { lat: number; lng: number }): Promise<ApiResponse<Record<string, unknown>>> {
     try {
       const response = await this.authenticatedFetch(`/events/${eventId}/checkin`, {
         method: 'POST',
         body: JSON.stringify({ bookingId, method, location }),
       });
-      return response as any;
+      return response;
     } catch (error) {
       devLog.error('[EventsApi] Error checking in:', error);
       throw error;
@@ -797,7 +867,8 @@ class EventsApiService {
   async getMyFavorites(limit = 20, offset = 0): Promise<{ events: EventItem[]; total: number }> {
     try {
       const response = await this.authenticatedFetch(`/events/my-favorites?limit=${limit}&offset=${offset}`);
-      return response?.data || { events: [], total: 0 };
+      const raw = response.data as { events?: EventItem[]; total?: number } | undefined;
+      return { events: raw?.events ?? [], total: raw?.total ?? 0 };
     } catch (error) {
       devLog.error('[EventsApi] Error fetching favorites:', error);
       return { events: [], total: 0 };
@@ -807,10 +878,10 @@ class EventsApiService {
   /**
    * Get user's events overview (bookings + favorites + attended)
    */
-  async getMyEvents(tab: 'upcoming' | 'past' | 'favorites' = 'upcoming'): Promise<any> {
+  async getMyEvents(tab: 'upcoming' | 'past' | 'favorites' = 'upcoming'): Promise<Record<string, unknown>> {
     try {
       const response = await this.authenticatedFetch(`/events/my-events?tab=${tab}`);
-      return response?.data || { bookings: [], tab };
+      return (response.data as Record<string, unknown>) ?? { bookings: [], tab };
     } catch (error) {
       devLog.error('[EventsApi] Error fetching my events:', error);
       return { bookings: [], tab };
@@ -825,7 +896,7 @@ class EventsApiService {
    */
   async isFavorited(eventId: string): Promise<boolean> {
     try {
-      const response = await apiClient.get<any>(`/events/${eventId}/favorite-status`);
+      const response = await apiClient.get<BackendFavoriteStatusData>(`/events/${eventId}/favorite-status`);
       return response.success && response.data?.isFavorited === true;
     } catch {
       return false;

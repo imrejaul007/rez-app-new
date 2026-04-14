@@ -4,6 +4,124 @@ import apiClient, { ApiResponse } from './apiClient';
 // WALLET API SERVICE
 // ============================================================================
 
+// ---- Remaining untyped API response interfaces ----
+
+export interface SentGiftsResponse {
+  gifts: Array<{
+    id: string;
+    recipientName: string;
+    recipientPhone: string;
+    amount: number;
+    message?: string;
+    status: 'pending' | 'claimed' | 'expired';
+    createdAt: string;
+    expiresAt: string;
+  }>;
+}
+
+export interface GiftCardCatalogResponse {
+  giftCards: Array<{
+    id: string;
+    brand: string;
+    brandLogo: string;
+    description: string;
+    denominations: number[];
+    discountPercentage?: number;
+    validDays: number;
+    category: string;
+    image?: string;
+  }>;
+  categories: string[];
+}
+
+export interface PurchaseGiftCardResponse {
+  userGiftCard: {
+    id: string;
+    giftCardId: string;
+    amount: number;
+    code?: string;
+    pin?: string;
+    status: 'active' | 'used' | 'expired';
+    purchaseDate: string;
+    expiryDate: string;
+  };
+}
+
+export interface MyGiftCardsResponse {
+  giftCards: Array<{
+    id: string;
+    giftCardId: string;
+    brand: string;
+    brandLogo: string;
+    amount: number;
+    code?: string;
+    status: 'active' | 'used' | 'expired';
+    purchaseDate: string;
+    expiryDate: string;
+  }>;
+}
+
+export interface ExpiringCoinsResponse {
+  expiringCoins: Record<string, {
+    totalAmount: number;
+    coins: Array<{
+      id: string;
+      amount: number;
+      expiresAt: string;
+      type: string;
+    }>;
+    count: number;
+  }>;
+  totalExpiring: number;
+}
+
+export interface CoinRulesResponse {
+  coinRules: Record<string, {
+    usageRules: string[];
+    earningMethods: string[];
+  }>;
+  coinExpiryConfig: Record<string, {
+    expiryDays: number;
+    maxUsagePct: number;
+  }>;
+  coinConversion?: { rezToInr: number };
+}
+
+export interface ScheduledDropsResponse {
+  drops: Array<{
+    id: string;
+    title: string;
+    amount: number;
+    type: 'daily' | 'weekly' | 'special' | 'cashback';
+    scheduledDate: string;
+    description: string;
+    icon: string;
+    source: string;
+    claimable: boolean;
+    storeLogo?: string;
+  }>;
+  totalUpcoming: number;
+}
+
+export interface RedeemCoinsResponse {
+  success: boolean;
+  newBalance: number;
+  discountApplied: number;
+}
+
+export interface RechargeCashbackPreviewResponse {
+  rechargeAmount: number;
+  cashbackPercentage: number;
+  cashback: number;
+  maxCashback: number;
+  cappedAt: number | null;
+}
+
+export interface RevealGiftCardResponse {
+  code: string;
+  pin?: string;
+}
+
 /**
  * Coin Balance from Backend (new schema)
  */
@@ -352,6 +470,26 @@ export interface RezCashIdentity {
   topCategories: Array<{ category: string; total: number }>;
 }
 
+export interface DevTopupResponse {
+  wallet: {
+    balance: { total: number; available: number; pending: number; cashback: number };
+    currency: string;
+  };
+  addedAmount: number;
+  type: string;
+}
+
+export interface SyncBalanceResponse {
+  previousBalance: number;
+  newBalance: number;
+  wallet: {
+    balance: { total: number; available: number; pending: number; cashback: number };
+    coins: BackendCoinBalance[];
+    currency: string;
+  };
+  synced: boolean;
+}
+
 /**
  * Wallet API Service Class
  */
@@ -361,10 +499,10 @@ class WalletService {
    */
   async getBalance(): Promise<ApiResponse<WalletBalanceResponse>> {
     try {
-      return await apiClient.get<any>('/wallet/balance');
+      return await apiClient.get<WalletBalanceResponse>('/wallet/balance');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getBalance failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch balance', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch balance' } as unknown as ApiResponse<WalletBalanceResponse>;
     }
   }
 
@@ -378,7 +516,7 @@ class WalletService {
       return await apiClient.get<TransactionListResponse>('/wallet/transactions', filters as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransactions failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch transactions', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch transactions', data: undefined };
     }
   }
 
@@ -389,10 +527,10 @@ class WalletService {
     transactionId: string
   ): Promise<ApiResponse<{ transaction: TransactionResponse }>> {
     try {
-      return await apiClient.get<any>(`/wallet/transaction/${transactionId}`);
+      return await apiClient.get<{ transaction: TransactionResponse }>(`/wallet/transaction/${transactionId}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransactionById failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch transaction', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch transaction', data: undefined };
     }
   }
 
@@ -415,10 +553,10 @@ class WalletService {
     data: WithdrawalRequest
   ): Promise<ApiResponse<WithdrawalResponse>> {
     try {
-      return await apiClient.post<any>('/wallet/withdraw', data as any);
+      return await apiClient.post<WithdrawalResponse>('/wallet/withdraw', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] withdraw failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to withdraw funds', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to withdraw funds', data: undefined };
     }
   }
 
@@ -437,12 +575,12 @@ class WalletService {
       const key =
         idempotencyKey ||
         `wallet-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-      return await apiClient.post<any>('/wallet/payment', data as any, {
+      return await apiClient.post<PaymentResponse>('/wallet/payment', data as any, {
         headers: { 'Idempotency-Key': key },
       });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] processPayment failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to process payment', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to process payment', data: undefined };
     }
   }
 
@@ -453,10 +591,10 @@ class WalletService {
     period: 'day' | 'week' | 'month' | 'year' = 'month'
   ): Promise<ApiResponse<TransactionSummaryResponse>> {
     try {
-      return await apiClient.get<any>('/wallet/summary', { period });
+      return await apiClient.get<TransactionSummaryResponse>('/wallet/summary', { period });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getSummary failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch summary', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch summary', data: undefined };
     }
   }
 
@@ -465,12 +603,12 @@ class WalletService {
    */
   async updateSettings(
     settings: WalletSettingsRequest
-  ): Promise<ApiResponse<{ settings: any }>> {
+  ): Promise<ApiResponse<{ settings: WalletSettingsRequest }>> {
     try {
-      return await apiClient.put<any>('/wallet/settings', settings as any);
+      return await apiClient.put<{ settings: WalletSettingsRequest }>('/wallet/settings', settings as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] updateSettings failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to update settings', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to update settings', data: undefined };
     }
   }
 
@@ -481,10 +619,10 @@ class WalletService {
     ApiResponse<CategoriesBreakdownResponse>
   > {
     try {
-      return await apiClient.get<any>('/wallet/categories');
+      return await apiClient.get<CategoriesBreakdownResponse>('/wallet/categories');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getCategoriesBreakdown failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch categories breakdown', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch categories breakdown', data: undefined };
     }
   }
 
@@ -521,61 +659,27 @@ class WalletService {
    * @param amount Amount to add (default: 1000)
    * @param type 'rez' | 'promo' | 'cashback' (default: 'rez')
    */
-  async devTopup(amount: number = 1000, type: 'rez' | 'promo' | 'cashback' = 'rez'): Promise<ApiResponse<{
-    wallet: {
-      balance: {
-        total: number;
-        available: number;
-        pending: number;
-        cashback: number;
-      };
-      currency: string;
-    };
-    addedAmount: number;
-    type: string;
-  }>> {
-    // SECURITY: Hard-block in production to prevent wallet fraud
+  async devTopup(amount: number = 1000, type: 'rez' | 'promo' | 'cashback' = 'rez'): Promise<ApiResponse<DevTopupResponse>> {
     if (!__DEV__) {
-      return { success: false, message: 'devTopup is only available in development builds', data: null } as any;
+      return { success: false, message: 'devTopup is only available in development builds', data: undefined };
     }
     try {
-      return await apiClient.post<any>('/wallet/dev-topup', { amount, type });
+      return await apiClient.post<DevTopupResponse>('/wallet/dev-topup', { amount, type });
     } catch (error: any) {
       console.warn('[WalletAPI] devTopup failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to add test funds', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to add test funds', data: undefined };
     }
   }
 
-  /**
-   * Sync wallet balance from CoinTransaction (fixes discrepancies)
-   * SECURITY: Only available in development. Call this to ensure wallet balance
-   * matches the actual coin transactions. Not exposed in production to prevent
-   * potential balance manipulation if the backend sync logic has bugs.
-   */
-  async syncBalance(): Promise<ApiResponse<{
-    previousBalance: number;
-    newBalance: number;
-    wallet: {
-      balance: {
-        total: number;
-        available: number;
-        pending: number;
-        cashback: number;
-      };
-      coins: any[];
-      currency: string;
-    };
-    synced: boolean;
-  }>> {
-    // SECURITY: Hard-block in production
+  async syncBalance(): Promise<ApiResponse<SyncBalanceResponse>> {
     if (!__DEV__) {
-      return { success: false, message: 'syncBalance is only available in development builds', data: null } as any;
+      return { success: false, message: 'syncBalance is only available in development builds', data: undefined };
     }
     try {
-      return await apiClient.post<any>('/wallet/sync-balance', {});
+      return await apiClient.post<SyncBalanceResponse>('/wallet/sync-balance', {});
     } catch (error: any) {
       console.warn('[WalletAPI] syncBalance failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to sync balance', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to sync balance', data: undefined };
     }
   }
 
@@ -626,10 +730,17 @@ class WalletService {
     status?: string;
   }>> {
     try {
-      return await apiClient.post<any>('/wallet/transfer/initiate', data as any);
+      return await apiClient.post<{
+    transferId: string;
+    requiresOtp: boolean;
+    recipientName: string;
+    amount: number;
+    coinType: string;
+    status?: string;
+  }>('/wallet/transfer/initiate', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] initiateTransfer failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to initiate transfer', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to initiate transfer', data: undefined };
     }
   }
 
@@ -643,10 +754,15 @@ class WalletService {
     coinType: string;
   }>> {
     try {
-      return await apiClient.post<any>('/wallet/transfer/confirm', data as any);
+      return await apiClient.post<{
+    transferId: string;
+    status: string;
+    amount: number;
+    coinType: string;
+  }>('/wallet/transfer/confirm', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] confirmTransfer failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to confirm transfer', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to confirm transfer', data: undefined };
     }
   }
 
@@ -663,20 +779,23 @@ class WalletService {
       if (params?.page) query.set('page', String(params.page));
       if (params?.limit) query.set('limit', String(params.limit));
       if (params?.type) query.set('type', params.type);
-      return await apiClient.get<any>(`/wallet/transfer/history?${query.toString()}`);
+      return await apiClient.get<{
+    transfers: any[];
+    pagination: { page: number; limit: number; total: number; totalPages: number; hasMore: boolean };
+  }>(`/wallet/transfer/history?${query.toString()}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransferHistory failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch transfer history', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch transfer history', data: undefined };
     }
   }
 
   async getRecentRecipients(search?: string): Promise<ApiResponse<{ recipients: any[] }>> {
     try {
       const query = search ? `?search=${encodeURIComponent(search)}` : '';
-      return await apiClient.get<any>(`/wallet/transfer/recipients${query}`);
+      return await apiClient.get<{ recipients: any[] }>(`/wallet/transfer/recipients${query}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getRecentRecipients failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch recent recipients', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch recent recipients', data: undefined };
     }
   }
 
@@ -706,10 +825,15 @@ class WalletService {
     };
   }>> {
     try {
-      return await apiClient.get<any>('/wallet/gift/config');
+      return await apiClient.get<{
+    themes: Array<{ id: string; label: string; emoji: string; colors: string[]; tags: string[] }>;
+    denominations: number[];
+    limits: { min: number; max: number; dailyMax: number; maxPerDay: number; otpAbove: number };
+    features: { scheduledDelivery: boolean; messageMaxLength: number };
+  }>('/wallet/gift/config');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getGiftConfig failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch gift config', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch gift config', data: undefined };
     }
   }
 
@@ -719,10 +843,10 @@ class WalletService {
     isSelf: boolean;
   }>> {
     try {
-      return await apiClient.post<any>('/wallet/gift/validate-recipient', { phone });
+      return await apiClient.post<{ exists: boolean; name?: string; isSelf: boolean }>('/wallet/gift/validate-recipient', { phone });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] validateGiftRecipient failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to validate recipient', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to validate recipient', data: undefined };
     }
   }
 
@@ -745,37 +869,44 @@ class WalletService {
     expiresAt: string;
   }>> {
     try {
-      return await apiClient.post<any>('/wallet/gift/send', data as any);
+      return await apiClient.post<{
+    giftId: string;
+    status: string;
+    recipientName: string;
+    amount: number;
+    theme: string;
+    expiresAt: string;
+  }>('/wallet/gift/send', data as any);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] sendGift failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to send gift', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to send gift', data: undefined };
     }
   }
 
   async getReceivedGifts(): Promise<ApiResponse<{ gifts: any[] }>> {
     try {
-      return await apiClient.get<any>('/wallet/gift/received');
+      return await apiClient.get<{ gifts: any[] }>('/wallet/gift/received');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getReceivedGifts failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch received gifts', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch received gifts', data: undefined };
     }
   }
 
   async claimGift(giftId: string): Promise<ApiResponse<{ giftId: string; amount: number; status: string }>> {
     try {
-      return await apiClient.post<any>(`/wallet/gift/${giftId}/claim`, {});
+      return await apiClient.post<{ giftId: string; amount: number; status: string }>(`/wallet/gift/${giftId}/claim`, {});
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] claimGift failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to claim gift', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to claim gift', data: undefined };
     }
   }
 
-  async getSentGifts(): Promise<ApiResponse<{ gifts: any[] }>> {
+  async getSentGifts(): Promise<ApiResponse<SentGiftsResponse>> {
     try {
-      return await apiClient.get<any>('/wallet/gift/sent');
+      return await apiClient.get<SentGiftsResponse>('/wallet/gift/sent');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getSentGifts failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch sent gifts', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch sent gifts', data: undefined };
     }
   }
 
@@ -786,46 +917,46 @@ class WalletService {
   async getGiftCardCatalog(params?: {
     category?: string;
     search?: string;
-  }): Promise<ApiResponse<{ giftCards: any[]; categories: string[] }>> {
+  }): Promise<ApiResponse<GiftCardCatalogResponse>> {
     try {
       const query = new URLSearchParams();
       if (params?.category) query.set('category', params.category);
       if (params?.search) query.set('search', params.search);
-      return await apiClient.get<any>(`/wallet/gift-cards/catalog?${query.toString()}`);
+      return await apiClient.get<GiftCardCatalogResponse>(`/wallet/gift-cards/catalog?${query.toString()}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getGiftCardCatalog failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch gift card catalog', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch gift card catalog', data: undefined };
     }
   }
 
   async purchaseGiftCard(data: {
     giftCardId: string;
     amount: number;
-  }): Promise<ApiResponse<{ userGiftCard: any }>> {
+  }): Promise<ApiResponse<PurchaseGiftCardResponse>> {
     try {
-      return await apiClient.post<any>('/wallet/gift-cards/purchase', data as any);
+      return await apiClient.post<PurchaseGiftCardResponse>('/wallet/gift-cards/purchase', data);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] purchaseGiftCard failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to purchase gift card', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to purchase gift card', data: undefined };
     }
   }
 
-  async getMyGiftCards(status?: string): Promise<ApiResponse<{ giftCards: any[] }>> {
+  async getMyGiftCards(status?: string): Promise<ApiResponse<MyGiftCardsResponse>> {
     try {
       const query = status ? `?status=${status}` : '';
-      return await apiClient.get<any>(`/wallet/gift-cards/mine${query}`);
+      return await apiClient.get<MyGiftCardsResponse>(`/wallet/gift-cards/mine${query}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getMyGiftCards failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch gift cards', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch gift cards', data: undefined };
     }
   }
 
-  async revealGiftCardCode(giftCardId: string): Promise<ApiResponse<{ code: string; pin?: string }>> {
+  async revealGiftCardCode(giftCardId: string): Promise<ApiResponse<RevealGiftCardResponse>> {
     try {
-      return await apiClient.get<any>(`/wallet/gift-cards/${giftCardId}/reveal`);
+      return await apiClient.get<RevealGiftCardResponse>(`/wallet/gift-cards/${giftCardId}/reveal`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] revealGiftCardCode failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to reveal gift card code', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to reveal gift card code', data: undefined };
     }
   }
 
@@ -833,66 +964,39 @@ class WalletService {
   // EXPIRY & RECHARGE APIs
   // ========================================================================
 
-  async getExpiringCoins(): Promise<ApiResponse<{
-    expiringCoins: Record<string, { totalAmount: number; coins: any[]; count: number }>;
-    totalExpiring: number;
-  }>> {
+  async getExpiringCoins(): Promise<ApiResponse<ExpiringCoinsResponse>> {
     try {
-      return await apiClient.get<any>('/wallet/expiring-coins');
+      return await apiClient.get<ExpiringCoinsResponse>('/wallet/expiring-coins');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getExpiringCoins failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch expiring coins', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch expiring coins', data: undefined };
     }
   }
 
-  async previewRechargeCashback(amount: number): Promise<ApiResponse<{
-    rechargeAmount: number;
-    cashbackPercentage: number;
-    cashback: number;
-    maxCashback: number;
-    cappedAt: number | null;
-  }>> {
+  async previewRechargeCashback(amount: number): Promise<ApiResponse<RechargeCashbackPreviewResponse>> {
     try {
-      return await apiClient.get<any>(`/wallet/recharge/preview?amount=${amount}`);
+      return await apiClient.get<RechargeCashbackPreviewResponse>(`/wallet/recharge/preview?amount=${amount}`);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] previewRechargeCashback failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to preview recharge cashback', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to preview recharge cashback', data: undefined };
     }
   }
 
-  async getCoinRules(): Promise<ApiResponse<{
-    coinRules: Record<string, { usageRules: string[]; earningMethods: string[] }>;
-    coinExpiryConfig: Record<string, { expiryDays: number; maxUsagePct: number }>;
-    coinConversion?: { rezToInr: number };
-  }>> {
+  async getCoinRules(): Promise<ApiResponse<CoinRulesResponse>> {
     try {
-      return await apiClient.get<any>('/wallet/coin-rules');
+      return await apiClient.get<CoinRulesResponse>('/wallet/coin-rules');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getCoinRules failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch coin rules', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch coin rules', data: undefined };
     }
   }
 
-  async getScheduledDrops(): Promise<ApiResponse<{
-    drops: Array<{
-      id: string;
-      title: string;
-      amount: number;
-      type: 'daily' | 'weekly' | 'special' | 'cashback';
-      scheduledDate: string;
-      description: string;
-      icon: string;
-      source: string;
-      claimable: boolean;
-      storeLogo?: string;
-    }>;
-    totalUpcoming: number;
-  }>> {
+  async getScheduledDrops(): Promise<ApiResponse<ScheduledDropsResponse>> {
     try {
-      return await apiClient.get<any>('/wallet/scheduled-drops');
+      return await apiClient.get<ScheduledDropsResponse>('/wallet/scheduled-drops');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getScheduledDrops failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch scheduled drops', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch scheduled drops', data: undefined };
     }
   }
 
@@ -907,16 +1011,12 @@ class WalletService {
     amount: number;
     orderId?: string;
     merchantId?: string;
-  }): Promise<ApiResponse<{
-    success: boolean;
-    newBalance: number;
-    discountApplied: number;
-  }>> {
+  }): Promise<ApiResponse<RedeemCoinsResponse>> {
     try {
-      return await apiClient.post<any>('/wallet/redeem-coins', data as any);
+      return await apiClient.post<RedeemCoinsResponse>('/wallet/redeem-coins', data);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] redeemCoins failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to redeem coins', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to redeem coins', data: undefined };
     }
   }
 
@@ -976,7 +1076,7 @@ class WalletService {
       return await apiClient.get<RezCashIdentity>('/wallet/rez-cash');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getRezCashIdentity failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to fetch REZ Cash identity', data: null } as any;
+      return { success: false, message: error?.message || 'Failed to fetch REZ Cash identity', data: undefined };
     }
   }
 }

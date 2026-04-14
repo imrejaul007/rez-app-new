@@ -229,6 +229,38 @@ export interface OrderCounts {
   past: number;
 }
 
+export interface TrackingEvent {
+  status: string;
+  message: string;
+  timestamp: string;
+  _id?: string;
+  details?: Record<string, any>;
+}
+
+export interface OrderTracking {
+  orderId: string;
+  currentStatus: string;
+  estimatedDelivery?: string;
+  events: TrackingEvent[];
+}
+
+export interface MonthlyRevenue {
+  month: string;
+  revenue: number;
+  orders: number;
+}
+
+export interface OrderStats {
+  totalOrders: number;
+  totalSpent: number;
+  averageOrderValue: number;
+  activeOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  topStores: Array<{ storeId: string; storeName: string; orderCount: number; totalSpent: number }>;
+  monthlyRevenue: MonthlyRevenue[];
+}
+
 export interface OrdersResponse {
   orders: Order[];
   nextCursor?: string | null;
@@ -281,7 +313,7 @@ class OrdersService {
         idempotencyKey ||
         `order-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-      const response = await apiClient.post<Order>('/orders', data as any, {
+      const response = await apiClient.post<Order>('/orders', data as unknown as Record<string, unknown>, {
         headers: { 'Idempotency-Key': key },
       });
 
@@ -301,7 +333,7 @@ class OrdersService {
   // Get user orders with filtering
   async getOrders(query: OrdersQuery = {}): Promise<ApiResponse<OrdersResponse>> {
     try {
-      const response = await apiClient.get<OrdersResponse>('/orders', query as any);
+      const response = await apiClient.get<OrdersResponse>('/orders', query as unknown as Record<string, string | number | boolean | null | undefined>);
 
       // Map backend pagination field names to the frontend interface.
       // Backend sends { page, totalPages } but the consumer app expects { current, pages }.
@@ -354,10 +386,10 @@ class OrdersService {
   }
 
   // Get order tracking
-  async getOrderTracking(orderId: string): Promise<ApiResponse<any>> {
+  async getOrderTracking(orderId: string): Promise<ApiResponse<OrderTracking>> {
     try {
-      const response = await apiClient.get<any>(`/orders/${orderId}/tracking`);
-      return response as any;
+      const response = await apiClient.get<OrderTracking>(`/orders/${orderId}/tracking`);
+      return response;
     } catch (error: any) {
       return {
         success: false,
@@ -412,10 +444,10 @@ class OrdersService {
   }
 
   // Get order statistics
-  async getOrderStats(): Promise<ApiResponse<any>> {
+  async getOrderStats(): Promise<ApiResponse<OrderStats>> {
     try {
-      const response = await apiClient.get<any>('/orders/stats');
-      return response as any;
+      const response = await apiClient.get<OrderStats>('/orders/stats');
+      return response;
     } catch (error: any) {
       return {
         success: false,

@@ -145,7 +145,7 @@ export interface SearchResponse {
 class ProductsService {
   // Get products with filtering and pagination
   async getProducts(query: ProductsQuery = {}): Promise<ApiResponse<ProductsResponse>> {
-    return apiClient.get<any>('/products', query as any);
+    return apiClient.get<ProductsResponse>('/products', query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get single product by ID
@@ -259,7 +259,7 @@ class ProductsService {
 
   // Search products
   async searchProducts(query: SearchQuery): Promise<ApiResponse<SearchResponse>> {
-    return apiClient.get<any>('/products/search', query as any);
+    return apiClient.get<SearchResponse>('/products/search', query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get products by category
@@ -267,7 +267,7 @@ class ProductsService {
     categorySlug: string,
     query: Omit<ProductsQuery, 'category'> = {}
   ): Promise<ApiResponse<ProductsResponse>> {
-    return apiClient.get<any>(`/products/category/${categorySlug}`, query as any);
+    return apiClient.get<ProductsResponse>(`/products/category/${categorySlug}`, query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get products by subcategory slug (for Browse Categories slider)
@@ -276,20 +276,19 @@ class ProductsService {
     limit: number = 10
   ): Promise<ApiResponse<Product[]>> {
     try {
-      const response = await apiClient.get<any>(`/products/subcategory/${subcategorySlug}`, { limit });
+      const response = await apiClient.get<Product[]>(`/products/subcategory/${subcategorySlug}`, { limit });
 
       if (response.success && response.data) {
         // Handle both array and paginated response formats
         const products = Array.isArray(response.data)
           ? response.data
-          : (response.data.products || []);
-
+          : (response.data as unknown as { products?: Product[] })?.products || [];
 
         // Validate and normalize products
         const validatedProducts = validateProductArray(products);
         return {
           ...response,
-          data: validatedProducts as unknown as unknown as Product[],
+          data: validatedProducts as unknown as Product[],
         };
       }
 
@@ -305,18 +304,18 @@ class ProductsService {
 
   // Get products by store
   async getProductsByStore(
-    storeId: string, 
+    storeId: string,
     query: Omit<ProductsQuery, 'store'> = {}
   ): Promise<ApiResponse<ProductsResponse>> {
-    return apiClient.get<any>(`/products/store/${storeId}`, query as any);
+    return apiClient.get<ProductsResponse>(`/products/store/${storeId}`, query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get product recommendations
   async getRecommendations(
-    productId: string, 
+    productId: string,
     limit: number = 5
   ): Promise<ApiResponse<Product[]>> {
-    return apiClient.get<any>(`/products/${productId}/recommendations`, { limit });
+    return apiClient.get<Product[]>(`/products/${productId}/recommendations`, { limit });
   }
 
   // Get related products
@@ -368,42 +367,42 @@ class ProductsService {
 
   // Get search suggestions
   async getSearchSuggestions(query: string): Promise<ApiResponse<string[]>> {
-    return apiClient.get<any>('/products/suggestions', { q: query });
+    return apiClient.get<string[]>('/products/suggestions', { q: query });
   }
 
   // Get popular search terms
   async getPopularSearches(limit: number = 10): Promise<ApiResponse<string[]>> {
-    return apiClient.get<any>('/products/popular-searches', { limit });
+    return apiClient.get<string[]>('/products/popular-searches', { limit });
   }
 
   // Track product view (updated endpoint)
-  async trackProductView(productId: string): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`/products/${productId}/track-view`);
+  async trackProductView(productId: string): Promise<ApiResponse<void>> {
+    return apiClient.post<void>(`/products/${productId}/track-view`);
   }
 
   // Get product analytics
-  async getProductAnalytics(productId: string, location?: any): Promise<ApiResponse<any>> {
+  async getProductAnalytics(productId: string, location?: { latitude: number; longitude: number }): Promise<ApiResponse<void>> {
     const params = location ? { location: JSON.stringify(location) } : {};
-    return apiClient.get<any>(`/products/${productId}/analytics`, params as any);
+    return apiClient.get<void>(`/products/${productId}/analytics`, params);
   }
 
   // Get frequently bought together products
   async getFrequentlyBoughtTogether(productId: string, limit: number = 4): Promise<ApiResponse<Product[]>> {
-    return apiClient.get<any>(`/products/${productId}/frequently-bought`, { limit });
+    return apiClient.get<Product[]>(`/products/${productId}/frequently-bought`, { limit });
   }
 
   // Get bundle products
-  async getBundleProducts(productId: string): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(`/products/${productId}/bundles`);
+  async getBundleProducts(productId: string): Promise<ApiResponse<Product[]>> {
+    return apiClient.get<Product[]>(`/products/${productId}/bundles`);
   }
 
   // Get product availability
   async checkAvailability(
-    productId: string, 
-    variantId?: string, 
+    productId: string,
+    variantId?: string,
     quantity: number = 1
   ): Promise<ApiResponse<{ available: boolean; maxQuantity: number }>> {
-    return apiClient.get<any>(`/products/${productId}/availability`, {
+    return apiClient.get<{ available: boolean; maxQuantity: number }>(`/products/${productId}/availability`, {
       variantId,
       quantity
     });
@@ -417,7 +416,7 @@ class ProductsService {
   async getFeaturedForHomepage(limit: number = 10): Promise<RecommendationItem[]> {
     try {
 
-      const response = await apiClient.get<any>('/products/featured', { limit });
+      const response = await apiClient.get<Product[]>('/products/featured', { limit });
 
       if (response.success && response.data && Array.isArray(response.data)) {
         // Validate and normalize products first
@@ -446,7 +445,7 @@ class ProductsService {
   async getNewArrivalsForHomepage(limit: number = 10): Promise<ProductItem[]> {
     try {
 
-      const response = await apiClient.get<any>('/products/new-arrivals', { limit });
+      const response = await apiClient.get<ProductItem[]>('/products/new-arrivals', { limit });
 
       if (response.success && response.data && Array.isArray(response.data)) {
         // Validate and normalize products
@@ -490,7 +489,7 @@ class ProductsService {
         Object.entries(queryParams).filter(([_, v]) => v !== undefined)
       );
       
-      const response = await apiClient.get<any>(`/products/store/${storeId}`, cleanParams as any);
+      const response = await apiClient.get<{ store: any; products: ProductItem[] }>(`/products/store/${storeId}`, cleanParams);
       
       if (response.success && response.data) {
         // API returns paginated response, extract the first item which contains store and products
@@ -548,7 +547,7 @@ class ProductsService {
   async isBackendAvailable(): Promise<boolean> {
     try {
       // Use 10s timeout for health checks (Render cold starts can take 10-15s)
-      const response = await apiClient.get<any>('/products/featured', { limit: 1 }, { timeout: 10000 });
+      const response = await apiClient.get<Product[]>('/products/featured', { limit: 1 }, { timeout: 10000 });
       return response.success === true;
     } catch (error) {
       return false;

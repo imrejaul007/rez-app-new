@@ -56,7 +56,7 @@ class ScratchCardApiService {
    */
   async checkEligibility(): Promise<ApiRes<ScratchCardEligibility>> {
     try {
-      return await apiClient.get<any>(`${this.baseUrl}/eligibility`);
+      return await apiClient.get<ScratchCardEligibility>(`${this.baseUrl}/eligibility`);
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Failed to check eligibility' };
     }
@@ -68,7 +68,7 @@ class ScratchCardApiService {
    */
   async createSession(): Promise<ApiRes<ScratchCardSession>> {
     try {
-      return await apiClient.post<any>(`${this.baseUrl}/create`, { earnedFrom: 'daily_free' });
+      return await apiClient.post<ScratchCardSession>(`${this.baseUrl}/create`, { earnedFrom: 'daily_free' });
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Failed to create session' };
     }
@@ -80,7 +80,7 @@ class ScratchCardApiService {
    */
   async play(sessionId: string): Promise<ApiRes<ScratchCardSession>> {
     try {
-      return await apiClient.post<any>(`${this.baseUrl}/play`, { sessionId });
+      return await apiClient.post<ScratchCardSession>(`${this.baseUrl}/play`, { sessionId });
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Failed to play scratch card' };
     }
@@ -92,7 +92,7 @@ class ScratchCardApiService {
    */
   async retryClaim(sessionId: string): Promise<ApiRes<ScratchCardSession>> {
     try {
-      return await apiClient.post<any>(`${this.baseUrl}/retry-claim`, { sessionId });
+      return await apiClient.post<ScratchCardSession>(`${this.baseUrl}/retry-claim`, { sessionId });
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Failed to retry claim' };
     }

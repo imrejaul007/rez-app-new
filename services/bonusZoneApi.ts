@@ -125,7 +125,10 @@ class BonusZoneApiService {
   }>> {
     const params: Record<string, string> = {};
     if (region) params.region = region;
-    return apiClient.get<any>('/bonus-zone/campaigns', params);
+    return apiClient.get<{
+    campaigns: BonusZoneCampaign[];
+    total: number;
+  }>('/bonus-zone/campaigns', params);
   }
 
   /**
@@ -143,7 +146,18 @@ class BonusZoneApiService {
       dailyClaimCount?: number;
     };
   }>> {
-    return apiClient.get<any>(`/bonus-zone/campaigns/${slug}`);
+    return apiClient.get<{
+    campaign: BonusZoneCampaignDetail;
+    userState: {
+      eligible: boolean;
+      reasons: string[];
+      claimCount: number;
+      totalReward: number;
+      maxClaimsPerUser: number;
+      maxClaimsPerUserPerDay?: number;
+      dailyClaimCount?: number;
+    };
+  }>(`/bonus-zone/campaigns/${slug}`);
   }
 
   /**
@@ -159,7 +173,7 @@ class BonusZoneApiService {
       transactionAmount?: number;
     }
   ): Promise<ApiResponse<ClaimResult>> {
-    return apiClient.post<any>(`/bonus-zone/campaigns/${slug}/claim`, {
+    return apiClient.post<ClaimResult>(`/bonus-zone/campaigns/${slug}/claim`, {
       transactionRef,
       ...context,
     });
@@ -181,14 +195,22 @@ class BonusZoneApiService {
       pages: number;
     };
   }>> {
-    return apiClient.get<any>('/bonus-zone/my-claims', params);
+    return apiClient.get<{
+    claims: BonusClaim[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  }>('/bonus-zone/my-claims', params);
   }
 
   /**
    * Pre-check eligibility for a campaign
    */
   async checkEligibility(slug: string): Promise<ApiResponse<EligibilityResult>> {
-    return apiClient.get<any>(`/bonus-zone/campaigns/${slug}/eligibility`);
+    return apiClient.get<EligibilityResult>(`/bonus-zone/campaigns/${slug}/eligibility`);
   }
 }
 

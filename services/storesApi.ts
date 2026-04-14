@@ -188,7 +188,7 @@ export interface StoreFollow {
 class StoresService {
   // Get stores with filtering and pagination
   async getStores(query: StoresQuery = {}): Promise<ApiResponse<StoresResponse>> {
-    return apiClient.get<any>('/stores', query as any);
+    return apiClient.get<StoresResponse>('/stores', query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get stores filtered by category slug and service type (e.g. homeDelivery, dineIn)
@@ -219,7 +219,7 @@ class StoresService {
   // Get single store by ID
   async getStoreById(storeId: string): Promise<ApiResponse<Store>> {
     try {
-      const response = await apiClient.get<any>(`/stores/${storeId}`);
+      const response = await apiClient.get<Store>(`/stores/${storeId}`);
 
       // Validate and normalize store data using unified types
       if (response.success && response.data) {
@@ -346,9 +346,9 @@ class StoresService {
   }
 
   // Get stores by subcategory slug
-  async getStoresBySubcategorySlug(subcategorySlug: string, limit: number = 10, page: number = 1): Promise<ApiResponse<any>> {
+  async getStoresBySubcategorySlug(subcategorySlug: string, limit: number = 10, page: number = 1): Promise<ApiResponse<{ stores: Store[]; pagination: { current: number; pages: number; total: number; limit: number } | null }>> {
     try {
-      const response = await apiClient.get<any>(`/stores/by-category-slug/${subcategorySlug}`, { limit, page });
+      const response = await apiClient.get<{ stores: Store[]; pagination: { current: number; pages: number; total: number; limit: number } | null }>(`/stores/by-category-slug/${subcategorySlug}`, { limit, page });
 
       if (response.success && response.data) {
         return {
@@ -405,7 +405,7 @@ class StoresService {
     radius: number = 10,
     limit: number = 20
   ): Promise<ApiResponse<Store[]>> {
-    return apiClient.get<any>('/stores/nearby', {
+    return apiClient.get<Store[]>('/stores/nearby', {
       latitude,
       longitude,
       radius,
@@ -466,25 +466,25 @@ class StoresService {
     query: string,
     filters?: Omit<StoresQuery, 'search'>
   ): Promise<ApiResponse<StoresResponse>> {
-    return apiClient.get<any>('/stores/search', {
+    return apiClient.get<StoresResponse>('/stores/search', {
       search: query,
       ...filters
-    } as any);
+    } as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get cuisine counts for Browse by Cuisine section
-  async getCuisineCounts(): Promise<ApiResponse<{ cuisines: any[]; total: number }>> {
-    return apiClient.get<any>('/stores/cuisine-counts');
+  async getCuisineCounts(): Promise<ApiResponse<{ cuisines: Array<{ id: string; name: string; slug: string; description?: string; icon?: string; storeCount: number }>; total: number }>> {
+    return apiClient.get<{ cuisines: Array<{ id: string; name: string; slug: string; description?: string; icon?: string; storeCount: number }>; total: number }>('/stores/cuisine-counts');
   }
 
   // Get top cashback stores
-  async getTopCashbackStores(params?: any): Promise<ApiResponse<any>> {
-    return apiClient.get<any>('/stores/top-cashback', params);
+  async getTopCashbackStores(params?: { limit?: number; category?: string }): Promise<ApiResponse<Store[]>> {
+    return apiClient.get<Store[]>('/stores/top-cashback', params);
   }
 
   // Get BNPL stores
-  async getBNPLStores(params?: any): Promise<ApiResponse<any>> {
-    return apiClient.get<any>('/stores/bnpl', params);
+  async getBNPLStores(params?: { limit?: number }): Promise<ApiResponse<Store[]>> {
+    return apiClient.get<Store[]>('/stores/bnpl', params);
   }
 
   // Get store categories
@@ -496,17 +496,24 @@ class StoresService {
     icon?: string;
     storeCount: number;
   }>>> {
-    return apiClient.get<any>('/stores/categories');
+    return apiClient.get<Array<{
+      id: string;
+      name: string;
+      slug: string;
+      description?: string;
+      icon?: string;
+      storeCount: number;
+    }>>('/stores/categories');
   }
 
   // Follow/unfollow a store (toggle)
   async followStore(storeId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post<any>(`/favorites/store/${storeId}/toggle`);
+    return apiClient.post<{ message: string }>(`/favorites/store/${storeId}/toggle`);
   }
 
   // Unfollow a store (same toggle endpoint)
   async unfollowStore(storeId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post<any>(`/favorites/store/${storeId}/toggle`);
+    return apiClient.post<{ message: string }>(`/favorites/store/${storeId}/toggle`);
   }
 
   // Get user's followed/favorited stores
@@ -522,7 +529,15 @@ class StoresService {
       limit: number;
     };
   }>> {
-    return apiClient.get<any>('/favorites/user/my-favorites', { type: 'store', page, limit });
+    return apiClient.get<{
+      stores: StoreFollow[];
+      pagination: {
+        current: number;
+        pages: number;
+        total: number;
+        limit: number;
+      };
+    }>('/favorites/user/my-favorites', { type: 'store', page, limit });
   }
 
   // Check if user follows a store
@@ -530,7 +545,7 @@ class StoresService {
     following: boolean;
     followedAt?: string;
   }>> {
-    return apiClient.get<any>(`/favorites/store/${storeId}/status`);
+    return apiClient.get<{ following: boolean; followedAt?: string }>(`/favorites/store/${storeId}/status`);
   }
 
   // Get store products
@@ -559,7 +574,22 @@ class StoresService {
       limit: number;
     };
   }>> {
-    return apiClient.get<any>(`/stores/${storeId}/products`, query);
+    return apiClient.get<{
+      products: Array<{
+        id: string;
+        name: string;
+        description: string;
+        images: Array<{ url: string; alt: string }>;
+        pricing: { basePrice: number; salePrice?: number };
+        ratings: { average: number; count: number };
+      }>;
+      pagination: {
+        current: number;
+        pages: number;
+        total: number;
+        limit: number;
+      };
+    }>(`/stores/${storeId}/products`, query);
   }
 
   // Get store reviews
@@ -597,7 +627,32 @@ class StoresService {
       ratingBreakdown: Record<number, number>;
     };
   }>> {
-    return apiClient.get<any>(`/stores/${storeId}/reviews`, query);
+    return apiClient.get<{
+      reviews: Array<{
+        id: string;
+        user: {
+          id: string;
+          name: string;
+          avatar?: string;
+        };
+        rating: number;
+        title: string;
+        comment: string;
+        helpful: number;
+        createdAt: string;
+      }>;
+      pagination: {
+        current: number;
+        pages: number;
+        total: number;
+        limit: number;
+      };
+      summary: {
+        averageRating: number;
+        totalReviews: number;
+        ratingBreakdown: Record<number, number>;
+      };
+    }>(`/stores/${storeId}/reviews`, query);
   }
 
   // Add store review
@@ -612,7 +667,7 @@ class StoresService {
     id: string;
     message: string;
   }>> {
-    return apiClient.post<any>(`/stores/${storeId}/reviews`, review);
+    return apiClient.post<{ id: string; message: string }>(`/stores/${storeId}/reviews`, review);
   }
 
   // Get store analytics (store owner only)
@@ -623,7 +678,7 @@ class StoresService {
       to: string;
     }
   ): Promise<ApiResponse<StoreAnalytics>> {
-    return apiClient.get<any>(`/stores/${storeId}/analytics`, dateRange);
+    return apiClient.get<StoreAnalytics>(`/stores/${storeId}/analytics`, dateRange);
   }
 
   // Update store information (store owner only)
@@ -640,7 +695,7 @@ class StoresService {
       socialMedia: Store['socialMedia'];
     }>
   ): Promise<ApiResponse<Store>> {
-    return apiClient.patch<any>(`/stores/${storeId}`, updates);
+    return apiClient.patch<Store>(`/stores/${storeId}`, updates);
   }
 
   // Upload store logo
@@ -680,7 +735,19 @@ class StoresService {
       revenue: number;
     };
   }>> {
-    return apiClient.get<any>(`/stores/${storeId}/metrics`, { period });
+    return apiClient.get<{
+      views: number;
+      followers: number;
+      orders: number;
+      revenue: number;
+      conversion: number;
+      growth: {
+        views: number;
+        followers: number;
+        orders: number;
+        revenue: number;
+      };
+    }>(`/stores/${storeId}/metrics`, { period });
   }
 
   // Get store followers list
@@ -702,12 +769,25 @@ class StoresService {
       limit: number;
     };
   }>> {
-    return apiClient.get<any>(`/stores/${storeId}/followers`, { page, limit });
+    return apiClient.get<{
+      followers: Array<{
+        id: string;
+        name: string;
+        avatar?: string;
+        followedAt: string;
+      }>;
+      pagination: {
+        current: number;
+        pages: number;
+        total: number;
+        limit: number;
+      };
+    }>(`/stores/${storeId}/followers`, { page, limit });
   }
 
   // Get follower count for a store
   async getFollowerCount(storeId: string): Promise<ApiResponse<{ count: number }>> {
-    return apiClient.get<any>(`/stores/${storeId}/followers/count`);
+    return apiClient.get<{ count: number }>(`/stores/${storeId}/followers/count`);
   }
 
   // Get user's store visits history
@@ -737,7 +817,28 @@ class StoresService {
       limit: number;
     };
   }>> {
-    return apiClient.get<any>('/store-visits/user', { page, limit, status });
+    return apiClient.get<{
+      visits: Array<{
+        id: string;
+        store: {
+          id: string;
+          name: string;
+          logo?: string;
+          address: any;
+        };
+        visitDate: string;
+        visitType: string;
+        status: string;
+        queueNumber?: string;
+        isQueue: boolean;
+      }>;
+      pagination: {
+        total: number;
+        page: number;
+        pages: number;
+        limit: number;
+      };
+    }>('/store-visits/user', { page, limit, status });
   }
 
   // ===== FRONTEND HOMEPAGE INTEGRATION METHODS =====
@@ -745,16 +846,16 @@ class StoresService {
   /**
    * Get featured stores for homepage sections - Returns formatted StoreItems
    */
-  async getFeaturedForHomepage(limit: number = 10): Promise<any[]> {
+  async getFeaturedForHomepage(limit: number = 10): Promise<Store[]> {
     try {
-      const response = await apiClient.get<any>('/stores/featured', { limit });
+      const response = await apiClient.get<Store[]>('/stores/featured', { limit });
 
       // Handle both response formats:
       // 1. { success: true, data: [...] } - direct array
       // 2. { success: true, data: { stores: [...] } } - nested stores array
       const storesData = Array.isArray(response.data)
         ? response.data
-        : (response.data?.stores || []);
+        : ((response.data as unknown as { stores?: Store[] })?.stores || []);
 
       if (response.success && storesData.length > 0) {
 
@@ -809,7 +910,7 @@ class StoresService {
   async isBackendAvailable(): Promise<boolean> {
     try {
       // Use 10s timeout for health checks (Render cold starts can take 10-15s)
-      const response = await apiClient.get<any>('/stores/featured', { limit: 1 }, { timeout: 10000 });
+      const response = await apiClient.get<Store[]>('/stores/featured', { limit: 1 }, { timeout: 10000 });
       return response.success === true;
     } catch (error) {
       return false;
@@ -912,13 +1013,13 @@ class StoresService {
     page?: number;
     days?: number;
   }): Promise<ApiResponse<{
-    stores: any[];
+    stores: Store[];
     pagination: { total: number; page: number; limit: number; pages: number };
   }>> {
     try {
 
       const response = await apiClient.get<{
-        stores: any[];
+        stores: Store[];
         pagination: { total: number; page: number; limit: number; pages: number };
       }>('/stores/trending', {
         limit: params?.limit || 4,
@@ -1104,7 +1205,7 @@ export async function fetchPersonalizedFeed(params: {
     }
 
     // Fallback: trending stores
-    const trendingRes = await apiClient.get<any>('/search/trending', {
+    const trendingRes = await apiClient.get<{ stores: any[]; results?: any[] }>('/search/trending', {
       limit,
     });
 

@@ -65,13 +65,13 @@ class StreakApi {
    */
   async getStreakStatus(type: 'login' | 'order' | 'review' = 'login'): Promise<ApiResponse<StreakData>> {
     try {
-      const response = await apiClient.get<any>(`${this.baseUrl}/streaks`, { type });
+      const response = await apiClient.get<AllStreaks>(`${this.baseUrl}/streaks`, { type });
 
       if (response.success && response.data) {
         // Backend returns { streak (number), currentStreak (number), longestStreak, ... }
         // response.data.streak is a NUMBER, not an object — use response.data directly
-        const streakData = (typeof response.data.streak === 'object' && response.data.streak)
-          ? response.data.streak
+        const streakData = (typeof response.data === 'object' && response.data && 'streak' in response.data && typeof (response.data as any).streak === 'object')
+          ? (response.data as any).streak
           : response.data;
 
         return {
@@ -103,16 +103,16 @@ class StreakApi {
    */
   async getAllStreaks(): Promise<ApiResponse<AllStreaks>> {
     try {
-      const response = await apiClient.get<any>(`${this.baseUrl}/streaks`);
+      const response = await apiClient.get<AllStreaks>(`${this.baseUrl}/streaks`);
 
       if (response.success && response.data) {
         return {
           success: true,
           data: {
-            login: this.mapStreakData(response.data.login || response.data),
-            order: this.mapStreakData(response.data.order),
-            review: this.mapStreakData(response.data.review),
-            savings: this.mapStreakData(response.data.savings),
+            login: this.mapStreakData(response.data?.login || response.data),
+            order: this.mapStreakData(response.data?.order),
+            review: this.mapStreakData(response.data?.review),
+            savings: this.mapStreakData(response.data?.savings),
           },
         };
       }
@@ -137,7 +137,15 @@ class StreakApi {
     };
   }>> {
     try {
-      const response = await apiClient.post<any>(`${this.baseUrl}/streak/checkin`, { type });
+      const response = await apiClient.post<{
+    streak: StreakData;
+    milestoneReached?: {
+      day: number;
+      coins: number;
+      name: string;
+      canClaim: boolean;
+    };
+  }>(`${this.baseUrl}/streak/checkin`, { type });
 
       if (response.success && response.data) {
         return {
@@ -149,7 +157,7 @@ class StreakApi {
         };
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -168,7 +176,14 @@ class StreakApi {
     };
   }>> {
     try {
-      const response = await apiClient.post<any>(`${this.baseUrl}/streak/claim-milestone`, { type, day });
+      const response = await apiClient.post<{
+    streak: StreakData;
+    rewards: {
+      coins: number;
+      badge?: string;
+      name: string;
+    };
+  }>(`${this.baseUrl}/streak/claim-milestone`, { type, day });
 
       if (response.success && response.data) {
         return {
@@ -180,7 +195,7 @@ class StreakApi {
         };
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -192,12 +207,13 @@ class StreakApi {
    */
   async getStreakBonuses(): Promise<ApiResponse<StreakMilestone[]>> {
     try {
-      const response = await apiClient.get<any>(`${this.baseUrl}/streak/bonuses`);
+      const response = await apiClient.get<StreakMilestone[]>(`${this.baseUrl}/streak/bonuses`);
 
       if (response.success && response.data) {
+        const raw = response.data as unknown as { bonuses?: StreakMilestone[]; milestones?: StreakMilestone[] };
         return {
           success: true,
-          data: response.data.bonuses || response.data.milestones || response.data || [],
+          data: raw.bonuses || raw.milestones || response.data,
         };
       }
 
@@ -244,16 +260,16 @@ class StreakApi {
    */
   async freezeStreak(type: 'login' | 'order' | 'review', days: number = 1): Promise<ApiResponse<StreakData>> {
     try {
-      const response = await apiClient.post<any>(`${this.baseUrl}/streak/freeze`, { type, days });
+      const response = await apiClient.post<StreakData>(`${this.baseUrl}/streak/freeze`, { type, days });
 
       if (response.success && response.data) {
         return {
           success: true,
-          data: this.mapStreakData(response.data.streak || response.data),
+          data: this.mapStreakData((response.data as unknown as { streak?: StreakData }).streak || response.data),
         };
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       return { success: false, error: error.message };
     }
@@ -265,10 +281,17 @@ class StreakApi {
    */
   async getStreakStats(): Promise<ApiResponse<StreakStats>> {
     try {
-      const response = await apiClient.get<any>(`${this.baseUrl}/stats`);
+      const response = await apiClient.get<StreakStats>(`${this.baseUrl}/stats`);
 
       if (response.success && response.data) {
-        const stats = response.data.streakStats || response.data.streaks || {};
+        const raw = response.data as unknown as { streakStats?: StreakStats; streaks?: StreakStats };
+        const stats: StreakStats = raw.streakStats || raw.streaks || {
+          totalStreaks: 0,
+          longestStreak: 0,
+          totalDaysActive: 0,
+          currentlyActive: 0,
+          byType: {},
+        };
 
         return {
           success: true,

@@ -7,13 +7,67 @@ import cacheService from './cacheService';
 import { locationService } from './locationService';
 import recommendationService from './recommendationApi';
 import apiClient from './apiClient';
-import { ProductItem, RecommendationItem, HomepageSection, EventItem, HomepageBatchResponse } from '@/types/homepage.types';
+import { ProductItem, RecommendationItem, HomepageSection, EventItem, HomepageBatchResponse, StoreItem } from '@/types/homepage.types';
 import { getSectionById } from '@/data/homepageData';
 import {
   getFallbackSectionData,
   getAllFallbackSections
 } from '@/data/offlineFallbackData';
 import HomepageApiService from './homepageApi';
+import { BrandedStoreItem } from '@/types/homepage.types';
+
+// Internal type for realOffersApi response shape
+interface OffersApiData {
+  items?: Array<{
+    _id: string;
+    title: string;
+    description?: string;
+    subtitle?: string;
+    image?: string;
+    discountedPrice?: number;
+    originalPrice?: number;
+    cashbackPercentage?: number;
+    store?: string;
+    category?: string;
+    validity?: string;
+    metadata?: {
+      flashSale?: {
+        isActive?: boolean;
+        salePrice?: number;
+        originalPrice?: number;
+      };
+    };
+  }>;
+}
+
+// Legacy batch API response format (before HomepageBatchResponse standardization)
+interface LegacyBatchSections {
+  featuredProducts?: RecommendationItem[];
+  newArrivals?: ProductItem[];
+  trendingStores?: StoreItem[];
+  upcomingEvents?: EventItem[];
+  megaOffers?: ProductItem[];
+  studentOffers?: ProductItem[];
+  flashSales?: ProductItem[];
+  // These field names are used in the inline fallback object
+  justForYou?: RecommendationItem[];
+  events?: EventItem[];
+  offers?: ProductItem[];
+}
+
+interface LegacyBatchData {
+  sections?: LegacyBatchSections;
+  userContext?: HomepageUserContext;
+  metadata?: { cached: boolean; timestamp: string };
+  featuredProducts?: RecommendationItem[];
+  newArrivals?: ProductItem[];
+  trendingStores?: StoreItem[];
+  featuredStores?: StoreItem[];
+  upcomingEvents?: EventItem[];
+  megaOffers?: ProductItem[];
+  studentOffers?: ProductItem[];
+  flashSales?: ProductItem[];
+}
 
 // Region currency getter - will be set by RegionContext
 let getCurrencySymbolFn: (() => string) | null = null;
@@ -233,9 +287,9 @@ class HomepageDataService {
         if (userLocation) {
           try {
             const pickedForYouResponse = await recommendationService.getPickedForYou(20, userLocation);
-            if (pickedForYouResponse.success && ((pickedForYouResponse.data as any)?.recommendations?.length ?? 0) > 0) {
+            if (pickedForYouResponse.success && ((pickedForYouResponse.data as { recommendations?: unknown[] })?.recommendations?.length ?? 0) > 0) {
               // Transform recommendations to ProductItem format
-              return (pickedForYouResponse.data as any).recommendations.map((rec: any) => ({
+              return (pickedForYouResponse.data as { recommendations: RecommendationItem[] }).recommendations.map((rec) => ({
                 ...rec,
                 recommendationReason: rec.recommendationReason || 'Recommended for you',
                 recommendationScore: rec.recommendationScore || 0.85,
@@ -262,7 +316,7 @@ class HomepageDataService {
       error: isOffline ? 'Showing offline data' : null
     };
 
-    return result as any;
+    return result;
   }
 
   /**
@@ -316,36 +370,36 @@ class HomepageDataService {
           lastUpdated: new Date().toISOString(),
           loading: false,
           error: null
-        } as any;
+        } as HomepageSection;
       }
 
       // No cache, try to fetch from backend
       const isBackendAvailable = await this.checkBackendAvailability();
-      
+
       if (isBackendAvailable) {
         try {
           const freshData = await productsService.getNewArrivalsForHomepage(20);
-          
+
           // Only cache and return if we have real data
           if (freshData && freshData.length > 0) {
             await cacheService.set(cacheKey, freshData, {
               ttl: this.CACHE_TTL,
               priority: 'high'
             });
-            
+
             return {
               ...sectionTemplate,
               items: freshData,
               lastUpdated: new Date().toISOString(),
               loading: false,
               error: null
-            } as any;
+            } as HomepageSection;
           }
         } catch (error) {
           // Silently fail - return empty section
         }
       }
-      
+
       // No data available - return empty section (will be filtered out)
       return {
         ...sectionTemplate,
@@ -353,7 +407,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      } as any;
+      } as HomepageSection;
     } catch (error) {
       // Return empty section on error (will be filtered out)
       return {
@@ -362,7 +416,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      } as any;
+      } as HomepageSection;
     }
   }
 
@@ -467,7 +521,7 @@ class HomepageDataService {
       cacheKey,
       async () => {
         const items = await storesService.getFeaturedForHomepage(15);
-        return items;
+        return items as unknown as (EventItem | StoreItem | ProductItem | BrandedStoreItem | RecommendationItem)[];
       },
       fallbackSection?.items || []
     );
@@ -481,7 +535,7 @@ class HomepageDataService {
       error: isOffline ? 'Showing offline data' : null
     };
 
-    return result as any;
+    return result;
   }
 
   /**
@@ -529,7 +583,7 @@ class HomepageDataService {
       error: isOffline ? 'Showing offline data' : null
     };
 
-    return result as any;
+    return result;
   }
 
   /**
@@ -567,11 +621,12 @@ class HomepageDataService {
             limit: 10
           });
 
-          if (response.success && response.data && (response.data as any).items) {
-            const offers = (response.data as any).items || [];
+          if (response.success && response.data && (response.data as OffersApiData).items) {
+            const offersData = response.data as OffersApiData;
+            const offers = offersData.items || [];
 
             // Transform offers to homepage format
-            const transformedItems = offers.map((offer: any) => ({
+            const transformedItems = offers.map((offer) => ({
               id: offer._id,
               type: 'product' as const,
               title: offer.title,
@@ -661,14 +716,15 @@ class HomepageDataService {
             limit: 10
           });
 
-          if (response.success && response.data && (response.data as any).items) {
+          if (response.success && response.data && (response.data as OffersApiData).items) {
+            const offersData = response.data as OffersApiData;
             // Filter for flash sale offers
-            const flashSales = (response.data as any).items.filter((offer: any) =>
+            const flashSales = (offersData.items || []).filter((offer) =>
               offer.metadata?.flashSale?.isActive
             );
 
             // Transform flash sales to homepage format
-            const transformedItems = (flashSales || []).map((offer: any) => ({
+            const transformedItems = (flashSales || []).map((offer) => ({
               id: offer._id,
               type: 'product' as const,
               title: offer.title,
@@ -754,11 +810,11 @@ class HomepageDataService {
 
             return {
               ...sectionTemplate,
-              items: brands as any,
+              items: brands as unknown as BrandedStoreItem[],
               lastUpdated: new Date().toISOString(),
               loading: false,
               error: null
-            } as any;
+            } as HomepageSection;
           }
         } catch (_error) {
           // silently handle
@@ -766,7 +822,7 @@ class HomepageDataService {
       }
 
       // Try to get from cache
-      const cachedData = await cacheService.get<any[]>(cacheKey);
+      const cachedData = await cacheService.get<BrandedStoreItem[]>(cacheKey);
       if (cachedData && cachedData.length > 0) {
         return {
           ...sectionTemplate,
@@ -774,7 +830,7 @@ class HomepageDataService {
           lastUpdated: new Date().toISOString(),
           loading: false,
           error: null
-        } as any;
+        } as HomepageSection;
       }
 
       // No data available - return empty section (will be hidden)
@@ -784,7 +840,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      } as any;
+      } as HomepageSection;
 
     } catch (error) {
       return {
@@ -793,7 +849,7 @@ class HomepageDataService {
         lastUpdated: new Date().toISOString(),
         loading: false,
         error: null
-      } as any;
+      } as HomepageSection;
     }
   }
 
@@ -913,7 +969,7 @@ class HomepageDataService {
       this.performanceMetrics.batchSuccesses++;
 
       // Extract userContext if present (backend includes it for authenticated users)
-      const rawData = response.data as any;
+      const rawData = (response.data || response) as HomepageBatchResponse['data'] | LegacyBatchData;
       if (rawData?.userContext) {
         this._lastUserContext = rawData.userContext;
         this._userContextTimestamp = Date.now();
@@ -945,14 +1001,14 @@ class HomepageDataService {
     flashSales: HomepageSection;
   } {
     // apiClient already unwraps backend data, so response may or may not have .data
-    const data = response.data || response;
+    const data = (response.data || response) as LegacyBatchData;
     const sections = data.sections || {
-      justForYou: (data as any).featuredProducts || [],
-      newArrivals: (data as any).newArrivals || [],
-      trendingStores: (data as any).trendingStores || (data as any).featuredStores || [],
-      events: (data as any).upcomingEvents || [],
-      offers: (data as any).megaOffers || (data as any).studentOffers || [],
-      flashSales: (data as any).flashSales || [],
+      justForYou: data.featuredProducts || [],
+      newArrivals: data.newArrivals || [],
+      trendingStores: data.trendingStores || data.featuredStores || [],
+      events: data.upcomingEvents || [],
+      offers: data.megaOffers || data.studentOffers || [],
+      flashSales: data.flashSales || [],
     };
     const metadata = data.metadata;
     const timestamp = new Date().toISOString();
@@ -1160,10 +1216,10 @@ class HomepageDataService {
         return sections;
       } catch (error) {
         // Don't fall through to individual calls — if batch timed out, they will too
-        const emptySection = (id: string, title: string, type: string, priority: number): HomepageSection => ({
+        const emptySection = (id: string, title: string, type: HomepageSection['type'], priority: number): HomepageSection => ({
           id,
           title,
-          type: type as any,
+          type,
           items: [],
           loading: false,
           error: null,
@@ -1196,10 +1252,10 @@ class HomepageDataService {
     ]);
 
     // Return empty sections for non-critical ones — they'll load via LazySection
-    const emptySection = (id: string, title: string, type: string, priority: number): HomepageSection => ({
+    const emptySection = (id: string, title: string, type: HomepageSection['type'], priority: number): HomepageSection => ({
       id,
       title,
-      type: type as any,
+      type,
       items: [],
       loading: false,
       error: null,

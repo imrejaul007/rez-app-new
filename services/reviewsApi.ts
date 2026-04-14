@@ -173,15 +173,49 @@ export interface ReviewStats {
   };
 }
 
+// Response payload types
+type HelpfullVoteResponse = { helpful: boolean; count: number };
+type MessageResponse = { message: string };
+type CanReviewResponse = {
+  canReview: boolean;
+  reason?: string;
+  existingReviewId?: string;
+  requiresVerification?: boolean;
+};
+type ReviewSuggestionsResponse = {
+  titleSuggestions: string[];
+  contentPrompts: string[];
+  commonPros: string[];
+  commonCons: string[];
+  relevantTags: string[];
+};
+type BulkModerateResponse = { processed: number; successful: number; failed: number };
+type ReviewAnalyticsResponse = {
+  overview: {
+    totalReviews: number;
+    averageRating: number;
+    reviewsThisMonth: number;
+    ratingTrend: number;
+  };
+  engagement: { helpfulVotes: number; replies: number; reports: number };
+  demographics: { verifiedUsers: number; repeatCustomers: number; averageUsageTime: string };
+  insights: Array<{
+    type: 'trending_keyword' | 'sentiment_shift' | 'rating_spike';
+    title: string;
+    description: string;
+    impact: 'positive' | 'negative' | 'neutral';
+  }>;
+};
+
 class ReviewsService {
   // Get reviews with filtering and pagination
   async getReviews(query: ReviewsQuery = {}): Promise<ApiResponse<ReviewsResponse>> {
-    return apiClient.get<any>('/reviews', query as any);
+    return apiClient.get<ReviewsResponse>('/reviews', query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get single review by ID
   async getReviewById(reviewId: string): Promise<ApiResponse<Review>> {
-    return apiClient.get<any>(`/reviews/${reviewId}`);
+    return apiClient.get<Review>(`/reviews/${reviewId}`);
   }
 
   // Get reviews for a specific target (product/store/etc.)
@@ -190,7 +224,7 @@ class ReviewsService {
     targetId: string,
     query: Omit<ReviewsQuery, 'targetType' | 'targetId'> = {}
   ): Promise<ApiResponse<ReviewsResponse>> {
-    return apiClient.get<any>(`/reviews/${targetType}/${targetId}`, query as any);
+    return apiClient.get<ReviewsResponse>(`/reviews/${targetType}/${targetId}`, query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Get user's reviews
@@ -199,7 +233,7 @@ class ReviewsService {
     query: Omit<ReviewsQuery, 'userId'> = {}
   ): Promise<ApiResponse<ReviewsResponse>> {
     const endpoint = userId ? `/reviews/user/${userId}` : '/reviews/my';
-    return apiClient.get<any>(endpoint, query as any);
+    return apiClient.get<ReviewsResponse>(endpoint, query as unknown as Record<string, string | number | boolean | null | undefined>);
   }
 
   // Create new review
@@ -228,7 +262,7 @@ class ReviewsService {
       return apiClient.uploadFile(endpoint, formData);
     }
 
-    return apiClient.post<any>(endpoint, data as any);
+    return apiClient.post<Review>(endpoint, data as unknown as Record<string, unknown>);
   }
 
   // Update review
@@ -242,40 +276,31 @@ class ReviewsService {
       cons: string[];
       recommended: boolean;
       wouldBuyAgain: boolean;
-      usageTime: string;
+      ratingTime: string;
       tags: string[];
     }>
   ): Promise<ApiResponse<Review>> {
-    return apiClient.patch<any>(`/reviews/${reviewId}`, updates);
+    return apiClient.patch<Review>(`/reviews/${reviewId}`, updates);
   }
 
   // Delete review
-  async deleteReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete<any>(`/reviews/${reviewId}`);
+  async deleteReview(reviewId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.delete<MessageResponse>(`/reviews/${reviewId}`);
   }
 
   // Mark review as helpful
-  async markHelpful(reviewId: string): Promise<ApiResponse<{
-    helpful: boolean;
-    count: number;
-  }>> {
-    return apiClient.post<any>(`/reviews/${reviewId}/helpful`);
+  async markHelpful(reviewId: string): Promise<ApiResponse<HelpfullVoteResponse>> {
+    return apiClient.post<HelpfullVoteResponse>(`/reviews/${reviewId}/helpful`);
   }
 
   // Mark review as not helpful
-  async markNotHelpful(reviewId: string): Promise<ApiResponse<{
-    helpful: boolean;
-    count: number;
-  }>> {
-    return apiClient.post<any>(`/reviews/${reviewId}/not-helpful`);
+  async markNotHelpful(reviewId: string): Promise<ApiResponse<HelpfullVoteResponse>> {
+    return apiClient.post<HelpfullVoteResponse>(`/reviews/${reviewId}/not-helpful`);
   }
 
   // Remove helpful/not helpful vote
-  async removeHelpfulVote(reviewId: string): Promise<ApiResponse<{
-    helpful: boolean;
-    count: number;
-  }>> {
-    return apiClient.delete<any>(`/reviews/${reviewId}/helpful`);
+  async removeHelpfulVote(reviewId: string): Promise<ApiResponse<HelpfullVoteResponse>> {
+    return apiClient.delete<HelpfullVoteResponse>(`/reviews/${reviewId}/helpful`);
   }
 
   // Add reply to review
@@ -283,7 +308,7 @@ class ReviewsService {
     reviewId: string,
     content: string
   ): Promise<ApiResponse<Review['replies'][0]>> {
-    return apiClient.post<any>(`/reviews/${reviewId}/replies`, { content });
+    return apiClient.post<Review['replies'][0]>(`/reviews/${reviewId}/replies`, { content });
   }
 
   // Update reply
@@ -291,12 +316,12 @@ class ReviewsService {
     replyId: string,
     content: string
   ): Promise<ApiResponse<Review['replies'][0]>> {
-    return apiClient.patch<any>(`/replies/${replyId}`, { content });
+    return apiClient.patch<Review['replies'][0]>(`/replies/${replyId}`, { content });
   }
 
   // Delete reply
-  async deleteReply(replyId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.delete<any>(`/replies/${replyId}`);
+  async deleteReply(replyId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.delete<MessageResponse>(`/replies/${replyId}`);
   }
 
   // Report review
@@ -304,35 +329,34 @@ class ReviewsService {
     reviewId: string,
     reason: 'spam' | 'inappropriate' | 'fake' | 'offensive' | 'other',
     description?: string
-  ): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.post<any>(`/reviews/${reviewId}/report`, {
+  ): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.post<MessageResponse>(`/reviews/${reviewId}/report`, {
       reason,
-      description
+      description,
     });
   }
 
   // Feature review (admin/store owner)
-  async featureReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch<any>(`/reviews/${reviewId}/feature`);
+  async featureReview(reviewId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.patch<MessageResponse>(`/reviews/${reviewId}/feature`);
   }
 
   // Unfeature review (admin/store owner)
-  async unfeatureReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch<any>(`/reviews/${reviewId}/unfeature`);
+  async unfeatureReview(reviewId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.patch<MessageResponse>(`/reviews/${reviewId}/unfeature`);
   }
 
   // Pin review (admin/store owner)
-  async pinReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch<any>(`/reviews/${reviewId}/pin`);
+  async pinReview(reviewId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.patch<MessageResponse>(`/reviews/${reviewId}/pin`);
   }
 
   // Unpin review (admin/store owner)
-  async unpinReview(reviewId: string): Promise<ApiResponse<{ message: string }>> {
-    return apiClient.patch<any>(`/reviews/${reviewId}/unpin`);
+  async unpinReview(reviewId: string): Promise<ApiResponse<MessageResponse>> {
+    return apiClient.patch<MessageResponse>(`/reviews/${reviewId}/unpin`);
   }
 
   // Get featured reviews
-  // Backend accepts: page, limit, category (slug)
   async getFeaturedReviews(
     options?: {
       category?: string;
@@ -340,7 +364,7 @@ class ReviewsService {
       limit?: number;
     }
   ): Promise<ApiResponse<Review[]>> {
-    return apiClient.get<any>('/reviews/featured', {
+    return apiClient.get<Review[]>('/reviews/featured', {
       page: options?.page,
       limit: options?.limit,
       category: options?.category,
@@ -351,12 +375,9 @@ class ReviewsService {
   async getReviewStats(
     targetType: Review['targetType'],
     targetId: string,
-    dateRange?: {
-      from: string;
-      to: string;
-    }
+    dateRange?: { from: string; to: string }
   ): Promise<ApiResponse<ReviewStats>> {
-    return apiClient.get<any>(`/reviews/${targetType}/${targetId}/stats`, dateRange);
+    return apiClient.get<ReviewStats>(`/reviews/${targetType}/${targetId}/stats`, dateRange);
   }
 
   // Get user's review for specific target
@@ -364,36 +385,25 @@ class ReviewsService {
     targetType: Review['targetType'],
     targetId: string
   ): Promise<ApiResponse<Review | null>> {
-    return apiClient.get<any>(`/reviews/${targetType}/${targetId}/my`);
+    return apiClient.get<Review | null>(`/reviews/${targetType}/${targetId}/my`);
   }
 
   // Check if user can review target
   async canReview(
     targetType: Review['targetType'],
     targetId: string
-  ): Promise<ApiResponse<{
-    canReview: boolean;
-    reason?: string;
-    existingReviewId?: string;
-    requiresVerification?: boolean;
-  }>> {
-    return apiClient.get<any>(`/reviews/${targetType}/${targetId}/can-review`);
+  ): Promise<ApiResponse<CanReviewResponse>> {
+    return apiClient.get<CanReviewResponse>(`/reviews/${targetType}/${targetId}/can-review`);
   }
 
   // Get review templates/suggestions
   async getReviewSuggestions(
     targetType: Review['targetType'],
     rating: number
-  ): Promise<ApiResponse<{
-    titleSuggestions: string[];
-    contentPrompts: string[];
-    commonPros: string[];
-    commonCons: string[];
-    relevantTags: string[];
-  }>> {
-    return apiClient.get<any>('/reviews/suggestions', {
+  ): Promise<ApiResponse<ReviewSuggestionsResponse>> {
+    return apiClient.get<ReviewSuggestionsResponse>('/reviews/suggestions', {
       targetType,
-      rating
+      rating,
     });
   }
 
@@ -403,10 +413,7 @@ class ReviewsService {
     action: 'approve' | 'reject' | 'flag',
     reason?: string
   ): Promise<ApiResponse<Review>> {
-    return apiClient.patch<any>(`/reviews/${reviewId}/moderate`, {
-      action,
-      reason
-    });
+    return apiClient.patch<Review>(`/reviews/${reviewId}/moderate`, { action, reason });
   }
 
   // Get pending reviews for moderation (admin only)
@@ -414,10 +421,7 @@ class ReviewsService {
     page: number = 1,
     limit: number = 20
   ): Promise<ApiResponse<ReviewsResponse>> {
-    return apiClient.get<any>('/reviews/pending', {
-      page,
-      limit
-    });
+    return apiClient.get<ReviewsResponse>('/reviews/pending', { page, limit });
   }
 
   // Bulk moderate reviews (admin only)
@@ -425,15 +429,11 @@ class ReviewsService {
     reviewIds: string[],
     action: 'approve' | 'reject' | 'flag',
     reason?: string
-  ): Promise<ApiResponse<{
-    processed: number;
-    successful: number;
-    failed: number;
-  }>> {
-    return apiClient.post<any>('/reviews/bulk-moderate', {
+  ): Promise<ApiResponse<BulkModerateResponse>> {
+    return apiClient.post<BulkModerateResponse>('/reviews/bulk-moderate', {
       reviewIds,
       action,
-      reason
+      reason,
     });
   }
 
@@ -441,38 +441,12 @@ class ReviewsService {
   async getReviewAnalytics(
     targetType?: Review['targetType'],
     targetId?: string,
-    dateRange?: {
-      from: string;
-      to: string;
-    }
-  ): Promise<ApiResponse<{
-    overview: {
-      totalReviews: number;
-      averageRating: number;
-      reviewsThisMonth: number;
-      ratingTrend: number;
-    };
-    engagement: {
-      helpfulVotes: number;
-      replies: number;
-      reports: number;
-    };
-    demographics: {
-      verifiedUsers: number;
-      repeatCustomers: number;
-      averageUsageTime: string;
-    };
-    insights: Array<{
-      type: 'trending_keyword' | 'sentiment_shift' | 'rating_spike';
-      title: string;
-      description: string;
-      impact: 'positive' | 'negative' | 'neutral';
-    }>;
-  }>> {
-    return apiClient.get<any>('/reviews/analytics', {
+    dateRange?: { from: string; to: string }
+  ): Promise<ApiResponse<ReviewAnalyticsResponse>> {
+    return apiClient.get<ReviewAnalyticsResponse>('/reviews/analytics', {
       targetType,
       targetId,
-      ...dateRange
+      ...dateRange,
     });
   }
 }

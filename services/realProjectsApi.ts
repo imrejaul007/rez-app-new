@@ -96,7 +96,7 @@ export const realProjectsApi = {
     sortBy?: 'newest' | 'popular' | 'trending' | 'difficulty_easy' | 'difficulty_hard';
     page?: number;
     limit?: number;
-  }): Promise<ApiResponse<{ projects: Project[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ projects: Project[]; pagination: { page: number; limit: number; total: number; pages: number } }>> {
     const queryParams = new URLSearchParams();
 
     if (params?.category) queryParams.append('category', params.category);
@@ -108,7 +108,7 @@ export const realProjectsApi = {
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get<any>(`/projects?${queryParams.toString()}`);
+    return apiClient.get<{ projects: Project[]; pagination: { page: number; limit: number; total: number; pages: number } }>(`/projects?${queryParams.toString()}`);
   },
 
   /**
@@ -118,7 +118,7 @@ export const realProjectsApi = {
     const queryParams = new URLSearchParams();
     if (limit) queryParams.append('limit', String(limit));
 
-    return apiClient.get<any>(`/projects/featured?${queryParams.toString()}`);
+    return apiClient.get<Project[]>(`/projects/featured?${queryParams.toString()}`);
   },
 
   /**
@@ -130,41 +130,41 @@ export const realProjectsApi = {
       page?: number;
       limit?: number;
     }
-  ): Promise<ApiResponse<{ projects: Project[]; pagination: any }>> {
+  ): Promise<ApiResponse<{ projects: Project[]; pagination: { page: number; limit: number; total: number; pages: number } }>> {
     const queryParams = new URLSearchParams();
 
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get<any>(`/projects/category/${category}?${queryParams.toString()}`);
+    return apiClient.get<{ projects: Project[]; pagination: { page: number; limit: number; total: number; pages: number } }>(`/projects/category/${category}?${queryParams.toString()}`);
   },
 
   /**
    * Get single project by ID
    */
   async getProjectById(projectId: string): Promise<ApiResponse<Project>> {
-    return apiClient.get<any>(`/projects/${projectId}`);
+    return apiClient.get<Project>(`/projects/${projectId}`);
   },
 
   /**
    * Like/Unlike a project (requires authentication)
    */
   async toggleProjectLike(projectId: string): Promise<ApiResponse<{ liked: boolean; likeCount: number }>> {
-    return apiClient.post<any>(`/projects/${projectId}/like`);
+    return apiClient.post<{ liked: boolean; likeCount: number }>(`/projects/${projectId}/like`);
   },
 
   /**
    * Add comment to project (requires authentication)
    */
-  async addProjectComment(projectId: string, comment: string): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`/projects/${projectId}/comments`, { comment });
+  async addProjectComment(projectId: string, comment: string): Promise<ApiResponse<{ commentId: string; comment: string; createdAt: string }>> {
+    return apiClient.post<{ commentId: string; comment: string; createdAt: string }>(`/projects/${projectId}/comments`, { comment });
   },
 
   /**
    * Apply to a project (requires authentication)
    */
-  async applyToProject(projectId: string): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`/projects/${projectId}/apply`);
+  async applyToProject(projectId: string): Promise<ApiResponse<{ message: string; appliedAt: string }>> {
+    return apiClient.post<{ message: string; appliedAt: string }>(`/projects/${projectId}/apply`);
   },
 
   /**
@@ -175,10 +175,10 @@ export const realProjectsApi = {
     data: {
       contentType: 'text' | 'image' | 'video' | 'rating' | 'checkin' | 'receipt';
       content: string | string[];
-      metadata?: any;
+      metadata?: Record<string, unknown>;
     }
-  ): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`/projects/${projectId}/submit`, data as any);
+  ): Promise<ApiResponse<{ submissionId: string; status: string; message: string }>> {
+    return apiClient.post<{ submissionId: string; status: string; message: string }>(`/projects/${projectId}/submit`, data);
   },
 
   /**
@@ -188,21 +188,21 @@ export const realProjectsApi = {
     status?: 'pending' | 'approved' | 'rejected';
     page?: number;
     limit?: number;
-  }): Promise<ApiResponse<{ submissions: any[]; pagination: any }>> {
+  }): Promise<ApiResponse<{ submissions: unknown[]; pagination: { page: number; limit: number; total: number; pages: number } }>> {
     const queryParams = new URLSearchParams();
 
     if (params?.status) queryParams.append('status', params.status);
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
 
-    return apiClient.get<any>(`/projects/my-submissions?${queryParams.toString()}`);
+    return apiClient.get<{ submissions: unknown[]; pagination: { page: number; limit: number; total: number; pages: number } }>(`/projects/my-submissions?${queryParams.toString()}`);
   },
 
   /**
    * Get user's project earnings (requires authentication)
    */
   async getMyEarnings(): Promise<ApiResponse<{ totalEarned: number; pendingPayment: number; projects: number }>> {
-    return apiClient.get<any>('/projects/my-earnings');
+    return apiClient.get<{ totalEarned: number; pendingPayment: number; projects: number }>('/projects/my-earnings');
   },
 };
 

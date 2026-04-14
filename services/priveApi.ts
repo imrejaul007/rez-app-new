@@ -441,8 +441,8 @@ class PriveApi {
   /**
    * Get detailed pillar breakdown
    */
-  async getPillars(): Promise<ApiResponse<{ pillars: PillarScore[]; factors: any }>> {
-    return apiClient.get<any>(ENDPOINTS.PILLARS);
+  async getPillars(): Promise<ApiResponse<{ pillars: PillarScore[]; factors: Record<string, unknown> }>> {
+    return apiClient.get<{ pillars: PillarScore[]; factors: Record<string, unknown> }>(ENDPOINTS.PILLARS);
   }
 
   /**
@@ -467,7 +467,11 @@ class PriveApi {
     lowestPillar: PillarScore;
     highestPillar: PillarScore;
   }>> {
-    return apiClient.get<any>(ENDPOINTS.TIPS);
+    return apiClient.get<{
+    tips: ImprovementTip[];
+    lowestPillar: PillarScore;
+    highestPillar: PillarScore;
+  }>(ENDPOINTS.TIPS);
   }
 
   /**
@@ -481,7 +485,7 @@ class PriveApi {
    * Get daily habit loops with progress
    */
   async getHabitLoops(): Promise<ApiResponse<{ loops: HabitLoop[]; weeklyEarnings: number }>> {
-    return apiClient.get<any>(ENDPOINTS.HABIT_LOOPS);
+    return apiClient.get<{ loops: HabitLoop[]; weeklyEarnings: number }>(ENDPOINTS.HABIT_LOOPS);
   }
 
   /**
@@ -508,14 +512,22 @@ class PriveApi {
       pages: number;
     };
   }>> {
-    return apiClient.get<any>(ENDPOINTS.OFFERS, params);
+    return apiClient.get<{
+    offers: PriveOffer[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  }>(ENDPOINTS.OFFERS, params);
   }
 
   /**
    * Get single offer by ID
    */
   async getOfferById(id: string): Promise<ApiResponse<PriveOffer>> {
-    return apiClient.get<any>(`${ENDPOINTS.OFFERS}/${id}`);
+    return apiClient.get<PriveOffer>(`${ENDPOINTS.OFFERS}/${id}`);
   }
 
   /**
@@ -529,7 +541,7 @@ class PriveApi {
    * Track offer click for analytics
    */
   async trackOfferClick(offerId: string): Promise<ApiResponse<void>> {
-    return apiClient.post<any>(`${ENDPOINTS.OFFERS}/${offerId}/click`);
+    return apiClient.post<void>(`${ENDPOINTS.OFFERS}/${offerId}/click`);
   }
 
   /**
@@ -554,7 +566,19 @@ class PriveApi {
       nextCursor?: string;
     };
   }>> {
-    return apiClient.get<any>(ENDPOINTS.EARNINGS, params);
+    return apiClient.get<{
+    earnings: EarningItem[];
+    summary: EarningsSummary;
+    bySource?: Record<string, number>;
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+      hasMore?: boolean;
+      nextCursor?: string;
+    };
+  }>(ENDPOINTS.EARNINGS, params);
   }
 
   /**
@@ -577,7 +601,17 @@ class PriveApi {
       nextCursor?: string;
     };
   }>> {
-    return apiClient.get<any>(ENDPOINTS.TRANSACTIONS, params);
+    return apiClient.get<{
+    transactions: TransactionItem[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+      hasMore?: boolean;
+      nextCursor?: string;
+    };
+  }>(ENDPOINTS.TRANSACTIONS, params);
   }
 
   /**
@@ -622,14 +656,26 @@ class PriveApi {
       pages: number;
     };
   }>> {
-    return apiClient.get<any>(ENDPOINTS.VOUCHERS, params);
+    return apiClient.get<{
+    vouchers: Voucher[];
+    stats: {
+      active: number;
+      total: number;
+    };
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  }>(ENDPOINTS.VOUCHERS, params);
   }
 
   /**
    * Get single voucher details
    */
   async getVoucherById(id: string): Promise<ApiResponse<Voucher>> {
-    return apiClient.get<any>(`${ENDPOINTS.VOUCHERS}/${id}`);
+    return apiClient.get<Voucher>(`${ENDPOINTS.VOUCHERS}/${id}`);
   }
 
   /**
@@ -641,7 +687,12 @@ class PriveApi {
     status: string;
     usedAt: string;
   }>> {
-    return apiClient.post<any>(`${ENDPOINTS.VOUCHERS}/${id}/use`);
+    return apiClient.post<{
+    id: string;
+    code: string;
+    status: string;
+    usedAt: string;
+  }>(`${ENDPOINTS.VOUCHERS}/${id}/use`);
   }
 
   // ─── Smart Spend ──────────────────────────────────────────────────────────
@@ -664,21 +715,30 @@ class PriveApi {
       totalPages: number;
     };
   }>> {
-    return apiClient.get<any>(ENDPOINTS.SMART_SPEND, params as any);
+    return apiClient.get<{
+    items: SmartSpendItem[];
+    sections: SmartSpendSection[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  }>(ENDPOINTS.SMART_SPEND, params);
   }
 
   /**
    * Get single Smart Spend item detail
    */
   async getSmartSpendItem(id: string): Promise<ApiResponse<SmartSpendItem>> {
-    return apiClient.get<any>(`${ENDPOINTS.SMART_SPEND}/${id}`);
+    return apiClient.get<SmartSpendItem>(`${ENDPOINTS.SMART_SPEND}/${id}`);
   }
 
   /**
    * Track Smart Spend item click (fire-and-forget)
    */
   async trackSmartSpendClick(id: string): Promise<ApiResponse<void>> {
-    return apiClient.post<any>(`${ENDPOINTS.SMART_SPEND}/${id}/click`);
+    return apiClient.post<void>(`${ENDPOINTS.SMART_SPEND}/${id}/click`);
   }
 
   // ─── Review Dashboard ──────────────────────────────────────────────────────
@@ -690,59 +750,59 @@ class PriveApi {
     page?: number;
     limit?: number;
   }): Promise<ApiResponse<PriveReviewDashboard>> {
-    return apiClient.get<PriveReviewDashboard>(ENDPOINTS.REVIEW_DASHBOARD, params as any);
+    return apiClient.get<PriveReviewDashboard>(ENDPOINTS.REVIEW_DASHBOARD, params);
   }
 
   // ─── Next Best Actions ──────────────────────────────────────────────────
 
-  async getNextActions(): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(ENDPOINTS.NEXT_ACTIONS);
+  async getNextActions(): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<Record<string, unknown>>(ENDPOINTS.NEXT_ACTIONS);
   }
 
   // ─── Missions ──────────────────────────────────────────────────────────
 
-  async getMissions(): Promise<ApiResponse<{ missions: any[] }>> {
-    return apiClient.get<any>(ENDPOINTS.MISSIONS);
+  async getMissions(): Promise<ApiResponse<{ missions: unknown[] }>> {
+    return apiClient.get<{ missions: unknown[] }>(ENDPOINTS.MISSIONS);
   }
 
-  async getActiveMissions(): Promise<ApiResponse<{ missions: any[] }>> {
-    return apiClient.get<any>(`${ENDPOINTS.MISSIONS}/active`);
+  async getActiveMissions(): Promise<ApiResponse<{ missions: unknown[] }>> {
+    return apiClient.get<{ missions: unknown[] }>(`${ENDPOINTS.MISSIONS}/active`);
   }
 
-  async getCompletedMissions(): Promise<ApiResponse<{ missions: any[] }>> {
-    return apiClient.get<any>(`${ENDPOINTS.MISSIONS}/completed`);
+  async getCompletedMissions(): Promise<ApiResponse<{ missions: unknown[] }>> {
+    return apiClient.get<{ missions: unknown[] }>(`${ENDPOINTS.MISSIONS}/completed`);
   }
 
-  async claimMission(id: string): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`${ENDPOINTS.MISSIONS}/${id}/claim`);
+  async claimMission(id: string): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.post<Record<string, unknown>>(`${ENDPOINTS.MISSIONS}/${id}/claim`);
   }
 
-  async completeMission(id: string): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`${ENDPOINTS.MISSIONS}/${id}/complete`);
+  async completeMission(id: string): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.post<Record<string, unknown>>(`${ENDPOINTS.MISSIONS}/${id}/complete`);
   }
 
   // ─── Tier Comparison ──────────────────────────────────────────────────
 
-  async getTierComparison(): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(ENDPOINTS.TIER_COMPARISON);
+  async getTierComparison(): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<Record<string, unknown>>(ENDPOINTS.TIER_COMPARISON);
   }
 
   // ─── Analytics ────────────────────────────────────────────────────────
 
-  async getAnalytics(period?: number): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(ENDPOINTS.ANALYTICS, period ? { period } : undefined);
+  async getAnalytics(period?: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<Record<string, unknown>>(ENDPOINTS.ANALYTICS, period ? { period } : undefined);
   }
 
   // ─── Notifications ────────────────────────────────────────────────────
 
-  async getNotifications(): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(ENDPOINTS.NOTIFICATIONS);
+  async getNotifications(): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<Record<string, unknown>>(ENDPOINTS.NOTIFICATIONS);
   }
 
   // ─── Program Config ───────────────────────────────────────────────────
 
-  async getProgramConfig(): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(ENDPOINTS.PROGRAM_CONFIG);
+  async getProgramConfig(): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<Record<string, unknown>>(ENDPOINTS.PROGRAM_CONFIG);
   }
 
   // ─── Concierge ────────────────────────────────────────────────────────
@@ -751,16 +811,16 @@ class PriveApi {
     subject: string;
     category?: string;
     message: string;
-  }): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(ENDPOINTS.CONCIERGE, data as any);
+  }): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.post<Record<string, unknown>>(ENDPOINTS.CONCIERGE, data);
   }
 
-  async getConciergeTickets(): Promise<ApiResponse<any>> {
-    return apiClient.get<any>(ENDPOINTS.CONCIERGE);
+  async getConciergeTickets(): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<Record<string, unknown>>(ENDPOINTS.CONCIERGE);
   }
 
-  async addConciergeMessage(ticketId: string, message: string): Promise<ApiResponse<any>> {
-    return apiClient.post<any>(`${ENDPOINTS.CONCIERGE}/${ticketId}/message`, { message });
+  async addConciergeMessage(ticketId: string, message: string): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.post<Record<string, unknown>>(`${ENDPOINTS.CONCIERGE}/${ticketId}/message`, { message });
   }
 
   // ─── Campaigns ────────────────────────────────────────────────────────────
@@ -781,21 +841,29 @@ class PriveApi {
       pages: number;
     };
   }>> {
-    return apiClient.get<any>(ENDPOINTS.CAMPAIGNS, params);
+    return apiClient.get<{
+    campaigns: PriveCampaign[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  }>(ENDPOINTS.CAMPAIGNS, params);
   }
 
   /**
    * Get campaign details by ID
    */
   async getCampaignById(id: string): Promise<ApiResponse<CampaignDetail>> {
-    return apiClient.get<any>(`${ENDPOINTS.CAMPAIGNS}/${id}`);
+    return apiClient.get<CampaignDetail>(`${ENDPOINTS.CAMPAIGNS}/${id}`);
   }
 
   /**
    * Join a campaign
    */
   async joinCampaign(id: string): Promise<ApiResponse<{ message: string; joinedAt: string }>> {
-    return apiClient.post<any>(`${ENDPOINTS.CAMPAIGNS}/${id}/join`);
+    return apiClient.post<{ message: string; joinedAt: string }>(`${ENDPOINTS.CAMPAIGNS}/${id}/join`);
   }
 
   /**
@@ -806,14 +874,14 @@ class PriveApi {
     postUrl: string;
     screenshotUrl?: string;
   }): Promise<ApiResponse<{ submissionId: string; status: string }>> {
-    return apiClient.post<any>(`${ENDPOINTS.CAMPAIGNS}/${id}/submit`, data as any);
+    return apiClient.post<{ submissionId: string; status: string }>(`${ENDPOINTS.CAMPAIGNS}/${id}/submit`, data);
   }
 
   /**
    * Get submission status for a campaign
    */
   async getCampaignSubmissionStatus(id: string): Promise<ApiResponse<CampaignStatus>> {
-    return apiClient.get<any>(`${ENDPOINTS.CAMPAIGNS}/${id}/status`);
+    return apiClient.get<CampaignStatus>(`${ENDPOINTS.CAMPAIGNS}/${id}/status`);
   }
 }
 

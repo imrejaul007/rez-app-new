@@ -73,7 +73,7 @@ class FinanceApiService {
 
   // BORROW
   async getOffers(): Promise<ApiResponse<{ offers: PartnerOffer[] }>> {
-    return apiClient.get<any>(`${this.base}/borrow/offers`);
+    return apiClient.get<{ offers: PartnerOffer[] }>(`${this.base}/borrow/offers`);
   }
 
   async applyForLoan(params: {
@@ -82,16 +82,16 @@ class FinanceApiService {
     tenure: number;
     context?: { screen: string; orderId?: string; bookingId?: string };
   }): Promise<ApiResponse<{ application: LoanApplication; redirectUrl?: string }>> {
-    return apiClient.post<any>(`${this.base}/borrow/apply`, params);
+    return apiClient.post<{ application: LoanApplication; redirectUrl?: string }>(`${this.base}/borrow/apply`, params);
   }
 
   async getApplications(): Promise<ApiResponse<{ applications: LoanApplication[] }>> {
-    return apiClient.get<any>(`${this.base}/borrow/applications`);
+    return apiClient.get<{ applications: LoanApplication[] }>(`${this.base}/borrow/applications`);
   }
 
   // BNPL (contextual — called from checkout)
   async checkBnpl(amount: number, orderId: string): Promise<ApiResponse<ContextualOffer>> {
-    return apiClient.post<any>(`${this.base}/borrow/bnpl/check`, { amount, orderId });
+    return apiClient.post<ContextualOffer>(`${this.base}/borrow/bnpl/check`, { amount, orderId });
   }
 
   async createBnplOrder(params: {
@@ -99,25 +99,25 @@ class FinanceApiService {
     orderId: string;
     merchantId?: string;
   }): Promise<ApiResponse<{ transaction: FinanceTransaction }>> {
-    return apiClient.post<any>(`${this.base}/borrow/bnpl/create`, params);
+    return apiClient.post<{ transaction: FinanceTransaction }>(`${this.base}/borrow/bnpl/create`, params);
   }
 
   // CREDIT SCORE
   async getScore(): Promise<ApiResponse<CreditScore>> {
-    return apiClient.get<any>(`${this.base}/credit/score`);
+    return apiClient.get<CreditScore>(`${this.base}/credit/score`);
   }
 
   async checkScoreAndEarnCoins(): Promise<ApiResponse<{ rezScore: number; coinsAwarded: number }>> {
-    return apiClient.post<any>(`${this.base}/credit/score/check`, {});
+    return apiClient.post<{ rezScore: number; coinsAwarded: number }>(`${this.base}/credit/score/check`, {});
   }
 
   async refreshScore(): Promise<ApiResponse<CreditScore>> {
-    return apiClient.post<any>(`${this.base}/credit/score/refresh`, {});
+    return apiClient.post<CreditScore>(`${this.base}/credit/score/refresh`, {});
   }
 
   // PAY & MANAGE
   async getBillers(): Promise<ApiResponse<{ billers: { id: string; name: string; type: string }[] }>> {
-    return apiClient.get<any>(`${this.base}/pay/billers`);
+    return apiClient.get<{ billers: { id: string; name: string; type: string }[] }>(`${this.base}/pay/billers`);
   }
 
   async payBill(params: {
@@ -125,7 +125,7 @@ class FinanceApiService {
     accountNumber: string;
     amount: number;
   }): Promise<ApiResponse<{ transaction: FinanceTransaction }>> {
-    return apiClient.post<any>(`${this.base}/pay/bill`, params);
+    return apiClient.post<{ transaction: FinanceTransaction }>(`${this.base}/pay/bill`, params);
   }
 
   async recharge(params: {
@@ -133,11 +133,11 @@ class FinanceApiService {
     accountNumber: string;
     amount: number;
   }): Promise<ApiResponse<{ transaction: FinanceTransaction }>> {
-    return apiClient.post<any>(`${this.base}/pay/recharge`, params);
+    return apiClient.post<{ transaction: FinanceTransaction }>(`${this.base}/pay/recharge`, params);
   }
 
   async getPayTransactions(): Promise<ApiResponse<{ transactions: FinanceTransaction[] }>> {
-    return apiClient.get<any>(`${this.base}/pay/transactions`);
+    return apiClient.get<{ transactions: FinanceTransaction[] }>(`${this.base}/pay/transactions`);
   }
 }
 

@@ -80,55 +80,55 @@ class AddressApiService {
 
   // Get all user addresses
   async getUserAddresses(): Promise<ApiResponse<Address[]>> {
-    const response = await apiClient.get<any>(this.baseUrl);
+    const response = await apiClient.get<{ addresses?: unknown[] }>(this.baseUrl);
     if (response.success && response.data) {
       // Backend wraps list as { addresses: [...], pagination: {...} }
-      const raw = (response.data as any).addresses ?? response.data;
+      const raw = (response.data as { addresses?: unknown[] }).addresses ?? response.data;
       const list: Address[] = Array.isArray(raw) ? raw.map(normaliseAddress) : [];
       return { ...response, data: list };
     }
-    return response as ApiResponse<Address[]>;
+    return response as unknown as ApiResponse<Address[]>;
   }
 
   // Get single address by ID
   async getAddressById(id: string): Promise<ApiResponse<Address>> {
-    const response = await apiClient.get<any>(`${this.baseUrl}/${id}`);
+    const response = await apiClient.get<Record<string, unknown>>(`${this.baseUrl}/${id}`);
     if (response.success && response.data) {
       return { ...response, data: normaliseAddress(response.data) };
     }
-    return response as ApiResponse<Address>;
+    return response as unknown as ApiResponse<Address>;
   }
 
   // Create new address
   async createAddress(data: AddressCreate): Promise<ApiResponse<Address>> {
-    const response = await apiClient.post<any>(this.baseUrl, data as any);
+    const response = await apiClient.post<Record<string, unknown>>(this.baseUrl, data as unknown as Record<string, unknown>);
     if (response.success && response.data) {
       return { ...response, data: normaliseAddress(response.data) };
     }
-    return response as ApiResponse<Address>;
+    return response as unknown as ApiResponse<Address>;
   }
 
   // Update address
   async updateAddress(id: string, data: AddressUpdate): Promise<ApiResponse<Address>> {
-    const response = await apiClient.put<any>(`${this.baseUrl}/${id}`, data as any);
+    const response = await apiClient.put<Record<string, unknown>>(`${this.baseUrl}/${id}`, data as unknown as Record<string, unknown>);
     if (response.success && response.data) {
       return { ...response, data: normaliseAddress(response.data) };
     }
-    return response as ApiResponse<Address>;
+    return response as unknown as ApiResponse<Address>;
   }
 
   // Delete address
   async deleteAddress(id: string): Promise<ApiResponse<{ deletedId: string }>> {
-    return apiClient.delete<any>(`${this.baseUrl}/${id}`);
+    return apiClient.delete<{ deletedId: string }>(`${this.baseUrl}/${id}`);
   }
 
   // Set default address
   async setDefaultAddress(id: string): Promise<ApiResponse<Address>> {
-    const response = await apiClient.patch<any>(`${this.baseUrl}/${id}/default`, {});
+    const response = await apiClient.patch<Record<string, unknown>>(`${this.baseUrl}/${id}/default`, {});
     if (response.success && response.data) {
       return { ...response, data: normaliseAddress(response.data) };
     }
-    return response as ApiResponse<Address>;
+    return response as unknown as ApiResponse<Address>;
   }
 }
 
