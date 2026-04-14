@@ -152,6 +152,13 @@ export function useAppServices(fontsLoaded: boolean) {
   };
 
   const startCacheWarming = async () => {
+    // Cache warming is for mobile (pre-loads data before user interaction).
+    // On web it causes a request flood that exhausts backend rate limits — skip it.
+    if (Platform.OS === 'web') {
+      setCacheWarmed(true);
+      return;
+    }
+
     try {
       const { default: AsyncStorage } = await import('@react-native-async-storage/async-storage');
       const onboardingCompleted = await AsyncStorage.getItem('onboarding_completed');
