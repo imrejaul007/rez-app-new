@@ -2,7 +2,18 @@ export interface Deal {
   id: string;
   title: string;
   discountType: 'percentage' | 'fixed';
-  discountValue: number;
+  /**
+   * FL-16 fix: Canonical value field for all deal types.
+   * Previously named `discountValue` inconsistently across deal types.
+   * Use this field for all deal value display and calculations.
+   *
+   * Migration: replace all `deal.discountValue` with `deal.value`.
+   * A getDealValue() helper is available in dataMappers.ts for
+   * backward compatibility with legacy data shapes.
+   */
+  value: number;
+  /** @deprecated Use `value` instead. Retained for backward compat with existing code. */
+  discountValue?: number;
   minimumBill: number;
   maxDiscount?: number;
   isOfflineOnly: boolean;
@@ -102,7 +113,13 @@ export interface StoreDeal {
   description: string;
   type: 'walk_in' | 'online' | 'combo' | 'cashback' | 'flash_sale';
   discountType: 'percentage' | 'fixed' | 'bogo';
+  /**
+   * FL-16 fix: Canonical value field.
+   * @deprecated Use `value` instead.
+   */
   discountValue: number;
+  /** Canonical value field for all store deal types. */
+  value: number;
   originalPrice?: number;
   finalPrice?: number;
   validFrom: string;

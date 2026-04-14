@@ -181,8 +181,12 @@ export interface Order {
   /** Device type */
   deviceType?: 'mobile' | 'tablet' | 'desktop';
 
-  /** Created at */
-  createdAt: string | Date;
+  /**
+   * TF-13 fix: Normalized to string (ISO 8601).
+   * Backend sends Date objects. Converter converts them to ISO strings so callers
+   * can safely call .toLocaleDateString() without a type guard.
+   */
+  createdAt: string;
 
   /** Updated at */
   updatedAt: string | Date;

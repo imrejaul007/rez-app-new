@@ -157,7 +157,7 @@ function TransactionItem({
       onPress={() => onPress?.(txn)}
       disabled={!onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${label}, ${amountPrefix}${txn.amount} ${txn.currency}, ${status}`}
+      accessibilityLabel={`${label}, ${amountPrefix}${typeof txn.amount === 'number' ? txn.amount : '—'} ${txn.currency || ''}, ${status}`}
     >
       {/* Left: gradient circle icon */}
       <LinearGradient
@@ -184,7 +184,7 @@ function TransactionItem({
       <View style={styles.txnRight}>
         <Text style={[styles.txnAmount, { color: amountColor }]}>
           {amountPrefix}
-          {txn.amount} {txn.currency}
+          {typeof txn.amount === 'number' ? txn.amount : '—'} {txn.currency || ''}
         </Text>
         <View style={[styles.statusBadge, { backgroundColor: sc + '18' }]}>
           <Text style={[styles.statusText, { color: sc }]}>

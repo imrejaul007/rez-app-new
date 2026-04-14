@@ -52,11 +52,13 @@ export interface User {
     pushNotifications?: boolean;
     smsNotifications?: boolean;
   };
-  wallet: {
-    balance: number;
-    totalEarned: number;
-    totalSpent: number;
-    pendingAmount: number;
+  // NOTE: DM-L4 — User.wallet sub-doc removed from backend User schema.
+  // Wallet data is no longer returned on /api/user/me. Use GET /wallet/balance instead.
+  wallet?: {
+    balance?: number;
+    totalEarned?: number;
+    totalSpent?: number;
+    pendingAmount?: number;
   };
   role: 'user' | 'admin' | 'merchant';
   isVerified: boolean;

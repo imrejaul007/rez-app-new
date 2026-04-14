@@ -668,8 +668,13 @@ export function useStockUpdates(productId: string | null) {
     const unsubscribeStock = onStockUpdate((payload) => {
       if (payload.productId === productId) {
         setStockData(payload);
-        setIsOutOfStock(payload.status === 'OUT_OF_STOCK');
-        setIsLowStock(payload.status === 'LOW_STOCK');
+        // FL-20 fix: normalize status to uppercase before comparison.
+        // socket.types.ts defines StockStatus as UPPERCASE ('IN_STOCK'|'LOW_STOCK'|'OUT_OF_STOCK'),
+        // but the backend WebSocket payload may send lowercase values per standard enum conventions.
+        // Normalizing here prevents silent mismatches if the backend ever changes casing.
+        const normalizedStatus = (payload.status as string).toUpperCase();
+        setIsOutOfStock(normalizedStatus === 'OUT_OF_STOCK');
+        setIsLowStock(normalizedStatus === 'LOW_STOCK');
       }
     });
 
@@ -698,7 +703,7 @@ export function useStockUpdates(productId: string | null) {
     stockData,
     isLowStock,
     isOutOfStock,
-    isInStock: stockData?.status === 'IN_STOCK',
+    isInStock: (stockData?.status as string).toUpperCase() === 'IN_STOCK',
   };
 }
 

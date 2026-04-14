@@ -109,15 +109,16 @@ class StreakApi {
         return {
           success: true,
           data: {
-            login: this.mapStreakData(response.data?.login || response.data),
-            order: this.mapStreakData(response.data?.order),
-            review: this.mapStreakData(response.data?.review),
-            savings: this.mapStreakData(response.data?.savings),
+            login: this.mapStreakData(response.data.login || response.data),
+            order: this.mapStreakData(response.data.order),
+            review: this.mapStreakData(response.data.review),
+            savings: this.mapStreakData(response.data.savings),
+            savingsTier: response.data.savingsTier,
           },
         };
       }
 
-      return { success: true, data: { login: this.getDefaultStreak(), order: this.getDefaultStreak(), review: this.getDefaultStreak(), savings: this.getDefaultStreak() } };
+      return { success: true, data: { login: this.getDefaultStreak(), order: this.getDefaultStreak(), review: this.getDefaultStreak(), savings: this.getDefaultStreak(), savingsTier: undefined } };
     } catch (error: any) {
       return { success: false, error: error.message };
     }

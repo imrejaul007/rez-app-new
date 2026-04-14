@@ -546,8 +546,20 @@ export function toOrder(data: any): Order {
     invoiceUrl: data.invoiceUrl,
     source: data.source,
     deviceType: data.deviceType,
-    createdAt: data.createdAt,
-    updatedAt: data.updatedAt,
+    // TF-13 fix: Normalize Date objects to ISO strings so consumers can safely
+    // call .toLocaleDateString() or .toISOString() without type guards.
+    createdAt: data.createdAt instanceof Date
+      ? data.createdAt.toISOString()
+      : typeof data.createdAt === 'string'
+        ? data.createdAt
+        : new Date(data.createdAt).toISOString(),
+    updatedAt: data.updatedAt instanceof Date
+      ? data.updatedAt.toISOString()
+      : typeof data.updatedAt === 'string'
+        ? data.updatedAt
+        : data.updatedAt != null
+          ? new Date(data.updatedAt).toISOString()
+          : undefined,
     metadata: data.metadata,
   };
 }

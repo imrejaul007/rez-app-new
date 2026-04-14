@@ -432,3 +432,27 @@ export function formatDateTime(date: string | Date): string {
 export function calculateSavingsPercentage(original: number, current: number): number {
   return 0;
 }
+
+/**
+ * FL-16 fix: Get the canonical deal value from any deal-like object.
+ *
+ * Handles inconsistent field names used across the codebase:
+ *   - `value`             → canonical (preferred)
+ *   - `discountValue`    → legacy Deal type field
+ *   - `cashbackAmount`   → bill/review types
+ *   - `cashbackPercentage` → backend offer field
+ *
+ * Use this function instead of accessing deal.value or deal.discountValue directly.
+ * Eventually all deal objects should be migrated to use `value`.
+ */
+export function getDealValue(deal: Record<string, unknown> | null | undefined): number {
+  if (!deal) return 0;
+  const value =
+    (deal.value as number) ??
+    (deal.discountValue as number) ??
+    (deal.cashbackAmount as number) ??
+    (deal.cashbackPercentage as number) ??
+    0;
+  return typeof value === 'number' && !isNaN(value) ? value : 0;
+}
+

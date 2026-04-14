@@ -90,15 +90,13 @@ function SubscriptionsPage() {
 
   const getSelectedPrice = () => {
     if (!selectedTier) return 0;
-    return selectedCycle === 'yearly'
-      ? selectedTier.pricing.yearly
-      : selectedTier.pricing.monthly;
+    return selectedCycle === 'yearly' ? selectedTier.pricing.yearly : selectedTier.pricing.monthly;
   };
 
   const handleSubscribe = () => {
     if (!selectedTier) return;
     router.push(
-      `/payment?type=subscription&tier=${selectedTier.tier}&cycle=${selectedCycle}&amount=${getSelectedPrice()}` as any
+      `/payment?type=subscription&tier=${selectedTier.tier}&cycle=${selectedCycle}&amount=${getSelectedPrice()}` as any,
     );
   };
 
@@ -110,10 +108,14 @@ function SubscriptionsPage() {
 
   const getTierColor = (tier: string) => {
     switch (tier) {
-      case 'free': return colors.text.secondary;
-      case 'premium': return Colors.gold;
-      case 'vip': return colors.brand.purpleLight;
-      default: return colors.text.primary;
+      case 'free':
+        return colors.text.secondary;
+      case 'premium':
+        return Colors.gold;
+      case 'vip':
+        return colors.brand.purpleLight;
+      default:
+        return colors.text.primary;
     }
   };
 
@@ -122,7 +124,10 @@ function SubscriptionsPage() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Subscriptions</Text>
@@ -145,7 +150,10 @@ function SubscriptionsPage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Subscriptions</Text>
@@ -156,9 +164,7 @@ function SubscriptionsPage() {
         style={styles.content}
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.gold} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.gold} />}
       >
         {/* Banner */}
         <View style={styles.banner}>
@@ -169,9 +175,7 @@ function SubscriptionsPage() {
             <Ionicons name="diamond-outline" size={32} color={colors.brand.purpleLight} />
             <View style={styles.bannerText}>
               <Text style={styles.bannerTitle}>Unlock Premium Benefits</Text>
-              <Text style={styles.bannerSubtitle}>
-                Get more cashback, free delivery, and exclusive perks
-              </Text>
+              <Text style={styles.bannerSubtitle}>Get more cashback, free delivery, and exclusive perks</Text>
             </View>
           </LinearGradient>
         </View>
@@ -184,8 +188,33 @@ function SubscriptionsPage() {
           </View>
         )}
 
-        {/* Current Subscription */}
-        {currentSub && currentSub.status !== 'cancelled' && (
+        {/* FL-18 FIX: payment_failed state — show recovery UI instead of the normal active card */}
+        {currentSub && currentSub.status === 'payment_failed' && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Subscription Issue</Text>
+            <View style={[styles.activeCard, { borderColor: Colors.warning, borderWidth: 1 }]}>
+              <View style={[styles.activeIcon, { backgroundColor: Colors.warning + '20' }]}>
+                <Ionicons name="alert-circle" size={24} color={Colors.warning} />
+              </View>
+              <View style={styles.activeInfo}>
+                <Text style={[styles.activePlatform, { color: Colors.warning }]}>Payment Failed</Text>
+                <Text style={styles.activePlan}>
+                  Your subscription payment could not be processed. Please update your payment method to restore your
+                  benefits.
+                </Text>
+              </View>
+              <Pressable
+                style={[styles.recoveryButton, { backgroundColor: Colors.primary }]}
+                onPress={() => router.push('/payment?type=subscription&action=retry' as any)}
+              >
+                <Text style={styles.recoveryButtonText}>Update Payment</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {/* Active subscription card — shown for all statuses except 'cancelled' and 'payment_failed' */}
+        {currentSub && currentSub.status !== 'cancelled' && currentSub.status !== 'payment_failed' && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Your Current Plan</Text>
             <View style={styles.activeCard}>
@@ -206,9 +235,7 @@ function SubscriptionsPage() {
               </View>
               <View style={styles.activeExpiry}>
                 <Text style={styles.activeExpiryLabel}>Expires in</Text>
-                <Text style={styles.activeExpiryValue}>
-                  {getDaysRemaining()} days
-                </Text>
+                <Text style={styles.activeExpiryValue}>{getDaysRemaining()} days</Text>
               </View>
             </View>
           </View>
@@ -229,7 +256,7 @@ function SubscriptionsPage() {
 
         {/* Value Calculator - above billing cycle for visibility */}
         <ValueCalculator
-          selectedTier={selectedTier || tiers.find(t => t.tier !== 'free') || null}
+          selectedTier={selectedTier || tiers.find((t) => t.tier !== 'free') || null}
           currencySymbol={currencySymbol}
           isAuthenticated={isAuthenticated}
           selectedCycle={selectedCycle}
@@ -255,9 +282,11 @@ function SubscriptionsPage() {
                 <Text style={[styles.cycleButtonText, selectedCycle === 'yearly' && styles.cycleButtonTextActive]}>
                   Yearly
                 </Text>
-                {tiers.some(t => t.pricing.yearlyDiscount > 0) && (
+                {tiers.some((t) => t.pricing.yearlyDiscount > 0) && (
                   <View style={styles.saveBadge}>
-                    <Text style={styles.saveBadgeText}>Save up to {Math.max(...tiers.map(t => t.pricing.yearlyDiscount))}%</Text>
+                    <Text style={styles.saveBadgeText}>
+                      Save up to {Math.max(...tiers.map((t) => t.pricing.yearlyDiscount))}%
+                    </Text>
                   </View>
                 )}
               </Pressable>
@@ -297,12 +326,11 @@ function SubscriptionsPage() {
             </Text>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryPrice}>
-                {currencySymbol}{getSelectedPrice().toFixed(2)}
+                {currencySymbol}
+                {getSelectedPrice().toFixed(2)}
               </Text>
               {selectedCycle === 'yearly' && selectedTier.pricing.yearlyDiscount > 0 && (
-                <Text style={styles.summarySavings}>
-                  Save {selectedTier.pricing.yearlyDiscount}%
-                </Text>
+                <Text style={styles.summarySavings}>Save {selectedTier.pricing.yearlyDiscount}%</Text>
               )}
             </View>
           </View>
@@ -522,6 +550,19 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontWeight: '600',
     color: Colors.gold,
+  },
+  // FL-18: payment_failed recovery button styles
+  recoveryButton: {
+    marginTop: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  recoveryButtonText: {
+    ...Typography.body,
+    fontWeight: '600',
+    color: 'white',
   },
   // Bottom CTA
   bottomCta: {
