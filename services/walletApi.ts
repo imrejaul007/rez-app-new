@@ -126,7 +126,7 @@ export interface RevealGiftCardResponse {
  * Coin Balance from Backend (new schema)
  */
 export interface BackendCoinBalance {
-  type: 'rez' | 'promo' | 'branded' | 'prive';
+  type: 'rez' | 'promo' | 'branded' | 'prive' | 'cashback' | 'referral';
   amount: number;
   isActive: boolean;
   color?: string;
@@ -239,6 +239,38 @@ export interface WalletBalanceResponse {
 }
 
 /**
+ * REZ-027 FIX: Typed metadata for TransactionResponse.source.metadata.
+ * Previously typed as `any`, preventing type-safe metadata parsing in UI.
+ */
+export interface TransactionMetadata {
+  orderId?: string;
+  productId?: string;
+  storeId?: string;
+  storeName?: string;
+  merchantId?: string;
+  campaignId?: string;
+  campaignName?: string;
+  referralId?: string;
+  referralCode?: string;
+  achievementId?: string;
+  achievementName?: string;
+  streakType?: 'login' | 'order' | 'review' | 'savings';
+  streakDay?: number;
+  milestoneName?: string;
+  promoCode?: string;
+  promoId?: string;
+  billId?: string;
+  rechargeNumber?: string;
+  rechargeOperator?: string;
+  couponId?: string;
+  couponName?: string;
+  refundReason?: string;
+  chargeType?: 'fee' | 'tax' | 'platform';
+  chargeDescription?: string;
+  [key: string]: unknown;
+}
+
+/**
  * Transaction Response
  */
 export interface TransactionResponse {
@@ -254,7 +286,7 @@ export interface TransactionResponse {
     type: string;
     reference: string;
     description?: string;
-    metadata?: any;
+    metadata?: TransactionMetadata;
   };
   status: {
     current: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'reversed';
@@ -637,7 +669,7 @@ class WalletService {
       type?: string;
       reference?: string;
       description?: string;
-      metadata?: any;
+      metadata?: TransactionMetadata;
     };
   }): Promise<ApiResponse<{
     balance: {
