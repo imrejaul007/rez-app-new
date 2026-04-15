@@ -159,6 +159,12 @@ const HotelBookingFlow: React.FC<HotelBookingFlowProps> = ({
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(contactEmail.trim())) {
+      platformAlertSimple('Invalid Email', 'Please enter a valid email address (e.g., user@example.com)');
+      return;
+    }
+
     if (guestDetails.some(g => !g.firstName.trim() || !g.lastName.trim())) {
       platformAlertSimple('Missing Information', 'Please fill in all guest details');
       return;
