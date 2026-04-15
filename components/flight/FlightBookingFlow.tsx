@@ -152,8 +152,9 @@ const FlightBookingFlow: React.FC<FlightBookingFlowProps> = ({
           platformAlertSimple('Missing Information', 'Please fill in all contact details');
           return;
         }
-        if (!contactEmail.includes('@')) {
-          platformAlertSimple('Invalid Email', 'Please enter a valid email address');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(contactEmail.trim())) {
+          platformAlertSimple('Invalid Email', 'Please enter a valid email address (e.g., user@example.com)');
           return;
         }
         // Initialize passenger details
