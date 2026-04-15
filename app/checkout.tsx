@@ -315,8 +315,21 @@ function CheckoutPage() {
   }, []);
 
   const handleContinueToCheckout = useCallback(() => {
+    // CA-CMC-037 FIX: Only close modal if checkout can proceed (no unresolved issues)
+    const hasUnresolvedIssues = validationState.validationResult?.issues && validationState.validationResult.issues.length > 0;
+
+    if (hasUnresolvedIssues) {
+      // Warn user that they need to resolve issues before proceeding
+      showToast({
+        message: 'Please resolve cart issues before proceeding to checkout',
+        type: 'warning',
+      });
+      return;
+    }
+
+    // Only close modal if all issues are resolved
     dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: false });
-  }, []);
+  }, [validationState.validationResult?.issues]);
 
   const handleRemoveInvalidItems = useCallback(async () => {
     await removeInvalidItems();

@@ -383,15 +383,15 @@ function App() {
     };
   }, []);
 
-  // Helper to add currency symbol to numeric badges
-  const formatBadgeWithCurrency = (badge: string | undefined): string => {
+  // CA-DSC-036 FIX: Memoize formatted badges to prevent unnecessary updates when currency changes
+  const formatBadgeWithCurrency = React.useCallback((badge: string | undefined): string => {
     if (!badge) return '';
     // If badge is a pure number, prefix with currency symbol
     if (/^\d+$/.test(badge)) {
       return `${currencySymbol}${badge}`;
     }
     return badge;
-  };
+  }, [currencySymbol]);
 
   // Fetch categories from backend
   const fetchCategories = React.useCallback(async () => {

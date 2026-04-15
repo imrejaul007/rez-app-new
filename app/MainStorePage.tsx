@@ -76,6 +76,15 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   // Scroll view ref for programmatic scrolling (e.g. jump-to-menu)
   const scrollViewRef = useRef<any>(null);
 
+  // CA-DSC-050 FIX: Close all modals on unmount to prevent state leaks
+  useEffect(() => {
+    return () => {
+      if (d.showAboutModal) d.handleCloseAboutModal();
+      if (d.showDealsModal) d.handleCloseDealsModal();
+      if (d.showReviewModal) d.handleCloseReviewModal();
+    };
+  }, [d]);
+
   // ── Food ordering handlers ────────────────────────────────────
   const handleOrderFood = useCallback(() => {
     // Switch to the menu tab and scroll to top

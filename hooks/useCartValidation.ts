@@ -54,14 +54,30 @@ export function useCartValidation(
 
   const validationTimerRef = useRef<any>(null);
   const isValidatingRef = useRef(false);
+  const debounceTimerRef = useRef<any>(null);
+  const lastValidatedItemsRef = useRef<any[]>([]);
 
   /**
    * Validate cart items against backend
    */
   const validateCart = useCallback(async (): Promise<ValidationResult | null> => {
+    // CA-CMC-026 FIX: Don't return stale cached result while validation is in-flight.
+    // Instead, wait for the in-flight validation to complete by polling isValidatingRef.
     if (isValidatingRef.current) {
-
-      return validationState.validationResult;
+      // Wait for in-flight validation to complete
+      return new Promise((resolve) => {
+        const checkComplete = setInterval(() => {
+          if (!isValidatingRef.current) {
+            clearInterval(checkComplete);
+            resolve(validationState.validationResult);
+          }
+        }, 50);
+        // Timeout after 30 seconds
+        setTimeout(() => {
+          clearInterval(checkComplete);
+          resolve(validationState.validationResult);
+        }, 30000);
+      });
     }
 
     if (cartState.items.length === 0) {
@@ -230,15 +246,30 @@ export function useCartValidation(
    */
   useEffect(() => {
     if (autoValidate && cartState.items.length > 0) {
+      // CA-CMC-028 FIX: Use ref-based debounce that doesn't reset on every items change.
+      // Only trigger validation if items actually changed (not just re-rendered).
+      const itemsChanged = JSON.stringify(cartState.items) !== JSON.stringify(lastValidatedItemsRef.current);
 
-      // Debounce validation to avoid excessive API calls
-      const timeoutId = setTimeout(() => {
-        validateCart();
-      }, 1000);
+      if (itemsChanged) {
+        // Clear existing debounce timer
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current);
+        }
 
-      return () => clearTimeout(timeoutId);
+        // Set new debounce timer
+        debounceTimerRef.current = setTimeout(() => {
+          lastValidatedItemsRef.current = cartState.items;
+          validateCart();
+        }, 1000);
+      }
+
+      return () => {
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current);
+        }
+      };
     }
-  }, [cartState.items, autoValidate]);
+  }, [cartState.items, autoValidate, validateCart]);
 
   /**
    * Periodic validation (real-time updates)
