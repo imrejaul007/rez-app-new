@@ -397,19 +397,24 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const order = orderResponse.data;
 
             // Map order items to checkout items
-            const checkoutItems: CheckoutItem[] = (order.items || []).map((item: any) => ({
-              id: item.id || item._id || item.productId,
-              productId: item.productId || item.product?.id || item.product?._id,
-              name: item.product?.name || item.name || 'Product',
-              image: item.product?.images?.[0]?.url || item.product?.images?.[0] || '',
-              price: item.unitPrice || item.totalPrice / (item.quantity || 1),
-              originalPrice: item.unitPrice || item.totalPrice / (item.quantity || 1),
-              quantity: item.quantity || 1,
-              discount: 0,
-              category: '',
-              storeId: typeof order.store === 'object' ? (order.store?._id || order.store?.id || '') : (order.store || ''),
-              storeName: typeof order.store === 'object' ? (order.store?.name || 'Store') : 'Store',
-            }));
+            const checkoutItems: CheckoutItem[] = (order.items || []).map((item: any) => {
+              // CA-CMC-044 FIX: Guard against division by zero if quantity is 0 or missing.
+              // Use Math.max to ensure denominator is at least 1.
+              const safeQuantity = Math.max(item.quantity || 1, 1);
+              return {
+                id: item.id || item._id || item.productId,
+                productId: item.productId || item.product?.id || item.product?._id,
+                name: item.product?.name || item.name || 'Product',
+                image: item.product?.images?.[0]?.url || item.product?.images?.[0] || '',
+                price: item.unitPrice || item.totalPrice / safeQuantity,
+                originalPrice: item.unitPrice || item.totalPrice / safeQuantity,
+                quantity: safeQuantity,
+                discount: 0,
+                category: '',
+                storeId: typeof order.store === 'object' ? (order.store?._id || order.store?.id || '') : (order.store || ''),
+                storeName: typeof order.store === 'object' ? (order.store?.name || 'Store') : 'Store',
+              };
+            });
 
             // Set delivery address from order
             const orderAddr = order.delivery?.address;
@@ -482,6 +487,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           const mappedCart = mapBackendCartToFrontend(cartResponse.data);
 
           // Convert cart items to checkout items format
+          // CA-CMC-045 FIX: Client-side prices are from cache and could be tampered.
+          // TODO (SERVER-SIDE): Backend MUST recalculate all prices from product master data
+          // at order creation time (ignoring client prices). Do NOT trust item.price from frontend.
           const checkoutItems: CheckoutItem[] = mappedCart.items.map((item: any) => ({
             id: item.id,
             productId: item.productId, // Keep product ID for order creation

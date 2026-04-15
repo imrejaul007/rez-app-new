@@ -338,10 +338,18 @@ function ArticleDetailScreen() {
   const hasProducts = article?.products && article.products.length > 0;
 
   // Rendered content
+  // CA-DSC-014 FIX: Validate content exists before rendering, show placeholder if missing
   const renderedContent = useMemo(() => {
     if (!article) return null;
     // Combine excerpt and content
     const fullContent = [article.excerpt, article.content].filter(Boolean).join('\n\n');
+    if (!fullContent) {
+      return (
+        <View style={[styles.container, styles.centerContent]}>
+          <Text style={styles.errorText}>No content available for this article</Text>
+        </View>
+      );
+    }
     return renderContent(fullContent);
   }, [article]);
 
@@ -423,6 +431,13 @@ function ArticleDetailScreen() {
                   setImageError(true);
                 }}
               />
+            )}
+            {/* CA-DSC-028 FIX: Show fallback icon when image fails to load */}
+            {imageError && (
+              <View style={[styles.imagePlaceholder, styles.imageErrorContainer]}>
+                <Ionicons name="image-outline" size={48} color={colors.neutral[300]} />
+                <Text style={styles.imageErrorText}>Image unavailable</Text>
+              </View>
             )}
             {/* Gradient overlay */}
             <LinearGradient colors={['transparent', 'rgba(0,0,0,0.4)']} style={styles.imageGradient} />
@@ -864,6 +879,15 @@ const styles = StyleSheet.create({
         elevation: 4,
       },
     }),
+  },
+  // CA-DSC-028: Styles for image error state
+  imageErrorContainer: {
+    backgroundColor: colors.neutral[100],
+  },
+  imageErrorText: {
+    ...Typography.caption,
+    color: colors.neutral[400],
+    marginTop: Spacing.sm,
   },
 });
 

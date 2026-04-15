@@ -85,8 +85,11 @@ class CacheService {
    */
   private async initialize(): Promise<void> {
     // Skip initialization during SSR
-    if (!isBrowser || this.initialized || this.initializing) return;
+    if (!isBrowser || this.initialized) return;
 
+    // CA-INF-006 FIX: Set initializing=true BEFORE async work starts
+    // This prevents concurrent calls from both running initialize()
+    if (this.initializing) return;
     this.initializing = true;
 
     try {
@@ -286,12 +289,15 @@ class CacheService {
       return entryA.lastAccessed - entryB.lastAccessed;
     });
 
+    // CA-INF-007 FIX: Batch eviction instead of awaiting each remove()
+    // Collect keys to remove first, then batch remove and save index once
+    const keysToRemove: string[] = [];
+
     // Evict entries until we're under 80% of max size AND under max entry count
     const targetSize = MAX_CACHE_SIZE * 0.8;
     const targetCount = Math.floor(MAX_CACHE_ENTRIES * 0.8);
     let currentSize = totalSize;
     let currentCount = entryCount;
-    let evicted = 0;
 
     for (const [key, entry] of entries) {
       if (currentSize <= targetSize && currentCount <= targetCount) {
@@ -303,10 +309,21 @@ class CacheService {
         continue;
       }
 
-      await this.remove(key);
+      keysToRemove.push(key);
       currentSize -= entry.size;
       currentCount--;
-      evicted++;
+    }
+
+    // Batch remove all entries from storage
+    for (const key of keysToRemove) {
+      const cacheKey = this.getCacheKey(key);
+      await asyncStorageService.remove(cacheKey);
+      this.cacheIndex.delete(key);
+    }
+
+    // Save cache index once after all removals
+    if (keysToRemove.length > 0) {
+      await this.saveCacheIndex();
     }
 
   }
@@ -774,6 +791,8 @@ class CacheService {
       return false;
     }
 
+    // CA-INF-009 FIX: Uncommented saveCacheIndex() to persist TTL changes
+    // Without this, TTL modifications are lost on app restart
     indexEntry.ttl = newTTL;
     this.cacheIndex.set(key, indexEntry);
     await this.saveCacheIndex();
