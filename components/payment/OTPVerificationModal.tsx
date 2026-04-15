@@ -218,6 +218,8 @@ function OTPVerificationModal({
                     maxLength={1}
                     selectTextOnFocus
                     editable={!isLoading}
+                    textContentType="none"
+                    autoComplete="off"
                   />
                 ))}
               </View>

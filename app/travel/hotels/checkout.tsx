@@ -122,11 +122,19 @@ export default function HotelCheckoutScreen() {
         }
 
         if (RazorpayCheckout) {
+          // CA-TRV-065: Validate Razorpay key is configured
+          const razorpayKey = process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID;
+          if (!razorpayKey) {
+            Alert.alert('Configuration Error', 'Payment gateway is not configured. Please contact support.');
+            setPaying(false);
+            return;
+          }
+
           const options = {
             description: `Hotel Booking — ${hotelName}`,
             image: 'https://rez-app.in/logo.png',
             currency: 'INR',
-            key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID ?? '',
+            key: razorpayKey,
             amount: pgAmountPaise,
             order_id: razorpayOrderId,
             name: 'REZ Hotels',
