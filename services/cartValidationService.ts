@@ -169,7 +169,17 @@ class CartValidationService {
 
   /**
    * Subscribe to stock updates via WebSocket/Socket.IO
-   * Note: Requires Socket.IO integration
+   * CA-CMC-017 FIX: This is a stub function. Real-time stock updates are NOT implemented.
+   * Frontend currently relies on validation checks at checkout time.
+   *
+   * TODO (FUTURE WORK): Implement Socket.IO integration for live stock updates:
+   * 1. Connect to stock update channel on checkout page mount
+   * 2. Handle stock depletion events mid-checkout
+   * 3. Warn user and disable checkout if item becomes unavailable
+   * 4. Disconnect on unmount or checkout completion
+   *
+   * For now, cart shows "5 in stock" info, but this is cached from last validation.
+   * Server-side validation at order creation time is the source of truth.
    */
   subscribeToStockUpdates(callback: (update: {
     productId: string;
@@ -178,12 +188,11 @@ class CartValidationService {
     timestamp: string;
   }) => void): () => void {
 
-    // TODO: Implement Socket.IO integration
-    // This is a placeholder for future real-time functionality
+    console.warn('[CartValidation] Real-time stock updates not implemented. Using checkout-time validation only.');
 
-    // Return unsubscribe function
+    // Return no-op unsubscribe function
     return () => {
-
+      // No-op
     };
   }
 
