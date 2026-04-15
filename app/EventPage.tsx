@@ -495,7 +495,11 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       // Track share analytics and earn sharing reward
       try {
         const shareResult = await eventsApiService.shareEvent(eventDetails.id);
-        eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        try {
+          eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        } catch (analyticsErr) {
+          // Silently ignore analytics errors — don't break sharing
+        }
         // Show reward feedback if coins were earned, or helpful hint if not
         if (shareResult?.success && shareResult?.reward?.coinsAwarded) {
           showAlert('Coins Earned!', `You earned +${shareResult.reward.coinsAwarded} coins for sharing this event!`);
@@ -504,7 +508,11 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           alertOk('Shared!', shareResult.message);
         }
       } catch (shareError) {
-        eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        try {
+          eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        } catch (analyticsErr) {
+          // Silently ignore analytics errors
+        }
       }
     } catch (err: any) {
       if (err instanceof Error && err.message !== 'User canceled') {
@@ -538,8 +546,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         const newState = result.isFavorited ?? !previousState;
         setIsFavorited(newState);
 
-        // Track analytics
-        eventAnalytics.trackFavoriteToggle(eventDetails.id, newState, 'event_page');
+        // Track analytics (safely — don't break UI if analytics fails)
+        try {
+          eventAnalytics.trackFavoriteToggle(eventDetails.id, newState, 'event_page');
+        } catch (analyticsErr) {
+          // Silently ignore analytics errors
+        }
 
         alertOk(
           newState ? 'Added to Favorites' : 'Removed from Favorites',
@@ -566,8 +578,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       return;
     }
 
-    // Track booking start
-    eventAnalytics.trackBookingStart(eventDetails.id, undefined, 'event_page');
+    // Track booking start (safely)
+    try {
+      eventAnalytics.trackBookingStart(eventDetails.id, undefined, 'event_page');
+    } catch (analyticsErr) {
+      // Silently ignore analytics errors
+    }
 
     // Open booking modal (same flow as offline events, just without slot selection)
     setShowBookingModal(true);
@@ -588,8 +604,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       return;
     }
 
-    // Track booking start
-    eventAnalytics.trackBookingStart(eventDetails.id, selectedSlot || undefined, 'event_page');
+    // Track booking start (safely)
+    try {
+      eventAnalytics.trackBookingStart(eventDetails.id, selectedSlot || undefined, 'event_page');
+    } catch (analyticsErr) {
+      // Silently ignore analytics errors
+    }
 
     // Open booking modal directly (for both free and paid events)
     setShowBookingModal(true);
