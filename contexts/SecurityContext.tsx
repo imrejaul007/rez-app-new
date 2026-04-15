@@ -2,6 +2,7 @@
 // Manages security settings and applies them globally across the app
 
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef, ReactNode } from 'react';
+import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { safeJsonParse } from '@/utils/safeJson';
 // Import with fallback for when expo-local-authentication is not available
@@ -14,6 +15,7 @@ try {
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import userSettingsApi from '@/services/userSettingsApi';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Security Settings Interface
 export interface SecuritySettings {

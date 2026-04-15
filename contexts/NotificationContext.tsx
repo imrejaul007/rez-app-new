@@ -123,8 +123,8 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load settings from storage or backend
-  const loadSettings = async () => {
+  // CA-INF-002: Load settings from storage or backend (wrapped in useCallback)
+  const loadSettings = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -150,7 +150,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isAuthenticated, user]);
 
   // Load from local storage
   const loadFromStorage = async () => {
