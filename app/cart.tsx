@@ -96,7 +96,7 @@ function CartPage() {
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
     return cartState.items
-      .filter(item => (item as any).itemType === 'product' || (item as any).itemType === undefined) // Only non-service items
+      .filter(item => (item as any).itemType === 'product') // CA-CMC-002 & CA-CMC-046: Explicit product check, not undefined
       .map(item => {
         // Preserve metadata for event items
         const metadata = (item as any).metadata || {};
@@ -218,7 +218,7 @@ function CartPage() {
         const formattedLockedItems = response.data.lockedItems.map((item: any) => {
           const productId = item.product?._id || item.product;
 
-          // Validate lockedAt and expiresAt are valid ISO strings
+          // Validate lockedAt and expiresAt are valid ISO strings (CA-CMC-004 fix)
           if (!item.lockedAt || !item.expiresAt || typeof item.lockedAt !== 'string' || typeof item.expiresAt !== 'string') {
             console.warn('Invalid lock date format for item:', item._id);
             return null; // Skip invalid items
@@ -235,13 +235,13 @@ function CartPage() {
 
           const remainingTime = expiresAt.getTime() - Date.now();
           const lockDuration = expiresAt.getTime() - lockedAt.getTime();
-          
+
           // Determine status based on remaining time
-          const status: 'active' | 'expiring' | 'expired' = 
-            remainingTime <= 0 ? 'expired' : 
-            remainingTime <= 120000 ? 'expiring' : 
+          const status: 'active' | 'expiring' | 'expired' =
+            remainingTime <= 0 ? 'expired' :
+            remainingTime <= 120000 ? 'expiring' :
             'active';
-          
+
           return {
             id: item._id || item.product?._id,
             productId: productId,
@@ -270,8 +270,13 @@ function CartPage() {
         }).filter((item): item is NonNullable<typeof item> => item !== null);
         setLockedProducts(formattedLockedItems);
       }
-    } catch (error) {
-      // silently handle
+    } catch (error: any) {
+      // CA-CMC-006 fix: Log errors with context instead of silently handling
+      console.error('[Cart] Failed to load locked items:', {
+        message: error?.message,
+        statusCode: error?.response?.status,
+        timestamp: new Date().toISOString(),
+      });
     }
   }, []);
 
@@ -370,37 +375,40 @@ function CartPage() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    // Set up interval only once when component mounts or when we have locked products
-    if (lockedProducts.length > 0 && !timerRef.current) {
-      timerRef.current = setInterval(() => {
-        setLockedProducts(prev => {
-          // Only update if there are still locked products
-          if (prev.length === 0) return prev;
-
-          const updated = updateLockedProductTimers(prev);
-
-          // Only update state if something actually changed
-          const hasChanges = updated.length !== prev.length ||
-            updated.some((item, i) => item.remainingTime !== prev[i]?.remainingTime);
-
-          return hasChanges ? updated : prev;
-        });
-      }, LOCK_CONFIG.UPDATE_INTERVAL);
+    // CA-CMC-007 fix: Clear interval immediately when no locked products
+    if (lockedProducts.length === 0) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
     }
 
-    // Clear interval if no locked products
-    if (lockedProducts.length === 0 && timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+    // Set up interval when we have locked products
+    // This will re-run whenever lockedProducts.length changes, ensuring fresh interval
+    timerRef.current = setInterval(() => {
+      setLockedProducts(prev => {
+        // Only update if there are still locked products
+        if (prev.length === 0) return prev;
 
+        const updated = updateLockedProductTimers(prev);
+
+        // Only update state if something actually changed
+        const hasChanges = updated.length !== prev.length ||
+          updated.some((item, i) => item.remainingTime !== prev[i]?.remainingTime);
+
+        return hasChanges ? updated : prev;
+      });
+    }, LOCK_CONFIG.UPDATE_INTERVAL);
+
+    // Cleanup function
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [lockedProducts.length]); // Safe to ignore timeLeft changes
+  }, [lockedProducts.length]); // Re-run when locked products count changes
 
 
   const handleBuyNow = async () => {
@@ -458,11 +466,13 @@ function CartPage() {
   };
 
   const renderCartItem = useCallback(({ item }: { item: CartItemType }) => {
-    // Null guard: prevent crash if item is somehow undefined
+    // CA-CMC-009 fix: Null guard at entry and re-check before each access
     if (!item) return null;
 
     // Render locked item if on locked products tab
     if (activeTab === 'lockedproduct') {
+      // Re-check item safety (CA-CMC-009)
+      if (!item || !item.id) return null;
       return (
         <View style={styles.cardWrapper}>
           <LockedItem
@@ -477,6 +487,8 @@ function CartPage() {
 
     // Render service item with booking details
     if (activeTab === 'service') {
+      // Re-check item safety (CA-CMC-009)
+      if (!item || !item.id) return null;
       const serviceItem = item as any;
       return (
         <View style={styles.cardWrapper}>
@@ -488,7 +500,7 @@ function CartPage() {
             hideQuantityControls={true} // Services don't have quantity controls
           />
           {/* Service Booking Details */}
-          {serviceItem.serviceBookingDetails && (
+          {serviceItem?.serviceBookingDetails && (
             <View style={styles.serviceBookingDetails}>
               <View style={styles.serviceBookingRow}>
                 <Ionicons name="calendar-outline" size={16} color={colors.nileBlue} />
@@ -502,7 +514,7 @@ function CartPage() {
                   {serviceItem.bookingTimeFormatted || 'Time not set'}
                 </ThemedText>
               </View>
-              {serviceItem.serviceBookingDetails.duration && (
+              {serviceItem?.serviceBookingDetails?.duration && (
                 <View style={styles.serviceBookingRow}>
                   <Ionicons name="hourglass-outline" size={16} color={colors.nileBlue} />
                   <ThemedText style={styles.serviceBookingText}>
@@ -516,7 +528,8 @@ function CartPage() {
       );
     }
 
-    // Render regular cart item
+    // Render regular cart item (CA-CMC-009: re-check before render)
+    if (!item || !item.id) return null;
     return (
       <View style={styles.cardWrapper}>
         <CartItem
@@ -610,7 +623,8 @@ function CartPage() {
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
-              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+              // CA-CMC-041 fix: Ensure productItems is not empty before accessing first item
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
                 <CardOffersSection
                   storeId={(productItems[0] as any)?.store?.id || (productItems[0] as any)?.storeId}
                   orderValue={overallTotal}
