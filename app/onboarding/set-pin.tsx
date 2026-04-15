@@ -26,6 +26,22 @@ function SetPinScreen() {
   const isOnboarded = useAuthStore((s) => s.state?.user?.isOnboarded ?? false);
   const nextRoute = isOnboarded ? '/(tabs)/' : '/onboarding/notification-permission';
 
+  // CA-AUT-027 FIX: Validate PIN strength (reject weak PINs like 1111, 1234, sequential)
+  const isWeakPin = (pinValue: string): boolean => {
+    // Reject all same digit (1111, 2222, etc.)
+    if (/^(\d)\1{3}$/.test(pinValue)) return true;
+
+    // Reject simple sequences (1234, 2345, 0123, 9876, etc.)
+    const digits = pinValue.split('').map(Number);
+    const isSequential = digits.every((d, i, arr) => i === 0 || d === arr[i - 1] + 1 || d === arr[i - 1] - 1);
+    if (isSequential) return true;
+
+    // Reject common patterns (birthday-like: 0101, 1212, etc.)
+    if (/^(\d{2})\1$/.test(pinValue)) return true;
+
+    return false;
+  };
+
   const handleSetPin = async () => {
     // Validate
     setErrors({ pin: '', confirmPin: '' });
@@ -36,6 +52,10 @@ function SetPinScreen() {
     }
     if (!/^\d{4}$/.test(pin)) {
       setErrors((prev) => ({ ...prev, pin: 'PIN must contain only digits' }));
+      return;
+    }
+    if (isWeakPin(pin)) {
+      setErrors((prev) => ({ ...prev, pin: 'PIN is too simple (avoid 1111, 1234, patterns)' }));
       return;
     }
     if (pin !== confirmPin) {

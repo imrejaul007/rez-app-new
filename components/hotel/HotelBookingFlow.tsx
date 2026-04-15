@@ -196,20 +196,28 @@ const HotelBookingFlow: React.FC<HotelBookingFlowProps> = ({
       // Format booking date as YYYY-MM-DD
       const bookingDateStr = checkInDate.toISOString().split('T')[0];
 
-      // Prepare customer notes with all booking details
-      const customerNotes = JSON.stringify({
-        checkOutDate: checkOutDate.toISOString().split('T')[0],
-        rooms,
-        roomType,
-        guests: {
-          adults: bookingData.guests.adults,
-          children: bookingData.guests.children,
-        },
-        selectedExtras: bookingData.selectedExtras,
-        guestDetails: bookingData.guestDetails,
-        contactInfo: bookingData.contactInfo,
-        totalPrice: calculateTotalPrice(),
-      });
+      // CA-TRV-043: Prepare customer notes with safe JSON stringification
+      let customerNotes = '';
+      try {
+        customerNotes = JSON.stringify({
+          checkOutDate: checkOutDate.toISOString().split('T')[0],
+          rooms,
+          roomType,
+          guests: {
+            adults: bookingData.guests.adults,
+            children: bookingData.guests.children,
+          },
+          selectedExtras: bookingData.selectedExtras,
+          guestDetails: bookingData.guestDetails,
+          contactInfo: bookingData.contactInfo,
+          totalPrice: calculateTotalPrice(),
+        }, (key, value) => value === undefined ? null : value);
+      } catch (e) {
+        platformAlertSimple('Error', 'Failed to prepare booking data');
+        if (!isMounted()) return;
+        setIsSubmitting(false);
+        return;
+      }
 
       // Call booking API with correct format matching backend
       const response = await serviceBookingApi.createBooking({

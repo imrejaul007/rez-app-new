@@ -249,17 +249,25 @@ const FlightBookingFlow: React.FC<FlightBookingFlowProps> = ({
       // Format booking date as YYYY-MM-DD
       const bookingDateStr = departureDate.toISOString().split('T')[0];
 
-      // Prepare customer notes with all booking details
-      const customerNotes = JSON.stringify({
-        tripType,
-        returnDate: bookingData.returnDate?.toISOString().split('T')[0],
-        passengers: bookingData.passengers,
-        flightClass,
-        selectedExtras: bookingData.selectedExtras,
-        passengerDetails,
-        contactInfo: bookingData.contactInfo,
-        totalPrice: getTotalPrice(),
-      });
+      // CA-TRV-042: Prepare customer notes with safe JSON stringification
+      let customerNotes = '';
+      try {
+        customerNotes = JSON.stringify({
+          tripType,
+          returnDate: bookingData.returnDate?.toISOString().split('T')[0],
+          passengers: bookingData.passengers,
+          flightClass,
+          selectedExtras: bookingData.selectedExtras,
+          passengerDetails,
+          contactInfo: bookingData.contactInfo,
+          totalPrice: getTotalPrice(),
+        }, (key, value) => value === undefined ? null : value);
+      } catch (e) {
+        platformAlertSimple('Error', 'Failed to prepare booking data');
+        if (!isMounted()) return;
+        setIsSubmitting(false);
+        return;
+      }
 
       // Call booking API with correct format matching backend
       const response = await serviceBookingApi.createBooking({

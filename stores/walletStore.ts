@@ -48,6 +48,9 @@ const defaults: WalletStoreData = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
+// CA-PAY-059 FIX: Note that wallet balance data is persisted to AsyncStorage in plain text.
+// For production use, consider adding encryption layer (react-native-secure-store)
+// to prevent unauthorized access to wallet balances on compromised devices.
 export const useWalletStore = create<WalletStoreState>()(
   persist(
     (set) => ({

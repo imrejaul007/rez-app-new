@@ -78,6 +78,26 @@ function SignInScreen() {
   const [isSending, setIsSending] = useState(false);
   const isMounted = useIsMounted();
 
+  // CA-SEC-027 FIX: OTP request rate limiting — max 3 requests per minute
+  const otpSendAttemptsRef = useRef<{ timestamp: number; count: number }>({ timestamp: Date.now(), count: 0 });
+
+  const canSendOTP = (): boolean => {
+    const now = Date.now();
+    const elapsed = now - otpSendAttemptsRef.current.timestamp;
+
+    // Reset counter every 60 seconds
+    if (elapsed > 60_000) {
+      otpSendAttemptsRef.current = { timestamp: now, count: 0 };
+    }
+
+    // Allow up to 3 requests per minute
+    return otpSendAttemptsRef.current.count < 3;
+  };
+
+  const recordOTPSendAttempt = (): void => {
+    otpSendAttemptsRef.current.count++;
+  };
+
   // OTP timer effect
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -236,12 +256,26 @@ function SignInScreen() {
       return;
     }
 
+    // CA-SEC-027 FIX: Rate limit OTP requests (max 3 per minute)
+    if (!canSendOTP()) {
+      setErrors((prev) => ({
+        ...prev,
+        phoneNumber: 'Too many OTP requests. Please wait a minute before trying again.',
+      }));
+      platformAlertSimple(
+        'Rate Limited',
+        'You have sent too many OTP requests. Please wait 1 minute before trying again.',
+      );
+      return;
+    }
+
     // Haptic feedback on phone continue
     try {
       await Haptics.selectionAsync();
     } catch {}
 
     setIsSending(true);
+    recordOTPSendAttempt();
     try {
       // Check if this phone number has a PIN set — if so, show PIN screen instead of OTP
       try {
