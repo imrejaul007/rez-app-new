@@ -52,8 +52,9 @@ class EventEmitter {
     listeners.forEach(listener => {
       try {
         listener(...args);
-      } catch (_error) {
-        // silently handle
+      } catch (error) {
+        // CA-PAY-038 FIX: Log caught errors instead of silently ignoring
+        console.error(`[EventEmitter] Error in listener for event "${event}":`, error);
       }
     });
     return listeners.length > 0;

@@ -97,6 +97,14 @@ function OTPVerificationScreen() {
       return;
     }
 
+    // Fixed CA-AUT-008: Validate OTP hasn't expired (timer = 0)
+    if (timer <= 0) {
+      triggerImpact('Light');
+      platformAlertSimple('OTP Expired', 'Your verification code has expired. Please request a new one.');
+      setOtp(['', '', '', '', '', '']);
+      return;
+    }
+
     if (!phoneNumber) {
       platformAlertSimple('Error', 'Phone number not found. Please go back and try again.');
       return;

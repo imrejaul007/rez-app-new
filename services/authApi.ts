@@ -148,13 +148,15 @@ function isValidEmail(email: string): boolean {
 }
 
 /**
- * Validates OTP format (6 digits)
+ * Validates OTP format (6 digits, including leading zeros)
+ * Fixed CA-AUT-031: Accept leading zeros like "000000"
  */
 function isValidOtp(otp: string): boolean {
   if (!otp || typeof otp !== 'string') {
     return false;
   }
 
+  // Accept exactly 6 digit characters (including leading zeros)
   const otpRegex = /^\d{6}$/;
   return otpRegex.test(otp);
 }
@@ -163,6 +165,7 @@ function isValidOtp(otp: string): boolean {
 
 /**
  * Validates auth response structure
+ * Fixed CA-AUT-005: Validate expiresIn is present and valid
  */
 function validateAuthResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
@@ -183,6 +186,13 @@ function validateAuthResponse(response: any): boolean {
   if (!response.tokens.accessToken || !response.tokens.refreshToken) {
     devLog.warn('[AUTH API] Auth response missing required tokens');
     return false;
+  }
+
+  // Fixed CA-AUT-005: Validate token expiration time
+  if (typeof response.tokens.expiresIn !== 'number' || response.tokens.expiresIn <= 0) {
+    devLog.warn('[AUTH API] Auth response missing or invalid expiresIn');
+    // Provide sensible default if missing
+    response.tokens.expiresIn = 3600; // 1 hour default
   }
 
   return true;

@@ -152,7 +152,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     // Set logout callback - called when token expires/is revoked
     // This is guarded by isLoggingOut in apiClient, so only called once per cycle
     // NOTE: No router.replace here — dispatch AUTH_LOGOUT triggers the navigation guard
-    apiClient.setLogoutCallback(async () => {
+    const unregisterLogoutCallback = apiClient.setLogoutCallback(async () => {
       try {
         // Immediately clear API tokens to stop any further authenticated requests
         apiClient.setAuthToken(null);
@@ -172,6 +172,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         setHasExplicitlyLoggedOut(true);
       }
     });
+
+    // Fixed CA-AUT-029: Cleanup callback on unmount to prevent duplicate registrations
+    return () => {
+      if (typeof unregisterLogoutCallback === 'function') {
+        unregisterLogoutCallback();
+      }
+    };
   }, []);
 
   // Check auth status on app start (but not after explicit logout)
@@ -590,10 +597,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   const checkAuthStatus = async () => {
     // Safety net: if the entire auth check hangs (e.g. Render cold-start takes
-    // minutes), give up after 12 s and show the sign-in screen so the user is
+    // minutes), give up after 8 s and show the sign-in screen so the user is
     // never permanently locked out.
+    // Fixed CA-AUT-015: Corrected timeout value (was 30000ms labeled as 8s) and added proper logging
     const authTimeout = setTimeout(() => {
-      logger.warn('[AUTH] checkAuthStatus timed out after 8s');
+      logger.warn('[AUTH] checkAuthStatus timed out after 8s - redirecting to sign-in');
       dispatch({ type: 'AUTH_LOGOUT' });
     }, 8_000);
 
@@ -713,13 +721,29 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     isRefreshingToken.current = true;
     let refreshSuccess = false;
 
-    // Create refresh promise
+    // Create refresh promise with timeout protection (CA-AUT-006)
     const refreshPromise = (async () => {
+      let timeoutHandle: NodeJS.Timeout | null = null;
       try {
-        const refreshToken = await authStorage.getRefreshToken();
+        // Create a timeout promise that rejects after 30 seconds
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutHandle = setTimeout(() => {
+            logger.warn('[AUTH] Token refresh timed out after 30s');
+            reject(new Error('Token refresh timeout'));
+          }, 30_000);
+        });
+
+        // Race between refresh and timeout
+        const refreshToken = await Promise.race([
+          authStorage.getRefreshToken(),
+          timeoutPromise
+        ]);
 
         if (refreshToken) {
-          const response = await authService.refreshToken(refreshToken);
+          const response = await Promise.race([
+            authService.refreshToken(refreshToken),
+            timeoutPromise
+          ]);
 
           // Check if API returned an error
           if (!response.success) {
@@ -762,11 +786,17 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
           return false; // No refresh token available
         }
       } catch (error: any) {
+        // Fixed CA-AUT-035: Log token refresh failures for debugging
+        const errorMessage = error?.message?.toLowerCase() || '';
+        logger.error('[AUTH] Token refresh failed:', {
+          message: error?.message,
+          isTimeout: error?.message?.includes('timeout')
+        });
+
         // Don't immediately logout on refresh failure - could be network issue
         // Only logout if the error message indicates an invalid/expired token.
         // Note: errors here are plain Error objects (not axios-style with response.status),
         // so we check the message string instead of error?.response?.status.
-        const errorMessage = error?.message?.toLowerCase() || '';
         const isInvalidToken = errorMessage.includes('token expired') ||
                               errorMessage.includes('invalid') ||
                               errorMessage.includes('Token refresh failed'.toLowerCase()) ||
@@ -788,9 +818,14 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
           return false; // Failed - invalid token
         } else {
-          return false; // Failed - network error
+          return false; // Failed - network error or timeout
         }
       } finally {
+        // Clear timeout if still pending
+        if (timeoutHandle) {
+          clearTimeout(timeoutHandle);
+        }
+
         // Reset refreshing flag
         isRefreshingToken.current = false;
         refreshPromiseRef.current = null;

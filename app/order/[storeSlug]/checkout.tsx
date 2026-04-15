@@ -15,7 +15,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
   TextInput,
   Alert,
@@ -27,6 +26,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { Button, Input } from '@rez/rez-ui';
 import { sendWebOtp, verifyWebOtp, createWebOrder, verifyWebPayment, CartItem } from '@/services/webOrderingApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -302,9 +302,13 @@ export default function CheckoutScreen() {
         <View style={styles.centerScreen}>
           <Ionicons name="cart-outline" size={52} color="#D1D5DB" />
           <Text style={styles.emptyTitle}>Cart is empty</Text>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text style={styles.backLink}>← Go back to menu</Text>
-          </TouchableOpacity>
+          <Button
+            onPress={() => router.back()}
+            label="← Go back to menu"
+            variant="secondary"
+            style={styles.backLinkButton}
+            textStyle={styles.backLinkText}
+          />
         </View>
       </SafeAreaView>
     );
@@ -317,9 +321,14 @@ export default function CheckoutScreen() {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Header */}
         <LinearGradient colors={['#7C3AED', '#6366F1']} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <Button
+            onPress={() => router.back()}
+            label=""
+            variant="primary"
+            style={styles.backBtn}
+          >
             <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
+          </Button>
           <View>
             <Text style={styles.headerTitle}>Checkout</Text>
             <Text style={styles.headerSub}>{store?.name}</Text>
@@ -341,13 +350,13 @@ export default function CheckoutScreen() {
             <Text style={styles.sectionTitle}>Your Details</Text>
 
             <Text style={styles.fieldLabel}>Name *</Text>
-            <TextInput
+            <Input
               style={styles.input}
               placeholder="Your name"
-              placeholderTextColor="#9CA3AF"
               value={name}
               onChangeText={setName}
               editable={!sessionToken}
+              textStyle={styles.inputText}
             />
 
             {params.table ? (
@@ -358,14 +367,12 @@ export default function CheckoutScreen() {
             ) : null}
 
             <Text style={styles.fieldLabel}>Special Instructions</Text>
-            <TextInput
+            <Input
               style={[styles.input, styles.inputMulti]}
               placeholder="Allergies, spice level, etc."
-              placeholderTextColor="#9CA3AF"
               value={instructions}
               onChangeText={setInstructions}
-              multiline
-              numberOfLines={3}
+              textStyle={styles.inputText}
             />
           </Animated.View>
 
@@ -380,59 +387,55 @@ export default function CheckoutScreen() {
                   <View style={styles.phonePrefix}>
                     <Text style={styles.phonePrefixText}>+91</Text>
                   </View>
-                  <TextInput
+                  <Input
                     style={[styles.input, { flex: 1, marginBottom: 0 }]}
                     placeholder="9876543210"
-                    placeholderTextColor="#9CA3AF"
                     value={phone}
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
-                    maxLength={10}
                     editable={!otpSent || otpResendCountdown > 0}
+                    textStyle={styles.inputText}
                   />
                 </View>
 
                 {!otpSent ? (
-                  <TouchableOpacity
-                    style={[styles.primaryBtn, { opacity: otpLoading ? 0.7 : 1 }]}
+                  <Button
                     onPress={handleSendOtp}
                     disabled={otpLoading}
+                    label={otpLoading ? '' : 'Send OTP'}
+                    variant="primary"
+                    style={[styles.primaryBtn, { opacity: otpLoading ? 0.7 : 1 }]}
+                    textStyle={styles.primaryBtnText}
                   >
-                    {otpLoading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text style={styles.primaryBtnText}>Send OTP</Text>
-                    )}
-                  </TouchableOpacity>
+                    {otpLoading && <ActivityIndicator size="small" color="#fff" />}
+                  </Button>
                 ) : (
                   <>
                     <Text style={[styles.fieldLabel, { marginTop: 16 }]}>Enter 6-digit OTP</Text>
                     <OtpInput value={otpValue} onChange={setOtpValue} disabled={otpLoading} />
 
-                    <TouchableOpacity
+                    <Button
+                      onPress={handleVerifyOtp}
+                      disabled={otpValue.length < 6 || otpLoading}
+                      label={otpLoading ? '' : 'Verify OTP'}
+                      variant="primary"
                       style={[
                         styles.primaryBtn,
                         { marginTop: 16, opacity: otpValue.length < 6 || otpLoading ? 0.6 : 1 },
                       ]}
-                      onPress={handleVerifyOtp}
-                      disabled={otpValue.length < 6 || otpLoading}
+                      textStyle={styles.primaryBtnText}
                     >
-                      {otpLoading ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                      ) : (
-                        <Text style={styles.primaryBtnText}>Verify OTP</Text>
-                      )}
-                    </TouchableOpacity>
+                      {otpLoading && <ActivityIndicator size="small" color="#fff" />}
+                    </Button>
 
-                    <TouchableOpacity
+                    <Button
                       onPress={otpResendCountdown === 0 ? handleSendOtp : undefined}
-                      style={{ marginTop: 10, alignItems: 'center' }}
                       disabled={otpResendCountdown > 0}
-                    >
-                      <Text style={[styles.resendText, otpResendCountdown > 0 && { color: '#9CA3AF' }]}>
-                        {otpResendCountdown > 0 ? `Resend in ${otpResendCountdown}s` : 'Resend OTP'}
-                      </Text>
-                    </TouchableOpacity>
+                      label={otpResendCountdown > 0 ? `Resend in ${otpResendCountdown}s` : 'Resend OTP'}
+                      variant="secondary"
+                      style={{ marginTop: 10 }}
+                      textStyle={[styles.resendText, otpResendCountdown > 0 && { color: '#9CA3AF' }]}
+                    />
                   </>
                 )}
               </>
@@ -452,22 +455,21 @@ export default function CheckoutScreen() {
         {/* Place Order button */}
         {sessionToken && (
           <Animated.View entering={FadeInDown.springify()} style={styles.placeOrderBar}>
-            <TouchableOpacity
-              style={[styles.placeOrderBtn, { opacity: placingOrder ? 0.75 : 1 }]}
+            <Button
               onPress={handlePlaceOrder}
               disabled={placingOrder}
+              label={placingOrder ? '' : 'Place Order'}
+              variant="primary"
+              style={[styles.placeOrderBtn, { opacity: placingOrder ? 0.75 : 1 }]}
+              textStyle={styles.placeOrderText}
             >
-              {placingOrder ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <>
-                  <Text style={styles.placeOrderText}>Place Order</Text>
-                  <Text style={styles.placeOrderAmount}>
-                    {formatCurrency(cart.reduce((s, c) => s + c.item.price * c.quantity, 0) * (1 + gst / 100))}
-                  </Text>
-                </>
+              {!placingOrder && (
+                <Text style={styles.placeOrderAmount}>
+                  {formatCurrency(cart.reduce((s, c) => s + c.item.price * c.quantity, 0) * (1 + gst / 100))}
+                </Text>
               )}
-            </TouchableOpacity>
+              {placingOrder && <ActivityIndicator size="small" color="#fff" />}
+            </Button>
           </Animated.View>
         )}
       </KeyboardAvoidingView>
@@ -545,6 +547,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#111827',
     marginBottom: 12,
+  },
+  inputText: {
+    color: '#111827',
+  },
+  backLinkButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  backLinkText: {
+    color: '#7C3AED',
+    fontWeight: '600',
   },
   inputMulti: { minHeight: 72, textAlignVertical: 'top' },
   tableRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },

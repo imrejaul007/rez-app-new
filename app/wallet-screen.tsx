@@ -122,11 +122,14 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
   // Sync balance hidden state from AsyncStorage (same key as BalanceDisplay)
   useEffect(() => {
-    AsyncStorage.getItem('@wallet_balance_hidden')
+    AsyncStorage.getItem('@wallet_screen_balance_hidden')
       .then((val) => {
         if (val === 'true') setIsBalanceHidden(true);
       })
-      .catch(() => {});
+      .catch((err) => {
+        // Log error for monitoring but don't crash
+        console.warn('Failed to load balance hidden state:', err);
+      });
   }, []);
 
   // Compute coin balances for CoinProportionBar

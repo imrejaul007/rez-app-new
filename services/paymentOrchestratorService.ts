@@ -151,18 +151,22 @@ class PaymentOrchestratorService {
 
     // Stripe methods (for international payments)
     if (ENABLE_STRIPE && stripeReactNativeService.isConfigured()) {
-      methods.push({
+      const stripeMethod = {
         id: 'stripe_card',
         name: 'International Card',
-        type: 'card',
-        gateway: 'stripe',
+        type: 'card' as const,
+        gateway: 'stripe' as const,
         icon: 'card',
         isAvailable: true,
         processingFee: 2.9,
         processingTime: '2-3 minutes',
         description: 'Visa, Mastercard, Amex (International)',
         supportedCurrencies: ['USD', 'EUR', 'GBP', 'INR'],
-      });
+      };
+      // CA-PAY-024: Only include if currency is supported
+      if (stripeMethod.supportedCurrencies.includes(currency)) {
+        methods.push(stripeMethod);
+      }
     }
 
     // Cash on Delivery
@@ -188,7 +192,21 @@ class PaymentOrchestratorService {
       });
     }
 
-    return methods;
+    // CA-PAY-024 FIX: Filter all methods by amount and currency constraints
+    return methods.filter(method => {
+      // Check currency support if specified
+      if (method.supportedCurrencies && !method.supportedCurrencies.includes(currency)) {
+        return false;
+      }
+      // Check amount constraints
+      if (method.minAmount !== undefined && amount < method.minAmount) {
+        return false;
+      }
+      if (method.maxAmount !== undefined && amount > method.maxAmount) {
+        return false;
+      }
+      return true;
+    });
   }
 
   /**

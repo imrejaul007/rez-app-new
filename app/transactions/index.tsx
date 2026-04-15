@@ -122,13 +122,13 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress,
         <View style={styles.transactionStatus}>
           <View style={[
             styles.statusBadge,
-            { backgroundColor: transaction.status.current === 'completed' ? colors.tint.green : colors.tint.amberLight }
+            { backgroundColor: (transaction.status?.current ?? 'completed') === 'completed' ? colors.tint.green : colors.tint.amberLight }
           ]}>
             <Text style={[
               styles.statusText,
-              { color: transaction.status.current === 'completed' ? '#065F46' : colors.brand.amberDark }
+              { color: (transaction.status?.current ?? 'completed') === 'completed' ? '#065F46' : colors.brand.amberDark }
             ]}>
-              {transaction.status.current.toUpperCase()}
+              {(transaction.status?.current ?? 'completed').toUpperCase()}
             </Text>
           </View>
         </View>
@@ -142,7 +142,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress,
           {formatAmount(transaction.amount, transaction.currency, transaction.type)}
         </Text>
         <Text style={styles.balanceText}>
-          Balance: {transaction.currency} {transaction.balanceAfter.toLocaleString()}
+          Balance: {transaction.currency} {(transaction.balanceAfter ?? 0).toLocaleString()}
         </Text>
       </View>
       

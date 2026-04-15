@@ -97,10 +97,12 @@ export interface WalletBalanceResponse {
   breakdown: {
     // API returns breakdown.rezCoins as an object with amount
     rezCoins: { amount: number; color: string; expiryDate?: string };
-    // API returns cashback as breakdown.cashback (not cashbackBalance)
+    // CANONICAL: Use 'cashback' field only. 'cashbackBalance' is deprecated.
+    // Code must check: breakdown.cashback ?? breakdown.cashbackBalance ?? 0
     cashback?: number;
     cashbackBalance?: number;
-    // API returns pending as breakdown.pending (not pendingRewards)
+    // CANONICAL: Use 'pending' field only. 'pendingRewards' is deprecated.
+    // Code must check: breakdown.pending ?? breakdown.pendingRewards ?? 0
     pending?: number;
     pendingRewards?: number;
   };

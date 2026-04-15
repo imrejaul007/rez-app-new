@@ -1,7 +1,23 @@
 // Payment Types and Interfaces for Nuqta App
 // Comprehensive payment system types
 
+/**
+ * CA-PAY-023 FIX: Payment method normalization.
+ * Legacy code may send 'rezcoins' | 'nuqtacoins' but API expects 'wallet'.
+ * Always use normalizePaymentMethod() before sending to backend.
+ */
 export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'nuqtacoins';
+
+/**
+ * Normalize payment method for backend submission.
+ * Maps legacy 'rezcoins' and 'nuqtacoins' to 'wallet'.
+ */
+export function normalizePaymentMethod(method: PaymentMethodType | string): PaymentMethodType {
+  if (method === 'rezcoins' || method === 'nuqtacoins') {
+    return 'wallet';
+  }
+  return (method as PaymentMethodType);
+}
 export type PaymentGateway = 'razorpay' | 'stripe' | 'internal' | 'none';
 export type PaymentStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
 export type CardType = 'visa' | 'mastercard' | 'amex' | 'rupay' | 'unknown';
