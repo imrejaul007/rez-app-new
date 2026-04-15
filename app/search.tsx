@@ -76,7 +76,10 @@ function SearchPage() {
     searchHistoryService
       .getRecentSearches()
       .then(setRecentSearches)
-      .catch(() => {});
+      .catch((err: any) => {
+        // CA-DSC-004 FIX: Log errors instead of silently swallowing
+        console.warn('[Search] Failed to load recent searches:', err?.message || err);
+      });
   }, []);
 
   // Prepare user location for search (memoized to avoid recreation)

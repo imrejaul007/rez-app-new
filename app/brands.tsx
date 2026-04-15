@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Brand } from '@/data/categoryDummyData';
 import brandApiService from '@/services/brandApi';
 import { CardGridSkeleton } from '@/components/skeletons';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -57,6 +58,7 @@ const BrandCard = ({ brand, onPress }: { brand: Brand; onPress: () => void }) =>
 );
 
 function BrandsPage() {
+  const isMounted = useIsMounted();
   const router = useRouter();
   const params = useLocalSearchParams();
   const categorySlug = params.category as string;
@@ -91,18 +93,22 @@ function BrandsPage() {
           tag: b.badges?.[0] ?? null,
           rating: b.rating,
         }));
+        if (!isMounted()) return;
         setBrands(brandsList);
         setFilteredBrands(brandsList);
       } else {
         // API returned empty — leave brands empty (no stale dummy data)
+        if (!isMounted()) return;
         setBrands([]);
         setFilteredBrands([]);
       }
     } catch (error: any) {
       console.error('[BrandsPage] Failed to load brands:', error);
+      if (!isMounted()) return;
       setBrands([]);
       setFilteredBrands([]);
     } finally {
+      if (!isMounted()) return;
       setLoading(false);
       setRefreshing(false);
     }

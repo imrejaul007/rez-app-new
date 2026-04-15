@@ -634,12 +634,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   const checkAuthStatus = async () => {
     // Safety net: if the entire auth check hangs (e.g. Render cold-start takes
-    // minutes), give up after 12 s and show the sign-in screen so the user is
-    // never permanently locked out.
+    // minutes), give up after 15s and show the sign-in screen so the user is
+    // never permanently locked out. (CA-AUT-015)
     const authTimeout = setTimeout(() => {
-      logger.warn('[AUTH] checkAuthStatus timed out after 30s');
+      logger.warn('[AUTH] checkAuthStatus timed out after 15s');
       dispatch({ type: 'AUTH_LOGOUT' });
-    }, 30_000);
+    }, 15_000);
 
     try {
       // Read stored auth FIRST, then only show loading if nothing is cached.
@@ -808,13 +808,22 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
             throw new Error('Invalid response data from server');
           }
 
+          // Validate tokens are non-empty strings (CA-AUT-011)
+          const { accessToken, refreshToken } = response.data.tokens;
+          if (!accessToken || typeof accessToken !== 'string' || accessToken.trim() === '') {
+            throw new Error('Invalid access token from server');
+          }
+          if (!refreshToken || typeof refreshToken !== 'string' || refreshToken.trim() === '') {
+            throw new Error('Invalid refresh token from server');
+          }
+
           // Save to both AsyncStorage AND localStorage (web) using authStorage
-          await authStorage.saveAuthToken(response.data.tokens.accessToken);
-          await authStorage.saveRefreshToken(response.data.tokens.refreshToken);
+          await authStorage.saveAuthToken(accessToken);
+          await authStorage.saveRefreshToken(refreshToken);
 
           // Set auth token in API client
-          authService.setAuthToken(response.data.tokens.accessToken);
-          apiClient.setAuthToken(response.data.tokens.accessToken);
+          authService.setAuthToken(accessToken);
+          apiClient.setAuthToken(accessToken);
 
           // Get user data safely (use authStorage to check localStorage first on web)
           let storedUser = null;

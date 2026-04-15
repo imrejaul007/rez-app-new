@@ -261,7 +261,7 @@ function CabDetailsPage() {
       let estimatedDistance: number | undefined = undefined;
       const specDistance = getSpec('distance');
       if (specDistance) {
-        estimatedDistance = parseInt(specDistance) || undefined;
+        estimatedDistance = parseInt(specDistance, 10) || undefined;  // CA-TRV-007 FIX: add radix 10
       } else {
         if (productData.price && typeof productData.price === 'number' && productData.price > 0)
           pricePerKm = productData.price;

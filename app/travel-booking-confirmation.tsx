@@ -276,12 +276,12 @@ function TravelBookingConfirmationPage() {
                 {booking.pricing.basePrice?.toLocaleString()}
               </ThemedText>
             </View>
-            {booking.pricing.taxes > 0 && (
+            {booking.pricing?.taxes && booking.pricing.taxes > 0 && (
               <View style={styles.priceRow}>
                 <ThemedText style={styles.priceLabel}>Taxes & Fees</ThemedText>
                 <ThemedText style={styles.priceValue}>
                   {currencySymbol}
-                  {booking.pricing.taxes?.toLocaleString()}
+                  {booking.pricing?.taxes?.toLocaleString()}
                 </ThemedText>
               </View>
             )}

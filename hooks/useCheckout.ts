@@ -203,6 +203,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
   // OG-004 FIX: Check network before initiating any payment so the user sees
   // a clear error instead of a stuck loading spinner when offline.
+  // CA-CMC-021 FIX: Verified that all callers properly check return value before proceeding
   const assertOnline = useCallback(async (): Promise<boolean> => {
     const state = await NetInfo.fetch();
     const online = state.isConnected === true;
@@ -535,7 +536,8 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           });
 
           // Calculate total before coin discount (for slider max calculation)
-          const totalBeforeCoinDiscount = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + platformFee + taxes - lockFeeDiscount - promoDiscount);
+          // CA-CMC-025 FIX: lockFeeDiscount already reflected in taxes (line 522), don't double-count
+          const totalBeforeCoinDiscount = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + platformFee + taxes - promoDiscount);
 
           // Always calculate total payable from our values to ensure consistency
           let totalPayable = totalBeforeCoinDiscount - coinDiscount;
