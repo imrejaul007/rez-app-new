@@ -214,11 +214,20 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     try {
       setError(null);
 
-      // CA-AUT-026 FIX: Require verification before allowing email change
+      // CA-AUT-026 FIX: Require password OR OTP before email change
+      // This prevents account takeover via email address spoofing.
+      // The API endpoint /auth/change-email requires either:
+      // 1. currentPassword (for password-authenticated users), OR
+      // 2. otpCode (for passwordless/OTP users)
+      // TODO: Implement UI flow to collect and submit verification before email change
+      // For now, reject any email change that doesn't include verification.
       if (userData.email && userData.email !== user.email) {
-        // Email is being changed — require identity verification
+        // Email is being changed — require identity verification (password or OTP)
+        // Throw error: caller must implement a separate change-email flow that:
+        // 1. Prompts user for current password or OTP
+        // 2. Calls /auth/change-email with email + password/otp
         throw new Error(
-          'Email changes require verification. Please verify your identity with your current password or OTP before updating your email address.'
+          'Email changes require verification. Please verify your identity with your password or OTP via the Change Email screen.'
         );
       }
 

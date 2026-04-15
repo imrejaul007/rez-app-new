@@ -80,10 +80,13 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const handleOrderFood = useCallback(() => {
     // Switch to the menu tab and scroll to top
     d.handleTabChange('menu');
-    try {
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-    } catch (e) {
-      // Silently ignore if scroll ref not ready
+    // CA-DSC-039 FIX: Add null check and error handling to scrollViewRef usage
+    if (scrollViewRef.current) {
+      try {
+        scrollViewRef.current.scrollTo({ y: 0, animated: true });
+      } catch (e) {
+        console.warn('[MainStore] Failed to scroll:', e);
+      }
     }
   }, [d]);
 
@@ -138,14 +141,16 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     }
   }, [d.refreshing]);
 
+  // CA-DSC-006 FIX: Use AbortController to cancel in-flight requests on unmount
   // PACKETSENSE FIX-1: Batch fetch upcoming coin drops + active campaigns in a single round trip.
   // Replaced two sequential useEffect API calls with one /page-extras call whose two DB
   // queries run in parallel on the backend (Promise.allSettled).
   useEffect(() => {
     if (!d.currentStoreId) return;
     let cancelled = false;
+    const abortController = new AbortController();
     apiClient
-      .get(`/stores/${d.currentStoreId}/page-extras`)
+      .get(`/stores/${d.currentStoreId}/page-extras`, { signal: abortController.signal })
       .then((res) => {
         if (cancelled) return;
         const payload = (res as any).data?.data;
@@ -155,10 +160,17 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       .catch(() => {});
     return () => {
       cancelled = true;
+      abortController.abort();
     };
   }, [d.currentStoreId]);
 
   const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, d.screenData), [HORIZONTAL_PADDING, d.screenData]);
+
+  // CA-DSC-020 FIX: Memoize conditional style array to prevent unnecessary re-renders
+  const contentContainerStyle = useMemo(
+    () => [styles.scrollContent, isWeb ? styles.webScrollContent : null],
+    [styles.scrollContent, styles.webScrollContent, isWeb],
+  );
 
   // Helper function to format time until coin drop
   const getTimeUntil = (dateStr: string) => {
@@ -168,11 +180,18 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     return h > 0 ? `${h}h ${m}m` : `${m} minutes`;
   };
 
-  // About modal data (memoized)
-  const aboutModalData = useMemo(
-    () => buildAboutModalData(d.storeData, d.fullStoreDataRef.current, d.fetchedStoreData, d.productData, d.isDynamic),
-    [d.storeData, d.fetchedStoreData, d.productData, d.isDynamic],
-  );
+  // About modal data (memoized) - CA-DSC-026 FIX: Add guard for missing fields
+  const aboutModalData = useMemo(() => {
+    const data = buildAboutModalData(d.storeData, d.fullStoreDataRef.current, d.fetchedStoreData, d.productData, d.isDynamic);
+    // Ensure all required fields are present
+    return {
+      ...data,
+      storeName: data?.storeName || '',
+      description: data?.description || '',
+      hours: data?.hours || [],
+      contact: data?.contact || {},
+    };
+  }, [d.storeData, d.fetchedStoreData, d.productData, d.isDynamic]);
 
   // Sticky header animated style
   const stickyHeaderAnimStyle = useAnimatedStyle(() => ({
@@ -220,7 +239,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
             scrollY.value = y;
             setShowStickyTabs(tabsPositionMeasured.current && y > tabsPositionY.current);
           }}
-          contentContainerStyle={[styles.scrollContent, isWeb ? styles.webScrollContent : null] as any}
+          contentContainerStyle={contentContainerStyle as any}
           refreshControl={
             <RefreshControl
               refreshing={d.refreshing}

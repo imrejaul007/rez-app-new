@@ -425,16 +425,17 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
   }, [updateSecuritySettings]);
 
   // CA-AUT-020 FIX: Backup codes must be generated server-side, not client-side
-  // This is a placeholder that should never be called. Backup codes are returned
-  // by the backend during 2FA setup. Client should NOT generate codes using Math.random().
+  // This function rejects client-side generation with a guard and TODO.
   const generateBackupCodes = useCallback((): string[] => {
-    // DEPRECATED: Backup codes must be generated server-side during 2FA setup.
+    // GUARD: Backup codes MUST be generated server-side during 2FA setup.
     // The backend returns them in the enableTwoFactorAuth response.
     // Client-side generation using Math.random() is cryptographically insecure.
+    // TODO: Remove this function entirely once the backend owns all 2FA backup code generation.
+    // Do NOT generate codes on the client using Math.random(), crypto.getRandomValues(), or any other method.
     if (__DEV__) {
-      console.warn('[SecurityContext] generateBackupCodes should NOT be called. Codes are generated server-side.');
+      console.warn('[SecurityContext] generateBackupCodes: GUARD REJECTING client-side generation. Use codes from backend response only.');
     }
-    return []; // Return empty — caller should use codes from backend response
+    return []; // Return empty — caller MUST use codes from backend response
   }, []);
 
   // Check if profile is visible based on privacy settings

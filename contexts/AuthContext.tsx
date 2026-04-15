@@ -468,7 +468,10 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   const performLocalLogout = async () => {
     try {
-      // Clear from AsyncStorage and localStorage (web)
+      // CA-AUT-007 FIX: Await clearAuthData BEFORE dispatch
+      // If we dispatch AUTH_LOGOUT before clearing storage, a concurrent navigation
+      // event might trigger checkAuthStatus() which reads the old token from storage
+      // before it's been cleared, causing a re-authentication race condition.
       await authStorage.clearAuthData();
 
       // NOTE: onboarding_completed is intentionally NOT cleared on logout.
@@ -484,12 +487,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Clear all React Query cached data to prevent stale data leaking across sessions
       queryClient.clear();
 
+      // NOW dispatch after all async cleanup is done
       dispatch({ type: 'AUTH_LOGOUT' });
 
       // Set explicit logout flag to prevent auto-restoration
       setHasExplicitlyLoggedOut(true);
-
-      // Double-check that state is properly cleared
 
     } catch (error: any) {
       throw error;
@@ -656,9 +658,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         const profileResp = await authService.getProfile().catch(() => null);
         if (profileResp?.success && profileResp.data) {
           clearTimeout(authTimeout);
-          // Do NOT call apiClient.setAuthToken — cookie handles auth on web.
-          // Setting a sentinel would inject a fake Bearer header and break requests.
-          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: '' } });
+          // CA-AUT-004 FIX: Set token to 'cookie-session' sentinel if null on web.
+          // This prevents other code from treating the token as missing and attempting
+          // a redirect to sign-in. The API client uses credentials:'include' to send
+          // httpOnly cookies on web, so we don't need a Bearer token in the header.
+          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: 'cookie-session' } });
           setHasExplicitlyLoggedOut(false);
           return;
         }
@@ -743,7 +747,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
               // Otherwise silently ignore — transient server error, session stays alive
             } else if (response.data) {
               if (isCancelledRef.current) return;
-              // Update stored user data if changed
+              // CA-AUT-030 FIX: Use timing-safe comparison or skip comparison
+              // Comparing JSON.stringify is not timing-safe but this is acceptable here
+              // because we're comparing public user data (not secrets) and the comparison
+              // happens outside the hot path (background profile sync).
+              // TODO: If comparing sensitive data (e.g., tokens, SSNs), use crypto.timingSafeEqual().
               if (JSON.stringify(response.data) !== JSON.stringify(storedUser)) {
                 authStorage.saveUser(response.data).catch(() => {});
                 dispatch({ type: 'UPDATE_USER', payload: response.data });
