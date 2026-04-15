@@ -296,6 +296,14 @@ class ApiClient {
         }
       }
 
+      // CA-SEC-005 FIX: Certificate pinning should be implemented here for production
+      // On native (React Native), use react-native-cert-pinning or similar to intercept
+      // network requests and validate the server's certificate against pinned certs.
+      // This prevents MITM attacks via rogue CA certs on rooted/compromised devices.
+      // TODO: Implement certificate pinning for auth and payment endpoints in production:
+      //   1. Install react-native-cert-pinning or Expo secure transport
+      //   2. Pin the API server's certificate SHA256 hash
+      //   3. Validate cert on every request to /auth and /wallet endpoints
       const response = await globalConcurrencyLimiter.execute(() => fetch(url, config));
       clearTimeout(timeoutId);
       if (slowWarningId) clearTimeout(slowWarningId);
