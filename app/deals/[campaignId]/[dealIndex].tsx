@@ -145,10 +145,12 @@ const DealDetailPage: React.FC = () => {
         }>('/campaigns/my-redemptions', { limit: 100 });
 
         if (response.success && response.data?.redemptions) {
-          // Find if this specific deal is already redeemed
+          // CA-CMC-030 FIX: Campaign object uses 'title' field, not 'campaignId'.
+          // Previous comparison (r.campaignId === campaign.campaignId) would always fail
+          // because campaign.campaignId is undefined. Use campaign._id or title instead.
           const existingRedemption = response.data.redemptions.find(
             (r) =>
-              (r.campaignId === campaign.campaignId || r.campaignSnapshot?.title === campaign.title) &&
+              ((r.campaignId === (campaign._id || campaignId)) || r.campaignSnapshot?.title === campaign.title) &&
               r.dealIndex === dealIndex &&
               (r.status === 'active' || r.status === 'used'),
           );
