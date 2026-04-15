@@ -82,8 +82,8 @@ function ReviewCard({ review }: { review: Review }) {
         <StarDisplay rating={review.rating} />
         <Text style={styles.reviewDate}>{formatDate(review.createdAt)}</Text>
       </View>
-      {review.title ? <Text style={styles.reviewTitle}>{review.title}</Text> : null}
-      {review.comment ? <Text style={styles.reviewComment}>{review.comment}</Text> : null}
+      {review?.title ? <Text style={styles.reviewTitle}>{review.title}</Text> : null}
+      {review?.comment ? <Text style={styles.reviewComment}>{review.comment}</Text> : null}
     </View>
   );
 }
