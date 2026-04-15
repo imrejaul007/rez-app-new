@@ -163,7 +163,10 @@ const DealDetailPage: React.FC = () => {
           }
         }
       } catch (err: any) {
-        // silently handle
+        // CA-CMC-031 FIX: Log error instead of silently ignoring
+        // Check redemption status failures should be visible for debugging
+        console.error('Failed to check redemption status:', err?.message || err);
+        // Don't show error banner — this is non-critical background check
       }
     };
 

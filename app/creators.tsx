@@ -197,18 +197,19 @@ function CreatorsPage() {
 
       const response = await creatorsApi.getApprovedCreators(params);
 
-      if (response.success && response.data) {
+      // CA-DSC-044 FIX: Validate API response shape before using
+      if (response.success && response.data && Array.isArray(response.data.creators)) {
         if (append) {
           setCreators(prev => [...prev, ...response.data!.creators]);
         } else {
           setCreators(response.data.creators);
         }
-        setPage(response.data.page);
-        setTotalPages(response.data.totalPages);
-        setTotal(response.data.total);
+        setPage(response.data.page || 1);
+        setTotalPages(response.data.totalPages || 1);
+        setTotal(response.data.total || 0);
       } else {
         if (!append) setCreators([]);
-        setError(response.error || 'Failed to load creators');
+        setError(response.error || 'Invalid response from server');
       }
     } catch (err: any) {
       if (!append) setCreators([]);

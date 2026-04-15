@@ -741,9 +741,80 @@ class CacheService {
   async setMany(entries: Array<{ key: string; data: any; options?: CacheOptions }>): Promise<void> {
     await this.ensureInitialized();
 
+    // CA-INF-027 FIX: Batch all writes and save index once instead of O(n) AsyncStorage writes
+    // Collect all entries first, then save all to AsyncStorage, update index, save once
+    const entriesToSave: Array<{ key: string; entry: CacheEntry }> = [];
 
-    for (const entry of entries) {
-      await this.set(entry.key, entry.data, entry.options);
+    for (const { key, data, options = {} } of entries) {
+      try {
+        const {
+          ttl = DEFAULT_TTL,
+          priority = 'medium',
+          compress,
+          version = CURRENT_CACHE_VERSION
+        } = options;
+
+        const estimatedSize = this.estimateSize(data);
+        const shouldCompress = compress !== undefined ? compress : estimatedSize > COMPRESSION_THRESHOLD;
+
+        let dataToStore: any;
+        let actualSize: number;
+
+        if (shouldCompress) {
+          dataToStore = await this.compress(data);
+          actualSize = new Blob([dataToStore]).size;
+        } else {
+          dataToStore = data;
+          actualSize = estimatedSize;
+        }
+
+        const now = Date.now();
+
+        const cacheEntry: CacheEntry = {
+          key,
+          data: dataToStore,
+          timestamp: now,
+          ttl,
+          size: actualSize,
+          priority,
+          compressed: shouldCompress,
+          version,
+          accessCount: 0,
+          lastAccessed: now
+        };
+
+        entriesToSave.push({ key, entry: cacheEntry });
+
+        // Update in-memory index
+        const indexEntry: CacheIndexEntry = {
+          key,
+          timestamp: now,
+          ttl,
+          size: actualSize,
+          priority,
+          compressed: shouldCompress,
+          version,
+          accessCount: 0,
+          lastAccessed: now
+        };
+        this.cacheIndex.set(key, indexEntry);
+
+      } catch (_error) {
+        // silently handle
+      }
+    }
+
+    // Batch save all entries to storage
+    for (const { key, entry } of entriesToSave) {
+      const cacheKey = this.getCacheKey(key);
+      await asyncStorageService.save(cacheKey, entry);
+    }
+
+    // Save index once after all writes
+    if (entriesToSave.length > 0) {
+      await this.saveCacheIndex();
+      // Check if we need to evict (but don't await multiple evictions)
+      await this.evictIfNeeded();
     }
   }
 
