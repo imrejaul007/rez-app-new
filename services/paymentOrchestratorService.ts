@@ -48,6 +48,7 @@ class PaymentOrchestratorService {
 
   /**
    * Get all available payment methods
+   * CA-PAY-043 FIX: Validate wallet balance before marking wallet as available
    */
   async getAvailablePaymentMethods(
     amount: number,
@@ -56,18 +57,34 @@ class PaymentOrchestratorService {
 
     const methods: PaymentMethod[] = [];
 
-    // REZ Wallet - Always available
+    // CA-PAY-043 FIX: REZ Wallet - Check balance before marking as available
+    // Fetch current balance to prevent users from paying with wallet they don't have balance for
+    let walletBalance = 0;
+    try {
+      // Try to get wallet balance from API
+      const walletRes = await apiClient.get<any>('/wallet/balance');
+      if (walletRes.success && walletRes.data) {
+        walletBalance = walletRes.data.balance?.total || 0;
+      }
+    } catch (error: any) {
+      // On error, assume wallet is not available (fail-safe)
+      walletBalance = 0;
+    }
+
+    const hasWalletBalance = walletBalance >= amount;
     methods.push({
       id: 'wallet',
       name: 'ReZ Wallet',
       type: 'wallet',
       gateway: 'internal',
       icon: 'wallet',
-      isAvailable: true,
+      isAvailable: hasWalletBalance,
       processingFee: 0,
       processingTime: 'Instant',
-      description: 'Pay using your ReZ wallet balance',
-      isDefault: true,
+      description: hasWalletBalance
+        ? 'Pay using your ReZ wallet balance'
+        : `Insufficient wallet balance (₹${walletBalance} < ₹${amount} needed)`,
+      isDefault: hasWalletBalance,
     });
 
     // REZ Coins - Always available

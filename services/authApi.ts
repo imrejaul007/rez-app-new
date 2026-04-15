@@ -491,14 +491,14 @@ class AuthService {
       // line 352: app.use('/api/user/auth', authRoutes)), and the profile endpoint is declared as
       // router.put('/profile', ...) inside authRoutes.ts. Full resolved path is therefore
       // /api/user/auth/profile. The old path /user/profile was incorrect and returned 404 in production.
-      logApiRequest('PUT', '/user/auth/profile', { fields: Object.keys(data) });
+      logApiRequest('PATCH', '/user/auth/profile', { fields: Object.keys(data) });
 
       const response = await withRetry(
-        () => apiClient.put<User>('/user/auth/profile', data as any),
+        () => apiClient.patch<User>('/user/auth/profile', data as any),
         { maxRetries: 2 }
       );
 
-      logApiResponse('PUT', '/user/auth/profile', response, Date.now() - startTime);
+      logApiResponse('PATCH', '/user/auth/profile', response, Date.now() - startTime);
 
       // Validate response
       if (response.success && response.data) {

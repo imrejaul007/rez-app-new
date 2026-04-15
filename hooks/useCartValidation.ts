@@ -65,8 +65,24 @@ export function useCartValidation(
     }
 
     if (cartState.items.length === 0) {
-
-      return null;
+      // CA-CMC-027 FIX: Never return null for empty cart. Return explicit valid result.
+      // Empty cart is valid, but downstream components may crash on null validationResult.
+      const emptyCartResult: ValidationResult = {
+        valid: true,
+        canCheckout: false, // Cannot checkout with empty cart
+        issues: [],
+        validItems: [],
+        invalidItems: [],
+        warnings: ['Your cart is empty'],
+        timestamp: new Date().toISOString(),
+      };
+      setValidationState({
+        isValidating: false,
+        validationResult: emptyCartResult,
+        error: null,
+        lastValidated: new Date().toISOString(),
+      });
+      return emptyCartResult;
     }
 
     try {

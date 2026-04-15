@@ -161,6 +161,8 @@ function AOVRewardNudge({
     (async () => {
       try {
         const { default: api } = await import('@/services/apiClient');
+        // CA-CMC-010 FIX: Use exact totalPayable value (in paise) without double-rounding.
+        // Converting to paise once avoids off-by-one errors at tier boundaries.
         const amountPaise = Math.round(totalPayable * 100);
         const res = (await api.get(
           `/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`,
@@ -176,7 +178,7 @@ function AOVRewardNudge({
     return () => {
       cancelled = true;
     };
-  }, [storeId, Math.round(totalPayable)]);
+  }, [storeId, totalPayable]);
 
   if (!nudge?.nextTier) return null;
   const moreRupees = Math.ceil(nudge.amountToNextTierPaise / 100);
@@ -274,8 +276,18 @@ function CheckoutPage() {
     if (validationState.validationResult && errorCount > 0) {
       // Focus management: dismiss keyboard and scroll to top on validation error
       Keyboard.dismiss();
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+
+      // CA-CMC-038 FIX: Defer scroll until after render cycle to ensure ref is available.
+      // ScrollView may not be fully mounted during initialization, so schedule scroll after layout.
+      const scrollTimer = setTimeout(() => {
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 0, animated: true });
+        }
+      }, 0);
+
       dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: true });
+
+      return () => clearTimeout(scrollTimer);
     }
   }, [errorCount, validationState.validationResult, dispatch]);
 

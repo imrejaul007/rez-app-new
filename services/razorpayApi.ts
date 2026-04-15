@@ -125,6 +125,10 @@ export const razorpayApi = {
     orderId?: string;
     notes?: Record<string, any>;
   }): Promise<ApiResponse<RazorpayOrderResponse>> {
+    // CA-PAY-005 FIX: Validate amount before API call
+    if (!Number.isFinite(data.amount) || data.amount <= 0) {
+      throw new Error(`Invalid payment amount: ${data.amount}. Amount must be a positive number.`);
+    }
     return apiClient.post<RazorpayOrderResponse>('/razorpay/create-order', data);
   },
 

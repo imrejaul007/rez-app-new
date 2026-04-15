@@ -102,10 +102,12 @@ async function nativeGet(key: string): Promise<string | null> {
 }
 
 /**
- * Write a value on native: tries SecureStore first, falls back to AsyncStorage.
- * - SecureStore success: remove the AsyncStorage copy (no duplicate data).
- * - SecureStore failure: write to AsyncStorage so the value is never lost.
- *   This handles devices without hardware-backed keystores and rooted devices.
+ * Write a value on native: MUST use SecureStore for auth tokens.
+ * - For auth tokens (ACCESS_TOKEN, REFRESH_TOKEN), fail explicitly if SecureStore unavailable.
+ * - For user data, fall back to AsyncStorage as a secondary measure.
+ * - Never store auth tokens in plain AsyncStorage — it offers zero encryption
+ *   and is readable by any app with READ_EXTERNAL_STORAGE permission.
+ * CRITICAL FIX (CA-SEC-003): Reject AsyncStorage fallback for tokens on rooted/no-keystore devices.
  */
 async function nativeSet(key: string, value: string): Promise<void> {
   const success = await secureSet(key, value);
@@ -113,7 +115,16 @@ async function nativeSet(key: string, value: string): Promise<void> {
     // SecureStore write confirmed — clean up any old AsyncStorage copy
     await AsyncStorage.removeItem(key).catch(() => {});
   } else {
-    // SecureStore unavailable — fall back to AsyncStorage so the value is persisted
+    // SecureStore unavailable — for auth tokens, FAIL EXPLICITLY; for user data, fall back
+    if (key === STORAGE_KEYS.ACCESS_TOKEN || key === STORAGE_KEYS.REFRESH_TOKEN) {
+      // SECURITY: Never store auth tokens unencrypted on native — fail instead
+      throw new Error(
+        `CRITICAL: Cannot store ${key} without SecureStore. ` +
+        'Device may be rooted or lack hardware-backed keystore. ' +
+        'Upgrade device or disable sensitive features.'
+      );
+    }
+    // For user data (not auth tokens), fall back to AsyncStorage
     try {
       await AsyncStorage.setItem(key, value);
     } catch {

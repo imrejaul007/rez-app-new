@@ -52,12 +52,10 @@ class CartValidationService {
    */
   async validateCart(): Promise<ApiResponse<ValidateCartResponse>> {
     try {
-
       const response = await apiClient.get<ValidateCartResponse>('/cart/validate');
 
-      if (response.success) {
-
-      } else {
+      if (response.success && response.data) {
+        return this.transformValidationResponse(response.data) as any;
       }
 
       return response as any;
