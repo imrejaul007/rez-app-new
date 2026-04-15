@@ -395,7 +395,7 @@ function ChallengesPage() {
           >
             <View style={styles.challengeHeader}>
               <View style={styles.challengeIconContainer}>
-                <Text style={styles.challengeIcon}>{challenge.challenge.icon}</Text>
+                <Text style={styles.challengeIcon}>{challenge.challenge.icon || '🎯'}</Text>
               </View>
 
               <View style={styles.challengeInfo}>

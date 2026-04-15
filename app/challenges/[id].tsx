@@ -73,6 +73,7 @@ function ChallengeDetailPage() {
   const [data, setData] = useState<ChallengeDetailData | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
+  const dismissTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [claimData, setClaimData] = useState<{
     coins: number;
     beforeBalance: number;
@@ -107,6 +108,20 @@ function ChallengeDetailPage() {
       }
     }, [isAuthenticated, id]),
   );
+
+  // Auto-dismiss claim modal after 2 seconds
+  useEffect(() => {
+    if (showClaimModal) {
+      dismissTimeoutRef.current = setTimeout(() => {
+        setShowClaimModal(false);
+      }, 2000);
+      return () => {
+        if (dismissTimeoutRef.current) {
+          clearTimeout(dismissTimeoutRef.current);
+        }
+      };
+    }
+  }, [showClaimModal]);
 
   // Start pulse animation when challenge is completed and ready to claim
   useEffect(() => {
