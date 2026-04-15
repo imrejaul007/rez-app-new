@@ -17,6 +17,10 @@ export const useAnalytics = () => {
   const { state } = useLocation();
   const { currentLocation } = state;
 
+  // CA-INF-001 FIX: Include currentLocation in the dependency array
+  // so trackEvent callback is recreated when location updates.
+  // Without this, trackEvent captures stale location from the initial render
+  // and sends outdated location data even after user moves.
   const trackEvent = useCallback(async (
     storeId: string,
     eventType: 'view' | 'search' | 'favorite' | 'unfavorite' | 'compare' | 'review' | 'click' | 'share',

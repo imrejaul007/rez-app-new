@@ -133,12 +133,20 @@ export default function StoreReviewsScreen() {
   const [canReview, setCanReview] = useState(false);
   const [ratingTrigger, setRatingTrigger] = useState(0);
   const pageRef = useRef(1);
+  // CA-DSC-019 FIX: Use AbortController to cancel previous request before starting new one
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadPage = useCallback(
     async (pageNum: number, append = false) => {
       try {
         if (pageNum === 1) setLoading(true);
         else setLoadingMore(true);
+
+        // Cancel previous request if still in flight
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
 
         const res = await storeSearchService.getStoreReviews({
           storeId,
@@ -154,8 +162,11 @@ export default function StoreReviewsScreen() {
           pageRef.current = pageNum;
           setPage(pageNum);
         }
-      } catch {
-        // silent
+      } catch (err: any) {
+        // Ignore abort errors, log others
+        if (err?.name !== 'AbortError') {
+          console.warn('[StoreReviews] Failed to load reviews:', err?.message);
+        }
       } finally {
         if (pageNum === 1) setLoading(false);
         else setLoadingMore(false);
