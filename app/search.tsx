@@ -76,7 +76,9 @@ function SearchPage() {
     searchHistoryService
       .getRecentSearches()
       .then(setRecentSearches)
-      .catch(() => {});
+      .catch((error) => {
+        console.warn('Failed to load recent searches:', error?.message || error);
+      });
   }, []);
 
   // Prepare user location for search (memoized to avoid recreation)
