@@ -116,6 +116,15 @@ class GamificationPerformanceMonitor {
 
     this.activeTimers.delete(name);
 
+    // Cleanup stale timers on every endTimer to prevent memory accumulation
+    const now = getHighResTime();
+    const fiveMinutes = 5 * 60 * 1000;
+    for (const [key, startTime] of this.activeTimers) {
+      if (now - startTime > fiveMinutes) {
+        this.activeTimers.delete(key);
+      }
+    }
+
     devLog.log(`✅ [PERF] Completed: ${name} in ${duration.toFixed(2)}ms`);
     return duration;
   }
