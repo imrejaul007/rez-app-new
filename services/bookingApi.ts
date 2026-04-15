@@ -95,10 +95,15 @@ class BookingService {
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error creating booking:', error);
+      // CA-TRV-073: Include error details for debugging
+      const errorDetails = error instanceof Error
+        ? { message: error.message, stack: error.stack }
+        : { error: String(error) };
+      devLog.error('❌ [BOOKING API] Error creating booking:', errorDetails);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create booking'
+        error: error instanceof Error ? error.message : 'Failed to create booking',
+        details: errorDetails
       };
     }
   }
@@ -277,6 +282,15 @@ class BookingService {
 
       if (!response.success) {
         devLog.error('❌ [BOOKING API] Failed to fetch available slots:', response.error);
+      } else if (response.data) {
+        // CA-TRV-074: Validate response is an array
+        if (!Array.isArray(response.data)) {
+          devLog.error('❌ [BOOKING API] Invalid available slots response structure - not an array');
+          return {
+            success: false,
+            error: 'Invalid response structure from server'
+          };
+        }
       }
 
       return response as any;
@@ -410,6 +424,17 @@ class BookingService {
 
       if (!response.success) {
         devLog.error('❌ [BOOKING API] Failed to fetch booking statistics:', response.error);
+      } else if (response.data) {
+        // CA-TRV-075: Validate required fields in stats response
+        const requiredFields = ['totalBookings', 'upcomingCount', 'completedCount', 'cancelledCount'];
+        const missingFields = requiredFields.filter(field => !(field in response.data));
+        if (missingFields.length > 0) {
+          devLog.error('❌ [BOOKING API] Missing required fields in stats:', missingFields);
+          return {
+            success: false,
+            error: `Invalid stats response - missing fields: ${missingFields.join(', ')}`
+          };
+        }
       }
 
       return response as any;
