@@ -240,6 +240,11 @@ export async function checkBurnCoins(params: {
   rezCoinRequestedPaise?: number;
   hotelBrandCoinRequestedPaise?: number;
 }): Promise<OtaCheckBurnResult> {
+  // CA-TRV-061: Validate bookingValuePaise is positive
+  if (params.bookingValuePaise <= 0) {
+    throw new Error('Booking value must be greater than 0');
+  }
+
   const res = await otaFetch<any>('POST', '/v1/wallet/check-burn', {
     hotel_id: params.hotelId,
     room_type_id: params.roomTypeId,
@@ -295,6 +300,15 @@ export async function holdBooking(params: {
     hotel_brand_coin_burn_paise: params.hotelBrandCoinBurnPaise ?? 0,
   });
   const d = res.data ?? res;
+
+  // CA-TRV-059: Validate holdExpiresAt is a valid ISO string
+  if (d.expires_at && typeof d.expires_at === 'string') {
+    const expiresTime = new Date(d.expires_at).getTime();
+    if (isNaN(expiresTime)) {
+      throw new Error(`Invalid holdExpiresAt timestamp: ${d.expires_at}`);
+    }
+  }
+
   return {
     holdId: d.hold_id,
     bookingRef: d.booking_ref,
@@ -302,9 +316,10 @@ export async function holdBooking(params: {
     totalPaise: d.total_value_paise,
     pgAmountPaise: d.pg_amount_paise,
     razorpayOrderId: d.razorpay_order_id,
-    otaCoinAppliedPaise: d.ota_coin_applied_paise ?? 0,
-    rezCoinAppliedPaise: d.rez_coin_applied_paise ?? 0,
-    hotelBrandCoinAppliedPaise: d.hotel_brand_coin_applied_paise ?? 0,
+    // CA-TRV-060: Validate coin amounts are non-negative
+    otaCoinAppliedPaise: Math.max(0, d.ota_coin_applied_paise ?? 0),
+    rezCoinAppliedPaise: Math.max(0, d.rez_coin_applied_paise ?? 0),
+    hotelBrandCoinAppliedPaise: Math.max(0, d.hotel_brand_coin_applied_paise ?? 0),
   };
 }
 
@@ -361,7 +376,10 @@ export async function getHotelBookingById(bookingId: string): Promise<OtaBooking
 }
 
 export async function getMyBookings(page = 1, limit = 10): Promise<{ bookings: OtaBooking[]; total: number }> {
-  const res = await otaFetch<any>('GET', `/v1/bookings?page=${page}&limit=${limit}`);
+  // CA-TRV-069: Validate page numbers are positive
+  const validPage = Math.max(1, Math.floor(page || 1));
+  const validLimit = Math.max(1, Math.floor(limit || 10));
+  const res = await otaFetch<any>('GET', `/v1/bookings?page=${validPage}&limit=${validLimit}`);
   return res.data ?? res;
 }
 
@@ -395,16 +413,24 @@ export async function getHotelCoinTransactions(params?: {
   if (params?.perPage) q.set('per_page', String(params.perPage ?? 20));
   const res = await otaFetch<any>('GET', `/v1/wallet/transactions?${q.toString()}`);
   const data = res.data ?? res;
-  const transactions: OtaCoinTransaction[] = (data.transactions ?? data).map((t: any) => ({
-    id: t.id,
-    coinType: t.coin_type ?? t.coinType,
-    direction: t.direction,
-    amountPaise: t.amount_paise ?? t.amountPaise,
-    description: t.description ?? '',
-    hotelId: t.hotel_id ?? t.hotelId,
-    hotelName: t.hotel_name ?? t.hotelName,
-    createdAt: t.created_at ?? t.createdAt,
-  }));
+  // CA-TRV-068: Validate coin transaction types
+  const validCoinTypes = ['ota', 'rez', 'hotel_brand'];
+  const transactions: OtaCoinTransaction[] = (data.transactions ?? data).map((t: any) => {
+    const coinType = t.coin_type ?? t.coinType;
+    if (coinType && !validCoinTypes.includes(coinType)) {
+      console.warn(`[CA-TRV-068] Invalid coin type: ${coinType}, using default 'ota'`);
+    }
+    return {
+      id: t.id,
+      coinType: (validCoinTypes.includes(coinType) ? coinType : 'ota') as 'ota' | 'rez' | 'hotel_brand',
+      direction: t.direction,
+      amountPaise: t.amount_paise ?? t.amountPaise,
+      description: t.description ?? '',
+      hotelId: t.hotel_id ?? t.hotelId,
+      hotelName: t.hotel_name ?? t.hotelName,
+      createdAt: t.created_at ?? t.createdAt,
+    };
+  });
   return { transactions, total: data.total ?? transactions.length, hasMore: data.has_more ?? false };
 }
 
@@ -428,14 +454,23 @@ export async function submitHotelReview(params: {
   title?: string;
   body: string;
 }): Promise<void> {
+  // CA-TRV-070: Validate rating is in range 1-5
+  const validateRating = (rating: number) => {
+    const r = Number(rating);
+    if (isNaN(r) || r < 1 || r > 5) {
+      throw new Error('Rating must be between 1 and 5');
+    }
+    return r;
+  };
+
   await otaFetch<any>('POST', '/v1/reviews', {
     hotel_id: params.hotelId,
     booking_ref: params.bookingRef,
-    overall_rating: params.overallRating,
-    cleanliness_rating: params.cleanlinessRating ?? params.overallRating,
-    service_rating: params.serviceRating ?? params.overallRating,
-    location_rating: params.locationRating ?? params.overallRating,
-    value_rating: params.valueRating ?? params.overallRating,
+    overall_rating: validateRating(params.overallRating),
+    cleanliness_rating: validateRating(params.cleanlinessRating ?? params.overallRating),
+    service_rating: validateRating(params.serviceRating ?? params.overallRating),
+    location_rating: validateRating(params.locationRating ?? params.overallRating),
+    value_rating: validateRating(params.valueRating ?? params.overallRating),
     title: params.title?.trim() || undefined,
     body: params.body.trim(),
   });
