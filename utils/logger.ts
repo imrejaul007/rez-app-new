@@ -5,11 +5,50 @@
  * in production code. Provides different log levels and integrates
  * with monitoring services like Sentry.
  *
- * Phase 0: Integrated with @rez/shared/telemetry RedactingLogger
+ * Note: @rez/shared/telemetry RedactingLogger is not available in the consumer
+ * app (wrong package name + non-existent export). Uses local inline implementation.
  */
 
 import { MonitoringHelpers } from '@/config/monitoring.config';
-import { RedactingLogger, LogContext } from '@rez/shared/telemetry';
+
+const REDACTION_PATTERNS: RegExp[] = [
+  /Bearer\s+[A-Za-z0-9._-]+/gi,
+  /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g,
+  /(token|secret|password)["']?\s*[:=]\s*["'][^"']+["']/gi,
+];
+
+const redact = (input: unknown): string => {
+  const raw = typeof input === 'string' ? input : JSON.stringify(input);
+  return REDACTION_PATTERNS.reduce((acc, pattern) => acc.replace(pattern, '[REDACTED]'), raw);
+};
+
+interface RedactLoggerOptions {
+  serviceName: string;
+  environment: string;
+  redactionPatterns: RegExp[];
+}
+
+class RedactingLogger {
+  constructor(private _opts: RedactLoggerOptions) {}
+
+  private log(level: string, message: string, data?: unknown): void {
+    const redactedData = data ? redact(data) : undefined;
+    const timestamp = new Date().toISOString();
+    const prefix = `[${timestamp}] [${this._opts.serviceName}:${level}]`;
+    if (level === 'ERROR') {
+      console.error(prefix, message, redactedData);
+    } else if (level === 'WARN') {
+      console.warn(prefix, message, redactedData);
+    } else {
+      console.log(prefix, message, redactedData);
+    }
+  }
+
+  debug(message: string, data?: unknown): void { this.log('DEBUG', message, data); }
+  info(message: string, data?: unknown): void { this.log('INFO', message, data); }
+  warn(message: string, data?: unknown): void { this.log('WARN', message, data); }
+  error(message: string, data?: unknown): void { this.log('ERROR', message, data); }
+}
 
 /**
  * Log levels
@@ -41,17 +80,6 @@ interface LogEntry {
   data?: any;
   context?: string;
 }
-
-const REDACTION_PATTERNS: RegExp[] = [
-  /Bearer\s+[A-Za-z0-9._-]+/gi,
-  /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g,
-  /(token|secret|password)["']?\s*[:=]\s*["'][^"']+["']/gi,
-];
-
-const redact = (input: unknown): string => {
-  const raw = typeof input === 'string' ? input : JSON.stringify(input);
-  return REDACTION_PATTERNS.reduce((acc, pattern) => acc.replace(pattern, '[REDACTED]'), raw);
-};
 
 /**
  * Logger class with shared RedactingLogger integration
@@ -140,7 +168,7 @@ class Logger {
     }
 
     // Use shared redacting logger
-    this.redactingLogger.debug(message, data as LogContext);
+    this.redactingLogger.debug(message, data);
   }
 
   /**
@@ -157,7 +185,7 @@ class Logger {
     }
 
     // Use shared redacting logger
-    this.redactingLogger.info(message, data as LogContext);
+    this.redactingLogger.info(message, data);
   }
 
   /**
@@ -179,7 +207,7 @@ class Logger {
     }
 
     // Use shared redacting logger
-    this.redactingLogger.warn(message, data as LogContext);
+    this.redactingLogger.warn(message, data);
   }
 
   /**
