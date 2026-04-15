@@ -198,11 +198,13 @@ const CategoriesPage: React.FC = () => {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
-  }, []);
+  }, [isMounted]);
 
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    // Only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);

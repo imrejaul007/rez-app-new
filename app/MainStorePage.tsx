@@ -152,6 +152,24 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     };
   }, [d.currentStoreId]);
 
+  // Cleanup modals on component unmount to prevent state leaks
+  useEffect(() => {
+    return () => {
+      if (d.showAboutModal) {
+        d.handleCloseAboutModal?.();
+      }
+      if (d.showDealsModal) {
+        d.handleCloseDealsModal?.();
+      }
+      if (d.showReviewModal) {
+        d.handleCloseReviewModal?.();
+      }
+      if (d.showWriteReviewModal) {
+        d.handleCloseWriteReviewModal?.();
+      }
+    };
+  }, []);
+
   const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, d.screenData), [HORIZONTAL_PADDING, d.screenData]);
 
   // Helper function to format time until coin drop

@@ -79,8 +79,14 @@ function PaymentScreen() {
     selectedOfferIds,
   });
 
+  // CA-PAY-018 FIX: Use cryptographically secure random values for idempotency key
   // Idempotency key — unique per mount, prevents duplicate payments on double-tap or network retry
-  const idempotencyKeyRef = useRef(`PAY-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const idempotencyKeyRef = useRef(() => {
+    const bytes = new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    const randomHex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    return `PAY-${Date.now()}-${randomHex}`;
+  })();
 
   // Local state for modals
   const [showStripeModal, setShowStripeModal] = useState(false);

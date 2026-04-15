@@ -121,14 +121,20 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   }, [isAuthenticated, refreshWallet]);
 
   // Sync balance hidden state from AsyncStorage (same key as BalanceDisplay)
+  // CA-PAY-012 FIX: Proper error handling with fallback state
   useEffect(() => {
     AsyncStorage.getItem('@wallet_screen_balance_hidden')
       .then((val) => {
-        if (val === 'true') setIsBalanceHidden(true);
+        if (isMounted() && val === 'true') {
+          setIsBalanceHidden(true);
+        }
       })
       .catch((err) => {
-        // Log error for monitoring but don't crash
-        console.warn('Failed to load balance hidden state:', err);
+        // Log error for monitoring but don't crash; default to shown balance
+        console.warn('Failed to load balance hidden state, defaulting to shown:', err);
+        if (isMounted()) {
+          setIsBalanceHidden(false);
+        }
       });
   }, []);
 

@@ -54,7 +54,13 @@ function DeleteAccountPage() {
     setIsLoading(true);
 
     try {
-      const response = await apiClient.delete('/auth/account');
+      // Fixed CA-AUT-040: Add Idempotency-Key header and use correct endpoint
+      const idempotencyKey = `delete-account-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const response = await apiClient.delete('/user/auth/account', {
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      });
 
       const data = response.data as any;
       if (data?.success) {

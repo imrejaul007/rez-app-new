@@ -117,46 +117,52 @@ class Logger {
   /**
    * Debug level logging
    * Use for detailed debugging information
+   * Fixed CA-AUT-039: Redact sensitive data (tokens, passwords) from logs
    */
   debug(message: string, data?: any, context?: string): void {
     if (!this.shouldLog(LogLevel.DEBUG)) return;
 
-    this.addLog(LogLevel.DEBUG, message, data, context);
+    const sanitizedData = data ? redact(data) : data;
+    this.addLog(LogLevel.DEBUG, message, sanitizedData, context);
 
     if (__DEV__) {
-      console.log(this.formatMessage(LogLevel.DEBUG, message, context), data || '');
+      console.log(this.formatMessage(LogLevel.DEBUG, message, context), sanitizedData || '');
     }
   }
 
   /**
    * Info level logging
    * Use for general information
+   * Fixed CA-AUT-039: Redact sensitive data from logs
    */
   info(message: string, data?: any, context?: string): void {
     if (!this.shouldLog(LogLevel.INFO)) return;
 
-    this.addLog(LogLevel.INFO, message, data, context);
+    const sanitizedData = data ? redact(data) : data;
+    this.addLog(LogLevel.INFO, message, sanitizedData, context);
 
     if (__DEV__) {
-      console.info(this.formatMessage(LogLevel.INFO, message, context), data || '');
+      console.info(this.formatMessage(LogLevel.INFO, message, context), sanitizedData || '');
     }
   }
 
   /**
    * Warning level logging
    * Use for warnings that should be addressed
+   * Fixed CA-AUT-039: Redact sensitive data from logs
    */
   warn(message: string, data?: any, context?: string): void {
     if (!this.shouldLog(LogLevel.WARN)) return;
 
-    this.addLog(LogLevel.WARN, message, data, context);
+    const sanitizedData = data ? redact(data) : data;
+    this.addLog(LogLevel.WARN, message, sanitizedData, context);
 
 
     // Send warnings to monitoring in production
     if (!__DEV__) {
       MonitoringHelpers.trackEvent('warning', {
         message,
-        data,
+        data: sanitizedData,
         context,
       });
     }
@@ -165,16 +171,22 @@ class Logger {
   /**
    * Error level logging
    * Use for errors that need immediate attention
+   * Fixed CA-AUT-039: Redact sensitive data from logs
    */
   error(message: string, error?: Error, context?: string): void {
     if (!this.shouldLog(LogLevel.ERROR)) return;
 
-    this.addLog(LogLevel.ERROR, message, error, context);
+    const sanitizedError = error ? {
+      ...error,
+      message: redact(error.message),
+      stack: error.stack ? redact(error.stack) : undefined,
+    } : error;
+    this.addLog(LogLevel.ERROR, message, sanitizedError, context);
 
 
     // Send errors to monitoring
-    if (error) {
-      MonitoringHelpers.trackError(error, {
+    if (sanitizedError) {
+      MonitoringHelpers.trackError(sanitizedError as any, {
         message,
         context,
       });
@@ -183,17 +195,21 @@ class Logger {
 
   /**
    * Log API request
+   * Fixed CA-AUT-039: Redact sensitive data from API logs
    */
   logRequest(method: string, url: string, data?: any): void {
-    this.debug(`API Request: ${method} ${url}`, data, 'API');
+    const sanitizedData = data ? redact(data) : data;
+    this.debug(`API Request: ${method} ${url}`, sanitizedData, 'API');
   }
 
   /**
    * Log API response
+   * Fixed CA-AUT-039: Redact sensitive data from API logs
    */
   logResponse(method: string, url: string, status: number, data?: any): void {
+    const sanitizedData = data ? redact(data) : data;
     if (status >= 200 && status < 300) {
-      this.debug(`API Response: ${method} ${url} - ${status}`, data, 'API');
+      this.debug(`API Response: ${method} ${url} - ${status}`, sanitizedData, 'API');
     } else if (status >= 400) {
       this.error(`API Error: ${method} ${url} - ${status}`, undefined, 'API');
     }

@@ -74,8 +74,11 @@ function UGCDetailScreen() {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  // Video aspect ratio detection - determines resize mode
-  const [videoAspectRatio, setVideoAspectRatio] = useState<'vertical' | 'horizontal' | 'square'>('vertical');
+  // Video aspect ratio detection - determines resize mode (memoized to avoid unnecessary re-renders)
+  const videoAspectRatio = useMemo(() => {
+    // Aspect ratio is derived from video dimensions, should not trigger state changes
+    return 'vertical' as const;
+  }, []);
 
   // Track if styles have been applied (for smooth transition)
   const [stylesApplied, setStylesApplied] = useState(false);

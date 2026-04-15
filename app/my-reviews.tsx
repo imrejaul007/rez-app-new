@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // My Reviews Page
 // Shows all reviews written by the user
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -38,6 +38,7 @@ const FILTER_TABS: { key: FilterTab; label: string }[] = [
 function MyReviewsPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const listRef = useRef<any>(null);
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -54,6 +55,13 @@ function MyReviewsPage() {
   useEffect(() => {
     loadReviews();
   }, []);
+
+  // Scroll to top when filter changes
+  useEffect(() => {
+    if (listRef.current && !loading) {
+      listRef.current?.scrollToIndex({ index: 0, animated: true });
+    }
+  }, [activeFilter, loading]);
 
   const loadReviews = async (isRefresh = false) => {
     try {
@@ -334,6 +342,7 @@ function MyReviewsPage() {
           </View>
         ) : (
           <FlashList
+            ref={listRef}
             data={filteredReviews}
             keyExtractor={(item, index) => item._id || item.id || `review-${index}`}
             renderItem={renderReviewItem}

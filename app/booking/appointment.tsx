@@ -427,9 +427,14 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
   const handlePaymentGate = async (amount: number) => {
     try {
       setSubmitting(true);
+      // CA-PAY-027 FIX: Validate amount is whole paise (no fractions)
       // Create Razorpay order for upfront payment
+      const paiseAmount = Math.round(amount * 100);
+      if (!Number.isInteger(paiseAmount)) {
+        throw new Error('Invalid amount: must be whole paise value');
+      }
       const orderResponse = await razorpayApi.createOrder({
-        amount: Math.round(amount * 100), // Convert to paise
+        amount: paiseAmount, // Convert to paise
         notes: {
           serviceId: selectedService?.id,
           serviceName: selectedService?.name,
@@ -443,7 +448,7 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
 
       // Initiate checkout
       const paymentResult = await (razorpayApi as any).checkout({
-        amount: Math.round(amount * 100),
+        amount: paiseAmount, // Use validated paise amount
         orderId: (orderResponse as any).data.data.razorpayOrderId,
         notes: {
           serviceId: selectedService?.id,

@@ -26,6 +26,7 @@ import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSy
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { showToast } from '@/utils/toast';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -121,12 +122,19 @@ function PostDetailScreen() {
     if (!post) return;
 
     try {
-      await Share.share({
+      const result = await Share.share({
         message: `Check out this post on ${BRAND.APP_NAME}! ${post.caption || ''}`,
         title: 'Share Post',
       });
+
+      if (result.action === Share.dismissedAction) {
+        // User dismissed the share dialog
+      } else {
+        showToast('Post shared successfully!', 'success');
+      }
     } catch (error) {
-      // silently handle
+      console.warn('Share error:', error);
+      showToast('Failed to share post', 'error');
     }
   }, [post]);
 

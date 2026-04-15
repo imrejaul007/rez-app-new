@@ -122,14 +122,25 @@ function PaymentSuccessPage() {
 
       try {
         const orderPromises = orderIds.map((id) => ordersApi.getOrderById(id));
-        const responses = await Promise.all(orderPromises);
+        // CA-PAY-033 FIX: Use Promise.allSettled instead of Promise.all to handle partial failures
+        // CA-PAY-065 FIX: Add timeout to prevent hanging forever
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Order fetch timeout')), 10000)
+        );
+        const responses = await Promise.race([
+          Promise.allSettled(orderPromises),
+          timeoutPromise,
+        ]);
 
         const fetchedOrders: OrderDetails[] = [];
         const failedOrders: string[] = [];
 
         for (let i = 0; i < responses.length; i++) {
-          const response = responses[i];
+          const result = responses[i];
           const currentOrderId = orderIds[i];
+
+          // Handle settled promises - check for fulfilled or rejected
+          const response = result.status === 'fulfilled' ? result.value : null;
 
           if (response.success && response.data) {
             const orderData = response.data;

@@ -497,7 +497,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       // Track share analytics and earn sharing reward
       try {
         const shareResult = await eventsApiService.shareEvent(eventDetails.id);
-        eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        try {
+          eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        } catch (analyticsError) {
+          // Silently swallow analytics errors to prevent page crashes
+          console.warn('Analytics tracking failed:', analyticsError);
+        }
         // Show reward feedback if coins were earned, or helpful hint if not
         if (shareResult?.success && shareResult?.reward?.coinsAwarded) {
           showAlert('Coins Earned!', `You earned +${shareResult.reward.coinsAwarded} coins for sharing this event!`);
@@ -506,7 +511,11 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           alertOk('Shared!', shareResult.message);
         }
       } catch (shareError) {
-        eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        try {
+          eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
+        } catch (analyticsError) {
+          console.warn('Analytics tracking failed:', analyticsError);
+        }
       }
     } catch (err) {
       if (err instanceof Error && err.message !== "User canceled") {
@@ -541,7 +550,11 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         setIsFavorited(newState);
 
         // Track analytics
-        eventAnalytics.trackFavoriteToggle(eventDetails.id, newState, 'event_page');
+        try {
+          eventAnalytics.trackFavoriteToggle(eventDetails.id, newState, 'event_page');
+        } catch (analyticsError) {
+          console.warn('Analytics tracking failed:', analyticsError);
+        }
 
         alertOk(
           newState ? "Added to Favorites" : "Removed from Favorites",
@@ -569,7 +582,11 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     }
 
     // Track booking start
-    eventAnalytics.trackBookingStart(eventDetails.id, undefined, 'event_page');
+    try {
+      eventAnalytics.trackBookingStart(eventDetails.id, undefined, 'event_page');
+    } catch (analyticsError) {
+      console.warn('Analytics tracking failed:', analyticsError);
+    }
 
     // Open booking modal (same flow as offline events, just without slot selection)
     setShowBookingModal(true);
