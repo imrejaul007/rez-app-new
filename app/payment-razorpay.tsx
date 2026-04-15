@@ -211,8 +211,28 @@ function PaymentPage() {
     }
 
     // For deals, flash sales, and lock deals, the Razorpay order is pre-created by the backend.
-    // The order ID and key arrive via URL params — skip the create-order API call.
+    // The order ID and key arrive via URL params, but we must fetch actual order details
+    // to verify the amount matches to prevent showing wrong amount to user.
     if ((isDealPayment || isFlashSalePayment) && orderId) {
+      // CA-PAY-050 FIX: Fetch actual order details to verify amount matches params
+      try {
+        const orderDetailsRes = await apiClient.get(`/deals/order/${orderId}`);
+        if (orderDetailsRes.success && orderDetailsRes.data) {
+          const actualAmount = orderDetailsRes.data.amount || amount;
+          const actualCurrency = orderDetailsRes.data.currency || currency;
+          setPaymentStartedAt(Date.now());
+          setOrderCreated(true);
+          return {
+            razorpayOrderId: orderId,
+            razorpayKeyId: preCreatedKeyId,
+            amount: actualAmount,
+            currency: actualCurrency,
+          };
+        }
+      } catch (err: any) {
+        console.warn('[Razorpay] Failed to fetch deal order details, using params:', err.message);
+      }
+      // Fallback: use params if fetch fails
       setPaymentStartedAt(Date.now());
       setOrderCreated(true);
       return {
@@ -223,6 +243,28 @@ function PaymentPage() {
       };
     }
     if ((isLockDealPayment || isSubscriptionPayment) && preCreatedRazorpayOrderId) {
+      // CA-PAY-050 FIX: Fetch actual lock deal/subscription order details
+      try {
+        const endpoint = isLockDealPayment
+          ? `/lock-deals/order/${preCreatedRazorpayOrderId}`
+          : `/subscription/order/${preCreatedRazorpayOrderId}`;
+        const orderDetailsRes = await apiClient.get(endpoint);
+        if (orderDetailsRes.success && orderDetailsRes.data) {
+          const actualAmount = orderDetailsRes.data.amount || amount;
+          const actualCurrency = orderDetailsRes.data.currency || currency;
+          setPaymentStartedAt(Date.now());
+          setOrderCreated(true);
+          return {
+            razorpayOrderId: preCreatedRazorpayOrderId,
+            razorpayKeyId: preCreatedKeyId,
+            amount: actualAmount,
+            currency: actualCurrency,
+          };
+        }
+      } catch (err: any) {
+        console.warn('[Razorpay] Failed to fetch order details, using params:', err.message);
+      }
+      // Fallback: use params if fetch fails
       setPaymentStartedAt(Date.now());
       setOrderCreated(true);
       return {
@@ -282,31 +324,47 @@ function PaymentPage() {
         return false;
       }
 
-      let response;
-      if (isTravelPayment) {
-        response = await apiClient.post('/travel-payment/verify', {
-          bookingId,
-          razorpay_order_id: paymentData.razorpay_order_id,
-          razorpay_payment_id: paymentData.razorpay_payment_id,
-          razorpay_signature: paymentData.razorpay_signature,
-        });
-      } else {
-        response = await apiClient.post('/payment/verify', {
-          orderId,
-          razorpay_order_id: paymentData.razorpay_order_id,
-          razorpay_payment_id: paymentData.razorpay_payment_id,
-          razorpay_signature: paymentData.razorpay_signature,
-        });
-      }
+      // CA-PAY-046 FIX: Implement retry with exponential backoff for transient network errors
+      const MAX_VERIFICATION_ATTEMPTS = 3;
+      for (let attempt = 0; attempt < MAX_VERIFICATION_ATTEMPTS; attempt++) {
+        try {
+          let response;
+          if (isTravelPayment) {
+            response = await apiClient.post('/travel-payment/verify', {
+              bookingId,
+              razorpay_order_id: paymentData.razorpay_order_id,
+              razorpay_payment_id: paymentData.razorpay_payment_id,
+              razorpay_signature: paymentData.razorpay_signature,
+            });
+          } else {
+            response = await apiClient.post('/payment/verify', {
+              orderId,
+              razorpay_order_id: paymentData.razorpay_order_id,
+              razorpay_payment_id: paymentData.razorpay_payment_id,
+              razorpay_signature: paymentData.razorpay_signature,
+            });
+          }
 
-      // CA-PAY-011 FIX: Only return true if backend explicitly confirms payment is valid
-      if (response.success && response.data) {
-        // Additional safety: ensure response contains order/payment confirmation
-        if (!response.data.orderId && !response.data.paymentId) {
-          console.warn('[Razorpay] Verification response missing orderId or paymentId');
+          // CA-PAY-011 FIX: Only return true if backend explicitly confirms payment is valid
+          if (response.success && response.data) {
+            // Additional safety: ensure response contains order/payment confirmation
+            if (!response.data.orderId && !response.data.paymentId) {
+              console.warn('[Razorpay] Verification response missing orderId or paymentId');
+              return false;
+            }
+            return true;
+          }
+          // Non-network error (e.g. invalid signature) — don't retry
           return false;
+        } catch (err: any) {
+          // CA-PAY-046: Retry on network/timeout errors; exponential backoff
+          if (attempt < MAX_VERIFICATION_ATTEMPTS - 1) {
+            await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt)));
+          } else {
+            console.error('[Razorpay] Verification failed after retries:', err.message);
+            return false;
+          }
         }
-        return true;
       }
       return false;
     } catch (error: any) {

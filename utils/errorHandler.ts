@@ -150,6 +150,42 @@ const ERROR_MAP: Record<string, ErrorMetadata> = {
   }
 };
 
+// CA-INF-028: PII redaction patterns to prevent data leakage
+const PII_PATTERNS = {
+  phone: /\+?[1-9]\d{1,14}(?![0-9])/g,
+  email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+  token: /Bearer\s+[A-Za-z0-9._-]+/gi,
+  jwt: /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g,
+  password: /password["']?\s*[:=]\s*["'][^"']+["']/gi,
+  ssn: /\d{3}-\d{2}-\d{4}/g,
+};
+
+// Sanitize error details to remove PII
+function sanitizeErrorDetails(details: any): any {
+  if (!details) return details;
+
+  const json = JSON.stringify(details);
+  let sanitized = json;
+
+  // Redact PII patterns
+  Object.values(PII_PATTERNS).forEach(pattern => {
+    sanitized = sanitized.replace(pattern, '[REDACTED]');
+  });
+
+  // Redact specific field values known to contain PII
+  sanitized = sanitized.replace(/"phoneNumber"\s*:\s*"[^"]+"/g, '"phoneNumber":"[REDACTED]"');
+  sanitized = sanitized.replace(/"phone"\s*:\s*"[^"]+"/g, '"phone":"[REDACTED]"');
+  sanitized = sanitized.replace(/"email"\s*:\s*"[^"]+"/g, '"email":"[REDACTED]"');
+  sanitized = sanitized.replace(/"user"\s*:\s*\{[^}]*\}/g, '"user":"[REDACTED]"');
+  sanitized = sanitized.replace(/"profile"\s*:\s*\{[^}]*\}/g, '"profile":"[REDACTED]"');
+
+  try {
+    return JSON.parse(sanitized);
+  } catch {
+    return sanitized;
+  }
+}
+
 // Error logger
 class ErrorLogger {
   private static logs: AppError[] = [];
@@ -167,24 +203,28 @@ class ErrorLogger {
       this.logs = this.logs.slice(0, this.maxLogs);
     }
 
+    // CA-INF-028: Sanitize details before logging to remove PII
+    const sanitizedDetails = sanitizeErrorDetails(error.details);
+
     // Log to console in development
     if (__DEV__) {
       console.error('[AppError]', {
         code: error.code,
         message: error.message,
-        details: error.details,
+        details: sanitizedDetails,
         timestamp: error.timestamp
       });
     }
 
     // M-1 FIX: Wire error logging to Sentry in production
+    // CA-INF-028: Always sanitize details before sending to Sentry
     if (!__DEV__) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
         Sentry.withScope((scope) => {
           scope.setTag('error_code', error.code);
-          scope.setExtra('details', error.details);
+          scope.setExtra('details', sanitizedDetails);
           Sentry.captureMessage(`[AppError] ${error.code}: ${error.message}`, 'error');
         });
       } catch {
