@@ -1,267 +1,354 @@
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
-    if (!timeStr || typeof timeStr !== 'string' || timeStr.trim().length === 0) {
-      return '';
+import { colors } from '@/constants/theme';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
+// My Bookings Page
+// Shows user's service bookings with travel-specific enhancements
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
+import { FlashList } from '@shopify/flash-list';
+import { CardGridSkeleton } from '@/components/skeletons';
+import { platformAlertSimple, platformAlertDestructive } from '@/utils/platformAlert';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter, useFocusEffect } from 'expo-router';
+import serviceBookingApi, { ServiceBooking } from '@/services/serviceBookingApi';
+import serviceAppointmentApi from '@/services/serviceAppointmentApi';
+import CashbackStatusBadge from '@/components/travel/CashbackStatusBadge';
+import { getMyBookings, cancelBooking, OtaBooking } from '@/services/hotelOtaApi';
+import { useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
+import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { useIsMounted } from '@/hooks/useIsMounted';
+
+const TRAVEL_SLUGS = ['flights', 'hotels', 'trains', 'bus', 'cab', 'packages'];
+const EDUCATION_KEYWORDS = ['class', 'course', 'tutorial', 'workshop', 'enrollment', 'lesson', 'training'];
+
+const CATEGORY_ICONS: Record<string, string> = {
+  flights: 'airplane',
+  hotels: 'bed',
+  trains: 'train',
+  bus: 'bus',
+  cab: 'car',
+  packages: 'briefcase',
+};
+
+const isTravelBooking = (booking: ServiceBooking): boolean => {
+  const slug = booking.serviceCategory?.slug || '';
+  return TRAVEL_SLUGS.includes(slug) || !!booking.travelDetails;
+};
+
+const MyBookingsPage = () => {
+  const isMounted = useIsMounted();
+  const router = useRouter();
+  const getCurrencySymbol = useGetCurrencySymbol();
+
+  // Screen fade-in animation
+  const fadeAnim = useSharedValue(0);
+  useEffect(() => {
+    fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
+  }, [fadeAnim]);
+  const currencySymbol = getCurrencySymbol();
+  const isAuthenticated = useIsAuthenticated();
+  const [bookings, setBookings] = useState<ServiceBooking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'courses' | 'hotels'>('upcoming');
+  const [hotelBookings, setHotelBookings] = useState<OtaBooking[]>([]);
+  const [hotelLoading, setHotelLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // SS-D002 FIX: Track which booking IDs currently have a cancel in-flight so
+  // the button is disabled (preventing double-tap race) and the UI shows a
+  // local "cancelling" state before the API responds.
+  const [cancellingIds, setCancellingIds] = useState<Set<string>>(new Set());
+  // Ref that keeps fetchBookings stable across the cancel handler closure
+  const fetchBookingsRef = useRef<() => void>(() => {});
+  // Skip the first render in the activeTab useEffect — useFocusEffect handles initial mount fetch
+  const isFirstTabRender = useRef(true);
+
+  const fetchBookings = useCallback(async () => {
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+
+      if (!isAuthenticated) {
+        setErrorMessage('Please login to view your bookings');
+        setLoading(false);
+        return;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Fetch both ServiceBooking (cart/checkout flow) and ServiceAppointment (direct booking flow) in parallel
+      const [response, appointmentsResponse] = await Promise.all([
+        serviceBookingApi.getUserBookings({ page: 1, limit: 50 }).catch(() => null),
+        serviceAppointmentApi.getUserServiceAppointments(1, 50).catch(() => null),
+      ]);
+
+      // BUG 1 FIX: Normalize appointments independently so they always appear,
+      // even when the ServiceBooking API fails or returns no data.
+      const rawAppointments: any[] =
+        appointmentsResponse?.data?.appointments ??
+        (Array.isArray(appointmentsResponse?.data as any) ? (appointmentsResponse?.data as any) : []);
+
+      const normalizedAppointments: ServiceBooking[] = rawAppointments.map(
+        (appt: any) =>
+          ({
+            _id: appt._id || appt.appointmentId || appt.id,
+            bookingNumber: appt.appointmentNumber || appt.id,
+            user: appt.userId || '',
+            service: {
+              _id: appt.serviceId || '',
+              name: appt.serviceType || 'Appointment',
+              images: [],
+              pricing: { original: 0, selling: 0 },
+            },
+            serviceCategory: { _id: '', name: 'Appointment', slug: 'appointments', icon: 'calendar' },
+            store: appt.store || { name: '' },
+            merchantId: '',
+            customerName: appt.customerName || '',
+            customerPhone: appt.customerPhone || '',
+            bookingDate: appt.appointmentDate || appt.date,
+            timeSlot: { start: appt.appointmentTime || appt.time || '09:00', end: '' },
+            duration: appt.duration || 60,
+            serviceType: 'store' as const,
+            pricing: { basePrice: 0, total: 0, currency: 'INR' },
+            paymentStatus: 'pending' as const,
+            status: appt.status === 'no-show' ? 'no_show' : appt.status,
+            cashbackStatus: 'pending' as const,
+            verificationDays: 0,
+            isRescheduled: false,
+            rescheduleCount: 0,
+            maxReschedules: 2,
+            requiresPaymentUpfront: false,
+            createdAt: appt.createdAt || new Date().toISOString(),
+            updatedAt: appt.updatedAt || new Date().toISOString(),
+            _isServiceAppointment: true,
+          }) as any,
+      );
+
+      const serviceBookings: ServiceBooking[] = response?.success && Array.isArray(response.data) ? response.data : [];
+
+      if (serviceBookings.length > 0 || normalizedAppointments.length > 0) {
+        let filteredBookings = [...serviceBookings, ...normalizedAppointments];
+
+        if (activeTab === 'courses') {
+          // ED-02: Filter education-related bookings
+          filteredBookings = filteredBookings.filter((booking) => {
+            const sType = (booking as any).serviceType?.toLowerCase() || '';
+            const catSlug = booking.serviceCategory?.slug?.toLowerCase() || '';
+            return EDUCATION_KEYWORDS.some((kw) => sType.includes(kw) || catSlug.includes(kw));
+          });
+          filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
+        } else if (activeTab === 'upcoming') {
+          // SS-008 FIX: Removed isMounted() guard inside .filter() — it returns undefined (falsy),
+          // incorrectly excluding all bookings when the check fires.
+          filteredBookings = filteredBookings.filter((booking) => {
+            const bookingDate = new Date(booking.bookingDate);
+            bookingDate.setHours(0, 0, 0, 0);
+            const isFuture = bookingDate >= today;
+            const isActive =
+              booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
+            return isFuture && isActive;
+          });
+          filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
+        } else {
+          // SS-008 FIX: Same — removed erroneous isMounted() early-return inside filter
+          filteredBookings = filteredBookings.filter((booking) => {
+            const bookingDate = new Date(booking.bookingDate);
+            bookingDate.setHours(0, 0, 0, 0);
+            const isPast = bookingDate < today;
+            const isCompleted =
+              booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';
+            return isPast || isCompleted;
+          });
+          filteredBookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
+        }
+
+        if (!isMounted()) return;
+        setBookings(filteredBookings);
+      } else {
+        // No bookings or appointments found
+        if (!isMounted()) return;
+        setBookings([]);
+      }
+    } catch (error: any) {
+      if (!isMounted()) return;
+      setBookings([]);
+    } finally {
+      if (!isMounted()) return;
+      setLoading(false);
+      setRefreshing(false);
     }
+  }, [isAuthenticated, activeTab]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchBookings();
+    }, [fetchBookings]),
+  );
+
+  useEffect(() => {
+    // Skip initial mount — useFocusEffect already handles the first fetch
+    if (isFirstTabRender.current) {
+      isFirstTabRender.current = false;
+      return;
+    }
+    fetchBookings();
+  }, [fetchBookings, activeTab]);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchBookings();
+  }, [fetchBookings]);
+
+  // SS-D002 FIX: Keep fetchBookings accessible inside handleCancelBooking
+  // without making it a dependency (avoids stale-closure re-creation loop).
+  useEffect(() => {
+    fetchBookingsRef.current = fetchBookings;
+  });
+
+  // Fetch hotel OTA bookings when Hotels tab is active
+  useEffect(() => {
+    if (activeTab !== 'hotels') return;
+    let cancelled = false;
+    setHotelLoading(true);
+    getMyBookings(1, 20)
+      .then((res) => {
+        if (!cancelled) setHotelBookings(res.bookings ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setHotelBookings([]);
+      })
+      .finally(() => {
+        if (!cancelled) setHotelLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
+
+  // Keep a ref to the current bookings so the cancel handler can read it without
+  // adding bookings to the useCallback dep array (which would re-create the handler on every render)
+  const bookingsRef = useRef<ServiceBooking[]>([]);
+  useEffect(() => {
+    bookingsRef.current = bookings;
+  }, [bookings]);
+
+  const handleCancelBooking = useCallback(
+    async (bookingId: string) => {
+      // SS-D002 FIX: If a cancel is already in-flight for this booking, ignore the
+      // duplicate tap — prevents race where two PATCH requests race each other.
+      if (cancellingIds.has(bookingId)) return;
+
+      // Determine whether this is a ServiceAppointment (Pattern A) or ServiceBooking (Pattern B)
+      // so we call the correct cancel endpoint.
+      const targetBooking = bookingsRef.current.find((b) => b._id === bookingId);
+      const isServiceAppt = (targetBooking as any)?._isServiceAppointment === true;
+
+      platformAlertDestructive(
+        'Cancel Booking',
+        'Are you sure you want to cancel this booking?',
+        async () => {
+          // SS-D002 FIX: Lock this booking's Cancel button immediately.
+          setCancellingIds((prev) => new Set(prev).add(bookingId));
+
+          // SS-D002 FIX: Optimistic local state update.
+          let previousBookings: ServiceBooking[] = [];
+          setBookings((prev) => {
+            previousBookings = prev;
+            return prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' as any } : b));
+          });
+
+          try {
+            // Route to the correct cancel API based on booking type.
+            const response = isServiceAppt
+              ? await serviceAppointmentApi.cancelServiceAppointment(bookingId)
+              : await serviceBookingApi.cancelBooking(bookingId);
+
+            if (response.success) {
+              // For ServiceAppointment, response.data has shape { message, appointment }
+              const updatedRecord = isServiceAppt
+                ? ((response.data as any)?.appointment ?? response.data)
+                : response.data;
+
+              if (updatedRecord) {
+                setBookings((prev) =>
+                  prev.map((b) => (b._id === bookingId ? { ...b, ...updatedRecord, status: 'cancelled' as any } : b)),
+                );
+              }
+              platformAlertSimple('Success', 'Booking cancelled successfully');
+              // Full refresh in the background to sync other fields (e.g. cashback reversal)
+              fetchBookingsRef.current();
+            } else {
+              // SS-D002 FIX: Revert optimistic update on API failure.
+              setBookings(previousBookings);
+              platformAlertSimple('Error', (response as any).error || 'Failed to cancel booking');
+            }
+          } catch (error: any) {
+            // SS-D002 FIX: Revert on network / unexpected error too.
+            setBookings(previousBookings);
+            platformAlertSimple('Error', 'Failed to cancel booking');
+          } finally {
+            // SS-D002 FIX: Always release the lock so the button re-enables on error.
+            setCancellingIds((prev) => {
+              const next = new Set(prev);
+              next.delete(bookingId);
+              return next;
+            });
+          }
+        },
+        'Yes, Cancel',
+      );
+    },
+    [cancellingIds],
+  );
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return colors.nileBlue;
+      case 'pending':
+        return Colors.warning;
+      case 'completed':
+        return Colors.info;
+      case 'cancelled':
+      case 'no_show':
+        return Colors.error;
+      case 'assigned':
+      case 'in_progress':
+        return Colors.brand.purple;
+      default:
+        return colors.text.tertiary;
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return 'Confirmed';
+      case 'pending':
+        return 'Pending';
+      case 'completed':
+        return 'Completed';
+      case 'cancelled':
+        return 'Cancelled';
+      case 'no_show':
+        return 'No Show';
+      case 'assigned':
+        return 'Assigned';
+      case 'in_progress':
+        return 'In Progress';
+      default:
+        return status;
+    }
+  };
+
+  const formatTime = (timeStr: string): string => {
+    if (!timeStr) return '';
     // ETHAN: crash guard — split could return incomplete array; parseInt could return NaN
     const parts = timeStr.split(':').map((x) => parseInt(x, 10));
-    if (parts.length < 2) return '';
     const hours = !isNaN(parts[0]) ? parts[0] : 0;
     const minutes = !isNaN(parts[1]) ? parts[1] : 0;
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -589,6 +676,12 @@ const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof tim
             >
               <Text style={[styles.tabText, activeTab === 'courses' && styles.activeTabText]}>Courses</Text>
             </Pressable>
+            <Pressable
+              style={[styles.tab, activeTab === 'hotels' && styles.activeTab]}
+              onPress={() => setActiveTab('hotels')}
+            >
+              <Text style={[styles.tabText, activeTab === 'hotels' && styles.activeTabText]}>Hotels</Text>
+            </Pressable>
           </View>
         </LinearGradient>
 
@@ -600,24 +693,198 @@ const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof tim
           </View>
         )}
 
-        {/* Bookings List */}
-        <FlashList
-          data={bookings}
-          renderItem={renderBooking}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={styles.listContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.nileBlue}
-              colors={[colors.nileBlue]}
+        {/* Hotel Bookings Tab */}
+        {activeTab === 'hotels' ? (
+          hotelLoading ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={colors.nileBlue} />
+            </View>
+          ) : hotelBookings.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="bed-outline" size={80} color={colors.border.default} />
+              <Text style={styles.emptyTitle}>No Hotel Bookings</Text>
+              <Text style={styles.emptyText}>Book a hotel to see your stays here</Text>
+              <Pressable style={styles.browseButton} onPress={() => router.push('/travel/hotels' as any)}>
+                <Ionicons name="bed-outline" size={20} color={colors.text.inverse} />
+                <Text style={styles.browseButtonText}>Browse Hotels</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <FlashList
+              data={hotelBookings}
+              keyExtractor={(item) => item.id}
+              estimatedItemSize={140}
+              contentContainerStyle={styles.listContainer}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }: { item: OtaBooking }) => {
+                // ENUM-10 FIX: 'hold' is not a real ServiceBooking status — removed from
+                // status map and canCancel check. OTA bookings start at 'pending' or 'confirmed'.
+                const statusColor =
+                  { pending: '#F59E0B', confirmed: '#0891B2', cancelled: '#EF4444', completed: '#16A34A' }[
+                    item.status
+                  ] ?? '#6B7280';
+                const canCancel = item.status === 'confirmed' || item.status === 'pending';
+                const canReview = item.status === 'completed';
+                return (
+                  <Pressable
+                    style={{
+                      backgroundColor: '#fff',
+                      borderRadius: 14,
+                      marginBottom: 12,
+                      padding: 14,
+                      shadowColor: '#000',
+                      shadowOpacity: 0.06,
+                      shadowRadius: 6,
+                      shadowOffset: { width: 0, height: 2 },
+                      elevation: 2,
+                    }}
+                    onPress={() => router.push(`/travel/hotels/booking/${item.id}` as any)}
+                  >
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: 8,
+                      }}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F172A' }} numberOfLines={1}>
+                          {item.hotelName}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{item.roomTypeName}</Text>
+                      </View>
+                      <View
+                        style={{
+                          backgroundColor: `${statusColor}18`,
+                          borderRadius: 8,
+                          paddingHorizontal: 8,
+                          paddingVertical: 3,
+                        }}
+                      >
+                        <Text style={{ fontSize: 11, fontWeight: '700', color: statusColor }}>
+                          {item.status.toUpperCase()}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Ionicons name="calendar-outline" size={12} color="#64748B" />
+                        <Text style={{ fontSize: 12, color: '#64748B' }}>
+                          {item.checkinDate} → {item.checkoutDate}
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Ionicons name="people-outline" size={12} color="#64748B" />
+                        <Text style={{ fontSize: 12, color: '#64748B' }}>
+                          {item.numGuests} guests · {item.numRooms} room{item.numRooms !== 1 ? 's' : ''}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: canCancel || canReview ? 10 : 0,
+                      }}
+                    >
+                      <Text style={{ fontSize: 11, color: '#94A3B8' }}>Ref: {item.bookingRef}</Text>
+                      <Text style={{ fontSize: 15, fontWeight: '800', color: '#0F172A' }}>
+                        ₹{Math.round(item.totalValuePaise / 100).toLocaleString()}
+                      </Text>
+                    </View>
+                    {(canCancel || canReview) && (
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        {canReview && (
+                          <Pressable
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 6,
+                              backgroundColor: '#0891B2',
+                              borderRadius: 8,
+                              paddingVertical: 8,
+                            }}
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              router.push({
+                                pathname: '/travel/hotels/[id]/review' as any,
+                                params: { id: item.hotelId, bookingRef: item.bookingRef, hotelName: item.hotelName },
+                              });
+                            }}
+                          >
+                            <Ionicons name="star" size={13} color="#fff" />
+                            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>Write Review</Text>
+                          </Pressable>
+                        )}
+                        {canCancel && (
+                          <Pressable
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 6,
+                              borderWidth: 1.5,
+                              borderColor: '#EF4444',
+                              borderRadius: 8,
+                              paddingVertical: 8,
+                            }}
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              Alert.alert('Cancel Booking', `Cancel booking at ${item.hotelName}?`, [
+                                { text: 'Keep', style: 'cancel' },
+                                {
+                                  text: 'Cancel',
+                                  style: 'destructive',
+                                  onPress: async () => {
+                                    try {
+                                      await cancelBooking(item.id, 'Cancelled by guest');
+                                      setHotelBookings((prev) =>
+                                        prev.map((b) => (b.id === item.id ? { ...b, status: 'cancelled' } : b)),
+                                      );
+                                    } catch (e2: any) {
+                                      Alert.alert('Error', e2.message ?? 'Cancellation failed');
+                                    }
+                                  },
+                                },
+                              ]);
+                            }}
+                          >
+                            <Ionicons name="close-circle-outline" size={13} color="#EF4444" />
+                            <Text style={{ color: '#EF4444', fontSize: 12, fontWeight: '700' }}>Cancel</Text>
+                          </Pressable>
+                        )}
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              }}
             />
-          }
-          ListEmptyComponent={renderEmptyState}
-          showsVerticalScrollIndicator={false}
-          estimatedItemSize={120}
-        />
+          )
+        ) : (
+          /* Regular Bookings List */
+          <FlashList
+            data={bookings}
+            renderItem={renderBooking}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.listContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor={colors.nileBlue}
+                colors={[colors.nileBlue]}
+              />
+            }
+            ListEmptyComponent={renderEmptyState}
+            showsVerticalScrollIndicator={false}
+            estimatedItemSize={120}
+          />
+        )}
       </Animated.View>
     </SafeAreaView>
   );
