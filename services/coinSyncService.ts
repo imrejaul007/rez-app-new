@@ -66,9 +66,25 @@ class CoinSyncService {
       const response = await walletApi.getBalance();
 
       if (response.success && response.data) {
-        // Wallet balance structure: { balance: { total, available, pending, cashback } }
-        // The 'available' balance is the usable ReZ coins
-        const balance = response.data.balance?.available || 0;
+        // CA-GAM-019 FIX: Defensive checks for multiple possible wallet response structures
+        // Wallet balance structure variations:
+        // - { balance: { total, available, pending, cashback } }
+        // - { coins: { available, ... } }
+        // - { balance: [...], coins: [...] }
+        let balance = response.data.balance?.available;
+        if (balance === undefined) {
+          balance = response.data.coins?.available;
+        }
+        if (balance === undefined && Array.isArray(response.data.balance)) {
+          balance = response.data.balance[0]?.available;
+        }
+        balance = balance || 0;
+
+        // Validate it's a safe number
+        if (typeof balance !== 'number' || isNaN(balance)) {
+          devLog.warn('⚠️ [COIN SYNC] Wallet balance is NaN, using 0');
+          balance = 0;
+        }
 
         devLog.log(`✅ [COIN SYNC] Wallet balance: ${balance}`);
         return balance;
@@ -114,8 +130,10 @@ class CoinSyncService {
     try {
       devLog.log(`🎮 [COIN SYNC] Syncing gamification reward: ${amount} coins from ${source}`);
 
-      if (amount <= 0) {
-        throw new Error('Reward amount must be greater than 0');
+      // CA-GAM-054 FIX: Validate award amount has max bound to prevent exploitation
+      const MAX_AWARD_PER_EVENT = 10000;
+      if (amount <= 0 || amount > MAX_AWARD_PER_EVENT) {
+        throw new Error(`Reward amount must be > 0 and <= ${MAX_AWARD_PER_EVENT}`);
       }
 
       // Step 1: Award points via Points API
@@ -451,10 +469,11 @@ class CoinSyncService {
       if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
         localStorage.setItem(this.SYNC_KEY, timestamp);
       } else {
-        // Native platforms use AsyncStorage (fire and forget)
-        AsyncStorage.setItem(this.SYNC_KEY, timestamp).then(() => {
-          this._cachedLastSyncTime = new Date(timestamp);
-        }).catch((error) => {
+        // CA-GAM-022 FIX: Update cached value IMMEDIATELY before async write
+        // This prevents shouldSync() from checking stale timestamp if app crashes
+        this._cachedLastSyncTime = new Date(timestamp);
+        // Then persist to AsyncStorage asynchronously
+        AsyncStorage.setItem(this.SYNC_KEY, timestamp).catch((error) => {
           devLog.warn('⚠️ [COIN SYNC] Could not update last sync time in AsyncStorage:', error);
         });
       }
