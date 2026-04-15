@@ -295,12 +295,13 @@ function StoreCard({ item, index }: { item: Store; index: number }) {
   }));
 
   useEffect(() => {
+    // CA-DSC-021, CA-DSC-054: Use stable item ID instead of index and properly cleanup animations
     const timer = setTimeout(() => {
       fadeAnim.value = withTiming(1, { duration: 400 });
       slideAnim.value = withTiming(0, { duration: 400 });
     }, index * 80);
     return () => clearTimeout(timer);
-  }, []);
+  }, [item.id, index, fadeAnim, slideAnim]);
 
   const handleStorePress = async () => {
     const category = item.id;
@@ -584,8 +585,8 @@ function App() {
 
         {/* Scrollable Grid */}
         <FlashList
-          data={categories}
-          keyExtractor={(it) => it.id}
+          data={categories.filter((c) => c.id)}
+          keyExtractor={(it, idx) => it.id || `fallback-${idx}`}
           numColumns={2}
           renderItem={renderStoreCategoryItem}
           showsVerticalScrollIndicator={false}

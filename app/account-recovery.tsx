@@ -3,6 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Help users recover access to their account
 
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
   ScrollView,
@@ -38,6 +39,41 @@ function AccountRecoveryPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // CA-AUT-021 FIX: Rate-limit recovery requests (max 3/hr)
+  // Store timestamps of recovery attempts in AsyncStorage
+  const recoveryAttemptsRef = React.useRef<number[]>([]);
+
+  const checkRateLimit = async (): Promise<boolean> => {
+    try {
+      const stored = await AsyncStorage.getItem('@account_recovery_attempts');
+      const attempts = stored ? JSON.parse(stored) : [];
+      const now = Date.now();
+      const oneHourAgo = now - 3600000; // 1 hour in milliseconds
+
+      // Filter out attempts older than 1 hour
+      const recentAttempts = attempts.filter((ts: number) => ts > oneHourAgo);
+
+      if (recentAttempts.length >= 3) {
+        // Rate limit reached
+        const oldestAttempt = Math.min(...recentAttempts);
+        const waitTime = Math.ceil((oldestAttempt + 3600000 - now) / 60000); // Minutes until next allowed
+        throw new Error(`Too many recovery attempts. Please try again in ${waitTime} minutes.`);
+      }
+
+      // Record this attempt
+      recentAttempts.push(now);
+      await AsyncStorage.setItem('@account_recovery_attempts', JSON.stringify(recentAttempts));
+      recoveryAttemptsRef.current = recentAttempts;
+      return true;
+    } catch (err: any) {
+      if (err.message && err.message.includes('Too many recovery attempts')) {
+        throw err;
+      }
+      // If storage fails, allow the attempt (fail open)
+      return true;
+    }
+  };
+
   const handleMethodSelect = (selectedMethod: RecoveryMethod) => {
     setMethod(selectedMethod);
     setStep('input');
@@ -50,6 +86,9 @@ function AccountRecoveryPage() {
     setLoading(true);
     setError('');
     try {
+      // Check rate limit before sending
+      await checkRateLimit();
+
       const phoneNumber = method === 'phone' ? input : '';
       if (!phoneNumber) {
         // Email recovery not yet supported by backend — phone only
@@ -67,8 +106,9 @@ function AccountRecoveryPage() {
       }
     } catch (e: any) {
       if (!isMounted()) return;
-      setError('Something went wrong. Please try again.');
-      platformAlertSimple('Error', 'Something went wrong. Please try again.');
+      const errorMsg = e.message || 'Something went wrong. Please try again.';
+      setError(errorMsg);
+      platformAlertSimple('Error', errorMsg);
     } finally {
       if (!isMounted()) return;
       setLoading(false);

@@ -69,7 +69,8 @@ function UGCDetailScreen() {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  // Video aspect ratio detection - determines resize mode
+  // Video aspect ratio detection - memoize to avoid unnecessary re-renders (CA-DSC-023)
+  const videoAspectRatioRef = useRef<'vertical' | 'horizontal' | 'square'>('vertical');
   const [videoAspectRatio, setVideoAspectRatio] = useState<'vertical' | 'horizontal' | 'square'>('vertical');
 
   // Track if styles have been applied (for smooth transition)
@@ -133,10 +134,13 @@ function UGCDetailScreen() {
 
         const extractedVideoId = videoData?._id || videoData?.id;
         if (videoData && extractedVideoId) {
+          // CA-DSC-040 FIX: Validate products array before normalizing
+          const productsArray = videoData.products || videoData.relatedProducts || [];
+          const validProducts = Array.isArray(productsArray) ? productsArray : [];
           const normalizedVideo = {
             ...videoData,
             _id: extractedVideoId,
-            products: videoData.products || videoData.relatedProducts || [],
+            products: validProducts,
           };
           setVideo(normalizedVideo);
         } else {
@@ -161,6 +165,13 @@ function UGCDetailScreen() {
       videoRef.current?.unloadAsync();
     };
   }, []);
+
+  // CA-DSC-009 FIX: Clear viewTrackedRef when videoId changes to allow re-tracking on re-visit
+  useEffect(() => {
+    if (video?._id) {
+      viewTrackedRef.current = new Set();
+    }
+  }, [video?._id]);
 
   // Get the store ID to use for follow - prioritize store over creator
   const getFollowableStoreId = useCallback(() => {

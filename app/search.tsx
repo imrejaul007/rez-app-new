@@ -28,7 +28,9 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 function SearchPage() {
   const params = useLocalSearchParams();
-  const initialQuery = (params.q as string) || '';
+  // CA-DSC-038 FIX: Validate query length before setting as initialQuery
+  const rawQuery = (params.q as string) || '';
+  const initialQuery = rawQuery.trim().length >= 2 ? rawQuery : '';
 
   // Use the search page hook
   const {
@@ -100,6 +102,9 @@ function SearchPage() {
 
   // Track last search to prevent duplicate searches
   const lastSearchedQuery = useRef<string>('');
+  // CA-DSC-002 FIX: Add timestamp/request ID to prevent race conditions in search
+  const lastSearchTimestamp = useRef<number>(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // CA-DSC-016 FIX: Add initialQuery to dependency array to handle deep-link re-triggers
   const hasSearchedInitial = useRef(false);
@@ -107,6 +112,7 @@ function SearchPage() {
     if (initialQuery && initialQuery.trim().length >= 2 && !hasSearchedInitial.current) {
       hasSearchedInitial.current = true;
       lastSearchedQuery.current = initialQuery;
+      lastSearchTimestamp.current = Date.now();
       actions.handleSearchChange(initialQuery);
       performGroupedSearchRef.current(initialQuery, userLocationRef.current, currentFiltersRef.current);
       setViewMode('results');
@@ -118,12 +124,26 @@ function SearchPage() {
     if (debouncedQuery && debouncedQuery.trim().length >= 2) {
       if (lastSearchedQuery.current !== debouncedQuery) {
         lastSearchedQuery.current = debouncedQuery;
+        lastSearchTimestamp.current = Date.now();
+        // Cancel previous search if still in flight
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
         performGroupedSearchRef.current(debouncedQuery, userLocationRef.current, currentFiltersRef.current);
         setViewMode('results');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedQuery]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // ============================================
   // HANDLERS

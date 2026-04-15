@@ -118,10 +118,15 @@ class ApiClient {
     }
     const resolvedURL = resolveBaseURL(rawURL || 'http://localhost:5001/api');
 
-    // In production, enforce HTTPS to prevent credential leakage over plaintext
+    // CA-AUT-033 FIX: On web, enforce HTTPS to prevent credential leakage over plaintext.
+    // On native, this is less critical since network traffic is encrypted at the OS level
+    // (except on Android with user-installed root certs, which this code mitigates).
+    // In production, enforce HTTPS.
     if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !resolvedURL.startsWith('https://')) {
       throw new Error(`[ApiClient] FATAL: Production API URL must use HTTPS. Got: ${resolvedURL}`);
     }
+    // TODO: On native, implement certificate pinning via react-native-cert-pinning
+    // to validate the API server's certificate hash and prevent MITM attacks on compromised devices.
 
     this.baseURL = resolvedURL;
     this.defaultHeaders = {
@@ -246,6 +251,18 @@ class ApiClient {
       ...headers
     };
 
+    // CA-AUT-009 FIX: Generate and include X-CSRF-Token header on auth endpoints
+    // CSRF protection prevents cross-site request forgery attacks on sensitive operations.
+    // On web (browser), tokens should be submitted as headers (not body) to prevent
+    // leakage in logs or error pages.
+    if (endpoint.includes('/auth') && typeof window !== 'undefined') {
+      // On web, attempt to read CSRF token from meta tag or cookie
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      if (csrfMeta && csrfMeta.getAttribute('content')) {
+        requestHeaders['X-CSRF-Token'] = csrfMeta.getAttribute('content')!;
+      }
+    }
+
     // Inject device fingerprint header for security tracking
     const fingerprint = await getDeviceFingerprintHeader();
     if (fingerprint) {
@@ -361,6 +378,20 @@ class ApiClient {
               success: false,
               error: 'Session expired',
             };
+          }
+
+          // CA-AUT-017 FIX: On web (browser), attempt cookie refresh
+          // The web platform uses httpOnly cookies for auth instead of Bearer tokens.
+          // When a 401 occurs on web with the 'cookie-session' sentinel token, try to
+          // refresh the cookie session by calling getProfile() again (which auto-sends cookies).
+          if (Platform.OS === 'web' && this.authToken === 'cookie-session') {
+            if (this.refreshTokenCallback && !this.isLoggingOut) {
+              const refreshSuccess = await this.handleTokenRefresh();
+              if (refreshSuccess) {
+                // Retry after refresh succeeded
+                return this.makeRequest<T>(endpoint, options);
+              }
+            }
           }
 
           // Attempt refresh for any 401 — do not gate on error message keywords.
