@@ -96,7 +96,7 @@ class LeaderboardApi {
           user: {
             _id: entry.user?.id || entry.user?._id || entry.userId || '',
             name: entry.user?.name || entry.userName || entry.name || 'Anonymous',
-            avatar: entry.user?.avatar || entry.user?.profilePicture || entry.avatar,
+            avatar: entry.user?.avatar || entry.user?.profilePicture || entry.avatar || '/assets/default-avatar.png',
           },
           rank: entry.rank || index + 1,
           value: entry.value || entry.amount || entry.score || 0,
