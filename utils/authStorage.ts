@@ -138,7 +138,11 @@ async function nativeSet(key: string, value: string): Promise<void> {
  */
 async function nativeDelete(key: string): Promise<void> {
   await secureDelete(key);
-  await AsyncStorage.removeItem(key);
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch {
+    // Ignore errors if item doesn't exist (e.g. called multiple times)
+  }
 }
 
 // ── Public API ──
