@@ -181,4 +181,19 @@ export interface GroupBuyingApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-  message?: stri
+  message?: string;
+}
+
+export interface ListGroupsResponse {
+  groups: GroupBuyingGroup[];
+  totalCount: number;
+  page: number;
+  limit: number;
+}
+
+export interface ListProductsResponse {
+  products: GroupBuyingProduct[];
+  totalCount: number;
+  page: number;
+  limit: number;
+}
