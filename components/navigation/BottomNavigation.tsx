@@ -24,6 +24,7 @@ import { useHomeTab } from '@/contexts/HomeTabContext';
 import { useTheme } from '@/hooks/useTheme';
 import { colors } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
+import { useAuthStore } from '@/stores/authStore';
 import { getActiveWebOrderCount } from '@/services/webOrderApi';
 
 // ─── Icon pairs: filled (active) / outline (inactive) ────────────────────────
@@ -164,6 +165,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const lastFetchRef = useRef<number>(0);
 
   const refreshWebOrderBadge = useCallback(async () => {
+    if (!useAuthStore.getState().state.isAuthenticated) return;
     // Throttle: at most once every 30 seconds to avoid hammering the API
     const now = Date.now();
     if (now - lastFetchRef.current < 30_000) return;
