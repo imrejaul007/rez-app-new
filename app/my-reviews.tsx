@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // My Reviews Page
 // Shows all reviews written by the user
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -39,6 +39,7 @@ const FILTER_TABS: { key: FilterTab; label: string }[] = [
 function MyReviewsPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const flatListRef = useRef<FlashList<UserReview> | null>(null);
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,6 +47,13 @@ function MyReviewsPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
+
+  // Scroll to top when filter changes
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index: 0, animated: true });
+    }
+  }, [activeFilter]);
 
   const filteredReviews = useMemo(
     () => (activeFilter === 'all' ? reviews : reviews.filter((r) => r.moderationStatus === activeFilter)),
@@ -340,6 +348,7 @@ function MyReviewsPage() {
           </View>
         ) : (
           <FlashList
+            ref={flatListRef}
             data={filteredReviews}
             keyExtractor={(item, index) => item._id || item.id || `review-${index}`}
             renderItem={renderReviewItem}

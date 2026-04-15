@@ -219,10 +219,17 @@ function CreatorsPage() {
     }
   }, [selectedCategory, sortBy, searchQuery]);
 
-  // Initial fetch
+  // Initial fetch and cleanup on unmount
   useEffect(() => {
     fetchCreators(1);
     isFirstMount.current = false;
+
+    return () => {
+      // Clear any pending search timeouts on unmount
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Refetch on category or sort change

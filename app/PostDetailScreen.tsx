@@ -159,7 +159,10 @@ function PostDetailScreen() {
         title: 'Share Post',
       });
     } catch (error: any) {
-      // silently handle
+      // Share was cancelled or failed - no need to show error
+      if (error?.code !== 'E_CANCELLED') {
+        // optionally log non-cancellation errors
+      }
     }
   }, [post]);
 
