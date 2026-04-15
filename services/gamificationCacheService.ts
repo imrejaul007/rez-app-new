@@ -173,7 +173,7 @@ class GamificationCacheService {
       });
       await cacheService.invalidateLeaderboard();
     }
-  }, 1000); // Wait 1 second before invalidating
+  }, 200); // Wait 200ms before invalidating (down from 1000ms for faster updates)
 
   // ==================== ACHIEVEMENTS ====================
 
@@ -235,11 +235,11 @@ class GamificationCacheService {
    * Invalidate challenges cache (called when challenge completed)
    * Throttled to avoid excessive invalidations
    */
-  invalidateChallenges = throttle(async () => {
+  invalidateChallenges = debounce(async () => {
     const key = GamificationCacheService.CACHE_KEYS.CHALLENGES;
     this.clearMemoryCache(key);
     await cacheService.invalidateChallenges();
-  }, 2000); // Max once every 2 seconds
+  }, 1000); // Wait 1 second after last invalidation trigger (CA-GAM-017 FIX)
 
   // ==================== STATS ====================
 
@@ -314,15 +314,22 @@ class GamificationCacheService {
     this.memoryCache.clear();
 
     const keys = Object.values(GamificationCacheService.CACHE_KEYS);
-    for (const key of keys) {
-      await cacheService.remove(key);
-    }
+    // CA-GAM-013 FIX: Use Promise.all to wait for all removals and catch errors
+    const removalPromises = keys.map(key =>
+      cacheService.remove(key).catch(error => {
+        console.warn(`Failed to remove cache key ${key}:`, error);
+      })
+    );
 
     // Also clear period-specific caches
-    ['daily', 'weekly', 'monthly', 'all-time'].forEach(async period => {
-      await cacheService.remove(`${GamificationCacheService.CACHE_KEYS.LEADERBOARD}_${period}`);
-    });
+    const periodPromises = ['daily', 'weekly', 'monthly', 'all-time'].map(period =>
+      cacheService.remove(`${GamificationCacheService.CACHE_KEYS.LEADERBOARD}_${period}`).catch(error => {
+        console.warn(`Failed to remove leaderboard cache for period ${period}:`, error);
+      })
+    );
 
+    // Wait for all removals to complete
+    await Promise.all([...removalPromises, ...periodPromises]);
   }
 
   /**

@@ -119,6 +119,11 @@ function ImageDetailScreen() {
     }
   }, [image, isBookmarked]);
 
+  // CA-DSC-046 FIX: Add error state handling for image load failures
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+  }, []);
+
   // Handle share
   const handleShare = useCallback(async () => {
     if (!image) return;

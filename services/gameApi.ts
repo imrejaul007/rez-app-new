@@ -218,10 +218,19 @@ class GameApi {
       const transformed: DailyLimits = {};
       for (const [key, value] of Object.entries(response.data)) {
         const v = value as any;
+        const limit = Math.max(0, Math.floor(v.limit || 0));
+        const remaining = Math.max(0, Math.floor(v.remaining || 0));
+        const used = Math.max(0, Math.floor(v.played ?? v.used ?? 0));
+
+        // CA-GAM-020 FIX: Validate that used + remaining <= limit
+        if (used + remaining > limit) {
+          console.warn(`⚠️ Daily limits inconsistency for ${key}: used(${used}) + remaining(${remaining}) > limit(${limit})`);
+        }
+
         transformed[key] = {
-          limit: v.limit,
-          remaining: v.remaining,
-          used: v.played ?? v.used ?? 0
+          limit,
+          remaining: Math.min(remaining, limit),
+          used,
         };
       }
       response.data = transformed;

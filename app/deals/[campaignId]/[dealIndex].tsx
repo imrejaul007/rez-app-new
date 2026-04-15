@@ -163,7 +163,12 @@ const DealDetailPage: React.FC = () => {
           }
         }
       } catch (err: any) {
-        // silently handle
+        // CA-CMC-031 FIX: Log errors and handle auth failures gracefully
+        console.error('[DealDetail] Redemption check failed:', err.message || err);
+        // If auth error (401), could show banner but for now just log
+        if (err.status === 401) {
+          console.warn('[DealDetail] Auth error - user may be logged out');
+        }
       }
     };
 

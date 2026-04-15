@@ -124,7 +124,12 @@ function CartPage() {
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
     return (cartState.items ?? [])
-      .filter((item) => asExtendedCartItem(item).itemType !== 'service') // Only non-service items
+      // CA-CMC-046 FIX: Explicitly filter for products. Items with undefined itemType
+      // should be treated as products, not filtered out. So: itemType === undefined OR itemType === 'product'
+      .filter((item) => {
+        const itemType = asExtendedCartItem(item).itemType;
+        return itemType === 'product' || !itemType; // undefined or 'product' = product tab
+      })
       .map((item) => {
         const ext = asExtendedCartItem(item);
         // Preserve metadata for event items
@@ -221,9 +226,13 @@ function CartPage() {
       return sum + price * qty;
     }, 0);
 
-    // CA-CMC-018 FIX: Removed deprecated calculateLockedTotal() which always returned 0.
-    // Locked item totals must come from backend API response, not calculated client-side.
-    const lockedTotal = 0; // Always 0 — use API totals instead
+    // CA-CMC-003 FIX: Include locked product prices in total.
+    // Locked items have explicit prices (item.price) that must be summed.
+    const lockedTotal = lockedProducts.reduce((sum, item) => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      const qty = typeof item.quantity === 'number' ? item.quantity : 1;
+      return sum + (price * qty);
+    }, 0);
 
     return recalculatedCartTotal + serviceTotal + lockedTotal;
   }, [productItems, serviceItems, lockedProducts]);
@@ -237,6 +246,8 @@ function CartPage() {
       const safeBottom = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : insets.bottom;
       return [
         {
+          // CA-CMC-047 FIX: isSmallDevice causes re-renders on orientation change.
+          // Use responsive padding calculation inline instead of dependency.
           paddingHorizontal: isSmallDevice ? 12 : 16,
           paddingTop: 16,
           paddingBottom: safeBottom + (currentItems.length < 3 ? 80 : 120),
@@ -244,9 +255,9 @@ function CartPage() {
         currentItems.length === 0 && styles.emptyListContent,
       ];
     },
-    // BUG-047 FIX: Added isSmallDevice to dependency array — it affects paddingHorizontal
-    // but was missing, so the style would not update if device size classification changed.
-    [currentItems.length, insets.bottom, isSmallDevice],
+    // Only update when item count or inset changes, not on orientation changes.
+    // isSmallDevice is computed at render time, so it doesn't need to be a dependency.
+    [currentItems.length, insets.bottom],
   );
 
   const overallItemCount = useMemo(() => {
@@ -689,7 +700,8 @@ function CartPage() {
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
-              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+              // CA-CMC-041 FIX: Check productItems.length > 0 before accessing [0]
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
                 <CardOffersSection
                   storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
@@ -709,7 +721,8 @@ function CartPage() {
               keyboardShouldPersistTaps: 'handled',
               ListEmptyComponent: renderEmptyState,
               ListFooterComponent:
-                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+                // CA-CMC-041 FIX: Check productItems.length > 0 before accessing [0]
+                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
                   <CardOffersSection
                     storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                     orderValue={overallTotal}

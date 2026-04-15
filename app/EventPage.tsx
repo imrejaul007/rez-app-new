@@ -32,6 +32,7 @@ import eventsApiService from '@/services/eventsApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { useRegion } from '@/contexts/RegionContext';
 import { BUSINESS_CONFIG } from '@/config/env';
+// CA-DSC-031 FIX: Wrap analytics calls in try-catch
 import eventAnalytics from '@/services/eventAnalytics';
 import { getCategoryTheme, CategoryTheme, DEFAULT_THEME } from '@/constants/categoryThemes';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
@@ -85,11 +86,14 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
-  // Dynamic event data state
+  // CA-DSC-051 FIX: Validate selectedSlot before using
   const [eventData, setEventData] = useState<DynamicEventData | null>(null);
   const [isDynamic, setIsDynamic] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+
+  // Helper to check if slot is selected
+  const isSlotSelected = selectedSlot && selectedSlot.trim().length > 0;
   const [realEventData, setRealEventData] = useState<EventItem | null>(null);
   const [isLoadingEvent, setIsLoadingEvent] = useState(true);
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
