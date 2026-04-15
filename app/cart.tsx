@@ -383,17 +383,26 @@ function CartPage() {
         return;
       }
 
+      // CA-CMC-005 FIX: Prevent double-unlock race condition by checking item status before unlocking
+      const item = lockedProducts.find((p) => p.id === itemId);
+      if (!item || item.status === 'expired') {
+        platformAlertSimple('Info', 'Item is no longer available to unlock');
+        return;
+      }
+
       try {
         const response = await cartApi.unlockItem(productId);
 
         if (response.success) {
           if (!isMounted()) return;
-          setLockedProducts((prev) => prev.filter((item) => item.id !== itemId));
+          setLockedProducts((prev) => prev.filter((p) => p.id !== itemId));
           platformAlertSimple('Success', 'Item unlocked successfully');
         } else {
+          if (!isMounted()) return;
           platformAlertSimple('Error', response.message || response.error || 'Failed to unlock item');
         }
       } catch (error: any) {
+        if (!isMounted()) return;
         platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
       }
     },
