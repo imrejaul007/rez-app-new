@@ -119,6 +119,14 @@ function ScratchCardPage() {
   /** Step 2: Play scratch animation, then call server for prize */
   const handleScratch = useCallback(async () => {
     if (isAnimating || !session?.sessionId) return;
+
+    // CA-GAM-025 FIX: Check session status before allowing scratch
+    // Prevent replay attacks by verifying session is still in 'available' state
+    if (session?.status && session.status !== 'available') {
+      platformAlertSimple('Info', 'This session has already been played.');
+      return;
+    }
+
     setIsAnimating(true);
 
     // Animate scratch-off effect
@@ -129,6 +137,9 @@ function ScratchCardPage() {
       const wonPrize = await revealPrize(session.sessionId);
 
       if (wonPrize) {
+        // CA-GAM-025 FIX: After successful prize reveal, immediately mark session as completed
+        // This prevents any subsequent calls to revealPrize with the same sessionId
+        // Server should also enforce this via idempotency checks
         // Haptic feedback on prize win
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
 

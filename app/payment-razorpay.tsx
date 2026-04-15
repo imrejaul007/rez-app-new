@@ -196,10 +196,13 @@ function PaymentPage() {
 
   // ==================== RAZORPAY FLOW ====================
 
+  // CA-PAY-006 FIX: Use promise-based lock to prevent double-submit of Razorpay orders
+  const createOrderPromiseRef = useRef<Promise<any> | null>(null);
+
   const createRazorpayOrder = async (): Promise<any> => {
-    // Double-payment prevention
-    if (orderCreated && razorpayOrderId) {
-      return { razorpayOrderId, razorpayKeyId };
+    // CA-PAY-006 FIX: If an order creation is already in-flight, return that promise
+    if (createOrderPromiseRef.current) {
+      return createOrderPromiseRef.current;
     }
 
     // For deals, flash sales, and lock deals, the Razorpay order is pre-created by the backend.
@@ -227,34 +230,53 @@ function PaymentPage() {
 
     try {
       setPaymentStartedAt(Date.now());
-      let response;
-      if (isTravelPayment) {
-        response = await apiClient.post('/travel-payment/create-order', {
-          bookingId,
-          amount,
-          currency,
-        });
-      } else {
-        // Event payments and generic order payments
-        response = await apiClient.post('/payment/create-order', {
-          orderId,
-          amount,
-          currency,
-        });
-      }
 
-      if (response.success && response.data) {
-        return response.data;
-      } else {
-        throw new Error(response.error || 'Failed to create payment order');
-      }
+      // CA-PAY-006 FIX: Create the promise and store it to prevent concurrent calls
+      const orderPromise = (async () => {
+        let response;
+        if (isTravelPayment) {
+          response = await apiClient.post('/travel-payment/create-order', {
+            bookingId,
+            amount,
+            currency,
+          });
+        } else {
+          // Event payments and generic order payments
+          response = await apiClient.post('/payment/create-order', {
+            orderId,
+            amount,
+            currency,
+          });
+        }
+
+        if (response.success && response.data) {
+          return response.data;
+        } else {
+          throw new Error(response.error || 'Failed to create payment order');
+        }
+      })();
+
+      createOrderPromiseRef.current = orderPromise;
+      const result = await orderPromise;
+      createOrderPromiseRef.current = null; // Clear after successful completion
+      return result;
     } catch (error: any) {
+      createOrderPromiseRef.current = null; // Clear after error
       throw error;
     }
   };
 
   const verifyRazorpayPaymentOnBackend = async (paymentData: any): Promise<boolean> => {
+    // CA-PAY-011 FIX: Always verify Razorpay payment server-side
+    // Do not trust client-side Razorpay data; backend MUST validate signature
+    // to prevent fraudulent payment claims.
     try {
+      // Validate required fields exist
+      if (!paymentData.razorpay_order_id || !paymentData.razorpay_payment_id || !paymentData.razorpay_signature) {
+        console.error('[Razorpay] Missing required payment verification fields');
+        return false;
+      }
+
       let response;
       if (isTravelPayment) {
         response = await apiClient.post('/travel-payment/verify', {
@@ -272,8 +294,18 @@ function PaymentPage() {
         });
       }
 
-      return !!(response.success && response.data);
+      // CA-PAY-011 FIX: Only return true if backend explicitly confirms payment is valid
+      if (response.success && response.data) {
+        // Additional safety: ensure response contains order/payment confirmation
+        if (!response.data.orderId && !response.data.paymentId) {
+          console.warn('[Razorpay] Verification response missing orderId or paymentId');
+          return false;
+        }
+        return true;
+      }
+      return false;
     } catch (error: any) {
+      console.error('[Razorpay] Verification error:', error.message);
       return false;
     }
   };
