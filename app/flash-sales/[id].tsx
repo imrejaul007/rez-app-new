@@ -179,6 +179,27 @@ function FlashSaleDetailPage() {
     try {
       setIsProcessingPayment(true);
 
+      // CA-CMC-032 FIX: Check stock availability before creating Razorpay order.
+      // If stock has sold out between page load and purchase attempt, reject purchase.
+      const availableStock = flashSale.maxQuantity - flashSale.soldQuantity;
+      const requestedQuantity = 1;
+
+      if (availableStock < requestedQuantity) {
+        platformAlertSimple('Out of Stock', 'This flash sale is no longer available. Stock has sold out.');
+        setIsProcessingPayment(false);
+        return;
+      }
+
+      // Also check if user has exceeded their per-user limit
+      if (requestedQuantity > flashSale.limitPerUser) {
+        platformAlertSimple(
+          'Limit Exceeded',
+          `You can purchase a maximum of ${flashSale.limitPerUser} item(s) of this flash sale.`
+        );
+        setIsProcessingPayment(false);
+        return;
+      }
+
       // Create Razorpay order via backend
       const response = await realOffersApi.initiateFlashSalePurchase(flashSale._id, 1);
 

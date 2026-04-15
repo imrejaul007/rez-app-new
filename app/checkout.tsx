@@ -161,6 +161,8 @@ function AOVRewardNudge({
     (async () => {
       try {
         const { default: api } = await import('@/services/apiClient');
+        // CA-CMC-010 FIX: Use exact totalPayable value (in paise) without double-rounding.
+        // Converting to paise once avoids off-by-one errors at tier boundaries.
         const amountPaise = Math.round(totalPayable * 100);
         const res = (await api.get(
           `/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`,
@@ -176,7 +178,7 @@ function AOVRewardNudge({
     return () => {
       cancelled = true;
     };
-  }, [storeId, Math.round(totalPayable)]);
+  }, [storeId, totalPayable]);
 
   if (!nudge?.nextTier) return null;
   const moreRupees = Math.ceil(nudge.amountToNextTierPaise / 100);

@@ -63,6 +63,8 @@ export const useWalletStore = create<WalletStoreState>()(
 
       // Optimistic balance adjustment for instant UI feedback after earning coins.
       // Server truth is restored by the next refreshWallet() call.
+      // CA-PAY-004 FIX: Use functional setState to read fresh state instead of capturing
+      // stale walletData from closure. Prevents inconsistency after rapid earn + spend.
       adjustBalance: (delta: number) => {
         set((state) => {
           if (!state.walletData) return state;
