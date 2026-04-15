@@ -222,7 +222,9 @@ function BusDetailsPage() {
 
       // Duration and times: prefer specs
       const rawDuration = productData.serviceDetails?.duration;
-      const duration = typeof rawDuration === 'number' && !isNaN(rawDuration) && rawDuration > 0 ? rawDuration : 480;
+      // CA-TRV-030 FIX: mark when using estimated duration fallback
+      const hasValidDuration = typeof rawDuration === 'number' && !isNaN(rawDuration) && rawDuration > 0;
+      const duration = hasValidDuration ? rawDuration : 480;
       const specDepTime = getSpec('departureTime');
       const specArrTime = getSpec('arrivalTime');
       let departureTime = specDepTime;

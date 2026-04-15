@@ -56,6 +56,11 @@ function MyReviewsPage() {
     loadReviews();
   }, []);
 
+  // CA-DSC-011 FIX: Reset page when filter changes to avoid showing misaligned data
+  useEffect(() => {
+    setPage(1);
+  }, [activeFilter]);
+
   const loadReviews = async (isRefresh = false) => {
     try {
       if (isRefresh) {
