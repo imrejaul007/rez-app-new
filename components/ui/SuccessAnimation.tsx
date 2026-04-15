@@ -85,16 +85,17 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
       // Hold for viewing time (800ms), then fade out
       const fadeTimer = setTimeout(() => {
         opacity.value = withTiming(0, { duration: 300, easing: Easing.inOut(Easing.ease) });
-
-        // Call onDone after fade completes
-        const doneTimer = setTimeout(() => {
-          if (onDone) runOnJS(onDone)();
-        }, 300);
-
-        return () => clearTimeout(doneTimer);
       }, 800);
 
-      return () => clearTimeout(fadeTimer);
+      // Call onDone after fade completes (300ms after fadeTimer trigger)
+      const doneTimer = setTimeout(() => {
+        if (onDone) runOnJS(onDone)();
+      }, 800 + 300);
+
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(doneTimer);
+      };
     }, coinReward ? 400 : 600);
 
     return () => clearTimeout(coinTimer);

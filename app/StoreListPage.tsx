@@ -58,10 +58,20 @@ const StoreListPage: React.FC = () => {
     ? sortByFromParams
     : 'rating';
 
+  // CA-DSC-005 FIX: Restore filters from params on mount to persist filter state
+  const initialFilters = useMemo(() => {
+    try {
+      const filtersParam = params.filters as string;
+      return filtersParam ? JSON.parse(filtersParam) : defaultSearchFilters;
+    } catch {
+      return defaultSearchFilters;
+    }
+  }, []);
+
   // Local state for search and filters
   const [searchQuery, setSearchQuery] = useState((params.query as string) || (params.search as string) || '');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  const [searchFilters, setSearchFilters] = useState<SearchFilters>(defaultSearchFilters);
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>(initialFilters);
   const [rezPayFilter, setRezPayFilter] = useState(false);
   const [showSortModal, setShowSortModal] = useState(false);
   const [sortBy, setSortByLocal] = useState<'rating' | 'distance' | 'name' | 'newest'>(validSortBy!);
@@ -86,9 +96,13 @@ const StoreListPage: React.FC = () => {
     }
   }, [subcategoriesParam]);
 
-  // Subcategory selection state
+  // CA-DSC-034 FIX: Reset subcategory when parent category changes
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
   const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
+
+  useEffect(() => {
+    setSelectedSubcategory('all');
+  }, [categoryFromParams]);
 
   // Sub-sub-category (cuisine/item type) filter state
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<string>('all');
@@ -235,63 +249,68 @@ const StoreListPage: React.FC = () => {
         hasRezPay:
           (store as any).paymentSettings?.acceptRezCoins || store.operationalInfo?.acceptsWalletPayment || false,
         cashbackPercent: (store as any).rewardRules?.baseCashbackPercent || 0,
-        products: filteredProducts.map((product: any) => {
-          // Handle both old and new product data structures
-          // New structure from backend transformation: { price: number, originalPrice: number, rating: number }
-          // Old structure: { price: { current, original }, rating: { value, count } }
-          const isNewStructure = typeof product.price === 'number';
+        // CA-DSC-015 FIX: Use Set to eliminate duplicate products from filter results
+        products: Array.from(
+          new Map(
+            filteredProducts.map((product: any) => {
+              // Handle both old and new product data structures
+              // New structure from backend transformation: { price: number, originalPrice: number, rating: number }
+              // Old structure: { price: { current, original }, rating: { value, count } }
+              const isNewStructure = typeof product.price === 'number';
 
-          // Safe price extraction with fallback
-          const getPrice = () => {
-            if (isNewStructure) {
-              return typeof product.price === 'number' ? product.price : 0;
-            }
-            return typeof product.price?.current === 'number' ? product.price.current : 0;
-          };
+              // Safe price extraction with fallback
+              const getPrice = () => {
+                if (isNewStructure) {
+                  return typeof product.price === 'number' ? product.price : 0;
+                }
+                return typeof product.price?.current === 'number' ? product.price.current : 0;
+              };
 
-          // Safe rating extraction with fallback
-          const getRating = () => {
-            if (isNewStructure) {
-              return typeof product.rating === 'number' ? product.rating : 0;
-            }
-            if (typeof product.rating?.value === 'number') {
-              return product.rating.value;
-            }
-            if (typeof product.rating?.value === 'string') {
-              const parsed = parseFloat(product.rating.value);
-              return isNaN(parsed) ? 0 : parsed;
-            }
-            return 0;
-          };
+              // Safe rating extraction with fallback
+              const getRating = () => {
+                if (isNewStructure) {
+                  return typeof product.rating === 'number' ? product.rating : 0;
+                }
+                if (typeof product.rating?.value === 'number') {
+                  return product.rating.value;
+                }
+                if (typeof product.rating?.value === 'string') {
+                  const parsed = parseFloat(product.rating.value);
+                  return isNaN(parsed) ? 0 : parsed;
+                }
+                return 0;
+              };
 
-          const transformedProduct = {
-            productId: product._id || product.productId || '',
-            name: product.name || product.title || '',
-            description: product.description || '',
-            price: getPrice(),
-            originalPrice: isNewStructure ? product.originalPrice || null : product.price?.original || null,
-            discountPercentage: isNewStructure ? product.discountPercentage || null : product.price?.discount || null,
-            imageUrl: product.imageUrl || product.image,
-            imageAlt: product.imageAlt || product.name || product.title || 'Product image',
-            hasRezPay: product.hasRezPay !== undefined ? product.hasRezPay : false,
-            inStock:
-              product.inStock !== undefined
-                ? product.inStock
-                : product.inventory?.isAvailable !== undefined
-                  ? product.inventory.isAvailable
-                  : true,
-            category: product.category || '',
-            subcategory: product.subcategory || '',
-            brand: product.brand || '',
-            rating: getRating(),
-            reviewCount: isNewStructure ? product.reviewCount || 0 : product.rating?.count || 0,
-            sizes: Array.isArray(product.sizes) ? product.sizes : [],
-            colors: Array.isArray(product.colors) ? product.colors : [],
-            tags: Array.isArray(product.tags) ? product.tags : [],
-          };
+              const transformedProduct = {
+                productId: product._id || product.productId || '',
+                name: product.name || product.title || '',
+                description: product.description || '',
+                price: getPrice(),
+                originalPrice: isNewStructure ? product.originalPrice || null : product.price?.original || null,
+                discountPercentage: isNewStructure ? product.discountPercentage || null : product.price?.discount || null,
+                imageUrl: product.imageUrl || product.image,
+                imageAlt: product.imageAlt || product.name || product.title || 'Product image',
+                hasRezPay: product.hasRezPay !== undefined ? product.hasRezPay : false,
+                inStock:
+                  product.inStock !== undefined
+                    ? product.inStock
+                    : product.inventory?.isAvailable !== undefined
+                      ? product.inventory.isAvailable
+                      : true,
+                category: product.category || '',
+                subcategory: product.subcategory || '',
+                brand: product.brand || '',
+                rating: getRating(),
+                reviewCount: isNewStructure ? product.reviewCount || 0 : product.rating?.count || 0,
+                sizes: Array.isArray(product.sizes) ? product.sizes : [],
+                colors: Array.isArray(product.colors) ? product.colors : [],
+                tags: Array.isArray(product.tags) ? product.tags : [],
+              };
 
-          return transformedProduct;
-        }),
+              return [product._id || product.productId || '', transformedProduct];
+            }),
+          ),
+        ).map(([, product]) => product),
         totalProductsFound: filteredProducts.length,
       };
     }),

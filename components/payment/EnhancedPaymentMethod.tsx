@@ -4,7 +4,7 @@
  * Payment method card with offers, badges, and provider icons
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { EnhancedPaymentMethod as EnhancedPaymentMethodType, PaymentBadgeType } from '@/types/storePayment.types';
@@ -28,6 +28,35 @@ export const EnhancedPaymentMethodCard: React.FC<EnhancedPaymentMethodProps> = (
   onSelect,
 }) => {
   const hasOffers = method.offers && method.offers.length > 0;
+
+  // Memoize offers rendering to avoid unnecessary recalculations
+  const offersElements = useMemo(() => {
+    if (!hasOffers) return null;
+    return method.offers!.slice(0, 2).map((offer, index) => (
+      <View key={offer.type ? `${offer.type}-${index}` : index} style={styles.offerRow}>
+        <View style={styles.offerIcon}>
+          <Ionicons
+            name={
+              offer.type === 'cashback' ? 'cash-outline' :
+              offer.type === 'discount' ? 'pricetag-outline' :
+              offer.type === 'emi' ? 'calendar-outline' :
+              'gift-outline'
+            }
+            size={12}
+            color={colors.successScale[500]}
+          />
+        </View>
+        <Text style={styles.offerText} numberOfLines={1}>
+          {offer.title}
+        </Text>
+        {offer.banks && offer.banks.length > 0 && (
+          <Text style={styles.offerBanks}>
+            {offer.banks.slice(0, 2).join(', ')}
+          </Text>
+        )}
+      </View>
+    ));
+  }, [hasOffers, method.offers]);
 
   return (
     <Pressable
