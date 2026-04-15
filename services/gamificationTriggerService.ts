@@ -145,7 +145,7 @@ class GamificationTriggerService {
         return 100;
 
       case 'DAILY_LOGIN':
-        // Streak-based login reward: 10 base + 5 per streak day (capped at 50 bonus = 60 total)
+        // Streak-based login reward: 10 base coins + 5 coins per streak day (bonus capped at 50 = max 60 total)
         const streak = data?.streak || 1;
         return 10 + Math.min(streak * 5, 50);
 

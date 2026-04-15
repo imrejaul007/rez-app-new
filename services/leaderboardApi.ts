@@ -102,7 +102,8 @@ class LeaderboardApi {
             name: entry.user?.name || entry.userName || entry.name || 'Anonymous',
             avatar: entry.user?.avatar || entry.user?.profilePicture || entry.avatar || '/assets/default-avatar.png',
           },
-          rank: entry.rank || index + 1,
+          // Always use explicit rank from API if available; only use index+1 as fallback
+          rank: typeof entry.rank === 'number' && entry.rank > 0 ? entry.rank : index + 1,
           value: entry.value || entry.amount || entry.score || 0,
           period: params.period,
         }));
