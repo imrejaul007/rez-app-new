@@ -200,6 +200,11 @@ function PaymentPage() {
   const createOrderPromiseRef = useRef<Promise<any> | null>(null);
 
   const createRazorpayOrder = async (): Promise<any> => {
+    // CA-PAY-005 FIX: Validate amount is positive and valid before API call
+    if (amount <= 0 || !Number.isFinite(amount)) {
+      throw new Error('Invalid payment amount');
+    }
+
     // CA-PAY-006 FIX: If an order creation is already in-flight, return that promise
     if (createOrderPromiseRef.current) {
       return createOrderPromiseRef.current;
@@ -339,6 +344,17 @@ function PaymentPage() {
   };
 
   const openNativeRazorpayCheckout = (orderData: any) => {
+    // CA-PAY-032 FIX: Check that RazorpayCheckout is not null before calling methods
+    if (!RazorpayCheckout) {
+      setCurrentStep('methods');
+      setIsProcessing(false);
+      platformAlertSimple(
+        'Payment Unavailable',
+        'Razorpay is not available in this environment. Please use the native app.',
+      );
+      return;
+    }
+
     const options = {
       description: isDealPayment
         ? 'REZ - Deal Purchase'
@@ -576,9 +592,9 @@ function PaymentPage() {
               <ThemedText style={styles.methodName}>{method.name}</ThemedText>
               <ThemedText style={styles.methodGateway}>Razorpay Gateway</ThemedText>
               <View style={styles.methodDetails}>
-                <ThemedText style={styles.methodFee}>
-                  {method.processingFee && method.processingFee > 0 ? `Fee: ${method.processingFee}%` : 'No fee'}
-                </ThemedText>
+                {/* CA-PAY-041 FIX: Remove fee display since fee is handled server-side
+                    Displaying fee here caused confusion as it wasn't actually added to amountToPay.
+                    Backend correctly handles fee calculation. */}
                 <ThemedText style={styles.methodTime}>{method.processingTime}</ThemedText>
               </View>
             </View>

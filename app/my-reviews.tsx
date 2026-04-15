@@ -70,6 +70,9 @@ function MyReviewsPage() {
   }, [activeFilter]);
 
   const loadReviews = async (isRefresh = false) => {
+    // CA-DSC-001 FIX: Check isMounted immediately before setting state
+    if (!isMounted()) return;
+
     try {
       if (isRefresh) {
         setRefreshing(true);

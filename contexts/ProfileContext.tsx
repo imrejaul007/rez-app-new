@@ -214,6 +214,14 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     try {
       setError(null);
 
+      // CA-AUT-026 FIX: Require verification before allowing email change
+      if (userData.email && userData.email !== user.email) {
+        // Email is being changed — require identity verification
+        throw new Error(
+          'Email changes require verification. Please verify your identity with your current password or OTP before updating your email address.'
+        );
+      }
+
       // Map profile user data to ProfileUpdate format for API call
       const profileUpdateData: any = {
         email: userData.email || undefined, // Add email at top level

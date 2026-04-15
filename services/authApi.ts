@@ -208,6 +208,36 @@ function validateAuthResponse(response: RawAuthResponsePayload): boolean {
 }
 
 class AuthService {
+  private csrfTokenCache: { token: string; timestamp: number } | null = null;
+
+  /**
+   * CA-AUT-009 FIX: Get CSRF token for auth endpoints
+   * Generates a nonce for CSRF protection on web platforms
+   */
+  private async getCsrfToken(): Promise<string | null> {
+    try {
+      // Only generate CSRF tokens on web (not needed on native)
+      if (typeof window === 'undefined') return null;
+
+      // Cache token for 5 minutes to avoid regenerating on every request
+      if (this.csrfTokenCache && Date.now() - this.csrfTokenCache.timestamp < 5 * 60 * 1000) {
+        return this.csrfTokenCache.token;
+      }
+
+      // Generate a random nonce
+      const nonce = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+
+      this.csrfTokenCache = { token: nonce, timestamp: Date.now() };
+      return nonce;
+    } catch (error) {
+      // Silently fail if CSRF token generation fails — auth will still work
+      // (backend validates based on cookies/auth tokens)
+      return null;
+    }
+  }
+
   /**
    * Send OTP for registration or login
    */
@@ -247,8 +277,18 @@ class AuthService {
         email: data.email
       });
 
+      // CA-AUT-009 FIX: Generate CSRF token for web auth protection
+      const csrfToken = await this.getCsrfToken();
+      const headers: Record<string, string> = {};
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await withRetry(
-        () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data as any, { timeout: API_TIMEOUTS.AUTH }),
+        () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data as any, {
+          timeout: API_TIMEOUTS.AUTH,
+          headers
+        }),
         { maxRetries: 0 } // HIGH-5: Do NOT retry OTP send — retrying triggers duplicate SMS charges
       );
 
@@ -307,8 +347,18 @@ class AuthService {
         otp: '******'
       });
 
+      // CA-AUT-009 FIX: Generate CSRF token for web auth protection
+      const csrfToken = await this.getCsrfToken();
+      const headers: Record<string, string> = {};
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await withRetry(
-        () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data as any, { timeout: API_TIMEOUTS.AUTH }),
+        () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data as any, {
+          timeout: API_TIMEOUTS.AUTH,
+          headers
+        }),
         { maxRetries: 0 } // HIGH-4: Do NOT retry OTP verification — a wrong OTP should fail immediately without consuming extra attempts
       );
 

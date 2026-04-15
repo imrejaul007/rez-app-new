@@ -364,8 +364,19 @@ function BillPaymentPage() {
           setLastPaymentId(payment._id);
           setPaymentPolling(true);
           let pollCount = 0;
+          // CA-PAY-008 FIX: Add max timeout protection (5 minutes) to prevent infinite polling
+          const pollStartTime = Date.now();
+          const MAX_POLL_DURATION = 5 * 60 * 1000; // 5 minutes
           pollIntervalRef.current = setInterval(async () => {
             pollCount++;
+            // CA-PAY-008 FIX: Check elapsed time to stop polling after max duration
+            const elapsedTime = Date.now() - pollStartTime;
+            if (elapsedTime > MAX_POLL_DURATION) {
+              if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+              if (isMounted()) setPaymentPolling(false);
+              platformAlert('Payment Status Pending', 'Payment status is still being confirmed. Please check your transaction history.');
+              return;
+            }
             try {
               const statusRes = await getPaymentHistory(1, 5);
               const updated = statusRes.data?.payments?.find((p) => p._id === payment._id);
@@ -380,8 +391,8 @@ function BillPaymentPage() {
             } catch {
               /* polling error — stop after max attempts */
             }
-            if (pollCount >= 10) {
-              // Stop after 10 polls (30s)
+            if (pollCount >= 100) {
+              // Stop after 100 polls (300s / 5 minutes) — also bounded by MAX_POLL_DURATION above
               if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
               if (isMounted()) setPaymentPolling(false);
             }

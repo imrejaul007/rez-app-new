@@ -3,6 +3,15 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 
+// CA-PAY-023 FIX: Normalize payment method types before API submission
+// Transform 'rezcoins' → 'wallet' as required by backend
+export function normalizePaymentMethod(method: string): string {
+  if (method === 'rezcoins') {
+    return 'wallet';
+  }
+  return method;
+}
+
 export interface PaymentMethod {
   id: string;
   name: string;
@@ -154,7 +163,12 @@ class PaymentService {
    */
   async initiatePayment(paymentRequest: PaymentRequest): Promise<ApiResponse<PaymentResponse>> {
     try {
-      const response = await apiClient.post<any>('/wallet/initiate-payment', paymentRequest as any);
+      // CA-PAY-023 FIX: Normalize payment method type before API submission
+      const normalizedRequest = {
+        ...paymentRequest,
+        paymentMethodType: normalizePaymentMethod(paymentRequest.paymentMethodType),
+      };
+      const response = await apiClient.post<any>('/wallet/initiate-payment', normalizedRequest as any);
 
       if (response.success && response.data) {
         return response as ApiResponse<PaymentResponse>;
