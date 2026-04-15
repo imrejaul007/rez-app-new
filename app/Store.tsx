@@ -279,6 +279,16 @@ function ModernCardIllustration({
             style={styles.categoryImage}
             contentFit="contain"
             cachePolicy="memory-disk"
+            onError={() => {
+              // Fallback to icon if image fails to load
+              if (icon) {
+                return (
+                  <View style={styles.iconContainer}>
+                    <Ionicons name={icon as any} size={32} color="white" />
+                  </View>
+                );
+              }
+            }}
           />
         ) : icon ? (
           <View style={styles.iconContainer}>
