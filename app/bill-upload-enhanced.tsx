@@ -179,9 +179,14 @@ function EnhancedBillUploadPage() {
       const success = await submitBill();
 
       if (success) {
+        // CA-PAY-002 FIX: Use precise decimal rounding instead of float toFixed().
+        // Avoid accumulated precision errors by rounding via integer paise (multiply by 100, round, divide).
+        const cashbackPaise = Math.round(estimatedCashback * 100);
+        const cashbackFormatted = (cashbackPaise / 100).toFixed(2);
+
         platformAlertConfirm(
           'Success!',
-          `Your bill has been uploaded successfully. You'll earn ${currencySymbol}${estimatedCashback.toFixed(2)} cashback once approved!`,
+          `Your bill has been uploaded successfully. You'll earn ${currencySymbol}${cashbackFormatted} cashback once approved!`,
           () => router?.push && router.push('/bill-history'),
           'View History',
         );
