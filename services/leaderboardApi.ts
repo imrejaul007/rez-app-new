@@ -78,11 +78,15 @@ class LeaderboardApi {
     page?: number;
   }): Promise<ApiResponse<LeaderboardResponse>> {
     try {
+      // CA-GAM-004: Validate pagination parameters before API call
+      const page = Math.max(1, Math.floor(params.page || 1));
+      const limit = Math.max(1, Math.min(100, Math.floor(params.limit || 50))); // Cap at 100
+
       const response = await apiClient.get<any>(this.baseUrl, {
         type: params.type || 'spending',
         period: params.period || 'weekly',
-        limit: params.limit || 50,
-        page: params.page || 1,
+        limit,
+        page,
       });
 
       if (response.success && response.data) {

@@ -218,10 +218,20 @@ class GameApi {
       const transformed: DailyLimits = {};
       for (const [key, value] of Object.entries(response.data)) {
         const v = value as any;
+        // CA-GAM-020: Validate daily limits structure
+        const limit = v.limit || 10;
+        const used = v.played ?? v.used ?? 0;
+        const remaining = v.remaining ?? Math.max(0, limit - used);
+
+        // Ensure remaining >= 0 and remaining <= limit
+        if (remaining < 0 || remaining > limit || (used + remaining) > limit) {
+          console.warn(`[GameAPI] Daily limit mismatch for ${key}: limit=${limit}, used=${used}, remaining=${remaining}`);
+        }
+
         transformed[key] = {
-          limit: v.limit,
-          remaining: v.remaining,
-          used: v.played ?? v.used ?? 0
+          limit,
+          remaining: Math.max(0, remaining),
+          used: Math.max(0, used)
         };
       }
       response.data = transformed;

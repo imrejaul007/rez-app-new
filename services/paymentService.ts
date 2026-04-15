@@ -2,6 +2,7 @@
 // Handles payment gateway integration for wallet topup
 
 import apiClient, { ApiResponse } from './apiClient';
+import { validateResponse, isFeatureEnabled, paymentResponseSchema } from '@rez/shared';
 
 export interface PaymentMethod {
   id: string;

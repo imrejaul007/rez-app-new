@@ -49,19 +49,24 @@ class CartValidationService {
   /**
    * Validate entire cart for stock availability and price changes
    * Calls backend /api/cart/validate endpoint
+   * CA-CMC-016 fix: Remove empty if/else blocks and transform response properly
    */
   async validateCart(): Promise<ApiResponse<ValidateCartResponse>> {
     try {
-
       const response = await apiClient.get<ValidateCartResponse>('/cart/validate');
 
-      if (response.success) {
-
-      } else {
+      if (response.success && response.data) {
+        // Transform validation response to standardized format
+        const transformed = this.transformValidationResponse(response.data);
+        return {
+          ...response,
+          data: transformed as any,
+        };
       }
 
       return response;
     } catch (error) {
+      console.error('[Cart Validation] Error validating cart:', error);
       throw error;
     }
   }
@@ -171,7 +176,9 @@ class CartValidationService {
 
   /**
    * Subscribe to stock updates via WebSocket/Socket.IO
+   * CA-CMC-017 fix: Disable this stub and advise not to use real-time stock updates yet
    * Note: Requires Socket.IO integration
+   * @deprecated Real-time stock updates not yet implemented. Use periodic validation instead.
    */
   subscribeToStockUpdates(callback: (update: {
     productId: string;
@@ -179,13 +186,11 @@ class CartValidationService {
     currentStock: number;
     timestamp: string;
   }) => void): () => void {
+    console.warn('[Cart Validation] subscribeToStockUpdates is not implemented. Use periodic validateCart() calls instead.');
 
-    // TODO: Implement Socket.IO integration
-    // This is a placeholder for future real-time functionality
-
-    // Return unsubscribe function
+    // Return unsubscribe function (no-op since subscription is not active)
     return () => {
-
+      // No-op: Real-time subscriptions not yet available
     };
   }
 

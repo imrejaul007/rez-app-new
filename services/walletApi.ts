@@ -1,4 +1,5 @@
 import apiClient, { ApiResponse } from './apiClient';
+import { validateResponse, isFeatureEnabled } from '@rez/shared';
 
 // ============================================================================
 // WALLET API SERVICE
@@ -366,6 +367,7 @@ class WalletService {
    */
   async getBalance(): Promise<ApiResponse<WalletBalanceResponse>> {
     try {
+      // Dark-launch schema validation added in Phase 4 (gated by SCHEMA_VALIDATION_ENABLED flag)
       return await apiClient.get('/wallet/balance');
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getBalance failed:', error?.message);

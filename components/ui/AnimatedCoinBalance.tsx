@@ -79,7 +79,7 @@ export const AnimatedCoinBalance: React.FC<AnimatedCoinBalanceProps> = ({
         [prevVal, value]
       )
     );
-  }, [value]);
+  }, [value, animProgress]); // Include animProgress in dependency array
 
   // LUCA: Scale pulse animation for delight
   const scaleStyle = useAnimatedStyle(() => ({

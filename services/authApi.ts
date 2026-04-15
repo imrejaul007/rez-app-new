@@ -10,6 +10,10 @@ import {
   isUserVerified
 } from '@/types/unified';
 
+import { validateResponse, setValidationLogger } from '@rez/shared';
+import { userProfileSchema } from '@rez/shared';
+import { isFeatureEnabled } from '@rez/shared';
+
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},
   warn: __DEV__ ? console.warn.bind(console) : () => {},
@@ -305,6 +309,16 @@ class AuthService {
 
       logApiResponse('POST', '/user/auth/verify-otp', { success: response.success }, Date.now() - startTime);
 
+      // Dark-launch: validate response against schema (log drift, don't throw)
+      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
+        if (response.data.user) {
+          const { valid, error } = validateResponse(userProfileSchema, response.data.user, '/user/auth/verify-otp');
+          if (!valid && error) {
+            devLog.warn('[AUTH API] Schema validation drift on /user/auth/verify-otp', { schemaDrift: true, error });
+          }
+        }
+      }
+
       // Validate response
       if (response.success && response.data) {
         if (!validateAuthResponse(response.data)) {
@@ -390,8 +404,15 @@ class AuthService {
     try {
       logApiRequest('POST', '/user/auth/logout');
 
+      // Fixed CA-AUT-014: Add Idempotency-Key for logout to handle retries safely
+      const idempotencyKey = `logout-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
       const response = await withRetry(
-        () => apiClient.post<{ message: string }>('/user/auth/logout'),
+        () => apiClient.post<{ message: string }>('/user/auth/logout', {}, {
+          headers: {
+            'Idempotency-Key': idempotencyKey,
+          },
+        }),
         { maxRetries: 1 }
       );
 
@@ -426,6 +447,14 @@ class AuthService {
       );
 
       logApiResponse('GET', '/user/auth/me', response, Date.now() - startTime);
+
+      // Dark-launch: validate response against schema (log drift, don't throw)
+      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
+        const { valid, error } = validateResponse(userProfileSchema, response.data, '/user/auth/me');
+        if (!valid && error) {
+          devLog.warn('[AUTH API] Schema validation drift on /user/auth/me', { schemaDrift: true, error });
+        }
+      }
 
       // Validate response
       if (response.success && response.data) {
@@ -490,6 +519,14 @@ class AuthService {
       );
 
       logApiResponse('PUT', '/user/auth/profile', response, Date.now() - startTime);
+
+      // Dark-launch: validate response against schema (log drift, don't throw)
+      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
+        const { valid, error } = validateResponse(userProfileSchema, response.data, '/user/auth/profile');
+        if (!valid && error) {
+          devLog.warn('[AUTH API] Schema validation drift on /user/auth/profile', { schemaDrift: true, error });
+        }
+      }
 
       // Validate response
       if (response.success && response.data) {

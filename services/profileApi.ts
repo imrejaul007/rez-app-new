@@ -85,8 +85,15 @@ class ProfileService {
         name: 'profile-picture.jpg',
       } as any);
 
+      // Fixed CA-AUT-023: Explicitly set Content-Type to multipart/form-data
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
       return await withRetry(
-        () => apiClient.post<{ profilePicture: string }>('/user/profile/picture', formData),
+        () => apiClient.post<{ profilePicture: string }>('/user/profile/picture', formData, config),
         { maxRetries: 3 }
       );
     } catch (error: any) {

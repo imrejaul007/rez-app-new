@@ -22,14 +22,15 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   const coins = useMemo(() => {
-    return Array.from({ length: COIN_COUNT }, () => ({
+    return Array.from({ length: COIN_COUNT }, (_, idx) => ({
+      id: `coin-${idx}`,
       x: Math.random() * (SCREEN_WIDTH - 24),
       size: 18 + Math.random() * 14, // 18-32
       delay: Math.random() * 500,
       wobbleAmplitude: 15 + Math.random() * 30,
       spinStart: Math.random() * 360,
     }));
-  }, [visible]);
+  }, []); // Generate coins once on mount, not on visibility toggle
 
   useEffect(() => {
     if (!visible) return;
@@ -75,7 +76,7 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
     masterAnim.start(() => { onComplete?.(); });
 
     return () => { masterAnim.stop(); };
-  }, [visible]);
+  }, [visible, coins]); // Include coins in dependency array
 
   if (!visible) return null;
 
@@ -97,7 +98,7 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
 
         return (
           <Animated.View
-            key={i}
+            key={coin.id}
             style={[
               styles.coinWrapper,
               {

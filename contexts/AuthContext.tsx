@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useRef, useCallback, useMemo } from 'react';
 import { logger } from '@/utils/logger';
 import { useAuthStore } from '@/stores/authStore';
+import { useWalletStore } from '@/stores/walletStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useSegments } from 'expo-router';
 import authService, { User, AuthResponse } from '@/services/authApi';
@@ -282,7 +283,16 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
       const requestData: any = { phoneNumber, flow };
       if (email) requestData.email = email;
-      if (referralCode) requestData.referralCode = referralCode;
+
+      // Fixed CA-AUT-012: Validate referral code format before sending
+      if (referralCode) {
+        // Validate: alphanumeric only, max 20 characters
+        const isValidReferralCode = /^[a-zA-Z0-9]{1,20}$/.test(referralCode);
+        if (!isValidReferralCode) {
+          throw new Error('Invalid referral code format. Must be alphanumeric and up to 20 characters.');
+        }
+        requestData.referralCode = referralCode;
+      }
 
       const response = await authService.sendOtp(requestData);
 
@@ -440,6 +450,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   const performLocalLogout = async () => {
     try {
+      // Fixed CA-AUT-024: Reset wallet store to prevent cache poisoning across user sessions
+      useWalletStore.getState().reset();
+
       // Clear from AsyncStorage and localStorage (web)
       await authStorage.clearAuthData();
 
@@ -462,16 +475,19 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const forceLogout = () => {
 
     try {
+      // Fixed CA-AUT-024: Reset wallet store on logout
+      useWalletStore.getState().reset();
+
       // Clear both localStorage and AsyncStorage via authStorage
       authStorage.clearAuthData().catch(() => { /* silently handle */ });
 
       // Clear API client token
       authService.setAuthToken(null);
       apiClient.setAuthToken(null);
-      
+
       // Force state update
       dispatch({ type: 'AUTH_LOGOUT' });
-      
+
       // Set explicit logout flag to prevent auto-restoration
       setHasExplicitlyLoggedOut(true);
 

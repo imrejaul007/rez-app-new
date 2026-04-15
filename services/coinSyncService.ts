@@ -114,8 +114,10 @@ class CoinSyncService {
     try {
       devLog.log(`🎮 [COIN SYNC] Syncing gamification reward: ${amount} coins from ${source}`);
 
-      if (amount <= 0) {
-        throw new Error('Reward amount must be greater than 0');
+      // Validate reward amount (CA-GAM-054: add max bound validation)
+      const MAX_AWARD_PER_EVENT = 10000;
+      if (amount <= 0 || amount > MAX_AWARD_PER_EVENT) {
+        throw new Error(`Reward amount must be between 1 and ${MAX_AWARD_PER_EVENT}`);
       }
 
       // Step 1: Award points via Points API

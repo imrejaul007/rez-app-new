@@ -158,7 +158,7 @@ class GamificationCacheService {
 
   /**
    * Invalidate leaderboard cache (called after game completion)
-   * Debounced to avoid excessive invalidations
+   * Debounced to avoid excessive invalidations with reduced delay for real-time updates
    */
   invalidateLeaderboard = debounce(async (period?: string) => {
     if (period) {
@@ -173,7 +173,7 @@ class GamificationCacheService {
       });
       await cacheService.invalidateLeaderboard();
     }
-  }, 1000); // Wait 1 second before invalidating
+  }, 200); // Reduced from 1000ms to 200ms for faster real-time updates (CA-GAM-016)
 
   // ==================== ACHIEVEMENTS ====================
 

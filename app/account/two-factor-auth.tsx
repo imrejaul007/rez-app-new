@@ -333,7 +333,11 @@ function TwoFactorAuthPage() {
                 <TextInput
                   style={styles.codeInput}
                   value={verificationCode}
-                  onChangeText={setVerificationCode}
+                  onChangeText={(text) => {
+                    // Fixed CA-AUT-025: Only allow numeric input
+                    const numericOnly = text.replace(/[^0-9]/g, '');
+                    setVerificationCode(numericOnly);
+                  }}
                   placeholder="Enter 6-digit code"
                   keyboardType="numeric"
                   maxLength={6}

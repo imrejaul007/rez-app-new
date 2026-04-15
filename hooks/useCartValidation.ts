@@ -57,16 +57,41 @@ export function useCartValidation(
 
   /**
    * Validate cart items against backend
+   * CA-CMC-026 fix: Don't return stale result if validation is in-flight; wait for fresh result
+   * CA-CMC-027 fix: Return explicit valid result for empty carts instead of null
    */
   const validateCart = useCallback(async (): Promise<ValidationResult | null> => {
+    // CA-CMC-026 fix: If validation is in-flight, return a promise that waits
+    // instead of returning stale cached result
     if (isValidatingRef.current) {
-
-      return validationState.validationResult;
+      // Wait for the ongoing validation to complete
+      return new Promise(resolve => {
+        const checkInterval = setInterval(() => {
+          if (!isValidatingRef.current && validationState.validationResult) {
+            clearInterval(checkInterval);
+            resolve(validationState.validationResult);
+          }
+        }, 100);
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          resolve(validationState.validationResult);
+        }, 10000);
+      });
     }
 
+    // CA-CMC-027 fix: Return explicit valid result for empty carts instead of null
     if (cartState.items.length === 0) {
-
-      return null;
+      const emptyCartResult: ValidationResult = {
+        valid: true,
+        canCheckout: false, // Can't checkout with empty cart
+        issues: [],
+        validItems: [],
+        invalidItems: [],
+        warnings: [],
+        timestamp: new Date().toISOString(),
+      };
+      return emptyCartResult;
     }
 
     try {
@@ -99,7 +124,6 @@ export function useCartValidation(
         throw new Error(response.error || 'Validation failed');
       }
     } catch (error) {
-
       const errorMessage = error instanceof Error ? error.message : 'Failed to validate cart';
 
       setValidationState(prev => ({
@@ -211,18 +235,29 @@ export function useCartValidation(
 
   /**
    * Auto-validate when cart changes
+   * CA-CMC-028 fix: Use ref-based debounce that survives rapid item changes
    */
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (autoValidate && cartState.items.length > 0) {
+      // CA-CMC-028 fix: Clear previous timer to prevent re-validation on rapid changes
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
 
-      // Debounce validation to avoid excessive API calls
-      const timeoutId = setTimeout(() => {
+      // Set new debounce timer with 1000ms delay
+      debounceTimerRef.current = setTimeout(() => {
         validateCart();
       }, 1000);
 
-      return () => clearTimeout(timeoutId);
+      return () => {
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current);
+        }
+      };
     }
-  }, [cartState.items, autoValidate]);
+  }, [cartState.items.length, autoValidate, validateCart]);
 
   /**
    * Periodic validation (real-time updates)

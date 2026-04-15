@@ -23,6 +23,8 @@ interface WalletStoreState extends WalletStoreData {
   _setFromProvider: (data: WalletStoreData) => void;
   /** Optimistic balance adjustment — adds delta to rez/total/available balances */
   adjustBalance: (delta: number) => void;
+  /** Reset wallet store to defaults - called on logout (CA-AUT-024) */
+  reset: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -74,6 +76,11 @@ export const useWalletStore = create<WalletStoreState>(
             },
           };
         });
+      },
+
+      // Fixed CA-AUT-024: Reset wallet store on logout to prevent cache poisoning
+      reset: () => {
+        set(defaults);
       },
     }),
     {

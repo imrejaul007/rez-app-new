@@ -169,6 +169,11 @@ export const getLockedItemCount = (items: LockedProduct[]): number => {
 export const updateLockedProductTimers = (items: LockedProduct[]): LockedProduct[] => {
   const now = new Date();
   return items.map(item => {
+    // CA-CMC-040 fix: Validate expiresAt is a Date object before calling getTime()
+    if (!item.expiresAt || !(item.expiresAt instanceof Date)) {
+      console.warn('Invalid expiresAt for locked item:', item.id);
+      return { ...item, remainingTime: 0, status: 'expired' as const };
+    }
     const remainingTime = Math.max(0, item.expiresAt.getTime() - now.getTime());
     return {
       ...item,
