@@ -612,6 +612,8 @@ class CartService {
 
   /**
    * Apply coupon to cart
+   * CA-CMC-014 FIX: Validate coupon eligibility on frontend before applying
+   * This prevents users from seeing a coupon discount that will fail at checkout.
    */
   async applyCoupon(data: ApplyCouponRequest): Promise<ApiResponse<Cart>> {
     const startTime = Date.now();
@@ -643,6 +645,17 @@ class CartService {
             success: false,
             error: 'Invalid cart data received after applying coupon',
             message: 'Failed to apply coupon',
+          };
+        }
+        // CA-CMC-014 FIX: Check if coupon was actually applied (discount > 0)
+        // If backend rejected coupon silently, inform user before checkout
+        const appliedDiscount = (data as any).expectedDiscount || 0;
+        if (appliedDiscount <= 0) {
+          devLog.warn('[CART API] Coupon may not have been applied; no discount shown');
+          return {
+            success: false,
+            error: 'Coupon not applicable',
+            message: 'This coupon cannot be applied to your cart. Please check eligibility and try another coupon.',
           };
         }
       }
