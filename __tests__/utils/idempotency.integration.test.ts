@@ -1,17 +1,16 @@
 /**
  * Integration Test: Idempotency Key Generation
  *
- * Verifies that idempotency keys are properly generated from @rez/shared/idempotency
+ * Verifies that idempotency keys are properly generated locally
  * and can be used for request deduplication.
  */
 
-import { generateIdempotencyKey, generateIdempotencyKey as generateSharedKey } from '@rez/shared/idempotency';
 import { generateIdempotencyKey as generateLocalKey } from '../../utils/idempotencyHelper';
 
 describe('Idempotency Key Integration', () => {
-  it('should generate idempotency keys from shared module', () => {
-    const key1 = generateSharedKey();
-    const key2 = generateSharedKey();
+  it('should generate idempotency keys from local generator', () => {
+    const key1 = generateLocalKey();
+    const key2 = generateLocalKey();
 
     expect(key1).toBeDefined();
     expect(key2).toBeDefined();

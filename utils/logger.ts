@@ -9,7 +9,45 @@
  */
 
 import { MonitoringHelpers } from '@/config/monitoring.config';
-import { RedactingLogger, LogContext } from '@rez/shared/telemetry';
+
+// Local stub for @rez/shared/telemetry — avoids npm dependency
+// The real RedactingLogger lives in @rez/shared/telemetry; this stub
+// provides the same interface so Logger compiles without the package.
+interface LogContext {
+  error?: string;
+  context?: string;
+  [key: string]: unknown;
+}
+
+class RedactingLogger {
+  private serviceName: string;
+  private environment: string;
+  private redactionPatterns: RegExp[];
+
+  constructor(config: { serviceName: string; environment: string; redactionPatterns: RegExp[] }) {
+    this.serviceName = config.serviceName;
+    this.environment = config.environment;
+    this.redactionPatterns = config.redactionPatterns;
+  }
+
+  private redact(input: unknown): string {
+    const raw = typeof input === 'string' ? input : JSON.stringify(input);
+    return this.redactionPatterns.reduce((acc, pattern) => acc.replace(pattern, '[REDACTED]'), raw);
+  }
+
+  debug(message: string, context?: LogContext): void {
+    if (__DEV__) console.debug(`[${this.serviceName}]`, this.redact(message), context);
+  }
+  info(message: string, context?: LogContext): void {
+    if (__DEV__) console.info(`[${this.serviceName}]`, this.redact(message), context);
+  }
+  warn(message: string, context?: LogContext): void {
+    console.warn(`[${this.serviceName}]`, this.redact(message), context);
+  }
+  error(message: string, context?: LogContext): void {
+    console.error(`[${this.serviceName}]`, this.redact(message), context);
+  }
+}
 
 /**
  * Log levels

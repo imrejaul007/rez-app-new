@@ -4,21 +4,29 @@
  * Provides idempotency key generation and management for API requests
  * to ensure safe retry semantics across unreliable networks.
  *
- * Phase 0: Uses @rez/shared/idempotency generateIdempotencyKey
+ * Phase 0: Uses local idempotency key generation (no @rez/shared dependency).
  */
 
-import { generateIdempotencyKey as generateSharedKey } from '@rez/shared/idempotency';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+/**
+ * Generate a unique idempotency key locally.
+ * Format: timestamp-randomString to ensure uniqueness across retries.
+ */
+function localGenerateIdempotencyKey(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+}
+
 
 const IDEMPOTENCY_CACHE_PREFIX = 'idempotency:';
 const IDEMPOTENCY_TTL_MS = 86400000; // 24 hours
 
 /**
  * Generate a new idempotency key for an API request
- * Uses the canonical generator from rez-shared/idempotency
+ * Uses the local generator (no @rez/shared dependency needed)
  */
 export function generateIdempotencyKey(): string {
-  return generateSharedKey();
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**
