@@ -83,6 +83,8 @@ export interface OtpRequest {
   phoneNumber: string;
   email?: string;
   referralCode?: string;
+  /** Auth flow: 'login' | 'signup'. Backend uses this to decide user creation behavior. */
+  flow?: 'login' | 'signup';
 }
 
 export interface OtpVerification {
@@ -196,6 +198,12 @@ function validateAuthResponse(response: RawAuthResponsePayload): boolean {
     return false;
   }
 
+  // CA-AUT-005: Validate expiresIn is present and valid
+  if (typeof response.tokens.expiresIn !== 'number' || response.tokens.expiresIn <= 0) {
+    devLog.warn('[AUTH API] Invalid or missing token expiresIn', response.tokens.expiresIn);
+    return false;
+  }
+
   return true;
 }
 
@@ -203,7 +211,7 @@ class AuthService {
   /**
    * Send OTP for registration or login
    */
-  async sendOtp(data: OtpRequest): Promise<ApiResponse<{ message: string; expiresIn: number }>> {
+  async sendOtp(data: OtpRequest): Promise<ApiResponse<{ message: string }>> {
     const startTime = Date.now();
 
     try {
