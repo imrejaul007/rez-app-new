@@ -169,7 +169,7 @@ class BillUploadService {
             const progress: UploadProgress = {
               loaded: event.loaded,
               total: event.total,
-              percentage: Math.round((event.loaded / event.total) * 100),
+              percentage: event.total > 0 ? Math.round((event.loaded / event.total) * 100) : 0,
               speed,
               timeRemaining,
               startTime,

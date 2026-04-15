@@ -50,9 +50,17 @@ export function initSentry() {
       return event;
     },
 
-    // Drop noisy console breadcrumbs
+    // Drop noisy and potentially PII-containing breadcrumbs
     beforeBreadcrumb(breadcrumb) {
       if (breadcrumb.category === 'console') {
+        return null;
+      }
+      // Filter HTTP breadcrumbs to avoid exposing auth headers
+      if (breadcrumb.category === 'http' && breadcrumb.data?.request?.headers) {
+        breadcrumb.data.request.headers = '[REDACTED]';
+      }
+      // Filter user interaction breadcrumbs that might contain sensitive info
+      if (breadcrumb.category === 'ui' && breadcrumb.data?.label?.includes('password')) {
         return null;
       }
       return breadcrumb;
