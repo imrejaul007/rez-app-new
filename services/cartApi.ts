@@ -490,11 +490,11 @@ class CartService {
         };
       }
 
-      if (!data.quantity || data.quantity < 0) {
+      if (!data.quantity || data.quantity < 0 || !Number.isInteger(data.quantity)) {
         return {
           success: false,
           error: 'Valid quantity is required',
-          message: 'Please specify a valid quantity',
+          message: 'Please specify a valid positive integer quantity',
         };
       }
 
