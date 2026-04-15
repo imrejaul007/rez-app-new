@@ -1,5 +1,4 @@
 import apiClient, { ApiResponse } from './apiClient';
-import { validateResponse, isFeatureEnabled } from '@rez/shared';
 
 // ============================================================================
 // WALLET API SERVICE

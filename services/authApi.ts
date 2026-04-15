@@ -10,9 +10,7 @@ import {
   isUserVerified
 } from '@/types/unified';
 
-import { validateResponse, setValidationLogger } from '@rez/shared';
-import { userProfileSchema } from '@rez/shared';
-import { isFeatureEnabled } from '@rez/shared';
+import { validateResponse, setValidationLogger, userProfileSchema, isFeatureEnabled } from '@rez/shared';
 
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},

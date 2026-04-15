@@ -5,6 +5,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@rez/shared": [
+        "./src/shared/index.ts"
+      ],
+      "@rez/shared/*": [
+        "./src/shared/*"
       ]
     }
   },
