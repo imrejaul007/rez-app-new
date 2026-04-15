@@ -245,10 +245,14 @@ function SignInScreen() {
     try {
       // Check if this phone number has a PIN set — if so, show PIN screen instead of OTP
       try {
+        // BUG FIX: has-pin response has NO "data" wrapper (backend returns {success, hasPin}).
+        // apiClient.makeRequest does: data = responseData.data || responseData. When backend
+        // has no "data" key, data = the entire response object, so hasPin lives at the TOP level
+        // (not response.data.hasPin which would be undefined). Check both paths for safety.
         const response = await apiClient.get<{ hasPin: boolean }>(
           `/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`,
         );
-        const hasPinSet = response.data?.hasPin ?? false;
+        const hasPinSet = (response as any).hasPin ?? response.data?.hasPin ?? false;
         if (hasPinSet) {
           if (!isMounted()) return;
           setStep('pin');
@@ -285,7 +289,11 @@ function SignInScreen() {
       if (response.success) {
         // Normalise user: backend returns _id, frontend expects id
         const rawUser = (response.data as any).user;
-        const user = { ...rawUser, id: rawUser._id || rawUser.id };
+        const userId = rawUser._id || rawUser.id;
+        if (!userId) {
+          throw new Error('Invalid user response: missing userId (_id or id)');
+        }
+        const user = { ...rawUser, id: userId };
         await actions.loginWithTokens((response.data as any).tokens, user);
         try {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -363,14 +371,20 @@ function SignInScreen() {
       try {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
-      // Use the returned user directly to avoid reading stale store state
-      const loggedInUser = (result as any) || useAuthStore.getState()?.state?.user;
-      if (loggedInUser?.isOnboarded) {
+      // Navigate using the freshly-returned user — do NOT read from store as fallback
+      // (store user may be stale from a prior session, causing wrong destination).
+      if (!isMounted()) return;
+      const user = (result as any);
+      if (user?.isOnboarded) {
         router.replace('/(tabs)/' as any);
       } else {
         router.replace('/onboarding/notification-permission');
       }
     } catch (error: any) {
+      // BUG FIX: Login failed — do NOT navigate anywhere. Stay on the OTP screen
+      // and display the error. The old code read useAuthStore.getState()?.state?.user
+      // as a fallback — which is the PREVIOUS session's user (or null), causing the
+      // app to incorrectly navigate to notification-permission instead of showing the error.
       const errorMessage = error?.message || useAuthStore.getState()?.state?.error || 'Invalid OTP. Please try again.';
       if (!isMounted()) return;
       setErrors((prev) => ({
