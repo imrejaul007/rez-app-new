@@ -276,8 +276,18 @@ function CheckoutPage() {
     if (validationState.validationResult && errorCount > 0) {
       // Focus management: dismiss keyboard and scroll to top on validation error
       Keyboard.dismiss();
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+
+      // CA-CMC-038 FIX: Defer scroll until after render cycle to ensure ref is available.
+      // ScrollView may not be fully mounted during initialization, so schedule scroll after layout.
+      const scrollTimer = setTimeout(() => {
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 0, animated: true });
+        }
+      }, 0);
+
       dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: true });
+
+      return () => clearTimeout(scrollTimer);
     }
   }, [errorCount, validationState.validationResult, dispatch]);
 
