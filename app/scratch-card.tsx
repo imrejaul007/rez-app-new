@@ -127,7 +127,11 @@ function ScratchCardPage() {
       return;
     }
 
-    setIsAnimating(true);
+    // Guard against rapid double-taps by setting state immediately
+    setIsAnimating((prev) => {
+      if (prev) return prev;
+      return true;
+    });
 
     // Animate scratch-off effect
     scratchAnim.value = withTiming(0, { duration: 800 });

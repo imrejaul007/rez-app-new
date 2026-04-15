@@ -200,7 +200,7 @@ class Logger {
     }
 
     // Use shared redacting logger
-    this.redactingLogger.error(message, { error: error?.message, context } as LogContext);
+    this.redactingLogger.error(message, { error: error ? { message: error.message, stack: error.stack, name: error.name, cause: error.cause } : undefined, context } as any);
   }
 
   /**

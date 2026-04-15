@@ -649,7 +649,7 @@ class CartService {
         }
         // CA-CMC-014 FIX: Check if coupon was actually applied (discount > 0)
         // If backend rejected coupon silently, inform user before checkout
-        const appliedDiscount = (data as any).expectedDiscount || 0;
+        const appliedDiscount = (response.data as any)?.totals?.discount || 0;
         if (appliedDiscount <= 0) {
           devLog.warn('[CART API] Coupon may not have been applied; no discount shown');
           return {

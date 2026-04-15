@@ -50,7 +50,13 @@ export async function getIdempotencyResult(key: string): Promise<any | null> {
     const cached = await AsyncStorage.getItem(cacheKey);
     if (!cached) return null;
 
-    const entry = JSON.parse(cached);
+    let entry: { timestamp: number; result: any };
+    try {
+      entry = JSON.parse(cached);
+    } catch {
+      await AsyncStorage.removeItem(cacheKey);
+      return null;
+    }
     const age = Date.now() - entry.timestamp;
 
     // Return null if cache has expired
