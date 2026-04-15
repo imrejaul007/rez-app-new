@@ -96,7 +96,7 @@ function CartPage() {
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
     return cartState.items
-      .filter(item => (item as any).itemType !== 'service') // Only non-service items
+      .filter(item => (item as any).itemType === 'product' || (item as any).itemType === undefined) // Only non-service items
       .map(item => {
         // Preserve metadata for event items
         const metadata = (item as any).metadata || {};
@@ -217,8 +217,22 @@ function CartPage() {
       if (response.success && response.data) {
         const formattedLockedItems = response.data.lockedItems.map((item: any) => {
           const productId = item.product?._id || item.product;
+
+          // Validate lockedAt and expiresAt are valid ISO strings
+          if (!item.lockedAt || !item.expiresAt || typeof item.lockedAt !== 'string' || typeof item.expiresAt !== 'string') {
+            console.warn('Invalid lock date format for item:', item._id);
+            return null; // Skip invalid items
+          }
+
           const lockedAt = new Date(item.lockedAt);
           const expiresAt = new Date(item.expiresAt);
+
+          // Check if dates are valid
+          if (isNaN(lockedAt.getTime()) || isNaN(expiresAt.getTime())) {
+            console.warn('Failed to parse lock dates for item:', item._id);
+            return null; // Skip items with unparseable dates
+          }
+
           const remainingTime = expiresAt.getTime() - Date.now();
           const lockDuration = expiresAt.getTime() - lockedAt.getTime();
           
@@ -253,7 +267,7 @@ function CartPage() {
             lockPaymentStatus: item.lockPaymentStatus,
             isPaidLock: item.isPaidLock,
           };
-        });
+        }).filter((item): item is NonNullable<typeof item> => item !== null);
         setLockedProducts(formattedLockedItems);
       }
     } catch (error) {
