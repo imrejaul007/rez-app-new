@@ -560,10 +560,10 @@ function CartPage() {
         );
       }
 
-      // Render service item with booking details
+      // Render service item with booking details (CA-CMC-009: safe cast with optional chaining)
       if (activeTab === 'service') {
         // Use the typed helper rather than casting to any
-        const serviceItem = asExtendedCartItem(item) as DisplayServiceItem;
+        const serviceItem = item ? asExtendedCartItem(item) as DisplayServiceItem : null;
         return (
           <View style={styles.cardWrapper}>
             <CartItem
@@ -574,7 +574,7 @@ function CartPage() {
               hideQuantityControls={true} // Services don't have quantity controls
             />
             {/* Service Booking Details */}
-            {serviceItem.serviceBookingDetails && (
+            {serviceItem?.serviceBookingDetails && (
               <View style={styles.serviceBookingDetails}>
                 <View style={styles.serviceBookingRow}>
                   <Ionicons name="calendar-outline" size={16} color={colors.nileBlue} />

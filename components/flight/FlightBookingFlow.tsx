@@ -167,18 +167,24 @@ const FlightBookingFlow: React.FC<FlightBookingFlowProps> = ({
           });
         }
         for (let i = 0; i < children; i++) {
+          // Initialize child DOB to 8 years ago (valid child age: 2-12)
+          const childDOB = new Date();
+          childDOB.setFullYear(childDOB.getFullYear() - 8);
           details.push({
             firstName: '',
             lastName: '',
-            dateOfBirth: new Date(),
+            dateOfBirth: childDOB,
             gender: 'male',
           });
         }
         for (let i = 0; i < infants; i++) {
+          // Initialize infant DOB to 1 year ago (valid infant age: 0-2)
+          const infantDOB = new Date();
+          infantDOB.setFullYear(infantDOB.getFullYear() - 1);
           details.push({
             firstName: '',
             lastName: '',
-            dateOfBirth: new Date(),
+            dateOfBirth: infantDOB,
             gender: 'male',
           });
         }
@@ -403,7 +409,7 @@ const FlightBookingFlow: React.FC<FlightBookingFlowProps> = ({
             minimumDate={new Date()}
             onChange={(event, selectedDate) => {
               setShowDeparturePicker(Platform.OS === 'ios');
-              if (selectedDate) {
+              if (selectedDate && selectedDate >= new Date()) {
                 setDepartureDate(selectedDate);
               }
             }}

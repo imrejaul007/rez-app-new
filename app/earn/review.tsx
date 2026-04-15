@@ -289,7 +289,7 @@ function ReviewToEarnPage() {
               <TextInput
                 style={styles.reviewInput}
                 value={review}
-                onChangeText={setReview}
+                onChangeText={(text) => setReview(text.trim())}
                 placeholder="Share your experience..."
                 placeholderTextColor={colors.text.tertiary}
                 multiline

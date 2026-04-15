@@ -438,7 +438,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
             const billSummary: BillSummary = {
               itemTotal,
-              getAndItemTotal: 0,
               deliveryFee,
               platformFee: 0,
               taxes,
@@ -511,7 +510,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           }, 0);
           // Item total shown in bill = full price (lock fee shown as separate deduction)
           const itemTotal = itemTotalBeforeLockFee;
-          const getAndItemTotal = 0; // Removed - was duplicating taxes
           const deliveryFee = mappedCart.totals.delivery || mappedCart.totals.shipping || 0;
           // Note: platformFee is NOT charged to customers - it's deducted from merchant payouts
           // Setting to 0 in customer-facing calculations to match backend
@@ -537,7 +535,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
           // Calculate total before coin discount (for slider max calculation)
           // CA-CMC-025 FIX: lockFeeDiscount already reflected in taxes (line 522), don't double-count
-          const totalBeforeCoinDiscount = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + platformFee + taxes - promoDiscount);
+          const totalBeforeCoinDiscount = Math.max(0, itemTotal + deliveryFee + platformFee + taxes - promoDiscount);
 
           // Always calculate total payable from our values to ensure consistency
           let totalPayable = totalBeforeCoinDiscount - coinDiscount;
@@ -555,7 +553,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
           const billSummary: BillSummary = {
             itemTotal,
-            getAndItemTotal,
+            
             deliveryFee,
             platformFee,
             taxes,
@@ -1122,7 +1120,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         newBillSummary.savings = (newBillSummary.savings || 0) + discountAmount;
 
         // Recalculate totalPayable with promo discount and lock fee
-        const subtotal = newBillSummary.itemTotal + newBillSummary.getAndItemTotal;
+        const subtotal = newBillSummary.itemTotal;
         const totalBeforeDiscount = subtotal + newBillSummary.platformFee + newBillSummary.deliveryFee + newBillSummary.taxes;
         const totalAfterDiscount = totalBeforeDiscount - (newBillSummary.lockFeeDiscount || 0) - discountAmount - coinUsage.rez - coinUsage.promo;
         newBillSummary.totalPayable = Math.max(0, Math.round(totalAfterDiscount));
@@ -1243,7 +1241,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         return total + (price * quantity);
       }, 0);
 
-      const getAndItemTotal = 0; // Fixed - was duplicating taxes
       // Note: platformFee is NOT charged to customers - deducted from merchant payouts
       const platformFee = 0;
       const taxes = Math.round(itemTotal * TAX_RATE) || 0;
@@ -1254,7 +1251,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) || Infinity)
       ) : 0;
 
-      const subtotalBeforeCoins = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + taxes - promoDiscount);
+      const subtotalBeforeCoins = Math.max(0, itemTotal + deliveryFee + taxes - promoDiscount);
 
       if (!enabled) {
         // Disabling REZ: also clear promo and storePromo to reset priority state
@@ -1310,7 +1307,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Calculate subtotal before coin discounts
       const itemTotal = prev.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-      const getAndItemTotal = 0; // Fixed - was duplicating taxes
       // Note: platformFee is NOT charged to customers - deducted from merchant payouts
       const platformFee = 0;
       const taxes = Math.round(itemTotal * TAX_RATE);
@@ -1320,7 +1316,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount || Infinity)
       ) : 0;
 
-      const subtotalAfterRezCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used;
+      const subtotalAfterRezCoins = itemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used;
 
       // Promo coins capped at configured max percentage of the GROSS bill (before any coin discounts)
       // This matches backend WalletConfig.coinExpiryConfig.promo.maxUsagePct which is applied against gross total
@@ -1366,7 +1362,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Calculate subtotal before coin discounts
       const itemTotal = prev.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-      const getAndItemTotal = 0; // Fixed - was duplicating taxes
       // Note: platformFee is NOT charged to customers - deducted from merchant payouts
       const platformFee = 0;
       const taxes = Math.round(itemTotal * TAX_RATE);
@@ -1377,7 +1372,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       ) : 0;
 
       // Calculate remaining after other coins (REZ and regular promo)
-      const subtotalAfterOtherCoins = itemTotal + getAndItemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used - prev.coinSystem.promoCoin.used;
+      const subtotalAfterOtherCoins = itemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used - prev.coinSystem.promoCoin.used;
 
       // Store promo coins can be used up to configured max percentage of remaining amount or available coins
       const maxStorePromoUsage = Math.floor(subtotalAfterOtherCoins * prev.coinSystem.storePromoCoin.maxUsagePercentage / 100);
@@ -1436,7 +1431,6 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         return total + (price * quantity);
       }, 0);
 
-      const getAndItemTotal = 0; // Fixed - was duplicating taxes
       // Note: platformFee is NOT charged to customers - deducted from merchant payouts
       const platformFee = 0;
       const taxes = Math.round(itemTotal * TAX_RATE) || 0;
@@ -1447,7 +1441,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) || Infinity)
       ) : 0;
 
-      let maxAllowed = Math.max(0, itemTotal + getAndItemTotal + deliveryFee + taxes - promoDiscount);
+      let maxAllowed = Math.max(0, itemTotal + deliveryFee + taxes - promoDiscount);
 
       if (!isRezCoin) {
         // For promo/store promo coins, subtract rez coins already used
@@ -2591,7 +2585,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           newBillSummary.savings = (newBillSummary.savings || 0) + response.data.discount;
 
           // Recalculate totalPayable with promo discount and lock fee
-          const subtotal = newBillSummary.itemTotal + newBillSummary.getAndItemTotal;
+          const subtotal = newBillSummary.itemTotal;
           const totalBeforeDiscount = subtotal + newBillSummary.platformFee + newBillSummary.deliveryFee + newBillSummary.taxes;
           const totalAfterDiscount = totalBeforeDiscount - (newBillSummary.lockFeeDiscount || 0) - response.data.discount - coinUsage.rez - coinUsage.promo;
           newBillSummary.totalPayable = Math.max(0, Math.round(totalAfterDiscount));

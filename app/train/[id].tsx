@@ -197,7 +197,7 @@ function TrainDetailsPage() {
         ];
         for (const pattern of routePatterns) {
           const match = productData.name.match(pattern);
-          if (match) {
+          if (match && match.length > 1) {
             if (!from) from = match[1].trim();
             if (!to) to = match[2] ? match[2].trim() : '';
             break;
