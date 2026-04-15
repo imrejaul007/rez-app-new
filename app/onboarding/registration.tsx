@@ -107,9 +107,9 @@ function RegistrationScreen() {
 
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
-    } else if (!/^[1-9]\d{5,14}$/.test(formData.phoneNumber.replace(/\s/g, ''))) {
-      // Validates the LOCAL part (country code is prepended in handleSubmit).
-      // Min 6 digits (+ country code → at least 7 total, matching E.164).
+    } else if (!/^[6-9]\d{5,14}$/.test(formData.phoneNumber.replace(/\s/g, ''))) {
+      // Indian mobile numbers start with 6, 7, 8, or 9.
+      // Previously used [1-9] which rejected all Indian mobile numbers.
       newErrors.phoneNumber = "That number doesn't look right — double-check and try again";
     }
 
