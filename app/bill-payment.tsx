@@ -335,8 +335,12 @@ function BillPaymentPage() {
         throw razorpayErr;
       }
 
+      // CA-PAY-003 FIX: Generate idempotency key ONCE per payment intent,
+      // use it for all retries to prevent duplicate charges on network retry.
+      const idempotencyKey = `bill-${selectedProvider._id}-${consumerNumber.trim()}-${Date.now()}`;
+
       // Step 3 — Confirm payment with backend BBPS
-      const res = await payBill(selectedProvider._id, consumerNumber.trim(), fetchedBill.amount, razorpayPaymentId);
+      const res = await payBill(selectedProvider._id, consumerNumber.trim(), fetchedBill.amount, razorpayPaymentId, undefined, idempotencyKey);
 
       if (res.success && res.data) {
         const { payment, promoCoinsEarned } = res.data;

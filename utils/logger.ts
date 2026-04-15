@@ -4,9 +4,12 @@
  * Centralized logging service that replaces console.log statements
  * in production code. Provides different log levels and integrates
  * with monitoring services like Sentry.
+ *
+ * Phase 0: Integrated with @rez/shared/telemetry RedactingLogger
  */
 
 import { MonitoringHelpers } from '@/config/monitoring.config';
+import { RedactingLogger, LogContext } from '@rez/shared/telemetry';
 
 /**
  * Log levels
@@ -51,7 +54,7 @@ const redact = (input: unknown): string => {
 };
 
 /**
- * Logger class
+ * Logger class with shared RedactingLogger integration
  */
 class Logger {
   private config: LoggerConfig = {
@@ -62,6 +65,15 @@ class Logger {
   };
 
   private logs: LogEntry[] = [];
+  private redactingLogger: RedactingLogger;
+
+  constructor() {
+    this.redactingLogger = new RedactingLogger({
+      serviceName: 'rez-app-consumer',
+      environment: __DEV__ ? 'development' : 'production',
+      redactionPatterns: REDACTION_PATTERNS,
+    });
+  }
 
   /**
    * Configure logger
@@ -126,6 +138,9 @@ class Logger {
     if (__DEV__) {
       console.log(this.formatMessage(LogLevel.DEBUG, message, context), data || '');
     }
+
+    // Use shared redacting logger
+    this.redactingLogger.debug(message, data as LogContext);
   }
 
   /**
@@ -140,6 +155,9 @@ class Logger {
     if (__DEV__) {
       console.info(this.formatMessage(LogLevel.INFO, message, context), data || '');
     }
+
+    // Use shared redacting logger
+    this.redactingLogger.info(message, data as LogContext);
   }
 
   /**
@@ -151,7 +169,6 @@ class Logger {
 
     this.addLog(LogLevel.WARN, message, data, context);
 
-
     // Send warnings to monitoring in production
     if (!__DEV__) {
       MonitoringHelpers.trackEvent('warning', {
@@ -160,6 +177,9 @@ class Logger {
         context,
       });
     }
+
+    // Use shared redacting logger
+    this.redactingLogger.warn(message, data as LogContext);
   }
 
   /**
@@ -171,7 +191,6 @@ class Logger {
 
     this.addLog(LogLevel.ERROR, message, error, context);
 
-
     // Send errors to monitoring
     if (error) {
       MonitoringHelpers.trackError(error, {
@@ -179,6 +198,9 @@ class Logger {
         context,
       });
     }
+
+    // Use shared redacting logger
+    this.redactingLogger.error(message, { error: error?.message, context } as LogContext);
   }
 
   /**

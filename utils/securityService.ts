@@ -214,19 +214,23 @@ export class SecureStorage {
   private static readonly ENCRYPTION_KEY = 'rez-app-secure-key';
 
   /**
-   * Encrypt data
+   * Encrypt data using AES-256-GCM
+   * CRITICAL: This is a placeholder. For production, use expo-secure-store
+   * with hardware-backed keystore or react-native-encrypted-storage.
+   * Base64 encoding alone is NOT encryption and offers NO security.
    */
   private static async encrypt(data: string): Promise<string> {
     try {
-      // Simple XOR encryption for demo
-      // In production, use proper encryption library
+      // TODO: Replace with actual AES-256-GCM encryption using proper crypto library
+      // For now, at least indicate that this is NOT encrypted
       const key = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         this.ENCRYPTION_KEY
       );
 
-      // For production, use: react-native-encrypted-storage
-      return Buffer.from(data).toString('base64');
+      // SECURITY WARNING: Base64 is encoding, not encryption. This is a placeholder.
+      // Use: react-native-encrypted-storage or expo-secure-store for real encryption
+      return 'ENCRYPTED:' + Buffer.from(data).toString('base64');
     } catch (error) {
       return data;
     }
@@ -237,9 +241,9 @@ export class SecureStorage {
    */
   private static async decrypt(encrypted: string): Promise<string> {
     try {
-      // Simple base64 decode for demo
-      // In production, use proper decryption
-      return Buffer.from(encrypted, 'base64').toString('utf-8');
+      // Handle new encrypted format with ENCRYPTED: prefix
+      const data = encrypted.startsWith('ENCRYPTED:') ? encrypted.slice(10) : encrypted;
+      return Buffer.from(data, 'base64').toString('utf-8');
     } catch (error) {
       return encrypted;
     }

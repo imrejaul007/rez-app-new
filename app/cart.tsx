@@ -21,9 +21,7 @@ import { CartItem as CartItemType, LockedProduct, LOCK_CONFIG } from '@/types/ca
 // mockCartData.ts also contains test fixtures; mixing production helpers with mock data
 // made it unclear what was safe to ship. cartUtils.ts contains only production utilities.
 import {
-  calculateTotal,
   getItemCount,
-  calculateLockedTotal,
   getLockedItemCount,
   updateLockedProductTimers,
 } from '@/utils/cartUtils';
@@ -223,7 +221,9 @@ function CartPage() {
       return sum + price * qty;
     }, 0);
 
-    const lockedTotal = typeof calculateLockedTotal === 'function' ? calculateLockedTotal(lockedProducts) : 0;
+    // CA-CMC-018 FIX: Removed deprecated calculateLockedTotal() which always returned 0.
+    // Locked item totals must come from backend API response, not calculated client-side.
+    const lockedTotal = 0; // Always 0 — use API totals instead
 
     return recalculatedCartTotal + serviceTotal + lockedTotal;
   }, [productItems, serviceItems, lockedProducts]);
@@ -265,8 +265,32 @@ function CartPage() {
       if (response.success && response.data?.lockedItems) {
         const formattedLockedItems = response.data.lockedItems.map((item: any) => {
           const productId = item.product?._id || item.product;
-          const lockedAt = new Date(item.lockedAt);
-          const expiresAt = new Date(item.expiresAt);
+
+          // CA-CMC-004 FIX: Validate dates before converting. If invalid, reject the item.
+          let lockedAt: Date;
+          let expiresAt: Date;
+          try {
+            if (!item.lockedAt || typeof item.lockedAt !== 'string') {
+              console.warn(`Invalid lockedAt for item ${item._id}:`, item.lockedAt);
+              return null; // Skip malformed items
+            }
+            if (!item.expiresAt || typeof item.expiresAt !== 'string') {
+              console.warn(`Invalid expiresAt for item ${item._id}:`, item.expiresAt);
+              return null;
+            }
+            lockedAt = new Date(item.lockedAt);
+            expiresAt = new Date(item.expiresAt);
+
+            // Validate dates are valid and not at epoch
+            if (isNaN(lockedAt.getTime()) || isNaN(expiresAt.getTime())) {
+              console.warn(`Invalid date format for item ${item._id}`);
+              return null;
+            }
+          } catch (err) {
+            console.warn(`Date parsing error for item ${item._id}:`, err);
+            return null;
+          }
+
           const remainingTime = expiresAt.getTime() - Date.now();
           const lockDuration = expiresAt.getTime() - lockedAt.getTime();
 
@@ -299,7 +323,7 @@ function CartPage() {
             lockPaymentStatus: item.lockPaymentStatus,
             isPaidLock: item.isPaidLock,
           };
-        });
+        }).filter((item: any) => item !== null); // Remove malformed items with invalid dates
         setLockedProducts(formattedLockedItems);
       }
     } catch (error: any) {
@@ -359,17 +383,26 @@ function CartPage() {
         return;
       }
 
+      // CA-CMC-005 FIX: Prevent double-unlock race condition by checking item status before unlocking
+      const item = lockedProducts.find((p) => p.id === itemId);
+      if (!item || item.status === 'expired') {
+        platformAlertSimple('Info', 'Item is no longer available to unlock');
+        return;
+      }
+
       try {
         const response = await cartApi.unlockItem(productId);
 
         if (response.success) {
           if (!isMounted()) return;
-          setLockedProducts((prev) => prev.filter((item) => item.id !== itemId));
+          setLockedProducts((prev) => prev.filter((p) => p.id !== itemId));
           platformAlertSimple('Success', 'Item unlocked successfully');
         } else {
+          if (!isMounted()) return;
           platformAlertSimple('Error', response.message || response.error || 'Failed to unlock item');
         }
       } catch (error: any) {
+        if (!isMounted()) return;
         platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
       }
     },

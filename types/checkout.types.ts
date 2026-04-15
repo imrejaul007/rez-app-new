@@ -95,7 +95,6 @@ export interface CoinSystem {
 
 export interface BillSummary {
   itemTotal: number;
-  getAndItemTotal: number;
   deliveryFee: number;
   platformFee: number;
   taxes: number;

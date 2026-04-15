@@ -187,9 +187,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   ) {
     prevCartFingerprintRef.current = cartFingerprint;
     prevUserIdRef.current = userId || '';
-    // Deterministic prefix (user+cart) + wall-clock epoch bucket (15-min window)
-    // so the same intent within 15 min maps to the same key, preventing duplicates.
-    const epochBucket = Math.floor(Date.now() / (15 * 60 * 1000));
+    // CA-CMC-019 FIX: Extended from 15-min window to 1-hour window to prevent duplicate orders
+    // when app crashes immediately after payment. 15 minutes was too short — if app crashed at
+    // 00:14:59 and restarted at 00:15:01, a new key was generated, allowing charge twice.
+    // 1 hour window aligns with typical payment retry windows in fintech.
+    const epochBucket = Math.floor(Date.now() / (60 * 60 * 1000));
     const base = `${userId || 'anon'}-${cartFingerprint}-${epochBucket}`;
     orderIdempotencyKeyRef.current = `order-${base}`;
     walletIdempotencyKeyRef.current = `wallet-${base}`;
@@ -513,10 +515,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // Note: platformFee is NOT charged to customers - it's deducted from merchant payouts
           // Setting to 0 in customer-facing calculations to match backend
           const platformFee = 0;
-          // Always calculate taxes locally (5% of item total after lock fee) - don't rely on backend
-          const taxes = Math.round((itemTotal - lockFeeDiscount) * TAX_RATE);
           const promoDiscount = mappedCart.totals.discount || 0;
           const coinDiscount = 0; // Will be calculated when coins are toggled
+          // CA-CMC-024 FIX: Tax should be calculated on the discounted amount.
+          // Tax base = itemTotal - lockFeeDiscount - promoDiscount (both deductions apply).
+          const taxBase = Math.max(0, itemTotal - lockFeeDiscount - promoDiscount);
+          const taxes = Math.round(taxBase * TAX_RATE);
 
           // Debug: Log the values
           devLog.log('💰 [Checkout] Bill calculation:', {

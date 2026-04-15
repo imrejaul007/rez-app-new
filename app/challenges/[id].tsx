@@ -231,14 +231,27 @@ function ChallengeDetailPage() {
   const handleClaimReward = async () => {
     if (!data?.userProgress) return;
 
+    // CA-GAM-001 FIX: Prevent double-claim by checking claiming state before entering handler
+    if (claiming) {
+      logger.warn('⚠️ [Challenge Detail] Claim already in progress, ignoring double-tap');
+      return;
+    }
+
     try {
       setClaiming(true);
 
       // Use wallet balance from context instead of extra API call
       const beforeBalance = rezBalance;
 
-      // Claim the reward
-      const response = await apiClient.post(`/gamification/challenges/${data.userProgress._id}/claim`);
+      // CA-GAM-001 FIX: Generate idempotency key for claim request to prevent duplicate wallet credits
+      const claimIdempotencyKey = `challenge-${data.userProgress._id}-${beforeBalance}`;
+
+      // Claim the reward with idempotency key
+      const response = await apiClient.post(`/gamification/challenges/${data.userProgress._id}/claim`, {}, {
+        headers: {
+          'Idempotency-Key': claimIdempotencyKey,
+        },
+      });
 
       if (response.success) {
         triggerNotification('Success');
@@ -262,9 +275,11 @@ function ChallengeDetailPage() {
         if (!isMounted()) return;
         setShowClaimModal(true);
       } else {
+        if (!isMounted()) return;
         showAlert('Error', response.message || 'Failed to claim reward', undefined, 'error');
       }
     } catch (error: any) {
+      if (!isMounted()) return;
       logger.error('❌ [Challenge Detail] Error claiming reward:', error);
       showAlert('Error', 'Failed to claim reward', undefined, 'error');
     } finally {
