@@ -48,6 +48,11 @@ export const updateLockedProductTimers = (items: LockedProduct[]): LockedProduct
   const now = new Date();
   return items
     .map((item) => {
+      // Type guard: validate expiresAt is a valid Date before calling getTime()
+      if (!item.expiresAt || !(item.expiresAt instanceof Date)) {
+        console.warn(`Invalid expiresAt for item ${item.id}:`, item.expiresAt);
+        return { ...item, remainingTime: 0, status: 'expired' as const };
+      }
       const remainingTime = Math.max(0, item.expiresAt.getTime() - now.getTime());
       return {
         ...item,
