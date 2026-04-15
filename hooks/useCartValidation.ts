@@ -59,9 +59,11 @@ export function useCartValidation(
    * Validate cart items against backend
    */
   const validateCart = useCallback(async (): Promise<ValidationResult | null> => {
+    // CA-CMC-026 FIX: If validation is already in-flight, wait for it to complete
+    // rather than returning stale cached result. Return null while waiting.
     if (isValidatingRef.current) {
-
-      return validationState.validationResult;
+      // Validation is in progress, caller should wait or retry
+      return null;
     }
 
     if (cartState.items.length === 0) {

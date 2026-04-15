@@ -88,23 +88,37 @@ class GamificationTriggerService {
       }
 
       // M-16 FIX: Check for challenge completion and tier progress via API
+      // CA-GAM-036 FIX: Validate require() and methods before calling
       try {
-        const gamificationApi = require('@/services/gamificationApi').default as {
-          checkChallengeCompletion: () => Promise<{ data?: { completed?: unknown[] } }>;
-          checkTierProgress: () => Promise<{ data?: { tierUpgraded?: boolean; newTier?: string } }>;
-        };
+        let gamificationApi;
+        try {
+          gamificationApi = require('@/services/gamificationApi').default;
+        } catch (requireError) {
+          console.warn('Gamification API require failed:', requireError);
+          return reward;
+        }
+
+        // Verify methods exist before calling
+        if (!gamificationApi || typeof gamificationApi.checkChallengeCompletion !== 'function' || typeof gamificationApi.checkTierProgress !== 'function') {
+          console.warn('Gamification API methods not available');
+          return reward;
+        }
+
         const [challengeRes, tierRes] = await Promise.all([
           gamificationApi.checkChallengeCompletion(),
           gamificationApi.checkTierProgress(),
         ]);
-        if (challengeRes.data?.completed?.length) {
+        if (challengeRes?.data?.completed?.length) {
           reward.achievements = [...(reward.achievements || []), ...(challengeRes.data.completed as never[])];
         }
-        if (tierRes.data?.tierUpgraded) {
+        if (tierRes?.data?.tierUpgraded) {
           (reward as unknown as Record<string, unknown>).tierUpgraded = true;
           (reward as unknown as Record<string, unknown>).newTier = tierRes.data.newTier;
         }
-      } catch { /* gamification API unavailable — skip */ }
+      } catch (error) {
+        console.warn('Challenge/tier check failed:', error);
+        // Continue — gamification trigger should not fail if challenge check fails
+      }
 
       return reward;
     } catch (error) {
@@ -136,6 +150,11 @@ class GamificationTriggerService {
       case 'REFERRAL_SUCCESS':
         // Tier-based referral rewards
         const tier = data?.tier || 'free';
+        // CA-GAM-045 FIX: Validate tier against enum to prevent typos
+        if (!['free', 'premium', 'vip'].includes(tier)) {
+          console.warn(`Invalid tier: ${tier}, defaulting to 'free'`);
+          return 100;
+        }
         if (tier === 'vip') return 500;
         if (tier === 'premium') return 200;
         return 100;
@@ -147,6 +166,11 @@ class GamificationTriggerService {
       case 'DAILY_LOGIN':
         // Streak-based login reward: 10 base coins + 5 coins per streak day (bonus capped at 50 = max 60 total)
         const streak = data?.streak || 1;
+        // CA-GAM-012 FIX: Validate streak to prevent NaN calculations
+        if (typeof streak !== 'number' || streak < 0 || streak >= 10000) {
+          console.warn(`Invalid streak: ${streak}, defaulting to 1`);
+          return 10 + Math.min(1 * 5, 50);
+        }
         return 10 + Math.min(streak * 5, 50);
 
       case 'FIRST_PURCHASE':

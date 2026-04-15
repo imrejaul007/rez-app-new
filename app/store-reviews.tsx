@@ -75,15 +75,16 @@ function StarDisplay({ rating }: { rating: number }) {
 
 // ── Review card ───────────────────────────────────────────────────────────────
 
+// CA-DSC-037 FIX: Add null safety checks with optional chaining
 function ReviewCard({ review }: { review: Review }) {
   return (
     <View style={styles.reviewCard}>
       <View style={styles.reviewHeader}>
-        <StarDisplay rating={review.rating} />
-        <Text style={styles.reviewDate}>{formatDate(review.createdAt)}</Text>
+        <StarDisplay rating={review?.rating || 0} />
+        <Text style={styles.reviewDate}>{formatDate(review?.createdAt || new Date().toISOString())}</Text>
       </View>
-      {review?.title ? <Text style={styles.reviewTitle}>{review.title}</Text> : null}
-      {review?.comment ? <Text style={styles.reviewComment}>{review.comment}</Text> : null}
+      {review?.title && <Text style={styles.reviewTitle}>{review.title}</Text>}
+      {review?.comment && <Text style={styles.reviewComment}>{review.comment}</Text>}
     </View>
   );
 }

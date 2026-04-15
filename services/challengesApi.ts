@@ -148,11 +148,15 @@ class ChallengesApiService {
         const progressList = response.data.challenges || response.data.progress || response.data || [];
 
         // Ensure each item has progressPercentage calculated
-        const mappedProgress = progressList.map((item: any) => ({
-          ...item,
-          progressPercentage: item.progressPercentage ??
-            (item.target > 0 ? Math.min((item.progress / item.target) * 100, 100) : 0),
-        }));
+        const mappedProgress = progressList.map((item: any) => {
+          // CA-GAM-011 FIX: Clamp progress percentage to 0-100 range
+          const progressPercentage = item.progressPercentage ??
+            (item.target > 0 ? Math.min((item.progress / item.target) * 100, 100) : 0);
+          return {
+            ...item,
+            progressPercentage: Math.max(0, Math.min(progressPercentage, 100)),
+          };
+        });
 
         return {
           success: true,

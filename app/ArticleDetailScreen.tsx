@@ -30,9 +30,16 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // ReZ Brand Colors
 
-// Simple Markdown-like content renderer
-const renderContent = (content: string) => {
-  if (!content) return null;
+// CA-DSC-014 & CA-DSC-024 FIX: Validate content exists before rendering and add error boundaries
+const renderContent = (content: string | undefined) => {
+  // CA-DSC-014 FIX: Check if content exists
+  if (!content || typeof content !== 'string' || content.trim().length === 0) {
+    return (
+      <View style={markdownStyles.emptyContent}>
+        <Text style={markdownStyles.emptyText}>No content available</Text>
+      </View>
+    );
+  }
 
   const lines = content.split('\n');
   const elements: React.ReactNode[] = [];
@@ -206,6 +213,18 @@ const markdownStyles = StyleSheet.create({
   },
   spacer: {
     height: 8,
+  },
+  // CA-DSC-014 FIX: Add empty content placeholder style
+  emptyContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: Spacing.xl,
+  },
+  emptyText: {
+    ...Typography.bodyLarge,
+    color: colors.text.tertiary,
+    textAlign: 'center',
   },
 });
 
