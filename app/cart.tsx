@@ -222,7 +222,10 @@ function CartPage() {
     }, 0);
 
     // CA-CMC-018 FIX: Removed deprecated calculateLockedTotal() which always returned 0.
-    // Locked item totals must come from backend API response, not calculated client-side.
+    // CA-CMC-003 FIX: Locked item totals must come from backend API response, not calculated client-side.
+    // TODO (SERVER-SIDE): The locked items totals should be fetched from a single API endpoint
+    // instead of separate /cart and /locked-items calls. This prevents drift if lock fees change
+    // between API calls. Consolidate locked item pricing into the main cart response.
     const lockedTotal = 0; // Always 0 — use API totals instead
 
     return recalculatedCartTotal + serviceTotal + lockedTotal;
@@ -689,7 +692,8 @@ function CartPage() {
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
-              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+              // CA-CMC-041 FIX: Check productItems.length > 0 before accessing productItems[0]
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
                 <CardOffersSection
                   storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
@@ -709,7 +713,8 @@ function CartPage() {
               keyboardShouldPersistTaps: 'handled',
               ListEmptyComponent: renderEmptyState,
               ListFooterComponent:
-                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+                // CA-CMC-041 FIX: Check productItems.length > 0 before accessing productItems[0]
+                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
                   <CardOffersSection
                     storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                     orderValue={overallTotal}

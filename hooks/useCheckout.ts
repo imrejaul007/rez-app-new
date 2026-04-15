@@ -329,7 +329,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         }
       } catch (err) {
         devLog.error('[Checkout] Payment recovery failed:', err);
-        // Clear the draft so the user isn't stuck in a recovery loop.
+        // CA-CMC-049 FIX: If backend is down during recovery, we still need to handle it gracefully.
+        // TODO (SERVER-SIDE): Implement server-side order reconciliation endpoint that:
+        // 1. Accepts razorpayPaymentId or walletTransactionId
+        // 2. Checks if an order was already created for this payment
+        // 3. Returns orderId if order exists, allowing client to redirect to success
+        // This prevents users from retrying payment when order was already created but recovery failed.
         clearDraft();
       } finally {
         if (isMountedRef.current) {
@@ -350,8 +355,16 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   );
 
   // Apply card offer from cart context if one was pre-selected
+  // CA-CMC-023 FIX: Only apply offer once per checkout session, not on every loading state change
+  // Use a ref to track if offer has been applied to prevent re-application on coin toggle
+  const cardOfferAppliedRef = useRef(false);
   useEffect(() => {
-    if (!state.loading && cartState.appliedCardOffer && !state.appliedCardOffer) {
+    // Only apply if:
+    // 1. Checkout is initialized (not loading)
+    // 2. There's a new card offer from cart
+    // 3. We haven't already applied an offer in this session
+    if (!state.loading && cartState.appliedCardOffer && !state.appliedCardOffer && !cardOfferAppliedRef.current) {
+      cardOfferAppliedRef.current = true;
       // Apply the card offer from cart
       const offer = cartState.appliedCardOffer;
       setState(prev => {
@@ -382,7 +395,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         };
       });
     }
-  }, [state.loading, cartState.appliedCardOffer, state.appliedCardOffer]);
+  }, [cartState.appliedCardOffer, state.appliedCardOffer]);
 
   const initializeCheckout = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true }));
