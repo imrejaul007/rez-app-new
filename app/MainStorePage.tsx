@@ -78,7 +78,11 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const handleOrderFood = useCallback(() => {
     // Switch to the menu tab and scroll to top
     d.handleTabChange('menu');
-    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    try {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    } catch (error) {
+      console.warn('Failed to scroll to top:', error);
+    }
   }, [d]);
 
   const handleBookTable = useCallback(() => {

@@ -207,7 +207,7 @@ function ReviewsPage() {
           {renderStars(review.rating, 18)}
         </View>
 
-        <ThemedText style={styles.reviewComment}>{review.comment}</ThemedText>
+        {review.comment && <ThemedText style={styles.reviewComment}>{review.comment}</ThemedText>}
 
         {review.images && review.images.length > 0 && (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.reviewImages}>
