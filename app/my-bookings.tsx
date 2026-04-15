@@ -256,9 +256,12 @@ const MyBookingsPage = () => {
   };
 
   const formatTime = (timeStr: string): string => {
-    if (!timeStr) return '';
+    if (!timeStr || typeof timeStr !== 'string' || timeStr.trim().length === 0) {
+      return '';
+    }
     // ETHAN: crash guard — split could return incomplete array; parseInt could return NaN
     const parts = timeStr.split(':').map((x) => parseInt(x, 10));
+    if (parts.length < 2) return '';
     const hours = !isNaN(parts[0]) ? parts[0] : 0;
     const minutes = !isNaN(parts[1]) ? parts[1] : 0;
     const ampm = hours >= 12 ? 'PM' : 'AM';
