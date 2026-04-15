@@ -210,9 +210,9 @@ function HotelDetailsPage() {
 
       // Star rating: prefer specs, fallback to name/price
       const specStarRating = getSpec('starRating');
-      const starRating = specStarRating ? parseInt(specStarRating) : (() => {
+      const starRating = specStarRating ? parseInt(specStarRating, 10) : (() => {
         const starMatch = productData.name.match(/(\d+)\s*star/i);
-        if (starMatch) return parseInt(starMatch[1]);
+        if (starMatch) return parseInt(starMatch[1], 10);
         if (basePrice >= 10000) return 5;
         if (basePrice >= 5000) return 4;
         if (basePrice >= 2000) return 3;
@@ -225,7 +225,7 @@ function HotelDetailsPage() {
       // Room features: prefer specs
       const beds = getSpec('beds') || '1 King Bed';
       const roomSize = getSpec('roomSize') || '25 sqm';
-      const maxGuests = getSpec('maxGuests') ? parseInt(getSpec('maxGuests')) : 2;
+      const maxGuests = getSpec('maxGuests') ? parseInt(getSpec('maxGuests'), 10) : 2;
 
       // Room types: prefer specs, fallback to all available
       const specRoomTypes = getSpec('roomTypes');

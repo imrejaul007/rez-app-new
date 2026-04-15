@@ -1,261 +1,261 @@
-import { colors } from '@/constants/theme';
-import { withErrorBoundary } from '@/utils/withErrorBoundary';
-// My Bookings Page
-// Shows user's service bookings with travel-specific enhancements
-
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
-import { FlashList } from '@shopify/flash-list';
-import { CardGridSkeleton } from '@/components/skeletons';
-import { platformAlertSimple, platformAlertDestructive } from '@/utils/platformAlert';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter, useFocusEffect } from 'expo-router';
-import serviceBookingApi, { ServiceBooking } from '@/services/serviceBookingApi';
-import CashbackStatusBadge from '@/components/travel/CashbackStatusBadge';
-import { useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
-import { useIsMounted } from '@/hooks/useIsMounted';
-
-const TRAVEL_SLUGS = ['flights', 'hotels', 'trains', 'bus', 'cab', 'packages'];
-const EDUCATION_KEYWORDS = ['class', 'course', 'tutorial', 'workshop', 'enrollment', 'lesson', 'training'];
-
-const CATEGORY_ICONS: Record<string, string> = {
-  flights: 'airplane',
-  hotels: 'bed',
-  trains: 'train',
-  bus: 'bus',
-  cab: 'car',
-  packages: 'briefcase',
-};
-
-const isTravelBooking = (booking: ServiceBooking): boolean => {
-  const slug = booking.serviceCategory?.slug || '';
-  return TRAVEL_SLUGS.includes(slug) || !!booking.travelDetails;
-};
-
-const MyBookingsPage = () => {
-  const isMounted = useIsMounted();
-  const router = useRouter();
-  const getCurrencySymbol = useGetCurrencySymbol();
-
-  // Screen fade-in animation
-  const fadeAnim = useSharedValue(0);
-  useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
-  }, [fadeAnim]);
-  const currencySymbol = getCurrencySymbol();
-  const isAuthenticated = useIsAuthenticated();
-  const [bookings, setBookings] = useState<ServiceBooking[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'courses'>('upcoming');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  // SS-D002 FIX: Track which booking IDs currently have a cancel in-flight so
-  // the button is disabled (preventing double-tap race) and the UI shows a
-  // local "cancelling" state before the API responds.
-  const [cancellingIds, setCancellingIds] = useState<Set<string>>(new Set());
-  // Ref that keeps fetchBookings stable across the cancel handler closure
-  const fetchBookingsRef = useRef<() => void>(() => {});
-
-  const fetchBookings = useCallback(async () => {
-    try {
-      setLoading(true);
-      setErrorMessage(null);
-
-      if (!isAuthenticated) {
-        setErrorMessage('Please login to view your bookings');
-        setLoading(false);
-        return;
-      }
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const response = await serviceBookingApi.getUserBookings({
-        page: 1,
-        limit: 50,
-      });
-
-      if (response.success && response.data) {
-        let filteredBookings = response.data;
-
-        if (activeTab === 'courses') {
-          // ED-02: Filter education-related bookings
-          filteredBookings = filteredBookings.filter((booking) => {
-            const sType = (booking as any).serviceType?.toLowerCase() || '';
-            const catSlug = booking.serviceCategory?.slug?.toLowerCase() || '';
-            return EDUCATION_KEYWORDS.some((kw) => sType.includes(kw) || catSlug.includes(kw));
-          });
-          filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
-        } else if (activeTab === 'upcoming') {
-          // SS-008 FIX: Removed isMounted() guard inside .filter() — it returns undefined (falsy),
-          // incorrectly excluding all bookings when the check fires.
-          filteredBookings = filteredBookings.filter((booking) => {
-            const bookingDate = new Date(booking.bookingDate);
-            bookingDate.setHours(0, 0, 0, 0);
-            const isFuture = bookingDate >= today;
-            const isActive =
-              booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
-            return isFuture && isActive;
-          });
-          filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
-        } else {
-          // SS-008 FIX: Same — removed erroneous isMounted() early-return inside filter
-          filteredBookings = filteredBookings.filter((booking) => {
-            const bookingDate = new Date(booking.bookingDate);
-            bookingDate.setHours(0, 0, 0, 0);
-            const isPast = bookingDate < today;
-            const isCompleted =
-              booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';
-            return isPast || isCompleted;
-          });
-          filteredBookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
-        }
-
-        if (!isMounted()) return;
-        setBookings(filteredBookings);
-      } else {
-        if (!isMounted()) return;
-        setBookings([]);
-      }
-    } catch (error: any) {
-      if (!isMounted()) return;
-      setBookings([]);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [isAuthenticated, activeTab]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchBookings();
-    }, [fetchBookings]),
-  );
-
-  useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings, activeTab]);
-
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchBookings();
-  }, [fetchBookings]);
-
-  // SS-D002 FIX: Keep fetchBookings accessible inside handleCancelBooking
-  // without making it a dependency (avoids stale-closure re-creation loop).
-  useEffect(() => {
-    fetchBookingsRef.current = fetchBookings;
-  });
-
-  const handleCancelBooking = useCallback(
-    async (bookingId: string) => {
-      // SS-D002 FIX: If a cancel is already in-flight for this booking, ignore the
-      // duplicate tap — prevents race where two PATCH requests race each other.
-      if (cancellingIds.has(bookingId)) return;
-
-      platformAlertDestructive(
-        'Cancel Booking',
-        'Are you sure you want to cancel this booking?',
-        'Yes, Cancel',
-        async () => {
-          // SS-D002 FIX: Lock this booking's Cancel button immediately so that:
-          //  (a) a background refresh arriving mid-cancel cannot re-render the
-          //      button in its enabled state and
-          //  (b) a double-tap cannot create two simultaneous cancel requests.
-          setCancellingIds((prev) => new Set(prev).add(bookingId));
-
-          // SS-D002 FIX: Optimistic local state update — immediately show the
-          // booking as 'cancelled' so the user sees instant feedback while the
-          // API call is in-flight.  If the call fails we revert.
-          let previousBookings: ServiceBooking[] = [];
-          setBookings((prev) => {
-            previousBookings = prev;
-            return prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' as any } : b));
-          });
-
-          try {
-            const response = await serviceBookingApi.cancelBooking(bookingId);
-            if (response.success) {
-              // SS-D002 FIX: Replace optimistic entry with authoritative server
-              // data so any server-side fields (refund amount, cancelledAt, etc.)
-              // are reflected without requiring a full list refresh.
-              if (response.data) {
-                setBookings((prev) => prev.map((b) => (b._id === bookingId ? response.data! : b)));
-              }
-              platformAlertSimple('Success', 'Booking cancelled successfully');
-              // Full refresh in the background to sync other fields (e.g. cashback reversal)
-              fetchBookingsRef.current();
-            } else {
-              // SS-D002 FIX: Revert optimistic update on API failure so the
-              // booking does not appear cancelled when it actually still is active.
-              setBookings(previousBookings);
-              platformAlertSimple('Error', response.error || 'Failed to cancel booking');
-            }
-          } catch (error) {
-            // SS-D002 FIX: Revert on network / unexpected error too.
-            setBookings(previousBookings);
-            platformAlertSimple('Error', 'Failed to cancel booking');
-          } finally {
-            // SS-D002 FIX: Always release the lock so the button re-enables on error.
-            setCancellingIds((prev) => {
-              const next = new Set(prev);
-              next.delete(bookingId);
-              return next;
-            });
-          }
-        },
-      );
-    },
-    [cancellingIds],
-  );
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return colors.nileBlue;
-      case 'pending':
-        return Colors.warning;
-      case 'completed':
-        return Colors.info;
-      case 'cancelled':
-      case 'no_show':
-        return Colors.error;
-      case 'assigned':
-      case 'in_progress':
-        return Colors.brand.purple;
-      default:
-        return colors.text.tertiary;
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'Confirmed';
-      case 'pending':
-        return 'Pending';
-      case 'completed':
-        return 'Completed';
-      case 'cancelled':
-        return 'Cancelled';
-      case 'no_show':
-        return 'No Show';
-      case 'assigned':
-        return 'Assigned';
-      case 'in_progress':
-        return 'In Progress';
-      default:
-        return status;
-    }
-  };
-
-  const formatTime = (timeStr: string): string => {
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
+const formatTime = (timeStr: string | undefined) => { if (!timeStr || typeof timeStr !== "string") return ""; const parts = 
     if (!timeStr || typeof timeStr !== 'string' || timeStr.trim().length === 0) {
       return '';
     }
