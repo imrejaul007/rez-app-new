@@ -323,7 +323,7 @@ function CartPage() {
             lockPaymentStatus: item.lockPaymentStatus,
             isPaidLock: item.isPaidLock,
           };
-        });
+        }).filter((item: any) => item !== null); // Remove malformed items with invalid dates
         setLockedProducts(formattedLockedItems);
       }
     } catch (error: any) {
