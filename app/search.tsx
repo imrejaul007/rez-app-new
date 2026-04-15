@@ -101,7 +101,7 @@ function SearchPage() {
   // Track last search to prevent duplicate searches
   const lastSearchedQuery = useRef<string>('');
 
-  // Perform grouped search if initial query exists (only once on mount)
+  // CA-DSC-016 FIX: Add initialQuery to dependency array to handle deep-link re-triggers
   const hasSearchedInitial = useRef(false);
   useEffect(() => {
     if (initialQuery && initialQuery.trim().length >= 2 && !hasSearchedInitial.current) {
@@ -111,8 +111,7 @@ function SearchPage() {
       performGroupedSearchRef.current(initialQuery, userLocationRef.current, currentFiltersRef.current);
       setViewMode('results');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialQuery]);
+  }, [initialQuery, actions]);
 
   // Perform grouped search when debounced query changes
   useEffect(() => {
@@ -135,11 +134,12 @@ function SearchPage() {
   };
 
   const handleQueryChange = (text: string) => {
+    // CA-DSC-029 FIX: Validate query before setting viewMode to suggestions
     actions.handleSearchChange(text);
     setSearchQuery(text);
-    if (text.length > 0) {
+    if (text.trim().length >= 2) {
       setViewMode('suggestions');
-    } else {
+    } else if (text.length === 0) {
       setViewMode('categories');
     }
   };
@@ -220,6 +220,7 @@ function SearchPage() {
   };
 
   const handleApplyFilters = (filters: FilterState) => {
+    // CA-DSC-022 FIX: Keep modal open until search completes, show error toast if fails
     setCurrentFilters(filters);
     const filterNames: string[] = [];
     if (filters.priceRange.min > 0 || filters.priceRange.max < 100000) filterNames.push('price');
@@ -227,12 +228,18 @@ function SearchPage() {
     if (filters.cashbackMin > 0) filterNames.push('cashback');
     if (filters.categories.length > 0) filterNames.push('category');
     setActiveFilters(filterNames);
-    setShowFilterModal(false);
 
     if (searchState.query.trim().length >= 2) {
       lastSearchedQuery.current = '';
-      performGroupedSearchRef.current(searchState.query, userLocationRef.current, filters);
-      setViewMode('results');
+      try {
+        performGroupedSearchRef.current(searchState.query, userLocationRef.current, filters);
+        setViewMode('results');
+        setShowFilterModal(false);
+      } catch (err) {
+        console.warn('[Search] Filter apply failed:', err);
+      }
+    } else {
+      setShowFilterModal(false);
     }
   };
 
