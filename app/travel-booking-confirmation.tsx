@@ -274,17 +274,17 @@ function TravelBookingConfirmationPage() {
             <ThemedText style={styles.cardTitle}>Price Breakdown</ThemedText>
             <View style={styles.priceRow}>
               <ThemedText style={styles.priceLabel}>Base Price</ThemedText>
-              <ThemedText style={styles.priceValue}>{currencySymbol}{booking.pricing.basePrice?.toLocaleString()}</ThemedText>
+              <ThemedText style={styles.priceValue}>{currencySymbol}{(booking.pricing?.basePrice || 0)?.toLocaleString()}</ThemedText>
             </View>
-            {booking.pricing.taxes > 0 && (
+            {(booking.pricing?.taxes || 0) > 0 && (
               <View style={styles.priceRow}>
                 <ThemedText style={styles.priceLabel}>Taxes & Fees</ThemedText>
-                <ThemedText style={styles.priceValue}>{currencySymbol}{booking.pricing.taxes?.toLocaleString()}</ThemedText>
+                <ThemedText style={styles.priceValue}>{currencySymbol}{(booking.pricing?.taxes || 0)?.toLocaleString()}</ThemedText>
               </View>
             )}
             <View style={[styles.priceRow, styles.totalRow]}>
               <ThemedText style={styles.totalLabel}>Total Paid</ThemedText>
-              <ThemedText style={styles.totalValue}>{currencySymbol}{booking.pricing.total?.toLocaleString()}</ThemedText>
+              <ThemedText style={styles.totalValue}>{currencySymbol}{(booking.pricing?.total || 0)?.toLocaleString()}</ThemedText>
             </View>
           </View>
 
