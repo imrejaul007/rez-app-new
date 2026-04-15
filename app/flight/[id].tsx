@@ -297,7 +297,7 @@ function FlightDetailsPage() {
         originalPrice: origPrice && origPrice > basePrice ? origPrice : undefined,
         discount: disc > 0 ? disc : undefined,
         images: processImages(),
-        description: productData.description || productData.description || 'Direct flight with excellent service.',
+        description: productData.description || 'Direct flight with excellent service.',
         duration: dur,
         departureTime: depTime,
         arrivalTime: arrTime,

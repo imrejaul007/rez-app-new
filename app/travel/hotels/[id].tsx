@@ -251,7 +251,7 @@ export default function HotelDetailScreen() {
         numGuests,
         guestName: guestName.trim(),
         guestPhone: guestPhone.trim(),
-        specialRequests: specialRequests.trim() || undefined,
+        specialRequests: specialRequests.trim().slice(0, 500) || undefined,
         otaCoinBurnPaise: useOtaCoins && burnResult ? burnResult.ota_coin_applicable_paise : 0,
         rezCoinBurnPaise: useRezCoins && burnResult ? burnResult.rez_coin_applicable_paise : 0,
         hotelBrandCoinBurnPaise: useBrandCoins && burnResult ? burnResult.hotel_brand_coin_applicable_paise : 0,

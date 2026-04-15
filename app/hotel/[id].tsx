@@ -288,7 +288,7 @@ function HotelDetailsPage() {
           return processedImages;
         })(),
         description:
-          productData.description || productData.description || 'Comfortable accommodation with excellent service.',
+          productData.description || 'Comfortable accommodation with excellent service.',
         checkInTime,
         checkOutTime,
         cashback: {

@@ -107,12 +107,17 @@ function OTPVerificationScreen() {
       triggerImpact('Medium');
       const freshUser = await actions.verifyOTP(phoneNumber, otpString);
 
+      // CA-AUT-018: Ensure user is returned from OTP verification
+      if (!freshUser) {
+        throw new Error('User not returned from OTP verification. Please try again.');
+      }
+
       analyticsService.track('otp_verified');
       triggerNotification('Success');
 
       if (!isMounted()) return;
 
-      if (freshUser?.isOnboarded) {
+      if (freshUser.isOnboarded) {
         router.replace('/(tabs)/' as any);
       } else {
         router.replace('/onboarding/set-pin');

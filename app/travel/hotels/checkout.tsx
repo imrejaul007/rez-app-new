@@ -5,7 +5,7 @@
  * Handles Razorpay payment → confirm booking → navigate to confirmation.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -83,6 +83,14 @@ export default function HotelCheckoutScreen() {
   const coinsSaved = otaCoinApplied + rezCoinApplied + brandCoinApplied;
 
   const [paying, setPaying] = useState(false);
+  const paymentPromiseRef = useRef<Promise<any> | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Countdown timer for hold expiry
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
@@ -99,7 +107,7 @@ export default function HotelCheckoutScreen() {
   }, [holdExpiresAt]);
 
   const handlePay = async () => {
-    if (!holdId) return;
+    if (!holdId || isNaN(pgAmountPaise) || pgAmountPaise < 0) return;
     setPaying(true);
     try {
       if (pgAmountPaise > 0 && razorpayOrderId) {
@@ -131,14 +139,19 @@ export default function HotelCheckoutScreen() {
             },
             theme: { color: '#06B6D4' },
           };
-          const payData = await RazorpayCheckout.open(options);
+          paymentPromiseRef.current = RazorpayCheckout.open(options);
+          const payData = await paymentPromiseRef.current;
+          // Only proceed if component still mounted
+          if (!isMountedRef.current) return;
           const result = await confirmBooking({
             holdId,
             razorpayPaymentId: payData.razorpay_payment_id,
             razorpayOrderId: payData.razorpay_order_id,
             razorpaySignature: payData.razorpay_signature,
           });
-          navigateToSuccess(result);
+          if (isMountedRef.current) {
+            navigateToSuccess(result);
+          }
         } else if (__DEV__) {
           // Dev fallback: simulate payment
           const result = await confirmBooking({

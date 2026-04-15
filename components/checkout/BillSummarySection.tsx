@@ -19,7 +19,6 @@ interface AppliedOfferRedemption {
 
 interface BillSummary {
   itemTotal?: number;
-  getAndItemTotal?: number;
   deliveryFee?: number;
   platformFee?: number;
   taxes?: number;
@@ -73,16 +72,6 @@ function BillSummarySection({
             {currencySymbol}{itemTotal.toFixed(0)}
           </ThemedText>
         </View>
-
-        {/* Get & Item Total */}
-        {(billSummary?.getAndItemTotal || 0) > 0 && (
-          <View style={styles.summaryRow}>
-            <ThemedText style={styles.summaryLabel}>Get & item Total</ThemedText>
-            <ThemedText style={styles.summaryValue}>
-              {currencySymbol}{(billSummary?.getAndItemTotal || 0).toFixed(0)}
-            </ThemedText>
-          </View>
-        )}
 
         {/* Delivery Fee */}
         <View style={styles.summaryRow}>
