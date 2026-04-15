@@ -69,6 +69,7 @@ export interface ActivitySummary {
 
 class ActivityApiService {
   private baseUrl = '/activities';
+  private seenActivityIds: Set<string> = new Set(); // CA-GAM-047: Track seen activities for deduplication
 
   // Get user activities with pagination
   async getUserActivities(page = 1, limit = 20, type?: ActivityType): Promise<ApiResponse<ActivityPagination>> {
@@ -77,7 +78,28 @@ class ActivityApiService {
       limit: limit.toString(),
       ...(type && { type })
     });
-    return apiClient.get(`${this.baseUrl}?${params.toString()}`);
+    const response = await apiClient.get<ActivityPagination>(`${this.baseUrl}?${params.toString()}`);
+
+    // CA-GAM-047: Deduplicate activities if response is successful
+    if (response.success && response.data?.activities) {
+      const uniqueActivities = response.data.activities.filter((activity) => {
+        if (this.seenActivityIds.has(activity.id)) {
+          return false; // Skip duplicate
+        }
+        this.seenActivityIds.add(activity.id);
+        return true;
+      });
+
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          activities: uniqueActivities
+        }
+      };
+    }
+
+    return response;
   }
 
   // Get activity by ID
