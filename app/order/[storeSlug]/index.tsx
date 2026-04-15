@@ -14,13 +14,13 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
   TextInput,
   FlatList,
   Image,
   Pressable,
 } from 'react-native';
+import { Button } from '@rez/rez-ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -72,21 +72,23 @@ function QuantityStepper({
 }) {
   return (
     <View style={styles.stepper}>
-      <TouchableOpacity
+      <Button
         style={styles.stepperBtn}
         onPress={onDecrease}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        label=""
+        variant="secondary"
       >
         <Ionicons name="remove" size={16} color={themeColors.brand.purple} />
-      </TouchableOpacity>
+      </Button>
       <Text style={styles.stepperCount}>{quantity}</Text>
-      <TouchableOpacity
+      <Button
         style={styles.stepperBtn}
         onPress={onIncrease}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        label=""
+        variant="secondary"
       >
         <Ionicons name="add" size={16} color={themeColors.brand.purple} />
-      </TouchableOpacity>
+      </Button>
     </View>
   );
 }
@@ -158,15 +160,15 @@ function MenuItemCard({
             <Text style={styles.unavailableText}>Unavailable</Text>
           </View>
         ) : quantity === 0 ? (
-          <TouchableOpacity
+          <Button
             style={styles.addBtn}
             onPress={onAdd}
-            accessibilityLabel="Add item"
-            accessibilityRole="button"
+            label="ADD"
+            variant="primary"
+            textStyle={styles.addBtnText}
           >
-            <Text style={styles.addBtnText}>ADD</Text>
             <Ionicons name="add" size={14} color={themeColors.brand.purple} />
-          </TouchableOpacity>
+          </Button>
         ) : (
           <QuantityStepper quantity={quantity} onIncrease={onIncrease} onDecrease={onDecrease} />
         )}
@@ -331,14 +333,14 @@ function WebOrderMenuScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       {/* Store header */}
       <LinearGradient colors={[themeColors.brand.purple, themeColors.brand.purpleMuted]} style={styles.header}>
-        <TouchableOpacity
+        <Button
           onPress={() => (router.canGoBack() ? router.back() : undefined)}
           style={styles.backBtn}
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
+          label=""
+          variant="primary"
         >
           <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
+        </Button>
         <View style={{ flex: 1 }}>
           <Text style={styles.storeName} numberOfLines={1}>
             {store.name}
@@ -369,9 +371,9 @@ function WebOrderMenuScreen() {
           returnKeyType="search"
         />
         {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery('')}>
+          <Button onPress={() => setSearchQuery('')} label="" variant="secondary" style={styles.clearSearchBtn}>
             <Ionicons name="close-circle" size={16} color="#9CA3AF" />
-          </TouchableOpacity>
+          </Button>
         )}
       </View>
 
@@ -423,15 +425,15 @@ function WebOrderMenuScreen() {
               <Text style={styles.cartTaxNote}>+{formatCurrency(taxes)} GST</Text>
             </View>
           </View>
-          <TouchableOpacity
+          <Button
             style={styles.cartCheckoutBtn}
             onPress={handleCheckout}
-            accessibilityLabel="View cart and checkout"
-            accessibilityRole="button"
+            label={`${formatCurrency(total + taxes)} View Cart →`}
+            variant="primary"
+            textStyle={styles.cartCheckoutText}
           >
-            <Text style={styles.cartCheckoutText}>{formatCurrency(total + taxes)}</Text>
             <Text style={styles.cartCheckoutArrow}>View Cart →</Text>
-          </TouchableOpacity>
+          </Button>
         </Animated.View>
       )}
     </SafeAreaView>
@@ -477,6 +479,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   searchInput: { flex: 1, fontSize: 14, color: '#111827' },
+  clearSearchBtn: { backgroundColor: 'transparent', padding: 4 },
 
   // Menu
   menuContent: { paddingHorizontal: 12 },

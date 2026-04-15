@@ -189,9 +189,13 @@ export default function ConfirmationScreen() {
           <Ionicons name="alert-circle-outline" size={52} color="#EF4444" />
           <Text style={styles.errorTitle}>Order not found</Text>
           <Text style={styles.errorSub}>{error}</Text>
-          <TouchableOpacity onPress={() => router.replace(`/order/${storeSlug}`)}>
-            <Text style={styles.backLink}>← Back to menu</Text>
-          </TouchableOpacity>
+          <Button
+            onPress={() => router.replace(`/order/${storeSlug}`)}
+            label="← Back to menu"
+            variant="secondary"
+            style={styles.backLinkButton}
+            textStyle={styles.backLinkText}
+          />
         </View>
       </SafeAreaView>
     );
@@ -284,15 +288,17 @@ export default function ConfirmationScreen() {
           )}
 
           {isTerminal && order.status === 'completed' && (
-            <TouchableOpacity
+            <Button
               style={styles.orderAgainBtn}
               onPress={() =>
                 router.replace(`/order/${storeSlug}${order.tableNumber ? `?table=${order.tableNumber}` : ''}`)
               }
+              label="Order Again"
+              variant="primary"
+              textStyle={styles.orderAgainText}
             >
               <Ionicons name="add-circle-outline" size={20} color="#fff" />
-              <Text style={styles.orderAgainText}>Order Again</Text>
-            </TouchableOpacity>
+            </Button>
           )}
         </Animated.View>
 
@@ -311,6 +317,8 @@ const styles = StyleSheet.create({
   errorTitle: { fontSize: 17, fontWeight: '700', color: '#374151' },
   errorSub: { fontSize: 13, color: '#9CA3AF', textAlign: 'center' },
   backLink: { fontSize: 14, color: '#7C3AED', fontWeight: '600', marginTop: 8 },
+  backLinkButton: { backgroundColor: 'transparent', marginTop: 8 },
+  backLinkText: { fontSize: 14, color: '#7C3AED', fontWeight: '600' },
 
   header: { flexDirection: 'row', alignItems: 'center', padding: 16 },
   headerTitle: { fontSize: 17, fontWeight: '700', color: '#fff' },
