@@ -1,0 +1,70 @@
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+const AnyFlashList = FlashList as any;
+import { UGCVideoItem, PLAY_PAGE_COLORS } from '@/types/playPage.types';
+import SectionHeader from './SectionHeader';
+import ThumbnailVideoCard from './ThumbnailVideoCard';
+
+interface MerchantVideoSectionProps {
+  videos: UGCVideoItem[];
+  onVideoPress: (video: UGCVideoItem) => void;
+  onViewAllPress?: () => void;
+  loading?: boolean;
+}
+
+function MerchantVideoSection({
+  videos,
+  onVideoPress,
+  onViewAllPress,
+  loading = false
+}: MerchantVideoSectionProps) {
+  const renderItem = ({ item }: { item: UGCVideoItem }) => (
+    <ThumbnailVideoCard
+      item={item}
+      onPress={onVideoPress}
+      showHashtags={true}
+    />
+  );
+
+  return (
+    <View style={styles.container}>
+      <SectionHeader
+        title="Products"
+        showViewAll={videos.length > 4}
+        onViewAllPress={onViewAllPress}
+      />
+
+      <AnyFlashList
+        data={videos.slice(0, 4)}
+        renderItem={renderItem}
+        keyExtractor={(item: any, index: number) => item.id || `merchant-video-${index}`}
+        numColumns={2}
+        contentContainerStyle={styles.gridContainer as any}
+        scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
+        estimatedItemSize={250}
+
+        // Performance Optimizations
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: PLAY_PAGE_COLORS.background,
+    paddingBottom: 24,
+    marginBottom: 8,
+  },
+  gridContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  row: {
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+});
+
+export default React.memo(MerchantVideoSection);

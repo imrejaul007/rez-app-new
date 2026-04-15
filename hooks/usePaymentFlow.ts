@@ -1,0 +1,484 @@
+/**
+ * usePaymentFlow Hook
+ * 
+ * Manages the complete payment flow state including:
+ * - Store info and membership
+ * - Coin selection and auto-optimization
+ * - Payment method selection
+ * - Offers and savings calculations
+ * - Payment processing
+ */
+
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import NetInfo from '@react-native-community/netinfo';
+import storePaymentApi from '@/services/storePaymentApi';
+import externalWalletApi from '@/services/externalWalletApi';
+import apiClient from '@/services/apiClient';
+import { useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
+import {
+  StorePaymentInfo,
+  AppliedCoins,
+  EnhancedPaymentMethod,
+  StoreMembership,
+  SavingsSummary,
+  RewardsPreview,
+  StorePaymentOffer,
+  ExternalWallet,
+  StorePaymentInitResponse,
+} from '@/types/storePayment.types';
+
+// ==================== TYPES ====================
+
+interface PaymentFlowState {
+  // Store info
+  store: StorePaymentInfo | null;
+  membership: StoreMembership | null;
+  
+  // Bill
+  billAmount: number;
+  taxesAndFees: number;
+  
+  // Coins
+  appliedCoins: AppliedCoins;
+  isAutoOptimized: boolean;
+  maxCoinRedemptionPercent: number;
+  
+  // Offers
+  selectedOffers: StorePaymentOffer[];
+  discountAmount: number;
+  
+  // Payment
+  paymentMethods: EnhancedPaymentMethod[];
+  selectedPaymentMethod: EnhancedPaymentMethod | null;
+  externalWallets: ExternalWallet[];
+  
+  // Calculations
+  totalDiscount: number;
+  amountToPay: number;
+  savingsSummary: SavingsSummary;
+  rewardsPreview: RewardsPreview;
+  
+  // Loading states
+  isLoading: boolean;
+  isProcessing: boolean;
+  error: string | null;
+}
+
+interface UsePaymentFlowParams {
+  storeId: string;
+  storeName: string;
+  amount: number;
+  selectedOfferIds?: string[];
+}
+
+interface UsePaymentFlowReturn extends PaymentFlowState {
+  // Actions
+  loadPaymentData: () => Promise<void>;
+  autoOptimize: () => Promise<void>;
+  toggleCoin: (coinType: 'rez' | 'promo' | 'branded', enabled: boolean) => void;
+  setCoinAmount: (coinType: 'rez' | 'promo' | 'branded', amount: number) => void;
+  selectPaymentMethod: (method: EnhancedPaymentMethod) => void;
+  initiatePayment: (idempotencyKey?: string) => Promise<StorePaymentInitResponse | null>;
+  reset: () => void;
+  clearError: () => void;
+}
+
+// ==================== DEFAULT VALUES ====================
+
+const DEFAULT_APPLIED_COINS: AppliedCoins = {
+  rezCoins: { available: 0, using: 0, enabled: true },
+  promoCoins: { available: 0, using: 0, enabled: true, expiringToday: false },
+  brandedCoins: null,
+  totalApplied: 0,
+};
+
+const DEFAULT_SAVINGS_SUMMARY: SavingsSummary = {
+  coinsUsed: 0,
+  bankOffers: 0,
+  loyaltyBenefit: 0,
+  totalSaved: 0,
+};
+
+const DEFAULT_REWARDS_PREVIEW: RewardsPreview = {
+  cashback: 0,
+  coinsToEarn: 0,
+};
+
+// ==================== HOOK ====================
+
+export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowReturn {
+  const { storeId, storeName, amount, selectedOfferIds = [] } = params;
+  const isAuthenticated = useIsAuthenticated();
+  const authLoading = useAuthLoading();
+
+  // Refs to prevent infinite loops
+  const hasLoadedRef = useRef(false);
+  const selectedOfferIdsRef = useRef(selectedOfferIds);
+
+  // OG-D001 FIX: One idempotency key per hook mount so retries after a
+  // network drop always re-use the same key and the backend deduplicates.
+  const idempotencyKeyRef = useRef(
+    `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  );
+
+  // OG-D002 FIX: In-flight lock prevents duplicate submissions from a
+  // double-tap or a reconnect firing initiatePayment a second time while
+  // the first request is still awaiting a response.
+  const isSubmittingRef = useRef(false);
+
+  // Update ref when selectedOfferIds changes
+  selectedOfferIdsRef.current = selectedOfferIds;
+
+  // OG-D003 FIX: assertOnline() — gate every mutating payment call so the
+  // user gets a clear error message instead of a stuck spinner when offline.
+  const assertOnline = useCallback(async (): Promise<boolean> => {
+    const state = await NetInfo.fetch();
+    const online = state.isConnected === true;
+    if (!online) {
+      setError('No internet connection. Please check your network and try again.');
+    }
+    return online;
+  }, []);
+
+  // State
+  const [store, setStore] = useState<StorePaymentInfo | null>(null);
+  const [membership, setMembership] = useState<StoreMembership | null>(null);
+  const [appliedCoins, setAppliedCoins] = useState<AppliedCoins>(DEFAULT_APPLIED_COINS);
+  const [isAutoOptimized, setIsAutoOptimized] = useState(false);
+  const [maxCoinRedemptionPercent, setMaxCoinRedemptionPercent] = useState(100);
+  const [selectedOffers, setSelectedOffers] = useState<StorePaymentOffer[]>([]);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [paymentMethods, setPaymentMethods] = useState<EnhancedPaymentMethod[]>([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<EnhancedPaymentMethod | null>(null);
+  const [externalWallets, setExternalWallets] = useState<ExternalWallet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const billAmount = amount;
+  const taxesAndFees = 0; // Can be passed from params if needed
+
+  // ==================== CALCULATIONS ====================
+
+  const totalDiscount = useMemo(() => discountAmount, [discountAmount]);
+
+  const amountToPay = useMemo(() => {
+    const afterDiscount = billAmount - totalDiscount;
+    const afterCoins = afterDiscount - appliedCoins.totalApplied;
+    return Math.max(0, afterCoins);
+  }, [billAmount, totalDiscount, appliedCoins.totalApplied]);
+
+  const savingsSummary = useMemo<SavingsSummary>(() => {
+    const loyaltyBenefit = membership?.benefits.cashbackBonus
+      ? Math.floor((billAmount * membership.benefits.cashbackBonus) / 100)
+      : 0;
+
+    return {
+      coinsUsed: appliedCoins.totalApplied,
+      bankOffers: 0, // Would come from selected offers
+      loyaltyBenefit,
+      totalSaved: appliedCoins.totalApplied + totalDiscount + loyaltyBenefit,
+    };
+  }, [appliedCoins.totalApplied, totalDiscount, membership, billAmount]);
+
+  const rewardsPreview = useMemo<RewardsPreview>(() => {
+    // Base cashback from store reward rules
+    const baseCashbackPercent = store?.rewardRules?.baseCashbackPercent ?? 0;
+    const memberBonus = membership?.benefits.cashbackBonus || 0;
+    const effectiveCashbackPercent = baseCashbackPercent + memberBonus;
+
+    const cashback = Math.floor((billAmount * effectiveCashbackPercent) / 100);
+    // C12 fix: The flat ₹10/coin formula does not match the backend cashbackEngine which applies
+    // category baseRate (2.5–6%), subscription multiplier (1×–3×), Privé multiplier (1×–2×),
+    // and a 15% hard cap. A flat formula over- or under-estimates by up to 50%.
+    // TODO: Replace with a server-side preview call:
+    //   GET /api/wallet/cashback-preview?billAmount=X&storeId=Y&category=Z
+    //   → { estimatedCoins, appliedRate, multiplier }
+    // For now, use the store's baseCashbackPercent as a best-effort approximation.
+    const baseRatePct = store?.rewardRules?.baseCashbackPercent ?? 2.5; // default 2.5%
+    const coinsToEarn = Math.floor((billAmount * baseRatePct) / 100);
+
+    return { cashback, coinsToEarn };
+  }, [billAmount, store, membership]);
+
+  // ==================== ACTIONS ====================
+
+  // Single entry point for loading all payment data
+  const loadPaymentData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const [
+        coinsData,
+        paymentMethodsData,
+        membershipData,
+        storeResponse,
+        walletsData,
+      ] = await Promise.all([
+        storePaymentApi.getCoinsForStore(storeId),
+        storePaymentApi.getEnhancedPaymentMethods(storeId, billAmount),
+        storePaymentApi.getStoreMembership(storeId),
+        apiClient.get(`/stores/${storeId}`),
+        externalWalletApi.getLinkedWallets(),
+      ]);
+
+      setAppliedCoins(coinsData);
+      setPaymentMethods(paymentMethodsData);
+      if (paymentMethodsData.length > 0) {
+        setSelectedPaymentMethod(paymentMethodsData[0]);
+      }
+      setMembership(membershipData);
+
+      if (storeResponse.success && storeResponse.data) {
+        const storeObj = (storeResponse.data as any).store || storeResponse.data;
+        setStore(storeObj);
+        setMaxCoinRedemptionPercent(
+          storeObj.paymentSettings?.maxCoinRedemptionPercent || 100
+        );
+      }
+
+      setExternalWallets(walletsData);
+
+      // Calculate discount from selected offers
+      const currentOfferIds = selectedOfferIdsRef.current;
+      if (currentOfferIds.length > 0) {
+        const offersResponse = await apiClient.get(`/store-payment/offers/${storeId}`, {
+          amount: billAmount,
+        });
+
+        if (offersResponse.success && offersResponse.data) {
+          const allOffers = [
+            ...((offersResponse.data as any).storeOffers || []),
+            ...((offersResponse.data as any).bankOffers || []),
+            ...((offersResponse.data as any).rezOffers || []),
+          ];
+          const selectedOffersList = allOffers.filter((o: any) =>
+            currentOfferIds.includes(o.id)
+          );
+          setSelectedOffers(selectedOffersList);
+
+          const totalDisc = selectedOffersList.reduce((sum: number, offer: any) => {
+            if (offer.valueType === 'PERCENTAGE') {
+              const discount = (billAmount * offer.value) / 100;
+              return sum + (offer.maxDiscount ? Math.min(discount, offer.maxDiscount) : discount);
+            }
+            return sum + offer.value;
+          }, 0);
+
+          setDiscountAmount(totalDisc);
+        }
+      }
+
+      hasLoadedRef.current = true;
+    } catch (err: any) {
+      setError('Failed to load payment information');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [storeId, billAmount]);
+
+  const autoOptimize = useCallback(async () => {
+    try {
+      const optimizedCoins = await storePaymentApi.autoOptimizeCoins(storeId, billAmount);
+      setAppliedCoins({
+        rezCoins: optimizedCoins.rezCoins,
+        promoCoins: optimizedCoins.promoCoins,
+        brandedCoins: optimizedCoins.brandedCoins,
+        totalApplied: optimizedCoins.totalApplied,
+      });
+      setIsAutoOptimized(true);
+    } catch (err: any) {
+      // silently handle
+    }
+  }, [storeId, billAmount]);
+
+  const toggleCoin = useCallback((coinType: 'rez' | 'promo' | 'branded', enabled: boolean) => {
+    setAppliedCoins(prev => {
+      // Use effective bill amount after discount
+      const effectiveBillAmount = billAmount - discountAmount;
+      const maxAllowed = Math.floor((effectiveBillAmount * maxCoinRedemptionPercent) / 100);
+
+      const newCoins = { ...prev };
+
+      if (coinType === 'rez') {
+        newCoins.rezCoins = {
+          ...prev.rezCoins,
+          enabled,
+          using: enabled ? Math.min(prev.rezCoins.available, maxAllowed) : 0,
+        };
+      } else if (coinType === 'promo') {
+        newCoins.promoCoins = {
+          ...prev.promoCoins,
+          enabled,
+          using: enabled ? Math.min(prev.promoCoins.available, maxAllowed) : 0,
+        };
+      } else if (coinType === 'branded' && prev.brandedCoins) {
+        newCoins.brandedCoins = {
+          ...prev.brandedCoins,
+          enabled,
+          using: enabled ? Math.min(prev.brandedCoins.available, maxAllowed) : 0,
+        };
+      }
+
+      // Recalculate total
+      newCoins.totalApplied =
+        newCoins.rezCoins.using +
+        newCoins.promoCoins.using +
+        (newCoins.brandedCoins?.using || 0);
+
+      return newCoins;
+    });
+    setIsAutoOptimized(false);
+  }, [billAmount, discountAmount, maxCoinRedemptionPercent]);
+
+  const setCoinAmount = useCallback((coinType: 'rez' | 'promo' | 'branded', amount: number) => {
+    setAppliedCoins(prev => {
+      const newCoins = { ...prev };
+
+      if (coinType === 'rez') {
+        newCoins.rezCoins = { ...prev.rezCoins, using: Math.floor(amount) };
+      } else if (coinType === 'promo') {
+        newCoins.promoCoins = { ...prev.promoCoins, using: Math.floor(amount) };
+      } else if (coinType === 'branded' && prev.brandedCoins) {
+        newCoins.brandedCoins = { ...prev.brandedCoins, using: Math.floor(amount) };
+      }
+
+      // Recalculate total
+      newCoins.totalApplied =
+        newCoins.rezCoins.using +
+        newCoins.promoCoins.using +
+        (newCoins.brandedCoins?.using || 0);
+
+      return newCoins;
+    });
+    setIsAutoOptimized(false);
+  }, []);
+
+  const selectPaymentMethod = useCallback((method: EnhancedPaymentMethod) => {
+    setSelectedPaymentMethod(method);
+  }, []);
+
+  const initiatePayment = useCallback(async (idempotencyKey?: string): Promise<StorePaymentInitResponse | null> => {
+    if (amountToPay > 0 && !selectedPaymentMethod) {
+      setError('Please select a payment method');
+      return null;
+    }
+
+    // OG-D002 FIX: Prevent concurrent duplicate submissions.
+    if (isSubmittingRef.current) {
+      return null;
+    }
+    isSubmittingRef.current = true;
+
+    // OG-D003 FIX: Fail fast when offline — don't start a doomed in-flight request.
+    if (!(await assertOnline())) {
+      isSubmittingRef.current = false;
+      return null;
+    }
+
+    try {
+      setIsProcessing(true);
+      setError(null);
+
+      // OG-D001 FIX: Use the caller-supplied key or the session-scoped ref so
+      // that retries after a reconnect always carry the same idempotency key.
+      const resolvedKey = idempotencyKey ?? idempotencyKeyRef.current;
+
+      // Map rezCoins back to rezCoins for backend
+      const response: any = await apiClient.post('/store-payment/initiate', {
+        storeId,
+        amount: billAmount,
+        paymentMethod: amountToPay > 0 ? selectedPaymentMethod?.type : 'coins_only',
+        coinsToRedeem: {
+          rezCoins: appliedCoins.rezCoins.using,  // Backend expects rezCoins
+          promoCoins: appliedCoins.promoCoins.using,
+          brandedCoins: appliedCoins.brandedCoins?.using || 0,
+          totalAmount: appliedCoins.totalApplied,
+        },
+        offersApplied: selectedOfferIdsRef.current,
+      }, {
+        headers: { 'Idempotency-Key': resolvedKey },
+      });
+
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        setError(response.error || 'Failed to initiate payment');
+        return null;
+      }
+    } catch (err: any) {
+      setError(err.error || err.message || 'Payment failed. Please try again.');
+      return null;
+    } finally {
+      setIsProcessing(false);
+      // OG-D002 FIX: Always release the lock so the user can retry after a
+      // genuine failure.
+      isSubmittingRef.current = false;
+    }
+  }, [storeId, billAmount, amountToPay, selectedPaymentMethod, appliedCoins, assertOnline]);
+
+  const reset = useCallback(() => {
+    setAppliedCoins(DEFAULT_APPLIED_COINS);
+    setIsAutoOptimized(false);
+    setSelectedPaymentMethod(null);
+    setError(null);
+    // OG-D001 FIX: Regenerate the idempotency key when the user explicitly
+    // resets — this represents a new payment intent, not a retry.
+    idempotencyKeyRef.current = `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    isSubmittingRef.current = false;
+    // Allow loadPaymentData to be called again after a reset (new payment intent).
+    hasLoadedRef.current = false;
+  }, []);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  // ==================== EFFECTS ====================
+
+  // Load payment data once when component mounts and auth is ready
+  useEffect(() => {
+    if (!storeId || !billAmount || hasLoadedRef.current) return;
+    if (authLoading || !isAuthenticated) return;
+    hasLoadedRef.current = true;
+    loadPaymentData();
+  }, [storeId, billAmount, authLoading, isAuthenticated, loadPaymentData]);
+
+  // ==================== RETURN ====================
+
+  return {
+    // State
+    store,
+    membership,
+    billAmount,
+    taxesAndFees,
+    appliedCoins,
+    isAutoOptimized,
+    maxCoinRedemptionPercent,
+    selectedOffers,
+    discountAmount,
+    paymentMethods,
+    selectedPaymentMethod,
+    externalWallets,
+    totalDiscount,
+    amountToPay,
+    savingsSummary,
+    rewardsPreview,
+    isLoading,
+    isProcessing,
+    error,
+    
+    // Actions
+    loadPaymentData,
+    autoOptimize,
+    toggleCoin,
+    setCoinAmount,
+    selectPaymentMethod,
+    initiatePayment,
+    reset,
+    clearError,
+  };
+}
+
+export default usePaymentFlow;

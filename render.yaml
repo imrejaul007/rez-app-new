@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: rez-app-consumer
+    runtime: node
+    buildCommand: npm install && npm run build:render
+    startCommand: npm run serve:render
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: EXPO_PUBLIC_API_BASE_URL
+        value: https://rez-api-gateway.onrender.com/api
+      - key: EXPO_PUBLIC_API_URL
+        value: https://rez-api-gateway.onrender.com/api
+      - key: EXPO_PUBLIC_SOCKET_URL
+        value: https://rez-backend-8dfu.onrender.com
+      - key: EXPO_PUBLIC_ENVIRONMENT
+        value: production
+      - key: EXPO_PUBLIC_APP_NAME
+        value: REZ
