@@ -196,6 +196,7 @@ const CategoriesPage: React.FC = () => {
     };
   };
 
+  // CA-DSC-053 FIX: Don't mutate input array or create mutable objects; use immutable patterns
   const groupCategoriesByType = (categories: Category[]): CategorySection[] => {
     const typeMap: Record<string, string> = {
       going_out: 'Food & Dining',
@@ -205,14 +206,12 @@ const CategoriesPage: React.FC = () => {
       general: 'Other',
     };
 
-    const grouped: Record<string, DisplayCategory[]> = {};
+    const grouped = new Map<string, DisplayCategory[]>();
 
     categories.forEach((cat) => {
       const sectionName = typeMap[cat.type] || 'Shopping';
-      if (!grouped[sectionName]) {
-        grouped[sectionName] = [];
-      }
-      grouped[sectionName].push(transformCategory(cat));
+      const existing = grouped.get(sectionName) || [];
+      grouped.set(sectionName, [...existing, transformCategory(cat)]);
     });
 
     // Order sections
@@ -227,20 +226,23 @@ const CategoriesPage: React.FC = () => {
     ];
 
     return sectionOrder
-      .filter((section) => grouped[section] && grouped[section].length > 0)
+      .filter((section) => grouped.has(section) && (grouped.get(section)?.length ?? 0) > 0)
       .map((section) => ({
         section,
-        items: grouped[section],
+        items: grouped.get(section) || [],
       }));
   };
 
+  // CA-DSC-035 FIX: Use useCallback with empty deps and move fetch inside useEffect to avoid double-calls in strict mode
   const fetchCategories = useCallback(async () => {
     try {
       const response = await categoriesApi.getCategories({ isActive: true });
 
-      if (response.success && response.data && response.data.length > 0) {
+      // CA-DSC-012 FIX: Validate response.data is array before using
+      if (response.success && Array.isArray(response.data) && response.data.length > 0) {
         const groupedSections = groupCategoriesByType(response.data);
         if (groupedSections.length > 0) {
+          if (!isMounted()) return;
           setSections(groupedSections);
         }
         if (!isMounted()) return;
@@ -254,11 +256,13 @@ const CategoriesPage: React.FC = () => {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
-  }, []);
+  }, [isMounted]);
 
+  // CA-DSC-035 FIX: Call fetchCategories directly without dependency array to prevent double-calls in strict mode
   useEffect(() => {
+    setIsLoading(true);
     fetchCategories();
-  }, [fetchCategories]);
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);

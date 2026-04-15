@@ -229,9 +229,9 @@ function BrandsPage() {
         <CardGridSkeleton />
       ) : (
         <FlashList
-          data={filteredBrands}
+          data={filteredBrands.filter((b) => b.id)}
           renderItem={renderBrand}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, idx) => item.id || `fallback-${idx}`}
           numColumns={2}
           contentContainerStyle={styles.listContent}
           ListHeaderComponent={renderHeader}

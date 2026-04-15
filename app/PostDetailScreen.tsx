@@ -47,6 +47,12 @@ function PostDetailScreen() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  // CA-DSC-032 FIX: Reset image loading states when post changes
+  useEffect(() => {
+    setImageLoaded(false);
+    setImageError(false);
+  }, [post?._id]);
+
   // Engagement state
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -150,6 +156,7 @@ function PostDetailScreen() {
   }, [post, isBookmarked]);
 
   // Handle share
+  // CA-DSC-047 FIX: Log share failures instead of silently ignoring
   const handleShare = useCallback(async () => {
     if (!post) return;
 
@@ -159,9 +166,9 @@ function PostDetailScreen() {
         title: 'Share Post',
       });
     } catch (error: any) {
-      // Share was cancelled or failed - no need to show error
-      if (error?.code !== 'E_CANCELLED') {
-        // optionally log non-cancellation errors
+      // Log non-cancellation errors for debugging
+      if (error?.code !== 'E_CANCELLED' && error?.code !== 'E_FAILED_TO_SHOW') {
+        console.warn('[PostDetail] Share failed:', error?.message || error);
       }
     }
   }, [post]);

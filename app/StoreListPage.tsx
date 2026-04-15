@@ -108,9 +108,12 @@ const StoreListPage: React.FC = () => {
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<string>('all');
 
   // Get available sub-sub-categories based on current category slug
+  // CA-DSC-027 FIX: Validate categoryFromParams before calling getSubSubCategories
   const availableSubSubCategories = useMemo((): SubSubCategory[] => {
     // The category param is now the subcategory slug (e.g., 'cafes', 'qsr-fast-food')
-    return getSubSubCategories(categoryFromParams);
+    if (!categoryFromParams) return [];
+    const result = getSubSubCategories(categoryFromParams);
+    return Array.isArray(result) ? result : [];
   }, [categoryFromParams]);
 
   // Always use parent category for fetching stores
