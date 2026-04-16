@@ -163,7 +163,8 @@ export interface WalletBalance {
 export interface Transaction {
   _id: string;
   type: 'earned' | 'converted' | 'spent' | 'bonus';
-  coinType: 'karma_points' | 'rez_coins' | 'branded_coin';
+  /** Canonical coin type: 'karma_points' (not in wallet), 'rez' (wallet coin), 'branded' (partner coin) */
+  coinType: 'karma_points' | 'rez' | 'branded';
   amount: number;
   description: string;
   eventId?: string;
@@ -265,14 +266,18 @@ class KarmaService {
   }
 
   /**
-   * Get wallet balance for karma points / rez coins
+   * Get wallet balance for karma points / rez coins.
+   * coinType 'karma_points' returns karmaPoints only; 'rez_coins' returns REZ balance only; 'all' returns both.
    */
   async getWalletBalance(coinType: 'karma_points' | 'rez_coins' | 'all' = 'all'): Promise<ApiResponse<WalletBalance>> {
     return apiClient.get<WalletBalance>('/karma/wallet/balance', { coinType });
   }
 
   /**
-   * Get transaction history for karma/coins
+   * Get transaction history for karma/coins.
+   * coinType 'karma_points' returns non-converted karma earn records;
+   * 'rez_coins' returns converted records (REZ coins credited to wallet);
+   * 'all' returns all records.
    */
   async getTransactions(
     coinType: 'karma_points' | 'rez_coins' | 'all' = 'all',

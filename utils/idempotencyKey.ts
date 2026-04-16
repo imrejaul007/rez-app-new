@@ -33,12 +33,17 @@ export function generateIdempotencyKey(operation: string): string {
         .join('')
         .substring(0, 10);
     } else {
-      // Fallback: still better than per-call Math.random() since epoch bucket
-      // is stable within the hour
-      randomValue = Math.random().toString(36).substring(2, 12);
+      // Fallback: use crypto.randomUUID() for CSPRNG-quality randomness
+      randomValue = (typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + Math.random().toString(36).substring(2, 12)
+      ).replace(/-/g, '').substring(0, 10);
     }
   } catch {
-    randomValue = Math.random().toString(36).substring(2, 12);
+    randomValue = (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Date.now().toString(36) + Math.random().toString(36).substring(2, 12)
+    ).replace(/-/g, '').substring(0, 10);
   }
   return `${operation}_${epochBucket}_${randomValue}`;
 }

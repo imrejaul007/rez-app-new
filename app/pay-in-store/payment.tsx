@@ -208,9 +208,6 @@ function PaymentScreen() {
   };
 
   const handleUpiPayment = async () => {
-    // Fallback path: Expo Go / web — cannot do real Razorpay, so we collect UPI ID
-    // and ask the user to pay manually. The backend will reject with UPI_PAYMENT_ID_MISSING
-    // if it tries to verify. Show a clear error so the user knows to use the native app.
     if (upiProcessing) return;
     setUpiError(null);
 
@@ -231,7 +228,33 @@ function PaymentScreen() {
       return;
     }
 
-    setUpiError('UPI payments require the REZ native app. Please open the REZ app to complete payment.');
+    // Wire up the UPI handler to call the backend — mirrors the Razorpay success path.
+    // The transactionId carries the user's UPI VPA so the backend can record it.
+    setUpiProcessing(true);
+    try {
+      const confirmResponse = await apiClient.post('/store-payment/confirm', {
+        paymentId: currentPaymentData.paymentId,
+        transactionId: upiId.trim(),
+        idempotencyKey: idempotencyKeyRef.current,
+      });
+
+      if (!isMounted()) return;
+      setUpiProcessing(false);
+
+      if (confirmResponse.success && confirmResponse.data) {
+        // Close modal and navigate to success
+        setShowUpiModal(false);
+        setUpiId('');
+        setCurrentPaymentData(null);
+        navigateToSuccess(confirmResponse.data);
+      } else {
+        setUpiError(confirmResponse.error || 'Payment could not be completed. Please try again.');
+      }
+    } catch (err: any) {
+      if (!isMounted()) return;
+      setUpiProcessing(false);
+      setUpiError(err?.message || 'Payment failed. Please try again.');
+    }
   };
 
   const navigateToSuccess = async (paymentResult: any) => {

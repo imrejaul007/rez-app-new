@@ -127,13 +127,13 @@ export const generateRandomProgress = (target: number) => {
  * Generate mock user ID
  */
 export const generateUserId = (): string =>
-  `user-${Math.random().toString(36).substr(2, 9)}`;
+  `user-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9)}`;
 
 /**
  * Generate mock transaction ID
  */
 export const generateTransactionId = (): string =>
-  `txn-${Math.random().toString(36).substr(2, 9)}`;
+  `txn-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9)}`;
 
 // ==================== TEST DATA BUILDERS ====================
 

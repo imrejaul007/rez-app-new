@@ -215,10 +215,12 @@ const GuessPrice = () => {
   };
 
   const submitGuess = async () => {
-    if (!guess || parseInt(guess) <= 0) return;
+    // R2-H2 + R2-M15: parseInt requires radix 10 to avoid octal interpretation.
+    // Number.isFinite guards against NaN when guess is non-numeric.
+    const guessValue = parseInt(guess, 10);
+    if (!guess || !Number.isFinite(guessValue) || guessValue <= 0) return;
 
     const product = products[currentProduct];
-    const guessValue = parseInt(guess);
     const actualPrice = product.actualPrice;
     const difference = Math.abs(guessValue - actualPrice);
     const percentDiff = (difference / actualPrice) * 100;

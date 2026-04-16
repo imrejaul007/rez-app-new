@@ -71,6 +71,9 @@ function EnhancedBillUploadPage() {
   const [showCorrectionForm, setShowCorrectionForm] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Double-tap guard: ref is checked synchronously on the call stack, before any state updates
+  const isSubmittingRef = useRef(false);
+
   // Safe navigation function
   const handleGoBack = () => {
     try {
@@ -168,7 +171,12 @@ function EnhancedBillUploadPage() {
 
   // Submit verified bill
   const handleSubmit = async () => {
+    // Double-tap guard: synchronous block prevents any second invocation
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
     if (!workflow || !canProceed) {
+      isSubmittingRef.current = false;
       platformAlertSimple('Cannot Submit', 'Please complete verification first.');
       return;
     }
@@ -198,6 +206,7 @@ function EnhancedBillUploadPage() {
     } finally {
       if (!isMounted()) return;
       setIsUploading(false);
+      isSubmittingRef.current = false;
     }
   };
 
@@ -385,9 +394,9 @@ function EnhancedBillUploadPage() {
           {/* Submit Button */}
           {billImage && (
             <Pressable
-              style={[styles.submitButton, (!canProceed || isUploading || isProcessing) && styles.submitButtonDisabled]}
+              style={[styles.submitButton, (!canProceed || isUploading || isProcessing || isSubmittingRef.current) && styles.submitButtonDisabled]}
               onPress={handleSubmit}
-              disabled={!canProceed || isUploading || isProcessing}
+              disabled={!canProceed || isUploading || isProcessing || isSubmittingRef.current}
             >
               {isUploading ? (
                 <ActivityIndicator color={colors.text.inverse} />

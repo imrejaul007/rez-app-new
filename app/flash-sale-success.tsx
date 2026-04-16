@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/ThemedText';
 import realOffersApi from '@/services/realOffersApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
@@ -88,6 +89,9 @@ function FlashSaleSuccessPage() {
         // Animate success
         scaleAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
         fadeAnim.value = withTiming(1, { duration: 300 });
+
+        // NA-MED-17 FIX: Add haptic feedback on successful payment (mirrors payment-success.tsx)
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       } else {
         // Retry on transient failures (network hiccup, backend still processing)
         if (attempt < MAX_RETRIES) {

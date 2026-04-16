@@ -22,6 +22,7 @@ import { useGetCurrencySymbol, useAuthUser, useSavingsInsights } from '@/stores'
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing } from '@/constants/DesignSystem';
 import { normalizeUserTier } from '@/constants/loyalty';
+import { showToast } from '@/components/common/ToastManager';
 
 import CheckoutHeader from '@/components/checkout/CheckoutHeader';
 import OrderItemsPreview from '@/components/checkout/OrderItemsPreview';

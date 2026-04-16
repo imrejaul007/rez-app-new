@@ -7,6 +7,7 @@ import cacheService from './cacheService';
 import { locationService } from './locationService';
 import recommendationService from './recommendationApi';
 import apiClient from './apiClient';
+import { logger } from '@/utils/logger';
 import { ProductItem, RecommendationItem, HomepageSection, EventItem, HomepageBatchResponse, StoreItem } from '@/types/homepage.types';
 import { getSectionById } from '@/data/homepageData';
 import {
@@ -207,9 +208,9 @@ class HomepageDataService {
                   priority: 'high'
                 });
               })
-              .catch(() => {});
+              .catch((err) => logger.error('HomepageDataService: background cache refresh failed', { cacheKey, error: String(err) }));
           }
-        }).catch(() => {});
+        }).catch((err) => logger.error('HomepageDataService: backend availability check failed', { cacheKey, error: String(err) }));
 
         return { data: cachedData, fromCache: true, isOffline: false };
       }
@@ -360,9 +361,9 @@ class HomepageDataService {
                   });
                 }
               })
-              .catch(() => {});
+              .catch((err) => logger.error('HomepageDataService: new arrivals refresh failed', { cacheKey, error: String(err) }));
           }
-        }).catch(() => {});
+        }).catch((err) => logger.error('HomepageDataService: new arrivals backend check failed', { cacheKey, error: String(err) }));
 
         return {
           ...sectionTemplate,
@@ -1192,7 +1193,7 @@ class HomepageDataService {
                   });
                 }
               })
-              .catch(() => {});
+              .catch((err) => logger.error('HomepageDataService: batch section refresh failed', { batchCacheKey, error: String(err) }));
             return cachedSections;
           }
           // Cache was empty — ignore it and fetch fresh
@@ -1211,7 +1212,7 @@ class HomepageDataService {
           cacheService.set(batchCacheKey, sections, {
             ttl: this.CACHE_TTL,
             priority: 'high'
-          }).catch(() => {});
+          }).catch((err) => logger.error('HomepageDataService: batch cache set failed', { batchCacheKey, error: String(err) }));
         }
         return sections;
       } catch (error) {

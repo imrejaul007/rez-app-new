@@ -1,6 +1,6 @@
 /**
  * Error Reporter Utility
- */
+ *
 
 import uuid from 'react-native-uuid';
  *

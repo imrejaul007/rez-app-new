@@ -30,7 +30,8 @@ const KARMA_PURPLE = '#8B5CF6';
 const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
 
 type TxType = 'earned' | 'converted' | 'spent' | 'bonus';
-type CoinType = 'karma_points' | 'rez_coins' | 'all';
+/** Wallet filter coin types — maps to query param sent to karma backend */
+type WalletCoinFilter = 'karma_points' | 'rez_coins' | 'all';
 
 const TX_CONFIG: Record<TxType, { icon: string; color: string; label: string }> = {
   earned: { icon: 'leaf', color: '#22C55E', label: 'Earned' },
@@ -39,15 +40,22 @@ const TX_CONFIG: Record<TxType, { icon: string; color: string; label: string }> 
   bonus: { icon: 'gift', color: '#F59E0B', label: 'Bonus' },
 };
 
-const COIN_TYPE_CONFIG: Record<CoinType, { label: string; icon: string; color: string }> = {
+/** UI display config keyed by the canonical backend coinType value.
+ * 'karma_points' — karma earned but not yet converted (from karma service)
+ * 'rez'         — REZ coins in the wallet (from wallet service via batch conversion)
+ * 'branded'     — branded partner coins (future)
+ * 'all'         — special filter value (not a real coin type)
+ */
+const COIN_TYPE_CONFIG: Record<string, { label: string; icon: string; color: string }> = {
   karma_points: { label: 'Karma Points', icon: 'leaf', color: KARMA_PURPLE },
-  rez_coins: { label: 'ReZ Coins', icon: 'wallet', color: '#F59E0B' },
+  rez: { label: 'ReZ Coins', icon: 'wallet', color: '#F59E0B' },
+  branded: { label: 'Branded Coins', icon: 'ribbon', color: '#6366F1' },
   all: { label: 'All', icon: 'apps', color: '#6B7280' },
 };
 
 function TransactionItem({ tx }: { tx: Transaction }) {
   const txCfg = TX_CONFIG[tx.type] ?? TX_CONFIG.earned;
-  const coinCfg = COIN_TYPE_CONFIG[tx.coinType] ?? COIN_TYPE_CONFIG.rez_coins;
+  const coinCfg = COIN_TYPE_CONFIG[tx.coinType] ?? COIN_TYPE_CONFIG.rez;
 
   return (
     <View style={txStyles.item}>
@@ -102,7 +110,7 @@ function KarmaWalletScreen() {
   const isMounted = useIsMounted();
   const [balance, setBalance] = useState<WalletBalance | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [selectedCoin, setSelectedCoin] = useState<CoinType>('all');
+  const [selectedCoin, setSelectedCoin] = useState<WalletCoinFilter>('all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -274,14 +282,14 @@ function KarmaWalletScreen() {
         <View style={styles.filterSection}>
           <Text style={styles.sectionTitle}>Transactions</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
-            {(Object.entries(COIN_TYPE_CONFIG) as [CoinType, (typeof COIN_TYPE_CONFIG)['all']][]).map(([key, cfg]) => (
+            {(Object.entries(COIN_TYPE_CONFIG) as [WalletCoinFilter, (typeof COIN_TYPE_CONFIG)['all']][]).map(([key, cfg]) => (
               <Pressable
                 key={key}
                 style={[
                   styles.filterChip,
                   selectedCoin === key && { backgroundColor: cfg.color, borderColor: cfg.color },
                 ]}
-                onPress={() => setSelectedCoin(key as CoinType)}
+                onPress={() => setSelectedCoin(key as WalletCoinFilter)}
               >
                 <Ionicons
                   name={cfg.icon as any}

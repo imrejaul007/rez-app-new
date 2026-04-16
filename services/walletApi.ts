@@ -297,38 +297,6 @@ export interface WalletBalanceResponse {
 }
 
 /**
- * REZ-027 FIX: Typed metadata for TransactionResponse.source.metadata.
- * Previously typed as `any`, preventing type-safe metadata parsing in UI.
- */
-export interface TransactionMetadata {
-  orderId?: string;
-  productId?: string;
-  storeId?: string;
-  storeName?: string;
-  merchantId?: string;
-  campaignId?: string;
-  campaignName?: string;
-  referralId?: string;
-  referralCode?: string;
-  achievementId?: string;
-  achievementName?: string;
-  streakType?: 'login' | 'order' | 'review' | 'savings';
-  streakDay?: number;
-  milestoneName?: string;
-  promoCode?: string;
-  promoId?: string;
-  billId?: string;
-  rechargeNumber?: string;
-  rechargeOperator?: string;
-  couponId?: string;
-  couponName?: string;
-  refundReason?: string;
-  chargeType?: 'fee' | 'tax' | 'platform';
-  chargeDescription?: string;
-  [key: string]: unknown;
-}
-
-/**
  * Transaction Response
  */
 export interface TransactionResponse {

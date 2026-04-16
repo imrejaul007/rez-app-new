@@ -1,6 +1,6 @@
 /**
  * Bill Upload Analytics Service
- */
+ *
 
 import uuid from 'react-native-uuid';
  *
@@ -982,7 +982,7 @@ class BillUploadAnalytics {
         
         // Check size before saving
         const eventsData = JSON.stringify(limitedEvents);
-        const sizeInMB = new Blob([eventsData]).size / (1024 * 1024);
+        const sizeInMB = new TextEncoder().encode(eventsData).length / (1024 * 1024);
         
         if (sizeInMB > 0.5) { // If larger than 500KB, keep only last 200 events
           const veryLimitedEvents = allEvents.slice(-200);

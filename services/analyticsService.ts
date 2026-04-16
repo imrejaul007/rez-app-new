@@ -1,6 +1,6 @@
 /**
  * Analytics Service
- */
+ *
 
 import uuid from 'react-native-uuid';
  *

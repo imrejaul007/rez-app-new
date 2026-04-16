@@ -306,10 +306,17 @@ export const useSecurityStore = create<SecurityStoreState>((set, get) => ({
       if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
         crypto.getRandomValues(code);
       } else {
-        // Fallback: Math.random() — still better than hardcoded values,
-        // but NOT cryptographically secure. Backend MUST be the source of truth.
-        for (let j = 0; j < 4; j++) {
-          code[j] = Math.floor(Math.random() * 0xFFFFFFFF);
+        // Fallback: crypto.getRandomValues() for CSPRNG-quality randomness
+        // NOTE: crypto.getRandomValues is available in Node 19+ and modern browsers
+        if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+          crypto.getRandomValues(code);
+        } else {
+          // Final fallback: use node crypto module
+          const nodeCrypto = require('crypto');
+          const buf = nodeCrypto.randomBytes(16);
+          for (let j = 0; j < 4; j++) {
+            code[j] = buf.readUInt32BE(j * 4);
+          }
         }
       }
       let codeStr = '';

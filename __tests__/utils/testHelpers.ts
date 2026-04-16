@@ -18,7 +18,7 @@ import { User } from '@/services/authApi';
  * Generate mock user
  */
 export const createMockUser = (overrides: Partial<User> = {}): User => ({
-  id: 'user_' + Math.random().toString(36).substring(7),
+  id: 'user_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
   phoneNumber: '+1234567890',
   email: 'test@example.com',
   profile: {
@@ -47,7 +47,7 @@ export const createMockUser = (overrides: Partial<User> = {}): User => ({
  * Generate mock product
  */
 export const createMockProduct = (overrides: any = {}) => ({
-  id: 'prod_' + Math.random().toString(36).substring(7),
+  id: 'prod_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
   name: 'Test Product',
   description: 'This is a test product description',
   price: 999,
@@ -70,7 +70,7 @@ export const createMockProduct = (overrides: any = {}) => ({
  * Generate mock order
  */
 export const createMockOrder = (overrides: any = {}) => ({
-  id: 'order_' + Math.random().toString(36).substring(7),
+  id: 'order_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
   orderNumber: 'ORD-2024-' + Math.floor(Math.random() * 10000),
   userId: 'user_123',
   status: 'pending',
@@ -91,7 +91,7 @@ export const createMockOrder = (overrides: any = {}) => ({
  * Generate mock address
  */
 export const createMockAddress = (overrides: any = {}) => ({
-  id: 'addr_' + Math.random().toString(36).substring(7),
+  id: 'addr_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
   firstName: 'John',
   lastName: 'Doe',
   street: '123 Main St',
@@ -109,7 +109,7 @@ export const createMockAddress = (overrides: any = {}) => ({
  * Generate mock cart
  */
 export const createMockCart = (itemCount: number = 2) => ({
-  id: 'cart_' + Math.random().toString(36).substring(7),
+  id: 'cart_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
   userId: 'user_123',
   items: Array.from({ length: itemCount }, (_, i) =>
     createMockCartItem({ quantity: i + 1 })
@@ -128,7 +128,7 @@ export const createMockCartItem = (overrides: any = {}) => {
   const subtotal = product.price * quantity;
 
   return {
-    id: 'cart_item_' + Math.random().toString(36).substring(7),
+    id: 'cart_item_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
     cartId: 'cart_123',
     productId: product.id,
     product,
@@ -143,7 +143,7 @@ export const createMockCartItem = (overrides: any = {}) => {
  * Generate mock review
  */
 export const createMockReview = (overrides: any = {}) => ({
-  id: 'review_' + Math.random().toString(36).substring(7),
+  id: 'review_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
   productId: 'prod_123',
   userId: 'user_123',
   rating: 4.5,

@@ -12,6 +12,15 @@ import { FILE_SIZE_LIMITS } from '@/utils/fileUploadConstants';
  * Generic caching service with TTL, compression, and intelligent eviction
  */
 
+/** Cross-platform byte size — works in React Native without Blob polyfill */
+function byteSize(data: string | Uint8Array): number {
+  if (typeof data === 'string') {
+    // TextEncoder is available in all modern JS environments (Node 11+, browsers, RN 0.64+)
+    return new TextEncoder().encode(data).length;
+  }
+  return data.length;
+}
+
 export interface CacheEntry<T = any> {
   key: string;
   data: T;
@@ -213,7 +222,7 @@ class CacheService {
    */
   private estimateSize(data: any): number {
     const jsonString = JSON.stringify(data);
-    return new Blob([jsonString]).size;
+    return byteSize(jsonString);
   }
 
   /**
@@ -359,7 +368,7 @@ class CacheService {
 
       if (shouldCompress) {
         dataToStore = await this.compress(data);
-        actualSize = new Blob([dataToStore]).size;
+        actualSize = byteSize(dataToStore as string | Uint8Array);
       } else {
         dataToStore = data;
         actualSize = estimatedSize;
@@ -762,7 +771,8 @@ class CacheService {
 
         if (shouldCompress) {
           dataToStore = await this.compress(data);
-          actualSize = new Blob([dataToStore]).size;
+          // NA-CRIT-03 FIX: Use byteSize instead of Blob (which is not available in React Native)
+          actualSize = byteSize(dataToStore as string | Uint8Array);
         } else {
           dataToStore = data;
           actualSize = estimatedSize;

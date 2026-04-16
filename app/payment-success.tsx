@@ -22,6 +22,7 @@ import { useGetCurrencySymbol, useIsAuthenticated, useAuthLoading } from '@/stor
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import analytics from '@/services/analytics/AnalyticsService';
+import logger from '@/utils/logger';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -231,7 +232,11 @@ function PaymentSuccessPage() {
               payment_method: paymentMethod || 'unknown',
               item_count: totalItems,
             });
-          } catch {}
+          } catch (e) {
+            // R2-H3: Analytics failures should not block the payment success screen,
+            // but should be logged so attribution data gaps can be investigated.
+            logger.warn('[Analytics] CHECKOUT_COMPLETED tracking failed', e);
+          }
         }
 
         // Haptic feedback on successful payment

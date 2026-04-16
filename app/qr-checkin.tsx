@@ -15,6 +15,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import apiClient from '@/services/apiClient';
+import { logger } from '@/utils/logger';
 import RatingPrompt from '@/components/store/RatingPrompt';
 
 export default function QRCheckinScreen() {
@@ -35,7 +36,7 @@ export default function QRCheckinScreen() {
       apiClient
         .get(`/qr-checkin/store/${storeId}`)
         .then((r) => setStoreName((r as any).data?.name || ''))
-        .catch(() => {})
+        .catch((err) => logger.error('QRCheckin: store lookup failed', { storeId, error: String(err) }))
         .finally(() => setLoadingStore(false));
     }
   }, [storeId]);
@@ -59,7 +60,7 @@ export default function QRCheckinScreen() {
             setStreakCount(streakRes.data.currentStreak || streakRes.data.savings?.currentStreak || 0);
           }
         })
-        .catch(() => {});
+        .catch((err) => logger.error('QRCheckin: streak status fetch failed', { storeId, error: String(err) }));
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Check-in failed. Try again.';
       Alert.alert('Error', msg);

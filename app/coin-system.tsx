@@ -98,6 +98,30 @@ const COIN_TYPE_TEMPLATES = [
     earnedFrom: 'Special promotions',
     usableAt: 'As per campaign rules',
   },
+  {
+    key: 'cashback' as const,
+    name: 'Cashback',
+    color: '#10B981',
+    backgroundColor: '#ECFDF5',
+    gradientColors: ['#10B981', '#059669'] as [string, string],
+    icon: 'cash-outline' as const,
+    description: 'Earned from partner purchases.',
+    defaultExpiry: 'Never expires',
+    earnedFrom: 'Partner store purchases',
+    usableAt: 'Everywhere on ReZ',
+  },
+  {
+    key: 'referral' as const,
+    name: 'Referral Bonus',
+    color: '#8B5CF6',
+    backgroundColor: '#F5F3FF',
+    gradientColors: ['#8B5CF6', '#7C3AED'] as [string, string],
+    icon: 'person-add-outline' as const,
+    description: 'Earned by inviting friends.',
+    defaultExpiry: 'Never expires',
+    earnedFrom: 'Inviting friends',
+    usableAt: 'Everywhere on ReZ',
+  },
 ];
 
 // ============================================

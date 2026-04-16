@@ -22,7 +22,7 @@ import { ImageSourcePropType } from 'react-native';
 // ---------------------------------------------------------------------------
 
 /** B02: Exact backend coin type values — zero tolerance for mismatched strings */
-export type CoinType = 'rez' | 'promo' | 'branded' | 'prive';
+export type CoinType = 'rez' | 'promo' | 'branded' | 'prive' | 'cashback' | 'referral';
 
 // ---------------------------------------------------------------------------
 // Per-coin-type display metadata (used by CoinDetailCard, CoinChip, etc.)
@@ -77,6 +77,20 @@ export const COIN_TYPES: Record<CoinType, CoinTypeInfo> = {
     backgroundColor: '#FFFBEB',
     amountColor: '#B8860B',
     description: 'Premium coins for elite members — exclusive perks and higher value',
+  },
+  cashback: {
+    name: 'Cashback',
+    color: '#10B981',
+    backgroundColor: '#ECFDF5',
+    amountColor: '#059669',
+    description: 'Earned from partner purchases',
+  },
+  referral: {
+    name: 'Referral Bonus',
+    color: '#8B5CF6',
+    backgroundColor: '#F5F3FF',
+    amountColor: '#7C3AED',
+    description: 'Earned by inviting friends',
   },
 };
 

@@ -2,6 +2,7 @@
 // Handles payment gateway integration for wallet topup
 
 import apiClient, { ApiResponse } from './apiClient';
+import { normalizePaymentStatus } from '@rez/rez-shared/statusCompat';
 
 // CA-PAY-023 FIX: Normalize payment method types before API submission
 // Transform 'rezcoins' → 'wallet' as required by backend
@@ -210,18 +211,41 @@ class PaymentService {
   }
 
   /**
-   * Poll payment status until terminal state
+   * Poll payment status until terminal state.
+   *
+   * Terminal success states: 'completed' (canonical PaymentStatus) and 'paid'
+   * (OrderPaymentStatus equivalent returned directly by some backend paths).
+   * normalizePaymentStatus() maps both to 'paid' — we check the raw value first
+   * to avoid false negatives when the backend returns 'paid' directly, then
+   * fall back to normalization for any other legacy aliases.
+   *
+   * Safety net: maxAttempts * intervalMs (default: 30 * 3000ms = 90s) or
+   * caller-supplied maxDurationMs.
    */
   async pollPaymentStatus(
     paymentId: string,
     gateway: string,
-    options?: { maxAttempts?: number; intervalMs?: number; onStatusChange?: (status: string) => void; shouldAbort?: () => boolean }
+    options?: {
+      maxAttempts?: number;
+      intervalMs?: number;
+      maxDurationMs?: number;
+      onStatusChange?: (status: string) => void;
+      shouldAbort?: () => boolean;
+    }
   ): Promise<ApiResponse<PaymentStatusResponse>> {
     const maxAttempts = options?.maxAttempts ?? 30;
     const intervalMs = options?.intervalMs ?? 3000;
+    const maxDurationMs = options?.maxDurationMs ?? 5 * 60 * 1000; // 5 minutes
+    const startTime = Date.now();
 
     for (let i = 0; i < maxAttempts; i++) {
-      // Check if polling was aborted (e.g., component unmounted)
+      if (Date.now() - startTime > maxDurationMs) {
+        return {
+          success: false,
+          error: 'Payment status check timed out. Please check your transaction history.',
+        };
+      }
+
       if (options?.shouldAbort?.()) {
         return { success: false, error: 'Payment polling aborted.' };
       }
@@ -229,7 +253,6 @@ class PaymentService {
       const response = await this.checkPaymentStatus(paymentId, gateway);
 
       if (!response.success) {
-        // On transient failure, keep polling
         if (i < maxAttempts - 1) {
           await new Promise(r => setTimeout(r, intervalMs));
           continue;
@@ -237,10 +260,14 @@ class PaymentService {
         return response as any;
       }
 
-      const status = response.data?.status;
-      options?.onStatusChange?.(status || 'unknown');
+      const rawStatus = response.data?.status ?? '';
+      const status = normalizePaymentStatus(rawStatus);
+      options?.onStatusChange?.(rawStatus);
 
-      if (status === 'completed' || status === 'failed' || status === 'cancelled') {
+      // Terminal states after normalization:
+      //   completed | paid  → payment succeeded
+      //   failed | cancelled | expired → terminal failure
+      if (status === 'paid' || status === 'failed' || status === 'cancelled' || status === 'expired') {
         return response as any;
       }
 
@@ -249,7 +276,7 @@ class PaymentService {
 
     return {
       success: false,
-      error: 'Payment status check timed out. Please check your transaction history.'
+      error: 'Payment status check timed out. Please check your transaction history.',
     };
   }
 
@@ -334,7 +361,7 @@ class PaymentService {
     let sum = 0;
     let isEven = false;
     for (let i = number.length - 1; i >= 0; i--) {
-      let digit = parseInt(number[i]);
+      let digit = parseInt(number[i], 10);
       if (isEven) {
         digit *= 2;
         if (digit > 9) digit -= 9;

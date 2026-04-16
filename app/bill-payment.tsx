@@ -273,8 +273,9 @@ function BillPaymentPage() {
     if (!fetchedBill || !selectedProvider || !fetchedBill.amount) return;
 
     // CONS-017: Client-side redemption cap validation
+    // NA-HIGH-07 FIX: Use Math.round instead of Math.floor to eliminate floating-point under-redemption
     if (coinsToRedeem > 0) {
-      const maxRedeemable = Math.floor(fetchedBill.amount * ((selectedProvider.maxRedemptionPercent ?? 0) / 100));
+      const maxRedeemable = Math.round(fetchedBill.amount * ((selectedProvider.maxRedemptionPercent ?? 0) / 100));
       if (coinsToRedeem > maxRedeemable) {
         platformAlert(
           'Redemption Cap Exceeded',
@@ -743,7 +744,8 @@ function BillPaymentPage() {
                     <Text style={styles.billLabel}>Use Promo Coins</Text>
                     <Text style={styles.coinCapText}>
                       Max {selectedProvider.maxRedemptionPercent}% of bill (
-                      {Math.floor((fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100))}{' '}
+                      {/* NA-HIGH-07 FIX: Math.round instead of Math.floor for accurate display */}
+                      {Math.round((fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100))}{' '}
                       coins)
                     </Text>
                   </View>
@@ -757,7 +759,7 @@ function BillPaymentPage() {
                       keyboardType="numeric"
                       onChangeText={(v) => {
                         const num = parseInt(v, 10) || 0;
-                        const maxRedeemable = Math.floor(
+                        const maxRedeemable = Math.round(
                           (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
                         );
                         setCoinsToRedeem(Math.min(num, Math.min(promoCoinsAvailable, maxRedeemable)));
@@ -766,7 +768,7 @@ function BillPaymentPage() {
                     <Pressable
                       style={styles.coinAdjBtn}
                       onPress={() => {
-                        const maxRedeemable = Math.floor(
+                        const maxRedeemable = Math.round(
                           (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
                         );
                         setCoinsToRedeem((c) => Math.min(c + 5, Math.min(promoCoinsAvailable, maxRedeemable)));
@@ -777,7 +779,7 @@ function BillPaymentPage() {
                     <Pressable
                       style={styles.coinMaxBtn}
                       onPress={() => {
-                        const maxRedeemable = Math.floor(
+                        const maxRedeemable = Math.round(
                           (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
                         );
                         setCoinsToRedeem(Math.min(promoCoinsAvailable, maxRedeemable));

@@ -1,6 +1,6 @@
 /**
  * Bill Upload Queue Service
- */
+ *
 
 import uuid from 'react-native-uuid';
  *

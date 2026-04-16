@@ -1,6 +1,6 @@
 /**
  * Error Tracking Service
- */
+ *
 
 import uuid from 'react-native-uuid';
  * Comprehensive error tracking and monitoring system

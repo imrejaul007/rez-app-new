@@ -4,9 +4,9 @@
 import apiClient, { ApiResponse } from './apiClient';
 
 export enum AddressType {
-  HOME = 'HOME',
-  OFFICE = 'OFFICE',
-  OTHER = 'OTHER'
+  HOME = 'home',
+  OFFICE = 'work',
+  OTHER = 'other'
 }
 
 export interface Address {

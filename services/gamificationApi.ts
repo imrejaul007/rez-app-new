@@ -258,11 +258,13 @@ class GamificationApiService {
       return { success: false, error: 'Failed to load config' };
     } catch (error: any) {
       devLog.error('[GAMIFICATION API] Error fetching checkin config:', error);
-      // Return defaults on failure
+      // NA-HIGH-08 FIX: Return empty rewards instead of hardcoded fallback.
+      // Hardcoded values become stale when server updates its config.
+      // UI will show "Rewards unavailable" when dayRewards is empty.
       return {
         success: true,
         data: {
-          dayRewards: [10, 15, 20, 25, 30, 40, 100],
+          dayRewards: [],
           proTips: [
             'Check in at the same time daily to build a habit',
             'Share posters daily to maximize your affiliate earnings',
@@ -361,7 +363,8 @@ class GamificationApiService {
 
         // Build 7-day calendar with weekly cycle support
         const calendar: CheckInReward[] = [];
-        const baseCoins = configResponse.data?.dayRewards || [10, 15, 20, 25, 30, 40, 100];
+        // NA-HIGH-08 FIX: Fallback to empty array instead of hardcoded values
+        const baseCoins = configResponse.data?.dayRewards ?? [];
 
         // Calculate day position within the 7-day week cycle
         // Streak 1 = Day 1, Streak 7 = Day 7, Streak 8 = Day 1 (new week), Streak 22 = Day 1, etc.

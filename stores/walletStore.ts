@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createSecureWalletStorage } from '@/utils/secureWalletStorage';
 import { WalletData } from '@/types/wallet';
 
 // ---------------------------------------------------------------------------
@@ -48,9 +48,11 @@ const defaults: WalletStoreData = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-// CA-PAY-059 FIX: Note that wallet balance data is persisted to AsyncStorage in plain text.
-// For production use, consider adding encryption layer (react-native-secure-store)
-// to prevent unauthorized access to wallet balances on compromised devices.
+// CA-PAY-059 FIX: Wallet balance data is now persisted using an encrypted storage
+// adapter.  On native: expo-secure-store (hardware-backed keychain/keystore).
+// On native devices without SecureStore availability: XOR+base64 obfuscation in
+// AsyncStorage as a fallback rather than plaintext.  On web: XOR+base64 obfuscation.
+// Old plain-AsyncStorage data is migrated on first read.
 export const useWalletStore = create<WalletStoreState>()(
   persist(
     (set) => ({
@@ -70,17 +72,18 @@ export const useWalletStore = create<WalletStoreState>()(
       adjustBalance: (delta: number) => {
         set((state) => {
           if (!state.walletData) return state;
+          // NA-HIGH-04 FIX: floor balances at 0 to prevent negative display from race conditions
           const updatedCoins = state.walletData.coins.map((c) =>
-            c.type === 'rez' ? { ...c, amount: c.amount + delta } : c
+            c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount + delta) } : c
           );
           return {
-            rezBalance: state.rezBalance + delta,
-            totalBalance: state.totalBalance + delta,
-            availableBalance: state.availableBalance + delta,
+            rezBalance: Math.max(0, state.rezBalance + delta),
+            totalBalance: Math.max(0, state.totalBalance + delta),
+            availableBalance: Math.max(0, state.availableBalance + delta),
             walletData: {
               ...state.walletData,
-              totalBalance: state.walletData.totalBalance + delta,
-              availableBalance: state.walletData.availableBalance + delta,
+              totalBalance: Math.max(0, state.walletData.totalBalance + delta),
+              availableBalance: Math.max(0, state.walletData.availableBalance + delta),
               coins: updatedCoins,
             },
           };
@@ -88,8 +91,8 @@ export const useWalletStore = create<WalletStoreState>()(
       },
     }),
     {
-      name: 'rez-wallet-store',
-      storage: createJSONStorage(() => AsyncStorage),
+      name: 'rez-wallet-store', // Must match LEGACY_ASYNC_KEY in secureWalletStorage.ts
+      storage: createJSONStorage(createSecureWalletStorage),
       partialize: (state) => ({
         // Only persist user data, not loading states or functions
         walletData: state.walletData,

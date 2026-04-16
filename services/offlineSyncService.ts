@@ -1,6 +1,6 @@
 /**
  * Offline Sync Service
- */
+ *
 
 import uuid from 'react-native-uuid';
  *

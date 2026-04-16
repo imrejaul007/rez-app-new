@@ -1,6 +1,6 @@
 /**
  * Cloudinary Video Upload Service
- */
+ *
 
 import uuid from 'react-native-uuid';
  * Handles video uploads to Cloudinary with progress tracking, retry logic, and error handling

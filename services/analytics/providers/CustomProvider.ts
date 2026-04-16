@@ -4,6 +4,7 @@
  * Sends events to our custom backend API
  */
 
+import * as Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { BaseAnalyticsProvider } from './BaseProvider';
 import { PurchaseTransaction, AnalyticsEvent } from '../types';
@@ -64,7 +65,7 @@ export class CustomAnalyticsProvider extends BaseAnalyticsProvider {
       userId: this.userId,
       sessionId: this.sessionId,
       platform: Platform.OS as any,
-      appVersion: '1.0.0', // TODO: Get from app config
+      appVersion: (Constants as any).expoConfig?.version || '1.0.0',
     };
 
     this.log('Tracking event:', name, properties);

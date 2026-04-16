@@ -6,6 +6,9 @@
 
 import { mockApiResponse, testDataFactory, generateMockProducts, generateMockStores } from './testHelpers';
 
+let _orderCounter = 1000;
+const nextOrderNumber = () => `ORD-2024-${String(++_orderCounter).padStart(4, '0')}`;
+
 export const mockApiHandlers = {
   // Authentication
   auth: {
@@ -102,7 +105,7 @@ export const mockApiHandlers = {
       Promise.resolve(
         mockApiResponse({
           id: `order_${Date.now()}`,
-          orderNumber: `ORD-2024-${Math.floor(Math.random() * 9999)}`,
+          orderNumber: nextOrderNumber(),
           status: 'pending',
           ...data,
         })
