@@ -2,6 +2,7 @@
 // Centralized navigation service with error handling and event management
 
 import { Href, Router } from 'expo-router';
+import uuid from 'react-native-uuid';
 import {
   INavigationService,
   NavigationOptions,
@@ -396,7 +397,7 @@ class NavigationService implements INavigationService {
       this.navigationQueue.pop();
     }
 
-    const id = `nav_${Date.now()}_${Math.random()}`;
+    const id = `nav_${Date.now()}_${uuid.v4()}`;
     const item: NavigationQueueItem = {
       id,
       route,

@@ -1,5 +1,8 @@
 /**
  * Error Reporter Utility
+ */
+
+import uuid from 'react-native-uuid';
  *
  * Centralized error reporting and logging system.
  * Captures, categorizes, and reports errors to monitoring services.
@@ -621,7 +624,7 @@ class ErrorReporter {
    * Generate unique error ID
    */
   private generateErrorId(): string {
-    return `error_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `error_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

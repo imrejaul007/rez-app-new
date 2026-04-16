@@ -1,5 +1,8 @@
 /**
  * Offline Sync Service
+ */
+
+import uuid from 'react-native-uuid';
  *
  * Generic offline-first queue for serializable API actions.
  * Queues actions when offline, auto-syncs when connectivity returns.
@@ -433,7 +436,7 @@ class OfflineSyncService extends EventEmitter {
   }
 
   private generateId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    return `${Date.now()}-${uuid.v4()}`;
   }
 }
 

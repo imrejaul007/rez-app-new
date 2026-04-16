@@ -1,4 +1,5 @@
 import { AppState, AppStateStatus, Platform } from 'react-native';
+import uuid from 'react-native-uuid';
 import { getAuthToken } from '@/utils/authStorage';
 import apiClient from './apiClient';
 
@@ -681,11 +682,11 @@ class RealTimeService {
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `msg_${Date.now()}_${uuid.v4()}`;
   }
 
   private generateSubscriptionId(): string {
-    return `sub_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `sub_${Date.now()}_${uuid.v4()}`;
   }
 
   private setupAppStateListener(): void {

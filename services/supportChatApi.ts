@@ -2,6 +2,7 @@
 // Handles all support chat backend communications
 
 import apiClient from './apiClient';
+import uuid from 'react-native-uuid';
 import type {
   SupportTicket,
   ChatMessage,
@@ -151,7 +152,7 @@ class SupportChatApi {
           id: raw._id || raw.id,
           status: raw.status || 'open',
           messages: (raw.messages || []).map((msg: any) => ({
-            id: msg._id || msg.id || `msg_${Date.now()}_${Math.random()}`,
+            id: msg._id || msg.id || `msg_${Date.now()}_${uuid.v4()}`,
             ticketId: raw._id || raw.id,
             content: msg.message || msg.content,
             sender: msg.senderType === 'agent' ? 'agent' : msg.senderType === 'system' ? 'system' : 'user',
@@ -214,7 +215,7 @@ class SupportChatApi {
       id: raw._id || raw.id,
       status: raw.status || 'open',
       messages: (raw.messages || []).map((msg: any) => ({
-        id: msg._id?.toString?.() || msg._id || msg.id || `msg_${Date.now()}_${Math.random()}`,
+        id: msg._id?.toString?.() || msg._id || msg.id || `msg_${Date.now()}_${uuid.v4()}`,
         ticketId: raw._id || raw.id,
         content: msg.message || msg.content,
         sender: msg.senderType === 'agent' ? 'agent' : msg.senderType === 'system' ? 'system' : 'user',

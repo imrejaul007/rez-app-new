@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system';
 import { Platform } from 'react-native';
 import { platformAlertSimple, platformAlert } from '@/utils/platformAlert';
 import apiClient from './apiClient';
+import uuid from 'react-native-uuid';
 
 export interface UploadOptions {
   allowsEditing?: boolean;
@@ -321,7 +322,7 @@ export const uploadHelpers = {
   // Generate unique filename
   generateFileName(prefix: string, extension: string): string {
     const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 15);
-    return `${prefix}_${timestamp}_${random}.${extension}`;
+    const randomPart = uuid.v4() as string;
+    return `${prefix}_${timestamp}_${randomPart}.${extension}`;
   },
 };

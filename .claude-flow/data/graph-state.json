@@ -20,15 +20,15 @@
     "mem-project_overview-tech-stack": {
       "id": "mem-project_overview-tech-stack",
       "category": "project_overview",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.55,
+      "accessCount": 1,
       "createdAt": 1775067298472
     },
     "mem-project_overview-current-state--phase-1-built-": {
       "id": "mem-project_overview-current-state--phase-1-built-",
       "category": "project_overview",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.55,
+      "accessCount": 1,
       "createdAt": 1775067298472
     },
     "mem-project_rez_strategy----": {
@@ -55,8 +55,8 @@
     "mem-project_rezapp-rez-consumer-app--nuqta-master": {
       "id": "mem-project_rezapp-rez-consumer-app--nuqta-master",
       "category": "project_rezapp",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.55,
+      "accessCount": 1,
       "createdAt": 1775067298478
     },
     "insight-1775103205739-q133": {

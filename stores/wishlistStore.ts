@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import wishlistApi from '@/services/wishlistApi';
+import uuid from 'react-native-uuid';
 
 export interface WishlistItem {
   id: string;
@@ -162,7 +163,7 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
       const items: WishlistItem[] = defaultWishlist.items.map((backendItem: any) => {
         const item = backendItem.itemId || {};
         return {
-          id: backendItem._id || backendItem.id || String(Math.random()),
+          id: backendItem._id || backendItem.id || String(uuid.v4()),
           productId: typeof backendItem.itemId === 'string' ? backendItem.itemId : (item._id || item.id || ''),
           productName: item.name || 'Unknown Product',
           productImage: (item.images && item.images[0]) || item.image || 'https://placehold.co/300',

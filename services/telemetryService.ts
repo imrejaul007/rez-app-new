@@ -1,5 +1,8 @@
 /**
  * Telemetry Service
+ */
+
+import uuid from 'react-native-uuid';
  *
  * Batch event sender for analytics and monitoring.
  * Handles queuing, batching, and sending telemetry data to backend services.
@@ -628,7 +631,7 @@ class TelemetryService {
    * Generate batch ID
    */
   private generateBatchId(): string {
-    return `batch_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `batch_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

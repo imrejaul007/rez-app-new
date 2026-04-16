@@ -5,6 +5,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 import { safeJsonParse } from '@/utils/safeJson';
+import uuid from 'react-native-uuid';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -127,8 +128,8 @@ const generateDeviceFingerprint = async (): Promise<string> => {
     if (!deviceId) {
       // Generate new device ID using timestamp and random values
       const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(2, 15);
-      deviceId = `device_${timestamp}_${random}`;
+      const randomPart = uuid.v4() as string;
+      deviceId = `device_${timestamp}_${randomPart}`;
 
       // Store for future use
       await AsyncStorage.setItem(FRAUD_CONFIG.STORAGE_KEY_DEVICE_ID, deviceId);

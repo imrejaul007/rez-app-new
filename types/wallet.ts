@@ -162,8 +162,8 @@ export type TransactionType = 'earned' | 'spent' | 'expired' | 'bonus' | 'refund
 export type TransactionStatus = 'completed' | 'pending' | 'failed';
 export type WalletErrorCode = 'NETWORK_ERROR' | 'SERVER_ERROR' | 'PARSING_ERROR' | 'UNAUTHORIZED' | 'TIMEOUT' | 'REAUTH_REQUIRED' | 'FEATURE_DISABLED' | 'VELOCITY_LIMIT' | 'WALLET_FROZEN' | 'INSUFFICIENT_BALANCE' | 'UNKNOWN';
 
-// Coin Usage Order - Promo > Branded > Rez (automatic)
-export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'prive', 'rez'];
+// Coin Usage Order - Promo > Branded > Prive > Cashback > Referral > Rez (automatic)
+export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'prive', 'cashback', 'referral', 'rez'];
 
 // Constants - Updated for new wallet design
 export const COIN_TYPES: Record<CoinType, { name: string; color: string; amountColor: string; backgroundColor: string; icon: string; description: string }> = {
@@ -198,6 +198,22 @@ export const COIN_TYPES: Record<CoinType, { name: string; color: string; amountC
     backgroundColor: '#FDF6E3',
     icon: 'prive-coin.png',
     description: 'Premium member exclusive rewards'
+  },
+  cashback: {
+    name: 'Cashback Coins',
+    color: '#10B981', // Emerald
+    amountColor: '#059669', // Deep emerald for text (WCAG AA compliant)
+    backgroundColor: '#ECFDF5',
+    icon: 'cashback-coin.png',
+    description: 'Cashback rewards from purchases'
+  },
+  referral: {
+    name: 'Referral Coins',
+    color: '#8B5CF6', // Purple
+    amountColor: '#6D28D9', // Deep purple for text (WCAG AA compliant)
+    backgroundColor: '#F5F3FF',
+    icon: 'referral-coin.png',
+    description: 'Rewards from successful referrals'
   }
 };
 

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { BRAND } from '@/constants/brand';
+import uuid from 'react-native-uuid';
 
 // Inline the interface to avoid importing from a component file
 interface RewardUnlockedData {
@@ -34,7 +35,7 @@ interface RewardPopupStoreState {
   popupQueue: RewardUnlockedData[];
 }
 
-const generateId = () => `reward-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+const generateId = () => `reward-${Date.now()}-${uuid.v4()}`;
 
 let _dismissTimer: ReturnType<typeof setTimeout> | null = null;
 

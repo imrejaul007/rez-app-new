@@ -1,5 +1,8 @@
 /**
  * Error Tracking Service
+ */
+
+import uuid from 'react-native-uuid';
  * Comprehensive error tracking and monitoring system
  *
  * Features:
@@ -175,7 +178,7 @@ class ErrorTrackingService {
    * Generate session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   /**
@@ -534,7 +537,7 @@ class ErrorTrackingService {
    * Generate error ID
    */
   private generateErrorId(): string {
-    return `error_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `error_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

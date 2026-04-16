@@ -1,5 +1,8 @@
 /**
  * Bill Upload Analytics Service
+ */
+
+import uuid from 'react-native-uuid';
  *
  * Comprehensive analytics and error tracking for the bill upload feature.
  * Tracks user behavior, upload performance, validation errors, and conversion funnel.
@@ -217,7 +220,7 @@ class BillUploadAnalytics {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

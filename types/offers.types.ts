@@ -4,7 +4,8 @@ export interface Offer {
   subtitle?: string;
   image: string;
   originalPrice?: number;
-  discountedPrice?: number;
+  discountedPrice?: number; // P0 FIX: was `price` — backend returns `discountedPrice`
+
   cashbackPercentage: number;
   distance: number;
   category: string;

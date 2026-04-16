@@ -1,4 +1,5 @@
 import apiClient, { ApiResponse, API_TIMEOUTS } from './apiClient';
+import uuid from 'react-native-uuid';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -127,7 +128,7 @@ export async function payBill(
 }>> {
   const key =
     idempotencyKey ||
-    `bill-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    `bill-${Date.now()}-${uuid.v4()}`;
 
   // CONS-015: PAYMENT timeout — give payment gateway and BBPS enough time
   return apiClient.post<any>('/bill-payments/pay', {
