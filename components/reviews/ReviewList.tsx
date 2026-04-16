@@ -282,7 +282,7 @@ function ReviewList({
   return (
     <AnyFlashList
       data={reviews}
-      keyExtractor={(item: any) => item._id || item.id || Math.random().toString()}
+      keyExtractor={(item: any) => String(item._id ?? item.id ?? 'unknown')}
       renderItem={renderReviewItem}
       ListHeaderComponent={renderHeader}
       ListEmptyComponent={renderEmptyState}

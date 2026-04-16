@@ -284,7 +284,7 @@ function AchievementsPage() {
       ) : (
         <FlashList
           data={filteredAchievements}
-          keyExtractor={(item) => item.id || (item as any)._id || String(Math.random())}
+          keyExtractor={(item) => String((item as any).id ?? (item as any)._id ?? 'unknown-achievement')}
           estimatedItemSize={150}
           renderItem={renderAchievementItem}
           numColumns={2}

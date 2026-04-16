@@ -83,7 +83,7 @@ export function generateVariantSku(
     : 'NA';
 
   // Variant ID from variant selection or timestamp
-  const variantId = variant.variantId || Math.random().toString(36).substring(7).toUpperCase();
+  const variantId = variant.variantId || (typeof crypto !== 'undefined' ? crypto.getRandomValues(new Uint8Array(4)).reduce((s, b) => s + b.toString(36).padStart(2, '0'), '') : `fallback-${Date.now()}`);
 
   return `${baseSku}-${sizeCode}-${colorCode}-${variantId}`;
 }

@@ -147,7 +147,7 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
     [onOfferPress]
   );
 
-  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id || String(Math.random()), []);
+  const keyExtractor = useCallback((item: MallOffer) => String(item.id ?? item._id ?? "unknown-offer"), []);
 
   if (isLoading) {
     return (
