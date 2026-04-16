@@ -8,6 +8,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
 
 export interface SessionMetadata {
   sessionId: string;
@@ -160,7 +161,7 @@ class SessionTrackingService {
   // --- Private helpers ---
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   private async persistSession(session: SessionMetadata): Promise<void> {

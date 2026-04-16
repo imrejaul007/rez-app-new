@@ -1,5 +1,14 @@
 import { BRAND } from '@/constants/brand';
 
+/**
+ * NOTE: REFERRAL_TIERS values should be fetched from the backend API.
+ * This file provides fallback/hardcoded values for offline/mock scenarios.
+ * Backend source: GET /user/referral/tiers
+ *
+ * TODO: Replace hardcoded REFERRAL_TIERS with a hook (useReferralTiers) that
+ * fetches from the backend API, with fallback to these values on failure.
+ */
+
 export interface ReferralTier {
   name: string;
   referralsRequired: number;

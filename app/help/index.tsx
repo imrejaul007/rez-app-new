@@ -174,7 +174,7 @@ function HelpPage() {
       id: 'faq3',
       question: 'How do I redeem coins?',
       answer:
-        'You can redeem your REZ coins at checkout in any participating store. Simply show your QR code or enter your REZ ID at the counter. The conversion rate is 1 coin = ₹0.50, so 100 coins = ₹50 off your bill. Go to the Redeem Coins section in your Wallet to see your available balance.',
+        'You can redeem your REZ coins at checkout in any participating store. Simply show your QR code or enter your REZ ID at the counter. The conversion rate is 1 coin = ₹1.00, so 100 coins = ₹100 off your bill. Go to the Redeem Coins section in your Wallet to see your available balance.',
       category: 'coins',
     },
     {
