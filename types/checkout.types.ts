@@ -1,3 +1,4 @@
+// Canonical reference: @rez/shared-types/src/enums/index.ts
 // Canonical types: @rez/shared-types — migrate imports when package is published
 // Checkout Types and Interfaces
 // This file contains all TypeScript interfaces for the checkout system
@@ -123,6 +124,7 @@ export interface CardOffer {
   cardBins?: string[];
 }
 
+// Canonical reference: @rez/shared-types/src/enums/PaymentMethod
 export interface PaymentMethod {
   id: string;
   type: 'upi' | 'card' | 'netbanking' | 'wallet' | 'paylater' | 'emi';
@@ -403,7 +405,13 @@ export const PAYMENT_TYPES = {
   EMI: 'emi',
 } as const;
 
+// Canonical reference: @rez/shared-types/src/enums/CoinType
+// Canonical coin types (6 priority-ordered types)
 export const COIN_TYPES = {
-  REZ: 'rez',
   PROMO: 'promo',
+  BRANDED: 'branded',
+  PRIVE: 'prive',
+  CASHBACK: 'cashback',
+  REFERRAL: 'referral',
+  REZ: 'rez',
 } as const;

@@ -189,9 +189,11 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       const wishlistItems: WishlistItem[] = defaultWishlist.items.map((backendItem: any) => {
         const item = backendItem.itemId || {};
         return {
-          id: backendItem._id || backendItem.id || item._id || item.id || (typeof crypto !== 'undefined' && crypto.getRandomValues
-            ? Array.from(new Uint8Array(8), b => b.toString(16).padStart(2, '0')).join('')
-            : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`),
+          id: backendItem._id || backendItem.id || item._id || item.id || (
+            typeof crypto !== 'undefined' && crypto.randomUUID
+              ? crypto.randomUUID()
+              : Array.from(new Uint8Array(8), b => b.toString(16).padStart(2, '0')).join('')
+          ),
           productId: typeof backendItem.itemId === 'string' ? backendItem.itemId : (item._id || item.id || ''),
           productName: item.name || 'Unknown Product',
           productImage: (item.images && item.images[0]) || item.image || 'https://placehold.co/300',

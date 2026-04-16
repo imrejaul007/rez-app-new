@@ -73,6 +73,26 @@ const COIN_TYPES: CoinType[] = [
     howToUse: 'Redeem for premium experiences and gift cards',
     expiry: '12-month expiry',
   },
+  {
+    id: 'cashback',
+    name: 'Cashback',
+    icon: 'cash-outline',
+    color: '#10B981',
+    description: 'Earned from partner purchases.',
+    howToEarn: ['Partner store purchases', 'Bill uploads', 'Campaign redemptions'],
+    howToUse: 'Redeem at any store or convert to vouchers',
+    expiry: 'Never expire',
+  },
+  {
+    id: 'referral',
+    name: 'Referral Bonus',
+    icon: 'person-add-outline',
+    color: '#8B5CF6',
+    description: 'Earned by inviting friends.',
+    howToEarn: ['Invite friends to join ReZ', 'Friend completes first transaction'],
+    howToUse: 'Redeem at any store or convert to vouchers',
+    expiry: 'Never expire',
+  },
 ];
 
 interface CoinEducationOverlayProps {

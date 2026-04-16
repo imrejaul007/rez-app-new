@@ -17,6 +17,7 @@ export interface AccountSettings {
   lastUpdated: string;
 }
 
+// Canonical reference: @rez/shared-types/src/enums/Theme
 export interface GeneralSettings {
   language: string;
   currency: string;

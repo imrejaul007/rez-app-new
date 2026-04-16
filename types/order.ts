@@ -1,8 +1,8 @@
-// Canonical types: @rez/shared-types — migrate imports when package is published
+// Canonical types: @rez/shared-types — import from shared-types when package is published
 // Order Types
 // Type definitions for order management system
 
-// Canonical source: @rez/shared/src/orderStatuses.ts
+// Canonical source: packages/shared-types/src/enums/index.ts (OrderStatus enum)
 export type OrderStatus =
   | 'placed'
   | 'confirmed'
@@ -16,15 +16,19 @@ export type OrderStatus =
   | 'returned'
   | 'refunded';
 
-// Canonical source: @rez/shared/src/paymentStatuses.ts (OrderPaymentStatus)
+// Canonical source: packages/shared-types/src/enums/index.ts (PaymentStatus enum)
+// Uses 'completed' (not 'paid') per canonical PaymentStatus.PENDING | 'processing' | 'completed' | 'failed' | 'cancelled' | 'expired' | 'refund_initiated' | 'refund_processing' | 'refunded' | 'refund_failed' | 'partially_refunded'
 export type PaymentStatus =
   | 'pending'
-  | 'awaiting_payment'
-  | 'authorized'
   | 'processing'
-  | 'paid'
+  | 'completed'
   | 'failed'
+  | 'cancelled'
+  | 'expired'
+  | 'refund_initiated'
+  | 'refund_processing'
   | 'refunded'
+  | 'refund_failed'
   | 'partially_refunded';
 
 export type DeliveryStatus =

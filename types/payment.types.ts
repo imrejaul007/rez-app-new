@@ -9,9 +9,9 @@
 export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'rezcoins';
 export type PaymentGateway = 'razorpay' | 'internal' | 'none';
 
+// Canonical reference: @rez/shared-types/src/enums/PaymentStatus
 // Backend canonical: order.payment.status sub-document (rez-order-service/src/models/Order.ts)
-// Matches the Zod schema in orderSchemas.ts: z.enum(['pending', 'processing', 'completed',
-// 'failed', 'cancelled', 'expired', 'refund_initiated', 'refund_processing', 'refunded', 'refund_failed'])
+// Canonical payment status (11 states + FSM)
 export type PaymentStatus =
   | 'pending'
   | 'processing'
@@ -22,7 +22,8 @@ export type PaymentStatus =
   | 'refund_initiated'
   | 'refund_processing'
   | 'refunded'
-  | 'refund_failed';
+  | 'refund_failed'
+  | 'partially_refunded';
 
 export type CardType = 'visa' | 'mastercard' | 'amex' | 'rupay' | 'unknown';
 

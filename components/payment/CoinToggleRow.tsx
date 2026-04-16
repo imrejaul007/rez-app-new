@@ -17,11 +17,13 @@ import CrossPlatformSlider from '@/components/common/CrossPlatformSlider';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { borderRadius, colors, spacing, typography } from '@/constants/theme';
+import type { CoinType } from '@/types/rez-shared-types';
 
-export type CoinType = 'rez' | 'promo' | 'branded';
+/** Subset of canonical CoinType supported by this payment component. */
+export type CoinToggleType = Extract<CoinType, 'rez' | 'promo' | 'branded'>;
 
 interface CoinToggleRowProps {
-  type: CoinType;
+  type: CoinToggleType;
   name: string;
   available: number;
   using: number;

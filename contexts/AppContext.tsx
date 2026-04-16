@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import logger from '@/utils/logger';
 import { Platform, useColorScheme as useNativeColorScheme } from 'react-native';
 
 // Types
@@ -242,14 +243,25 @@ export function AppProvider({ children }: AppProviderProps) {
           const raw = window.localStorage.getItem(STORAGE_KEYS.APP_SETTINGS);
           settings = raw ? JSON.parse(raw) : {};
           isFirstLaunch = window.localStorage.getItem(STORAGE_KEYS.FIRST_LAUNCH) !== 'false';
-        } catch {}
+        } catch (e) {
+          // R2-M13: Corrupted localStorage — fall back to default settings.
+          // User preferences are lost but the app continues with defaults.
+          logger.warn('[AppContext] localStorage parse failed, using defaults', e);
+          settings = {};
+        }
       } else {
-        const [savedSettings, firstLaunch] = await AsyncStorage.multiGet([
-          STORAGE_KEYS.APP_SETTINGS,
-          STORAGE_KEYS.FIRST_LAUNCH,
-        ]);
-        settings = savedSettings[1] ? JSON.parse(savedSettings[1]) : {};
-        isFirstLaunch = firstLaunch[1] !== 'false';
+        try {
+          const [savedSettings, firstLaunch] = await AsyncStorage.multiGet([
+            STORAGE_KEYS.APP_SETTINGS,
+            STORAGE_KEYS.FIRST_LAUNCH,
+          ]);
+          settings = savedSettings[1] ? JSON.parse(savedSettings[1]) : {};
+          isFirstLaunch = firstLaunch[1] !== 'false';
+        } catch (e) {
+          // R2-M13: Corrupted AsyncStorage — fall back to default settings.
+          logger.warn('[AppContext] AsyncStorage parse failed, using defaults', e);
+          settings = {};
+        }
       }
 
       dispatch({ type: 'SET_FIRST_LAUNCH', payload: isFirstLaunch });

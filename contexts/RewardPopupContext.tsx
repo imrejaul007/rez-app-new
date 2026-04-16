@@ -52,16 +52,12 @@ export function RewardPopupProvider({ children }: RewardPopupProviderProps) {
   const [popupQueue, setPopupQueue] = useState<RewardUnlockedData[]>([]);
 
   // Generate unique ID for each popup
-  // FIX: Use crypto.getRandomValues instead of insecure Math.random()
+  // R2-C3 FIX: Throw instead of falling back to Math.random() — predictable IDs
+  // make popup deduplication unreliable and could cause duplicate popups to fire.
   const generateId = () => {
-    try {
-      const array = new Uint8Array(16);
-      require('react-native').crypto.getRandomValues(array);
-      return `reward-${Date.now()}-${Array.from(array, b => b.toString(16).padStart(2, '0')).join('')}`;
-    } catch {
-      // Fallback for environments where crypto is unavailable
-      return `reward-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    }
+    const array = new Uint8Array(16);
+    require('react-native').crypto.getRandomValues(array);
+    return `reward-${Date.now()}-${Array.from(array, b => b.toString(16).padStart(2, '0')).join('')}`;
   };
 
   // Process next popup from queue

@@ -287,7 +287,7 @@ function OrderConfirmationPage() {
               <ThemedText style={styles.infoLabel}>Payment Status</ThemedText>
               <View style={[styles.statusBadge, styles.paidBadge]}>
                 <ThemedText style={styles.statusText}>
-                  {order.payment.status === 'paid' ? 'Paid' : 'Pending'}
+                  {order.payment.status === 'completed' ? 'Paid' : 'Pending'}
                 </ThemedText>
               </View>
             </View>

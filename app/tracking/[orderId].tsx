@@ -724,7 +724,7 @@ function DetailedOrderTrackingPage() {
             <ThemedText
               style={[
                 styles.detailValue,
-                { color: order.payment?.status === 'paid' ? PROFILE_COLORS.success : PROFILE_COLORS.warning },
+                { color: order.payment?.status === 'completed' ? PROFILE_COLORS.success : PROFILE_COLORS.warning },
               ]}
             >
               {order.payment?.status?.toUpperCase() || 'PENDING'}

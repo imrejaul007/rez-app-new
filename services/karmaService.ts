@@ -5,22 +5,36 @@
  */
 
 import apiClient, { ApiResponse } from './apiClient';
+import type {
+  KarmaLevel,
+  EarnRecordStatus,
+  CoinType,
+  CoinTransactionType,
+  KarmaVerificationStatus,
+} from '@/types/rez-shared-types';
 
 // =============================================================================
 // TYPES
 // =============================================================================
 
+/**
+ * Consumer karma profile — extends the canonical IKarmaProfile with client-only fields.
+ * Consumer apps should import IKarmaProfile from @/types/rez-shared-types and extend here.
+ * G-CR-X1 FIX: level uses KarmaLevel from shared-types instead of inline union.
+ */
 export interface KarmaProfile {
   userId: string;
   lifetimeKarma: number;
   activeKarma: number;
-  level: 'L1' | 'L2' | 'L3' | 'L4';
+  level: KarmaLevel;
   conversionRate: number;
   eventsCompleted: number;
   totalHours: number;
   trustScore: number;
   badges: KarmaBadge[];
+  /** Client-only: next level threshold (not in canonical IKarmaProfile) */
   nextLevelAt: number;
+  /** Client-only: decay warning message (not in canonical IKarmaProfile) */
   decayWarning: string | null;
 }
 
@@ -32,7 +46,7 @@ export interface KarmaBadge {
 }
 
 export interface LevelInfo {
-  level: 'L1' | 'L2' | 'L3' | 'L4';
+  level: KarmaLevel;
   activeKarma: number;
   threshold: number;
   nextLevelAt: number;
@@ -96,7 +110,7 @@ export interface Booking {
   gpsCheckOut?: GPSCoords;
   ngoApproved: boolean;
   confidenceScore: number;
-  verificationStatus: 'pending' | 'partial' | 'verified' | 'rejected';
+  verificationStatus: KarmaVerificationStatus;
   karmaEarned: number;
   earnedAt?: string;
   createdAt: string;
@@ -124,18 +138,22 @@ export interface CheckOutResult {
   pendingApproval?: boolean;
 }
 
+/**
+ * Consumer earn record — mirrors the canonical IEarnRecord structure.
+ * G-CR-X7 FIX: status uses EarnRecordStatus from shared-types instead of inline union.
+ */
 export interface EarnRecord {
   _id: string;
   eventId: string;
   eventName?: string;
   karmaEarned: number;
-  activeLevelAtApproval: 'L1' | 'L2' | 'L3' | 'L4';
+  activeLevelAtApproval: KarmaLevel;
   conversionRateSnapshot: number;
-  status: 'APPROVED_PENDING_CONVERSION' | 'CONVERTED' | 'REJECTED' | 'ROLLED_BACK';
+  status: EarnRecordStatus;
   verificationSignals: {
     qr_in: boolean;
     qr_out: boolean;
-    // FIX: Backend stores gps_match as Number (0-1) for precision. Updated from boolean to number.
+    /** Backend stores gps_match as Number (0-1) for precision. */
     gps_match: number;
     ngo_approved: boolean;
     photo_proof: boolean;
@@ -160,11 +178,16 @@ export interface WalletBalance {
   brandedCoins?: Record<string, number>;
 }
 
+/**
+ * Consumer transaction — aligns with CoinTransactionType from shared-types.
+ * G-CR-X11 FIX: type uses CoinTransactionType from shared-types.
+ * 'converted' is not in the canonical CoinTransactionType — use REFUNDED for reversals.
+ * Using string type for flexibility during the migration.
+ */
 export interface Transaction {
   _id: string;
-  type: 'earned' | 'converted' | 'spent' | 'bonus';
-  /** Canonical coin type: 'karma_points' (not in wallet), 'rez' (wallet coin), 'branded' (partner coin) */
-  coinType: 'karma_points' | 'rez' | 'branded';
+  type: CoinTransactionType | 'converted';
+  coinType: CoinType | 'karma_points';
   amount: number;
   description: string;
   eventId?: string;
@@ -288,8 +311,10 @@ class KarmaService {
 
   /**
    * Get user's joined events
+   * G-CR-X9 FIX: Removed invalid 'upcoming' and 'past' status values.
+   * Valid statuses are: 'published', 'ongoing', 'completed', 'cancelled', 'draft'.
    */
-  async getMyEvents(status?: 'upcoming' | 'ongoing' | 'past'): Promise<ApiResponse<KarmaEvent[]>> {
+  async getMyEvents(status?: 'published' | 'ongoing' | 'completed' | 'cancelled'): Promise<ApiResponse<KarmaEvent[]>> {
     return apiClient.get<KarmaEvent[]>('/karma/my-events', status ? { status } : undefined);
   }
 

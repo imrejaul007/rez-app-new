@@ -181,4 +181,5 @@ export interface GroupBuyingApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-  message?: stri
+  message?: string;
+}

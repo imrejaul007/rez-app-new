@@ -265,9 +265,9 @@ class PaymentService {
       options?.onStatusChange?.(rawStatus);
 
       // Terminal states after normalization:
-      //   completed | paid  → payment succeeded
+      //   completed → payment succeeded
       //   failed | cancelled | expired → terminal failure
-      if (status === 'paid' || status === 'failed' || status === 'cancelled' || status === 'expired') {
+      if (status === 'completed' || status === 'failed' || status === 'cancelled' || status === 'expired') {
         return response as any;
       }
 

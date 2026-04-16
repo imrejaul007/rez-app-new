@@ -158,8 +158,9 @@ function CategoryRecommendationsGrid({
               else if (product.isFeatured) subtitle = 'Featured';
 
               // Calculate cashback from discount or set default
-              const cashback = product.price?.discount ||
-                             Math.floor(Math.random() * 6) + 5; // 5-10% if not specified
+              // R2-L3 FIX: Use fixed default instead of random — random values cause
+              // inconsistent displayed vs. actual cashback across page loads.
+              const cashback = product.price?.discount ?? 7;
 
               cards.push({
                 id: productItem.id,

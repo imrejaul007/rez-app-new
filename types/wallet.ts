@@ -2,27 +2,28 @@
  * types/wallet.ts
  *
  * B02 FIX: Canonical wallet type definitions for the consumer frontend.
- *
- * The backend sends coin types as: 'rez' | 'promo' | 'branded' | 'prive'
- * These are defined in rez-backend/src/constants/coinTypes.ts (COIN_TYPE_VALUES enum).
- * ALL frontend code must use these exact string literals — no aliases,
- * no pluralised forms (e.g. 'promotion'), no renamed variants (e.g. 'wasil').
+ * CoinType is now imported from @/types/rez-shared-types (which re-exports
+ * from packages/shared-types/src/enums/index.ts). This eliminates the local
+ * type duplication that violated architecture governance rules.
  *
  * Canonical values:
  *   'rez'      — Universal coin, usable anywhere on the platform
  *   'promo'    — Promotional coin, limited-time from campaigns
  *   'branded'  — Merchant-specific loyalty coin
  *   'prive'    — Privé exclusive coin (premium/elite tier)
+ *   'cashback' — Cashback coin
+ *   'referral' — Referral coin
  */
 
 import { ImageSourcePropType } from 'react-native';
+import type { CoinType } from './rez-shared-types';
 
 // ---------------------------------------------------------------------------
-// Coin type literal
+// Coin type literal — re-exported from canonical shared-types
 // ---------------------------------------------------------------------------
 
-/** B02: Exact backend coin type values — zero tolerance for mismatched strings */
-export type CoinType = 'rez' | 'promo' | 'branded' | 'prive' | 'cashback' | 'referral';
+/** B02: Re-exported from @/types/rez-shared-types (canonical source). */
+export type { CoinType } from './rez-shared-types';
 
 // ---------------------------------------------------------------------------
 // Per-coin-type display metadata (used by CoinDetailCard, CoinChip, etc.)

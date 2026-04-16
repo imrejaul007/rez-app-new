@@ -29,6 +29,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import logger from '@/utils/logger';
 
 const { width } = Dimensions.get('window');
 const NUQTA_COIN = BRAND.COIN_IMAGE;
@@ -197,7 +198,11 @@ const CreatorPickDetail = () => {
     creatorsApi.trackPickClick(id);
     try {
       if (typeof localStorage !== 'undefined') localStorage.setItem('attribution_pick_id', id);
-    } catch {}
+    } catch (e) {
+      // R2-M12: Attribution tracking failures should not block navigation.
+      // Log the error so campaign attribution gaps can be investigated.
+      logger.warn('[Attribution] localStorage write failed', e);
+    }
     router.push({
       pathname: '/product-page',
       params: { cardId: pick.productId || id, cardType: 'product', pickId: id },

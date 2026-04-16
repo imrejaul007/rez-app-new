@@ -28,6 +28,7 @@ import { campaignsApi } from '@/services/campaignsApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import analytics from '@/services/analytics/AnalyticsService';
+import logger from '@/utils/logger';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { colors } from '@/constants/theme';
 import BookingRewardBanner from '@/components/booking/BookingRewardBanner';
@@ -456,9 +457,13 @@ function BookingPage() {
           store_id: storeId,
           date: selectedDate?.toISOString(),
           time: selectedTime,
-          party_size: parseInt(numberOfPeople),
+          party_size: parseInt(numberOfPeople, 10),
         });
-      } catch {}
+      } catch (e) {
+        // R2-H4: Analytics failures should not block the booking success flow,
+        // but should be logged so attribution data gaps can be investigated.
+        logger.warn('[Analytics] BOOKING_COMPLETED tracking failed', e);
+      }
     } catch (error: any) {
       if (!isMounted()) return;
       setSubmitting(false);
