@@ -158,7 +158,7 @@ function RezCashScreen() {
     }
     setBankSubmitting(true);
     try {
-      const idempotencyKey = `bank-withdraw-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const idempotencyKey = `bank-withdraw-${Date.now()}-${crypto.randomUUID()}`;
       const res = await walletService.withdraw({
         amount,
         method: 'bank',

@@ -372,19 +372,21 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
       const response = await userSettingsApi.enableTwoFactorAuth(method);
 
       if (response.success) {
+        // FIX: Guard against malformed API responses — backupCodes may be undefined
+        const backupCodes = response.data?.backupCodes || [];
         // Update local state
         await updateSecuritySettings({
           twoFactorAuth: {
             enabled: true,
             method,
-            backupCodes: response.data.backupCodes,
+            backupCodes,
             lastUpdated: new Date().toISOString(),
           },
         });
 
         platformAlertSimple(
           'Two-Factor Authentication Enabled',
-          `Two-factor authentication has been enabled using ${method}. Please save your backup codes: ${response.data.backupCodes.join(', ')}`
+          `Two-factor authentication has been enabled using ${method}. Please save your backup codes: ${backupCodes.join(', ')}`
         );
         return true;
       } else {

@@ -258,9 +258,13 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
       };
 
       // Call the correct authService method directly instead of going through AuthContext
-      if (__DEV__) console.log('[ProfileContext] Sending to API:', JSON.stringify(profileUpdateData));
+      // FIX: Redact PII from dev console logs before logging
+      const safeUpdateData = userData.email
+        ? { ...profileUpdateData, email: (userData.email || '').replace(/^(.)(.*)(@.+)$/, (_, a, b, c) => `${a}***${c}`), profile: { ...profileUpdateData.profile, firstName: '[REDACTED]', lastName: '[REDACTED]' } }
+        : profileUpdateData;
+      if (__DEV__) console.log('[ProfileContext] Sending to API:', JSON.stringify(safeUpdateData));
       const response = await authService.updateProfile(profileUpdateData);
-      if (__DEV__) console.log('[ProfileContext] API response:', JSON.stringify({ success: response.success, error: response.error, hasData: !!response.data }));
+      if (__DEV__) console.log('[ProfileContext] API response:', JSON.stringify({ success: response.success, error: response.error ? '[REDACTED]' : undefined, hasData: !!response.data }));
 
       // Check for API errors and throw with descriptive message
       if (!response.success) {
@@ -335,8 +339,16 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     setIsModalVisible(false);
   }, []);
 
+  // FIX: Route whitelist to prevent arbitrary path injection
+  const ALLOWED_ROUTES = ['profile', 'settings', 'wallet', 'orders', 'notifications', 'help', 'privacy', 'terms', '/wallet-screen', '/transactions', '/BookingsPage', '/account/', '/profile/'];
+
   // Navigation function - memoized for performance
   const navigateToScreen = useCallback((route: string, params?: any) => {
+    // FIX: Block navigation to routes not in the whitelist
+    if (!ALLOWED_ROUTES.includes(route)) {
+      if (__DEV__) console.warn(`[ProfileContext] Blocked invalid route navigation: ${route}`);
+      return;
+    }
     try {
       if (params) {
         router.push({

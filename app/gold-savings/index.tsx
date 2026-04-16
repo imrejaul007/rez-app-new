@@ -37,7 +37,7 @@ const GOLD_DARK = colors.warningScale[700];
 const QUICK_AMOUNTS = ['100', '500', '1000', '2000', '5000', '10000'];
 
 function generateIdempotencyKey(): string {
-  return `gold_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+  return `gold_${Date.now()}_${crypto.randomUUID()}`;
 }
 
 function GoldSavingsPage() {
