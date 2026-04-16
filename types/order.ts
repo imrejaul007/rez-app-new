@@ -2,7 +2,7 @@
 // Order Types
 // Type definitions for order management system
 
-// Canonical source: @rez/shared/src/orderStatuses.ts
+// Canonical source: @rez/shared-types/enums OrderStatus (11 states)
 export type OrderStatus =
   | 'placed'
   | 'confirmed'
@@ -16,16 +16,30 @@ export type OrderStatus =
   | 'returned'
   | 'refunded';
 
-// Canonical source: @rez/shared/src/paymentStatuses.ts (OrderPaymentStatus)
+/**
+ * PaymentStatus aligned with canonical @rez/shared-types/enums PaymentStatus (11 states).
+ * Backend canonical values:
+ *   pending, processing, completed, failed, cancelled, expired,
+ *   refund_initiated, refund_processing, refunded, refund_failed, partially_refunded
+ * Consumer app also uses: awaiting_payment, authorized, paid (mapped from backend flow).
+ * These are stored as PaymentStatus values in the consumer app's local order cache.
+ */
 export type PaymentStatus =
   | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
+  | 'expired'
+  | 'refund_initiated'
+  | 'refund_processing'
+  | 'refunded'
+  | 'refund_failed'
+  | 'partially_refunded'
+  // Consumer app payment flow states (stored in local order cache)
   | 'awaiting_payment'
   | 'authorized'
-  | 'processing'
-  | 'paid'
-  | 'failed'
-  | 'refunded'
-  | 'partially_refunded';
+  | 'paid';
 
 export type DeliveryStatus =
   | 'pending'

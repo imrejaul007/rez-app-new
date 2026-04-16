@@ -1,9 +1,15 @@
-// Canonical types: @rez/shared-types — migrate imports when package is published
+// Canonical CoinType: values must match @rez/shared-types/enums CoinType enum
+// enum values: PROMO='promo', BRANDED='branded', PRIVE='prive', CASHBACK='cashback', REFERRAL='referral', REZ='rez'
 import { ImageSourcePropType } from 'react-native';
 import { BRAND } from '@/constants/brand';
 
-// Core Coin Types — canonical source: @rez/shared/src/constants/coins.ts
-export type CoinType = 'rez' | 'branded' | 'promo' | 'prive' | 'cashback' | 'referral';
+/**
+ * CoinType values aligned with canonical enum in @rez/shared-types/enums.
+ * Enum members: CoinType.PROMO='promo', CoinType.BRANDED='branded', etc.
+ * Using string literal type for ergonomic consumption; enum can be imported
+ * from @rez/shared-types where strict enum typing is needed.
+ */
+export type CoinType = 'promo' | 'branded' | 'prive' | 'cashback' | 'referral' | 'rez';
 
 // Branded Coin Details (merchant-specific)
 export interface BrandedCoinDetails {
