@@ -231,7 +231,13 @@ function TrendingOffersPage() {
             'Your cashback may not be tracked. Open anyway?',
             () => {
               try {
-                Linking.openURL(brand.externalUrl!);
+                const url = brand.externalUrl;
+                // Validate URL has safe HTTP/HTTPS scheme before opening
+                if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
+                  Linking.openURL(url);
+                } else {
+                  catchAndWarn(new Error('Invalid URL scheme'), 'CashStoreTrending/openURL');
+                }
               } catch (e: any) {
                 catchAndWarn(e, 'CashStoreTrending/openURL');
               }
@@ -278,9 +284,14 @@ function TrendingOffersPage() {
             'Your cashback may not be tracked. Open anyway?',
             () => {
               try {
-                Linking.openURL(offer.externalUrl!);
+                const url = offer.externalUrl;
+                if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
+                  Linking.openURL(url);
+                } else {
+                  catchAndWarn(new Error('Invalid URL scheme'), 'CashStoreTrending/openURL-offer');
+                }
               } catch (e: any) {
-                catchAndWarn(e, 'CashStoreTrending/openURL');
+                catchAndWarn(e, 'CashStoreTrending/openURL-offer');
               }
             },
             'Open Anyway',

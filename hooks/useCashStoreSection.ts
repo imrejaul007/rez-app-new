@@ -545,8 +545,9 @@ export function useCashStoreSection(
             );
           }
         } catch {
-          if (brand.externalUrl) {
-            try { await Linking.openURL(brand.externalUrl); } catch {}
+          const url = brand.externalUrl;
+          if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
+            try { await Linking.openURL(url); } catch {}
           }
         }
       }
