@@ -277,7 +277,7 @@ function TransferPage() {
         if (!mountedRef.current) return;
         const data = res.data;
         if (data?.requiresOtp) {
-          const confirmRes = await walletApi.confirmTransfer({ transferId: data.transferId, otp });
+          const confirmRes = await walletApi.confirmTransfer({ transferId: data.transferId, otp, idempotencyKey });
           if (!mountedRef.current) return;
           setTransactionId(confirmRes.data?.transferId || data.transferId);
         } else {
@@ -290,6 +290,7 @@ function TransferPage() {
         const res = await walletApi.confirmTransfer({
           transferId: pendingTransferId,
           otp,
+          idempotencyKey,
         });
         if (!mountedRef.current) return;
         const data = res.data;

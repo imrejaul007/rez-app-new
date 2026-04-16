@@ -24,6 +24,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import walletApi from '@/services/walletApi';
+import { generateIdempotencyKey } from '@/utils/idempotencyKey';
 import { colors } from '@/constants/theme';
 import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 
@@ -68,6 +69,7 @@ export default function RedeemCoinsScreen() {
     discountApplied: number;
     redeemedCoins: number;
   } | null>(null);
+  const [idempotencyKey, setIdempotencyKey] = useState(() => generateIdempotencyKey('redeem-coins'));
 
   // Fetch current coin balance and live conversion rate on mount
   useEffect(() => {
@@ -126,7 +128,7 @@ export default function RedeemCoinsScreen() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const res = await walletApi.redeemCoins({ amount: parsedCoins });
+      const res = await walletApi.redeemCoins({ amount: parsedCoins, idempotencyKey });
       if (res.success && res.data) {
         setSuccessData({
           newBalance: res.data.newBalance,

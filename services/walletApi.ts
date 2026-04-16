@@ -803,6 +803,12 @@ class WalletService {
   // TRANSFER APIs
   // ========================================================================
 
+  /**
+   * P1-FINANCIAL-ATOMICITY FIX: Forward idempotencyKey as a header so the backend
+   * middleware can deduplicate transfer initiations on retry. Previously the key was
+   * accepted in the body but never forwarded as a header, making the backend's
+   * Idempotency-Key header check a no-op.
+   */
   async initiateTransfer(data: {
     recipientPhone?: string;
     recipientId?: string;
@@ -820,6 +826,7 @@ class WalletService {
     status?: string;
   }>> {
     try {
+      const key = data.idempotencyKey ?? `wallet-transfer-${Date.now()}-${uuid.v4()}`;
       return await apiClient.post<{
     transferId: string;
     requiresOtp: boolean;
@@ -827,16 +834,23 @@ class WalletService {
     amount: number;
     coinType: string;
     status?: string;
-  }>('/wallet/transfer/initiate', data as any);
+  }>('/wallet/transfer/initiate', data as any, {
+        headers: { 'Idempotency-Key': key },
+      });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] initiateTransfer failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to initiate transfer', data: undefined };
     }
   }
 
+  /**
+   * P1-FINANCIAL-ATOMICITY FIX: Add idempotency key to prevent duplicate transfer
+   * completions when the user retries after a network timeout.
+   */
   async confirmTransfer(data: {
     transferId: string;
     otp: string;
+    idempotencyKey?: string;
   }): Promise<ApiResponse<{
     transferId: string;
     status: string;
@@ -844,12 +858,15 @@ class WalletService {
     coinType: string;
   }>> {
     try {
+      const key = data.idempotencyKey ?? `wallet-confirm-${Date.now()}-${uuid.v4()}`;
       return await apiClient.post<{
     transferId: string;
     status: string;
     amount: number;
     coinType: string;
-  }>('/wallet/transfer/confirm', data as any);
+  }>('/wallet/transfer/confirm', data as any, {
+        headers: { 'Idempotency-Key': key },
+      });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] confirmTransfer failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to confirm transfer', data: undefined };
@@ -940,6 +957,10 @@ class WalletService {
     }
   }
 
+  /**
+   * P1-FINANCIAL-ATOMICITY FIX: Forward idempotencyKey as a header so the backend
+   * middleware can deduplicate gift sends on retry.
+   */
   async sendGift(data: {
     recipientPhone?: string;
     recipientId?: string;
@@ -959,6 +980,7 @@ class WalletService {
     expiresAt: string;
   }>> {
     try {
+      const key = data.idempotencyKey ?? `wallet-gift-${Date.now()}-${uuid.v4()}`;
       return await apiClient.post<{
     giftId: string;
     status: string;
@@ -966,7 +988,9 @@ class WalletService {
     amount: number;
     theme: string;
     expiresAt: string;
-  }>('/wallet/gift/send', data as any);
+  }>('/wallet/gift/send', data as any, {
+        headers: { 'Idempotency-Key': key },
+      });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] sendGift failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to send gift', data: undefined };
@@ -982,9 +1006,18 @@ class WalletService {
     }
   }
 
-  async claimGift(giftId: string): Promise<ApiResponse<{ giftId: string; amount: number; status: string }>> {
+  /**
+   * P1-FINANCIAL-ATOMICITY FIX: Add idempotency key to prevent duplicate gift claims
+   * when the user retries after a network timeout.
+   */
+  async claimGift(giftId: string, idempotencyKey?: string): Promise<ApiResponse<{ giftId: string; amount: number; status: string }>> {
     try {
-      return await apiClient.post<{ giftId: string; amount: number; status: string }>(`/wallet/gift/${giftId}/claim`, {});
+      const key = idempotencyKey ?? `wallet-claim-gift-${Date.now()}-${uuid.v4()}`;
+      return await apiClient.post<{ giftId: string; amount: number; status: string }>(
+        `/wallet/gift/${giftId}/claim`,
+        {},
+        { headers: { 'Idempotency-Key': key } },
+      );
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] claimGift failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to claim gift', data: undefined };
@@ -1019,12 +1052,21 @@ class WalletService {
     }
   }
 
+  /**
+   * P1-FINANCIAL-ATOMICITY FIX: Add idempotency key header. Consumer already passes
+   * idempotencyKey in the body (gift-cards.tsx line 164) but it was not forwarded
+   * as a header, making the backend's Idempotency-Key check ineffective.
+   */
   async purchaseGiftCard(data: {
     giftCardId: string;
     amount: number;
+    idempotencyKey?: string;
   }): Promise<ApiResponse<PurchaseGiftCardResponse>> {
     try {
-      return await apiClient.post<PurchaseGiftCardResponse>('/wallet/gift-cards/purchase', data);
+      const key = data.idempotencyKey ?? `wallet-gift-card-${Date.now()}-${uuid.v4()}`;
+      return await apiClient.post<PurchaseGiftCardResponse>('/wallet/gift-cards/purchase', data as any, {
+        headers: { 'Idempotency-Key': key },
+      });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] purchaseGiftCard failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to purchase gift card', data: undefined };
@@ -1091,19 +1133,23 @@ class WalletService {
   }
 
   /**
-   * Redeem coins for a discount
-   * POST /wallet/redeem-coins
-   * @param amount - Number of coins to redeem (min 50, max 500)
-   * @param orderId - Optional order to apply the discount to
-   * @param merchantId - Optional merchant to apply the discount at
+   * P1-FINANCIAL-ATOMICITY FIX: Add idempotency key to prevent double-redemption
+   * when the user retries after a network failure. A network timeout on a coin
+   * redemption debit could cause the user to retry and inadvertently redeem twice.
+   *
+   * @param data - { amount, orderId?, merchantId?, idempotencyKey? }
    */
   async redeemCoins(data: {
     amount: number;
     orderId?: string;
     merchantId?: string;
+    idempotencyKey?: string;
   }): Promise<ApiResponse<RedeemCoinsResponse>> {
     try {
-      return await apiClient.post<RedeemCoinsResponse>('/wallet/redeem-coins', data);
+      const key = data.idempotencyKey ?? `wallet-redeem-${Date.now()}-${uuid.v4()}`;
+      return await apiClient.post<RedeemCoinsResponse>('/wallet/redeem-coins', data as any, {
+        headers: { 'Idempotency-Key': key },
+      });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] redeemCoins failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to redeem coins', data: undefined };

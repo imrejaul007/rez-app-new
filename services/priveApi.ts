@@ -629,10 +629,13 @@ class PriveApi {
   }
 
   /**
-   * Redeem coins for a voucher
+   * P1-FINANCIAL-ATOMICITY FIX: Forward idempotencyKey as a header so the backend
+   * middleware can deduplicate prive redemptions on retry.
    */
   async redeemCoins(request: RedeemRequest): Promise<ApiResponse<RedeemResponse>> {
-    return apiClient.post<RedeemResponse>(ENDPOINTS.REDEEM, { ...request, coinType: 'prive' });
+    return apiClient.post<RedeemResponse>(ENDPOINTS.REDEEM, { ...request, coinType: 'prive' }, {
+      headers: { 'Idempotency-Key': request.idempotencyKey },
+    });
   }
 
   /**
