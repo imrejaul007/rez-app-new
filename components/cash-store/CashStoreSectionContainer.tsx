@@ -114,7 +114,10 @@ const CashStoreSectionContainer: React.FC<CashStoreSectionContainerProps> = ({
         } catch (error: any) {
           if (deal.externalUrl) {
             try {
-              await Linking.openURL(deal.externalUrl);
+              const url = deal.externalUrl;
+              if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
+                await Linking.openURL(url);
+              }
             } catch (e: any) { catchAndWarn(e, 'CashStoreSectionContainer/handleTrendingDealPress-fallback'); }
           }
         }
@@ -155,7 +158,10 @@ const CashStoreSectionContainer: React.FC<CashStoreSectionContainerProps> = ({
         } catch (error: any) {
           if (deal.externalUrl) {
             try {
-              await Linking.openURL(deal.externalUrl);
+              const url = deal.externalUrl;
+              if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
+                await Linking.openURL(url);
+              }
             } catch (e: any) { catchAndWarn(e, 'CashStoreSectionContainer/handleHighCashbackPress-fallback'); }
           }
         }

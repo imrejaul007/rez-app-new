@@ -245,7 +245,12 @@ function CashStoreBrandsPage() {
             'Your cashback may not be tracked. Open anyway?',
             () => {
               try {
-                Linking.openURL(brand.externalUrl!);
+                const url = brand.externalUrl;
+                if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
+                  Linking.openURL(url);
+                } else {
+                  catchAndWarn(new Error('Invalid URL scheme'), 'CashStoreBrands/openURL');
+                }
               } catch (e: any) {
                 catchAndWarn(e, 'CashStoreBrands/openURL');
               }

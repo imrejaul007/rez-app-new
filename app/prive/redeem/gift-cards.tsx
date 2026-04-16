@@ -19,7 +19,7 @@ import { coinToFiatValue } from '@/constants/priveConversion';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const generateIdempotencyKey = () => `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+const generateIdempotencyKey = () => `${Date.now()}-${crypto.randomUUID()}`;
 
 function GiftCardsScreen() {
   const router = useRouter();

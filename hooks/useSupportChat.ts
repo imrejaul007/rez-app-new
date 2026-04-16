@@ -224,7 +224,9 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       // Auto-mark as read if chat is active
       if (Platform.OS === 'web' && typeof document !== 'undefined' && document.hasFocus?.()) {
-        supportChatApi.markAsRead(ticketId, [message.id]);
+        supportChatApi.markAsRead(ticketId, [message.id]).catch(() => {
+          // silently ignore — read status is best-effort
+        });
       }
     };
 
@@ -572,7 +574,9 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     (messageIds: string[]) => {
       if (!currentTicket) return;
 
-      supportChatApi.markAsRead(currentTicket.id, messageIds);
+      supportChatApi.markAsRead(currentTicket.id, messageIds).catch(() => {
+        // silently ignore — read status is best-effort
+      });
 
       // Update local state
       setMessages((prev) =>

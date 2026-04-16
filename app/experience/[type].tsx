@@ -117,7 +117,8 @@ const ExperienceDetailPage: React.FC = () => {
       stores.filter((store: any) => {
         const matchesCategory =
           selectedFilter === 'all' || (store.category?.name || store.category || 'Other') === selectedFilter;
-        const matchesSearch = store.name.toLowerCase().includes(searchQuery.toLowerCase());
+        // HIGH-14 FIX: Use optional chaining to handle null store.name
+        const matchesSearch = (store.name || '').toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
       }),
     [stores, selectedFilter, searchQuery],

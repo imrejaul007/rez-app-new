@@ -663,10 +663,10 @@ class MockOffersApi implements OffersApiEndpoints {
       const query = params.query.toLowerCase().trim();
 
       const filteredOffers = validOffers.filter(offer =>
-        offer.title.toLowerCase().includes(query) ||
+        offer.title?.toLowerCase().includes(query) ||
         (offer.subtitle && offer.subtitle.toLowerCase().includes(query)) ||
-        offer.category.toLowerCase().includes(query) ||
-        offer.store.name.toLowerCase().includes(query) ||
+        offer.category?.toLowerCase().includes(query) ||
+        offer.store?.name?.toLowerCase().includes(query) ||
         (offer.description && offer.description.toLowerCase().includes(query))
       );
 

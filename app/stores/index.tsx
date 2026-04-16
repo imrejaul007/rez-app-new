@@ -186,9 +186,9 @@ const StoresPage: React.FC = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         store =>
-          store.name.toLowerCase().includes(query) ||
-          store.category.toLowerCase().includes(query) ||
-          store.tags.some(tag => tag.toLowerCase().includes(query))
+          store.name?.toLowerCase().includes(query) ||
+          store.category?.toLowerCase().includes(query) ||
+          store.tags?.some(tag => tag.toLowerCase().includes(query))
       );
     }
 

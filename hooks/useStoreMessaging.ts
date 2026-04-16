@@ -342,7 +342,9 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
         });
 
         // Auto-mark as read if user is viewing the conversation
-        markAsRead();
+        markAsRead().catch(() => {
+          // silently ignore — read status is best-effort
+        });
       }
     };
 
