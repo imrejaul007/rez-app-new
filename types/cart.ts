@@ -10,6 +10,11 @@ export interface CartItem {
   lockedQuantity?: number; // Number of items that have lock fee applied
   image: string | number; // string for URL, number for require()
   cashback: string;
+  // R31: Naming inconsistency — cart items use `category` ('products'|'service') but
+  // order items use `productType`. Both represent the same concept. The cartApi.ts
+  // CartItem uses `itemType?: 'product'|'service'|'event'`. No runtime issue exists
+  // since the cart and order pipelines handle conversion, but future refactors
+  // should standardize on one name across all layers.
   category: 'products' | 'service';
   quantity?: number; // Quantity in cart
   selected?: boolean; // Selection state for bulk operations

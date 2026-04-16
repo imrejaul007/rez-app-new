@@ -62,7 +62,7 @@ export interface Order {
    * Mapping: pending→placed, processing→preparing, shipped→dispatched
    */
   status: 'placed' | 'confirmed' | 'preparing' | 'ready' | 'dispatched' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'refunded';
-  paymentStatus?: 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded';
+  paymentStatus?: 'pending' | 'awaiting_payment' | 'processing' | 'authorized' | 'paid' | 'failed' | 'refunded' | 'partially_refunded';
   items: OrderItem[];
   createdAt: string; // Order creation timestamp
   updatedAt: string; // Last update timestamp
