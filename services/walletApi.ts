@@ -4,6 +4,21 @@ import apiClient, { ApiResponse } from './apiClient';
 // WALLET API SERVICE
 // ============================================================================
 
+// ---- Convention Notes (R12, R33) ----
+// R12: Wallet currency — backend uses an enum: 'REZ_COIN' | 'NC' | 'INR' | 'RC'.
+// Frontend types use string (accepts any value). All API responses return
+// currency as a string matching one of those backend enum values.
+//
+// R33: Date fields — all dates from the backend are ISO 8601 strings
+// (e.g. "2026-04-16T10:30:00.000Z"). Frontend types consistently use
+// string for date fields. No automatic Date parsing is applied at the API
+// layer; consume dates as-is from responses.
+//
+// R32: Coin redemption — the POST /wallet/redeem-coins endpoint requires
+// amount >= 50 (Joi validation). Consumers are not shown this limit.
+// MIN_REDEEM_COINS documents this requirement for UI awareness.
+export const MIN_REDEEM_COINS = 50;
+
 // ---- Remaining untyped API response interfaces ----
 
 export interface SentGiftsResponse {
@@ -186,12 +201,19 @@ export interface BackendBrandedCoin {
 
 /**
  * Savings Insights from Backend
+ *
+ * R11 FIX: All fields are now guaranteed in the balance response — the model-level
+ * toJSON no longer redacts them (B01), and the controller explicitly returns the
+ * computed CoinTransaction-derived values. The partial subset (totalSaved / thisMonth
+ * / avgPerVisit) is what the balance endpoint currently computes; the extended
+ * Phase 2 fields are stored on the wallet document and returned via other endpoints
+ * (e.g. getRezCashIdentity). lastCalculated is always present when insights exist.
  */
 export interface BackendSavingsInsights {
   totalSaved: number;
   thisMonth: number;
   avgPerVisit: number;
-  lastCalculated?: string;
+  lastCalculated: string;
 }
 
 /**
@@ -247,7 +269,10 @@ export interface WalletBalanceResponse {
   categoryBalances?: Record<string, CategoryBalance>;
   savingsInsights: BackendSavingsInsights;
   currency: string;
-  statistics?: {
+  // R10 FIX: statistics is no longer redacted. The walletBalanceController's .select()
+  // projection includes it (line ~68) and the response always returns wallet.statistics.
+  // B01 removed model-level redaction for balance / statistics / savingsInsights.
+  statistics: {
     totalEarned: number;
     totalSpent: number;
     totalCashback: number;
