@@ -139,13 +139,21 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const order = await orderApi.createOrder({
+        fulfillmentType: 'delivery',
+        deliveryAddress: {
+          name: mockAddress.name || 'Test Customer',
+          phone: mockAddress.phone || '9999999999',
+          addressLine1: mockAddress.addressLine1 || '123 Test St',
+          city: mockAddress.city || 'Bangalore',
+          state: mockAddress.state || 'Karnataka',
+          pincode: mockAddress.pincode || '560001',
+        },
+        paymentMethod: 'upi',
         items: cart.items.map((item) => ({
-          productId: item.productId,
+          product: item.productId,
           quantity: item.quantity,
           price: item.price,
         })),
-        shippingAddressId: mockAddress.id,
-        paymentIntentId: paymentIntent.paymentIntentId,
       });
 
       expect(order.id).toBe('order_123');
@@ -188,12 +196,21 @@ describe('Checkout Flow Integration Tests', () => {
 
       await expect(
         orderApi.createOrder({
+          fulfillmentType: 'delivery',
+          deliveryAddress: {
+            name: 'Test Customer',
+            phone: '9999999999',
+            addressLine1: '123 Test St',
+            city: 'Bangalore',
+            state: 'Karnataka',
+            pincode: '560001',
+          },
+          paymentMethod: 'upi',
           items: cart.items.map((item) => ({
-            productId: item.productId,
+            product: item.productId,
             quantity: item.quantity,
             price: item.price,
           })),
-          shippingAddressId: 'addr_123',
         })
       ).rejects.toMatchObject({
         response: {
@@ -298,8 +315,21 @@ describe('Checkout Flow Integration Tests', () => {
 
       await expect(
         orderApi.createOrder({
-          items: cart.items,
-          shippingAddressId: 'addr_123',
+          fulfillmentType: 'delivery',
+          deliveryAddress: {
+            name: 'Test Customer',
+            phone: '9999999999',
+            addressLine1: '123 Test St',
+            city: 'Bangalore',
+            state: 'Karnataka',
+            pincode: '560001',
+          },
+          paymentMethod: 'upi',
+          items: cart.items.map((item) => ({
+            product: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
         })
       ).rejects.toBeDefined();
     });
@@ -496,14 +526,21 @@ describe('Checkout Flow Integration Tests', () => {
   describe('Order Creation', () => {
     it('should create order with all details', async () => {
       const orderData = {
+        fulfillmentType: 'delivery',
+        deliveryAddress: {
+          name: 'Test Customer',
+          phone: '9999999999',
+          addressLine1: '123 Test St',
+          city: 'Bangalore',
+          state: 'Karnataka',
+          pincode: '560001',
+        },
+        paymentMethod: 'upi',
         items: mockCartItems.map((item) => ({
-          productId: item.productId,
+          product: item.productId,
           quantity: item.quantity,
           price: item.price,
         })),
-        shippingAddressId: 'addr_123',
-        billingAddressId: 'addr_123',
-        paymentIntentId: 'pi_123',
         couponCode: 'SAVE10',
       };
 
@@ -562,9 +599,21 @@ describe('Checkout Flow Integration Tests', () => {
 
       await expect(
         orderApi.createOrder({
-          items: mockCartItems,
-          shippingAddressId: 'addr_123',
-          paymentIntentId: 'pi_123',
+          fulfillmentType: 'delivery',
+          deliveryAddress: {
+            name: 'Test Customer',
+            phone: '9999999999',
+            addressLine1: '123 Test St',
+            city: 'Bangalore',
+            state: 'Karnataka',
+            pincode: '560001',
+          },
+          paymentMethod: 'upi',
+          items: mockCartItems.map((item) => ({
+            product: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
         })
       ).rejects.toBeDefined();
 
@@ -661,8 +710,21 @@ describe('Checkout Flow Integration Tests', () => {
       await cartApi.getCart();
       await paymentService.createPaymentIntent({ amount: 2796.7 });
       await orderApi.createOrder({
-        items: mockCartItems,
-        shippingAddressId: 'addr_123',
+        fulfillmentType: 'delivery',
+        deliveryAddress: {
+          name: 'Test Customer',
+          phone: '9999999999',
+          addressLine1: '123 Test St',
+          city: 'Bangalore',
+          state: 'Karnataka',
+          pincode: '560001',
+        },
+        paymentMethod: 'upi',
+        items: mockCartItems.map((item) => ({
+          product: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+        })),
       });
 
       const endTime = Date.now();

@@ -1,7 +1,8 @@
+// Canonical types: @rez/shared-types — migrate imports when package is published
 import { ImageSourcePropType } from 'react-native';
 import { BRAND } from '@/constants/brand';
 
-// Core Coin Types — must match rez-shared COIN_TYPES and backend CoinTransaction.type (TF-01 fix)
+// Core Coin Types — canonical source: @rez/shared/src/constants/coins.ts
 export type CoinType = 'rez' | 'branded' | 'promo' | 'prive' | 'cashback' | 'referral';
 
 // Branded Coin Details (merchant-specific)
@@ -75,8 +76,8 @@ export interface SmartAlert {
 
 export interface WalletTransaction {
   id: string;
-  // FL-07/TF-02 fix: match backend CoinTransaction.type lowercase values exactly.
-  // 'transfer' and 'gift' do not exist in DB; added 'refunded' and 'branded_award'.
+  // Canonical source: @rez/shared/src/types/wallet.ts (CoinTransaction.type)
+  // Matches backend CoinTransaction.type lowercase values exactly.
   type: 'earned' | 'spent' | 'expired' | 'bonus' | 'refunded' | 'branded_award';
   coinType: CoinType;
   amount: number;
@@ -157,12 +158,12 @@ export interface RefreshWalletRequest {
   forceRefresh?: boolean;
 }
 
-// Utility Types — FL-07/TF-02 fix: match backend CoinTransaction.type lowercase values
+// Utility Types — canonical source: @rez/shared/src/types/wallet.ts
 export type TransactionType = 'earned' | 'spent' | 'expired' | 'bonus' | 'refunded' | 'branded_award';
 export type TransactionStatus = 'completed' | 'pending' | 'failed';
 export type WalletErrorCode = 'NETWORK_ERROR' | 'SERVER_ERROR' | 'PARSING_ERROR' | 'UNAUTHORIZED' | 'TIMEOUT' | 'REAUTH_REQUIRED' | 'FEATURE_DISABLED' | 'VELOCITY_LIMIT' | 'WALLET_FROZEN' | 'INSUFFICIENT_BALANCE' | 'UNKNOWN';
 
-// Coin Usage Order - Promo > Branded > Prive > Cashback > Referral > Rez (automatic)
+// Coin Usage Order — canonical: Promo > Branded > Prive > Cashback > Referral > Rez (automatic)
 export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'prive', 'cashback', 'referral', 'rez'];
 
 // Constants - Updated for new wallet design

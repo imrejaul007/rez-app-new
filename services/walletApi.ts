@@ -260,7 +260,7 @@ export interface WalletBalanceResponse {
     maxBalance: number;
     dailySpendLimit: number;
     dailySpentToday: number;
-    remainingToday: number;
+    remainingToday: number; // computed: dailySpendLimit - dailySpentToday
   };
   status: {
     isActive: boolean;

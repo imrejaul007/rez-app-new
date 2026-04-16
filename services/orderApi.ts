@@ -18,16 +18,67 @@ interface GetOrdersParams {
   dateTo?: string;
 }
 
+/**
+ * @deprecated Use ordersApi.ts CreateOrderRequest instead.
+ * This interface is kept for test compatibility only.
+ *
+ * Backend (rezbackend) POST /orders expects:
+ * {
+ *   fulfillmentType?: 'delivery' | 'pickup' | 'drive_thru' | 'dine_in',
+ *   deliveryAddress?: { name, phone, addressLine1, city, state, pincode, ... },
+ *   paymentMethod: 'wallet' | 'card' | 'upi' | 'cod' | 'netbanking' | 'razorpay',
+ *   fulfillmentDetails?: { tableNumber?, vehicleInfo?, pickupInstructions? },
+ *   specialInstructions?: string,
+ *   couponCode?: string,
+ *   redemptionCode?: string,
+ *   lockFeeDiscount?: number,
+ *   coinsUsed?: { rezCoins, promoCoins, storePromoCoins, totalCoinsValue?, wasilCoins? },
+ *   storeId?: string,
+ *   items?: Array<{ product: string; quantity: number; price: number; name? }>,
+ *   pickId?: string,
+ * }
+ *
+ * Tests should migrate to ordersApi.ts which uses the correct format.
+ */
 interface CreateOrderData {
-  items: Array<{
-    productId: string;
-    quantity: number;
-    variant?: any;
-  }>;
-  shippingAddressId: string;
-  paymentMethodId: string;
+  fulfillmentType?: 'delivery' | 'pickup' | 'drive_thru' | 'dine_in';
+  fulfillmentDetails?: {
+    tableNumber?: string;
+    vehicleInfo?: string;
+    pickupInstructions?: string;
+  };
+  deliveryAddress?: {
+    name: string;
+    phone: string;
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    state: string;
+    pincode: string;
+    country?: string;
+    landmark?: string;
+    addressType?: 'home' | 'work' | 'other';
+  };
+  paymentMethod: 'wallet' | 'card' | 'upi' | 'cod' | 'netbanking' | 'razorpay';
+  specialInstructions?: string;
   couponCode?: string;
-  notes?: string;
+  redemptionCode?: string;
+  lockFeeDiscount?: number;
+  coinsUsed?: {
+    rezCoins: number;
+    promoCoins: number;
+    storePromoCoins: number;
+    totalCoinsValue?: number;
+    wasilCoins?: number;
+  };
+  storeId?: string;
+  items?: Array<{
+    product: string;
+    quantity: number;
+    price: number;
+    name?: string;
+  }>;
+  pickId?: string;
 }
 
 class OrderApiService {

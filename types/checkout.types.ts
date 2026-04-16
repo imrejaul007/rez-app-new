@@ -1,7 +1,9 @@
+// Canonical types: @rez/shared-types — migrate imports when package is published
 // Checkout Types and Interfaces
 // This file contains all TypeScript interfaces for the checkout system
 
 // ── Fulfillment Types ──────────────────────────────────────────────
+// Canonical source: @rez/shared/src/types/order.types.ts (FulfillmentType)
 export type FulfillmentType = 'delivery' | 'pickup' | 'drive_thru' | 'dine_in';
 
 export interface FulfillmentOption {
