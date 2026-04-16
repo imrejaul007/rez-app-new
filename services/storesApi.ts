@@ -1152,6 +1152,49 @@ class StoresService {
   }
 }
 
+// ── Coordinate Utilities ─────────────────────────────────────────────────────
+
+/**
+ * Normalizes coordinates from any format to GeoJSON [longitude, latitude].
+ *
+ * Handles all input formats:
+ *   - GeoJSON array:        [lng, lat]
+ *   - { lat, lng } object:  { lat, lng }
+ *   - { latitude, longitude } object: { latitude, longitude }
+ *
+ * Returns null if coordinates are missing or invalid.
+ *
+ * @example
+ *   normalizeCoordinates([77.5946, 12.9716])          // [77.5946, 12.9716] — already GeoJSON
+ *   normalizeCoordinates({ lat: 12.9716, lng: 77.5946 }) // [77.5946, 12.9716]
+ *   normalizeCoordinates({ latitude: 12.9716, longitude: 77.5946 }) // [77.5946, 12.9716]
+ */
+export function normalizeCoordinates(
+  coords: [number, number] | { lat?: number; lng?: number; latitude?: number; longitude?: number } | null | undefined
+): [number, number] | null {
+  if (!coords) return null;
+
+  // GeoJSON [lng, lat] array
+  if (Array.isArray(coords)) {
+    if (coords.length === 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+      return coords as [number, number];
+    }
+    return null;
+  }
+
+  // { lat, lng } format
+  if (typeof coords.lat === 'number' && typeof coords.lng === 'number') {
+    return [coords.lng, coords.lat];
+  }
+
+  // { latitude, longitude } format
+  if (typeof coords.latitude === 'number' && typeof coords.longitude === 'number') {
+    return [coords.longitude, coords.latitude];
+  }
+
+  return null;
+}
+
 // Create singleton instance
 const storesService = new StoresService();
 

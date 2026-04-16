@@ -8,6 +8,7 @@ import * as Application from 'expo-application';
 import { Platform } from 'react-native';
 import apiClient from './apiClient';
 import { safeJsonParse } from '@/utils/safeJson';
+import uuid from 'react-native-uuid';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -105,8 +106,8 @@ export const generateDeviceFingerprint = async (): Promise<DeviceFingerprint> =>
     if (!storedId) {
       // Generate new unique ID
       const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(2, 15);
-      storedId = `${Platform.OS}_${timestamp}_${random}`;
+      const randomPart = uuid.v4() as string;
+      storedId = `${Platform.OS}_${timestamp}_${randomPart}`;
 
       await AsyncStorage.setItem(SECURITY_CONFIG.DEVICE_ID_KEY, storedId);
 

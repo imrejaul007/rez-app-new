@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import uuid from 'react-native-uuid';
 import NetInfo from '@react-native-community/netinfo';
 import storePaymentApi from '@/services/storePaymentApi';
 import externalWalletApi from '@/services/externalWalletApi';
@@ -118,7 +119,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
   // OG-D001 FIX: One idempotency key per hook mount so retries after a
   // network drop always re-use the same key and the backend deduplicates.
   const idempotencyKeyRef = useRef(
-    `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+    `store-pay-${Date.now()}-${uuid.v4()}`
   );
 
   // OG-D002 FIX: In-flight lock prevents duplicate submissions from a
@@ -425,7 +426,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
     setError(null);
     // OG-D001 FIX: Regenerate the idempotency key when the user explicitly
     // resets — this represents a new payment intent, not a retry.
-    idempotencyKeyRef.current = `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    idempotencyKeyRef.current = `store-pay-${Date.now()}-${uuid.v4()}`;
     isSubmittingRef.current = false;
     // Allow loadPaymentData to be called again after a reset (new payment intent).
     hasLoadedRef.current = false;

@@ -3,6 +3,7 @@
 // READ operations use react-query; WebSocket logic and mutations remain imperative.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import uuid from 'react-native-uuid';
 import { Platform } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import NetInfo from '@react-native-community/netinfo';
@@ -197,7 +198,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       const msg = data?.message || data;
       const message: ChatMessage = {
-        id: msg.id || msg._id?.toString?.() || msg._id || `msg_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        id: msg.id || msg._id?.toString?.() || msg._id || `msg_${Date.now()}_${uuid.v4()}`,
         ticketId: ticketId,
         content: msg.content || msg.message || '',
         sender: msg.sender || (msg.senderType === 'agent' ? 'agent' : 'user'),
@@ -443,7 +444,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
     // Optimistically add message to UI
     const optimisticMessage: ChatMessage = {
-      id: `temp_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      id: `temp_${Date.now()}_${uuid.v4()}`,
       ticketId: currentTicket.id,
       content: messageRequest.content,
       sender: 'user',

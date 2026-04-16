@@ -12,6 +12,7 @@
 
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
 
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},
@@ -333,7 +334,7 @@ class WebVitalsService {
    * Generate unique ID
    */
   private generateId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    return `${Date.now()}-${uuid.v4()}`;
   }
 
   /**

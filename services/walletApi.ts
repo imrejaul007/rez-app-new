@@ -1,4 +1,5 @@
 import apiClient, { ApiResponse } from './apiClient';
+import uuid from 'react-native-uuid';
 
 // ============================================================================
 // WALLET API SERVICE
@@ -259,7 +260,7 @@ export interface WalletBalanceResponse {
     maxBalance: number;
     dailySpendLimit: number;
     dailySpentToday: number;
-    remainingToday: number;
+    remainingToday: number; // computed: dailySpendLimit - dailySpentToday
   };
   status: {
     isActive: boolean;
@@ -638,7 +639,7 @@ class WalletService {
     try {
       const key =
         idempotencyKey ||
-        `wallet-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        `wallet-pay-${Date.now()}-${uuid.v4()}`;
       return await apiClient.post<PaymentResponse>('/wallet/payment', data as any, {
         headers: { 'Idempotency-Key': key },
       });

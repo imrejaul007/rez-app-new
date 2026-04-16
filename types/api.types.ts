@@ -1,3 +1,4 @@
+// Canonical types: @rez/shared-types — migrate imports when package is published
 // API Response Types
 export interface ApiResponse<T> {
   success: boolean;

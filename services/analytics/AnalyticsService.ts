@@ -10,6 +10,7 @@ import { AnalyticsProvider, AnalyticsConfig, PurchaseTransaction, UserProperties
 import { CustomAnalyticsProvider } from './providers/CustomProvider';
 import apiClient from '../apiClient';
 import { ANALYTICS_EVENTS } from './events';
+import uuid from 'react-native-uuid';
 
 const DEFAULT_CONFIG: AnalyticsConfig = {
   enabled: true,
@@ -368,7 +369,7 @@ export class AnalyticsService {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

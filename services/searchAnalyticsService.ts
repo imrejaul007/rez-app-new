@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
 
 export interface SearchEvent {
   id: string;
@@ -34,7 +35,7 @@ class SearchAnalyticsService {
    */
   async trackSearch(query: string, resultsCount: number = 0): Promise<void> {
     const event: SearchEvent = {
-      id: `search_${Date.now()}_${Math.random()}`,
+      id: `search_${Date.now()}_${uuid.v4()}`,
       type: 'search',
       timestamp: Date.now(),
       query: query.trim(),
@@ -62,7 +63,7 @@ class SearchAnalyticsService {
     position: number
   ): Promise<void> {
     const event: SearchEvent = {
-      id: `click_${Date.now()}_${Math.random()}`,
+      id: `click_${Date.now()}_${uuid.v4()}`,
       type: 'result_click',
       timestamp: Date.now(),
       query: query.trim(),
@@ -79,7 +80,7 @@ class SearchAnalyticsService {
    */
   async trackCategoryClick(categoryId: string, categoryName: string): Promise<void> {
     const event: SearchEvent = {
-      id: `category_${Date.now()}_${Math.random()}`,
+      id: `category_${Date.now()}_${uuid.v4()}`,
       type: 'category_click',
       timestamp: Date.now(),
       categoryId,
@@ -94,7 +95,7 @@ class SearchAnalyticsService {
    */
   async trackFilterApplied(filters: any): Promise<void> {
     const event: SearchEvent = {
-      id: `filter_${Date.now()}_${Math.random()}`,
+      id: `filter_${Date.now()}_${uuid.v4()}`,
       type: 'filter_applied',
       timestamp: Date.now(),
       filters,
@@ -108,7 +109,7 @@ class SearchAnalyticsService {
    */
   async trackSortApplied(sortBy: string): Promise<void> {
     const event: SearchEvent = {
-      id: `sort_${Date.now()}_${Math.random()}`,
+      id: `sort_${Date.now()}_${uuid.v4()}`,
       type: 'sort_applied',
       timestamp: Date.now(),
       sortBy,

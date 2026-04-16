@@ -2,6 +2,7 @@
 // Handles order creation, management, and tracking
 
 import apiClient, { ApiResponse } from './apiClient';
+import uuid from 'react-native-uuid';
 import {
   Order as UnifiedOrder,
   OrderItem as UnifiedOrderItem,
@@ -308,7 +309,7 @@ class OrdersService {
     try {
       const key =
         idempotencyKey ||
-        `order-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        `order-${Date.now()}-${uuid.v4()}`;
 
       const response = await apiClient.post<Order>('/orders', data as unknown as Record<string, unknown>, {
         headers: { 'Idempotency-Key': key },

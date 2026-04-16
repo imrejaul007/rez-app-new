@@ -7,6 +7,8 @@
  */
 
 // Offers API Service
+
+import uuid from 'react-native-uuid';
 // Handles offer operations, search, filtering, favorites, and redemption
 // Enhanced with comprehensive error handling, validation, retry logic, and logging
 
@@ -907,7 +909,7 @@ class MockOffersApi implements OffersApiEndpoints {
       await this.simulateDelay();
 
       // Generate redemption ID
-      const redemptionId = `redemption_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      const redemptionId = `redemption_${Date.now()}_${uuid.v4()}`;
 
       const response: ApiResponse<{ success: boolean; redemptionId: string }> = {
         success: true,

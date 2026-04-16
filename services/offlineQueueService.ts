@@ -1,4 +1,5 @@
 import asyncStorageService from './asyncStorageService';
+import uuid from 'react-native-uuid';
 import cartService from './cartApi';
 import * as authStorage from '@/utils/authStorage';
 
@@ -97,7 +98,7 @@ class OfflineQueueService {
     maxRetries: number = 3
   ): Promise<string> {
     const operation: QueuedOperation = {
-      id: `${type}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+      id: `${type}_${Date.now()}_${uuid.v4()}`,
       type,
       timestamp: new Date().toISOString(),
       data,

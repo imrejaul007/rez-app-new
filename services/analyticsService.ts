@@ -1,5 +1,8 @@
 /**
  * Analytics Service
+ */
+
+import uuid from 'react-native-uuid';
  *
  * Comprehensive analytics and event tracking system
  * Features:
@@ -82,7 +85,7 @@ class AnalyticsService {
 
   private generateSessionId(): string {
     // BUG-091 FIX: .substr() is deprecated — use .substring() instead
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   setUserId(userId: string) {

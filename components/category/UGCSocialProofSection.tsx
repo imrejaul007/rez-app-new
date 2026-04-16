@@ -313,7 +313,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
       <FlashList
         data={displayContent}
         renderItem={renderVideoItem}
-        keyExtractor={(item) => item.id || Math.random().toString()}
+        keyExtractor={(item) => String(item.id ?? 'unknown-ugc')}
         numColumns={2}
         scrollEnabled={false}
         contentContainerStyle={styles.gridContainer as any}

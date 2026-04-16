@@ -8,6 +8,7 @@ import { Platform } from 'react-native';
 import { BaseAnalyticsProvider } from './BaseProvider';
 import { PurchaseTransaction, AnalyticsEvent } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
 
 interface CustomProviderConfig {
   apiUrl: string;
@@ -174,7 +175,7 @@ export class CustomAnalyticsProvider extends BaseAnalyticsProvider {
   }
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   private async persistEvents(): Promise<void> {

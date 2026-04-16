@@ -293,9 +293,31 @@ export const useSecurityStore = create<SecurityStoreState>((set, get) => ({
   },
 
   generateBackupCodes: (): string[] => {
-    const codes = [];
+    // CA-AUT-020 FIX: Use crypto.getRandomValues() instead of Math.random()
+    // Math.random() is NOT cryptographically secure — backup codes generated with it
+    // are predictable, enabling 2FA bypass. crypto.getRandomValues() provides
+    // CSPRNG-quality randomness suitable for security-sensitive token generation.
+    const codes: string[] = [];
+    // Generate 10 codes, each 8 characters from alphanumeric charset
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     for (let i = 0; i < 10; i++) {
-      codes.push(Math.random().toString(36).substring(2, 8).toUpperCase());
+      const code = new Uint32Array(4);
+      // Use available crypto source (web: window.crypto, React Native: fallback)
+      if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+        crypto.getRandomValues(code);
+      } else {
+        // Fallback: Math.random() — still better than hardcoded values,
+        // but NOT cryptographically secure. Backend MUST be the source of truth.
+        for (let j = 0; j < 4; j++) {
+          code[j] = Math.floor(Math.random() * 0xFFFFFFFF);
+        }
+      }
+      let codeStr = '';
+      for (let j = 0; j < 4; j++) {
+        codeStr += charset[code[j] % charset.length];
+        codeStr += charset[(code[j] >> 8) % charset.length];
+      }
+      codes.push(codeStr);
     }
     return codes;
   },

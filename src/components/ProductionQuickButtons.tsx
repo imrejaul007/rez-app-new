@@ -42,7 +42,7 @@ const ProductionQuickButtons = () => {
         `/StoreListPage?lat=${location.coords.latitude}&lng=${location.coords.longitude}&sortBy=distance`
       );
     } catch (error) {
-      console.error('Error getting location:', error);
+      console.warn('[ProductionQuickButtons] Error getting location:', error instanceof Error ? error.message : String(error));
       platformAlertSimple(
         'Location Error',
         'Could not get your location. Please try again.'

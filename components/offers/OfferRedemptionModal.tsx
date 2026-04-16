@@ -5,7 +5,7 @@
  * Shows promo code with copy functionality and redemption instructions
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Modal,
@@ -74,6 +74,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
 
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(50);
+  const copySuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -84,6 +85,14 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
     } else {
       animateOut();
     }
+    return () => {
+      // CA-CMP-009 FIX: Clear any pending copySuccess timer when modal closes or unmounts.
+      // Without this cleanup, setState is called on an unmounted component causing React warnings.
+      if (copySuccessTimerRef.current !== null) {
+        clearTimeout(copySuccessTimerRef.current);
+        copySuccessTimerRef.current = null;
+      }
+    };
   }, [visible]);
 
   const animateIn = () => {
@@ -107,7 +116,8 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
 
       platformAlertSimple('Copied!', `Promo code "${codeToCopy}" copied to clipboard`);
 
-      setTimeout(() => setCopySuccess(false), 3000);
+      // CA-CMP-009 FIX: Store timer ID in ref so cleanup effect can clear it on unmount
+      copySuccessTimerRef.current = setTimeout(() => setCopySuccess(false), 3000);
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to copy code to clipboard');
     }

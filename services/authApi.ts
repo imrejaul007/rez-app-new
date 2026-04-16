@@ -29,7 +29,7 @@ export interface User {
     avatar?: string;
     bio?: string;
     dateOfBirth?: Date;
-    gender?: 'male' | 'female' | 'other';
+    gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
     location?: {
       address?: string;
       city?: string;
@@ -52,15 +52,7 @@ export interface User {
     pushNotifications?: boolean;
     smsNotifications?: boolean;
   };
-  // NOTE: DM-L4 — User.wallet sub-doc removed from backend User schema.
-  // Wallet data is no longer returned on /api/user/me. Use GET /wallet/balance instead.
-  wallet?: {
-    balance?: number;
-    totalEarned?: number;
-    totalSpent?: number;
-    pendingAmount?: number;
-  };
-  role: 'user' | 'admin' | 'merchant';
+  role: 'user' | 'admin' | 'merchant' | 'support' | 'operator' | 'super_admin' | 'consumer';
   isVerified: boolean;
   isOnboarded: boolean;
   createdAt: string;
@@ -100,7 +92,7 @@ export interface ProfileUpdate {
     bio?: string;
     website?: string;
     dateOfBirth?: Date;
-    gender?: 'male' | 'female' | 'other';
+    gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
     location?: {
       address?: string;
       city?: string;

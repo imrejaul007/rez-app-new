@@ -1,5 +1,8 @@
 /**
  * Bill Upload Queue Service
+ */
+
+import uuid from 'react-native-uuid';
  *
  * Provides offline-first upload queue functionality for bill uploads.
  * Handles queueing, persistence, retry logic, and synchronization.
@@ -849,7 +852,7 @@ class BillUploadQueueService extends EventEmitter {
    * Generate unique bill ID
    */
   private generateBillId(): string {
-    return `bill_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `bill_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

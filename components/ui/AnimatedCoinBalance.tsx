@@ -68,6 +68,8 @@ export const AnimatedCoinBalance: React.FC<AnimatedCoinBalanceProps> = ({
   }, [value, animProgress, scaleAnim]);
 
   // LUCA: Interpolate the displayed value between old and new
+  // CA-CMP-054 FIX: Include animProgress in dependency array so displayValue updates
+  // as the animation progresses, not just when the target value changes.
   const displayValue = useMemo(() => {
     const prevVal = previousValue.current;
 
@@ -79,7 +81,7 @@ export const AnimatedCoinBalance: React.FC<AnimatedCoinBalanceProps> = ({
         [prevVal, value]
       )
     );
-  }, [value]);
+  }, [value, animProgress]);
 
   // LUCA: Scale pulse animation for delight
   const scaleStyle = useAnimatedStyle(() => ({

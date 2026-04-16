@@ -1,3 +1,4 @@
+// Canonical types: @rez/shared-types — migrate imports when package is published
 // Account Settings System Types and Interfaces
 // TypeScript definitions for account settings, preferences, and configuration
 

@@ -2,6 +2,7 @@
 // Manages group buying state and real-time updates
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import uuid from 'react-native-uuid';
 import { useSocket } from '@/contexts/SocketContext';
 import { useIsAuthenticated } from '@/stores/selectors';
 import groupBuyingApi from '@/services/groupBuyingApi';
@@ -488,7 +489,7 @@ export function useGroupBuying() {
 
     if (title) {
       const notification: GroupNotification = {
-        id: `${Date.now()}-${Math.random()}`,
+        id: `${Date.now()}-${uuid.v4()}`,
         groupId: payload.groupId,
         type,
         title,

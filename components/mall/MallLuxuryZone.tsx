@@ -45,7 +45,7 @@ const MallLuxuryZone: React.FC<MallLuxuryZoneProps> = ({
     [onBrandPress]
   );
 
-  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id || String(Math.random()), []);
+  const keyExtractor = useCallback((item: MallBrand) => String(item.id ?? item._id ?? "unknown-brand"), []);
 
   // Loading skeleton
   if (isLoading) {

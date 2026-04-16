@@ -1,5 +1,8 @@
 /**
  * Cloudinary Video Upload Service
+ */
+
+import uuid from 'react-native-uuid';
  * Handles video uploads to Cloudinary with progress tracking, retry logic, and error handling
  *
  * Features:
@@ -467,7 +470,7 @@ class VideoUploadService {
    * Generate unique upload ID
    */
   private generateUploadId(): string {
-    return `upload_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    return `upload_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

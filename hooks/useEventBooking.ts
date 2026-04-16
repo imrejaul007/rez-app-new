@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { alertOk } from '@/utils/alert';
+import uuid from 'react-native-uuid';
 import eventsApiService from '@/services/eventsApi';
 import { EventItem } from '@/types/homepage.types';
 
@@ -46,7 +47,7 @@ export function useEventBooking(): UseEventBookingReturn {
       }
 
       // Generate idempotency key to prevent duplicate bookings
-      const idempotencyKey = `${event.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const idempotencyKey = `${event.id}-${Date.now()}-${uuid.v4()}`;
 
       // Call API to book event
       const result = await eventsApiService.bookEventSlot(event.id, { ...formData, idempotencyKey });

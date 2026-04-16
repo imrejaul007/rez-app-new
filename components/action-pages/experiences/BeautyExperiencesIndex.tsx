@@ -334,7 +334,7 @@ function BeautyExperiencesPage() {
       ) : (
         <FlashList
           data={filteredExperiences}
-          keyExtractor={(item) => item._id || item.id || Math.random().toString()}
+          keyExtractor={(item) => item._id ?? item.id ?? 'unknown-experience'}
           renderItem={renderExperienceItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}

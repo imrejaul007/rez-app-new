@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '@/services/apiClient';
+import uuid from 'react-native-uuid';
 
 // Types
 export interface SearchQuery {
@@ -339,7 +340,7 @@ class SearchService {
   }
 
   private generateHistoryId(): string {
-    return `search_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `search_${Date.now()}_${uuid.v4()}`;
   }
 
   private cacheResult(key: string, result: SearchResult): void {
