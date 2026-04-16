@@ -51,7 +51,9 @@ const CONVERSION_RATES: Record<string, number> = {
 // LEVEL PROGRESS BAR
 // =============================================================================
 
-function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
+// G-KU-M27 FIX: Memoize LevelProgressBar to prevent unnecessary re-renders
+// when the parent re-renders with the same level prop.
+const LevelProgressBar = React.memo(function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
   const levels: Array<'L1' | 'L2' | 'L3' | 'L4'> = ['L1', 'L2', 'L3', 'L4'];
   const currentIdx = levels.indexOf(level);
 
@@ -102,13 +104,14 @@ function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
       </View>
     </View>
   );
-}
+});
 
 // =============================================================================
 // BADGE ITEM
 // =============================================================================
 
-function BadgeItem({ badge, index }: { badge: { id: string; name: string; icon?: string; earnedAt: string }; index: number }) {
+// G-KU-M27 FIX: Memoize BadgeItem to prevent re-renders when parent re-renders.
+const BadgeItem = React.memo(function BadgeItem({ badge, index }: { badge: { id: string; name: string; icon?: string; earnedAt: string }; index: number }) {
   const colors2 = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F', '#BB8FCE', '#85C1E9'];
   const color = colors2[index % colors2.length];
   const bgColor = color + '20';
@@ -126,7 +129,7 @@ function BadgeItem({ badge, index }: { badge: { id: string; name: string; icon?:
       </Text>
     </View>
   );
-}
+});
 
 // =============================================================================
 // EARN RECORD ITEM
@@ -193,8 +196,9 @@ function KarmaMyKarmaScreen() {
         if (!isMounted()) return;
         if (profileRes.success && profileRes.data) setProfile(profileRes.data);
         if (historyRes.success && historyRes.data) setHistory(historyRes.data.records ?? []);
-      } catch {
-        // non-fatal
+      } catch (err: any) {
+        // G-KU-H5 FIX: Log non-fatal errors instead of silently ignoring.
+        console.warn('[MyKarma] Failed to load karma data', err?.message ?? err);
       } finally {
         if (!isMounted()) return;
         setLoading(false);
@@ -204,8 +208,13 @@ function KarmaMyKarmaScreen() {
     [isAuthenticated, isMounted],
   );
 
+  // G-KU-M11 FIX: useFocusEffect requires a callback that may return a cleanup fn.
+  // Using useCallback correctly ensures fetchData is recreated when its deps change.
   useFocusEffect(
-    useCallback(() => { fetchData(); }, [fetchData]),
+    useCallback(() => {
+      fetchData();
+      return () => {}; // no-op cleanup — fetchData handles its own cancellation
+    }, [fetchData]),
   );
 
   const onRefresh = () => { setRefreshing(true); fetchData(true); };
@@ -238,6 +247,23 @@ function KarmaMyKarmaScreen() {
   }
 
   const levelCfg = profile ? LEVEL_CONFIG[profile.level] : LEVEL_CONFIG.L1;
+  // G-KU-H6 FIX: If user is authenticated but profile is null, show an error message
+  // instead of silently rendering default values (L1, 0 karma, 0 events).
+  if (!profile && !loading && isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <KarmaHeader title="My Karma" showBack />
+        <View style={styles.authRequired}>
+          <Ionicons name="alert-circle-outline" size={64} color={Colors.textSecondary} />
+          <Text style={styles.authTitle}>Failed to Load Karma</Text>
+          <Text style={styles.authSubtitle}>Could not load your karma profile. Please try again.</Text>
+          <Pressable style={styles.loginBtn} onPress={() => fetchData()}>
+            <Text style={styles.loginBtnText}>Retry</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
   const conversionRate = profile ? CONVERSION_RATES[profile.level] : 25;
   const progressPercent =
     profile && profile.level !== 'L4'

@@ -40,6 +40,8 @@ function KarmaScanScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [locationPermission, requestLocationPermission] = Location.useForegroundPermissions();
+  const lastScanRef = useRef<string | null>(null);
+  const lastScanTimeRef = useRef<number>(0);
 
   const [scanMode, setScanMode] = useState<ScanMode>((mode as ScanMode) ?? 'checkin');
   const [activeEventId, setActiveEventId] = useState<string | null>(eventId ?? null);
@@ -71,12 +73,24 @@ function KarmaScanScreen() {
     })();
   }, []);
 
+  // G-KU-H4 FIX: Sync state with URL params when they change (e.g., back navigation).
+  useEffect(() => {
+    if (eventId) setActiveEventId(eventId);
+    if (mode === 'checkin' || mode === 'checkout') setScanMode(mode);
+  }, [eventId, mode]);
+
   // Handle barcode scan
   const handleBarCodeScanned = useCallback(
     async (result: BarcodeScanningResult) => {
-      if (scanState !== 'idle') return;
+      // G-KU-H3 FIX: Debounce — ignore duplicate scans within 2 seconds.
+      const now = Date.now();
       const qrCode = result.data;
       if (!qrCode || !activeEventId) return;
+      if (qrCode === lastScanRef.current && now - lastScanTimeRef.current < 2000) return;
+      lastScanRef.current = qrCode;
+      lastScanTimeRef.current = now;
+
+      if (scanState !== 'idle') return;
 
       setScanState('processing');
       try {
