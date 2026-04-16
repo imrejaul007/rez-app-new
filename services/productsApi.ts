@@ -66,9 +66,10 @@ export interface Product {
     slug: string;
   };
   visibility: 'public' | 'private' | 'hidden';
+  // Canonical pricing format: mrp (marked retail price) and selling (actual selling price)
   pricing: {
-    basePrice: number;
-    salePrice?: number;
+    mrp: number;
+    selling: number;
     cost?: number;
     taxable: boolean;
   };
