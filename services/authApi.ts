@@ -19,7 +19,8 @@ const devLog = {
 // Keep the old User interface for backwards compatibility during migration
 export interface User {
   id: string;
-  /** MongoDB ObjectId — may be present alongside `id` on backend responses */
+  /** R03: Backend consistently returns `id` (serialized from `_id`). `_id` may still
+   * appear on some legacy response paths — kept optional to avoid breaking existing callers. */
   _id?: string;
   phoneNumber: string;
   email?: string;
@@ -28,7 +29,9 @@ export interface User {
     lastName?: string;
     avatar?: string;
     bio?: string;
-    dateOfBirth?: Date;
+    /** ISO 8601 string — backend returns Date objects serialized as strings */
+    dateOfBirth?: string;
+    // R01 FIX: Added 'prefer_not_to_say' to match Mongoose schema and Joi validator
     gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
     location?: {
       address?: string;
@@ -91,7 +94,9 @@ export interface ProfileUpdate {
     avatar?: string;
     bio?: string;
     website?: string;
-    dateOfBirth?: Date;
+    /** ISO 8601 string — backend returns Date objects serialized as strings */
+    dateOfBirth?: string;
+    // R01 FIX: Added 'prefer_not_to_say' to match Mongoose schema and Joi validator
     gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
     location?: {
       address?: string;
