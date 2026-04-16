@@ -49,7 +49,7 @@ const validOtp = '123456';
 const makeAuthResponse = () => ({
   success: true,
   data: {
-    user: { id: 'u1', phoneNumber: validPhone, profile: {}, preferences: {}, wallet: { balance: 0, totalEarned: 0, totalSpent: 0, pendingAmount: 0 }, role: 'user', isVerified: true, isOnboarded: false, createdAt: '', updatedAt: '' },
+    user: { id: 'u1', phoneNumber: validPhone, profile: {}, preferences: {}, role: 'user', isVerified: true, isOnboarded: false, createdAt: '', updatedAt: '' },
     tokens: { accessToken: 'access-abc', refreshToken: 'refresh-xyz', expiresIn: 3600 },
   },
 });
