@@ -84,6 +84,7 @@ interface SocketContextType {
   onOutOfStock: (callback: OutOfStockCallback) => () => void;
   onPriceUpdate: (callback: PriceUpdateCallback) => () => void;
   onProductAvailability: (callback: ProductAvailabilityCallback) => () => void;
+  onProductCreated: (callback: (payload: any) => void) => () => void;
   onConnect: (callback: ConnectionCallback) => () => void;
   onDisconnect: (callback: ConnectionCallback) => () => void;
   onError: (callback: ErrorCallback) => () => void;
@@ -372,6 +373,18 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     };
   }, []);
 
+  // Listen for product creation events (backend must emit product_created event)
+  // TODO: Backend team — ensure product_created socket event is emitted when new products are created
+  const onProductCreated = useCallback((callback: (payload: any) => void) => {
+    if (!socketRef.current) return () => {};
+
+    socketRef.current.on('product_created', callback);
+
+    return () => {
+      socketRef.current?.off('product_created', callback);
+    };
+  }, []);
+
   const onConnect = useCallback((callback: ConnectionCallback) => {
     if (!socketRef.current) return () => {};
 
@@ -565,6 +578,7 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     onOutOfStock,
     onPriceUpdate,
     onProductAvailability,
+    onProductCreated,
     onConnect,
     onDisconnect,
     onError,
@@ -618,6 +632,7 @@ const SOCKET_DEFAULTS: SocketContextType = {
   onOutOfStock: () => noopUnsubscribe,
   onPriceUpdate: () => noopUnsubscribe,
   onProductAvailability: () => noopUnsubscribe,
+  onProductCreated: () => noopUnsubscribe,
   onConnect: () => noopUnsubscribe,
   onDisconnect: () => noopUnsubscribe,
   onError: () => noopUnsubscribe,
