@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
+import uuid from 'react-native-uuid';
 import { View, StyleSheet } from 'react-native';
 import PointsNotification, { PointsNotificationData } from './PointsNotification';
 
@@ -18,7 +19,7 @@ let showNotificationCallback: ((notification: NotificationItem) => void) | null 
 export function showPointsNotification(data: PointsNotificationData) {
   const notification: NotificationItem = {
     ...data,
-    id: `${Date.now()}-${Math.random()}`,
+    id: `${Date.now()}-${uuid.v4()}`,
   };
 
   if (showNotificationCallback) {

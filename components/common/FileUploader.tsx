@@ -2,6 +2,7 @@
 // Reusable component for file uploads with progress and preview
 
 import React, { useState, useCallback } from 'react';
+import uuid from 'react-native-uuid';
 import {
   View,
   StyleSheet,
@@ -98,7 +99,7 @@ function FileUploader({
 
       // Add files to upload queue
       const newUploads: FileUpload[] = validFiles.map(file => ({
-        id: `${Date.now()}_${Math.random()}`,
+        id: `${Date.now()}_${uuid.v4()}`,
         file,
         uploadProgress: 0,
         isUploading: false,
