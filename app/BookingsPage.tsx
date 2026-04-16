@@ -680,7 +680,7 @@ function BookingsPage() {
 
           {/* Detail pills */}
           <View style={styles.detailRow}>
-            {booking.details.slice(0, 3).map((d, i) => (
+            {(booking.details || []).slice(0, 3).map((d, i) => (
               <View key={i} style={styles.detailPill}>
                 <Text style={styles.detailPillLabel}>{d.label}</Text>
                 <Text style={styles.detailPillValue} numberOfLines={1}>
@@ -694,8 +694,8 @@ function BookingsPage() {
           {isExpanded && (
             <View style={styles.expandedSection}>
               {/* All remaining details */}
-              {booking.details.length > 3 &&
-                booking.details.slice(3).map((d, i) => (
+              {(booking.details || []).length > 3 &&
+                (booking.details || []).slice(3).map((d, i) => (
                   <View key={`extra-${i}`} style={styles.expandedRow}>
                     <Text style={styles.expandedLabel}>{d.label}</Text>
                     <Text style={styles.expandedValue}>{d.value}</Text>

@@ -44,6 +44,7 @@ initSentry();
 import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
+import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus, Linking, StyleSheet, View, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -339,7 +340,14 @@ function RootLayout() {
     // This ensures users who navigate directly to hotel screens (deep links, notifications) are pre-logged in.
     try {
       const rezTokenVal = await authStorage.getAuthToken();
-      const otaTokenRaw = await AsyncStorage.getItem('@ota_access_token');
+      // HIGH-12 FIX: Use SecureStore for OTA token (sensitive); fall back to AsyncStorage if unavailable
+      let otaTokenRaw: string | null = null;
+      try {
+        otaTokenRaw = await SecureStore.getItemAsync('@ota_access_token');
+      } catch {
+        // SecureStore unavailable (e.g., device not supported); try AsyncStorage fallback
+        otaTokenRaw = await AsyncStorage.getItem('@ota_access_token');
+      }
       const hasRez = !!rezTokenVal;
       const hasOta = !!otaTokenRaw;
       if (hasRez && !hasOta) {

@@ -152,15 +152,15 @@ export default function ConfirmationScreen() {
   const fetchOrder = useCallback(async () => {
     if (!orderNumber) return;
     try {
-      // CA-CMC-043 FIX: Increment poll count and abort if exceeded
-      pollCountRef.current += 1;
-      if (pollCountRef.current > MAX_POLLS) {
+      // LOW-09 FIX: Check poll count BEFORE increment to prevent off-by-one
+      if (pollCountRef.current >= MAX_POLLS) {
         if (pollRef.current) clearInterval(pollRef.current);
         if (isMountedRef.current) {
           setError('Order status check timeout. Please contact support if not resolved.');
         }
         return;
       }
+      pollCountRef.current += 1;
 
       const data = await getWebOrder(orderNumber);
       if (!isMountedRef.current) return;
