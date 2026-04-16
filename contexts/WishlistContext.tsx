@@ -189,7 +189,9 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       const wishlistItems: WishlistItem[] = defaultWishlist.items.map((backendItem: any) => {
         const item = backendItem.itemId || {};
         return {
-          id: backendItem._id || backendItem.id || String(Math.random()),
+          id: backendItem._id || backendItem.id || item._id || item.id || (typeof crypto !== 'undefined' && crypto.getRandomValues
+            ? Array.from(new Uint8Array(8), b => b.toString(16).padStart(2, '0')).join('')
+            : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`),
           productId: typeof backendItem.itemId === 'string' ? backendItem.itemId : (item._id || item.id || ''),
           productName: item.name || 'Unknown Product',
           productImage: (item.images && item.images[0]) || item.image || 'https://placehold.co/300',
@@ -199,7 +201,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
             ? Math.round(((item.basePrice - item.salePrice) / item.basePrice) * 100)
             : 0,
           rating: item.rating?.average || item.rating || 4.0,
-          reviewCount: item.rating?.count || Math.floor(Math.random() * 1000) + 100,
+          reviewCount: item.rating?.count || 0,
           brand: item.brand || 'Brand',
           category: item.category?.name || backendItem.tags?.[0] || 'General',
           availability: item.inventory?.stock > 0 ? 'IN_STOCK' :
