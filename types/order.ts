@@ -2,7 +2,7 @@
 // Order Types
 // Type definitions for order management system
 
-// Canonical source: packages/shared-types/src/enums/index.ts (OrderStatus enum)
+// Canonical source: @rez/shared-types/src/orderStatuses.ts (OrderStatus)
 export type OrderStatus =
   | 'placed'
   | 'confirmed'
@@ -10,9 +10,12 @@ export type OrderStatus =
   | 'ready'
   | 'dispatched'
   | 'out_for_delivery'
+  | 'failed_delivery'
   | 'delivered'
   | 'cancelling'
   | 'cancelled'
+  | 'return_requested'
+  | 'return_rejected'
   | 'returned'
   | 'refunded';
 
