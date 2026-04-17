@@ -3,11 +3,11 @@ name: Deploy to Vercel
 on:
   push:
     branches:
-      - sync/consumer
+      - main
   workflow_dispatch:
 
 concurrency:
-  group: vercel-sync-consumer
+  group: vercel-main
   cancel-in-progress: true
 
 jobs:

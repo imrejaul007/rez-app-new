@@ -1,6 +1,6 @@
 # REZ Consumer App (Nuqta)
 
-<!-- Trigger deployment: sync/consumer fix merge at 2026-04-16 -->
+<!-- Trigger deployment: main — unified branch strategy, all audit fixes consolidated -->
 
 React Native/Expo mobile application for the REZ consumer platform. Buy products, earn cashback, manage wallet, and referral rewards.
 
