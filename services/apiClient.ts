@@ -69,6 +69,8 @@ interface RequestOptions {
   body?: Record<string, unknown> | unknown[] | FormData | string | null;
   timeout?: number;
   deduplicate?: boolean; // Enable/disable deduplication per-request
+  /** FIX 6: External abort signal — when aborted, cancels the in-flight fetch */
+  signal?: AbortSignal;
 }
 
 /** Typed Sentry scope interface (subset used by ApiClient) */
@@ -280,6 +282,19 @@ class ApiClient {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
+      // FIX 6: If an external signal is provided, abort the internal controller
+      // when the external signal fires (e.g. component unmount / navigation away).
+      const externalSignal = options.signal;
+      let externalAbortHandler: (() => void) | null = null;
+      if (externalSignal) {
+        if (externalSignal.aborted) {
+          controller.abort();
+        } else {
+          externalAbortHandler = () => controller.abort();
+          externalSignal.addEventListener('abort', externalAbortHandler, { once: true });
+        }
+      }
+
       // OG-D005/OG-D006 FIX: Register the controller so the AppState
       // background listener can abort this fetch if the app is backgrounded
       // or killed while the request is in flight.
@@ -324,6 +339,10 @@ class ApiClient {
       const response = await globalConcurrencyLimiter.execute(() => fetch(url, config));
       clearTimeout(timeoutId);
       if (slowWarningId) clearTimeout(slowWarningId);
+      // FIX 6: Clean up external signal listener
+      if (externalSignal && externalAbortHandler) {
+        externalSignal.removeEventListener('abort', externalAbortHandler);
+      }
       // OG-D006 FIX: Unregister now that the fetch has resolved.
       requestRegistry.unregister(registryId);
 
@@ -510,7 +529,7 @@ class ApiClient {
     endpoint: string,
     params?: Record<string, string | number | boolean | undefined | null>,
     // Fixed: Add headers option so callers can pass explicit auth headers - Phase 0
-    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
+    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string>; signal?: AbortSignal }
   ): Promise<ApiResponse<T>> {
     let url = endpoint;
 
@@ -530,6 +549,9 @@ class ApiClient {
     }
     if (options?.headers) {
       requestOptions.headers = options.headers;
+    }
+    if (options?.signal) {
+      requestOptions.signal = options.signal;
     }
 
     // Deduplicate GET requests by default (can be disabled per-request)

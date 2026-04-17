@@ -9,6 +9,16 @@
 export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'rezcoins';
 export type PaymentGateway = 'razorpay' | 'internal' | 'none';
 
+/**
+ * FIX 9: Compile-time enforced mapping from UI payment method to backend value.
+ * 'rezcoins' is a UI/display concept; the backend Order API expects 'wallet'.
+ * Use this helper before any API call that sends payment method to the backend.
+ */
+export function toBackendPaymentMethod(method: PaymentMethodType): string {
+  if (method === 'rezcoins') return 'wallet';
+  return method;
+}
+
 // Canonical reference: @rez/shared-types/src/enums/PaymentStatus
 // Backend canonical: order.payment.status sub-document (rez-order-service/src/models/Order.ts)
 // Canonical payment status (11 states + FSM)

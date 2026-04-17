@@ -80,3 +80,4 @@ tests.bak/
 coverage/
 dist-crash-test/
 *.bak
+.vercel

@@ -50,7 +50,11 @@ export const useSearch = () => {
   const userId = useUserId();
 
   // Search products
-  const searchProducts = useCallback(async (query: string, filters?: Partial<ProductSearchParams>) => {
+  // FIX 4: Accept an explicit page parameter (defaults to 1) so new queries
+  // always start at page 1 instead of using the stale pagination.page from
+  // a previous scroll position. The loadMore/pagination effect passes the
+  // incremented page explicitly.
+  const searchProducts = useCallback(async (query: string, filters?: Partial<ProductSearchParams>, page: number = 1) => {
     if (!query.trim()) {
       setState(prev => ({ ...prev, productResults: [], query: '' }));
       return;
@@ -62,7 +66,7 @@ export const useSearch = () => {
 
       const response: any = await searchService.searchProducts({
         q: query,
-        page: state.pagination.page,
+        page,
         limit: state.pagination.limit,
         ...(userId ? { userId } : {}),
         ...filters,
@@ -93,7 +97,7 @@ export const useSearch = () => {
         error: error instanceof Error ? error.message : 'Failed to search products',
       }));
     }
-  }, [state.pagination.page, state.pagination.limit, state.filters]);
+  }, [state.pagination.limit, state.filters]);
 
   // Search stores
   const searchStores = useCallback(async (query: string, filters?: Partial<StoreSearchParams>) => {
@@ -243,10 +247,10 @@ export const useSearch = () => {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
-  // Auto-trigger search when pagination changes
+  // Auto-trigger search when pagination changes (pass page explicitly)
   useEffect(() => {
     if (state.pagination.page > 1 && state.query) {
-      searchProducts(state.query);
+      searchProducts(state.query, undefined, state.pagination.page);
     }
   }, [state.pagination.page]);
 
