@@ -205,8 +205,8 @@ class ApiClient {
     return 0;
   }
 
-  // Handle token refresh
-  private async handleTokenRefresh(): Promise<boolean> {
+  // Handle token refresh (C-C02 FIX: made public so OffersHttpClient can use it)
+  async handleTokenRefresh(): Promise<boolean> {
     if (this.isRefreshing && this.refreshPromise) {
       return this.refreshPromise;
     }
