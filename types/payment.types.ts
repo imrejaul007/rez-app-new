@@ -6,6 +6,7 @@
 // When sending payment method to the backend Order API, 'rezcoins' maps to 'wallet'.
 // The /wallet/initiate-payment endpoint uses gateway names (e.g. 'razorpay'), not this type.
 // Transform rule: rezcoins → 'wallet' before any API call that sends payment method to backend.
+// CV-07 FIX: Aligned to lowercase to match consumer app's PaymentMethodType enum.
 export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'rezcoins';
 export type PaymentGateway = 'razorpay' | 'internal' | 'none';
 

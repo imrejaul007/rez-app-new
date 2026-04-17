@@ -456,14 +456,15 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
    * Get tier color
    */
   const getTierColor = useCallback((tier: string): string => {
+    // CV-14 FIX: Backend sends lowercase; switch cases updated to match.
     switch (tier) {
-      case 'Bronze':
+      case 'bronze':
         return '#CD7F32';
-      case 'Silver':
+      case 'silver':
         return '#C0C0C0';
-      case 'Gold':
+      case 'gold':
         return colors.brand.goldBright;
-      case 'Platinum':
+      case 'platinum':
         return '#E5E4E2';
       case 'Diamond':
         return '#B9F2FF';

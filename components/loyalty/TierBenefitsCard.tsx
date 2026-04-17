@@ -28,15 +28,15 @@ function TierBenefitsCard({
 }: TierBenefitsCardProps) {
   const getTierGradient = (tier: LoyaltyTier) => {
     switch (tier) {
-      case 'Bronze':
+      case 'bronze':
         return ['#CD7F32', '#A0522D'] as const;
-      case 'Silver':
+      case 'silver':
         return ['#C0C0C0', '#A8A8A8'] as const;
-      case 'Gold':
+      case 'gold':
         return [colors.brand.goldBright, '#FFA500'] as const;
-      case 'Platinum':
+      case 'platinum':
         return ['#E5E4E2', '#A9A9A9'] as const;
-      case 'Diamond':
+      case 'diamond':
         return ['#B9F2FF', '#00CED1'] as const;
       default:
         return [colors.brand.purpleLight, colors.brand.purple] as const;

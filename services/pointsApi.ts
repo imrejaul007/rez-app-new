@@ -107,7 +107,10 @@ class PointsApiService {
         return {
           success: true,
           data: {
-            total: w.balance?.total || (w as any).total || 0,
+            // CV-08 FIX: WalletBalanceResponse.balance always has .total (line 230-234 of walletApi.ts).
+            // The old (w as any).total fallback is removed — if the API changes its response shape,
+            // a new backend API version should be issued rather than a type bypass.
+            total: w.balance?.total ?? 0,
             earned: w.balance?.available || 0,
             spent: 0,
             pending: w.balance?.pending || 0,

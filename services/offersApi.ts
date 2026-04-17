@@ -360,6 +360,7 @@ class OffersHttpClient {
         });
         clearTimeout(timeoutId);
         // C-C02 FIX: Detect 401 and retry after token refresh.
+        // Previously, no retry logic meant authenticated requests silently failed on 401.
         if (response.status === 401 && token) {
           const refreshed = await mainApiClient.handleTokenRefresh();
           if (refreshed) {

@@ -306,17 +306,11 @@ export const useSecurityStore = create<SecurityStoreState>((set, get) => ({
       if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
         crypto.getRandomValues(code);
       } else {
-        // Fallback: crypto.getRandomValues() for CSPRNG-quality randomness
-        // NOTE: crypto.getRandomValues is available in Node 19+ and modern browsers
-        if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
-          crypto.getRandomValues(code);
-        } else {
-          // Final fallback: use node crypto module
-          const nodeCrypto = require('crypto');
-          const buf = nodeCrypto.randomBytes(16);
-          for (let j = 0; j < 4; j++) {
-            code[j] = buf.readUInt32BE(j * 4);
-          }
+        // Final fallback: node crypto module for CSPRNG-quality randomness
+        const nodeCrypto = require('crypto');
+        const buf = nodeCrypto.randomBytes(16);
+        for (let j = 0; j < 4; j++) {
+          code[j] = buf.readUInt32BE(j * 4);
         }
       }
       let codeStr = '';

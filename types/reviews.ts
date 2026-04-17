@@ -72,7 +72,7 @@ export interface UserReviewProfile {
   totalReviews: number;
   averageGiven: number;
   isVerifiedReviewer: boolean;
-  reviewerLevel: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+  reviewerLevel: 'bronze' | 'silver' | 'gold' | 'platinum';
   joinedDate: Date;
 }
 
@@ -145,11 +145,12 @@ export enum ReviewSortOption {
   HELPFUL = 'helpful'
 }
 
+// CV-14 FIX: Backend stores lowercase; enum values match canonical lowercase.
 export enum ReviewerLevel {
-  BRONZE = 'Bronze',
-  SILVER = 'Silver', 
-  GOLD = 'Gold',
-  PLATINUM = 'Platinum'
+  BRONZE = 'bronze',
+  SILVER = 'silver',
+  GOLD = 'gold',
+  PLATINUM = 'platinum'
 }
 
 export enum ContentType {

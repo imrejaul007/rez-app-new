@@ -9,7 +9,7 @@ const mockUserProfiles: UserReviewProfile[] = [
     totalReviews: 47,
     averageGiven: 4.2,
     isVerifiedReviewer: true,
-    reviewerLevel: 'Gold',
+    reviewerLevel: 'gold',
     joinedDate: new Date('2022-03-15'),
   },
   {
@@ -19,7 +19,7 @@ const mockUserProfiles: UserReviewProfile[] = [
     totalReviews: 23,
     averageGiven: 4.6,
     isVerifiedReviewer: true,
-    reviewerLevel: 'Silver',
+    reviewerLevel: 'silver',
     joinedDate: new Date('2022-08-20'),
   },
   {
@@ -29,7 +29,7 @@ const mockUserProfiles: UserReviewProfile[] = [
     totalReviews: 89,
     averageGiven: 4.1,
     isVerifiedReviewer: true,
-    reviewerLevel: 'Platinum',
+    reviewerLevel: 'platinum',
     joinedDate: new Date('2021-11-10'),
   },
   {
@@ -39,7 +39,7 @@ const mockUserProfiles: UserReviewProfile[] = [
     totalReviews: 12,
     averageGiven: 4.8,
     isVerifiedReviewer: false,
-    reviewerLevel: 'Bronze',
+    reviewerLevel: 'bronze',
     joinedDate: new Date('2023-05-03'),
   },
   {
@@ -49,7 +49,7 @@ const mockUserProfiles: UserReviewProfile[] = [
     totalReviews: 156,
     averageGiven: 3.9,
     isVerifiedReviewer: true,
-    reviewerLevel: 'Platinum',
+    reviewerLevel: 'platinum',
     joinedDate: new Date('2021-02-28'),
   },
 ];

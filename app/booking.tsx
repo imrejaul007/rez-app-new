@@ -397,7 +397,7 @@ function BookingPage() {
             customerName,
             customerPhone,
             customerEmail,
-            numberOfPeople: parseInt(numberOfPeople),
+            numberOfPeople: parseInt(numberOfPeople, 10),
             notes,
             ...(validatedDeal && {
               redemptionCode: validatedDeal.redemptionCode,
@@ -422,7 +422,7 @@ function BookingPage() {
           storeId: storeId as string,
           bookingDate: bookingDateStr,
           bookingTime: selectedTime24h || '09:00',
-          partySize: parseInt(numberOfPeople),
+          partySize: parseInt(numberOfPeople, 10),
           customerName,
           customerPhone,
           customerEmail: customerEmail || undefined,
@@ -934,7 +934,7 @@ function BookingPage() {
                   <View style={styles.summaryRow}>
                     <ThemedText style={styles.summaryLabel}>Guests</ThemedText>
                     <ThemedText style={styles.summaryValue}>
-                      {numberOfPeople} {parseInt(numberOfPeople) === 1 ? 'person' : 'people'}
+                      {numberOfPeople} {parseInt(numberOfPeople, 10) === 1 ? 'person' : 'people'}
                     </ThemedText>
                   </View>
                 )}
@@ -1027,7 +1027,7 @@ function BookingPage() {
             </View>
             <ThemedText style={styles.modalTitle}>Confirm Booking</ThemedText>
             <ThemedText style={styles.modalMessage}>
-              Book a table for {numberOfPeople} {parseInt(numberOfPeople) === 1 ? 'person' : 'people'} on{' '}
+              Book a table for {numberOfPeople} {parseInt(numberOfPeople, 10) === 1 ? 'person' : 'people'} on{' '}
               {formatDate(selectedDate)} at {timeSlots.find((s) => s.id === selectedTime)?.time}?
             </ThemedText>
 

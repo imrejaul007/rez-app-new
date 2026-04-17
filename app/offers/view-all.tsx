@@ -135,7 +135,9 @@ function ViewAllOffersScreen() {
               if (discount === 'free_delivery') {
                 return offer.isFreeDelivery === true;
               }
-              const discountValue = parseInt(discount);
+              // R2-H2 FIX: Add radix 10 to parseInt. Without radix, parseInt may produce
+              // incorrect results for strings with leading zeros (e.g. "08" → 0 in strict mode).
+              const discountValue = parseInt(discount, 10);
               if (discountValue === 25) {
                 return offer.discountPercentage >= 25 && offer.discountPercentage < 50;
               } else if (discountValue === 50) {

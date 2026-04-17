@@ -30,12 +30,15 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Category configurations
-const categoryConfigs: Record<string, {
-  title: string;
-  color: string;
-  tags: string[];
-  icon: string;
-}> = {
+const categoryConfigs: Record<
+  string,
+  {
+    title: string;
+    color: string;
+    tags: string[];
+    icon: string;
+  }
+> = {
   'beauty-wellness': {
     title: 'Beauty & Wellness',
     color: colors.brand.pink,
@@ -48,7 +51,7 @@ const categoryConfigs: Record<string, {
     tags: ['food', 'restaurant', 'cafe', 'dining'],
     icon: '🍔',
   },
-  'fashion': {
+  fashion: {
     title: 'Fashion',
     color: Colors.brand.purple,
     tags: ['fashion', 'clothing', 'apparel'],
@@ -60,13 +63,13 @@ const categoryConfigs: Record<string, {
     tags: ['grocery', 'supermarket', 'essentials'],
     icon: '🛒',
   },
-  'healthcare': {
+  healthcare: {
     title: 'Healthcare',
     color: Colors.error,
     tags: ['healthcare', 'pharmacy', 'medical', 'clinic'],
     icon: '🏥',
   },
-  'default': {
+  default: {
     title: 'All Stores',
     color: Colors.gold,
     tags: [],
@@ -129,7 +132,7 @@ const StoresPage: React.FC = () => {
         : '15%',
     image: store.logo || store.banner || store.images?.[0],
     isVerified: store.isVerified || store.verification?.isVerified || false,
-    is60Min: store.operationalInfo?.deliveryTime ? parseInt(store.operationalInfo.deliveryTime) <= 60 : false,
+    is60Min: store.operationalInfo?.deliveryTime ? parseInt(store.operationalInfo.deliveryTime, 10) <= 60 : false,
     tags: store.tags || [],
   });
 
@@ -185,22 +188,22 @@ const StoresPage: React.FC = () => {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
-        store =>
+        (store) =>
           store.name?.toLowerCase().includes(query) ||
           store.category?.toLowerCase().includes(query) ||
-          store.tags?.some(tag => tag.toLowerCase().includes(query))
+          store.tags?.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
     // Apply filter
     if (selectedFilter === 'verified') {
-      result = result.filter(store => store.isVerified);
+      result = result.filter((store) => store.isVerified);
     } else if (selectedFilter === 'nearby') {
       result = result.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
     } else if (selectedFilter === 'top-rated') {
       result = result.sort((a, b) => b.rating - a.rating);
     } else if (selectedFilter === 'try-buy') {
-      result = result.filter(store => store.is60Min);
+      result = result.filter((store) => store.is60Min);
     }
 
     setFilteredStores(result);
@@ -219,16 +222,18 @@ const StoresPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={[config.color, config.color + 'DD']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[config.color, config.color + 'DD']} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
+            <Text style={styles.headerTitle}>
+              {config.icon} {config.title}
+            </Text>
             <Text style={styles.headerSubtitle}>{filteredStores.length} stores near you</Text>
           </View>
         </View>
@@ -258,20 +263,14 @@ const StoresPage: React.FC = () => {
             <Pressable
               key={filter.id}
               onPress={() => setSelectedFilter(filter.id)}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.id && { backgroundColor: config.color }
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.id && { backgroundColor: config.color }]}
             >
               <Ionicons
                 name={filter.icon as any}
                 size={14}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
-              <Text style={[
-                styles.filterChipText,
-                selectedFilter === filter.id && styles.filterChipTextActive
-              ]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -282,13 +281,7 @@ const StoresPage: React.FC = () => {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={[config.color]}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[config.color]} />}
       >
         {/* Error State */}
         {error && (
@@ -307,7 +300,7 @@ const StoresPage: React.FC = () => {
             <Text style={styles.emptyIcon}>🏪</Text>
             <Text style={styles.emptyTitle}>No Stores Found</Text>
             <Text style={styles.emptySubtitle}>
-              {searchQuery ? 'Try a different search term' : 'We\'re adding more stores soon!'}
+              {searchQuery ? 'Try a different search term' : "We're adding more stores soon!"}
             </Text>
           </View>
         )}
@@ -316,12 +309,7 @@ const StoresPage: React.FC = () => {
         {filteredStores.length > 0 && (
           <View style={styles.storesGrid}>
             {filteredStores.map((store) => (
-              <Pressable
-                key={store.id}
-                style={styles.storeCard}
-                onPress={() => handleStorePress(store)}
-               
-              >
+              <Pressable key={store.id} style={styles.storeCard} onPress={() => handleStorePress(store)}>
                 <CachedImage source={store.image} style={styles.storeImage} />
 
                 {/* Badges */}
@@ -345,8 +333,12 @@ const StoresPage: React.FC = () => {
                 </View>
 
                 <View style={styles.storeInfo}>
-                  <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-                  <Text style={styles.storeCategory} numberOfLines={1}>{store.category}</Text>
+                  <Text style={styles.storeName} numberOfLines={1}>
+                    {store.name}
+                  </Text>
+                  <Text style={styles.storeCategory} numberOfLines={1}>
+                    {store.category}
+                  </Text>
                   <View style={styles.storeMeta}>
                     <View style={styles.ratingContainer}>
                       <Ionicons name="star" size={12} color={Colors.warning} />

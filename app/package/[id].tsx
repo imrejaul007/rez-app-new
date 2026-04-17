@@ -188,8 +188,8 @@ function PackageDetailsPage() {
       // Duration: prefer specs
       const specNights = getSpec('nights');
       const specDays = getSpec('days');
-      if (specNights) nights = parseInt(specNights) || 3;
-      if (specDays) days = parseInt(specDays) || nights + 1;
+      if (specNights) nights = parseInt(specNights, 10) || 3;
+      if (specDays) days = parseInt(specDays, 10) || nights + 1;
 
       if (!destination) {
         const namePatterns = [/(.+?)\s+(\d+)N\/(\d+)D/i, /(.+?)\s+(\d+)\s+nights/i, /(.+?)\s+package/i];
@@ -197,8 +197,8 @@ function PackageDetailsPage() {
           const match = productData.name.match(pattern);
           if (match) {
             destination = match[1].trim();
-            if (!specNights && match[2]) nights = parseInt(match[2]) || 3;
-            if (!specDays && match[3]) days = parseInt(match[3]) || nights + 1;
+            if (!specNights && match[2]) nights = parseInt(match[2], 10) || 3;
+            if (!specDays && match[3]) days = parseInt(match[3], 10) || nights + 1;
             break;
           }
         }

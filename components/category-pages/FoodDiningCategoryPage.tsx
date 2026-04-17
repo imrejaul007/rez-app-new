@@ -199,7 +199,7 @@ function FoodDiningCategoryPage() {
             if (!order.timeAgo) return true;
             const timeStr = order.timeAgo.toLowerCase();
             if (timeStr.includes('d ago')) {
-              const days = parseInt(timeStr);
+              const days = parseInt(timeStr, 10);
               return !isNaN(days) && days <= 2;
             }
             return !timeStr.includes('w ago') && !timeStr.includes('mo ago');
@@ -409,8 +409,8 @@ function FoodDiningCategoryPage() {
       switch (sortOption) {
         case 'rating': return ((b as any).rating?.average || (b as any).rating || 0) - ((a as any).rating?.average || (a as any).rating || 0);
         case 'delivery_time': {
-          const aTime = parseInt((a as any).operationalInfo?.deliveryTime) || 60;
-          const bTime = parseInt((b as any).operationalInfo?.deliveryTime) || 60;
+          const aTime = parseInt((a as any).operationalInfo?.deliveryTime, 10) || 60;
+          const bTime = parseInt((b as any).operationalInfo?.deliveryTime, 10) || 60;
           return aTime - bTime;
         }
         case 'newest': return 0;

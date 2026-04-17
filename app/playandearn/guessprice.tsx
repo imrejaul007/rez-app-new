@@ -488,10 +488,10 @@ const GuessPrice = () => {
                       keyboardType="numeric"
                     />
                   </View>
-                  <Pressable onPress={submitGuess} disabled={!guess || parseInt(guess) <= 0}>
+                  <Pressable onPress={submitGuess} disabled={!guess || parseInt(guess, 10) <= 0}>
                     <LinearGradient
                       colors={
-                        !guess || parseInt(guess) <= 0
+                        !guess || parseInt(guess, 10) <= 0
                           ? [colors.neutral[400], colors.neutral[500]]
                           : [COLORS.emerald, COLORS.emeraldDark]
                       }

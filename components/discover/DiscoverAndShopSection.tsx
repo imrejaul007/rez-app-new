@@ -198,7 +198,7 @@ function DiscoverAndShopSection({
   // Format count for likes/views
   const formatCount = (num: number | string | undefined): string => {
     if (!num) return '0';
-    const count = typeof num === 'string' ? parseInt(num) : num;
+    const count = typeof num === 'string' ? parseInt(num, 10) : num;
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();

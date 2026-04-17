@@ -328,8 +328,8 @@ function PaymentScreen() {
                   merchantName: storeName || '',
                   currentVisits: (paymentFlow.membership as any)?.visitsCompleted ?? 0,
                   requiredVisits: (paymentFlow.membership as any)?.totalVisitsRequired ?? 5,
-                  currentTier: (paymentFlow.membership as any)?.tier ?? 'Bronze',
-                  nextTier: 'Silver',
+                  currentTier: (paymentFlow.membership as any)?.tier ?? 'bronze',
+                  nextTier: 'silver',
                 }
               : null
           }

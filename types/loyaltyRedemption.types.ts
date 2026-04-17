@@ -4,23 +4,20 @@
  */
 
 // Tier Types
-// UI display tier uses Title Case; backend stores lowercase.
-export type LoyaltyTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
+// CV-14 FIX: Backend stores lowercase. This type now reflects canonical lowercase values.
+// Use toDisplayTier() for UI display (converts lowercase → title case).
+export type LoyaltyTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
 
 /**
- * ENUM-05 FIX: The backend stores loyalty tiers in lowercase ('bronze', 'silver', ...).
- * Some UI types use Title Case (LoyaltyTier above) for display purposes.
- * Use this helper whenever comparing or displaying a tier value sourced from the API
- * so the case difference never causes a silent mismatch.
+ * Converts a backend tier value to a display string for the UI.
+ * Handles lowercase, uppercase, and title case inputs.
  *
  * @example toDisplayTier('gold')   === 'Gold'
  * @example toDisplayTier('SILVER') === 'Silver'
  */
-export function toDisplayTier(rawTier: string | undefined | null): LoyaltyTier {
+export function toDisplayTier(rawTier: string | undefined | null): string {
   if (!rawTier) return 'Bronze';
-  const normalised = rawTier.charAt(0).toUpperCase() + rawTier.slice(1).toLowerCase() as LoyaltyTier;
-  const validTiers: LoyaltyTier[] = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
-  return validTiers.includes(normalised) ? normalised : 'Bronze';
+  return rawTier.charAt(0).toUpperCase() + rawTier.slice(1).toLowerCase();
 }
 
 /**

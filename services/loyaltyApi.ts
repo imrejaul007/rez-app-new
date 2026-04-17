@@ -5,7 +5,9 @@ import apiClient, { ApiResponse } from './apiClient';
 
 export interface LoyaltyPoints {
   currentPoints: number;
-  tier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
+  // CV-14 FIX: lowercase tier values aligned with canonical LoyaltyTier enum.
+  // 'diamond' added to match backend — canonical also updated with DIAMOND.
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
   nextTier: string;
   pointsToNextTier: number;
   lifetimePoints: number;

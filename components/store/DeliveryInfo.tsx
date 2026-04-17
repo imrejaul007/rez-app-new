@@ -78,7 +78,7 @@ const DeliveryInfo: React.FC<DeliveryInfoProps> = ({
 
     if (hasHours) {
       if (timeStr.toLowerCase().includes('day')) {
-        const days = parseInt(timeStr) || 2;
+        const days = parseInt(timeStr, 10) || 2;
         deliveryDate.setDate(today.getDate() + days);
       } else {
         deliveryDate.setHours(today.getHours() + 2);

@@ -35,13 +35,14 @@ export interface MerchantLoyaltyCardProps {
 // HELPERS
 // ============================================================================
 
-const TIER_ORDER: TierName[] = ['Bronze', 'Silver', 'Gold', 'Platinum'];
+// CV-14 FIX: TIER_ORDER and TIER_STYLES keys are lowercase to match backend values.
+const TIER_ORDER: TierName[] = ['bronze', 'silver', 'gold', 'platinum'];
 
 const TIER_STYLES: Record<TierName, { gradient: string[]; badge: string; text: string }> = {
-  Bronze:   { gradient: ['#CD7F32', '#A0522D'], badge: '#FDF0E8', text: '#A0522D' },
-  Silver:   { gradient: ['#B0B7BD', '#9AA7B2'], badge: '#F4F6F8', text: '#627D98' },
-  Gold:     { gradient: [colors.lightMustard, colors.brand.goldRich], badge: colors.tint.amber, text: colors.brand.amberDark },
-  Platinum: { gradient: ['#B2DFDB', '#80CBC4'], badge: '#E0F2F1', text: '#00796B' },
+  bronze:   { gradient: ['#CD7F32', '#A0522D'], badge: '#FDF0E8', text: '#A0522D' },
+  silver:   { gradient: ['#B0B7BD', '#9AA7B2'], badge: '#F4F6F8', text: '#627D98' },
+  gold:     { gradient: [colors.lightMustard, colors.brand.goldRich], badge: colors.tint.amber, text: colors.brand.amberDark },
+  platinum: { gradient: ['#B2DFDB', '#80CBC4'], badge: '#E0F2F1', text: '#00796B' },
 };
 
 function getNextTier(tier: TierName): TierName {
@@ -64,7 +65,7 @@ const MerchantLoyaltyCard: React.FC<MerchantLoyaltyCardProps> = ({
 }) => {
   const tierStyle = TIER_STYLES[tier];
   const nextTier = getNextTier(tier);
-  const isPlatinum = tier === 'Platinum';
+  const isPlatinum = tier === 'platinum';
   const requiredVisits = nextTierAt;
   const currentVisits = Math.round(progress * requiredVisits);
 

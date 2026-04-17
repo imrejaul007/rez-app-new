@@ -19,6 +19,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
+// CV-14 FIX: Keys are lowercase to match backend values (canonical LoyaltyTier enum).
 const TIER_CONFIG: Record<
   string,
   {
@@ -31,34 +32,34 @@ const TIER_CONFIG: Record<
     gradientEnd: string;
   }
 > = {
-  Bronze: {
+  bronze: {
     bg: colors.tint.amberLight,
     text: colors.brand.amberDark,
     border: colors.warningScale[700],
     icon: '\uD83E\uDD49',
-    next: 'Silver',
+    next: 'silver',
     gradientStart: '#FEFCE8',
     gradientEnd: colors.tint.amberLight,
   },
-  Silver: {
+  silver: {
     bg: colors.neutral[100],
     text: colors.neutral[700],
     border: colors.neutral[400],
     icon: '\uD83E\uDD48',
-    next: 'Gold',
+    next: 'gold',
     gradientStart: colors.neutral[50],
     gradientEnd: colors.neutral[100],
   },
-  Gold: {
+  gold: {
     bg: colors.tint.amber,
     text: colors.brand.amberDark,
     border: colors.warningScale[400],
     icon: '\uD83E\uDD47',
-    next: 'Platinum',
+    next: 'platinum',
     gradientStart: colors.tint.amber,
     gradientEnd: colors.tint.amberLight,
   },
-  Platinum: {
+  platinum: {
     bg: colors.tint.purple,
     text: '#5B21B6',
     border: colors.brand.purpleLight,
@@ -109,7 +110,7 @@ function ElectronicsBrandsPage() {
 
   const renderBrand = useCallback(
     ({ item }: { item: BrandLoyalty }) => {
-      const config = TIER_CONFIG[item.tier] || TIER_CONFIG.Bronze;
+      const config = TIER_CONFIG[item.tier] || TIER_CONFIG.bronze;
       const progressPercent = Math.min(item.progress, 100);
       const purchasesToNext = item.nextTierAt > 0 ? item.nextTierAt - item.purchaseCount : 0;
 
@@ -166,11 +167,11 @@ function ElectronicsBrandsPage() {
             <View style={styles.benefitRow}>
               <Ionicons name="gift-outline" size={14} color={SHARED_COLORS.textSecondary} />
               <Text style={styles.benefitText}>
-                {item.tier === 'Platinum'
+                {item.tier === 'platinum'
                   ? 'Enjoy exclusive platinum perks and early access to new launches'
-                  : item.tier === 'Gold'
+                  : item.tier === 'gold'
                     ? 'Enjoy gold member discounts and priority support'
-                    : item.tier === 'Silver'
+                    : item.tier === 'silver'
                       ? 'Earn bonus coins on every purchase'
                       : 'Keep shopping to unlock rewards'}
               </Text>

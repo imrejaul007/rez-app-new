@@ -90,7 +90,7 @@ function OffersScreen() {
     initialType: searchParams.type,
     initialTab: searchParams.tab,
     initialCategory: searchParams.category,
-    cashbackMultiplier: searchParams.multiplier ? parseInt(searchParams.multiplier) : undefined,
+    cashbackMultiplier: searchParams.multiplier ? parseInt(searchParams.multiplier, 10) : undefined,
     initialFilter: searchParams.filter,
   };
 

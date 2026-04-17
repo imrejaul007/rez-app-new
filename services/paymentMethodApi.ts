@@ -3,30 +3,31 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 
+// CV-07 FIX: Aligned to canonical lowercase values. Backend stores UPPERCASE; normalize on read.
 export enum PaymentMethodType {
-  CARD = 'CARD',
-  BANK_ACCOUNT = 'BANK_ACCOUNT',
-  UPI = 'UPI',
-  WALLET = 'WALLET'
+  CARD = 'card',
+  BANK_ACCOUNT = 'bank_account',
+  UPI = 'upi',
+  WALLET = 'wallet'
 }
 
 export enum CardType {
-  CREDIT = 'CREDIT',
-  DEBIT = 'DEBIT'
+  CREDIT = 'credit',
+  DEBIT = 'debit'
 }
 
 export enum CardBrand {
-  VISA = 'VISA',
-  MASTERCARD = 'MASTERCARD',
-  AMEX = 'AMEX',
-  RUPAY = 'RUPAY',
-  DISCOVER = 'DISCOVER',
-  OTHER = 'OTHER'
+  VISA = 'visa',
+  MASTERCARD = 'mastercard',
+  AMEX = 'amex',
+  RUPAY = 'rupay',
+  DISCOVER = 'discover',
+  OTHER = 'other'
 }
 
 export enum BankAccountType {
-  SAVINGS = 'SAVINGS',
-  CURRENT = 'CURRENT'
+  SAVINGS = 'savings',
+  CURRENT = 'current'
 }
 
 export interface CardDetails {

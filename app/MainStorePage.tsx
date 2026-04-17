@@ -191,7 +191,13 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
 
   // About modal data (memoized) - CA-DSC-026 FIX: Add guard for missing fields
   const aboutModalData = useMemo(() => {
-    const data = buildAboutModalData(d.storeData, d.fullStoreDataRef.current, d.fetchedStoreData, d.productData, d.isDynamic);
+    const data = buildAboutModalData(
+      d.storeData,
+      d.fullStoreDataRef.current,
+      d.fetchedStoreData,
+      d.productData,
+      d.isDynamic,
+    );
     // Ensure all required fields are present
     return {
       ...data,
@@ -500,7 +506,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                   <MerchantLoyaltyCard
                     merchantName={d.currentStoreName ?? ''}
                     merchantLogo={d.currentStoreLogo || undefined}
-                    tier={'Bronze' as TierName}
+                    tier={'bronze' as TierName}
                     visitCount={d.userVisitsData.visitsCompleted}
                     multiplier={1}
                     progress={Math.min(

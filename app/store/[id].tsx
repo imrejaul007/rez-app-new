@@ -153,8 +153,8 @@ const StoreDetailPage: React.FC = () => {
 
       if (hours && !hours.closed) {
         const currentTime = now.getHours() * 100 + now.getMinutes();
-        const openTime = parseInt(hours.open?.replace(':', '') || '0');
-        const closeTime = parseInt(hours.close?.replace(':', '') || '2359');
+        const openTime = parseInt(hours.open?.replace(':', '') || '0', 10);
+        const closeTime = parseInt(hours.close?.replace(':', '') || '2359', 10);
         if (!isMounted()) return;
         setIsOpen(currentTime >= openTime && currentTime <= closeTime);
       }
@@ -353,7 +353,7 @@ const StoreDetailPage: React.FC = () => {
   const formatTime = (time: string) => {
     if (!time) return '';
     const [hours, minutes] = time.split(':');
-    const h = parseInt(hours);
+    const h = parseInt(hours, 10);
     const ampm = h >= 12 ? 'PM' : 'AM';
     const hour12 = h % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;

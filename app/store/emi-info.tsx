@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // EMI options for store purchases
 
 import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  TextInput,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -50,10 +42,10 @@ function StoreEMIInfoPage() {
   const [amount, setAmount] = useState('50000');
   const [selectedTenure, setSelectedTenure] = useState(6);
 
-  const amountValue = parseInt(amount.replace(/,/g, '')) || 0;
+  const amountValue = parseInt(amount.replace(/,/g, ''), 10) || 0;
 
   const calculateEMI = (tenure: number): EMIPlan => {
-    const isNoCost = PARTNER_BANKS.some(b => b.noCostTenures.includes(tenure));
+    const isNoCost = PARTNER_BANKS.some((b) => b.noCostTenures.includes(tenure));
     const interestRate = isNoCost ? 0 : 14; // 14% annual for non-no-cost
     const monthlyRate = interestRate / 12 / 100;
 
@@ -66,7 +58,7 @@ function StoreEMIInfoPage() {
       totalAmount = amountValue;
       interest = 0;
     } else {
-      emi = amountValue * monthlyRate * Math.pow(1 + monthlyRate, tenure) / (Math.pow(1 + monthlyRate, tenure) - 1);
+      emi = (amountValue * monthlyRate * Math.pow(1 + monthlyRate, tenure)) / (Math.pow(1 + monthlyRate, tenure) - 1);
       totalAmount = emi * tenure;
       interest = totalAmount - amountValue;
     }
@@ -80,18 +72,18 @@ function StoreEMIInfoPage() {
     };
   };
 
-  const emiPlans: EMIPlan[] = [3, 6, 9, 12, 18, 24].map(t => calculateEMI(t));
+  const emiPlans: EMIPlan[] = [3, 6, 9, 12, 18, 24].map((t) => calculateEMI(t));
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>EMI Options</ThemedText>
@@ -101,9 +93,7 @@ function StoreEMIInfoPage() {
         <View style={styles.heroSection}>
           <Ionicons name="card" size={40} color={colors.background.primary} />
           <ThemedText style={styles.heroTitle}>Easy EMI</ThemedText>
-          <ThemedText style={styles.heroSubtitle}>
-            Split your payment into easy monthly installments
-          </ThemedText>
+          <ThemedText style={styles.heroSubtitle}>Split your payment into easy monthly installments</ThemedText>
         </View>
       </LinearGradient>
 
@@ -132,13 +122,10 @@ function StoreEMIInfoPage() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Choose EMI Tenure</ThemedText>
           <View style={styles.emiPlansGrid}>
-            {emiPlans.map(plan => (
+            {emiPlans.map((plan) => (
               <Pressable
                 key={plan.tenure}
-                style={[
-                  styles.emiPlanCard,
-                  selectedTenure === plan.tenure && styles.emiPlanCardSelected,
-                ]}
+                style={[styles.emiPlanCard, selectedTenure === plan.tenure && styles.emiPlanCardSelected]}
                 onPress={() => setSelectedTenure(plan.tenure)}
               >
                 {plan.isNoCost && (
@@ -146,23 +133,13 @@ function StoreEMIInfoPage() {
                     <ThemedText style={styles.noCostText}>No Cost</ThemedText>
                   </View>
                 )}
-                <ThemedText style={[
-                  styles.emiTenure,
-                  selectedTenure === plan.tenure && styles.emiTenureSelected,
-                ]}>
+                <ThemedText style={[styles.emiTenure, selectedTenure === plan.tenure && styles.emiTenureSelected]}>
                   {plan.tenure} Months
                 </ThemedText>
-                <ThemedText style={[
-                  styles.emiAmount,
-                  selectedTenure === plan.tenure && styles.emiAmountSelected,
-                ]}>
+                <ThemedText style={[styles.emiAmount, selectedTenure === plan.tenure && styles.emiAmountSelected]}>
                   {plan.emi}/mo
                 </ThemedText>
-                {!plan.isNoCost && (
-                  <ThemedText style={styles.emiInterest}>
-                    Interest: {plan.interest}
-                  </ThemedText>
-                )}
+                {!plan.isNoCost && <ThemedText style={styles.emiInterest}>Interest: {plan.interest}</ThemedText>}
               </Pressable>
             ))}
           </View>
@@ -174,7 +151,10 @@ function StoreEMIInfoPage() {
           <View style={styles.breakdownCard}>
             <View style={styles.breakdownRow}>
               <ThemedText style={styles.breakdownLabel}>Principal Amount</ThemedText>
-              <ThemedText style={styles.breakdownValue}>{currencySymbol}{amountValue.toLocaleString()}</ThemedText>
+              <ThemedText style={styles.breakdownValue}>
+                {currencySymbol}
+                {amountValue.toLocaleString()}
+              </ThemedText>
             </View>
             <View style={styles.breakdownRow}>
               <ThemedText style={styles.breakdownLabel}>Tenure</ThemedText>
@@ -188,15 +168,11 @@ function StoreEMIInfoPage() {
             </View>
             <View style={styles.breakdownRow}>
               <ThemedText style={styles.breakdownLabel}>Interest</ThemedText>
-              <ThemedText style={styles.breakdownValue}>
-                {calculateEMI(selectedTenure).interest}
-              </ThemedText>
+              <ThemedText style={styles.breakdownValue}>{calculateEMI(selectedTenure).interest}</ThemedText>
             </View>
             <View style={[styles.breakdownRow, styles.breakdownTotal]}>
               <ThemedText style={styles.breakdownTotalLabel}>Total Payable</ThemedText>
-              <ThemedText style={styles.breakdownTotalValue}>
-                {calculateEMI(selectedTenure).totalAmount}
-              </ThemedText>
+              <ThemedText style={styles.breakdownTotalValue}>{calculateEMI(selectedTenure).totalAmount}</ThemedText>
             </View>
           </View>
         </View>
@@ -205,13 +181,11 @@ function StoreEMIInfoPage() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Partner Banks</ThemedText>
           <View style={styles.banksGrid}>
-            {PARTNER_BANKS.map(bank => (
+            {PARTNER_BANKS.map((bank) => (
               <View key={bank.id} style={styles.bankCard}>
                 <ThemedText style={styles.bankLogo}>{bank.logo}</ThemedText>
                 <ThemedText style={styles.bankName}>{bank.name}</ThemedText>
-                <ThemedText style={styles.bankNoCost}>
-                  No Cost: {bank.noCostTenures.join(', ')} mo
-                </ThemedText>
+                <ThemedText style={styles.bankNoCost}>No Cost: {bank.noCostTenures.join(', ')} mo</ThemedText>
               </View>
             ))}
           </View>
@@ -223,21 +197,15 @@ function StoreEMIInfoPage() {
           <View style={styles.termsList}>
             <View style={styles.termItem}>
               <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
-              <ThemedText style={styles.termText}>
-                No Cost EMI available on select bank cards
-              </ThemedText>
+              <ThemedText style={styles.termText}>No Cost EMI available on select bank cards</ThemedText>
             </View>
             <View style={styles.termItem}>
               <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
-              <ThemedText style={styles.termText}>
-                Processing fee may apply as per bank policy
-              </ThemedText>
+              <ThemedText style={styles.termText}>Processing fee may apply as per bank policy</ThemedText>
             </View>
             <View style={styles.termItem}>
               <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
-              <ThemedText style={styles.termText}>
-                EMI conversion available post-purchase
-              </ThemedText>
+              <ThemedText style={styles.termText}>EMI conversion available post-purchase</ThemedText>
             </View>
             <View style={styles.termItem}>
               <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
@@ -250,10 +218,7 @@ function StoreEMIInfoPage() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Pressable
-          style={styles.proceedButton}
-          onPress={() => router.push('/checkout/emi-selection' as any)}
-        >
+        <Pressable style={styles.proceedButton} onPress={() => router.push('/checkout/emi-selection' as any)}>
           <ThemedText style={styles.proceedButtonText}>
             Proceed with {calculateEMI(selectedTenure).emi}/mo EMI
           </ThemedText>

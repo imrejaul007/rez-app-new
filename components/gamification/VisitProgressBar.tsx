@@ -20,7 +20,8 @@ import { colors } from '@/constants/theme';
 // TYPES
 // ============================================================================
 
-export type TierName = 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+// CV-14 FIX: TierName is now lowercase to match backend canonical values.
+export type TierName = 'bronze' | 'silver' | 'gold' | 'platinum';
 
 export interface VisitProgressBarProps {
   currentVisits: number;
@@ -35,10 +36,10 @@ export interface VisitProgressBarProps {
 // ============================================================================
 
 const TIER_CONFIG: Record<TierName, { emoji: string; color: string; bg: string }> = {
-  Bronze:   { emoji: '🥉', color: '#CD7F32', bg: '#FDF0E8' },
-  Silver:   { emoji: '🥈', color: '#9AA7B2', bg: '#F4F6F8' },
-  Gold:     { emoji: '🏆', color: colors.lightMustard, bg: colors.tint.amber },
-  Platinum: { emoji: '💎', color: '#B2DFDB', bg: '#E0F2F1' },
+  bronze:   { emoji: '🥉', color: '#CD7F32', bg: '#FDF0E8' },
+  silver:   { emoji: '🥈', color: '#9AA7B2', bg: '#F4F6F8' },
+  gold:     { emoji: '🏆', color: colors.lightMustard, bg: colors.tint.amber },
+  platinum: { emoji: '💎', color: '#B2DFDB', bg: '#E0F2F1' },
 };
 
 // ============================================================================
