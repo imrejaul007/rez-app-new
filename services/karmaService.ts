@@ -193,7 +193,7 @@ class KarmaService {
    * Get karma level info
    */
   async getKarmaLevel(userId: string): Promise<ApiResponse<LevelInfo>> {
-    return apiClient.get<LevelInfo>(`/karma/level/${userId}`);
+    return apiClient.get<LevelInfo>(`/karma/user/${userId}/level`);
   }
 
   /**
@@ -226,14 +226,16 @@ class KarmaService {
 
   /**
    * Check in to an event (QR or GPS)
+   * FIX: KV-CV-02 — backend requires userId in body; consumer was not sending it.
    */
   async checkIn(
+    userId: string,
     eventId: string,
     mode: 'qr' | 'gps',
     qrCode?: string,
     gpsCoords?: GPSCoords,
   ): Promise<ApiResponse<CheckInResult>> {
-    const payload: Record<string, unknown> = { eventId, mode };
+    const payload: Record<string, unknown> = { userId, eventId, mode };
     if (mode === 'qr' && qrCode) payload.qrCode = qrCode;
     if (mode === 'gps' && gpsCoords) payload.gpsCoords = gpsCoords;
     return apiClient.post<CheckInResult>('/karma/verify/checkin', payload);
@@ -241,14 +243,16 @@ class KarmaService {
 
   /**
    * Check out from an event (QR or GPS)
+   * FIX: KV-CV-02 — backend requires userId in body; consumer was not sending it.
    */
   async checkOut(
+    userId: string,
     eventId: string,
     mode: 'qr' | 'gps',
     qrCode?: string,
     gpsCoords?: GPSCoords,
   ): Promise<ApiResponse<CheckOutResult>> {
-    const payload: Record<string, unknown> = { eventId, mode };
+    const payload: Record<string, unknown> = { userId, eventId, mode };
     if (mode === 'qr' && qrCode) payload.qrCode = qrCode;
     if (mode === 'gps' && gpsCoords) payload.gpsCoords = gpsCoords;
     return apiClient.post<CheckOutResult>('/karma/verify/checkout', payload);
@@ -258,7 +262,7 @@ class KarmaService {
    * Get karma earn history
    */
   async getKarmaHistory(userId: string, page = 1): Promise<ApiResponse<HistoryResult>> {
-    return apiClient.get<HistoryResult>(`/karma/history/${userId}`, { page });
+    return apiClient.get<HistoryResult>(`/karma/user/${userId}/history`, { page });
   }
 
   /**
