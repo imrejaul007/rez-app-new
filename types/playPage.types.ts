@@ -132,22 +132,22 @@ export interface PlayPageActions {
   fetchVideos: (category?: CategoryType) => Promise<void>;
   refreshVideos: () => Promise<void>;
   loadMoreVideos: () => Promise<void>;
-  
+
   // Category management
   setActiveCategory: (category: CategoryType) => void;
-  
+
   // Video playback control
   playVideo: (videoId: string) => void;
   pauseVideo: (videoId: string) => void;
   toggleMute: (videoId: string) => void;
-  
+
   // User interactions
   likeVideo: (videoId: string) => Promise<boolean>;
   shareVideo: (video: UGCVideoItem) => Promise<void>;
-  
+
   // Navigation
   navigateToDetail: (video: UGCVideoItem) => void;
-  
+
   // Error handling
   clearError: () => void;
 }
