@@ -64,7 +64,7 @@ class PaymentOrchestratorService {
       // Try to get wallet balance from API
       const walletRes = await apiClient.get<any>('/wallet/balance');
       if (walletRes.success && walletRes.data) {
-        walletBalance = walletRes.data.balance?.total || 0;
+        walletBalance = walletRes.data.balance?.available ?? walletRes.data.balance?.total ?? 0;
       }
     } catch (error: any) {
       // On error, assume wallet is not available (fail-safe)

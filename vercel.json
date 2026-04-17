@@ -1,7 +1,7 @@
 {
-  "buildCommand": "",
+  "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
-  "installCommand": "echo skip",
+  "installCommand": "npm ci",
   "headers": [
     {
       "source": "/assets/(.*)",
