@@ -73,7 +73,16 @@ class CoinSyncService {
         // - { balance: [...], coins: [...] }
         let balance = response.data.balance?.available;
         if (balance === undefined) {
-          balance = response.data.coins?.available;
+          // coins is an array of BackendCoinBalance ({ type, amount, ... }).
+          // Use the 'rez' (universal) coin's amount as the available balance.
+          // REGRESSION FIX: Only assign when a 'rez' entry is found; otherwise
+          // leave `balance` undefined so the next fallback (array-shaped balance)
+          // is still evaluated. Previously `?? 0` locked balance to 0 and short-
+          // circuited the fallback chain.
+          const rezCoin = response.data.coins?.find(c => c.type === 'rez');
+          if (rezCoin?.amount !== undefined) {
+            balance = rezCoin.amount;
+          }
         }
         if (balance === undefined && Array.isArray(response.data.balance)) {
           balance = response.data.balance[0]?.available;
