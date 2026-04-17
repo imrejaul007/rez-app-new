@@ -191,6 +191,8 @@ export interface CreateOrderRequest {
   specialInstructions?: string;
   couponCode?: string;
   redemptionCode?: string;
+  voucherCode?: string;
+  offerRedemptionCode?: string;
   lockFeeDiscount?: number;
   coinsUsed?: {
     rezCoins: number;
