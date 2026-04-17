@@ -58,10 +58,6 @@ process.env.METRO_FILE_MAP_WATCHER_HEALTH_CHECK_TIMEOUT = '120000';
 // RESOLVER OPTIMIZATIONS
 // =============================================================================
 
-// Map @rez/rez-shared to the local monorepo packages directory
-// so the consumer app can import shared types without npm installation.
-const REZ_SHARED_PATH = path.resolve(__dirname, '../packages/rez-shared/src');
-
 config.resolver = {
   ...config.resolver,
   blockList: [
@@ -93,11 +89,6 @@ config.resolver = {
     /\.stories\.(js|jsx|ts|tsx)$/,
   ],
   hasteImplModulePath: undefined,
-  // Map nested node_modules so Metro can resolve markdown-it's entities@2 correctly
-  extraNodeModules: {
-    ...config.resolver.extraNodeModules,
-    '@rez/rez-shared': REZ_SHARED_PATH,
-  },
 };
 
 // Fix: markdown-it@10 needs entities@2 (with lib/maps/entities.json),
@@ -106,8 +97,6 @@ config.resolver = {
 config.watchFolders = [
   ...(config.watchFolders || []),
   path.resolve(__dirname, 'node_modules/markdown-it/node_modules/entities'),
-  // Allow Metro to resolve modules from the monorepo packages directory
-  path.resolve(__dirname, '../packages'),
 ];
 
 // =============================================================================

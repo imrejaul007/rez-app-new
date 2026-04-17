@@ -2,7 +2,7 @@
 // Handles payment gateway integration for wallet topup
 
 import apiClient, { ApiResponse } from './apiClient';
-import { normalizePaymentStatus } from '@rez/rez-shared/statusCompat';
+import { normalizePaymentStatus } from '../utils/statusCompat';
 
 // CA-PAY-023 FIX: Normalize payment method types before API submission
 // Transform 'rezcoins' → 'wallet' as required by backend
