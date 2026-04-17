@@ -6,9 +6,8 @@
  * This module re-exports canonical types from the shared-types package so that
  * rez-app-consumer can import from a stable path (@/types/rez-shared-types).
  *
- * NOTE: @rez/shared-types is not yet published as an npm package. Until then,
- * types are maintained here. When the package is published, update tsconfig.json
- * to resolve @rez/shared-types to packages/shared-types and remove this file.
+ * Files are copied locally from packages/shared-types/src/ to types/entities/ and types/enums/
+ * to enable Metro bundler resolution. Update these copies when shared-types is published as npm package.
  */
 
 // Re-export all canonical types
@@ -26,7 +25,7 @@ export {
   KarmaConversionRate,
   EarnRecordStatus,
   BatchStatus,
-} from '../../../packages/shared-types/src/entities/karma';
+} from './entities/karma';
 
 export {
   IOrder,
@@ -34,7 +33,7 @@ export {
   IOrderTotals,
   IOrderPayment,
   IOrderDelivery,
-} from '../../../packages/shared-types/src/entities/order';
+} from './entities/order';
 
 export {
   OrderStatus,
@@ -42,7 +41,7 @@ export {
   CoinType,
   COIN_PRIORITY,
   CoinTransactionType,
-} from '../../../packages/shared-types/src/enums/index';
+} from './enums/index';
 
 /**
  * Canonical order statuses (11 states).
@@ -76,16 +75,8 @@ const LEGACY_STATUS_MAP: Partial<Record<string, CANONICAL_ORDER_STATUSES[number]
 };
 
 /**
- * Normalizes any order status string to its canonical value.
+ * Normalizes any order status String to its canonical value.
  * Maps legacy FSM values to canonical values for consistent UI display.
- *
- * @param status - Any order status string (canonical or legacy)
- * @returns The canonical order status
- *
- * @example
- * normalizeOrderStatus('processing')  // 'preparing'
- * normalizeOrderStatus('completed')     // 'delivered'
- * normalizeOrderStatus('delivered')    // 'delivered'
  */
 export function normalizeOrderStatus(
   status: string,
