@@ -206,6 +206,9 @@ export class AnalyticsQueue {
    * Generate unique ID
    */
   private generateId(): string {
+    if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
+      return `${Date.now()}_${globalThis.crypto.randomUUID()}`;
+    }
     return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 

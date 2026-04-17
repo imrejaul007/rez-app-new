@@ -73,10 +73,10 @@ function FeedbackPage() {
   const isMounted = useIsMounted();
 
   const [idempotencyKey] = useState(() => {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-    return `${Date.now()}-${typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : Math.random().toString(36).substring(2, 11)}`;
+    if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   });
 
   const uploadImageToCloudinary = async (uri: string): Promise<string> => {

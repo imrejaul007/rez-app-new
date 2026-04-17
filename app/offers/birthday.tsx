@@ -297,7 +297,9 @@ function BirthdayRewardsPage() {
                   message: `It's my birthday! Check out my birthday rewards on ${BRAND.APP_NAME}!`,
                   title: 'Birthday Rewards',
                 });
-              } catch (_e) {}
+              } catch (_e) {
+                // Share cancelled or failed — silent is acceptable here
+              }
             }}
           >
             <ThemedText style={styles.shareButtonText}>Share</ThemedText>
