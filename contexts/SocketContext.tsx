@@ -537,6 +537,10 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
       SocketEvents.ORDER_OUT_FOR_DELIVERY,
       SocketEvents.ORDER_DELIVERED,
       SocketEvents.ORDER_CANCELLED,
+      // CRITICAL-1 FIX: Listen for order:refunded emitted by the monolith after
+      // admin-initiated refunds. On receipt the callback (e.g. useOrderTracking)
+      // triggers a wallet refresh so the refunded coins appear immediately.
+      'order:refunded',
     ];
     events.forEach(ev => socketRef.current?.on(ev, callback));
     return () => {
