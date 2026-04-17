@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * Format: timestamp-randomString to ensure uniqueness across retries.
  */
 function localGenerateIdempotencyKey(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  return `${Date.now()}-${crypto.randomUUID()}`;
 }
 
 
@@ -26,7 +26,7 @@ const IDEMPOTENCY_TTL_MS = 86400000; // 24 hours
  * Uses the local generator (no @rez/shared dependency needed)
  */
 export function generateIdempotencyKey(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  return `${Date.now()}-${crypto.randomUUID()}`;
 }
 
 /**

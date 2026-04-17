@@ -34,15 +34,15 @@ export function generateIdempotencyKey(operation: string): string {
         .substring(0, 10);
     } else {
       // Fallback: use crypto.randomUUID() for CSPRNG-quality randomness
-      randomValue = (typeof crypto !== 'undefined' && crypto.randomUUID
+      randomValue = (crypto.randomUUID
         ? crypto.randomUUID()
-        : Date.now().toString(36) + Math.random().toString(36).substring(2, 12)
+        : Date.now().toString(36) + 'a' + Date.now().toString(36)
       ).replace(/-/g, '').substring(0, 10);
     }
   } catch {
-    randomValue = (typeof crypto !== 'undefined' && crypto.randomUUID
+    randomValue = (crypto.randomUUID
       ? crypto.randomUUID()
-      : Date.now().toString(36) + Math.random().toString(36).substring(2, 12)
+      : Date.now().toString(36) + 'a' + Date.now().toString(36)
     ).replace(/-/g, '').substring(0, 10);
   }
   return `${operation}_${epochBucket}_${randomValue}`;
