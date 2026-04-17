@@ -339,21 +339,47 @@ class OffersHttpClient {
     // Get current region from main apiClient for region filtering
     const currentRegion = mainApiClient.getRegion();
 
-    try {
+    // C-C02 FIX: Get auth token from mainApiClient and include in header.
+    // Previously, OffersHttpClient sent zero Authorization headers, so all
+    // authenticated requests silently returned 401.
+    const authToken = mainApiClient.getAuthToken();
+
+    const doFetch = async (token: string | null): Promise<Response> => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-        headers: {
+      try {
+        const headers: Record<string, string> = {
           'Content-Type': 'application/json',
-          'X-Rez-Region': currentRegion, // Include region header for filtering
-          ...options.headers,
-        },
-      });
+          'X-Rez-Region': currentRegion,
+        };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+          headers: { ...headers, ...options.headers },
+        });
+        clearTimeout(timeoutId);
+        // C-C02 FIX: Detect 401 and retry after token refresh.
+        // Previously, no retry logic meant authenticated requests silently failed on 401.
+        if (response.status === 401 && token) {
+          const refreshed = await mainApiClient.handleTokenRefresh();
+          if (refreshed) {
+            const newToken = mainApiClient.getAuthToken();
+            if (newToken && newToken !== token) {
+              const newHeaders = { ...headers, 'Authorization': `Bearer ${newToken}` };
+              const retryRes = await fetch(url, { ...options, headers: { ...newHeaders, ...options.headers } });
+              return retryRes;
+            }
+          }
+        }
+        return response;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    };
 
-      clearTimeout(timeoutId);
+    try {
+      const response = await doFetch(authToken);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
