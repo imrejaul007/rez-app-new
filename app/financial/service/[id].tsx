@@ -36,6 +36,7 @@ import { useComprehensiveAnalytics } from '@/hooks/useComprehensiveAnalytics';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { platformAlertSimple } from '@/utils/platformAlert';
+import { validatePaymentAmount } from '@/utils/validation';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import FinancialServiceShareModal from '@/components/financial/FinancialServiceShareModal';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -354,8 +355,12 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         amount = 0; // Will be set based on selected plan
       }
 
-      if (amount <= 0) {
-        platformAlertSimple('Invalid Amount', 'Please enter a valid amount');
+      // NA-HIGH-17 FIX: Use shared payment amount validator so zero, negative,
+      // and out-of-range amounts are rejected with a consistent error message
+      // before the payment payload reaches the backend.
+      const amountValidation = validatePaymentAmount(amount);
+      if (!amountValidation.valid) {
+        platformAlertSimple('Invalid Amount', amountValidation.error || 'Please enter a valid amount');
         setIsProcessing(false);
         return;
       }

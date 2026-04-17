@@ -147,3 +147,32 @@ export function validateApiParams(
 export function isValidSharePlatform(value: unknown): value is SharePlatform {
   return typeof value === 'string' && validateSharePlatform(value);
 }
+
+/**
+ * NA-HIGH-17 FIX: Shared payment amount validator.
+ * Rejects 0, negative, non-finite, and out-of-range amounts BEFORE they reach
+ * the backend. Use this at every amount-entry boundary (pay-in-store, wallet
+ * recharge, send money, bill pay, etc.) so the user gets a consistent error
+ * and the backend never sees a zero-amount payment attempt.
+ *
+ * @param amount - Numeric amount to validate (post-parseFloat)
+ * @param min - Minimum allowed amount (default: 1)
+ * @param max - Maximum allowed amount (default: 1,000,000)
+ * @returns Validation result with optional user-facing error message
+ */
+export function validatePaymentAmount(
+  amount: number | undefined | null,
+  min: number = 1,
+  max: number = 1_000_000
+): { valid: boolean; error?: string } {
+  if (typeof amount !== 'number' || !Number.isFinite(amount)) {
+    return { valid: false, error: 'Please enter a valid amount' };
+  }
+  if (amount < min) {
+    return { valid: false, error: `Minimum amount is ₹${min}` };
+  }
+  if (amount > max) {
+    return { valid: false, error: `Maximum amount is ₹${max.toLocaleString('en-IN')}` };
+  }
+  return { valid: true };
+}
