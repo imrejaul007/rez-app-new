@@ -30,8 +30,7 @@ const KARMA_PURPLE = '#8B5CF6';
 const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
 
 type TxType = 'earned' | 'converted' | 'spent' | 'bonus';
-/** Wallet filter coin types — maps to query param sent to karma backend */
-type WalletCoinFilter = 'karma_points' | 'rez_coins' | 'all';
+type CoinType = 'karma_points' | 'rez_coins' | 'all';
 
 const TX_CONFIG: Record<TxType, { icon: string; color: string; label: string }> = {
   earned: { icon: 'leaf', color: '#22C55E', label: 'Earned' },
@@ -40,22 +39,15 @@ const TX_CONFIG: Record<TxType, { icon: string; color: string; label: string }> 
   bonus: { icon: 'gift', color: '#F59E0B', label: 'Bonus' },
 };
 
-/** UI display config keyed by the canonical backend coinType value.
- * 'karma_points' — karma earned but not yet converted (from karma service)
- * 'rez'         — REZ coins in the wallet (from wallet service via batch conversion)
- * 'branded'     — branded partner coins (future)
- * 'all'         — special filter value (not a real coin type)
- */
-const COIN_TYPE_CONFIG: Record<string, { label: string; icon: string; color: string }> = {
+const COIN_TYPE_CONFIG: Record<CoinType, { label: string; icon: string; color: string }> = {
   karma_points: { label: 'Karma Points', icon: 'leaf', color: KARMA_PURPLE },
-  rez: { label: 'ReZ Coins', icon: 'wallet', color: '#F59E0B' },
-  branded: { label: 'Branded Coins', icon: 'ribbon', color: '#6366F1' },
+  rez_coins: { label: 'ReZ Coins', icon: 'wallet', color: '#F59E0B' },
   all: { label: 'All', icon: 'apps', color: '#6B7280' },
 };
 
 function TransactionItem({ tx }: { tx: Transaction }) {
   const txCfg = TX_CONFIG[tx.type] ?? TX_CONFIG.earned;
-  const coinCfg = COIN_TYPE_CONFIG[tx.coinType] ?? COIN_TYPE_CONFIG.rez;
+  const coinCfg = COIN_TYPE_CONFIG[tx.coinType] ?? COIN_TYPE_CONFIG.rez_coins;
 
   return (
     <View style={txStyles.item}>
@@ -64,9 +56,7 @@ function TransactionItem({ tx }: { tx: Transaction }) {
           <Ionicons name={txCfg.icon as any} size={18} color={txCfg.color} />
         </View>
         <View style={txStyles.info}>
-          <Text style={txStyles.desc} numberOfLines={1}>
-            {tx.description}
-          </Text>
+          <Text style={txStyles.desc} numberOfLines={1}>{tx.description}</Text>
           <Text style={txStyles.date}>
             {new Date(tx.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
           </Text>
@@ -74,8 +64,7 @@ function TransactionItem({ tx }: { tx: Transaction }) {
       </View>
       <View style={txStyles.right}>
         <Text style={[txStyles.amount, { color: tx.type === 'spent' ? Colors.error : '#22C55E' }]}>
-          {tx.type === 'spent' ? '-' : '+'}
-          {tx.amount}
+          {tx.type === 'spent' ? '-' : '+'}{tx.amount}
         </Text>
         <View style={[txStyles.coinBadge, { backgroundColor: coinCfg.color + '15' }]}>
           <Ionicons name={coinCfg.icon as any} size={10} color={coinCfg.color} />
@@ -86,14 +75,7 @@ function TransactionItem({ tx }: { tx: Transaction }) {
 }
 
 const txStyles = StyleSheet.create({
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.default,
-  },
+  item: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border.default },
   left: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
   iconWrap: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   info: { flex: 1 },
@@ -110,16 +92,13 @@ function KarmaWalletScreen() {
   const isMounted = useIsMounted();
   const [balance, setBalance] = useState<WalletBalance | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [selectedCoin, setSelectedCoin] = useState<WalletCoinFilter>('all');
+  const [selectedCoin, setSelectedCoin] = useState<CoinType>('all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = useCallback(
     async (isRefresh = false) => {
-      if (!isAuthenticated) {
-        setLoading(false);
-        return;
-      }
+      if (!isAuthenticated) { setLoading(false); return; }
       if (!isRefresh) setLoading(true);
       try {
         const [balRes, txRes] = await Promise.all([
@@ -141,15 +120,10 @@ function KarmaWalletScreen() {
   );
 
   useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, [fetchData]),
+    useCallback(() => { fetchData(); }, [fetchData]),
   );
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchData(true);
-  };
+  const onRefresh = () => { setRefreshing(true); fetchData(true); };
 
   if (!isAuthenticated) {
     return (
@@ -183,27 +157,18 @@ function KarmaWalletScreen() {
 
   return (
     <View style={styles.container}>
-      <KarmaHeader
-        title="Wallet"
-        showBack
-        rightAction={
-          <Pressable style={styles.headerAction} onPress={() => router.push('/karma/my-karma')} hitSlop={8}>
-            <Ionicons name="leaf" size={20} color={colors.text.inverse} />
-          </Pressable>
-        }
-      />
+      <KarmaHeader title="Wallet" showBack rightAction={
+        <Pressable style={styles.headerAction} onPress={() => router.push('/karma/my-karma')} hitSlop={8}>
+          <Ionicons name="leaf" size={20} color={colors.text.inverse} />
+        </Pressable>
+      } />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[KARMA_PURPLE]}
-            tintColor={KARMA_PURPLE}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[KARMA_PURPLE]} tintColor={KARMA_PURPLE} />
         }
       >
         {/* Balance Cards */}
@@ -235,9 +200,7 @@ function KarmaWalletScreen() {
               <Text style={[styles.balanceLabel, { color: colors.deepNavy }]}>ReZ Coins</Text>
             </View>
             <Text style={[styles.balanceNumber, { color: colors.deepNavy }]}>{rezCoins.toLocaleString()}</Text>
-            <Text style={[styles.balanceSub, { color: Colors.textSecondary }]}>
-              Universal currency — spend anywhere
-            </Text>
+            <Text style={[styles.balanceSub, { color: Colors.textSecondary }]}>Universal currency — spend anywhere</Text>
             <View style={styles.balanceCardFooter}>
               <View style={[styles.balanceTag, { backgroundColor: '#FEF3C7' }]}>
                 <Ionicons name="swap-horizontal" size={12} color="#D97706" />
@@ -258,8 +221,8 @@ function KarmaWalletScreen() {
               <Text style={styles.conversionTitle}>How Conversion Works</Text>
             </View>
             <Text style={styles.conversionDesc}>
-              Your Karma Points auto-convert to ReZ Coins weekly based on your level. Higher levels = higher conversion
-              rate.
+              Your Karma Points auto-convert to ReZ Coins weekly based on your level.
+              Higher levels = higher conversion rate.
             </Text>
             <View style={styles.conversionRates}>
               {[
@@ -282,23 +245,14 @@ function KarmaWalletScreen() {
         <View style={styles.filterSection}>
           <Text style={styles.sectionTitle}>Transactions</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
-            {(Object.entries(COIN_TYPE_CONFIG) as [WalletCoinFilter, (typeof COIN_TYPE_CONFIG)['all']][]).map(([key, cfg]) => (
+            {(Object.entries(COIN_TYPE_CONFIG) as [CoinType, typeof COIN_TYPE_CONFIG['all']][]).map(([key, cfg]) => (
               <Pressable
                 key={key}
-                style={[
-                  styles.filterChip,
-                  selectedCoin === key && { backgroundColor: cfg.color, borderColor: cfg.color },
-                ]}
-                onPress={() => setSelectedCoin(key as WalletCoinFilter)}
+                style={[styles.filterChip, selectedCoin === key && { backgroundColor: cfg.color, borderColor: cfg.color }]}
+                onPress={() => setSelectedCoin(key as CoinType)}
               >
-                <Ionicons
-                  name={cfg.icon as any}
-                  size={14}
-                  color={selectedCoin === key ? colors.text.inverse : Colors.textSecondary}
-                />
-                <Text style={[styles.filterChipText, selectedCoin === key && { color: colors.text.inverse }]}>
-                  {cfg.label}
-                </Text>
+                <Ionicons name={cfg.icon as any} size={14} color={selectedCoin === key ? colors.text.inverse : Colors.textSecondary} />
+                <Text style={[styles.filterChipText, selectedCoin === key && { color: colors.text.inverse }]}>{cfg.label}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -358,12 +312,10 @@ function KarmaWalletScreen() {
             </Text>
             <View style={styles.brandedBrands}>
               {['Partner A', 'Partner B', 'Partner C'].map((brand, idx) => (
-                // TODO: Replace with dynamic partner data from API
-                <View
-                  key={brand}
-                  style={[styles.brandedChip, idx === 0 && { backgroundColor: '#DCFCE7', borderColor: '#22C55E' }]}
-                >
-                  <Text style={[styles.brandedChipText, idx === 0 && { color: '#22C55E' }]}>{brand}</Text>
+                <View key={brand} style={[styles.brandedChip, idx === 0 && { backgroundColor: '#DCFCE7', borderColor: '#22C55E' }]}>
+                  <Text style={[styles.brandedChipText, idx === 0 && { color: '#22C55E' }]}>
+                    {brand}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -380,86 +332,32 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   authRequired: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing['2xl'] },
-  authTitle: {
-    fontSize: Typography.h3.fontSize,
-    fontWeight: '700',
-    color: colors.deepNavy,
-    marginTop: Spacing.base,
-    marginBottom: Spacing.sm,
-  },
-  authSubtitle: {
-    fontSize: Typography.body.fontSize,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: Spacing.xl,
-  },
-  loginBtn: {
-    backgroundColor: KARMA_PURPLE,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: 14,
-    borderRadius: BorderRadius.xl,
-  },
+  authTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base, marginBottom: Spacing.sm },
+  authSubtitle: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.xl },
+  loginBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: 14, borderRadius: BorderRadius.xl },
   loginBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
   scrollView: { flex: 1 },
-  headerAction: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  headerAction: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
 
   // Balance Cards
   balanceCards: { padding: Spacing.base, gap: Spacing.md },
   balanceCard: { padding: Spacing.lg, borderRadius: BorderRadius.xl, marginBottom: 0 },
-  rezCoinCard: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: colors.text.inverse,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-  },
+  rezCoinCard: { padding: Spacing.lg, borderRadius: BorderRadius.xl, backgroundColor: colors.text.inverse, borderWidth: 1, borderColor: colors.border.default },
   balanceCardHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.sm },
-  balanceIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  balanceIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
   balanceLabel: { fontSize: Typography.body.fontSize, fontWeight: '600', color: 'rgba(255,255,255,0.9)' },
   balanceNumber: { fontSize: 36, fontWeight: '800', color: colors.text.inverse, marginBottom: 4 },
   balanceSub: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.7)', marginBottom: Spacing.md },
   balanceCardFooter: { flexDirection: 'row' },
-  balanceTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
+  balanceTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, gap: 4 },
   balanceTagText: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.8)', fontWeight: '500' },
 
   // Conversion
   conversionSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  conversionCard: {
-    padding: Spacing.base,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: 'rgba(139,92,246,0.15)',
-  },
+  conversionCard: { padding: Spacing.base, borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: 'rgba(139,92,246,0.15)' },
   conversionHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.sm },
   conversionTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy },
-  conversionDesc: {
-    fontSize: Typography.caption.fontSize,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.md,
-    lineHeight: 18,
-  },
+  conversionDesc: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginBottom: Spacing.md, lineHeight: 18 },
   conversionRates: { flexDirection: 'row', justifyContent: 'space-between' },
   conversionRateItem: { alignItems: 'center' },
   conversionLevel: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.deepNavy },
@@ -468,124 +366,39 @@ const styles = StyleSheet.create({
 
   // Filter
   filterSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.md },
-  sectionTitle: {
-    fontSize: Typography.bodyLarge.fontSize,
-    fontWeight: '700',
-    color: colors.deepNavy,
-    marginBottom: Spacing.md,
-  },
+  sectionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.deepNavy, marginBottom: Spacing.md },
   filterScroll: { gap: Spacing.sm },
-  filterChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.text.inverse,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    gap: 6,
-    marginRight: Spacing.sm,
-  },
+  filterChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.text.inverse, borderWidth: 1, borderColor: colors.border.default, gap: 6, marginRight: Spacing.sm },
   filterChipText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: Colors.textSecondary },
 
   // Transactions
   txSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  emptyTx: {
-    alignItems: 'center',
-    padding: Spacing.xl,
-    backgroundColor: colors.text.inverse,
-    borderRadius: BorderRadius.lg,
-  },
-  emptyTxTitle: {
-    fontSize: Typography.body.fontSize,
-    fontWeight: '700',
-    color: colors.deepNavy,
-    marginTop: Spacing.base,
-  },
-  emptyTxSub: {
-    fontSize: Typography.body.fontSize,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    marginTop: 4,
-    marginBottom: Spacing.lg,
-  },
-  exploreBtn: {
-    backgroundColor: KARMA_PURPLE,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.xl,
-  },
+  emptyTx: { alignItems: 'center', padding: Spacing.xl, backgroundColor: colors.text.inverse, borderRadius: BorderRadius.lg },
+  emptyTxTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base },
+  emptyTxSub: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginTop: 4, marginBottom: Spacing.lg },
+  exploreBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius.xl },
   exploreBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
-  txList: {
-    backgroundColor: colors.text.inverse,
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: 4,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-  },
+  txList: { backgroundColor: colors.text.inverse, borderRadius: BorderRadius.lg, paddingHorizontal: Spacing.base, paddingVertical: 4, borderWidth: 1, borderColor: colors.border.default },
 
   // Earn More
   earnMoreSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  earnMoreCard: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: 'rgba(255,205,87,0.2)',
-  },
+  earnMoreCard: { padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: 'rgba(255,205,87,0.2)' },
   earnMoreContent: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.md },
   earnMoreTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy },
   earnMoreDesc: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2 },
   earnMoreActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  earnMoreBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#22C55E',
-    paddingVertical: 12,
-    borderRadius: BorderRadius.xl,
-    gap: 8,
-  },
+  earnMoreBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#22C55E', paddingVertical: 12, borderRadius: BorderRadius.xl, gap: 8 },
   earnMoreBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
-  scanBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#F5F3FF',
-    borderWidth: 1,
-    borderColor: KARMA_PURPLE,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  scanBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#F5F3FF', borderWidth: 1, borderColor: KARMA_PURPLE, justifyContent: 'center', alignItems: 'center' },
 
   // Branded
   brandedSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  brandedCard: {
-    backgroundColor: colors.text.inverse,
-    padding: Spacing.base,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-  },
+  brandedCard: { backgroundColor: colors.text.inverse, padding: Spacing.base, borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: colors.border.default },
   brandedHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.sm },
   brandedTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy },
-  brandedDesc: {
-    fontSize: Typography.body.fontSize,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.md,
-    lineHeight: 20,
-  },
+  brandedDesc: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, marginBottom: Spacing.md, lineHeight: 20 },
   brandedBrands: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  brandedChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 12,
-    backgroundColor: colors.background.secondary,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-  },
+  brandedChip: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.background.secondary, borderWidth: 1, borderColor: colors.border.default },
   brandedChipText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: Colors.textSecondary },
 });
 

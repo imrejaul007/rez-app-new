@@ -222,10 +222,7 @@ function CartPage() {
     }, 0);
 
     // CA-CMC-018 FIX: Removed deprecated calculateLockedTotal() which always returned 0.
-    // CA-CMC-003 FIX: Locked item totals must come from backend API response, not calculated client-side.
-    // TODO (SERVER-SIDE): The locked items totals should be fetched from a single API endpoint
-    // instead of separate /cart and /locked-items calls. This prevents drift if lock fees change
-    // between API calls. Consolidate locked item pricing into the main cart response.
+    // Locked item totals must come from backend API response, not calculated client-side.
     const lockedTotal = 0; // Always 0 — use API totals instead
 
     return recalculatedCartTotal + serviceTotal + lockedTotal;
@@ -563,10 +560,10 @@ function CartPage() {
         );
       }
 
-      // Render service item with booking details (CA-CMC-009: safe cast with optional chaining)
+      // Render service item with booking details
       if (activeTab === 'service') {
         // Use the typed helper rather than casting to any
-        const serviceItem = item ? asExtendedCartItem(item) as DisplayServiceItem : null;
+        const serviceItem = asExtendedCartItem(item) as DisplayServiceItem;
         return (
           <View style={styles.cardWrapper}>
             <CartItem
@@ -577,7 +574,7 @@ function CartPage() {
               hideQuantityControls={true} // Services don't have quantity controls
             />
             {/* Service Booking Details */}
-            {serviceItem?.serviceBookingDetails && (
+            {serviceItem.serviceBookingDetails && (
               <View style={styles.serviceBookingDetails}>
                 <View style={styles.serviceBookingRow}>
                   <Ionicons name="calendar-outline" size={16} color={colors.nileBlue} />
@@ -692,8 +689,7 @@ function CartPage() {
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
-              // CA-CMC-041 FIX: Check productItems.length > 0 before accessing productItems[0]
-              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
                   storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
@@ -713,8 +709,7 @@ function CartPage() {
               keyboardShouldPersistTaps: 'handled',
               ListEmptyComponent: renderEmptyState,
               ListFooterComponent:
-                // CA-CMC-041 FIX: Check productItems.length > 0 before accessing productItems[0]
-                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
+                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                   <CardOffersSection
                     storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                     orderValue={overallTotal}

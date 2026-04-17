@@ -1,92 +1,98 @@
-import { CartItem as CartItemType, LockedProduct, LOCK_CONFIG } from '@/types/cart';
+/**
+ * Cart utility functions — production-safe helpers for locked product calculations.
+ *
+ * BUG-076 FIX: These utilities were previously exported from utils/mockCartData.ts
+ * alongside test fixtures, making it misleading (mock = dev/test only).
+ * Moved here so cart.tsx imports from a clearly production-appropriate module.
+ * mockCartData.ts re-exports these for backward compatibility with existing tests.
+ */
+
+import { CartItem, LockedProduct, LOCK_CONFIG, getLockStatus } from '@/types/cart';
 
 /**
- * Calculate total number of items in the cart
- * CA-CMC-018 FIX: Deprecated calculateTotal() which used to return 0.
- * All price calculations now happen server-side via cart API.
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously summed cart item prices on the frontend. Cart totals (subtotal, tax, discount,
+ * cashback, total) must come from the backend cart API response (cart.totals.*).
+ * Use the totals already returned by the API instead of calling this function.
  */
-export const getItemCount = (items: CartItemType[]): number => {
-  if (!Array.isArray(items)) {
-    return 0;
-  }
-  return items.reduce((total, item) => {
-    const qty = typeof item.quantity === 'number' ? Math.max(0, item.quantity) : 0;
-    return total + qty;
-  }, 0);
-};
-
-/**
- * Calculate total number of locked items
- */
-export const getLockedItemCount = (lockedItems: LockedProduct[]): number => {
-  if (!Array.isArray(lockedItems)) {
-    return 0;
-  }
-  return lockedItems.length;
-};
-
-/**
- * CA-CMC-040 FIX: Update locked product timers with proper date validation
- * Recalculates remaining time for each locked item and updates status.
- * Validates expiresAt is a valid Date before calling getTime().
- */
-export const updateLockedProductTimers = (lockedProducts: LockedProduct[]): LockedProduct[] => {
-  if (!Array.isArray(lockedProducts)) {
-    return [];
-  }
-
-  const now = Date.now();
-
-  return lockedProducts.map((item) => {
-    // CA-CMC-040 FIX: Check expiresAt is a valid Date instance before calling getTime()
-    if (!item.expiresAt || !(item.expiresAt instanceof Date)) {
-      console.warn(`Invalid expiresAt for locked item ${item._id}:`, item.expiresAt);
-      return { ...item, remainingTime: 0, status: 'expired' };
-    }
-
-    const expiresAtTime = item.expiresAt.getTime();
-
-    // Check for invalid date
-    if (isNaN(expiresAtTime)) {
-      console.warn(`Invalid expiresAt timestamp for locked item ${item._id}`);
-      return { ...item, remainingTime: 0, status: 'expired' };
-    }
-
-    const remainingTime = Math.max(0, expiresAtTime - now);
-
-    // Determine status based on remaining time
-    let status: 'active' | 'expiring' | 'expired' = 'active';
-    if (remainingTime <= 0) {
-      status = 'expired';
-    } else if (remainingTime <= LOCK_CONFIG.EXPIRING_THRESHOLD) {
-      status = 'expiring';
-    }
-
-    return {
-      ...item,
-      remainingTime,
-      status,
-    };
-  });
-};
-
-/**
- * CA-CMC-018 FIX: Deprecated stub that was returning 0.
- * All price calculations now happen server-side. This function
- * is kept for backward compatibility but should not be used.
- * @deprecated Use cart API response totals instead
- */
-export const calculateTotal = (): number => {
-  console.warn('calculateTotal() is deprecated. Use cart API response totals instead.');
+export const calculateTotal = (items: CartItem[]): number => {
   return 0;
 };
 
+/** Return the count of cart items. */
+export const getItemCount = (items: CartItem[]): number => {
+  return items.length;
+};
+
 /**
- * CA-CMC-018 FIX: Deprecated stub that was returning 0.
- * Locked product prices are fetched from the API response.
- * @deprecated Use cart API response totals instead
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously summed locked product prices on the frontend. Locked item totals must come
+ * from the backend API response rather than being computed client-side.
  */
-export const calculateLockedTotal = (): number => {
-  console.warn('calculateLockedTotal() is deprecated. Use cart API response totals instead.');
+export const calculateLockedTotal = (items: LockedProduct[]): number => {
   return 0;
+};
+
+/** Return the count of currently locked items. */
+export const getLockedItemCount = (items: LockedProduct[]): number => {
+  return items.length;
+};
+
+/**
+ * Recalculate remaining times for all locked products and remove expired ones.
+ * Call this on every timer tick to keep the UI in sync.
+ */
+export const updateLockedProductTimers = (items: LockedProduct[]): LockedProduct[] => {
+  const now = new Date();
+  return items
+    .map((item) => {
+      // Type guard: validate expiresAt is a valid Date before calling getTime()
+      if (!item.expiresAt || !(item.expiresAt instanceof Date)) {
+        console.warn(`Invalid expiresAt for item ${item.id}:`, item.expiresAt);
+        return { ...item, remainingTime: 0, status: 'expired' as const };
+      }
+      const remainingTime = Math.max(0, item.expiresAt.getTime() - now.getTime());
+      return {
+        ...item,
+        remainingTime,
+        status: getLockStatus(remainingTime),
+      };
+    })
+    .filter((item) => item.remainingTime > 0); // Remove expired items
+};
+
+/** Format a remaining-time value (ms) as "M:SS". */
+export const formatRemainingTime = (remainingTime: number): string => {
+  if (remainingTime <= 0) return 'Expired';
+  const minutes = Math.floor(remainingTime / (60 * 1000));
+  const seconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
+  if (minutes > 0) {
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+  return `0:${seconds.toString().padStart(2, '0')}`;
+};
+
+/** Create a LockedProduct from a CartItem. */
+export const createLockedProductFromCartItem = (
+  item: CartItem,
+  productId?: string,
+): LockedProduct => {
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + LOCK_CONFIG.DEFAULT_DURATION);
+  return {
+    id: `locked_${item.id}_${Date.now()}`,
+    productId: productId || item.id,
+    name: item.name,
+    price: item.price,
+    image: item.image,
+    cashback: item.cashback,
+    category: item.category,
+    lockedAt: now,
+    expiresAt,
+    remainingTime: LOCK_CONFIG.DEFAULT_DURATION,
+    lockDuration: LOCK_CONFIG.DEFAULT_DURATION,
+    status: 'active',
+  };
 };

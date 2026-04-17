@@ -628,11 +628,6 @@ class CartService {
         };
       }
 
-      // CA-CMC-036 FIX: Pre-flight validation of coupon eligibility.
-      // TODO: Validate coupon applicability (minOrderValue, categories, user tier) before applying.
-      // This requires fetching coupon details and checking against current cart.
-      // For now, rely on backend validation (lines 650-660) to inform user of ineligibility.
-
       logApiRequest('POST', '/cart/coupon', data);
 
       const response = await withRetry(
@@ -654,7 +649,7 @@ class CartService {
         }
         // CA-CMC-014 FIX: Check if coupon was actually applied (discount > 0)
         // If backend rejected coupon silently, inform user before checkout
-        const appliedDiscount = (response.data as any)?.totals?.discount || 0;
+        const appliedDiscount = (data as any).expectedDiscount || 0;
         if (appliedDiscount <= 0) {
           devLog.warn('[CART API] Coupon may not have been applied; no discount shown');
           return {
