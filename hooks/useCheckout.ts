@@ -742,7 +742,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               });
             }
           } catch (walletError) {
-            logger.error('💳 [Checkout] Failed to read wallet context, using 0 balance:', walletError);
+            logger.error('💳 [Checkout] Failed to read wallet context, using 0 balance:', walletError as Error);
           }
 
           // Process coupons result
@@ -998,7 +998,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           });
         }
       } catch (walletError) {
-        logger.error('💳 [Checkout] Failed to read wallet context (fallback), using 0 balance:', walletError);
+        logger.error('💳 [Checkout] Failed to read wallet context (fallback), using 0 balance:', walletError as Error);
       }
       
       // Fetch store promo coins for this store (fallback)
@@ -1109,7 +1109,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         subtotal: state.items.reduce((total, item) => total + (item.price * item.quantity), 0),
       };
 
-      logger.info('🎟️ [Checkout] Validating coupon:', code.code, 'with cart data:', cartData);
+      logger.info(`🎟️ [Checkout] Validating coupon: ${code.code}`, cartData);
 
       const response: any = await couponService.validateCoupon(code.code, cartData);
 
@@ -1436,7 +1436,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Validate amount
       if (amount <= 0 || amount > coin.available) {
-        logger.info('💳 [Checkout] Invalid coin amount - returning early. amount:', amount, 'available:', coin.available);
+        logger.info(`💳 [Checkout] Invalid coin amount - amount: ${amount}, available: ${coin.available}`);
         return prev;
       }
       
@@ -1754,7 +1754,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     // Validate sufficient balance (check total available, not just used)
     if (totalPayable > 0 && totalAvailableBalance < totalPayable) {
       const shortfall = totalPayable - totalAvailableBalance;
-      logger.error('💳 [Checkout] Insufficient balance:', { shortfall, totalPayable, totalAvailableBalance });
+      logger.error(`💳 [Checkout] Insufficient balance - shortfall: ${shortfall}, payable: ${totalPayable}, available: ${totalAvailableBalance}`);
       setState(prev => ({
         ...prev,
         error: `Insufficient balance. You need ${shortfall} more RC to complete this purchase.`
@@ -1862,7 +1862,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       );
 
       if (!orderResponse.success || !orderResponse.data) {
-        logger.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error as Error);
+        logger.error('[Checkout] Order + wallet payment failed atomically: ' + orderResponse.error);
         setState(prev => ({
           ...prev,
           loading: false,
@@ -1903,7 +1903,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         );
 
         if (!walletResponse.success || !walletResponse.data) {
-          logger.error('[Checkout] Fallback wallet payment failed:', walletResponse.error as Error);
+          logger.error('[Checkout] Fallback wallet payment failed: ' + walletResponse.error);
           setState(prev => ({
             ...prev,
             loading: false,
@@ -2145,12 +2145,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             });
             const orderId = orderResponse.data.id || orderResponse.data._id;
             if (!orderId) {
-              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data as Error);
+              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, undefined, JSON.stringify(orderResponse.data));
             }
             createdOrderIds.push(orderId);
             logger.info(`✅ [COD] Order created for ${storeGroup.storeName}: ${orderId}`);
           } else {
-            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error as Error);
+            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}: ` + orderResponse.error);
             failedStores.push(storeGroup.storeName);
           }
         } catch (err: any) {
@@ -2421,7 +2421,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             );
 
             if (!orderResponse.success || !orderResponse.data) {
-              logger.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error as Error);
+              logger.error('❌ [Checkout] Order creation failed after payment: ' + orderResponse.error);
               showToast({
                 message: 'Payment successful but order creation failed. Please contact support.',
                 type: 'error',

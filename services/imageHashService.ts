@@ -1,5 +1,6 @@
 /**
  * Image Hash Service
+import { createHash } from 'crypto';
  *
  * Provides image duplicate detection using SHA-256 hashing.
  * Compares uploaded images against previous uploads to prevent duplicates.
@@ -19,6 +20,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 import { BILL_UPLOAD_CONFIG } from '@/config/uploadConfig';
+import { v4 as uuidv4 } from 'uuid';
 
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},
@@ -352,7 +354,7 @@ class ImageHashService {
       const hashBase64 = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         base64,
-        { encoding: Crypto.DigestEncoding.HEX }
+        { encoding: Crypto.CryptoEncoding.HEX }
       );
 
       return hashBase64;

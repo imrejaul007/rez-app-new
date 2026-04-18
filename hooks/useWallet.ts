@@ -71,7 +71,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
   const coins: CoinBalance[] = [
     {
       id: 'rez-0',
-      type: 'rez',
+      type: 'rez' as any,
       name: BRAND.COIN_NAME,
       amount: rezAmount,
       currency: BRAND.CURRENCY_CODE,
@@ -87,7 +87,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
     },
     {
       id: 'promo-0',
-      type: 'promo',
+      type: 'promo' as any,
       name: 'Promo Coins',
       amount: promoAmount,
       currency: BRAND.CURRENCY_CODE,

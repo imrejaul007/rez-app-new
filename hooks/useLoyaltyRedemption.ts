@@ -436,7 +436,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
     }
 
     if (reward.minTier && state.balance.tier) {
-      const tierLevels = { Bronze: 1, Silver: 2, Gold: 3, Platinum: 4, Diamond: 5 };
+      const tierLevels: Record<string, number> = { Bronze: 1, Silver: 2, Gold: 3, Platinum: 4, Diamond: 5 };
       const userTierLevel = tierLevels[state.balance.tier] || 0;
       const requiredTierLevel = tierLevels[reward.minTier] || 0;
 
@@ -480,7 +480,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
     if (!state.balance) return 0;
     if (!state.balance.pointsToNextTier) return 100;
 
-    const tierRanges = {
+    const tierRanges: Record<string, [number, number]> = {
       Bronze: [0, 999],
       Silver: [1000, 4999],
       Gold: [5000, 9999],
@@ -488,7 +488,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       Diamond: [50000, Infinity],
     };
 
-    const currentRange = tierRanges[state.balance.tier] || [0, 999];
+    const currentRange = tierRanges[state.balance.tier] ?? [0, 999];
     const rangeSize = currentRange[1] - currentRange[0];
     const progress = state.balance.currentPoints - currentRange[0];
 

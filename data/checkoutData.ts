@@ -194,7 +194,7 @@ export const calculateBillSummary = (
 
   return {
     itemTotal,
-    getAndItemTotal,
+    
     deliveryFee,
     platformFee,
     taxes,

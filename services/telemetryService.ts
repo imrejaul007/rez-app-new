@@ -26,6 +26,7 @@ import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import apiClient from './apiClient';
+import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // Type Definitions

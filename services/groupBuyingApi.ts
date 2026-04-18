@@ -9,17 +9,17 @@ import {
   CreateGroupRequest,
   JoinGroupRequest,
   GroupCheckoutRequest,
-  any,
-  any,
+  
   GroupBuyingFilters,
   GroupMessage,
+  GroupBuyingApiResponse,
 } from '@/types/groupBuying.types';
 
 const BASE_PATH = '/group-buying';
 
 class GroupBuyingApi {
   // Get available group buying products
-  async getProducts(filters?: GroupBuyingFilters): Promise<ApiResponse<ListProductsResponse>> {
+  async getProducts(filters?: GroupBuyingFilters): Promise<ApiResponse<GroupBuyingProduct[]>> {
     try {
 
       const params: any = {};
@@ -30,7 +30,7 @@ class GroupBuyingApi {
         if (filters.sortBy) params.sortBy = filters.sortBy;
       }
 
-      const response = await apiClient.get<ListProductsResponse>(`${BASE_PATH}/products`, params);
+      const response = await apiClient.get<GroupBuyingProduct[]>(`${BASE_PATH}/products`, params);
 
       if (response.success) {
 
@@ -65,7 +65,7 @@ class GroupBuyingApi {
   }
 
   // Get available groups
-  async getAvailableGroups(filters?: GroupBuyingFilters): Promise<ApiResponse<ListGroupsResponse>> {
+  async getAvailableGroups(filters?: GroupBuyingFilters): Promise<ApiResponse<GroupBuyingGroup[]>> {
     try {
 
       const params: any = { status: 'active,filling' };
@@ -76,7 +76,7 @@ class GroupBuyingApi {
         if (filters.sortBy) params.sortBy = filters.sortBy;
       }
 
-      const response = await apiClient.get<ListGroupsResponse>(`${BASE_PATH}/groups`, params);
+      const response = await apiClient.get<GroupBuyingGroup[]>(`${BASE_PATH}/groups`, params);
 
       if (response.success) {
 

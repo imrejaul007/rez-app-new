@@ -1,5 +1,4 @@
 /**
-import { v4 as uuidv4 } from 'uuid';
  * Analytics Service
  *
 
@@ -18,6 +17,7 @@ import uuid from 'react-native-uuid';
 // BUG-059 FIX: Import regionStore to get the active currency dynamically.
 // Previously, trackAddToCart() hardcoded 'INR' regardless of selected region (AED, etc.).
 import { useRegionStore } from '@/stores/regionStore';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface AnalyticsEvent {
   name: string;

@@ -87,7 +87,7 @@ const checkCategoryConflicts = (deals: Deal[]): DealConflict[] => {
       message: 'Only one instant discount can be applied per transaction',
       severity: 'ERROR',
       suggestion: `Choose the deal with highest discount: ${instantDeals.reduce((best, current) => 
-        current(discountValue ?? 0) > best(discountValue ?? 0) ? current : best
+        (current.discountValue ?? 0) > (best.discountValue ?? 0) ? current : best
       ).title}`,
     });
   }
@@ -240,11 +240,11 @@ const calculateOptimalDealCombination = (
   // Sort by potential savings (discount value)
   const sortedDeals = validDeals.sort((a, b) => {
     const aSavings = Math.min(
-      (billAmount * a(discountValue ?? 0)) / 100,
+      (billAmount * (a.discountValue ?? 0)) / 100,
       a.maxDiscount || Infinity
     );
     const bSavings = Math.min(
-      (billAmount * b(discountValue ?? 0)) / 100,
+      (billAmount * (b.discountValue ?? 0)) / 100,
       b.maxDiscount || Infinity
     );
     return bSavings - aSavings;
@@ -267,7 +267,7 @@ const calculateOptimalDealCombination = (
     if (!hasErrorConflicts) {
       recommendedDeals.push(deal.id);
       const dealSavings = Math.min(
-        (billAmount * deal(discountValue ?? 0)) / 100,
+        (billAmount * (deal.discountValue ?? 0)) / 100,
         deal.maxDiscount || Infinity
       );
       totalSavings += dealSavings;
@@ -328,6 +328,6 @@ export const suggestAlternativeDeals = (
   
   // Sort by potential value and return top 3
   return nonConflictingDeals
-    .sort((a, b) => b(discountValue ?? 0) - a(discountValue ?? 0))
+    .sort((a, b) => (b.discountValue ?? 0) - (a.discountValue ?? 0))
     .slice(0, 3);
 };

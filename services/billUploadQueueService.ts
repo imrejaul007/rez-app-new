@@ -1,5 +1,4 @@
 /**
-import { v4 as uuidv4 } from 'uuid';
  * Bill Upload Queue Service
  *
 
@@ -27,6 +26,7 @@ import { billUploadService } from './billUploadService';
 import { imageHashService } from './imageHashService';
 import type { BillUploadData } from './billUploadService';
 import { BILL_UPLOAD_CONFIG } from '@/config/uploadConfig';
+import { v4 as uuidv4 } from 'uuid';
 
 // EventEmitter polyfill for React Native compatibility
 class EventEmitter {

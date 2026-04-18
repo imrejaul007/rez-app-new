@@ -31,7 +31,7 @@ class ExclusiveOffersApiService {
    * Get all active exclusive offers
    */
   async getOffers(params?: GetExclusiveOffersParams): Promise<ApiResponse<{ offers: ExclusiveOffer[] }>> {
-    return apiClient.get<{ offers: ExclusiveOffer[] }>(this.baseUrl, params);
+    return apiClient.get<{ offers: ExclusiveOffer[] }>(this.baseUrl, params as Record<string, string | number | boolean | null | undefined> | undefined);
   }
 
   /**

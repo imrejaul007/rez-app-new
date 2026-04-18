@@ -1,5 +1,4 @@
 /**
-import { v4 as uuidv4 } from 'uuid';
  * Offline Sync Service
  *
  * Generic offline-first queue for serializable API actions.
@@ -23,6 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { logger } from '@/utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 // ─── EventEmitter (lightweight polyfill) ────────────────────
 

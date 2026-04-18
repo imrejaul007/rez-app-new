@@ -26,6 +26,7 @@ import {
   generateThumbnailUrl,
   validateCloudinaryConfig,
 } from '@/config/cloudinary.config';
+import { v4 as uuidv4 } from 'uuid';
 import {
   videoCompressionService,
   videoCompressionHelpers,

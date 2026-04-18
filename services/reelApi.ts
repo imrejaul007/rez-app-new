@@ -73,13 +73,16 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>('/videos', params);
 
       if (response.success && response.data) {
-        const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
+        const raw = response.data;
+        const videos: unknown[] = Array.isArray(raw) ? raw : ((raw as any).videos || []);
+        const reels = videos.map((video: any) => this.transformVideoToReel(video));
+        const pagination = !Array.isArray(raw) ? (raw as any).pagination : undefined;
 
         return {
           success: true,
           data: {
             reels,
-            pagination: response.data.pagination || response.meta?.pagination,
+            pagination: pagination || (response as any).meta?.pagination,
           },
         };
       }
@@ -101,7 +104,9 @@ class ReelApiService {
       const response = await apiClient.get<unknown[]>('/videos/trending', params);
 
       if (response.success && response.data) {
-        const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
+        const raw = response.data;
+        const videos: unknown[] = Array.isArray(raw) ? raw : ((raw as any).videos || []);
+        const reels = videos.map((video: any) => this.transformVideoToReel(video));
         return { success: true, data: reels };
       }
 
@@ -123,13 +128,16 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/category/${category}`, params);
 
       if (response.success && response.data) {
-        const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
+        const raw = response.data;
+        const videos: unknown[] = Array.isArray(raw) ? raw : ((raw as any).videos || []);
+        const pagination = !Array.isArray(raw) ? (raw as any).pagination : undefined;
+        const reels = videos.map((video: any) => this.transformVideoToReel(video));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: response.data.pagination,
+            pagination: pagination ?? {},
           },
         };
       }
@@ -169,13 +177,16 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/creator/${creatorId}`, params);
 
       if (response.success && response.data) {
-        const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
+        const raw = response.data;
+        const videos: unknown[] = Array.isArray(raw) ? raw : ((raw as any).videos || []);
+        const pagination = !Array.isArray(raw) ? (raw as any).pagination : undefined;
+        const reels = videos.map((video: any) => this.transformVideoToReel(video));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: response.data.pagination,
+            pagination: pagination ?? {},
           },
         };
       }
@@ -197,7 +208,9 @@ class ReelApiService {
       const response = await apiClient.get<unknown[]>(`/videos/store/${storeId}`, params);
 
       if (response.success && response.data) {
-        const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
+        const raw = response.data;
+        const videos: unknown[] = Array.isArray(raw) ? raw : ((raw as any).videos || []);
+        const reels = videos.map((video: any) => this.transformVideoToReel(video));
         return { success: true, data: reels };
       }
 
@@ -219,13 +232,16 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>('/videos/search', { q: query, ...params });
 
       if (response.success && response.data) {
-        const reels = (response.data.videos || response.data || []).map((video: any) => this.transformVideoToReel(video));
+        const raw = response.data;
+        const videos: unknown[] = Array.isArray(raw) ? raw : ((raw as any).videos || []);
+        const pagination = !Array.isArray(raw) ? (raw as any).pagination : undefined;
+        const reels = videos.map((video: any) => this.transformVideoToReel(video));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: response.data.pagination,
+            pagination: pagination ?? {},
           },
         };
       }
@@ -241,14 +257,15 @@ class ReelApiService {
    */
   async toggleLike(reelId: string): Promise<ApiResponse<{ liked: boolean; likesCount: number }>> {
     try {
-      const response = await apiClient.post<{ liked: boolean; likesCount: number }>(`/videos/${reelId}/like`);
+      const response = await apiClient.post<{ liked: boolean; likesCount: number } & Record<string, unknown>>(`/videos/${reelId}/like`);
 
       if (response.success && response.data) {
+        const d = response.data as any;
         return {
           success: true,
           data: {
-            liked: response.data.liked ?? response.data.isLiked ?? true,
-            likesCount: response.data.likesCount ?? response.data.likes ?? 0,
+            liked: d.liked ?? d.isLiked ?? true,
+            likesCount: d.likesCount ?? d.likes ?? 0,
           },
         };
       }
@@ -264,13 +281,14 @@ class ReelApiService {
    */
   async toggleBookmark(reelId: string): Promise<ApiResponse<{ bookmarked: boolean }>> {
     try {
-      const response = await apiClient.post<{ bookmarked: boolean }>(`/videos/${reelId}/bookmark`);
+      const response = await apiClient.post<{ bookmarked: boolean } & Record<string, unknown>>(`/videos/${reelId}/bookmark`);
 
       if (response.success && response.data) {
+        const d = response.data as any;
         return {
           success: true,
           data: {
-            bookmarked: response.data.bookmarked ?? response.data.isBookmarked ?? true,
+            bookmarked: d.bookmarked ?? d.isBookmarked ?? true,
           },
         };
       }
@@ -286,13 +304,14 @@ class ReelApiService {
    */
   async trackView(reelId: string): Promise<ApiResponse<{ viewsCount: number }>> {
     try {
-      const response = await apiClient.post<{ viewsCount: number }>(`/videos/${reelId}/view`);
+      const response = await apiClient.post<{ viewsCount: number } & Record<string, unknown>>(`/videos/${reelId}/view`);
 
-      if (response.success) {
+      if (response.success && response.data) {
+        const d = response.data as any;
         return {
           success: true,
           data: {
-            viewsCount: response.data?.viewsCount ?? response.data?.views ?? 0,
+            viewsCount: d.viewsCount ?? d.views ?? 0,
           },
         };
       }
@@ -314,7 +333,10 @@ class ReelApiService {
       const response = await apiClient.get<{ comments?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/${reelId}/comments`, params);
 
       if (response.success && response.data) {
-        const comments = (response.data.comments || response.data || []).map((comment: any) => ({
+        const raw = response.data;
+        const commentsRaw: unknown[] = Array.isArray(raw) ? raw : ((raw as any).comments || []);
+        const pagination = !Array.isArray(raw) ? (raw as any).pagination : undefined;
+        const comments = commentsRaw.map((comment: any) => ({
           id: comment._id || comment.id,
           userId: comment.user?._id || comment.userId,
           userName: comment.user?.name || comment.userName || 'Anonymous',
@@ -329,7 +351,7 @@ class ReelApiService {
           success: true,
           data: {
             comments,
-            pagination: response.data.pagination,
+            pagination: pagination ?? {},
           },
         };
       }
@@ -348,7 +370,8 @@ class ReelApiService {
       const response = await apiClient.post<Record<string, unknown>>(`/videos/${reelId}/comments`, { comment });
 
       if (response.success && response.data) {
-        const newComment = response.data.comment || response.data;
+        const nc = (response.data as any);
+        const newComment = nc.comment || nc;
         return {
           success: true,
           data: {

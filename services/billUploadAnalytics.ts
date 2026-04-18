@@ -1,5 +1,4 @@
 /**
-import { v4 as uuidv4 } from 'uuid';
  * Bill Upload Analytics Service
  *
 
@@ -26,6 +25,7 @@ import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { telemetryService } from './telemetryService';
 import { errorReporter } from '../utils/errorReporter';
+import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // Type Definitions

@@ -1,5 +1,4 @@
 /**
-import { v4 as uuidv4 } from 'uuid';
  * Error Tracking Service
  *
 
@@ -21,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { logger } from '@/utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // Types
@@ -585,11 +585,8 @@ class ErrorTrackingService {
 
     logger.error(
       `${emoji} [ErrorTracking] [${type}] [${severity}] ${error.message}`,
-      {
-        stack: error.stack,
-        route: this.currentRoute,
-        networkStatus: this.networkStatus,
-      }
+      error,
+      JSON.stringify({ stack: error.stack, route: this.currentRoute, networkStatus: this.networkStatus })
     );
   }
 
