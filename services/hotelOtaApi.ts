@@ -153,11 +153,26 @@ async function otaFetch<T>(
     if (token) headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${OTA_BASE}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${OTA_BASE}${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
+  } catch (err: any) {
+    clearTimeout(timeout);
+    if (err?.name === 'AbortError' || err?.message?.includes('aborted')) {
+      throw new Error(`[HotelOTA] Request timed out after 10s — ${method} ${path}`);
+    }
+    throw err;
+  }
+
+  clearTimeout(timeout);
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: 'Unknown error' }));

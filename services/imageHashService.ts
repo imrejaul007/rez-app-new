@@ -16,6 +16,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
+import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 import { BILL_UPLOAD_CONFIG } from '@/config/uploadConfig';
 
@@ -333,21 +334,28 @@ class ImageHashService {
   }
 
   /**
-   * Generate hash on native platform (iOS/Android)
+   * Generate hash on native platform (iOS/Android) using SHA-256 via expo-crypto
    */
   private async generateHashNative(imageUri: string): Promise<string> {
     try {
-      // Use Expo FileSystem to read file and generate MD5 (SHA-256 not available)
-      // Note: For production, consider using crypto-js library for SHA-256
-      const fileInfo = await FileSystem.getInfoAsync(imageUri, { md5: true });
-
-      if (!fileInfo.exists || !fileInfo.md5) {
-        throw new Error('Unable to generate hash for image');
+      const fileInfo = await FileSystem.getInfoAsync(imageUri, {});
+      if (!fileInfo.exists) {
+        throw new Error('Unable to read image file');
       }
 
-      // MD5 is less secure than SHA-256 but acceptable for duplicate detection
-      // To use SHA-256, install and use: expo-crypto or crypto-js
-      return fileInfo.md5;
+      // Read file contents as base64 (works for both file:// and content:// URIs)
+      const base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Hash the base64 string with SHA-256 via expo-crypto
+      const hashBase64 = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        base64,
+        { encoding: Crypto.DigestEncoding.HEX }
+      );
+
+      return hashBase64;
     } catch (error) {
       devLog.error('[ImageHash] Native hash generation failed:', error);
       throw error;
