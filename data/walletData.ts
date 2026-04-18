@@ -359,7 +359,7 @@ export const formatCurrency = (amount: number | null | undefined, currency: stri
 };
 
 export const getTransactionIcon = (type: TransactionType): string => {
-  const iconMap = {
+  const iconMap: Record<string, string> = {
     PAYMENT: 'arrow-up-circle',
     REFUND: 'arrow-down-circle',
     CASHBACK: 'gift',
@@ -367,13 +367,15 @@ export const getTransactionIcon = (type: TransactionType): string => {
     TRANSFER: 'swap-horizontal',
     TOPUP: 'add-circle',
     WITHDRAWAL: 'remove-circle',
+    spent: 'arrow-up-circle',
+    earned: 'gift',
   };
-  
+
   return iconMap[type] || 'help-circle';
 };
 
 export const getStatusColor = (status: TransactionStatus): string => {
-  const colorMap = {
+  const colorMap: Record<string, string> = {
     success: '#ffcd57',
     pending: '#F59E0B',
     failed: '#EF4444',
@@ -381,7 +383,7 @@ export const getStatusColor = (status: TransactionStatus): string => {
     processing: '#3B82F6',
     refunded: '#8B5CF6',
   };
-  
+
   return colorMap[status] || '#6B7280';
 };
 

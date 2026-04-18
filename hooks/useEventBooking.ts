@@ -54,7 +54,7 @@ export function useEventBooking(): UseEventBookingReturn {
 
       if (result.success && result.booking) {
         setBookingSuccess(true);
-        const bookingId = result.booking?.id || result.booking?._id || result.booking?.bookingReference || null;
+        const bookingId = (result.booking?.id || result.booking?._id || result.booking?.bookingReference || null) as string | null;
 
         // Only show alert if it's a free event (paid events handle their own alerts)
         if (event.price?.isFree) {

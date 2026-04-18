@@ -1,24 +1,4 @@
-/**
-import { v4 as uuidv4 } from 'uuid';
- * Offline Sync Service
- *
- * Generic offline-first queue for serializable API actions.
- * Queues actions when offline, auto-syncs when connectivity returns.
- *
- * Supported action types:
- * - visit_submission: Store visit scheduling
- * - referral_share: Referral link share tracking
- * - reward_claim: Referral reward claims
- *
- * Features:
- * - AsyncStorage persistence across app restarts
- * - Auto-sync on network reconnection (NetInfo)
- * - Exponential backoff retry (2s → 30s, max 3 attempts)
- * - Concurrency limit (3 concurrent actions)
- * - Event-driven updates for UI reactivity
- *
- * @module offlineSyncService
- */
+import uuid from "react-native-uuid";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
@@ -435,7 +415,7 @@ class OfflineSyncService extends EventEmitter {
   }
 
   private generateId(): string {
-    return `${Date.now()}-${uuidv4()}`;
+    return `${Date.now()}-${uuid.v4()}`;
   }
 }
 

@@ -1,27 +1,4 @@
-/**
-import { v4 as uuidv4 } from 'uuid';
- * Bill Upload Analytics Service
- *
-
-import uuid from 'react-native-uuid';
- *
- * Comprehensive analytics and error tracking for the bill upload feature.
- * Tracks user behavior, upload performance, validation errors, and conversion funnel.
- *
- * Features:
- * - Upload attempt tracking
- * - Success/failure metrics
- * - Verification time tracking
- * - User drop-off point analysis
- * - Error type categorization
- * - Validation failure tracking
- * - Conversion funnel analysis
- * - OCR accuracy metrics
- * - Session metrics
- * - Batch event transmission
- *
- * @module billUploadAnalytics
- */
+import uuid from "react-native-uuid";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { telemetryService } from './telemetryService';
@@ -221,7 +198,7 @@ class BillUploadAnalytics {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuidv4()}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

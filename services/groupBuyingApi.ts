@@ -9,11 +9,12 @@ import {
   CreateGroupRequest,
   JoinGroupRequest,
   GroupCheckoutRequest,
-  any,
-  any,
   GroupBuyingFilters,
   GroupMessage,
 } from '@/types/groupBuying.types';
+
+type ListProductsResponse = GroupBuyingProduct[];
+type ListGroupsResponse = GroupBuyingGroup[];
 
 const BASE_PATH = '/group-buying';
 

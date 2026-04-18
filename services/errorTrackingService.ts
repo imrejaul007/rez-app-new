@@ -1,21 +1,4 @@
-/**
-import { v4 as uuidv4 } from 'uuid';
- * Error Tracking Service
- *
-
-import uuid from 'react-native-uuid';
- * Comprehensive error tracking and monitoring system
- *
- * Features:
- * - Global error capture
- * - Network error tracking
- * - API error tracking
- * - Component error tracking
- * - User context capture
- * - Stack trace capture
- * - Error categorization
- * - Error deduplication
- */
+import uuid from "react-native-uuid";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
@@ -174,7 +157,7 @@ class ErrorTrackingService {
    * Generate session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuidv4()}`;
+    return `session_${Date.now()}_${uuid.v4()}`;
   }
 
   /**
@@ -533,7 +516,7 @@ class ErrorTrackingService {
    * Generate error ID
    */
   private generateErrorId(): string {
-    return `error_${Date.now()}_${uuidv4()}`;
+    return `error_${Date.now()}_${uuid.v4()}`;
   }
 
   /**
@@ -585,11 +568,8 @@ class ErrorTrackingService {
 
     logger.error(
       `${emoji} [ErrorTracking] [${type}] [${severity}] ${error.message}`,
-      {
-        stack: error.stack,
-        route: this.currentRoute,
-        networkStatus: this.networkStatus,
-      }
+      error,
+      undefined
     );
   }
 

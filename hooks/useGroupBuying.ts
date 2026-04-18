@@ -160,9 +160,9 @@ export function useGroupBuying() {
 
       setState((prev) => ({
         ...prev,
-        availableProducts: productsRes.success ? productsRes.data?.products || [] : [],
+        availableProducts: productsRes.success ? productsRes.data || [] : [],
         myGroups: myGroupsRes.success ? myGroupsRes.data || [] : [],
-        availableGroups: availableGroupsRes.success ? availableGroupsRes.data?.groups || [] : [],
+        availableGroups: availableGroupsRes.success ? availableGroupsRes.data || [] : [],
         stats: statsRes.success ? statsRes.data || null : null,
         loading: false,
         error: null,

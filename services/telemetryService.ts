@@ -1,27 +1,4 @@
-/**
-import { v4 as uuidv4 } from 'uuid';
- * Telemetry Service
- *
-
-import uuid from 'react-native-uuid';
- *
- * Batch event sender for analytics and monitoring.
- * Handles queuing, batching, and sending telemetry data to backend services.
- *
- * Features:
- * - Event batching
- * - Offline queue management
- * - Retry logic with exponential backoff
- * - Network-aware sending
- * - Compression support
- * - Rate limiting
- * - Priority queuing
- * - Event validation
- * - Delivery guarantees
- * - Performance monitoring
- *
- * @module telemetryService
- */
+import uuid from "react-native-uuid";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
@@ -632,7 +609,7 @@ class TelemetryService {
    * Generate batch ID
    */
   private generateBatchId(): string {
-    return `batch_${Date.now()}_${uuidv4()}`;
+    return `batch_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

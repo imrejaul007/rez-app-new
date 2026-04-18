@@ -352,7 +352,7 @@ class ImageHashService {
       const hashBase64 = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         base64,
-        { encoding: Crypto.DigestEncoding.HEX }
+        { encoding: Crypto.CryptoEncoding.HEX }
       );
 
       return hashBase64;

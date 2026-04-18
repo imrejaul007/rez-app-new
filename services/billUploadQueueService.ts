@@ -1,23 +1,4 @@
-/**
-import { v4 as uuidv4 } from 'uuid';
- * Bill Upload Queue Service
- *
-
-import uuid from 'react-native-uuid';
- *
- * Provides offline-first upload queue functionality for bill uploads.
- * Handles queueing, persistence, retry logic, and synchronization.
- *
- * Features:
- * - Offline queue with persistence
- * - Automatic retry with exponential backoff
- * - Network-aware synchronization
- * - Image hash-based duplicate detection (via imageHashService)
- * - Batch processing
- * - Event-driven updates
- *
- * @module billUploadQueueService
- */
+import uuid from "react-native-uuid";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
@@ -854,7 +835,7 @@ class BillUploadQueueService extends EventEmitter {
    * Generate unique bill ID
    */
   private generateBillId(): string {
-    return `bill_${Date.now()}_${uuidv4()}`;
+    return `bill_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

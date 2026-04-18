@@ -103,8 +103,7 @@ class BookingService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to create booking',
-        details: null as any, errorDetails
-      };
+      } as any;
     }
   }
 

@@ -1,22 +1,4 @@
-/**
-import { v4 as uuidv4 } from 'uuid';
- * Cloudinary Video Upload Service
- *
-
-import uuid from 'react-native-uuid';
- * Handles video uploads to Cloudinary with progress tracking, retry logic, and error handling
- *
- * Features:
- * - Progress tracking with speed and ETA
- * - Automatic retry on network errors
- * - Video compression for large files
- * - Automatic thumbnail generation
- * - Cancel support
- * - Both file URI and URL support
- * - Chunked upload for large files
- * - Network error handling
- * - Timeout handling
- */
+import uuid from "react-native-uuid";
 
 import * as FileSystem from 'expo-file-system';
 import { Platform } from 'react-native';
@@ -471,7 +453,7 @@ class VideoUploadService {
    * Generate unique upload ID
    */
   private generateUploadId(): string {
-    return `upload_${Date.now()}_${uuidv4()}`;
+    return `upload_${Date.now()}_${uuid.v4()}`;
   }
 
   /**

@@ -323,7 +323,7 @@ class BillUploadService {
         );
       } catch (error) {
         lastError = error as UploadError;
-        logger.error(`❌ [BILL UPLOAD] Attempt ${attempt} failed:`, lastError.message as Error);
+        logger.error(`❌ [BILL UPLOAD] Attempt ${attempt} failed:`, new Error(lastError.message));
       }
 
       // Check if error is retryable
@@ -410,7 +410,7 @@ class BillUploadService {
     // Validate file extension
     const validation = this.validateFileExtension(filename);
     if (!validation.isValid) {
-      logger.error('❌ [BILL UPLOAD] Invalid file extension:', validation.error as Error);
+      logger.error('❌ [BILL UPLOAD] Invalid file extension:', validation.error ? new Error(validation.error) : undefined);
       throw this.createUploadError(
         UploadErrorCode.INVALID_FILE_TYPE,
         validation.error || 'Invalid file type',
@@ -581,7 +581,7 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        logger.error('❌ [BILL DETAIL] Failed:', response.error as Error);
+        logger.error('❌ [BILL DETAIL] Failed:', response.error ? new Error(response.error) : undefined);
         return response as any;
       }
     } catch (error) {
@@ -610,7 +610,7 @@ class BillUploadService {
       // Validate file extension
       const validation = this.validateFileExtension(filename);
       if (!validation.isValid) {
-        logger.error('❌ [BILL RESUBMIT] Invalid file extension:', validation.error as Error);
+        logger.error('❌ [BILL RESUBMIT] Invalid file extension:', validation.error ? new Error(validation.error) : undefined);
         return {
           success: false,
           error: validation.error || 'Invalid file type',
@@ -658,7 +658,7 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        logger.error('❌ [BILL RESUBMIT] Failed:', response.error as Error);
+        logger.error('❌ [BILL RESUBMIT] Failed:', response.error ? new Error(response.error) : undefined);
         return response as any;
       }
     } catch (error) {
@@ -704,7 +704,7 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        logger.error('❌ [BILL STATS] Failed:', response.error as Error);
+        logger.error('❌ [BILL STATS] Failed:', response.error ? new Error(response.error) : undefined);
         return response as any;
       }
     } catch (error) {

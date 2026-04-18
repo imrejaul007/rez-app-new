@@ -37,9 +37,11 @@ export function normalizeProductPrice(product: any): {
   mrp: number | null;
   discount: number | null;
   currency?: string;
+  current: number | null;
+  original: number | null;
 } {
   if (!product) {
-    return { selling: null, mrp: null, discount: null };
+    return { selling: null, mrp: null, discount: null, current: null, original: null };
   }
 
   let selling: number | null = null;
@@ -54,7 +56,7 @@ export function normalizeProductPrice(product: any): {
 
     if (selling !== null && mrp !== null) {
       const discount = mrp > selling ? Math.round(((mrp - selling) / mrp) * 100) : null;
-      return { selling, mrp, discount, currency };
+      return { selling, mrp, discount, currency, current: selling, original: mrp };
     }
   }
 
@@ -65,7 +67,7 @@ export function normalizeProductPrice(product: any): {
 
     if (selling !== null && mrp !== null) {
       const discount = mrp > selling ? Math.round(((mrp - selling) / mrp) * 100) : null;
-      return { selling, mrp, discount, currency };
+      return { selling, mrp, discount, currency, current: selling, original: mrp };
     }
   }
 
@@ -76,11 +78,11 @@ export function normalizeProductPrice(product: any): {
 
     if (selling !== null && mrp !== null) {
       const discount = mrp > selling ? Math.round(((mrp - selling) / mrp) * 100) : null;
-      return { selling, mrp, discount, currency };
+      return { selling, mrp, discount, currency, current: selling, original: mrp };
     }
   }
 
-  return { selling: null, mrp: null, discount: null };
+  return { selling: null, mrp: null, discount: null, current: null, original: null };
 }
 
 /**

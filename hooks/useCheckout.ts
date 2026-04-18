@@ -513,7 +513,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               // Use Math.max to ensure denominator is at least 1.
               const safeQuantity = Math.max(item.quantity || 1, 1);
               return {
-                id: item.id || item._id || item.productId,
+                id: item.id || item._id || item.productId || 'unknown-item',
                 productId: item.productId || item.product?.id || item.product?._id,
                 name: item.product?.name || item.name || 'Product',
                 image: typeof item.product?.images?.[0] === 'string'
@@ -541,7 +541,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 addressLine2: orderAddr.addressLine2,
                 city: orderAddr.city,
                 state: orderAddr.state,
-                pincode: orderAddr.pincode || orderAddr.postalCode,
+                pincode: orderAddr.pincode,
                 country: orderAddr.country || 'India',
                 type: orderAddr.addressType ? (orderAddr.addressType.toUpperCase() as 'HOME' | 'OFFICE' | 'OTHER') : undefined,
                 isDefault: false,
@@ -625,7 +625,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // IMPORTANT: Only count discount as lock fee if item has lockedQuantity > 0
           // Regular sale discounts (originalPrice > price) are NOT lock fees
           const lockFeeDiscount = checkoutItems.reduce((total, item) => {
-            const lockedQty = item.lockedQuantity || 0;
+            const lockedQty = (item as { lockedQuantity?: number }).lockedQuantity || 0;
             // Only count as lock fee if item was actually locked
             return total + (lockedQty > 0 ? (item.discount || 0) : 0);
           }, 0);
@@ -847,7 +847,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               });
             }
           } catch (walletError) {
-            logger.error('💳 [Checkout] Failed to read wallet context, using 0 balance:', walletError);
+            logger.error('💳 [Checkout] Failed to read wallet context, using 0 balance:', walletError as Error);
           }
 
           // Process coupons result
@@ -958,7 +958,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 if (lastAddr) {
                   lastUsedAddress = userAddresses.find(addr =>
                     addr.addressLine1 === lastAddr.addressLine1 &&
-                    addr.pincode === (lastAddr.pincode || lastAddr.postalCode)
+                    addr.pincode === lastAddr.pincode
                   );
                 }
               } catch (err: any) {
@@ -1076,7 +1076,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
           // Check for category-specific balance (fallback path)
           const fallbackCategoryBalances = (currentWalletRawData as RawWalletData)?.categoryBalances;
-          const fallbackCatSlug = state.store?.categorySlug;
+          const fallbackCatSlug = (state.store as any)?.categorySlug;
           const fallbackCatBal = fallbackCatSlug && fallbackCategoryBalances ? fallbackCategoryBalances[fallbackCatSlug] : null;
           const fallbackRezAvailable = fallbackCatBal?.available ?? (rezCoin?.amount || 0);
 
@@ -1103,7 +1103,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           });
         }
       } catch (walletError) {
-        logger.error('💳 [Checkout] Failed to read wallet context (fallback), using 0 balance:', walletError);
+        logger.error('💳 [Checkout] Failed to read wallet context (fallback), using 0 balance:', walletError as Error);
       }
       
       // Fetch store promo coins for this store (fallback)
@@ -1214,7 +1214,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         subtotal: state.items.reduce((total, item) => total + (item.price * item.quantity), 0),
       };
 
-      logger.info('🎟️ [Checkout] Validating coupon:', code.code, 'with cart data:', cartData);
+      logger.info('🎟️ [Checkout] Validating coupon with cart data', { code: code.code, cartData });
 
       const response: any = await couponService.validateCoupon(code.code, cartData);
 
@@ -1541,7 +1541,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Validate amount
       if (amount <= 0 || amount > coin.available) {
-        logger.info('💳 [Checkout] Invalid coin amount - returning early. amount:', amount, 'available:', coin.available);
+        logger.info('💳 [Checkout] Invalid coin amount - returning early', { amount, available: coin.available });
         return prev;
       }
       
@@ -1869,7 +1869,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     // Validate sufficient balance (check total available, not just used)
     if (totalPayable > 0 && totalAvailableBalance < totalPayable) {
       const shortfall = totalPayable - totalAvailableBalance;
-      logger.error('💳 [Checkout] Insufficient balance:', { shortfall, totalPayable, totalAvailableBalance });
+      logger.error('💳 [Checkout] Insufficient balance:', { shortfall, totalPayable, totalAvailableBalance } as any);
       setState(prev => ({
         ...prev,
         error: `Insufficient balance. You need ${shortfall} more RC to complete this purchase.`
@@ -1977,7 +1977,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       );
 
       if (!orderResponse.success || !orderResponse.data) {
-        logger.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error as Error);
+        logger.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error as unknown as Error);
         setState(prev => ({
           ...prev,
           loading: false,
@@ -2018,7 +2018,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         );
 
         if (!walletResponse.success || !walletResponse.data) {
-          logger.error('[Checkout] Fallback wallet payment failed:', walletResponse.error as Error);
+          logger.error('[Checkout] Fallback wallet payment failed:', walletResponse.error as unknown as Error);
           setState(prev => ({
             ...prev,
             loading: false,
@@ -2260,12 +2260,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             });
             const orderId = orderResponse.data.id || orderResponse.data._id;
             if (!orderId) {
-              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data as Error);
+              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data as unknown as Error);
             }
             createdOrderIds.push(orderId);
             logger.info(`✅ [COD] Order created for ${storeGroup.storeName}: ${orderId}`);
           } else {
-            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error as Error);
+            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error as unknown as Error);
             failedStores.push(storeGroup.storeName);
           }
         } catch (err: any) {
@@ -2544,7 +2544,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             );
 
             if (!orderResponse.success || !orderResponse.data) {
-              logger.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error as Error);
+              logger.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error as unknown as Error);
               showToast({
                 message: 'Payment successful but order creation failed. Please contact support.',
                 type: 'error',

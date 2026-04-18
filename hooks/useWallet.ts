@@ -6,7 +6,8 @@ import {
   WalletData,
   WalletError,
   WalletErrorCode,
-  CoinBalance
+  CoinBalance,
+  CoinType
 } from '@/types/wallet';
 import walletApi from '@/services/walletApi';
 import { logger } from '@/utils/logger';
@@ -71,7 +72,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
   const coins: CoinBalance[] = [
     {
       id: 'rez-0',
-      type: 'rez',
+      type: 'rez' as CoinType,
       name: BRAND.COIN_NAME,
       amount: rezAmount,
       currency: BRAND.CURRENCY_CODE,
@@ -87,7 +88,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
     },
     {
       id: 'promo-0',
-      type: 'promo',
+      type: 'promo' as CoinType,
       name: 'Promo Coins',
       amount: promoAmount,
       currency: BRAND.CURRENCY_CODE,

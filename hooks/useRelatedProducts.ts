@@ -83,7 +83,7 @@ export const useRelatedProducts = ({
       }
 
       // Transform backend data to frontend format
-      const transformedProducts: RelatedProduct[] = (response.data.products || response.data || []).map((product: any) => {
+      const transformedProducts: RelatedProduct[] = ((response.data as any).products || response.data || []).map((product: any) => {
         // ✅ FIXED: Handle both old, new, and normalized price formats
         // Normalized format (from validator): price.current
         // New format from backend: pricing.selling
