@@ -1,4 +1,5 @@
 /**
+import { v4 as uuidv4 } from 'uuid';
  * Bill Upload Queue Service
  *
 
@@ -853,7 +854,7 @@ class BillUploadQueueService extends EventEmitter {
    * Generate unique bill ID
    */
   private generateBillId(): string {
-    return `bill_${Date.now()}_${uuid.v4()}`;
+    return `bill_${Date.now()}_${uuidv4()}`;
   }
 
   /**

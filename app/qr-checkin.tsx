@@ -60,7 +60,7 @@ export default function QRCheckinScreen() {
             setStreakCount(streakRes.data.currentStreak || streakRes.data.savings?.currentStreak || 0);
           }
         })
-        .catch((err) => logger.error('QRCheckin: streak status fetch failed', { storeId, error: String(err) }));
+        .catch((err) => logger.error('QRCheckin: streak status fetch failed', new Error(String(err)), 'streak status'));
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Check-in failed. Try again.';
       Alert.alert('Error', msg);

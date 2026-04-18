@@ -48,7 +48,7 @@ const COIN_TYPE_CONFIG: Record<KarmaCoinFilter, { label: string; icon: string; c
 
 function TransactionItem({ tx }: { tx: Transaction }) {
   const txCfg = TX_CONFIG[tx.type] ?? TX_CONFIG.earned;
-  const coinCfg = COIN_TYPE_CONFIG[tx.coinType] ?? COIN_TYPE_CONFIG.rez_coins;
+  const coinCfg = COIN_TYPE_CONFIG[tx.coinType as KarmaCoinFilter] ?? COIN_TYPE_CONFIG.rez_coins;
 
   return (
     <View style={txStyles.item}>
@@ -117,7 +117,7 @@ function KarmaWalletScreen() {
       try {
         const [balRes, txRes] = await Promise.all([
           karmaService.getWalletBalance('all'),
-          karmaService.getTransactions(selectedCoin, 1),
+          karmaService.getTransactions(selectedCoin as 'karma_points' | 'rez_coins' | 'all', 1),
         ]);
         if (!isMounted()) return;
         if (balRes.success && balRes.data) setBalance(balRes.data);

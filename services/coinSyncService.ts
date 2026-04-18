@@ -96,7 +96,7 @@ class CoinSyncService {
 
       throw new Error(response.error || 'Failed to fetch wallet balance');
     } catch (error) {
-      logger.error('❌ [COIN SYNC] Error fetching wallet balance:', error);
+      logger.error('❌ [COIN SYNC] Error fetching wallet balance:', error as Error);
       throw error;
     }
   }
@@ -170,7 +170,7 @@ class CoinSyncService {
         source,
       };
     } catch (error) {
-      logger.error('❌ [COIN SYNC] Error syncing gamification reward:', error);
+      logger.error('❌ [COIN SYNC] Error syncing gamification reward:', error as Error);
       return {
         success: false,
         coinsAdded: 0,
@@ -226,7 +226,7 @@ class CoinSyncService {
         source: 'spending',
       };
     } catch (error) {
-      logger.error('❌ [COIN SYNC] Error spending coins:', error);
+      logger.error('❌ [COIN SYNC] Error spending coins:', error as Error);
       return {
         success: false,
         coinsAdded: 0,
@@ -281,7 +281,7 @@ class CoinSyncService {
         difference: synced ? 0 : difference,
       };
     } catch (error) {
-      logger.error('❌ [COIN SYNC] Error checking sync:', error);
+      logger.error('❌ [COIN SYNC] Error checking sync:', error as Error);
       return {
         success: false,
         walletBalance: 0,
@@ -337,7 +337,7 @@ class CoinSyncService {
         synced: true,
       };
     } catch (error) {
-      logger.error('❌ [COIN SYNC] Error force syncing:', error);
+      logger.error('❌ [COIN SYNC] Error force syncing:', error as Error);
       return {
         success: false,
         walletBalance: 0,

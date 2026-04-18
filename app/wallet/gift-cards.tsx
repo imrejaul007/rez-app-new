@@ -108,9 +108,9 @@ function GiftCardsPage() {
       const response = await walletApi.getGiftCardCatalog(params);
       const data = response?.data;
       if (mountedRef.current) {
-        setCatalogCards(data?.giftCards ?? []);
-        if (data?.categories?.length) {
-          setCategories(['All', ...data.categories]);
+        setCatalogCards((data as any)?.giftCards ?? []);
+        if ((data as any)?.categories?.length) {
+          setCategories(['All', ...(data as any).categories]);
         }
       }
     } catch (err: any) {
@@ -124,7 +124,7 @@ function GiftCardsPage() {
     setMyCardsLoading(true);
     try {
       const response = await walletApi.getMyGiftCards();
-      if (mountedRef.current) setMyGiftCards(response?.data?.giftCards ?? []);
+      if (mountedRef.current) setMyGiftCards((response?.data as any)?.giftCards ?? []);
     } catch (err: any) {
       if (mountedRef.current) setMyGiftCards([]);
     } finally {

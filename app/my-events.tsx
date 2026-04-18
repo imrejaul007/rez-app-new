@@ -86,14 +86,13 @@ function MyEventsPage() {
 
         if (tab === 'upcoming') {
           if (!isMounted()) return;
-          setUpcomingBookings(result?.bookings || []);
+          setUpcomingBookings((result as any)?.bookings ?? []);
         } else if (tab === 'past') {
           if (!isMounted()) return;
-          setPastBookings(result?.bookings || []);
+          setPastBookings((result as any)?.bookings ?? []);
         } else {
-          // Backend returns { events: [...], tab: 'favorites' } for favorites tab
           if (!isMounted()) return;
-          setFavorites(result?.events || result?.favorites || result?.bookings || []);
+          setFavorites((result as any)?.events || (result as any)?.favorites || []);
         }
       } catch (error: any) {
         showAlert('Error', 'Failed to load events. Pull down to refresh.');
@@ -138,7 +137,7 @@ function MyEventsPage() {
     try {
       const result = await eventsApiService.checkInToEvent(eventId, booking._id, 'manual');
       if (result?.success) {
-        const coins = result.data?.reward?.coinsAwarded || 0;
+        const coins = (result.data as any)?.reward?.coinsAwarded || 0;
         showAlert(
           'Checked In!',
           coins > 0 ? `You've checked in successfully and earned +${coins} coins!` : `You've checked in successfully!`,

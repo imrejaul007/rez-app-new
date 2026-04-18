@@ -33,7 +33,7 @@ function TransactionCard({
   };
 
   const statusColor = getStatusColor(transaction.status);
-  const isDebit = transaction.type === 'PAYMENT';
+  const isDebit = (transaction.type as string) === 'PAYMENT';
   const safeAmount = typeof transaction.amount === 'number' ? transaction.amount : 0;
   const safeCurrency = transaction.currency === 'RC' ? BRAND.CURRENCY_CODE : (transaction.currency || BRAND.CURRENCY_CODE);
   

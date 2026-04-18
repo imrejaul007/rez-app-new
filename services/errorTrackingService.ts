@@ -1,4 +1,5 @@
 /**
+import { v4 as uuidv4 } from 'uuid';
  * Error Tracking Service
  *
 
@@ -173,7 +174,7 @@ class ErrorTrackingService {
    * Generate session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${uuidv4()}`;
   }
 
   /**
@@ -234,7 +235,7 @@ class ErrorTrackingService {
       try {
         listener(error);
       } catch (err) {
-        logger.error('[ErrorTracking] Error in listener:', err);
+        logger.error('[ErrorTracking] Error in listener:', err as Error);
       }
     });
   }
@@ -532,7 +533,7 @@ class ErrorTrackingService {
    * Generate error ID
    */
   private generateErrorId(): string {
-    return `error_${Date.now()}_${uuid.v4()}`;
+    return `error_${Date.now()}_${uuidv4()}`;
   }
 
   /**
@@ -630,7 +631,7 @@ class ErrorTrackingService {
         JSON.stringify(this.errors.slice(0, MAX_STORED_ERRORS))
       );
     } catch (error) {
-      logger.error('[ErrorTracking] Failed to save errors:', error);
+      logger.error('[ErrorTracking] Failed to save errors:', error as Error);
     }
   }
 
@@ -654,7 +655,7 @@ class ErrorTrackingService {
         logger.info(`[ErrorTracking] Loaded ${this.errors.length} stored errors`);
       }
     } catch (error) {
-      logger.error('[ErrorTracking] Failed to load errors:', error);
+      logger.error('[ErrorTracking] Failed to load errors:', error as Error);
     }
   }
 

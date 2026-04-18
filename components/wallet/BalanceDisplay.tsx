@@ -254,7 +254,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
 
           {/* Rez Coins */}
           <Pressable
-            onPress={() => onCoinPress?.('rez')}
+            onPress={() => onCoinPress?.('rez' as CoinType)}
             style={({ pressed }) => [pressed && { opacity: 0.88 }]}
           >
             <CoinCard
@@ -269,7 +269,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
 
           {/* Privé Coins */}
           <Pressable
-            onPress={() => onCoinPress?.('prive')}
+            onPress={() => onCoinPress?.('prive' as CoinType)}
             style={({ pressed }) => [pressed && { opacity: 0.88 }]}
           >
             <CoinCard
@@ -291,7 +291,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
 
           {/* Promo Coins */}
           <Pressable
-            onPress={() => onCoinPress?.('promo')}
+            onPress={() => onCoinPress?.('promo' as CoinType)}
             style={({ pressed }) => [pressed && { opacity: 0.88 }]}
           >
             <CoinCard
@@ -314,7 +314,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
           <Pressable
             onPress={() => {
               setBrandedExpanded((v) => !v);
-              onCoinPress?.('branded');
+              onCoinPress?.('branded' as CoinType);
             }}
             style={({ pressed }) => [pressed && { opacity: 0.88 }]}
           >

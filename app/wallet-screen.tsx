@@ -949,7 +949,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <CoinDetailCard
               coin={{
                 id: 'branded-summary',
-                type: 'branded',
+                type: 'branded' as CoinType,
                 name: 'Branded Coins',
                 amount: walletData.brandedCoinsTotal ?? 0,
                 currency: BRAND.CURRENCY_CODE,

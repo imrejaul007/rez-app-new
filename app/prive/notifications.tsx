@@ -34,8 +34,8 @@ function NotificationsScreen() {
     try {
       const response = await priveApi.getNotifications();
       if (response.success && response.data) {
-        setNotifications(response.data.notifications || []);
-        setCounts(response.data.counts || { critical: 0, warning: 0, info: 0 });
+        setNotifications((response.data as any)?.notifications || []);
+        setCounts((response.data as any)?.counts || { critical: 0, warning: 0, info: 0 });
       }
     } catch (e: any) {
       catchAndReport(e, setError, 'Notifications/fetchData');

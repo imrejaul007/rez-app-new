@@ -159,7 +159,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     let cancelled = false;
     const abortController = new AbortController();
     apiClient
-      .get(`/stores/${d.currentStoreId}/page-extras`, { signal: abortController.signal })
+      .get(`/stores/${d.currentStoreId}/page-extras`, { signal: abortController.signal } as any)
       .then((res) => {
         if (cancelled) return;
         const payload = (res as any).data?.data;

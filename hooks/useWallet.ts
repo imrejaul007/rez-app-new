@@ -9,6 +9,7 @@ import {
   CoinBalance
 } from '@/types/wallet';
 import walletApi from '@/services/walletApi';
+import { logger } from '@/utils/logger';
 import { BRAND } from '@/constants/brand';
 import { setCoinConversionRate } from '@/config/checkout.config';
 

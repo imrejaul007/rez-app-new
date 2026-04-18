@@ -208,7 +208,7 @@ function UploadPage() {
         });
 
         if (result.success) {
-          const coins = result.data?.coinReward?.coinsAwarded;
+          const coins = (result.data as any)?.coinReward?.coinsAwarded;
           const msg = coins
             ? `Your reel has been submitted for review. You'll earn ${coins} coins once approved!`
             : 'Your reel has been submitted for review.';
@@ -270,7 +270,7 @@ function UploadPage() {
       setUploadProgress(100);
 
       if (result.success) {
-        const coins = result.data?.coinReward?.coinsAwarded;
+        const coins = (result.data as any)?.coinReward?.coinsAwarded;
         const msg = coins
           ? `Your ${contentType} has been submitted for review. You'll earn ${coins} coins once approved!`
           : `Your ${contentType} has been submitted for review.`;

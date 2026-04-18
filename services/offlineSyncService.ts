@@ -1,4 +1,5 @@
 /**
+import { v4 as uuidv4 } from 'uuid';
  * Offline Sync Service
  *
  * Generic offline-first queue for serializable API actions.
@@ -434,7 +435,7 @@ class OfflineSyncService extends EventEmitter {
   }
 
   private generateId(): string {
-    return `${Date.now()}-${uuid.v4()}`;
+    return `${Date.now()}-${uuidv4()}`;
   }
 }
 

@@ -80,7 +80,7 @@ function KarmaSnapshotCard({ profile, onPressMyKarma }: SnapshotCardProps) {
 
   return (
     <Pressable onPress={onPressMyKarma} style={{ marginHorizontal: Spacing.base, marginBottom: Spacing.base }}>
-      <LinearGradient colors={KARMA_GRADIENT} style={styles.snapshotCard} borderRadius={BorderRadius.xl}>
+      <LinearGradient colors={KARMA_GRADIENT} style={styles.snapshotCard}>
         {/* Top row: level badge + active karma */}
         <View style={styles.snapshotTopRow}>
           <View style={styles.levelBadge}>
@@ -265,13 +265,11 @@ function KarmaHomeScreen() {
       setProfileError(false);
 
       try {
-        const [profileRes, eventsRes] = await Promise.all([
-          isAuthenticated ? karmaService.getKarmaProfile('me') : Promise.resolve({ success: false }),
-          karmaService.getNearbyEvents({ status: 'published' }),
-        ]);
+        const profileRes = isAuthenticated ? await karmaService.getKarmaProfile('me') : { success: false as const };
+        const eventsRes = await karmaService.getNearbyEvents({ status: 'published' });
 
-        if (profileRes.success && profileRes.data) {
-          setProfile(profileRes.data);
+        if (profileRes.success && 'data' in profileRes && (profileRes as any).data) {
+          setProfile((profileRes as any).data);
         } else if (isAuthenticated) {
           setProfileError(true);
         }

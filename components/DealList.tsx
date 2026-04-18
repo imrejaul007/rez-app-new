@@ -93,7 +93,7 @@ function DealList({
         case 'priority':
           return a.priority - b.priority;
         case 'discount':
-          return b.discountValue - a.discountValue;
+          return (b.discountValue ?? 0) - (a.discountValue ?? 0);
         case 'expiry':
           return new Date(a.validUntil).getTime() - new Date(b.validUntil).getTime();
         case 'alphabetical':

@@ -190,13 +190,13 @@ class BillUploadService {
                 message: response.message,
               });
             } catch (err) {
-              logger.error('❌ [BILL UPLOAD] Failed to parse response:', err);
+              logger.error('❌ [BILL UPLOAD] Failed to parse response:', err as Error);
               reject(this.createUploadError(UploadErrorCode.SERVER_ERROR, 'Invalid server response'));
             }
           } else {
             try {
               const errorResponse = JSON.parse(xhr.responseText);
-              logger.error('❌ [BILL UPLOAD] Upload failed:', errorResponse);
+              logger.error('❌ [BILL UPLOAD] Upload failed:', errorResponse as Error);
               resolve({
                 success: false,
                 error: errorResponse.message || `HTTP ${xhr.status}: ${xhr.statusText}`,
@@ -254,7 +254,7 @@ class BillUploadService {
     } catch (error) {
       this.activeUploads.delete(uploadId);
       this.uploadSpeeds.delete(uploadId);
-      logger.error('❌ [BILL UPLOAD] Exception:', error);
+      logger.error('❌ [BILL UPLOAD] Exception:', error as Error);
 
       if (error && typeof error === 'object' && 'code' in error) {
         return {
@@ -323,7 +323,7 @@ class BillUploadService {
         );
       } catch (error) {
         lastError = error as UploadError;
-        logger.error(`❌ [BILL UPLOAD] Attempt ${attempt} failed:`, lastError.message);
+        logger.error(`❌ [BILL UPLOAD] Attempt ${attempt} failed:`, lastError.message as Error);
       }
 
       // Check if error is retryable
@@ -410,7 +410,7 @@ class BillUploadService {
     // Validate file extension
     const validation = this.validateFileExtension(filename);
     if (!validation.isValid) {
-      logger.error('❌ [BILL UPLOAD] Invalid file extension:', validation.error);
+      logger.error('❌ [BILL UPLOAD] Invalid file extension:', validation.error as Error);
       throw this.createUploadError(
         UploadErrorCode.INVALID_FILE_TYPE,
         validation.error || 'Invalid file type',
@@ -435,7 +435,7 @@ class BillUploadService {
         logger.info('✅ [BILL UPLOAD] Image blob fetched successfully:', blob.size, 'bytes');
         formData.append('billImage', blob, filename);
       } catch (error) {
-        logger.error('❌ [BILL UPLOAD] Failed to fetch image blob:', error);
+        logger.error('❌ [BILL UPLOAD] Failed to fetch image blob:', error as Error);
         throw this.createUploadError(
           UploadErrorCode.FILE_NOT_FOUND,
           error instanceof Error ? error.message : 'Failed to load image file',
@@ -556,7 +556,7 @@ class BillUploadService {
         return response as any;
       }
     } catch (error) {
-      logger.error('❌ [BILL HISTORY] Exception:', error);
+      logger.error('❌ [BILL HISTORY] Exception:', error as Error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch bill history',
@@ -581,11 +581,11 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        logger.error('❌ [BILL DETAIL] Failed:', response.error);
+        logger.error('❌ [BILL DETAIL] Failed:', response.error as Error);
         return response as any;
       }
     } catch (error) {
-      logger.error('❌ [BILL DETAIL] Exception:', error);
+      logger.error('❌ [BILL DETAIL] Exception:', error as Error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch bill',
@@ -610,7 +610,7 @@ class BillUploadService {
       // Validate file extension
       const validation = this.validateFileExtension(filename);
       if (!validation.isValid) {
-        logger.error('❌ [BILL RESUBMIT] Invalid file extension:', validation.error);
+        logger.error('❌ [BILL RESUBMIT] Invalid file extension:', validation.error as Error);
         return {
           success: false,
           error: validation.error || 'Invalid file type',
@@ -634,7 +634,7 @@ class BillUploadService {
           logger.info('✅ [BILL RESUBMIT] Image blob fetched successfully:', blob.size, 'bytes');
           formData.append('billImage', blob, filename);
         } catch (error) {
-          logger.error('❌ [BILL RESUBMIT] Failed to fetch image blob:', error);
+          logger.error('❌ [BILL RESUBMIT] Failed to fetch image blob:', error as Error);
           return {
             success: false,
             error: error instanceof Error ? error.message : 'Failed to load image file',
@@ -658,11 +658,11 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        logger.error('❌ [BILL RESUBMIT] Failed:', response.error);
+        logger.error('❌ [BILL RESUBMIT] Failed:', response.error as Error);
         return response as any;
       }
     } catch (error) {
-      logger.error('❌ [BILL RESUBMIT] Exception:', error);
+      logger.error('❌ [BILL RESUBMIT] Exception:', error as Error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to resubmit bill',
@@ -704,11 +704,11 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        logger.error('❌ [BILL STATS] Failed:', response.error);
+        logger.error('❌ [BILL STATS] Failed:', response.error as Error);
         return response as any;
       }
     } catch (error) {
-      logger.error('❌ [BILL STATS] Exception:', error);
+      logger.error('❌ [BILL STATS] Exception:', error as Error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch statistics',

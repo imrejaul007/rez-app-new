@@ -39,7 +39,7 @@ function ConciergeScreen() {
     try {
       const response = await priveApi.getConciergeTickets();
       if (response.success && response.data) {
-        setTickets(response.data.tickets || response.data || []);
+        setTickets((response.data as any)?.tickets || (response.data as any) || []);
       }
     } catch (e: any) {
       catchAndReport(e, setError, 'Concierge/fetchTickets');

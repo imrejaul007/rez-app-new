@@ -152,7 +152,7 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: store._id || store.id || '',
+            storeId: (store as any)._id || (store as any).id || '',
             storeName: store.name,
             storeLogo: store.logo || '',
             ...(tableNumber ? { tableNumber } : {}),
@@ -200,7 +200,7 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: store._id || store.id || '',
+            storeId: (store as any)._id || (store as any).id || '',
             storeName: store.name,
             storeLogo: store.logo || '',
           },

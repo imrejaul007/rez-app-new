@@ -1,4 +1,5 @@
 /**
+import { v4 as uuidv4 } from 'uuid';
  * Analytics Service
  *
 
@@ -85,7 +86,7 @@ class AnalyticsService {
 
   private generateSessionId(): string {
     // BUG-091 FIX: .substr() is deprecated — use .substring() instead
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${uuidv4()}`;
   }
 
   setUserId(userId: string) {

@@ -56,8 +56,8 @@ function StoreProductCard({
   const normalizedPrice = normalizeProductPrice(product);
   const normalizedRating = normalizeProductRating(product);
 
-  const currentPrice = normalizedPrice.current;
-  const originalPrice = normalizedPrice.original;
+  const currentPrice = normalizedPrice.selling;
+  const originalPrice = normalizedPrice.mrp;
   const discountPercentage = normalizedPrice.discount;
 
   const hasDiscount = discountPercentage !== null && discountPercentage > 0;

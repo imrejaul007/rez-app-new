@@ -323,7 +323,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           });
         }
       } catch (err) {
-        logger.error('[Checkout] Payment recovery failed:', err);
+        logger.error('[Checkout] Payment recovery failed:', err as Error);
         // CA-CMC-049 FIX: If backend is down during recovery, we still need to handle it gracefully.
         // TODO (SERVER-SIDE): Implement server-side order reconciliation endpoint that:
         // 1. Accepts razorpayPaymentId or walletTransactionId
@@ -765,7 +765,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               }));
             }
           } else if (couponsResult.status === 'rejected') {
-            logger.error('💳 [Checkout] Failed to load coupons:', couponsResult.reason);
+            logger.error('💳 [Checkout] Failed to load coupons:', couponsResult.reason as Error);
           }
 
           // Process store details result
@@ -884,7 +884,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               });
             }
           } else if (addressResult.status === 'rejected') {
-            logger.error('📍 [Checkout] Failed to load addresses:', addressResult.reason);
+            logger.error('📍 [Checkout] Failed to load addresses:', addressResult.reason as Error);
           }
 
           // Adjust delivery fee for non-delivery fulfillment
@@ -1007,7 +1007,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         logger.info('💎 [Checkout] Skipping store promo coins in fallback mode');
         // Note: In fallback mode, store ID might not be available yet
       } catch (storeCoinsError) {
-        logger.error('💎 [Checkout] Failed to load store promo coins (fallback):', storeCoinsError);
+        logger.error('💎 [Checkout] Failed to load store promo coins (fallback):', storeCoinsError as Error);
       }
 
       // Fire independent fallback API calls in parallel (coupons cached via react-query)
@@ -1039,7 +1039,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           logger.info('💳 [Checkout] Loaded coupons (fallback)');
         }
       } else if (fallbackCouponsResult.status === 'rejected') {
-        logger.error('💳 [Checkout] Failed to load coupons (fallback):', fallbackCouponsResult.reason);
+        logger.error('💳 [Checkout] Failed to load coupons (fallback):', fallbackCouponsResult.reason as Error);
       }
 
       const data = fallbackMockResult.status === 'fulfilled' ? fallbackMockResult.value : await CheckoutData.api.initializeCheckout();
@@ -1161,7 +1161,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
         return { success: true, message: `${code.code} applied! You save ${currencySymbol}${discountAmount}`, discount: discountAmount };
       } else {
-        logger.error('💳 [Checkout] Coupon invalid:', response.message);
+        logger.error('💳 [Checkout] Coupon invalid:', response.message as Error);
         const errorMsg = response.message || 'Invalid coupon code';
         setState(prev => ({
           ...prev,
@@ -1171,7 +1171,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         return { success: false, message: errorMsg };
       }
     } catch (error: any) {
-      logger.error('💳 [Checkout] Coupon validation error:', error);
+      logger.error('💳 [Checkout] Coupon validation error:', error as Error);
       const errorMsg = 'Failed to validate coupon';
       setState(prev => ({
         ...prev,
@@ -1683,7 +1683,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           await cartService.clearCart();
           await cartActions.clearCart();
         } catch (clearError) {
-          logger.error('💳 [Checkout] Failed to clear cart:', clearError);
+          logger.error('💳 [Checkout] Failed to clear cart:', clearError as Error);
         }
 
         const orderId = response.data.id || response.data._id;
@@ -1709,7 +1709,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         }));
       }
     } catch (error: any) {
-      logger.error('💳 [Checkout] Order creation failed:', error);
+      logger.error('💳 [Checkout] Order creation failed:', error as Error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -1862,7 +1862,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       );
 
       if (!orderResponse.success || !orderResponse.data) {
-        logger.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error);
+        logger.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error as Error);
         setState(prev => ({
           ...prev,
           loading: false,
@@ -1903,7 +1903,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         );
 
         if (!walletResponse.success || !walletResponse.data) {
-          logger.error('[Checkout] Fallback wallet payment failed:', walletResponse.error);
+          logger.error('[Checkout] Fallback wallet payment failed:', walletResponse.error as Error);
           setState(prev => ({
             ...prev,
             loading: false,
@@ -1921,7 +1921,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         await cartService.clearCart();
         await cartActions.clearCart();
       } catch (clearError) {
-        logger.error('[Checkout] Failed to clear cart:', clearError);
+        logger.error('[Checkout] Failed to clear cart:', clearError as Error);
         // Non-critical error, continue
       }
 
@@ -1942,7 +1942,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId}&paymentMethod=wallet`);
 
     } catch (error: any) {
-      logger.error('💳 [Checkout] Wallet payment error:', error);
+      logger.error('💳 [Checkout] Wallet payment error:', error as Error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -2145,16 +2145,16 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             });
             const orderId = orderResponse.data.id || orderResponse.data._id;
             if (!orderId) {
-              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data);
+              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data as Error);
             }
             createdOrderIds.push(orderId);
             logger.info(`✅ [COD] Order created for ${storeGroup.storeName}: ${orderId}`);
           } else {
-            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error);
+            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error as Error);
             failedStores.push(storeGroup.storeName);
           }
         } catch (err: any) {
-          logger.error(`❌ [COD] Error creating order for ${storeGroup.storeName}:`, err);
+          logger.error(`❌ [COD] Error creating order for ${storeGroup.storeName}:`, err as Error);
           failedStores.push(storeGroup.storeName);
         }
       }
@@ -2184,7 +2184,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         await cartService.clearCart();
         await cartActions.clearCart();
       } catch (clearError) {
-        logger.error('💵 [Checkout] Failed to clear cart:', clearError);
+        logger.error('💵 [Checkout] Failed to clear cart:', clearError as Error);
       }
 
       // Navigate to success page
@@ -2206,7 +2206,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       router.replace(`/payment-success?orderId=${orderIdsParam}&transactionId=${transactionId}&paymentMethod=cod&multiStore=${isMultiStore}`);
 
     } catch (error: any) {
-      logger.error('💵 [Checkout] COD payment error:', error);
+      logger.error('💵 [Checkout] COD payment error:', error as Error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -2347,7 +2347,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                   }
                 }
               } catch (err: any) {
-                logger.error('⚠️ [Checkout] Error auto-applying card offer:', err);
+                logger.error('⚠️ [Checkout] Error auto-applying card offer:', err as Error);
                 // Non-critical error, continue with order
               }
             }
@@ -2421,7 +2421,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             );
 
             if (!orderResponse.success || !orderResponse.data) {
-              logger.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error);
+              logger.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error as Error);
               showToast({
                 message: 'Payment successful but order creation failed. Please contact support.',
                 type: 'error',
@@ -2440,7 +2440,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               await cartService.clearCart();
               await cartActions.clearCart();
             } catch (clearError) {
-              logger.error('⚠️ [Checkout] Failed to clear cart:', clearError);
+              logger.error('⚠️ [Checkout] Failed to clear cart:', clearError as Error);
               // Non-critical error
             }
 
@@ -2463,14 +2463,14 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               `/payment-success?orderId=${orderId}&transactionId=${paymentResponse.transactionId}&paymentMethod=razorpay`
             );
           } catch (error: any) {
-            logger.error('❌ [Checkout] Post-payment error:', error);
+            logger.error('❌ [Checkout] Post-payment error:', error as Error);
             // Payment was charged but order creation failed — attempt server-side refund.
             try {
               await razorpayApi.requestRefund({ paymentId: razorpayPaymentId });
               logger.info('✅ [Checkout] Refund requested for payment:', razorpayPaymentId);
             } catch (refundErr) {
               // Log but don't throw — user already sees the order-failure error.
-              logger.error('⚠️ [Checkout] Refund request failed:', refundErr);
+              logger.error('⚠️ [Checkout] Refund request failed:', refundErr as Error);
             }
             showToast({
               message: error instanceof Error ? error.message : 'Order creation failed',
@@ -2485,7 +2485,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           }
         },
         onError: (error) => {
-          logger.error('❌ [Checkout] Razorpay payment error:', error);
+          logger.error('❌ [Checkout] Razorpay payment error:', error as Error);
           showToast({
             message: error.message || 'Payment failed',
             type: 'error',
@@ -2499,7 +2499,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         },
       });
     } catch (error: any) {
-      logger.error('❌ [Checkout] Razorpay initialization error:', error);
+      logger.error('❌ [Checkout] Razorpay initialization error:', error as Error);
       showToast({
         message: error instanceof Error ? error.message : 'Failed to initialize payment',
         type: 'error',
