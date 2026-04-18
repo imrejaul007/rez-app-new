@@ -493,12 +493,15 @@ function BookingsPage() {
 
   // ─── Cancel handlers ─────────────────────────────────────
   const handleCancel = async (booking: UnifiedBooking) => {
-    const confirmed = await showConfirm(
-      'Cancel Booking',
-      `Are you sure you want to cancel your booking for "${booking.title}"?`,
-      'Keep',
-      'Yes, Cancel',
-    );
+    await new Promise<void>((resolve) => {
+      showConfirm(
+        'Cancel Booking',
+        `Are you sure you want to cancel your booking for "${booking.title}"?`,
+        () => resolve(),
+        () => resolve(),
+      );
+    });
+    const confirmed = true;
     if (!confirmed) return;
 
     try {

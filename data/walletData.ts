@@ -27,7 +27,7 @@ export const mockWalletBalance: WalletBalance = {
 export const mockTransactions: Transaction[] = [
   {
     id: 'txn_001',
-    type: 'PAYMENT',
+    type: 'PAYMENT' as any,
     status: 'success',
     amount: 2075,
     currency: BRAND.CURRENCY_CODE,
@@ -48,7 +48,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: 'txn_002',
-    type: 'PAYMENT',
+    type: 'PAYMENT' as any,
     status: 'success',
     amount: 2075,
     currency: BRAND.CURRENCY_CODE,
@@ -67,7 +67,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: 'txn_003',
-    type: 'PAYMENT',
+    type: 'PAYMENT' as any,
     status: 'success',
     amount: 2075,
     currency: BRAND.CURRENCY_CODE,
@@ -87,7 +87,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: 'txn_004',
-    type: 'CASHBACK',
+    type: 'CASHBACK' as any,
     status: 'success',
     amount: 125,
     currency: BRAND.CURRENCY_CODE,
@@ -106,7 +106,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: 'txn_005',
-    type: 'PAYMENT',
+    type: 'PAYMENT' as any,
     status: 'success',
     amount: 850,
     currency: BRAND.CURRENCY_CODE,
@@ -127,8 +127,8 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: 'txn_006',
-    type: 'PAYMENT',
-    status: 'pending',
+    type: 'PAYMENT' as any,
+    status: 'pending' as any,
     amount: 1200,
     currency: BRAND.CURRENCY_CODE,
     title: 'Payment Processing',

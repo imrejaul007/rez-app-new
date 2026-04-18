@@ -57,7 +57,7 @@ interface BackendCategory {
   _id?: string;
   slug: string;
   name: string;
-  icon: string;   // emoji or icon string from backend
+  icon?: string;   // emoji or icon string from backend
   color: string;
   eventCount?: number;
 }
@@ -98,7 +98,7 @@ const EventCategoryTabs: React.FC<EventCategoryTabsProps> = ({
             emoji: '🎫',
             color: colors.nileBlue,
           };
-          const mapped = backendCats.map((c: BackendCategory): DisplayCategory => ({
+          const mapped = (backendCats as BackendCategory[]).map((c: BackendCategory): DisplayCategory => ({
             id: c.slug,
             label: c.name,
             ionicon: SLUG_ICON_MAP[c.slug] || SLUG_ICON_MAP[c.slug?.toLowerCase()] || 'pricetag-outline',

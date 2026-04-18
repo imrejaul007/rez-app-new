@@ -161,19 +161,19 @@ function CategoryCard({
   const renderPrice = () => {
     const normalizedPrice = normalizeProductPrice(item);
 
-    if (normalizedPrice.current === null) return null;
+    if (normalizedPrice.selling === null) return null;
 
     const currency = typeof item.price?.currency === 'string' ? item.price.currency : 'INR';
-    const hasDiscount = normalizedPrice.original !== null && normalizedPrice.original > normalizedPrice.current;
+    const hasDiscount = normalizedPrice.mrp !== null && normalizedPrice.mrp > normalizedPrice.selling;
 
     return (
       <View style={styles.priceContainer}>
         <ThemedText style={styles.currentPrice}>
-          {formatPrice(normalizedPrice.current, currency, false)}
+          {formatPrice(normalizedPrice.selling, currency, false)}
         </ThemedText>
-        {hasDiscount && normalizedPrice.original !== null && (
+        {hasDiscount && normalizedPrice.mrp !== null && (
           <ThemedText style={styles.originalPrice}>
-            {formatPrice(normalizedPrice.original, currency, false)}
+            {formatPrice(normalizedPrice.mrp, currency, false)}
           </ThemedText>
         )}
       </View>

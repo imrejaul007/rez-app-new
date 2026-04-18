@@ -103,7 +103,7 @@ class BookingService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to create booking',
-        details: errorDetails
+        details: null as any, errorDetails
       };
     }
   }
@@ -170,12 +170,12 @@ class BookingService {
       const response = await apiClient.get<Booking>(`/service-bookings/${bookingId}`);
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch booking details:', response.error);
+        devLog.error('❌ [BOOKING API] Failed to fetch booking details: null as any,', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching booking details:', error);
+      devLog.error('❌ [BOOKING API] Error fetching booking details: null as any,', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch booking details'

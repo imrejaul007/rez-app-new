@@ -210,7 +210,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       // Validate cart item structure
       const itemValidation = validateCartItem(action.payload);
       if (!itemValidation.valid) {
-        logger.error('🛒 [CartReducer] Invalid cart item:', itemValidation.error);
+        logger.error('🛒 [CartReducer] Invalid cart item: ' + (itemValidation.error ?? ''), undefined, 'CartReducer');
         return {
           ...state,
           error: itemValidation.error || 'Invalid cart item',
@@ -251,7 +251,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         // Validate initial quantity
         const quantityValidation = validateQuantity(1, MAX_QUANTITY_PER_ITEM, 0);
         if (!quantityValidation.valid) {
-          logger.error('🛒 [CartReducer] Invalid quantity:', quantityValidation.error);
+          logger.error('🛒 [CartReducer] Invalid quantity: ' + (quantityValidation.error ?? ''), undefined, 'CartReducer');
           return {
             ...state,
             error: quantityValidation.error || 'Invalid quantity',
@@ -535,7 +535,7 @@ export function CartProvider({ children }: CartProviderProps) {
           return;
         }
       } catch (apiError) {
-        logger.error('[Cart] Failed to load cart from backend:', apiError, 'CartContext');
+        logger.error('[Cart] Failed to load cart from backend', apiError as Error, 'CartContext');
         dispatch({ type: 'CART_ERROR', payload: 'Failed to sync cart' });
         // Fallback to AsyncStorage already happens below
       }
@@ -546,7 +546,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
       dispatch({ type: 'CART_LOADED', payload: cartItems });
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to load cart:', error);
+      logger.error('🛒 [CartContext] Failed to load cart:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to load cart'
@@ -816,14 +816,14 @@ export function CartProvider({ children }: CartProviderProps) {
             }
             // If still not valid, log warning
             if (!/^[0-9a-fA-F]+$/.test(String(productIdForBackend))) {
-              logger.error('❌ [CartContext] Invalid productId format:', productIdForBackend);
+              logger.error('❌ [CartContext] Invalid productId format: ' + String(productIdForBackend), undefined, 'CartContext');
             }
           }
           
           // Final validation - ensure productId is valid hex
           const finalProductId = String(productIdForBackend).trim();
           if (!/^[0-9a-fA-F]+$/.test(finalProductId)) {
-            logger.error('❌ [CartContext] Invalid productId, cannot send to backend:', finalProductId);
+            logger.error('❌ [CartContext] Invalid productId, cannot send to backend: ' + finalProductId, undefined, 'CartContext');
             throw new Error(`Invalid productId format: ${finalProductId}. Must be hexadecimal.`);
           }
           
@@ -842,7 +842,7 @@ export function CartProvider({ children }: CartProviderProps) {
             await loadCart();
           }
         } catch (apiError) {
-          logger.error('🛒 [CartContext] API add failed, queuing for later:', apiError);
+          logger.error('🛒 [CartContext] API add failed, queuing for later', apiError as Error, 'CartContext');
           // Queue for offline sync but keep local state
           await offlineQueueService.addToQueue('add', {
             productId: item.id,
@@ -864,7 +864,7 @@ export function CartProvider({ children }: CartProviderProps) {
         logger.warn('🛒 [CartContext] Storage quota issue (item still added to state)');
         // Item is already in state, so don't dispatch error
       } else {
-        logger.error('🛒 [CartContext] Failed to add item:', error);
+        logger.error('🛒 [CartContext] Failed to add item:', error as Error);
         dispatch({
           type: 'CART_ERROR',
           payload: error instanceof Error ? error.message : 'Failed to add item'
@@ -879,8 +879,8 @@ export function CartProvider({ children }: CartProviderProps) {
       const item = state.items.find(i => i.id === itemId);
 
       if (!item) {
-        logger.error('🛒 [CartContext] Item not found in cart:', itemId);
-        logger.error('🛒 [CartContext] Available item IDs:', state.items.map(i => i.id));
+        logger.error('🛒 [CartContext] Item not found in cart: ' + itemId, undefined, 'CartContext');
+        logger.error('🛒 [CartContext] Available item IDs: ' + state.items.map(i => i.id).join(','), undefined, 'CartContext');
         return;
       }
 
@@ -903,17 +903,17 @@ export function CartProvider({ children }: CartProviderProps) {
           // Reload cart to ensure sync with backend
           await loadCart();
         } else {
-          logger.error('🛒 [CartContext] API remove failed, response not successful:', response);
+          logger.error('🛒 [CartContext] API remove failed, response not successful', undefined, 'CartContext');
           // Revert optimistic update by reloading
           await loadCart();
         }
       } catch (apiError) {
-        logger.error('🛒 [CartContext] API remove failed with error:', apiError);
+        logger.error('🛒 [CartContext] API remove failed with error:', apiError as Error);
         // Revert optimistic update by reloading cart from backend
         await loadCart();
       }
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to remove item:', error);
+      logger.error('🛒 [CartContext] Failed to remove item:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to remove item'
@@ -929,7 +929,7 @@ export function CartProvider({ children }: CartProviderProps) {
       // Find the item to get its productId
       const item = state.items.find(i => i.id === itemId);
       if (!item) {
-        logger.error('🛒 [CartContext] Item not found in cart:', itemId);
+        logger.error('🛒 [CartContext] Item not found in cart: ' + itemId, undefined, 'CartContext');
         return;
       }
 
@@ -963,12 +963,12 @@ export function CartProvider({ children }: CartProviderProps) {
           await removeItem(itemId);
         }
       } catch (apiError) {
-        logger.error('🛒 [CartContext] API update failed with error:', apiError);
+        logger.error('🛒 [CartContext] API update failed with error:', apiError as Error);
         // Revert optimistic update by reloading cart from backend
         await loadCart();
       }
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to update quantity:', error);
+      logger.error('🛒 [CartContext] Failed to update quantity:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update quantity'
@@ -1004,10 +1004,10 @@ export function CartProvider({ children }: CartProviderProps) {
         await cartService.clearCart();
 
       } catch (apiError) {
-        logger.error('🛒 [CartContext] API clear failed:', apiError);
+        logger.error('🛒 [CartContext] API clear failed:', apiError as Error);
       }
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to clear cart:', error);
+      logger.error('🛒 [CartContext] Failed to clear cart:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to clear cart'
@@ -1043,7 +1043,7 @@ export function CartProvider({ children }: CartProviderProps) {
         await loadCart(); // Reload to get updated totals
       }
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to apply coupon:', error);
+      logger.error('🛒 [CartContext] Failed to apply coupon:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to apply coupon'
@@ -1062,7 +1062,7 @@ export function CartProvider({ children }: CartProviderProps) {
         await loadCart(); // Reload to get updated totals
       }
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to remove coupon:', error);
+      logger.error('🛒 [CartContext] Failed to remove coupon:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to remove coupon'
@@ -1080,7 +1080,7 @@ export function CartProvider({ children }: CartProviderProps) {
         await applyCoupon(offer.code as string);
       }
     } catch (error: any) {
-      logger.error('🛒 [CartContext] Failed to set card offer:', error);
+      logger.error('🛒 [CartContext] Failed to set card offer:', error as Error);
       throw error;
     }
   }, [applyCoupon]);
@@ -1110,14 +1110,14 @@ export function CartProvider({ children }: CartProviderProps) {
         // Reload cart from server
         await loadCart();
       } else {
-        logger.error('🔄 [CartContext] Sync partially failed:', result);
+        logger.error('🔄 [CartContext] Sync partially failed', undefined, 'CartContext');
         dispatch({
           type: 'CART_ERROR',
           payload: `Failed to sync ${result.failed} operations`
         });
       }
     } catch (error: any) {
-      logger.error('🔄 [CartContext] Sync error:', error);
+      logger.error('🔄 [CartContext] Sync error:', error as Error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to sync'

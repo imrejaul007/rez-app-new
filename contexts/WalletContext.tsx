@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo, ReactNode } from 'react';
 import { useWalletStore } from '@/stores/walletStore';
 import { WalletData, CoinBalance } from '@/types/wallet';
+import { CoinType } from '@/types/enums/index';
 import walletApi from '@/services/walletApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
@@ -88,7 +89,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
   const coins: CoinBalance[] = [
     {
       id: 'rez-0',
-      type: 'rez',
+      type: 'rez' as CoinType,
       name: BRAND.COIN_NAME,
       amount: rezAmount,
       currency: BRAND.CURRENCY_CODE,
@@ -104,7 +105,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
     },
     {
       id: 'promo-0',
-      type: 'promo',
+      type: 'promo' as CoinType,
       name: 'Promo Coins',
       amount: promoAmount,
       currency: BRAND.CURRENCY_CODE,

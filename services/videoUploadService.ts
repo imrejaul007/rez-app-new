@@ -1,4 +1,5 @@
 /**
+import { v4 as uuidv4 } from 'uuid';
  * Cloudinary Video Upload Service
  *
 
@@ -470,7 +471,7 @@ class VideoUploadService {
    * Generate unique upload ID
    */
   private generateUploadId(): string {
-    return `upload_${Date.now()}_${uuid.v4()}`;
+    return `upload_${Date.now()}_${uuidv4()}`;
   }
 
   /**

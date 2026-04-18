@@ -106,7 +106,7 @@ function CommentsPage() {
 
           const pagination = response.data.pagination;
           if (!isMounted()) return;
-          setHasMore(pagination?.hasNext ?? transformed.length >= COMMENTS_PER_PAGE);
+          setHasMore((pagination as any)?.hasNext ?? transformed.length >= COMMENTS_PER_PAGE);
           if (!isMounted()) return;
           setPage(pageNum);
           if (!isMounted()) return;

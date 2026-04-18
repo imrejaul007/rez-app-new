@@ -191,7 +191,7 @@ function DealComparisonModal({
     if (metric.label === 'Your Savings' && bestDeal?.deal.id === deal.id) {
       return colors.successScale[400]; // Green for best savings
     }
-    if (metric.label === 'Discount' && deal.discountValue >= 25) {
+    if (metric.label === 'Discount' && (deal.discountValue ?? 0) >= 25) {
       return colors.brand.purpleLight; // Purple for high discounts
     }
     if (metric.label === 'Valid Until') {

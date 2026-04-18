@@ -32,8 +32,8 @@ function _HomeDeliveryProductCardInner({
 
   // Build comprehensive accessibility label
   const buildAccessibilityLabel = () => {
-    const currentPrice = normalizedPrice.current;
-    const originalPrice = normalizedPrice.original;
+    const currentPrice = normalizedPrice.selling;
+    const originalPrice = normalizedPrice.mrp;
     const ratingValue = normalizedRating.value;
 
     const parts = [
@@ -121,14 +121,14 @@ function _HomeDeliveryProductCardInner({
         {/* Price Section */}
         <View style={styles.priceSection}>
           <View style={styles.priceContainer}>
-            {normalizedPrice.current !== null && (
+            {normalizedPrice.selling !== null && (
               <ThemedText style={styles.currentPrice}>
-                {formatPrice(normalizedPrice.current, product.price?.currency || 'INR', false)}
+                {formatPrice(normalizedPrice.selling, product.price?.currency || 'INR', false)}
               </ThemedText>
             )}
-            {normalizedPrice.original !== null && (
+            {normalizedPrice.mrp !== null && (
               <ThemedText style={styles.originalPrice}>
-                {formatPrice(normalizedPrice.original, product.price?.currency || 'INR', false)}
+                {formatPrice(normalizedPrice.mrp, product.price?.currency || 'INR', false)}
               </ThemedText>
             )}
           </View>

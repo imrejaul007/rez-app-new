@@ -14,7 +14,7 @@
  */
 
 import { ImageSourcePropType } from 'react-native';
-import type { CoinType } from './rez-shared-types';
+import { CoinType } from './enums/index';
 
 // ---------------------------------------------------------------------------
 // Coin type literal — re-exported from canonical shared-types

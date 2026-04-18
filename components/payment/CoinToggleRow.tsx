@@ -20,7 +20,7 @@ import { borderRadius, colors, spacing, typography } from '@/constants/theme';
 import type { CoinType } from '@/types/rez-shared-types';
 
 /** Subset of canonical CoinType supported by this payment component. */
-export type CoinToggleType = Extract<CoinType, 'rez' | 'promo' | 'branded'>;
+export type CoinToggleType = 'rez' | 'promo' | 'branded';
 
 interface CoinToggleRowProps {
   type: CoinToggleType;
@@ -40,7 +40,7 @@ interface CoinToggleRowProps {
 
 // Default coin styles matching Wallet design
 // All colors must follow the palette: Nile Blue, Mustard, Linen, Peach, Lavender
-const COIN_STYLES: Record<CoinType, { color: string; bgColor: string; gradientColors: string[]; icon: string; description: string }> = {
+const COIN_STYLES: Partial<Record<CoinType, { color: string; bgColor: string; gradientColors: string[]; icon: string; description: string }>> = {
   rez: {
     color: colors.lightMustard, // Mustard
     bgColor: colors.linen, // Linen

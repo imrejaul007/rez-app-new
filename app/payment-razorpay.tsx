@@ -297,7 +297,7 @@ function PaymentPage() {
       // CA-PAY-011 FIX: Only return true if backend explicitly confirms payment is valid
       if (response.success && response.data) {
         // Additional safety: ensure response contains order/payment confirmation
-        if (!response.data.orderId && !response.data.paymentId) {
+        if (!(response.data as any).orderId && !(response.data as any).paymentId) {
           console.warn('[Razorpay] Verification response missing orderId or paymentId');
           return false;
         }

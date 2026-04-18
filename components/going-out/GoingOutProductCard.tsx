@@ -73,8 +73,8 @@ function _GoingOutProductCardInner({
 
     // Otherwise use cartActions directly
     try {
-      const price = normalizedPrice.current || 0;
-      const originalPrice = normalizedPrice.original || price;
+      const price = normalizedPrice.selling || 0;
+      const originalPrice = normalizedPrice.mrp || price;
 
       await cartActions.addItem({
         id: productId,
@@ -138,8 +138,8 @@ function _GoingOutProductCardInner({
       parts.push(`${normalizedRating.value} stars with ${normalizedRating.count} reviews`);
     }
 
-    if (normalizedPrice.current !== null) {
-      const formattedPrice = formatPrice(normalizedPrice.current, 'INR', false);
+    if (normalizedPrice.selling !== null) {
+      const formattedPrice = formatPrice(normalizedPrice.selling, 'INR', false);
       if (formattedPrice) parts.push(formattedPrice);
     }
 
@@ -287,14 +287,14 @@ function _GoingOutProductCardInner({
 
           {/* Price */}
           <View style={styles.priceContainer}>
-            {normalizedPrice.current !== null && (
+            {normalizedPrice.selling !== null && (
               <ThemedText style={styles.currentPrice}>
-                {formatPrice(normalizedPrice.current, 'INR', false)}
+                {formatPrice(normalizedPrice.selling, 'INR', false)}
               </ThemedText>
             )}
-            {normalizedPrice.original !== null && normalizedPrice.current !== null && normalizedPrice.original > normalizedPrice.current && (
+            {normalizedPrice.mrp !== null && normalizedPrice.selling !== null && normalizedPrice.mrp > normalizedPrice.selling && (
               <ThemedText style={styles.originalPrice}>
-                {formatPrice(normalizedPrice.original, 'INR', false)}
+                {formatPrice(normalizedPrice.mrp, 'INR', false)}
               </ThemedText>
             )}
           </View>

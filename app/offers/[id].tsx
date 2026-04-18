@@ -176,7 +176,7 @@ function OfferDetailPage() {
 
       if (response.success && response.data) {
         // Handle both direct array and paginated response
-        const redemptionsArray = Array.isArray(response.data) ? response.data : response.data?.data || [];
+        const redemptionsArray = Array.isArray(response.data) ? response.data : (response.data as any)?.data || [];
         logger.log('📋 [REDEMPTION CHECK] Redemptions found:', redemptionsArray.length);
         logger.log(
           '📋 [REDEMPTION CHECK] All redemptions:',

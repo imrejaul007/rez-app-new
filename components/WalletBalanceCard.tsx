@@ -123,8 +123,8 @@ const WalletBalanceCardComponent: React.FC<WalletBalanceCardProps> = ({
   const styles = createStyles(screenWidth);
 
   // Determine expiry state
-  const expiringSoon = isExpiringSoon(coin.expiryDate, 7);
-  const expiryLabel = getExpiryLabel(coin.expiryDate, coin.type);
+  const expiringSoon = isExpiringSoon(coin.expiryDate as Date | undefined, 7);
+  const expiryLabel = getExpiryLabel(coin.expiryDate as Date | undefined, coin.type);
   const coinTypeColor = COIN_TYPE_COLORS[coin.type]?.color || coin.color || colors.lightMustard;
 
   // Check if this coin has a pending status (from restrictions or description hints)

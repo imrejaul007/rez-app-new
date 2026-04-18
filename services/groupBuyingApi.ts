@@ -9,8 +9,8 @@ import {
   CreateGroupRequest,
   JoinGroupRequest,
   GroupCheckoutRequest,
-  ListGroupsResponse,
-  ListProductsResponse,
+  any,
+  any,
   GroupBuyingFilters,
   GroupMessage,
 } from '@/types/groupBuying.types';

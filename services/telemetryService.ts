@@ -1,4 +1,5 @@
 /**
+import { v4 as uuidv4 } from 'uuid';
  * Telemetry Service
  *
 
@@ -631,7 +632,7 @@ class TelemetryService {
    * Generate batch ID
    */
   private generateBatchId(): string {
-    return `batch_${Date.now()}_${uuid.v4()}`;
+    return `batch_${Date.now()}_${uuidv4()}`;
   }
 
   /**

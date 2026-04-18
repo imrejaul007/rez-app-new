@@ -63,7 +63,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
         ? `From ${coin.brandedDetails.merchantName}`
         : coin.description || 'From stores';
     }
-    return coin.description;
+    return coin.description ?? 'From stores';
   };
 
   const expiryMs = coin.expiryDate ? new Date(coin.expiryDate).getTime() : NaN;
