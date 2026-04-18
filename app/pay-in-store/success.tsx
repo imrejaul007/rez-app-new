@@ -98,6 +98,12 @@ function PaymentSuccessScreen() {
     transform: [{ translateY: rewardsSlide.value }],
   }));
 
+  // Use refs to avoid stale closures in animation callbacks
+  const rewardsRef = React.useRef(rewards);
+  rewardsRef.current = rewards;
+  const currencySymbolRef = React.useRef(currencySymbol);
+  currencySymbolRef.current = currencySymbol;
+
   useEffect(() => {
     // Trigger haptic feedback
     if (Platform.OS !== 'web') {
@@ -115,17 +121,19 @@ function PaymentSuccessScreen() {
 
     // Show reward popup after a short delay (let the success screen animate first)
     const popupTimer = setTimeout(() => {
+      const currentRewards = rewardsRef.current;
+      const currentSymbol = currencySymbolRef.current;
       // Show coins earned popup if any coins were earned
-      if (rewards.coinsEarned > 0) {
-        showCoinsEarned(rewards.coinsEarned, `${BRAND.COIN_NAME} earned from purchase`, () =>
+      if (currentRewards.coinsEarned > 0) {
+        showCoinsEarned(currentRewards.coinsEarned, `${BRAND.COIN_NAME} earned from purchase`, () =>
           router.push('/wallet-screen'),
         );
       }
       // Show cashback popup if any cashback was earned (after coins popup)
-      else if (rewards.cashbackEarned > 0) {
+      else if (currentRewards.cashbackEarned > 0) {
         showCashbackEarned(
-          rewards.cashbackEarned,
-          `${currencySymbol}${rewards.cashbackEarned} added to your wallet`,
+          currentRewards.cashbackEarned,
+          `${currentSymbol}${currentRewards.cashbackEarned} added to your wallet`,
           () => router.push('/wallet-screen'),
         );
       }

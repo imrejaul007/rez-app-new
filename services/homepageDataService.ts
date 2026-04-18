@@ -208,9 +208,9 @@ class HomepageDataService {
                   priority: 'high'
                 });
               })
-              .catch((err) => logger.error('HomepageDataService: background cache refresh failed', { cacheKey, error: String(err) }));
+              .catch((err) => logger.error(`HomepageDataService: background cache refresh failed [cacheKey=${cacheKey}] ${String(err)}`));
           }
-        }).catch((err) => logger.error('HomepageDataService: backend availability check failed', { cacheKey, error: String(err) }));
+        }).catch((err) => logger.error(`HomepageDataService: backend availability check failed [cacheKey=${cacheKey}] ${String(err)}`));
 
         return { data: cachedData, fromCache: true, isOffline: false };
       }
@@ -361,9 +361,9 @@ class HomepageDataService {
                   });
                 }
               })
-              .catch((err) => logger.error('HomepageDataService: new arrivals refresh failed', { cacheKey, error: String(err) }));
+              .catch((err) => logger.error(`HomepageDataService: new arrivals refresh failed [cacheKey=${cacheKey}] ${String(err)}`));
           }
-        }).catch((err) => logger.error('HomepageDataService: new arrivals backend check failed', { cacheKey, error: String(err) }));
+        }).catch((err) => logger.error(`HomepageDataService: new arrivals backend check failed [cacheKey=${cacheKey}] ${String(err)}`));
 
         return {
           ...sectionTemplate,
@@ -1193,7 +1193,7 @@ class HomepageDataService {
                   });
                 }
               })
-              .catch((err) => logger.error('HomepageDataService: batch section refresh failed', { batchCacheKey, error: String(err) }));
+              .catch((err) => logger.error(`HomepageDataService: batch section refresh failed [batchCacheKey=${batchCacheKey}] ${String(err)}`));
             return cachedSections;
           }
           // Cache was empty — ignore it and fetch fresh
@@ -1212,7 +1212,7 @@ class HomepageDataService {
           cacheService.set(batchCacheKey, sections, {
             ttl: this.CACHE_TTL,
             priority: 'high'
-          }).catch((err) => logger.error('HomepageDataService: batch cache set failed', { batchCacheKey, error: String(err) }));
+          }).catch((err) => logger.error(`HomepageDataService: batch cache set failed [batchCacheKey=${batchCacheKey}] ${String(err)}`));
         }
         return sections;
       } catch (error) {

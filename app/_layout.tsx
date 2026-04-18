@@ -365,7 +365,9 @@ function RootLayout() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
-      const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
+      // Fallback to the production gateway (see SOURCE-OF-TRUTH/API-ENDPOINTS.md).
+      // The `/api/config/app-status` route is served by the gateway.
+      const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://rez-api-gateway.onrender.com/api';
       const resp = await fetch(`${apiUrl}/config/app-status`, { signal: controller.signal });
       clearTimeout(timeoutId);
       let json: any;

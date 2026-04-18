@@ -113,7 +113,10 @@ export default function FriendsScreen() {
     await RNShare.share({
       message: buildShareMessage(),
       title: `Join ${BRAND.APP_NAME}`,
-    }).catch(() => {});
+    }).catch((err: any) => {
+      // R2-H1 FIX: Log Share failure so attribution can be retried.
+      if (__DEV__) console.warn('[friends] Share failed:', err);
+    });
   };
 
   return (

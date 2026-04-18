@@ -638,7 +638,9 @@ const StoreDetailPage: React.FC = () => {
                       </View>
                       <View style={styles.redemptionInfo}>
                         <Text style={styles.redemptionCampaign} numberOfLines={1}>
-                          {(redemption as any).campaignId.title}
+                          {typeof (redemption as any).campaignId === 'object'
+                            ? (redemption as any).campaignId?.title
+                            : 'Campaign'}
                         </Text>
                         <View style={styles.redemptionCodeRow}>
                           <Ionicons name="qr-code-outline" size={12} color={COLORS.gray500} />

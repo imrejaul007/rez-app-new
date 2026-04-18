@@ -111,7 +111,10 @@ function PriveInviteDashboard() {
       await Share.share({
         message: `Join me on Prive! Use my exclusive invite code: ${code}\n\nDownload ${BRAND.APP_NAME} and enter this code to unlock premium features.`,
       });
-    } catch {}
+    } catch (err) {
+      // R2-H1 FIX: Log Share failure so attribution can be retried.
+      if (__DEV__) console.warn('[invite-dashboard] Share failed:', err);
+    }
   };
 
   const tierLabel = (tier || 'entry').charAt(0).toUpperCase() + (tier || 'entry').slice(1);

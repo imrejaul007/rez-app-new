@@ -693,7 +693,9 @@ class AuthService {
 
       const response = await withRetry(
         () => apiClient.get<{
-    reviews: { total: number; approved: number; rejected: number; avgRating: number };
+    user: { joinedDate: string; isVerified: boolean; totalReferrals: number; referralEarnings: number };
+    wallet: { balance: number; totalEarned: number; totalSpent: number; pendingAmount: number };
+    orders: { total: number; completed: number; cancelled: number; totalSpent: number };
     videos: { totalCreated: number; totalViews: number; totalLikes: number; totalShares: number };
     projects: { totalParticipated: number; approved: number; rejected: number; totalEarned: number };
     offers: { totalRedeemed: number };

@@ -163,7 +163,12 @@ const MyVouchersPage = () => {
         }
 
         // 2. Map offer redemptions (cashback vouchers)
-        const redemptionsArray = redemptionsResponse.data || [];
+        // redemptionsResponse.data can be either never[] (catch fallback) or PaginatedResponse<Offer>
+        // Narrow to an array of redemptions by shape.
+        const redemptionsData = redemptionsResponse.data;
+        const redemptionsArray: any[] = Array.isArray(redemptionsData)
+          ? redemptionsData
+          : (redemptionsData?.items ?? []);
         logger.debug('[MY VOUCHERS] Redemptions array:', redemptionsArray);
 
         if (redemptionsArray.length > 0) {

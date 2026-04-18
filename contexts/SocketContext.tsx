@@ -676,7 +676,7 @@ export function useStockUpdates(productId: string | null) {
         // socket.types.ts defines StockStatus as UPPERCASE ('IN_STOCK'|'LOW_STOCK'|'OUT_OF_STOCK'),
         // but the backend WebSocket payload may send lowercase values per standard enum conventions.
         // Normalizing here prevents silent mismatches if the backend ever changes casing.
-        const normalizedStatus = (payload.status as string).toUpperCase();
+        const normalizedStatus = ((payload.status as string) ?? '').toUpperCase();
         setIsOutOfStock(normalizedStatus === 'OUT_OF_STOCK');
         setIsLowStock(normalizedStatus === 'LOW_STOCK');
       }
@@ -707,7 +707,7 @@ export function useStockUpdates(productId: string | null) {
     stockData,
     isLowStock,
     isOutOfStock,
-    isInStock: (stockData?.status as string).toUpperCase() === 'IN_STOCK',
+    isInStock: ((stockData?.status as string) ?? '').toUpperCase() === 'IN_STOCK',
   };
 }
 

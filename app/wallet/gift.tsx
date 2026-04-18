@@ -334,7 +334,10 @@ function GiftPage() {
                 await Share.share({
                   message: `I sent ${successData.amount} ${BRAND.CURRENCY_CODE} to ${successData.recipientName}${successData.message ? ` — "${successData.message}"` : ''} via ${BRAND.APP_NAME}!`,
                 });
-              } catch {}
+              } catch (err) {
+                // R2-H1 FIX: Log Share failure so attribution can be retried.
+                if (__DEV__) console.warn('[wallet/gift] Share failed:', err);
+              }
             }}
           >
             <Ionicons name="share-outline" size={18} color={Colors.secondary[700]} />

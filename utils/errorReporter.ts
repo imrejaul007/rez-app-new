@@ -1,9 +1,6 @@
 /**
  * Error Reporter Utility
  *
-
-import uuid from 'react-native-uuid';
- *
  * Centralized error reporting and logging system.
  * Captures, categorizes, and reports errors to monitoring services.
  *
@@ -24,6 +21,7 @@ import uuid from 'react-native-uuid';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import uuid from 'react-native-uuid';
 import { Sentry } from '@/config/sentry';
 
 // ============================================================================

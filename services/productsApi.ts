@@ -170,7 +170,7 @@ class ProductsService {
             return {
               success: false,
               error: 'Product validation failed',
-              message: `Invalid product data: ${validation.errors.map(e => e.message).join(', ')}`,
+              message: `Invalid product data: ${(validation.errors ?? []).map(e => e.message).join(', ')}`,
             };
           }
         } catch (conversionError: any) {

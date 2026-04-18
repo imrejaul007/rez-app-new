@@ -41,7 +41,10 @@ function CampusSavingsBoard({
       await Share.share({
         message: `Students at ${institutionName} saved \u20B9${totalSaved.toLocaleString()} this month on REZ! Join the savings.`,
       });
-    } catch {}
+    } catch (err) {
+      // R2-H1 FIX: Log Share failure so attribution can be retried.
+      if (__DEV__) console.warn('[CampusSavingsBoard] Share failed:', err);
+    }
   };
 
   if (leaderboard.length === 0) {

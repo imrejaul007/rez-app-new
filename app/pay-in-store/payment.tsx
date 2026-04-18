@@ -79,7 +79,16 @@ function PaymentScreen() {
   });
 
   // Idempotency key — unique per mount, prevents duplicate payments on double-tap or network retry
-  const idempotencyKeyRef = useRef(`PAY-${Date.now()}-${crypto.randomUUID()}`);
+  const idempotencyKeyRef = useRef(
+    `PAY-${Date.now()}-${
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = (Math.random() * 16) | 0;
+            return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+          })
+    }`,
+  );
 
   // Local state for modals
   const [currentPaymentData, setCurrentPaymentData] = useState<StorePaymentInitResponse | null>(null);

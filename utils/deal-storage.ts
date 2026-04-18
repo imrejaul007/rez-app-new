@@ -268,7 +268,11 @@ class DealStorage {
       const jsonString = JSON.stringify(data);
       
       return {
-        size: new Blob([jsonString]).size,
+        // NA-CRIT-03 FIX: new Blob() crashes on React Native (iOS/Android).
+        // Use TextEncoder for cross-platform byte-size estimation.
+        size: typeof Blob !== 'undefined'
+          ? new Blob([jsonString]).size
+          : new TextEncoder().encode(jsonString).length,
         lastUpdated: data.lastUpdated,
         itemCount: data.selectedDeals.length + data.dealHistory.length,
       };

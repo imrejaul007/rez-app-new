@@ -321,7 +321,10 @@ function CouponsPage() {
           ? `${coupon.discountValue}% OFF`
           : `${currencySymbol}${coupon.discountValue} OFF`;
       await Share.share({ message: `Use code "${coupon.couponCode}" to get ${disc} on Nquta! ${coupon.title}` });
-    } catch {} // Silent: non-critical Share API
+    } catch (err) {
+      // R2-H1 FIX: Log Share failure so attribution can be retried.
+      if (__DEV__) console.warn('[coupons] Share failed:', err);
+    }
   };
 
   // ── View Details ──────────────────────────────────────────────

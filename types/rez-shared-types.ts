@@ -65,7 +65,7 @@ export const CANONICAL_ORDER_STATUSES = [
  * Legacy status alias map — normalizes deprecated values to canonical equivalents.
  * Used to handle responses from backends that may emit old FSM values.
  */
-const LEGACY_STATUS_MAP: Partial<Record<string, CANONICAL_ORDER_STATUSES[number]>> = {
+const LEGACY_STATUS_MAP: Partial<Record<string, typeof CANONICAL_ORDER_STATUSES[number]>> = {
   // Legacy → Canonical
   pending: 'placed',
   processing: 'preparing',
@@ -80,10 +80,10 @@ const LEGACY_STATUS_MAP: Partial<Record<string, CANONICAL_ORDER_STATUSES[number]
  */
 export function normalizeOrderStatus(
   status: string,
-): CANONICAL_ORDER_STATUSES[number] {
+): typeof CANONICAL_ORDER_STATUSES[number] {
   if (!status || typeof status !== 'string') {
     return 'placed';
   }
   const normalized = status.toLowerCase().trim();
-  return LEGACY_STATUS_MAP[normalized] ?? (normalized as CANONICAL_ORDER_STATUSES[number]);
+  return LEGACY_STATUS_MAP[normalized] ?? (normalized as typeof CANONICAL_ORDER_STATUSES[number]);
 }

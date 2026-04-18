@@ -10,6 +10,10 @@ function isNonEmptyObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
 }
 
+function hasKey<K extends string>(obj: unknown, key: K): obj is Record<K, unknown> {
+  return typeof obj === 'object' && obj !== null && key in obj;
+}
+
 // ─── Guards ───────────────────────────────────────────────────────────────────
 
 export function isProduct(value: unknown): value is Record<string, unknown> {
@@ -73,7 +77,7 @@ export function isStore(value: unknown): value is Record<string, unknown> {
 export function isStoreOpen(store: unknown): boolean {
   if (!isNonEmptyObject(store)) return false;
   const s = store as Record<string, unknown>;
-  return s.status?.isOpen === true;
+  return hasKey(s.status, 'isOpen') && s.status.isOpen === true;
 }
 
 export function isStoreVerified(store: unknown): boolean {
@@ -85,13 +89,13 @@ export function isStoreVerified(store: unknown): boolean {
 export function isDeliveryAvailable(store: unknown): boolean {
   if (!isNonEmptyObject(store)) return false;
   const s = store as Record<string, unknown>;
-  return s.delivery?.isAvailable === true;
+  return hasKey(s.delivery, 'isAvailable') && s.delivery.isAvailable === true;
 }
 
 export function isPickupAvailable(store: unknown): boolean {
   if (!isNonEmptyObject(store)) return false;
   const s = store as Record<string, unknown>;
-  return s.pickup?.isAvailable === true;
+  return hasKey(s.pickup, 'isAvailable') && s.pickup.isAvailable === true;
 }
 
 export function isCartItem(value: unknown): value is Record<string, unknown> {

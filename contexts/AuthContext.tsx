@@ -817,17 +817,17 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
           }
 
           // Validate tokens are non-empty strings (CA-AUT-011)
-          const { accessToken, refreshToken } = response.data.tokens;
+          const { accessToken, refreshToken: newRefreshToken } = response.data.tokens;
           if (!accessToken || typeof accessToken !== 'string' || accessToken.trim() === '') {
             throw new Error('Invalid access token from server');
           }
-          if (!refreshToken || typeof refreshToken !== 'string' || refreshToken.trim() === '') {
+          if (!newRefreshToken || typeof newRefreshToken !== 'string' || newRefreshToken.trim() === '') {
             throw new Error('Invalid refresh token from server');
           }
 
           // Save to both AsyncStorage AND localStorage (web) using authStorage
           await authStorage.saveAuthToken(accessToken);
-          await authStorage.saveRefreshToken(refreshToken);
+          await authStorage.saveRefreshToken(newRefreshToken);
 
           // Set auth token in API client
           authService.setAuthToken(accessToken);

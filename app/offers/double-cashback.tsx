@@ -159,7 +159,10 @@ function DoubleCashbackPage() {
       await Share.share({
         message: `${campaign.multiplier}X Cashback! ${campaign.title} - ${campaign.subtitle}. Shop now and earn extra cashback!`,
       });
-    } catch {}
+    } catch (err) {
+      // R2-H1 FIX: Log Share failure so attribution can be retried.
+      if (__DEV__) console.warn('[double-cashback] Share failed:', err);
+    }
   };
 
   const pad = (n: number) => n.toString().padStart(2, '0');

@@ -54,7 +54,10 @@ function CampusLeaderboardPage() {
       await Share.share({
         message: `Students at ${instituteName} saved \u20B9${data?.totalSaved?.toLocaleString() || 0} this month on REZ!`,
       });
-    } catch {}
+    } catch (err) {
+      // R2-H1 FIX: Log Share failure so attribution can be retried.
+      if (__DEV__) console.warn('[leaderboard/campus] Share failed:', err);
+    }
   };
 
   const userId = (user as any)?._id || (user as any)?.id;

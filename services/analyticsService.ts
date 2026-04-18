@@ -340,7 +340,9 @@ class AnalyticsService {
       // Dynamic import to avoid circular dependency
       const { default: apiClient } = await import('./apiClient');
       await apiClient.post<any>('/analytics/batch', { events });
-    } catch {
+    } catch (err) {
+      // R2-H3/H4 FIX: Log analytics flush failure for monitoring.
+      if (__DEV__) console.warn('[AnalyticsService] flush failed, re-queuing events:', err);
       // Re-queue events on failure, capped to MAX_QUEUE_SIZE
       this.eventQueue = [...events, ...this.eventQueue].slice(-AnalyticsService.MAX_QUEUE_SIZE);
     } finally {

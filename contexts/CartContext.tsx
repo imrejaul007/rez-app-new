@@ -1079,7 +1079,7 @@ export function CartProvider({ children }: CartProviderProps) {
   const setCardOffer = useCallback(async (offer: CartCardOffer) => {
     try {
       dispatch({ type: 'SET_CARD_OFFER', payload: offer });
-      
+
       // If offer has a code, apply it as coupon
       if (offer.code && typeof applyCoupon === 'function') {
         await applyCoupon(offer.code as string);
@@ -1088,7 +1088,7 @@ export function CartProvider({ children }: CartProviderProps) {
       devLog.error('🛒 [CartContext] Failed to set card offer:', error);
       throw error;
     }
-  }, []);
+  }, [applyCoupon]);
 
   const removeCardOffer = useCallback(() => {
     dispatch({ type: 'REMOVE_CARD_OFFER' });

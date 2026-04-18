@@ -273,7 +273,10 @@ function CreatorProfilePage() {
               Share.share({
                 message: `Check out ${creator.name} on ${BRAND.APP_NAME}!`,
                 title: creator.name,
-              }).catch(() => {});
+              }).catch((err: any) => {
+                // R2-H1 FIX: Log Share failure so attribution can be retried.
+                if (__DEV__) console.warn('[creator] Share failed:', err);
+              });
             }}
           >
             <Ionicons name="share-social-outline" size={22} color={colors.text.inverse} />
