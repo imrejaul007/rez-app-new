@@ -90,9 +90,24 @@ function IdentitySelectPage() {
       choice: identity.id,
     });
 
-    // Save stated identity — non-blocking
+    // Save stated identity. CA-ONB-004 FIX: previously this was fire-and-forget —
+    // a network failure silently miscategorized the user. Now we await the call,
+    // surface an error toast, and persist the choice for retry on next app start.
     setIdentity({ statedIdentity: identity.id });
-    identityApi.setStatedIdentity(identity.id).catch(() => {});
+    try {
+      await identityApi.setStatedIdentity(identity.id);
+      // Clear any stale pending retry for a previous attempt.
+      await AsyncStorage.removeItem('rez_pending_identity').catch(() => {});
+    } catch {
+      await AsyncStorage.setItem('rez_pending_identity', identity.id).catch(() => {});
+      import('@/contexts/ToastContext')
+        .then(({ showGlobalToast }) => {
+          if (typeof showGlobalToast === 'function') {
+            showGlobalToast('Couldn\'t save your choice — we\'ll retry automatically.');
+          }
+        })
+        .catch(() => {});
+    }
 
     if (identity.id === 'general' || (identity.next as string) === '/(tabs)') {
       // Only complete onboarding when going directly to home.
@@ -111,7 +126,20 @@ function IdentitySelectPage() {
   const handleSkip = async () => {
     analyticsService.track(IdentityAnalyticsEvents.IDENTITY_SKIP_CLICKED);
     setIdentity({ statedIdentity: 'general' });
-    identityApi.setStatedIdentity('general').catch(() => {});
+    // CA-ONB-004 FIX: Await and retry-on-failure (see handleSelect comment).
+    try {
+      await identityApi.setStatedIdentity('general');
+      await AsyncStorage.removeItem('rez_pending_identity').catch(() => {});
+    } catch {
+      await AsyncStorage.setItem('rez_pending_identity', 'general').catch(() => {});
+      import('@/contexts/ToastContext')
+        .then(({ showGlobalToast }) => {
+          if (typeof showGlobalToast === 'function') {
+            showGlobalToast('Couldn\'t save your choice — we\'ll retry automatically.');
+          }
+        })
+        .catch(() => {});
+    }
 
     // Complete onboarding but ALWAYS go to home, even if the API call fails.
     // The user is authenticated — failing to mark isOnboarded on the backend

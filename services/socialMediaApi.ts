@@ -306,7 +306,11 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
       // Continue - backend will validate
     }
 
-    // ===== STEP 3: FRAUD DETECTION (non-blocking) =====
+    // ===== STEP 3: FRAUD DETECTION (fail-closed) =====
+    // CA-SEC-006 FIX: Fraud check is now authoritative on the client side. If the
+    // check throws or returns allowed=false, we block the submission and surface a
+    // user-visible error. Server-authoritative validation still runs on the backend;
+    // this is defense-in-depth.
     try {
       devLog.log('🔍 [SOCIAL MEDIA API] Running fraud detection...');
       fraudCheckResult = await fraudDetectionService.performFraudCheck(data.postUrl, {
@@ -314,13 +318,21 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
       });
 
       if (fraudCheckResult && !fraudCheckResult.allowed) {
-        devLog.warn('⚠️ Fraud check warnings:', fraudCheckResult.blockedReasons);
-        // Don't block - backend will validate
+        devLog.warn('🚫 Fraud check blocked submission:', fraudCheckResult.blockedReasons);
+        const reason = fraudCheckResult.blockedReasons?.[0] || '';
+        const userMsg = reason === 'FRAUD_CHECK_UNAVAILABLE'
+          ? 'Verification unavailable — please try again.'
+          : (fraudCheckResult.warnings?.[0] || reason || 'Submission blocked by fraud check.');
+        throw new Error(userMsg);
       }
       devLog.log('✅ Fraud check completed');
     } catch (fraudError: any) {
-      devLog.warn('⚠️ [SOCIAL MEDIA API] Fraud check failed (continuing):', fraudError.message);
-      // Continue - backend will validate
+      // Re-throw if we raised it above — blocking decisions propagate to the UI.
+      if (fraudError && fraudError.message) {
+        throw fraudError;
+      }
+      devLog.warn('⚠️ [SOCIAL MEDIA API] Fraud check failed:', fraudError);
+      throw new Error('Verification unavailable — please try again.');
     }
 
     // ===== STEP 4: SUBMIT TO BACKEND =====

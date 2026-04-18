@@ -33,6 +33,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack, useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useAuthUser } from '@/stores/selectors';
+import { useAuth } from '@/contexts/AuthContext';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { useSecurity } from '@/contexts/SecurityContext';
@@ -76,6 +77,7 @@ function AccountProfilePage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const user = useAuthUser();
+  const { actions: authActions } = useAuth();
   const { settings: notificationSettings, updateSettings: updateNotificationSettings } = useNotifications();
   const { securitySettings, privacySettings, updateSecuritySettings, updatePrivacySettings } = useSecurity();
   const { preferences: appPreferences, updatePreferences: updateAppPreferences } = useAppPreferences();
@@ -120,6 +122,12 @@ function AccountProfilePage() {
         setSavedFirstName(trimmedFirst);
         setSavedLastName(trimmedLast);
         setIsEditing(false);
+        // Refresh the auth store so `user.profile.firstName/lastName` is up to
+        // date everywhere the user object is consumed (not just this screen).
+        // Previously only the local `savedFirstName` state was updated, so
+        // the rest of the app kept rendering the stale name until the next
+        // full auth re-check.
+        authActions.checkAuthStatus().catch(() => { /* non-blocking */ });
         platformAlertSimple('Success', 'Profile updated successfully.');
       } else {
         platformAlertSimple('Error', 'Could not update profile. Please try again.');

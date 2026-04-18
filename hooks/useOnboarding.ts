@@ -37,10 +37,12 @@ export const useOnboarding = () => {
     loadSavedProgress();
   }, []);
 
-  // Save progress whenever state changes
+  // Save progress only when persistable slices change.
+  // Depending on the whole `state` object fires on every `isLoading`/`error` toggle
+  // (including during the OTP flow), causing storm-writes to AsyncStorage.
   useEffect(() => {
     saveProgress();
-  }, [state]);
+  }, [state.currentStep, state.userData, state.isCompleted]);
 
   const loadSavedProgress = async () => {
     try {

@@ -37,6 +37,8 @@ export interface RateLimitStatus {
   remainingSubmissions: number;
   resetTime: number;
   message?: string;
+  /** Machine-readable reason code — e.g. 'FRAUD_CHECK_UNAVAILABLE' */
+  reason?: string;
 }
 
 export interface DuplicateCheckResult {
@@ -61,6 +63,8 @@ export interface AccountVerification {
   postCount?: number;
   verificationBadge?: boolean;
   riskFactors: string[];
+  /** Machine-readable failure reason when isVerified === false */
+  reason?: string;
 }
 
 export interface FraudPattern {
@@ -434,11 +438,15 @@ export const checkRateLimit = async (): Promise<RateLimitStatus> => {
       resetTime: now + (24 * 60 * 60 * 1000),
     };
   } catch (error) {
-    // In case of error, allow but log
+    // CA-SEC-006 FIX: Fail CLOSED on fraud-check errors instead of fail-open.
+    // A rate-limit check that can't read storage must not default to "allowed" —
+    // the frontend is defense-in-depth and should block when the check fails.
     return {
-      allowed: true,
-      remainingSubmissions: 1,
+      allowed: false,
+      remainingSubmissions: 0,
       resetTime: Date.now() + (24 * 60 * 60 * 1000),
+      reason: 'FRAUD_CHECK_UNAVAILABLE',
+      message: 'Verification unavailable — please try again.',
     };
   }
 };
@@ -497,17 +505,17 @@ export const checkSubmissionVelocity = async (): Promise<{
 /**
  * Verify Instagram account details
  * Note: This would require Instagram Graph API integration on backend
- * Currently returns a default "verified" response - backend handles real validation
+ *
+ * CA-SEC-006 FIX: Fail CLOSED — the frontend must not claim an account is
+ * verified when there is no way to verify it. Server-authoritative validation
+ * still runs on the backend; this function is defense-in-depth.
  */
 export const verifyInstagramAccount = async (url: string): Promise<AccountVerification> => {
-  // Skip API call - endpoint doesn't exist yet
-  // Backend will handle the actual verification
+  // Verification endpoint is not yet wired — treat as unavailable, not "verified".
   return {
-    isVerified: true, // Assume verified - backend will reject if not
-    accountAge: 365, // Default to 1 year old
-    followerCount: 500,
-    postCount: 50,
+    isVerified: false,
     riskFactors: [],
+    reason: 'UNAVAILABLE',
   };
 };
 
@@ -626,15 +634,16 @@ export const performFraudCheck = async (
       },
     };
   } catch (error) {
-
-    // On error, allow submission but flag as warning
-    // Backend will perform final validation
+    // CA-SEC-006 FIX: Fail CLOSED on fraud-check errors. Previous behavior allowed
+    // submission with a "medium" risk flag, effectively letting an OCR / storage error
+    // bypass every client-side check. Backend server-authoritative validation is the
+    // real fix, but the frontend should not silently wave submissions through.
     return {
-      allowed: true, // Allow to proceed - backend will validate
-      riskScore: 50, // Medium risk on error
-      riskLevel: 'medium',
-      blockedReasons: [],
-      warnings: ['Fraud check temporarily unavailable. Submission will be reviewed.'],
+      allowed: false,
+      riskScore: 100,
+      riskLevel: 'critical',
+      blockedReasons: ['FRAUD_CHECK_UNAVAILABLE'],
+      warnings: ['Verification unavailable — please try again.'],
       metadata: {
         checksPassed: 0,
         totalChecks,

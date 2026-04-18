@@ -19,6 +19,35 @@ import { usePriveStore } from '@/stores/priveStore';
 let _cachedDeviceFingerprint: string | null = null;
 let _fingerprintLoadPromise: Promise<string | null> | null = null;
 
+// CA-AUT-009 FIX: Track whether we've warned about a missing CSRF token this
+// session so we don't spam logs. One warn() per page load is plenty for ops.
+let _csrfMissingWarned = false;
+
+// Mutating HTTP methods — CSRF is only required on state-changing requests.
+const _CSRF_MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+/**
+ * Read a CSRF token from the current web document:
+ *   1. <meta name="csrf-token" content="..."> (preferred)
+ *   2. document.cookie "csrf-token=..." (fallback)
+ * Returns null on native or when neither source has a token.
+ */
+function readCsrfTokenFromDocument(): string | null {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return null;
+  try {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    const metaToken = meta?.getAttribute('content');
+    if (metaToken) return metaToken;
+  } catch { /* DOM query failed — fall through to cookie */ }
+  try {
+    const cookieMatch = document.cookie.match(/(?:^|;\s*)csrf-token=([^;]+)/);
+    if (cookieMatch && cookieMatch[1]) {
+      return decodeURIComponent(cookieMatch[1]);
+    }
+  } catch { /* cookie read failed */ }
+  return null;
+}
+
 async function getDeviceFingerprintHeader(): Promise<string | null> {
   if (_cachedDeviceFingerprint) return _cachedDeviceFingerprint;
   if (_fingerprintLoadPromise) return _fingerprintLoadPromise;
@@ -263,15 +292,24 @@ class ApiClient {
       ...headers
     };
 
-    // CA-AUT-009 FIX: Generate and include X-CSRF-Token header on auth endpoints
+    // CA-AUT-009 FIX: Attach X-CSRF-Token header on ALL mutating requests on web.
     // CSRF protection prevents cross-site request forgery attacks on sensitive operations.
     // On web (browser), tokens should be submitted as headers (not body) to prevent
-    // leakage in logs or error pages.
-    if (endpoint.includes('/auth') && typeof window !== 'undefined') {
-      // On web, attempt to read CSRF token from meta tag or cookie
-      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-      if (csrfMeta && csrfMeta.getAttribute('content')) {
-        requestHeaders['X-CSRF-Token'] = csrfMeta.getAttribute('content')!;
+    // leakage in logs or error pages. Native platforms don't need CSRF protection
+    // (no browser cookie jar in play), so we gate on `typeof window !== 'undefined'`.
+    if (typeof window !== 'undefined' && _CSRF_MUTATING_METHODS.has(method)) {
+      const csrfToken = readCsrfTokenFromDocument();
+      if (csrfToken) {
+        requestHeaders['X-CSRF-Token'] = csrfToken;
+      } else if (!_csrfMissingWarned) {
+        _csrfMissingWarned = true;
+        // Observability-only — don't block the request. Backend will reject if CSRF is
+        // actually required; this warning surfaces the misconfiguration in logs.
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[apiClient] CSRF token missing: no <meta name="csrf-token"> and no csrf-token cookie. ' +
+          'Mutating requests will be sent without X-CSRF-Token until this is fixed.'
+        );
       }
     }
 

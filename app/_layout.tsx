@@ -345,6 +345,27 @@ function RootLayout() {
       // If AsyncStorage fails, do not block the app — proceed normally.
     }
 
+    // CA-ONB-004 FIX: Retry a deferred setStatedIdentity call if the user picked an
+    // identity during onboarding but the network request failed. We persist the choice
+    // in AsyncStorage under `rez_pending_identity` and replay it here once per startup.
+    try {
+      const pendingIdentity = await AsyncStorage.getItem('rez_pending_identity');
+      if (pendingIdentity) {
+        const token = await authStorage.getAuthToken();
+        if (token) {
+          const { setStatedIdentity } = await import('@/services/identityApi');
+          try {
+            await setStatedIdentity(pendingIdentity);
+            await AsyncStorage.removeItem('rez_pending_identity');
+          } catch {
+            // Leave the pending value in place; we'll retry on the next startup.
+          }
+        }
+      }
+    } catch {
+      // Non-blocking — AsyncStorage failures should not crash startup.
+    }
+
     // Non-blocking: establish Hotel OTA SSO session if REZ token exists and OTA token is absent.
     // This ensures users who navigate directly to hotel screens (deep links, notifications) are pre-logged in.
     try {

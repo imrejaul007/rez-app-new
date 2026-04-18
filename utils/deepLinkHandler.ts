@@ -3,6 +3,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReferralHandler from './referralHandler';
+import { useAuthStore } from '@/stores/authStore';
+import { useToastStore } from '@/stores/toastStore';
+
+// Module-level de-duplication: Linking.getInitialURL() and the 'url' event
+// listener can both fire for the same URL during app cold-start, causing the
+// handler to process the same deep link twice. Tracking processed URLs at the
+// module scope ensures each URL is handled exactly once across both code paths.
+const handledUrls = new Set<string>();
 
 interface DeepLinkData {
   type: 'referral' | 'product' | 'store' | 'offer' | 'unknown';
@@ -179,44 +187,64 @@ export function useDeepLinkHandler() {
   const handler = new DeepLinkHandler();
 
   useEffect(() => {
+    const processUrl = (url: string) => {
+      // Skip URLs that have already been dispatched — prevents the getInitialURL
+      // vs addEventListener race where both paths process the same cold-start URL.
+      if (handledUrls.has(url)) return;
+      handledUrls.add(url);
+      const parsed = handler.parseDeepLink(url);
+      setDeepLink(parsed);
+      handleDeepLink(parsed);
+    };
+
     // Handle initial URL (app opened from link)
     const handleInitialURL = async () => {
       const initialUrl = await Linking.getInitialURL();
-      if (initialUrl) {
-        const parsed = handler.parseDeepLink(initialUrl);
-        setDeepLink(parsed);
-        handleDeepLink(parsed);
-      }
+      if (initialUrl) processUrl(initialUrl);
     };
 
     // Handle URL when app is already open
     const subscription = Linking.addEventListener('url', ({ url }) => {
-      const parsed = handler.parseDeepLink(url);
-      setDeepLink(parsed);
-      handleDeepLink(parsed);
+      processUrl(url);
     });
 
     handleInitialURL();
 
     return () => {
       subscription.remove();
+      // Reset the de-dup set on unmount so a remount (e.g. after logout/login)
+      // can re-process any pending deep links cleanly.
+      handledUrls.clear();
     };
   }, []);
 
   const handleDeepLink = async (linkData: DeepLinkData) => {
     switch (linkData.type) {
-      case 'referral':
+      case 'referral': {
         await handler.handleReferralLink(
           linkData.data.code,
           linkData.data.source
         );
         await handler.trackAttribution('referral', linkData.data);
 
-        // Navigate to registration or apply code
-        // Check if user is logged in
-        // If not, navigate to registration
-        // If yes, prompt to apply code (if not already used)
+        // Route to sign-in for logged-out users so they can sign up with the
+        // referral code pre-filled. Logged-in users simply see a confirmation
+        // toast — an in-app "apply referral" screen can be added later, but
+        // dropping logged-in users onto an unrelated screen is worse than a
+        // no-op notification.
+        const authState = useAuthStore.getState().state;
+        const code = linkData.data.code as string;
+        if (!authState.isAuthenticated) {
+          router.push({ pathname: '/sign-in', params: { ref: code } } as any);
+        } else {
+          try {
+            useToastStore.getState().showInfo('Referral code noted');
+          } catch {
+            // Toast store may not be initialised in some contexts — non-fatal.
+          }
+        }
         break;
+      }
 
       case 'product':
         await handler.trackAttribution('product', linkData.data);

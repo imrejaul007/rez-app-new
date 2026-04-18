@@ -1562,7 +1562,8 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) || Infinity)
       ) : 0;
 
-      let maxAllowed = Math.max(0, itemTotal + deliveryFee + taxes - promoDiscount);
+      const totalBeforeCoinDiscount = Math.max(0, itemTotal + deliveryFee + taxes - promoDiscount);
+      let maxAllowed = totalBeforeCoinDiscount;
 
       if (!isRezCoin) {
         // For promo/store promo coins, subtract rez coins already used
@@ -1575,8 +1576,15 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
         // Apply percentage limit
         maxAllowed = Math.floor(maxAllowed * coin.maxUsagePercentage / 100);
+      } else {
+        // REZ coin: honour the merchant's maxUsagePercentage cap as well.
+        // Previously this branch skipped the percentage clamp entirely, which
+        // allowed users to redeem 100% of an order in REZ coins even when the
+        // merchant capped REZ-coin usage at (e.g.) 30%.
+        const percentageCap = Math.floor(totalBeforeCoinDiscount * coin.maxUsagePercentage / 100);
+        maxAllowed = Math.min(maxAllowed, percentageCap);
       }
-      
+
       // Ensure amount doesn't exceed order total
       const finalAmount = Math.min(amount, maxAllowed, coin.available);
 
@@ -1778,8 +1786,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       logger.info('💰 [Checkout] Sending coinsUsed to backend:', JSON.stringify(coinsUsed));
       logger.info('💰 [Checkout] Store promo coin state:', JSON.stringify(state.coinSystem.storePromoCoin));
 
-      // Create order via API
-      const response: any = await ordersService.createOrder(orderData);
+      // Create order via API.
+      // OG-001 FIX: Pipe the per-checkout idempotency key so concurrent network retries
+      // (reconnect, double-tap, transport retry) don't create duplicate orders.
+      const response: any = await ordersService.createOrder(
+        orderData,
+        orderIdempotencyKeyRef.current || undefined
+      );
 
       if (response.success && response.data) {
         // Debug: Log the order data to trace ID extraction
@@ -2587,16 +2600,15 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             );
           } catch (error: any) {
             logger.error('❌ [Checkout] Post-payment error:', error as Error);
-            // Payment was charged but order creation failed — attempt server-side refund.
-            try {
-              await razorpayApi.requestRefund({ paymentId: razorpayPaymentId });
-              logger.info('✅ [Checkout] Refund requested for payment:', razorpayPaymentId);
-            } catch (refundErr) {
-              // Log but don't throw — user already sees the order-failure error.
-              logger.error('⚠️ [Checkout] Refund request failed:', refundErr as Error);
-            }
+            // Client no longer initiates refunds; backend refunds failed-order payments via webhook.
+            // The backend owns the refund on failed-order-create to avoid replay and enforce idempotency.
+            logger.error(
+              `[checkout] Order create failed after payment — backend will refund via webhook (paymentId=${razorpayPaymentId})`,
+              error instanceof Error ? error : undefined,
+              'Checkout'
+            );
             showToast({
-              message: error instanceof Error ? error.message : 'Order creation failed',
+              message: 'Your payment is being refunded — you\'ll see it in 3-5 business days',
               type: 'error',
             });
             setState(prev => ({

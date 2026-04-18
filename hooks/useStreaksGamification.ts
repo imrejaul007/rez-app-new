@@ -76,6 +76,7 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
   const [coinBalance, setCoinBalance] = useState<number>(0);
 
   const isMountedRef = useRef(true);
+  const isCheckingInRef = useRef(false);
 
   // Fetch data from API with timeout protection
   const fetchData = useCallback(async () => {
@@ -141,40 +142,53 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
 
   // Claim mission reward
   const claimReward = useCallback(async (missionId: string): Promise<boolean> => {
-    try {
-      const response: any = await (gamificationAPI as any).claimChallengeReward(missionId);
+    // Only mark the mission as claimed after the server confirms success.
+    // Previously the UI optimistically flipped `completed: true` regardless of
+    // the response, which left users looking at a "claimed" state even when
+    // the backend had rejected the claim.
+    const response: any = await (gamificationAPI as any).claimChallengeReward(missionId);
 
-      if (response.success) {
-        // Update local state to reflect claimed reward
-        setMissions(prev =>
-          prev.map(mission =>
-            mission.id === missionId
-              ? { ...mission, completed: true }
-              : mission
-          )
-        );
+    if (response?.success === true) {
+      setMissions(prev =>
+        prev.map(mission =>
+          mission.id === missionId
+            ? { ...mission, completed: true }
+            : mission
+        )
+      );
 
-        // Update coin balance if returned
-        if (response.data?.newBalance) {
-          setCoinBalance(response.data.newBalance);
-        }
-
-        return true;
+      if (response.data?.newBalance) {
+        setCoinBalance(response.data.newBalance);
       }
 
-      return false;
-    } catch (err: any) {
-      return false;
+      return true;
     }
+
+    // Surface the failure so callers can render an error toast instead of
+    // silently assuming the claim went through.
+    throw new Error(response?.message || 'Failed to claim reward');
   }, []);
 
   // Check in for streak
   const checkin = useCallback(async () => {
+    // Guard against double-tap: parallel checkin calls would double-increment
+    // the streak and double-award the daily reward on the server.
+    if (isCheckingInRef.current) return;
+    isCheckingInRef.current = true;
+
+    // Optimistic flip so the UI immediately reflects the check-in; rolled back
+    // on failure below.
+    let previousCheckedIn = false;
+    setStreak(prev => {
+      previousCheckedIn = prev.todayCheckedIn;
+      return { ...prev, todayCheckedIn: true };
+    });
+
     try {
       const response: any = await gamificationAPI.streakCheckin();
 
       if (response.success && response.data) {
-        // Update streak data
+        // Reconcile with server-authoritative values
         setStreak(prev => ({
           ...prev,
           current: response.data.currentStreak,
@@ -182,13 +196,18 @@ export function useStreaksGamification(): UseStreaksGamificationResult {
           todayCheckedIn: true,
         }));
 
-        // Update coin balance if returned
         if (response.data.newBalance) {
           setCoinBalance(response.data.newBalance);
         }
+      } else {
+        // API returned a non-success response — roll back the optimistic flip
+        setStreak(prev => ({ ...prev, todayCheckedIn: previousCheckedIn }));
       }
     } catch (_err) {
-      // silently handle
+      // Network/parse failure — roll back the optimistic flip
+      setStreak(prev => ({ ...prev, todayCheckedIn: previousCheckedIn }));
+    } finally {
+      isCheckingInRef.current = false;
     }
   }, []);
 

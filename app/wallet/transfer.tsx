@@ -68,6 +68,7 @@ function TransferPage() {
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [idempotencyKey, setIdempotencyKey] = useState(() => generateIdempotencyKey('transfer'));
   const submittingRef = useRef(false);
+  const submittingOtpRef = useRef(false);
   const mountedRef = useRef(true);
   useEffect(() => {
     return () => {
@@ -276,6 +277,12 @@ function TransferPage() {
       return;
     }
 
+    // Guard against double-tap: a second Confirm call would re-submit the same
+    // OTP and surface a misleading "OTP already used" error even when the first
+    // call succeeded.
+    if (submittingOtpRef.current) return;
+    submittingOtpRef.current = true;
+
     setLoading(true);
     try {
       if (!pendingTransferId) {
@@ -318,6 +325,7 @@ function TransferPage() {
       platformAlertSimple('Verification Failed', message);
     } finally {
       if (mountedRef.current) setLoading(false);
+      submittingOtpRef.current = false;
     }
   };
 

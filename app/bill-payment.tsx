@@ -112,6 +112,9 @@ function BillPaymentPage() {
   const [lastPaymentId, setLastPaymentId] = useState<string | null>(null);
   const [paymentPolling, setPaymentPolling] = useState(false);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // CA-PAY-009 FIX: Track consecutive polling errors so we can stop after 5 failures
+  // instead of silently burning through pollCount.
+  const pollErrorCountRef = useRef(0);
 
   // Pagination for history
   const [historyPage, setHistoryPage] = useState(1);
@@ -371,10 +374,14 @@ function BillPaymentPage() {
         if (payment?.status === 'processing' && payment?._id) {
           setLastPaymentId(payment._id);
           setPaymentPolling(true);
+          pollErrorCountRef.current = 0;
           let pollCount = 0;
           // CA-PAY-008 FIX: Add max timeout protection (5 minutes) to prevent infinite polling
           const pollStartTime = Date.now();
           const MAX_POLL_DURATION = 5 * 60 * 1000; // 5 minutes
+          // CA-PAY-009 FIX: Stop polling after this many consecutive errors so we surface
+          // the problem instead of silently burning through the poll budget.
+          const MAX_CONSECUTIVE_POLL_ERRORS = 5;
           pollIntervalRef.current = setInterval(async () => {
             pollCount++;
             // CA-PAY-008 FIX: Check elapsed time to stop polling after max duration
@@ -393,6 +400,8 @@ function BillPaymentPage() {
               const updated = statusRes.data?.payments?.find((p) => p._id === payment._id);
               // FL-05 fix: rez-finance-service returns 'success' as terminal status (not 'completed')
               const status = updated?.status as string | undefined;
+              // CA-PAY-009 FIX: Reset the error counter on any successful poll
+              pollErrorCountRef.current = 0;
               if (status === 'completed' || status === 'success' || status === 'failed') {
                 if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
                 if (isMounted()) setPaymentPolling(false);
@@ -401,7 +410,17 @@ function BillPaymentPage() {
                 }
               }
             } catch {
-              /* polling error — stop after max attempts */
+              // CA-PAY-009 FIX: Actually stop after MAX_CONSECUTIVE_POLL_ERRORS
+              // instead of silently burning through pollCount. Previous catch was a no-op.
+              pollErrorCountRef.current += 1;
+              if (pollErrorCountRef.current >= MAX_CONSECUTIVE_POLL_ERRORS) {
+                if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+                if (isMounted()) setPaymentPolling(false);
+                platformAlert(
+                  'Status Check Unavailable',
+                  'Status check unavailable — please check your wallet history.',
+                );
+              }
             }
             if (pollCount >= 100) {
               // Stop after 100 polls (300s / 5 minutes) — also bounded by MAX_POLL_DURATION above
