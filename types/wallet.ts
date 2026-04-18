@@ -24,6 +24,31 @@ import type { CoinType } from './rez-shared-types';
 export type { CoinType } from './rez-shared-types';
 
 // ---------------------------------------------------------------------------
+// WalletTransaction — per-transaction record in the wallet feed
+// ---------------------------------------------------------------------------
+
+export interface WalletTransaction {
+  id: string;
+  type: 'earned' | 'spent';
+  coinType: CoinType;
+  amount: number;
+  currency: string;
+  formattedAmount: string;
+  description: string;
+  timestamp: Date;
+  status: string;
+  merchantName?: string;
+  orderId?: string;
+  balanceAfter: number;
+}
+
+// ---------------------------------------------------------------------------
+// DEFAULT_CURRENCY — single source of truth for currency symbol
+// ---------------------------------------------------------------------------
+
+export const DEFAULT_CURRENCY = 'RC';
+
+// ---------------------------------------------------------------------------
 // Per-coin-type display metadata (used by CoinDetailCard, CoinChip, etc.)
 // ---------------------------------------------------------------------------
 
