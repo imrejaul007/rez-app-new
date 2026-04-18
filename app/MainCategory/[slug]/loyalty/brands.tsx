@@ -167,11 +167,11 @@ function ElectronicsBrandsPage() {
             <View style={styles.benefitRow}>
               <Ionicons name="gift-outline" size={14} color={SHARED_COLORS.textSecondary} />
               <Text style={styles.benefitText}>
-                {item.tier === 'platinum'
+                {item.tier === 'Platinum'
                   ? 'Enjoy exclusive platinum perks and early access to new launches'
-                  : item.tier === 'gold'
+                  : item.tier === 'Gold'
                     ? 'Enjoy gold member discounts and priority support'
-                    : item.tier === 'silver'
+                    : item.tier === 'Silver'
                       ? 'Earn bonus coins on every purchase'
                       : 'Keep shopping to unlock rewards'}
               </Text>

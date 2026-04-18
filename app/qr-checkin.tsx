@@ -36,7 +36,7 @@ export default function QRCheckinScreen() {
       apiClient
         .get(`/qr-checkin/store/${storeId}`)
         .then((r) => setStoreName((r as any).data?.name || ''))
-        .catch((err) => logger.error('QRCheckin: store lookup failed', { storeId, error: String(err) }))
+        .catch((err) => logger.error('QRCheckin: store lookup failed', { storeId, error: String(err) } as any))
         .finally(() => setLoadingStore(false));
     }
   }, [storeId]);

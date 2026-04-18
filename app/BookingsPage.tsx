@@ -26,7 +26,7 @@ import { useIsAuthenticated, useGetCurrencySymbol } from '@/stores/selectors';
 import eventsApiService from '@/services/eventsApi';
 import tableBookingApi from '@/services/tableBookingApi';
 import serviceBookingService from '@/services/serviceBookingApi';
-import { confirmAlert, alertOk } from '@/utils/alert';
+import { showConfirm, showAlert } from '@/utils/alert';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -493,7 +493,7 @@ function BookingsPage() {
 
   // ─── Cancel handlers ─────────────────────────────────────
   const handleCancel = async (booking: UnifiedBooking) => {
-    const confirmed = await confirmAlert(
+    const confirmed = await showConfirm(
       'Cancel Booking',
       `Are you sure you want to cancel your booking for "${booking.title}"?`,
       'Keep',
@@ -520,13 +520,13 @@ function BookingsPage() {
       }
 
       if (success) {
-        alertOk('Cancelled', message || 'Your booking has been cancelled.');
+        showAlert('Cancelled', message || 'Your booking has been cancelled.');
         await loadBookings();
       } else {
-        alertOk('Error', message || 'Failed to cancel booking.');
+        showAlert('Error', message || 'Failed to cancel booking.');
       }
     } catch (error: any) {
-      alertOk('Error', error.message || 'Something went wrong.');
+      showAlert('Error', error.message || 'Something went wrong.');
     }
   };
 

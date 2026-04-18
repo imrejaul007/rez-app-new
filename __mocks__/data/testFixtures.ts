@@ -19,7 +19,7 @@ export const mockUser: User = {
     lastName: 'Doe',
     avatar: 'https://example.com/avatar.jpg',
     bio: 'Test user bio',
-    dateOfBirth: new Date('1990-01-01'),
+    dateOfBirth: '1990-01-01',
     gender: 'male',
     location: {
       address: '123 Test Street',

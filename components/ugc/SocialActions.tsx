@@ -104,7 +104,10 @@ function SocialActions({
         style={styles.actionButton}
         onPress={handleLike}
         disabled={liking}
-       
+        accessibilityRole="button"
+        accessibilityLabel={isLiked ? 'Unlike this content' : 'Like this content'}
+        accessibilityHint="Double tap to toggle like"
+        accessibilityState={{ selected: isLiked }}
       >
         <Animated.View style={likeAnimStyle}>
           <Ionicons
@@ -120,7 +123,9 @@ function SocialActions({
       <Pressable
         style={styles.actionButton}
         onPress={onComment}
-       
+        accessibilityRole="button"
+        accessibilityLabel="View and add comments"
+        accessibilityHint="Double tap to view comments"
       >
         <Ionicons name="chatbubble-outline" size={30} color={colors.background.primary} />
         <ThemedText style={styles.actionText}>{formatCount(comments)}</ThemedText>
@@ -131,7 +136,10 @@ function SocialActions({
         style={styles.actionButton}
         onPress={handleBookmark}
         disabled={bookmarking}
-       
+        accessibilityRole="button"
+        accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Bookmark this content'}
+        accessibilityHint="Double tap to toggle bookmark"
+        accessibilityState={{ selected: isBookmarked }}
       >
         <Animated.View style={bookmarkAnimStyle}>
           <Ionicons
@@ -146,7 +154,9 @@ function SocialActions({
       <Pressable
         style={styles.actionButton}
         onPress={onShare}
-       
+        accessibilityRole="button"
+        accessibilityLabel="Share this content"
+        accessibilityHint="Double tap to share this content"
       >
         <Ionicons name="share-social-outline" size={30} color={colors.background.primary} />
         <ThemedText style={styles.actionText}>{formatCount(shares)}</ThemedText>

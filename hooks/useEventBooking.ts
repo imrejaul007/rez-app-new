@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import uuid from 'react-native-uuid';
 import eventsApiService from '@/services/eventsApi';
 import { EventItem } from '@/types/homepage.types';
@@ -58,7 +58,7 @@ export function useEventBooking(): UseEventBookingReturn {
 
         // Only show alert if it's a free event (paid events handle their own alerts)
         if (event.price?.isFree) {
-          alertOk(
+          showAlert(
             'Booking Confirmed!',
             `You have successfully booked "${event.title}". Your booking reference is ${result.booking?.bookingReference || 'N/A'}.`
           );
@@ -73,7 +73,7 @@ export function useEventBooking(): UseEventBookingReturn {
       setBookingError(errorMessage);
 
       // Show alert
-      alertOk('Booking Failed', errorMessage);
+      showAlert('Booking Failed', errorMessage);
       return null;
     } finally {
       setIsBooking(false);
@@ -87,7 +87,7 @@ export function useEventBooking(): UseEventBookingReturn {
       const result = await eventsApiService.cancelBooking(bookingId);
 
       if (result.success) {
-        alertOk('Booking Cancelled', 'Your event booking has been cancelled successfully.');
+        showAlert('Booking Cancelled', 'Your event booking has been cancelled successfully.');
         return true;
       } else {
         throw new Error(result.message || 'Failed to cancel booking');
@@ -96,7 +96,7 @@ export function useEventBooking(): UseEventBookingReturn {
       const errorMessage = error instanceof Error ? error.message : 'Failed to cancel booking';
       setBookingError(errorMessage);
 
-      alertOk('Cancellation Failed', errorMessage);
+      showAlert('Cancellation Failed', errorMessage);
       return false;
     } finally {
       setIsBooking(false);

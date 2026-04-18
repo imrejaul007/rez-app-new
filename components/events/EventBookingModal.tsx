@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
 } from 'react-native';
-import { showAlert, alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -239,7 +239,7 @@ function EventBookingModal({
     if (nameError || emailError || phoneError || ageError || slotError) {
       // Show alert for the first error found
       const firstError = nameError || emailError || phoneError || ageError || slotError;
-      alertOk('Validation Error', firstError || 'Please fix the errors in the form');
+      showAlert('Validation Error', firstError || 'Please fix the errors in the form');
       return;
     }
 
@@ -308,7 +308,7 @@ function EventBookingModal({
         );
       }
       
-      alertOk(
+      showAlert(
         'Payment Failed',
         error instanceof Error ? error.message : 'Failed to process payment. Please try again.'
       );

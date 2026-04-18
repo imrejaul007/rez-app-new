@@ -117,12 +117,12 @@ function SeniorCitizenZonePage() {
         if (zone) {
           if (!isMounted()) return;
           setZoneInfo({
-            name: zone.name,
-            description: zone.description,
-            offersCount: zone.offersCount || 0,
-            verificationRequired: zone.verificationRequired,
-            eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible,
+            name: zone.name as string,
+            description: zone.description as string,
+            offersCount: (zone.offersCount || 0) as number,
+            verificationRequired: zone.verificationRequired as boolean,
+            eligibilityDetails: zone.eligibilityDetails as string | undefined,
+            userEligible: zone.userEligible as boolean | undefined,
           });
         }
       }
@@ -133,13 +133,13 @@ function SeniorCitizenZonePage() {
         if (profile) {
           if (!isMounted()) return;
           setZoneInfo({
-            name: profile.name,
-            description: profile.description,
-            offersCount: profile.offersCount || 0,
+            name: profile.name as string,
+            description: profile.description as string,
+            offersCount: (profile.offersCount || 0) as number,
             verificationRequired: !!profile.verificationRequired,
-            eligibilityDetails: profile.verificationRequired,
-            userEligible: profile.userEligible,
-            discountRange: profile.discountRange,
+            eligibilityDetails: profile.verificationRequired as string | undefined,
+            userEligible: profile.userEligible as boolean | undefined,
+            discountRange: profile.discountRange as string | undefined,
           });
         }
       }

@@ -22,7 +22,7 @@ import apiClient from '@/services/apiClient';
 import { useAuthUser, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { EARN_COLORS } from '@/constants/EarnPageColors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
-import { showAlert, alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { TransactionListSkeleton } from '@/components/skeletons';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -318,7 +318,7 @@ function EarningsHistoryPage() {
         link.download = `earnings-history-${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
         URL.revokeObjectURL(url);
-        alertOk('Success', 'Earnings history exported successfully');
+        showAlert('Success', 'Earnings history exported successfully');
       } else {
         // For native, use Share API
         await Share.share({

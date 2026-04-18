@@ -58,6 +58,12 @@ export interface User {
   role: 'user' | 'admin' | 'merchant' | 'support' | 'operator' | 'super_admin' | 'consumer';
   isVerified: boolean;
   isOnboarded: boolean;
+  wallet?: {
+    balance: number;
+    totalEarned?: number;
+    totalSpent?: number;
+    pendingAmount?: number;
+  };
   createdAt: string;
   updatedAt: string;
 }

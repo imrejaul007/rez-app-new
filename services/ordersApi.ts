@@ -318,6 +318,7 @@ class OrdersService {
       });
 
       if (!response.success) {
+        throw new Error(response.message || 'Order creation failed');
       }
 
       return response as any;

@@ -120,7 +120,13 @@ function FilterModal({
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Filters</Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable
+              onPress={onClose}
+              style={styles.closeButton}
+              accessibilityRole="button"
+              accessibilityLabel="Close filters"
+              accessibilityHint="Double tap to close the filter modal"
+            >
               <Ionicons name="close" size={24} color={colors.neutral[800]} />
             </Pressable>
           </View>
@@ -181,6 +187,9 @@ function FilterModal({
                       filters.rating === option.value && styles.ratingOptionActive,
                     ]}
                     onPress={() => setFilters(prev => ({ ...prev, rating: option.value }))}
+                    accessibilityRole="radio"
+                    accessibilityLabel={option.label}
+                    accessibilityState={{ selected: filters.rating === option.value }}
                   >
                     <Ionicons
                       name="star"
@@ -203,6 +212,9 @@ function FilterModal({
                     filters.rating === null && styles.ratingOptionActive,
                   ]}
                   onPress={() => setFilters(prev => ({ ...prev, rating: null }))}
+                  accessibilityRole="radio"
+                  accessibilityLabel="Any rating"
+                  accessibilityState={{ selected: filters.rating === null }}
                 >
                   <Text
                     style={[
@@ -228,6 +240,9 @@ function FilterModal({
                       filters.categories.includes(category.id) && styles.categoryChipActive,
                     ]}
                     onPress={() => toggleCategory(category.id)}
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={category.name}
+                    accessibilityState={{ checked: filters.categories.includes(category.id) }}
                   >
                     <Ionicons
                       name={category.icon as any}
@@ -275,6 +290,10 @@ function FilterModal({
               <Pressable
                 style={styles.toggleRow}
                 onPress={() => setFilters(prev => ({ ...prev, inStock: !prev.inStock }))}
+                accessibilityRole="switch"
+                accessibilityLabel="Show in-stock items only"
+                accessibilityState={{ checked: filters.inStock }}
+                accessibilityHint="Double tap to toggle in-stock filter"
               >
                 <Text style={styles.toggleLabel}>Show in-stock items only</Text>
                 <View
@@ -293,10 +312,22 @@ function FilterModal({
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Pressable style={styles.resetButton} onPress={handleReset}>
+            <Pressable
+              style={styles.resetButton}
+              onPress={handleReset}
+              accessibilityRole="button"
+              accessibilityLabel="Reset filters"
+              accessibilityHint="Double tap to clear all selected filters"
+            >
               <Text style={styles.resetButtonText}>Reset</Text>
             </Pressable>
-            <Pressable style={styles.applyButton} onPress={handleApply}>
+            <Pressable
+              style={styles.applyButton}
+              onPress={handleApply}
+              accessibilityRole="button"
+              accessibilityLabel="Apply filters"
+              accessibilityHint="Double tap to apply the selected filters"
+            >
               <Text style={styles.applyButtonText}>Apply Filters</Text>
             </Pressable>
           </View>

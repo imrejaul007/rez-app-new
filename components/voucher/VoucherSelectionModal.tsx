@@ -234,7 +234,10 @@ function VoucherSelectionModal({
         ]}
         onPress={() => handleVoucherSelect(voucher)}
         disabled={!isEligible}
-       
+        accessibilityRole="button"
+        accessibilityLabel={`${voucher.code}, ${voucher.discountType === 'PERCENTAGE' ? `${voucher.value}% off` : `${currencySymbol}${voucher.value} off`}${isCurrentlyApplied ? ', applied' : ''}${!isEligible ? ', not eligible' : ''}`}
+        accessibilityHint={isEligible ? 'Double tap to apply this voucher' : 'Not eligible for this voucher'}
+        accessibilityState={{ selected: isCurrentlyApplied, disabled: !isEligible }}
       >
         <LinearGradient
           colors={
@@ -337,7 +340,13 @@ function VoucherSelectionModal({
             <ThemedText style={styles.headerTitle}>
               Apply Coupon or Voucher
             </ThemedText>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable
+              onPress={onClose}
+              style={styles.closeButton}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+              accessibilityHint="Double tap to close voucher selection"
+            >
               <Ionicons name="close" size={24} color={colors.neutral[700]} />
             </Pressable>
           </View>
@@ -356,6 +365,10 @@ function VoucherSelectionModal({
               style={styles.applyButton}
               onPress={handleApplyManualCode}
               disabled={loading}
+              accessibilityRole="button"
+              accessibilityLabel="Apply coupon code"
+              accessibilityHint="Double tap to apply the entered coupon code"
+              accessibilityState={{ disabled: loading }}
             >
               <ThemedText style={styles.applyButtonText}>Apply</ThemedText>
             </Pressable>
@@ -366,6 +379,9 @@ function VoucherSelectionModal({
             <Pressable
               style={[styles.tab, activeTab === 'all' && styles.activeTab]}
               onPress={() => setActiveTab('all')}
+              accessibilityRole="tab"
+              accessibilityLabel={`All offers, ${vouchers.length} available`}
+              accessibilityState={{ selected: activeTab === 'all' }}
             >
               <ThemedText
                 style={[styles.tabText, activeTab === 'all' && styles.activeTabText]}
@@ -376,6 +392,9 @@ function VoucherSelectionModal({
             <Pressable
               style={[styles.tab, activeTab === 'coupons' && styles.activeTab]}
               onPress={() => setActiveTab('coupons')}
+              accessibilityRole="tab"
+              accessibilityLabel={`Coupons, ${vouchers.filter(v => v.type === 'coupon').length} available`}
+              accessibilityState={{ selected: activeTab === 'coupons' }}
             >
               <ThemedText
                 style={[styles.tabText, activeTab === 'coupons' && styles.activeTabText]}
@@ -386,6 +405,9 @@ function VoucherSelectionModal({
             <Pressable
               style={[styles.tab, activeTab === 'vouchers' && styles.activeTab]}
               onPress={() => setActiveTab('vouchers')}
+              accessibilityRole="tab"
+              accessibilityLabel={`Vouchers, ${vouchers.filter(v => v.type === 'voucher').length} available`}
+              accessibilityState={{ selected: activeTab === 'vouchers' }}
             >
               <ThemedText
                 style={[styles.tabText, activeTab === 'vouchers' && styles.activeTabText]}
@@ -400,6 +422,9 @@ function VoucherSelectionModal({
             <Pressable
               style={styles.bestOfferBanner}
               onPress={() => handleVoucherSelect(bestOffer)}
+              accessibilityRole="button"
+              accessibilityLabel={`Best offer: ${bestOffer.code}`}
+              accessibilityHint={`Save ${currencySymbol}${calculateDiscount(bestOffer).toFixed(0)} on this order. Double tap to apply.`}
             >
               <Ionicons name="star" size={20} color={colors.warningScale[400]} />
               <View style={styles.bestOfferContent}>
@@ -450,7 +475,13 @@ function VoucherSelectionModal({
                   </ThemedText>
                 </View>
               </View>
-              <Pressable onPress={onRemove} style={styles.removeButton}>
+              <Pressable
+                onPress={onRemove}
+                style={styles.removeButton}
+                accessibilityRole="button"
+                accessibilityLabel="Remove applied voucher"
+                accessibilityHint="Double tap to remove the currently applied voucher"
+              >
                 <ThemedText style={styles.removeButtonText}>Remove</ThemedText>
               </Pressable>
             </View>

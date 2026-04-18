@@ -12,12 +12,7 @@ import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { useAuthUser, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
 import { useCartStore } from '@/stores/cartStore';
-
-// Dev-only logger to prevent string accumulation in production
-const devLog = {
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Lazy-loaded heavy deps (not in synchronous dependency chain)
 const getNetInfo = async () => (await import('@react-native-community/netinfo')).default;
@@ -215,7 +210,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       // Validate cart item structure
       const itemValidation = validateCartItem(action.payload);
       if (!itemValidation.valid) {
-        devLog.error('🛒 [CartReducer] Invalid cart item:', itemValidation.error);
+        logger.error('🛒 [CartReducer] Invalid cart item:', itemValidation.error);
         return {
           ...state,
           error: itemValidation.error || 'Invalid cart item',
@@ -239,7 +234,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         );
 
         if (!quantityValidation.valid) {
-          devLog.warn('🛒 [CartReducer] Quantity limit reached:', quantityValidation.error);
+          logger.warn('🛒 [CartReducer] Quantity limit reached:', quantityValidation.error);
           return {
             ...state,
             error: quantityValidation.error || 'Cannot add more items',
@@ -256,7 +251,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         // Validate initial quantity
         const quantityValidation = validateQuantity(1, MAX_QUANTITY_PER_ITEM, 0);
         if (!quantityValidation.valid) {
-          devLog.error('🛒 [CartReducer] Invalid quantity:', quantityValidation.error);
+          logger.error('🛒 [CartReducer] Invalid quantity:', quantityValidation.error);
           return {
             ...state,
             error: quantityValidation.error || 'Invalid quantity',
@@ -322,7 +317,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       // Validate quantity
       const quantityValidation = validateQuantity(quantity, MAX_QUANTITY_PER_ITEM, 0);
       if (!quantityValidation.valid) {
-        devLog.warn('🛒 [CartReducer] Invalid quantity update:', quantityValidation.error);
+        logger.warn('🛒 [CartReducer] Invalid quantity update:', quantityValidation.error);
         return {
           ...state,
           error: quantityValidation.error || 'Invalid quantity',
@@ -529,7 +524,7 @@ export function CartProvider({ children }: CartProviderProps) {
             await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
           } catch (error: any) {
             if (error?.name === 'QuotaExceededError' || error?.message?.includes('quota')) {
-              devLog.warn('🛒 [CartContext] Storage quota exceeded when loading cart');
+              logger.warn('🛒 [CartContext] Storage quota exceeded when loading cart');
               // Save only last 30 items
               const limitedItems = cartItems.slice(-30);
               await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(limitedItems));
@@ -540,7 +535,7 @@ export function CartProvider({ children }: CartProviderProps) {
           return;
         }
       } catch (apiError) {
-        console.error('[Cart] Failed to load cart from backend:', apiError);
+        logger.error('[Cart] Failed to load cart from backend:', apiError, 'CartContext');
         dispatch({ type: 'CART_ERROR', payload: 'Failed to sync cart' });
         // Fallback to AsyncStorage already happens below
       }
@@ -551,7 +546,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
       dispatch({ type: 'CART_LOADED', payload: cartItems });
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to load cart:', error);
+      logger.error('🛒 [CartContext] Failed to load cart:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to load cart'
@@ -612,12 +607,12 @@ export function CartProvider({ children }: CartProviderProps) {
       // Check size (localStorage limit is typically 5-10MB)
       const sizeInMB = estimateStringSize(cartData) / (1024 * 1024);
       if (sizeInMB > 3) { // Lower threshold to 3MB
-        devLog.warn('🛒 [CartContext] Cart data is large:', sizeInMB.toFixed(2), 'MB');
+        logger.warn('🛒 [CartContext] Cart data is large:', sizeInMB.toFixed(2), 'MB');
         // If too large, keep only last 20 items
         if (optimizedItems.length > 20) {
           const limitedItems = optimizedItems.slice(-20);
           await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(limitedItems));
-          devLog.warn('🛒 [CartContext] Limited cart to 20 items to save storage space');
+          logger.warn('🛒 [CartContext] Limited cart to 20 items to save storage space');
           return;
         }
       }
@@ -626,7 +621,7 @@ export function CartProvider({ children }: CartProviderProps) {
     } catch (error: any) {
       // Handle quota exceeded error - don't throw, just log
       if (error?.name === 'QuotaExceededError' || error?.message?.includes('quota')) {
-        devLog.warn('🛒 [CartContext] Storage quota exceeded, attempting to clean up...');
+        logger.warn('🛒 [CartContext] Storage quota exceeded, attempting to clean up...');
         
         try {
           // Aggressively clean up storage first
@@ -649,11 +644,11 @@ export function CartProvider({ children }: CartProviderProps) {
           const optimizedItems = optimizeCartForStorage(state.items);
           const limitedItems = optimizedItems.slice(-15);
           await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(limitedItems));
-          devLog.warn('🛒 [CartContext] Saved only last 15 items after cleanup');
+          logger.warn('🛒 [CartContext] Saved only last 15 items after cleanup');
         } catch (retryError) {
           // If still fails, just log - don't throw
           // Cart is still in memory, will sync with backend
-          devLog.warn('🛒 [CartContext] Storage completely full, cart kept in memory only');
+          logger.warn('🛒 [CartContext] Storage completely full, cart kept in memory only');
           // Try to clear cart storage to free space
           try {
             await AsyncStorage.removeItem(CART_STORAGE_KEY);
@@ -663,7 +658,7 @@ export function CartProvider({ children }: CartProviderProps) {
         }
       } else {
         // For non-quota errors, just log - don't throw
-        devLog.warn('🛒 [CartContext] Failed to save cart to storage (non-quota):', error);
+        logger.warn('🛒 [CartContext] Failed to save cart to storage (non-quota):', error);
       }
     }
   }, [state.items, optimizeCartForStorage]);
@@ -687,7 +682,7 @@ export function CartProvider({ children }: CartProviderProps) {
         }
       } catch (stockErr) {
         // Don't block add-to-cart on stock check failure — the backend will catch it at checkout
-        if (__DEV__) console.log('[Cart] Stock check failed, proceeding:', stockErr);
+        logger.debug('[Cart] Stock check failed, proceeding', stockErr, 'CartContext');
       }
 
       // Update UI optimistically - reducer will handle the state update
@@ -735,7 +730,7 @@ export function CartProvider({ children }: CartProviderProps) {
           // Check size before saving
           const sizeInMB = estimateStringSize(cartData) / (1024 * 1024);
           if (sizeInMB > 3) { // Lower threshold to 3MB
-            devLog.warn('🛒 [CartContext] Cart data too large, limiting to last 20 items');
+            logger.warn('🛒 [CartContext] Cart data too large, limiting to last 20 items');
             const limitedItems = optimizedItems.slice(-20);
             await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(limitedItems));
           } else {
@@ -744,7 +739,7 @@ export function CartProvider({ children }: CartProviderProps) {
         } catch (error: any) {
           // Handle quota exceeded error - don't throw, just log
           if (error?.name === 'QuotaExceededError' || error?.message?.includes('quota')) {
-            devLog.warn('🛒 [CartContext] Storage quota exceeded when adding item (handled gracefully)');
+            logger.warn('🛒 [CartContext] Storage quota exceeded when adding item (handled gracefully)');
             
             // Aggressively clean up storage
             try {
@@ -774,15 +769,15 @@ export function CartProvider({ children }: CartProviderProps) {
               const optimizedItems = optimizeCartForStorage(newItems);
               const limitedItems = optimizedItems.slice(-15);
               await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(limitedItems));
-              devLog.warn('🛒 [CartContext] Saved only last 15 items after cleanup');
+              logger.warn('🛒 [CartContext] Saved only last 15 items after cleanup');
             } catch (retryError) {
               // If still fails, just log - don't throw
               // Item is already in state, will sync with backend
-              devLog.warn('🛒 [CartContext] Storage completely full, item added to memory only');
+              logger.warn('🛒 [CartContext] Storage completely full, item added to memory only');
             }
           } else {
             // For non-quota errors, just log - don't throw
-            devLog.warn('🛒 [CartContext] Failed to save to storage (non-quota):', error);
+            logger.warn('🛒 [CartContext] Failed to save to storage (non-quota):', error);
           }
         }
       })().catch(() => {
@@ -821,14 +816,14 @@ export function CartProvider({ children }: CartProviderProps) {
             }
             // If still not valid, log warning
             if (!/^[0-9a-fA-F]+$/.test(String(productIdForBackend))) {
-              devLog.error('❌ [CartContext] Invalid productId format:', productIdForBackend);
+              logger.error('❌ [CartContext] Invalid productId format:', productIdForBackend);
             }
           }
           
           // Final validation - ensure productId is valid hex
           const finalProductId = String(productIdForBackend).trim();
           if (!/^[0-9a-fA-F]+$/.test(finalProductId)) {
-            devLog.error('❌ [CartContext] Invalid productId, cannot send to backend:', finalProductId);
+            logger.error('❌ [CartContext] Invalid productId, cannot send to backend:', finalProductId);
             throw new Error(`Invalid productId format: ${finalProductId}. Must be hexadecimal.`);
           }
           
@@ -847,7 +842,7 @@ export function CartProvider({ children }: CartProviderProps) {
             await loadCart();
           }
         } catch (apiError) {
-          devLog.error('🛒 [CartContext] API add failed, queuing for later:', apiError);
+          logger.error('🛒 [CartContext] API add failed, queuing for later:', apiError);
           // Queue for offline sync but keep local state
           await offlineQueueService.addToQueue('add', {
             productId: item.id,
@@ -866,10 +861,10 @@ export function CartProvider({ children }: CartProviderProps) {
     } catch (error: any) {
       // Don't log quota errors as failures - they're handled gracefully
       if (error?.name === 'QuotaExceededError' || error?.message?.includes('quota')) {
-        devLog.warn('🛒 [CartContext] Storage quota issue (item still added to state)');
+        logger.warn('🛒 [CartContext] Storage quota issue (item still added to state)');
         // Item is already in state, so don't dispatch error
       } else {
-        devLog.error('🛒 [CartContext] Failed to add item:', error);
+        logger.error('🛒 [CartContext] Failed to add item:', error);
         dispatch({
           type: 'CART_ERROR',
           payload: error instanceof Error ? error.message : 'Failed to add item'
@@ -884,8 +879,8 @@ export function CartProvider({ children }: CartProviderProps) {
       const item = state.items.find(i => i.id === itemId);
 
       if (!item) {
-        devLog.error('🛒 [CartContext] Item not found in cart:', itemId);
-        devLog.error('🛒 [CartContext] Available item IDs:', state.items.map(i => i.id));
+        logger.error('🛒 [CartContext] Item not found in cart:', itemId);
+        logger.error('🛒 [CartContext] Available item IDs:', state.items.map(i => i.id));
         return;
       }
 
@@ -908,17 +903,17 @@ export function CartProvider({ children }: CartProviderProps) {
           // Reload cart to ensure sync with backend
           await loadCart();
         } else {
-          devLog.error('🛒 [CartContext] API remove failed, response not successful:', response);
+          logger.error('🛒 [CartContext] API remove failed, response not successful:', response);
           // Revert optimistic update by reloading
           await loadCart();
         }
       } catch (apiError) {
-        devLog.error('🛒 [CartContext] API remove failed with error:', apiError);
+        logger.error('🛒 [CartContext] API remove failed with error:', apiError);
         // Revert optimistic update by reloading cart from backend
         await loadCart();
       }
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to remove item:', error);
+      logger.error('🛒 [CartContext] Failed to remove item:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to remove item'
@@ -934,7 +929,7 @@ export function CartProvider({ children }: CartProviderProps) {
       // Find the item to get its productId
       const item = state.items.find(i => i.id === itemId);
       if (!item) {
-        devLog.error('🛒 [CartContext] Item not found in cart:', itemId);
+        logger.error('🛒 [CartContext] Item not found in cart:', itemId);
         return;
       }
 
@@ -959,7 +954,7 @@ export function CartProvider({ children }: CartProviderProps) {
             // Reload cart to ensure sync with backend
             await loadCart();
           } else {
-            devLog.error('🛒 [CartContext] API update failed, response not successful');
+            logger.error('🛒 [CartContext] API update failed, response not successful');
             // Revert optimistic update by reloading
             await loadCart();
           }
@@ -968,12 +963,12 @@ export function CartProvider({ children }: CartProviderProps) {
           await removeItem(itemId);
         }
       } catch (apiError) {
-        devLog.error('🛒 [CartContext] API update failed with error:', apiError);
+        logger.error('🛒 [CartContext] API update failed with error:', apiError);
         // Revert optimistic update by reloading cart from backend
         await loadCart();
       }
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to update quantity:', error);
+      logger.error('🛒 [CartContext] Failed to update quantity:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to update quantity'
@@ -1009,10 +1004,10 @@ export function CartProvider({ children }: CartProviderProps) {
         await cartService.clearCart();
 
       } catch (apiError) {
-        devLog.error('🛒 [CartContext] API clear failed:', apiError);
+        logger.error('🛒 [CartContext] API clear failed:', apiError);
       }
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to clear cart:', error);
+      logger.error('🛒 [CartContext] Failed to clear cart:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to clear cart'
@@ -1048,7 +1043,7 @@ export function CartProvider({ children }: CartProviderProps) {
         await loadCart(); // Reload to get updated totals
       }
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to apply coupon:', error);
+      logger.error('🛒 [CartContext] Failed to apply coupon:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to apply coupon'
@@ -1067,7 +1062,7 @@ export function CartProvider({ children }: CartProviderProps) {
         await loadCart(); // Reload to get updated totals
       }
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to remove coupon:', error);
+      logger.error('🛒 [CartContext] Failed to remove coupon:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to remove coupon'
@@ -1085,7 +1080,7 @@ export function CartProvider({ children }: CartProviderProps) {
         await applyCoupon(offer.code as string);
       }
     } catch (error: any) {
-      devLog.error('🛒 [CartContext] Failed to set card offer:', error);
+      logger.error('🛒 [CartContext] Failed to set card offer:', error);
       throw error;
     }
   }, [applyCoupon]);
@@ -1115,14 +1110,14 @@ export function CartProvider({ children }: CartProviderProps) {
         // Reload cart from server
         await loadCart();
       } else {
-        devLog.error('🔄 [CartContext] Sync partially failed:', result);
+        logger.error('🔄 [CartContext] Sync partially failed:', result);
         dispatch({
           type: 'CART_ERROR',
           payload: `Failed to sync ${result.failed} operations`
         });
       }
     } catch (error: any) {
-      devLog.error('🔄 [CartContext] Sync error:', error);
+      logger.error('🔄 [CartContext] Sync error:', error);
       dispatch({
         type: 'CART_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to sync'

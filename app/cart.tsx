@@ -20,11 +20,7 @@ import { CartItem as CartItemType, LockedProduct, LOCK_CONFIG } from '@/types/ca
 // BUG-076 FIX: Import production cart utilities from cartUtils (not mockCartData).
 // mockCartData.ts also contains test fixtures; mixing production helpers with mock data
 // made it unclear what was safe to ship. cartUtils.ts contains only production utilities.
-import {
-  getItemCount,
-  getLockedItemCount,
-  updateLockedProductTimers,
-} from '@/utils/cartUtils';
+import { getItemCount, getLockedItemCount, updateLockedProductTimers } from '@/utils/cartUtils';
 import { useCartValidation } from '@/hooks/useCartValidation';
 import { useCartStore } from '@/stores/cartStore';
 import { useTotalBalance, useWalletLoading, useIsAuthenticated } from '@/stores';
@@ -263,67 +259,69 @@ function CartPage() {
     try {
       const response = await cartApi.getLockedItems();
       if (response.success && response.data?.lockedItems) {
-        const formattedLockedItems = response.data.lockedItems.map((item: any) => {
-          const productId = item.product?._id || item.product;
+        const formattedLockedItems = response.data.lockedItems
+          .map((item: any) => {
+            const productId = item.product?._id || item.product;
 
-          // CA-CMC-004 FIX: Validate dates before converting. If invalid, reject the item.
-          let lockedAt: Date;
-          let expiresAt: Date;
-          try {
-            if (!item.lockedAt || typeof item.lockedAt !== 'string') {
-              console.warn(`Invalid lockedAt for item ${item._id}:`, item.lockedAt);
-              return null; // Skip malformed items
-            }
-            if (!item.expiresAt || typeof item.expiresAt !== 'string') {
-              console.warn(`Invalid expiresAt for item ${item._id}:`, item.expiresAt);
+            // CA-CMC-004 FIX: Validate dates before converting. If invalid, reject the item.
+            let lockedAt: Date;
+            let expiresAt: Date;
+            try {
+              if (!item.lockedAt || typeof item.lockedAt !== 'string') {
+                console.warn(`Invalid lockedAt for item ${item._id}:`, item.lockedAt);
+                return null; // Skip malformed items
+              }
+              if (!item.expiresAt || typeof item.expiresAt !== 'string') {
+                console.warn(`Invalid expiresAt for item ${item._id}:`, item.expiresAt);
+                return null;
+              }
+              lockedAt = new Date(item.lockedAt);
+              expiresAt = new Date(item.expiresAt);
+
+              // Validate dates are valid and not at epoch
+              if (isNaN(lockedAt.getTime()) || isNaN(expiresAt.getTime())) {
+                console.warn(`Invalid date format for item ${item._id}`);
+                return null;
+              }
+            } catch (err) {
+              console.warn(`Date parsing error for item ${item._id}:`, err);
               return null;
             }
-            lockedAt = new Date(item.lockedAt);
-            expiresAt = new Date(item.expiresAt);
 
-            // Validate dates are valid and not at epoch
-            if (isNaN(lockedAt.getTime()) || isNaN(expiresAt.getTime())) {
-              console.warn(`Invalid date format for item ${item._id}`);
-              return null;
-            }
-          } catch (err) {
-            console.warn(`Date parsing error for item ${item._id}:`, err);
-            return null;
-          }
+            const remainingTime = expiresAt.getTime() - Date.now();
+            const lockDuration = expiresAt.getTime() - lockedAt.getTime();
 
-          const remainingTime = expiresAt.getTime() - Date.now();
-          const lockDuration = expiresAt.getTime() - lockedAt.getTime();
+            // Determine status based on remaining time
+            const status: 'active' | 'expiring' | 'expired' =
+              remainingTime <= 0 ? 'expired' : remainingTime <= 120000 ? 'expiring' : 'active';
 
-          // Determine status based on remaining time
-          const status: 'active' | 'expiring' | 'expired' =
-            remainingTime <= 0 ? 'expired' : remainingTime <= 120000 ? 'expiring' : 'active';
-
-          return {
-            id: item._id || item.product?._id,
-            productId: productId,
-            name: item.product?.name || 'Product',
-            price: item.lockedPrice,
-            originalPrice: item.originalPrice,
-            quantity: item.quantity,
-            image: item.product?.images?.[0]?.url || item.product?.images?.[0],
-            store: item.store?.name || 'Store',
-            variant: item.variant,
-            cashback: `Upto 12% cash back`,
-            category: 'products' as const,
-            lockedAt,
-            expiresAt,
-            remainingTime: Math.max(0, remainingTime),
-            lockDuration,
-            status,
-            notes: item.notes,
-            // Paid lock fields
-            lockFee: item.lockFee,
-            lockFeePercentage: item.lockFeePercentage,
-            paymentMethod: item.paymentMethod,
-            lockPaymentStatus: item.lockPaymentStatus,
-            isPaidLock: item.isPaidLock,
-          };
-        }).filter((item: any) => item !== null); // Remove malformed items with invalid dates
+            return {
+              id: item._id || item.product?._id,
+              productId: productId,
+              name: item.product?.name || 'Product',
+              price: item.lockedPrice,
+              originalPrice: item.originalPrice,
+              quantity: item.quantity,
+              image: item.product?.images?.[0]?.url || item.product?.images?.[0],
+              store: item.store?.name || 'Store',
+              variant: item.variant,
+              cashback: `Upto 12% cash back`,
+              category: 'products' as const,
+              lockedAt,
+              expiresAt,
+              remainingTime: Math.max(0, remainingTime),
+              lockDuration,
+              status,
+              notes: item.notes,
+              // Paid lock fields
+              lockFee: item.lockFee,
+              lockFeePercentage: item.lockFeePercentage,
+              paymentMethod: item.paymentMethod,
+              lockPaymentStatus: item.lockPaymentStatus,
+              isPaidLock: item.isPaidLock,
+            };
+          })
+          .filter((item: any) => item !== null) as any;
         setLockedProducts(formattedLockedItems);
       }
     } catch (error: any) {

@@ -95,7 +95,7 @@ function SavedAddressesPage() {
       if (response.success && response.data) {
         const transformedAddresses: Address[] = response.data.map((addr: ApiAddress) => ({
           id: addr.id,
-          type: addr.type as AddressType,
+          type: addr.type as unknown as AddressType,
           title: addr.title,
           phone: addr.phone,
           addressLine1: addr.addressLine1,
@@ -234,7 +234,7 @@ function SavedAddressesPage() {
         if (response.success && response.data) {
           const saved: Address = {
             id: response.data.id,
-            type: (response.data.type as AddressType) || 'OTHER',
+            type: (response.data.type as unknown as AddressType) || 'OTHER',
             title: response.data.title,
             phone: response.data.phone,
             addressLine1: response.data.addressLine1,
@@ -289,7 +289,7 @@ function SavedAddressesPage() {
         if (response.success && response.data) {
           const newAddress: Address = {
             id: response.data.id,
-            type: response.data.type as AddressType,
+            type: response.data.type as unknown as AddressType,
             title: response.data.title,
             phone: response.data.phone,
             addressLine1: response.data.addressLine1,
@@ -331,7 +331,7 @@ function SavedAddressesPage() {
                 addr.id === id
                   ? {
                       ...addr,
-                      type: response.data!.type as AddressType,
+                      type: response.data!.type as unknown as AddressType,
                       title: response.data!.title,
                       phone: response.data!.phone,
                       addressLine1: response.data!.addressLine1,

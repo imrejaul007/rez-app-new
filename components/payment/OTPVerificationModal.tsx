@@ -180,7 +180,13 @@ function OTPVerificationModal({
     <Modal visible={visible} animationType="slide" presentationStyle="formSheet" onRequestClose={onClose}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={onClose} style={styles.closeButton}>
+          <Pressable
+            onPress={onClose}
+            style={styles.closeButton}
+            accessibilityRole="button"
+            accessibilityLabel="Close OTP verification"
+            accessibilityHint="Double tap to close this screen"
+          >
             <Ionicons name="close" size={24} color={colors.neutral[800]} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Enter OTP</ThemedText>
@@ -234,6 +240,10 @@ function OTPVerificationModal({
                 style={[styles.verifyButton, isLoading ? styles.verifyButtonDisabled : null]}
                 onPress={() => verifyOTP()}
                 disabled={isLoading || otp.some(d => !d)}
+                accessibilityRole="button"
+                accessibilityLabel="Verify OTP"
+                accessibilityHint="Double tap to verify your one-time password"
+                accessibilityState={{ disabled: isLoading || otp.some(d => !d) }}
               >
                 {isLoading ? (
                   <ActivityIndicator color="white" />
@@ -246,6 +256,10 @@ function OTPVerificationModal({
                 style={styles.resendButton}
                 onPress={handleResend}
                 disabled={resendTimer > 0}
+                accessibilityRole="button"
+                accessibilityLabel="Resend OTP"
+                accessibilityHint={resendTimer > 0 ? `Resend available in ${resendTimer} seconds` : 'Double tap to resend a new OTP'}
+                accessibilityState={{ disabled: resendTimer > 0 }}
               >
                 <ThemedText style={[styles.resendText, resendTimer > 0 ? styles.resendTextDisabled : null]}>
                   {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}

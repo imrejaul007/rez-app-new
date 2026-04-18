@@ -2,13 +2,7 @@
 // Handles all bill upload and verification API calls with progress tracking and retry mechanism
 
 import apiClient, { ApiResponse } from './apiClient';
-
-// Dev-only logger to prevent string accumulation in production
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 import { Platform } from 'react-native';
 import {
   OCRExtractedData,
@@ -146,7 +140,7 @@ class BillUploadService {
     const startTime = Date.now();
 
     try {
-      devLog.log('📤 [BILL UPLOAD] Starting upload with progress tracking...');
+      logger.info('📤 [BILL UPLOAD] Starting upload with progress tracking...');
 
       // Create FormData
       const formData = await this.createFormData(data);
@@ -176,7 +170,7 @@ class BillUploadService {
               currentTime: Date.now(),
             };
 
-            devLog.log(`📊 [BILL UPLOAD] Progress: ${progress.percentage}% (${this.formatSpeed(speed)})`);
+            logger.info(`📊 [BILL UPLOAD] Progress: ${progress.percentage}% (${this.formatSpeed(speed)})`);
             onProgress(progress);
           }
         });
@@ -189,20 +183,20 @@ class BillUploadService {
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
               const response = JSON.parse(xhr.responseText);
-              devLog.log('✅ [BILL UPLOAD] Upload completed successfully');
+              logger.info('✅ [BILL UPLOAD] Upload completed successfully');
               resolve({
                 success: true,
                 data: response.data || response,
                 message: response.message,
               });
             } catch (err) {
-              devLog.error('❌ [BILL UPLOAD] Failed to parse response:', err);
+              logger.error('❌ [BILL UPLOAD] Failed to parse response:', err);
               reject(this.createUploadError(UploadErrorCode.SERVER_ERROR, 'Invalid server response'));
             }
           } else {
             try {
               const errorResponse = JSON.parse(xhr.responseText);
-              devLog.error('❌ [BILL UPLOAD] Upload failed:', errorResponse);
+              logger.error('❌ [BILL UPLOAD] Upload failed:', errorResponse);
               resolve({
                 success: false,
                 error: errorResponse.message || `HTTP ${xhr.status}: ${xhr.statusText}`,
@@ -220,7 +214,7 @@ class BillUploadService {
         xhr.addEventListener('error', () => {
           this.activeUploads.delete(uploadId);
           this.uploadSpeeds.delete(uploadId);
-          devLog.error('❌ [BILL UPLOAD] Network error occurred');
+          logger.error('❌ [BILL UPLOAD] Network error occurred');
           reject(this.createUploadError(UploadErrorCode.NETWORK_ERROR, 'Network error during upload'));
         });
 
@@ -228,7 +222,7 @@ class BillUploadService {
         xhr.addEventListener('timeout', () => {
           this.activeUploads.delete(uploadId);
           this.uploadSpeeds.delete(uploadId);
-          devLog.error('❌ [BILL UPLOAD] Upload timeout');
+          logger.error('❌ [BILL UPLOAD] Upload timeout');
           reject(this.createUploadError(UploadErrorCode.TIMEOUT, 'Upload request timed out'));
         });
 
@@ -236,7 +230,7 @@ class BillUploadService {
         xhr.addEventListener('abort', () => {
           this.activeUploads.delete(uploadId);
           this.uploadSpeeds.delete(uploadId);
-          devLog.log('⚠️ [BILL UPLOAD] Upload cancelled');
+          logger.info('⚠️ [BILL UPLOAD] Upload cancelled');
           reject(this.createUploadError(UploadErrorCode.CANCELLED, 'Upload was cancelled'));
         });
 
@@ -254,13 +248,13 @@ class BillUploadService {
         }
 
         // Send request
-        devLog.log('🚀 [BILL UPLOAD] Sending request to:', url);
+        logger.info('🚀 [BILL UPLOAD] Sending request to:', url);
         xhr.send(formData);
       });
     } catch (error) {
       this.activeUploads.delete(uploadId);
       this.uploadSpeeds.delete(uploadId);
-      devLog.error('❌ [BILL UPLOAD] Exception:', error);
+      logger.error('❌ [BILL UPLOAD] Exception:', error);
 
       if (error && typeof error === 'object' && 'code' in error) {
         return {
@@ -289,11 +283,11 @@ class BillUploadService {
     let lastError: UploadError | undefined;
     let totalBytesTransferred = 0;
 
-    devLog.log('🔄 [BILL UPLOAD] Starting upload with retry (max attempts:', config.maxAttempts, ')');
+    logger.info('🔄 [BILL UPLOAD] Starting upload with retry (max attempts:', config.maxAttempts, ')');
 
     for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
       try {
-        devLog.log(`📤 [BILL UPLOAD] Attempt ${attempt}/${config.maxAttempts}`);
+        logger.info(`📤 [BILL UPLOAD] Attempt ${attempt}/${config.maxAttempts}`);
 
         const result = await this.uploadBillWithProgress(data, (progress) => {
           totalBytesTransferred = progress.loaded;
@@ -304,7 +298,7 @@ class BillUploadService {
           const duration = Date.now() - startTime;
           const avgSpeed = duration > 0 ? (totalBytesTransferred / duration) * 1000 : 0;
 
-          devLog.log('✅ [BILL UPLOAD] Upload successful after', attempt, 'attempt(s)');
+          logger.info('✅ [BILL UPLOAD] Upload successful after', attempt, 'attempt(s)');
 
           return {
             success: true,
@@ -329,12 +323,12 @@ class BillUploadService {
         );
       } catch (error) {
         lastError = error as UploadError;
-        devLog.error(`❌ [BILL UPLOAD] Attempt ${attempt} failed:`, lastError.message);
+        logger.error(`❌ [BILL UPLOAD] Attempt ${attempt} failed:`, lastError.message);
       }
 
       // Check if error is retryable
       if (lastError && !config.retryableErrors.includes(lastError.code)) {
-        devLog.log('⚠️ [BILL UPLOAD] Error is not retryable:', lastError.code);
+        logger.info('⚠️ [BILL UPLOAD] Error is not retryable:', lastError.code);
         break;
       }
 
@@ -344,14 +338,14 @@ class BillUploadService {
           config.initialDelay * Math.pow(config.backoffMultiplier, attempt - 1),
           config.maxDelay
         );
-        devLog.log(`⏳ [BILL UPLOAD] Waiting ${delay}ms before retry...`);
+        logger.info(`⏳ [BILL UPLOAD] Waiting ${delay}ms before retry...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
     // All attempts failed
     const duration = Date.now() - startTime;
-    devLog.error('❌ [BILL UPLOAD] All retry attempts failed');
+    logger.error('❌ [BILL UPLOAD] All retry attempts failed');
 
     return {
       success: false,
@@ -371,7 +365,7 @@ class BillUploadService {
       xhr.abort();
       this.activeUploads.delete(uploadId);
       this.uploadSpeeds.delete(uploadId);
-      devLog.log('🛑 [BILL UPLOAD] Upload cancelled:', uploadId);
+      logger.info('🛑 [BILL UPLOAD] Upload cancelled:', uploadId);
       return true;
     }
     return false;
@@ -416,7 +410,7 @@ class BillUploadService {
     // Validate file extension
     const validation = this.validateFileExtension(filename);
     if (!validation.isValid) {
-      devLog.error('❌ [BILL UPLOAD] Invalid file extension:', validation.error);
+      logger.error('❌ [BILL UPLOAD] Invalid file extension:', validation.error);
       throw this.createUploadError(
         UploadErrorCode.INVALID_FILE_TYPE,
         validation.error || 'Invalid file type',
@@ -430,7 +424,7 @@ class BillUploadService {
     // For web
     if (Platform.OS === 'web') {
       try {
-        devLog.log('🌐 [BILL UPLOAD] Fetching image blob for web upload...');
+        logger.info('🌐 [BILL UPLOAD] Fetching image blob for web upload...');
         const response = await fetch(imageUri);
 
         if (!response.ok) {
@@ -438,10 +432,10 @@ class BillUploadService {
         }
 
         const blob = await response.blob();
-        devLog.log('✅ [BILL UPLOAD] Image blob fetched successfully:', blob.size, 'bytes');
+        logger.info('✅ [BILL UPLOAD] Image blob fetched successfully:', blob.size, 'bytes');
         formData.append('billImage', blob, filename);
       } catch (error) {
-        devLog.error('❌ [BILL UPLOAD] Failed to fetch image blob:', error);
+        logger.error('❌ [BILL UPLOAD] Failed to fetch image blob:', error);
         throw this.createUploadError(
           UploadErrorCode.FILE_NOT_FOUND,
           error instanceof Error ? error.message : 'Failed to load image file',
@@ -562,7 +556,7 @@ class BillUploadService {
         return response as any;
       }
     } catch (error) {
-      devLog.error('❌ [BILL HISTORY] Exception:', error);
+      logger.error('❌ [BILL HISTORY] Exception:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch bill history',
@@ -575,11 +569,11 @@ class BillUploadService {
    */
   async getBillById(billId: string): Promise<ApiResponse<Bill>> {
     try {
-      devLog.log('📋 [BILL DETAIL] Fetching bill:', billId);
+      logger.info('📋 [BILL DETAIL] Fetching bill:', billId);
       const response = await apiClient.get<Bill>(`/bills/${billId}`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [BILL DETAIL] Bill fetched successfully:', {
+        logger.info('✅ [BILL DETAIL] Bill fetched successfully:', {
           billId: response.data._id,
           merchant: response.data.merchant.name,
           amount: response.data.amount,
@@ -587,11 +581,11 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        devLog.error('❌ [BILL DETAIL] Failed:', response.error);
+        logger.error('❌ [BILL DETAIL] Failed:', response.error);
         return response as any;
       }
     } catch (error) {
-      devLog.error('❌ [BILL DETAIL] Exception:', error);
+      logger.error('❌ [BILL DETAIL] Exception:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch bill',
@@ -604,7 +598,7 @@ class BillUploadService {
    */
   async resubmitBill(billId: string, newPhoto: string): Promise<ApiResponse<Bill>> {
     try {
-      devLog.log('🔄 [BILL RESUBMIT] Resubmitting bill:', billId);
+      logger.info('🔄 [BILL RESUBMIT] Resubmitting bill:', billId);
 
       // Create FormData for file upload
       const formData = new FormData();
@@ -616,7 +610,7 @@ class BillUploadService {
       // Validate file extension
       const validation = this.validateFileExtension(filename);
       if (!validation.isValid) {
-        devLog.error('❌ [BILL RESUBMIT] Invalid file extension:', validation.error);
+        logger.error('❌ [BILL RESUBMIT] Invalid file extension:', validation.error);
         return {
           success: false,
           error: validation.error || 'Invalid file type',
@@ -629,7 +623,7 @@ class BillUploadService {
       // For web
       if (Platform.OS === 'web') {
         try {
-          devLog.log('🌐 [BILL RESUBMIT] Fetching image blob for web upload...');
+          logger.info('🌐 [BILL RESUBMIT] Fetching image blob for web upload...');
           const fetchResponse = await fetch(imageUri);
 
           if (!fetchResponse.ok) {
@@ -637,10 +631,10 @@ class BillUploadService {
           }
 
           const blob = await fetchResponse.blob();
-          devLog.log('✅ [BILL RESUBMIT] Image blob fetched successfully:', blob.size, 'bytes');
+          logger.info('✅ [BILL RESUBMIT] Image blob fetched successfully:', blob.size, 'bytes');
           formData.append('billImage', blob, filename);
         } catch (error) {
-          devLog.error('❌ [BILL RESUBMIT] Failed to fetch image blob:', error);
+          logger.error('❌ [BILL RESUBMIT] Failed to fetch image blob:', error);
           return {
             success: false,
             error: error instanceof Error ? error.message : 'Failed to load image file',
@@ -658,17 +652,17 @@ class BillUploadService {
       const response = await apiClient.uploadFile<Bill>(`/bills/${billId}/resubmit`, formData);
 
       if (response.success && response.data) {
-        devLog.log('✅ [BILL RESUBMIT] Bill resubmitted successfully:', {
+        logger.info('✅ [BILL RESUBMIT] Bill resubmitted successfully:', {
           billId: response.data._id,
           status: response.data.verificationStatus,
         });
         return response as any;
       } else {
-        devLog.error('❌ [BILL RESUBMIT] Failed:', response.error);
+        logger.error('❌ [BILL RESUBMIT] Failed:', response.error);
         return response as any;
       }
     } catch (error) {
-      devLog.error('❌ [BILL RESUBMIT] Exception:', error);
+      logger.error('❌ [BILL RESUBMIT] Exception:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to resubmit bill',
@@ -688,7 +682,7 @@ class BillUploadService {
     pendingCashback: number;
   }>> {
     try {
-      devLog.log('📊 [BILL STATS] Fetching bill statistics...');
+      logger.info('📊 [BILL STATS] Fetching bill statistics...');
 
       const response = await apiClient.get<{
         totalBills: number;
@@ -700,7 +694,7 @@ class BillUploadService {
       }>('/bills/statistics');
 
       if (response.success && response.data) {
-        devLog.log('✅ [BILL STATS] Statistics fetched successfully:', {
+        logger.info('✅ [BILL STATS] Statistics fetched successfully:', {
           totalBills: response.data.totalBills,
           pendingBills: response.data.pendingBills,
           approvedBills: response.data.approvedBills,
@@ -710,11 +704,11 @@ class BillUploadService {
         });
         return response as any;
       } else {
-        devLog.error('❌ [BILL STATS] Failed:', response.error);
+        logger.error('❌ [BILL STATS] Failed:', response.error);
         return response as any;
       }
     } catch (error) {
-      devLog.error('❌ [BILL STATS] Exception:', error);
+      logger.error('❌ [BILL STATS] Exception:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch statistics',

@@ -79,17 +79,17 @@ export const COIN_TYPES: Record<CoinType, CoinTypeInfo> = {
   },
   cashback: {
     name: 'Cashback Coins',
-    color: '#10B981',
-    backgroundColor: '#D1FAE5',
+    color: '#10B981',          // emerald
+    backgroundColor: '#ECFDF5',
     amountColor: '#059669',
-    description: 'Earned from purchases',
+    description: 'Cashback earned from purchases',
   },
   referral: {
     name: 'Referral Coins',
-    color: '#8B5CF6',
-    backgroundColor: '#EDE9FE',
+    color: '#8B5CF6',          // purple
+    backgroundColor: '#F5F3FF',
     amountColor: '#7C3AED',
-    description: 'Earned by referring friends',
+    description: 'Coins earned from referring friends',
   },
 };
 

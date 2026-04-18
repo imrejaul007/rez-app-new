@@ -27,10 +27,10 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 import { colors } from '@/constants/theme';
 
 const KARMA_PURPLE = '#8B5CF6';
-const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
+const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'] as const;
 
 type TxType = 'earned' | 'converted' | 'spent' | 'bonus';
-type KarmaCoinFilter = 'karma_points' | 'rez_coins' | 'all';
+type CoinType = 'karma_points' | 'rez_coins' | 'all';
 
 const TX_CONFIG: Record<TxType, { icon: string; color: string; label: string }> = {
   earned: { icon: 'leaf', color: '#22C55E', label: 'Earned' },
@@ -39,7 +39,7 @@ const TX_CONFIG: Record<TxType, { icon: string; color: string; label: string }> 
   bonus: { icon: 'gift', color: '#F59E0B', label: 'Bonus' },
 };
 
-const COIN_TYPE_CONFIG: Record<KarmaCoinFilter, { label: string; icon: string; color: string }> = {
+const COIN_TYPE_CONFIG: Record<CoinType, { label: string; icon: string; color: string }> = {
   karma_points: { label: 'Karma Points', icon: 'leaf', color: KARMA_PURPLE },
   rez_coins: { label: 'ReZ Coins', icon: 'wallet', color: '#F59E0B' },
   all: { label: 'All', icon: 'apps', color: '#6B7280' },
@@ -102,7 +102,7 @@ function KarmaWalletScreen() {
   const isMounted = useIsMounted();
   const [balance, setBalance] = useState<WalletBalance | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [selectedCoin, setSelectedCoin] = useState<KarmaCoinFilter>('all');
+  const [selectedCoin, setSelectedCoin] = useState<CoinType>('all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -274,27 +274,25 @@ function KarmaWalletScreen() {
         <View style={styles.filterSection}>
           <Text style={styles.sectionTitle}>Transactions</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
-            {(Object.entries(COIN_TYPE_CONFIG) as [KarmaCoinFilter, (typeof COIN_TYPE_CONFIG)['all']][]).map(
-              ([key, cfg]) => (
-                <Pressable
-                  key={key}
-                  style={[
-                    styles.filterChip,
-                    selectedCoin === key && { backgroundColor: cfg.color, borderColor: cfg.color },
-                  ]}
-                  onPress={() => setSelectedCoin(key as KarmaCoinFilter)}
-                >
-                  <Ionicons
-                    name={cfg.icon as any}
-                    size={14}
-                    color={selectedCoin === key ? colors.text.inverse : Colors.textSecondary}
-                  />
-                  <Text style={[styles.filterChipText, selectedCoin === key && { color: colors.text.inverse }]}>
-                    {cfg.label}
-                  </Text>
-                </Pressable>
-              ),
-            )}
+            {(Object.entries(COIN_TYPE_CONFIG) as [CoinType, (typeof COIN_TYPE_CONFIG)['all']][]).map(([key, cfg]) => (
+              <Pressable
+                key={key}
+                style={[
+                  styles.filterChip,
+                  selectedCoin === key && { backgroundColor: cfg.color, borderColor: cfg.color },
+                ]}
+                onPress={() => setSelectedCoin(key as CoinType)}
+              >
+                <Ionicons
+                  name={cfg.icon as any}
+                  size={14}
+                  color={selectedCoin === key ? colors.text.inverse : Colors.textSecondary}
+                />
+                <Text style={[styles.filterChipText, selectedCoin === key && { color: colors.text.inverse }]}>
+                  {cfg.label}
+                </Text>
+              </Pressable>
+            ))}
           </ScrollView>
         </View>
 

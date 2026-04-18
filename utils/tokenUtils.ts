@@ -48,7 +48,7 @@ export function decodeJWT(token: string): DecodedToken | null {
     let decoded: string;
     try {
       // atob may not be available in all RN/Hermes environments
-      decoded = atob(payload);
+      decoded = Buffer.from(payload, 'base64').toString('utf8');
     } catch {
       decoded = base64Decode(payload);
     }

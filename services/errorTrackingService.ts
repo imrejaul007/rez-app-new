@@ -19,12 +19,7 @@ import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Types
@@ -213,7 +208,7 @@ class ErrorTrackingService {
    */
   setEnabled(enabled: boolean): void {
     this.isEnabled = enabled;
-    devLog.log(`[ErrorTracking] ${enabled ? 'Enabled' : 'Disabled'}`);
+    logger.info(`[ErrorTracking] ${enabled ? 'Enabled' : 'Disabled'}`);
   }
 
   /**
@@ -239,7 +234,7 @@ class ErrorTrackingService {
       try {
         listener(error);
       } catch (err) {
-        devLog.error('[ErrorTracking] Error in listener:', err);
+        logger.error('[ErrorTracking] Error in listener:', err);
       }
     });
   }
@@ -587,7 +582,7 @@ class ErrorTrackingService {
       critical: '🔥',
     }[severity];
 
-    devLog.error(
+    logger.error(
       `${emoji} [ErrorTracking] [${type}] [${severity}] ${error.message}`,
       {
         stack: error.stack,
@@ -635,7 +630,7 @@ class ErrorTrackingService {
         JSON.stringify(this.errors.slice(0, MAX_STORED_ERRORS))
       );
     } catch (error) {
-      devLog.error('[ErrorTracking] Failed to save errors:', error);
+      logger.error('[ErrorTracking] Failed to save errors:', error);
     }
   }
 
@@ -656,10 +651,10 @@ class ErrorTrackingService {
           },
         }));
 
-        devLog.log(`[ErrorTracking] Loaded ${this.errors.length} stored errors`);
+        logger.info(`[ErrorTracking] Loaded ${this.errors.length} stored errors`);
       }
     } catch (error) {
-      devLog.error('[ErrorTracking] Failed to load errors:', error);
+      logger.error('[ErrorTracking] Failed to load errors:', error);
     }
   }
 
@@ -669,7 +664,7 @@ class ErrorTrackingService {
   async clearErrors(): Promise<void> {
     this.errors = [];
     await AsyncStorage.removeItem(STORAGE_KEY);
-    devLog.log('[ErrorTracking] All errors cleared');
+    logger.info('[ErrorTracking] All errors cleared');
   }
 
   /**
@@ -698,7 +693,7 @@ class ErrorTrackingService {
     // Clear error listeners
     this.errorListeners = [];
 
-    devLog.log('[ErrorTracking] Service destroyed');
+    logger.info('[ErrorTracking] Service destroyed');
   }
 
   /**
@@ -708,37 +703,37 @@ class ErrorTrackingService {
     const stats = this.getErrorStats('day');
     const trends = this.getErrorTrends('hour');
 
-    devLog.log('\n========================================');
-    devLog.log('       ERROR TRACKING REPORT');
-    devLog.log('========================================\n');
+    logger.info('\n========================================');
+    logger.info('       ERROR TRACKING REPORT');
+    logger.info('========================================\n');
 
-    devLog.log(`Total Errors (24h): ${stats.total}\n`);
+    logger.info(`Total Errors (24h): ${stats.total}\n`);
 
-    devLog.log('By Type:');
+    logger.info('By Type:');
     Object.entries(stats.byType).forEach(([type, count]) => {
       if (count > 0) {
-        devLog.log(`  ${type}: ${count}`);
+        logger.info(`  ${type}: ${count}`);
       }
     });
 
-    devLog.log('\nBy Severity:');
+    logger.info('\nBy Severity:');
     Object.entries(stats.bySeverity).forEach(([severity, count]) => {
       if (count > 0) {
-        devLog.log(`  ${severity}: ${count}`);
+        logger.info(`  ${severity}: ${count}`);
       }
     });
 
-    devLog.log('\nTop Errors:');
+    logger.info('\nTop Errors:');
     stats.topErrors.slice(0, 5).forEach((error, index) => {
-      devLog.log(`  ${index + 1}. [${error.severity}] ${error.message} (${error.count}x)`);
+      logger.info(`  ${index + 1}. [${error.severity}] ${error.message} (${error.count}x)`);
     });
 
-    devLog.log('\nTrends (last hour):');
-    devLog.log(`  Error Rate: ${trends.errorRate.toFixed(2)} errors/min`);
-    devLog.log(`  Trend: ${trends.increasing ? '📈 Increasing' : '📉 Decreasing'}`);
-    devLog.log(`  Change: ${trends.comparison.change.toFixed(1)}%\n`);
+    logger.info('\nTrends (last hour):');
+    logger.info(`  Error Rate: ${trends.errorRate.toFixed(2)} errors/min`);
+    logger.info(`  Trend: ${trends.increasing ? '📈 Increasing' : '📉 Decreasing'}`);
+    logger.info(`  Change: ${trends.comparison.change.toFixed(1)}%\n`);
 
-    devLog.log('========================================\n');
+    logger.info('========================================\n');
   }
 }
 

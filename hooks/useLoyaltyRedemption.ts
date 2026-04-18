@@ -466,7 +466,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         return colors.brand.goldBright;
       case 'platinum':
         return '#E5E4E2';
-      case 'Diamond':
+      case 'diamond':
         return '#B9F2FF';
       default:
         return colors.neutral[500];

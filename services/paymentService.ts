@@ -3,6 +3,7 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 import { normalizePaymentStatus } from '../utils/statusCompat';
+import { logger } from '@/utils/logger';
 
 // CA-PAY-023 FIX: Normalize payment method types before API submission
 // Transform 'rezcoins' → 'wallet' as required by backend
@@ -93,7 +94,7 @@ class PaymentService {
 
       // Fallback only for dev if backend is down
       if (__DEV__) {
-        console.warn('[PAYMENT] Backend failed, using fallback methods (DEV)');
+        logger.warn('[PAYMENT] Backend failed, using fallback methods (DEV)');
         return this.getFallbackPaymentMethods();
       }
 

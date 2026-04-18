@@ -5,16 +5,7 @@
 
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Platform,
-  Alert,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Platform, Alert, Dimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
 import * as Location from 'expo-location';
@@ -22,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { KarmaHeader } from './_layout';
 import karmaService, { GPSCoords } from '@/services/karmaService';
-import { alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
@@ -44,7 +35,9 @@ function KarmaScanScreen() {
   const [scanMode, setScanMode] = useState<ScanMode>((mode as ScanMode) ?? 'checkin');
   const [activeEventId, setActiveEventId] = useState<string | null>(eventId ?? null);
   const [scanState, setScanState] = useState<ScanState>('idle');
-  const [lastResult, setLastResult] = useState<{ success: boolean; message: string; karmaEarned?: number } | null>(null);
+  const [lastResult, setLastResult] = useState<{ success: boolean; message: string; karmaEarned?: number } | null>(
+    null,
+  );
   const [gpsCoords, setGpsCoords] = useState<GPSCoords | null>(null);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -82,16 +75,13 @@ function KarmaScanScreen() {
       try {
         const res =
           scanMode === 'checkin'
-            ? await karmaService.checkIn(activeEventId, 'qr', qrCode)
-            : await karmaService.checkOut(activeEventId, 'qr', qrCode);
+            ? await karmaService.checkIn('', activeEventId, 'qr', qrCode, undefined)
+            : await karmaService.checkOut('', activeEventId, 'qr', qrCode, undefined);
 
         if (res.success && res.data) {
           setLastResult({
             success: true,
-            message:
-              scanMode === 'checkin'
-                ? 'Check-in successful!'
-                : 'Check-out submitted for NGO approval.',
+            message: scanMode === 'checkin' ? 'Check-in successful!' : 'Check-out submitted for NGO approval.',
             karmaEarned: res.data.karmaEarned,
           });
           setScanState('success');
@@ -123,16 +113,13 @@ function KarmaScanScreen() {
     try {
       const res =
         scanMode === 'checkin'
-          ? await karmaService.checkIn(activeEventId, 'gps', undefined, gpsCoords)
-          : await karmaService.checkOut(activeEventId, 'gps', undefined, gpsCoords);
+          ? await karmaService.checkIn('', activeEventId, 'gps', undefined, gpsCoords)
+          : await karmaService.checkOut('', activeEventId, 'gps', undefined, gpsCoords);
 
       if (res.success && res.data) {
         setLastResult({
           success: true,
-          message:
-            scanMode === 'checkin'
-              ? 'Check-in recorded via GPS!'
-              : 'Check-out submitted for NGO approval.',
+          message: scanMode === 'checkin' ? 'Check-in recorded via GPS!' : 'Check-out submitted for NGO approval.',
           karmaEarned: res.data.karmaEarned,
         });
         setScanState('success');
@@ -171,9 +158,7 @@ function KarmaScanScreen() {
         <View style={styles.permissionContainer}>
           <Ionicons name="camera-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.permissionTitle}>Camera Access Needed</Text>
-          <Text style={styles.permissionDesc}>
-            Camera access is required to scan the QR code at the event venue.
-          </Text>
+          <Text style={styles.permissionDesc}>Camera access is required to scan the QR code at the event venue.</Text>
           <Pressable style={styles.permissionBtn} onPress={requestPermission}>
             <Text style={styles.permissionBtnText}>Grant Permission</Text>
           </Pressable>
@@ -225,9 +210,7 @@ function KarmaScanScreen() {
               style={styles.doneBtn}
               onPress={() => router.push(activeEventId ? `/karma/event/${activeEventId}` : '/karma/home')}
             >
-              <Text style={styles.doneBtnText}>
-                {activeEventId ? 'Back to Event' : 'Go to Home'}
-              </Text>
+              <Text style={styles.doneBtnText}>{activeEventId ? 'Back to Event' : 'Go to Home'}</Text>
             </Pressable>
           </View>
         </View>
@@ -318,9 +301,7 @@ function KarmaScanScreen() {
         <Text style={styles.instructionTitle}>
           {scanState === 'idle' ? `Scan the ${scanMode === 'checkin' ? 'check-in' : 'check-out'} QR code` : ''}
         </Text>
-        <Text style={styles.instructionSub}>
-          Point your camera at the QR code displayed at the venue
-        </Text>
+        <Text style={styles.instructionSub}>Point your camera at the QR code displayed at the venue</Text>
 
         {/* GPS Fallback */}
         <View style={styles.gpsSection}>
@@ -339,7 +320,7 @@ function KarmaScanScreen() {
               <Text style={styles.gpsSub}>
                 {gpsCoords
                   ? `Location captured (${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)})`
-                  : locationError ?? 'Getting location...'}
+                  : (locationError ?? 'Getting location...')}
               </Text>
             </View>
           </View>
@@ -363,20 +344,59 @@ const styles = StyleSheet.create({
 
   // Permission
   permissionContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing['2xl'] },
-  permissionTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base, marginBottom: Spacing.sm },
-  permissionDesc: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.xl },
-  permissionBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius.xl, marginBottom: Spacing.md },
+  permissionTitle: {
+    fontSize: Typography.h3.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginTop: Spacing.base,
+    marginBottom: Spacing.sm,
+  },
+  permissionDesc: {
+    fontSize: Typography.body.fontSize,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+  },
+  permissionBtn: {
+    backgroundColor: KARMA_PURPLE,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.xl,
+    marginBottom: Spacing.md,
+  },
   permissionBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
   gpsBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F5F3FF', gap: 6 },
   gpsBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: KARMA_PURPLE },
 
   // No event banner
-  noEventBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFBEB', paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, gap: 8 },
+  noEventBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    gap: 8,
+  },
   noEventText: { fontSize: Typography.caption.fontSize, color: '#92400E', flex: 1 },
 
   // Mode toggle
-  modeToggle: { flexDirection: 'row', backgroundColor: colors.text.inverse, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, gap: Spacing.sm },
-  modeBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, borderRadius: BorderRadius.md, backgroundColor: colors.background.secondary, gap: 6 },
+  modeToggle: {
+    flexDirection: 'row',
+    backgroundColor: colors.text.inverse,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  modeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: BorderRadius.md,
+    backgroundColor: colors.background.secondary,
+    gap: 6,
+  },
   modeBtnActive: { backgroundColor: KARMA_PURPLE },
   modeBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.textSecondary },
   modeBtnTextActive: { color: colors.text.inverse },
@@ -403,20 +423,57 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  processingText: { color: colors.text.inverse, fontSize: Typography.body.fontSize, fontWeight: '600', marginTop: Spacing.md },
+  processingText: {
+    color: colors.text.inverse,
+    fontSize: Typography.body.fontSize,
+    fontWeight: '600',
+    marginTop: Spacing.md,
+  },
 
   // Instruction
   instructionSection: { flex: 1, padding: Spacing.base },
-  instructionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.deepNavy, textAlign: 'center', marginBottom: 4 },
-  instructionSub: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.xl },
+  instructionTitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  instructionSub: {
+    fontSize: Typography.body.fontSize,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+  },
 
   // GPS
-  gpsSection: { backgroundColor: colors.text.inverse, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1, borderColor: colors.border.default },
+  gpsSection: {
+    backgroundColor: colors.text.inverse,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   gpsInfo: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.md },
-  gpsIconWrap: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  gpsIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   gpsTitle: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.deepNavy },
   gpsSub: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2 },
-  gpsBtnLarge: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: KARMA_PURPLE, paddingVertical: 14, borderRadius: BorderRadius.xl, gap: 8 },
+  gpsBtnLarge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: KARMA_PURPLE,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+    gap: 8,
+  },
   gpsBtnDisabled: { backgroundColor: Colors.textSecondary },
   gpsBtnLargeText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.text.inverse },
 
@@ -425,14 +482,53 @@ const styles = StyleSheet.create({
   resultIconWrap: { marginBottom: Spacing.lg },
   resultIconSuccess: {},
   resultIconError: {},
-  resultTitle: { fontSize: Typography.h3.fontSize, fontWeight: '800', color: colors.deepNavy, marginBottom: Spacing.sm },
-  resultMessage: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.xl },
-  karmaEarnedBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F5F3FF', paddingHorizontal: 16, paddingVertical: 10, borderRadius: BorderRadius.xl, gap: 8, marginBottom: Spacing.xl, borderWidth: 1, borderColor: '#E9D5FF' },
+  resultTitle: {
+    fontSize: Typography.h3.fontSize,
+    fontWeight: '800',
+    color: colors.deepNavy,
+    marginBottom: Spacing.sm,
+  },
+  resultMessage: {
+    fontSize: Typography.body.fontSize,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+  },
+  karmaEarnedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F3FF',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.xl,
+    gap: 8,
+    marginBottom: Spacing.xl,
+    borderWidth: 1,
+    borderColor: '#E9D5FF',
+  },
   karmaEarnedText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: KARMA_PURPLE },
   resultActions: { flexDirection: 'row', gap: Spacing.md, width: '100%' },
-  retryBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5F3FF', paddingVertical: 14, borderRadius: BorderRadius.xl, gap: 8, borderWidth: 1, borderColor: KARMA_PURPLE },
+  retryBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F3FF',
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: KARMA_PURPLE,
+  },
   retryBtnText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: KARMA_PURPLE },
-  doneBtn: { flex: 1, backgroundColor: KARMA_PURPLE, paddingVertical: 14, borderRadius: BorderRadius.xl, alignItems: 'center', justifyContent: 'center' },
+  doneBtn: {
+    flex: 1,
+    backgroundColor: KARMA_PURPLE,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   doneBtnText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.text.inverse },
 });
 

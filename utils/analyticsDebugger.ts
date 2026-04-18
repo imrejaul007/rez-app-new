@@ -66,15 +66,6 @@ export class AnalyticsDebugger {
 
     console.group(`${emoji} Analytics Event: ${event.name}`);
 
-    if (event.properties && Object.keys(event.properties).length > 0) {
-    }
-
-
-    if (event.validation && !event.validation.valid) {
-    }
-
-    if (event.validation && event.validation.warnings.length > 0) {
-    }
 
     console.groupEnd();
   }
@@ -190,15 +181,6 @@ export class AnalyticsDebugger {
 
     console.group(`🧪 Testing Event: ${eventName}`);
 
-    if (validation.valid) {
-    } else {
-    }
-
-    if (validation.warnings.length > 0) {
-    }
-
-    if (properties) {
-    }
 
     console.groupEnd();
   }

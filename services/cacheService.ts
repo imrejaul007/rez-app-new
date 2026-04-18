@@ -168,7 +168,7 @@ class CacheService {
    * Convert base64 string to Uint8Array (web-compatible)
    */
   private base64ToUint8Array(base64: string): Uint8Array {
-    const binary = atob(base64);
+    const binary = Buffer.from(base64, 'base64').toString('utf8');
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);

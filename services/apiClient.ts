@@ -51,6 +51,7 @@ interface ApiResponse<T = any> {
   data?: T;
   message?: string;
   error?: string;
+  statusCode?: number;
   errors?: { [key: string]: string[] };
   meta?: {
     pagination?: {
@@ -70,6 +71,7 @@ interface RequestOptions {
   body?: Record<string, unknown> | unknown[] | FormData | string | null;
   timeout?: number;
   deduplicate?: boolean; // Enable/disable deduplication per-request
+  signal?: AbortSignal; // AbortController signal for request cancellation
 }
 
 /** Typed Sentry scope interface (subset used by ApiClient) */
@@ -247,7 +249,8 @@ class ApiClient {
       method = 'GET',
       headers = {},
       body,
-      timeout = ENV_API_CONFIG.timeout
+      timeout = ENV_API_CONFIG.timeout,
+      signal: externalSignal,
     } = options;
 
     const url = `${this.baseURL}${endpoint}`;
@@ -288,6 +291,15 @@ class ApiClient {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+      // Merge external abort signal with internal timeout signal
+      if (externalSignal) {
+        if (externalSignal.aborted) {
+          controller.abort();
+        } else {
+          externalSignal.addEventListener('abort', () => controller.abort());
+        }
+      }
 
       // OG-D005/OG-D006 FIX: Register the controller so the AppState
       // background listener can abort this fetch if the app is backgrounded
@@ -519,7 +531,7 @@ class ApiClient {
     endpoint: string,
     params?: Record<string, string | number | boolean | undefined | null>,
     // Fixed: Add headers option so callers can pass explicit auth headers - Phase 0
-    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
+    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string>; signal?: AbortSignal }
   ): Promise<ApiResponse<T>> {
     let url = endpoint;
 
@@ -539,6 +551,9 @@ class ApiClient {
     }
     if (options?.headers) {
       requestOptions.headers = options.headers;
+    }
+    if (options?.signal) {
+      requestOptions.signal = options.signal;
     }
 
     // Deduplicate GET requests by default (can be disabled per-request)
@@ -564,7 +579,7 @@ class ApiClient {
   async post<T>(
     endpoint: string,
     data?: Record<string, unknown> | unknown[] | FormData,
-    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
+    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string>; signal?: AbortSignal }
   ): Promise<ApiResponse<T>> {
     // POST requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;

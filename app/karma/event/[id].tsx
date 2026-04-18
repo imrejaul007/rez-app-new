@@ -24,12 +24,12 @@ import CachedImage from '@/components/ui/CachedImage';
 import { KarmaHeader } from '../_layout';
 import karmaService, { KarmaEvent, Booking } from '@/services/karmaService';
 import { useIsAuthenticated } from '@/stores/selectors';
-import { alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const KARMA_PURPLE = '#8B5CF6';
-const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
+const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'] as const;
 
 const CATEGORY_ICONS: Record<string, { icon: string; color: string; bg: string }> = {
   environment: { icon: 'leaf', color: '#22C55E', bg: '#DCFCE7' },
@@ -40,7 +40,7 @@ const CATEGORY_ICONS: Record<string, { icon: string; color: string; bg: string }
 };
 
 function KarmaEventDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string}>();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
   const [event, setEvent] = useState<KarmaEvent | null>(null);
@@ -60,13 +60,15 @@ function KarmaEventDetailScreen() {
       if (eventRes.success && eventRes.data) setEvent(eventRes.data);
       if (bookingRes.success) setBooking(bookingRes.data ?? null);
     } catch {
-      alertOk('Error', 'Failed to load event details');
+      showAlert('Error', 'Failed to load event details');
     } finally {
       setLoading(false);
     }
   }, [id]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleJoin = async () => {
     if (!isAuthenticated) {
@@ -79,12 +81,12 @@ function KarmaEventDetailScreen() {
       const res = await karmaService.joinEvent(event._id);
       if (res.success && res.data) {
         setBooking(res.data);
-        alertOk('Joined!', `You're registered for ${event.name}. Check in when you arrive.`);
+        showAlert('Joined!', `You're registered for ${event.name}. Check in when you arrive.`);
       } else {
-        alertOk('Error', res.error ?? 'Unable to join event');
+        showAlert('Error', res.error ?? 'Unable to join event');
       }
     } catch (e: any) {
-      alertOk('Error', e.message ?? 'Something went wrong');
+      showAlert('Error', e.message ?? 'Something went wrong');
     } finally {
       setJoining(false);
     }
@@ -92,33 +94,29 @@ function KarmaEventDetailScreen() {
 
   const handleLeave = async () => {
     if (!event) return;
-    Alert.alert(
-      'Leave Event',
-      'Are you sure you want to cancel your registration?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Leave',
-          style: 'destructive',
-          onPress: async () => {
-            setLeaving(true);
-            try {
-              const res = await karmaService.leaveEvent(event._id);
-              if (res.success) {
-                setBooking(null);
-                alertOk('Left', "You've cancelled your registration.");
-              } else {
-                alertOk('Error', res.error ?? 'Unable to leave event');
-              }
-            } catch (e: any) {
-              alertOk('Error', e.message);
-            } finally {
-              setLeaving(false);
+    Alert.alert('Leave Event', 'Are you sure you want to cancel your registration?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Leave',
+        style: 'destructive',
+        onPress: async () => {
+          setLeaving(true);
+          try {
+            const res = await karmaService.leaveEvent(event._id);
+            if (res.success) {
+              setBooking(null);
+              showAlert('Left', "You've cancelled your registration.");
+            } else {
+              showAlert('Error', res.error ?? 'Unable to leave event');
             }
-          },
+          } catch (e: any) {
+            showAlert('Error', e.message);
+          } finally {
+            setLeaving(false);
+          }
         },
-      ],
-    );
+      },
+    ]);
   };
 
   const handleCheckIn = () => {
@@ -135,9 +133,10 @@ function KarmaEventDetailScreen() {
     if (!event?.location.coordinates) return;
     const { lat, lng } = event.location.coordinates;
     const scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
-    const url = Platform.OS === 'ios'
-      ? `${scheme}?q=${encodeURIComponent(event.location.address)}&ll=${lat},${lng}`
-      : `${scheme}${lat},${lng}?q=${encodeURIComponent(event.location.address)}`;
+    const url =
+      Platform.OS === 'ios'
+        ? `${scheme}?q=${encodeURIComponent(event.location.address)}&ll=${lat},${lng}`
+        : `${scheme}${lat},${lng}?q=${encodeURIComponent(event.location.address)}`;
     Linking.openURL(url).catch(() => {});
   };
 
@@ -176,7 +175,11 @@ function KarmaEventDetailScreen() {
   const canCheckIn = isJoined && booking?.status !== 'checked_in' && !booking?.qrCheckedIn;
   const canCheckOut = isJoined && booking?.qrCheckedIn && !booking?.qrCheckedOut;
   const verificationIcon =
-    event.verificationMode === 'qr' ? 'qr-code-outline' : event.verificationMode === 'gps' ? 'location-outline' : 'hand-right-outline';
+    event.verificationMode === 'qr'
+      ? 'qr-code-outline'
+      : event.verificationMode === 'gps'
+        ? 'location-outline'
+        : 'hand-right-outline';
 
   return (
     <View style={styles.container}>
@@ -197,10 +200,7 @@ function KarmaEventDetailScreen() {
             </View>
           )}
           {/* Gradient overlay */}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.5)']}
-            style={styles.heroGradient}
-          />
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.5)']} style={styles.heroGradient} />
           {/* Category + Status */}
           <View style={styles.heroBadges}>
             <View style={[styles.catBadge, { backgroundColor: catCfg.bg }]}>
@@ -249,7 +249,12 @@ function KarmaEventDetailScreen() {
               <Text style={styles.infoLabel}>Date</Text>
               <Text style={styles.infoValue}>
                 {event.date
-                  ? new Date(event.date).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+                  ? new Date(event.date).toLocaleDateString('en-IN', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })
                   : 'TBD'}
               </Text>
             </View>
@@ -260,8 +265,8 @@ function KarmaEventDetailScreen() {
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Time</Text>
               <Text style={styles.infoValue}>
-                {event.time ? `${event.time.start} - ${event.time.end}` : 'TBD'}
-                {' '}| Duration: {event.expectedDurationHours}h
+                {event.time ? `${event.time.start} - ${event.time.end}` : 'TBD'} | Duration:{' '}
+                {event.expectedDurationHours}h
               </Text>
             </View>
           </View>
@@ -281,7 +286,11 @@ function KarmaEventDetailScreen() {
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Verification</Text>
               <Text style={styles.infoValue}>
-                {event.verificationMode === 'qr' ? 'QR Code scan' : event.verificationMode === 'gps' ? 'GPS check-in' : 'Manual'}
+                {event.verificationMode === 'qr'
+                  ? 'QR Code scan'
+                  : event.verificationMode === 'gps'
+                    ? 'GPS check-in'
+                    : 'Manual'}
                 {event.gpsRadius ? ` (within ${event.gpsRadius}m)` : ''}
               </Text>
             </View>
@@ -303,7 +312,10 @@ function KarmaEventDetailScreen() {
               zoomEnabled={false}
             >
               <Marker
-                coordinate={event.location.coordinates}
+                coordinate={{
+                  latitude: event.location.coordinates!.lat,
+                  longitude: event.location.coordinates!.lng,
+                }}
                 title={event.name}
                 description={event.location.address}
               />
@@ -323,9 +335,7 @@ function KarmaEventDetailScreen() {
             <View style={styles.capacityBar}>
               <View style={[styles.capacityFill, { width: `${progressPercent}%` }]} />
             </View>
-            <Text style={styles.capacitySpots}>
-              {event.capacity.goal - event.capacity.enrolled} spots remaining
-            </Text>
+            <Text style={styles.capacitySpots}>{event.capacity.goal - event.capacity.enrolled} spots remaining</Text>
           </View>
         )}
 
@@ -362,22 +372,36 @@ function KarmaEventDetailScreen() {
         {/* Difficulty */}
         <View style={styles.difficultySection}>
           <Text style={styles.sectionTitle}>Difficulty</Text>
-          <View style={[
-            styles.difficultyBadge,
-            {
-              backgroundColor: event.difficulty === 'easy' ? '#DCFCE7' : event.difficulty === 'hard' ? '#FFF1F2' : '#EFF6FF',
-            },
-          ]}>
+          <View
+            style={[
+              styles.difficultyBadge,
+              {
+                backgroundColor:
+                  event.difficulty === 'easy' ? '#DCFCE7' : event.difficulty === 'hard' ? '#FFF1F2' : '#EFF6FF',
+              },
+            ]}
+          >
             <Ionicons
-              name={event.difficulty === 'easy' ? 'sunny-outline' : event.difficulty === 'hard' ? 'flame' : 'walk-outline'}
+              name={
+                event.difficulty === 'easy' ? 'sunny-outline' : event.difficulty === 'hard' ? 'flame' : 'walk-outline'
+              }
               size={18}
               color={event.difficulty === 'easy' ? '#22C55E' : event.difficulty === 'hard' ? '#EF4444' : '#3B82F6'}
             />
-            <Text style={[
-              styles.difficultyText,
-              { color: event.difficulty === 'easy' ? '#22C55E' : event.difficulty === 'hard' ? '#EF4444' : '#3B82F6' },
-            ]}>
-              {event.difficulty.charAt(0).toUpperCase() + event.difficulty.slice(1)} — {event.difficulty === 'easy' ? 'No prior experience needed' : event.difficulty === 'hard' ? 'Requires training or physical effort' : 'Basic skills helpful'}
+            <Text
+              style={[
+                styles.difficultyText,
+                {
+                  color: event.difficulty === 'easy' ? '#22C55E' : event.difficulty === 'hard' ? '#EF4444' : '#3B82F6',
+                },
+              ]}
+            >
+              {event.difficulty.charAt(0).toUpperCase() + event.difficulty.slice(1)} —{' '}
+              {event.difficulty === 'easy'
+                ? 'No prior experience needed'
+                : event.difficulty === 'hard'
+                  ? 'Requires training or physical effort'
+                  : 'Basic skills helpful'}
             </Text>
           </View>
         </View>
@@ -502,8 +526,19 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing['2xl'] },
-  emptyTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base },
-  backHomeBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius.xl, marginTop: Spacing.xl },
+  emptyTitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginTop: Spacing.base,
+  },
+  backHomeBtn: {
+    backgroundColor: KARMA_PURPLE,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.xl,
+    marginTop: Spacing.xl,
+  },
   backHomeBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
   scrollView: { flex: 1 },
 
@@ -513,9 +548,24 @@ const styles = StyleSheet.create({
   heroPlaceholder: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   heroGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 100 },
   heroBadges: { position: 'absolute', top: 16, left: 16, flexDirection: 'row', gap: 8 },
-  catBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, gap: 4 },
+  catBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    gap: 4,
+  },
   catBadgeText: { fontSize: 11, fontWeight: '700' },
-  liveBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#EF4444', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, gap: 4 },
+  liveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EF4444',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    gap: 4,
+  },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.text.inverse },
   liveText: { fontSize: 11, fontWeight: '700', color: colors.text.inverse },
 
@@ -524,22 +574,51 @@ const styles = StyleSheet.create({
   eventTitle: { fontSize: Typography.h3.fontSize, fontWeight: '800', color: colors.deepNavy, marginBottom: Spacing.sm },
   organizerRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: Spacing.sm },
   orgLogo: { width: 24, height: 24, borderRadius: 12 },
-  orgEmojiWrap: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  orgEmojiWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   orgEmoji: { fontSize: 14 },
   orgName: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, fontWeight: '500' },
-  joinedBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#DCFCE7', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, alignSelf: 'flex-start', gap: 4 },
+  joinedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    gap: 4,
+  },
   joinedBadgeText: { fontSize: Typography.caption.fontSize, fontWeight: '700', color: Colors.success },
 
   // Info
   infoSection: { backgroundColor: colors.text.inverse, padding: Spacing.base, marginTop: 8 },
-  infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.border.default },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.md,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
   infoContent: { flex: 1 },
   infoLabel: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginBottom: 2 },
   infoValue: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.deepNavy },
   infoSub: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2 },
 
   // Map
-  mapSection: { height: 140, marginHorizontal: Spacing.base, marginTop: 8, borderRadius: BorderRadius.lg, overflow: 'hidden' },
+  mapSection: {
+    height: 140,
+    marginHorizontal: Spacing.base,
+    marginTop: 8,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+  },
   map: { ...StyleSheet.absoluteFillObject },
 
   // Capacity
@@ -553,12 +632,22 @@ const styles = StyleSheet.create({
 
   // Impact
   impactSection: { backgroundColor: colors.text.inverse, padding: Spacing.base, marginTop: 8 },
-  sectionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.deepNavy, marginBottom: Spacing.md },
+  sectionTitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginBottom: Spacing.md,
+  },
   impactCards: { flexDirection: 'row', alignItems: 'center' },
   impactCard: { flex: 1, alignItems: 'center', padding: Spacing.md },
   impactDivider: { width: 1, backgroundColor: colors.border.default, height: 50 },
   impactNumber: { fontSize: 22, fontWeight: '800', color: colors.deepNavy, marginTop: 6 },
-  impactLabel: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2, textAlign: 'center' },
+  impactLabel: {
+    fontSize: Typography.caption.fontSize,
+    color: Colors.textSecondary,
+    marginTop: 2,
+    textAlign: 'center',
+  },
 
   // Description
   descSection: { backgroundColor: colors.text.inverse, padding: Spacing.base, marginTop: 8 },
@@ -566,7 +655,13 @@ const styles = StyleSheet.create({
 
   // Difficulty
   difficultySection: { backgroundColor: colors.text.inverse, padding: Spacing.base, marginTop: 8 },
-  difficultyBadge: { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.md, gap: 10 },
+  difficultyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    gap: 10,
+  },
   difficultyText: { fontSize: Typography.body.fontSize, fontWeight: '600', flex: 1 },
 
   // Booking status
@@ -593,13 +688,49 @@ const styles = StyleSheet.create({
   joinBtnInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, gap: 8 },
   joinBtnText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.inverse },
   joinedCta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  checkInBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: KARMA_PURPLE, paddingVertical: 14, borderRadius: BorderRadius.xl, gap: 8 },
+  checkInBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: KARMA_PURPLE,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+    gap: 8,
+  },
   checkInBtnText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.text.inverse },
-  checkOutBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5F3FF', paddingVertical: 14, borderRadius: BorderRadius.xl, gap: 8, borderWidth: 1, borderColor: KARMA_PURPLE },
+  checkOutBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F3FF',
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: KARMA_PURPLE,
+  },
   checkOutBtnText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: KARMA_PURPLE },
-  waitingCta: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background.secondary, paddingVertical: 14, borderRadius: BorderRadius.xl, gap: 8 },
+  waitingCta: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background.secondary,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+    gap: 8,
+  },
   waitingCtaText: { fontSize: Typography.body.fontSize, fontWeight: '500', color: Colors.textSecondary },
-  leaveBtn: { width: 48, height: 48, borderRadius: BorderRadius.xl, backgroundColor: '#FEF2F2', justifyContent: 'center', alignItems: 'center' },
+  leaveBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: '#FEF2F2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   closedCta: { alignItems: 'center', paddingVertical: 14 },
   closedCtaText: { fontSize: Typography.body.fontSize, color: Colors.textSecondary },
 });

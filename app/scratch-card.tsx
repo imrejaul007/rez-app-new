@@ -122,7 +122,7 @@ function ScratchCardPage() {
 
     // CA-GAM-025 FIX: Check session status before allowing scratch
     // Prevent replay attacks by verifying session is still in 'available' state
-    if (session?.status && session.status !== 'available') {
+    if (session?.status && session.status !== 'pending') {
       platformAlertSimple('Info', 'This session has already been played.');
       return;
     }

@@ -181,8 +181,10 @@ export const useWallet = ({
   // useEffect is already imported at the top of this file.
   useEffect(() => {
     if (__DEV__) {
-      console.warn(
-        '[useWallet] This hook is deprecated. Use useWalletContext() from @/contexts/WalletContext instead.'
+      logger.warn(
+        '[useWallet] This hook is deprecated. Use useWalletContext() from @/contexts/WalletContext instead.',
+        undefined,
+        'useWallet',
       );
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

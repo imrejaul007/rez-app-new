@@ -48,7 +48,7 @@ class OfflineQueueService {
    */
   private decryptQueueData(encryptedData: string): QueuedOperation[] {
     try {
-      const jsonString = atob(encryptedData);
+      const jsonString = Buffer.from(encryptedData, 'base64').toString('utf8');
       return JSON.parse(jsonString);
     } catch {
       return [];

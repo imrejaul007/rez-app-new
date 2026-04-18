@@ -22,7 +22,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { getCategoryConfig } from '@/config/categoryConfig';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { isStoreOpen } from '@/utils/dateUtils';
+import { isStoreOpen } from '@/types/unified/guards';
 
 // Subcategory metadata for icons and colors
 const SUBCATEGORY_META: Record<
@@ -493,7 +493,7 @@ function SharedCategoryPage() {
 
         if (response.success && response.data) {
           const storesData = Array.isArray(response.data) ? response.data : response.data.stores || [];
-          const total = response.data.total || storesData.length;
+          const total = response.data.pagination?.total ?? storesData.length;
           if (!isMounted()) return;
           setTotalCount(total);
 

@@ -72,6 +72,7 @@ export interface KarmaEvent {
   gpsRadius?: number;
   isJoined?: boolean;
   qrCodes?: { checkIn: string; checkOut: string };
+  totalHours?: number;
 }
 
 export interface EventFilters {

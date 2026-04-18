@@ -156,7 +156,9 @@ export default function HotelSearchScreen() {
       if (existing && !needsRefresh) {
         try {
           // Decode expiry from JWT payload (base64url middle segment)
-          const payload = JSON.parse(atob(existing.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+          const payload = JSON.parse(
+            Buffer.from(existing.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'),
+          );
           const expiresInMs = (payload.exp ?? 0) * 1000 - Date.now();
           if (expiresInMs < 5 * 60 * 1000) needsRefresh = true; // refresh if < 5 min left
         } catch {
