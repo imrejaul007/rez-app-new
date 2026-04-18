@@ -76,7 +76,7 @@ function xorDeobfuscate(obfuscated: string): string {
     const b64 = obfuscated.replace(/-/g, '+').replace(/_/g, '/');
     // Pad to multiple of 4
     const padded = b64 + '==='.slice(0, (4 - (b64.length % 4)) % 4);
-    const decoded = atob(padded);
+    const decoded = Buffer.from(padded, 'base64').toString('utf8');
     const keyBytes = new TextEncoder().encode(XOR_OBFUSCATION_KEY_BASE);
     const encoded = new TextEncoder().encode(decoded);
     const result = new Uint8Array(encoded.length);

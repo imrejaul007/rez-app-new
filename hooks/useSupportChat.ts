@@ -27,12 +27,7 @@ import type {
   OfflineMessage,
   UseSupportChatReturn,
 } from '@/types/supportChat.types';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 const STORAGE_KEYS = {
   CURRENT_TICKET: 'support_current_ticket',
@@ -171,7 +166,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       await loadStoredData();
       setConnecting(false);
     } catch (error: any) {
-      devLog.error('Failed to initialize support chat:', error);
+      logger.error('Failed to initialize support chat:', error);
       setConnecting(false);
     }
   };
@@ -361,7 +356,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return null;
     } catch (error: any) {
-      devLog.error('Error creating ticket:', error);
+      logger.error('Error creating ticket:', error);
       setMessagesError('Failed to create support ticket');
       return null;
     }
@@ -386,7 +381,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return success;
     } catch (error: any) {
-      devLog.error('Error closing ticket:', error);
+      logger.error('Error closing ticket:', error);
       return false;
     }
   };
@@ -405,7 +400,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return success;
     } catch (error: any) {
-      devLog.error('Error reopening ticket:', error);
+      logger.error('Error reopening ticket:', error);
       return false;
     }
   };
@@ -417,7 +412,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     messageAttachments?: MessageAttachment[]
   ): Promise<boolean> => {
     if (!currentTicket) {
-      devLog.error('No active ticket');
+      logger.error('No active ticket');
       return false;
     }
 
@@ -490,7 +485,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
         return false;
       }
     } catch (error: any) {
-      devLog.error('Error sending message:', error);
+      logger.error('Error sending message:', error);
       // Remove optimistic message on error
       setMessages((prev) =>
         prev.filter((msg) => msg.id !== optimisticMessage.id)
@@ -518,7 +513,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return null;
     } catch (error: any) {
-      devLog.error('Error uploading attachment:', error);
+      logger.error('Error uploading attachment:', error);
       return null;
     }
   };
@@ -538,7 +533,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return success;
     } catch (error: any) {
-      devLog.error('Error deleting message:', error);
+      logger.error('Error deleting message:', error);
       return false;
     }
   };
@@ -604,7 +599,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return false;
     } catch (error: any) {
-      devLog.error('Error requesting agent:', error);
+      logger.error('Error requesting agent:', error);
       return false;
     }
   };
@@ -624,7 +619,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return transfer !== null;
     } catch (error: any) {
-      devLog.error('Error transferring to agent:', error);
+      logger.error('Error transferring to agent:', error);
       return false;
     }
   };
@@ -655,7 +650,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return success;
     } catch (error: any) {
-      devLog.error('Error rating conversation:', error);
+      logger.error('Error rating conversation:', error);
       return false;
     }
   };
@@ -673,7 +668,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       return [];
     } catch (error: any) {
-      devLog.error('Error searching FAQ:', error);
+      logger.error('Error searching FAQ:', error);
       return [];
     }
   };
@@ -682,7 +677,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     try {
       return await supportChatApi.markFAQHelpful(faqId, helpful);
     } catch (error: any) {
-      devLog.error('Error marking FAQ helpful:', error);
+      logger.error('Error marking FAQ helpful:', error);
       return false;
     }
   };
@@ -696,7 +691,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       const callRequest = await supportChatApi.requestCall(currentTicket.id, type);
       return callRequest !== null;
     } catch (error: any) {
-      devLog.error('Error requesting call:', error);
+      logger.error('Error requesting call:', error);
       return false;
     }
   };
@@ -705,7 +700,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     try {
       return await supportChatApi.acceptCall(callId);
     } catch (error: any) {
-      devLog.error('Error accepting call:', error);
+      logger.error('Error accepting call:', error);
       return false;
     }
   };
@@ -714,7 +709,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     try {
       return await supportChatApi.rejectCall(callId);
     } catch (error: any) {
-      devLog.error('Error rejecting call:', error);
+      logger.error('Error rejecting call:', error);
       return false;
     }
   };
@@ -760,7 +755,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
         setMessages((prev) => [...response.messages, ...prev]);
       }
     } catch (error: any) {
-      devLog.error('Error loading messages:', error);
+      logger.error('Error loading messages:', error);
       setMessagesError('Failed to load messages');
     } finally {
       setMessagesLoading(false);
@@ -831,7 +826,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
             );
           }
         } catch (error: any) {
-          devLog.error('Failed to send offline message:', error);
+          logger.error('Failed to send offline message:', error);
         }
       }
     }
@@ -956,7 +951,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
         setInputText(storedDraft);
       }
     } catch (error: any) {
-      devLog.error('Error loading stored data:', error);
+      logger.error('Error loading stored data:', error);
     }
   };
 

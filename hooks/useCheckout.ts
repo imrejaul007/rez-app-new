@@ -44,12 +44,7 @@ import discountsApi from '@/services/discountsApi';
 import { queryKeys } from '@/lib/queryKeys';
 // OG-D004 FIX: Persist checkout progress across OS background-kills.
 import { useCheckoutDraftStore, getActiveDraft } from '@/stores/checkoutDraftStore';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Helper function to group checkout items by store
 interface StoreGroup {
@@ -275,7 +270,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     if (!hasRazorpayPending && !hasWalletPending) return;
 
     hasAttemptedRecoveryRef.current = true;
-    devLog.log('[Checkout] Detected pending payment recovery:', {
+    logger.info('[Checkout] Detected pending payment recovery:', {
       razorpay: hasRazorpayPending ? draft.razorpayPaymentId : null,
       wallet: hasWalletPending ? draft.walletTransactionId : null,
     });
@@ -298,7 +293,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const { orderId, transactionId } = verifyResponse.data;
             if (orderId) {
               // Payment was verified and order exists — navigate to success.
-              devLog.log('[Checkout] Razorpay payment recovered, orderId:', orderId);
+              logger.info('[Checkout] Razorpay payment recovered, orderId:', orderId);
               clearDraft();
               showToast({ message: 'Your previous payment was recovered successfully!', type: 'success' });
               router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId || draft.razorpayPaymentId}&paymentMethod=razorpay`);
@@ -309,7 +304,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // Verification didn't return an order — payment may have been
           // captured but order was never created. Show a support message
           // and clear the draft so the user isn't stuck in a loop.
-          devLog.warn('[Checkout] Razorpay payment found but no order was created. Payment ID:', draft.razorpayPaymentId);
+          logger.warn('[Checkout] Razorpay payment found but no order was created. Payment ID:', draft.razorpayPaymentId);
           clearDraft();
           showToast({
             message: 'We found a previous payment that wasn\'t completed. If you were charged, please contact support with payment ID: ' + draft.razorpayPaymentId,
@@ -320,7 +315,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // Wallet was debited but order was never created.
           // We cannot create the order from the client (we lost the checkout
           // state), so inform the user and clear the draft.
-          devLog.warn('[Checkout] Wallet payment pending but order not created. Transaction ID:', draft.walletTransactionId);
+          logger.warn('[Checkout] Wallet payment pending but order not created. Transaction ID:', draft.walletTransactionId);
           clearDraft();
           showToast({
             message: 'A previous wallet payment was not completed. If your balance was deducted, please contact support with transaction ID: ' + draft.walletTransactionId,
@@ -328,7 +323,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           });
         }
       } catch (err) {
-        devLog.error('[Checkout] Payment recovery failed:', err);
+        logger.error('[Checkout] Payment recovery failed:', err);
         // CA-CMC-049 FIX: If backend is down during recovery, we still need to handle it gracefully.
         // TODO (SERVER-SIDE): Implement server-side order reconciliation endpoint that:
         // 1. Accepts razorpayPaymentId or walletTransactionId
@@ -386,7 +381,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           totalPayable: Math.max(0, prev.billSummary.totalPayable - discountAmount),
         };
 
-        devLog.log('💳 [Checkout] Applied card offer from cart:', { offer, discountAmount });
+        logger.info('💳 [Checkout] Applied card offer from cart:', { offer, discountAmount });
 
         return {
           ...prev,
@@ -487,7 +482,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             return;
           }
         } catch (orderError) {
-          devLog.warn('⚠️ [Checkout] Failed to load retry order, falling back to cart:', orderError);
+          logger.warn('⚠️ [Checkout] Failed to load retry order, falling back to cart:', orderError);
         }
       }
 
@@ -543,7 +538,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           const taxes = Math.round(taxBase * TAX_RATE);
 
           // Debug: Log the values
-          devLog.log('💰 [Checkout] Bill calculation:', {
+          logger.info('💰 [Checkout] Bill calculation:', {
             itemTotal,
             lockFeeDiscount,
             deliveryFee,
@@ -684,7 +679,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // Process wallet refresh result
           let walletCategoryBalances: Record<string, any> | null = null;
           if (walletRefreshResult.status === 'rejected') {
-            devLog.error('💳 [Checkout] Failed to refresh wallet, using cached balance:', walletRefreshResult.reason);
+            logger.error('💳 [Checkout] Failed to refresh wallet, using cached balance:', walletRefreshResult.reason);
           }
 
           // Read wallet data from shared WalletContext (via refs for fresh values after refresh)
@@ -732,7 +727,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 }
               };
 
-              devLog.log('💰 [Checkout] Wallet coins loaded from context:', {
+              logger.info('💰 [Checkout] Wallet coins loaded from context:', {
                 rezCoins: realCoinSystem.rezCoin.available,
                 promoCoins: realCoinSystem.promoCoin.available,
                 brandedCoinsAvailable: realCoinSystem.storePromoCoin?.available || 0,
@@ -747,7 +742,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               });
             }
           } catch (walletError) {
-            devLog.error('💳 [Checkout] Failed to read wallet context, using 0 balance:', walletError);
+            logger.error('💳 [Checkout] Failed to read wallet context, using 0 balance:', walletError);
           }
 
           // Process coupons result
@@ -770,7 +765,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               }));
             }
           } else if (couponsResult.status === 'rejected') {
-            devLog.error('💳 [Checkout] Failed to load coupons:', couponsResult.reason);
+            logger.error('💳 [Checkout] Failed to load coupons:', couponsResult.reason);
           }
 
           // Process store details result
@@ -812,7 +807,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               }
             }
           } else if (storeResult.status === 'rejected') {
-            devLog.warn('Failed to fetch store details, using defaults:', storeResult.reason);
+            logger.warn('Failed to fetch store details, using defaults:', storeResult.reason);
           }
 
           // Override rez coin balance with category-specific amount if available
@@ -820,7 +815,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const catBal = walletCategoryBalances[realStore.categorySlug];
             if (catBal && catBal.available > 0) {
               realCoinSystem.rezCoin.available = catBal.available;
-              devLog.log('💰 [Checkout] Category coin balance applied:', realStore.categorySlug, catBal.available);
+              logger.info('💰 [Checkout] Category coin balance applied:', realStore.categorySlug, catBal.available);
             }
           }
 
@@ -832,7 +827,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           let defaultAddress: CheckoutDeliveryAddress | undefined;
           if (addressResult.status === 'fulfilled' && addressResult.value) {
             const addressResponse = addressResult.value;
-            devLog.log('📍 [Checkout] Address response:', addressResponse);
+            logger.info('📍 [Checkout] Address response:', addressResponse);
 
             if (addressResponse.success && addressResponse.data) {
               userAddresses = addressResponse.data.map((addr: any) => ({
@@ -878,18 +873,18 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 const draftAddr = userAddresses.find(a => a.id === activeDraft.selectedAddressId);
                 if (draftAddr) {
                   defaultAddress = draftAddr;
-                  devLog.log('📍 [Checkout] Address restored from draft:', draftAddr.addressLine1);
+                  logger.info('📍 [Checkout] Address restored from draft:', draftAddr.addressLine1);
                 }
               }
 
-              devLog.log('📍 [Checkout] Addresses loaded:', {
+              logger.info('📍 [Checkout] Addresses loaded:', {
                 total: userAddresses.length,
                 defaultAddress: defaultAddress?.addressLine1 || 'none',
                 lastUsedMatch: !!lastUsedAddress,
               });
             }
           } else if (addressResult.status === 'rejected') {
-            devLog.error('📍 [Checkout] Failed to load addresses:', addressResult.reason);
+            logger.error('📍 [Checkout] Failed to load addresses:', addressResult.reason);
           }
 
           // Adjust delivery fee for non-delivery fulfillment
@@ -938,7 +933,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           return;
         }
       } catch (apiError) {
-        devLog.warn('⚠️ [Checkout] Failed to load checkout data from API, using fallback:', apiError);
+        logger.warn('⚠️ [Checkout] Failed to load checkout data from API, using fallback:', apiError);
       }
 
       // Fallback to mock data + real wallet
@@ -966,7 +961,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Read wallet data from shared WalletContext (already refreshed above)
       try {
-        devLog.log('💳 [Checkout] Reading wallet balance from context (fallback)...');
+        logger.info('💳 [Checkout] Reading wallet balance from context (fallback)...');
         const currentWalletData = walletDataRef.current;
         const currentWalletRawData = walletRawDataRef.current;
 
@@ -996,23 +991,23 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             }
           };
 
-          devLog.log('💳 [Checkout] Loaded wallet coins from context:', {
+          logger.info('💳 [Checkout] Loaded wallet coins from context:', {
             rez: realCoinSystem.rezCoin.available,
             promo: realCoinSystem.promoCoin.available,
             categoryBalance: fallbackCatBal
           });
         }
       } catch (walletError) {
-        devLog.error('💳 [Checkout] Failed to read wallet context (fallback), using 0 balance:', walletError);
+        logger.error('💳 [Checkout] Failed to read wallet context (fallback), using 0 balance:', walletError);
       }
       
       // Fetch store promo coins for this store (fallback)
       try {
         // For fallback, we might not have checkoutStore, but we can try from state or mock data
-        devLog.log('💎 [Checkout] Skipping store promo coins in fallback mode');
+        logger.info('💎 [Checkout] Skipping store promo coins in fallback mode');
         // Note: In fallback mode, store ID might not be available yet
       } catch (storeCoinsError) {
-        devLog.error('💎 [Checkout] Failed to load store promo coins (fallback):', storeCoinsError);
+        logger.error('💎 [Checkout] Failed to load store promo coins (fallback):', storeCoinsError);
       }
 
       // Fire independent fallback API calls in parallel (coupons cached via react-query)
@@ -1041,10 +1036,10 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             validUntil: coupon.validTo,
             termsAndConditions: coupon.termsAndConditions || [],
           }));
-          devLog.log('💳 [Checkout] Loaded coupons (fallback)');
+          logger.info('💳 [Checkout] Loaded coupons (fallback)');
         }
       } else if (fallbackCouponsResult.status === 'rejected') {
-        devLog.error('💳 [Checkout] Failed to load coupons (fallback):', fallbackCouponsResult.reason);
+        logger.error('💳 [Checkout] Failed to load coupons (fallback):', fallbackCouponsResult.reason);
       }
 
       const data = fallbackMockResult.status === 'fulfilled' ? fallbackMockResult.value : await CheckoutData.api.initializeCheckout();
@@ -1114,11 +1109,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         subtotal: state.items.reduce((total, item) => total + (item.price * item.quantity), 0),
       };
 
-      devLog.log('🎟️ [Checkout] Validating coupon:', code.code, 'with cart data:', cartData);
+      logger.info('🎟️ [Checkout] Validating coupon:', code.code, 'with cart data:', cartData);
 
       const response: any = await couponService.validateCoupon(code.code, cartData);
 
-      devLog.log('🎟️ [Checkout] Coupon validation response:', response);
+      logger.info('🎟️ [Checkout] Coupon validation response:', response);
 
       if (response.success && response.data) {
         // Calculate new bill summary with coupon discount
@@ -1146,12 +1141,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         const totalAfterDiscount = totalBeforeDiscount - (newBillSummary.lockFeeDiscount || 0) - discountAmount - coinUsage.rez - coinUsage.promo;
         newBillSummary.totalPayable = Math.max(0, Math.round(totalAfterDiscount));
 
-        devLog.log('🎟️ [Checkout] New bill summary after coupon:', newBillSummary);
-        devLog.log('🎟️ [Checkout] Setting state with appliedPromoCode:', code);
-        devLog.log('🎟️ [Checkout] Setting state with billSummary:', newBillSummary);
+        logger.info('🎟️ [Checkout] New bill summary after coupon:', newBillSummary);
+        logger.info('🎟️ [Checkout] Setting state with appliedPromoCode:', code);
+        logger.info('🎟️ [Checkout] Setting state with billSummary:', newBillSummary);
 
         setState(prev => {
-          devLog.log('🎟️ [Checkout] Previous state:', { appliedPromoCode: prev.appliedPromoCode, billSummary: prev.billSummary });
+          logger.info('🎟️ [Checkout] Previous state:', { appliedPromoCode: prev.appliedPromoCode, billSummary: prev.billSummary });
           const newState = {
             ...prev,
             appliedPromoCode: code,
@@ -1160,13 +1155,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             showPromoCodeSection: false,
             error: null,
           };
-          devLog.log('🎟️ [Checkout] New state:', { appliedPromoCode: newState.appliedPromoCode, billSummary: newState.billSummary });
+          logger.info('🎟️ [Checkout] New state:', { appliedPromoCode: newState.appliedPromoCode, billSummary: newState.billSummary });
           return newState;
         });
 
         return { success: true, message: `${code.code} applied! You save ${currencySymbol}${discountAmount}`, discount: discountAmount };
       } else {
-        devLog.error('💳 [Checkout] Coupon invalid:', response.message);
+        logger.error('💳 [Checkout] Coupon invalid:', response.message);
         const errorMsg = response.message || 'Invalid coupon code';
         setState(prev => ({
           ...prev,
@@ -1176,7 +1171,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         return { success: false, message: errorMsg };
       }
     } catch (error: any) {
-      devLog.error('💳 [Checkout] Coupon validation error:', error);
+      logger.error('💳 [Checkout] Coupon validation error:', error);
       const errorMsg = 'Failed to validate coupon';
       setState(prev => ({
         ...prev,
@@ -1429,7 +1424,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   }, []);
 
   const handleCustomCoinAmount = useCallback((coinType: 'rez' | 'promo' | 'storePromo', amount: number) => {
-    devLog.log('🎚️ [handleCustomCoinAmount] Called with:', { coinType, amount });
+    logger.info('🎚️ [handleCustomCoinAmount] Called with:', { coinType, amount });
     setState(prev => {
 
       const coinSystem = prev.coinSystem;
@@ -1437,11 +1432,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       const isStorePromo = coinType === 'storePromo';
       const coin = isRezCoin ? coinSystem.rezCoin : (isStorePromo ? coinSystem.storePromoCoin : coinSystem.promoCoin);
 
-      devLog.log('🎚️ [handleCustomCoinAmount] Coin state:', { available: coin.available, currentUsed: coin.used });
+      logger.info('🎚️ [handleCustomCoinAmount] Coin state:', { available: coin.available, currentUsed: coin.used });
 
       // Validate amount
       if (amount <= 0 || amount > coin.available) {
-        devLog.log('💳 [Checkout] Invalid coin amount - returning early. amount:', amount, 'available:', coin.available);
+        logger.info('💳 [Checkout] Invalid coin amount - returning early. amount:', amount, 'available:', coin.available);
         return prev;
       }
       
@@ -1480,7 +1475,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // Ensure amount doesn't exceed order total
       const finalAmount = Math.min(amount, maxAllowed, coin.available);
 
-      devLog.log('🎚️ [handleCustomCoinAmount] Final calculation:', {
+      logger.info('🎚️ [handleCustomCoinAmount] Final calculation:', {
         requestedAmount: amount,
         maxAllowed,
         available: coin.available,
@@ -1495,7 +1490,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         },
       };
 
-      devLog.log('🎚️ [handleCustomCoinAmount] ✅ STATE UPDATED - newCoinSystem.rezCoin.used:', newCoinSystem.rezCoin.used);
+      logger.info('🎚️ [handleCustomCoinAmount] ✅ STATE UPDATED - newCoinSystem.rezCoin.used:', newCoinSystem.rezCoin.used);
 
       const coinUsage = {
         rez: isRezCoin ? finalAmount : coinSystem.rezCoin.used,
@@ -1586,7 +1581,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         totalPayable: Math.max(0, prev.billSummary.totalPayable - discountAmount + prev.billSummary.cardOfferDiscount),
       };
 
-      devLog.log('💳 [Checkout] Card offer applied:', { offer: cardOffer, discountAmount, newTotal: newBillSummary.totalPayable });
+      logger.info('💳 [Checkout] Card offer applied:', { offer: cardOffer, discountAmount, newTotal: newBillSummary.totalPayable });
 
       return {
         ...prev,
@@ -1608,7 +1603,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         cardOfferDiscount: 0,
       };
 
-      devLog.log('💳 [Checkout] Card offer removed, new total:', newBillSummary.totalPayable);
+      logger.info('💳 [Checkout] Card offer removed, new total:', newBillSummary.totalPayable);
 
       return {
         ...prev,
@@ -1668,15 +1663,15 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       };
       (orderData as any).coinsUsed = coinsUsed;
 
-      devLog.log('💰 [Checkout] Sending coinsUsed to backend:', JSON.stringify(coinsUsed));
-      devLog.log('💰 [Checkout] Store promo coin state:', JSON.stringify(state.coinSystem.storePromoCoin));
+      logger.info('💰 [Checkout] Sending coinsUsed to backend:', JSON.stringify(coinsUsed));
+      logger.info('💰 [Checkout] Store promo coin state:', JSON.stringify(state.coinSystem.storePromoCoin));
 
       // Create order via API
       const response: any = await ordersService.createOrder(orderData);
 
       if (response.success && response.data) {
         // Debug: Log the order data to trace ID extraction
-        devLog.log('✅ [Checkout] Order created successfully:', {
+        logger.info('✅ [Checkout] Order created successfully:', {
           'response.data.id': response.data.id,
           'response.data._id': response.data._id,
           'orderNumber': response.data.orderNumber,
@@ -1688,11 +1683,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           await cartService.clearCart();
           await cartActions.clearCart();
         } catch (clearError) {
-          devLog.error('💳 [Checkout] Failed to clear cart:', clearError);
+          logger.error('💳 [Checkout] Failed to clear cart:', clearError);
         }
 
         const orderId = response.data.id || response.data._id;
-        devLog.log('🔗 [Checkout] Navigating to payment-success with orderId:', orderId);
+        logger.info('🔗 [Checkout] Navigating to payment-success with orderId:', orderId);
 
         // Non-blocking analytics
         try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId, cartValue: state.billSummary.itemTotal, paymentMethod: state.selectedPaymentMethod?.id || '' }); } catch {} // Silent: non-critical analytics
@@ -1714,7 +1709,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         }));
       }
     } catch (error: any) {
-      devLog.error('💳 [Checkout] Order creation failed:', error);
+      logger.error('💳 [Checkout] Order creation failed:', error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -1759,7 +1754,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     // Validate sufficient balance (check total available, not just used)
     if (totalPayable > 0 && totalAvailableBalance < totalPayable) {
       const shortfall = totalPayable - totalAvailableBalance;
-      devLog.error('💳 [Checkout] Insufficient balance:', { shortfall, totalPayable, totalAvailableBalance });
+      logger.error('💳 [Checkout] Insufficient balance:', { shortfall, totalPayable, totalAvailableBalance });
       setState(prev => ({
         ...prev,
         error: `Insufficient balance. You need ${shortfall} more RC to complete this purchase.`
@@ -1770,7 +1765,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     // OG-002 FIX: Prevent double-submission if user taps Pay again while a
     // previous attempt is still in flight (e.g. slow network).
     if (isSubmittingRef.current) {
-      devLog.warn('👛 [Wallet] Payment already in progress, ignoring duplicate call');
+      logger.warn('👛 [Wallet] Payment already in progress, ignoring duplicate call');
       return;
     }
     isSubmittingRef.current = true;
@@ -1816,19 +1811,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // Add redemption code if provided (for deal redemptions)
       if (coinValuesOverride?.redemptionCode) {
         (orderData as any).redemptionCode = coinValuesOverride.redemptionCode;
-        devLog.log('[Wallet] Redemption code added to order:', coinValuesOverride.redemptionCode);
+        logger.info('[Wallet] Redemption code added to order:', coinValuesOverride.redemptionCode);
       }
 
       // Add offer redemption code if provided (for cashback vouchers RED-xxx)
       if (coinValuesOverride?.offerRedemptionCode) {
         (orderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-        devLog.log('[Wallet] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
+        logger.info('[Wallet] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
       }
 
       // Add lock fee discount if applicable
       if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) {
         (orderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
-        devLog.log('[Wallet] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
+        logger.info('[Wallet] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
       }
 
       // Add coinsUsed to order data - map rezCoin back to rezCoins for backend
@@ -1850,7 +1845,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         storePromoCoins: storePromoCoinsValue,
         totalCoinsValue: rezCoinsValue + promoCoinsValue + storePromoCoinsValue,
       };
-      devLog.log('[Wallet] coinsUsed being sent to backend:', JSON.stringify(coinsUsedData));
+      logger.info('[Wallet] coinsUsed being sent to backend:', JSON.stringify(coinsUsedData));
       (orderData as any).coinsUsed = coinsUsedData;
 
       // ATOMIC WALLET CHECKOUT FIX: Include the wallet payment amount in the
@@ -1867,7 +1862,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       );
 
       if (!orderResponse.success || !orderResponse.data) {
-        devLog.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error);
+        logger.error('[Checkout] Order + wallet payment failed atomically:', orderResponse.error);
         setState(prev => ({
           ...prev,
           loading: false,
@@ -1885,7 +1880,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       if (!transactionId) {
         // Fallback: backend is an older version without atomic wallet support.
         // Run the separate wallet debit as before so we don't break in mixed deploys.
-        devLog.warn('[Wallet] Backend did not return walletPaymentResult — falling back to separate payment call');
+        logger.warn('[Wallet] Backend did not return walletPaymentResult — falling back to separate payment call');
         const paymentData = {
           amount: totalPayable,
           orderId: orderResponse.data.id || orderResponse.data._id,
@@ -1908,7 +1903,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         );
 
         if (!walletResponse.success || !walletResponse.data) {
-          devLog.error('[Checkout] Fallback wallet payment failed:', walletResponse.error);
+          logger.error('[Checkout] Fallback wallet payment failed:', walletResponse.error);
           setState(prev => ({
             ...prev,
             loading: false,
@@ -1926,7 +1921,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         await cartService.clearCart();
         await cartActions.clearCart();
       } catch (clearError) {
-        devLog.error('[Checkout] Failed to clear cart:', clearError);
+        logger.error('[Checkout] Failed to clear cart:', clearError);
         // Non-critical error, continue
       }
 
@@ -1947,7 +1942,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId}&paymentMethod=wallet`);
 
     } catch (error: any) {
-      devLog.error('💳 [Checkout] Wallet payment error:', error);
+      logger.error('💳 [Checkout] Wallet payment error:', error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -1975,9 +1970,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     redemptionCode?: string;
     offerRedemptionCode?: string;
   }) => {
-    devLog.log('💵 [COD] handleCODPayment started');
-    devLog.log('💵 [COD] coinValuesOverride:', coinValuesOverride);
-    devLog.log('💵 [COD] Current state:', {
+    logger.info('💵 [COD] handleCODPayment started');
+    logger.info('💵 [COD] coinValuesOverride:', coinValuesOverride);
+    logger.info('💵 [COD] Current state:', {
       selectedAddress: state.selectedAddress,
       items: state.items?.length,
       billSummary: state.billSummary
@@ -1985,7 +1980,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
     // OG-002 FIX: Prevent duplicate COD submissions.
     if (isSubmittingRef.current) {
-      devLog.warn('💵 [COD] Submission already in progress, ignoring duplicate call');
+      logger.warn('💵 [COD] Submission already in progress, ignoring duplicate call');
       return;
     }
     isSubmittingRef.current = true;
@@ -2002,16 +1997,16 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     try {
       // Step 1: Validate delivery address (required for delivery only)
       if (state.fulfillment.selectedType === 'delivery' && !state.selectedAddress) {
-        devLog.error('💵 [COD] No delivery address selected!');
+        logger.error('💵 [COD] No delivery address selected!');
         setState(prev => ({ ...prev, loading: false, error: 'Please select a delivery address', currentStep: 'checkout' }));
         return;
       }
-      devLog.log('💵 [COD] Address validated:', state.selectedAddress?.addressLine1 || 'N/A (non-delivery)');
+      logger.info('💵 [COD] Address validated:', state.selectedAddress?.addressLine1 || 'N/A (non-delivery)');
 
       // Step 2: Group items by store for multi-store support
       const storeGroups = groupItemsByStore(state.items);
       const isMultiStore = storeGroups.length > 1;
-      devLog.log('💵 [COD] Store groups:', storeGroups.length, isMultiStore ? '(MULTI-STORE ORDER)' : '(single store)');
+      logger.info('💵 [COD] Store groups:', storeGroups.length, isMultiStore ? '(MULTI-STORE ORDER)' : '(single store)');
 
       // Calculate total coins to distribute
       const rezCoinsValue = coinValuesOverride
@@ -2035,7 +2030,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       const failedStores: string[] = [];
 
       for (const storeGroup of storeGroups) {
-        devLog.log(`💵 [COD] Creating order for store: ${storeGroup.storeName} (${storeGroup.storeId})`);
+        logger.info(`💵 [COD] Creating order for store: ${storeGroup.storeName} (${storeGroup.storeId})`);
 
         // Get coins for this store
         const storeCoins = coinsDistribution.get(storeGroup.storeId) || { rezCoins: 0, promoCoins: 0, storePromoCoins: 0 };
@@ -2094,7 +2089,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         });
 
         // DEBUG: Log all values before condition checks
-        devLog.log('🔍 [COD DEBUG] Values before adding to order:', {
+        logger.info('🔍 [COD DEBUG] Values before adding to order:', {
           'coinValuesOverride': coinValuesOverride,
           'coinValuesOverride?.redemptionCode': coinValuesOverride?.redemptionCode,
           'state.billSummary': state.billSummary,
@@ -2106,26 +2101,26 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         // Add redemption code if provided (for deal redemptions) - only for first/single store order
         if (coinValuesOverride?.redemptionCode && storeGroups.indexOf(storeGroup) === 0) {
           (storeOrderData as any).redemptionCode = coinValuesOverride.redemptionCode;
-          devLog.log(`💵 [COD] Redemption code added to order for ${storeGroup.storeName}:`, coinValuesOverride.redemptionCode);
+          logger.info(`💵 [COD] Redemption code added to order for ${storeGroup.storeName}:`, coinValuesOverride.redemptionCode);
         } else {
-          devLog.log(`⚠️ [COD] Redemption code NOT added. Reason: redemptionCode=${coinValuesOverride?.redemptionCode}, isFirstStore=${storeGroups.indexOf(storeGroup) === 0}`);
+          logger.info(`⚠️ [COD] Redemption code NOT added. Reason: redemptionCode=${coinValuesOverride?.redemptionCode}, isFirstStore=${storeGroups.indexOf(storeGroup) === 0}`);
         }
 
         // Add offer redemption code if provided (for cashback vouchers RED-xxx) - only for first/single store order
         if (coinValuesOverride?.offerRedemptionCode && storeGroups.indexOf(storeGroup) === 0) {
           (storeOrderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-          devLog.log(`💵 [COD] Offer redemption code added to order for ${storeGroup.storeName}:`, coinValuesOverride.offerRedemptionCode);
+          logger.info(`💵 [COD] Offer redemption code added to order for ${storeGroup.storeName}:`, coinValuesOverride.offerRedemptionCode);
         }
 
         // Add lock fee discount if applicable - only for first/single store order
         if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0 && storeGroups.indexOf(storeGroup) === 0) {
           (storeOrderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
-          devLog.log(`💵 [COD] Lock fee discount added to order for ${storeGroup.storeName}:`, state.billSummary.lockFeeDiscount);
+          logger.info(`💵 [COD] Lock fee discount added to order for ${storeGroup.storeName}:`, state.billSummary.lockFeeDiscount);
         } else {
-          devLog.log(`⚠️ [COD] Lock fee discount NOT added. Reason: lockFeeDiscount=${state.billSummary?.lockFeeDiscount}, isFirstStore=${storeGroups.indexOf(storeGroup) === 0}`);
+          logger.info(`⚠️ [COD] Lock fee discount NOT added. Reason: lockFeeDiscount=${state.billSummary?.lockFeeDiscount}, isFirstStore=${storeGroups.indexOf(storeGroup) === 0}`);
         }
 
-        devLog.log(`💵 [COD] Store ${storeGroup.storeName} order data:`, {
+        logger.info(`💵 [COD] Store ${storeGroup.storeName} order data:`, {
           storeId: (storeOrderData as any).storeId,
           itemCount: storeGroup.items.length,
           subtotal: storeGroup.subtotal,
@@ -2143,23 +2138,23 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
           if (orderResponse.success && orderResponse.data) {
             // Debug: Log full order response to trace ID extraction
-            devLog.log(`✅ [COD] Order response for ${storeGroup.storeName}:`, {
+            logger.info(`✅ [COD] Order response for ${storeGroup.storeName}:`, {
               'data.id': orderResponse.data.id,
               'data._id': orderResponse.data._id,
               'orderNumber': orderResponse.data.orderNumber
             });
             const orderId = orderResponse.data.id || orderResponse.data._id;
             if (!orderId) {
-              devLog.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data);
+              logger.error(`❌ [COD] Order created but no ID found for ${storeGroup.storeName}!`, orderResponse.data);
             }
             createdOrderIds.push(orderId);
-            devLog.log(`✅ [COD] Order created for ${storeGroup.storeName}: ${orderId}`);
+            logger.info(`✅ [COD] Order created for ${storeGroup.storeName}: ${orderId}`);
           } else {
-            devLog.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error);
+            logger.error(`❌ [COD] Failed to create order for ${storeGroup.storeName}:`, orderResponse.error);
             failedStores.push(storeGroup.storeName);
           }
         } catch (err: any) {
-          devLog.error(`❌ [COD] Error creating order for ${storeGroup.storeName}:`, err);
+          logger.error(`❌ [COD] Error creating order for ${storeGroup.storeName}:`, err);
           failedStores.push(storeGroup.storeName);
         }
       }
@@ -2189,11 +2184,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         await cartService.clearCart();
         await cartActions.clearCart();
       } catch (clearError) {
-        devLog.error('💵 [Checkout] Failed to clear cart:', clearError);
+        logger.error('💵 [Checkout] Failed to clear cart:', clearError);
       }
 
       // Navigate to success page
-      devLog.log('💵 [COD] Orders created successfully:', createdOrderIds);
+      logger.info('💵 [COD] Orders created successfully:', createdOrderIds);
       setState(prev => ({ ...prev, currentStep: 'success', loading: false }));
 
       const transactionId = `COD_${Date.now()}`;
@@ -2211,7 +2206,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       router.replace(`/payment-success?orderId=${orderIdsParam}&transactionId=${transactionId}&paymentMethod=cod&multiStore=${isMultiStore}`);
 
     } catch (error: any) {
-      devLog.error('💵 [Checkout] COD payment error:', error);
+      logger.error('💵 [Checkout] COD payment error:', error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -2253,7 +2248,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
     // OG-002 FIX: Prevent duplicate Razorpay payment sessions.
     if (isSubmittingRef.current) {
-      devLog.warn('💳 [Razorpay] Payment already in progress, ignoring duplicate call');
+      logger.warn('💳 [Razorpay] Payment already in progress, ignoring duplicate call');
       return;
     }
     isSubmittingRef.current = true;
@@ -2287,7 +2282,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         storePromoCoins: storePromoCoinsValue,
         totalCoinsValue: rezCoinsValue + promoCoinsValue + storePromoCoinsValue,
       };
-      devLog.log('💳 [Razorpay] coinsUsed being sent:', JSON.stringify(coinsUsed));
+      logger.info('💳 [Razorpay] coinsUsed being sent:', JSON.stringify(coinsUsed));
 
       // Auto-apply card offer if available (will be validated when card is entered in Razorpay)
       // The offer will be applied via the CardOffersSection component or when card is validated
@@ -2347,12 +2342,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                     
                     if (applyResponse.success) {
                       appliedCardOffer = bestOffer;
-                      devLog.log('✅ [Checkout] Card offer auto-applied:', bestOffer.name);
+                      logger.info('✅ [Checkout] Card offer auto-applied:', bestOffer.name);
                     }
                   }
                 }
               } catch (err: any) {
-                devLog.error('⚠️ [Checkout] Error auto-applying card offer:', err);
+                logger.error('⚠️ [Checkout] Error auto-applying card offer:', err);
                 // Non-critical error, continue with order
               }
             }
@@ -2389,19 +2384,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             // Add redemption code if provided (for deal redemptions)
             if (coinValuesOverride?.redemptionCode) {
               (orderData as any).redemptionCode = coinValuesOverride.redemptionCode;
-              devLog.log('💳 [Razorpay] Redemption code added to order:', coinValuesOverride.redemptionCode);
+              logger.info('💳 [Razorpay] Redemption code added to order:', coinValuesOverride.redemptionCode);
             }
 
             // Add offer redemption code if provided (for cashback vouchers RED-xxx)
             if (coinValuesOverride?.offerRedemptionCode) {
               (orderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-              devLog.log('💳 [Razorpay] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
+              logger.info('💳 [Razorpay] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
             }
 
             // Add lock fee discount if applicable
             if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) {
               (orderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
-              devLog.log('💳 [Razorpay] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
+              logger.info('💳 [Razorpay] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
             }
 
             // Attach card offer if applied
@@ -2426,7 +2421,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             );
 
             if (!orderResponse.success || !orderResponse.data) {
-              devLog.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error);
+              logger.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error);
               showToast({
                 message: 'Payment successful but order creation failed. Please contact support.',
                 type: 'error',
@@ -2445,7 +2440,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               await cartService.clearCart();
               await cartActions.clearCart();
             } catch (clearError) {
-              devLog.error('⚠️ [Checkout] Failed to clear cart:', clearError);
+              logger.error('⚠️ [Checkout] Failed to clear cart:', clearError);
               // Non-critical error
             }
 
@@ -2468,14 +2463,14 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               `/payment-success?orderId=${orderId}&transactionId=${paymentResponse.transactionId}&paymentMethod=razorpay`
             );
           } catch (error: any) {
-            devLog.error('❌ [Checkout] Post-payment error:', error);
+            logger.error('❌ [Checkout] Post-payment error:', error);
             // Payment was charged but order creation failed — attempt server-side refund.
             try {
               await razorpayApi.requestRefund({ paymentId: razorpayPaymentId });
-              devLog.log('✅ [Checkout] Refund requested for payment:', razorpayPaymentId);
+              logger.info('✅ [Checkout] Refund requested for payment:', razorpayPaymentId);
             } catch (refundErr) {
               // Log but don't throw — user already sees the order-failure error.
-              devLog.error('⚠️ [Checkout] Refund request failed:', refundErr);
+              logger.error('⚠️ [Checkout] Refund request failed:', refundErr);
             }
             showToast({
               message: error instanceof Error ? error.message : 'Order creation failed',
@@ -2490,7 +2485,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           }
         },
         onError: (error) => {
-          devLog.error('❌ [Checkout] Razorpay payment error:', error);
+          logger.error('❌ [Checkout] Razorpay payment error:', error);
           showToast({
             message: error.message || 'Payment failed',
             type: 'error',
@@ -2504,7 +2499,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         },
       });
     } catch (error: any) {
-      devLog.error('❌ [Checkout] Razorpay initialization error:', error);
+      logger.error('❌ [Checkout] Razorpay initialization error:', error);
       showToast({
         message: error instanceof Error ? error.message : 'Failed to initialize payment',
         type: 'error',

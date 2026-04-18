@@ -14,7 +14,7 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 import { colors } from '@/constants/theme';
 
 const KARMA_PURPLE = '#8B5CF6';
-const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
+const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'] as const;
 
 interface KarmaHeaderProps {
   title: string;
@@ -49,9 +49,7 @@ export function KarmaHeader({ title, subtitle, showBack, rightAction }: KarmaHea
             <Text style={styles.headerTitle}>{title}</Text>
             {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
           </View>
-          <View style={styles.headerRight}>
-            {rightAction || <View style={{ width: 36 }} />}
-          </View>
+          <View style={styles.headerRight}>{rightAction || <View style={{ width: 36 }} />}</View>
         </View>
       </SafeAreaView>
     </LinearGradient>

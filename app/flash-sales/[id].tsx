@@ -152,7 +152,7 @@ function FlashSaleDetailPage() {
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setFlashSale(response.data);
+        setFlashSale(response.data as unknown as FlashSale);
         if (!isMounted()) return;
         setImageError(false);
       } else {
@@ -219,7 +219,7 @@ function FlashSaleDetailPage() {
       if (requestedQuantity > flashSale.limitPerUser) {
         platformAlertSimple(
           'Limit Exceeded',
-          `You can purchase a maximum of ${flashSale.limitPerUser} item(s) of this flash sale.`
+          `You can purchase a maximum of ${flashSale.limitPerUser} item(s) of this flash sale.`,
         );
         setIsProcessingPayment(false);
         return;

@@ -408,7 +408,7 @@ function OrderDetailsScreen() {
                   styles.paymentStatus,
                   {
                     color:
-                      (order.payment?.status || order.paymentStatus) === 'completed'
+                      (order.payment?.status || order.paymentStatus) === 'paid'
                         ? colors.lightMustard
                         : (order.payment?.status || order.paymentStatus) === 'failed'
                           ? '#ef4444'

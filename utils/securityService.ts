@@ -13,6 +13,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Crypto = (() => { try { return require('expo-crypto'); } catch { return { digestStringAsync: async () => '', CryptoDigestAlgorithm: { SHA256: 'SHA-256' } }; } })();
+import { logger } from '@/utils/logger';
 
 /**
  * Input Sanitization
@@ -564,7 +565,7 @@ export class SecurityLogger {
 
     // Log to console in dev
     if (__DEV__) {
-      console.log(`[Security ${severity.toUpperCase()}] ${type}: ${message}`);
+      logger.info(`[Security ${severity.toUpperCase()}] ${type}: ${message}`, undefined, 'Security');
     }
 
     // H-11 / H-12 FIX: Wire high/critical security events to Sentry for real-time

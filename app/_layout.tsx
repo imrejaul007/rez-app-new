@@ -32,11 +32,13 @@ initSentry();
   if (missing.length > 0) {
     const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;
     // Never throw on missing env — crashes the app before anything renders
-    console.error(`[Config] WARNING: ${msg}`);
+    logger.error(`[Config] WARNING: ${msg}`, undefined, 'Config');
   }
   if (missingRecommended.length > 0 && __DEV__) {
-    console.warn(
+    logger.warn(
       `[Config] Recommended env vars not set: ${missingRecommended.map(([k, v]) => `${k} (${v})`).join(', ')}`,
+      undefined,
+      'Config',
     );
   }
 })();
@@ -62,6 +64,13 @@ import { getActiveDraft } from '@/stores/checkoutDraftStore';
 import apiClient from '@/services/apiClient';
 import * as authStorage from '@/utils/authStorage';
 import { lookupStoreBySlug } from '@/services/storePaymentApi';
+
+interface StoreRouteInfo {
+  _id: string;
+  id?: string;
+  name: string;
+  logo?: string;
+}
 
 const FONT_TIMEOUT_MS = 5000;
 
@@ -143,14 +152,14 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as any)._id || (store as any).id,
+            storeId: store._id || store.id || '',
             storeName: store.name,
             storeLogo: store.logo || '',
             ...(tableNumber ? { tableNumber } : {}),
           },
-        } as any);
+        });
       } else {
-        router.push('/pay-in-store' as any);
+        router.push('/pay-in-store');
       }
       return;
     }
@@ -191,13 +200,13 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as any)._id || (store as any).id,
+            storeId: store._id || store.id || '',
             storeName: store.name,
             storeLogo: store.logo || '',
           },
-        } as any);
+        });
       } else {
-        router.push('/pay-in-store' as any);
+        router.push('/pay-in-store');
       }
       return;
     }
@@ -236,7 +245,7 @@ function RootLayout() {
     // 2. Store check-in deep links: rezapp://checkin?storeId=XYZ
     if (path === 'checkin' && params.storeId) {
       try {
-        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}` as any);
+        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}`);
       } catch {
         // If router isn't ready, navigate to tab root
       }
@@ -246,7 +255,7 @@ function RootLayout() {
     // 3. Generic route deep links (notification-tapped links, etc.)
     if (path && path !== '') {
       try {
-        router.push(`/${path}` as any);
+        router.push(`/${path}`);
       } catch {
         // Ignore navigation errors if route doesn't exist
       }
@@ -302,7 +311,7 @@ function RootLayout() {
 
           if (data?.route && typeof data.route === 'string') {
             try {
-              router.push(data.route as any);
+              router.push(data.route);
             } catch {
               // Ignore if route is invalid
             }

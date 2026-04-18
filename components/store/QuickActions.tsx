@@ -301,7 +301,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
               key={action.id}
               style={styles.compactButton}
               onPress={action.onPress}
-             
+              accessibilityRole="button"
+              accessibilityLabel={action.label}
             >
               <View style={styles.compactIconCircle}>
                 <Ionicons name={action.icon} size={14} color={colors.brand.green} />
@@ -326,7 +327,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
             key={action.id}
             style={styles.actionButton}
             onPress={action.onPress}
-           
+            accessibilityRole="button"
+            accessibilityLabel={action.label}
           >
             <View style={styles.iconContainer}>
               <Ionicons name={action.icon} size={18} color={colors.brand.green} />

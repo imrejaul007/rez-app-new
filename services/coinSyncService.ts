@@ -27,12 +27,7 @@ import walletApi from './walletApi';
 import pointsApi, { PointsBalance } from './pointsApi';
 import gamificationAPI from './gamificationApi';
 import apiClient, { ApiResponse } from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 export interface CoinSyncResult {
   success: boolean;
@@ -61,7 +56,7 @@ class CoinSyncService {
    */
   async getWalletBalance(): Promise<number> {
     try {
-      devLog.log('🔄 [COIN SYNC] Fetching wallet balance (source of truth)...');
+      logger.info('🔄 [COIN SYNC] Fetching wallet balance (source of truth)...');
 
       const response = await walletApi.getBalance();
 
@@ -91,17 +86,17 @@ class CoinSyncService {
 
         // Validate it's a safe number
         if (typeof balance !== 'number' || isNaN(balance)) {
-          devLog.warn('⚠️ [COIN SYNC] Wallet balance is NaN, using 0');
+          logger.warn('⚠️ [COIN SYNC] Wallet balance is NaN, using 0');
           balance = 0;
         }
 
-        devLog.log(`✅ [COIN SYNC] Wallet balance: ${balance}`);
+        logger.info(`✅ [COIN SYNC] Wallet balance: ${balance}`);
         return balance;
       }
 
       throw new Error(response.error || 'Failed to fetch wallet balance');
     } catch (error) {
-      devLog.error('❌ [COIN SYNC] Error fetching wallet balance:', error);
+      logger.error('❌ [COIN SYNC] Error fetching wallet balance:', error);
       throw error;
     }
   }
@@ -111,18 +106,18 @@ class CoinSyncService {
    */
   async getPointsBalance(): Promise<PointsBalance | null> {
     try {
-      devLog.log('🔄 [COIN SYNC] Fetching points balance for verification...');
+      logger.info('🔄 [COIN SYNC] Fetching points balance for verification...');
 
       const response = await pointsApi.getBalance();
 
       if (response.success && response.data) {
-        devLog.log(`✅ [COIN SYNC] Points balance: ${response.data.total}`);
+        logger.info(`✅ [COIN SYNC] Points balance: ${response.data.total}`);
         return response.data;
       }
 
       return null;
     } catch (error) {
-      devLog.warn('⚠️ [COIN SYNC] Could not fetch points balance:', error);
+      logger.warn('⚠️ [COIN SYNC] Could not fetch points balance:', error);
       return null;
     }
   }
@@ -137,7 +132,7 @@ class CoinSyncService {
     metadata?: any
   ): Promise<CoinRewardSyncResult> {
     try {
-      devLog.log(`🎮 [COIN SYNC] Syncing gamification reward: ${amount} coins from ${source}`);
+      logger.info(`🎮 [COIN SYNC] Syncing gamification reward: ${amount} coins from ${source}`);
 
       // CA-GAM-054 FIX: Validate award amount has max bound to prevent exploitation
       const MAX_AWARD_PER_EVENT = 10000;
@@ -161,12 +156,12 @@ class CoinSyncService {
         throw new Error(earnResponse.error || 'Failed to earn points');
       }
 
-      devLog.log(`✅ [COIN SYNC] Points awarded: ${amount}`);
+      logger.info(`✅ [COIN SYNC] Points awarded: ${amount}`);
 
       // Step 2: Verify wallet balance was updated
       const newWalletBalance = await this.getWalletBalance();
 
-      devLog.log(`✅ [COIN SYNC] Reward synced successfully. New wallet balance: ${newWalletBalance}`);
+      logger.info(`✅ [COIN SYNC] Reward synced successfully. New wallet balance: ${newWalletBalance}`);
 
       return {
         success: true,
@@ -175,7 +170,7 @@ class CoinSyncService {
         source,
       };
     } catch (error) {
-      devLog.error('❌ [COIN SYNC] Error syncing gamification reward:', error);
+      logger.error('❌ [COIN SYNC] Error syncing gamification reward:', error);
       return {
         success: false,
         coinsAdded: 0,
@@ -195,7 +190,7 @@ class CoinSyncService {
     metadata?: any
   ): Promise<CoinRewardSyncResult> {
     try {
-      devLog.log(`💸 [COIN SYNC] Spending ${amount} coins for: ${purpose}`);
+      logger.info(`💸 [COIN SYNC] Spending ${amount} coins for: ${purpose}`);
 
       if (amount <= 0) {
         throw new Error('Spend amount must be greater than 0');
@@ -217,12 +212,12 @@ class CoinSyncService {
         throw new Error(spendResponse.error || 'Failed to spend points');
       }
 
-      devLog.log(`✅ [COIN SYNC] Points spent: ${amount}`);
+      logger.info(`✅ [COIN SYNC] Points spent: ${amount}`);
 
       // Step 2: Verify wallet balance was updated
       const newWalletBalance = await this.getWalletBalance();
 
-      devLog.log(`✅ [COIN SYNC] Coins spent successfully. New wallet balance: ${newWalletBalance}`);
+      logger.info(`✅ [COIN SYNC] Coins spent successfully. New wallet balance: ${newWalletBalance}`);
 
       return {
         success: true,
@@ -231,7 +226,7 @@ class CoinSyncService {
         source: 'spending',
       };
     } catch (error) {
-      devLog.error('❌ [COIN SYNC] Error spending coins:', error);
+      logger.error('❌ [COIN SYNC] Error spending coins:', error);
       return {
         success: false,
         coinsAdded: 0,
@@ -247,7 +242,7 @@ class CoinSyncService {
    */
   async checkSync(): Promise<CoinSyncResult> {
     try {
-      devLog.log('🔍 [COIN SYNC] Checking wallet and points sync status...');
+      logger.info('🔍 [COIN SYNC] Checking wallet and points sync status...');
 
       const [walletBalance, pointsBalance] = await Promise.all([
         this.getWalletBalance(),
@@ -268,9 +263,9 @@ class CoinSyncService {
       const synced = difference < 1; // Allow 1 coin tolerance for rounding
 
       if (synced) {
-        devLog.log(`✅ [COIN SYNC] Wallet and points are in sync: ${walletBalance}`);
+        logger.info(`✅ [COIN SYNC] Wallet and points are in sync: ${walletBalance}`);
       } else {
-        devLog.warn(
+        logger.warn(
           `⚠️ [COIN SYNC] Sync mismatch detected!\n` +
           `  Wallet: ${walletBalance}\n` +
           `  Points: ${pointsBalance.total}\n` +
@@ -286,7 +281,7 @@ class CoinSyncService {
         difference: synced ? 0 : difference,
       };
     } catch (error) {
-      devLog.error('❌ [COIN SYNC] Error checking sync:', error);
+      logger.error('❌ [COIN SYNC] Error checking sync:', error);
       return {
         success: false,
         walletBalance: 0,
@@ -303,7 +298,7 @@ class CoinSyncService {
    */
   async forceSyncPointsToWallet(): Promise<CoinSyncResult> {
     if (this.syncInProgress) {
-      devLog.warn('⚠️ [COIN SYNC] Sync already in progress, skipping...');
+      logger.warn('⚠️ [COIN SYNC] Sync already in progress, skipping...');
       return {
         success: false,
         walletBalance: 0,
@@ -315,12 +310,12 @@ class CoinSyncService {
 
     try {
       this.syncInProgress = true;
-      devLog.log('🔄 [COIN SYNC] Force syncing points to wallet...');
+      logger.info('🔄 [COIN SYNC] Force syncing points to wallet...');
 
       const syncStatus = await this.checkSync();
 
       if (syncStatus.synced) {
-        devLog.log('✅ [COIN SYNC] Already in sync, no action needed');
+        logger.info('✅ [COIN SYNC] Already in sync, no action needed');
         return syncStatus;
       }
 
@@ -330,7 +325,7 @@ class CoinSyncService {
 
       // Wallet is always source of truth - we don't modify it
       // This function is mainly for verification
-      devLog.warn(
+      logger.warn(
         `⚠️ [COIN SYNC] Sync mismatch detected but wallet is source of truth.\n` +
         `  Using wallet balance: ${syncStatus.walletBalance}`
       );
@@ -342,7 +337,7 @@ class CoinSyncService {
         synced: true,
       };
     } catch (error) {
-      devLog.error('❌ [COIN SYNC] Error force syncing:', error);
+      logger.error('❌ [COIN SYNC] Error force syncing:', error);
       return {
         success: false,
         walletBalance: 0,
@@ -363,7 +358,7 @@ class CoinSyncService {
     coinsWon: number,
     gameData?: any
   ): Promise<CoinRewardSyncResult> {
-    devLog.log(`🎮 [COIN SYNC] Handling ${gameType} reward: ${coinsWon} coins`);
+    logger.info(`🎮 [COIN SYNC] Handling ${gameType} reward: ${coinsWon} coins`);
 
     return this.syncGamificationReward(coinsWon, gameType, {
       gameType,
@@ -380,7 +375,7 @@ class CoinSyncService {
     challengeName: string,
     coinsReward: number
   ): Promise<CoinRewardSyncResult> {
-    devLog.log(`🏆 [COIN SYNC] Handling challenge reward: ${coinsReward} coins for ${challengeName}`);
+    logger.info(`🏆 [COIN SYNC] Handling challenge reward: ${coinsReward} coins for ${challengeName}`);
 
     return this.syncGamificationReward(coinsReward, 'challenge', {
       challengeId,
@@ -397,7 +392,7 @@ class CoinSyncService {
     achievementName: string,
     coinsReward: number
   ): Promise<CoinRewardSyncResult> {
-    devLog.log(`🎖️ [COIN SYNC] Handling achievement reward: ${coinsReward} coins for ${achievementName}`);
+    logger.info(`🎖️ [COIN SYNC] Handling achievement reward: ${coinsReward} coins for ${achievementName}`);
 
     return this.syncGamificationReward(coinsReward, 'achievement', {
       achievementId,
@@ -413,7 +408,7 @@ class CoinSyncService {
     streak: number,
     coinsReward: number
   ): Promise<CoinRewardSyncResult> {
-    devLog.log(`📅 [COIN SYNC] Handling daily login reward: ${coinsReward} coins (streak: ${streak})`);
+    logger.info(`📅 [COIN SYNC] Handling daily login reward: ${coinsReward} coins (streak: ${streak})`);
 
     return this.syncGamificationReward(coinsReward, 'daily_login', {
       streak,
@@ -483,11 +478,11 @@ class CoinSyncService {
         this._cachedLastSyncTime = new Date(timestamp);
         // Then persist to AsyncStorage asynchronously
         AsyncStorage.setItem(this.SYNC_KEY, timestamp).catch((error) => {
-          devLog.warn('⚠️ [COIN SYNC] Could not update last sync time in AsyncStorage:', error);
+          logger.warn('⚠️ [COIN SYNC] Could not update last sync time in AsyncStorage:', error);
         });
       }
     } catch (error) {
-      devLog.warn('⚠️ [COIN SYNC] Could not update last sync time:', error);
+      logger.warn('⚠️ [COIN SYNC] Could not update last sync time:', error);
     }
   }
 }

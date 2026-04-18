@@ -51,6 +51,9 @@ function WishlistItem({
             style={styles.removeButton}
             onPress={handleRemove}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel={`Remove ${item.productName} from wishlist`}
+            accessibilityHint="Double tap to remove this item from your wishlist"
           >
             <Ionicons name="heart" size={20} color={colors.error} />
           </Pressable>
@@ -121,6 +124,10 @@ function WishlistItem({
             ]}
             onPress={handleAddToCart}
             disabled={item.availability === 'OUT_OF_STOCK'}
+            accessibilityRole="button"
+            accessibilityLabel="Add to cart"
+            accessibilityHint={`Add ${item.productName} to cart`}
+            accessibilityState={{ disabled: item.availability === 'OUT_OF_STOCK' }}
           >
             <Ionicons name="cart-outline" size={16} color={colors.brand.purpleLight} />
             <ThemedText style={styles.addToCartText}>Add to Cart</ThemedText>

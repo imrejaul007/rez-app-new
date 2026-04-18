@@ -176,6 +176,9 @@ function RedemptionFlow({
         <Pressable
           style={[styles.button, styles.buttonSecondary]}
           onPress={handleClose}
+          accessibilityRole="button"
+          accessibilityLabel="Cancel"
+          accessibilityHint="Double tap to cancel voucher redemption"
         >
           <ThemedText style={styles.buttonSecondaryText}>Cancel</ThemedText>
         </Pressable>
@@ -187,6 +190,10 @@ function RedemptionFlow({
           ]}
           onPress={handleNext}
           disabled={!selectedVoucher}
+          accessibilityRole="button"
+          accessibilityLabel="Next"
+          accessibilityHint="Double tap to proceed to redemption method selection"
+          accessibilityState={{ disabled: !selectedVoucher }}
         >
           <ThemedText style={styles.buttonPrimaryText}>Next</ThemedText>
         </Pressable>
@@ -258,6 +265,9 @@ function RedemptionFlow({
         <Pressable
           style={[styles.button, styles.buttonSecondary]}
           onPress={handleBack}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          accessibilityHint="Double tap to go back to voucher selection"
         >
           <ThemedText style={styles.buttonSecondaryText}>Back</ThemedText>
         </Pressable>
@@ -269,6 +279,10 @@ function RedemptionFlow({
           ]}
           onPress={handleNext}
           disabled={!selectedMethod}
+          accessibilityRole="button"
+          accessibilityLabel="Next"
+          accessibilityHint="Double tap to proceed to terms and conditions"
+          accessibilityState={{ disabled: !selectedMethod }}
         >
           <ThemedText style={styles.buttonPrimaryText}>Next</ThemedText>
         </Pressable>
@@ -324,6 +338,10 @@ function RedemptionFlow({
       <Pressable
         style={styles.checkbox}
         onPress={() => setTermsAccepted(!termsAccepted)}
+        accessibilityRole="checkbox"
+        accessibilityLabel="Accept terms and conditions"
+        accessibilityState={{ checked: termsAccepted }}
+        accessibilityHint="Double tap to toggle acceptance of terms"
       >
         <View style={[styles.checkboxBox, termsAccepted ? styles.checkboxBoxChecked : null]}>
           {termsAccepted && <Ionicons name="checkmark" size={16} color={colors.background.primary} />}
@@ -337,6 +355,9 @@ function RedemptionFlow({
         <Pressable
           style={[styles.button, styles.buttonSecondary]}
           onPress={handleBack}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          accessibilityHint="Double tap to go back to redemption method selection"
         >
           <ThemedText style={styles.buttonSecondaryText}>Back</ThemedText>
         </Pressable>
@@ -348,6 +369,10 @@ function RedemptionFlow({
           ]}
           onPress={handleNext}
           disabled={!termsAccepted}
+          accessibilityRole="button"
+          accessibilityLabel="Next"
+          accessibilityHint="Double tap to proceed to confirmation"
+          accessibilityState={{ disabled: !termsAccepted }}
         >
           <ThemedText style={styles.buttonPrimaryText}>Next</ThemedText>
         </Pressable>
@@ -407,6 +432,10 @@ function RedemptionFlow({
           style={[styles.button, styles.buttonSecondary]}
           onPress={handleBack}
           disabled={isProcessing}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          accessibilityHint="Double tap to go back to terms and conditions"
+          accessibilityState={{ disabled: isProcessing }}
         >
           <ThemedText style={styles.buttonSecondaryText}>Back</ThemedText>
         </Pressable>
@@ -414,6 +443,10 @@ function RedemptionFlow({
           style={[styles.button, styles.buttonPrimary]}
           onPress={handleConfirmRedemption}
           disabled={isProcessing}
+          accessibilityRole="button"
+          accessibilityLabel="Confirm redemption"
+          accessibilityHint="Double tap to confirm and redeem your voucher"
+          accessibilityState={{ disabled: isProcessing, busy: isProcessing }}
         >
           {isProcessing ? (
             <ActivityIndicator size="small" color={colors.background.primary} />
@@ -474,6 +507,9 @@ function RedemptionFlow({
         <Pressable
           style={[styles.button, styles.buttonPrimary, { flex: 1 }]}
           onPress={handleClose}
+          accessibilityRole="button"
+          accessibilityLabel="Done"
+          accessibilityHint="Double tap to close the redemption screen"
         >
           <ThemedText style={styles.buttonPrimaryText}>Done</ThemedText>
         </Pressable>
@@ -514,7 +550,14 @@ function RedemptionFlow({
             end={{ x: 1, y: 1 }}
           >
             <ThemedText style={styles.modalTitle}>Redeem Voucher</ThemedText>
-            <Pressable onPress={handleClose} disabled={isProcessing}>
+            <Pressable
+              onPress={handleClose}
+              disabled={isProcessing}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+              accessibilityHint="Double tap to close the voucher redemption screen"
+              accessibilityState={{ disabled: isProcessing }}
+            >
               <Ionicons name="close" size={28} color={colors.background.primary} />
             </Pressable>
           </LinearGradient>

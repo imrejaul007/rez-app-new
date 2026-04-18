@@ -25,7 +25,7 @@ import { useRouter, Stack } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useIsAuthenticated } from '@/stores/selectors';
 import eventsApiService from '@/services/eventsApi';
-import { alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -96,7 +96,7 @@ function MyEventsPage() {
           setFavorites(result?.events || result?.favorites || result?.bookings || []);
         }
       } catch (error: any) {
-        alertOk('Error', 'Failed to load events. Pull down to refresh.');
+        showAlert('Error', 'Failed to load events. Pull down to refresh.');
       } finally {
         if (!isMounted()) return;
         setIsLoading(false);
@@ -139,16 +139,16 @@ function MyEventsPage() {
       const result = await eventsApiService.checkInToEvent(eventId, booking._id, 'manual');
       if (result?.success) {
         const coins = result.data?.reward?.coinsAwarded || 0;
-        alertOk(
+        showAlert(
           'Checked In!',
           coins > 0 ? `You've checked in successfully and earned +${coins} coins!` : `You've checked in successfully!`,
         );
         fetchData(activeTab);
       } else {
-        alertOk('Check-in Failed', result?.message || 'Unable to check in at this time.');
+        showAlert('Check-in Failed', result?.message || 'Unable to check in at this time.');
       }
     } catch (error: any) {
-      alertOk('Check-in Failed', error.message || 'Something went wrong. Please try again.');
+      showAlert('Check-in Failed', error.message || 'Something went wrong. Please try again.');
     } finally {
       if (!isMounted()) return;
       setCheckingIn(null);

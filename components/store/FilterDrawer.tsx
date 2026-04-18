@@ -201,6 +201,9 @@ function FilterDrawer({
                 onPress={onClose}
                 style={styles.closeButton}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel="Close filters"
+                accessibilityHint="Double tap to close the filter drawer"
               >
                 <Ionicons name="close" size={24} color={colors.neutral[800]} />
               </Pressable>
@@ -222,7 +225,9 @@ function FilterDrawer({
                 <Pressable
                   style={styles.sectionHeader}
                   onPress={() => toggleSection('categories')}
-                 
+                  accessibilityRole="button"
+                  accessibilityLabel="Category filter section"
+                  accessibilityHint={expandedSections.categories ? 'Double tap to collapse' : 'Double tap to expand'}
                 >
                   <View style={styles.sectionHeaderLeft}>
                     <Ionicons name="grid-outline" size={20} color={colors.brand.purple} />
@@ -247,7 +252,9 @@ function FilterDrawer({
                         key={category}
                         style={styles.checkboxItem}
                         onPress={() => toggleCategory(category)}
-                       
+                        accessibilityRole="checkbox"
+                        accessibilityLabel={category}
+                        accessibilityState={{ checked: filters.categories.includes(category) }}
                       >
                         <View
                           style={[
@@ -271,7 +278,9 @@ function FilterDrawer({
                 <Pressable
                   style={styles.sectionHeader}
                   onPress={() => toggleSection('price')}
-                 
+                  accessibilityRole="button"
+                  accessibilityLabel="Price range filter section"
+                  accessibilityHint={expandedSections.price ? 'Double tap to collapse' : 'Double tap to expand'}
                 >
                   <View style={styles.sectionHeaderLeft}>
                     <Ionicons name="cash-outline" size={20} color={colors.brand.purple} />
@@ -342,7 +351,9 @@ function FilterDrawer({
                 <Pressable
                   style={styles.sectionHeader}
                   onPress={() => toggleSection('stock')}
-                 
+                  accessibilityRole="button"
+                  accessibilityLabel="Stock status filter section"
+                  accessibilityHint={expandedSections.stock ? 'Double tap to collapse' : 'Double tap to expand'}
                 >
                   <View style={styles.sectionHeaderLeft}>
                     <Ionicons name="cube-outline" size={20} color={colors.brand.purple} />
@@ -367,7 +378,9 @@ function FilterDrawer({
                         key={option.value}
                         style={styles.stockStatusItem}
                         onPress={() => toggleStockStatus(option.value)}
-                       
+                        accessibilityRole="checkbox"
+                        accessibilityLabel={option.label}
+                        accessibilityState={{ checked: filters.stockStatus?.includes(option.value) }}
                       >
                         <View
                           style={[
@@ -400,7 +413,9 @@ function FilterDrawer({
                 <Pressable
                   style={styles.sectionHeader}
                   onPress={() => toggleSection('rating')}
-                 
+                  accessibilityRole="button"
+                  accessibilityLabel="Minimum rating filter section"
+                  accessibilityHint={expandedSections.rating ? 'Double tap to collapse' : 'Double tap to expand'}
                 >
                   <View style={styles.sectionHeaderLeft}>
                     <Ionicons name="star-outline" size={20} color={colors.brand.purple} />
@@ -430,7 +445,9 @@ function FilterDrawer({
                               minRating: prev.minRating === option.value ? undefined : option.value,
                             }))
                           }
-                         
+                          accessibilityRole="checkbox"
+                          accessibilityLabel={option.label}
+                          accessibilityState={{ checked: isSelected }}
                         >
                           {renderStars(option.value, isSelected)}
                           <Text
@@ -465,7 +482,9 @@ function FilterDrawer({
               <Pressable
                 style={styles.resetButton}
                 onPress={handleReset}
-               
+                accessibilityRole="button"
+                accessibilityLabel="Reset filters"
+                accessibilityHint="Double tap to clear all selected filters"
               >
                 <Ionicons name="refresh-outline" size={18} color={colors.neutral[500]} />
                 <Text style={styles.resetButtonText}>Reset</Text>
@@ -474,7 +493,9 @@ function FilterDrawer({
               <Pressable
                 style={styles.applyButton}
                 onPress={handleApply}
-               
+                accessibilityRole="button"
+                accessibilityLabel={`Apply filters${activeFilterCount > 0 ? `, ${activeFilterCount} active` : ''}`}
+                accessibilityHint="Double tap to apply selected filters"
               >
                 <Text style={styles.applyButtonText}>
                   Apply Filters

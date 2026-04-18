@@ -62,7 +62,10 @@ export const EnhancedPaymentMethodCard: React.FC<EnhancedPaymentMethodProps> = (
     <Pressable
       style={[styles.container, isSelected ? styles.containerSelected : null]}
       onPress={onSelect}
-     
+      accessibilityRole="button"
+      accessibilityLabel={`${method.name}${isSelected ? ', selected' : ''}`}
+      accessibilityHint="Double tap to select this payment method"
+      accessibilityState={{ selected: isSelected }}
     >
       <View style={styles.mainRow}>
         {/* Icon */}

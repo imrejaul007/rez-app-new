@@ -131,14 +131,10 @@ const EventsCategoryPage: React.FC = () => {
           const found = categoriesResult.find((c: any) => c.slug === categoryKey);
           if (found) {
             setCategoryMeta({
-              name: found.name,
-              icon: found.icon,
-              color: found.color,
-              gradient: found.gradient
-                ? Array.isArray(found.gradient)
-                  ? found.gradient
-                  : found.gradient.split(',')
-                : (fallbackConfig.gradientColors as unknown as string[]),
+              name: found.name ?? '',
+              icon: found.icon ?? '',
+              color: found.color ?? '',
+              gradient: fallbackConfig.gradientColors as unknown as string[],
             });
           }
         }

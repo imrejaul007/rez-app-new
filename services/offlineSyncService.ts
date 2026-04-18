@@ -1,9 +1,6 @@
 /**
  * Offline Sync Service
  *
-
-import uuid from 'react-native-uuid';
- *
  * Generic offline-first queue for serializable API actions.
  * Queues actions when offline, auto-syncs when connectivity returns.
  *
@@ -24,6 +21,7 @@ import uuid from 'react-native-uuid';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import { logger } from '@/utils/logger';
 
 // ─── EventEmitter (lightweight polyfill) ────────────────────
 
@@ -178,7 +176,7 @@ class OfflineSyncService extends EventEmitter {
     const netState = await NetInfo.fetch();
     if (netState.isConnected && this.config.autoSync) {
       this.syncAll().catch((err) => {
-        if (__DEV__) console.warn('[OfflineSync] Auto-sync after enqueue failed:', err?.message);
+        logger.warn('[OfflineSync] Auto-sync after enqueue failed:', err?.message);
       });
     }
 
@@ -301,7 +299,7 @@ class OfflineSyncService extends EventEmitter {
     await this.persistQueue();
     this.emit('queue:change', { type: 'retry' });
     this.syncAll().catch((err) => {
-      if (__DEV__) console.warn('[OfflineSync] Retry sync failed:', err?.message);
+      logger.warn('[OfflineSync] Retry sync failed:', err?.message);
     });
   }
 
@@ -398,7 +396,7 @@ class OfflineSyncService extends EventEmitter {
         // Small delay to let connection stabilize
         setTimeout(() => {
           this.syncAll().catch((err) => {
-            if (__DEV__) console.warn('[OfflineSync] Reconnect sync failed:', err?.message);
+            logger.warn('[OfflineSync] Reconnect sync failed:', err?.message);
           });
         }, 1500);
       }

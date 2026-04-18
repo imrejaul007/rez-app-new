@@ -25,12 +25,12 @@ import CachedImage from '@/components/ui/CachedImage';
 import { KarmaHeader } from './_layout';
 import { useIsAuthenticated } from '@/stores/selectors';
 import karmaService, { KarmaProfile, KarmaEvent } from '@/services/karmaService';
-import { alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const KARMA_PURPLE = '#8B5CF6';
-const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
+const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'] as const;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // =============================================================================
@@ -76,9 +76,7 @@ function KarmaSnapshotCard({ profile, onPressMyKarma }: SnapshotCardProps) {
   const levelCfg = LEVEL_CONFIG[profile.level];
   const conversionPct = CONVERSION_RATES[profile.level] ?? 25;
   const progressPercent =
-    profile.level !== 'L4'
-      ? Math.min((profile.activeKarma / (levelCfg.next ?? 1)) * 100, 100)
-      : 100;
+    profile.level !== 'L4' ? Math.min((profile.activeKarma / (levelCfg.next ?? 1)) * 100, 100) : 100;
 
   return (
     <Pressable onPress={onPressMyKarma} style={{ marginHorizontal: Spacing.base, marginBottom: Spacing.base }}>
@@ -261,32 +259,35 @@ function KarmaHomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [profileError, setProfileError] = useState(false);
 
-  const fetchData = useCallback(async (isRefresh = false) => {
-    if (!isRefresh) setLoading(true);
-    setProfileError(false);
+  const fetchData = useCallback(
+    async (isRefresh = false) => {
+      if (!isRefresh) setLoading(true);
+      setProfileError(false);
 
-    try {
-      const [profileRes, eventsRes] = await Promise.all([
-        isAuthenticated ? karmaService.getKarmaProfile('me') : Promise.resolve({ success: false }),
-        karmaService.getNearbyEvents({ status: 'published' }),
-      ]);
+      try {
+        const [profileRes, eventsRes] = await Promise.all([
+          isAuthenticated ? karmaService.getKarmaProfile('me') : Promise.resolve({ success: false }),
+          karmaService.getNearbyEvents({ status: 'published' }),
+        ]);
 
-      if (profileRes.success && profileRes.data) {
-        setProfile(profileRes.data);
-      } else if (isAuthenticated) {
+        if (profileRes.success && profileRes.data) {
+          setProfile(profileRes.data);
+        } else if (isAuthenticated) {
+          setProfileError(true);
+        }
+
+        if (eventsRes.success && eventsRes.data) {
+          setNearbyEvents(eventsRes.data.slice(0, 10));
+        }
+      } catch {
         setProfileError(true);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-
-      if (eventsRes.success && eventsRes.data) {
-        setNearbyEvents(eventsRes.data.slice(0, 10));
-      }
-    } catch {
-      setProfileError(true);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [isAuthenticated]);
+    },
+    [isAuthenticated],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -352,11 +353,7 @@ function KarmaHomeScreen() {
         title="Karma"
         subtitle="Do Good. Earn More."
         rightAction={
-          <Pressable
-            style={styles.walletBtn}
-            onPress={() => router.push('/karma/wallet')}
-            hitSlop={8}
-          >
+          <Pressable style={styles.walletBtn} onPress={() => router.push('/karma/wallet')} hitSlop={8}>
             <Ionicons name="wallet" size={20} color={colors.text.inverse} />
           </Pressable>
         }
@@ -408,11 +405,7 @@ function KarmaHomeScreen() {
               contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: Spacing.md }}
             >
               {nearbyEvents.map((event) => (
-                <EventCard
-                  key={event._id}
-                  event={event}
-                  onPress={() => router.push(`/karma/event/${event._id}`)}
-                />
+                <EventCard key={event._id} event={event} onPress={() => router.push(`/karma/event/${event._id}`)} />
               ))}
             </ScrollView>
           </View>
@@ -479,9 +472,7 @@ function KarmaHomeScreen() {
                   <View style={styles.levelInfo}>
                     <Text style={styles.levelRowName}>{cfg.name}</Text>
                     <Text style={styles.levelRowDesc}>
-                      {level === 'L4'
-                        ? '5000+ karma'
-                        : `${cfg.next ? cfg.next.toLocaleString() : '∞'} karma`}
+                      {level === 'L4' ? '5000+ karma' : `${cfg.next ? cfg.next.toLocaleString() : '∞'} karma`}
                     </Text>
                   </View>
                   <View style={[styles.rateBadge, { backgroundColor: cfg.bg }]}>
@@ -553,7 +544,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   karmaNumber: { fontSize: 26, fontWeight: '800', color: colors.text.inverse, textAlign: 'center' },
-  karmaLabel: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.7)', marginTop: 2, textAlign: 'center' },
+  karmaLabel: {
+    fontSize: Typography.caption.fontSize,
+    color: 'rgba(255,255,255,0.7)',
+    marginTop: 2,
+    textAlign: 'center',
+  },
   karmaDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)', height: 40 },
   progressContainer: { marginBottom: Spacing.base },
   progressBar: { height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' },
@@ -584,7 +580,13 @@ const styles = StyleSheet.create({
 
   // Quick Actions
   section: { marginBottom: Spacing.xl },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md, paddingHorizontal: Spacing.base },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.base,
+  },
   sectionTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
@@ -671,7 +673,13 @@ const styles = StyleSheet.create({
   eventMeta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 3 },
   eventMetaText: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, flex: 1 },
   capacityRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6, marginBottom: 6 },
-  capacityBar: { flex: 1, height: 4, backgroundColor: colors.background.secondary, borderRadius: 2, overflow: 'hidden' },
+  capacityBar: {
+    flex: 1,
+    height: 4,
+    backgroundColor: colors.background.secondary,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
   capacityFill: { height: '100%', backgroundColor: KARMA_PURPLE, borderRadius: 2 },
   capacityText: { fontSize: Typography.overline.fontSize, color: Colors.textSecondary },
   karmaRewardRow: { flexDirection: 'row', gap: 6, marginTop: 4 },
@@ -687,18 +695,46 @@ const styles = StyleSheet.create({
   karmaRewardText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: KARMA_PURPLE },
 
   // How It Works
-  howItWorksCard: { marginHorizontal: Spacing.base, backgroundColor: colors.text.inverse, borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: colors.border.default },
+  howItWorksCard: {
+    marginHorizontal: Spacing.base,
+    backgroundColor: colors.text.inverse,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   howStep: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: Spacing.lg },
-  howStepNum: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
+  howStepNum: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
   howStepNumText: { fontSize: 13, fontWeight: '800' },
   howStepContent: { flex: 1 },
   howStepTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy, marginBottom: 2 },
   howStepDesc: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary },
 
   // Levels
-  levelsCard: { marginHorizontal: Spacing.base, backgroundColor: colors.text.inverse, borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: colors.border.default },
+  levelsCard: {
+    marginHorizontal: Spacing.base,
+    backgroundColor: colors.text.inverse,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   levelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md },
-  levelDot: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
+  levelDot: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
   levelDotText: { fontSize: 14, fontWeight: '800' },
   levelInfo: { flex: 1 },
   levelRowName: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy },

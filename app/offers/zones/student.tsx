@@ -167,15 +167,15 @@ function StudentZonePage() {
         if (zone) {
           if (!isMounted()) return;
           setZoneInfo({
-            name: zone.name,
-            description: zone.description,
-            offersCount: zone.offersCount || 0,
-            icon: zone.icon,
-            backgroundColor: zone.backgroundColor,
-            iconColor: zone.iconColor,
-            verificationRequired: zone.verificationRequired,
-            eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible,
+            name: zone.name as string,
+            description: zone.description as string,
+            offersCount: (zone.offersCount || 0) as number,
+            icon: zone.icon as string,
+            backgroundColor: zone.backgroundColor as string,
+            iconColor: zone.iconColor as string,
+            verificationRequired: zone.verificationRequired as boolean,
+            eligibilityDetails: zone.eligibilityDetails as string | undefined,
+            userEligible: zone.userEligible as boolean | undefined,
           });
         }
       }

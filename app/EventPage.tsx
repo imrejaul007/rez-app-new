@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import Animated, { useSharedValue, withTiming, interpolate } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
-import { showAlert, alertOk, confirmAlert } from '@/utils/alert';
+import { showAlert, showConfirm } from '@/utils/alert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams, useFocusEffect, Stack } from 'expo-router';
 import Constants from 'expo-constants';
@@ -505,7 +505,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           showAlert('Coins Earned!', `You earned +${shareResult.reward.coinsAwarded} coins for sharing this event!`);
         } else if (shareResult?.success && shareResult?.message) {
           // Backend returns helpful message like "Book this event to earn sharing rewards!"
-          alertOk('Shared!', shareResult.message);
+          showAlert('Shared!', shareResult.message);
         }
       } catch (shareError) {
         try {
@@ -527,7 +527,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     if (!eventDetails) return;
 
     if (!isAuthenticated || !user) {
-      alertOk('Login Required', 'Please login to favorite events');
+      showAlert('Login Required', 'Please login to favorite events');
       return;
     }
 
@@ -553,7 +553,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           // Silently ignore analytics errors
         }
 
-        alertOk(
+        showAlert(
           newState ? 'Added to Favorites' : 'Removed from Favorites',
           `${eventDetails.title} ${newState ? 'added to' : 'removed from'} favorites.`,
         );
@@ -574,7 +574,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
     // Check authentication
     if (!isAuthenticated || !user) {
-      alertOk('Login Required', 'Please login to register for events');
+      showAlert('Login Required', 'Please login to register for events');
       return;
     }
 
@@ -594,13 +594,13 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
     // Check if user needs to select a time slot (only if slots are defined)
     if (availableSlots.length > 0 && !selectedSlot) {
-      alertOk('Select Time Slot', 'Please select a time slot before booking.');
+      showAlert('Select Time Slot', 'Please select a time slot before booking.');
       return;
     }
 
     // Check authentication
     if (!isAuthenticated || !user) {
-      alertOk('Login Required', 'Please login to book events');
+      showAlert('Login Required', 'Please login to book events');
       return;
     }
 

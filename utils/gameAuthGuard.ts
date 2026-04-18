@@ -158,7 +158,7 @@ export class GameAuthGuard {
 
     try {
       // Decode payload to check expiration
-      const payload = JSON.parse(atob(parts[1]));
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
 
       // Check if token is expired
       if (payload.exp) {
@@ -209,7 +209,7 @@ export class GameAuthGuard {
     try {
       // Decode payload
       const parts = token.split('.');
-      const payload = JSON.parse(atob(parts[1]));
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
 
       // Check if token will expire soon (within 5 minutes)
       if (payload.exp) {

@@ -341,7 +341,14 @@ function BillPaymentPage() {
       const idempotencyKey = `bill-${selectedProvider._id}-${consumerNumber.trim()}-${Date.now()}`;
 
       // Step 3 — Confirm payment with backend BBPS
-      const res = await payBill(selectedProvider._id, consumerNumber.trim(), fetchedBill.amount, razorpayPaymentId, undefined, idempotencyKey);
+      const res = await payBill(
+        selectedProvider._id,
+        consumerNumber.trim(),
+        fetchedBill.amount,
+        razorpayPaymentId,
+        undefined,
+        idempotencyKey,
+      );
 
       if (res.success && res.data) {
         const { payment, promoCoinsEarned } = res.data;
@@ -375,17 +382,21 @@ function BillPaymentPage() {
             if (elapsedTime > MAX_POLL_DURATION) {
               if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
               if (isMounted()) setPaymentPolling(false);
-              platformAlert('Payment Status Pending', 'Payment status is still being confirmed. Please check your transaction history.');
+              platformAlert(
+                'Payment Status Pending',
+                'Payment status is still being confirmed. Please check your transaction history.',
+              );
               return;
             }
             try {
               const statusRes = await getPaymentHistory(1, 5);
               const updated = statusRes.data?.payments?.find((p) => p._id === payment._id);
               // FL-05 fix: rez-finance-service returns 'success' as terminal status (not 'completed')
-              if (updated?.status === 'completed' || updated?.status === 'success' || updated?.status === 'failed') {
+              const status = updated?.status as string | undefined;
+              if (status === 'completed' || status === 'success' || status === 'failed') {
                 if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
                 if (isMounted()) setPaymentPolling(false);
-                if (updated.status === 'failed') {
+                if (status === 'failed') {
                   platformAlert('Payment Failed', 'Payment was not completed. Please contact support.');
                 }
               }
@@ -745,7 +756,9 @@ function BillPaymentPage() {
                     <Text style={styles.coinCapText}>
                       Max {selectedProvider.maxRedemptionPercent}% of bill (
                       {/* NA-HIGH-07 FIX: Math.round instead of Math.floor for accurate display */}
-                      {Math.round((fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100))}{' '}
+                      {Math.round(
+                        (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
+                      )}{' '}
                       coins)
                     </Text>
                   </View>

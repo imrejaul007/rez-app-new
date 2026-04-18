@@ -144,7 +144,7 @@ class StorageService {
       if (serializedData.startsWith('ENCODED:') || serializedData.startsWith('ENCRYPTED:')) {
         const prefixLength = serializedData.startsWith('ENCODED:') ? 8 : 10;
         try {
-          serializedData = atob(serializedData.substring(prefixLength));
+          serializedData = Buffer.from(serializedData.substring(prefixLength), 'base64').toString('utf8');
         } catch {
           // atob unavailable — attempt to use the raw value as-is
           serializedData = serializedData.substring(prefixLength);

@@ -79,12 +79,12 @@ export enum PaymentGateway {
 
 // Coin types (6 priority-ordered types)
 export enum CoinType {
+  REZ = 'rez',
   PROMO = 'promo',
   BRANDED = 'branded',
   PRIVE = 'prive',
   CASHBACK = 'cashback',
   REFERRAL = 'referral',
-  REZ = 'rez',
 }
 
 // Coin priority order (canonical: promo → branded → prive → cashback → referral → rez)

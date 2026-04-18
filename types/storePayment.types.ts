@@ -397,7 +397,7 @@ export interface StorePaymentInitResponse {
   razorpayKeyId?: string;
 }
 
-export type PaymentStatus = 'INITIATED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'EXPIRED';
+export type PaymentStatus = 'initiated' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'expired';
 
 export interface StorePaymentConfirmRequest {
   paymentId: string;

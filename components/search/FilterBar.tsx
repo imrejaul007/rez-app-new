@@ -35,6 +35,9 @@ function FilterBar({
             activeFilters.length > 0 && styles.filterButtonActive
           ]}
           onPress={() => onFilterPress('filters')}
+          accessibilityRole="button"
+          accessibilityLabel="Filters"
+          accessibilityHint="Double tap to open filter options"
         >
           <Text style={[
             styles.filterButtonText,
@@ -61,6 +64,9 @@ function FilterBar({
               activeFilters.includes(filter.toLowerCase()) && styles.filterButtonActive
             ]}
             onPress={() => onFilterPress(filter.toLowerCase())}
+            accessibilityRole="button"
+            accessibilityLabel={filter}
+            accessibilityHint={`Filter by ${filter.toLowerCase()}`}
           >
             <Text style={[
               styles.filterButtonText,

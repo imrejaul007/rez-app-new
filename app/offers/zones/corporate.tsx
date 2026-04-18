@@ -115,12 +115,12 @@ function CorporateZonePage() {
         if (zone) {
           if (!isMounted()) return;
           setZoneInfo({
-            name: zone.name,
-            description: zone.description,
-            offersCount: zone.offersCount || 0,
-            verificationRequired: zone.verificationRequired,
-            eligibilityDetails: zone.eligibilityDetails,
-            userEligible: zone.userEligible,
+            name: zone.name as string,
+            description: zone.description as string,
+            offersCount: (zone.offersCount || 0) as number,
+            verificationRequired: zone.verificationRequired as boolean,
+            eligibilityDetails: zone.eligibilityDetails as string | undefined,
+            userEligible: zone.userEligible as boolean | undefined,
           });
         }
       }

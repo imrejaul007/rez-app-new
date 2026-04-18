@@ -25,12 +25,12 @@ import { KarmaHeader } from './_layout';
 import karmaService, { KarmaProfile, EarnRecord } from '@/services/karmaService';
 import { useIsAuthenticated } from '@/stores/selectors';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const KARMA_PURPLE = '#8B5CF6';
-const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'];
+const KARMA_GRADIENT = ['#7C3AED', '#8B5CF6', '#A78BFA'] as const;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const LEVEL_CONFIG = {
@@ -73,12 +73,8 @@ function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
                   { backgroundColor: isActive ? cfg.color : colors.background.secondary },
                 ]}
               >
-                {isCurrent && (
-                  <View style={styles.progressDotInner} />
-                )}
-                {isActive && !isCurrent && (
-                  <Ionicons name="checkmark" size={10} color={colors.text.inverse} />
-                )}
+                {isCurrent && <View style={styles.progressDotInner} />}
+                {isActive && !isCurrent && <Ionicons name="checkmark" size={10} color={colors.text.inverse} />}
               </View>
               <Text style={[styles.progressLabel, isCurrent && { color: cfg.color, fontWeight: '700' }]}>
                 {cfg.label}
@@ -108,7 +104,13 @@ function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
 // BADGE ITEM
 // =============================================================================
 
-function BadgeItem({ badge, index }: { badge: { id: string; name: string; icon?: string; earnedAt: string }; index: number }) {
+function BadgeItem({
+  badge,
+  index,
+}: {
+  badge: { id: string; name: string; icon?: string; earnedAt: string };
+  index: number;
+}) {
   const colors2 = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F', '#BB8FCE', '#85C1E9'];
   const color = colors2[index % colors2.length];
   const bgColor = color + '20';
@@ -116,11 +118,11 @@ function BadgeItem({ badge, index }: { badge: { id: string; name: string; icon?:
   return (
     <View style={styles.badgeItem}>
       <View style={[styles.badgeIcon, { backgroundColor: bgColor }]}>
-        <Text style={[styles.badgeEmoji]}>
-          {badge.icon ?? '🏆'}
-        </Text>
+        <Text style={[styles.badgeEmoji]}>{badge.icon ?? '🏆'}</Text>
       </View>
-      <Text style={styles.badgeName} numberOfLines={1}>{badge.name}</Text>
+      <Text style={styles.badgeName} numberOfLines={1}>
+        {badge.name}
+      </Text>
       <Text style={styles.badgeDate}>
         {new Date(badge.earnedAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
       </Text>
@@ -145,16 +147,18 @@ function EarnRecordItem({ record }: { record: EarnRecord }) {
     <View style={styles.recordItem}>
       <View style={styles.recordLeft}>
         <View style={[styles.recordIconWrap, { backgroundColor: status.bg }]}>
-          <Ionicons
-            name={record.status === 'CONVERTED' ? 'swap-horizontal' : 'leaf'}
-            size={18}
-            color={status.color}
-          />
+          <Ionicons name={record.status === 'CONVERTED' ? 'swap-horizontal' : 'leaf'} size={18} color={status.color} />
         </View>
         <View style={styles.recordInfo}>
-          <Text style={styles.recordEvent} numberOfLines={1}>{record.eventName ?? 'Event'}</Text>
+          <Text style={styles.recordEvent} numberOfLines={1}>
+            {record.eventName ?? 'Event'}
+          </Text>
           <Text style={styles.recordDate}>
-            {new Date(record.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {new Date(record.createdAt).toLocaleDateString('en-IN', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </Text>
         </View>
       </View>
@@ -183,7 +187,10 @@ function KarmaMyKarmaScreen() {
 
   const fetchData = useCallback(
     async (isRefresh = false) => {
-      if (!isAuthenticated) { setLoading(false); return; }
+      if (!isAuthenticated) {
+        setLoading(false);
+        return;
+      }
       if (!isRefresh) setLoading(true);
       try {
         const [profileRes, historyRes] = await Promise.all([
@@ -205,10 +212,15 @@ function KarmaMyKarmaScreen() {
   );
 
   useFocusEffect(
-    useCallback(() => { fetchData(); }, [fetchData]),
+    useCallback(() => {
+      fetchData();
+    }, [fetchData]),
   );
 
-  const onRefresh = () => { setRefreshing(true); fetchData(true); };
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData(true);
+  };
 
   if (!isAuthenticated) {
     return (
@@ -240,24 +252,31 @@ function KarmaMyKarmaScreen() {
   const levelCfg = profile ? LEVEL_CONFIG[profile.level] : LEVEL_CONFIG.L1;
   const conversionRate = profile ? CONVERSION_RATES[profile.level] : 25;
   const progressPercent =
-    profile && profile.level !== 'L4'
-      ? Math.min((profile.activeKarma / (levelCfg.next ?? 1)) * 100, 100)
-      : 100;
+    profile && profile.level !== 'L4' ? Math.min((profile.activeKarma / (levelCfg.next ?? 1)) * 100, 100) : 100;
 
   return (
     <View style={styles.container}>
-      <KarmaHeader title="My Karma" showBack rightAction={
-        <Pressable style={styles.headerAction} onPress={() => router.push('/karma/wallet')} hitSlop={8}>
-          <Ionicons name="wallet" size={20} color={colors.text.inverse} />
-        </Pressable>
-      } />
+      <KarmaHeader
+        title="My Karma"
+        showBack
+        rightAction={
+          <Pressable style={styles.headerAction} onPress={() => router.push('/karma/wallet')} hitSlop={8}>
+            <Ionicons name="wallet" size={20} color={colors.text.inverse} />
+          </Pressable>
+        }
+      />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[KARMA_PURPLE]} tintColor={KARMA_PURPLE} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[KARMA_PURPLE]}
+            tintColor={KARMA_PURPLE}
+          />
         }
       >
         {/* Hero Card */}
@@ -371,7 +390,11 @@ function KarmaMyKarmaScreen() {
         {profile && profile.badges.length > 0 && (
           <View style={styles.badgesSection}>
             <Text style={styles.sectionTitle}>Badges ({profile.badges.length})</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: Spacing.base }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: Spacing.base }}
+            >
               {profile.badges.map((badge, idx) => (
                 <BadgeItem key={badge.id} badge={badge} index={idx} />
               ))}
@@ -408,17 +431,47 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   authRequired: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing['2xl'] },
-  authTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base, marginBottom: Spacing.sm },
-  authSubtitle: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.xl },
-  loginBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: 14, borderRadius: BorderRadius.xl },
+  authTitle: {
+    fontSize: Typography.h3.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginTop: Spacing.base,
+    marginBottom: Spacing.sm,
+  },
+  authSubtitle: {
+    fontSize: Typography.body.fontSize,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+  },
+  loginBtn: {
+    backgroundColor: KARMA_PURPLE,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.xl,
+  },
   loginBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
   scrollView: { flex: 1 },
-  headerAction: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  headerAction: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
   // Hero Card
   heroCard: { margin: Spacing.base, padding: Spacing.lg, borderRadius: BorderRadius.xl },
   heroTopRow: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.lg },
-  levelBadgeHero: { width: 52, height: 52, borderRadius: 26, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
+  levelBadgeHero: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
   levelBadgeText: { fontSize: 20, fontWeight: '800' },
   levelNameHero: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   heroNumbers: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: Spacing.lg },
@@ -433,38 +486,95 @@ const styles = StyleSheet.create({
 
   // Stats Grid
   statsGrid: { flexDirection: 'row', paddingHorizontal: Spacing.base, gap: Spacing.sm, marginBottom: Spacing.lg },
-  statCard: { flex: 1, backgroundColor: colors.text.inverse, padding: Spacing.md, borderRadius: BorderRadius.lg, alignItems: 'center', borderWidth: 1, borderColor: colors.border.default },
+  statCard: {
+    flex: 1,
+    backgroundColor: colors.text.inverse,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   statValue: { fontSize: Typography.body.fontSize, fontWeight: '800', color: colors.deepNavy, marginTop: 4 },
   statLabel: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2, textAlign: 'center' },
 
   // Trust
   trustSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  trustCard: { backgroundColor: colors.text.inverse, padding: Spacing.base, borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: colors.border.default },
+  trustCard: {
+    backgroundColor: colors.text.inverse,
+    padding: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   trustHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.md },
   trustScore: { fontSize: Typography.h2.fontSize, fontWeight: '800', color: colors.deepNavy },
-  trustBar: { height: 8, backgroundColor: colors.background.secondary, borderRadius: 4, overflow: 'hidden', marginBottom: Spacing.sm },
+  trustBar: {
+    height: 8,
+    backgroundColor: colors.background.secondary,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: Spacing.sm,
+  },
   trustFill: { height: '100%', backgroundColor: KARMA_PURPLE, borderRadius: 4 },
   trustDesc: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary },
 
   // Level Progress
   levelSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  sectionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.deepNavy, marginBottom: Spacing.md },
-  levelCard: { backgroundColor: colors.text.inverse, padding: Spacing.base, borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: colors.border.default },
+  sectionTitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginBottom: Spacing.md,
+  },
+  levelCard: {
+    backgroundColor: colors.text.inverse,
+    padding: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   progressContainer: { marginBottom: Spacing.lg },
   progressTrack: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', position: 'relative' },
   progressLines: { position: 'absolute', top: 12, left: 20, right: 20, flexDirection: 'row', height: 2 },
   progressLine: { flex: 1, height: 2, backgroundColor: colors.background.secondary },
   progressLineActive: { backgroundColor: KARMA_PURPLE },
   progressStep: { alignItems: 'center', zIndex: 1 },
-  progressDot: { width: 24, height: 24, borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: colors.border.default },
+  progressDot: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.border.default,
+  },
   progressDotActive: { borderColor: 'transparent' },
   progressDotCurrent: {},
   progressDotInner: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.text.inverse },
-  progressLabel: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 4, fontWeight: '600' },
+  progressLabel: {
+    fontSize: Typography.caption.fontSize,
+    color: Colors.textSecondary,
+    marginTop: 4,
+    fontWeight: '600',
+  },
   levelList: { gap: Spacing.sm },
-  levelRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingHorizontal: Spacing.sm, borderRadius: BorderRadius.md },
+  levelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
   levelRowActive: { backgroundColor: '#F5F3FF' },
-  levelDotSm: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
+  levelDotSm: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
   levelDotSmText: { fontSize: 12, fontWeight: '800' },
   levelRowInfo: { flex: 1 },
   levelRowName: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.deepNavy },
@@ -475,7 +585,14 @@ const styles = StyleSheet.create({
   // Badges
   badgesSection: { marginBottom: Spacing.lg },
   badgeItem: { alignItems: 'center', width: 80, marginRight: Spacing.md },
-  badgeIcon: { width: 56, height: 56, borderRadius: 16, justifyContent: 'center', alignItems: 'center', marginBottom: 4 },
+  badgeIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   badgeEmoji: { fontSize: 28 },
   badgeName: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: colors.deepNavy, textAlign: 'center' },
   badgeDate: { fontSize: 10, color: Colors.textSecondary, textAlign: 'center', marginTop: 2 },
@@ -483,12 +600,43 @@ const styles = StyleSheet.create({
   // History
   historySection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
   historySectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  emptyHistory: { alignItems: 'center', padding: Spacing.xl, backgroundColor: colors.text.inverse, borderRadius: BorderRadius.lg },
-  emptyHistoryTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base },
-  emptyHistorySub: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginTop: 4, marginBottom: Spacing.lg },
-  exploreBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius.xl },
+  emptyHistory: {
+    alignItems: 'center',
+    padding: Spacing.xl,
+    backgroundColor: colors.text.inverse,
+    borderRadius: BorderRadius.lg,
+  },
+  emptyHistoryTitle: {
+    fontSize: Typography.body.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginTop: Spacing.base,
+  },
+  emptyHistorySub: {
+    fontSize: Typography.body.fontSize,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: Spacing.lg,
+  },
+  exploreBtn: {
+    backgroundColor: KARMA_PURPLE,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.xl,
+  },
   exploreBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
-  recordItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.text.inverse, padding: Spacing.md, borderRadius: BorderRadius.lg, marginBottom: Spacing.sm, borderWidth: 1, borderColor: colors.border.default },
+  recordItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.text.inverse,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   recordLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, flex: 1 },
   recordIconWrap: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   recordInfo: { flex: 1 },

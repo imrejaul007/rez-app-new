@@ -12,7 +12,7 @@ import {
   Linking,
 } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-import { showAlert, alertOk, confirmAlert } from '@/utils/alert';
+import { showAlert, showConfirm } from '@/utils/alert';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { EventItem } from '@/types/homepage.types';
 import eventsApiService from '@/services/eventsApi';
@@ -373,7 +373,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
         if (shareResult?.success && shareResult?.reward?.coinsAwarded) {
           showAlert('Coins Earned!', `You earned +${shareResult.reward.coinsAwarded} coins for sharing this event!`);
         } else if (shareResult?.success && shareResult?.message) {
-          alertOk('Shared!', shareResult.message);
+          showAlert('Shared!', shareResult.message);
         }
       } catch {
         eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
@@ -387,7 +387,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
 
   const handleFavoritePress = useCallback(async () => {
     if (!eventDetails) return;
-    if (!isAuthenticated || !user) { alertOk('Login Required', 'Please login to favorite events'); return; }
+    if (!isAuthenticated || !user) { showAlert('Login Required', 'Please login to favorite events'); return; }
     try {
       setIsLoadingFavorite(true);
       const previousState = isFavorited;
@@ -397,7 +397,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
         const newState = result.isFavorited ?? !previousState;
         setIsFavorited(newState);
         eventAnalytics.trackFavoriteToggle(eventDetails.id, newState, 'event_page');
-        alertOk(
+        showAlert(
           newState ? 'Added to Favorites' : 'Removed from Favorites',
           `${eventDetails.title} ${newState ? 'added to' : 'removed from'} favorites.`
         );
@@ -414,7 +414,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
 
   const handleOnlineBooking = useCallback(async () => {
     if (!eventDetails || !eventDetails.isOnline) return;
-    if (!isAuthenticated || !user) { alertOk('Login Required', 'Please login to register for events'); return; }
+    if (!isAuthenticated || !user) { showAlert('Login Required', 'Please login to register for events'); return; }
     eventAnalytics.trackBookingStart(eventDetails.id, undefined, 'event_page');
     setShowBookingModal(true);
   }, [eventDetails, isAuthenticated, user]);
@@ -422,10 +422,10 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
   const handleOfflineBooking = useCallback(async () => {
     if (!eventDetails || eventDetails.isOnline) return;
     if (availableSlots.length > 0 && !selectedSlot) {
-      alertOk('Select Time Slot', 'Please select a time slot before booking.');
+      showAlert('Select Time Slot', 'Please select a time slot before booking.');
       return;
     }
-    if (!isAuthenticated || !user) { alertOk('Login Required', 'Please login to book events'); return; }
+    if (!isAuthenticated || !user) { showAlert('Login Required', 'Please login to book events'); return; }
     eventAnalytics.trackBookingStart(eventDetails.id, selectedSlot || undefined, 'event_page');
     setShowBookingModal(true);
   }, [eventDetails, selectedSlot, availableSlots, isAuthenticated, user]);

@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import apiClient from '@/services/apiClient';
 import { useAuthUser, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
-import { showAlert, alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import ProjectSubmissionForm from '@/components/projects/ProjectSubmissionForm';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { colors } from '@/constants/theme';
@@ -202,7 +202,7 @@ function ProjectDetailPage() {
             : 'Your submission has been updated successfully!'
           : 'Your submission has been received and is under review!';
 
-        alertOk('Success', message);
+        showAlert('Success', message);
         setShowSubmissionForm(false);
         loadProject(); // Reload to show updated status
       } else {

@@ -13,7 +13,7 @@ import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
-import { showAlert, alertOk } from '@/utils/alert';
+import { showAlert } from '@/utils/alert';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { uploadProjectFile, uploadMultipleProjectFiles } from '@/services/projectUploadService';

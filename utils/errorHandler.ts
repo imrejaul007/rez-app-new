@@ -2,6 +2,7 @@
 // Centralized error handling for the entire app
 
 import { platformAlert } from '@/utils/platformAlert';
+import { logger } from '@/utils/logger';
 // ApiError class for API-specific errors
 class ApiError extends Error {
   code?: string;
@@ -169,12 +170,7 @@ class ErrorLogger {
 
     // Log to console in development
     if (__DEV__) {
-      console.error('[AppError]', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        timestamp: error.timestamp
-      });
+      logger.error('[AppError]', new Error(error.message), 'ErrorLogger');
     }
 
     // M-1 FIX: Wire error logging to Sentry in production

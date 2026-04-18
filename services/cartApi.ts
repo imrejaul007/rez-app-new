@@ -4,18 +4,13 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 import { withRetry, createErrorResponse, getUserFriendlyErrorMessage, logApiRequest, logApiResponse } from '@/utils/apiUtils';
+import { logger } from '@/utils/logger';
 import {
   CartItem as UnifiedCartItem,
   toCartItem,
   validateCartItem as validateUnifiedCartItem,
   isCartItemAvailable
 } from '@/types/unified';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
 
 // Service booking details for cart items
 export interface ServiceBookingDetails {
@@ -247,22 +242,22 @@ export interface ShippingEstimate {
  */
 function validateCart(cart: any): boolean {
   if (!cart || typeof cart !== 'object') {
-    devLog.warn('[CART API] Invalid cart data: not an object');
+    logger.warn('[CART API] Invalid cart data: not an object');
     return false;
   }
 
   if (!cart._id) {
-    devLog.warn('[CART API] Cart missing _id field');
+    logger.warn('[CART API] Cart missing _id field');
     return false;
   }
 
   if (!Array.isArray(cart.items)) {
-    devLog.warn('[CART API] Cart items is not an array');
+    logger.warn('[CART API] Cart items is not an array');
     return false;
   }
 
   if (!cart.totals || typeof cart.totals !== 'object') {
-    devLog.warn('[CART API] Cart missing totals object');
+    logger.warn('[CART API] Cart missing totals object');
     return false;
   }
 
@@ -278,12 +273,12 @@ function validateCartItem(item: any): boolean {
   }
 
   if (!item.product || !item.product._id) {
-    devLog.warn('[CART API] Cart item missing product information');
+    logger.warn('[CART API] Cart item missing product information');
     return false;
   }
 
   if (typeof item.quantity !== 'number' || item.quantity < 1) {
-    devLog.warn('[CART API] Cart item has invalid quantity');
+    logger.warn('[CART API] Cart item has invalid quantity');
     return false;
   }
 
@@ -310,7 +305,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed');
+          logger.error('[CART API] Cart validation failed');
           return {
             success: false,
             error: 'Invalid cart data received from server',
@@ -321,7 +316,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error fetching cart:', error);
+      logger.error('[CART API] Error fetching cart:', error);
       return createErrorResponse(error, 'Failed to load cart. Please try again.') as any;
     }
   }
@@ -362,7 +357,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after adding item');
+          logger.error('[CART API] Cart validation failed after adding item');
           return {
             success: false,
             error: 'Invalid cart data received after adding item',
@@ -373,7 +368,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error adding to cart:', error);
+      logger.error('[CART API] Error adding to cart:', error);
       return createErrorResponse(
         error,
         'Failed to add item to cart. Please try again.'
@@ -451,7 +446,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after adding service');
+          logger.error('[CART API] Cart validation failed after adding service');
           return {
             success: false,
             error: 'Invalid cart data received after adding service',
@@ -462,7 +457,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error adding service to cart:', error);
+      logger.error('[CART API] Error adding service to cart:', error);
       return createErrorResponse(
         error,
         'Failed to add service to cart. Please try again.'
@@ -514,7 +509,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after updating item');
+          logger.error('[CART API] Cart validation failed after updating item');
           return {
             success: false,
             error: 'Invalid cart data received after update',
@@ -525,7 +520,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error updating cart item:', error);
+      logger.error('[CART API] Error updating cart item:', error);
       return createErrorResponse(
         error,
         'Failed to update cart item. Please try again.'
@@ -568,7 +563,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after removing item');
+          logger.error('[CART API] Cart validation failed after removing item');
           return {
             success: false,
             error: 'Invalid cart data received after removal',
@@ -579,7 +574,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error removing cart item:', error);
+      logger.error('[CART API] Error removing cart item:', error);
       return createErrorResponse(
         error,
         'Failed to remove item from cart. Please try again.'
@@ -605,7 +600,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error clearing cart:', error);
+      logger.error('[CART API] Error clearing cart:', error);
       return createErrorResponse(error, 'Failed to clear cart. Please try again.') as any;
     }
   }
@@ -640,7 +635,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after applying coupon');
+          logger.error('[CART API] Cart validation failed after applying coupon');
           return {
             success: false,
             error: 'Invalid cart data received after applying coupon',
@@ -651,7 +646,7 @@ class CartService {
         // If backend rejected coupon silently, inform user before checkout
         const appliedDiscount = (data as any).expectedDiscount || 0;
         if (appliedDiscount <= 0) {
-          devLog.warn('[CART API] Coupon may not have been applied; no discount shown');
+          logger.warn('[CART API] Coupon may not have been applied; no discount shown');
           return {
             success: false,
             error: 'Coupon not applicable',
@@ -662,7 +657,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error applying coupon:', error);
+      logger.error('[CART API] Error applying coupon:', error);
       return createErrorResponse(error, 'Failed to apply coupon. Please try again.') as any;
     }
   }
@@ -686,7 +681,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after removing coupon');
+          logger.error('[CART API] Cart validation failed after removing coupon');
           return {
             success: false,
             error: 'Invalid cart data received after removing coupon',
@@ -697,7 +692,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error removing coupon:', error);
+      logger.error('[CART API] Error removing coupon:', error);
       return createErrorResponse(error, 'Failed to remove coupon. Please try again.') as any;
     }
   }
@@ -721,7 +716,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart summary validation failed');
+          logger.error('[CART API] Cart summary validation failed');
           return {
             success: false,
             error: 'Invalid cart summary data',
@@ -732,7 +727,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error fetching cart summary:', error);
+      logger.error('[CART API] Error fetching cart summary:', error);
       return createErrorResponse(error, 'Failed to load cart summary. Please try again.') as any;
     }
   }
@@ -773,7 +768,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error validating cart:', error);
+      logger.error('[CART API] Error validating cart:', error);
       return createErrorResponse(error, 'Failed to validate cart. Please try again.') as any;
     }
   }
@@ -785,7 +780,7 @@ class CartService {
     zipCode?: string,
     country?: string
   ): Promise<ApiResponse<ShippingEstimate[]>> {
-    devLog.warn('[CART API] getShippingEstimates is not yet available');
+    logger.warn('[CART API] getShippingEstimates is not yet available');
     return {
       success: false,
       error: 'This feature is not yet available',
@@ -803,7 +798,7 @@ class CartService {
       };
     }
 
-    devLog.warn('[CART API] moveToWishlist is not yet available');
+    logger.warn('[CART API] moveToWishlist is not yet available');
     return {
       success: false,
       error: 'This feature is not yet available',
@@ -814,7 +809,7 @@ class CartService {
    * Save cart for later
    */
   async saveCartForLater(): Promise<ApiResponse<{ message: string }>> {
-    devLog.warn('[CART API] saveCartForLater is not yet available');
+    logger.warn('[CART API] saveCartForLater is not yet available');
     return {
       success: false,
       error: 'This feature is not yet available',
@@ -832,7 +827,7 @@ class CartService {
       };
     }
 
-    devLog.warn('[CART API] mergeCart is not yet available');
+    logger.warn('[CART API] mergeCart is not yet available');
     return {
       success: false,
       error: 'This feature is not yet available',
@@ -873,7 +868,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error getting checkout summary:', error);
+      logger.error('[CART API] Error getting checkout summary:', error);
       return createErrorResponse(error, 'Failed to load checkout summary') as any;
     }
   }
@@ -911,7 +906,7 @@ class CartService {
       // Validate response
       if (response.success && response.data?.cart) {
         if (!validateCart(response.data.cart)) {
-          devLog.error('[CART API] Cart validation failed after locking item');
+          logger.error('[CART API] Cart validation failed after locking item');
           return {
             success: false,
             error: 'Invalid cart data after locking item',
@@ -922,7 +917,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error locking item:', error);
+      logger.error('[CART API] Error locking item:', error);
       return createErrorResponse(error, 'Failed to lock item. Please try again.') as any;
     }
   }
@@ -945,7 +940,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error fetching locked items:', error);
+      logger.error('[CART API] Error fetching locked items:', error);
       return createErrorResponse(error, 'Failed to load locked items') as any;
     }
   }
@@ -984,7 +979,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after unlocking item');
+          logger.error('[CART API] Cart validation failed after unlocking item');
           return {
             success: false,
             error: 'Invalid cart data after unlocking item',
@@ -995,7 +990,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error unlocking item:', error);
+      logger.error('[CART API] Error unlocking item:', error);
       return createErrorResponse(error, 'Failed to unlock item') as any;
     }
   }
@@ -1034,7 +1029,7 @@ class CartService {
       // Validate response
       if (response.success && response.data) {
         if (!validateCart(response.data)) {
-          devLog.error('[CART API] Cart validation failed after moving locked item');
+          logger.error('[CART API] Cart validation failed after moving locked item');
           return {
             success: false,
             error: 'Invalid cart data after moving locked item',
@@ -1045,7 +1040,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error moving locked item to cart:', error);
+      logger.error('[CART API] Error moving locked item to cart:', error);
       return createErrorResponse(error, 'Failed to move locked item to cart') as any;
     }
   }
@@ -1081,7 +1076,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error getting lock fee options:', error);
+      logger.error('[CART API] Error getting lock fee options:', error);
       return createErrorResponse(error, 'Failed to get lock fee options') as any;
     }
   }
@@ -1133,7 +1128,7 @@ class CartService {
       // Validate response
       if (response.success && response.data?.cart) {
         if (!validateCart(response.data.cart)) {
-          devLog.error('[CART API] Cart validation failed after lock with payment');
+          logger.error('[CART API] Cart validation failed after lock with payment');
           return {
             success: false,
             error: 'Invalid cart data after locking item',
@@ -1144,7 +1139,7 @@ class CartService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[CART API] Error locking item with payment:', error);
+      logger.error('[CART API] Error locking item with payment:', error);
       return createErrorResponse(error, 'Failed to lock item. Please try again.') as any;
     }
   }
