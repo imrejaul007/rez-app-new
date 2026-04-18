@@ -336,7 +336,10 @@ export class AuthGuard {
       );
 
       if (!payload.exp) {
-        return false; // No expiration
+        // Conservative: tokens with no exp claim are invalid. Treating them as
+        // "never expiring" would let forged tokens (or tokens issued by a
+        // misconfigured signer) grant access indefinitely.
+        return true;
       }
 
       const now = Math.floor(Date.now() / 1000);
@@ -361,7 +364,15 @@ export class AuthGuard {
   }
 
   /**
-   * Get user permissions
+   * Get user permissions.
+   *
+   * SECURITY NOTE: The `permissions` array is decoded from the JWT payload on
+   * the client and MUST NOT be used as a real access gate. A forged or
+   * self-issued token could claim any permissions it wants. This accessor is
+   * advisory only — for UX hints such as hiding menu items we will never need
+   * to enforce. Real authorisation decisions must come from the server's
+   * response to `/me` (or an equivalent authoritative endpoint) after the
+   * token is validated server-side.
    */
   static async getUserPermissions(): Promise<string[]> {
     try {

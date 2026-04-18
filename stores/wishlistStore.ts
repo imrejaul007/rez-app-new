@@ -48,7 +48,11 @@ export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
 
     const optimisticItem: WishlistItem = {
       ...item,
-      id: `temp-${Date.now()}`,
+      // Using UUID prevents temp-id collisions when two adds happen within the
+      // same millisecond — Date.now() would otherwise mint identical ids and
+      // the reconciliation step below would replace BOTH optimistic items with
+      // the first server response's id.
+      id: `temp-${String(uuid.v4())}`,
       addedAt: new Date().toISOString(),
     };
 

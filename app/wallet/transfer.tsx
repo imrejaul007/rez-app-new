@@ -30,6 +30,7 @@ import { useRezBalance, useRefreshWallet } from '@/stores/selectors';
 import walletApi from '@/services/walletApi';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { generateIdempotencyKey } from '@/utils/idempotencyKey';
+import { promptTransactionPin, canPromptTransactionPin } from '@/utils/promptTransactionPin';
 import { handleWalletError, parseWalletError } from '@/utils/walletErrorHandler';
 import { BRAND } from '@/constants/brand';
 
@@ -198,13 +199,26 @@ function TransferPage() {
     if (!selectedRecipient) return;
     const numAmount = Number(amount);
 
-    // Biometric authentication before transfer
+    // Step-up authentication before transfer. If biometrics are unavailable or not
+    // enrolled, fall back to the transaction PIN (same PIN set during onboarding).
+    let authenticated = false;
     if (biometricAvailable && biometricEnrolled) {
-      const authenticated = await authenticateWithBiometric();
-      if (!authenticated) {
-        platformAlertSimple('Authentication Required', 'Biometric authentication is required to send coins.');
-        return;
-      }
+      authenticated = await authenticateWithBiometric();
+    } else if (canPromptTransactionPin()) {
+      authenticated = await promptTransactionPin(
+        'Confirm Transfer',
+        'Enter your 4-digit PIN to authorise this transfer.',
+      );
+    } else {
+      platformAlertSimple(
+        'Authentication Required',
+        'Please enable biometric authentication to send coins.',
+      );
+      return;
+    }
+    if (!authenticated) {
+      platformAlertSimple('Authentication Required', 'Authentication is required to send coins.');
+      return;
     }
 
     submittingRef.current = true;

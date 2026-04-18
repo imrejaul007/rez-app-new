@@ -54,6 +54,109 @@ interface StoreGroup {
   subtotal: number;
 }
 
+// Backend API response shapes (not all fields typed, only those accessed in this file)
+interface BackendOrderData extends Record<string, unknown> {
+  coinsUsed?: {
+    rezCoins?: number;
+    promoCoins?: number;
+    storePromoCoins?: number;
+    totalCoinsValue?: number;
+  };
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
+  transactionId?: string;
+  redemptionCode?: string;
+  offerRedemptionCode?: string;
+  lockFeeDiscount?: number;
+  cardOfferId?: string;
+  cardOfferDiscount?: number;
+  walletPayment?: { amount?: number };
+}
+
+interface RawWalletData {
+  categoryBalances?: Record<string, { available?: number }>;
+}
+
+interface BackendOrderItem {
+  id?: string;
+  _id?: string;
+  productId?: string;
+  product?: {
+    id?: string;
+    _id?: string;
+    name?: string;
+    images?: Array<{ url?: string } | string>;
+  };
+  unitPrice?: number;
+  totalPrice?: number;
+  quantity?: number;
+  name?: string;
+}
+
+interface BackendAddressResponse {
+  id?: string;
+  _id?: string;
+  title?: string;
+  type?: string;
+  phone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  postalCode?: string;
+  country?: string;
+  isDefault?: boolean;
+  instructions?: string;
+}
+
+interface BackendCouponItem {
+  _id?: string;
+  couponCode?: string;
+  title?: string;
+  description?: string;
+  discountValue?: number;
+  discountType?: string;
+  minOrderValue?: number;
+  maxDiscountCap?: number;
+  status?: string;
+  validTo?: string;
+  termsAndConditions?: string[];
+}
+
+interface BackendStoreData {
+  name?: string;
+  minimumOrder?: number;
+  settings?: { minimumOrder?: number };
+  estimatedDelivery?: string;
+  deliveryTime?: string;
+  distance?: string;
+  mainCategorySlug?: string;
+  serviceCapabilities?: {
+    homeDelivery?: { enabled?: boolean; estimatedTime?: string };
+    storePickup?: { enabled?: boolean; estimatedTime?: string };
+    driveThru?: { enabled?: boolean; estimatedTime?: string };
+    dineIn?: { enabled?: boolean };
+  };
+}
+
+interface BackendCartItem {
+  id?: string;
+  productId?: string;
+  name?: string;
+  image?: string;
+  price?: number;
+  quantity?: number;
+  originalPrice?: number;
+  discount?: number;
+  lockedQuantity?: number;
+  category?: string;
+  store?: {
+    id?: string;
+    name?: string;
+  };
+}
+
 const groupItemsByStore = (items: CheckoutItem[]): StoreGroup[] => {
   const storeMap = new Map<string, StoreGroup>();
 
@@ -405,7 +508,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const order = orderResponse.data;
 
             // Map order items to checkout items
-            const checkoutItems: CheckoutItem[] = (order.items || []).map((item: any) => {
+            const checkoutItems: CheckoutItem[] = (order.items || []).map((item: BackendOrderItem) => {
               // CA-CMC-044 FIX: Guard against division by zero if quantity is 0 or missing.
               // Use Math.max to ensure denominator is at least 1.
               const safeQuantity = Math.max(item.quantity || 1, 1);
@@ -413,9 +516,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 id: item.id || item._id || item.productId,
                 productId: item.productId || item.product?.id || item.product?._id,
                 name: item.product?.name || item.name || 'Product',
-                image: item.product?.images?.[0]?.url || item.product?.images?.[0] || '',
-                price: item.unitPrice || item.totalPrice / safeQuantity,
-                originalPrice: item.unitPrice || item.totalPrice / safeQuantity,
+                image: typeof item.product?.images?.[0] === 'string'
+                  ? item.product.images[0]
+                  : (item.product?.images?.[0] as { url?: string } | undefined)?.url || '',
+                price: item.unitPrice || (item.totalPrice ?? 0) / safeQuantity,
+                originalPrice: item.unitPrice || (item.totalPrice ?? 0) / safeQuantity,
                 quantity: safeQuantity,
                 discount: 0,
                 category: '',
@@ -436,7 +541,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 addressLine2: orderAddr.addressLine2,
                 city: orderAddr.city,
                 state: orderAddr.state,
-                pincode: orderAddr.pincode || (orderAddr as any).postalCode,
+                pincode: orderAddr.pincode || orderAddr.postalCode,
                 country: orderAddr.country || 'India',
                 type: orderAddr.addressType ? (orderAddr.addressType.toUpperCase() as 'HOME' | 'OFFICE' | 'OTHER') : undefined,
                 isDefault: false,
@@ -447,7 +552,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const totals = order.totals || order.summary;
             const itemTotal = totals?.subtotal || checkoutItems.reduce((t, i) => t + i.price * i.quantity, 0);
             const taxes = totals?.tax || Math.round(itemTotal * TAX_RATE);
-            const deliveryFee = totals?.delivery || (totals as any)?.shipping || 0;
+            const deliveryFee = totals?.delivery || (totals as { shipping?: number }).shipping || 0;
 
             const billSummary: BillSummary = {
               itemTotal,
@@ -476,7 +581,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               billSummary,
               selectedAddress,
               availablePaymentMethods: mockData.paymentMethods,
-              recentPaymentMethods: mockData.paymentMethods.filter((m: any) => m.isRecent),
+              recentPaymentMethods: mockData.paymentMethods.filter((m: PaymentMethod) => m.isRecent),
               loading: false,
             }));
             return;
@@ -498,7 +603,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // CA-CMC-045 FIX: Client-side prices are from cache and could be tampered.
           // TODO (SERVER-SIDE): Backend MUST recalculate all prices from product master data
           // at order creation time (ignoring client prices). Do NOT trust item.price from frontend.
-          const checkoutItems: CheckoutItem[] = mappedCart.items.map((item: any) => ({
+          const checkoutItems: CheckoutItem[] = mappedCart.items.map((item: BackendCartItem) => ({
             id: item.id,
             productId: item.productId, // Keep product ID for order creation
             name: item.name,
@@ -520,7 +625,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           // IMPORTANT: Only count discount as lock fee if item has lockedQuantity > 0
           // Regular sale discounts (originalPrice > price) are NOT lock fees
           const lockFeeDiscount = checkoutItems.reduce((total, item) => {
-            const lockedQty = (item as any).lockedQuantity || 0;
+            const lockedQty = item.lockedQuantity || 0;
             // Only count as lock fee if item was actually locked
             return total + (lockedQty > 0 ? (item.discount || 0) : 0);
           }, 0);
@@ -687,7 +792,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const storeId = checkoutItems[0]?.storeId;
             const currentWalletData = walletDataRef.current;
             const currentWalletRawData = walletRawDataRef.current;
-            walletCategoryBalances = (currentWalletRawData as any)?.categoryBalances || null;
+            walletCategoryBalances = (currentWalletRawData as RawWalletData)?.categoryBalances || null;
 
             if (currentWalletData) {
               const rezCoin = currentWalletData.coins.find((c) => c.type === 'rez');
@@ -772,18 +877,18 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           if (storeResult.status === 'fulfilled' && storeResult.value) {
             const storeResponse = storeResult.value;
             if (storeResponse.success && storeResponse.data) {
-              const storeData = storeResponse.data;
+              const storeData = storeResponse.data as BackendStoreData;
               realStore = {
                 ...realStore,
                 name: storeData.name || realStore.name,
-                minimumOrder: (storeData as any).minimumOrder || (storeData as any).settings?.minimumOrder || 0,
-                estimatedDelivery: (storeData as any).estimatedDelivery || (storeData as any).deliveryTime || '30-45 min',
-                distance: (storeData as any).distance || '',
-                categorySlug: (storeData as any).mainCategorySlug || '',
+                minimumOrder: storeData.minimumOrder || storeData.settings?.minimumOrder || 0,
+                estimatedDelivery: storeData.estimatedDelivery || storeData.deliveryTime || '30-45 min',
+                distance: storeData.distance || '',
+                categorySlug: storeData.mainCategorySlug || '',
               };
 
               // Build fulfillment options from serviceCapabilities
-              const caps = (storeData as any).serviceCapabilities;
+              const caps = storeData.serviceCapabilities;
               if (caps) {
                 const types: FulfillmentOption[] = [];
                 if (caps.homeDelivery?.enabled) {
@@ -853,7 +958,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 if (lastAddr) {
                   lastUsedAddress = userAddresses.find(addr =>
                     addr.addressLine1 === lastAddr.addressLine1 &&
-                    addr.pincode === (lastAddr.pincode || (lastAddr as any).postalCode)
+                    addr.pincode === (lastAddr.pincode || lastAddr.postalCode)
                   );
                 }
               } catch (err: any) {
@@ -970,8 +1075,8 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           const promoCoin = currentWalletData.coins.find((c) => c.type === 'promo');
 
           // Check for category-specific balance (fallback path)
-          const fallbackCategoryBalances = (currentWalletRawData as any)?.categoryBalances;
-          const fallbackCatSlug = (state as any)?.store?.categorySlug;
+          const fallbackCategoryBalances = (currentWalletRawData as RawWalletData)?.categoryBalances;
+          const fallbackCatSlug = state.store?.categorySlug;
           const fallbackCatBal = fallbackCatSlug && fallbackCategoryBalances ? fallbackCategoryBalances[fallbackCatSlug] : null;
           const fallbackRezAvailable = fallbackCatBal?.available ?? (rezCoin?.amount || 0);
 
@@ -1619,6 +1724,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       return;
     }
 
+    // OG-002 FIX: Guard against double-submit (double-tap, reconnect retry).
+    // Matches the pattern used in handleWalletPayment/handleCODPayment/handleRazorpayPayment.
+    if (isSubmittingRef.current) {
+      return;
+    }
+    isSubmittingRef.current = true;
+
     setState(prev => ({ ...prev, loading: true, currentStep: 'processing' }));
 
     try {
@@ -1641,7 +1753,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           pincode: state.selectedAddress.pincode,
           country: state.selectedAddress.country || 'India',
         } : { name: 'Customer', phone: '', addressLine1: '', city: '', state: '', pincode: '' },
-        paymentMethod: state.selectedPaymentMethod.id as any,
+        paymentMethod: state.selectedPaymentMethod.id,
         specialInstructions: state.selectedAddress?.instructions || '',
         couponCode: state.appliedPromoCode?.code,
         fulfillmentType: state.fulfillment.selectedType,
@@ -1661,7 +1773,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           (state.coinSystem.promoCoin.used || 0) +
           (state.coinSystem.storePromoCoin.used || 0)
       };
-      (orderData as any).coinsUsed = coinsUsed;
+      (orderData as unknown as BackendOrderData).coinsUsed = coinsUsed;
 
       logger.info('💰 [Checkout] Sending coinsUsed to backend:', JSON.stringify(coinsUsed));
       logger.info('💰 [Checkout] Store promo coin state:', JSON.stringify(state.coinSystem.storePromoCoin));
@@ -1716,6 +1828,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         error: error instanceof Error ? error.message : 'Failed to create order',
         currentStep: 'payment_methods',
       }));
+    } finally {
+      // OG-002 FIX: Always release the submission lock so the user can retry.
+      isSubmittingRef.current = false;
     }
   }, [state.selectedPaymentMethod, state.billSummary, state.items, state.store, state.appliedPromoCode, cartActions]);
 
@@ -1810,19 +1925,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Add redemption code if provided (for deal redemptions)
       if (coinValuesOverride?.redemptionCode) {
-        (orderData as any).redemptionCode = coinValuesOverride.redemptionCode;
+        (orderData as unknown as BackendOrderData).redemptionCode = coinValuesOverride.redemptionCode;
         logger.info('[Wallet] Redemption code added to order:', coinValuesOverride.redemptionCode);
       }
 
       // Add offer redemption code if provided (for cashback vouchers RED-xxx)
       if (coinValuesOverride?.offerRedemptionCode) {
-        (orderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
+        (orderData as unknown as BackendOrderData).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
         logger.info('[Wallet] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
       }
 
       // Add lock fee discount if applicable
       if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) {
-        (orderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
+        (orderData as unknown as BackendOrderData).lockFeeDiscount = state.billSummary.lockFeeDiscount;
         logger.info('[Wallet] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
       }
 
@@ -1846,13 +1961,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         totalCoinsValue: rezCoinsValue + promoCoinsValue + storePromoCoinsValue,
       };
       logger.info('[Wallet] coinsUsed being sent to backend:', JSON.stringify(coinsUsedData));
-      (orderData as any).coinsUsed = coinsUsedData;
+      (orderData as unknown as BackendOrderData).coinsUsed = coinsUsedData;
 
       // ATOMIC WALLET CHECKOUT FIX: Include the wallet payment amount in the
       // createOrder request body. The backend will debit the wallet and create
       // the order in a single MongoDB transaction, eliminating the race window
       // that previously left orders stuck in payment_pending on crash/network drop.
-      (orderData as any).walletPayment = { amount: totalPayable };
+      (orderData as unknown as BackendOrderData).walletPayment = { amount: totalPayable };
 
       // OG-001 FIX: pass the session idempotency key so reconnect retries
       // reuse the same key and the backend de-duplication fires correctly.
@@ -1875,7 +1990,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // Determine transaction ID — prefer the atomic result returned by the backend.
       // Fall back to the legacy separate-payment path for older backend versions that
       // don't yet return walletPaymentResult.
-      let transactionId: string | undefined = (orderResponse.data as any).walletPaymentResult?.transactionId;
+      let transactionId: string | undefined = (orderResponse.data as { walletPaymentResult?: { transactionId?: string } }).walletPaymentResult?.transactionId;
 
       if (!transactionId) {
         // Fallback: backend is an older version without atomic wallet support.
@@ -2100,7 +2215,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
         // Add redemption code if provided (for deal redemptions) - only for first/single store order
         if (coinValuesOverride?.redemptionCode && storeGroups.indexOf(storeGroup) === 0) {
-          (storeOrderData as any).redemptionCode = coinValuesOverride.redemptionCode;
+          (storeOrderData as unknown as BackendOrderData).redemptionCode = coinValuesOverride.redemptionCode;
           logger.info(`💵 [COD] Redemption code added to order for ${storeGroup.storeName}:`, coinValuesOverride.redemptionCode);
         } else {
           logger.info(`⚠️ [COD] Redemption code NOT added. Reason: redemptionCode=${coinValuesOverride?.redemptionCode}, isFirstStore=${storeGroups.indexOf(storeGroup) === 0}`);
@@ -2108,25 +2223,25 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
         // Add offer redemption code if provided (for cashback vouchers RED-xxx) - only for first/single store order
         if (coinValuesOverride?.offerRedemptionCode && storeGroups.indexOf(storeGroup) === 0) {
-          (storeOrderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
+          (storeOrderData as unknown as BackendOrderData).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
           logger.info(`💵 [COD] Offer redemption code added to order for ${storeGroup.storeName}:`, coinValuesOverride.offerRedemptionCode);
         }
 
         // Add lock fee discount if applicable - only for first/single store order
         if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0 && storeGroups.indexOf(storeGroup) === 0) {
-          (storeOrderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
+          (storeOrderData as unknown as BackendOrderData).lockFeeDiscount = state.billSummary.lockFeeDiscount;
           logger.info(`💵 [COD] Lock fee discount added to order for ${storeGroup.storeName}:`, state.billSummary.lockFeeDiscount);
         } else {
           logger.info(`⚠️ [COD] Lock fee discount NOT added. Reason: lockFeeDiscount=${state.billSummary?.lockFeeDiscount}, isFirstStore=${storeGroups.indexOf(storeGroup) === 0}`);
         }
 
         logger.info(`💵 [COD] Store ${storeGroup.storeName} order data:`, {
-          storeId: (storeOrderData as any).storeId,
+          storeId: (storeOrderData as unknown as BackendOrderData).storeId,
           itemCount: storeGroup.items.length,
           subtotal: storeGroup.subtotal,
           coinsUsed,
-          redemptionCode: (storeOrderData as any).redemptionCode,
-          lockFeeDiscount: (storeOrderData as any).lockFeeDiscount,
+          redemptionCode: (storeOrderData as unknown as BackendOrderData).redemptionCode,
+          lockFeeDiscount: (storeOrderData as unknown as BackendOrderData).lockFeeDiscount,
           fullData: JSON.stringify(storeOrderData),
         });
 
@@ -2191,7 +2306,15 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       logger.info('💵 [COD] Orders created successfully:', createdOrderIds);
       setState(prev => ({ ...prev, currentStep: 'success', loading: false }));
 
-      const transactionId = `COD_${Date.now()}`;
+      // OG-002 FIX: `COD_${Date.now()}` collides when two orders are placed in
+      // the same millisecond (rapid retries, multi-store checkouts). Prefer the
+      // session-scoped idempotency key that's already unique per order intent,
+      // then fall back to crypto.randomUUID(), and only as a last resort use
+      // the timestamp form.
+      const transactionId =
+        orderIdempotencyKeyRef.current ||
+        globalThis.crypto?.randomUUID?.() ||
+        `COD_${Date.now()}`;
       const orderIdsParam = createdOrderIds.join(',');
 
       // Non-blocking analytics
@@ -2286,7 +2409,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Auto-apply card offer if available (will be validated when card is entered in Razorpay)
       // The offer will be applied via the CardOffersSection component or when card is validated
-      const appliedCardOffer = (state as any).appliedCardOffer;
+      const appliedCardOffer = state.appliedCardOffer;
 
       // Create Razorpay payment
       await createRazorpayPayment({
@@ -2376,37 +2499,37 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             });
 
             // Attach payment and coins info
-            (orderData as any).razorpayPaymentId = paymentResponse.paymentId;
-            (orderData as any).razorpayOrderId = paymentResponse.orderId;
-            (orderData as any).transactionId = paymentResponse.transactionId;
-            (orderData as any).coinsUsed = coinsUsed;
+            (orderData as unknown as BackendOrderData).razorpayPaymentId = paymentResponse.paymentId;
+            (orderData as unknown as BackendOrderData).razorpayOrderId = paymentResponse.orderId;
+            (orderData as unknown as BackendOrderData).transactionId = paymentResponse.transactionId;
+            (orderData as unknown as BackendOrderData).coinsUsed = coinsUsed;
 
             // Add redemption code if provided (for deal redemptions)
             if (coinValuesOverride?.redemptionCode) {
-              (orderData as any).redemptionCode = coinValuesOverride.redemptionCode;
+              (orderData as unknown as BackendOrderData).redemptionCode = coinValuesOverride.redemptionCode;
               logger.info('💳 [Razorpay] Redemption code added to order:', coinValuesOverride.redemptionCode);
             }
 
             // Add offer redemption code if provided (for cashback vouchers RED-xxx)
             if (coinValuesOverride?.offerRedemptionCode) {
-              (orderData as any).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
+              (orderData as unknown as BackendOrderData).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
               logger.info('💳 [Razorpay] Offer redemption code added to order:', coinValuesOverride.offerRedemptionCode);
             }
 
             // Add lock fee discount if applicable
             if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) {
-              (orderData as any).lockFeeDiscount = state.billSummary.lockFeeDiscount;
+              (orderData as unknown as BackendOrderData).lockFeeDiscount = state.billSummary.lockFeeDiscount;
               logger.info('💳 [Razorpay] Lock fee discount added to order:', state.billSummary.lockFeeDiscount);
             }
 
             // Attach card offer if applied
             if (appliedCardOffer) {
-              (orderData as any).cardOfferId = appliedCardOffer._id;
+              (orderData as unknown as BackendOrderData).cardOfferId = appliedCardOffer._id;
               const orderTotal = state.billSummary?.totalPayable || 0;
               const discountAmount = appliedCardOffer.type === 'percentage'
                 ? Math.round((orderTotal * appliedCardOffer.value) / 100)
                 : appliedCardOffer.value;
-              (orderData as any).cardOfferDiscount = Math.min(
+              (orderData as unknown as BackendOrderData).cardOfferDiscount = Math.min(
                 discountAmount,
                 appliedCardOffer.maxDiscountAmount || discountAmount
               );

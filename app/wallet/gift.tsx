@@ -28,6 +28,7 @@ import { useSecurity } from '@/contexts/SecurityContext';
 import walletApi from '@/services/walletApi';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { generateIdempotencyKey } from '@/utils/idempotencyKey';
+import { promptTransactionPin, canPromptTransactionPin } from '@/utils/promptTransactionPin';
 import { handleWalletError, parseWalletError } from '@/utils/walletErrorHandler';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -200,13 +201,26 @@ function GiftPage() {
       return;
     }
 
-    // Biometric authentication before gift send
+    // Step-up authentication before gift send. If biometrics are unavailable or not
+    // enrolled, fall back to the transaction PIN (same PIN set during onboarding).
+    let authenticated = false;
     if (biometricAvailable && biometricEnrolled) {
-      const authenticated = await authenticateWithBiometric();
-      if (!authenticated) {
-        platformAlertSimple('Authentication Required', 'Biometric authentication is required to send gifts.');
-        return;
-      }
+      authenticated = await authenticateWithBiometric();
+    } else if (canPromptTransactionPin()) {
+      authenticated = await promptTransactionPin(
+        'Confirm Gift',
+        'Enter your 4-digit PIN to authorise this gift.',
+      );
+    } else {
+      platformAlertSimple(
+        'Authentication Required',
+        'Please enable biometric authentication to send gifts.',
+      );
+      return;
+    }
+    if (!authenticated) {
+      platformAlertSimple('Authentication Required', 'Authentication is required to send gifts.');
+      return;
     }
 
     submittingRef.current = true;
