@@ -21,6 +21,7 @@ import { EnterAmountParams, StorePaymentInfo, StorePaymentOffer, OffersResponse 
 import apiClient from '@/services/apiClient';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated, useRegionState } from '@/stores/selectors';
 import { showToast } from '@/components/common/ToastManager';
+import { validatePaymentAmount } from '@/utils/validation';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -203,7 +204,18 @@ function EnterAmountScreen() {
   }, [numericAmount, store?.rewardRules?.baseCashbackPercent]);
 
   const handleProceed = () => {
-    if (numericAmount <= 0) return;
+    // NA-HIGH-17 FIX: Use shared payment amount validator — rejects 0, negative,
+    // non-finite, and out-of-range amounts with a user-visible toast instead of
+    // silently passing the amount through to the backend.
+    const validation = validatePaymentAmount(numericAmount);
+    if (!validation.valid) {
+      showToast({
+        message: validation.error || 'Please enter a valid amount',
+        type: 'error',
+        duration: 3000,
+      });
+      return;
+    }
 
     router.push({
       pathname: '/pay-in-store/offers',

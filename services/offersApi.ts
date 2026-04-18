@@ -60,12 +60,15 @@ const API_CONFIG: ApiConfig = {
     }
   },
   endpoints: {
-    offers: '/api/offers',
-    categories: '/api/categories',
-    favorites: '/api/user/favorites',
-    search: '/api/offers/search',
-    analytics: '/api/analytics',
-    recommendations: '/api/recommendations'
+    // SHOWSTOPPER FIX: baseUrl (from EXPO_PUBLIC_API_BASE_URL via mainApiClient)
+    // already ends in `/api`, so endpoints must NOT include a leading `/api`.
+    // Previously produced URLs like `/api/api/offers` → 404.
+    offers: '/offers',
+    categories: '/categories',
+    favorites: '/user/favorites',
+    search: '/offers/search',
+    analytics: '/analytics',
+    recommendations: '/recommendations'
   }
 };
 

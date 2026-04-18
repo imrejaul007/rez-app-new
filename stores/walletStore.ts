@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createSecureWalletStorage } from '@/utils/secureWalletStorage';
 import { WalletData } from '@/types/wallet';
+import { logger } from '@/utils/logger';
 
 // ---------------------------------------------------------------------------
 // State types (mirrors WalletContext)
@@ -29,16 +30,74 @@ interface WalletStoreState extends WalletStoreData {
 }
 
 // ---------------------------------------------------------------------------
+// Default refreshWallet implementation
+// ---------------------------------------------------------------------------
+// NA-HIGH-12 FIX: Previously `refreshWallet` was a noop (`async () => {}`),
+// so any code calling `useWalletStore.getState().refreshWallet()` silently
+// did nothing when the WalletProvider wasn't mounted above the caller. That
+// broke reward-popup, post-payment, and socket-event refresh paths whenever
+// the zustand fallback path was taken. This default now actually hits the
+// API and writes the balances back into the store.
+//
+// Dynamic import avoids a circular dependency: walletApi → apiClient → auth
+// store → walletStore (persisted). A dynamic import defers resolution until
+// the first call, by which time the module graph is fully initialised.
+async function defaultRefreshWallet(
+  set: (partial: Partial<WalletStoreData>) => void,
+  get: () => WalletStoreState,
+): Promise<void> {
+  if (get().isRefreshing) return;
+  try {
+    set({ isRefreshing: true, error: null });
+    const { default: walletApi } = await import('@/services/walletApi');
+    const response = await walletApi.getBalance();
+    if (response.success && response.data) {
+      const data = response.data;
+      const rezCoin = Array.isArray(data.coins)
+        ? data.coins.find((c: { type?: string }) => c?.type === 'rez')
+        : undefined;
+      const rezBalance =
+        rezCoin?.amount ?? data.breakdown?.rezCoins?.amount ?? 0;
+      const totalBalance =
+        typeof data.totalValue === 'number' && data.totalValue > 0
+          ? data.totalValue
+          : (data.balance?.total ?? 0);
+      const availableBalance = data.balance?.available ?? totalBalance;
+      set({
+        rezBalance,
+        totalBalance,
+        availableBalance,
+        brandedCoins: Array.isArray(data.brandedCoins) ? data.brandedCoins : [],
+        savingsInsights:
+          data.savingsInsights ?? { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
+        rawBackendData: data,
+        error: null,
+      });
+    } else {
+      set({ error: response.message || 'Failed to refresh wallet' });
+    }
+  } catch (err) {
+    const errorObj = err instanceof Error ? err : new Error(String(err));
+    logger.error('[walletStore] refreshWallet failed', errorObj);
+    set({ error: errorObj.message });
+  } finally {
+    set({ isRefreshing: false });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Defaults
 // ---------------------------------------------------------------------------
-const defaults: WalletStoreData = {
+// Placeholder — the real defaults (including a working refreshWallet bound to
+// `set`/`get`) are built inside the create() callback below so the function
+// can write back into the store.
+const baseDefaults: Omit<WalletStoreData, 'refreshWallet'> = {
   walletData: null,
   rezBalance: 0,
   totalBalance: 0,
   availableBalance: 0,
   brandedCoins: [],
   savingsInsights: { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
-  refreshWallet: async () => {},
   rawBackendData: null,
   isLoading: false,
   isRefreshing: false,
@@ -55,8 +114,9 @@ const defaults: WalletStoreData = {
 // Old plain-AsyncStorage data is migrated on first read.
 export const useWalletStore = create<WalletStoreState>()(
   persist(
-    (set) => ({
-      ...defaults,
+    (set, get) => ({
+      ...baseDefaults,
+      refreshWallet: () => defaultRefreshWallet(set, get),
 
       // Called by WalletProvider on every render to keep store in sync
       _setFromProvider: (data: WalletStoreData) => {
@@ -64,7 +124,12 @@ export const useWalletStore = create<WalletStoreState>()(
       },
 
       // Clears all persisted wallet data on logout.
-      resetWallet: () => set({ ...defaults }),
+      // Restores the default refreshWallet so a logged-out store still has
+      // a working implementation when the next user logs in.
+      resetWallet: () => set({
+        ...baseDefaults,
+        refreshWallet: () => defaultRefreshWallet(set, get),
+      }),
 
       // Optimistic balance adjustment for instant UI feedback after earning coins.
       // Server truth is restored by the next refreshWallet() call.

@@ -268,7 +268,8 @@ export interface AutoOptimizeResponse {
 
 // ==================== COIN TYPES ====================
 
-export type CoinType = 'rezCoins' | 'promoCoins';
+import { CoinType } from '@/types/rez-shared-types';
+export { CoinType } from '@/types/rez-shared-types';
 
 export interface CoinBalance {
   type: CoinType;
@@ -276,6 +277,54 @@ export interface CoinBalance {
   balance: number;
   icon?: string;
   maxUsable?: number; // Maximum that can be used for this transaction
+}
+
+/**
+ * Normalize a legacy or canonical CoinType string into its canonical {@link CoinType} value.
+ *
+ * Background: the launch-prep refactor widened the `CoinType` union from
+ * `'rezCoins' | 'promoCoins'` to the canonical six-value enum
+ * (`'promo' | 'branded' | 'prive' | 'cashback' | 'referral' | 'rez'`).
+ *
+ * Any `CoinBalance` / `CoinType` values previously cached in AsyncStorage
+ * (e.g. `type: 'rezCoins'`) will NEVER equal a canonical enum value, which
+ * causes silent lookup/render failures at the UI layer.
+ *
+ * Call `normalizeLegacyCoinType` on ANY raw coin-type string read from
+ * persisted storage (AsyncStorage, SecureStore, zustand-persist caches)
+ * BEFORE using it in comparisons, switch statements, or passing it to
+ * typed components. Live API responses usually already return canonical
+ * values, but migration of persisted user data is mandatory.
+ *
+ * Unknown inputs fall back to {@link CoinType.REZ} (universal coin) — the
+ * safest default that keeps the wallet functional.
+ *
+ * @param raw Any string value previously stored as a coin type.
+ * @returns The canonical {@link CoinType} enum value.
+ */
+export function normalizeLegacyCoinType(raw: string): CoinType {
+  switch (raw) {
+    case 'rezCoins':
+    case 'rez':
+      return CoinType.REZ;
+    case 'promoCoins':
+    case 'promo':
+      return CoinType.PROMO;
+    case 'branded':
+    case 'brandedCoins':
+      return CoinType.BRANDED;
+    case 'prive':
+    case 'priveCoins':
+      return CoinType.PRIVE;
+    case 'cashback':
+    case 'cashbackCoins':
+      return CoinType.CASHBACK;
+    case 'referral':
+    case 'referralCoins':
+      return CoinType.REFERRAL;
+    default:
+      return CoinType.REZ;
+  }
 }
 
 export interface CoinRedemption {

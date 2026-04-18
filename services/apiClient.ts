@@ -2,6 +2,7 @@
 // Base client for all backend API communications
 
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import { parseConnectionError, formatConnectionError, isConnectionError } from '@/utils/connectionUtils';
 import { Sentry } from '@/config/sentry';
 import { API_CONFIG as ENV_API_CONFIG } from '@/config/env';
@@ -129,9 +130,14 @@ class ApiClient {
     // to validate the API server's certificate hash and prevent MITM attacks on compromised devices.
 
     this.baseURL = resolvedURL;
+    // BUG-048 (consumer): Send X-App-Version so the server's 426-Upgrade-Required
+    // minimum-version check can evaluate the client. Mirrors the admin apiClient.
+    const appVersion = Constants.expoConfig?.version ?? '1.0.0';
+    this.currentAppVersion = appVersion;
     this.defaultHeaders = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'X-App-Version': appVersion,
     };
   }
 
@@ -184,6 +190,9 @@ class ApiClient {
   // Set current app version
   setCurrentAppVersion(version: string) {
     this.currentAppVersion = version;
+    // Keep the X-App-Version default header in sync so overrides (e.g. from
+    // expo-updates runtime version) are applied to every outgoing request.
+    this.defaultHeaders['X-App-Version'] = version;
   }
 
   // Set slow request warning callback (fires at 4s before actual timeout)

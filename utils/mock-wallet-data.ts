@@ -4,10 +4,10 @@ import {
   WalletTransaction,
   WalletState,
   WalletError,
-  CoinType,
   COIN_TYPES,
   DEFAULT_CURRENCY
 } from '@/types/wallet';
+import { CoinType } from '@/types/enums';
 import { BRAND } from '@/constants/brand';
 
 // Mock Assets - Update paths as needed for your project structure
@@ -60,13 +60,13 @@ const createMockCoinBalance = (
 export const mockCoinBalances: CoinBalance[] = [
   createMockCoinBalance(
     'rez-001',
-    'rez',
+    CoinType.REZ,
     1955,
     'There is no cap or limit on the uses of this coin'
   ),
   createMockCoinBalance(
     'promo-001',
-    'promo',
+    CoinType.PROMO,
     120,
     'There is no cap or limit on the uses of this coin'
   ),
@@ -99,7 +99,7 @@ export const mockTransactions: WalletTransaction[] = [
   createMockTransaction(
     'txn-001',
     'earned',
-    'rez',
+    CoinType.REZ,
     50,
     'Cashback from purchase at Reliance Trends',
     1
@@ -107,7 +107,7 @@ export const mockTransactions: WalletTransaction[] = [
   createMockTransaction(
     'txn-002',
     'spent',
-    'promo',
+    CoinType.PROMO,
     25,
     'Used for discount on fashion items',
     2
@@ -115,7 +115,7 @@ export const mockTransactions: WalletTransaction[] = [
   createMockTransaction(
     'txn-003',
     'earned',
-    'promo',
+    CoinType.PROMO,
     75,
     'Welcome bonus promotion',
     3
@@ -123,7 +123,7 @@ export const mockTransactions: WalletTransaction[] = [
   createMockTransaction(
     'txn-004',
     'earned',
-    'rez',
+    CoinType.REZ,
     30,
     'Review reward for product feedback',
     5
@@ -131,7 +131,7 @@ export const mockTransactions: WalletTransaction[] = [
   createMockTransaction(
     'txn-005',
     'spent',
-    'rez',
+    CoinType.REZ,
     100,
     'Purchase discount applied',
     7
@@ -160,6 +160,7 @@ export const mockWalletData: WalletData = {
   recentTransactions: mockTransactions,
   lastUpdated: new Date(),
   isActive: true,
+  isFrozen: false,
 };
 
 // Mock Wallet State

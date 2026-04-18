@@ -322,15 +322,22 @@ export function getProductDiscount(product: UnifiedProduct): number {
     return product.discount;
   }
 
-  if (product.price.discount) {
+  if (product.price?.discount) {
     return product.price.discount;
   }
 
-  if (product.price.original && product.price.current < product.price.original) {
-    return Math.round(((product.price.original - product.price.current) / product.price.original) * 100);
+  // REGRESSION FIX: Guard against undefined current price. Previously `?? 0`
+  // caused a 100% discount to display when price.current was simply missing
+  // from the API response (e.g. original=100, current=undefined → 100% OFF).
+  if (
+    !product.price?.original ||
+    typeof product.price.current !== 'number' ||
+    product.price.current >= product.price.original
+  ) {
+    return 0;
   }
 
-  return 0;
+  return Math.round(((product.price.original - product.price.current) / product.price.original) * 100);
 }
 
 /**

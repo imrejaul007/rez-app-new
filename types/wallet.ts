@@ -179,6 +179,7 @@ export type WalletErrorCode =
   | 'FEATURE_DISABLED'
   | 'VELOCITY_LIMIT'
   | 'REAUTH_REQUIRED'
+  | 'INSUFFICIENT_BALANCE'
   | 'UNKNOWN';
 
 export interface WalletError {
