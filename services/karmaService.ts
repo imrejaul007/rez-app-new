@@ -277,7 +277,7 @@ class KarmaService {
    * Get transaction history for karma/coins
    */
   async getTransactions(
-    coinType: 'karma_points' | 'rez_coins' | 'all' = 'all',
+    coinType: 'karma_points' | 'rez_coins' | 'branded_coin' | 'all' = 'all',
     page = 1,
   ): Promise<ApiResponse<TransactionResult>> {
     return apiClient.get<TransactionResult>('/karma/wallet/transactions', { coinType, page });
