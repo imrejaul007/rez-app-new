@@ -94,6 +94,25 @@ function compareVersions(a: string, b: string): number {
 let _startupChecksRun = false;
 let _fontTimedOut = false;
 
+// F2: Push notification deep-link allowlist (CONS-SEC-001).
+// Notification payloads are remote-controlled; without this allowlist a malicious push
+// could navigate the user to an arbitrary in-app screen (route hijack).
+const ALLOWED_PUSH_ROUTES: RegExp[] = [
+  /^\/orders\/[a-zA-Z0-9-]+$/,
+  /^\/wallet$/,
+  /^\/wallet\/transactions$/,
+  /^\/notifications$/,
+  /^\/offers\/[a-zA-Z0-9-]+$/,
+  /^\/rewards$/,
+  /^\/pay-in-store(\/.*)?$/,
+  /^\/tabs(\/.*)?$/,
+];
+function isAllowedPushRoute(route: string): boolean {
+  if (typeof route !== 'string' || route.length === 0 || route.length > 200) return false;
+  if (route.includes('://')) return false; // reject absolute URLs
+  return ALLOWED_PUSH_ROUTES.some((re) => re.test(route));
+}
+
 function RootLayout() {
   const router = useRouter();
   const [loaded, fontError] = useFonts({
@@ -310,10 +329,19 @@ function RootLayout() {
           }
 
           if (data?.route && typeof data.route === 'string') {
-            try {
-              router.push(data.route);
-            } catch {
-              // Ignore if route is invalid
+            // F2: Only navigate if the route matches the allowlist — remote-controlled
+            // payloads cannot be trusted to deep-link anywhere in the app.
+            if (isAllowedPushRoute(data.route)) {
+              try {
+                router.push(data.route);
+              } catch {
+                // Ignore if route is invalid
+              }
+            } else {
+              Sentry.captureMessage('[Push] Rejected push route (not in allowlist)', {
+                level: 'warning',
+                extra: { route: String(data.route).slice(0, 200) },
+              });
             }
           } else if (data?.url && typeof data.url === 'string') {
             handleDeepLink(data.url);
