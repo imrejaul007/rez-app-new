@@ -22,7 +22,7 @@
     "verify:production": "ts-node scripts/verify-production-readiness.ts",
     "check:backend": "node scripts/check-backend.js",
     "build:render": "npx expo export --platform web",
-    "serve:render": "npx serve dist -l tcp://0.0.0.0:$PORT",
+    "serve:render": "npx serve dist -p ${PORT:-3000} -s",
     "serve:web": "npx serve dist",
     "prepare": "husky",
     "preinstall": "node scripts/preinstall.js",
