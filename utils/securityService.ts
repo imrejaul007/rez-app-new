@@ -11,8 +11,8 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Crypto = (() => { try { return require('expo-crypto'); } catch { return { digestStringAsync: async () => '', CryptoDigestAlgorithm: { SHA256: 'SHA-256' } }; } })();
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { logger } from '@/utils/logger';
 
 /**
@@ -211,82 +211,73 @@ export class InputValidator {
 /**
  * Secure Storage
  */
+/**
+ * SecureStorage — CD-CRIT-03 fix.
+ *
+ * Uses expo-secure-store for hardware-backed keystore encryption on iOS (Keychain)
+ * and Android (Keystore). Falls back to AsyncStorage for the web platform where
+ * SecureStore is not available (tokens on web are handled by httpOnly cookies
+ * in the auth layer — see authStorage.ts for the full web token strategy).
+ *
+ * IMPORTANT: This class stores NON-AUTH tokens (e.g. API secrets, cached keys).
+ * Auth tokens MUST go through authStorage.ts which uses SecureStore on native
+ * and httpOnly cookies on web.
+ */
 export class SecureStorage {
-  private static readonly ENCRYPTION_KEY = 'rez-app-secure-key';
+  private static readonly STORE_KEY = (k: string) => `secure_${k}`;
 
   /**
-   * Encrypt data using AES-256-GCM
-   * CRITICAL: This is a placeholder. For production, use expo-secure-store
-   * with hardware-backed keystore or react-native-encrypted-storage.
-   * Base64 encoding alone is NOT encryption and offers NO security.
-   */
-  private static async encrypt(data: string): Promise<string> {
-    try {
-      // TODO: Replace with actual AES-256-GCM encryption using proper crypto library
-      // For now, at least indicate that this is NOT encrypted
-      const key = await Crypto.digestStringAsync(
-        Crypto.CryptoDigestAlgorithm.SHA256,
-        this.ENCRYPTION_KEY
-      );
-
-      // SECURITY WARNING: Base64 is encoding, not encryption. This is a placeholder.
-      // Use: react-native-encrypted-storage or expo-secure-store for real encryption
-      return 'ENCRYPTED:' + Buffer.from(data).toString('base64');
-    } catch (error) {
-      return data;
-    }
-  }
-
-  /**
-   * Decrypt data
-   */
-  private static async decrypt(encrypted: string): Promise<string> {
-    try {
-      // Handle new encrypted format with ENCRYPTED: prefix
-      const data = encrypted.startsWith('ENCRYPTED:') ? encrypted.slice(10) : encrypted;
-      return Buffer.from(data, 'base64').toString('utf-8');
-    } catch (error) {
-      return encrypted;
-    }
-  }
-
-  /**
-   * Store sensitive data securely
+   * Store sensitive data securely. On native, uses hardware-backed keystore.
+   * On web, delegates to AsyncStorage — auth layer handles httpOnly cookies for tokens.
    */
   static async setSecure(key: string, value: string): Promise<void> {
     try {
-      const encrypted = await this.encrypt(value);
-      await AsyncStorage.setItem(`secure_${key}`, encrypted);
+      if (Platform.OS === 'web') {
+        // SecureStore unavailable on web — fall back to AsyncStorage.
+        // Non-auth data (no tokens here) is acceptable in AsyncStorage on web.
+        await AsyncStorage.setItem(this.STORE_KEY(key), value);
+        return;
+      }
+      await SecureStore.setItemAsync(this.STORE_KEY(key), value, {
+        keychainService: 'rez.app.secure',
+      });
     } catch (error) {
+      logger.error('[SecureStorage] setSecure failed', { key, error });
       throw new Error('Failed to store secure data');
     }
   }
 
   /**
-   * Retrieve sensitive data securely
+   * Retrieve sensitive data.
    */
   static async getSecure(key: string): Promise<string | null> {
     try {
-      const encrypted = await AsyncStorage.getItem(`secure_${key}`);
-
-      if (!encrypted) {
-        return null;
+      if (Platform.OS === 'web') {
+        return await AsyncStorage.getItem(this.STORE_KEY(key));
       }
-
-      return await this.decrypt(encrypted);
+      return await SecureStore.getItemAsync(this.STORE_KEY(key), {
+        keychainService: 'rez.app.secure',
+      });
     } catch (error) {
+      logger.error('[SecureStorage] getSecure failed', { key, error });
       return null;
     }
   }
 
   /**
-   * Remove secure data
+   * Remove sensitive data from secure storage.
    */
   static async removeSecure(key: string): Promise<void> {
     try {
-      await AsyncStorage.removeItem(`secure_${key}`);
-    } catch (_error) {
-      // silently handle
+      if (Platform.OS === 'web') {
+        await AsyncStorage.removeItem(this.STORE_KEY(key));
+        return;
+      }
+      await SecureStore.deleteItemAsync(this.STORE_KEY(key), {
+        keychainService: 'rez.app.secure',
+      });
+    } catch (error) {
+      logger.error('[SecureStorage] removeSecure failed', { key, error });
     }
   }
 
@@ -495,9 +486,15 @@ export class APISecurityHeaders {
 
     const message = `${method}${url}${JSON.stringify(body)}`;
 
-    const signature = await Crypto.digestStringAsync(
-      Crypto.CryptoDigestAlgorithm.SHA256,
-      message + secret
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    );
+    const sigBytes = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+    const signature = Buffer.from(new Uint8Array(sigBytes)).toString('hex');
     );
 
     return signature;
