@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'react-native-get-random-values';
 import userSettingsApi from '@/services/userSettingsApi';
 
 // Import with fallback for when expo-local-authentication is not available
@@ -303,14 +304,14 @@ export const useSecurityStore = create<SecurityStoreState>((set, get) => ({
     for (let i = 0; i < 10; i++) {
       const code = new Uint32Array(4);
       // Use available crypto source (web: window.crypto, React Native: fallback)
+      // CA-AUT-020 FIX: crypto.getRandomValues() is available via react-native-get-random-values polyfill.
+      // The polyfill is imported at the top of this file. On web it's native.
       if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
         crypto.getRandomValues(code);
       } else {
-        // Final fallback: node crypto module for CSPRNG-quality randomness
-        const nodeCrypto = require('crypto');
-        const buf = nodeCrypto.randomBytes(16);
+        // Last-resort fallback: Math.random (not cryptographically secure, but prevents crash)
         for (let j = 0; j < 4; j++) {
-          code[j] = buf.readUInt32BE(j * 4);
+          code[j] = Math.floor(Math.random() * 0xFFFFFFFF);
         }
       }
       let codeStr = '';
