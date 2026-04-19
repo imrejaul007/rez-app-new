@@ -25,6 +25,7 @@
     "serve:render": "npx serve dist -l tcp://0.0.0.0:$PORT",
     "serve:web": "npx serve dist",
     "prepare": "husky",
+    "preinstall": "node scripts/preinstall.js",
     "format": "prettier --write 'app/**/*.ts' 'app/**/*.tsx'"
   },
   "main": "expo-router/entry",
