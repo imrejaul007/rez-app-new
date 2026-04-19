@@ -1,7 +1,12 @@
 // Loyalty Points & Rewards API Service
 // Handles loyalty program operations
+//
+// CV-31 FIX: LoyaltyTransaction is now canonical from types/transactions.ts.
+// PointsTransaction is kept as a type alias for backward compatibility.
 
 import apiClient, { ApiResponse } from './apiClient';
+export type { LoyaltyTransaction } from '@/types/transactions';
+export type { LoyaltyTransaction as PointsTransaction } from '@/types/transactions';
 
 export interface LoyaltyPoints {
   currentPoints: number;
@@ -26,18 +31,6 @@ export interface Reward {
   available: boolean;
   expiryDate?: string;
   termsAndConditions?: string[];
-}
-
-export interface PointsTransaction {
-  _id: string;
-  type: 'earned' | 'redeemed' | 'expired' | 'adjusted';
-  points: number;
-  description: string;
-  relatedEntity?: {
-    type: 'order' | 'review' | 'referral' | 'reward';
-    id: string;
-  };
-  createdAt: string;
 }
 
 export interface LoyaltyStats {
@@ -141,7 +134,7 @@ class LoyaltyApiService {
     type?: 'earned' | 'redeemed' | 'expired' | 'adjusted';
     limit?: number;
     offset?: number;
-  }): Promise<ApiResponse<{ transactions: PointsTransaction[]; total: number; hasMore: boolean }>> {
+  }): Promise<ApiResponse<{ transactions: LoyaltyTransaction[]; total: number; hasMore: boolean }>> {
 
     return apiClient.get<any>(`${this.baseUrl}/points/history`, filters);
   }

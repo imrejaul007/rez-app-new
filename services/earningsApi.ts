@@ -1,7 +1,10 @@
 // Earnings API Service
 // Provides methods to fetch consolidated earnings data from the backend
+//
+// CV-31 FIX: EarningTransaction is now canonical from types/transactions.ts.
 
 import apiClient, { ApiResponse } from './apiClient';
+export type { EarningTransaction } from '@/types/transactions';
 
 export interface EarningsBreakdownItem {
   amount: number;
@@ -29,17 +32,6 @@ export interface EarningsStatistics {
   monthlyAverage: number;
   transactionCount: number;
   daysActive: number;
-}
-
-export interface EarningTransaction {
-  _id: string;
-  type: string;
-  source: string;
-  category: string;
-  amount: number;
-  description: string;
-  createdAt: string;
-  metadata?: Record<string, any>;
 }
 
 export interface ConsolidatedEarningsSummary {

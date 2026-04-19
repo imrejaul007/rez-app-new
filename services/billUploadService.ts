@@ -453,6 +453,23 @@ class BillUploadService {
 
     // Add basic fields
     formData.append('merchantId', data.merchantId);
+    // NA-CRIT-02: Bill amount is client-controlled — defense-in-depth.
+    // Client validates amount (min/max via validateAmount). The PRIMARY fix is on the backend:
+    // the backend MUST perform OCR reconciliation to verify that the submitted amount matches
+    // the amount extracted from the bill image. If OCR confidence is high and the discrepancy
+    // exceeds 5%, the backend should reject the submission.
+    // Additionally, if ocrData is available, log a discrepancy warning for fraud review.
+    const ocrAmount = data.ocrData?.amount;
+    if (ocrAmount !== undefined) {
+      const pctDiff = Math.abs(data.amount - ocrAmount) / Math.max(data.amount, ocrAmount);
+      if (pctDiff > 0.05) {
+        logger.warn(
+          `[BILL UPLOAD] Amount discrepancy detected: user=${data.amount}, ocr=${ocrAmount} (${(pctDiff * 100).toFixed(1)}%)`,
+        );
+        // Attach discrepancy metadata so the backend can flag this for review
+        formData.append('amount_discrepancy_pct', pctDiff.toFixed(4));
+      }
+    }
     formData.append('amount', data.amount.toString());
     formData.append('billDate', data.billDate.toISOString());
 

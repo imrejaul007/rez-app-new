@@ -14,6 +14,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useRef } from 'react';
+import uuid from 'react-native-uuid';
 
 // Load native Razorpay SDK — not available in Expo Go / web
 let RazorpayCheckout: any = null;
@@ -81,12 +82,7 @@ function PaymentScreen() {
   // Idempotency key — unique per mount, prevents duplicate payments on double-tap or network retry
   const idempotencyKeyRef = useRef(
     `PAY-${Date.now()}-${
-      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? crypto.randomUUID()
-        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-            const r = (Math.random() * 16) | 0;
-            return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-          })
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : String(uuid.v4())
     }`,
   );
 

@@ -1,10 +1,21 @@
 /**
  * Points/Coins API Service
  * Centralized service for managing user points, coins, and rewards
+ *
+ * CV-31 FIX: All transaction types are now consolidated in types/transactions.ts.
+ * This file re-exports PointTransaction from the canonical shared location.
  */
 
 import apiClient, { ApiResponse } from './apiClient';
 import walletApi from './walletApi';
+
+// CV-31 FIX: Re-export canonical types from shared location
+export type {
+  PointTransaction,
+  PointSource,
+  PointType,
+  PointStatus,
+} from '@/types/transactions';
 
 export interface PointsBalance {
   total: number;
@@ -13,43 +24,6 @@ export interface PointsBalance {
   pending: number;
   lifetimeEarned: number;
   lifetimeSpent: number;
-}
-
-export interface PointTransaction {
-  id: string;
-  userId: string;
-  type: 'earned' | 'spent' | 'expired' | 'refunded' | 'bonus';
-  amount: number;
-  source:
-    | 'purchase'
-    | 'review'
-    | 'referral'
-    | 'daily_login'
-    | 'achievement'
-    | 'challenge'
-    | 'spin_wheel'
-    | 'scratch_card'
-    | 'quiz'
-    | 'bill_upload'
-    | 'video_upload'
-    | 'social_share'
-    | 'bonus'
-    | 'admin';
-  description: string;
-  metadata?: {
-    orderId?: string;
-    reviewId?: string;
-    referralId?: string;
-    achievementId?: string;
-    challengeId?: string;
-    productId?: string;
-    storeId?: string;
-    [key: string]: any;
-  };
-  status: 'pending' | 'completed' | 'cancelled' | 'expired';
-  expiresAt?: string;
-  createdAt: string;
-  completedAt?: string;
 }
 
 export interface PointsStats {
