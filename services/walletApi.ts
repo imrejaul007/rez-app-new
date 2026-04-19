@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import apiClient, { ApiResponse } from './apiClient';
 import uuid from 'react-native-uuid';
 
@@ -600,7 +601,7 @@ class WalletService {
    */
   async topup(data: TopupRequest): Promise<ApiResponse<TopupResponse>> {
     // These are admin-only endpoints - consumer app should not call them directly
-    console.warn('[WalletAPI] topup is admin-only and cannot be called from consumer app');
+    logger.warn('[WalletAPI] topup is admin-only and cannot be called from consumer app');
     throw new Error('This operation requires admin privileges');
   }
 
@@ -708,7 +709,7 @@ class WalletService {
     message: string;
   }>> {
     // These are admin-only endpoints - consumer app should not call them directly
-    console.warn('[WalletAPI] creditLoyaltyPoints is admin-only and cannot be called from consumer app');
+    logger.warn('[WalletAPI] creditLoyaltyPoints is admin-only and cannot be called from consumer app');
     throw new Error('This operation requires admin privileges');
   }
 
@@ -724,7 +725,7 @@ class WalletService {
     try {
       return await apiClient.post<DevTopupResponse>('/wallet/dev-topup', { amount, type });
     } catch (error: any) {
-      console.warn('[WalletAPI] devTopup failed:', error?.message);
+      logger.warn('[WalletAPI] devTopup failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to add test funds', data: undefined };
     }
   }
@@ -736,7 +737,7 @@ class WalletService {
     try {
       return await apiClient.post<SyncBalanceResponse>('/wallet/sync-balance', {});
     } catch (error: any) {
-      console.warn('[WalletAPI] syncBalance failed:', error?.message);
+      logger.warn('[WalletAPI] syncBalance failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to sync balance', data: undefined };
     }
   }
@@ -763,7 +764,7 @@ class WalletService {
     status: 'success' | 'failed' | 'pending';
   }>> {
     // These are admin-only endpoints - consumer app should not call them directly
-    console.warn('[WalletAPI] refundPayment is admin-only and cannot be called from consumer app');
+    logger.warn('[WalletAPI] refundPayment is admin-only and cannot be called from consumer app');
     throw new Error('This operation requires admin privileges');
   }
 

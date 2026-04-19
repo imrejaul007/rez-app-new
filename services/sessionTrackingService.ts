@@ -9,6 +9,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
+import { logger } from '@/utils/logger';
 
 export interface SessionMetadata {
   sessionId: string;
@@ -125,7 +126,7 @@ class SessionTrackingService {
       const data = await AsyncStorage.getItem(SESSION_STORAGE_KEY);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.warn('[SessionTracking] Failed to read persisted sessions:', error);
+      logger.warn('[SessionTracking] Failed to read persisted sessions:', error);
       return [];
     }
   }
@@ -136,9 +137,9 @@ class SessionTrackingService {
   async clearPersistedSessions(): Promise<void> {
     try {
       await AsyncStorage.removeItem(SESSION_STORAGE_KEY);
-      console.debug('[SessionTracking] Cleared persisted sessions');
+      logger.debug('[SessionTracking] Cleared persisted sessions');
     } catch (error) {
-      console.warn('[SessionTracking] Failed to clear sessions:', error);
+      logger.warn('[SessionTracking] Failed to clear sessions:', error);
     }
   }
 
@@ -172,7 +173,7 @@ class SessionTrackingService {
       const trimmed = updated.slice(-50);
       await AsyncStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(trimmed));
     } catch (error) {
-      console.warn('[SessionTracking] Failed to persist session:', error);
+      logger.warn('[SessionTracking] Failed to persist session:', error);
     }
   }
 }

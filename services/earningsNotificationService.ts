@@ -13,6 +13,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { showAlert } from '@/utils/alert';
+import { logger } from '@/utils/logger';
 import apiClient from '@/services/apiClient';
 
 // Configure notification behavior (wrapped in try-catch for emulator compatibility)
@@ -88,7 +89,7 @@ class EarningsNotificationService {
             token: token.data,
             platform: Platform.OS,
           }).catch(error => {
-            console.warn('[EarningsNotificationService] Failed to register push token:', error);
+            logger.warn('[EarningsNotificationService] Failed to register push token:', error);
           });
         } catch (_tokenError) {
           // silently handle

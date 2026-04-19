@@ -2,6 +2,7 @@
 // Handles user authentication, registration, and profile management
 // Enhanced with comprehensive error handling, validation, token management, and logging
 
+import { logger } from '@/utils/logger';
 import apiClient, { ApiResponse, API_TIMEOUTS } from './apiClient';
 import { withRetry, createErrorResponse, logApiRequest, logApiResponse } from '@/utils/apiUtils';
 import {
@@ -773,10 +774,10 @@ class AuthService {
    */
   async ensureValidToken(): Promise<boolean> {
     if (__DEV__) {
-      console.warn(
+      logger.warn(
         '[AuthService] ensureValidToken() is deprecated. Token refresh is automatic via apiClient. Remove this call.',
       );
-      console.error(
+      logger.error(
         '[AuthService] ensureValidToken() has no callers — this call should be removed. ' +
         'Token refresh is handled automatically by the apiClient 401 interceptor via AuthContext.tryRefreshToken().',
       );

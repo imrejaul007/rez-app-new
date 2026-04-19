@@ -5,6 +5,7 @@
 // { apiClient } does not exist, so all apiClient.request() calls below would throw
 // "apiClient is undefined" at runtime. Additionally, ApiClient has no .request()
 // method — the correct helpers are .get() / .post(). Both issues are fixed here.
+import { logger } from '@/utils/logger';
 import apiClient from './apiClient';
 
 // Mock data fallback — imported lazily so it tree-shakes in production.
@@ -46,7 +47,7 @@ async function withMockFallback<T>(
     return await apiFn();
   } catch (err: any) {
     if (__DEV__) {
-      console.warn(`[TRY MOCK] ${label} — API unreachable, using mock data.`, err?.message);
+      logger.debug(`[TRY MOCK] ${label} — API unreachable, using mock data.`, err?.message);
       return fallback;
     }
     throw err;

@@ -1,6 +1,7 @@
 // services/cartValidationService.ts
 // Cart Validation Service - Handles stock validation API calls
 
+import { logger } from '@/utils/logger';
 import apiClient, { ApiResponse } from './apiClient';
 import { ValidationResult, ValidationIssue } from '@/types/validation.types';
 
@@ -188,7 +189,7 @@ class CartValidationService {
     timestamp: string;
   }) => void): () => void {
 
-    console.warn('[CartValidation] Real-time stock updates not implemented. Using checkout-time validation only.');
+    logger.warn('[CartValidation] Real-time stock updates not implemented. Using checkout-time validation only.');
 
     // Return no-op unsubscribe function
     return () => {

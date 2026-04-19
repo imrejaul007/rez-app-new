@@ -3,6 +3,7 @@
 
 import { Platform } from 'react-native';
 import { platformAlert } from '@/utils/platformAlert';
+import { logger } from '@/utils/logger';
 import apiClient from './apiClient';
 import type {
   PaymentRequest,
@@ -40,10 +41,10 @@ class RazorpayService {
 
     if (__DEV__) {
       if (!RAZORPAY_ENABLED) {
-        console.warn('[RAZORPAY] Razorpay is disabled in environment config');
+        logger.warn('[RAZORPAY] Razorpay is disabled in environment config');
       }
       if (!this.keyId || this.keyId.includes('your_razorpay_key_id')) {
-        console.warn('[RAZORPAY] Razorpay key not configured. Set EXPO_PUBLIC_RAZORPAY_KEY_ID in .env');
+        logger.warn('[RAZORPAY] Razorpay key not configured. Set EXPO_PUBLIC_RAZORPAY_KEY_ID in .env');
       }
     }
   }

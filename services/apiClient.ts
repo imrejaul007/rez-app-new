@@ -3,6 +3,7 @@
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { logger } from '@/utils/logger';
 import { parseConnectionError, formatConnectionError, isConnectionError } from '@/utils/connectionUtils';
 import { Sentry } from '@/config/sentry';
 import { API_CONFIG as ENV_API_CONFIG } from '@/config/env';
@@ -140,12 +141,12 @@ class ApiClient {
     const rawURL = process.env.EXPO_PUBLIC_API_BASE_URL;
     if (!rawURL) {
       if (__DEV__) {
-        console.error('[ApiClient] EXPO_PUBLIC_API_BASE_URL is not set. Defaulting to localhost for dev.');
+        logger.error('[ApiClient] EXPO_PUBLIC_API_BASE_URL is not set. Defaulting to localhost for dev.');
       } else {
         // During `expo export` static pre-rendering, env vars may not be present.
         // Log a warning but don't throw — the app will show API errors at runtime
         // rather than crashing the entire build.
-        console.error('[ApiClient] WARNING: EXPO_PUBLIC_API_BASE_URL is not configured. API calls will fail at runtime.');
+        logger.error('[ApiClient] WARNING: EXPO_PUBLIC_API_BASE_URL is not configured. API calls will fail at runtime.');
       }
     }
     const resolvedURL = resolveBaseURL(rawURL || 'http://localhost:5001/api');
@@ -305,8 +306,7 @@ class ApiClient {
         _csrfMissingWarned = true;
         // Observability-only — don't block the request. Backend will reject if CSRF is
         // actually required; this warning surfaces the misconfiguration in logs.
-        // eslint-disable-next-line no-console
-        console.warn(
+        logger.warn(
           '[apiClient] CSRF token missing: no <meta name="csrf-token"> and no csrf-token cookie. ' +
           'Mutating requests will be sent without X-CSRF-Token until this is fixed.'
         );

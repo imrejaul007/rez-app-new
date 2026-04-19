@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { logger } from '@/utils/logger';
 import apiClient from './apiClient';
 
 // SS-004 FIX: Foreground notification data-refresh callback registry
@@ -108,7 +109,7 @@ class PushNotificationService {
 
       return this.expoPushToken;
     } catch (error) {
-      console.error('[PushNotificationService] Failed to initialize push notifications:', error);
+      logger.error('[PushNotificationService] Failed to initialize push notifications:', error);
       return null;
     }
   }
