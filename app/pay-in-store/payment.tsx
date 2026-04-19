@@ -79,7 +79,8 @@ function PaymentScreen() {
     selectedOfferIds,
   });
 
-  // Idempotency key — unique per mount, prevents duplicate payments on double-tap or network retry
+  // Idempotency key — generated fresh per payment attempt to prevent the backend
+  // from returning a cached response on retry (CD-CRIT-09 fix).
   const idempotencyKeyRef = useRef(
     `PAY-${Date.now()}-${
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : String(uuid.v4())
@@ -97,7 +98,13 @@ function PaymentScreen() {
   const handlePayment = async () => {
     paymentFlow.clearError();
 
-    const paymentData = await paymentFlow.initiatePayment(idempotencyKeyRef.current);
+    // CD-CRIT-09 FIX: Generate a fresh idempotency key per attempt, not per mount.
+    // Mount-scoped keys cause the backend to return a cached response on retry,
+    // silently dropping the new attempt. Each payment attempt gets its own key.
+    const attemptKey = `PAY-${Date.now()}-${typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : String(uuid.v4())}`;
+    idempotencyKeyRef.current = attemptKey;
+
+    const paymentData = await paymentFlow.initiatePayment(attemptKey);
 
     if (!paymentData) return;
 

@@ -36,7 +36,7 @@ const CATEGORIES = [
   { id: 'product', label: 'Merchant Denied Offer', icon: 'storefront-outline', subject: 'Merchant denied offer' },
   { id: 'refund', label: 'Refund Not Processed', icon: 'return-down-back-outline' },
   { id: 'account', label: 'Wallet Balance Issue', icon: 'cash-outline', subject: 'Wallet balance issue' },
-  { id: 'account', label: 'Referral Reward Missing', icon: 'people-outline', subject: 'Referral reward missing' },
+  { id: 'referral', label: 'Referral Reward Missing', icon: 'people-outline', subject: 'Referral reward missing' },
   { id: 'technical', label: 'App Technical Problem', icon: 'bug-outline' },
   { id: 'delivery', label: 'Delivery Issue', icon: 'bicycle-outline' },
   { id: 'other', label: 'Other', icon: 'help-circle-outline' },

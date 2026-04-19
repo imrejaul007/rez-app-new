@@ -382,8 +382,9 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       setIsProcessing(true);
       setError(null);
 
-      // OG-D001 FIX: Use the caller-supplied key or the session-scoped ref so
-      // that retries after a reconnect always carry the same idempotency key.
+      // OG-D001 / CD-CRIT-09: Use the caller-supplied key when provided.
+      // The key is now generated fresh per attempt in payment.tsx handlePayment(),
+      // so retries get a new key and the backend processes each attempt freshly.
       const resolvedKey = idempotencyKey ?? idempotencyKeyRef.current;
 
       // Map rezCoins back to rezCoins for backend

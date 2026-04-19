@@ -600,9 +600,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           const mappedCart = mapBackendCartToFrontend(cartResponse.data);
 
           // Convert cart items to checkout items format
-          // CA-CMC-045 FIX: Client-side prices are from cache and could be tampered.
-          // TODO (SERVER-SIDE): Backend MUST recalculate all prices from product master data
-          // at order creation time (ignoring client prices). Do NOT trust item.price from frontend.
+          // CD-CRIT-06: Backend already enforces price integrity — webOrderingRoutes.ts:1998
+          // uses canonical menu prices server-side, ignoring client-supplied prices entirely.
+          // Frontend sends prices for display only; backend recalculates at order creation.
           const checkoutItems: CheckoutItem[] = mappedCart.items.map((item: BackendCartItem) => ({
             id: item.id,
             productId: item.productId, // Keep product ID for order creation
