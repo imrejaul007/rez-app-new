@@ -339,9 +339,8 @@ function BillPaymentPage() {
         throw razorpayErr;
       }
 
-      // CA-PAY-003 FIX: Generate idempotency key ONCE per payment intent,
-      // use it for all retries to prevent duplicate charges on network retry.
-      const idempotencyKey = `bill-${selectedProvider._id}-${consumerNumber.trim()}-${Date.now()}`;
+      // CA-PAY-003 FIX: crypto.randomUUID() replaces Date.now() for collision-safe idempotency.
+      const idempotencyKey = `bill-${selectedProvider._id}-${consumerNumber.trim()}-${crypto.randomUUID()}`;
 
       // Step 3 — Confirm payment with backend BBPS
       const res = await payBill(

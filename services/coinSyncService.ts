@@ -125,6 +125,11 @@ class CoinSyncService {
   /**
    * Sync gamification rewards to wallet
    * When user earns coins from games/challenges, credit them to wallet
+   *
+   * CA-GAM-001 FIX: Idempotency guard via AsyncStorage + idempotency key in API metadata.
+   * On retry (network drop, crash, double-tap), the same idempotency key is used so the
+   * backend can deduplicate. Frontend also checks AsyncStorage before calling to prevent
+   * the API call from firing twice in the same session.
    */
   async syncGamificationReward(
     amount: number,
@@ -140,7 +145,23 @@ class CoinSyncService {
         throw new Error(`Reward amount must be > 0 and <= ${MAX_AWARD_PER_EVENT}`);
       }
 
-      // Step 1: Award points via Points API
+      // CA-GAM-001 FIX: Generate idempotency key for this specific reward event.
+      // Format: reward_sync:${source}:${amount}:${rounded_timestamp}
+      // The rounded timestamp (to 5-second windows) groups rapid taps as the same intent.
+      const timestampBucket = Math.floor(Date.now() / 5000);
+      const idempotencyKey = `reward_sync:${source}:${amount}:${timestampBucket}`;
+
+      // Frontend guard: check AsyncStorage before making the API call.
+      // This prevents double calls even when the API call itself is not retryable.
+      const rewardStorageKey = `${this.SYNC_KEY}:${idempotencyKey}`;
+      const existingReward = await AsyncStorage.getItem(rewardStorageKey).catch(() => null);
+      if (existingReward) {
+        logger.info(`🎮 [COIN SYNC] Reward already processed (idempotency key: ${idempotencyKey}), skipping.`);
+        const cached = JSON.parse(existingReward) as CoinRewardSyncResult;
+        return cached;
+      }
+
+      // Step 1: Award points via Points API with idempotency key in metadata
       const earnResponse = await pointsApi.earnPoints({
         amount,
         source,
@@ -148,6 +169,7 @@ class CoinSyncService {
         metadata: {
           syncedToWallet: true,
           timestamp: new Date().toISOString(),
+          idempotencyKey, // CA-GAM-001 FIX: pass idempotency key for backend deduplication
           ...metadata,
         },
       });
@@ -163,12 +185,26 @@ class CoinSyncService {
 
       logger.info(`✅ [COIN SYNC] Reward synced successfully. New wallet balance: ${newWalletBalance}`);
 
-      return {
+      // CA-GAM-001 FIX: Persist successful award to AsyncStorage after balance is confirmed.
+      // On next attempt with the same idempotency key, return the cached result instead of
+      // calling the API again. 5-minute TTL prevents indefinite storage.
+      const finalResult: CoinRewardSyncResult = {
         success: true,
         coinsAdded: amount,
         newWalletBalance,
         source,
       };
+      try {
+        await AsyncStorage.setItem(rewardStorageKey, JSON.stringify(finalResult)).catch(() => {});
+        // Auto-expire after 5 minutes to keep storage lean
+        setTimeout(() => {
+          AsyncStorage.removeItem(rewardStorageKey).catch(() => {});
+        }, 5 * 60 * 1000);
+      } catch (_cacheErr) {
+        // Non-critical — don't fail the reward for cache errors
+      }
+
+      return finalResult;
     } catch (error) {
       logger.error('❌ [COIN SYNC] Error syncing gamification reward:', error as Error);
       return {

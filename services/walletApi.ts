@@ -631,9 +631,10 @@ class WalletService {
     idempotencyKey?: string
   ): Promise<ApiResponse<PaymentResponse>> {
     try {
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
       const key =
         idempotencyKey ||
-        `wallet-pay-${Date.now()}-${uuid.v4()}`;
+        `wallet-pay-${uuid.v4() as string}`;
       return await apiClient.post<PaymentResponse>('/wallet/payment', data as any, {
         headers: { 'Idempotency-Key': key },
       });
@@ -795,7 +796,8 @@ class WalletService {
     status?: string;
   }>> {
     try {
-      const key = data.idempotencyKey ?? `wallet-transfer-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed (redundant).
+      const key = data.idempotencyKey ?? `wallet-transfer-${uuid.v4() as string}`;
       return await apiClient.post<{
     transferId: string;
     requiresOtp: boolean;
@@ -827,7 +829,8 @@ class WalletService {
     coinType: string;
   }>> {
     try {
-      const key = data.idempotencyKey ?? `wallet-confirm-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
+      const key = data.idempotencyKey ?? `wallet-confirm-${uuid.v4() as string}`;
       return await apiClient.post<{
     transferId: string;
     status: string;
@@ -949,7 +952,8 @@ class WalletService {
     expiresAt: string;
   }>> {
     try {
-      const key = data.idempotencyKey ?? `wallet-gift-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
+      const key = data.idempotencyKey ?? `wallet-gift-${uuid.v4() as string}`;
       return await apiClient.post<{
     giftId: string;
     status: string;
@@ -981,7 +985,8 @@ class WalletService {
    */
   async claimGift(giftId: string, idempotencyKey?: string): Promise<ApiResponse<{ giftId: string; amount: number; status: string }>> {
     try {
-      const key = idempotencyKey ?? `wallet-claim-gift-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
+      const key = idempotencyKey ?? `wallet-claim-gift-${uuid.v4() as string}`;
       return await apiClient.post<{ giftId: string; amount: number; status: string }>(
         `/wallet/gift/${giftId}/claim`,
         {},
@@ -1032,7 +1037,8 @@ class WalletService {
     idempotencyKey?: string;
   }): Promise<ApiResponse<PurchaseGiftCardResponse>> {
     try {
-      const key = data.idempotencyKey ?? `wallet-gift-card-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
+      const key = data.idempotencyKey ?? `wallet-gift-card-${uuid.v4() as string}`;
       return await apiClient.post<PurchaseGiftCardResponse>('/wallet/gift-cards/purchase', data as any, {
         headers: { 'Idempotency-Key': key },
       });
@@ -1115,7 +1121,8 @@ class WalletService {
     idempotencyKey?: string;
   }): Promise<ApiResponse<RedeemCoinsResponse>> {
     try {
-      const key = data.idempotencyKey ?? `wallet-redeem-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
+      const key = data.idempotencyKey ?? `wallet-redeem-${uuid.v4() as string}`;
       return await apiClient.post<RedeemCoinsResponse>('/wallet/redeem-coins', data as any, {
         headers: { 'Idempotency-Key': key },
       });
