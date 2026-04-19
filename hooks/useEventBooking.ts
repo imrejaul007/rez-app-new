@@ -46,8 +46,8 @@ export function useEventBooking(): UseEventBookingReturn {
         throw new Error('Please select a time slot');
       }
 
-      // Generate idempotency key to prevent duplicate bookings
-      const idempotencyKey = `${event.id}-${Date.now()}-${uuid.v4()}`;
+      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
+      const idempotencyKey = `${event.id}-${uuid.v4() as string}`;
 
       // Call API to book event
       const result = await eventsApiService.bookEventSlot(event.id, { ...formData, idempotencyKey });
