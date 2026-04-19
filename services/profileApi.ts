@@ -51,7 +51,7 @@ class ProfileService {
   async updateProfile(updates: Partial<ProfileData>): Promise<ApiResponse<ProfileData>> {
     try {
       return await withRetry(
-        () => apiClient.put<ProfileData>('/user/profile', updates),
+        () => apiClient.patch<ProfileData>('/user/auth/profile', updates),
         { maxRetries: 3 }
       );
     } catch (error: any) {
