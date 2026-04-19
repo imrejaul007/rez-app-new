@@ -9,13 +9,14 @@
 import apiClient, { ApiResponse } from './apiClient';
 import walletApi from './walletApi';
 
-// CV-31 FIX: Re-export canonical types from shared location
-export type {
+// CV-31 FIX: Import canonical types for local use, re-export for external consumers
+import type {
   PointTransaction,
   PointSource,
   PointType,
   PointStatus,
 } from '@/types/transactions';
+export type { PointTransaction, PointSource, PointType, PointStatus } from '@/types/transactions';
 
 export interface PointsBalance {
   total: number;

@@ -109,7 +109,7 @@ class PushNotificationService {
 
       return this.expoPushToken;
     } catch (error) {
-      logger.error('[PushNotificationService] Failed to initialize push notifications:', error);
+      logger.error('[PushNotificationService] Failed to initialize push notifications:', error as Error);
       return null;
     }
   }

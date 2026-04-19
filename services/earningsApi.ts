@@ -4,6 +4,7 @@
 // CV-31 FIX: EarningTransaction is now canonical from types/transactions.ts.
 
 import apiClient, { ApiResponse } from './apiClient';
+import type { EarningTransaction } from '@/types/transactions';
 export type { EarningTransaction } from '@/types/transactions';
 
 export interface EarningsBreakdownItem {

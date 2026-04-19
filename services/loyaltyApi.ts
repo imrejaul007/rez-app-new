@@ -5,6 +5,7 @@
 // PointsTransaction is kept as a type alias for backward compatibility.
 
 import apiClient, { ApiResponse } from './apiClient';
+import type { LoyaltyTransaction } from '@/types/transactions';
 export type { LoyaltyTransaction } from '@/types/transactions';
 export type { LoyaltyTransaction as PointsTransaction } from '@/types/transactions';
 
