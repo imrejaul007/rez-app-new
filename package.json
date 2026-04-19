@@ -1,6 +1,5 @@
 {
   "name": "rez-consumer",
-  "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
     "start": "NODE_OPTIONS=--max-old-space-size=8192 expo start",
