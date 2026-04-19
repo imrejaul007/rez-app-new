@@ -27,6 +27,7 @@
     "prepare": "husky",
     "format": "prettier --write 'app/**/*.ts' 'app/**/*.tsx'"
   },
+  "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/poppins": "^0.4.1",
