@@ -3,7 +3,7 @@ services:
     name: rez-app-consumer
     runtime: node
     buildCommand: npm install && npm run build:render
-    startCommand: npm run serve:render
+    startCommand: npx serve dist -p ${PORT:-3000} -s
     envVars:
       - key: NODE_VERSION
         value: 22
