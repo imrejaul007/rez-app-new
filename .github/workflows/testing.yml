@@ -11,7 +11,7 @@ on:
   workflow_dispatch: # Manual trigger
 
 env:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: '20'
   COVERAGE_THRESHOLD: 70
 
 jobs:
