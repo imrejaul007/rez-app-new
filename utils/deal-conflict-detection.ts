@@ -241,11 +241,11 @@ const calculateOptimalDealCombination = (
   const sortedDeals = validDeals.sort((a, b) => {
     const aSavings = Math.min(
       (billAmount * (a.discountValue ?? 0)) / 100,
-      a.maxDiscount || Infinity
+      a.maxDiscount ?? Infinity
     );
     const bSavings = Math.min(
       (billAmount * (b.discountValue ?? 0)) / 100,
-      b.maxDiscount || Infinity
+      b.maxDiscount ?? Infinity
     );
     return bSavings - aSavings;
   });
@@ -268,7 +268,7 @@ const calculateOptimalDealCombination = (
       recommendedDeals.push(deal.id);
       const dealSavings = Math.min(
         (billAmount * (deal.discountValue ?? 0)) / 100,
-        deal.maxDiscount || Infinity
+        deal.maxDiscount ?? Infinity
       );
       totalSavings += dealSavings;
     }

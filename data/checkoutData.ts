@@ -165,7 +165,7 @@ export const calculateBillSummary = (
     } else if (discountType === 'PERCENTAGE') {
       promoDiscount = Math.min(
         Math.round((itemTotal * appliedPromoCode.discountValue) / 100),
-        appliedPromoCode.maxDiscount || Infinity
+        appliedPromoCode.maxDiscount ?? Infinity
       );
     }
   }
