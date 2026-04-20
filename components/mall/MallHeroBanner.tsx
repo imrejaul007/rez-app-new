@@ -31,8 +31,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBanner } from '../../types/mall.types';
-import { FlashList } from '@shopify/flash-list';
-const AnyFlashList = FlashList as any;
+import TypedFlashList from '@/components/ui/TypedFlashList';
+import type { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -297,8 +297,8 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
 
   return (
     <View style={styles.container}>
-      <AnyFlashList
-        ref={flatListRef as any}
+      <TypedFlashList
+        ref={flatListRef}
         data={displayBanners}
         renderItem={renderBanner}
         keyExtractor={keyExtractor}
@@ -311,9 +311,9 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
         snapToInterval={SNAP_INTERVAL}
         snapToAlignment="start"
         decelerationRate="fast"
-        contentContainerStyle={styles.listContent as any}
+        contentContainerStyle={styles.listContent}
         estimatedItemSize={200}
-        ItemSeparatorComponent={ItemSeparator as any}
+        ItemSeparatorComponent={ItemSeparator}
       />
 
       {/* External animated pagination dots */}

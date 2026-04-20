@@ -7,7 +7,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import CachedImage from '@/components/ui/CachedImage';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
@@ -200,16 +200,16 @@ function HotDealsSection({
           </Pressable>
         </View>
       ) : (
-        React.createElement(FlashList as any, {
-          data: products,
-          renderItem: renderProduct,
-          keyExtractor,
-          numColumns: 2,
-          scrollEnabled: false,
-          contentContainerStyle: styles.listContent,
-          estimatedItemSize: 220,
-          ItemSeparatorComponent: () => <View style={styles.rowSeparator} />,
-        })
+        <TypedFlashList
+          data={products}
+          renderItem={renderProduct}
+          keyExtractor={keyExtractor}
+          numColumns={2}
+          scrollEnabled={false}
+          contentContainerStyle={styles.listContent}
+          estimatedItemSize={220}
+          ItemSeparatorComponent={() => <View style={styles.rowSeparator} />}
+        />
       )}
     </View>
   );

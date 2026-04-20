@@ -18,8 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallCollection } from '../../types/mall.types';
 import MallCollectionCard from './cards/MallCollectionCard';
-import { FlashList } from '@shopify/flash-list';
-const AnyFlashList = FlashList as any;
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
 
 interface MallCollectionsProps {
@@ -158,13 +157,13 @@ const MallCollections: React.FC<MallCollectionsProps> = ({
         </View>
 
         {/* Collections List */}
-        <AnyFlashList
+        <TypedFlashList
           data={collections}
           renderItem={renderCollection}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent as any}
+          contentContainerStyle={styles.listContent}
           estimatedItemSize={150}
         />
       </LinearGradient>

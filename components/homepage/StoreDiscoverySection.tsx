@@ -5,8 +5,7 @@ import {
   Pressable,
   Platform,
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-const AnyFlashList = FlashList as any;
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -153,13 +152,13 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
           {isLoadingTop ? (
             <StoreDiscoverySkeleton showTopStores={true} showPopularStores={false} />
           ) : (
-            <AnyFlashList
+            <TypedFlashList
               data={topStores}
               renderItem={renderTopStoreCard}
               keyExtractor={keyExtractorTop}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent as any}
+              contentContainerStyle={styles.scrollContent}
               scrollEventThrottle={16}
               decelerationRate="normal"
               estimatedItemSize={110}
@@ -183,13 +182,13 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
           {isLoadingPopular ? (
             <StoreDiscoverySkeleton showTopStores={false} showPopularStores={true} />
           ) : (
-            <AnyFlashList
+            <TypedFlashList
               data={popularStores}
               renderItem={renderPopularStoreCard}
               keyExtractor={keyExtractorPopular}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent as any}
+              contentContainerStyle={styles.scrollContent}
               scrollEventThrottle={16}
               decelerationRate="normal"
               estimatedItemSize={110}

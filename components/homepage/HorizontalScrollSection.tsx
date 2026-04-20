@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, Dimensions, RefreshControl, Platform } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { HorizontalScrollSectionProps } from '@/types/homepage.types';
@@ -84,20 +84,20 @@ const HorizontalScrollSection = React.memo(function HorizontalScrollSection({
       </ThemedView>
 
       {/* Horizontal Scroll Content - Optimized FlatList for all platforms */}
-      {React.createElement(FlashList as any, {
-        data: section.items,
-        horizontal: true,
-        nestedScrollEnabled: true,
-        showsHorizontalScrollIndicator: showIndicator,
-        contentContainerStyle: [styles.scrollContent, { paddingHorizontal: spacing }],
-        style: Platform.OS === 'web' ? styles.webFlatListContainer : undefined,
-        removeClippedSubviews: Platform.OS !== 'web',
-        scrollEventThrottle: 16,
-        decelerationRate: 'normal',
-        estimatedItemSize: 150,
-        keyExtractor: (item: any, index: number) => item?.id || item?._id || `item-${index}`,
-        renderItem: renderSectionCard,
-      })}
+      <TypedFlashList
+        data={section.items}
+        renderItem={renderSectionCard}
+        keyExtractor={(item: any, index: number) => item?.id || item?._id || `item-${index}`}
+        horizontal
+        nestedScrollEnabled
+        showsHorizontalScrollIndicator={showIndicator}
+        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: spacing }]}
+        style={Platform.OS === 'web' ? styles.webFlatListContainer : undefined}
+        removeClippedSubviews={Platform.OS !== 'web'}
+        scrollEventThrottle={16}
+        decelerationRate="normal"
+        estimatedItemSize={150}
+      />
 
       {/* Optional iOS Always-visible Scroll Indicator */}
       {Platform.OS === 'ios' && showIndicator && (

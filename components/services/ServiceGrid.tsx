@@ -9,8 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ServiceCard, { ServiceItem } from './ServiceCard';
-import { FlashList } from '@shopify/flash-list';
-const AnyFlashList = FlashList as any;
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
@@ -99,12 +98,12 @@ const ServiceGrid: React.FC<ServiceGridProps> = ({
   }
 
   return (
-    <AnyFlashList
+    <TypedFlashList
       data={services}
       renderItem={renderItem}
       keyExtractor={(item: any) => item.id}
       numColumns={columns}
-      contentContainerStyle={[styles.listContent, contentContainerStyle] as any}
+      contentContainerStyle={[styles.listContent, contentContainerStyle]}
       showsVerticalScrollIndicator={false}
       ListEmptyComponent={renderEmpty}
       removeClippedSubviews={Platform.OS !== 'web'}

@@ -796,7 +796,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             const storeId = checkoutItems[0]?.storeId;
             const currentWalletData = walletDataRef.current;
             const currentWalletRawData = walletRawDataRef.current;
-            walletCategoryBalances = (currentWalletRawData as RawWalletData)?.categoryBalances || null;
+            walletCategoryBalances = (currentWalletRawData as RawWalletData)?.categoryBalances ?? null;
 
             if (currentWalletData) {
               const rezCoin = currentWalletData.coins.find((c) => c.type === 'rez');
@@ -2449,7 +2449,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             paymentMethod: 'razorpay',
             razorpayPaymentId: paymentResponse.paymentId,
             razorpayOrderId: paymentResponse.orderId,
-            razorpaySignature: paymentResponse.signature || null,
+            razorpaySignature: paymentResponse.signature ?? null,
             pendingPaymentAmount: totalPayable,
             orderCreated: false,
           });

@@ -8,8 +8,8 @@ import {
   NativeSyntheticEvent,
   Platform,
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-const AnyFlashList = FlashList as any;
+import TypedFlashList from '@/components/ui/TypedFlashList';
+import type { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
@@ -360,8 +360,8 @@ function StoreCard({
             <>
               {banners.length > 1 ? (
                 <>
-                  <AnyFlashList
-                    ref={flatListRef as any}
+                  <TypedFlashList
+                    ref={flatListRef}
                     data={banners}
                     renderItem={renderBannerItem}
                     keyExtractor={(item: string, index: number) => `banner-${store.id || store.name}-${index}`}

@@ -15,8 +15,7 @@ import ReviewItem from './ReviewItem';
 import RatingStars from './RatingStars';
 import { Review, ReviewFilters, ReviewStats } from '@/types/review.types';
 import reviewService from '@/services/reviewApi';
-import { FlashList } from '@shopify/flash-list';
-const AnyFlashList = FlashList as any;
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -280,7 +279,7 @@ function ReviewList({
   }
 
   return (
-    <AnyFlashList
+    <TypedFlashList
       data={reviews}
       keyExtractor={(item: any) => String(item._id ?? item.id ?? 'unknown')}
       renderItem={renderReviewItem}
