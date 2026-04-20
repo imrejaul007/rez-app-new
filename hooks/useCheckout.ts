@@ -1373,7 +1373,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       const promoDiscount = prev.appliedPromoCode ? (
         prev.appliedPromoCode.discountType === 'FIXED'
           ? Number(prev.appliedPromoCode.discountValue) || 0
-          : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) || Infinity)
+          : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) ?? Infinity)
       ) : 0;
 
       const subtotalBeforeCoins = Math.max(0, itemTotal + deliveryFee + taxes - promoDiscount);
@@ -1438,7 +1438,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       const promoDiscount = prev.appliedPromoCode ? (
         prev.appliedPromoCode.discountType === 'FIXED'
           ? prev.appliedPromoCode.discountValue
-          : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount || Infinity)
+          : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount ?? Infinity)
       ) : 0;
 
       const subtotalAfterRezCoins = itemTotal + prev.store.deliveryFee + taxes - promoDiscount - prev.coinSystem.rezCoin.used;
@@ -1493,7 +1493,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       const promoDiscount = prev.appliedPromoCode ? (
         prev.appliedPromoCode.discountType === 'FIXED'
           ? prev.appliedPromoCode.discountValue
-          : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount || Infinity)
+          : Math.min(Math.round((itemTotal * prev.appliedPromoCode.discountValue) / 100), prev.appliedPromoCode.maxDiscount ?? Infinity)
       ) : 0;
 
       // Calculate remaining after other coins (REZ and regular promo)
@@ -1563,7 +1563,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       const promoDiscount = prev.appliedPromoCode ? (
         prev.appliedPromoCode.discountType === 'FIXED'
           ? Number(prev.appliedPromoCode.discountValue) || 0
-          : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) || Infinity)
+          : Math.min(Math.round((itemTotal * (Number(prev.appliedPromoCode.discountValue) || 0)) / 100), Number(prev.appliedPromoCode.maxDiscount) ?? Infinity)
       ) : 0;
 
       const totalBeforeCoinDiscount = Math.max(0, itemTotal + deliveryFee + taxes - promoDiscount);
