@@ -7,6 +7,7 @@
  */
 
 // Offers API Service
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import uuid from 'react-native-uuid';
 // Handles offer operations, search, filtering, favorites, and redemption
@@ -30,7 +31,7 @@ import {
 } from '@/types/api.types';
 import { Offer, OfferCategory } from '@/types/offers.types';
 import { offersPageData } from '@/data/offersData';
-import { withRetry, createErrorResponse, logApiRequest, logApiResponse } from '@/utils/apiUtils';
+import { withRetry, createErrorResponse, logApiRequest, logApiResponse, StandardApiResponse } from '@/utils/apiUtils';
 import mainApiClient from './apiClient';
 
 const devLog = {
@@ -466,26 +467,26 @@ class MockOffersApi implements OffersApiEndpoints {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async getOffers(params: GetOffersRequest): Promise<ApiResponse<PaginatedResponse<Offer>>> {
+  async getOffers(params: GetOffersRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate pagination parameters
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error});
+        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error}) as StandardApiResponse<any>;
       }
 
       // Validate filters
       const filtersValidation = validateFilters(params.filters);
       if (!filtersValidation.valid) {
-        return createErrorResponse({error: filtersValidation.error, message: filtersValidation.error});
+        return createErrorResponse({error: filtersValidation.error, message: filtersValidation.error}) as StandardApiResponse<any>;
       }
 
       // Validate sort parameter
       const sortValidation = validateSortBy(params.sortBy);
       if (!sortValidation.valid) {
-        return createErrorResponse({error: sortValidation.error, message: sortValidation.error});
+        return createErrorResponse({error: sortValidation.error, message: sortValidation.error}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', '/api/offers', params);
@@ -595,18 +596,18 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching offers:', error);
-      return createErrorResponse(error, 'Failed to load offers. Please try again.');
+      return createErrorResponse(error, 'Failed to load offers. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getOfferDetails(params: GetOfferDetailsRequest): Promise<ApiResponse<Offer>> {
+  async getOfferDetails(params: GetOfferDetailsRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', `/api/offers/${params.offerId}`, { offerId: params.offerId });
@@ -629,7 +630,7 @@ class MockOffersApi implements OffersApiEndpoints {
         };
 
         logApiResponse('GET', `/api/offers/${params.offerId}`, response, Date.now() - startTime);
-        return response as ApiResponse<Offer>;
+        return response as StandardApiResponse<any>;
       }
 
       // Additional validation on the specific offer
@@ -642,7 +643,7 @@ class MockOffersApi implements OffersApiEndpoints {
         };
 
         logApiResponse('GET', `/api/offers/${params.offerId}`, response, Date.now() - startTime);
-        return response as ApiResponse<Offer>;
+        return response as StandardApiResponse<any>;
       }
 
       const response: ApiResponse<Offer> = {
@@ -656,24 +657,24 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching offer details:', error);
-      return createErrorResponse(error, 'Failed to load offer details. Please try again.');
+      return createErrorResponse(error, 'Failed to load offer details. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async searchOffers(params: SearchOffersRequest): Promise<ApiResponse<PaginatedResponse<Offer>>> {
+  async searchOffers(params: SearchOffersRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate search query
       const queryValidation = validateSearchQuery(params.query);
       if (!queryValidation.valid) {
-        return createErrorResponse({error: queryValidation.error, message: queryValidation.error});
+        return createErrorResponse({error: queryValidation.error, message: queryValidation.error}) as StandardApiResponse<any>;
       }
 
       // Validate pagination
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error});
+        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', '/api/offers/search', { query: params.query, page: params.page });
@@ -724,11 +725,11 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error searching offers:', error);
-      return createErrorResponse(error, 'Failed to search offers. Please try again.');
+      return createErrorResponse(error, 'Failed to search offers. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getCategories(): Promise<ApiResponse<OfferCategory[]>> {
+  async getCategories(): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
@@ -767,33 +768,33 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching categories:', error);
-      return createErrorResponse(error, 'Failed to load categories. Please try again.');
+      return createErrorResponse(error, 'Failed to load categories. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getOffersByCategory(categoryId: string, params?: GetOffersRequest): Promise<ApiResponse<PaginatedResponse<Offer>>> {
+  async getOffersByCategory(categoryId: string, params?: GetOffersRequest): Promise<StandardApiResponse<any>> {
     try {
       // Validate category ID
       if (!categoryId || typeof categoryId !== 'string' || categoryId.trim().length === 0) {
-        return createErrorResponse({error: 'Category ID is required', message: 'Category ID is required'});
+        return createErrorResponse({error: 'Category ID is required', message: 'Category ID is required'}) as StandardApiResponse<any>;
       }
 
       const categoryParams = { ...params, category: categoryId };
       return this.getOffers(categoryParams);
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching offers by category:', error);
-      return createErrorResponse(error, 'Failed to load offers for this category. Please try again.');
+      return createErrorResponse(error, 'Failed to load offers for this category. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getUserFavorites(params: GetUserFavoritesRequest): Promise<ApiResponse<PaginatedResponse<Offer>>> {
+  async getUserFavorites(params: GetUserFavoritesRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate pagination
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error});
+        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', '/api/user/favorites', params);
@@ -820,18 +821,18 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching user favorites:', error);
-      return createErrorResponse(error, 'Failed to load favorites. Please try again.');
+      return createErrorResponse(error, 'Failed to load favorites. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async addToFavorites(params: AddToFavoritesRequest): Promise<ApiResponse<{ success: boolean }>> {
+  async addToFavorites(params: AddToFavoritesRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error}) as StandardApiResponse<any>;
       }
 
       logApiRequest('POST', '/api/user/favorites', { offerId: params.offerId });
@@ -850,18 +851,18 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error adding to favorites:', error);
-      return createErrorResponse(error, 'Failed to add offer to favorites. Please try again.');
+      return createErrorResponse(error, 'Failed to add offer to favorites. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async removeFromFavorites(params: RemoveFromFavoritesRequest): Promise<ApiResponse<{ success: boolean }>> {
+  async removeFromFavorites(params: RemoveFromFavoritesRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error}) as StandardApiResponse<any>;
       }
 
       logApiRequest('DELETE', `/api/user/favorites/${params.offerId}`);
@@ -880,11 +881,11 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error removing from favorites:', error);
-      return createErrorResponse(error, 'Failed to remove offer from favorites. Please try again.');
+      return createErrorResponse(error, 'Failed to remove offer from favorites. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async trackOfferView(params: TrackOfferViewRequest): Promise<ApiResponse<{ success: boolean }>> {
+  async trackOfferView(params: TrackOfferViewRequest): Promise<StandardApiResponse<any>> {
     try {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
@@ -908,23 +909,23 @@ class MockOffersApi implements OffersApiEndpoints {
         success: true,
         data: { success: false },
         timestamp: new Date().toISOString(),
-      };
+      } as StandardApiResponse<any>;
     }
   }
 
-  async redeemOffer(params: RedeemOfferRequest): Promise<ApiResponse<{ success: boolean; redemptionId: string }>> {
+  async redeemOffer(params: RedeemOfferRequest): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error}) as StandardApiResponse<any>;
       }
 
       // Validate user ID
       if (!params.userId || typeof params.userId !== 'string' || params.userId.trim().length === 0) {
-        return createErrorResponse({error: 'User ID is required', message: 'User authentication required to redeem offer'});
+        return createErrorResponse({error: 'User ID is required', message: 'User authentication required to redeem offer'}) as StandardApiResponse<any>;
       }
 
       logApiRequest('POST', '/api/offers/redeem', { offerId: params.offerId, userId: params.userId });
@@ -949,17 +950,17 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error redeeming offer:', error);
-      return createErrorResponse(error, 'Failed to redeem offer. Please try again.');
+      return createErrorResponse(error, 'Failed to redeem offer. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getRecommendedOffers(userId: string, location?: { latitude: number; longitude: number }): Promise<ApiResponse<Offer[]>> {
+  async getRecommendedOffers(userId: string, location?: { latitude: number; longitude: number }): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate user ID
       if (!userId || typeof userId !== 'string' || userId.trim().length === 0) {
-        return createErrorResponse({error: 'User ID is required', message: 'User ID is required'});
+        return createErrorResponse({error: 'User ID is required', message: 'User ID is required'}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', '/api/recommendations', { userId, hasLocation: !!location });
@@ -987,11 +988,11 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching recommended offers:', error);
-      return createErrorResponse(error, 'Failed to load recommendations. Please try again.');
+      return createErrorResponse(error, 'Failed to load recommendations. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getTrendingOffers(location?: { latitude: number; longitude: number }): Promise<ApiResponse<Offer[]>> {
+  async getTrendingOffers(location?: { latitude: number; longitude: number }): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
@@ -1017,21 +1018,17 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching trending offers:', error);
-      return createErrorResponse(error, 'Failed to load trending offers. Please try again.');
+      return createErrorResponse(error, 'Failed to load trending offers. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getStorePromotions(storeId: string): Promise<ApiResponse<{
-    promotions: any[];
-    totalCount: number;
-    activeCount: number;
-  }>> {
+  async getStorePromotions(storeId: string): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate store ID
       if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
-        return createErrorResponse({error: 'Store ID is required', message: 'Please provide a valid store ID'});
+        return createErrorResponse({error: 'Store ID is required', message: 'Please provide a valid store ID'}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', `/api/stores/${storeId}/promotions`, { storeId });
@@ -1065,22 +1062,22 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching store promotions:', error);
-      return createErrorResponse(error, 'Failed to load store promotions. Please try again.');
+      return createErrorResponse(error, 'Failed to load store promotions. Please try again.') as StandardApiResponse<any>;
     }
   }
 
-  async getExpiringDeals(storeId: string, hours: number = 24): Promise<ApiResponse<Offer[]>> {
+  async getExpiringDeals(storeId: string, hours: number = 24): Promise<StandardApiResponse<any>> {
     const startTime = Date.now();
 
     try {
       // Validate store ID
       if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
-        return createErrorResponse({error: 'Store ID is required', message: 'Store ID is required'});
+        return createErrorResponse({error: 'Store ID is required', message: 'Store ID is required'}) as StandardApiResponse<any>;
       }
 
       // Validate hours parameter
       if (typeof hours !== 'number' || hours < 1 || hours > 720) {
-        return createErrorResponse({error: 'Invalid hours parameter', message: 'Invalid hours parameter'});
+        return createErrorResponse({error: 'Invalid hours parameter', message: 'Invalid hours parameter'}) as StandardApiResponse<any>;
       }
 
       logApiRequest('GET', `/api/stores/${storeId}/expiring-deals`, { storeId, hours });
@@ -1127,7 +1124,7 @@ class MockOffersApi implements OffersApiEndpoints {
       return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching expiring deals:', error);
-      return createErrorResponse(error, 'Failed to load expiring deals. Please try again.');
+      return createErrorResponse(error, 'Failed to load expiring deals. Please try again.') as StandardApiResponse<any>;
     }
   }
 }

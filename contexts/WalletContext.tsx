@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo, ReactNode } from 'react';
 import { useWalletStore } from '@/stores/walletStore';
-import { WalletData, CoinBalance } from '@/types/wallet';
+import { WalletData, CoinBalance, CoinPromoDetails } from '@/types/wallet';
 import { CoinType } from '@/types/enums/index';
 import walletApi from '@/services/walletApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
@@ -118,7 +118,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
       earnedDate: promoData?.earnedDate ? new Date(promoData.earnedDate) : safeDate,
       lastUsed: promoData?.lastUsed ? new Date(promoData.lastUsed) : safeDate,
       expiryDate: promoData?.expiryDate ? new Date(promoData.expiryDate) : undefined,
-      promoDetails: promoData?.promoDetails as unknown,
+      promoDetails: (promoData?.promoDetails as unknown) as CoinPromoDetails | undefined,
     }
   ];
 
@@ -179,8 +179,8 @@ interface WalletDataContextType {
   refreshWallet: () => Promise<void>;
   rawBackendData: RawWalletBackendData | null;
   error: string | null;
-  /** CD-CRIT-SEC-04: Tracks in-flight optimistic delta for rollback on API failure */
-  pendingDelta: number;
+  /** CD-CRIT-04: Stack of in-flight optimistic deltas for rollback on API failure */
+  pendingDeltaStack: number[];
 }
 
 // Loading context — changes on loading transitions only
@@ -191,8 +191,8 @@ interface WalletLoadingContextType {
 
 // Combined type for backwards compatibility
 interface WalletContextType extends WalletDataContextType, WalletLoadingContextType {
-  /** CD-CRIT-SEC-04: Tracks in-flight optimistic delta for rollback on API failure */
-  pendingDelta: number;
+  /** CD-CRIT-04: Stack of in-flight optimistic deltas for rollback on API failure */
+  pendingDeltaStack: number[];
 }
 
 const WALLET_DATA_DEFAULTS: WalletDataContextType = {
@@ -207,7 +207,7 @@ const WALLET_DATA_DEFAULTS: WalletDataContextType = {
   refreshWallet: async () => {},
   rawBackendData: null,
   error: null,
-  pendingDelta: 0,
+  pendingDeltaStack: [],
 };
 
 const WALLET_LOADING_DEFAULTS: WalletLoadingContextType = {
@@ -403,8 +403,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   // Combined value for legacy WalletContext consumers
   const combinedValue = useMemo<WalletContextType>(() => ({
     ...dataValue, ...loadingValue,
-    // CD-CRIT-SEC-04: Sync pendingDelta from store to context
-    pendingDelta: dataValue.pendingDelta ?? 0,
+    // CD-CRIT-04: Sync pendingDeltaStack from store to context
+    pendingDeltaStack: dataValue.pendingDeltaStack ?? [],
   }), [dataValue, loadingValue]);
 
   // Sync to Zustand store for crash-safe fallback

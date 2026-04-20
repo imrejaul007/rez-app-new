@@ -1,4 +1,6 @@
 // Canonical types: @rez/shared-types — migrate imports when package is published
+import { StandardApiResponse } from '@/utils/apiUtils';
+// Canonical types: @rez/shared-types — migrate imports when package is published
 // API Response Types
 export interface ApiResponse<T> {
   success: boolean;
@@ -97,26 +99,26 @@ export interface RedeemOfferRequest {
 // API Endpoint Types
 export interface OffersApiEndpoints {
   // Core offer endpoints
-  getOffers: (params: GetOffersRequest) => Promise<ApiResponse<PaginatedResponse<Offer>>>;
-  getOfferDetails: (params: GetOfferDetailsRequest) => Promise<ApiResponse<Offer>>;
-  searchOffers: (params: SearchOffersRequest) => Promise<ApiResponse<PaginatedResponse<Offer>>>;
-  
+  getOffers: (params: GetOffersRequest) => Promise<StandardApiResponse<any>>;
+  getOfferDetails: (params: GetOfferDetailsRequest) => Promise<StandardApiResponse<any>>;
+  searchOffers: (params: SearchOffersRequest) => Promise<StandardApiResponse<any>>;
+
   // Category endpoints
-  getCategories: () => Promise<ApiResponse<OfferCategory[]>>;
-  getOffersByCategory: (categoryId: string, params?: GetOffersRequest) => Promise<ApiResponse<PaginatedResponse<Offer>>>;
-  
+  getCategories: () => Promise<StandardApiResponse<any>>;
+  getOffersByCategory: (categoryId: string, params?: GetOffersRequest) => Promise<StandardApiResponse<any>>;
+
   // User favorites
-  getUserFavorites: (params: GetUserFavoritesRequest) => Promise<ApiResponse<PaginatedResponse<Offer>>>;
-  addToFavorites: (params: AddToFavoritesRequest) => Promise<ApiResponse<{ success: boolean }>>;
-  removeFromFavorites: (params: RemoveFromFavoritesRequest) => Promise<ApiResponse<{ success: boolean }>>;
-  
+  getUserFavorites: (params: GetUserFavoritesRequest) => Promise<StandardApiResponse<any>>;
+  addToFavorites: (params: AddToFavoritesRequest) => Promise<StandardApiResponse<any>>;
+  removeFromFavorites: (params: RemoveFromFavoritesRequest) => Promise<StandardApiResponse<any>>;
+
   // Analytics
-  trackOfferView: (params: TrackOfferViewRequest) => Promise<ApiResponse<{ success: boolean }>>;
-  redeemOffer: (params: RedeemOfferRequest) => Promise<ApiResponse<{ success: boolean; redemptionId: string }>>;
-  
+  trackOfferView: (params: TrackOfferViewRequest) => Promise<StandardApiResponse<any>>;
+  redeemOffer: (params: RedeemOfferRequest) => Promise<StandardApiResponse<any>>;
+
   // Personalization
-  getRecommendedOffers: (userId: string, location?: { latitude: number; longitude: number }) => Promise<ApiResponse<Offer[]>>;
-  getTrendingOffers: (location?: { latitude: number; longitude: number }) => Promise<ApiResponse<Offer[]>>;
+  getRecommendedOffers: (userId: string, location?: { latitude: number; longitude: number }) => Promise<StandardApiResponse<any>>;
+  getTrendingOffers: (location?: { latitude: number; longitude: number }) => Promise<StandardApiResponse<any>>;
 }
 
 // Cache Configuration

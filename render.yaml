@@ -2,7 +2,7 @@ services:
   - type: web
     name: rez-app-consumer
     runtime: node
-    buildCommand: npm install && npm run build:render
+    buildCommand: npm install --force && npx expo-modules install && npm run build:render
     startCommand: npx serve dist -p ${PORT:-3000} -s
     envVars:
       - key: NODE_VERSION

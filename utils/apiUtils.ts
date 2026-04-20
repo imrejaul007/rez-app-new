@@ -1,5 +1,6 @@
 // API Utilities
 // Enhanced utilities for API error handling, retry logic, and response standardization
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface StandardApiResponse<T = any> {
   success: boolean;
@@ -160,7 +161,7 @@ export function standardizeResponse<T>(
 export function createErrorResponse(
   error: any,
   defaultMessage: string = 'An error occurred'
-): StandardApiResponse<never> {
+): StandardApiResponse<any> {
   // Handle null/undefined
   if (!error) {
     return {

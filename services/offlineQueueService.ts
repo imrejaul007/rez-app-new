@@ -16,8 +16,15 @@ export interface QueuedOperation {
 
 /**
  * Offline Queue Service
- * Manages queued operations when the app is offline
- * CA-SEC-029 FIX: Queue items are now encrypted before storing in AsyncStorage
+ * Manages queued operations when the app is offline.
+ *
+ * CA-SEC-029 FIX: Queue items are obfuscated via base64 encoding before storing
+ * in AsyncStorage. Base64 is NOT encryption — it is trivially reversible and
+ * provides zero security. This is deliberate: queued cart operations contain
+ * only product IDs, quantities, and coupon codes — no tokens, passwords, or PII.
+ * Obfuscation prevents casual inspection of localStorage/AsyncStorage.
+ * True encryption (AES-GCM) would require key management infrastructure that
+ * is not yet in place for this service.
  */
 class OfflineQueueService {
   private queue: QueuedOperation[] = [];
@@ -29,8 +36,10 @@ class OfflineQueueService {
   }
 
   /**
-   * CA-SEC-029 FIX: Encrypt queue item before storing
-   * Uses a simple encryption via btoa + XOR with stored token hash
+   * CA-SEC-029 FIX: Obfuscate queue data before storing in AsyncStorage.
+   * Uses base64 encoding (NOT encryption — trivially reversible).
+   * Queued data contains only product IDs, quantities, and coupon codes — no
+   * tokens or PII, so base64 is an acceptable level of protection.
    */
   private encryptQueueData(data: QueuedOperation[]): string {
     try {
@@ -44,7 +53,7 @@ class OfflineQueueService {
   }
 
   /**
-   * CA-SEC-029 FIX: Decrypt queue data
+   * De-obfuscate queue data. Inverse of encryptQueueData.
    */
   private decryptQueueData(encryptedData: string): QueuedOperation[] {
     try {
@@ -62,7 +71,7 @@ class OfflineQueueService {
     try {
       const savedQueue = await asyncStorageService.getOfflineQueue();
       if (savedQueue) {
-        // CA-SEC-029: Decrypt if stored as string, or use as-is if already parsed
+        // CA-SEC-029: De-obfuscate if stored as string, or use as-is if already parsed
         if (typeof savedQueue === 'string') {
           this.queue = this.decryptQueueData(savedQueue);
         } else {
@@ -81,7 +90,7 @@ class OfflineQueueService {
    */
   private async saveQueue(): Promise<void> {
     try {
-      // CA-SEC-029: Encrypt before storing
+      // CA-SEC-029: Obfuscate via base64 before storing
       const encryptedQueue = this.encryptQueueData(this.queue);
       await asyncStorageService.saveOfflineQueue(encryptedQueue as any);
     } catch (_error) {

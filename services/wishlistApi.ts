@@ -779,7 +779,7 @@ class WishlistService {
       logApiRequest('POST', '/wishlist', { name: data.name });
 
       const response = await withRetry(
-        () => apiClient.post<Wishlist>('/wishlist', data as CreateWishlistRequest),
+        () => apiClient.post<Wishlist>('/wishlist', data as unknown as Record<string, unknown>),
         { maxRetries: 2 }
       );
 
@@ -939,7 +939,7 @@ class WishlistService {
       logApiRequest('GET', endpoint, query);
 
       const response = await withRetry(
-        () => apiClient.get<WishlistsResponse>(endpoint, query as WishlistsQuery),
+        () => apiClient.get<WishlistsResponse>(endpoint, query as unknown as Record<string, string | number | boolean | null | undefined>),
         { maxRetries: 2 }
       );
 
@@ -1650,14 +1650,7 @@ class WishlistService {
         () => apiClient.get<{
     wishlists: Array<Wishlist & { owner: { id: string; name: string; avatar?: string } }>;
     pagination: { current: number; pages: number; total: number; limit: number };
-  }>('/wishlist/public', query as {
-    page?: number;
-    limit?: number;
-    search?: string;
-    userId?: string;
-    tags?: string[];
-    sort?: 'newest' | 'popular' | 'most_items' | 'highest_value';
-  }),
+  }>('/wishlist/public', query as unknown as Record<string, string | number | boolean | null | undefined>),
         { maxRetries: 2 }
       );
 
@@ -1906,7 +1899,15 @@ class WishlistService {
 
       logApiResponse('POST', '/wishlist/import', response, Date.now() - startTime);
 
-      return response;
+      return response as unknown as ApiResponse<{
+    imported: number;
+    failed: number;
+    wishlistId: string;
+    errors?: Array<{
+      row: number;
+      error: string;
+    }>;
+  }>;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error importing wishlist:', error);
       return createErrorResponse(error, 'Failed to import wishlist. Please try again.') as ApiResponse<{

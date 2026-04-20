@@ -418,8 +418,8 @@ export class HomepageApiService {
           success: true,
           data: {
             sections: validatedSections,
-            metadata: (rawData as Record<string, unknown>).metadata,
-            userContext: (rawData as Record<string, unknown>).userContext || null,
+            metadata: (rawData as Record<string, unknown>).metadata as { cached: boolean; timestamp: string },
+            userContext: ((rawData as Record<string, unknown>).userContext || null) as { walletBalance: number; totalSaved: number; voucherCount: number; offersCount: number; cartItemCount: number; subscription: { tier: string; status: string } } | null,
           },
         },
       };

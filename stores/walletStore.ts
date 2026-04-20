@@ -19,8 +19,8 @@ interface WalletStoreData {
   isLoading: boolean;
   isRefreshing: boolean;
   error: string | null;
-  /** CD-CRIT-SEC-04 FIX: Tracks the last applied optimistic delta for rollback on API failure */
-  pendingDelta: number;
+  /** CD-CRIT-04 FIX: Stack of applied optimistic deltas — each has a matching rollback entry */
+  pendingDeltaStack: number[];
 }
 
 interface WalletStoreState extends WalletStoreData {
@@ -52,7 +52,7 @@ async function defaultRefreshWallet(
 ): Promise<void> {
   if (get().isRefreshing) return;
   try {
-    set({ isRefreshing: true, error: null, pendingDelta: 0 });
+    set({ isRefreshing: true, error: null, pendingDeltaStack: [] });
     const { default: walletApi } = await import('@/services/walletApi');
     const response = await walletApi.getBalance();
     if (response.success && response.data) {
@@ -106,7 +106,7 @@ const baseDefaults: Omit<WalletStoreData, 'refreshWallet'> = {
   isLoading: false,
   isRefreshing: false,
   error: null,
-  pendingDelta: 0,
+  pendingDeltaStack: [],
 };
 
 // ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ export const useWalletStore = create<WalletStoreState>()(
       resetWallet: () => set({
         ...baseDefaults,
         refreshWallet: () => defaultRefreshWallet(set, get),
-        pendingDelta: 0,
+        pendingDeltaStack: [],
       }),
 
       // Optimistic balance adjustment for instant UI feedback after earning coins.
@@ -159,17 +159,19 @@ export const useWalletStore = create<WalletStoreState>()(
               availableBalance: Math.max(0, state.walletData.availableBalance + delta),
               coins: updatedCoins,
             },
-            pendingDelta: delta,
+            pendingDeltaStack: [...state.pendingDeltaStack, delta],
           };
         });
       },
 
       // Roll back the last optimistic adjustBalance call.
-      // Call this in a try/catch around the API call if refreshWallet might fail.
+      // CD-CRIT-04 FIX: Pop from the stack so concurrent adjustBalance calls don't
+      // incorrectly undo each other's deltas. Each adjustBalance has its own stack slot.
       rollbackAdjustment: () => {
         set((state) => {
-          const delta = state.pendingDelta;
-          if (delta === 0 || !state.walletData) return { pendingDelta: 0 };
+          const stack = state.pendingDeltaStack;
+          if (stack.length === 0 || !state.walletData) return { pendingDeltaStack: [] };
+          const delta = stack[stack.length - 1];
 
           const updatedCoins = state.walletData.coins.map((c) =>
             c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount - delta) } : c
@@ -184,7 +186,7 @@ export const useWalletStore = create<WalletStoreState>()(
               availableBalance: Math.max(0, state.walletData.availableBalance - delta),
               coins: updatedCoins,
             },
-            pendingDelta: 0,
+            pendingDeltaStack: stack.slice(0, -1),
           };
         });
       },
