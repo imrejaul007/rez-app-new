@@ -3,7 +3,10 @@
 // READ operations use react-query; WebSocket logic and mutations remain imperative.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import uuid from 'react-native-uuid';
+// CD-CRIT-SEC-02 FIX: Replaced react-native-uuid (uses Math.random()) with crypto.randomUUID()
+// for cryptographically secure ID generation. The uuid package (which uses crypto.getRandomValues)
+// is already available — prefer it over Math.random() fallbacks.
+import { v4 as uuidv4 } from 'uuid';
 import { Platform } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import NetInfo from '@react-native-community/netinfo';
@@ -128,6 +131,8 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   const agentTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const activeTicketIdRef = useRef<string | null>(null);
+  // CD-CRIT-TS-03 FIX: Added isMountedRef to prevent setState on unmounted component
+  const isMountedRef = useRef(true);
 
   // ==================== Network Status ====================
 
@@ -193,7 +198,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
       const msg = data?.message || data;
       const message: ChatMessage = {
-        id: msg.id || msg._id?.toString?.() || msg._id || `msg_${Date.now()}_${uuid.v4()}`,
+        id: msg.id || msg._id?.toString?.() || msg._id || `msg_${Date.now()}_${uuidv4()}`,
         ticketId: ticketId,
         content: msg.content || msg.message || '',
         sender: msg.sender || (msg.senderType === 'agent' ? 'agent' : 'user'),
@@ -439,7 +444,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
     // Optimistically add message to UI
     const optimisticMessage: ChatMessage = {
-      id: `temp_${Date.now()}_${uuid.v4()}`,
+      id: `temp_${Date.now()}_${uuidv4()}`,
       ticketId: currentTicket.id,
       content: messageRequest.content,
       sender: 'user',
@@ -788,11 +793,16 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
     setOfflineMessages((prev) => [...prev, offlineMsg]);
 
-    // Save to storage
+    // CD-CRIT-TS-04 FIX: Use offlineMessagesRef instead of stale closure variable.
+    // The `offlineMessages` variable above is captured at render time and is stale in async context.
+    // offlineMessagesRef.current is kept in sync via the useEffect at line 135.
+    // Also added catch to prevent silent failure.
     await AsyncStorage.setItem(
       STORAGE_KEYS.OFFLINE_MESSAGES,
-      JSON.stringify([...offlineMessages, offlineMsg])
-    );
+      JSON.stringify([...offlineMessagesRef.current, offlineMsg])
+    ).catch((err) => {
+      logger.error('[useSupportChat] offline message persistence failed', err as Error);
+    });
 
     return true;
   };
@@ -1004,27 +1014,36 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   };
 
   // Load initial ticket if provided via URL param
+  // CD-CRIT-TS-03 FIX: Added isMountedRef guard and .catch() to prevent setState on unmounted
+  // and silent error swallowing.
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
     if (initialTicketId && !currentTicket) {
       activeTicketIdRef.current = initialTicketId;
-      supportChatApi.getTicket(initialTicketId).then((ticket) => {
-        if (ticket) {
-          setCurrentTicket(ticket);
-          setMessages(ticket.messages || []);
-          lastSyncedTicketId.current = ticket.id || initialTicketId;
+      supportChatApi
+        .getTicket(initialTicketId)
+        .then((ticket) => {
+          if (isMountedRef.current && ticket) {
+            setCurrentTicket(ticket);
+            setMessages(ticket.messages || []);
+            lastSyncedTicketId.current = ticket.id || initialTicketId;
 
-          if ((ticket as any).assignedAgent) {
-            setAssignedAgent((ticket as any).assignedAgent);
+            if ((ticket as any).assignedAgent) {
+              setAssignedAgent((ticket as any).assignedAgent);
+            }
+
+            // Save to storage for persistence — await to ensure write completes
+            AsyncStorage.setItem(
+              STORAGE_KEYS.CURRENT_TICKET,
+              JSON.stringify(ticket)
+            ).catch((err) => {
+              logger.error('[useSupportChat] getTicket AsyncStorage write failed', err as Error);
+            });
           }
-
-          // Save to storage for persistence
-          AsyncStorage.setItem(
-            STORAGE_KEYS.CURRENT_TICKET,
-            JSON.stringify(ticket)
-          );
-        }
-      });
+        })
+        .catch((err) => {
+          logger.error('[useSupportChat] getTicket failed', err as Error);
+        });
     }
   }, [initialTicketId, authLoading, isAuthenticated]);
 

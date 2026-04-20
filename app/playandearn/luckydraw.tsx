@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import gameApi from '../../services/gameApi';
 import { useGamification } from '@/contexts/GamificationContext';
-import { useRezBalance, useRefreshWallet, useAdjustBalance } from '@/stores/selectors';
+import { useRezBalance, useRefreshWallet, useAdjustBalance, useRollbackAdjustment } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -114,6 +114,7 @@ const LuckyDraw = () => {
   const walletBalance = useRezBalance();
   const refreshWallet = useRefreshWallet();
   const adjustBalance = useAdjustBalance();
+  const rollbackAdjustment = useRollbackAdjustment();
   const [gameState, setGameState] = useState<'start' | 'spinning' | 'result' | 'error'>('start');
   const [spinning, setSpinning] = useState(false);
   const [prize, setPrize] = useState<Prize | null>(null);
@@ -194,7 +195,12 @@ const LuckyDraw = () => {
           setGameState('result');
           setTodayPlays(todayPlays + 1);
           adjustBalance(coinsWon);
-          await refreshWallet();
+          // CD-CRIT-SEC-04 FIX: rollback if refreshWallet fails so balance doesn't stay inflated
+          try {
+            await refreshWallet();
+          } catch {
+            rollbackAdjustment();
+          }
           await gamificationActions.syncCoinsFromWallet();
         } else {
           if (!isMounted()) return;

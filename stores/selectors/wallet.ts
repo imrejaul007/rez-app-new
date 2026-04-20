@@ -36,3 +36,6 @@ export const useWalletRefreshing = () => useWalletStore((s) => s.isRefreshing);
 
 /** Stable function — optimistic balance adjustment for instant UI feedback */
 export const useAdjustBalance = () => useWalletStore((s) => s.adjustBalance);
+
+/** Stable function — roll back the last optimistic adjustBalance if API call fails */
+export const useRollbackAdjustment = () => useWalletStore((s) => s.rollbackAdjustment);

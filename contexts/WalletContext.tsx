@@ -179,6 +179,8 @@ interface WalletDataContextType {
   refreshWallet: () => Promise<void>;
   rawBackendData: RawWalletBackendData | null;
   error: string | null;
+  /** CD-CRIT-SEC-04: Tracks in-flight optimistic delta for rollback on API failure */
+  pendingDelta: number;
 }
 
 // Loading context — changes on loading transitions only
@@ -188,7 +190,10 @@ interface WalletLoadingContextType {
 }
 
 // Combined type for backwards compatibility
-interface WalletContextType extends WalletDataContextType, WalletLoadingContextType {}
+interface WalletContextType extends WalletDataContextType, WalletLoadingContextType {
+  /** CD-CRIT-SEC-04: Tracks in-flight optimistic delta for rollback on API failure */
+  pendingDelta: number;
+}
 
 const WALLET_DATA_DEFAULTS: WalletDataContextType = {
   walletData: null,
@@ -202,6 +207,7 @@ const WALLET_DATA_DEFAULTS: WalletDataContextType = {
   refreshWallet: async () => {},
   rawBackendData: null,
   error: null,
+  pendingDelta: 0,
 };
 
 const WALLET_LOADING_DEFAULTS: WalletLoadingContextType = {
@@ -385,6 +391,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       cashbackBalance, pendingRewards,
       brandedCoins, savingsInsights, refreshWallet, rawBackendData,
       error: walletError,
+      // CD-CRIT-SEC-04: pendingDelta lives in the Zustand store, not the context
+      pendingDelta: 0,
     };
   }, [walletData, refreshWallet, rawBackendData, walletError]);
 
@@ -395,6 +403,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   // Combined value for legacy WalletContext consumers
   const combinedValue = useMemo<WalletContextType>(() => ({
     ...dataValue, ...loadingValue,
+    // CD-CRIT-SEC-04: Sync pendingDelta from store to context
+    pendingDelta: dataValue.pendingDelta ?? 0,
   }), [dataValue, loadingValue]);
 
   // Sync to Zustand store for crash-safe fallback
@@ -457,6 +467,8 @@ export function useWalletContext(): WalletContextType {
     isLoading: storeIsLoading,
     isRefreshing: storeIsRefreshing,
     error: storeError,
+    // CD-CRIT-SEC-04: pendingDelta lives in the Zustand store, not the context
+    pendingDelta: 0,
   };
 }
 

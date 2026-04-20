@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import gameApi from '../../services/gameApi';
 import { useGamification } from '@/contexts/GamificationContext';
-import { useGetCurrencySymbol, useRezBalance, useRefreshWallet, useAdjustBalance } from '@/stores/selectors';
+import { useGetCurrencySymbol, useRezBalance, useRefreshWallet, useAdjustBalance, useRollbackAdjustment } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -112,6 +112,7 @@ const GuessPrice = () => {
   const walletBalance = useRezBalance();
   const refreshWallet = useRefreshWallet();
   const adjustBalance = useAdjustBalance();
+  const rollbackAdjustment = useRollbackAdjustment();
   const currencySymbol = getCurrencySymbol();
   const [gameState, setGameState] = useState<'start' | 'playing' | 'result' | 'error'>('start');
   const [currentProduct, setCurrentProduct] = useState(0);
@@ -254,7 +255,12 @@ const GuessPrice = () => {
           else message = response.data.message || 'Try again!';
           if (response.data.newBalance !== undefined) {
             adjustBalance(earnedCoins);
-            refreshWallet(); // Reconcile with server
+            // CD-CRIT-SEC-04 FIX: rollback if refreshWallet fails so balance doesn't stay inflated
+            try {
+              await refreshWallet();
+            } catch {
+              rollbackAdjustment();
+            }
           }
         }
       } catch (err: any) {

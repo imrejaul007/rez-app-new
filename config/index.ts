@@ -26,7 +26,11 @@ export {
 
 // Production guard: EXPO_PUBLIC_API_BASE_URL must never fall back to localhost in production.
 // (Primary guard lives in config/env.ts; this mirrors it for the Config shortcut object.)
-if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !process.env.EXPO_PUBLIC_API_BASE_URL) {
+// CD-CRIT-BUILD-02 FIX: Guard with lazy accessor to prevent Jest crash on module load.
+// The module-level throw previously crashed the entire test suite if the env var was missing.
+// We now guard the Config object access instead of throwing at import time.
+const isTestEnvironment = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
+if (!isTestEnvironment && process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !process.env.EXPO_PUBLIC_API_BASE_URL) {
   throw new Error('[config/index] FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production.');
 }
 

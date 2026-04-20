@@ -19,12 +19,16 @@ interface WalletStoreData {
   isLoading: boolean;
   isRefreshing: boolean;
   error: string | null;
+  /** CD-CRIT-SEC-04 FIX: Tracks the last applied optimistic delta for rollback on API failure */
+  pendingDelta: number;
 }
 
 interface WalletStoreState extends WalletStoreData {
   _setFromProvider: (data: WalletStoreData) => void;
   /** Optimistic balance adjustment — adds delta to rez/total/available balances */
   adjustBalance: (delta: number) => void;
+  /** Roll back the last optimistic adjustBalance delta. Call when API call fails. */
+  rollbackAdjustment: () => void;
   /** Reset all wallet data on logout to prevent stale balance showing for next user */
   resetWallet: () => void;
 }
@@ -48,7 +52,7 @@ async function defaultRefreshWallet(
 ): Promise<void> {
   if (get().isRefreshing) return;
   try {
-    set({ isRefreshing: true, error: null });
+    set({ isRefreshing: true, error: null, pendingDelta: 0 });
     const { default: walletApi } = await import('@/services/walletApi');
     const response = await walletApi.getBalance();
     if (response.success && response.data) {
@@ -102,6 +106,7 @@ const baseDefaults: Omit<WalletStoreData, 'refreshWallet'> = {
   isLoading: false,
   isRefreshing: false,
   error: null,
+  pendingDelta: 0,
 };
 
 // ---------------------------------------------------------------------------
@@ -129,10 +134,13 @@ export const useWalletStore = create<WalletStoreState>()(
       resetWallet: () => set({
         ...baseDefaults,
         refreshWallet: () => defaultRefreshWallet(set, get),
+        pendingDelta: 0,
       }),
 
       // Optimistic balance adjustment for instant UI feedback after earning coins.
-      // Server truth is restored by the next refreshWallet() call.
+      // CD-CRIT-SEC-04 FIX: Now tracks pendingDelta so callers can call rollbackAdjustment()
+      // when the API call fails. Server truth is restored by refreshWallet() which overwrites
+      // the optimistic value. Rollback is only needed if refreshWallet() fails or is never called.
       // CA-PAY-004 FIX: Already uses functional setState: set((state) => ...)
       adjustBalance: (delta: number) => {
         set((state) => {
@@ -151,6 +159,32 @@ export const useWalletStore = create<WalletStoreState>()(
               availableBalance: Math.max(0, state.walletData.availableBalance + delta),
               coins: updatedCoins,
             },
+            pendingDelta: delta,
+          };
+        });
+      },
+
+      // Roll back the last optimistic adjustBalance call.
+      // Call this in a try/catch around the API call if refreshWallet might fail.
+      rollbackAdjustment: () => {
+        set((state) => {
+          const delta = state.pendingDelta;
+          if (delta === 0 || !state.walletData) return { pendingDelta: 0 };
+
+          const updatedCoins = state.walletData.coins.map((c) =>
+            c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount - delta) } : c
+          );
+          return {
+            rezBalance: Math.max(0, state.rezBalance - delta),
+            totalBalance: Math.max(0, state.totalBalance - delta),
+            availableBalance: Math.max(0, state.availableBalance - delta),
+            walletData: {
+              ...state.walletData,
+              totalBalance: Math.max(0, state.walletData.totalBalance - delta),
+              availableBalance: Math.max(0, state.walletData.availableBalance - delta),
+              coins: updatedCoins,
+            },
+            pendingDelta: 0,
           };
         });
       },

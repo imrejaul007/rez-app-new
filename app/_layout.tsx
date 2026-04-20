@@ -398,13 +398,16 @@ function RootLayout() {
     // This ensures users who navigate directly to hotel screens (deep links, notifications) are pre-logged in.
     try {
       const rezTokenVal = await authStorage.getAuthToken();
-      // HIGH-12 FIX: Use SecureStore for OTA token (sensitive); fall back to AsyncStorage if unavailable
+      // HIGH-12 FIX: Use SecureStore for OTA token (sensitive).
+      // CD-CRIT-03 FIX: Removed AsyncStorage fallback — hotel booking auth tokens must NEVER
+      // be stored in plain AsyncStorage on Android where they are trivially extractable.
+      // If SecureStore is unavailable, skip OTA auto-login rather than degrading security.
       let otaTokenRaw: string | null = null;
       try {
         otaTokenRaw = await SecureStore.getItemAsync('@ota_access_token');
       } catch {
-        // SecureStore unavailable (e.g., device not supported); try AsyncStorage fallback
-        otaTokenRaw = await AsyncStorage.getItem('@ota_access_token');
+        // SecureStore unavailable — do not fall back to AsyncStorage.
+        // Users of unsupported devices navigate to hotel screens normally without pre-auth.
       }
       const hasRez = !!rezTokenVal;
       const hasOta = !!otaTokenRaw;

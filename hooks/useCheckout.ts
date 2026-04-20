@@ -323,7 +323,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   useEffect(() => {
     isMountedRef.current = true;
     if (authLoading || !isAuthenticated) return;
-    initializeCheckout().then(() => { hasInitializedRef.current = true; });
+    initializeCheckout()
+      .then(() => { hasInitializedRef.current = true; })
+      .catch((err) => {
+        logger.error('[useCheckout] initializeCheckout failed', err as Error);
+      });
     return () => { isMountedRef.current = false; };
   }, [authLoading, isAuthenticated]);
 

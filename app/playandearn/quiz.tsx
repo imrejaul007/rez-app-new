@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import gameApi, { QuizQuestion } from '@/services/gameApi';
 import gamificationApi from '@/services/gamificationApi';
-import { useGetCurrencySymbol, useRezBalance, useRefreshWallet, useAdjustBalance } from '@/stores/selectors';
+import { useGetCurrencySymbol, useRezBalance, useRefreshWallet, useAdjustBalance, useRollbackAdjustment } from '@/stores/selectors';
 import { useGamification } from '@/contexts/GamificationContext';
 import { platformAlert } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -116,6 +116,7 @@ const Quiz = () => {
   const walletBalance = useRezBalance();
   const refreshWallet = useRefreshWallet();
   const adjustBalance = useAdjustBalance();
+  const rollbackAdjustment = useRollbackAdjustment();
   const currencySymbol = getCurrencySymbol();
   const [gameState, setGameState] = useState<'start' | 'playing' | 'result'>('start');
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -293,10 +294,18 @@ const Quiz = () => {
         setTodayPlays(todayPlays + 1);
       }
       // Refresh wallet then sync coins
-      await refreshWallet();
-      await gamificationActions.syncCoinsFromWallet();
+      // CD-CRIT-SEC-04 FIX: rollback if refreshWallet fails so balance doesn't stay inflated
+      try {
+        await refreshWallet();
+      } catch {
+        rollbackAdjustment();
+      }
+      try {
+        await gamificationActions.syncCoinsFromWallet();
+      } catch { /* non-critical */ }
     } catch (error: any) {
       if (!isMounted()) return;
+      rollbackAdjustment();
       setTodayPlays(todayPlays + 1);
     } finally {
       if (!isMounted()) return;
