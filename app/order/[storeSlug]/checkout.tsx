@@ -692,5 +692,4 @@ const styles = StyleSheet.create({
   placeOrderAmount: { fontSize: 16, fontWeight: '800', color: '#fff' },
 });
 
-import { withErrorBoundary } from '@/utils/withErrorBoundary';
 export default withErrorBoundary(CheckoutScreen, 'WebCheckout');

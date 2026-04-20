@@ -473,19 +473,19 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate pagination parameters
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString() };
+        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error});
       }
 
       // Validate filters
       const filtersValidation = validateFilters(params.filters);
       if (!filtersValidation.valid) {
-        return { success: false, error: filtersValidation.error, message: filtersValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<never>;
+        return createErrorResponse({error: filtersValidation.error, message: filtersValidation.error});
       }
 
       // Validate sort parameter
       const sortValidation = validateSortBy(params.sortBy);
       if (!sortValidation.valid) {
-        return { success: false, error: sortValidation.error, message: sortValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<never>;
+        return createErrorResponse({error: sortValidation.error, message: sortValidation.error});
       }
 
       logApiRequest('GET', '/api/offers', params);
@@ -606,7 +606,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<Offer>;
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
       }
 
       logApiRequest('GET', `/api/offers/${params.offerId}`, { offerId: params.offerId });
@@ -667,13 +667,13 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate search query
       const queryValidation = validateSearchQuery(params.query);
       if (!queryValidation.valid) {
-        return { success: false, error: queryValidation.error, message: queryValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<PaginatedResponse<Offer>>;
+        return createErrorResponse({error: queryValidation.error, message: queryValidation.error});
       }
 
       // Validate pagination
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString() };
+        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error});
       }
 
       logApiRequest('GET', '/api/offers/search', { query: params.query, page: params.page });
@@ -775,7 +775,7 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate category ID
       if (!categoryId || typeof categoryId !== 'string' || categoryId.trim().length === 0) {
-        return { success: false, error: 'Category ID is required', message: 'Please provide a valid category ID', timestamp: new Date().toISOString(), } as ApiResponse<PaginatedResponse<Offer>>;
+        return createErrorResponse({error: 'Category ID is required', message: 'Category ID is required'});
       }
 
       const categoryParams = { ...params, category: categoryId };
@@ -793,7 +793,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate pagination
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString() };
+        return createErrorResponse({error: paginationValidation.error, message: paginationValidation.error});
       }
 
       logApiRequest('GET', '/api/user/favorites', params);
@@ -831,7 +831,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean }>;
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
       }
 
       logApiRequest('POST', '/api/user/favorites', { offerId: params.offerId });
@@ -861,7 +861,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean }>;
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
       }
 
       logApiRequest('DELETE', `/api/user/favorites/${params.offerId}`);
@@ -919,12 +919,12 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean; redemptionId: string }>;
+        return createErrorResponse({error: offerIdValidation.error, message: offerIdValidation.error});
       }
 
       // Validate user ID
       if (!params.userId || typeof params.userId !== 'string' || params.userId.trim().length === 0) {
-        return { success: false, error: 'User ID is required', message: 'User authentication required to redeem offer', timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean; redemptionId: string }>;
+        return createErrorResponse({error: 'User ID is required', message: 'User authentication required to redeem offer'});
       }
 
       logApiRequest('POST', '/api/offers/redeem', { offerId: params.offerId, userId: params.userId });
@@ -959,7 +959,7 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate user ID
       if (!userId || typeof userId !== 'string' || userId.trim().length === 0) {
-        return { success: false, error: 'User ID is required', message: 'User ID is required for recommendations', timestamp: new Date().toISOString(), } as ApiResponse<Offer[]>;
+        return createErrorResponse({error: 'User ID is required', message: 'User ID is required'});
       }
 
       logApiRequest('GET', '/api/recommendations', { userId, hasLocation: !!location });
@@ -1025,17 +1025,13 @@ class MockOffersApi implements OffersApiEndpoints {
     promotions: any[];
     totalCount: number;
     activeCount: number;
-  }>> {
+  }> {
     const startTime = Date.now();
 
     try {
       // Validate store ID
       if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
-        return { success: false, error: 'Store ID is required', message: 'Please provide a valid store ID', timestamp: new Date().toISOString(), } as ApiResponse<{
-          promotions: any[];
-          totalCount: number;
-          activeCount: number;
-        }>;
+        return createErrorResponse({error: 'Store ID is required', message: 'Please provide a valid store ID'});
       }
 
       logApiRequest('GET', `/api/stores/${storeId}/promotions`, { storeId });
@@ -1079,12 +1075,12 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate store ID
       if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
-        return { success: false, error: 'Store ID is required', message: 'Please provide a valid store ID', timestamp: new Date().toISOString(), } as ApiResponse<Offer[]>;
+        return createErrorResponse({error: 'Store ID is required', message: 'Store ID is required'});
       }
 
       // Validate hours parameter
       if (typeof hours !== 'number' || hours < 1 || hours > 720) {
-        return { success: false, error: 'Invalid hours parameter', message: 'Hours must be between 1 and 720 (30 days)', timestamp: new Date().toISOString(), } as ApiResponse<Offer[]>;
+        return createErrorResponse({error: 'Invalid hours parameter', message: 'Invalid hours parameter'});
       }
 
       logApiRequest('GET', `/api/stores/${storeId}/expiring-deals`, { storeId, hours });

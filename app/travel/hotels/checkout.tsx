@@ -408,5 +408,4 @@ const styles = StyleSheet.create({
   secureText: { fontSize: 11, color: C.slate, textAlign: 'center' },
 });
 
-import { withErrorBoundary } from '@/utils/withErrorBoundary';
 export default withErrorBoundary(HotelCheckoutScreen, 'HotelCheckout');
