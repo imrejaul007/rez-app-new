@@ -242,7 +242,7 @@ export class SecureStorage {
         keychainService: 'rez.app.secure',
       });
     } catch (error) {
-      logger.error('[SecureStorage] setSecure failed', { key, error });
+      logger.error('[SecureStorage] setSecure failed', error as Error, `key=${key}`);
       throw new Error('Failed to store secure data');
     }
   }
@@ -259,7 +259,7 @@ export class SecureStorage {
         keychainService: 'rez.app.secure',
       });
     } catch (error) {
-      logger.error('[SecureStorage] getSecure failed', { key, error });
+      logger.error('[SecureStorage] getSecure failed', error as Error, `key=${key}`);
       return null;
     }
   }
@@ -277,7 +277,7 @@ export class SecureStorage {
         keychainService: 'rez.app.secure',
       });
     } catch (error) {
-      logger.error('[SecureStorage] removeSecure failed', { key, error });
+      logger.error('[SecureStorage] removeSecure failed', error as Error, `key=${key}`);
     }
   }
 
@@ -495,7 +495,6 @@ export class APISecurityHeaders {
     );
     const sigBytes = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
     const signature = Buffer.from(new Uint8Array(sigBytes)).toString('hex');
-    );
 
     return signature;
   }
