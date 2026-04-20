@@ -1,9 +1,9 @@
-import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Switch, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 interface PaymentMethod {
   id: string;
@@ -202,5 +202,4 @@ const styles = StyleSheet.create({
   addMethodText: { fontSize: 16, fontWeight: '600', color: '#fff' },
 });
 
-import { withErrorBoundary } from '@/utils/withErrorBoundary';
 export default withErrorBoundary(PaymentMethodsScreen, 'AccountPayment');
