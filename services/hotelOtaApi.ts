@@ -18,13 +18,21 @@ const OTA_TOKEN_KEY = 'ota_access_token';
 const OTA_REFRESH_KEY = 'ota_refresh_token';
 
 async function secureGet(key: string): Promise<string | null> {
-  if (Platform.OS === 'web') return AsyncStorage.getItem(`@${key}`);
+  if (Platform.OS === 'web') {
+    // CD-XS-23 FIX: Use sessionStorage instead of AsyncStorage/localStorage.
+    // sessionStorage is still JS-accessible (XSS-readable) but does NOT persist
+    // across browser sessions/tabs. This limits token exposure to the current
+    // session only. True httpOnly cookie protection requires the Hotel OTA
+    // service to set the cookie itself on its domain — not possible from a
+    // cross-origin React Native web build.
+    return sessionStorage.getItem(`@${key}`);
+  }
   return SecureStore.getItemAsync(key);
 }
 
 async function secureSet(key: string, value: string): Promise<void> {
   if (Platform.OS === 'web') {
-    await AsyncStorage.setItem(`@${key}`, value);
+    sessionStorage.setItem(`@${key}`, value);
   } else {
     await SecureStore.setItemAsync(key, value);
   }
@@ -32,7 +40,7 @@ async function secureSet(key: string, value: string): Promise<void> {
 
 async function secureDelete(key: string): Promise<void> {
   if (Platform.OS === 'web') {
-    await AsyncStorage.removeItem(`@${key}`);
+    sessionStorage.removeItem(`@${key}`);
   } else {
     await SecureStore.deleteItemAsync(key);
   }
