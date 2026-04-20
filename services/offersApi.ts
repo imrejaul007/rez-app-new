@@ -104,7 +104,7 @@ class SimpleCache<T> {
     // Check if item has expired
     if (Date.now() - item.timestamp > item.ttl) {
       this.cache.delete(key);
-      return null as any;
+      return null;
     }
 
     return item.data;
@@ -130,35 +130,35 @@ const userCache = new SimpleCache<ApiResponse<any>>(API_CONFIG.cache.userCache.m
 function validateOffer(offer: any): boolean {
   if (!offer || typeof offer !== 'object') {
     devLog.warn('[OFFERS API] Invalid offer data: not an object');
-    return false as any;
+    return false;
   }
 
   if (!offer.id || typeof offer.id !== 'string') {
     devLog.warn('[OFFERS API] Offer missing valid id field');
-    return false as any;
+    return false;
   }
 
   if (!offer.title || typeof offer.title !== 'string') {
     devLog.warn('[OFFERS API] Offer missing valid title field');
-    return false as any;
+    return false;
   }
 
   if (typeof offer.cashbackPercentage !== 'number' || offer.cashbackPercentage < 0) {
     devLog.warn('[OFFERS API] Offer has invalid cashback percentage');
-    return false as any;
+    return false;
   }
 
   if (!offer.category || typeof offer.category !== 'string') {
     devLog.warn('[OFFERS API] Offer missing category');
-    return false as any;
+    return false;
   }
 
   if (!offer.store || typeof offer.store !== 'object' || !offer.store.name) {
     devLog.warn('[OFFERS API] Offer missing valid store information');
-    return false as any;
+    return false;
   }
 
-  return true as any;
+  return true;
 }
 
 /**
@@ -186,7 +186,7 @@ function validateOfferArray(offers: any[]): Offer[] {
     devLog.warn(`[OFFERS API] Filtered out ${invalidCount} invalid offers from response`);
   }
 
-  return validOffers as any;
+  return validOffers;
 }
 
 /**
@@ -194,15 +194,15 @@ function validateOfferArray(offers: any[]): Offer[] {
  */
 function validateCategory(category: any): boolean {
   if (!category || typeof category !== 'object') {
-    return false as any;
+    return false;
   }
 
   if (!category.id || !category.name) {
     devLog.warn('[OFFERS API] Category missing required fields');
-    return false as any;
+    return false;
   }
 
-  return true as any;
+  return true;
 }
 
 /**
@@ -389,7 +389,7 @@ class OffersHttpClient {
       }
 
       const data = await response.json();
-      return data as any;
+      return data;
     } catch (error) {
       // Handle different types of errors
       let errorCode: ApiErrorCode = 'SERVER_ERROR';
@@ -473,19 +473,19 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate pagination parameters
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString() };
       }
 
       // Validate filters
       const filtersValidation = validateFilters(params.filters);
       if (!filtersValidation.valid) {
-        return { success: false, error: filtersValidation.error, message: filtersValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: filtersValidation.error, message: filtersValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<never>;
       }
 
       // Validate sort parameter
       const sortValidation = validateSortBy(params.sortBy);
       if (!sortValidation.valid) {
-        return { success: false, error: sortValidation.error, message: sortValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: sortValidation.error, message: sortValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<never>;
       }
 
       logApiRequest('GET', '/api/offers', params);
@@ -498,7 +498,7 @@ class MockOffersApi implements OffersApiEndpoints {
       if (cached) {
         devLog.log('[OFFERS API] Returning cached offers');
         logApiResponse('GET', '/api/offers', cached, Date.now() - startTime);
-        return cached as any;
+        return cached;
       }
 
       // Simulate filtering and pagination
@@ -517,17 +517,11 @@ class MockOffersApi implements OffersApiEndpoints {
 
       // Apply filters
       if (params.filters) {
-        const { minCashBack, priceRange, cashBackMin } = params.filters as any;
+        const { minCashBack, priceRange } = params.filters;
 
         if (minCashBack !== undefined) {
           allOffers = allOffers.filter(offer =>
             offer.cashbackPercentage >= minCashBack
-          );
-        }
-
-        if (cashBackMin !== undefined) {
-          allOffers = allOffers.filter(offer =>
-            offer.cashbackPercentage >= cashBackMin
           );
         }
 
@@ -538,7 +532,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
             if (priceRange.min !== undefined && price < priceRange.min) return false;
             if (priceRange.max !== undefined && price > priceRange.max) return false;
-            return true as any;
+            return true;
           });
         }
       }
@@ -598,10 +592,10 @@ class MockOffersApi implements OffersApiEndpoints {
         page,
       }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching offers:', error);
-      return createErrorResponse(error, 'Failed to load offers. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load offers. Please try again.');
     }
   }
 
@@ -612,7 +606,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<Offer>;
       }
 
       logApiRequest('GET', `/api/offers/${params.offerId}`, { offerId: params.offerId });
@@ -635,7 +629,7 @@ class MockOffersApi implements OffersApiEndpoints {
         };
 
         logApiResponse('GET', `/api/offers/${params.offerId}`, response, Date.now() - startTime);
-        return response as any;
+        return response as ApiResponse<Offer>;
       }
 
       // Additional validation on the specific offer
@@ -648,7 +642,7 @@ class MockOffersApi implements OffersApiEndpoints {
         };
 
         logApiResponse('GET', `/api/offers/${params.offerId}`, response, Date.now() - startTime);
-        return response as any;
+        return response as ApiResponse<Offer>;
       }
 
       const response: ApiResponse<Offer> = {
@@ -659,10 +653,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('GET', `/api/offers/${params.offerId}`, { success: true }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching offer details:', error);
-      return createErrorResponse(error, 'Failed to load offer details. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load offer details. Please try again.');
     }
   }
 
@@ -673,13 +667,13 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate search query
       const queryValidation = validateSearchQuery(params.query);
       if (!queryValidation.valid) {
-        return { success: false, error: queryValidation.error, message: queryValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: queryValidation.error, message: queryValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<PaginatedResponse<Offer>>;
       }
 
       // Validate pagination
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString() };
       }
 
       logApiRequest('GET', '/api/offers/search', { query: params.query, page: params.page });
@@ -727,10 +721,10 @@ class MockOffersApi implements OffersApiEndpoints {
         totalCount: filteredOffers.length,
       }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error searching offers:', error);
-      return createErrorResponse(error, 'Failed to search offers. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to search offers. Please try again.');
     }
   }
 
@@ -747,7 +741,7 @@ class MockOffersApi implements OffersApiEndpoints {
       if (cached) {
         devLog.log('[OFFERS API] Returning cached categories');
         logApiResponse('GET', '/api/categories', cached, Date.now() - startTime);
-        return cached as any;
+        return cached;
       }
 
       const categories = offersPageData.categories;
@@ -770,10 +764,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('GET', '/api/categories', { success: true, count: validCategories.length }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching categories:', error);
-      return createErrorResponse(error, 'Failed to load categories. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load categories. Please try again.');
     }
   }
 
@@ -781,14 +775,14 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate category ID
       if (!categoryId || typeof categoryId !== 'string' || categoryId.trim().length === 0) {
-        return { success: false, error: 'Category ID is required', message: 'Please provide a valid category ID', timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: 'Category ID is required', message: 'Please provide a valid category ID', timestamp: new Date().toISOString(), } as ApiResponse<PaginatedResponse<Offer>>;
       }
 
       const categoryParams = { ...params, category: categoryId };
       return this.getOffers(categoryParams);
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching offers by category:', error);
-      return createErrorResponse(error, 'Failed to load offers for this category. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load offers for this category. Please try again.');
     }
   }
 
@@ -799,7 +793,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate pagination
       const paginationValidation = validatePaginationParams(params.page, params.pageSize);
       if (!paginationValidation.valid) {
-        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: paginationValidation.error, message: paginationValidation.error, timestamp: new Date().toISOString() };
       }
 
       logApiRequest('GET', '/api/user/favorites', params);
@@ -823,10 +817,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('GET', '/api/user/favorites', { success: true, count: 0 }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching user favorites:', error);
-      return createErrorResponse(error, 'Failed to load favorites. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load favorites. Please try again.');
     }
   }
 
@@ -837,7 +831,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean }>;
       }
 
       logApiRequest('POST', '/api/user/favorites', { offerId: params.offerId });
@@ -853,10 +847,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('POST', '/api/user/favorites', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error adding to favorites:', error);
-      return createErrorResponse(error, 'Failed to add offer to favorites. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to add offer to favorites. Please try again.');
     }
   }
 
@@ -867,7 +861,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean }>;
       }
 
       logApiRequest('DELETE', `/api/user/favorites/${params.offerId}`);
@@ -883,10 +877,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('DELETE', `/api/user/favorites/${params.offerId}`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error removing from favorites:', error);
-      return createErrorResponse(error, 'Failed to remove offer from favorites. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to remove offer from favorites. Please try again.');
     }
   }
 
@@ -925,12 +919,12 @@ class MockOffersApi implements OffersApiEndpoints {
       // Validate offer ID
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
-        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: offerIdValidation.error, message: offerIdValidation.error, timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean; redemptionId: string }>;
       }
 
       // Validate user ID
       if (!params.userId || typeof params.userId !== 'string' || params.userId.trim().length === 0) {
-        return { success: false, error: 'User ID is required', message: 'User authentication required to redeem offer', timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: 'User ID is required', message: 'User authentication required to redeem offer', timestamp: new Date().toISOString(), } as ApiResponse<{ success: boolean; redemptionId: string }>;
       }
 
       logApiRequest('POST', '/api/offers/redeem', { offerId: params.offerId, userId: params.userId });
@@ -952,10 +946,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('POST', '/api/offers/redeem', { success: true, redemptionId }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error redeeming offer:', error);
-      return createErrorResponse(error, 'Failed to redeem offer. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to redeem offer. Please try again.');
     }
   }
 
@@ -965,7 +959,7 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate user ID
       if (!userId || typeof userId !== 'string' || userId.trim().length === 0) {
-        return { success: false, error: 'User ID is required', message: 'User ID is required for recommendations', timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: 'User ID is required', message: 'User ID is required for recommendations', timestamp: new Date().toISOString(), } as ApiResponse<Offer[]>;
       }
 
       logApiRequest('GET', '/api/recommendations', { userId, hasLocation: !!location });
@@ -990,10 +984,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('GET', '/api/recommendations', { success: true, count: trendingOffers.length }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching recommended offers:', error);
-      return createErrorResponse(error, 'Failed to load recommendations. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load recommendations. Please try again.');
     }
   }
 
@@ -1020,10 +1014,10 @@ class MockOffersApi implements OffersApiEndpoints {
 
       logApiResponse('GET', '/api/offers/trending', { success: true, count: trendingOffers.length }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching trending offers:', error);
-      return createErrorResponse(error, 'Failed to load trending offers. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load trending offers. Please try again.');
     }
   }
 
@@ -1037,7 +1031,11 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate store ID
       if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
-        return { success: false, error: 'Store ID is required', message: 'Please provide a valid store ID', timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: 'Store ID is required', message: 'Please provide a valid store ID', timestamp: new Date().toISOString(), } as ApiResponse<{
+          promotions: any[];
+          totalCount: number;
+          activeCount: number;
+        }>;
       }
 
       logApiRequest('GET', `/api/stores/${storeId}/promotions`, { storeId });
@@ -1068,10 +1066,10 @@ class MockOffersApi implements OffersApiEndpoints {
         activeCount: promotions.filter(p => p.isActive).length,
       }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching store promotions:', error);
-      return createErrorResponse(error, 'Failed to load store promotions. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load store promotions. Please try again.');
     }
   }
 
@@ -1081,12 +1079,12 @@ class MockOffersApi implements OffersApiEndpoints {
     try {
       // Validate store ID
       if (!storeId || typeof storeId !== 'string' || storeId.trim().length === 0) {
-        return { success: false, error: 'Store ID is required', message: 'Please provide a valid store ID', timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: 'Store ID is required', message: 'Please provide a valid store ID', timestamp: new Date().toISOString(), } as ApiResponse<Offer[]>;
       }
 
       // Validate hours parameter
       if (typeof hours !== 'number' || hours < 1 || hours > 720) {
-        return { success: false, error: 'Invalid hours parameter', message: 'Hours must be between 1 and 720 (30 days)', timestamp: new Date().toISOString(), } as any;
+        return { success: false, error: 'Invalid hours parameter', message: 'Hours must be between 1 and 720 (30 days)', timestamp: new Date().toISOString(), } as ApiResponse<Offer[]>;
       }
 
       logApiRequest('GET', `/api/stores/${storeId}/expiring-deals`, { storeId, hours });
@@ -1104,8 +1102,7 @@ class MockOffersApi implements OffersApiEndpoints {
       const thresholdTime = now + (hours * 60 * 60 * 1000);
 
       const expiringDeals = validDeals.filter(offer => {
-        // Note: The Offer type doesn't have validUntil, so this is for future compatibility
-        const validUntil = (offer as any).validUntil;
+        const validUntil = offer.validUntil;
         if (!validUntil) return false;
 
         const expiryTime = new Date(validUntil).getTime();
@@ -1114,8 +1111,8 @@ class MockOffersApi implements OffersApiEndpoints {
 
       // Sort by expiry time (soonest first)
       expiringDeals.sort((a, b) => {
-        const timeA = new Date((a as any).validUntil).getTime();
-        const timeB = new Date((b as any).validUntil).getTime();
+        const timeA = new Date(a.validUntil!).getTime();
+        const timeB = new Date(b.validUntil!).getTime();
         return timeA - timeB;
       });
 
@@ -1131,10 +1128,10 @@ class MockOffersApi implements OffersApiEndpoints {
         hours,
       }, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[OFFERS API] Error fetching expiring deals:', error);
-      return createErrorResponse(error, 'Failed to load expiring deals. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load expiring deals. Please try again.');
     }
   }
 }

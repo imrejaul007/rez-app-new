@@ -940,12 +940,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const contextValue: AuthContextType = useMemo(() => ({
     state,
     actions: stableActions,
-  }), [state, stableActions]) as any;
+  }), [state, stableActions]) as AuthContextType;
 
   // Sync to Zustand store for crash-safe fallback
   const _setFromProvider = useAuthStore((s) => s._setFromProvider);
   useEffect(() => {
-    _setFromProvider(state, stableActions as any);
+    _setFromProvider(state, stableActions as AuthContextType['actions']);
   }, [state, stableActions, _setFromProvider]);
 
   return (

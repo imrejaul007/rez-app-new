@@ -1,3 +1,4 @@
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Web QR Ordering — Checkout
  *
@@ -151,7 +152,8 @@ function OrderSummary({ cart, gstPercent }: { cart: CartItem[]; gstPercent: numb
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
-export default function CheckoutScreen() {
+// CD-TS-05 FIX: Wrap with ErrorBoundary to prevent crashes from killing the entire screen
+function CheckoutScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<any>();
 
@@ -689,3 +691,6 @@ const styles = StyleSheet.create({
   placeOrderText: { fontSize: 16, fontWeight: '700', color: '#fff' },
   placeOrderAmount: { fontSize: 16, fontWeight: '800', color: '#fff' },
 });
+
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
+export default withErrorBoundary(CheckoutScreen, 'WebCheckout');

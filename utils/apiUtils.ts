@@ -160,7 +160,7 @@ export function standardizeResponse<T>(
 export function createErrorResponse(
   error: any,
   defaultMessage: string = 'An error occurred'
-): StandardApiResponse {
+): StandardApiResponse<never> {
   // Handle null/undefined
   if (!error) {
     return {

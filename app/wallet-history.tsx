@@ -1,3 +1,4 @@
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Wallet Transaction History Screen
  *
@@ -204,7 +205,8 @@ const tabStyles = StyleSheet.create({
 // MAIN SCREEN
 // ============================================================================
 
-export default function WalletHistoryScreen() {
+// CD-TS-05 FIX: Wrap with ErrorBoundary to prevent crashes from killing the entire screen
+function WalletHistoryScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -454,3 +456,5 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
+
+export default withErrorBoundary(WalletHistoryScreen, 'WalletHistory');

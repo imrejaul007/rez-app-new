@@ -84,7 +84,7 @@ function validateUserId(userId?: string): boolean {
 function validateSectionId(sectionId: string): boolean {
   if (!sectionId || typeof sectionId !== 'string') {
     devLog.warn('[HOMEPAGE API] Invalid section ID');
-    return false as any;
+    return false;
   }
   return sectionId.trim().length > 0;
 }
@@ -95,13 +95,13 @@ function validateSectionId(sectionId: string): boolean {
 function validatePaginationParams(page?: number, limit?: number): boolean {
   if (page !== undefined && (typeof page !== 'number' || page < 1)) {
     devLog.warn('[HOMEPAGE API] Invalid page parameter');
-    return false as any;
+    return false;
   }
   if (limit !== undefined && (typeof limit !== 'number' || limit < 1 || limit > 100)) {
     devLog.warn('[HOMEPAGE API] Invalid limit parameter (must be 1-100)');
-    return false as any;
+    return false;
   }
-  return true as any;
+  return true;
 }
 
 /**
@@ -112,7 +112,7 @@ function validateFilters(filters?: SectionFilters): boolean {
 
   if (typeof filters !== 'object') {
     devLog.warn('[HOMEPAGE API] Filters must be an object');
-    return false as any;
+    return false;
   }
 
   // Validate price range if provided
@@ -120,7 +120,7 @@ function validateFilters(filters?: SectionFilters): boolean {
     const { min, max } = filters.priceRange;
     if (typeof min !== 'number' || typeof max !== 'number' || min < 0 || max < min) {
       devLog.warn('[HOMEPAGE API] Invalid price range');
-      return false as any;
+      return false;
     }
   }
 
@@ -128,11 +128,11 @@ function validateFilters(filters?: SectionFilters): boolean {
   if (filters.rating !== undefined) {
     if (typeof filters.rating !== 'number' || filters.rating < 0 || filters.rating > 5) {
       devLog.warn('[HOMEPAGE API] Invalid rating (must be 0-5)');
-      return false as any;
+      return false;
     }
   }
 
-  return true as any;
+  return true;
 }
 
 /**
@@ -141,15 +141,15 @@ function validateFilters(filters?: SectionFilters): boolean {
 function validateHomepageResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
     devLog.warn('[HOMEPAGE API] Invalid response: not an object');
-    return false as any;
+    return false;
   }
 
   if (!Array.isArray(response.sections)) {
     devLog.warn('[HOMEPAGE API] Response missing sections array');
-    return false as any;
+    return false;
   }
 
-  return true as any;
+  return true;
 }
 
 /**
@@ -158,15 +158,15 @@ function validateHomepageResponse(response: any): boolean {
 function validateSectionResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
     devLog.warn('[HOMEPAGE API] Invalid section response: not an object');
-    return false as any;
+    return false;
   }
 
   if (!response.section || typeof response.section !== 'object') {
     devLog.warn('[HOMEPAGE API] Section response missing section object');
-    return false as any;
+    return false;
   }
 
-  return true as any;
+  return true;
 }
 
 /**
@@ -178,7 +178,7 @@ function validateSectionResponse(response: any): boolean {
 function validateBatchResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
     devLog.warn('[HOMEPAGE API] Invalid batch response: not an object');
-    return false as any;
+    return false;
   }
 
   // apiClient already unwraps the backend's data field,
@@ -187,16 +187,16 @@ function validateBatchResponse(response: any): boolean {
 
   // Accept either format: data.sections or data directly containing arrays
   const hasLegacyFormat = data.sections && typeof data.sections === 'object';
-  const hasCurrentFormat = Array.isArray((data as any).featuredProducts) ||
-                           Array.isArray((data as any).newArrivals) ||
-                           Array.isArray((data as any).trendingStores);
+  const hasCurrentFormat = Array.isArray((data as Record<string, unknown>).featuredProducts) ||
+                           Array.isArray((data as Record<string, unknown>).newArrivals) ||
+                           Array.isArray((data as Record<string, unknown>).trendingStores);
 
   if (!hasLegacyFormat && !hasCurrentFormat) {
     devLog.warn('[HOMEPAGE API] Batch response missing valid data structure');
-    return false as any;
+    return false;
   }
 
-  return true as any;
+  return true;
 }
 
 // Homepage API Service
@@ -277,7 +277,7 @@ export class HomepageApiService {
       };
     } catch (error: any) {
       devLog.error('[HOMEPAGE API] Error fetching homepage data:', error);
-      return createErrorResponse(error, 'Failed to load homepage. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load homepage. Please try again.');
     }
   }
 
@@ -371,12 +371,12 @@ export class HomepageApiService {
       // apiClient already unwraps the backend's data field, so response IS the data
       const rawData = response.data || response;
       const sections = rawData.sections || {
-        justForYou: (rawData as any).featuredProducts || [],
-        newArrivals: (rawData as any).newArrivals || [],
-        trendingStores: (rawData as any).trendingStores || (rawData as any).featuredStores || [],
-        events: (rawData as any).upcomingEvents || [],
-        offers: (rawData as any).megaOffers || (rawData as any).studentOffers || [],
-        flashSales: (rawData as any).flashSales || [],
+        justForYou: (rawData as Record<string, unknown>).featuredProducts as ProductItem[] || [],
+        newArrivals: (rawData as Record<string, unknown>).newArrivals as ProductItem[] || [],
+        trendingStores: (rawData as Record<string, unknown>).trendingStores as StoreItem[] || (rawData as Record<string, unknown>).featuredStores as StoreItem[] || [],
+        events: (rawData as Record<string, unknown>).upcomingEvents as EventItem[] || [],
+        offers: (rawData as Record<string, unknown>).megaOffers as ProductItem[] || (rawData as Record<string, unknown>).studentOffers as ProductItem[] || [],
+        flashSales: (rawData as Record<string, unknown>).flashSales as ProductItem[] || [],
       };
       const validatedSections: any = {};
 
@@ -424,13 +424,13 @@ export class HomepageApiService {
         success: true,
         data: {
           sections: validatedSections,
-          metadata: (rawData as any).metadata || (rawData as any).metadata,
-          userContext: (rawData as any).userContext || null,
+          metadata: (rawData as Record<string, unknown>).metadata,
+          userContext: (rawData as Record<string, unknown>).userContext || null,
         },
-      } as any;
+      };
     } catch (error: any) {
       devLog.error('❌ [HOMEPAGE API] Batch endpoint failed:', error);
-      return createErrorResponse(error, 'Failed to load homepage data. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load homepage data. Please try again.');
     }
   }
 
@@ -444,17 +444,17 @@ export class HomepageApiService {
    * Fetch homepage data with persistent cache and stale-while-revalidate
    * Returns cached data instantly if available, refreshes in background if stale
    */
-  static async fetchHomepageDataCached(userId?: string): Promise<HomepageApiResponse> {
+  static async fetchHomepageDataCached(userId?: string): Promise<ApiResponse<HomepageApiResponse>> {
     const cacheKey = `homepage:${userId || 'anonymous'}`;
 
     return cacheService.getWithRevalidation(
       cacheKey,
-      () => HomepageApiService.fetchHomepageData(userId) as any,
+      (() => HomepageApiService.fetchHomepageData(userId)) as () => Promise<ApiResponse<HomepageApiResponse>>,
       {
         ttl: HOMEPAGE_CACHE_TTL,
         priority: 'high',
       }
-    ) as any;
+    );
   }
 
   /**
@@ -600,7 +600,7 @@ export class HomepageApiService {
       };
     } catch (error: any) {
       devLog.error(`[HOMEPAGE API] Error fetching section ${sectionId}:`, error);
-      return createErrorResponse(error, `Failed to load section. Please try again.`) as any;
+      return createErrorResponse(error, `Failed to load section. Please try again.`);
     }
   }
 
@@ -619,17 +619,17 @@ export class HomepageApiService {
     sectionId: string,
     userId?: string,
     filters?: Record<string, any>
-  ): Promise<SectionApiResponse> {
+  ): Promise<ApiResponse<SectionApiResponse>> {
     const cacheKey = HomepageCacheManager.getSectionKey(sectionId, userId, filters);
 
     return cacheService.getWithRevalidation(
       cacheKey,
-      () => HomepageApiService.fetchSectionData(sectionId, userId, filters) as any,
+      (() => HomepageApiService.fetchSectionData(sectionId, userId, filters)) as () => Promise<ApiResponse<SectionApiResponse>>,
       {
         ttl: SECTION_CACHE_TTL,
         priority: 'medium',
       }
-    ) as any;
+    );
   }
 
   /**
@@ -669,7 +669,7 @@ export class HomepageApiService {
 
       logApiResponse('POST', ENDPOINTS.ANALYTICS, apiResponse, Date.now() - startTime);
 
-      return apiResponse as any;
+      return apiResponse;
     } catch (error: any) {
       // Analytics failures shouldn't block the app
       devLog.warn('[HOMEPAGE API] Failed to send analytics:', error);
@@ -810,10 +810,10 @@ export class HomepageApiService {
 
       logApiResponse('PUT', ENDPOINTS.USER_PREFERENCES, apiResponse, Date.now() - startTime);
 
-      return apiResponse as any;
+      return apiResponse;
     } catch (error: any) {
       devLog.error('[HOMEPAGE API] Failed to update user preferences:', error);
-      return createErrorResponse(error, 'Failed to update preferences. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to update preferences. Please try again.');
     }
   }
 
@@ -862,14 +862,14 @@ export class HomepageApiService {
 
           if (result.success) {
             devLog.log(`[HOMEPAGE API] Section ${sectionId} refreshed successfully on attempt ${attempt}`);
-            return result as any;
+            return result;
           }
 
           lastError = new Error(result.error || 'Unknown error');
 
           // Don't retry validation errors
           if (result.error?.includes('Invalid') || result.error?.includes('validation')) {
-            return result as any;
+            return result;
           }
 
           if (attempt < maxRetries) {
@@ -883,7 +883,7 @@ export class HomepageApiService {
           if (error instanceof ApiError && error.isClientError) {
             // Don't retry client errors (4xx)
             devLog.error(`[HOMEPAGE API] Client error for section ${sectionId}, not retrying`);
-            return createErrorResponse(error, 'Failed to refresh section') as any;
+            return createErrorResponse(error, 'Failed to refresh section');
           }
 
           if (attempt < maxRetries) {
@@ -895,10 +895,10 @@ export class HomepageApiService {
       }
 
       devLog.error(`[HOMEPAGE API] All ${maxRetries} retry attempts failed for section ${sectionId}`);
-      return createErrorResponse(lastError, 'Failed to refresh section after multiple attempts') as any;
+      return createErrorResponse(lastError, 'Failed to refresh section after multiple attempts');
     } catch (error: any) {
       devLog.error('[HOMEPAGE API] Error in refreshSectionWithRetry:', error);
-      return createErrorResponse(error, 'Failed to refresh section') as any;
+      return createErrorResponse(error, 'Failed to refresh section');
     }
   }
 
@@ -987,7 +987,7 @@ export class HomepageApiService {
       };
     } catch (error: any) {
       devLog.error('[HOMEPAGE API] Error in refreshMultipleSections:', error);
-      return createErrorResponse(error, 'Failed to refresh sections') as any;
+      return createErrorResponse(error, 'Failed to refresh sections');
     }
   }
 }
@@ -1010,7 +1010,7 @@ export class HomepageCacheManager {
     const now = Date.now();
     if (now > cached.timestamp + cached.ttl) {
       this.cache.delete(key);
-      return null as any;
+      return null;
     }
     
     return cached.data;
@@ -1075,7 +1075,7 @@ export function withCache<T extends any[], R>(
     const result = await fn(...args);
     HomepageCacheManager.set(key, result, ttl);
     
-    return result as any;
+    return result;
   };
 }
 
@@ -1191,8 +1191,15 @@ export class HomepageCacheWarmer {
     };
   }> {
     try {
-      const response = await apiClient.get<any>('/homepage/user-context');
-      return response as any;
+      const response = await apiClient.get<{
+        walletBalance: number;
+        totalSaved: number;
+        voucherCount: number;
+        offersCount: number;
+        cartItemCount: number;
+        subscription: { tier: string; status: string };
+      }>('/homepage/user-context');
+      return response;
     } catch (error) {
       devLog.error('❌ [HOMEPAGE] Error fetching user context:', error);
       return { success: false };

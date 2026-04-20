@@ -14,6 +14,7 @@ export interface Offer {
   isBestSeller?: boolean;
   isSpecial?: boolean;
   description?: string;
+  validUntil?: string; // ISO date — present for expiring-deal filtering
   store: {
     id?: string;
     name: string;

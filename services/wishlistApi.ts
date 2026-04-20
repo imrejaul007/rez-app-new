@@ -309,7 +309,7 @@ class WishlistService {
       logApiRequest('GET', '/wishlist', { page, limit });
 
       const response = await withRetry(
-        () => apiClient.get<any>('/wishlist', { page, limit }),
+        () => apiClient.get<{ wishlists: Wishlist[]; pagination: { current: number; pages: number; total: number; limit: number } }>('/wishlist', { page, limit }),
         { maxRetries: 2 }
       );
 
@@ -336,10 +336,13 @@ class WishlistService {
         });
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching wishlists:', error);
-      return createErrorResponse(error, 'Failed to load wishlists. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load wishlists. Please try again.') as ApiResponse<{
+        wishlists: Wishlist[];
+        pagination: { current: number; pages: number; total: number; limit: number };
+      }>;
     }
   }
 
@@ -399,7 +402,8 @@ class WishlistService {
 
         if (defaultWishlistResponse.success && defaultWishlistResponse.data) {
           // Backend returns _id (MongoDB), handle both _id and id
-          wishlistId = defaultWishlistResponse.data.id || (defaultWishlistResponse.data as any)._id;
+          wishlistId = (defaultWishlistResponse.data as { id?: string; _id?: string }).id
+            || (defaultWishlistResponse.data as { id?: string; _id?: string })._id;
         } else {
           // Create default wishlist if it doesn't exist
           const createResponse = await this.createWishlist({
@@ -410,7 +414,8 @@ class WishlistService {
 
           if (createResponse.success && createResponse.data) {
             // Backend returns _id (MongoDB), handle both _id and id
-            wishlistId = createResponse.data.id || (createResponse.data as any)._id;
+            wishlistId = (createResponse.data as { id?: string; _id?: string }).id
+            || (createResponse.data as { id?: string; _id?: string })._id;
           } else {
             devLog.error('[WISHLIST API] Failed to create default wishlist');
             return {
@@ -454,10 +459,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error adding to wishlist:', error);
-      return createErrorResponse(error, 'Failed to add item to wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to add item to wishlist. Please try again.') as ApiResponse<WishlistItem>;
     }
   }
 
@@ -510,7 +515,7 @@ class WishlistService {
 
         logApiResponse('POST', '/wishlist/remove-item', response, Date.now() - startTime);
 
-        return response as any;
+        return response;
       }
 
       // Legacy: using wishlist item ID directly
@@ -534,10 +539,10 @@ class WishlistService {
 
       logApiResponse('DELETE', `/wishlist/items/${wishlistItemId}`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error removing from wishlist:', error);
-      return createErrorResponse(error, 'Failed to remove item from wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to remove item from wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -566,10 +571,10 @@ class WishlistService {
 
       logApiResponse('DELETE', `/wishlist/${wishlistId}/clear`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error clearing wishlist:', error);
-      return createErrorResponse(error, 'Failed to clear wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to clear wishlist. Please try again.') as ApiResponse<{ message: string; count: number }>;
     }
   }
 
@@ -618,16 +623,26 @@ class WishlistService {
       logApiRequest('GET', '/wishlist/check', { itemType: normalizedItemType, itemId });
 
       const response = await withRetry(
-        () => apiClient.get<any>('/wishlist/check', { itemType: normalizedItemType, itemId }),
+        () => apiClient.get<{
+    inWishlist: boolean;
+    wishlistItemId?: string;
+    wishlistId?: string;
+    addedAt?: string;
+  }>('/wishlist/check', { itemType: normalizedItemType, itemId }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', '/wishlist/check', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error checking wishlist status:', error);
-      return createErrorResponse(error, 'Failed to check wishlist status. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to check wishlist status. Please try again.') as ApiResponse<{
+    inWishlist: boolean;
+    wishlistItemId?: string;
+    wishlistId?: string;
+    addedAt?: string;
+  }>;
     }
   }
 
@@ -649,10 +664,10 @@ class WishlistService {
 
       logApiResponse('GET', endpoint, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching wishlist count:', error);
-      return createErrorResponse(error, 'Failed to load wishlist count. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load wishlist count. Please try again.') as ApiResponse<{ count: number }>;
     }
   }
 
@@ -695,10 +710,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching wishlist:', error);
-      return createErrorResponse(error, 'Failed to load wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
 
@@ -730,10 +745,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching default wishlist:', error);
-      return createErrorResponse(error, 'Failed to load default wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load default wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
 
@@ -764,7 +779,7 @@ class WishlistService {
       logApiRequest('POST', '/wishlist', { name: data.name });
 
       const response = await withRetry(
-        () => apiClient.post<Wishlist>('/wishlist', data as any),
+        () => apiClient.post<Wishlist>('/wishlist', data as CreateWishlistRequest),
         { maxRetries: 2 }
       );
 
@@ -782,10 +797,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error creating wishlist:', error);
-      return createErrorResponse(error, 'Failed to create wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to create wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
 
@@ -853,10 +868,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error updating wishlist:', error);
-      return createErrorResponse(error, 'Failed to update wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to update wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
 
@@ -885,10 +900,10 @@ class WishlistService {
 
       logApiResponse('DELETE', `/wishlist/${wishlistId}`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error deleting wishlist:', error);
-      return createErrorResponse(error, 'Failed to delete wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to delete wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -924,7 +939,7 @@ class WishlistService {
       logApiRequest('GET', endpoint, query);
 
       const response = await withRetry(
-        () => apiClient.get<WishlistsResponse>(endpoint, query as any),
+        () => apiClient.get<WishlistsResponse>(endpoint, query as WishlistsQuery),
         { maxRetries: 2 }
       );
 
@@ -951,10 +966,10 @@ class WishlistService {
         });
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching wishlist items:', error);
-      return createErrorResponse(error, 'Failed to load wishlist items. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load wishlist items. Please try again.') as ApiResponse<WishlistsResponse>;
     }
   }
 
@@ -1019,10 +1034,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error updating wishlist item:', error);
-      return createErrorResponse(error, 'Failed to update wishlist item. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to update wishlist item. Please try again.') as ApiResponse<WishlistItem>;
     }
   }
 
@@ -1051,10 +1066,10 @@ class WishlistService {
 
       logApiResponse('POST', `/wishlist/items/${itemId}/move-to-cart`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error moving item to cart:', error);
-      return createErrorResponse(error, 'Failed to move item to cart. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to move item to cart. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1116,10 +1131,10 @@ class WishlistService {
 
       logApiResponse('POST', `/wishlist/${wishlistId}/share`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error sharing wishlist:', error);
-      return createErrorResponse(error, 'Failed to share wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to share wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1175,10 +1190,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error syncing wishlist:', error);
-      return createErrorResponse(error, 'Failed to sync wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to sync wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
 
@@ -1218,10 +1233,10 @@ class WishlistService {
 
       logApiResponse('PATCH', `/wishlist/items/${itemId}/move`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error moving item:', error);
-      return createErrorResponse(error, 'Failed to move item. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to move item. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1263,7 +1278,11 @@ class WishlistService {
       logApiRequest('POST', '/wishlist/items/bulk', { count: items.length });
 
       const response = await withRetry(
-        () => apiClient.post<any>('/wishlist/items/bulk', { items }),
+        () => apiClient.post<{
+    added: number;
+    failed: number;
+    items: WishlistItem[];
+  }>('/wishlist/items/bulk', { items }),
         { maxRetries: 2 }
       );
 
@@ -1280,10 +1299,14 @@ class WishlistService {
         });
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error bulk adding to wishlist:', error);
-      return createErrorResponse(error, 'Failed to add items to wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to add items to wishlist. Please try again.') as ApiResponse<{
+    added: number;
+    failed: number;
+    items: WishlistItem[];
+  }>;
     }
   }
 
@@ -1311,16 +1334,22 @@ class WishlistService {
       logApiRequest('POST', '/wishlist/items/bulk-remove', { count: itemIds.length });
 
       const response = await withRetry(
-        () => apiClient.post<any>('/wishlist/items/bulk-remove', { itemIds }),
+        () => apiClient.post<{
+    removed: number;
+    failed: number;
+  }>('/wishlist/items/bulk-remove', { itemIds }),
         { maxRetries: 2 }
       );
 
       logApiResponse('POST', '/wishlist/items/bulk-remove', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error bulk removing from wishlist:', error);
-      return createErrorResponse(error, 'Failed to remove items from wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to remove items from wishlist. Please try again.') as ApiResponse<{
+    removed: number;
+    failed: number;
+  }>;
     }
   }
 
@@ -1357,16 +1386,22 @@ class WishlistService {
       logApiRequest('PATCH', '/wishlist/items/bulk-move', { count: itemIds.length, targetWishlistId });
 
       const response = await withRetry(
-        () => apiClient.patch<any>('/wishlist/items/bulk-move', { itemIds, targetWishlistId }),
+        () => apiClient.patch<{
+    moved: number;
+    failed: number;
+  }>('/wishlist/items/bulk-move', { itemIds, targetWishlistId }),
         { maxRetries: 2 }
       );
 
       logApiResponse('PATCH', '/wishlist/items/bulk-move', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error bulk moving items:', error);
-      return createErrorResponse(error, 'Failed to move items. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to move items. Please try again.') as ApiResponse<{
+    moved: number;
+    failed: number;
+  }>;
     }
   }
 
@@ -1419,16 +1454,36 @@ class WishlistService {
       logApiRequest('GET', '/wishlist/recommendations', { wishlistId, limit });
 
       const response = await withRetry(
-        () => apiClient.get<any>('/wishlist/recommendations', { wishlistId, limit }),
+        () => apiClient.get<Array<{
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    price: number;
+    rating: number;
+    type: WishlistItem['itemType'];
+    reason: string;
+    similarity: number;
+  }>>('/wishlist/recommendations', { wishlistId, limit }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', '/wishlist/recommendations', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching recommendations:', error);
-      return createErrorResponse(error, 'Failed to load recommendations. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load recommendations. Please try again.') as ApiResponse<Array<{
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    price: number;
+    rating: number;
+    type: WishlistItem['itemType'];
+    reason: string;
+    similarity: number;
+  }>>;
     }
   }
 
@@ -1478,16 +1533,30 @@ class WishlistService {
       logApiRequest('GET', '/wishlist/shared', { page, limit });
 
       const response = await withRetry(
-        () => apiClient.get<any>('/wishlist/shared', { page, limit }),
+        () => apiClient.get<{
+    wishlists: Array<Wishlist & {
+      owner: { id: string; name: string; avatar?: string };
+      sharedAt: string;
+      permissions: 'view' | 'edit';
+    }>;
+    pagination: { current: number; pages: number; total: number; limit: number };
+  }>('/wishlist/shared', { page, limit }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', '/wishlist/shared', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching shared wishlists:', error);
-      return createErrorResponse(error, 'Failed to load shared wishlists. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load shared wishlists. Please try again.') as ApiResponse<{
+    wishlists: Array<Wishlist & {
+      owner: { id: string; name: string; avatar?: string };
+      sharedAt: string;
+      permissions: 'view' | 'edit';
+    }>;
+    pagination: { current: number; pages: number; total: number; limit: number };
+  }>;
     }
   }
 
@@ -1521,10 +1590,10 @@ class WishlistService {
 
       logApiResponse('DELETE', endpoint, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error unsharing wishlist:', error);
-      return createErrorResponse(error, 'Failed to unshare wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to unshare wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1578,16 +1647,29 @@ class WishlistService {
       logApiRequest('GET', '/wishlist/public', query);
 
       const response = await withRetry(
-        () => apiClient.get<any>('/wishlist/public', query as any),
+        () => apiClient.get<{
+    wishlists: Array<Wishlist & { owner: { id: string; name: string; avatar?: string } }>;
+    pagination: { current: number; pages: number; total: number; limit: number };
+  }>('/wishlist/public', query as {
+    page?: number;
+    limit?: number;
+    search?: string;
+    userId?: string;
+    tags?: string[];
+    sort?: 'newest' | 'popular' | 'most_items' | 'highest_value';
+  }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', '/wishlist/public', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching public wishlists:', error);
-      return createErrorResponse(error, 'Failed to load public wishlists. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load public wishlists. Please try again.') as ApiResponse<{
+    wishlists: Array<Wishlist & { owner: { id: string; name: string; avatar?: string } }>;
+    pagination: { current: number; pages: number; total: number; limit: number };
+  }>;
     }
   }
 
@@ -1616,10 +1698,10 @@ class WishlistService {
 
       logApiResponse('POST', `/wishlist/${wishlistId}/follow`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error following wishlist:', error);
-      return createErrorResponse(error, 'Failed to follow wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to follow wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1648,10 +1730,10 @@ class WishlistService {
 
       logApiResponse('DELETE', `/wishlist/${wishlistId}/follow`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error unfollowing wishlist:', error);
-      return createErrorResponse(error, 'Failed to unfollow wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to unfollow wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1700,16 +1782,28 @@ class WishlistService {
       logApiRequest('GET', '/wishlist/following', { page, limit });
 
       const response = await withRetry(
-        () => apiClient.get<any>('/wishlist/following', { page, limit }),
+        () => apiClient.get<{
+    wishlists: Array<Wishlist & {
+      owner: { id: string; name: string; avatar?: string };
+      followedAt: string;
+    }>;
+    pagination: { current: number; pages: number; total: number; limit: number };
+  }>('/wishlist/following', { page, limit }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', '/wishlist/following', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching followed wishlists:', error);
-      return createErrorResponse(error, 'Failed to load followed wishlists. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load followed wishlists. Please try again.') as ApiResponse<{
+    wishlists: Array<Wishlist & {
+      owner: { id: string; name: string; avatar?: string };
+      followedAt: string;
+    }>;
+    pagination: { current: number; pages: number; total: number; limit: number };
+  }>;
     }
   }
 
@@ -1749,16 +1843,24 @@ class WishlistService {
       logApiRequest('GET', `/wishlist/${wishlistId}/export`, { format });
 
       const response = await withRetry(
-        () => apiClient.get<any>(`/wishlist/${wishlistId}/export`, { format } as any),
+        () => apiClient.get<{
+    downloadUrl: string;
+    filename: string;
+    expiresAt: string;
+  }>(`/wishlist/${wishlistId}/export`, { format }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', `/wishlist/${wishlistId}/export`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error exporting wishlist:', error);
-      return createErrorResponse(error, 'Failed to export wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to export wishlist. Please try again.') as ApiResponse<{
+    downloadUrl: string;
+    filename: string;
+    expiresAt: string;
+  }>;
     }
   }
 
@@ -1804,10 +1906,15 @@ class WishlistService {
 
       logApiResponse('POST', '/wishlist/import', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error importing wishlist:', error);
-      return createErrorResponse(error, 'Failed to import wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to import wishlist. Please try again.') as ApiResponse<{
+    imported: number;
+    failed: number;
+    wishlistId: string;
+    errors?: Array<{ row: number; error: string }>;
+  }>;
     }
   }
 
@@ -1835,16 +1942,32 @@ class WishlistService {
       logApiRequest('GET', endpoint);
 
       const response = await withRetry(
-        () => apiClient.get<any>(endpoint),
+        () => apiClient.get<Array<{
+    itemId: string;
+    item: WishlistItem['item'];
+    currentPrice: number;
+    alertPrice: number;
+    priceDrop: number;
+    percentage: number;
+    triggeredAt: string;
+  }>>(endpoint),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', endpoint, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching price alerts:', error);
-      return createErrorResponse(error, 'Failed to load price alerts. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load price alerts. Please try again.') as ApiResponse<Array<{
+    itemId: string;
+    item: WishlistItem['item'];
+    currentPrice: number;
+    alertPrice: number;
+    priceDrop: number;
+    percentage: number;
+    triggeredAt: string;
+  }>>;
     }
   }
 
@@ -1884,10 +2007,10 @@ class WishlistService {
 
       logApiResponse('POST', `/wishlist/items/${itemId}/price-alert`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error setting price alert:', error);
-      return createErrorResponse(error, 'Failed to set price alert. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to set price alert. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1916,10 +2039,10 @@ class WishlistService {
 
       logApiResponse('DELETE', `/wishlist/items/${itemId}/price-alert`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error removing price alert:', error);
-      return createErrorResponse(error, 'Failed to remove price alert. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to remove price alert. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
 
@@ -1949,10 +2072,10 @@ class WishlistService {
 
       logApiResponse('GET', endpoint, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching analytics:', error);
-      return createErrorResponse(error, 'Failed to load analytics. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load analytics. Please try again.') as ApiResponse<WishlistAnalytics>;
     }
   }
 
@@ -1995,16 +2118,34 @@ class WishlistService {
       logApiRequest('GET', `/wishlist/items/${itemId}/similar`, { limit });
 
       const response = await withRetry(
-        () => apiClient.get<any>(`/wishlist/items/${itemId}/similar`, { limit } as any),
+        () => apiClient.get<Array<{
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    price: number;
+    rating: number;
+    type: WishlistItem['itemType'];
+    similarity: number;
+  }>>(`/wishlist/items/${itemId}/similar`, { limit }),
         { maxRetries: 2 }
       );
 
       logApiResponse('GET', `/wishlist/items/${itemId}/similar`, response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error fetching similar items:', error);
-      return createErrorResponse(error, 'Failed to load similar items. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load similar items. Please try again.') as ApiResponse<Array<{
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    price: number;
+    rating: number;
+    type: WishlistItem['itemType'];
+    similarity: number;
+  }>>;
     }
   }
 
@@ -2066,10 +2207,10 @@ class WishlistService {
         }
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error duplicating wishlist:', error);
-      return createErrorResponse(error, 'Failed to duplicate wishlist. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to duplicate wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
 
@@ -2116,7 +2257,11 @@ class WishlistService {
       logApiRequest('POST', '/wishlist/merge', { sourceWishlistId, targetWishlistId, deleteSource });
 
       const response = await withRetry(
-        () => apiClient.post<any>('/wishlist/merge', {
+        () => apiClient.post<{
+    message: string;
+    merged: number;
+    duplicates: number;
+  }>('/wishlist/merge', {
           sourceWishlistId,
           targetWishlistId,
           deleteSource
@@ -2126,10 +2271,14 @@ class WishlistService {
 
       logApiResponse('POST', '/wishlist/merge', response, Date.now() - startTime);
 
-      return response as any;
+      return response;
     } catch (error: any) {
       devLog.error('[WISHLIST API] Error merging wishlists:', error);
-      return createErrorResponse(error, 'Failed to merge wishlists. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to merge wishlists. Please try again.') as ApiResponse<{
+    message: string;
+    merged: number;
+    duplicates: number;
+  }>;
     }
   }
 }

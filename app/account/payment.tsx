@@ -1,3 +1,4 @@
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Switch, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,7 +41,8 @@ const DUMMY_PAYMENT_METHODS: PaymentMethod[] = [
   },
 ];
 
-export default function PaymentMethodsScreen() {
+// CD-TS-05 FIX: Wrap with ErrorBoundary to prevent crashes from killing the entire screen
+function PaymentMethodsScreen() {
   const router = useRouter();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(DUMMY_PAYMENT_METHODS);
 
@@ -199,3 +201,6 @@ const styles = StyleSheet.create({
   },
   addMethodText: { fontSize: 16, fontWeight: '600', color: '#fff' },
 });
+
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
+export default withErrorBoundary(PaymentMethodsScreen, 'AccountPayment');

@@ -118,7 +118,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
       earnedDate: promoData?.earnedDate ? new Date(promoData.earnedDate) : safeDate,
       lastUsed: promoData?.lastUsed ? new Date(promoData.lastUsed) : safeDate,
       expiryDate: promoData?.expiryDate ? new Date(promoData.expiryDate) : undefined,
-      promoDetails: promoData?.promoDetails as any,
+      promoDetails: promoData?.promoDetails as unknown,
     }
   ];
 
@@ -152,7 +152,7 @@ function transformWalletResponse(backendData: RawWalletBackendData, userId: stri
     currency: BRAND.CURRENCY_CODE,
     formattedTotalBalance: `${BRAND.CURRENCY_CODE} ${totalBalance}`,
     coins,
-    brandedCoins: brandedCoinsData as any,
+    brandedCoins: brandedCoinsData as BrandedCoinEntry[],
     brandedCoinsTotal,
     savingsInsights: backendData.savingsInsights || { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
     recentTransactions: [],

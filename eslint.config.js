@@ -18,6 +18,8 @@ module.exports = defineConfig([
       'coverage/**',
     ],
     rules: {
+      // RC-46-1 FIX: Enable error-level enforcement for explicit any
+      '@typescript-eslint/no-explicit-any': 'error',
       'no-restricted-syntax': [
         'warn',
         {

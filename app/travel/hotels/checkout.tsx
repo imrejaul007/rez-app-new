@@ -1,3 +1,4 @@
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Hotel Checkout / Payment Screen
  * Route: /travel/hotels/checkout
@@ -41,7 +42,8 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
   );
 }
 
-export default function HotelCheckoutScreen() {
+// CD-TS-05 FIX: Wrap with ErrorBoundary to prevent crashes from killing the entire screen
+function HotelCheckoutScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { state: authState } = useAuth();
@@ -405,3 +407,6 @@ const styles = StyleSheet.create({
   payBtnText: { color: '#fff', fontWeight: '800', fontSize: 15 },
   secureText: { fontSize: 11, color: C.slate, textAlign: 'center' },
 });
+
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
+export default withErrorBoundary(HotelCheckoutScreen, 'HotelCheckout');
