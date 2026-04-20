@@ -13,7 +13,7 @@ import { useToastStore } from '@/stores/toastStore';
 const handledUrls = new Set<string>();
 
 interface DeepLinkData {
-  type: 'referral' | 'product' | 'store' | 'offer' | 'unknown';
+  type: 'referral' | 'product' | 'store' | 'offer' | 'wallet' | 'transaction' | 'unknown';
   data: any;
 }
 
@@ -79,6 +79,22 @@ export class DeepLinkHandler {
         return { type: 'offer', data: { offerId } };
       }
 
+      // Handle wallet deep links: rezapp://wallet or rezapp://wallet/transactions
+      if (hostname === 'wallet' || path?.startsWith('wallet')) {
+        const subpath = path?.replace(/^wallet\/?/, '');
+        return {
+          type: 'wallet',
+          data: { subpath: subpath || null, url }
+        };
+      }
+
+      // Handle transaction deep links: rezapp://transaction/<orderNumber>
+      if (hostname === 'transaction' || path?.startsWith('transaction/')) {
+        const raw = path?.replace(/^transaction\//, '') || hostname || undefined;
+        const orderNumber = raw?.split('?')[0].split('#')[0].trim() || null;
+        return { type: 'transaction', data: { orderNumber, url } };
+      }
+
       return {
         type: 'unknown',
         data: { url }
@@ -127,7 +143,7 @@ export class DeepLinkHandler {
   /**
    * Generate deep link URL
    */
-  generateDeepLink(type: 'referral' | 'product' | 'store' | 'offer', id: string): string {
+  generateDeepLink(type: 'referral' | 'product' | 'store' | 'offer' | 'wallet' | 'transaction', id?: string): string {
     const baseUrl = 'https://rez.app';
 
     switch (type) {
@@ -139,6 +155,10 @@ export class DeepLinkHandler {
         return `${baseUrl}/store/${id}`;
       case 'offer':
         return `${baseUrl}/offer/${id}`;
+      case 'wallet':
+        return id ? `${baseUrl}/wallet/${id}` : `${baseUrl}/wallet`;
+      case 'transaction':
+        return `${baseUrl}/transaction/${id}`;
       default:
         return baseUrl;
     }
@@ -263,6 +283,25 @@ export function useDeepLinkHandler() {
       case 'offer':
         await handler.trackAttribution('offer', linkData.data);
         router.push(`/offers?id=${linkData.data.offerId}`);
+        break;
+
+      case 'wallet':
+        await handler.trackAttribution('wallet', linkData.data);
+        // Subpath: /transactions → transaction history, otherwise → wallet overview
+        if (linkData.data.subpath === 'transactions') {
+          router.push('/wallet/transactions');
+        } else {
+          router.push('/wallet');
+        }
+        break;
+
+      case 'transaction':
+        await handler.trackAttribution('transaction', linkData.data);
+        if (linkData.data.orderNumber) {
+          router.push(`/orders/${linkData.data.orderNumber}`);
+        } else {
+          router.push('/wallet');
+        }
         break;
 
       default:

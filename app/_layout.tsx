@@ -200,6 +200,20 @@ function RootLayout() {
       return;
     }
 
+    // 0c. REZ Now wallet / coins-earned links from push notifications
+    //     https://now.rez.money/wallet → consumer app wallet
+    //     https://now.rez.money/wallet/transactions → transaction history
+    const nowWalletMatch = url.match(/https?:\/\/now\.rez\.money\/wallet(\/.*)?$/i);
+    if (nowWalletMatch) {
+      const subpath = nowWalletMatch[1] || '';
+      if (subpath === '/transactions' || subpath === '/history') {
+        router.push('/wallet/transactions');
+      } else {
+        router.push('/wallet');
+      }
+      return;
+    }
+
     const nowMatch = url.match(/https?:\/\/now\.rez\.money\/([a-z0-9][a-z0-9-]*[a-z0-9]?)(?:\?(.*))?$/i);
     if (nowMatch) {
       const slug = nowMatch[1].toLowerCase();
@@ -475,6 +489,28 @@ function RootLayout() {
 
   // Track whether an OTA update has been downloaded and is ready to apply
   const updateReadyRef = useRef(false);
+
+  // ── Phase 4: Refresh wallet on foreground ────────────────────────────────────
+  // When the app returns to foreground (user switched away and back from REZ Now QR payment),
+  // the server has already credited coins. Pull the updated balance so the UI is current.
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async (nextState: AppStateStatus) => {
+      if (nextState !== 'active') return;
+      // Skip if a payment is in progress — refreshWallet would overwrite optimistic state
+      const activeDraft = getActiveDraft();
+      if (activeDraft?.paymentMethod != null) return;
+      // Only refresh if the user is authenticated (wallet requires auth)
+      const token = await authStorage.getAuthToken().catch(() => null);
+      if (!token) return;
+      try {
+        const { useWalletStore } = await import('@/stores/walletStore');
+        useWalletStore.getState().refreshWallet();
+      } catch {
+        // Non-blocking — wallet refresh is best-effort
+      }
+    });
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (__DEV__) return;
