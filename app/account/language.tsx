@@ -10,7 +10,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useUserSettings } from '@/hooks/useUserSettings';
-import { useApp } from '@/contexts/AppContext';
+// F6: Use the focused selector hook instead of useApp(). We only need
+// actions here, not any state slice — pulling just actions means this
+// screen no longer re-renders when unrelated settings (notifications,
+// privacy, currency) change.
+import { useAppActions } from '@/stores/appStoreSelectors';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -68,7 +72,7 @@ function LanguageSettingsPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { settings, isLoading, updateGeneralSettings, refetch } = useUserSettings(true);
-  const { actions: appActions } = useApp();
+  const appActions = useAppActions();
 
   const [refreshing, setRefreshing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');

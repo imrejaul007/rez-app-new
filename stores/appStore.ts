@@ -294,6 +294,12 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
   },
 
   computed: {
+    // F6 note: these two are stale placeholders — do NOT consume them from
+    // the store directly. Use the hooks in stores/appStoreSelectors.ts:
+    //   useColorScheme()   — resolves 'auto' against the native scheme
+    //   useIsFirstLaunch() — reactive to state.isFirstLaunch
+    // Kept here only because the legacy Context-backed useApp() fallback
+    // still references them; new code must prefer the selector hooks.
     effectiveColorScheme: 'light',
     isFirstTime: true,
     formattedCurrency: (amount: number): string => {

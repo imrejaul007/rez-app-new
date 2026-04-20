@@ -14,6 +14,14 @@ const devLog = {
   error: __DEV__ ? console.error.bind(console) : () => {},
 };
 
+// PERF-N7: Pre-compile the "is this a fashion product" detection.
+// Original implementation ran 4 categoryName.includes() + 13 per-tag
+// .includes() calls per product. For 100 products × ~10 tags each that's
+// ~17k string scans on every fetch. A single compiled regex collapses
+// all 17 substring checks into one PC-cached trie scan per call.
+const FASHION_CATEGORY_NAME_RE = /fashion|clothing|apparel|beauty/i;
+const FASHION_TAG_RE = /fashion|clothing|apparel|beauty|jacket|jeans|dress|shirt|shoe|sneaker|sunglasses|handbag|blazer/i;
+
 export interface FashionStore {
   _id: string;
   name: string;
@@ -324,52 +332,24 @@ export const useFashionData = (): UseFashionDataResult => {
               // Handle both category object and category ID string
               let categoryId = '';
               let categoryName = '';
-              
+
               if (typeof product.category === 'string') {
                 categoryId = product.category;
               } else if (product.category && typeof product.category === 'object') {
                 categoryId = product.category._id || product.category.id || '';
                 categoryName = product.category.name?.toLowerCase() || '';
               }
-              
-              const productTags = product.tags || [];
-              
-              devLog.log(`🔍 Checking product: ${product.name}`, {
-                categoryId,
-                categoryName,
-                tags: productTags,
-              });
-              
-              // Check if product is fashion-related
-              const isFashion = 
-                categoryId === FASHION_CATEGORY_ID || // Match Fashion & Beauty category ID
-                categoryName.includes('fashion') || 
-                categoryName.includes('clothing') || 
-                categoryName.includes('apparel') ||
-                categoryName.includes('beauty') ||
-                productTags.some((tag: string) => {
-                  const tagLower = tag.toLowerCase();
-                  return tagLower.includes('fashion') || 
-                         tagLower.includes('clothing') ||
-                         tagLower.includes('apparel') ||
-                         tagLower.includes('beauty') ||
-                         tagLower.includes('jacket') ||
-                         tagLower.includes('jeans') ||
-                         tagLower.includes('dress') ||
-                         tagLower.includes('shirt') ||
-                         tagLower.includes('shoe') ||
-                         tagLower.includes('sneaker') ||
-                         tagLower.includes('sunglasses') ||
-                         tagLower.includes('handbag') ||
-                         tagLower.includes('blazer');
-                });
-              
-              if (isFashion) {
-                devLog.log('✅ Fashion Product:', product.name);
-              } else {
-                devLog.log('❌ NOT Fashion:', product.name);
-              }
-              
+
+              const productTags: string[] = product.tags || [];
+
+              // PERF-N7: Collapsed 17 substring scans into 2 regex tests.
+              // Per-product devLog removed from the hot path (the summary
+              // log after the filter still shows total matches).
+              const isFashion =
+                categoryId === FASHION_CATEGORY_ID ||
+                FASHION_CATEGORY_NAME_RE.test(categoryName) ||
+                productTags.some((tag) => FASHION_TAG_RE.test(tag));
+
               return isFashion;
             })
           : [];

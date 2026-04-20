@@ -1025,7 +1025,7 @@ class MockOffersApi implements OffersApiEndpoints {
     promotions: any[];
     totalCount: number;
     activeCount: number;
-  }> {
+  }>> {
     const startTime = Date.now();
 
     try {

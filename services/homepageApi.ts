@@ -346,11 +346,7 @@ export class HomepageApiService {
       logApiResponse('GET', ENDPOINTS.HOMEPAGE, apiResponse, Date.now() - startTime);
 
       if (!apiResponse.success || !apiResponse.data) {
-        return {
-          success: false,
-          error: apiResponse.error || 'Failed to fetch homepage batch data',
-          message: 'Failed to load homepage data. Please try again.',
-        };
+        return createErrorResponse(apiResponse.error || 'Failed to fetch homepage batch data', 'Failed to load homepage data. Please try again.');
       }
 
       const response = apiResponse.data;
@@ -358,11 +354,7 @@ export class HomepageApiService {
       // Validate response structure
       if (!validateBatchResponse(response)) {
         devLog.error('[HOMEPAGE API] Batch response validation failed');
-        return {
-          success: false,
-          error: 'Invalid batch response structure',
-          message: 'Failed to load homepage data. Please try again.',
-        };
+        return createErrorResponse('Invalid batch response structure', 'Failed to load homepage data. Please try again.');
       }
 
       // Handle both formats: data.sections or data directly containing arrays
@@ -423,9 +415,12 @@ export class HomepageApiService {
       return {
         success: true,
         data: {
-          sections: validatedSections,
-          metadata: (rawData as Record<string, unknown>).metadata,
-          userContext: (rawData as Record<string, unknown>).userContext || null,
+          success: true,
+          data: {
+            sections: validatedSections,
+            metadata: (rawData as Record<string, unknown>).metadata,
+            userContext: (rawData as Record<string, unknown>).userContext || null,
+          },
         },
       };
     } catch (error: any) {
