@@ -45,12 +45,12 @@ export const isInCriticalRetentionWindow = (user: User | null): boolean => {
  * CARLOS: retention — habit loop trigger — guide user to high-impact action
  */
 export const getDay1ChallengeAction = (userPreferences?: any): 'booking' | 'earn' | 'store' => {
-  // Simple rotation to A/B test which first action drives highest retention
+  // A/B rotation to test which first action drives highest retention.
+  // Uses a hash of user ID for deterministic bucketing — same user always gets same action.
   const actions: Array<'booking' | 'earn' | 'store'> = ['booking', 'earn', 'store'];
-  const hash = Math.random();
-  if (hash < 0.33) return 'booking';
-  if (hash < 0.66) return 'earn';
-  return 'store';
+  const userId = (userPreferences as any)?.userId ?? 'anon';
+  const hash = [...userId].reduce((acc, c) => acc + c.charCodeAt(0), 0) % 3;
+  return actions[hash];
 };
 
 /**
@@ -287,6 +287,7 @@ export const getDay1ChallengeWithReward = (): DayChallenge => {
   ];
 
   // Rotate based on hash to distribute A/B test
-  const hash = Math.random();
-  return challenges[Math.floor(hash * challenges.length)];
+  // Uses a date-based hash for deterministic bucketing without Math.random
+  const todayBucket = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
+  return challenges[todayBucket % challenges.length];
 };

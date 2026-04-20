@@ -1,5 +1,6 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { v4 as uuidv4 } from 'uuid';
 // Call Support Page
 // Phone support options with callback request — config-driven
 
@@ -55,7 +56,7 @@ function CallSupportPage() {
     if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
       return globalThis.crypto.randomUUID();
     }
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    return `${Date.now()}-${uuidv4()}`;
   });
 
   // Load config on mount

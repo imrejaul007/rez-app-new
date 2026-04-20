@@ -6,6 +6,7 @@
 
 import { AnalyticsEvent } from '@/services/analytics/types';
 import { eventValidator } from './eventValidator';
+import { v4 as uuidv4 } from 'uuid';
 
 interface DebugEvent extends AnalyticsEvent {
   id: string;
@@ -206,7 +207,7 @@ export class AnalyticsDebugger {
     if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
       return `${Date.now()}_${globalThis.crypto.randomUUID()}`;
     }
-    return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `${Date.now()}_${uuidv4()}`;
   }
 }
 

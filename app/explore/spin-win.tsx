@@ -160,7 +160,7 @@ function SpinWinPage() {
         // Calculate rotation to land on the correct segment
         const rawPrizeIndex = prizes.findIndex((p) => p.id === segmentId);
         // If segment not found in client list, pick a random valid index
-        const prizeIndex = rawPrizeIndex >= 0 ? rawPrizeIndex : Math.floor(Math.random() * prizes.length);
+        const prizeIndex = rawPrizeIndex >= 0 ? rawPrizeIndex : 0; // Fallback to first prize if unknown — Math.random removed from game logic
         const degreesPerSlice = 360 / prizes.length;
         const prizeAngle = prizeIndex * degreesPerSlice;
         const fullSpins = 5;

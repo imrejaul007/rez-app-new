@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { v4 as uuidv4 } from 'uuid';
 // Create Support Ticket Page
 // Form to submit a new support ticket
 
@@ -68,7 +69,7 @@ function generateIdempotencyKey(): string {
   if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
     return globalThis.crypto.randomUUID();
   }
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  return `${Date.now()}-${uuidv4()}`;
 }
 
 function CreateTicketPage() {

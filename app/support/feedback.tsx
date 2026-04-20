@@ -1,5 +1,6 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { v4 as uuidv4 } from 'uuid';
 // Feedback Page
 // App feedback submission
 
@@ -76,7 +77,7 @@ function FeedbackPage() {
     if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
       return globalThis.crypto.randomUUID();
     }
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    return `${Date.now()}-${uuidv4()}`;
   });
 
   const uploadImageToCloudinary = async (uri: string): Promise<string> => {

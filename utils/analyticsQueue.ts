@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { AnalyticsEvent } from '@/services/analytics/types';
 import apiClient from '@/services/apiClient';
+import { v4 as uuidv4 } from 'uuid';
 
 const QUEUE_KEY = '@analytics:offline_queue';
 const MAX_QUEUE_SIZE = 1000;
@@ -209,7 +210,7 @@ export class AnalyticsQueue {
     if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.randomUUID) {
       return `${Date.now()}_${globalThis.crypto.randomUUID()}`;
     }
-    return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `${Date.now()}_${uuidv4()}`;
   }
 
   /**
