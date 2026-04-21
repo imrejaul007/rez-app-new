@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import {
   MainStoreHeader,
@@ -50,7 +50,7 @@ import AlwaysVisibleSections from '@/components/store/AlwaysVisibleSections';
 import StoreModals, { buildAboutModalData } from '@/components/store/StoreModals';
 
 // Custom hook for all data/state/handlers
-import { useMainStorePageData } from '@/hooks/useMainStorePageData';
+import { useMainStorePageData, DynamicStoreData, LocationData } from '@/hooks/useMainStorePageData';
 import apiClient from '@/services/apiClient';
 import { logger } from '@/utils/logger';
 
@@ -102,12 +102,12 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
 
   const handleBookTable = useCallback(() => {
     router.push(
-      `/MainCategory/food-dining/book-table?storeId=${d.currentStoreId}&storeName=${encodeURIComponent(d.currentStoreName || '')}` as any,
+      `/MainCategory/food-dining/book-table?storeId=${d.currentStoreId}&storeName=${encodeURIComponent(d.currentStoreName || '')}`,
     );
   }, [router, d.currentStoreId, d.currentStoreName]);
 
   const handleCallStore = useCallback(() => {
-    const phone = (d.storeData as any)?.contact?.phone || (d.storeData as any)?.phone;
+    const phone = (d.storeData as DynamicStoreData)?.contact?.phone || (d.storeData as DynamicStoreData)?.phone;
     if (phone) {
       Linking.openURL(`tel:${phone}`).catch(() => {});
     }
@@ -129,8 +129,8 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   useEffect(() => {
     if (!d.pageLoading) {
       const timer = setTimeout(() => {
-        if (tabsContainerRef.current && (tabsContainerRef.current as any).measure) {
-          (tabsContainerRef.current as any).measure((_x: number, y: number, _w: number, height: number) => {
+        if (tabsContainerRef.current && (tabsContainerRef.current as View).measure) {
+          (tabsContainerRef.current as View).measure((_x: number, y: number, _w: number, height: number) => {
             tabsPositionY.current = y + height;
             tabsPositionMeasured.current = true;
           });
@@ -160,10 +160,10 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     let cancelled = false;
     const abortController = new AbortController();
     apiClient
-      .get(`/stores/${d.currentStoreId}/page-extras`, { signal: abortController.signal } as any)
-      .then((res) => {
+      .get(`/stores/${d.currentStoreId}/page-extras`, { signal: abortController.signal })
+      .then((res: { data?: { data?: unknown; activeCampaigns?: unknown[]; upcomingDrop?: unknown } }) => {
         if (cancelled) return;
-        const payload = (res as any).data?.data;
+        const payload = res.data?.data;
         if (payload?.upcomingDrop) setUpcomingDrop(payload.upcomingDrop);
         if (Array.isArray(payload?.activeCampaigns)) setActiveCampaigns(payload.activeCampaigns);
       })
@@ -227,7 +227,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
           ? d.storeData.discount
           : undefined,
     reviewCount: d.totalReviewCount,
-    photoCount: (d.storeData as any)?.photoCount,
+    photoCount: (d.storeData as DynamicStoreData)?.photoCount,
   };
 
   return (
@@ -255,7 +255,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
             scrollY.value = y;
             setShowStickyTabs(tabsPositionMeasured.current && y > tabsPositionY.current);
           }}
-          contentContainerStyle={contentContainerStyle as any}
+          contentContainerStyle={contentContainerStyle}
           refreshControl={
             <RefreshControl
               refreshing={d.refreshing}
@@ -298,7 +298,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                       locationCoords={
                         d.storeData?.location && typeof d.storeData.location === 'object'
                           ? (() => {
-                              const coords = (d.storeData.location as any).coordinates;
+                              const coords = (d.storeData.location as LocationData).coordinates;
                               if (!coords) return undefined;
                               const lat = coords.lat || coords[1] || 0;
                               const lng = coords.lng || coords[0] || 0;
@@ -327,11 +327,11 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                     const cashbackVal =
                       typeof d.storeData.cashback === 'number'
                         ? d.storeData.cashback
-                        : (d.storeData as any).offers?.cashback || 0;
+                        : (d.storeData as DynamicStoreData).offers?.cashback || 0;
                     return cashbackVal > 0 ? (
                       <CashbackHeroCard
                         cashbackPercentage={cashbackVal}
-                        coinsToEarn={(d.storeData as any).rewardRules?.reviewBonusCoins || 50}
+                        coinsToEarn={(d.storeData as DynamicStoreData).rewardRules?.reviewBonusCoins || 50}
                       />
                     ) : null;
                   })()}
@@ -347,19 +347,19 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                         storeName: d.currentStoreName || '',
                         storeLogo: d.currentStoreLogo,
                       },
-                    } as any)
+                    } as Href)
                   }
                   onUploadBill={() =>
                     router.push({
                       pathname: '/bill-upload',
                       params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
-                    } as any)
+                    } as Href)
                   }
                   onViewOffers={() =>
                     router.push({
                       pathname: '/CardOffersPage',
                       params: { storeId: d.currentStoreId, storeName: d.currentStoreName, orderValue: '1000' },
-                    } as any)
+                    } as Href)
                   }
                 />
 
@@ -369,32 +369,34 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                     <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 15, marginBottom: spacing.xs }}>
                       🎯 Active Offers
                     </Text>
-                    {activeCampaigns.map((c: any) => (
-                      <View
-                        key={c._id}
-                        style={{
-                          padding: spacing.md,
-                          backgroundColor: '#fff',
-                          borderRadius: 10,
-                          borderWidth: 1,
-                          borderColor: '#E8DCC4',
-                          marginBottom: spacing.xs,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Text style={{ fontSize: 20, marginRight: spacing.sm }}>✨</Text>
-                        <View style={{ flex: 1 }}>
-                          <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
-                          <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
-                          {c.coinMultiplier > 1 && (
-                            <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
-                              {c.coinMultiplier}x coins on every purchase
-                            </Text>
-                          )}
+                    {activeCampaigns.map(
+                      (c: { _id: string; title?: string; description?: string; [key: string]: unknown }) => (
+                        <View
+                          key={c._id}
+                          style={{
+                            padding: spacing.md,
+                            backgroundColor: '#fff',
+                            borderRadius: 10,
+                            borderWidth: 1,
+                            borderColor: '#E8DCC4',
+                            marginBottom: spacing.xs,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Text style={{ fontSize: 20, marginRight: spacing.sm }}>✨</Text>
+                          <View style={{ flex: 1 }}>
+                            <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
+                            <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
+                            {c.coinMultiplier > 1 && (
+                              <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
+                                {c.coinMultiplier}x coins on every purchase
+                              </Text>
+                            )}
+                          </View>
                         </View>
-                      </View>
-                    ))}
+                      ),
+                    )}
                   </View>
                 )}
 
@@ -427,22 +429,22 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                   <StoreQuickInfoCard
                     storeName={d.storeData.name || d.storeData.title || d.productData.title}
                     description={d.storeData.description}
-                    isVerified={(d.storeData as any).isVerified}
+                    isVerified={(d.storeData as DynamicStoreData).isVerified}
                     operationalInfo={d.storeData.operationalInfo}
                     location={
                       d.storeData.location && typeof d.storeData.location === 'object'
                         ? {
-                            address: (d.storeData.location as any).address,
-                            city: (d.storeData.location as any).city,
-                            state: (d.storeData.location as any).state,
-                            coordinates: (d.storeData.location as any).coordinates
+                            address: (d.storeData.location as LocationData).address,
+                            city: (d.storeData.location as LocationData).city,
+                            state: (d.storeData.location as LocationData).state,
+                            coordinates: (d.storeData.location as LocationData).coordinates
                               ? {
                                   lat:
-                                    (d.storeData.location as any).coordinates.lat ||
-                                    (d.storeData.location as any).coordinates[1],
+                                    (d.storeData.location as LocationData).coordinates.lat ||
+                                    (d.storeData.location as LocationData).coordinates[1],
                                   lng:
-                                    (d.storeData.location as any).coordinates.lng ||
-                                    (d.storeData.location as any).coordinates[0],
+                                    (d.storeData.location as LocationData).coordinates.lng ||
+                                    (d.storeData.location as LocationData).coordinates[0],
                                 }
                               : undefined,
                           }
@@ -459,7 +461,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                     storeCategory={d.storeData.category || ''}
                     onPress={(sId, sName) =>
                       router.push(
-                        `/MainCategory/food-dining/book-table?storeId=${sId}&storeName=${encodeURIComponent(sName)}` as any,
+                        `/MainCategory/food-dining/book-table?storeId=${sId}&storeName=${encodeURIComponent(sName)}`,
                       )
                     }
                   />
@@ -468,20 +470,20 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                 {/* Store Offers Preview */}
                 {d.isDynamic && d.storeData && (
                   <StoreOffersBuilder
-                    storeData={d.storeData as any}
+                    storeData={d.storeData as DynamicStoreData}
                     storeId={d.currentStoreId}
                     storeName={d.currentStoreName || ''}
                     onViewAll={() =>
                       router.push({
                         pathname: '/CardOffersPage',
                         params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
-                      } as any)
+                      } as Href)
                     }
                     onApplyOffer={(offer) =>
                       router.push({
                         pathname: '/pay-in-store',
                         params: { storeId: d.currentStoreId, offerId: offer.id },
-                      } as any)
+                      } as Href)
                     }
                   />
                 )}
@@ -497,7 +499,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                       router.push({
                         pathname: '/loyalty',
                         params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
-                      } as any)
+                      } as Href)
                     }
                   />
                 )}
@@ -521,12 +523,12 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                 {/* Payment Methods Card */}
                 {d.isDynamic && d.storeData && d.fullStoreDataRef.current?.paymentSettings && (
                   <PaymentMethodsCard
-                    acceptPromoCoins={(d.storeData as any).paymentSettings?.acceptPromoCoins !== false}
+                    acceptPromoCoins={(d.storeData as DynamicStoreData).paymentSettings?.acceptPromoCoins !== false}
                     acceptBrandedCoins={true}
-                    acceptRezCoins={(d.storeData as any).paymentSettings?.acceptRezCoins !== false}
-                    acceptUPI={(d.storeData as any).paymentSettings?.acceptUPI !== false}
-                    acceptCards={(d.storeData as any).paymentSettings?.acceptCards !== false}
-                    acceptPayLater={(d.storeData as any).paymentSettings?.acceptPayLater === true}
+                    acceptRezCoins={(d.storeData as DynamicStoreData).paymentSettings?.acceptRezCoins !== false}
+                    acceptUPI={(d.storeData as DynamicStoreData).paymentSettings?.acceptUPI !== false}
+                    acceptCards={(d.storeData as DynamicStoreData).paymentSettings?.acceptCards !== false}
+                    acceptPayLater={(d.storeData as DynamicStoreData).paymentSettings?.acceptPayLater === true}
                   />
                 )}
 
@@ -667,13 +669,13 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
         <StoreBottomActionBar
           storeId={d.currentStoreId}
           storeName={d.currentStoreName || ''}
-          storePhone={(d.storeData as any)?.contact?.phone || (d.storeData as any)?.phone}
+          storePhone={(d.storeData as DynamicStoreData)?.contact?.phone || (d.storeData as DynamicStoreData)?.phone}
           storeCategory={d.storeData?.category || d.productData.category}
           onScanPayEarn={() =>
             router.push({
               pathname: '/pay-in-store/enter-amount',
               params: { storeId: d.currentStoreId, storeName: d.currentStoreName || '', storeLogo: d.currentStoreLogo },
-            } as any)
+            } as { photoCount?: number; rating?: number; name?: string })
           }
           onOrderFood={handleOrderFood}
           onBookTable={handleBookTable}

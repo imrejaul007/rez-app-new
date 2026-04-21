@@ -25,6 +25,23 @@ interface FollowSystemState {
   error: string | null;
 }
 
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+}
+interface FollowStatusData {
+  isFollowing: boolean;
+  isFollower: boolean;
+  isMutual: boolean;
+}
+interface FollowersData { followers: import('@/services/followApi').FollowUser[]; pagination: Pagination; }
+interface FollowingData { following: import('@/services/followApi').FollowUser[]; pagination: Pagination; }
+interface MutualsData { mutuals: import('@/services/followApi').FollowUser[]; pagination: Pagination; }
+interface SuggestionsData { suggestions: import('@/services/followApi').FollowUser[]; }
+interface FollowRequestsData { requests: import('@/services/followApi').FollowRequest[]; }
+interface FollowSearchData { users: import('@/services/followApi').FollowUser[]; pagination: Pagination; }
+
 export function useFollowSystem(targetUserId?: string, options: UseFollowSystemOptions = {}) {
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
@@ -60,12 +77,12 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
       if (statusResponse.success && countsResponse.success) {
         setState(prev => ({
           ...prev,
-          isFollowing: (statusResponse.data as any).isFollowing,
-          isFollower: (statusResponse.data as any).isFollower,
-          isMutual: (statusResponse.data as any).isMutual,
-          followersCount: (countsResponse.data as any).followersCount,
-          followingCount: (countsResponse.data as any).followingCount,
-          mutualCount: (countsResponse.data as any).mutualCount,
+          isFollowing: (statusResponse.data as FollowStatusData).isFollowing,
+          isFollower: (statusResponse.data as FollowStatusData).isFollower,
+          isMutual: (statusResponse.data as FollowStatusData).isMutual,
+          followersCount: (countsResponse.data as FollowCounts).followersCount,
+          followingCount: (countsResponse.data as FollowCounts).followingCount,
+          mutualCount: (countsResponse.data as FollowCounts).mutualCount,
           isLoading: false,
         }));
       }
@@ -101,8 +118,8 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
       if (response.success) {
         setState(prev => ({
           ...prev,
-          followersCount: (response.data as any).followersCount,
-          followingCount: (response.data as any).followingCount,
+          followersCount: (response.data as FollowStatus).followersCount,
+          followingCount: (response.data as FollowStatus).followingCount,
         }));
 
         // Trigger callback
@@ -110,7 +127,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
           options.onFollowChange(userId, true);
         }
         if (options.onFollowersChange) {
-          options.onFollowersChange((response.data as any).followersCount);
+          options.onFollowersChange((response.data as FollowStatus).followersCount);
         }
 
         return true;
@@ -143,8 +160,8 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
       if (response.success) {
         setState(prev => ({
           ...prev,
-          followersCount: (response.data as any).followersCount,
-          followingCount: (response.data as any).followingCount,
+          followersCount: (response.data as FollowStatus).followersCount,
+          followingCount: (response.data as FollowStatus).followingCount,
         }));
 
         // Trigger callback
@@ -152,7 +169,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
           options.onFollowChange(userId, false);
         }
         if (options.onFollowersChange) {
-          options.onFollowersChange((response.data as any).followersCount);
+          options.onFollowersChange((response.data as FollowStatus).followersCount);
         }
 
         return true;
@@ -184,7 +201,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
     try {
       const response: any = await followApi.getFollowSuggestions(limit);
       if (response.success) {
-        setSuggestions((response.data as any).suggestions || []);
+        setSuggestions((response.data as SuggestionsData).suggestions || []);
       }
     } catch (error: any) {
       // silently handle
@@ -200,12 +217,12 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
 
       if (response.success) {
         if (page === 1) {
-          setFollowers((response.data as any).followers || []);
+          setFollowers((response.data as FollowersData).followers || []);
         } else {
-          setFollowers(prev => [...prev, ...((response.data as any).followers || [])]);
+          setFollowers(prev => [...prev, ...((response.data as FollowersData).followers || [])]);
         }
         setState(prev => ({ ...prev, isLoading: false }));
-        return (response.data as any).pagination;
+        return (response.data as FollowersData).pagination;
       }
 
       setState(prev => ({ ...prev, isLoading: false }));
@@ -225,12 +242,12 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
 
       if (response.success) {
         if (page === 1) {
-          setFollowing((response.data as any).following || []);
+          setFollowing((response.data as FollowingData).following || []);
         } else {
-          setFollowing(prev => [...prev, ...((response.data as any).following || [])]);
+          setFollowing(prev => [...prev, ...((response.data as FollowingData).following || [])]);
         }
         setState(prev => ({ ...prev, isLoading: false }));
-        return (response.data as any).pagination;
+        return (response.data as FollowersData).pagination;
       }
 
       setState(prev => ({ ...prev, isLoading: false }));
@@ -250,12 +267,12 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
 
       if (response.success) {
         if (page === 1) {
-          setMutuals((response.data as any).mutuals || []);
+          setMutuals((response.data as MutualsData).mutuals || []);
         } else {
-          setMutuals(prev => [...prev, ...((response.data as any).mutuals || [])]);
+          setMutuals(prev => [...prev, ...((response.data as MutualsData).mutuals || [])]);
         }
         setState(prev => ({ ...prev, isLoading: false }));
-        return (response.data as any).pagination;
+        return (response.data as FollowersData).pagination;
       }
 
       setState(prev => ({ ...prev, isLoading: false }));
@@ -271,7 +288,7 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
     try {
       const response: any = await followApi.getPendingFollowRequests();
       if (response.success) {
-        setPendingRequests((response.data as any).requests || []);
+        setPendingRequests((response.data as FollowRequestsData).requests || []);
       }
     } catch (error: any) {
       // silently handle
@@ -343,8 +360,8 @@ export function useFollowSystem(targetUserId?: string, options: UseFollowSystemO
 
       if (response.success) {
         return {
-          users: (response.data as any).users || [],
-          pagination: (response.data as any).pagination,
+          users: (response.data as FollowSearchData).users || [],
+          pagination: (response.data as FollowSearchData).pagination,
         };
       }
       return null;

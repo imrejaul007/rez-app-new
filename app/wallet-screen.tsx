@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { CoinBalance, WalletScreenProps, COIN_TYPES, CoinType } from '@/types/wallet';
 import {
   useGetCurrency,
@@ -261,10 +261,12 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             const coinsList = Array.isArray(bucket.coins) ? bucket.coins : [];
             for (const coin of coinsList) {
               if (!coin) continue;
-              const coinType: string = (coin as any).type || (coin as any).source || 'rez';
-              const coinAmount: number = typeof (coin as any).amount === 'number' ? (coin as any).amount : 0;
-              const coinExpiresAt: string = (coin as any).expiresAt || '';
-              const coinDaysLeft: number = typeof (coin as any).daysLeft === 'number' ? (coin as any).daysLeft : 0;
+              const coinType: string = (coin as CoinBucketItem).type || (coin as CoinBucketItem).source || 'rez';
+              const coinAmount: number =
+                typeof (coin as CoinBucketItem).amount === 'number' ? (coin as CoinBucketItem).amount : 0;
+              const coinExpiresAt: string = (coin as CoinBucketItem).expiresAt || '';
+              const coinDaysLeft: number =
+                typeof (coin as CoinBucketItem).daysLeft === 'number' ? (coin as CoinBucketItem).daysLeft : 0;
               const existing = typeMap.get(coinType);
               if (existing) {
                 existing.amount += coinAmount;
@@ -305,7 +307,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         .getBalance()
         .then((res) => {
           if (cancelled || !res.success || !res.data) return;
-          const data = res.data as any;
+          const data = res.data as ExpiryResData;
           setLifetimeEarned(data.lifetimeEarned ?? 0);
           setLifetimeRedeemed(data.lifetimeRedeemed ?? 0);
           setLifetimeExpired(data.lifetimeExpired ?? 0);
@@ -343,7 +345,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     if (onNavigateBack) {
       onNavigateBack();
     } else {
-      goBack('/' as any);
+      goBack('/');
     }
   }, [onNavigateBack, goBack]);
 
@@ -355,7 +357,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         router.push({
           pathname: '/wallet/coin-detail/[coinType]',
           params: { coinType: coin.type },
-        } as any);
+        } as Href);
       }
     },
     [onCoinPress, router],
@@ -366,7 +368,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
       router.push({
         pathname: '/wallet/coin-detail/[coinType]',
         params: { coinType: type },
-      } as any);
+      } as Href);
     },
     [router],
   );
@@ -441,10 +443,10 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     if (!entry) return null;
     return {
       id: entry.id,
-      icon: entry.icon as any,
+      icon: entry.icon,
       title: entry.title,
       subtitle: entry.subtitle,
-      onPress: () => router.push(entry.route as any),
+      onPress: () => router.push(entry.route),
       badge: 'VERIFIED',
     };
   }, [segment, router]);
@@ -465,7 +467,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         icon: 'flag-outline' as const,
         title: 'Savings Goals',
         subtitle: 'Track & hit your targets',
-        onPress: () => router.push('/savings-goals' as any),
+        onPress: () => router.push('/savings-goals'),
       },
       {
         id: 'scratch-card',
@@ -538,8 +540,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     // Orange/warning if 1 < daysLeft ≤ 7
     return {
       backgroundColor: colors.warningScale?.[50] ?? '#FFF9E6',
-      borderColor: (colors.warningScale as any)?.[300] ?? '#FCD34D',
-      iconColor: (colors.warningScale as any)?.[600] ?? '#D97706',
+      borderColor: (colors.warningScale as Record<string, Record<number, string>>)?.[300] ?? '#FCD34D',
+      iconColor: (colors.warningScale as Record<string, Record<number, string>>)?.[600] ?? '#D97706',
     };
   }, [minDaysLeft]);
 
@@ -590,7 +592,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             </Text>
             <Pressable
               style={[styles.retryButton, { backgroundColor: Colors.brand.purple }]}
-              onPress={() => router.push('/onboarding/profile' as any)}
+              onPress={() => router.push('/onboarding/profile')}
               accessibilityLabel="Complete your profile"
               accessibilityRole="button"
             >
@@ -651,7 +653,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <Pressable
               style={styles.settingsButton}
-              onPress={() => router.push('/wallet/settings' as any)}
+              onPress={() => router.push('/wallet/settings')}
               accessibilityLabel="Wallet settings"
               accessibilityRole="button"
             >
@@ -671,7 +673,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           {/* Pending Cashback Banner — shown prominently when there are pending rewards */}
           {(walletData.pendingRewards > 0 || walletData.cashbackBalance > 0) && (
             <Pressable
-              onPress={() => router.push('/transaction-history' as any)}
+              onPress={() => router.push('/transaction-history')}
               style={({ pressed }) => ({
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -728,7 +730,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
           {/* REZ Cash identity entry point */}
           <Pressable
-            onPress={() => router.push('/rez-cash' as any)}
+            onPress={() => router.push('/rez-cash')}
             style={({ pressed }) => [
               {
                 flexDirection: 'row',
@@ -827,7 +829,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                   borderColor: expiryBannerStyle.borderColor,
                 },
               ]}
-              onPress={() => router.push('/wallet/expiry-tracker' as any)}
+              onPress={() => router.push('/wallet/expiry-tracker')}
               accessibilityLabel={`${expiringLabel} — tap to view expiry details`}
               accessibilityRole="button"
             >
@@ -994,7 +996,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                         lifetimeEarned: String(hc.lifetimeEarnedPaise ?? 0),
                         lifetimeBurned: String(hc.lifetimeBurnedPaise ?? 0),
                       },
-                    } as any)
+                    } as Href)
                   }
                   style={{
                     flexDirection: 'row',
@@ -1100,7 +1102,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <View style={sprint10Styles.quickActionsRow}>
               <Pressable
                 style={sprint10Styles.quickActionBtn}
-                onPress={() => router.push('/redeem-coins' as any)}
+                onPress={() => router.push('/redeem-coins')}
                 accessibilityLabel="Redeem Coins"
                 accessibilityRole="button"
               >
@@ -1111,7 +1113,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               </Pressable>
               <Pressable
                 style={sprint10Styles.quickActionBtn}
-                onPress={() => router.push('/group-buy' as any)}
+                onPress={() => router.push('/group-buy')}
                 accessibilityLabel="Group Buy"
                 accessibilityRole="button"
               >
@@ -1122,7 +1124,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               </Pressable>
               <Pressable
                 style={sprint10Styles.quickActionBtn}
-                onPress={() => router.push('/transaction-history' as any)}
+                onPress={() => router.push('/transaction-history')}
                 accessibilityLabel="Transaction History"
                 accessibilityRole="button"
               >
@@ -1140,7 +1142,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               <View style={sprint10Styles.recentTxHeader}>
                 <Text style={sprint10Styles.breakdownTitle}>Recent Transactions</Text>
                 <Pressable
-                  onPress={() => router.push('/transaction-history' as any)}
+                  onPress={() => router.push('/transaction-history')}
                   accessibilityLabel="View all transactions"
                   accessibilityRole="button"
                 >
@@ -1268,7 +1270,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
                 {/* Micro Pack CTA */}
                 <Pressable
-                  onPress={() => router.push('/value-packs?persona=student' as any)}
+                  onPress={() => router.push('/value-packs?persona=student')}
                   style={{
                     backgroundColor: colors.background.primary,
                     borderRadius: 12,
@@ -1416,7 +1418,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
                 {/* Value Pack CTA */}
                 <Pressable
-                  onPress={() => router.push('/value-packs?persona=corporate' as any)}
+                  onPress={() => router.push('/value-packs?persona=corporate')}
                   style={{
                     backgroundColor: colors.lightMustard,
                     borderRadius: 12,
@@ -1439,7 +1441,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           {/* Verification CTA for unverified users who stated an identity */}
           {segment === 'normal' && statedIdentity && statedIdentity !== 'general' && (
             <Pressable
-              onPress={() => router.push('/onboarding/identity-select' as any)}
+              onPress={() => router.push('/onboarding/identity-select')}
               style={{
                 marginHorizontal: Spacing.md,
                 marginVertical: Spacing.md,
@@ -1495,7 +1497,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                   () => {},
                 );
               } else {
-                router.push('/referral' as any);
+                router.push('/referral');
               }
             }}
             isLoading={referralLoading}

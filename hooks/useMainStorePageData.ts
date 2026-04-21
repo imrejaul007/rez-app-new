@@ -22,7 +22,9 @@ import { errorReporter } from '@/utils/errorReporter';
 interface LocationData {
   address?: string;
   city?: string;
+  state?: string;
   distance?: string;
+  coordinates?: { lat?: number; lng?: number; [key: number]: number };
   [key: string]: unknown;
 }
 
