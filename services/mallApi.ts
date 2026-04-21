@@ -105,7 +105,7 @@ class MallApiService {
    */
   async getMallHomepage(): Promise<MallHomepageData> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallHomepageData>(
         MALL_ENDPOINTS.HOMEPAGE
       );
       return response.data || {
@@ -143,14 +143,14 @@ class MallApiService {
       if (filters?.page) params.append('page', filters.page.toString());
       if (filters?.limit) params.append('limit', filters.limit.toString());
 
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<{ brands: MallBrand[]; pagination?: { total?: number; pages?: number } }>(
         `${MALL_ENDPOINTS.BRANDS}?${params.toString()}`
       );
 
       return {
-        brands: response.data || [],
-        total: response.meta?.pagination?.total || 0,
-        pages: response.meta?.pagination?.pages || 0
+        brands: response.data?.brands || [],
+        total: response.data?.pagination?.total || response.meta?.pagination?.total || 0,
+        pages: response.data?.pagination?.pages || response.meta?.pagination?.pages || 0
       };
     } catch (error) {
       devLog.error('Error fetching brands:', error);
@@ -163,10 +163,10 @@ class MallApiService {
    */
   async getBrandById(brandId: string): Promise<MallBrand | null> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBrand>(
         `${MALL_ENDPOINTS.BRANDS}/${brandId}`
       );
-      return (response.data as any) ?? null;
+      return response.data ?? null;
     } catch (error) {
       devLog.error('Error fetching brand:', error);
       throw error;
@@ -178,10 +178,10 @@ class MallApiService {
    */
   async getFeaturedBrands(limit: number = 10): Promise<MallBrand[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBrand[]>(
         `${MALL_ENDPOINTS.BRANDS_FEATURED}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching featured brands:', error);
       throw error;
@@ -193,10 +193,10 @@ class MallApiService {
    */
   async getNewArrivals(limit: number = 10): Promise<MallBrand[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBrand[]>(
         `${MALL_ENDPOINTS.BRANDS_NEW}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching new arrivals:', error);
       throw error;
@@ -208,10 +208,10 @@ class MallApiService {
    */
   async getTopRatedBrands(limit: number = 10): Promise<MallBrand[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBrand[]>(
         `${MALL_ENDPOINTS.BRANDS_TOP_RATED}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching top rated brands:', error);
       throw error;
@@ -223,10 +223,10 @@ class MallApiService {
    */
   async getLuxuryBrands(limit: number = 10): Promise<MallBrand[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBrand[]>(
         `${MALL_ENDPOINTS.BRANDS_LUXURY}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching luxury brands:', error);
       throw error;
@@ -240,10 +240,10 @@ class MallApiService {
     try {
       if (!query || query.length < 2) return [];
 
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBrand[]>(
         `${MALL_ENDPOINTS.BRANDS_SEARCH}?q=${encodeURIComponent(query)}&limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error searching brands:', error);
       throw error;
@@ -255,10 +255,10 @@ class MallApiService {
    */
   async getCategories(): Promise<MallCategory[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallCategory[]>(
         MALL_ENDPOINTS.CATEGORIES
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching categories:', error);
       throw error;
@@ -298,10 +298,10 @@ class MallApiService {
    */
   async getCollections(limit: number = 10): Promise<MallCollection[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallCollection[]>(
         `${MALL_ENDPOINTS.COLLECTIONS}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching collections:', error);
       throw error;
@@ -321,14 +321,18 @@ class MallApiService {
     total: number;
   }> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<{
+        collection?: MallCollection;
+        brands?: MallBrand[];
+        pagination?: { total?: number };
+      }>(
         `${MALL_ENDPOINTS.COLLECTIONS}/${collectionSlug}/brands?page=${page}&limit=${limit}`
       );
 
       return {
         collection: response.data?.collection || null,
         brands: response.data?.brands || [],
-        total: response.meta?.pagination?.total || 0
+        total: response.data?.pagination?.total || response.meta?.pagination?.total || 0
       };
     } catch (error) {
       devLog.error('Error fetching brands by collection:', error);
@@ -341,10 +345,10 @@ class MallApiService {
    */
   async getExclusiveOffers(limit: number = 10): Promise<MallOffer[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallOffer[]>(
         `${MALL_ENDPOINTS.OFFERS_EXCLUSIVE}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching exclusive offers:', error);
       throw error;
@@ -359,13 +363,16 @@ class MallApiService {
     total: number;
   }> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<{
+        offers?: MallOffer[];
+        pagination?: { total?: number };
+      }>(
         `${MALL_ENDPOINTS.OFFERS}?page=${page}&limit=${limit}`
       );
 
       return {
-        offers: response.data || [],
-        total: response.meta?.pagination?.total || 0
+        offers: response.data?.offers || response.data || [],
+        total: response.data?.pagination?.total || response.meta?.pagination?.total || 0
       };
     } catch (error) {
       devLog.error('Error fetching offers:', error);
@@ -378,10 +385,10 @@ class MallApiService {
    */
   async getHeroBanners(limit: number = 5): Promise<MallBanner[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBanner[]>(
         `${MALL_ENDPOINTS.BANNERS_HERO}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching hero banners:', error);
       throw error;
@@ -393,10 +400,10 @@ class MallApiService {
    */
   async getBanners(): Promise<MallBanner[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallBanner[]>(
         MALL_ENDPOINTS.BANNERS
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching banners:', error);
       throw error;
@@ -419,8 +426,8 @@ class MallApiService {
         return null;
       }
 
-      const response = await apiClient.post<any>(MALL_ENDPOINTS.AFFILIATE_CLICK, { brandId });
-      return (response.data as any) ?? null;
+      const response = await apiClient.post<{ clickId: string; trackingUrl: string; brand: { name: string; cashback: number } }>(MALL_ENDPOINTS.AFFILIATE_CLICK, { brandId });
+      return response.data ?? null;
     } catch (error) {
       devLog.warn('Failed to track affiliate click:', error);
       return null;
@@ -514,8 +521,16 @@ class MallApiService {
     recentActivity: any[];
   } | null> {
     try {
-      const response = await apiClient.get<any>(MALL_ENDPOINTS.AFFILIATE_SUMMARY);
-      return (response.data as any) ?? null;
+      const response = await apiClient.get<{
+    totalEarned: number;
+    pending: number;
+    credited: number;
+    totalClicks: number;
+    totalPurchases: number;
+    conversionRate: number;
+    recentActivity: any[];
+  }>(MALL_ENDPOINTS.AFFILIATE_SUMMARY);
+      return response.data ?? null;
     } catch (error) {
       devLog.error('Error fetching cashback summary:', error);
       return null;
@@ -635,10 +650,10 @@ class MallApiService {
    */
   async getFeaturedMallStores(limit: number = 10): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_FEATURED}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching featured mall stores:', error);
       throw error;
@@ -650,10 +665,10 @@ class MallApiService {
    */
   async getNewMallStores(limit: number = 10): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_NEW}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching new mall stores:', error);
       throw error;
@@ -665,10 +680,10 @@ class MallApiService {
    */
   async getTopRatedMallStores(limit: number = 10): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_TOP_RATED}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching top rated mall stores:', error);
       throw error;
@@ -680,10 +695,10 @@ class MallApiService {
    */
   async getPremiumMallStores(limit: number = 10): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_PREMIUM}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching premium mall stores:', error);
       throw error;
@@ -697,10 +712,10 @@ class MallApiService {
     try {
       if (!query || query.length < 2) return [];
 
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_SEARCH}?q=${encodeURIComponent(query)}&limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error searching mall stores:', error);
       throw error;
@@ -712,10 +727,10 @@ class MallApiService {
    */
   async getMallStoreCategories(): Promise<MallHomepageBatchResponse['categories']> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallHomepageBatchResponse['categories']>(
         MALL_ENDPOINTS.STORES_CATEGORIES
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching mall store categories:', error);
       throw error;
@@ -727,10 +742,10 @@ class MallApiService {
    */
   async getMallStoreById(storeId: string): Promise<MallStoreData | null> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData>(
         `${MALL_ENDPOINTS.STORES}/${storeId}`
       );
-      return (response.data as any) ?? null;
+      return response.data ?? null;
     } catch (error) {
       devLog.error('Error fetching mall store:', error);
       throw error;
@@ -749,13 +764,16 @@ class MallApiService {
     total: number;
   }> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<{
+        stores?: MallStoreData[];
+        pagination?: { total?: number };
+      }>(
         `${MALL_ENDPOINTS.STORES}/category/${categoryId}?page=${page}&limit=${limit}`
       );
 
       return {
-        stores: response.data || [],
-        total: response.meta?.pagination?.total || 0,
+        stores: response.data?.stores || response.data || [],
+        total: response.data?.pagination?.total || response.meta?.pagination?.total || 0,
       };
     } catch (error) {
       devLog.error('Error fetching mall stores by category:', error);
@@ -778,7 +796,11 @@ class MallApiService {
     pages: number;
   }> {
     try {
-      const response = await apiClient.get<any>(`${MALL_ENDPOINTS.STORES}/category-slug/${categorySlug}?page=${page}&limit=${limit}`);
+      const response = await apiClient.get<{
+        category?: { _id: string; name: string; slug: string; icon?: string; color?: string; description?: string };
+        stores?: MallStoreData[];
+        pagination?: { total?: number; pages?: number };
+      }>(`${MALL_ENDPOINTS.STORES}/category-slug/${categorySlug}?page=${page}&limit=${limit}`);
 
       const data = response.data;
       return {
@@ -797,10 +819,10 @@ class MallApiService {
    */
   async getAllianceStores(limit: number = 20): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_ALLIANCE}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching alliance stores:', error);
       throw error;
@@ -810,12 +832,12 @@ class MallApiService {
   /**
    * Get trending mall stores
    */
-  async getTrendingStores(limit: number = 10): Promise<any[]> {
+  async getTrendingStores(limit: number = 10): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_TRENDING}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching trending stores:', error);
       throw error;
@@ -825,12 +847,12 @@ class MallApiService {
   /**
    * Get reward booster stores (highest coin rewards)
    */
-  async getRewardBoosterStores(limit: number = 10): Promise<any[]> {
+  async getRewardBoosterStores(limit: number = 10): Promise<MallStoreData[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES_REWARD_BOOSTERS}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching reward booster stores:', error);
       throw error;
@@ -840,12 +862,12 @@ class MallApiService {
   /**
    * Get deals of the day (flash sale offers)
    */
-  async getDealsOfDay(limit: number = 10): Promise<any[]> {
+  async getDealsOfDay(limit: number = 10): Promise<MallOffer[]> {
     try {
-      const response = await apiClient.get<any>(
+      const response = await apiClient.get<MallOffer[]>(
         `${MALL_ENDPOINTS.OFFERS_TODAY}?limit=${limit}`
       );
-      return (response.data as any[]) || [];
+      return response.data || [];
     } catch (error) {
       devLog.error('Error fetching deals of the day:', error);
       throw error;

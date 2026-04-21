@@ -93,7 +93,11 @@ function PaymentSuccessPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const { orderId, transactionId, paymentMethod } = useLocalSearchParams<any>();
+  const { orderId, transactionId, paymentMethod } = useLocalSearchParams<{
+    orderId?: string;
+    transactionId?: string;
+    paymentMethod?: string;
+  }>();
 
   const [orders, setOrders] = useState<OrderDetails[]>([]);
   const [loading, setLoading] = useState(true);
@@ -141,24 +145,24 @@ function PaymentSuccessPage() {
           if (response.success && response.data) {
             const orderData = response.data;
             // Extract store name from various possible locations in the response
+            const orderDataAny = orderData as Record<string, unknown>;
             const extractedStoreName =
-              (orderData as any).store?.name ||
-              (orderData as any).storeName ||
-              (orderData as any).items?.[0]?.store?.name ||
-              orderData.items?.[0]?.storeName ||
-              ((orderData as any).store && typeof (orderData as any).store === 'string'
-                ? (orderData as any).store
-                : null) ||
+              (orderDataAny.store as { name?: string } | string | null | undefined)?.name ||
+              orderDataAny.storeName ||
+              (((orderDataAny.items as unknown[]) || [])[0] as Record<string, unknown> | undefined)?.store?.name ||
+              ((orderDataAny.items as { storeName?: string }[]) || [])[0]?.storeName ||
+              (orderDataAny.store && typeof orderDataAny.store === 'string' ? orderDataAny.store : null) ||
               `Order ${orderData.orderNumber?.slice(-4) || ''}`;
 
             // Extract store ID from various possible locations
+            const storeVal = orderDataAny.store as Record<string, unknown> | string | null | undefined;
             const extractedStoreId =
-              ((orderData as any).store && typeof (orderData as any).store === 'object'
-                ? (orderData as any).store._id || (orderData as any).store.id
+              (storeVal && typeof storeVal === 'object'
+                ? ((storeVal._id || (storeVal as { id?: string }).id) as string | null)
                 : null) ||
-              (typeof (orderData as any).store === 'string' ? (orderData as any).store : null) ||
-              (orderData as any).store ||
-              (orderData as any).items?.[0]?.store?.id ||
+              (typeof storeVal === 'string' ? storeVal : null) ||
+              (storeVal as string | null) ||
+              (((orderDataAny.items as unknown[]) || [])[0] as Record<string, unknown> | undefined)?.store?.id ||
               '';
 
             fetchedOrders.push({
@@ -167,12 +171,12 @@ function PaymentSuccessPage() {
               status: orderData.status || 'placed',
               storeId: extractedStoreId,
               storeName: extractedStoreName,
-              items: (orderData.items || []) as any,
+              items: orderData.items || [],
               totals: {
                 subtotal: orderData.totals?.subtotal || orderData.summary?.subtotal || 0,
                 delivery:
                   orderData.totals?.delivery ||
-                  (orderData as any).totals?.shipping ||
+                  (orderDataAny.totals as Record<string, unknown> | undefined)?.shipping ||
                   orderData.delivery?.deliveryFee ||
                   orderData.summary?.shipping ||
                   0,
@@ -187,7 +191,7 @@ function PaymentSuccessPage() {
               payment: {
                 method: orderData.payment?.method || paymentMethod || 'unknown',
                 status: orderData.payment?.status || 'completed',
-                coinsUsed: (orderData as any).payment?.coinsUsed || {
+                coinsUsed: (orderDataAny.payment as Record<string, unknown> | undefined)?.coinsUsed || {
                   rezCoins: 0,
                   promoCoins: 0,
                   storePromoCoins: 0,
@@ -195,9 +199,15 @@ function PaymentSuccessPage() {
                 },
               },
               delivery: orderData.delivery || undefined,
-              fulfillmentType: (orderData as any).fulfillmentType || (orderData as any).fulfillment?.type || undefined,
+              fulfillmentType:
+                (orderDataAny.fulfillmentType as string | undefined) ||
+                ((orderDataAny.fulfillment as Record<string, unknown> | undefined)?.type as string | undefined) ||
+                undefined,
               fulfillmentDetails:
-                (orderData as any).fulfillmentDetails || (orderData as any).fulfillment?.details || undefined,
+                (orderDataAny.fulfillmentDetails as OrderDetails['fulfillmentDetails']) ||
+                ((orderDataAny.fulfillment as Record<string, unknown> | undefined)
+                  ?.details as OrderDetails['fulfillmentDetails']) ||
+                undefined,
               createdAt: orderData.createdAt || new Date().toISOString(),
             });
           } else {
@@ -270,7 +280,7 @@ function PaymentSuccessPage() {
           // estimate to determine if coins are pending, and show a pending message
           // instead of a false "0 coins earned" celebration.
           const totalCoinsEarned: number = fetchedOrders.reduce(
-            (s, o) => s + ((o as any).rewards?.coinsEarned ?? 0),
+            (s, o) => s + ((o as unknown as Record<string, unknown>).rewards?.coinsEarned ?? 0),
             0,
           );
           // Phase 1.6: surface coin total for PostPaymentSummary section.
@@ -282,7 +292,7 @@ function PaymentSuccessPage() {
             // SS-D001 FIX: verify reward was actually credited before celebrating
             if (totalCoinsEarned > 0) {
               showCoinsEarned(totalCoinsEarned, `${BRAND.COIN_NAME} earned from your purchase`, () =>
-                router.push('/wallet-screen' as any),
+                router.push('/wallet-screen'),
               );
             } else if (totalCashback > 0) {
               // Attempt a wallet refresh to confirm the backend credited cashback.
@@ -295,7 +305,7 @@ function PaymentSuccessPage() {
               // WalletContext (coins:awarded / wallet:updated) will later correct it.
               // A separate toast is shown to set the right expectation.
               showCashbackEarned(totalCashback, `${currencySymbol}${totalCashback} cashback added to your wallet`, () =>
-                router.push('/wallet-screen' as any),
+                router.push('/wallet-screen'),
               );
             }
           }, 1500);
@@ -307,7 +317,7 @@ function PaymentSuccessPage() {
           if (!isMounted()) return;
           setError('Could not load order details. Please check your orders page.');
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!isMounted()) return;
         setError('Failed to load order details');
       } finally {
@@ -325,7 +335,7 @@ function PaymentSuccessPage() {
   // Handle hardware back button - redirect to home
   useEffect(() => {
     const backAction = () => {
-      router.replace('/(tabs)/' as any);
+      router.replace('/(tabs)/');
       return true;
     };
 
@@ -335,26 +345,26 @@ function PaymentSuccessPage() {
 
   const handleTrackOrder = () => {
     if (isMultiStoreOrder) {
-      router.push('/orders' as any);
+      router.push('/orders');
     } else if (orderId) {
       // Route to fulfillment-specific tracking screen
       const ft = order?.fulfillmentType;
       if (ft === 'pickup') {
-        router.push(`/pickup-tracking?orderId=${orderId}` as any);
+        router.push(`/pickup-tracking?orderId=${orderId}`);
       } else if (ft === 'drive_thru') {
-        router.push(`/drivethru-tracking?orderId=${orderId}` as any);
+        router.push(`/drivethru-tracking?orderId=${orderId}`);
       } else if (ft === 'dine_in') {
-        router.push(`/dinein-tracking?orderId=${orderId}` as any);
+        router.push(`/dinein-tracking?orderId=${orderId}`);
       } else {
-        router.push(`/tracking?orderId=${orderId}` as any);
+        router.push(`/tracking?orderId=${orderId}`);
       }
     } else {
-      router.push('/tracking' as any);
+      router.push('/tracking');
     }
   };
 
   const handleGoHome = () => {
-    router.replace('/(tabs)/' as any);
+    router.replace('/(tabs)/');
   };
 
   const getPaymentMethodIcon = (method: string) => {
@@ -770,7 +780,7 @@ function PaymentSuccessPage() {
                 style={styles.reviewButton}
                 onPress={() =>
                   router.push(
-                    `/ReviewPage?storeId=${order.storeId}&storeName=${encodeURIComponent(order.storeName || '')}` as any,
+                    `/ReviewPage?storeId=${order.storeId}&storeName=${encodeURIComponent(order.storeName || '')}`,
                   )
                 }
                 accessibilityLabel="Rate your experience"

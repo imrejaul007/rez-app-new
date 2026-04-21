@@ -73,21 +73,23 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>('/videos', params);
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const reels = ((data.videos || data || []) as unknown[]).map((video: any) => this.transformVideoToReel(video));
+        const data = response.data;
+        const videoArray = Array.isArray(data) ? data : (data.videos || []);
+        const reels = (videoArray as unknown[]).map((video) => this.transformVideoToReel(video as Record<string, unknown>));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: data.pagination || (response.meta as any)?.pagination,
+            pagination: (data as Record<string, unknown>).pagination || (response.meta as Record<string, unknown> | undefined)?.pagination || {},
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -102,14 +104,16 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[] }>('/videos/trending', params);
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const reels = ((data.videos || data || []) as unknown[]).map((video: any) => this.transformVideoToReel(video));
+        const data = response.data;
+        const videoArray = Array.isArray(data) ? data : (data.videos || []);
+        const reels = (videoArray as unknown[]).map((video) => this.transformVideoToReel(video as Record<string, unknown>));
         return { success: true, data: reels };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -125,21 +129,23 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/category/${category}`, params);
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const reels = ((data.videos || data || []) as unknown[]).map((video: any) => this.transformVideoToReel(video));
+        const data = response.data;
+        const videoArray = Array.isArray(data) ? data : (data.videos || []);
+        const reels = (videoArray as unknown[]).map((video) => this.transformVideoToReel(video as Record<string, unknown>));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: data.pagination,
+            pagination: (data as Record<string, unknown>).pagination || {},
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -151,13 +157,15 @@ class ReelApiService {
       const response = await apiClient.get<Record<string, unknown>>(`/videos/${reelId}`);
 
       if (response.success && response.data) {
-        const reel = this.transformVideoToReel(response.data.video || response.data);
+        const data = response.data;
+        const reel = this.transformVideoToReel((data.video || data) as Record<string, unknown>);
         return { success: true, data: reel };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -172,21 +180,23 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/creator/${creatorId}`, params);
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const reels = ((data.videos || data || []) as unknown[]).map((video: any) => this.transformVideoToReel(video));
+        const data = response.data;
+        const videoArray = Array.isArray(data) ? data : (data.videos || []);
+        const reels = (videoArray as unknown[]).map((video) => this.transformVideoToReel(video as Record<string, unknown>));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: data.pagination,
+            pagination: (data as Record<string, unknown>).pagination || {},
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -201,14 +211,16 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[] }>(`/videos/store/${storeId}`, params);
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const reels = ((data.videos || data || []) as unknown[]).map((video: any) => this.transformVideoToReel(video));
+        const data = response.data;
+        const videoArray = Array.isArray(data) ? data : (data.videos || []);
+        const reels = (videoArray as unknown[]).map((video) => this.transformVideoToReel(video as Record<string, unknown>));
         return { success: true, data: reels };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -224,21 +236,23 @@ class ReelApiService {
       const response = await apiClient.get<{ videos?: unknown[]; pagination?: Record<string, unknown> }>('/videos/search', { q: query, ...params });
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const reels = ((data.videos || data || []) as unknown[]).map((video: any) => this.transformVideoToReel(video));
+        const data = response.data;
+        const videoArray = Array.isArray(data) ? data : (data.videos || []);
+        const reels = (videoArray as unknown[]).map((video) => this.transformVideoToReel(video as Record<string, unknown>));
 
         return {
           success: true,
           data: {
             reels,
-            pagination: data.pagination,
+            pagination: (data as Record<string, unknown>).pagination || {},
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -250,19 +264,20 @@ class ReelApiService {
       const response = await apiClient.post<{ liked: boolean; likesCount: number }>(`/videos/${reelId}/like`);
 
       if (response.success && response.data) {
-        const data = response.data as any;
+        const data = response.data;
         return {
           success: true,
           data: {
-            liked: data.liked ?? data.isLiked ?? true,
-            likesCount: data.likesCount ?? data.likes ?? 0,
+            liked: data.liked ?? (data as Record<string, unknown>).isLiked ?? true,
+            likesCount: data.likesCount ?? (data as Record<string, unknown>).likes ?? 0,
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -274,18 +289,19 @@ class ReelApiService {
       const response = await apiClient.post<{ bookmarked: boolean }>(`/videos/${reelId}/bookmark`);
 
       if (response.success && response.data) {
-        const data = response.data as any;
+        const data = response.data;
         return {
           success: true,
           data: {
-            bookmarked: data.bookmarked ?? data.isBookmarked ?? true,
+            bookmarked: data.bookmarked ?? (data as Record<string, unknown>).isBookmarked ?? true,
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -297,18 +313,19 @@ class ReelApiService {
       const response = await apiClient.post<{ viewsCount: number }>(`/videos/${reelId}/view`);
 
       if (response.success) {
-        const data = response.data as any;
+        const data = response.data as Record<string, unknown> | null | undefined;
         return {
           success: true,
           data: {
-            viewsCount: data?.viewsCount ?? data?.views ?? 0,
+            viewsCount: (data?.viewsCount as number | undefined) ?? (data?.views as number | undefined) ?? 0,
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -323,30 +340,35 @@ class ReelApiService {
       const response = await apiClient.get<{ comments?: unknown[]; pagination?: Record<string, unknown> }>(`/videos/${reelId}/comments`, params);
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const comments = ((data.comments || data || []) as unknown[]).map((comment: any) => ({
-          id: comment._id || comment.id,
-          userId: comment.user?._id || comment.userId,
-          userName: comment.user?.name || comment.userName || 'Anonymous',
-          userAvatar: comment.user?.avatar || comment.userAvatar,
-          comment: comment.comment || comment.text || comment.content,
-          createdAt: comment.createdAt,
-          likes: comment.likes || 0,
-          isLiked: comment.isLiked || false,
-        }));
+        const data = response.data;
+        const commentArray = Array.isArray(data) ? data : ((data as Record<string, unknown>).comments as unknown[] || []);
+        const comments = commentArray.map((comment) => {
+          const c = comment as Record<string, unknown>;
+          return {
+            id: (c._id || c.id) as string,
+            userId: ((c.user as Record<string, unknown>)?._id || c.userId) as string,
+            userName: ((c.user as Record<string, unknown>)?.name || c.userName || 'Anonymous') as string,
+            userAvatar: ((c.user as Record<string, unknown>)?.avatar || c.userAvatar) as string | undefined,
+            comment: (c.comment || c.text || c.content) as string,
+            createdAt: c.createdAt as string,
+            likes: (c.likes as number) || 0,
+            isLiked: (c.isLiked as boolean) || false,
+          };
+        });
 
         return {
           success: true,
           data: {
             comments,
-            pagination: data.pagination,
+            pagination: (data as Record<string, unknown>).pagination || {},
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -358,26 +380,27 @@ class ReelApiService {
       const response = await apiClient.post<Record<string, unknown>>(`/videos/${reelId}/comments`, { comment });
 
       if (response.success && response.data) {
-        const data = response.data as any;
-        const newComment = data.comment || data;
+        const data = response.data;
+        const newComment = (data.comment || data) as Record<string, unknown>;
         return {
           success: true,
           data: {
-            id: newComment._id || newComment.id,
-            userId: newComment.user?._id || newComment.userId,
-            userName: newComment.user?.name || newComment.userName,
-            userAvatar: newComment.user?.avatar || newComment.userAvatar,
-            comment: newComment.comment || newComment.text,
-            createdAt: newComment.createdAt,
+            id: (newComment._id || newComment.id) as string,
+            userId: ((newComment.user as Record<string, unknown>)?._id || newComment.userId) as string,
+            userName: ((newComment.user as Record<string, unknown>)?.name || newComment.userName) as string,
+            userAvatar: ((newComment.user as Record<string, unknown>)?.avatar || newComment.userAvatar) as string | undefined,
+            comment: (newComment.comment || newComment.text) as string,
+            createdAt: newComment.createdAt as string,
             likes: 0,
             isLiked: false,
           },
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -397,9 +420,10 @@ class ReelApiService {
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -420,9 +444,10 @@ class ReelApiService {
         };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 
@@ -437,9 +462,10 @@ class ReelApiService {
         return { success: true, data: { reported: true } };
       }
 
-      return response as any;
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      return { success: false, error: err };
     }
   }
 

@@ -19,6 +19,8 @@ import Animated, {
   withSequence,
   withRepeat,
   interpolate,
+  multiply,
+  event,
 } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -94,7 +96,7 @@ function OnlineVoucherPage() {
 
     // Entrance animation
     fadeAnim.value = withTiming(1, { duration: 800 });
-    slideAnim.value = withSpring(0, { tension: 50, friction: 7 } as any);
+    slideAnim.value = withSpring(0, { tension: 50, friction: 7 });
 
     // Shimmer animation loop
     shimmerAnim.value = withRepeat(withTiming(1, { duration: 2000 }), -1);
@@ -171,19 +173,19 @@ function OnlineVoucherPage() {
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <View style={styles.glassButton}>
-              <Ionicons name="arrow-back" size={20} color={(COLORS as any).navy} />
+              <Ionicons name="arrow-back" size={20} color={COLORS.navy} />
             </View>
           </Pressable>
 
           <View style={styles.coinsContainer}>
             <Animated.View style={[styles.coinsBadge, { transform: [{ scale: pulseAnim }] }]}>
               <LinearGradient
-                colors={[COLORS.gold, (COLORS as any).goldDark]}
+                colors={[COLORS.gold, COLORS.goldDark]}
                 style={styles.coinsBadgeGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="star" size={16} color={(COLORS as any).navy} />
+                <Ionicons name="star" size={16} color={COLORS.navy} />
                 <ThemedText style={styles.coinsText}>{state.userCoins}</ThemedText>
               </LinearGradient>
             </Animated.View>
@@ -191,7 +193,7 @@ function OnlineVoucherPage() {
 
           <View style={styles.headerActions}>
             <Pressable style={styles.glassButton} onPress={() => handlers.handleShare()}>
-              <Ionicons name="share-outline" size={20} color={(COLORS as any).navy} />
+              <Ionicons name="share-outline" size={20} color={COLORS.navy} />
             </Pressable>
 
             <Pressable style={styles.glassButton}>
@@ -266,7 +268,7 @@ function OnlineVoucherPage() {
             styles.hero3DWrapper,
             {
               transform: [{ scale }],
-              opacity: (Animated as any).multiply(opacity, fadeAnim),
+              opacity: multiply(opacity, fadeAnim),
             },
           ]}
         >
@@ -284,7 +286,7 @@ function OnlineVoucherPage() {
             style={styles.heroCard}
             onPress={() => {
               if (item.brandId) {
-                handlers.handleBrandSelect({ id: item.brandId } as any);
+                handlers.handleBrandSelect({ id: item.brandId } as { id: string });
               }
             }}
           >
@@ -319,7 +321,7 @@ function OnlineVoucherPage() {
                 <View style={styles.heroCardInner}>
                   {/* Multi-layer gradient background */}
                   <LinearGradient
-                    colors={gradientColors as any}
+                    colors={gradientColors as [string, string, string]}
                     style={styles.heroGradient}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -349,13 +351,13 @@ function OnlineVoucherPage() {
                           {/* Premium Floating Cashback Badge */}
                           <View style={styles.heroCashbackBadge}>
                             <LinearGradient
-                              colors={[COLORS.gold, (COLORS as any).goldDark]}
+                              colors={[COLORS.gold, COLORS.goldDark]}
                               style={styles.heroCashbackGradient}
                               start={{ x: 0, y: 0 }}
                               end={{ x: 1, y: 1 }}
                             >
                               <View style={styles.heroCashbackInnerShine} />
-                              <Ionicons name="gift" size={13} color={(COLORS as any).navy} />
+                              <Ionicons name="gift" size={13} color={COLORS.navy} />
                               <ThemedText style={styles.heroCashbackText}>
                                 {item.subtitle || 'Up to 15% Cashback'}
                               </ThemedText>
@@ -366,10 +368,12 @@ function OnlineVoucherPage() {
                           <ThemedText style={styles.heroTitle}>{item.title}</ThemedText>
 
                           {/* Location Badge */}
-                          {(item as any).store && (
+                          {(item as Record<string, unknown>).store && (
                             <View style={styles.heroLocationBadge}>
                               <View style={styles.heroLocationDot} />
-                              <ThemedText style={styles.heroLocationText}>{(item as any).store.name}</ThemedText>
+                              <ThemedText style={styles.heroLocationText}>
+                                {((item as Record<string, unknown>).store as { name: string }).name}
+                              </ThemedText>
                             </View>
                           )}
 
@@ -399,7 +403,7 @@ function OnlineVoucherPage() {
                             >
                               <View style={styles.heroIconTopShine} />
                               <ThemedText style={styles.heroEmoji}>
-                                {item.image || (item as any).logo || '🎁'}
+                                {item.image || (item as Record<string, unknown>).logo || '🎁'}
                               </ThemedText>
                             </LinearGradient>
                           </View>
@@ -443,7 +447,7 @@ function OnlineVoucherPage() {
           <Animated.FlatList
             data={carouselData}
             renderItem={renderHeroCarouselItem}
-            keyExtractor={(item, index) => item.id || (item as any)._id || String(index)}
+            keyExtractor={(item, index) => item.id || item._id || String(index)}
             horizontal
             showsHorizontalScrollIndicator={false}
             snapToInterval={SNAP_INTERVAL}
@@ -451,9 +455,9 @@ function OnlineVoucherPage() {
             decelerationRate="fast"
             bounces={false}
             contentContainerStyle={styles.heroCarouselContent}
-            onScroll={(Animated as any).event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+            onScroll={event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
               useNativeDriver: true,
-              listener: (event: any) => {
+              listener: (event: { nativeEvent: { contentOffset: { x: number } } }) => {
                 const index = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL);
                 setCarouselIndex(index);
               },
@@ -513,7 +517,7 @@ function OnlineVoucherPage() {
               {Platform.OS === 'web' ? (
                 <View style={styles.categoryCardInnerWeb}>
                   <LinearGradient
-                    colors={[category.color || COLORS.gold, (category.color || (COLORS as any).goldDark) + 'CC']}
+                    colors={[category.color || COLORS.gold, (category.color || COLORS.goldDark) + 'CC']}
                     style={styles.categoryIconContainer}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -534,7 +538,7 @@ function OnlineVoucherPage() {
               ) : (
                 <BlurView intensity={50} tint="light" style={styles.categoryCardInner}>
                   <LinearGradient
-                    colors={[category.color || COLORS.gold, (category.color || (COLORS as any).goldDark) + 'CC']}
+                    colors={[category.color || COLORS.gold, (category.color || COLORS.goldDark) + 'CC']}
                     style={styles.categoryIconContainer}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -580,7 +584,7 @@ function OnlineVoucherPage() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <ThemedText style={[styles.brandLogoText, { color: brand.logoColor || (COLORS as any).navy }]}>
+              <ThemedText style={[styles.brandLogoText, { color: brand.logoColor || COLORS.navy }]}>
                 {brand.logo}
               </ThemedText>
             </LinearGradient>
@@ -591,7 +595,7 @@ function OnlineVoucherPage() {
                 </ThemedText>
                 {brand.featured && (
                   <LinearGradient
-                    colors={[COLORS.gold, (COLORS as any).goldDark]}
+                    colors={[COLORS.gold, COLORS.goldDark]}
                     style={styles.featuredBadge}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -944,7 +948,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     letterSpacing: 0.2,
   },
   headerActions: {
@@ -985,7 +989,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     fontWeight: '500',
     paddingVertical: Spacing.sm,
   },
@@ -1197,7 +1201,7 @@ const styles = StyleSheet.create({
   heroCashbackText: {
     ...Typography.caption,
     fontWeight: '800',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     letterSpacing: 0.3,
   },
   heroTitle: {
@@ -1425,7 +1429,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     letterSpacing: -0.5,
     marginBottom: 2,
   },
@@ -1508,7 +1512,7 @@ const styles = StyleSheet.create({
   categoryName: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 3,
     letterSpacing: -0.2,
     textAlign: 'center',
@@ -1572,7 +1576,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     letterSpacing: -0.2,
     flex: 1,
   },
@@ -1584,7 +1588,7 @@ const styles = StyleSheet.create({
   featuredText: {
     fontSize: 8,
     fontWeight: '800',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     letterSpacing: 0.5,
   },
   brandCashbackRow: {
@@ -1620,7 +1624,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: (COLORS as any).goldDark,
+    color: COLORS.goldDark,
   },
 
   // Newly Added Brands - Premium Glass
@@ -1667,7 +1671,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     textAlign: 'center',
     marginBottom: 6,
     letterSpacing: -0.2,
@@ -1701,7 +1705,7 @@ const styles = StyleSheet.create({
   searchResultsTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.base,
   },

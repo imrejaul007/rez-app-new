@@ -97,20 +97,18 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     };
   }, []);
 
-  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as any);
+  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg']);
 
   return (
     <Animated.View
-      style={
-        [
-          styles.confetti,
-          {
-            backgroundColor: color,
-            transform: [{ translateY }, { translateX }, { rotate: spin }],
-            opacity,
-          },
-        ] as any
-      }
+      style={[
+        styles.confetti,
+        {
+          backgroundColor: color,
+          transform: [{ translateY }, { translateX }, { rotate: spin }],
+          opacity,
+        },
+      ]}
     />
   );
 };
@@ -159,7 +157,7 @@ const Quiz = () => {
             setMaxPlays(quizLimits.limit);
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         // silently handle
       } finally {
         if (!isMounted()) return;
@@ -191,15 +189,17 @@ const Quiz = () => {
       const response = await gamificationApi.startQuiz('medium');
 
       if (response.success && response.data?.questions) {
-        const mappedQuestions: QuizQuestion[] = response.data.questions.map((q: any) => ({
-          _id: q.id,
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          coins: q.coins,
-          category: 'General',
-          difficulty: 'medium',
-        }));
+        const mappedQuestions: QuizQuestion[] = response.data.questions.map(
+          (q: { id: string; question: string; options: string[]; correctAnswer: number; coins: number }) => ({
+            _id: q.id,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            coins: q.coins,
+            category: 'General',
+            difficulty: 'medium',
+          }),
+        );
 
         if (mappedQuestions.length === 0) {
           platformAlert('No Questions', 'No quiz questions are available right now. Please try again later.');
@@ -232,7 +232,7 @@ const Quiz = () => {
       } else {
         platformAlert('Error', response.error || 'Failed to load quiz questions. Please try again.');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       platformAlert('Error', 'Something went wrong while loading the quiz. Please try again.');
     } finally {
       if (!isMounted()) return;
@@ -311,7 +311,7 @@ const Quiz = () => {
       } catch {
         /* non-critical */
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (!isMounted()) return;
       rollbackAdjustment();
       setTodayPlays(todayPlays + 1);
@@ -334,13 +334,13 @@ const Quiz = () => {
   const getPerformanceRating = () => {
     const pct = quizQuestions.length > 0 ? correctCount / quizQuestions.length : 0;
     if (pct === 1) return { text: 'Perfect Score!', icon: 'star' as const, color: COLORS.gold };
-    if (pct >= 0.8) return { text: 'Excellent!', icon: 'trophy' as const, color: (COLORS as any).purple };
+    if (pct >= 0.8) return { text: 'Excellent!', icon: 'trophy' as const, color: COLORS.purple };
     if (pct >= 0.6) return { text: 'Good Job!', icon: 'thumbs-up' as const, color: COLORS.primary };
     if (pct >= 0.4) return { text: 'Nice Try!', icon: 'happy' as const, color: COLORS.warning };
     return { text: 'Keep Practicing!', icon: 'refresh' as const, color: COLORS.textMuted };
   };
 
-  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%'] as any);
+  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%']);
 
   return (
     <View style={styles.container}>
@@ -352,7 +352,7 @@ const Quiz = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="chevron-back" size={24} color={(COLORS as any).navy} />
+          <Ionicons name="chevron-back" size={24} color={COLORS.navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -365,11 +365,11 @@ const Quiz = () => {
 
         {gameState === 'playing' ? (
           <View style={[styles.timerBadge, timeLeft <= 5 ? styles.timerBadgeWarning : null]}>
-            <Ionicons name="time-outline" size={16} color={timeLeft <= 5 ? COLORS.error : (COLORS as any).purple} />
+            <Ionicons name="time-outline" size={16} color={timeLeft <= 5 ? COLORS.error : COLORS.purple} />
             <Text style={[styles.timerText, timeLeft <= 5 ? styles.timerTextWarning : null]}>{timeLeft}s</Text>
           </View>
         ) : (
-          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet')}>
             <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
@@ -386,7 +386,7 @@ const Quiz = () => {
           <View style={styles.content}>
             {/* Hero Card */}
             <LinearGradient
-              colors={[(COLORS as any).purple, COLORS.purpleDark]}
+              colors={[COLORS.purple, COLORS.purpleDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.heroCard}
@@ -426,7 +426,7 @@ const Quiz = () => {
             {/* How to Play */}
             <View style={styles.howToPlayCard}>
               <View style={styles.howToPlayHeader}>
-                <Ionicons name="help-circle" size={20} color={(COLORS as any).purple} />
+                <Ionicons name="help-circle" size={20} color={COLORS.purple} />
                 <Text style={styles.howToPlayTitle}>How to Play</Text>
               </View>
 
@@ -434,7 +434,7 @@ const Quiz = () => {
                 {[
                   {
                     num: '1',
-                    color: (COLORS as any).purple,
+                    color: COLORS.purple,
                     title: 'Answer 5 questions',
                     desc: 'Each question has 15 seconds',
                     icon: 'bulb',
@@ -463,7 +463,7 @@ const Quiz = () => {
                       <Text style={styles.stepDesc}>{step.desc}</Text>
                     </View>
                     <View style={[styles.stepIconBg, { backgroundColor: `${step.color}10` }]}>
-                      <Ionicons name={step.icon as any} size={18} color={step.color} />
+                      <Ionicons name={step.icon as keyof typeof Ionicons.glyphMap} size={18} color={step.color} />
                     </View>
                   </View>
                 ))}
@@ -478,9 +478,7 @@ const Quiz = () => {
             >
               <LinearGradient
                 colors={
-                  todayPlays >= maxPlays
-                    ? [colors.text.tertiary, Colors.gray[600]]
-                    : [(COLORS as any).purple, COLORS.purpleDark]
+                  todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -609,9 +607,7 @@ const Quiz = () => {
                 <Animated.View style={[styles.progressFill, { width: progressWidth }]}>
                   <LinearGradient
                     colors={
-                      timeLeft <= 5
-                        ? [COLORS.error, Colors.errorScale[700]]
-                        : [(COLORS as any).purple, COLORS.purpleLight]
+                      timeLeft <= 5 ? [COLORS.error, Colors.errorScale[700]] : [COLORS.purple, COLORS.purpleLight]
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
@@ -642,7 +638,7 @@ const Quiz = () => {
                   <ConfettiParticle
                     key={i}
                     delay={i * 150}
-                    color={[(COLORS as any).purple, COLORS.gold, colors.brand.pink, COLORS.primary][i % 4]}
+                    color={[COLORS.purple, COLORS.gold, colors.brand.pink, COLORS.primary][i % 4] as string}
                   />
                 ))}
               </View>
@@ -652,9 +648,7 @@ const Quiz = () => {
             <View style={styles.resultCard}>
               <LinearGradient
                 colors={
-                  correctCount >= 3
-                    ? [(COLORS as any).purple, COLORS.purpleDark]
-                    : [COLORS.surfaceSecondary, COLORS.surface]
+                  correctCount >= 3 ? [COLORS.purple, COLORS.purpleDark] : [COLORS.surfaceSecondary, COLORS.surface]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -673,12 +667,7 @@ const Quiz = () => {
                   />
                 </View>
 
-                <Text
-                  style={[
-                    styles.resultTitle,
-                    { color: correctCount >= 3 ? colors.text.inverse : (COLORS as any).navy },
-                  ]}
-                >
+                <Text style={[styles.resultTitle, { color: correctCount >= 3 ? colors.text.inverse : COLORS.navy }]}>
                   {getPerformanceRating().text}
                 </Text>
                 <Text
@@ -739,7 +728,7 @@ const Quiz = () => {
             <View style={styles.statsGrid}>
               <View style={styles.statCard}>
                 <View style={[styles.statIconBg, { backgroundColor: COLORS.purpleBg }]}>
-                  <Ionicons name="locate" size={22} color={(COLORS as any).purple} />
+                  <Ionicons name="locate" size={22} color={COLORS.purple} />
                 </View>
                 <Text style={styles.statValue}>
                   {quizQuestions.length > 0 ? ((correctCount / quizQuestions.length) * 100).toFixed(0) : 0}%
@@ -773,7 +762,7 @@ const Quiz = () => {
                   colors={
                     todayPlays >= maxPlays
                       ? [colors.text.tertiary, Colors.gray[600]]
-                      : [(COLORS as any).purple, COLORS.purpleDark]
+                      : [COLORS.purple, COLORS.purpleDark]
                   }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -798,7 +787,7 @@ const Quiz = () => {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable onPress={() => router.push('/playandearn' as any)} style={styles.secondaryAction}>
+              <Pressable onPress={() => router.push('/playandearn')} style={styles.secondaryAction}>
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
                 <Text style={styles.secondaryActionText}>Back to Games</Text>
               </Pressable>
@@ -852,7 +841,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -874,7 +863,7 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as any).purple,
+    color: COLORS.purple,
   },
   timerTextWarning: {
     color: COLORS.error,
@@ -895,7 +884,7 @@ const styles = StyleSheet.create({
   coinsText: {
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as any).goldDark,
+    color: COLORS.goldDark,
   },
 
   scrollView: {
@@ -1007,7 +996,7 @@ const styles = StyleSheet.create({
   howToPlayTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   stepsContainer: {
     gap: 14,
@@ -1034,7 +1023,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 2,
   },
   stepDesc: {
@@ -1096,7 +1085,7 @@ const styles = StyleSheet.create({
   gameStatValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   gameStatTotal: {
     fontSize: 14,
@@ -1146,12 +1135,12 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 12,
     fontWeight: '600',
-    color: (COLORS as any).purple,
+    color: COLORS.purple,
   },
   questionText: {
     fontSize: 18,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 24,
     lineHeight: 26,
   },
@@ -1169,7 +1158,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionSelected: {
-    borderColor: (COLORS as any).purple,
+    borderColor: COLORS.purple,
     backgroundColor: COLORS.purpleBg,
   },
   optionCorrect: {
@@ -1199,7 +1188,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
 
   // Progress Bar
@@ -1351,7 +1340,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 4,
   },
   statLabel: {

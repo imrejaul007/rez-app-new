@@ -314,10 +314,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error fetching cart:', error);
-      return createErrorResponse(error, 'Failed to load cart. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load cart. Please try again.');
     }
   }
 
@@ -348,7 +348,7 @@ class CartService {
       logApiRequest('POST', '/cart/add', data);
 
       const response = await withRetry(
-        () => apiClient.post<Cart>('/cart/add', data as any),
+        () => apiClient.post<Cart>('/cart/add', data as unknown as AddToCartRequest),
         { maxRetries: 2 }
       );
 
@@ -366,13 +366,13 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error adding to cart:', error);
       return createErrorResponse(
         error,
         'Failed to add item to cart. Please try again.'
-      ) as any;
+      );
     }
   }
 
@@ -437,7 +437,7 @@ class CartService {
       logApiRequest('POST', '/cart/add (service)', requestData);
 
       const response = await withRetry(
-        () => apiClient.post<Cart>('/cart/add', requestData as any),
+        () => apiClient.post<Cart>('/cart/add', requestData as unknown as AddToCartRequest),
         { maxRetries: 2 }
       );
 
@@ -455,13 +455,13 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error adding service to cart:', error);
       return createErrorResponse(
         error,
         'Failed to add service to cart. Please try again.'
-      ) as any;
+      );
     }
   }
 
@@ -500,7 +500,7 @@ class CartService {
       logApiRequest('PUT', url, data);
 
       const response = await withRetry(
-        () => apiClient.put<Cart>(url, data as any),
+        () => apiClient.put<Cart>(url, data as unknown as UpdateCartItemRequest),
         { maxRetries: 2 }
       );
 
@@ -518,13 +518,13 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error updating cart item:', error);
       return createErrorResponse(
         error,
         'Failed to update cart item. Please try again.'
-      ) as any;
+      );
     }
   }
 
@@ -572,13 +572,13 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error removing cart item:', error);
       return createErrorResponse(
         error,
         'Failed to remove item from cart. Please try again.'
-      ) as any;
+      );
     }
   }
 
@@ -598,10 +598,10 @@ class CartService {
 
       logApiResponse('DELETE', '/cart/clear', response, Date.now() - startTime);
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error clearing cart:', error);
-      return createErrorResponse(error, 'Failed to clear cart. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to clear cart. Please try again.');
     }
   }
 
@@ -626,7 +626,7 @@ class CartService {
       logApiRequest('POST', '/cart/coupon', data);
 
       const response = await withRetry(
-        () => apiClient.post<Cart>('/cart/coupon', data as any),
+        () => apiClient.post<Cart>('/cart/coupon', data as unknown as ApplyCouponRequest),
         { maxRetries: 1 } // Don't retry coupon applications
       );
 
@@ -644,7 +644,7 @@ class CartService {
         }
         // CA-CMC-014 FIX: Check if coupon was actually applied (discount > 0)
         // If backend rejected coupon silently, inform user before checkout
-        const appliedDiscount = (data as any).expectedDiscount || 0;
+        const appliedDiscount = (data as unknown as ApplyCouponRequest & { expectedDiscount?: number }).expectedDiscount || 0;
         if (appliedDiscount <= 0) {
           logger.warn('[CART API] Coupon may not have been applied; no discount shown');
           return {
@@ -655,10 +655,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error applying coupon:', error);
-      return createErrorResponse(error, 'Failed to apply coupon. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to apply coupon. Please try again.');
     }
   }
 
@@ -690,10 +690,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error removing coupon:', error);
-      return createErrorResponse(error, 'Failed to remove coupon. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to remove coupon. Please try again.');
     }
   }
 
@@ -725,10 +725,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error fetching cart summary:', error);
-      return createErrorResponse(error, 'Failed to load cart summary. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load cart summary. Please try again.');
     }
   }
 
@@ -766,10 +766,10 @@ class CartService {
 
       logApiResponse('GET', '/cart/validate', response, Date.now() - startTime);
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error validating cart:', error);
-      return createErrorResponse(error, 'Failed to validate cart. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to validate cart. Please try again.');
     }
   }
 
@@ -866,10 +866,10 @@ class CartService {
         };
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error getting checkout summary:', error);
-      return createErrorResponse(error, 'Failed to load checkout summary') as any;
+      return createErrorResponse(error, 'Failed to load checkout summary');
     }
   }
 
@@ -915,10 +915,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error locking item:', error);
-      return createErrorResponse(error, 'Failed to lock item. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to lock item. Please try again.');
     }
   }
 
@@ -938,10 +938,10 @@ class CartService {
 
       logApiResponse('GET', '/cart/locked', response, Date.now() - startTime);
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error fetching locked items:', error);
-      return createErrorResponse(error, 'Failed to load locked items') as any;
+      return createErrorResponse(error, 'Failed to load locked items');
     }
   }
 
@@ -988,10 +988,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error unlocking item:', error);
-      return createErrorResponse(error, 'Failed to unlock item') as any;
+      return createErrorResponse(error, 'Failed to unlock item');
     }
   }
 
@@ -1038,10 +1038,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error moving locked item to cart:', error);
-      return createErrorResponse(error, 'Failed to move locked item to cart') as any;
+      return createErrorResponse(error, 'Failed to move locked item to cart');
     }
   }
 
@@ -1074,10 +1074,10 @@ class CartService {
 
       logApiResponse('GET', '/cart/lock-fee-options', response, Date.now() - startTime);
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error getting lock fee options:', error);
-      return createErrorResponse(error, 'Failed to get lock fee options') as any;
+      return createErrorResponse(error, 'Failed to get lock fee options');
     }
   }
 
@@ -1119,7 +1119,7 @@ class CartService {
       logApiRequest('POST', '/cart/lock-with-payment', data);
 
       const response = await withRetry(
-        () => apiClient.post<LockWithPaymentResponse>('/cart/lock-with-payment', data as any),
+        () => apiClient.post<LockWithPaymentResponse>('/cart/lock-with-payment', data as unknown as LockWithPaymentRequest),
         { maxRetries: 1 } // Don't retry payment operations
       );
 
@@ -1137,10 +1137,10 @@ class CartService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       logger.error('[CART API] Error locking item with payment:', error);
-      return createErrorResponse(error, 'Failed to lock item. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to lock item. Please try again.');
     }
   }
 }

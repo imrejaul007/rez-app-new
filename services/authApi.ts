@@ -289,7 +289,7 @@ class AuthService {
       }
 
       const response = await withRetry(
-        () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data as any, {
+        () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data, {
           timeout: API_TIMEOUTS.AUTH,
           headers
         }),
@@ -298,10 +298,10 @@ class AuthService {
 
       logApiResponse('POST', '/user/auth/send-otp', { success: response.success }, Date.now() - startTime);
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error sending OTP:', error);
-      return createErrorResponse(error, 'Failed to send OTP. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to send OTP. Please try again.');
     }
   }
 
@@ -359,7 +359,7 @@ class AuthService {
       }
 
       const response = await withRetry(
-        () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data as any, {
+        () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data, {
           timeout: API_TIMEOUTS.AUTH,
           headers
         }),
@@ -370,7 +370,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateAuthResponse(response.data as any)) {
+        if (!validateAuthResponse(response.data as RawAuthResponsePayload)) {
           devLog.error('[AUTH API] Invalid auth response structure');
           return {
             success: false,
@@ -385,10 +385,10 @@ class AuthService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error verifying OTP:', error);
-      return createErrorResponse(error, 'Failed to verify OTP. Please check the code and try again.') as any;
+      return createErrorResponse(error, 'Failed to verify OTP. Please check the code and try again.');
     }
   }
 
@@ -437,10 +437,10 @@ class AuthService {
         this.setAuthToken(tokens.accessToken);
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error refreshing token:', error);
-      return createErrorResponse(error, 'Session expired. Please log in again.') as any;
+      return createErrorResponse(error, 'Session expired. Please log in again.');
     }
   }
 
@@ -463,14 +463,14 @@ class AuthService {
       // Clear stored token regardless of API response
       this.setAuthToken(null);
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error during logout:', error);
 
       // Clear token even if logout API fails
       this.setAuthToken(null);
 
-      return createErrorResponse(error, 'Logged out successfully') as any;
+      return createErrorResponse(error, 'Logged out successfully');
     }
   }
 
@@ -502,17 +502,17 @@ class AuthService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error fetching profile:', error);
 
       // Handle 401 Unauthorized - token expired
-      if (error?.status === 401) {
+      if ((error as { status?: number })?.status === 401) {
         this.setAuthToken(null);
-        return createErrorResponse(error, 'Session expired. Please log in again.') as any;
+        return createErrorResponse(error, 'Session expired. Please log in again.');
       }
 
-      return createErrorResponse(error, 'Failed to load profile. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to load profile. Please try again.');
     }
   }
 
@@ -533,7 +533,8 @@ class AuthService {
       }
 
       // Validate email if provided
-      if ((data.profile as any)?.email && !isValidEmail(String((data.profile as any).email))) {
+      const profileEmail = (data.profile as { email?: string } | undefined)?.email;
+      if (profileEmail && !isValidEmail(profileEmail)) {
         return {
           success: false,
           error: 'Invalid email format',
@@ -548,7 +549,7 @@ class AuthService {
       logApiRequest('PATCH', '/user/auth/profile', { fields: Object.keys(data) });
 
       const response = await withRetry(
-        () => apiClient.patch<User>('/user/auth/profile', data as any),
+        () => apiClient.patch<User>('/user/auth/profile', data),
         { maxRetries: 2 }
       );
 
@@ -566,10 +567,10 @@ class AuthService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error updating profile:', error);
-      return createErrorResponse(error, 'Failed to update profile. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to update profile. Please try again.');
     }
   }
 
@@ -592,7 +593,7 @@ class AuthService {
       logApiRequest('POST', '/user/auth/complete-onboarding', { fields: Object.keys(data) });
 
       const response = await withRetry(
-        () => apiClient.post<User>('/user/auth/complete-onboarding', data as any),
+        () => apiClient.post<User>('/user/auth/complete-onboarding', data),
         { maxRetries: 2 }
       );
 
@@ -610,10 +611,10 @@ class AuthService {
         }
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error completing onboarding:', error);
-      return createErrorResponse(error, 'Failed to complete onboarding. Please try again.') as any;
+      return createErrorResponse(error, 'Failed to complete onboarding. Please try again.');
     }
   }
 
@@ -638,10 +639,10 @@ class AuthService {
         this.setAuthToken(null);
       }
 
-      return response as any;
-    } catch (error: any) {
+      return response;
+    } catch (error: unknown) {
       devLog.error('[AUTH API] Error deleting account:', error);
-      return createErrorResponse(error, 'Failed to delete account. Please try again or contact support.') as any;
+      return createErrorResponse(error, 'Failed to delete account. Please try again or contact support.');
     }
   }
 

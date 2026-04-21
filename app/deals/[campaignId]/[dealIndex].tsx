@@ -151,7 +151,7 @@ const DealDetailPage: React.FC = () => {
           // because campaign.campaignId is undefined. Use campaign._id or title instead.
           const existingRedemption = response.data.redemptions.find(
             (r) =>
-              ((r.campaignId === (campaign._id || campaignId)) || r.campaignSnapshot?.title === campaign.title) &&
+              (r.campaignId === (campaign._id || campaignId) || r.campaignSnapshot?.title === campaign.title) &&
               r.dealIndex === dealIndex &&
               (r.status === 'active' || r.status === 'used'),
           );
@@ -163,7 +163,7 @@ const DealDetailPage: React.FC = () => {
             setExistingRedemptionCode(existingRedemption.code);
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         // CA-CMC-031 FIX: Log error instead of silently ignoring
         // Check redemption status failures should be visible for debugging
         logger.error('Failed to check redemption status: ' + (err?.message || String(err)));
@@ -216,9 +216,9 @@ const DealDetailPage: React.FC = () => {
   };
 
   // Check if deal is paid - ONLY use price field (backend determines paid by price > 0)
-  const isPaidDeal = deal && ((deal as any).price || 0) > 0;
-  const dealPrice = deal ? (deal as any).price || 0 : 0;
-  const dealCurrency = deal ? (deal as any).currency || 'INR' : 'INR';
+  const isPaidDeal = deal && (deal.price || 0) > 0;
+  const dealPrice = deal ? deal.price || 0 : 0;
+  const dealCurrency = deal ? deal.currency || 'INR' : 'INR';
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
@@ -252,14 +252,14 @@ const DealDetailPage: React.FC = () => {
       platformAlertConfirm(
         'Sign In Required',
         'Please sign in to redeem this deal',
-        () => router.push('/sign-in' as any),
+        () => router.push('/sign-in'),
         'Sign In',
       );
       return;
     }
 
     // Check if deal is sold out
-    if ((deal as any).isSoldOut) {
+    if (deal.isSoldOut) {
       platformAlertSimple('Sold Out', 'This deal is no longer available.');
       return;
     }
@@ -338,13 +338,13 @@ const DealDetailPage: React.FC = () => {
             storeType: 'dynamic',
             ...(redemptionCode ? { redemptionCode } : {}),
           },
-        } as any);
+        });
       };
 
       // Handle paid deal - redirect to Razorpay payment page
       if (response.data?.type === 'paid' && response.data?.razorpayOrderId) {
         router.push(
-          `/payment-razorpay?bookingId=${response.data.redemptionId}&bookingType=deal&orderId=${response.data.razorpayOrderId}&razorpayKeyId=${response.data.razorpayKeyId}&amount=${response.data.amount}&currency=${response.data.currency || dealCurrency}` as any,
+          `/payment-razorpay?bookingId=${response.data.redemptionId}&bookingType=deal&orderId=${response.data.razorpayOrderId}&razorpayKeyId=${response.data.razorpayKeyId}&amount=${response.data.amount}&currency=${response.data.currency || dealCurrency}`,
         );
         return;
       }
@@ -378,9 +378,10 @@ const DealDetailPage: React.FC = () => {
         if (!isMounted()) return;
         setShowSuccessModal(true);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       // Handle "already redeemed" error
-      if (error.message?.includes('already redeemed') || error.message?.includes('already purchased')) {
+      if (err.message?.includes('already redeemed') || err.message?.includes('already purchased')) {
         if (!isMounted()) return;
         setSuccessModalData({
           title: 'Already Redeemed',
@@ -395,12 +396,12 @@ const DealDetailPage: React.FC = () => {
           if (!isMounted()) return;
           setSuccessModalData({
             title: 'Redemption Failed',
-            message: error.message || 'Please try again.',
+            message: err.message || 'Please try again.',
           });
           if (!isMounted()) return;
           setShowSuccessModal(true);
         } else {
-          platformAlertSimple('Redemption Failed', error.message || 'Please try again.');
+          platformAlertSimple('Redemption Failed', err.message || 'Please try again.');
         }
       }
     } finally {
@@ -425,7 +426,7 @@ const DealDetailPage: React.FC = () => {
         dealIndex,
         action: 'like',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (!isMounted()) return;
       setIsLiked(!isLiked);
     }
@@ -443,7 +444,7 @@ const DealDetailPage: React.FC = () => {
           action: 'share',
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // silently handle
     }
   };
@@ -472,7 +473,7 @@ const DealDetailPage: React.FC = () => {
           }),
           storeType: 'dynamic',
         },
-      } as any);
+      });
     } else {
       platformAlertSimple('Store Information', 'Store details are not available for this deal.');
     }
@@ -595,7 +596,7 @@ const DealDetailPage: React.FC = () => {
             <View style={[styles.urgentBadge, styles.paidBadge]}>
               <Ionicons name="pricetag" size={14} color={COLORS.white} />
               <Text style={styles.urgentBadgeText}>
-                {(deal as any)?.isSoldOut ? 'SOLD OUT' : `${getCurrencySymbol(dealCurrency)}${dealPrice}`}
+                {deal?.isSoldOut ? 'SOLD OUT' : `${getCurrencySymbol(dealCurrency)}${dealPrice}`}
               </Text>
             </View>
           )}
@@ -636,14 +637,14 @@ const DealDetailPage: React.FC = () => {
         {dealValueInfo && (
           <View style={styles.valueCardContainer}>
             <LinearGradient
-              colors={[(COLORS as any).navy, COLORS.navyLight]}
+              colors={[COLORS.navy, COLORS.navyLight]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.valueCard}
             >
               <View style={styles.valueCardInner}>
                 <View style={[styles.valueIconBg, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
-                  <Ionicons name={dealValueInfo.icon as any} size={28} color={COLORS.gold} />
+                  <Ionicons name={dealValueInfo.icon as keyof typeof Ionicons.glyphMap} size={28} color={COLORS.gold} />
                 </View>
                 <View style={styles.valueTextContainer}>
                   <Text style={styles.valueType}>{dealValueInfo.type}</Text>
@@ -739,7 +740,7 @@ const DealDetailPage: React.FC = () => {
                 </View>
                 <View style={styles.stepContent}>
                   <View style={styles.stepIconContainer}>
-                    <Ionicons name={item.icon as any} size={20} color={(COLORS as any).navy} />
+                    <Ionicons name={item.icon as keyof typeof Ionicons.glyphMap} size={20} color={COLORS.navy} />
                   </View>
                   <View style={styles.stepTextContainer}>
                     <Text style={styles.stepTitle}>{item.title}</Text>
@@ -769,7 +770,7 @@ const DealDetailPage: React.FC = () => {
             ].map((item, idx) => (
               <View key={idx} style={styles.highlightItem}>
                 <View style={[styles.highlightIcon, { backgroundColor: `${item.color}15` }]}>
-                  <Ionicons name={item.icon as any} size={20} color={item.color} />
+                  <Ionicons name={item.icon as keyof typeof Ionicons.glyphMap} size={20} color={item.color} />
                 </View>
                 <Text style={styles.highlightLabel}>{item.label}</Text>
               </View>
@@ -896,7 +897,7 @@ const DealDetailPage: React.FC = () => {
             <Pressable style={styles.storeCard} onPress={handleVisitStore}>
               <View style={styles.storeInfo}>
                 <View style={styles.storeAvatar}>
-                  <Ionicons name="storefront" size={24} color={(COLORS as any).navy} />
+                  <Ionicons name="storefront" size={24} color={COLORS.navy} />
                 </View>
                 <View style={styles.storeDetails}>
                   <Text style={styles.storeName}>{deal.store}</Text>
@@ -943,17 +944,15 @@ const DealDetailPage: React.FC = () => {
               style={[
                 styles.redeemButton,
                 (isRedeeming || isPurchasing) && styles.redeemButtonDisabled,
-                (deal as any)?.isSoldOut && styles.redeemButtonSoldOut,
+                deal?.isSoldOut && styles.redeemButtonSoldOut,
                 alreadyRedeemed && styles.redeemButtonRedeemed,
               ]}
-              onPress={
-                alreadyRedeemed ? () => router.push('/my-deals' as any) : isPaidDeal ? handlePurchase : handleRedeem
-              }
-              disabled={isRedeeming || isPurchasing || (deal as any)?.isSoldOut}
+              onPress={alreadyRedeemed ? () => router.push('/my-deals') : isPaidDeal ? handlePurchase : handleRedeem}
+              disabled={isRedeeming || isPurchasing || deal?.isSoldOut}
             >
               <LinearGradient
                 colors={
-                  (deal as any)?.isSoldOut
+                  deal?.isSoldOut
                     ? [COLORS.gray400, COLORS.gray400]
                     : isRedeeming || isPurchasing
                       ? [COLORS.gray400, COLORS.gray400]
@@ -969,7 +968,7 @@ const DealDetailPage: React.FC = () => {
               >
                 {isRedeeming || isPurchasing ? (
                   <ActivityIndicator color={COLORS.white} size="small" />
-                ) : (deal as any)?.isSoldOut ? (
+                ) : deal?.isSoldOut ? (
                   <>
                     <Ionicons name="close-circle" size={22} color={COLORS.white} />
                     <Text style={styles.redeemButtonText}>Sold Out</Text>
@@ -1047,7 +1046,7 @@ const DealDetailPage: React.FC = () => {
                   style={styles.modalPrimaryBtn}
                   onPress={() => {
                     setShowSuccessModal(false);
-                    router.push('/my-deals' as any);
+                    router.push('/my-deals');
                   }}
                 >
                   <LinearGradient colors={[COLORS.green500, COLORS.emerald500]} style={styles.modalPrimaryBtnGradient}>
@@ -1075,7 +1074,7 @@ const DealDetailPage: React.FC = () => {
                         storeType: 'dynamic',
                         redemptionCode: successModalData.redemptionCode,
                       },
-                    } as any);
+                    });
                   }}
                 >
                   <Ionicons name="storefront-outline" size={18} color={COLORS.green500} />
@@ -1137,7 +1136,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: Spacing.sm,
   },
   errorText: {
@@ -1150,7 +1149,7 @@ const styles = StyleSheet.create({
   errorButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: (COLORS as any).navy,
+    backgroundColor: COLORS.navy,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
@@ -1373,7 +1372,7 @@ const styles = StyleSheet.create({
   countdownNumber: {
     ...Typography.h1,
     fontWeight: '800',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   countdownNumberUrgent: {
     color: COLORS.red500,
@@ -1420,7 +1419,7 @@ const styles = StyleSheet.create({
   sectionHeaderTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
 
   // Steps
@@ -1469,7 +1468,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 2,
   },
   stepDesc: {
@@ -1511,7 +1510,7 @@ const styles = StyleSheet.create({
   highlightLabel: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     flex: 1,
   },
 
@@ -1561,7 +1560,7 @@ const styles = StyleSheet.create({
   validityValue: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginTop: 2,
   },
   validityArrow: {
@@ -1583,7 +1582,7 @@ const styles = StyleSheet.create({
   detailValue: {
     ...Typography.h3,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginTop: Spacing.sm,
     marginBottom: Spacing.xs,
   },
@@ -1647,7 +1646,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 2,
   },
   storeSubtext: {
@@ -1739,7 +1738,7 @@ const styles = StyleSheet.create({
   existingCodeText: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     letterSpacing: 1,
   },
   redeemButtonGradient: {
@@ -1795,7 +1794,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: Spacing.base,
     textAlign: 'center',
   },

@@ -126,20 +126,23 @@ const GroceryPage: React.FC = () => {
       // Process categories
       if (categoriesRes.success && categoriesRes.data) {
         const groceryCategory = categoriesRes.data.find(
-          (cat: any) => cat.slug === 'grocery' || cat.name?.toLowerCase().includes('grocery'),
+          (cat: Record<string, unknown>) =>
+            cat.slug === 'grocery' || (cat.name as string)?.toLowerCase().includes('grocery'),
         );
 
-        if (groceryCategory && (groceryCategory as any).subcategories?.length > 0) {
-          const mappedCategories = (groceryCategory as any).subcategories.map((sub: any) => {
-            const config = categoryConfig[sub.slug] || { icon: '🛒', color: colors.success };
-            return {
-              id: sub.slug,
-              title: sub.name,
-              icon: config.icon,
-              color: config.color,
-              count: sub.productCount || 0,
-            };
-          });
+        if (groceryCategory && ((groceryCategory.subcategories as unknown[]) || []).length > 0) {
+          const mappedCategories = ((groceryCategory.subcategories as unknown[]) || []).map(
+            (sub: Record<string, unknown>) => {
+              const config = categoryConfig[sub.slug as string] || { icon: '🛒', color: colors.success };
+              return {
+                id: sub.slug as string,
+                title: sub.name as string,
+                icon: config.icon,
+                color: config.color,
+                count: (sub.productCount as number) || 0,
+              };
+            },
+          );
           if (!isMounted()) return;
           setCategories(mappedCategories.length > 0 ? mappedCategories : defaultCategories);
         }
@@ -150,16 +153,21 @@ const GroceryPage: React.FC = () => {
         const stores = storesRes.data.stores;
 
         // Map stores to display format
-        const mappedStores: Store[] = stores.map((store: any) => ({
-          id: store.id || store._id,
-          name: store.name,
-          rating: store.ratings?.average || store.rating?.average || 4.5,
-          deliveryTime: store.operationalInfo?.deliveryTime
-            ? store.operationalInfo?.deliveryTime || '15-30 min'
+        const mappedStores: Store[] = stores.map((store: Record<string, unknown>) => ({
+          id: (store.id || store._id) as string,
+          name: store.name as string,
+          rating:
+            ((store.ratings as Record<string, unknown> | undefined)?.average as number | undefined) ||
+            ((store.rating as Record<string, unknown> | undefined)?.average as number | undefined) ||
+            4.5,
+          deliveryTime: ((store.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as
+            | string
+            | undefined)
+            ? ((store.operationalInfo as Record<string, unknown>)?.deliveryTime as string) || '15-30 min'
             : '30-45 min',
-          cashback: `${store.offers?.cashback || store.maxCashback || 15}%`,
-          image: store.banner || store.image || undefined,
-          logo: store.logo,
+          cashback: `${((store.offers as Record<string, unknown> | undefined)?.cashback as number | undefined) || (store.maxCashback as number) || 15}%`,
+          image: (store.banner as string | undefined) || (store.image as string | undefined) || undefined,
+          logo: store.logo as string | undefined,
         }));
 
         if (!isMounted()) return;
@@ -168,28 +176,45 @@ const GroceryPage: React.FC = () => {
         // Filter quick delivery stores
         const quick = stores
           .filter(
-            (s: any) =>
-              s.deliveryCategories?.fastDelivery ||
-              (s.operationalInfo?.deliveryTime?.includes('-') &&
-                parseInt(s.operationalInfo.deliveryTime.split('-')[1]) <= 30),
+            (s: Record<string, unknown>) =>
+              (s.deliveryCategories as Record<string, boolean> | undefined)?.fastDelivery ||
+              ((
+                (s.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as string | undefined
+              )?.includes('-') &&
+                parseInt(
+                  ((s.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as string).split('-')[1],
+                ) <= 30),
           )
-          .map((store: any) => ({
-            id: store.id || store._id,
-            name: store.name,
-            rating: store.ratings?.average || store.rating?.average || 4.5,
-            deliveryTime: store.operationalInfo?.deliveryTime
-              ? store.operationalInfo?.deliveryTime?.split('-')[0] + ' min' || '15 min'
+          .map((store: Record<string, unknown>) => ({
+            id: (store.id || store._id) as string,
+            name: store.name as string,
+            rating:
+              ((store.ratings as Record<string, unknown> | undefined)?.average as number | undefined) ||
+              ((store.rating as Record<string, unknown> | undefined)?.average as number | undefined) ||
+              4.5,
+            deliveryTime: ((store.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as
+              | string
+              | undefined)
+              ? ((store.operationalInfo as Record<string, unknown>)?.deliveryTime as string).split('-')[0] + ' min' ||
+                '15 min'
               : '15 min',
-            cashback: `${store.offers?.cashback || store.maxCashback || 15}%`,
-            image: store.banner || store.image || undefined,
-            logo: store.logo,
+            cashback: `${((store.offers as Record<string, unknown> | undefined)?.cashback as number | undefined) || (store.maxCashback as number) || 15}%`,
+            image: (store.banner as string | undefined) || (store.image as string | undefined) || undefined,
+            logo: store.logo as string | undefined,
           }));
         if (!isMounted()) return;
         setQuickStores(quick.slice(0, 4));
 
         // Calculate stats
-        const maxCashback = Math.max(...stores.map((s: any) => s.maxCashback || 0), 25);
-        const fastestTime = Math.min(...stores.map((s: any) => s.operationalInfo?.deliveryTime?.min || 30), 10);
+        const maxCashback = Math.max(...stores.map((s: Record<string, unknown>) => (s.maxCashback as number) || 0), 25);
+        const fastestTime = Math.min(
+          ...stores.map(
+            (s: Record<string, unknown>) =>
+              ((s.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as { min?: number } | undefined)
+                ?.min || 30,
+          ),
+          10,
+        );
         if (!isMounted()) return;
         setStats({
           storeCount: stores.length,
@@ -203,7 +228,7 @@ const GroceryPage: React.FC = () => {
         if (!isMounted()) return;
         setQuickStores(getFallbackStores().slice(0, 3));
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (!isMounted()) return;
       setFeaturedStores(getFallbackStores());
       if (!isMounted()) return;
@@ -228,7 +253,7 @@ const GroceryPage: React.FC = () => {
   // Handle search
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&category=grocery` as any);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&category=grocery`);
     }
   };
 
@@ -314,11 +339,7 @@ const GroceryPage: React.FC = () => {
           <Text style={styles.sectionTitle}>Categories</Text>
           <View style={styles.categoriesGrid}>
             {categories.map((cat) => (
-              <Pressable
-                key={cat.id}
-                style={styles.categoryCard}
-                onPress={() => router.push(`/grocery/${cat.id}` as any)}
-              >
+              <Pressable key={cat.id} style={styles.categoryCard} onPress={() => router.push(`/grocery/${cat.id}`)}>
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                   <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                 </View>
@@ -333,7 +354,7 @@ const GroceryPage: React.FC = () => {
         <View style={styles.quickActionsContainer}>
           <Pressable
             style={[styles.quickAction, { backgroundColor: colors.tint.amberLight }]}
-            onPress={() => router.push('/deals' as any)}
+            onPress={() => router.push('/deals')}
           >
             <Text style={styles.quickActionIcon}>🔥</Text>
             <Text style={styles.quickActionTitle}>Hot Deals</Text>
@@ -341,7 +362,7 @@ const GroceryPage: React.FC = () => {
           </Pressable>
           <Pressable
             style={[styles.quickAction, { backgroundColor: '#E0E7FF' }]}
-            onPress={() => router.push('/grocery/compare' as any)}
+            onPress={() => router.push('/grocery/compare')}
           >
             <Text style={styles.quickActionIcon}>⚖️</Text>
             <Text style={styles.quickActionTitle}>Compare</Text>
@@ -349,7 +370,7 @@ const GroceryPage: React.FC = () => {
           </Pressable>
           <Pressable
             style={[styles.quickAction, { backgroundColor: colors.tint.green }]}
-            onPress={() => router.push('/grocery/stores' as any)}
+            onPress={() => router.push('/grocery/stores')}
           >
             <Text style={styles.quickActionIcon}>🏪</Text>
             <Text style={styles.quickActionTitle}>Stores</Text>
@@ -364,7 +385,7 @@ const GroceryPage: React.FC = () => {
               <Ionicons name="flash" size={20} color={Colors.warning} />
               <Text style={styles.sectionTitle}>Quick Delivery</Text>
             </View>
-            <Pressable onPress={() => router.push('/grocery/quick' as any)}>
+            <Pressable onPress={() => router.push('/grocery/quick')}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -373,7 +394,7 @@ const GroceryPage: React.FC = () => {
               <Pressable
                 key={store.id}
                 style={styles.quickStoreCard}
-                onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
+                onPress={() => router.push(`/MainStorePage?storeId=${store.id}`)}
               >
                 <View style={styles.quickBadge}>
                   <Ionicons name="flash" size={10} color="#FCD34D" />
@@ -393,7 +414,7 @@ const GroceryPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Stores</Text>
-            <Pressable onPress={() => router.push('/grocery/stores' as any)}>
+            <Pressable onPress={() => router.push('/grocery/stores')}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -402,7 +423,7 @@ const GroceryPage: React.FC = () => {
               <Pressable
                 key={store.id}
                 style={styles.storeCard}
-                onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
+                onPress={() => router.push(`/MainStorePage?storeId=${store.id}`)}
               >
                 <CachedImage source={store.image} style={styles.storeImage} />
                 <View style={styles.cashbackBadge}>
@@ -434,7 +455,7 @@ const GroceryPage: React.FC = () => {
             <Text style={styles.promoEmoji}>🛒</Text>
             <Text style={styles.promoTitle}>First Order? Get {currencySymbol}100 Off</Text>
             <Text style={styles.promoSubtitle}>+ Free delivery on orders above {currencySymbol}199</Text>
-            <Pressable style={styles.promoButton} onPress={() => router.push('/deals' as any)}>
+            <Pressable style={styles.promoButton} onPress={() => router.push('/deals')}>
               <Text style={styles.promoButtonText}>Order Now</Text>
             </Pressable>
           </LinearGradient>
@@ -455,7 +476,7 @@ function getFallbackStores(): Store[] {
       rating: 4.5,
       deliveryTime: '30-45 min',
       cashback: '15%',
-      image: undefined as any,
+      image: undefined,
     },
     {
       id: 'blinkit',
@@ -463,7 +484,7 @@ function getFallbackStores(): Store[] {
       rating: 4.6,
       deliveryTime: '8-15 min',
       cashback: '20%',
-      image: undefined as any,
+      image: undefined,
     },
     {
       id: 'zepto',
@@ -471,7 +492,7 @@ function getFallbackStores(): Store[] {
       rating: 4.4,
       deliveryTime: '10-20 min',
       cashback: '25%',
-      image: undefined as any,
+      image: undefined,
     },
     {
       id: 'dmart',
@@ -479,7 +500,7 @@ function getFallbackStores(): Store[] {
       rating: 4.3,
       deliveryTime: '45-90 min',
       cashback: '10%',
-      image: undefined as any,
+      image: undefined,
     },
   ];
 }
@@ -533,7 +554,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   statsRow: {
     flexDirection: 'row',
@@ -577,7 +598,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   viewAllText: {
     ...Typography.body,
@@ -611,7 +632,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 2,
     textAlign: 'center',
   },
@@ -639,7 +660,7 @@ const styles = StyleSheet.create({
   quickActionTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   quickActionSubtitle: {
     ...Typography.overline,
@@ -681,7 +702,7 @@ const styles = StyleSheet.create({
   quickStoreName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     textAlign: 'center',
   },
   quickStoreCashback: {
@@ -723,7 +744,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: Spacing.xs,
   },
   storeMeta: {
@@ -740,7 +761,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   deliveryText: {
     ...Typography.bodySmall,
