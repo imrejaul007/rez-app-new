@@ -4,7 +4,7 @@ import { CartItem as CartItemType } from '@/types/cart';
 // ---------------------------------------------------------------------------
 // State types (mirrors CartContext)
 // ---------------------------------------------------------------------------
-interface CartItemWithQuantity extends CartItemType {
+export interface CartItemWithQuantity extends CartItemType {
   quantity: number;
   selected: boolean;
   addedAt: string;
@@ -69,7 +69,7 @@ interface CartContextShape {
   actions: CartActions;
 }
 
-interface CartStoreState extends CartContextShape {
+export interface CartStoreState extends CartContextShape {
   _setFromProvider: (data: CartContextShape) => void;
 }
 

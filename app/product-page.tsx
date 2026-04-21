@@ -1,5 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { logger } from '@/utils/logger';
 import { ScrollView, StyleSheet, View, Modal, Pressable, ActivityIndicator, Platform, Dimensions } from 'react-native';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -82,7 +83,13 @@ interface Store {
   operationalInfo?: {
     deliveryTime?: string;
     minimumOrder?: number;
+    deliveryFee?: number;
   };
+  offers?: {
+    cashback?: number;
+  };
+  deliveryFee?: number;
+  operatingHours?: string | StoreOperatingHours;
   // Action buttons configuration for ProductPage
   actionButtons?: {
     enabled: boolean;
@@ -108,6 +115,103 @@ interface ProductAnalytics {
     percentage?: number;
     amount?: number;
   };
+}
+
+interface ProductsApiProductResponse {
+  _id?: string;
+  id?: string;
+  name?: string;
+  title?: string;
+  description?: string;
+  productType?: 'product' | 'service';
+  price?: number | { current?: number; original?: number; selling?: number; discount?: number };
+  originalPrice?: number | { original?: number };
+  pricing?: {
+    selling?: number;
+    basePrice?: number;
+    original?: number;
+    compare?: number;
+    mrp?: number;
+    discount?: number;
+  };
+  discount?: number;
+  rating?: { value?: number; count?: number };
+  ratings?: { average?: number; count?: number };
+  category?: string | { name?: string };
+  merchant?: string;
+  images?: Array<string | { url?: string }>;
+  image?: string;
+  inventory?: { isAvailable?: boolean; stock?: number };
+  availabilityStatus?: string;
+  store?: Store | null;
+  computedCashback?: { amount?: number; percentage?: number };
+  cashback?: { percentage?: number; maxAmount?: number };
+  computedDelivery?: string;
+  todayPurchases?: number;
+  todayViews?: number;
+  deliveryInfo?: {
+    estimatedDays?: string;
+    standardDeliveryTime?: string;
+    expressDeliveryTime?: string;
+  };
+  features?: string[];
+  [key: string]: unknown;
+}
+
+interface RecentlyViewedProductInput {
+  _id?: string;
+  name?: string;
+  title?: string;
+  image?: string;
+  images?: string[];
+  price?: { current?: number; original?: number };
+  rating?: { value?: number; count?: number };
+  cashback?: { percentage?: number };
+}
+
+interface StoreReview {
+  id?: string | number;
+  userName?: string;
+  userAvatar?: string;
+  rating?: number;
+  date?: string;
+  text?: string;
+  cashbackEarned?: number | null;
+}
+
+interface StoreOperatingHours {
+  [day: string]: { open: string; close: string; closed?: boolean } | undefined;
+}
+
+interface StoreOffers {
+  cashback?: number;
+  [key: string]: unknown;
+}
+
+interface StoreInfo {
+  name: string;
+  location: string;
+  hours?: string | StoreOperatingHours;
+}
+
+interface LockDetails {
+  lockFee?: number;
+  duration?: number;
+  expiresAt?: string;
+  message?: string;
+}
+
+interface BundleProduct {
+  _id?: string;
+  id?: string;
+  [key: string]: unknown;
+}
+
+interface RouterNavParams {
+  cardId?: string;
+  cardType?: string;
+  category?: string;
+  cardData?: string;
 }
 
 interface DynamicCardData {
@@ -194,7 +298,7 @@ function formatReviewDate(dateString: string): string {
 }
 
 function StorePage() {
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<RouterNavParams>();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
@@ -209,7 +313,7 @@ function StorePage() {
   const [showAddedToCartModal, setShowAddedToCartModal] = useState(false);
   const [productAnalytics, setProductAnalytics] = useState<ProductAnalytics | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [storeReviews, setStoreReviews] = useState<any[]>([]);
+  const [storeReviews, setStoreReviews] = useState<StoreReview[]>([]);
   const [isLocked, setIsLocked] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [showLockPriceModal, setShowLockPriceModal] = useState(false);
@@ -288,46 +392,58 @@ function StorePage() {
       if (activeRequestIdRef.current !== productId) return;
 
       if (response.success && response.data) {
-        const productData = response.data;
+        const productData = response.data as unknown as ProductsApiProductResponse;
 
         // Update cardData with real backend data using the correct structure
-        const productType = (productData as any).productType || 'product';
+        const productType = productData.productType || 'product';
 
         // Determine correct price: check if price is a direct number or an object
-        const priceField = (productData as any).price;
+        const priceField = productData.price;
         const actualPrice =
           typeof priceField === 'number'
             ? priceField
             : priceField?.current ||
               priceField?.selling ||
-              (productData as any).pricing?.selling ||
-              (productData as any).pricing?.basePrice ||
+              productData.pricing?.selling ||
+              productData.pricing?.basePrice ||
               0;
         // Get original price - check unified price object first, then raw pricing
-        const unifiedPriceOriginal = (productData as any).price?.original;
-        const originalPriceField = (productData as any).originalPrice;
+        const unifiedPriceOriginal = typeof priceField === 'object' && priceField !== null ? priceField.original : undefined;
+        const originalPriceField = productData.originalPrice;
         const actualOriginalPrice =
           unifiedPriceOriginal ||
           (typeof originalPriceField === 'number' ? originalPriceField : null) ||
-          originalPriceField?.original ||
-          (productData as any).pricing?.original ||
-          (productData as any).pricing?.compare ||
-          (productData as any).pricing?.mrp ||
+          (typeof originalPriceField === 'object' && originalPriceField !== null ? originalPriceField.original : undefined) ||
+          productData.pricing?.original ||
+          productData.pricing?.compare ||
+          productData.pricing?.mrp ||
           undefined;
         const actualDiscount =
-          (productData as any).discount ||
-          (productData as any).price?.discount ||
-          (productData as any).pricing?.discount ||
+          productData.discount ||
+          (typeof priceField === 'object' && priceField !== null ? priceField.discount : undefined) ||
+          productData.pricing?.discount ||
           0;
 
         // Determine correct rating: prioritize rating.value over ratings.average if rating object exists
-        const actualRatingValue = (productData as any).rating?.value || productData.ratings?.average || 0;
-        const actualReviewCount = (productData as any).rating?.count || productData.ratings?.count || 0;
+        const actualRatingValue = (productData.rating?.value ?? productData.ratings?.average) || 0;
+        const actualReviewCount = (productData.rating?.count ?? productData.ratings?.count) || 0;
+
+        const categoryValue = typeof productData.category === 'object' && productData.category !== null
+          ? productData.category.name || String(productData.category)
+          : productData.category || 'General';
+
+        const imageUrl = typeof productData.images?.[0] === 'string'
+          ? productData.images[0]
+          : (typeof productData.images?.[0] === 'object' && productData.images[0] !== null ? productData.images[0].url : undefined) || productData.image || undefined;
+
+        const imageUrls: string[] = productData.images
+          ?.map((img) => typeof img === 'string' ? img : (img?.url ?? undefined))
+          .filter((img): img is string => img !== undefined) || [];
 
         const updatedCardData: DynamicCardData = {
-          id: (productData as any)._id || productData.id,
-          _id: (productData as any)._id,
-          title: productData.name || (productData as any).title,
+          id: productData._id || productData.id,
+          _id: productData._id,
+          title: productData.name || productData.title,
           name: productData.name,
           description: productData.description,
           price: actualPrice,
@@ -335,35 +451,28 @@ function StorePage() {
           rating: actualRatingValue,
           reviewCount: actualReviewCount,
           ratings: productData.ratings, // Full ratings object
-          category: (productData.category as any)?.name || (productData.category as any) || 'General',
-          merchant: productData.store?.name || (productData as any).merchant || 'Store',
-          image:
-            (typeof productData.images?.[0] === 'string'
-              ? productData.images[0]
-              : (productData.images?.[0] as any)?.url) || (productData as any).image,
-          images:
-            (productData.images as any)
-              ?.map((img: any) => (typeof img === 'string' ? img : img?.url))
-              .filter(Boolean) || [],
+          category: categoryValue,
+          merchant: productData.store?.name || productData.merchant || 'Store',
+          image: imageUrl,
+          images: imageUrls,
           discount: actualDiscount,
-          isAvailable:
-            (productData as any).inventory?.isAvailable || (productData as any).availabilityStatus === 'in_stock',
-          availabilityStatus: (productData as any).inventory?.isAvailable ? 'in_stock' : 'out_of_stock',
-          stock: (productData as any).inventory?.stock || 0,
+          isAvailable: productData.inventory?.isAvailable || productData.availabilityStatus === 'in_stock',
+          availabilityStatus: productData.inventory?.isAvailable ? 'in_stock' : 'out_of_stock',
+          stock: productData.inventory?.stock || 0,
           productType: productType, // 'product' or 'service'
-          pricing: (productData as any).pricing,
-          inventory: (productData as any).inventory,
+          pricing: productData.pricing,
+          inventory: productData.inventory,
           // Add full store data for navigation to MainStorePage
-          store: productData.store as any,
-          storeId: (productData.store as any)?._id || productData.store?.id,
+          store: productData.store as Store ?? undefined,
+          storeId: (productData.store as Store | null)?._id || productData.store?.id,
           // Add computed fields from backend
-          computedCashback: (productData as any).computedCashback,
-          computedDelivery: (productData as any).computedDelivery,
-          todayPurchases: (productData as any).todayPurchases,
-          todayViews: (productData as any).todayViews,
-          cashback: (productData as any).cashback,
-          deliveryInfo: (productData as any).deliveryInfo,
-          features: (productData as any).features || [],
+          computedCashback: productData.computedCashback,
+          computedDelivery: productData.computedDelivery,
+          todayPurchases: productData.todayPurchases,
+          todayViews: productData.todayViews,
+          cashback: productData.cashback,
+          deliveryInfo: productData.deliveryInfo,
+          features: productData.features || [],
         };
 
         if (!isMounted()) return;
@@ -387,22 +496,22 @@ function StorePage() {
             images: updatedCardData.images,
             price: updatedCardData.price
               ? {
-                  current: updatedCardData.price,
-                  original: updatedCardData.originalPrice,
+                  current: updatedCardData.price ?? 0,
+                  original: updatedCardData.originalPrice ?? 0,
                 }
               : undefined,
             rating: {
               value:
                 typeof updatedCardData.rating === 'number'
                   ? updatedCardData.rating
-                  : (updatedCardData.rating as any)?.value || 0,
+                  : (typeof updatedCardData.rating === 'object' && updatedCardData.rating !== null ? updatedCardData.rating.value ?? 0 : 0),
               count: updatedCardData.reviewCount || 0,
             },
             cashback:
               updatedCardData.cashback?.percentage !== undefined
                 ? { percentage: updatedCardData.cashback.percentage }
                 : undefined,
-          } as any)
+          } as RecentlyViewedProductInput)
           .catch(() => {});
 
         // Fire analytics + view tracking in parallel (non-blocking)
@@ -448,7 +557,7 @@ function StorePage() {
 
       if (lockedResponse.success && lockedResponse.data) {
         const lockedItem = lockedResponse.data.lockedItems.find(
-          (item: any) => item.product?._id === productId || item.product?.id === productId,
+          (item: any) => item.product?._id === productId || (item.product as any)?.id === productId,
         );
         if (!isMounted()) return;
         setIsLocked(!!lockedItem);
@@ -712,7 +821,7 @@ function StorePage() {
         cardData?.store?.location?.address ||
         `${cardData?.store?.location?.city || ''}, ${cardData?.store?.location?.state || ''}`.trim() ||
         'Location available at store',
-      hours: (cardData?.store as any)?.operatingHours || '9 AM - 9 PM',
+      hours: cardData?.store?.operatingHours || '9 AM - 9 PM',
     }),
     [cardData?.store],
   );
@@ -756,7 +865,7 @@ function StorePage() {
             ? `${currencySymbol}${cardData.store!.operationalInfo.minimumOrder}`
             : 'N/A',
         },
-        { key: 'Cashback', value: `Up to ${(cardData?.store as any)?.offers?.cashback || 5}%` },
+        { key: 'Cashback', value: `Up to ${cardData?.store?.offers?.cashback || 5}%` },
         { key: BRAND.COIN_NAME, value: '10% of purchase' },
         { key: 'Lock Duration', value: 'Up to 48 hours' },
       ].filter((spec) => spec.value !== 'N/A'),
@@ -816,7 +925,7 @@ function StorePage() {
       {/* Sticky Header - Outside ScrollView */}
       <View style={styles.stickyHeader}>
         <StoreHeader
-          dynamicData={isDynamic ? (cardData as any) : null}
+          dynamicData={isDynamic ? cardData : null}
           cardType={params.cardType as string}
           isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
           showImage={false}
@@ -845,7 +954,7 @@ function StorePage() {
         >
           {/* 1. Product Image Section */}
           <StoreHeader
-            dynamicData={isDynamic ? (cardData as any) : null}
+            dynamicData={isDynamic ? cardData : null}
             cardType={params.cardType as string}
             isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
             showImage={true}
@@ -917,7 +1026,7 @@ function StorePage() {
             <CompletePurchaseSection
               storeInfo={storeInfo}
               deliveryFee={
-                (cardData?.store as any)?.deliveryFee || (cardData?.store as any)?.operationalInfo?.deliveryFee || 49
+                cardData?.store?.deliveryFee || cardData?.store?.operationalInfo?.deliveryFee || 49
               }
               onVisitStore={handleVisitStore}
               onBuyOnline={handleBuyPress}
@@ -1056,7 +1165,7 @@ function StorePage() {
             storeType={storeType}
             storeActionConfig={cardData?.store?.actionButtons}
             storeData={storeActionData}
-            dynamicData={isDynamic ? (cardData as any) : null}
+            dynamicData={isDynamic ? cardData : null}
             buttonGroup="store-actions"
           />
 
@@ -1119,7 +1228,7 @@ function StorePage() {
           onViewCart={handleViewCart}
           product={addedToCartProduct}
           cartItemCount={(cartState?.items ?? []).length}
-          cartTotal={(cartState as any).total || 0}
+          cartTotal={cartState.totalPrice || 0}
         />
       )}
 

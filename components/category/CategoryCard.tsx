@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { CategoryItem } from '@/types/category.types';
 import { useCartState, useCartActions } from '@/stores/selectors';
+import type { CartItemWithQuantity } from '@/stores/cartStore';
 import { showToast } from '@/components/common/ToastManager';
 import { normalizeProductPrice, normalizeProductRating } from '@/utils/productDataNormalizer';
 import { formatPrice } from '@/utils/priceFormatter';
@@ -51,7 +52,7 @@ function CategoryCard({
   // Check if product is in cart and get quantity - memoized to ensure proper re-renders
   const { productId, cartItem, quantityInCart, isInCart } = useMemo(() => {
     const id = item.id;
-    const cartItem = cartState.items.find(i => i.productId === id);
+    const cartItem = cartState.items.find((i: CartItemWithQuantity) => i.productId === id);
     const qty = cartItem?.quantity || 0;
     const inCart = qty > 0;
 

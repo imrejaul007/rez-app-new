@@ -8,7 +8,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { borderRadius, colors, spacing } from '@/constants/theme';
-import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
+import { useUserIdentityStore, IdentitySegment, UserIdentityState } from '@/stores/userIdentityStore';
 
 const NAVY    = '#1a3a52';
 const MUSTARD = '#FFC857';
@@ -54,7 +54,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
   currencySymbol,
   onPress,
 }) => {
-  const { segment } = useUserIdentityStore();
+  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
   const savingsLabel = SEGMENT_SAVINGS_LABEL[segment] ?? 'You saved this month';
   const isEmptyState = thisMonthSaved === 0 && totalSaved === 0;
 

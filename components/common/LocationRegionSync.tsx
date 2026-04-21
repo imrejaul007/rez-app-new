@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { useRegionStore, type RegionId } from '@/stores/regionStore';
+import { useRegionStore, type RegionId, type RegionStoreState } from '@/stores/regionStore';
 import { useLocation } from '@/contexts/LocationContext';
 import { UserLocation } from '@/types/location.types';
 
@@ -27,7 +27,7 @@ const REGION_LOCATIONS: Record<RegionId, { name: string; coords: { lat: number; 
 };
 
 function LocationRegionSync() {
-  const regionState = useRegionStore((s) => s.state);
+  const regionState = useRegionStore((s: RegionStoreState) => s.state);
   const { state: locationState, setManualLocation } = useLocation();
   const hasInitialized = useRef(false);
 
@@ -37,7 +37,8 @@ function LocationRegionSync() {
     if (regionState.isInitialized && !hasInitialized.current) {
       hasInitialized.current = true;
 
-      const regionData = REGION_LOCATIONS[regionState.currentRegion];
+      const currentRegionId: RegionId = regionState.currentRegion;
+      const regionData = REGION_LOCATIONS[currentRegionId];
       if (regionData) {
         // Check if current location matches the region
         const currentCity = locationState.currentLocation?.address?.city;

@@ -23,6 +23,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getImagePicker } from '@/utils/lazyImports';
+import { ImagePickerAsset } from 'expo-image-picker';
 import { Share } from 'react-native';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -67,7 +68,7 @@ function SharePage() {
       });
 
       if (!result.canceled && result.assets) {
-        const newImages = result.assets.map((asset) => asset.uri);
+        const newImages = result.assets.map((asset: ImagePickerAsset) => asset.uri);
         if (!isMounted()) return;
         setSelectedImages((prev) => [...prev, ...newImages].slice(0, 5));
       }

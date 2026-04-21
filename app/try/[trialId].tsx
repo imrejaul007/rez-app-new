@@ -168,7 +168,7 @@ function TrialDetailScreen() {
       if (bookingResponse?.data?.bookingId) {
         router.push(`/try/booking/${bookingResponse.data.bookingId}`);
       } else {
-        if (__DEV__) logger.error('No booking ID in response:', bookingResponse);
+        if (__DEV__) logger.error('No booking ID in response: ' + JSON.stringify(bookingResponse));
         setBookingModal((prev) => ({
           ...prev,
           loading: false,

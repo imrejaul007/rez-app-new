@@ -33,7 +33,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useHomePersona, QuickLink, PersonaId } from '@/hooks/useHomePersona';
-import { useUserIdentityStore } from '@/stores/userIdentityStore';
+import { useUserIdentityStore, type UserIdentityState } from '@/stores/userIdentityStore';
 import { spacing, borderRadius } from '@/constants/theme';
 
 const { width: SW } = Dimensions.get('window');
@@ -307,7 +307,7 @@ const GeneralHero = memo(function GeneralHero({
  * so the correct persona is shown on first paint (no flash).
  */
 export const PersonalizedHeroBanner = memo(function PersonalizedHeroBanner() {
-  const isHydrated = useUserIdentityStore((s) => s._hydrated);
+  const isHydrated = useUserIdentityStore((s: UserIdentityState) => s._hydrated);
   const persona = useHomePersona();
 
   // Don't render anything until AsyncStorage rehydration is complete —

@@ -17,7 +17,7 @@ export type StatedIdentity = 'student' | 'corporate' | 'other' | 'general';
 export type VerificationSegment = 'none' | 'provisional' | 'pending' | 'verified';
 export type InstituteStatus = 'not_available' | 'pending_referral' | 'onboarded';
 
-interface UserIdentityState {
+export interface UserIdentityState {
   segment: IdentitySegment;
   featureLevel: number;
   verificationSegment: VerificationSegment;

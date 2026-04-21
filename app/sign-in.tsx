@@ -17,7 +17,7 @@ import { useRouter, useRootNavigationState } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, type AuthStoreState } from '@/stores/authStore';
 import { useAuth } from '@/contexts/AuthContext';
 import FormInput from '@/components/onboarding/FormInput';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -40,7 +40,7 @@ function SignInScreen() {
   const userRef = useRef(useAuthStore.getState()?.state?.user);
   const isAuthRef = useRef(useAuthStore.getState()?.state?.isAuthenticated);
   useEffect(() => {
-    const unsub = useAuthStore.subscribe((s) => {
+    const unsub = useAuthStore.subscribe((s: AuthStoreState) => {
       userRef.current = s.state.user;
       isAuthRef.current = s.state.isAuthenticated;
     });
@@ -233,7 +233,7 @@ function SignInScreen() {
           phoneNumber: errorMessage,
         }));
         // BUG-094 FIX: Gate behind __DEV__ to prevent leaking error details in production
-        if (__DEV__) logger.error('[SIGN-IN] OTP send failed:', error, { errorMessage });
+        if (__DEV__) logger.error('[SIGN-IN] OTP send failed: ' + errorMessage);
         platformAlertSimple(
           'OTP Failed',
           `Could not send OTP: ${errorMessage}\n\nPlease check your internet connection and try again.`,

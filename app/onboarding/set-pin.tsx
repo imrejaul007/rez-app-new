@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, type AuthStoreState } from '@/stores/authStore';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import apiClient from '@/services/apiClient';
@@ -23,7 +23,7 @@ function SetPinScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Determine where to navigate after PIN setup (or skip)
-  const isOnboarded = useAuthStore((s) => s.state?.user?.isOnboarded ?? false);
+  const isOnboarded = useAuthStore((s: AuthStoreState) => s.state?.user?.isOnboarded ?? false);
   const nextRoute = isOnboarded ? '/(tabs)/' : '/onboarding/notification-permission';
 
   // CA-AUT-027 FIX: Validate PIN strength (reject weak PINs like 1111, 1234, sequential)

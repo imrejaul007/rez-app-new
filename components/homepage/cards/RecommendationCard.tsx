@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { RecommendationCardProps } from '@/types/homepage.types';
 import { useCartState, useCartActions } from '@/stores/selectors';
+import type { CartItemWithQuantity } from '@/stores/cartStore';
 import { useWishlist } from '@/contexts/WishlistContext';
 import StockBadge from '@/components/common/StockBadge';
 import { useStockStatus } from '@/hooks/useStockStatus';
@@ -68,7 +69,7 @@ function RecommendationCard({
   // Check if product is in cart and get quantity
   const { productId, cartItem, quantityInCart, isInCart } = useMemo(() => {
     const id = (recommendation as any)._id || recommendation.id;
-    const item = cartState.items.find(i => i.productId === id);
+    const item = cartState.items.find((i: CartItemWithQuantity) => i.productId === id);
     const qty = item?.quantity || 0;
     const inCart = qty > 0;
 

@@ -12,6 +12,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ProductCardProps } from '@/types/homepage.types';
 import { useCartState, useCartActions } from '@/stores/selectors';
+import type { CartItemWithQuantity } from '@/stores/cartStore';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useStockStatus } from '@/hooks/useStockStatus';
 import { useStockNotifications } from '@/hooks/useStockNotifications';
@@ -59,7 +60,7 @@ function ProductCard({
 
   // Check if product is in cart and get quantity
   const { cartItem, quantityInCart, isInCart } = useMemo(() => {
-    const item = cartState.items.find((i) => i.productId === productId);
+    const item = cartState.items.find((i: CartItemWithQuantity) => i.productId === productId);
     const qty = item?.quantity || 0;
     const inCart = qty > 0;
 

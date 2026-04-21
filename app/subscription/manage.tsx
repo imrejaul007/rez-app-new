@@ -19,7 +19,7 @@ import PaymentFailedBanner from '@/components/subscription/PaymentFailedBanner';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
+import { useUserIdentityStore, IdentitySegment, UserIdentityState } from '@/stores/userIdentityStore';
 // StickyCTAContainer available for future use
 
 const SEGMENT_SAVINGS_TITLE: Partial<Record<IdentitySegment, string>> = {
@@ -47,7 +47,7 @@ function SubscriptionManagePage() {
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const isMounted = useIsMounted();
-  const { segment } = useUserIdentityStore();
+  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
   const savingsTitle = SEGMENT_SAVINGS_TITLE[segment] ?? 'Total Savings';
 
   useEffect(() => {

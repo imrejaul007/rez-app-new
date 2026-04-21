@@ -119,7 +119,7 @@ function FlashSaleDetailPage() {
           endTimeMs = new Date(flashSale.endTime).getTime();
         }
       } catch (err) {
-        logger.error('Date parsing error:', err);
+        logger.error('Date parsing error: ' + (err instanceof Error ? err.message : String(err)));
         return;
       }
 

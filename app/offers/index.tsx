@@ -22,7 +22,7 @@ import { platformAlertSimple } from '@/utils/platformAlert';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
+import { useUserIdentityStore, IdentitySegment, UserIdentityState } from '@/stores/userIdentityStore';
 
 // Segment-aware hero banner config
 const SEGMENT_HERO: Partial<Record<IdentitySegment, { title: string; subtitle: string; icon: string; color: string }>> =
@@ -74,7 +74,7 @@ const PALETTE = {
 function OffersScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { segment } = useUserIdentityStore();
+  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
   const heroConfig = SEGMENT_HERO[segment];
   const user = useAuthUser();
   const isAuthenticated = useIsAuthenticated();

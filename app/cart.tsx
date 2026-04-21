@@ -22,7 +22,7 @@ import { CartItem as CartItemType, LockedProduct, LOCK_CONFIG } from '@/types/ca
 // made it unclear what was safe to ship. cartUtils.ts contains only production utilities.
 import { getItemCount, getLockedItemCount, updateLockedProductTimers } from '@/utils/cartUtils';
 import { useCartValidation } from '@/hooks/useCartValidation';
-import { useCartStore } from '@/stores/cartStore';
+import { useCartStore, CartStoreState, CartItemWithQuantity } from '@/stores/cartStore';
 import { useTotalBalance, useWalletLoading, useIsAuthenticated } from '@/stores';
 import CachedImage from '@/components/ui/CachedImage';
 import cartApi from '@/services/cartApi';
@@ -89,8 +89,8 @@ function CartPage() {
   const router = useRouter();
   const params = useLocalSearchParams<any>();
   const insets = useSafeAreaInsets();
-  const cartState = useCartStore((s) => s.state);
-  const cartActions = useCartStore((s) => s.actions);
+  const cartState = useCartStore((s: CartStoreState) => s.state);
+  const cartActions = useCartStore((s: CartStoreState) => s.actions);
   const totalBalance = useTotalBalance();
   const walletLoading = useWalletLoading();
   const isAuthenticated = useIsAuthenticated();
@@ -121,8 +121,8 @@ function CartPage() {
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
     return (cartState.items ?? [])
-      .filter((item) => asExtendedCartItem(item).itemType !== 'service') // Only non-service items
-      .map((item) => {
+      .filter((item: CartItemWithQuantity) => asExtendedCartItem(item).itemType !== 'service') // Only non-service items
+      .map((item: CartItemWithQuantity) => {
         const ext = asExtendedCartItem(item);
         // Preserve metadata for event items
         const metadata = (ext.metadata as Record<string, unknown>) || {};
@@ -152,8 +152,8 @@ function CartPage() {
   // Service items from cart
   const serviceItems = useMemo(() => {
     return (cartState.items ?? [])
-      .filter((item) => asExtendedCartItem(item).itemType === 'service')
-      .map((item) => {
+      .filter((item: CartItemWithQuantity) => asExtendedCartItem(item).itemType === 'service')
+      .map((item: CartItemWithQuantity) => {
         const ext = asExtendedCartItem(item);
         const bookingDetails = ext.serviceBookingDetails || {};
         const bookingDate = bookingDetails.bookingDate ? new Date(bookingDetails.bookingDate as string | Date) : null;
@@ -206,13 +206,13 @@ function CartPage() {
   const overallTotal = useMemo(() => {
     // ✅ FIX: Recalculate total from scratch instead of relying on cartState.totalPrice
     // This prevents incremental modifications from drifting over time
-    const recalculatedCartTotal = productItems.reduce((sum, item) => {
+    const recalculatedCartTotal = productItems.reduce((sum: number, item: CartItemWithQuantity) => {
       const price = typeof item.price === 'number' ? item.price : 0;
       const qty = typeof item.quantity === 'number' ? item.quantity : 0;
       return sum + price * qty;
     }, 0);
 
-    const serviceTotal = serviceItems.reduce((sum, item) => {
+    const serviceTotal = serviceItems.reduce((sum: number, item: CartItemWithQuantity) => {
       const price = typeof item.price === 'number' ? item.price : 0;
       const qty = typeof item.quantity === 'number' ? item.quantity : 0;
       return sum + price * qty;

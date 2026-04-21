@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ProductCardProps } from '@/types/homepage.types';
 import { useCartState, useCartActions } from '@/stores/selectors';
+import type { CartItemWithQuantity } from '@/stores/cartStore';
 import { useWishlist } from '@/contexts/WishlistContext';
 import StockBadge from '@/components/common/StockBadge';
 import RatingStars from '@/components/reviews/RatingStars';
@@ -51,7 +52,7 @@ function ProductCard({
   // Check if product is in cart and get quantity - ONLY for THIS product
   const { cartItem, quantityInCart, isInCart } = useMemo(() => {
     // Find this specific product in cart
-    const item = cartState.items.find(i => i.productId === productId);
+    const item = cartState.items.find((i: CartItemWithQuantity) => i.productId === productId);
     const qty = item?.quantity || 0;
     const inCart = qty > 0;
 

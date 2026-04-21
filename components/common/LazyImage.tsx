@@ -123,7 +123,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   // Preload image if requested
   useEffect(() => {
     if (preload && mainSourceUri) {
-      Image.prefetch(mainSourceUri).catch((err) => {
+      Image.prefetch(mainSourceUri).catch((err: Error) => {
       });
     }
   }, [preload, mainSourceUri]);

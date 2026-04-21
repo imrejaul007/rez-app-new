@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Toast from './Toast';
-import { useToastStore } from '@/stores/toastStore';
+import { useToastStore, type ToastStoreState } from '@/stores/toastStore';
 
 export interface ToastConfig {
   id: string;
@@ -32,8 +32,8 @@ export function showToast(config: Omit<ToastConfig, 'id'>) {
  * No provider needed. Place this component once in the tree (e.g., ThemedNavigation).
  */
 export default function ToastManager() {
-  const currentToast = useToastStore((s) => s.currentToast);
-  const onDismiss = useToastStore((s) => s._onDismiss);
+  const currentToast = useToastStore((s: ToastStoreState) => s.currentToast);
+  const onDismiss = useToastStore((s: ToastStoreState) => s._onDismiss);
 
   if (!currentToast) return null;
 

@@ -14,6 +14,7 @@ import { GoingOutProductCardProps } from '@/types/going-out.types';
 import { normalizeProductPrice, normalizeProductRating } from '@/utils/productDataNormalizer';
 import { formatPrice } from '@/utils/priceFormatter';
 import { useCartState, useCartActions } from '@/stores/selectors';
+import type { CartItemWithQuantity } from '@/stores/cartStore';
 import { colors } from '@/constants/theme';
 
 function _GoingOutProductCardInner({
@@ -33,7 +34,7 @@ function _GoingOutProductCardInner({
   // Get product ID and check if in cart
   const productId = (product as any)._id || product.id;
   const { cartItem, quantityInCart, isInCart } = useMemo(() => {
-    const item = cartState.items.find(i => i.productId === productId || i.id === productId);
+    const item = cartState.items.find((i: CartItemWithQuantity) => i.productId === productId || i.id === productId);
     const qty = item?.quantity || 0;
     return {
       cartItem: item,

@@ -12,7 +12,7 @@ export interface ToastItem {
   }>;
 }
 
-interface ToastStoreState {
+export interface ToastStoreState {
   /** Currently displayed toast (queue is processed one-at-a-time) */
   currentToast: ToastItem | null;
   /** Queued toasts waiting to be shown */

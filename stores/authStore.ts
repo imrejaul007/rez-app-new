@@ -29,7 +29,7 @@ interface AuthActions {
   loginWithTokens: (tokens: { accessToken: string; refreshToken: string }, user: User) => Promise<User>;
 }
 
-interface AuthStoreState {
+export interface AuthStoreState {
   state: AuthState;
   actions: AuthActions;
   _setFromProvider: (state: AuthState, actions: AuthActions) => void;

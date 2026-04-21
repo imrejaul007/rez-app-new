@@ -77,7 +77,7 @@ export function setOnRegionChangeCallback(callback: (() => Promise<void>) | null
 
 // ── Store ──
 
-interface RegionState {
+export interface RegionState {
   currentRegion: RegionId;
   regionConfig: RegionConfig | null;
   availableRegions: RegionConfig[];
@@ -87,7 +87,7 @@ interface RegionState {
   isInitialized: boolean;
 }
 
-interface RegionStoreState {
+export interface RegionStoreState {
   state: RegionState;
 
   // Actions

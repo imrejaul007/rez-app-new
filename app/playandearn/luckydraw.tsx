@@ -80,7 +80,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
   useEffect(() => {
     const startAnimation = () => {
       translateY.value = 0;
-      translateX.value = ((Date.now() * 7 + (i ?? 0) * 31) % 200) - 100;
+      translateX.value = ((Date.now() * 7 + delay * 31) % 200) - 100;
       opacity.value = 1;
       rotate.value = 0;
 

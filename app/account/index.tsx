@@ -22,7 +22,7 @@ import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 import analyticsService from '@/services/analyticsService';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
-import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
+import { useUserIdentityStore, IdentitySegment, UserIdentityState } from '@/stores/userIdentityStore';
 
 // ---------------------------------------------------------------------------
 // Section Card Component (memoized)
@@ -62,7 +62,8 @@ function AccountPage() {
 
   const { sections, loading, error, refreshing, refresh } = useAccountData(activeTab);
 
-  const { segment, featureLevel, verificationSegment, statedIdentity } = useUserIdentityStore();
+  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
+  const { featureLevel, verificationSegment, statedIdentity } = useUserIdentityStore();
   // Wallet context for dynamic insights
   const rezBalance = useRezBalance();
 
