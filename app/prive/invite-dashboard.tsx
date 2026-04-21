@@ -23,6 +23,7 @@ import { platformAlertSimple } from '@/utils/platformAlert';
 import usePriveEligibility from '@/hooks/usePriveEligibility';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const TIER_COLORS: Record<string, string> = {
   entry: colors.brand.goldAccent,
@@ -113,7 +114,7 @@ function PriveInviteDashboard() {
       });
     } catch (err) {
       // R2-H1 FIX: Log Share failure so attribution can be retried.
-      if (__DEV__) console.warn('[invite-dashboard] Share failed:', err);
+      if (__DEV__) logger.warn('[invite-dashboard] Share failed:', { error: err });
     }
   };
 

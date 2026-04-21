@@ -16,6 +16,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { getCategoryTheme } from '@/config/categoryThemeConfig';
 import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 interface StampCardData {
   storeId: string;
@@ -54,7 +55,7 @@ export default function StampCardScreen() {
         setStampCard(response.data.stampCard);
       }
     } catch (error: any) {
-      if (__DEV__) console.error('[Stamp Card] Error fetching data:', error);
+      if (__DEV__) logger.error('[Stamp Card] Error fetching data:', error);
     } finally {
       if (!isMounted()) return;
       setLoading(false);

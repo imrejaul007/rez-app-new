@@ -22,6 +22,7 @@ import apiClient from '@/services/apiClient';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 interface MyReferralData {
   referralCode: string;
@@ -115,7 +116,7 @@ export default function FriendsScreen() {
       title: `Join ${BRAND.APP_NAME}`,
     }).catch((err: any) => {
       // R2-H1 FIX: Log Share failure so attribution can be retried.
-      if (__DEV__) console.warn('[friends] Share failed:', err);
+      if (__DEV__) logger.warn('[friends] Share failed:', { error: err });
     });
   };
 

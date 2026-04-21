@@ -4,6 +4,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 type Period = 'weekly' | 'monthly' | 'alltime';
 
@@ -46,7 +47,7 @@ export default function LeaderboardScreen() {
       const data = await tryApi.getLeaderboard(city, period);
       setLeaderboard(data);
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to load leaderboard:', err);
+      if (__DEV__) logger.error('Failed to load leaderboard:', err);
     } finally {
       setLoading(false);
     }

@@ -28,6 +28,7 @@ import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import * as Haptics from 'expo-haptics';
 import apiClient from '@/services/apiClient';
+import { logger } from '@/utils/logger';
 
 // Rez Design System Colors
 
@@ -232,7 +233,7 @@ function SignInScreen() {
           phoneNumber: errorMessage,
         }));
         // BUG-094 FIX: Gate behind __DEV__ to prevent leaking error details in production
-        if (__DEV__) console.error('[SIGN-IN] OTP send failed:', errorMessage, error);
+        if (__DEV__) logger.error('[SIGN-IN] OTP send failed:', error, { errorMessage });
         platformAlertSimple(
           'OTP Failed',
           `Could not send OTP: ${errorMessage}\n\nPlease check your internet connection and try again.`,

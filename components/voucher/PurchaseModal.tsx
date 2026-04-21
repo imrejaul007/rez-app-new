@@ -22,6 +22,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useVoucherPurchase } from '@/hooks/useVoucherPurchase';
 import { useRezBalance, useWalletLoading, useRefreshWallet, useGetCurrencySymbol } from '@/stores/selectors';
 import logger from '@/utils/logger';
+import { platformAlertSimple } from '@/utils/platformAlert';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -123,9 +124,7 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({
       const message = `Insufficient Balance\n\nYou need ${currencySymbol}${selectedDenomination - walletBalance} more to purchase this voucher.\n\nCurrent balance: ${currencySymbol}${walletBalance}`;
 
       // Use window.alert for web compatibility
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      }
+      platformAlertSimple('Insufficient Balance', message);
       return;
     }
 

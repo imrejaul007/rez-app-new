@@ -23,6 +23,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import uuid from 'react-native-uuid';
 import { Sentry } from '@/config/sentry';
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Type Definitions
@@ -160,7 +161,7 @@ class ErrorReporter {
       this.setupGlobalErrorHandlers();
       this.isInitialized = true;
     } catch (error) {
-      console.error('Failed to initialize ErrorReporter:', error);
+      logger.error('Failed to initialize ErrorReporter:', error);
     }
   }
 
@@ -288,7 +289,7 @@ class ErrorReporter {
         } catch {}
       }
     } catch (err) {
-      console.error('Failed to capture error:', err);
+      logger.error('Failed to capture error:', err);
     }
   }
 
@@ -395,7 +396,7 @@ class ErrorReporter {
         this.breadcrumbs = JSON.parse(data);
       }
     } catch (error) {
-      console.error('Failed to load breadcrumbs:', error);
+      logger.error('Failed to load breadcrumbs:', error);
     }
   }
 
@@ -429,7 +430,7 @@ class ErrorReporter {
         JSON.stringify(this.errors)
       );
     } catch (error) {
-      console.error('Failed to save errors:', error);
+      logger.error('Failed to save errors:', error);
     }
   }
 
@@ -443,7 +444,7 @@ class ErrorReporter {
         this.errors = JSON.parse(data);
       }
     } catch (error) {
-      console.error('Failed to load errors:', error);
+      logger.error('Failed to load errors:', error);
     }
   }
 
@@ -648,15 +649,15 @@ class ErrorReporter {
     switch (error.severity) {
       case 'fatal':
       case 'error':
-        console.error(message, error);
+        logger.error(message, { error });
         break;
       case 'warning':
-        console.warn(message, error);
+        logger.warn(message, { error });
         break;
       case 'info':
       case 'debug':
         // L-2 FIX: Only emit info/debug logs in development to prevent production noise
-        if (__DEV__) console.log(message, error);
+        if (__DEV__) logger.info(message, { error });
         break;
     }
   }
@@ -690,7 +691,7 @@ class ErrorReporter {
         }
       }
     } catch (error) {
-      console.error('Failed to send errors:', error);
+      logger.error('Failed to send errors:', error);
     }
   }
 

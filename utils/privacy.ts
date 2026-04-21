@@ -1,4 +1,5 @@
 /**
+import { logger } from '@/utils/logger';
  * Privacy Utilities
  * GDPR-compliant data anonymization functions
  */
@@ -180,7 +181,7 @@ export const logPrivacyEvent = (
 ): void => {
   // M-11 FIX: Send privacy audit event to analytics/audit system in production
   if (__DEV__) {
-    console.log('[Privacy Audit]', {
+    logger.info('[Privacy Audit]', {
       action,
       dataType,
       userId: userId || 'unknown',

@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import gameAuthGuard from './gameAuthGuard';
 import gameRateLimiter from './gameRateLimiter';
 import { validateCoinAmount, sanitizeObject } from './gameValidation';
+import { logger } from '@/utils/logger';
 
 // Security flags storage
 const SECURITY_FLAGS_KEY = 'security_flags';
@@ -253,7 +254,7 @@ export class GameSecurityMiddleware {
 
       // Log to console in development
       if (__DEV__) {
-        console.warn(`[GameSecurityMiddleware] Suspicious activity logged:`, activity);
+        logger.warn('[GameSecurityMiddleware] Suspicious activity logged:', { activity });
       }
 
       // In production, send to backend security service

@@ -8,7 +8,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import gameApi from '../../services/gameApi';
 import { useGamification } from '@/contexts/GamificationContext';
-import { useGetCurrencySymbol, useRezBalance, useRefreshWallet, useAdjustBalance, useRollbackAdjustment } from '@/stores/selectors';
+import {
+  useGetCurrencySymbol,
+  useRezBalance,
+  useRefreshWallet,
+  useAdjustBalance,
+  useRollbackAdjustment,
+} from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -78,7 +84,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
   useEffect(() => {
     const startAnimation = () => {
       translateY.value = 0;
-      translateX.value = Math.random() * 200 - 100;
+      translateX.value = ((Date.now() * 7 + (i ?? 0) * 31) % 200) - 100;
       opacity.value = 1;
       rotate.value = 0;
 

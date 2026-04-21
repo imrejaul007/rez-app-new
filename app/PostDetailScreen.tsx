@@ -27,6 +27,7 @@ import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSy
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -168,7 +169,7 @@ function PostDetailScreen() {
     } catch (error: any) {
       // Log non-cancellation errors for debugging
       if (error?.code !== 'E_CANCELLED' && error?.code !== 'E_FAILED_TO_SHOW') {
-        console.warn('[PostDetail] Share failed:', error?.message || error);
+        logger.warn('[PostDetail] Share failed:', { error: error?.message || error });
       }
     }
   }, [post]);

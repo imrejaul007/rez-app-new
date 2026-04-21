@@ -14,6 +14,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface Mission {
   id: string;
@@ -92,7 +93,7 @@ export default function MissionsScreen() {
       const data = await tryApi.getMissions();
       setMissions(data);
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to load missions:', err);
+      if (__DEV__) logger.error('Failed to load missions:', err);
     } finally {
       setLoading(false);
     }

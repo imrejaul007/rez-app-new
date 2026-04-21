@@ -21,6 +21,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/utils/logger';
 
 // Import Razorpay for native support
 let RazorpayCheckout: any = null;
@@ -273,7 +274,7 @@ function PaymentPage() {
     try {
       // Validate required fields exist
       if (!paymentData.razorpay_order_id || !paymentData.razorpay_payment_id || !paymentData.razorpay_signature) {
-        console.error('[Razorpay] Missing required payment verification fields');
+        logger.error('[Razorpay] Missing required payment verification fields');
         return false;
       }
 
@@ -298,14 +299,14 @@ function PaymentPage() {
       if (response.success && response.data) {
         // Additional safety: ensure response contains order/payment confirmation
         if (!(response.data as any).orderId && !(response.data as any).paymentId) {
-          console.warn('[Razorpay] Verification response missing orderId or paymentId');
+          logger.warn('[Razorpay] Verification response missing orderId or paymentId');
           return false;
         }
         return true;
       }
       return false;
     } catch (error: any) {
-      console.error('[Razorpay] Verification error:', error.message);
+      logger.error('[Razorpay] Verification error:', { message: error.message });
       return false;
     }
   };

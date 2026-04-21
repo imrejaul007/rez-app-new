@@ -16,6 +16,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import apiClient from '@/services/apiClient';
+import { logger } from '@/utils/logger';
 
 interface SipConfig {
   monthlyAmount: number;
@@ -68,7 +69,7 @@ function GoldSavingsSipPage() {
           setGoldData(response.data);
         }
       } catch (error: any) {
-        if (__DEV__) console.debug('[GoldSIP] API fetch failed, using fallback data');
+        if (__DEV__) logger.debug('[GoldSIP] API fetch failed, using fallback data');
         if (isMounted) {
           // Use fallback data if API not available
           setGoldData({
@@ -118,7 +119,7 @@ function GoldSavingsSipPage() {
         setGoldData(response.data);
       }
     } catch (error: any) {
-      if (__DEV__) console.debug('[GoldSIP] API fetch failed, using fallback data');
+      if (__DEV__) logger.debug('[GoldSIP] API fetch failed, using fallback data');
       // Use fallback data if API not available
       setGoldData({
         activeSip: null,
@@ -155,7 +156,7 @@ function GoldSavingsSipPage() {
       const amount = customAmount ? parseInt(customAmount) : selectedAmount;
 
       if (isNaN(amount) || amount <= 0) {
-        if (__DEV__) console.warn('[GoldSIP] Invalid amount:', amount);
+        if (__DEV__) logger.warn('[GoldSIP] Invalid amount:', { amount });
         return;
       }
 
@@ -170,7 +171,7 @@ function GoldSavingsSipPage() {
         setCustomAmount('');
       }
     } catch (error: any) {
-      if (__DEV__) console.error('[GoldSIP] Failed to start SIP:', error);
+      if (__DEV__) logger.error('[GoldSIP] Failed to start SIP:', error);
     } finally {
       setSaving(false);
     }
@@ -182,7 +183,7 @@ function GoldSavingsSipPage() {
       await apiClient.delete('/wallet/gold-sip');
       await fetchGoldData();
     } catch (error: any) {
-      if (__DEV__) console.error('[GoldSIP] Failed to cancel SIP:', error);
+      if (__DEV__) logger.error('[GoldSIP] Failed to cancel SIP:', error);
     } finally {
       setSaving(false);
     }

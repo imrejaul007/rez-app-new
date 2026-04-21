@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface CoinsBucket {
   amount: number;
@@ -76,7 +77,7 @@ export default function TrialCoinsScreen() {
           setTransactions(coinsData.recentTransactions);
         }
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to load coins data:', err);
+        if (__DEV__) logger.error('Failed to load coins data:', err);
       } finally {
         setLoading(false);
       }
@@ -120,12 +121,12 @@ export default function TrialCoinsScreen() {
       } catch (paymentErr: any) {
         if (paymentErr.code !== 2) {
           // 2 = user cancelled
-          if (__DEV__) console.error('Payment error:', paymentErr);
+          if (__DEV__) logger.error('Payment error:', paymentErr);
         }
         setPurchaseModal((prev) => ({ ...prev, loading: false }));
       }
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to purchase coins:', err);
+      if (__DEV__) logger.error('Failed to purchase coins:', err);
       setPurchaseModal((prev) => ({ ...prev, loading: false }));
     }
   };

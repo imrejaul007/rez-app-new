@@ -22,6 +22,7 @@ import {
   withTimeout,
 } from './requestRetry';
 import NetInfo from '@react-native-community/netinfo';
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Type Definitions
@@ -251,7 +252,7 @@ class EnhancedApiClient {
       const cached = requestCache.get<T>(requestKey);
       if (cached) {
         if (logging) {
-          console.log(`💾 [CACHE HIT] ${endpoint}`);
+          logger.debug(`💾 [CACHE HIT] ${endpoint}`);
         }
         return cached;
       }
@@ -272,8 +273,8 @@ class EnhancedApiClient {
       metrics.attempts++;
 
       if (logging) {
-        console.log(`\n📤 [REQUEST] GET ${endpoint}`);
-        if (params) console.log(`   Params:`, params);
+        logger.debug(`[REQUEST] GET ${endpoint}`);
+        if (params) logger.debug(`[REQUEST] GET params`, params);
       }
 
       // Use timeout wrapper
@@ -286,7 +287,7 @@ class EnhancedApiClient {
       const response = await timeoutPromise;
 
       if (logging) {
-        console.log(`📥 [RESPONSE] GET ${endpoint}`, {
+        logger.debug(`📥 [RESPONSE] GET ${endpoint}`, {
           success: response.success,
           hasData: !!response.data,
         });
@@ -326,7 +327,7 @@ class EnhancedApiClient {
       if (cache && response.success) {
         requestCache.set(requestKey, response, cacheDuration);
         if (logging) {
-          console.log(`💾 [CACHED] ${endpoint}`);
+          logger.debug(`[CACHED] GET ${endpoint}`);
         }
       }
 
@@ -336,7 +337,7 @@ class EnhancedApiClient {
       metrics.duration = metrics.endTime - metrics.startTime;
 
       if (logging) {
-        console.log(`✅ [SUCCESS] ${endpoint} (${metrics.duration}ms, ${metrics.attempts} attempts)`);
+        logger.debug(`[SUCCESS] GET ${endpoint}`, { duration: metrics.duration, attempts: metrics.attempts });
       }
 
       this.recordMetrics(requestKey, metrics);
@@ -350,7 +351,7 @@ class EnhancedApiClient {
       metrics.duration = metrics.endTime - metrics.startTime;
 
       if (logging) {
-        console.error(`❌ [FAILED] ${endpoint}`, error);
+        logger.error(`[FAILED] GET ${endpoint}`, error);
       }
 
       this.recordMetrics(requestKey, metrics);
@@ -396,7 +397,7 @@ class EnhancedApiClient {
       metrics.attempts++;
 
       if (logging) {
-        console.log(`\n📤 [REQUEST] POST ${endpoint}`);
+        logger.debug(`[REQUEST] POST ${endpoint}`);
       }
 
       const timeoutPromise = withTimeout(
@@ -408,7 +409,7 @@ class EnhancedApiClient {
       const response = await timeoutPromise;
 
       if (logging) {
-        console.log(`📥 [RESPONSE] POST ${endpoint}`, {
+        logger.debug(`📥 [RESPONSE] POST ${endpoint}`, {
           success: response.success,
         });
       }
@@ -452,7 +453,7 @@ class EnhancedApiClient {
       metrics.duration = metrics.endTime - metrics.startTime;
 
       if (logging) {
-        console.error(`❌ [FAILED] POST ${endpoint}`, error);
+        logger.error(`[FAILED] POST ${endpoint}`, error);
       }
 
       this.recordMetrics(requestKey, metrics);
@@ -504,7 +505,7 @@ class EnhancedApiClient {
 
     const makeRequest = async (): Promise<ApiResponse<T>> => {
       if (logging) {
-        console.log(`\n📤 [REQUEST] DELETE ${endpoint}`);
+        logger.debug(`[REQUEST] DELETE ${endpoint}`);
       }
 
       const timeoutPromise = withTimeout(
@@ -527,7 +528,7 @@ class EnhancedApiClient {
 
     } catch (error: any) {
       if (logging) {
-        console.error(`❌ [FAILED] DELETE ${endpoint}`, error);
+        logger.error(`[FAILED] DELETE ${endpoint}`, error);
       }
 
       return {
@@ -544,7 +545,7 @@ class EnhancedApiClient {
   clearCache(): void {
     requestCache.clear();
     if (__DEV__) {
-      console.log(`🗑️  [CACHE] Cleared`);
+      logger.debug('[CACHE] Cleared');
     }
   }
 
@@ -578,22 +579,22 @@ class EnhancedApiClient {
   printStats(): void {
     if (!__DEV__) return;
 
-    console.log('\n┌─────────────────────────────────────────┐');
-    console.log('│     ENHANCED API CLIENT STATISTICS     │');
-    console.log('└─────────────────────────────────────────┘');
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│     ENHANCED API CLIENT STATISTICS     │');
+    logger.debug('└─────────────────────────────────────────┘');
 
     // Deduplication stats
     const dedupeStats = globalDeduplicator.getStats();
-    console.log('\n📊 Deduplication:');
-    console.log(`   Total Requests:    ${dedupeStats.totalRequests}`);
-    console.log(`   Deduplicated:      ${dedupeStats.deduplicatedRequests}`);
-    console.log(`   Requests Saved:    ${dedupeStats.saved}`);
-    console.log(`   Active:            ${dedupeStats.active}`);
+    logger.debug('\n📊 Deduplication:');
+    logger.debug(`   Total Requests:    ${dedupeStats.totalRequests}`);
+    logger.debug(`   Deduplicated:      ${dedupeStats.deduplicatedRequests}`);
+    logger.debug(`   Requests Saved:    ${dedupeStats.saved}`);
+    logger.debug(`   Active:            ${dedupeStats.active}`);
 
     // Cache stats
     const cacheStats = requestCache.getStats();
-    console.log('\n💾 Cache:');
-    console.log(`   Cached Entries:    ${cacheStats.size}`);
+    logger.debug('\n💾 Cache:');
+    logger.debug(`   Cached Entries:    ${cacheStats.size}`);
 
     // Request metrics
     const allMetrics = Array.from(this.metrics.values());
@@ -602,13 +603,13 @@ class EnhancedApiClient {
       ? allMetrics.reduce((sum, m) => sum + (m.duration || 0), 0) / allMetrics.length
       : 0;
 
-    console.log('\n📈 Requests:');
-    console.log(`   Total:             ${allMetrics.length}`);
-    console.log(`   Successful:        ${successCount}`);
-    console.log(`   Failed:            ${allMetrics.length - successCount}`);
-    console.log(`   Avg Duration:      ${avgDuration.toFixed(0)}ms`);
+    logger.debug('\n📈 Requests:');
+    logger.debug(`   Total:             ${allMetrics.length}`);
+    logger.debug(`   Successful:        ${successCount}`);
+    logger.debug(`   Failed:            ${allMetrics.length - successCount}`);
+    logger.debug(`   Avg Duration:      ${avgDuration.toFixed(0)}ms`);
 
-    console.log('─────────────────────────────────────────\n');
+    logger.debug('─────────────────────────────────────────\n');
   }
 }
 

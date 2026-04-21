@@ -32,6 +32,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { isSmallDevice } from '@/utils/responsive';
+import { logger } from '@/utils/logger';
 
 // Helper function to format time slot for display
 const formatTimeSlot = (start: string, end?: string): string => {
@@ -268,11 +269,11 @@ function CartPage() {
             let expiresAt: Date;
             try {
               if (!item.lockedAt || typeof item.lockedAt !== 'string') {
-                console.warn(`Invalid lockedAt for item ${item._id}:`, item.lockedAt);
+                logger.warn(`Invalid lockedAt for item ${item._id}:`, { itemId: item._id, lockedAt: item.lockedAt });
                 return null; // Skip malformed items
               }
               if (!item.expiresAt || typeof item.expiresAt !== 'string') {
-                console.warn(`Invalid expiresAt for item ${item._id}:`, item.expiresAt);
+                logger.warn(`Invalid expiresAt for item ${item._id}:`, { itemId: item._id, expiresAt: item.expiresAt });
                 return null;
               }
               lockedAt = new Date(item.lockedAt);
@@ -280,11 +281,11 @@ function CartPage() {
 
               // Validate dates are valid and not at epoch
               if (isNaN(lockedAt.getTime()) || isNaN(expiresAt.getTime())) {
-                console.warn(`Invalid date format for item ${item._id}`);
+                logger.warn(`Invalid date format for item ${item._id}`);
                 return null;
               }
             } catch (err) {
-              console.warn(`Date parsing error for item ${item._id}:`, err);
+              logger.warn(`Date parsing error for item ${item._id}:`, { error: err });
               return null;
             }
 

@@ -67,6 +67,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useHomeTabStore } from '@/stores/homeTabStore';
 import { getCoinExpiryWarning } from '@/utils/retentionHooks';
+import { logger } from '@/utils/logger';
 
 const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress }) => {
   const isMounted = useIsMounted();
@@ -149,7 +150,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
       })
       .catch(() => {
         // CA-PAY-059: Log error to error reporter instead of silently failing
-        console.warn('[WalletScreen] Failed to load balance hidden preference');
+        logger.warn('[WalletScreen] Failed to load balance hidden preference');
       });
   }, []);
 

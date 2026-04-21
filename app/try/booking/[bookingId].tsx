@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface BookingDetails {
   bookingId: string;
@@ -38,7 +39,7 @@ export default function QRDisplayScreen() {
         const details = await tryApi.getBookingDetails(bookingId);
         setBooking(details);
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to load booking details:', err);
+        if (__DEV__) logger.error('Failed to load booking details:', err);
         setBooking(null);
       } finally {
         setLoading(false);

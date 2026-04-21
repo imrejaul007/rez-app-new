@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import realVouchersApi from '@/services/realVouchersApi';
 import logger from '@/utils/logger';
+import { platformAlertSimple } from '@/utils/platformAlert';
 
 interface PurchaseResult {
   success: boolean;
@@ -75,10 +76,7 @@ export const useVoucherPurchase = () => {
 
           setError(errorMsg);
 
-          // Show error using window.alert for web compatibility
-          if (typeof window !== 'undefined') {
-            window.alert(`Purchase Failed\n\n${errorMsg}`);
-          }
+          platformAlertSimple('Purchase Failed', errorMsg);
 
           setPurchasing(false);
           return {
@@ -131,10 +129,7 @@ export const useVoucherPurchase = () => {
 
         setError(errorMsg);
 
-        // Show error using window.alert for web compatibility
-        if (typeof window !== 'undefined') {
-          window.alert(`Error\n\n${errorMsg}`);
-        }
+        platformAlertSimple('Error', errorMsg);
 
         setPurchasing(false);
         return {

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { TabId } from '@/components/homepage/HomeTabSection';
+import { logger } from '@/utils/logger';
 
 // Legacy type alias for backward compatibility
 export type HomeTabId = 'rez' | 'rez-mall' | 'cash-store';
@@ -142,7 +143,7 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
         });
       }
     } catch (error: any) {
-      console.warn('[homeTabStore] Failed to fetch Prive eligibility:', error);
+      logger.warn('[homeTabStore] Failed to fetch Prive eligibility:', { error });
       // Keep the default state on error
     }
   },

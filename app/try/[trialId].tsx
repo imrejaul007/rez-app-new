@@ -18,6 +18,7 @@ import * as Location from 'expo-location';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { logger } from '@/utils/logger';
 
 // Bangalore city-centre as a safe fallback when location access is denied
 const FALLBACK_GEO = { lat: 12.9716, lng: 77.5946 };
@@ -89,7 +90,7 @@ function TrialDetailScreen() {
         const coinsData = await tryApi.getCoins();
         setCoinBalance(coinsData.totalBalance);
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to load trial details:', err);
+        if (__DEV__) logger.error('Failed to load trial details:', err);
       } finally {
         setLoading(false);
       }
@@ -167,7 +168,7 @@ function TrialDetailScreen() {
       if (bookingResponse?.data?.bookingId) {
         router.push(`/try/booking/${bookingResponse.data.bookingId}`);
       } else {
-        if (__DEV__) console.error('No booking ID in response:', bookingResponse);
+        if (__DEV__) logger.error('No booking ID in response:', bookingResponse);
         setBookingModal((prev) => ({
           ...prev,
           loading: false,

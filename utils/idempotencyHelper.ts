@@ -8,6 +8,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '@/utils/logger';
 
 const IDEMPOTENCY_CACHE_PREFIX = 'idempotency:';
 const IDEMPOTENCY_TTL_MS = 86400000; // 24 hours
@@ -36,7 +37,7 @@ export async function storeIdempotencyResult(
     };
     await AsyncStorage.setItem(cacheKey, JSON.stringify(entry));
   } catch (error) {
-    console.error('Failed to store idempotency result:', error);
+    logger.error('Failed to store idempotency result:', error);
   }
 }
 
@@ -60,7 +61,7 @@ export async function getIdempotencyResult(key: string): Promise<any | null> {
 
     return entry.result;
   } catch (error) {
-    console.error('Failed to retrieve idempotency result:', error);
+    logger.error('Failed to retrieve idempotency result:', error);
     return null;
   }
 }
@@ -73,7 +74,7 @@ export async function clearIdempotencyResult(key: string): Promise<void> {
     const cacheKey = `${IDEMPOTENCY_CACHE_PREFIX}${key}`;
     await AsyncStorage.removeItem(cacheKey);
   } catch (error) {
-    console.error('Failed to clear idempotency result:', error);
+    logger.error('Failed to clear idempotency result:', error);
   }
 }
 

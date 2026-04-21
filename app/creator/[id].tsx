@@ -29,6 +29,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { catchAndWarn } from '@/utils/catchAndReport';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const { width } = Dimensions.get('window');
 const NUQTA_COIN = BRAND.COIN_IMAGE;
@@ -275,7 +276,7 @@ function CreatorProfilePage() {
                 title: creator.name,
               }).catch((err: any) => {
                 // R2-H1 FIX: Log Share failure so attribution can be retried.
-                if (__DEV__) console.warn('[creator] Share failed:', err);
+                if (__DEV__) logger.warn('[creator] Share failed:', { error: err });
               });
             }}
           >

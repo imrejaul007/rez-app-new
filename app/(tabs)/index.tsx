@@ -124,6 +124,7 @@ import sessionTrackingService from '@/services/sessionTrackingService';
 // ProfileMenuModal eagerly loaded — React.lazy + Suspense(null) causes modal to not appear on Android
 import ProfileMenuModal from '@/components/profile/ProfileMenuModal';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 // Lazy-loaded components (below-the-fold / modals / secondary content)
 const HomeTabSection = lazyWithRetry(() => import('@/components/homepage/HomeTabSection'));
@@ -465,7 +466,7 @@ function HomeScreen() {
         sessionTrackingService.startSession(authUser?.id);
         // CARLOS: retention — log to analytics (would go to analytics queue)
         if (__DEV__) {
-          console.debug('[Retention] Session started:', event);
+          logger.debug('[Retention] Session started:', { event });
         }
       } else if (state === 'background' || state === 'inactive') {
         // Session end — app goes background
@@ -475,7 +476,7 @@ function HomeScreen() {
           sessionTrackingService.endSession().catch(() => {});
           // CARLOS: retention — log to analytics (would go to analytics queue)
           if (__DEV__) {
-            console.debug('[Retention] Session ended, duration:', event.sessionDuration, 'ms');
+            logger.debug('[Retention] Session ended', { duration: event.sessionDuration });
           }
           sessionStartTimeRef.current = 0;
         }

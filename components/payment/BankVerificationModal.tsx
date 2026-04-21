@@ -88,11 +88,7 @@ function BankVerificationModal({
     if (!amount1 || !amount2) {
       const errorMsg = 'Please enter both deposit amounts';
       setError(errorMsg);
-      if (Platform.OS === 'web') {
-        window.alert(errorMsg);
-      } else {
-        platformAlertSimple('Missing Information', errorMsg);
-      }
+      platformAlertSimple('Missing Information', errorMsg);
       return;
     }
 

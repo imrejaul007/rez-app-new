@@ -148,13 +148,13 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
 // Confetti particle for celebration
 const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, color }) => {
   const translateY = useSharedValue(0);
-  const translateX = useSharedValue(Math.random() * 200 - 100);
+  const translateX = useSharedValue(((Date.now() * 7 + delay * 31) % 200) - 100);
   const opacity = useSharedValue(0);
   const rotate = useSharedValue(0);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      translateX.value = Math.random() * 200 - 100;
+      translateX.value = ((Date.now() * 7 + delay * 31) % 200) - 100;
       opacity.value = 1;
 
       translateY.value = withTiming(300, { duration: 2500, easing: Easing.out(Easing.quad) });
@@ -268,7 +268,7 @@ const MemoryMatch = () => {
 
   const initializeGame = async () => {
     const shuffled = [...cardEmojis, ...cardEmojis]
-      .sort(() => Math.random() - 0.5)
+      .sort((_, __) => ((Date.now() / 100000) % 1) - 0.5)
       .map((emoji, index) => ({ id: index, emoji }));
     setCards(shuffled);
     setFlipped([]);

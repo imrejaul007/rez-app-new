@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface CategoryBadge {
   category: string;
@@ -67,7 +68,7 @@ export default function BadgesScreen() {
         setUndiscovered(data.undiscovered);
       }
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to load badges:', err);
+      if (__DEV__) logger.error('Failed to load badges:', err);
     } finally {
       setLoading(false);
     }

@@ -17,6 +17,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { logger } from '@/utils/logger';
 
 const BrandCard = ({ brand, onPress }: { brand: Brand; onPress: () => void }) => (
   <Pressable style={styles.brandCard} onPress={onPress}>
@@ -103,7 +104,7 @@ function BrandsPage() {
         setFilteredBrands([]);
       }
     } catch (error: any) {
-      console.error('[BrandsPage] Failed to load brands:', error);
+      logger.error('[BrandsPage] Failed to load brands:', error);
       if (!isMounted()) return;
       setBrands([]);
       setFilteredBrands([]);

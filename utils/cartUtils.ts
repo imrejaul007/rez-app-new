@@ -8,6 +8,7 @@
  */
 
 import { CartItem, LockedProduct, LOCK_CONFIG, getLockStatus } from '@/types/cart';
+import { logger } from '@/utils/logger';
 
 /**
  * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
@@ -50,7 +51,7 @@ export const updateLockedProductTimers = (items: LockedProduct[]): LockedProduct
     .map((item) => {
       // Type guard: validate expiresAt is a valid Date before calling getTime()
       if (!item.expiresAt || !(item.expiresAt instanceof Date)) {
-        console.warn(`Invalid expiresAt for item ${item.id}:`, item.expiresAt);
+        logger.warn(`Invalid expiresAt for item ${item.id}:`, { itemId: item.id, expiresAt: item.expiresAt });
         return { ...item, remainingTime: 0, status: 'expired' as const };
       }
       const remainingTime = Math.max(0, item.expiresAt.getTime() - now.getTime());

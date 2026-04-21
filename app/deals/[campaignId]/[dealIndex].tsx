@@ -31,6 +31,7 @@ import apiClient from '@/services/apiClient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol as useGetCurrencySymbolFromStore } from '@/stores/selectors';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -165,7 +166,7 @@ const DealDetailPage: React.FC = () => {
       } catch (err: any) {
         // CA-CMC-031 FIX: Log error instead of silently ignoring
         // Check redemption status failures should be visible for debugging
-        console.error('Failed to check redemption status:', err?.message || err);
+        logger.error('Failed to check redemption status:', { error: err?.message || err });
         // Don't show error banner — this is non-critical background check
       }
     };

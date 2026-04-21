@@ -52,6 +52,7 @@ import StoreModals, { buildAboutModalData } from '@/components/store/StoreModals
 // Custom hook for all data/state/handlers
 import { useMainStorePageData } from '@/hooks/useMainStorePageData';
 import apiClient from '@/services/apiClient';
+import { logger } from '@/utils/logger';
 
 function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const router = useRouter();
@@ -94,7 +95,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       try {
         scrollViewRef.current.scrollTo({ y: 0, animated: true });
       } catch (e) {
-        console.warn('[MainStore] Failed to scroll:', e);
+        logger.warn('[MainStore] Failed to scroll:', { error: e });
       }
     }
   }, [d]);

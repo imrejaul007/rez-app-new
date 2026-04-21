@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface HistoryItem {
   bookingId: string;
@@ -54,7 +55,7 @@ export default function TrialHistoryScreen() {
         const data = await tryApi.getHistory();
         setBookings(data);
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to load history:', err);
+        if (__DEV__) logger.error('Failed to load history:', err);
       } finally {
         setLoading(false);
       }

@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface Campaign {
   id: string;
@@ -80,7 +81,7 @@ export default function CampaignsScreen() {
         const data = await tryApi.getCampaigns(cityName ?? city);
         setCampaigns(data);
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to load campaigns:', err);
+        if (__DEV__) logger.error('Failed to load campaigns:', err);
       } finally {
         setLoading(false);
       }
@@ -100,7 +101,7 @@ export default function CampaignsScreen() {
       // Reload campaigns to update joined status
       await loadCampaigns();
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to join campaign:', err);
+      if (__DEV__) logger.error('Failed to join campaign:', err);
     }
   };
 

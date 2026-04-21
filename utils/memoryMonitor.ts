@@ -6,6 +6,7 @@
 
 import { Platform, AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '@/utils/logger';
 
 interface MemoryStats {
   timestamp: number;
@@ -254,7 +255,7 @@ class MemoryMonitor {
     const memory = this.formatMemoryStats();
     const storage = await this.getStorageStats();
     if (__DEV__) {
-      console.log(`[MemoryMonitor] ${memory} | Storage: ${storage.totalKeys} keys (${storage.estimatedSize})`);
+      logger.info('[MemoryMonitor]', { memory, totalKeys: storage.totalKeys, estimatedSize: storage.estimatedSize });
     }
     return { memory, storage };
   }

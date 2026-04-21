@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import disputeApi, { Dispute } from '@/services/disputeApi';
 import { colors, typography, spacing, borderRadius, shadows } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const STATUS_COLORS: Record<string, string> = {
   open: colors.error,
@@ -64,7 +65,7 @@ function DisputeListScreen() {
           setHasMore(pagination?.hasNext ?? false);
         }
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to fetch disputes:', err);
+        if (__DEV__) logger.error('Failed to fetch disputes:', err);
       } finally {
         if (!isMounted()) return;
         setLoading(false);

@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { storeSearchService, Review, ReviewStats } from '@/services/storeSearchService';
 import RatingPrompt from '@/components/store/RatingPrompt';
 import { colors } from '@/constants/theme';
+import { logger } from '@/utils/logger';
 
 const STORAGE_KEY = 'rez_rated_stores';
 
@@ -165,7 +166,7 @@ export default function StoreReviewsScreen() {
       } catch (err: any) {
         // Ignore abort errors, log others
         if (err?.name !== 'AbortError') {
-          console.warn('[StoreReviews] Failed to load reviews:', err?.message);
+          logger.warn('[StoreReviews] Failed to load reviews:', { message: err?.message });
         }
       } finally {
         if (pageNum === 1) setLoading(false);

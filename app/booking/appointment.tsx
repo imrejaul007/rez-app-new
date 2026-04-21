@@ -33,6 +33,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import apiClient from '@/services/apiClient';
 import serviceAppointmentApi from '@/services/serviceAppointmentApi';
 import { isSmallDevice, responsiveFontSize } from '@/utils/responsive';
+import { logger } from '@/utils/logger';
 
 // Service type icon mapping
 const SERVICE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
@@ -219,7 +220,7 @@ function AppointmentBookingPage() {
           }
         })
         .catch((err) => {
-          if (__DEV__) console.warn('[Appointment] Patch test check failed:', err?.message);
+          if (__DEV__) logger.warn('[Appointment] Patch test check failed:', { message: err?.message });
           setPatchTestStatus(null);
         });
     } else {
@@ -487,7 +488,7 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         await submitBooking({ paymentId: paymentResult.paymentId });
       }
     } catch (error: any) {
-      if (__DEV__) console.error('[Appointment] Payment failed:', error);
+      if (__DEV__) logger.error('[Appointment] Payment failed:', error);
       platformAlertSimple('Payment Failed', error?.message || 'Unable to process payment. Please try again.');
       setSubmitting(false);
     }

@@ -37,6 +37,7 @@ import priveApi, { RedeemConfig } from '@/services/priveApi';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 // Fallback config matching backend defaults
 const FALLBACK_CONFIG: RedeemConfig = {
@@ -122,7 +123,7 @@ function RedeemScreen() {
     } catch (err: unknown) {
       // Config fetch failed — FALLBACK_CONFIG is used as a safe default.
       // Surface the failure in dev so it doesn't go unnoticed.
-      if (__DEV__) console.warn('[RedeemScreen] Failed to load redeem config, using fallback defaults', err);
+      if (__DEV__) logger.warn('[RedeemScreen] Failed to load redeem config, using fallback defaults', { error: err });
     } finally {
       if (!isMounted()) return;
       setConfigLoading(false);

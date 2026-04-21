@@ -11,6 +11,7 @@ import {
   ActionButtonId,
 } from '@/types/store-actions';
 import { colors } from '@/constants/theme';
+import { logger } from '@/utils/logger';
 
 /**
  * Determines which buttons should be visible based on store type
@@ -280,7 +281,7 @@ export function handleButtonDestination(
   const destination = buttonConfig.destination;
 
   // Default error handler logs to console if no callback provided
-  const showError: ButtonErrorCallback = onError || ((title, message) => console.warn(`[StoreAction] ${title}: ${message}`));
+  const showError: ButtonErrorCallback = onError || ((title, message) => logger.warn(`[StoreAction] ${title}: ${message}`));
 
   // If no destination configured, use defaults based on button id
   if (!destination) {

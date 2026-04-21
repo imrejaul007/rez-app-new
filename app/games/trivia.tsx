@@ -187,10 +187,20 @@ function TriviaPage() {
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
+  // Seeded PRNG for visual question shuffle — deterministic per seed
+  function createSeededRandom(seed: number) {
+    let s = seed;
+    return () => {
+      s = (s * 1664525 + 1013904223) & 0xffffffff;
+      return (s >>> 0) / 0xffffffff;
+    };
+  }
+
   function shuffleQuestions(): Question[] {
+    const rand = createSeededRandom(Date.now());
     const shuffled = [...HARDCODED_QUESTIONS];
     for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(rand() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled.slice(0, TOTAL_QUESTIONS);

@@ -30,6 +30,15 @@ const rezCoinImage = BRAND.COIN_IMAGE;
 const SYMBOLS = ['🍒', '🍋', '🍇', '💎', '⭐', '🔔', '7️⃣'];
 const SPIN_COST = 5;
 
+// Seeded PRNG for visual reel animations — deterministic per seed
+function createSeededRandom(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
 interface SpinResult {
   reels: string[];
   win: boolean;
@@ -37,8 +46,9 @@ interface SpinResult {
   winType: 'jackpot' | 'small' | 'none';
 }
 
-function getRandomSymbol(): string {
-  return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+function getRandomSymbol(seed?: number): string {
+  const rand = createSeededRandom(seed ?? Date.now());
+  return SYMBOLS[Math.floor(rand() * SYMBOLS.length)];
 }
 
 function calculateSpinResult(): SpinResult {
@@ -162,7 +172,9 @@ function SlotsPage() {
           <ReelView
             reelAnim={reelAnim}
             symbol={
-              spinningSymbols[index]?.[Math.floor(Math.random() * (spinningSymbols[index]?.length || 1))] || symbol
+              spinningSymbols[index]?.[
+                Math.floor(createSeededRandom(Date.now() + index)() * (spinningSymbols[index]?.length || 1))
+              ] || symbol
             }
           />
         ) : (

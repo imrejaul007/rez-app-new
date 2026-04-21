@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface ScoreEvent {
   id: string;
@@ -64,7 +65,7 @@ export default function ExplorerScoreScreen() {
         const data = await tryApi.getScore();
         setScoreData(data);
       } catch (err: any) {
-        if (__DEV__) console.error('Failed to load score data:', err);
+        if (__DEV__) logger.error('Failed to load score data:', err);
       } finally {
         setLoading(false);
       }

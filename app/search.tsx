@@ -25,6 +25,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { searchHistoryService } from '@/services/searchHistoryService';
 import { Spacing } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 function SearchPage() {
   const params = useLocalSearchParams();
@@ -80,7 +81,7 @@ function SearchPage() {
       .then(setRecentSearches)
       .catch((err: any) => {
         // CA-DSC-004 FIX: Log errors instead of silently swallowing
-        console.warn('[Search] Failed to load recent searches:', err?.message || err);
+        logger.warn('[Search] Failed to load recent searches:', { error: err?.message || err });
       });
   }, []);
 
@@ -256,7 +257,7 @@ function SearchPage() {
         setViewMode('results');
         setShowFilterModal(false);
       } catch (err) {
-        console.warn('[Search] Filter apply failed:', err);
+        logger.warn('[Search] Filter apply failed:', { error: err });
       }
     } else {
       setShowFilterModal(false);

@@ -15,6 +15,7 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import apiClient from '@/services/apiClient';
+import { logger } from '@/utils/logger';
 
 interface KhataEntry {
   _id: string;
@@ -35,7 +36,7 @@ function ConsumerKhataScreen() {
       const resp = await apiClient.get('/consumer/khata');
       setCredits((resp as any).data?.data || (resp as any).data?.credits || []);
     } catch (e: any) {
-      if (__DEV__) console.error('Khata load error', e);
+      if (__DEV__) logger.error('Khata load error', { error: e });
     } finally {
       setLoading(false);
       setRefreshing(false);

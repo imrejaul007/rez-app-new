@@ -111,7 +111,7 @@ function FlashSaleDetailPage() {
         if (typeof flashSale.endTime === 'string') {
           // Validate ISO format (must contain 'T' and 'Z' or +/- offset)
           if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(flashSale.endTime)) {
-            console.warn('Invalid endTime format:', flashSale.endTime);
+            logger.warn('Invalid endTime format:', { endTime: flashSale.endTime });
             return;
           }
           endTimeMs = new Date(flashSale.endTime).getTime();
@@ -119,7 +119,7 @@ function FlashSaleDetailPage() {
           endTimeMs = new Date(flashSale.endTime).getTime();
         }
       } catch (err) {
-        console.error('Date parsing error:', err);
+        logger.error('Date parsing error:', err);
         return;
       }
 

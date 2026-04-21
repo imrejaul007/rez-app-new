@@ -1,4 +1,5 @@
 /**
+import { logger } from '@/utils/logger';
  * requestRegistry — OG-D005 FIX
  *
  * A lightweight in-process registry that lets payment hooks register their
@@ -71,13 +72,13 @@ class RequestRegistry {
         controller.abort(reason);
         count++;
         if (__DEV__) {
-          console.log(`[RequestRegistry] Aborted: ${label} (reason: ${reason})`);
+          logger.info('[RequestRegistry] Aborted:', { label, reason });
         }
       }
     });
     this.entries.clear();
     if (__DEV__ && count > 0) {
-      console.log(`[RequestRegistry] Aborted ${count} in-flight request(s).`);
+      logger.info(`[RequestRegistry] Aborted ${count} in-flight request(s).`);
     }
   }
 

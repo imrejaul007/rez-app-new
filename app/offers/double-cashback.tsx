@@ -24,6 +24,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const { width } = Dimensions.get('window');
 
@@ -161,7 +162,7 @@ function DoubleCashbackPage() {
       });
     } catch (err) {
       // R2-H1 FIX: Log Share failure so attribution can be retried.
-      if (__DEV__) console.warn('[double-cashback] Share failed:', err);
+      if (__DEV__) logger.warn('[double-cashback] Share failed:', { error: err });
     }
   };
 

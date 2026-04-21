@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface SurpriseData {
   category: string;
@@ -62,7 +63,7 @@ export default function SurpriseScreen() {
       setData(surpriseData);
       setRevealed(!!surpriseData.merchant);
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to load surprise:', err);
+      if (__DEV__) logger.error('Failed to load surprise:', err);
     } finally {
       setLoading(false);
     }
@@ -94,7 +95,7 @@ export default function SurpriseScreen() {
           setData(revealed);
           setRevealed(true);
         } catch (err: any) {
-          if (__DEV__) console.error('Failed to reveal surprise:', err);
+          if (__DEV__) logger.error('Failed to reveal surprise:', err);
         } finally {
           setRevealing(false);
         }
@@ -177,8 +178,8 @@ export default function SurpriseScreen() {
                   style={[
                     styles.sparkle,
                     {
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
+                      left: `${(Date.now() * 7 + i * 31) % 100}%`,
+                      top: `${(Date.now() * 13 + i * 47) % 100}%`,
                     },
                   ]}
                 >

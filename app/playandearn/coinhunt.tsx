@@ -111,7 +111,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
   useEffect(() => {
     const startAnimation = () => {
       translateY.value = 0;
-      translateX.value = Math.random() * 200 - 100;
+      translateX.value = ((Date.now() * 7 + (Date.now() % 1000)) % 200) - 100;
       opacity.value = 1;
       rotate.value = 0;
 
@@ -234,9 +234,9 @@ const CoinHunt = () => {
       const interval = setInterval(() => {
         const newCoin: Coin = {
           id: Date.now(),
-          x: Math.random() * 70 + 10,
-          y: Math.random() * 55 + 5,
-          value: [5, 10, 15, 25][Math.floor(Math.random() * 4)],
+          x: ((Date.now() * 7 + (Date.now() % 1000)) % 70) + 10,
+          y: ((Date.now() * 13 + (Date.now() % 500)) % 55) + 5,
+          value: [5, 10, 15, 25][Math.floor(((Date.now() * 17) % 400) / 100)],
         };
         setCoins((prev) => [...prev, newCoin]);
         const t = setTimeout(() => {

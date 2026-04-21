@@ -31,6 +31,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { errorReporter } from '@/utils/errorReporter';
 import ErrorState from '@/components/common/ErrorState';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 type CouponTab = 'available' | 'my-coupons' | 'expired';
@@ -323,7 +324,7 @@ function CouponsPage() {
       await Share.share({ message: `Use code "${coupon.couponCode}" to get ${disc} on Nquta! ${coupon.title}` });
     } catch (err) {
       // R2-H1 FIX: Log Share failure so attribution can be retried.
-      if (__DEV__) console.warn('[coupons] Share failed:', err);
+      if (__DEV__) logger.warn('[coupons] Share failed:', { error: err });
     }
   };
 

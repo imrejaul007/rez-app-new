@@ -8,6 +8,7 @@
  */
 
 import { errorReporter } from '@/utils/errorReporter';
+import { logger } from '@/utils/logger';
 
 /**
  * Handle a caught error by reporting it and setting UI error state.
@@ -48,6 +49,6 @@ export function catchAndWarn(e: unknown, context: string): void {
  */
 export function catchSilent(e: unknown, context: string): void {
   if (__DEV__) {
-    console.debug(`[${context}]`, e instanceof Error ? e.message : e);
+    logger.debug(`[${context}]`, { message: e instanceof Error ? e.message : e });
   }
 }

@@ -9,6 +9,7 @@ import storesApi, { Store } from '@/services/storesApi';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { logger } from '@/utils/logger';
 
 interface NearbyStore extends Store {
   distance?: number;
@@ -48,7 +49,7 @@ function StoreMapScreen() {
           setLocation(currentLocation);
         }
       } catch (error: any) {
-        if (__DEV__) console.error('Location error:', error);
+        if (__DEV__) logger.error('Location error:', error);
         if (isMounted()) {
           setLocationPermission(false);
           setLoading(false);
@@ -81,7 +82,7 @@ function StoreMapScreen() {
           setLoading(false);
         }
       } catch (error: any) {
-        if (__DEV__) console.error('Fetch stores error:', error);
+        if (__DEV__) logger.error('Fetch stores error:', error);
         if (isMounted()) {
           platformAlertSimple('Error', 'Failed to load nearby stores');
           setLoading(false);

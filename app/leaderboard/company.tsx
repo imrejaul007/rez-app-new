@@ -10,6 +10,7 @@ import { useAuthUser } from '@/stores';
 import * as identityApi from '@/services/identityApi';
 import analyticsService, { IdentityAnalyticsEvents } from '@/services/analyticsService';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 function CompanyLeaderboardPage() {
   const isMounted = useIsMounted();
@@ -56,7 +57,7 @@ function CompanyLeaderboardPage() {
       });
     } catch (err) {
       // R2-H1 FIX: Log Share failure so attribution can be retried.
-      if (__DEV__) console.warn('[leaderboard/company] Share failed:', err);
+      if (__DEV__) logger.warn('[leaderboard/company] Share failed:', { error: err });
     }
   };
 

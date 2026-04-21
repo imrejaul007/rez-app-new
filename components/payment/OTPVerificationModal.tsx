@@ -90,11 +90,7 @@ function OTPVerificationModal({
       }
     } catch (error: any) {
       onError(error.message || 'Failed to send OTP');
-      if (Platform.OS === 'web') {
-        window.alert(error.message || 'Failed to send OTP');
-      } else {
-        platformAlertSimple('Error', error.message || 'Failed to send OTP');
-      }
+      platformAlertSimple('Error', error.message || 'Failed to send OTP');
     } finally {
       if (!isMounted()) return;
       setIsSendingOTP(false);

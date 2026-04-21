@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { logger } from '@/utils/logger';
 
 interface Bundle {
   id: string;
@@ -67,7 +68,7 @@ export default function BundlesScreen() {
       setBundles(bundlesData);
       setActiveBundles(activeBundlesData);
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to load bundles:', err);
+      if (__DEV__) logger.error('Failed to load bundles:', err);
     } finally {
       setLoading(false);
     }
@@ -117,12 +118,12 @@ export default function BundlesScreen() {
       } catch (paymentErr: any) {
         if (paymentErr.code !== 2) {
           // 2 = user cancelled
-          if (__DEV__) console.error('Payment error:', paymentErr);
+          if (__DEV__) logger.error('Payment error:', paymentErr);
         }
         setPurchaseModal((prev) => ({ ...prev, confirming: false }));
       }
     } catch (err: any) {
-      if (__DEV__) console.error('Failed to purchase bundle:', err);
+      if (__DEV__) logger.error('Failed to purchase bundle:', err);
       setPurchaseModal((prev) => ({ ...prev, confirming: false }));
     }
   };

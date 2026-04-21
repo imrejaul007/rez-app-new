@@ -33,6 +33,7 @@ import { handleWalletError, parseWalletError } from '@/utils/walletErrorHandler'
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { logger } from '@/utils/logger';
 
 const rezCoinImage = BRAND.COIN_IMAGE;
 
@@ -350,7 +351,7 @@ function GiftPage() {
                 });
               } catch (err) {
                 // R2-H1 FIX: Log Share failure so attribution can be retried.
-                if (__DEV__) console.warn('[wallet/gift] Share failed:', err);
+                if (__DEV__) logger.warn('[wallet/gift] Share failed:', { error: err });
               }
             }}
           >
