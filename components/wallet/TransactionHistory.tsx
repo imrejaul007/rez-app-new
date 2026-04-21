@@ -88,7 +88,7 @@ function formatDate(dateStr: string): string {
 // ---------------------------------------------------------------------------
 // Transaction Item
 // ---------------------------------------------------------------------------
-const ICON_MAP: Record<string, keyof typeof import('@expo/vector-icons').Ionicons['glyphMap']> = {
+const ICON_MAP: Record<string, string> = {
   earning: 'arrow-down-circle',
   spending: 'arrow-up-circle',
   refund: 'refresh-circle',

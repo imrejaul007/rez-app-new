@@ -65,7 +65,7 @@ export interface CheckoutDraft {
   orderCreated: boolean;
 }
 
-interface CheckoutDraftState {
+export interface CheckoutDraftState {
   draft: CheckoutDraft | null;
   saveDraft: (partial: Partial<CheckoutDraft>) => void;
   clearDraft: () => void;

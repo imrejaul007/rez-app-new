@@ -196,7 +196,7 @@ const GENERAL_PERSONA: PersonaConfig = {
 
 export function useHomePersona(): PersonaConfig & { displayName: string } {
   const { statedIdentity, segment } = useUserIdentityStore();
-  const authUser = useAuthStore((s) => s.state.user);
+  const authUser = useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.user);
 
   const firstName = useMemo(() => {
     const fullName = (authUser as any)?.profile?.firstName

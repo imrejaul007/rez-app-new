@@ -11,7 +11,7 @@ import { useToastStore } from '@/stores/toastStore';
 import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { useAuthUser, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
-import { useCartStore } from '@/stores/cartStore';
+import { useCartStore, type CartStoreState } from '@/stores/cartStore';
 import { logger } from '@/utils/logger';
 
 // Lazy-loaded heavy deps (not in synchronous dependency chain)
@@ -1298,7 +1298,7 @@ export function CartProvider({ children }: CartProviderProps) {
   }), [state, stableRefreshCart, stableCartActions]);
 
   // Sync to Zustand store for crash-safe fallback
-  const _setFromProvider = useCartStore((s) => s._setFromProvider);
+  const _setFromProvider = useCartStore((s: CartStoreState) => s._setFromProvider);
   useEffect(() => {
     _setFromProvider(contextValue);
   }, [contextValue, _setFromProvider]);
@@ -1338,9 +1338,9 @@ const CART_DEFAULTS: CartContextType = {
 // Hook — falls back to Zustand store for crash safety when outside Provider
 export function useCart() {
   const context = useContext(CartContext);
-  const storeState = useCartStore((s) => s.state);
-  const storeRefreshCart = useCartStore((s) => s.refreshCart);
-  const storeActions = useCartStore((s) => s.actions);
+  const storeState = useCartStore((s: CartStoreState) => s.state);
+  const storeRefreshCart = useCartStore((s: CartStoreState) => s.refreshCart);
+  const storeActions = useCartStore((s: CartStoreState) => s.actions);
 
   if (context !== undefined) {
     return context;

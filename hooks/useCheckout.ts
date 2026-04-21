@@ -21,12 +21,12 @@
  */
 import { useCheckoutState } from './useCheckoutState';
 import { useCheckoutActions, type CheckoutActionsParams } from './useCheckoutActions';
-import { useCheckoutDraftStore } from '@/stores/checkoutDraftStore';
+import { useCheckoutDraftStore, type CheckoutDraftState } from '@/stores/checkoutDraftStore';
 import { useRefreshWallet } from '@/stores/selectors';
 import type { UseCheckoutReturn } from '@/types/checkout.types';
 
 export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
-  const clearDraft = useCheckoutDraftStore(s => s.clearDraft);
+  const clearDraft = useCheckoutDraftStore((s: CheckoutDraftState) => s.clearDraft);
   const refreshSharedWallet = useRefreshWallet();
 
   // All state, refs, and side effects

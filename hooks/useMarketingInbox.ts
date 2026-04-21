@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 export function useMarketingInbox() {
   const [messages, setMessages] = useState<MarketingMessage[]>([]);
   const [loading, setLoading] = useState(false);
-  const isAuthenticated = useAuthStore((s) => s.state.isAuthenticated);
+  const isAuthenticated = useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.isAuthenticated);
 
   const fetchInbox = useCallback(async () => {
     if (!isAuthenticated) return;

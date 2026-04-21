@@ -3,10 +3,10 @@ import React, { createContext, useContext, useEffect, useState, useRef, ReactNod
 type Socket = any;
 const getIO = async () => (await import('socket.io-client')).io;
 import Constants from 'expo-constants';
-import { useSocketStore } from '@/stores/socketStore';
+import { useSocketStore, type SocketStoreState } from '@/stores/socketStore';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import { getAuthToken, getUser } from '@/utils/authStorage';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, type AuthStoreState } from '@/stores/authStore';
 import {
   SocketEvents,
   SocketState,
@@ -118,7 +118,7 @@ interface SocketProviderProps {
 
 export function SocketProvider({ children, config }: SocketProviderProps) {
   // Reactive token from auth store — triggers socket reconnect when token refreshes
-  const authToken = useAuthStore((s) => s.state.token);
+  const authToken = useAuthStore((s: AuthStoreState) => s.state.token);
 
   const [socketState, setSocketState] = useState<SocketState>({
     connected: false,
@@ -595,7 +595,7 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
   }), [socketState, stableActions]);
 
   // Sync connection state to Zustand store for crash-safe fallback
-  const _setFromProvider = useSocketStore((s) => s._setFromProvider);
+  const _setFromProvider = useSocketStore((s: SocketStoreState) => s._setFromProvider);
   useEffect(() => {
     _setFromProvider(socketState);
   }, [socketState, _setFromProvider]);
@@ -644,7 +644,7 @@ const SOCKET_DEFAULTS: SocketContextType = {
 // Hook — falls back to Zustand store (connection state only) for crash safety when outside Provider
 export function useSocket() {
   const context = useContext(SocketContext);
-  const storeState = useSocketStore((s) => s.state);
+  const storeState = useSocketStore((s: SocketStoreState) => s.state);
 
   if (context !== undefined) {
     return context;

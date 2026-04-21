@@ -43,12 +43,12 @@ export function useOfflineSync() {
   );
 
   const pendingActions = useMemo(
-    () => store.queue.filter(a => a.status === 'pending'),
+    () => store.queue.filter((a: { status: string }) => a.status === 'pending'),
     [store.queue]
   );
 
   const failedActions = useMemo(
-    () => store.queue.filter(a => a.status === 'failed'),
+    () => store.queue.filter((a: { status: string }) => a.status === 'failed'),
     [store.queue]
   );
 

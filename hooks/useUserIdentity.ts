@@ -75,9 +75,9 @@ export interface UserIdentity {
 
 export function useUserIdentity(): UserIdentity {
   // Granular selectors — each only triggers re-render when its slice changes
-  const user = useAuthStore((s) => s.state.user);
-  const computed = useSubscriptionStore((s) => s.computed);
-  const priveTier = usePriveStore((s) => (s.eligibility?.tier as PriveTier) ?? 'none');
+  const user = useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.user);
+  const computed = useSubscriptionStore((s: ReturnType<typeof useSubscriptionStore.getState>) => s.computed);
+  const priveTier = usePriveStore((s: ReturnType<typeof usePriveStore.getState>) => (s.eligibility?.tier as PriveTier) ?? 'none');
 
   return useMemo(() => {
     const isPremium = computed?.isPremium ?? false;

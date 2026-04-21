@@ -245,8 +245,8 @@ export function usePlayAndEarnData() {
   const brandedCoinsFromCtx = useBrandedCoins();
   const refreshWallet = useRefreshWallet();
   const savingsInsights = useSavingsInsights();
-  const totalBrandedCoins = useMemo(() => brandedCoinsFromCtx?.reduce((sum: number, c: any) => sum + (c.amount || 0), 0) || 0, [brandedCoinsFromCtx]);
-  const totalPromoCoins = useMemo(() => walletData?.coins?.find(c => c.type === 'promo')?.amount || 0, [walletData?.coins]);
+  const totalBrandedCoins = useMemo(() => brandedCoinsFromCtx?.reduce((sum: number, c: { amount?: number }) => sum + (c.amount || 0), 0) || 0, [brandedCoinsFromCtx]);
+  const totalPromoCoins = useMemo(() => walletData?.coins?.find((c: { type?: string; amount?: number }) => c.type === 'promo')?.amount || 0, [walletData?.coins]);
   const monthlyEarnings = savingsInsights?.thisMonth || 0;
 
   // 8 react-query hooks

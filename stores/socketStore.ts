@@ -4,7 +4,7 @@ import { SocketState } from '@/types/socket.types';
 // ---------------------------------------------------------------------------
 // Store holds ONLY connection state — the socket instance stays in Provider
 // ---------------------------------------------------------------------------
-interface SocketStoreState {
+export interface SocketStoreState {
   state: SocketState;
   isConnected: boolean;
   lastEvent: string | null;

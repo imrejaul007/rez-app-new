@@ -52,8 +52,8 @@ export function useVideoUpload() {
   const requestCameraPermission = useCallback(async () => {
     try {
       const result = await requestCameraPermissionHook();
-      const status = result?.granted ? 'granted' : 'denied';
-      setPermissions(prev => ({ ...prev, camera: status }));
+      const status = (result?.granted ? 'granted' : 'denied') as unknown as PermissionStatus;
+      setPermissions(prev => ({ ...prev, camera: status } as unknown as PermissionsState));
       return result?.granted ?? false;
     } catch (error: any) {
       return false;
@@ -66,7 +66,7 @@ export function useVideoUpload() {
   const requestMediaLibraryPermission = useCallback(async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      setPermissions(prev => ({ ...prev, mediaLibrary: status }));
+      setPermissions(prev => ({ ...prev, mediaLibrary: status } as PermissionsState));
       return status === 'granted';
     } catch (error: any) {
       return false;
@@ -173,8 +173,8 @@ export function useVideoUpload() {
         videoMaxDuration: DEFAULT_VIDEO_RULES.maxDuration,
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const asset = result.assets[0];
+      if (!result.canceled && result.assets?.[0]) {
+        const asset = result.assets![0];
 
         const videoMetadata: VideoMetadata = {
           uri: asset.uri,
@@ -242,8 +242,8 @@ export function useVideoUpload() {
         quality: 1,
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const asset = result.assets[0];
+      if (!result.canceled && result.assets?.[0]) {
+        const asset = result.assets![0];
 
         const videoMetadata: VideoMetadata = {
           uri: asset.uri,

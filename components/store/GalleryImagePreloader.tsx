@@ -38,9 +38,7 @@ export function useGalleryImagePreloader(
       if (item) {
         const imageUrl = item.type === 'video' ? (item.thumbnail || item.url) : item.url;
         if (imageUrl) {
-          Image.prefetch(imageUrl, {
-            cachePolicy: 'memory-disk',
-          }).catch((error) => {
+          Image.prefetch(imageUrl).catch((error) => {
             // Silently fail - preloading is not critical
             logger.debug('Image preload failed:', error);
           });
@@ -59,9 +57,7 @@ export default function GalleryImagePreloader({
     items.forEach((item) => {
       const imageUrl = item.type === 'video' ? (item.thumbnail || item.url) : item.url;
       if (imageUrl) {
-        Image.prefetch(imageUrl, {
-          cachePolicy: 'memory-disk',
-        }).catch(() => {
+        Image.prefetch(imageUrl, { cachePolicy: 'memory-disk' }).catch(() => {
           // Silently fail
         });
       }

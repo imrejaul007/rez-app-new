@@ -25,6 +25,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useLocationStore } from '@/stores/locationStore';
+import type { LocationContextType } from '@/types/location.types';
 import nearbyEarnApi, { NearbyStore } from '@/services/nearbyEarnApi';
 import type { TimeAwarePersona } from '@/components/homepage/TimeAwareContextPill';
 
@@ -101,7 +102,7 @@ const MicroMomentDecisionCard: React.FC<MicroMomentDecisionCardProps> = ({
   overrideHour,
 }) => {
   const router = useRouter();
-  const locationState = useLocationStore(s => s.state);
+  const locationState = useLocationStore((s: LocationContextType) => s.state);
   const coords = locationState.currentLocation?.coordinates;
 
   const [stores, setStores]       = useState<NearbyStore[]>([]);

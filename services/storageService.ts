@@ -6,6 +6,49 @@ import { FILE_SIZE_LIMITS } from '@/utils/fileUploadConstants';
 // Sensitive keys that should be stored in SecureStore (not on web)
 const SECURE_KEYS = ['auth_token', 'refresh_token', 'device_fingerprint', 'user_id', 'access_token'];
 
+// ---------------------------------------------------------------------------
+// XOR + base64 obfuscation for SecureStore fallback
+// Prevents auth tokens from being stored in plain AsyncStorage on devices
+// where SecureStore is unavailable (rooted / no-keychain).
+// NOT cryptographic — mirrors the pattern in secureWalletStorage.ts
+// ---------------------------------------------------------------------------
+const OBFUSCATION_KEY_BASE =
+  'REZ_STORAGE_V1_' +
+  (typeof process !== 'undefined' && (process as any).env?.EXPO_PUBLIC_APP_SECRET
+    ? (process as any).env.EXPO_PUBLIC_APP_SECRET
+    : 'FALLBACK_DEV_SECRET');
+
+function xorObfuscate(plaintext: string): string {
+  const keyBytes = new TextEncoder().encode(OBFUSCATION_KEY_BASE);
+  const textBytes = new TextEncoder().encode(plaintext);
+  const result = new Uint8Array(textBytes.length);
+  for (let i = 0; i < textBytes.length; i++) {
+    result[i] = textBytes[i] ^ keyBytes[i % keyBytes.length];
+  }
+  return 'OBFUSCATED:' + btoa(String.fromCharCode(...result))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
+
+function xorDeobfuscate(obfuscated: string): string {
+  if (!obfuscated.startsWith('OBFUSCATED:')) return obfuscated;
+  try {
+    const b64 = obfuscated.substring(12).replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '==='.slice(0, (4 - (b64.length % 4)) % 4);
+    const decoded = Buffer.from(padded, 'base64').toString('utf8');
+    const keyBytes = new TextEncoder().encode(OBFUSCATION_KEY_BASE);
+    const encoded = new TextEncoder().encode(decoded);
+    const result = new Uint8Array(encoded.length);
+    for (let i = 0; i < encoded.length; i++) {
+      result[i] = encoded[i] ^ keyBytes[i % keyBytes.length];
+    }
+    return new TextDecoder().decode(result);
+  } catch {
+    return '';
+  }
+}
+
 // Types
 export interface StorageOptions {
   // WARNING: This is Base64 encoding, NOT encryption.
@@ -102,8 +145,9 @@ class StorageService {
         try {
           await SecureStore.setItemAsync(key, serializedData);
         } catch (error) {
-          // Fallback to AsyncStorage if SecureStore fails
-          await AsyncStorage.setItem(key, serializedData);
+          // SecureStore unavailable — use XOR obfuscation instead of plain AsyncStorage
+          const obfuscated = xorObfuscate(serializedData);
+          await AsyncStorage.setItem(key, obfuscated);
         }
       } else {
         // Use AsyncStorage for non-sensitive keys or web platform
@@ -127,8 +171,9 @@ class StorageService {
         try {
           serializedData = await SecureStore.getItemAsync(key);
         } catch (error) {
-          // Fallback to AsyncStorage if SecureStore fails
-          serializedData = await AsyncStorage.getItem(key);
+          // SecureStore unavailable — read obfuscated value from AsyncStorage
+          const asyncRaw = await AsyncStorage.getItem(key);
+          serializedData = asyncRaw ? xorDeobfuscate(asyncRaw) : null;
         }
       } else {
         // Use AsyncStorage for non-sensitive keys or web platform

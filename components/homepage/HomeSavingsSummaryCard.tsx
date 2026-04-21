@@ -54,7 +54,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
   currencySymbol,
   onPress,
 }) => {
-  const segment: IdentitySegment = useUserIdentityStore.getState().segment;
+  const segment: IdentitySegment = (useUserIdentityStore.getState() as UserIdentityState).segment;
   const savingsLabel = SEGMENT_SAVINGS_LABEL[segment] ?? 'You saved this month';
   const isEmptyState = thisMonthSaved === 0 && totalSaved === 0;
 

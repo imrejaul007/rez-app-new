@@ -62,7 +62,7 @@ import {
 import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { queryKeys } from '@/lib/queryKeys';
-import { useCheckoutDraftStore, getActiveDraft } from '@/stores/checkoutDraftStore';
+import { useCheckoutDraftStore, getActiveDraft, type CheckoutDraftState } from '@/stores/checkoutDraftStore';
 import { logger } from '@/utils/logger';
 import { razorpayApi } from '@/services/razorpayApi';
 
@@ -139,8 +139,8 @@ function groupItemsByStore(items: CheckoutItem[]) {
 // ── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn => {
-  const saveDraft = useCheckoutDraftStore(s => s.saveDraft);
-  const clearDraft = useCheckoutDraftStore(s => s.clearDraft);
+  const saveDraft = useCheckoutDraftStore((s: CheckoutDraftState) => s.saveDraft);
+  const clearDraft = useCheckoutDraftStore((s: CheckoutDraftState) => s.clearDraft);
 
   const cartActions = useCartActions();
   const cartState = useCartState();
@@ -287,11 +287,18 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
         const cartResponse = await cartService.getCart();
         if (cartResponse.success && cartResponse.data) {
           const mappedCart = mapBackendCartToFrontend(cartResponse.data);
-          const checkoutItems: CheckoutItem[] = mappedCart.items.map((item: BackendCartItem) => ({
-            id: item.id, productId: item.productId, name: item.name, image: item.image,
-            price: item.price, originalPrice: item.originalPrice, quantity: item.quantity,
-            discount: item.discount || 0, lockedQuantity: item.lockedQuantity || 0,
-            category: item.category || '', storeId: item.store?.id || '', storeName: item.store?.name || '',
+          const checkoutItems: CheckoutItem[] = (mappedCart.items as unknown as BackendCartItem[]).map((item: BackendCartItem): CheckoutItem => ({
+            id: item.id ?? '',
+            productId: item.productId ?? '',
+            name: item.name ?? '',
+            image: item.image ?? '',
+            price: item.price ?? 0,
+            originalPrice: item.originalPrice ?? item.price ?? 0,
+            quantity: item.quantity ?? 1,
+            discount: item.discount ?? 0,
+            category: item.category ?? '',
+            storeId: item.store?.id ?? '',
+            storeName: item.store?.name ?? '',
           }));
 
           const itemTotalBeforeLockFee = checkoutItems.reduce((t, i) => t + (i.price * i.quantity), 0);
@@ -300,7 +307,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
             return t + (lockedQty > 0 ? (i.discount || 0) : 0);
           }, 0);
           const itemTotal = itemTotalBeforeLockFee;
-          const deliveryFee = mappedCart.totals.delivery || mappedCart.totals.shipping || 0;
+          const deliveryFee = (mappedCart.totals as { delivery?: number; shipping?: number }).delivery || (mappedCart.totals as { shipping?: number }).shipping || 0;
           const platformFee = 0;
           const promoDiscount = mappedCart.totals.discount || 0;
           const taxBase = Math.max(0, itemTotal - lockFeeDiscount - promoDiscount);
@@ -323,7 +330,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
             id: mappedCart.coupon.code, code: mappedCart.coupon.code,
             title: mappedCart.coupon.code,
             description: `${mappedCart.coupon.discountValue}% off`,
-            discountType: mappedCart.coupon.discountType || 'PERCENTAGE',
+            discountType: (mappedCart.coupon.discountType || 'PERCENTAGE') as PromoCode['discountType'],
             discountValue: mappedCart.coupon.discountValue,
             maxDiscount: mappedCart.coupon.appliedAmount,
             minOrderValue: 0, validUntil: '', isActive: true, termsAndConditions: [],
@@ -364,8 +371,8 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
               const currentWalletRawData = walletRawDataRef.current;
               walletCategoryBalances = (currentWalletRawData as RawWalletData)?.categoryBalances ?? null;
               if (currentWalletData) {
-                const rezCoin = currentWalletData.coins.find((c) => c.type === 'rez');
-                const promoCoin = currentWalletData.coins.find((c) => c.type === 'promo');
+                const rezCoin = currentWalletData.coins.find((c: { type?: string }) => c.type === 'rez');
+                const promoCoin = currentWalletData.coins.find((c: { type?: string }) => c.type === 'promo');
                 const brandedCoins = currentWalletData.brandedCoins || [];
                 const storeBrandedCoin = storeId ? brandedCoins.find((bc: BackendBrandedCoin) => bc.merchantId === storeId) : null;
                 realCoinSystem = {
@@ -380,12 +387,12 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
 
           let realAvailableCoupons: PromoCode[] = [];
           if (couponsResult.status === 'fulfilled' && couponsResult.value?.success && couponsResult.value?.data) {
-            realAvailableCoupons = couponsResult.value.data.coupons.map((coupon: Record<string, unknown>) => ({
-              id: coupon._id, code: coupon.couponCode, title: coupon.title || coupon.couponCode,
-              description: coupon.description || 'Get discount on your order',
-              discountValue: coupon.discountValue as number, discountType: coupon.discountType as string,
+            realAvailableCoupons = (couponsResult.value.data.coupons as unknown as Record<string, unknown>[]).map((coupon: Record<string, unknown>): PromoCode => ({
+              id: String(coupon._id), code: String(coupon.couponCode), title: String(coupon.title || coupon.couponCode || ''),
+              description: String(coupon.description || 'Get discount on your order'),
+              discountValue: coupon.discountValue as number, discountType: (coupon.discountType as string) as PromoCode['discountType'],
               minOrderValue: coupon.minOrderValue as number, maxDiscount: (coupon.maxDiscountCap as number) || 0,
-              isActive: coupon.status === 'active', validUntil: coupon.validTo as string,
+              isActive: coupon.status === 'active', validUntil: String(coupon.validTo || ''),
               termsAndConditions: (coupon.termsAndConditions as string[]) || [],
             }));
           }
@@ -424,12 +431,12 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
           let defaultAddress: CheckoutDeliveryAddress | undefined;
           if (addressResult.status === 'fulfilled' && addressResult.value?.success && addressResult.value?.data) {
             const addressResponse = addressResult.value;
-            userAddresses = addressResponse.data.map((addr: Record<string, unknown>) => ({
-              id: addr.id || addr._id, name: addr.title || addr.type || 'Address', phone: addr.phone || '',
-              addressLine1: addr.addressLine1 as string, addressLine2: addr.addressLine2 as string,
-              city: addr.city as string, state: addr.state as string,
-              pincode: (addr.postalCode || addr.pincode) as string, country: (addr.country || 'India') as string,
-              type: addr.type as string, isDefault: addr.isDefault as boolean, instructions: addr.instructions as string,
+            userAddresses = (addressResponse.data as unknown as Record<string, unknown>[] ?? []).map((addr: Record<string, unknown>): CheckoutDeliveryAddress => ({
+              id: String((addr.id || addr._id) ?? ''), name: String(addr.title || addr.type || 'Address'), phone: String(addr.phone || ''),
+              addressLine1: String(addr.addressLine1 ?? ''), addressLine2: String(addr.addressLine2 ?? ''),
+              city: String(addr.city ?? ''), state: String(addr.state ?? ''),
+              pincode: String(addr.postalCode || (addr.pincode ?? '')), country: String(addr.country || 'India'),
+              type: addr.type as CheckoutDeliveryAddress['type'], isDefault: Boolean(addr.isDefault), instructions: String(addr.instructions ?? ''),
             }));
             let lastUsedAddress: CheckoutDeliveryAddress | undefined;
             try {
@@ -459,13 +466,13 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
           }
 
           const autoAppliedCoinSystem = autoApplyCoinsInOrder(realCoinSystem, adjustedBillSummary.totalPayable);
-          const autoAppliedBillSummary = CheckoutData.helpers.calculateBillSummary(checkoutItems, realStore as Parameters<typeof CheckoutData.helpers.calculateBillSummary>[1], appliedPromoCode, { rez: autoAppliedCoinSystem.rezCoin.used, promo: autoAppliedCoinSystem.promoCoin.used });
+          const autoAppliedBillSummary = CheckoutData.helpers.calculateBillSummary(checkoutItems, realStore as unknown as Parameters<typeof CheckoutData.helpers.calculateBillSummary>[1], appliedPromoCode, { rez: autoAppliedCoinSystem.rezCoin.used, promo: autoAppliedCoinSystem.promoCoin.used });
 
           if (!isMountedRef.current) return;
           setState(prev => ({
             ...prev,
             items: checkoutItems,
-            store: realStore as CheckoutPageState['store'],
+            store: realStore as unknown as CheckoutPageState['store'],
             fulfillment: fulfillmentState,
             billSummary: autoAppliedBillSummary,
             selectedAddress: defaultAddress,
@@ -496,10 +503,10 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
         const currentWalletData = walletDataRef.current;
         const currentWalletRawData = walletRawDataRef.current;
         if (currentWalletData) {
-          const rezCoin = currentWalletData.coins.find((c) => c.type === 'rez');
-          const promoCoin = currentWalletData.coins.find((c) => c.type === 'promo');
+          const rezCoin = currentWalletData.coins.find((c: { type?: string }) => c.type === 'rez');
+          const promoCoin = currentWalletData.coins.find((c: { type?: string }) => c.type === 'promo');
           const fallbackCatBalances = (currentWalletRawData as RawWalletData)?.categoryBalances;
-          const fallbackCatSlug = (state.store as Record<string, string>)?.categorySlug;
+          const fallbackCatSlug = (state.store as unknown as Record<string, string>)?.categorySlug;
           const fallbackCatBal = fallbackCatSlug && fallbackCatBalances ? fallbackCatBalances[fallbackCatSlug] : null;
           const fallbackRezAvailable = fallbackCatBal?.available ?? (rezCoin?.amount || 0);
           realCoinSystem = {
@@ -517,12 +524,12 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
 
       let realAvailableCoupons: PromoCode[] = [];
       if (fallbackCouponsResult.status === 'fulfilled' && fallbackCouponsResult.value?.success && fallbackCouponsResult.value?.data) {
-        realAvailableCoupons = fallbackCouponsResult.value.data.coupons.map((coupon: Record<string, unknown>) => ({
-          id: coupon._id, code: coupon.couponCode, title: coupon.title || coupon.couponCode,
-          description: coupon.description || 'Get discount on your order',
-          discountValue: coupon.discountValue as number, discountType: coupon.discountType as string,
+        realAvailableCoupons = (fallbackCouponsResult.value.data.coupons as unknown as Record<string, unknown>[]).map((coupon: Record<string, unknown>): PromoCode => ({
+          id: String(coupon._id), code: String(coupon.couponCode), title: String(coupon.title || coupon.couponCode || ''),
+          description: String(coupon.description || 'Get discount on your order'),
+          discountValue: coupon.discountValue as number, discountType: (coupon.discountType as string) as PromoCode['discountType'],
           minOrderValue: coupon.minOrderValue as number, maxDiscount: (coupon.maxDiscountCap as number) || 0,
-          isActive: coupon.status === 'active', validUntil: coupon.validTo as string,
+          isActive: coupon.status === 'active', validUntil: String(coupon.validTo || ''),
           termsAndConditions: (coupon.termsAndConditions as string[]) || [],
         }));
       }
@@ -553,7 +560,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
   useEffect(() => {
     isMountedRef.current = true;
     if (authLoading || !isAuthenticated) return;
-    initializeCheckout().then(() => { hasInitializedRef.current = true; }).catch((err) => { logger.error('[useCheckout] initializeCheckout failed', err as Error); });
+    initializeCheckout().then(() => { if (isMountedRef.current) { hasInitializedRef.current = true; } }).catch((err) => { logger.error('[useCheckout] initializeCheckout failed', err as Error); });
     return () => { isMountedRef.current = false; };
   }, [authLoading, isAuthenticated]);
 

@@ -17,7 +17,7 @@ import React, {
 } from 'react';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { useWalletContext } from './WalletContext';
-import { usePriveStore } from '@/stores/priveStore';
+import { usePriveStore, type PriveStoreState } from '@/stores/priveStore';
 import priveApi, {
   PriveDashboard,
   PriveEligibility,
@@ -357,7 +357,7 @@ export function PriveProvider({ children }: { children: ReactNode }) {
   );
 
   // Sync to Zustand store for crash-safe fallback
-  const _setFromProvider = usePriveStore((s) => s._setFromProvider);
+  const _setFromProvider = usePriveStore((s: PriveStoreState) => s._setFromProvider);
   useEffect(() => {
     _setFromProvider(value);
   }, [value, _setFromProvider]);
@@ -377,23 +377,23 @@ export function usePriveContext(): PriveContextType {
   const context = useContext(PriveContext);
 
   // Zustand fallback selectors (always called — hooks can't be conditional)
-  const storeDashboard = usePriveStore((s) => s.dashboard);
-  const storeEligibility = usePriveStore((s) => s.eligibility);
-  const storeProgramConfig = usePriveStore((s) => s.programConfig);
-  const storeIsLoading = usePriveStore((s) => s.isLoading);
-  const storeIsRefreshing = usePriveStore((s) => s.isRefreshing);
-  const storeError = usePriveStore((s) => s.error);
-  const storeLastFetchedAt = usePriveStore((s) => s.lastFetchedAt);
-  const storeTier = usePriveStore((s) => s.tier);
-  const storeHasAccess = usePriveStore((s) => s.hasAccess);
-  const storeFeaturedOffers = usePriveStore((s) => s.featuredOffers);
-  const storeHighlights = usePriveStore((s) => s.highlights);
-  const storeDailyProgress = usePriveStore((s) => s.dailyProgress);
-  const storeIsFeatureEnabled = usePriveStore((s) => s.isFeatureEnabled);
-  const storeRefreshAll = usePriveStore((s) => s.refreshAll);
-  const storeRefreshEligibility = usePriveStore((s) => s.refreshEligibility);
-  const storeCheckIn = usePriveStore((s) => s.checkIn);
-  const storeTrackOfferClick = usePriveStore((s) => s.trackOfferClick);
+  const storeDashboard = usePriveStore((s: PriveStoreState) => s.dashboard);
+  const storeEligibility = usePriveStore((s: PriveStoreState) => s.eligibility);
+  const storeProgramConfig = usePriveStore((s: PriveStoreState) => s.programConfig);
+  const storeIsLoading = usePriveStore((s: PriveStoreState) => s.isLoading);
+  const storeIsRefreshing = usePriveStore((s: PriveStoreState) => s.isRefreshing);
+  const storeError = usePriveStore((s: PriveStoreState) => s.error);
+  const storeLastFetchedAt = usePriveStore((s: PriveStoreState) => s.lastFetchedAt);
+  const storeTier = usePriveStore((s: PriveStoreState) => s.tier);
+  const storeHasAccess = usePriveStore((s: PriveStoreState) => s.hasAccess);
+  const storeFeaturedOffers = usePriveStore((s: PriveStoreState) => s.featuredOffers);
+  const storeHighlights = usePriveStore((s: PriveStoreState) => s.highlights);
+  const storeDailyProgress = usePriveStore((s: PriveStoreState) => s.dailyProgress);
+  const storeIsFeatureEnabled = usePriveStore((s: PriveStoreState) => s.isFeatureEnabled);
+  const storeRefreshAll = usePriveStore((s: PriveStoreState) => s.refreshAll);
+  const storeRefreshEligibility = usePriveStore((s: PriveStoreState) => s.refreshEligibility);
+  const storeCheckIn = usePriveStore((s: PriveStoreState) => s.checkIn);
+  const storeTrackOfferClick = usePriveStore((s: PriveStoreState) => s.trackOfferClick);
 
   if (context !== undefined) {
     return context;

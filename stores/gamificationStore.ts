@@ -70,7 +70,7 @@ interface GamificationContextShape {
   computed: GamificationComputed;
 }
 
-interface GamificationStoreState extends GamificationContextShape {
+export interface GamificationStoreState extends GamificationContextShape {
   _setFromProvider: (data: GamificationContextShape) => void;
 }
 

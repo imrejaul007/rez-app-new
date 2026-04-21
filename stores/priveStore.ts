@@ -45,7 +45,7 @@ interface PriveContextShape {
   trackOfferClick: (offerId: string) => void;
 }
 
-interface PriveStoreState extends PriveContextShape {
+export interface PriveStoreState extends PriveContextShape {
   _setFromProvider: (data: PriveContextShape) => void;
 }
 

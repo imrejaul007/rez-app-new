@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useRef, useCallback, useMemo } from 'react';
 import { logger } from '@/utils/logger';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, type AuthStoreState } from '@/stores/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useSegments } from 'expo-router';
 import authService, { User, AuthResponse } from '@/services/authApi';
@@ -943,7 +943,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   }), [state, stableActions]) as unknown as AuthContextType;
 
   // Sync to Zustand store for crash-safe fallback
-  const _setFromProvider = useAuthStore((s) => s._setFromProvider);
+  const _setFromProvider = useAuthStore((s: AuthStoreState) => s._setFromProvider);
   useEffect(() => {
     _setFromProvider(state, stableActions as unknown as AuthContextType['actions']);
   }, [state, stableActions, _setFromProvider]);
@@ -958,8 +958,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 // Hook — falls back to Zustand store for crash safety when outside Provider
 export function useAuth() {
   const context = useContext(AuthContext);
-  const storeState = useAuthStore((s) => s.state);
-  const storeActions = useAuthStore((s) => s.actions);
+  const storeState = useAuthStore((s: AuthStoreState) => s.state);
+  const storeActions = useAuthStore((s: AuthStoreState) => s.actions);
 
   if (context !== undefined) {
     return context;

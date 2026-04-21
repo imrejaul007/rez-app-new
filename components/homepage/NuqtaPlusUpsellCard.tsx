@@ -10,11 +10,11 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useUserIdentity } from '@/hooks/useUserIdentity';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, AuthStoreState } from '@/stores/authStore';
 
 const RezPlusUpsellCard = React.memo(function RezPlusUpsellCard() {
   const { isRezFree } = useUserIdentity();
-  const user = useAuthStore((s) => s.state.user);
+  const user = useAuthStore((s: AuthStoreState) => s.state.user);
   const router = useRouter();
 
   const orderCount = (user as any)?.totalOrders ?? 0;

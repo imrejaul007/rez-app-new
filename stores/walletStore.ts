@@ -23,7 +23,7 @@ interface WalletStoreData {
   pendingDeltaStack: number[];
 }
 
-interface WalletStoreState extends WalletStoreData {
+export interface WalletStoreState extends WalletStoreData {
   _setFromProvider: (data: WalletStoreData) => void;
   /** Optimistic balance adjustment — adds delta to rez/total/available balances */
   adjustBalance: (delta: number) => void;

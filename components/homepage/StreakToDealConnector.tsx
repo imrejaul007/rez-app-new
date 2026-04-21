@@ -24,6 +24,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import nearbyEarnApi, { NearbyStore } from '@/services/nearbyEarnApi';
 import { useLocationStore } from '@/stores/locationStore';
+import type { LocationContextType } from '@/types/location.types';
 
 const NAVY    = '#1a3a52';
 const MUSTARD = '#FFC857';
@@ -54,7 +55,7 @@ interface StreakToDealConnectorProps {
 
 const StreakToDealConnector: React.FC<StreakToDealConnectorProps> = ({ streakCount }) => {
   const router = useRouter();
-  const locationState = useLocationStore(s => s.state);
+  const locationState = useLocationStore((s: LocationContextType) => s.state);
   const coords = locationState.currentLocation?.coordinates;
 
   const [dealStore, setDealStore] = useState<NearbyStore | null>(null);

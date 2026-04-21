@@ -80,7 +80,7 @@ import type { TimeAwarePersona } from '@/components/homepage/TimeAwareContextPil
 
 import { useHomePersona } from '@/hooks/useHomePersona';
 import { useWalletStore } from '@/stores/walletStore';
-import { useGamificationStore } from '@/stores/gamificationStore';
+import { useGamificationStore, GamificationStoreState } from '@/stores/gamificationStore';
 import { useCheckinStatus } from '@/hooks/useCheckinStatus';
 import { useVisitStreak } from '@/hooks/useVisitStreak';
 import { useLiveContext } from '@/hooks/queries/useLiveContext';
@@ -159,7 +159,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   const unlockAmount = (walletData as any)?.unlockAmount ?? (walletData as any)?.lockedBalance ?? undefined;
 
   // Gamification — streak count for StreakToDealConnector
-  const dailyStreak = useGamificationStore((s) => (s as any).dailyStreak ?? 0);
+  const dailyStreak = useGamificationStore((s: GamificationStoreState) => s.state.dailyStreak ?? 0);
 
   // API-backed check-in status and visit streak
   const { data: checkinStatus } = useCheckinStatus();

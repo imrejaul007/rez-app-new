@@ -78,6 +78,7 @@ interface FrontendOrderItem {
 
 /** Frontend order — normalized from BackendOrder */
 interface FrontendOrder {
+  _id?: string;
   id: string;
   orderNumber?: string;
   userId?: string;
@@ -102,6 +103,7 @@ interface FrontendOrder {
   delivery_fee: number;
   shippingCost: number;
   deliveryAddress: FrontendAddress | null;
+  billingAddress?: FrontendAddress | null;
   summary: {
     subtotal: number;
     shipping: number;
@@ -176,6 +178,7 @@ interface FrontendCheckoutAddress {
   address2?: string;
   landmark?: string;
   addressType?: string;
+  country?: string;
 }
 
 /** Frontend order list response */

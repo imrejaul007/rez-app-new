@@ -841,10 +841,16 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
       }
     }
 
-    await AsyncStorage.setItem(
-      STORAGE_KEYS.OFFLINE_MESSAGES,
-      JSON.stringify(offlineMessages)
-    );
+    // Use offlineMessagesRef to capture the latest state after processing (stale closure
+    // otherwise misses items filtered/updated in the loop above).
+    try {
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.OFFLINE_MESSAGES,
+        JSON.stringify(offlineMessagesRef.current)
+      );
+    } catch (err) {
+      logger.error('[useSupportChat] processOfflineMessages persistence failed', err as Error);
+    }
   };
 
   // Keep ref up-to-date so the NetInfo listener above can call it

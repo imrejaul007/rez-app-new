@@ -10,6 +10,7 @@ import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useWalletData, useWalletLoading, useBrandedCoins } from '@/stores/selectors';
+import { CoinBalance } from '@/types/wallet';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
@@ -77,8 +78,8 @@ const WalletSnapshotCard: React.FC = () => {
   }
 
   // Get coin balances
-  const rezCoin = walletData?.coins?.find(c => c.type === 'rez');
-  const promoCoin = walletData?.coins?.find(c => c.type === 'promo');
+  const rezCoin = walletData?.coins?.find((c: CoinBalance) => c.type === 'rez');
+  const promoCoin = walletData?.coins?.find((c: CoinBalance) => c.type === 'promo');
   const brandedCoins = brandedCoinsFromCtx || [];
 
   const rezCoins = rezCoin?.amount || 0;

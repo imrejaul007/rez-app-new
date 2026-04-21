@@ -39,7 +39,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import type { ProfileIconGridItem } from '@/types/profile.types';
 import { profileIconGridItems } from '@/data/profileData';
 import type { UseQueryResult } from '@tanstack/react-query';
-import type { getScore as GetScoreFn } from '@/services/rezScoreApi';
+type GetScoreFn = typeof import('@/services/rezScoreApi')['getScore'];
 
 export interface ProfileUser {
   id?: string;
@@ -131,7 +131,7 @@ export const useProfileData = (): UseProfileDataReturn => {
     let cancelled = false;
     authService.getProfile().then((res) => {
       if (cancelled || !res.success || !res.data) return;
-      const d = res.data as Record<string, unknown>;
+      const d = res.data as unknown as Record<string, unknown>;
       const fn = (d.profile as Record<string, string> | undefined)?.firstName || '';
       const ln = (d.profile as Record<string, string> | undefined)?.lastName || '';
       const name = fn && ln ? `${fn} ${ln}` : fn || (d.name as string) || (d.email as string)?.split('@')[0] || '';
@@ -202,10 +202,10 @@ export const useProfileData = (): UseProfileDataReturn => {
         if (status !== 'granted') { platformAlertSimple('Permission Required', 'Please allow access to your photo library to upload a profile picture.'); return; }
       }
       const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: 'images', allowsEditing: true, aspect: [1, 1], quality: 0.8 });
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets?.[0]) {
         if (!isMounted()) return;
         setUploadingImage(true);
-        const uploadResult = await uploadProfileImage(result.assets[0].uri);
+        const uploadResult = await uploadProfileImage(result.assets![0].uri);
         if (uploadResult.success) { await authActions.checkAuthStatus(); platformAlertSimple('Success', 'Profile picture updated successfully!'); }
         else { platformAlertSimple('Upload Failed', uploadResult.error || 'Failed to upload image'); }
       }

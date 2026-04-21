@@ -93,7 +93,7 @@ export interface UseCheckoutActionsReturn {
   toggleStorePromoCoin: (enabled: boolean) => void;
   handleCustomCoinAmount: (coinType: 'rez' | 'promo' | 'storePromo', amount: number) => void;
   selectPaymentMethod: (method: PaymentMethod) => void;
-  proceedToPayment: () => void;
+  proceedToPayment: () => Promise<void>;
   navigateToOtherPaymentMethods: () => void;
   applyCardOffer: (offer: {
     _id: string; name: string; type: 'percentage' | 'fixed'; value: number;
@@ -154,7 +154,7 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
         }),
         subtotal: state.items.reduce((t, i) => t + (i.price * i.quantity), 0),
       };
-      const response: Record<string, unknown> = await couponService.validateCoupon(code.code, cartData) as Record<string, unknown>;
+      const response = await couponService.validateCoupon(code.code, cartData as unknown as Parameters<typeof couponService.validateCoupon>[1]);
       if (response.success && response.data) {
         const coinUsage = { rez: state.coinSystem.rezCoin.used, promo: state.coinSystem.promoCoin.used };
         const newBillSummary = CheckoutData.helpers.calculateBillSummary(state.items, state.store, code, coinUsage);
@@ -278,7 +278,7 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
     saveDraft({ paymentMethod: method.id });
   }, []);
 
-  const proceedToPayment = useCallback(() => {
+  const proceedToPayment = useCallback(async (): Promise<void> => {
     setState(prev => ({ ...prev, currentStep: 'payment_methods' }));
     router.push('/payment-methods');
   }, []);
@@ -376,8 +376,8 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
         fulfillmentType: state.fulfillment.selectedType,
         fulfillmentDetails: { tableNumber: state.fulfillment.tableNumber, vehicleInfo: state.fulfillment.vehicleInfo, pickupInstructions: state.fulfillment.pickupInstructions },
       });
-      (orderData as Record<string, unknown>).coinsUsed = { rezCoins: state.coinSystem.rezCoin.used || 0, promoCoins: state.coinSystem.promoCoin.used || 0, storePromoCoins: state.coinSystem.storePromoCoin.used || 0, totalCoinsValue: (state.coinSystem.rezCoin.used || 0) + (state.coinSystem.promoCoin.used || 0) + (state.coinSystem.storePromoCoin.used || 0) };
-      const response: Record<string, unknown> = await ordersService.createOrder(orderData, orderIdempotencyKeyRef.current || undefined) as Record<string, unknown>;
+      (orderData as unknown as Record<string, unknown>).coinsUsed = { rezCoins: state.coinSystem.rezCoin.used || 0, promoCoins: state.coinSystem.promoCoin.used || 0, storePromoCoins: state.coinSystem.storePromoCoin.used || 0, totalCoinsValue: (state.coinSystem.rezCoin.used || 0) + (state.coinSystem.promoCoin.used || 0) + (state.coinSystem.storePromoCoin.used || 0) };
+      const response = await ordersService.createOrder(orderData as unknown as Parameters<typeof ordersService.createOrder>[0], orderIdempotencyKeyRef.current || undefined);
       if (response.success && response.data) {
         try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}
         const orderId = (response.data as { id?: string; _id?: string }).id || (response.data as { _id?: string })._id || '';
@@ -413,15 +413,15 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
         couponCode: state.appliedPromoCode?.code, fulfillmentType: state.fulfillment.selectedType,
         fulfillmentDetails: { tableNumber: state.fulfillment.tableNumber, vehicleInfo: state.fulfillment.vehicleInfo, pickupInstructions: state.fulfillment.pickupInstructions },
       });
-      if (coinValuesOverride?.redemptionCode) (orderData as Record<string, unknown>).redemptionCode = coinValuesOverride.redemptionCode;
-      if (coinValuesOverride?.offerRedemptionCode) (orderData as Record<string, unknown>).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-      if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) (orderData as Record<string, unknown>).lockFeeDiscount = state.billSummary.lockFeeDiscount;
+      if (coinValuesOverride?.redemptionCode) (orderData as unknown as Record<string, unknown>).redemptionCode = coinValuesOverride.redemptionCode;
+      if (coinValuesOverride?.offerRedemptionCode) (orderData as unknown as Record<string, unknown>).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
+      if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) (orderData as unknown as Record<string, unknown>).lockFeeDiscount = state.billSummary.lockFeeDiscount;
       const rezCoinsValue = coinValuesOverride ? Number(coinValuesOverride.rezCoins) || 0 : Number(state.coinSystem.rezCoin.used) || 0;
       const promoCoinsValue = coinValuesOverride ? Number(coinValuesOverride.promoCoins) || 0 : Number(state.coinSystem.promoCoin.used) || 0;
       const storePromoCoinsValue = coinValuesOverride ? Number(coinValuesOverride.storePromoCoins) || 0 : Number(state.coinSystem.storePromoCoin.used) || 0;
-      (orderData as Record<string, unknown>).coinsUsed = { rezCoins: rezCoinsValue, promoCoins: promoCoinsValue, storePromoCoins: storePromoCoinsValue, totalCoinsValue: rezCoinsValue + promoCoinsValue + storePromoCoinsValue };
-      (orderData as Record<string, unknown>).walletPayment = { amount: totalPayable };
-      const orderResponse: Record<string, unknown> = await ordersService.createOrder(orderData, orderIdempotencyKeyRef.current) as Record<string, unknown>;
+      (orderData as unknown as Record<string, unknown>).coinsUsed = { rezCoins: rezCoinsValue, promoCoins: promoCoinsValue, storePromoCoins: storePromoCoinsValue, totalCoinsValue: rezCoinsValue + promoCoinsValue + storePromoCoinsValue };
+      (orderData as unknown as Record<string, unknown>).walletPayment = { amount: totalPayable };
+      const orderResponse = await ordersService.createOrder(orderData as unknown as Parameters<typeof ordersService.createOrder>[0], orderIdempotencyKeyRef.current);
       if (!orderResponse.success || !orderResponse.data) { setState(prev => ({ ...prev, loading: false, error: (orderResponse.error as string) || 'Checkout failed. Please try again.', currentStep: 'checkout' })); isSubmittingRef.current = false; return; }
       let transactionId: string | undefined = (orderResponse.data as { walletPaymentResult?: { transactionId?: string } }).walletPaymentResult?.transactionId;
       if (!transactionId) {
@@ -473,12 +473,12 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
           fulfillmentDetails: { tableNumber: state.fulfillment.tableNumber, vehicleInfo: state.fulfillment.vehicleInfo, pickupInstructions: state.fulfillment.pickupInstructions },
           items: storeGroup.items.map(i => ({ product: i.productId || i.id, quantity: i.quantity, price: i.price, name: i.name })), coinsUsed,
         });
-        if (coinValuesOverride?.redemptionCode && storeGroups.indexOf(storeGroup) === 0) (storeOrderData as Record<string, unknown>).redemptionCode = coinValuesOverride.redemptionCode;
-        if (coinValuesOverride?.offerRedemptionCode && storeGroups.indexOf(storeGroup) === 0) (storeOrderData as Record<string, unknown>).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-        if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0 && storeGroups.indexOf(storeGroup) === 0) (storeOrderData as Record<string, unknown>).lockFeeDiscount = state.billSummary.lockFeeDiscount;
+        if (coinValuesOverride?.redemptionCode && storeGroups.indexOf(storeGroup) === 0) (storeOrderData as unknown as Record<string, unknown>).redemptionCode = coinValuesOverride.redemptionCode;
+        if (coinValuesOverride?.offerRedemptionCode && storeGroups.indexOf(storeGroup) === 0) (storeOrderData as unknown as Record<string, unknown>).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
+        if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0 && storeGroups.indexOf(storeGroup) === 0) (storeOrderData as unknown as Record<string, unknown>).lockFeeDiscount = state.billSummary.lockFeeDiscount;
         try {
           const storeOrderKey = `${orderIdempotencyKeyRef.current}-${storeGroup.storeId}`;
-          const orderResponse: Record<string, unknown> = await ordersService.createOrder(storeOrderData, storeOrderKey) as Record<string, unknown>;
+          const orderResponse = await ordersService.createOrder(storeOrderData as unknown as Parameters<typeof ordersService.createOrder>[0], storeOrderKey);
           if (orderResponse.success && orderResponse.data) {
             const orderId = (orderResponse.data as { id?: string }).id || (orderResponse.data as { _id?: string })._id || '';
             if (orderId) createdOrderIds.push(orderId);
@@ -526,7 +526,7 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
         onSuccess: async (paymentResponse) => {
           saveDraft({ paymentMethod: 'razorpay', razorpayPaymentId: paymentResponse.paymentId, razorpayOrderId: paymentResponse.orderId, razorpaySignature: paymentResponse.signature ?? null, pendingPaymentAmount: totalPayable, orderCreated: false });
           try {
-            let appliedCardOfferData: typeof appliedCardOffer = null;
+            let appliedCardOfferData: typeof appliedCardOffer | undefined = undefined;
             if (paymentResponse.paymentMethod === 'card' || paymentResponse.paymentMethod?.includes('card')) {
               try {
                 const cardOffersResponse = await discountsApi.getCardOffers({ storeId: state.store.id, orderValue: state.billSummary.totalPayable, page: 1, limit: 1 });
@@ -545,19 +545,19 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
               couponCode: state.appliedPromoCode?.code, fulfillmentType: state.fulfillment.selectedType,
               fulfillmentDetails: { tableNumber: state.fulfillment.tableNumber, vehicleInfo: state.fulfillment.vehicleInfo, pickupInstructions: state.fulfillment.pickupInstructions },
             });
-            (orderData as Record<string, unknown>).razorpayPaymentId = paymentResponse.paymentId;
-            (orderData as Record<string, unknown>).razorpayOrderId = paymentResponse.orderId;
-            (orderData as Record<string, unknown>).transactionId = paymentResponse.transactionId;
-            (orderData as Record<string, unknown>).coinsUsed = coinsUsed;
-            if (coinValuesOverride?.redemptionCode) (orderData as Record<string, unknown>).redemptionCode = coinValuesOverride.redemptionCode;
-            if (coinValuesOverride?.offerRedemptionCode) (orderData as Record<string, unknown>).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
-            if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) (orderData as Record<string, unknown>).lockFeeDiscount = state.billSummary.lockFeeDiscount;
+            (orderData as unknown as Record<string, unknown>).razorpayPaymentId = paymentResponse.paymentId;
+            (orderData as unknown as Record<string, unknown>).razorpayOrderId = paymentResponse.orderId;
+            (orderData as unknown as Record<string, unknown>).transactionId = paymentResponse.transactionId;
+            (orderData as unknown as Record<string, unknown>).coinsUsed = coinsUsed;
+            if (coinValuesOverride?.redemptionCode) (orderData as unknown as Record<string, unknown>).redemptionCode = coinValuesOverride.redemptionCode;
+            if (coinValuesOverride?.offerRedemptionCode) (orderData as unknown as Record<string, unknown>).offerRedemptionCode = coinValuesOverride.offerRedemptionCode;
+            if (state.billSummary?.lockFeeDiscount && state.billSummary.lockFeeDiscount > 0) (orderData as unknown as Record<string, unknown>).lockFeeDiscount = state.billSummary.lockFeeDiscount;
             if (appliedCardOfferData) {
-              (orderData as Record<string, unknown>).cardOfferId = appliedCardOfferData._id;
+              (orderData as unknown as Record<string, unknown>).cardOfferId = appliedCardOfferData._id;
               const discountAmt = appliedCardOfferData.type === 'percentage' ? Math.round((state.billSummary?.totalPayable || 0) * appliedCardOfferData.value / 100) : appliedCardOfferData.value;
-              (orderData as Record<string, unknown>).cardOfferDiscount = Math.min(discountAmt, appliedCardOfferData.maxDiscountAmount || discountAmt);
+              (orderData as unknown as Record<string, unknown>).cardOfferDiscount = Math.min(discountAmt, appliedCardOfferData.maxDiscountAmount || discountAmt);
             }
-            const orderResponse: Record<string, unknown> = await ordersService.createOrder(orderData, orderIdempotencyKeyRef.current) as Record<string, unknown>;
+            const orderResponse = await ordersService.createOrder(orderData as unknown as Parameters<typeof ordersService.createOrder>[0], orderIdempotencyKeyRef.current);
             if (!orderResponse.success || !orderResponse.data) { showToast({ message: 'Payment successful but order creation failed. Please contact support.', type: 'error' }); setState(prev => ({ ...prev, loading: false, error: 'Order creation failed. Please contact support.', currentStep: 'checkout' })); return; }
             try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}
             const orderId = (orderResponse.data as { id?: string }).id || (orderResponse.data as { _id?: string })._id || '';
@@ -603,9 +603,9 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const cartData = { items: state.items.map(i => { const c: Record<string, unknown> = { product: i.productId || i.id, quantity: i.quantity, price: i.price }; if (i.category?.trim()) c.category = i.category; if (i.storeId?.trim()) c.store = i.storeId; return c; }), subtotal: itemTotal };
-      const response: Record<string, unknown> = await couponService.validateCoupon(code, cartData) as Record<string, unknown>;
+      const response = await couponService.validateCoupon(code, cartData as unknown as Parameters<typeof couponService.validateCoupon>[1]);
       if (response.success && response.data) {
-        tempPromoCode.discountType = (response.data as { coupon?: { type: string } }).coupon?.type || 'PERCENTAGE';
+        tempPromoCode.discountType = ((response.data as unknown as { coupon?: { type: string } }).coupon?.type || 'PERCENTAGE') as PromoCode['discountType'];
         tempPromoCode.discountValue = (response.data as { coupon?: { value: number } }).coupon?.value || 0;
         const coinUsage = { rez: state.coinSystem.rezCoin.used, promo: state.coinSystem.promoCoin.used };
         const newBillSummary = CheckoutData.helpers.calculateBillSummary(state.items, state.store, tempPromoCode, coinUsage);

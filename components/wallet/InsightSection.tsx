@@ -10,7 +10,7 @@ import { WalletData } from '@/types/wallet';
 import { Spacing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
-const SEGMENT_THIRD_TILE: Record<string, { label: string; icon: keyof typeof import('@expo/vector-icons').Ionicons['glyphMap']; iconColor: string }> = {
+const SEGMENT_THIRD_TILE: Record<string, { label: string; icon: string; iconColor: string }> = {
   verified_student:    { label: 'Campus Rank',    icon: 'trophy-outline',       iconColor: '#F59E0B' },
   verified_employee:   { label: 'Work Perks Used', icon: 'checkmark-circle',    iconColor: '#10B981' },
   verified_healthcare: { label: 'Health Saves',   icon: 'medkit-outline',       iconColor: '#EF4444' },

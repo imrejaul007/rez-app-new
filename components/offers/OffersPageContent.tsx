@@ -104,7 +104,7 @@ export const OffersPageContent: React.FC<OffersPageContentProps> = ({
 }) => {
   const { theme, isDark } = useOffersTheme();
   const router = useRouter();
-  const { segment } = useUserIdentityStore();
+  const { segment }: { segment: IdentitySegment } = useUserIdentityStore();
   const bannerConfig = SEGMENT_BANNER[segment];
   const exclusiveTabLabel = SEGMENT_EXCLUSIVE_LABEL[segment] ?? 'Exclusive';
 

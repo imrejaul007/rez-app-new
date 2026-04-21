@@ -7,7 +7,7 @@ import challengesApi from '@/services/challengesApi';
 import coinSyncService from '@/services/coinSyncService';
 import { useIsAuthenticated, useIsOnboarded } from '@/stores/selectors';
 import { useWalletContext } from './WalletContext';
-import { useGamificationStore } from '@/stores/gamificationStore';
+import { useGamificationStore, type GamificationStoreState } from '@/stores/gamificationStore';
 
 // L-1 FIX: Feature flags now read from environment variables for runtime control.
 // Set EXPO_PUBLIC_FEAT_* in .env to override defaults without a code change.
@@ -728,7 +728,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
   }), [state, stableActions, computed]);
 
   // Sync to Zustand store for crash-safe fallback (synchronous to avoid one-frame lag)
-  const _setFromProvider = useGamificationStore((s) => s._setFromProvider);
+  const _setFromProvider = useGamificationStore((s: GamificationStoreState) => s._setFromProvider);
   const prevGamificationValueRef = useRef(contextValue);
   if (prevGamificationValueRef.current !== contextValue) {
     prevGamificationValueRef.current = contextValue;
@@ -780,9 +780,9 @@ const GAMIFICATION_DEFAULTS: GamificationContextType = {
 // Hook — falls back to Zustand store for crash safety when outside Provider
 export function useGamification() {
   const context = useContext(GamificationContext);
-  const storeState = useGamificationStore((s) => s.state);
-  const storeActions = useGamificationStore((s) => s.actions);
-  const storeComputed = useGamificationStore((s) => s.computed);
+  const storeState = useGamificationStore((s: GamificationStoreState) => s.state);
+  const storeActions = useGamificationStore((s: GamificationStoreState) => s.actions);
+  const storeComputed = useGamificationStore((s: GamificationStoreState) => s.computed);
 
   if (context !== undefined) {
     return context;

@@ -13,7 +13,7 @@ import {
   getCurrentRegion as _getCurrentRegion,
   setOnRegionChangeCallback as _setOnRegionChangeCallback,
 } from '@/stores/regionStore';
-import type { RegionId, RegionConfig } from '@/stores/regionStore';
+import type { RegionId, RegionConfig, RegionStoreState } from '@/stores/regionStore';
 
 // Re-export types and utilities
 export type { RegionId, RegionConfig };
@@ -67,14 +67,14 @@ export function useRegion(): RegionContextType {
  * Hook for just the current region (safe version — returns default if store not ready)
  */
 export function useCurrentRegion(): RegionId {
-  return useRegionStore((s) => s.state.currentRegion);
+  return useRegionStore((s: RegionStoreState) => s.state.currentRegion);
 }
 
 /**
  * Hook for region config
  */
 export function useRegionConfig(): RegionConfig | null {
-  return useRegionStore((s) => s.state.regionConfig);
+  return useRegionStore((s: RegionStoreState) => s.state.regionConfig);
 }
 
 /**

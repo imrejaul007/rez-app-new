@@ -102,10 +102,11 @@ declare module 'expo-image' {
     portal_tag?: string;
   }
   export class Image extends Component<ImageProps> {
-    static prefetch(url: string | string[]): Promise<boolean>;
+    static prefetch(url: string | string[], options?: { cachePolicy?: 'memory' | 'disk' | 'memory-disk' | 'none' }): Promise<boolean>;
   }
   export { ImageStyle as ImageStyle };
 }
 declare module 'expo-blur';
 declare module 'expo-local-authentication';
 declare module 'expo-linking';
+declare module 'expo-brightness';

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo, ReactNode } from 'react';
-import { useWalletStore } from '@/stores/walletStore';
+import { useWalletStore, type WalletStoreState } from '@/stores/walletStore';
 import { WalletData, CoinBalance, CoinPromoDetails } from '@/types/wallet';
 import { CoinType } from '@/types/enums/index';
 import walletApi from '@/services/walletApi';
@@ -391,8 +391,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       cashbackBalance, pendingRewards,
       brandedCoins, savingsInsights, refreshWallet, rawBackendData,
       error: walletError,
-      // CD-CRIT-SEC-04: pendingDelta lives in the Zustand store, not the context
-      pendingDelta: 0,
+      // CD-CRIT-SEC-04: pendingDeltaStack lives in the Zustand store, not the context
+      pendingDeltaStack: [],
     };
   }, [walletData, refreshWallet, rawBackendData, walletError]);
 
@@ -408,7 +408,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }), [dataValue, loadingValue]);
 
   // Sync to Zustand store for crash-safe fallback
-  const _setFromProvider = useWalletStore((s) => s._setFromProvider);
+  const _setFromProvider = useWalletStore((s: WalletStoreState) => s._setFromProvider);
   useEffect(() => {
     _setFromProvider(combinedValue);
   }, [combinedValue, _setFromProvider]);
@@ -436,17 +436,17 @@ export function useWalletContext(): WalletContextType {
   const loadingCtx = useContext(WalletLoadingContext);
 
   // Zustand fallback selectors (always called — hooks can't be conditional)
-  const storeWalletData = useWalletStore((s) => s.walletData);
-  const storeRezBalance = useWalletStore((s) => s.rezBalance);
-  const storeTotalBalance = useWalletStore((s) => s.totalBalance);
-  const storeAvailableBalance = useWalletStore((s) => s.availableBalance);
-  const storeBrandedCoins = useWalletStore((s) => s.brandedCoins);
-  const storeSavingsInsights = useWalletStore((s) => s.savingsInsights);
-  const storeRefreshWallet = useWalletStore((s) => s.refreshWallet);
-  const storeRawBackendData = useWalletStore((s) => s.rawBackendData);
-  const storeIsLoading = useWalletStore((s) => s.isLoading);
-  const storeIsRefreshing = useWalletStore((s) => s.isRefreshing);
-  const storeError = useWalletStore((s) => s.error);
+  const storeWalletData = useWalletStore((s: WalletStoreState) => s.walletData);
+  const storeRezBalance = useWalletStore((s: WalletStoreState) => s.rezBalance);
+  const storeTotalBalance = useWalletStore((s: WalletStoreState) => s.totalBalance);
+  const storeAvailableBalance = useWalletStore((s: WalletStoreState) => s.availableBalance);
+  const storeBrandedCoins = useWalletStore((s: WalletStoreState) => s.brandedCoins);
+  const storeSavingsInsights = useWalletStore((s: WalletStoreState) => s.savingsInsights);
+  const storeRefreshWallet = useWalletStore((s: WalletStoreState) => s.refreshWallet);
+  const storeRawBackendData = useWalletStore((s: WalletStoreState) => s.rawBackendData);
+  const storeIsLoading = useWalletStore((s: WalletStoreState) => s.isLoading);
+  const storeIsRefreshing = useWalletStore((s: WalletStoreState) => s.isRefreshing);
+  const storeError = useWalletStore((s: WalletStoreState) => s.error);
 
   if (dataCtx && loadingCtx) {
     return { ...dataCtx, ...loadingCtx };
@@ -467,8 +467,8 @@ export function useWalletContext(): WalletContextType {
     isLoading: storeIsLoading,
     isRefreshing: storeIsRefreshing,
     error: storeError,
-    // CD-CRIT-SEC-04: pendingDelta lives in the Zustand store, not the context
-    pendingDelta: 0,
+    // CD-CRIT-SEC-04: pendingDeltaStack lives in the Zustand store, not the context
+    pendingDeltaStack: [],
   };
 }
 
