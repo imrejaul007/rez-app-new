@@ -101,7 +101,7 @@ class FileUploadService {
         return [];
       }
 
-      return this.processPickerResults(result.assets);
+      return this.processPickerResults(result.assets as ImagePicker.ImagePickerAsset[]);
     } catch (error) {
       throw error;
     }
@@ -123,7 +123,7 @@ class FileUploadService {
         return [];
       }
 
-      return this.processPickerResults(result.assets);
+      return this.processPickerResults(result.assets as ImagePicker.ImagePickerAsset[]);
     } catch (error) {
       throw error;
     }

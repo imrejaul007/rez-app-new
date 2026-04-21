@@ -29,7 +29,7 @@
  * ```
  */
 
-import { create } from 'zustand';
+import { create, SetState, GetState } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -88,12 +88,15 @@ const emptyDraft: CheckoutDraft = {
   orderCreated: false,
 };
 
+type StoreSet = SetState<CheckoutDraftState>;
+type StoreGet = GetState<CheckoutDraftState>;
+
 export const useCheckoutDraftStore = create<CheckoutDraftState>()(
   persist(
-    (set, get) => ({
+    (set: StoreSet, get: StoreGet) => ({
       draft: null,
 
-      saveDraft: (partial) => {
+      saveDraft: (partial: Partial<CheckoutDraft>) => {
         const existing = get().draft ?? emptyDraft;
         set({
           draft: {
@@ -113,7 +116,7 @@ export const useCheckoutDraftStore = create<CheckoutDraftState>()(
       storage: createJSONStorage(() => AsyncStorage),
 
       // Only persist non-null, non-stale drafts
-      partialize: (state) => {
+      partialize: (state: CheckoutDraftState) => {
         const draft = state.draft;
         if (!draft || !draft.savedAt) return { draft: null };
         const isStale = Date.now() - draft.savedAt > DRAFT_TTL_MS;

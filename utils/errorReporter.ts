@@ -161,7 +161,7 @@ class ErrorReporter {
       this.setupGlobalErrorHandlers();
       this.isInitialized = true;
     } catch (error) {
-      logger.error('Failed to initialize ErrorReporter:', error);
+      logger.error('Failed to initialize ErrorReporter:', error as Error | undefined);
     }
   }
 
@@ -289,7 +289,7 @@ class ErrorReporter {
         } catch {}
       }
     } catch (err) {
-      logger.error('Failed to capture error:', err);
+      logger.error('Failed to capture error:', err as Error | undefined);
     }
   }
 
@@ -396,7 +396,7 @@ class ErrorReporter {
         this.breadcrumbs = JSON.parse(data);
       }
     } catch (error) {
-      logger.error('Failed to load breadcrumbs:', error);
+      logger.error('Failed to load breadcrumbs:', error as Error | undefined);
     }
   }
 
@@ -430,7 +430,7 @@ class ErrorReporter {
         JSON.stringify(this.errors)
       );
     } catch (error) {
-      logger.error('Failed to save errors:', error);
+      logger.error('Failed to save errors:', error as Error | undefined);
     }
   }
 
@@ -444,7 +444,7 @@ class ErrorReporter {
         this.errors = JSON.parse(data);
       }
     } catch (error) {
-      logger.error('Failed to load errors:', error);
+      logger.error('Failed to load errors:', error as Error | undefined);
     }
   }
 
@@ -649,7 +649,7 @@ class ErrorReporter {
     switch (error.severity) {
       case 'fatal':
       case 'error':
-        logger.error(message, { error });
+        logger.error(message, error);
         break;
       case 'warning':
         logger.warn(message, { error });
@@ -691,7 +691,7 @@ class ErrorReporter {
         }
       }
     } catch (error) {
-      logger.error('Failed to send errors:', error);
+      logger.error('Failed to send errors:', error as Error | undefined);
     }
   }
 

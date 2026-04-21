@@ -119,7 +119,7 @@ async function fetchRegionConfigFromServer(regionId: RegionId) {
     if (response.success && response.data?.region) {
       regionConfigFetchedAt[regionId] = now;
       const serverConfig = response.data.region as RegionConfig;
-      useRegionStore.setState((s) => ({
+      useRegionStore.setState((s: RegionStoreState) => ({
         state: {
           ...s.state,
           currentRegion: regionId,
@@ -142,7 +142,7 @@ async function fetchAvailableRegions() {
     const response = await apiClient.get<any>('/location/regions');
     if (response.success && response.data?.regions) {
       availableRegionsFetchedAt = now;
-      useRegionStore.setState((s) => ({
+      useRegionStore.setState((s: RegionStoreState) => ({
         state: { ...s.state, availableRegions: response.data.regions },
       }));
     }
@@ -172,7 +172,10 @@ function syncRegionGetters(regionId: RegionId, config: RegionConfig | null) {
   }
 }
 
-export const useRegionStore = create<RegionStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<RegionStoreState> | ((s: RegionStoreState) => Partial<RegionStoreState>), replace?: boolean) => void;
+type StoreGet = () => RegionStoreState;
+
+export const useRegionStore = create<RegionStoreState>((set: StoreSet, get: StoreGet) => ({
   state: {
     currentRegion: DEFAULT_REGION,
     regionConfig: DEFAULT_CONFIGS[DEFAULT_REGION],

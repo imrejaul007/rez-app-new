@@ -39,7 +39,10 @@ const generateId = () => `reward-${Date.now()}-${uuid.v4()}`;
 
 let _dismissTimer: ReturnType<typeof setTimeout> | null = null;
 
-export const useRewardPopupStore = create<RewardPopupStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<RewardPopupStoreState> | ((s: RewardPopupStoreState) => Partial<RewardPopupStoreState>), replace?: boolean) => void;
+type StoreGet = () => RewardPopupStoreState;
+
+export const useRewardPopupStore = create<RewardPopupStoreState>((set: StoreSet, get: StoreGet) => ({
   currentPopup: null,
   popupQueue: [],
 

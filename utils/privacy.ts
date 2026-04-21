@@ -1,8 +1,8 @@
 /**
-import { logger } from '@/utils/logger';
  * Privacy Utilities
  * GDPR-compliant data anonymization functions
  */
+import { logger } from '@/utils/logger';
 
 /**
  * Anonymize email address

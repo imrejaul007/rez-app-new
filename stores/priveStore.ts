@@ -78,7 +78,10 @@ const defaults: PriveContextShape = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const usePriveStore = create<PriveStoreState>((set) => ({
+type StoreSet = (partial: Partial<PriveStoreState> | ((s: PriveStoreState) => Partial<PriveStoreState>), replace?: boolean) => void;
+type StoreGet = () => PriveStoreState;
+
+export const usePriveStore = create<PriveStoreState>((set: StoreSet) => ({
   ...defaults,
 
   // Called by PriveProvider on every render to keep store in sync

@@ -224,7 +224,7 @@ export function useDeepLinkHandler() {
     };
 
     // Handle URL when app is already open
-    const subscription = Linking.addEventListener('url', ({ url }) => {
+    const subscription = Linking.addEventListener('url', ({ url }: { url: string }) => {
       processUrl(url);
     });
 

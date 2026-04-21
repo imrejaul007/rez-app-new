@@ -24,7 +24,10 @@ const initialState: CategoryState = {
 
 interface CategoryStoreState extends CategoryContextType {}
 
-export const useCategoryStore = create<CategoryStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<CategoryStoreState> | ((s: CategoryStoreState) => Partial<CategoryStoreState>), replace?: boolean) => void;
+type StoreGet = () => CategoryStoreState;
+
+export const useCategoryStore = create<CategoryStoreState>((set: StoreSet, get: StoreGet) => ({
   state: initialState,
 
   actions: {

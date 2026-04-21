@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, SetState, GetState } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createSecureWalletStorage } from '@/utils/secureWalletStorage';
 import { WalletData } from '@/types/wallet';
@@ -117,9 +117,12 @@ const baseDefaults: Omit<WalletStoreData, 'refreshWallet'> = {
 // On native devices without SecureStore availability: XOR+base64 obfuscation in
 // AsyncStorage as a fallback rather than plaintext.  On web: XOR+base64 obfuscation.
 // Old plain-AsyncStorage data is migrated on first read.
+type StoreSet = SetState<WalletStoreState>;
+type StoreGet = GetState<WalletStoreState>;
+
 export const useWalletStore = create<WalletStoreState>()(
   persist(
-    (set, get) => ({
+    (set: StoreSet, get: StoreGet) => ({
       ...baseDefaults,
       refreshWallet: () => defaultRefreshWallet(set, get),
 
@@ -143,10 +146,10 @@ export const useWalletStore = create<WalletStoreState>()(
       // the optimistic value. Rollback is only needed if refreshWallet() fails or is never called.
       // CA-PAY-004 FIX: Already uses functional setState: set((state) => ...)
       adjustBalance: (delta: number) => {
-        set((state) => {
-          if (!state.walletData) return state;
+        set((state: WalletStoreState): Partial<WalletStoreState> => {
+          if (!state.walletData) return {};
           // NA-HIGH-04 FIX: floor balances at 0 to prevent negative display from race conditions
-          const updatedCoins = state.walletData.coins.map((c) =>
+          const updatedCoins = state.walletData.coins.map((c: { type?: string; amount: number }) =>
             c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount + delta) } : c
           );
           return {
@@ -157,7 +160,7 @@ export const useWalletStore = create<WalletStoreState>()(
               ...state.walletData,
               totalBalance: Math.max(0, state.walletData.totalBalance + delta),
               availableBalance: Math.max(0, state.walletData.availableBalance + delta),
-              coins: updatedCoins,
+              coins: updatedCoins as any,
             },
             pendingDeltaStack: [...state.pendingDeltaStack, delta],
           };
@@ -168,12 +171,12 @@ export const useWalletStore = create<WalletStoreState>()(
       // CD-CRIT-04 FIX: Pop from the stack so concurrent adjustBalance calls don't
       // incorrectly undo each other's deltas. Each adjustBalance has its own stack slot.
       rollbackAdjustment: () => {
-        set((state) => {
+        set((state: WalletStoreState): Partial<WalletStoreState> => {
           const stack = state.pendingDeltaStack;
           if (stack.length === 0 || !state.walletData) return { pendingDeltaStack: [] };
           const delta = stack[stack.length - 1];
 
-          const updatedCoins = state.walletData.coins.map((c) =>
+          const updatedCoins = state.walletData.coins.map((c: { type?: string; amount: number }) =>
             c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount - delta) } : c
           );
           return {
@@ -184,7 +187,7 @@ export const useWalletStore = create<WalletStoreState>()(
               ...state.walletData,
               totalBalance: Math.max(0, state.walletData.totalBalance - delta),
               availableBalance: Math.max(0, state.walletData.availableBalance - delta),
-              coins: updatedCoins,
+              coins: updatedCoins as any,
             },
             pendingDeltaStack: stack.slice(0, -1),
           };
@@ -194,7 +197,7 @@ export const useWalletStore = create<WalletStoreState>()(
     {
       name: 'rez-wallet-store', // Must match LEGACY_ASYNC_KEY in secureWalletStorage.ts
       storage: createJSONStorage(createSecureWalletStorage),
-      partialize: (state) => ({
+      partialize: (state: WalletStoreState) => ({
         // Only persist user data, not loading states or functions
         walletData: state.walletData,
         rezBalance: state.rezBalance,

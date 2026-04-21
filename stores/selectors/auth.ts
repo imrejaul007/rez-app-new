@@ -9,22 +9,22 @@
 import { useAuthStore } from '../authStore';
 
 /** Only re-renders when user object changes */
-export const useAuthUser = () => useAuthStore((s) => s.state.user);
+export const useAuthUser = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.user);
 
 /** Only re-renders when auth status flips */
-export const useIsAuthenticated = () => useAuthStore((s) => s.state.isAuthenticated);
+export const useIsAuthenticated = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.isAuthenticated);
 
 /** Only re-renders when loading state changes */
-export const useAuthLoading = () => useAuthStore((s) => s.state.isLoading);
+export const useAuthLoading = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.isLoading);
 
 /** Only re-renders when error changes */
-export const useAuthError = () => useAuthStore((s) => s.state.error);
+export const useAuthError = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.error);
 
 /** Never re-renders — actions are stable references */
-export const useAuthActions = () => useAuthStore((s) => s.actions);
+export const useAuthActions = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.actions);
 
 /** Common pattern: just need user ID for API guards */
-export const useUserId = () => useAuthStore((s) => s.state.user?.id || s.state.user?._id);
+export const useUserId = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.user?.id || s.state.user?._id);
 
 /** Common pattern: check if onboarded */
-export const useIsOnboarded = () => useAuthStore((s) => s.state.user?.isOnboarded ?? false);
+export const useIsOnboarded = () => useAuthStore((s: ReturnType<typeof useAuthStore.getState>) => s.state.user?.isOnboarded ?? false);

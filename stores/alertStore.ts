@@ -22,7 +22,10 @@ interface AlertStoreState {
   dismiss: (button?: AlertButton) => void;
 }
 
-export const useAlertStore = create<AlertStoreState>((set) => ({
+type StoreSet = (partial: Partial<AlertStoreState> | ((s: AlertStoreState) => Partial<AlertStoreState>), replace?: boolean) => void;
+type StoreGet = () => AlertStoreState;
+
+export const useAlertStore = create<AlertStoreState>((set: StoreSet) => ({
   visible: false,
   alertData: null,
 

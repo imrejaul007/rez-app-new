@@ -71,6 +71,17 @@ declare module 'expo-image-picker' {
   export const useMediaLibraryPermissions: () => PermissionResponse;
   export const useCameraPermissions: () => PermissionResponse;
   export function getPendingResultAsync(): Promise<ImagePickerResult[]>;
+  export enum PermissionStatus {
+    UNDETERMINED = 'undetermined',
+    GRANTED = 'granted',
+    DENIED = 'denied',
+    LIMITED = 'limited',
+  }
+  export enum MediaType {
+    ALL = 'All',
+    IMAGES = 'Images',
+    VIDEOS = 'Videos',
+  }
 }
 declare module 'expo-clipboard';
 declare module 'expo-haptics';
@@ -110,3 +121,10 @@ declare module 'expo-blur';
 declare module 'expo-local-authentication';
 declare module 'expo-linking';
 declare module 'expo-brightness';
+declare module 'expo-media-library';
+declare module 'expo-crypto';
+declare module 'expo-device';
+declare module 'expo-application';
+declare module 'expo-store-review';
+declare module 'expo-image-manipulator';
+declare module '@react-navigation/native';

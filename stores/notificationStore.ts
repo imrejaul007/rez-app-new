@@ -95,7 +95,10 @@ const defaultSettings: NotificationSettings = {
   },
 };
 
-export const useNotificationStore = create<NotificationStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<NotificationStoreState> | ((s: NotificationStoreState) => Partial<NotificationStoreState>), replace?: boolean) => void;
+type StoreGet = () => NotificationStoreState;
+
+export const useNotificationStore = create<NotificationStoreState>((set: StoreSet, get: StoreGet) => ({
   settings: null,
   isLoading: false,
   error: null,

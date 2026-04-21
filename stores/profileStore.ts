@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, SetState, GetState } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
@@ -13,9 +13,12 @@ import profileApi from '@/services/profileApi';
 
 interface ProfileStoreState extends ProfileContextType {}
 
+type StoreSet = SetState<ProfileStoreState>;
+type StoreGet = GetState<ProfileStoreState>;
+
 export const useProfileStore = create<ProfileStoreState>()(
   persist(
-    (set, get) => ({
+    (set: StoreSet, get: StoreGet) => ({
       user: null,
       isLoading: false,
       error: null,
@@ -71,7 +74,7 @@ export const useProfileStore = create<ProfileStoreState>()(
     {
       name: 'rez-profile-store',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({
+      partialize: (state: ProfileStoreState) => ({
         // Only persist user data, not loading states or modal visibility
         user: state.user,
         completionStatus: state.completionStatus,

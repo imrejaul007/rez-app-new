@@ -72,7 +72,10 @@ interface HomeTabState {
 let _scrollToTopCallback: (() => void) | null = null;
 let _transitionTimer: ReturnType<typeof setTimeout> | null = null;
 
-export const useHomeTabStore = create<HomeTabState>((set) => ({
+type StoreSet = (partial: Partial<HomeTabState> | ((s: HomeTabState) => Partial<HomeTabState>), replace?: boolean) => void;
+type StoreGet = () => HomeTabState;
+
+export const useHomeTabStore = create<HomeTabState>((set: StoreSet) => ({
   activeTab: 'near-u',
   isLoaded: false,
   isTransitioning: false,
@@ -149,7 +152,7 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
   },
 
   markPriveGlowSeen: () => {
-    set((state) => ({
+    set((state: HomeTabState) => ({
       priveEligibility: {
         ...state.priveEligibility,
         hasSeenGlowThisSession: true,

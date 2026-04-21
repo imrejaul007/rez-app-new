@@ -225,12 +225,12 @@ export function mapBackendCartItemToFrontend(backendItem: BackendCartItem): Fron
     store: backendItem.store ? {
       id: backendItem.store._id,
       name: backendItem.store.name,
-      location: backendItem.store.location,
+      location: (backendItem.store.location as { address?: string })?.address,
     } : null,
     variant: backendItem.variant,
     addedAt: backendItem.addedAt,
     notes: (backendItem as unknown as { notes?: string }).notes,
-    itemType: (backendItem as unknown as { itemType?: string }).itemType || 'product',
+    itemType: ((backendItem as unknown as { itemType?: string }).itemType || 'product') as FrontendCartItem['itemType'],
     serviceBookingDetails: (backendItem as unknown as { serviceBookingDetails?: Record<string, unknown> | null }).serviceBookingDetails || null,
     metadata: (backendItem as unknown as { metadata?: Record<string, unknown> | null }).metadata || null,
     subtotal: (backendItem.price * backendItem.quantity) - (backendItem.discount || 0),
@@ -336,7 +336,7 @@ export function mapFrontendCheckoutToBackendOrder(checkoutData: {
       state,
       pincode,
       landmark: address.landmark || '',
-      addressType: address.addressType || 'home',
+      addressType: (address.addressType || 'home') as 'home' | 'work' | 'other',
     };
   } else {
     result.deliveryAddress = { name, phone, addressLine1, city, state, pincode };
@@ -405,7 +405,7 @@ export function mapBackendOrderToFrontend(backendOrder: BackendOrder): FrontendO
 
   // Get delivery fee from multiple possible sources
   const backendTotals = backendOrder as unknown as {
-    totals?: { delivery?: number; tax?: number; discount?: number; cashback?: number; total?: number; paidAmount?: number; refundAmount?: number; lockFeeDiscount?: number };
+    totals?: { delivery?: number; tax?: number; discount?: number; cashback?: number; total?: number; paidAmount?: number; refundAmount?: number; lockFeeDiscount?: number; subtotal?: number };
     delivery?: { deliveryFee?: number; status?: string; method?: string; estimatedTime?: string; deliveredAt?: string };
     user?: { _id?: string };
     userId?: string;
@@ -415,6 +415,7 @@ export function mapBackendOrderToFrontend(backendOrder: BackendOrder): FrontendO
     specialInstructions?: string;
     cancellation?: Record<string, unknown>;
     rating?: Record<string, unknown>;
+    summary?: { subtotal?: number; tax?: number; discount?: number; total?: number; shipping?: number };
   };
   const deliveryFee =
     backendTotals.totals?.delivery ||
@@ -428,22 +429,38 @@ export function mapBackendOrderToFrontend(backendOrder: BackendOrder): FrontendO
     user: backendTotals.user || null,
     customer: backendTotals.user || null,
     status: mapOrderStatus(backendOrder.status),
-    items: (backendOrder.items || []).map((item) => ({
-      id: (item as unknown as { _id?: string })._id || item.id || '',
-      productId: typeof item.product === 'object' && item.product !== null ? (item.product as unknown as { _id?: string })._id || '' : String(item.product || ''),
-      name: item.name,
-      image: item.image,
-      quantity: item.quantity,
-      price: item.price,
-      originalPrice: item.originalPrice,
-      discount: item.discount,
-      subtotal: item.subtotal,
-      variant: item.variant,
-      store: item.store ? {
-        id: (item.store as unknown as { _id?: string })._id || String(item.store),
-        name: (item.store as unknown as { name?: string }).name || '',
-      } : null,
-    })),
+    items: (backendOrder.items || []).map((item) => {
+      const backendItem = item as unknown as {
+        _id?: string;
+        id?: string;
+        product: string | { _id?: string };
+        name?: string;
+        image?: string;
+        quantity: number;
+        price: number;
+        originalPrice?: number;
+        discount?: number;
+        subtotal?: number;
+        variant?: unknown;
+        store?: string | { _id?: string; name?: string };
+      };
+      return {
+        id: backendItem._id || backendItem.id || '',
+        productId: typeof backendItem.product === 'object' && backendItem.product !== null ? (backendItem.product as { _id?: string })._id || '' : String(backendItem.product || ''),
+        name: backendItem.name || '',
+        image: backendItem.image || '',
+        quantity: backendItem.quantity,
+        price: backendItem.price,
+        originalPrice: backendItem.originalPrice ?? backendItem.price,
+        discount: backendItem.discount ?? 0,
+        subtotal: backendItem.subtotal ?? (backendItem.price * backendItem.quantity),
+        variant: backendItem.variant,
+        store: backendItem.store ? {
+          id: typeof backendItem.store === 'object' ? (backendItem.store as { _id?: string })._id || '' : String(backendItem.store),
+          name: typeof backendItem.store === 'object' ? (backendItem.store as { name?: string }).name || '' : '',
+        } : null,
+      };
+    }),
     totals: {
       subtotal: backendOrder.summary?.subtotal || backendTotals.totals?.subtotal || 0,
       shipping: deliveryFee,
@@ -566,11 +583,11 @@ export function mapBackendOrdersListToFrontend(backendResponse: {
 }): FrontendOrdersList {
   return {
     orders: (backendResponse.orders || []).map(mapBackendOrderToFrontend),
-    pagination: backendResponse.pagination || {
-      page: 1,
-      limit: 20,
-      total: backendResponse.orders?.length || 0,
-      totalPages: 1,
+    pagination: {
+      page: backendResponse.pagination?.page ?? 1,
+      limit: backendResponse.pagination?.limit ?? 20,
+      total: backendResponse.pagination?.total ?? backendResponse.orders?.length ?? 0,
+      totalPages: backendResponse.pagination?.totalPages ?? 1,
     },
     stats: backendResponse.summary || backendResponse.stats,
   };

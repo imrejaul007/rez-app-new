@@ -117,7 +117,10 @@ const defaultPrivacySettings: PrivacySettings = {
   },
 };
 
-export const useSecurityStore = create<SecurityStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<SecurityStoreState> | ((s: SecurityStoreState) => Partial<SecurityStoreState>), replace?: boolean) => void;
+type StoreGet = () => SecurityStoreState;
+
+export const useSecurityStore = create<SecurityStoreState>((set: StoreSet, get: StoreGet) => ({
   securitySettings: null,
   privacySettings: null,
   isLoading: false,

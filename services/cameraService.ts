@@ -60,7 +60,7 @@ const STORAGE_KEYS = {
 
 // Default options
 const DEFAULT_PICKER_OPTIONS: Required<ImagePickerOptions> = {
-  mediaTypes: 'images',
+  mediaTypes: 'Images' as unknown as ImagePicker.MediaType,
   allowsEditing: true,
   aspect: [1, 1],
   quality: 0.8,
@@ -102,8 +102,8 @@ class CameraService {
       const permissions: CameraPermissions = {
         camera: cameraPermission.status === ImagePicker.PermissionStatus.GRANTED,
         mediaLibrary: mediaLibraryPermission.status === ImagePicker.PermissionStatus.GRANTED,
-        canAskAgain: 
-          cameraPermission.canAskAgain && mediaLibraryPermission.canAskAgain,
+        canAskAgain:
+          !!(cameraPermission.canAskAgain && mediaLibraryPermission.canAskAgain),
       };
 
       this.permissions = permissions;
@@ -126,8 +126,8 @@ class CameraService {
       const permissions: CameraPermissions = {
         camera: cameraPermission.status === ImagePicker.PermissionStatus.GRANTED,
         mediaLibrary: mediaLibraryPermission.status === ImagePicker.PermissionStatus.GRANTED,
-        canAskAgain: 
-          cameraPermission.canAskAgain && mediaLibraryPermission.canAskAgain,
+        canAskAgain:
+          !!(cameraPermission.canAskAgain && mediaLibraryPermission.canAskAgain),
       };
 
       this.permissions = permissions;
@@ -159,11 +159,10 @@ class CameraService {
       const mergedOptions = { ...DEFAULT_CAMERA_OPTIONS, ...options };
 
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: 'mixed' as any,
+        mediaTypes: 'All' as ImagePicker.MediaType,
         allowsEditing: mergedOptions.allowsEditing,
         aspect: mergedOptions.aspect,
         quality: mergedOptions.quality,
-        videoQuality: mergedOptions.videoQuality,
         videoMaxDuration: mergedOptions.videoMaxDuration,
       });
 
@@ -171,12 +170,12 @@ class CameraService {
         const asset = result.assets[0];
         return {
           uri: asset.uri,
-          width: asset.width,
-          height: asset.height,
-          type: asset.type,
+          width: asset.width ?? 0,
+          height: asset.height ?? 0,
+          type: asset.type as ImageAsset['type'],
           fileName: asset.fileName || undefined,
           fileSize: asset.fileSize || undefined,
-          exif: asset.exif || undefined,
+          exif: (asset as any).exif || undefined,
           base64: asset.base64 || undefined,
         };
       }
@@ -215,14 +214,14 @@ class CameraService {
       });
 
       if (!result.canceled && result.assets) {
-        return result.assets.map((asset: ImagePicker.ImagePickerAsset) => ({
+        return result.assets.map((asset: ImagePicker.ImagePickerAsset): ImageAsset => ({
           uri: asset.uri,
-          width: asset.width,
-          height: asset.height,
-          type: asset.type,
+          width: asset.width ?? 0,
+          height: asset.height ?? 0,
+          type: asset.type as ImageAsset['type'],
           fileName: asset.fileName || undefined,
           fileSize: asset.fileSize || undefined,
-          exif: asset.exif || undefined,
+          exif: (asset as any).exif || undefined,
           base64: asset.base64 || undefined,
         }));
       }
@@ -396,7 +395,7 @@ class CameraService {
   ): Promise<string | null> {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images',
+        mediaTypes: 'Images',
         allowsEditing: false,
         quality,
         base64: false,

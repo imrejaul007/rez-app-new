@@ -31,7 +31,10 @@ interface WishlistStoreState {
   refreshWishlist: () => Promise<void>;
 }
 
-export const useWishlistStore = create<WishlistStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<WishlistStoreState> | ((s: WishlistStoreState) => Partial<WishlistStoreState>), replace?: boolean) => void;
+type StoreGet = () => WishlistStoreState;
+
+export const useWishlistStore = create<WishlistStoreState>((set: StoreSet, get: StoreGet) => ({
   wishlistItems: [],
   isLoading: false,
   error: null,

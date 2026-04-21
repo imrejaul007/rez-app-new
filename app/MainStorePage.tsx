@@ -160,8 +160,12 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     let cancelled = false;
     const abortController = new AbortController();
     apiClient
-      .get(`/stores/${d.currentStoreId}/page-extras`, { signal: abortController.signal })
-      .then((res: { data?: { data?: unknown; activeCampaigns?: unknown[]; upcomingDrop?: unknown } }) => {
+      .get<{ data?: { upcomingDrop?: unknown; activeCampaigns?: unknown[] } }>(
+        `/stores/${d.currentStoreId}/page-extras`,
+        undefined,
+        { signal: abortController.signal }
+      )
+      .then((res) => {
         if (cancelled) return;
         const payload = res.data?.data;
         if (payload?.upcomingDrop) setUpcomingDrop(payload.upcomingDrop);
@@ -370,7 +374,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                       🎯 Active Offers
                     </Text>
                     {activeCampaigns.map(
-                      (c: { _id: string; title?: string; description?: string; [key: string]: unknown }) => (
+                      (c: { _id: string; title?: string; description?: string; coinMultiplier?: number; [key: string]: unknown }) => (
                         <View
                           key={c._id}
                           style={{
@@ -388,7 +392,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                           <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
                             <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
-                            {c.coinMultiplier > 1 && (
+                            {(c as any).coinMultiplier > 1 && (
                               <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
                                 {c.coinMultiplier}x coins on every purchase
                               </Text>
@@ -440,11 +444,11 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                             coordinates: (d.storeData.location as LocationData).coordinates
                               ? {
                                   lat:
-                                    (d.storeData.location as LocationData).coordinates.lat ||
-                                    (d.storeData.location as LocationData).coordinates[1],
+                                    (d.storeData.location as LocationData).coordinates?.lat ??
+                                    (d.storeData.location as LocationData).coordinates?.[1],
                                   lng:
-                                    (d.storeData.location as LocationData).coordinates.lng ||
-                                    (d.storeData.location as LocationData).coordinates[0],
+                                    (d.storeData.location as LocationData).coordinates?.lng ??
+                                    (d.storeData.location as LocationData).coordinates?.[0],
                                 }
                               : undefined,
                           }
@@ -675,7 +679,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
             router.push({
               pathname: '/pay-in-store/enter-amount',
               params: { storeId: d.currentStoreId, storeName: d.currentStoreName || '', storeLogo: d.currentStoreLogo },
-            } as { photoCount?: number; rating?: number; name?: string })
+            })
           }
           onOrderFood={handleOrderFood}
           onBookTable={handleBookTable}

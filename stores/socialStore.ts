@@ -24,7 +24,10 @@ interface SocialStoreState {
   loadSuggestedUsers: () => Promise<void>;
 }
 
-export const useSocialStore = create<SocialStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<SocialStoreState> | ((s: SocialStoreState) => Partial<SocialStoreState>), replace?: boolean) => void;
+type StoreGet = () => SocialStoreState;
+
+export const useSocialStore = create<SocialStoreState>((set: StoreSet, get: StoreGet) => ({
   activities: [],
   isLoadingFeed: false,
   feedPage: 1,

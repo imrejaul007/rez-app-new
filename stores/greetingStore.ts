@@ -19,7 +19,10 @@ const initialState: GreetingState = {
 
 interface GreetingStoreState extends GreetingContextType {}
 
-export const useGreetingStore = create<GreetingStoreState>((set) => ({
+type StoreSet = (partial: Partial<GreetingStoreState> | ((s: GreetingStoreState) => Partial<GreetingStoreState>), replace?: boolean) => void;
+type StoreGet = () => GreetingStoreState;
+
+export const useGreetingStore = create<GreetingStoreState>((set: StoreSet) => ({
   state: initialState,
 
   updateGreeting: async (config?: GreetingConfig): Promise<void> => {

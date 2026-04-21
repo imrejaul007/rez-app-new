@@ -119,7 +119,7 @@ function CartPage() {
   });
 
   // Use real cart items from CartContext - separate products and services
-  const productItems = useMemo(() => {
+  const productItems: CartItemWithQuantity[] = useMemo(() => {
     return (cartState.items ?? [])
       .filter((item: CartItemWithQuantity) => asExtendedCartItem(item).itemType !== 'service') // Only non-service items
       .map((item: CartItemWithQuantity) => {
@@ -129,28 +129,30 @@ function CartPage() {
         const isEvent = metadata.eventType === 'event';
 
         return {
+          ...item,
           id: item.id,
           productId: ext.productId || item.id,
           name: item.name,
           image: item.image || '',
           price: item.discountedPrice || item.originalPrice || 0,
           originalPrice: item.originalPrice,
-          cashback: isEvent ? '0' : `Upto 12% cash back`, // Events don't have cashback
+          cashback: isEvent ? '0' : `Upto 12% cash back`,
           quantity: item.quantity,
           discount: ext.discount,
           variant: ext.variant,
           store: ext.store,
           category: 'products' as const,
           itemType: ext.itemType || 'product',
-          // Preserve event metadata
           metadata: isEvent ? metadata : undefined,
           isEvent: isEvent,
+          selected: item.selected ?? true,
+          addedAt: item.addedAt ?? new Date().toISOString(),
         };
       });
   }, [cartState.items, cartState.isLoading, cartState.error]);
 
   // Service items from cart
-  const serviceItems = useMemo(() => {
+  const serviceItems: CartItemWithQuantity[] = useMemo(() => {
     return (cartState.items ?? [])
       .filter((item: CartItemWithQuantity) => asExtendedCartItem(item).itemType === 'service')
       .map((item: CartItemWithQuantity) => {
@@ -159,25 +161,28 @@ function CartPage() {
         const bookingDate = bookingDetails.bookingDate ? new Date(bookingDetails.bookingDate as string | Date) : null;
 
         return {
+          ...item,
           id: item.id,
           productId: ext.productId || item.id,
           name: item.name,
           image: item.image || '',
           price: item.discountedPrice || item.originalPrice || 0,
           originalPrice: item.originalPrice,
-          cashback: '0', // Services typically don't have cashback
+          cashback: '0',
           quantity: item.quantity,
           discount: ext.discount,
           variant: ext.variant,
           store: ext.store,
           category: 'service' as const,
           itemType: 'service' as const,
+          selected: item.selected ?? true,
+          addedAt: item.addedAt ?? new Date().toISOString(),
           // Service booking details
           serviceBookingDetails: {
             bookingDate: bookingDate,
-            timeSlot: bookingDetails.timeSlot,
-            duration: bookingDetails.duration,
-            serviceType: bookingDetails.serviceType,
+            timeSlot: bookingDetails.timeSlot ?? null,
+            duration: bookingDetails.duration ?? 0,
+            serviceType: bookingDetails.serviceType ?? '',
             customerNotes: bookingDetails.customerNotes,
             customerName: bookingDetails.customerName,
             customerPhone: bookingDetails.customerPhone,
@@ -690,7 +695,7 @@ function CartPage() {
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
+                  storeId={(productItems[0] as any)?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />
@@ -710,7 +715,7 @@ function CartPage() {
               ListFooterComponent:
                 overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                   <CardOffersSection
-                    storeId={productItems[0]?.store?.id || productItems[0]?.productId}
+                    storeId={(productItems[0] as any)?.store?.id || productItems[0]?.productId}
                     orderValue={overallTotal}
                     onOfferApplied={handleCardOfferApplied}
                   />

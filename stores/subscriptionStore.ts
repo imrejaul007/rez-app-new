@@ -85,7 +85,10 @@ const freeTierDefault = (userId: string): CurrentSubscription => ({
   updatedAt: new Date().toISOString(),
 });
 
-export const useSubscriptionStore = create<SubscriptionStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<SubscriptionStoreState> | ((s: SubscriptionStoreState) => Partial<SubscriptionStoreState>), replace?: boolean) => void;
+type StoreGet = () => SubscriptionStoreState;
+
+export const useSubscriptionStore = create<SubscriptionStoreState>((set: StoreSet, get: StoreGet) => ({
   state: initialState,
 
   actions: {

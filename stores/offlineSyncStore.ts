@@ -33,7 +33,10 @@ export interface OfflineSyncStoreState {
   hasSucceeded: (actionId: string) => boolean;
 }
 
-export const useOfflineSyncStore = create<OfflineSyncStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<OfflineSyncStoreState> | ((s: OfflineSyncStoreState) => Partial<OfflineSyncStoreState>), replace?: boolean) => void;
+type StoreGet = () => OfflineSyncStoreState;
+
+export const useOfflineSyncStore = create<OfflineSyncStoreState>((set: StoreSet, get: StoreGet) => ({
   queue: [],
   status: null,
   isSyncing: false,

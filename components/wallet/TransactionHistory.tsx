@@ -99,7 +99,7 @@ const ICON_MAP: Record<string, string> = {
   cashback: 'cash',
 };
 
-function getIcon(category: string): keyof typeof import('@expo/vector-icons').Ionicons['glyphMap'] {
+function getIcon(category: string): string {
   return ICON_MAP[category] || 'swap-horizontal';
 }
 

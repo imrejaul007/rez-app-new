@@ -28,8 +28,11 @@ interface ThemeStoreState {
   toggleTheme: () => void;
   _initialize: () => void;
 }
+type StoreSet = (partial: Partial<ThemeStoreState> | ((s: ThemeStoreState) => Partial<ThemeStoreState>), replace?: boolean) => void;
+type StoreGet = () => ThemeStoreState;
 
-export const useThemeStore = create<ThemeStoreState>((set, get) => ({
+
+export const useThemeStore = create<ThemeStoreState>((set: StoreSet, get: StoreGet) => ({
   themeMode: 'system',
   _loaded: false,
 

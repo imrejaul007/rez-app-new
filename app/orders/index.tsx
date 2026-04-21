@@ -416,13 +416,13 @@ function OrdersListScreen() {
 
         if (refresh || pageNum === 1) {
           if (!isMounted()) return;
-          setOrders(mappedOrders);
+          setOrders(mappedOrders as unknown as Order[]);
         } else {
           // Deduplicate on append
           if (!isMounted()) return;
           setOrders((prev) => {
             const ids = new Set(prev.map((o) => o.id));
-            return [...prev, ...mappedOrders.filter((o) => !ids.has(o.id))];
+            return [...prev, ...mappedOrders.filter((o) => !ids.has(o.id))] as unknown as Order[];
           });
         }
 

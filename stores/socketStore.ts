@@ -15,7 +15,10 @@ export interface SocketStoreState {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const useSocketStore = create<SocketStoreState>((set) => ({
+type StoreSet = (partial: Partial<SocketStoreState> | ((s: SocketStoreState) => Partial<SocketStoreState>), replace?: boolean) => void;
+type StoreGet = () => SocketStoreState;
+
+export const useSocketStore = create<SocketStoreState>((set: StoreSet) => ({
   state: {
     connected: false,
     reconnecting: false,

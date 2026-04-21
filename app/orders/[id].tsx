@@ -89,7 +89,7 @@ function OrderDetailsScreen() {
       if (response.success && response.data) {
         const mappedOrder = mapBackendOrderToFrontend(response.data);
         if (!isMounted()) return;
-        setOrder(mappedOrder);
+        setOrder(mappedOrder as unknown as Order);
         setError(null);
       } else {
         if (!isMounted()) return;
@@ -256,7 +256,7 @@ function OrderDetailsScreen() {
 
               return (
                 <View key={itemKey} style={styles.itemCard}>
-                  <CachedImage source={{ uri: productImage }} style={styles.itemImage} cachePolicy="memory-disk" />
+                  <CachedImage source={{ uri: productImage || '' }} style={styles.itemImage} cachePolicy="memory-disk" />
                   <View style={styles.itemInfo}>
                     <Text style={styles.itemName}>{productName}</Text>
                     <Text style={styles.storeName}>{storeName}</Text>

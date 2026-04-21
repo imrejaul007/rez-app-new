@@ -68,7 +68,10 @@ const defaultActions: AuthActions = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const useAuthStore = create<AuthStoreState>((set) => ({
+type StoreSet = (partial: Partial<AuthStoreState> | ((s: AuthStoreState) => Partial<AuthStoreState>), replace?: boolean) => void;
+type StoreGet = () => AuthStoreState;
+
+export const useAuthStore = create<AuthStoreState>((set: StoreSet) => ({
   state: initialState,
   actions: defaultActions,
 

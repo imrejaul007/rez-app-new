@@ -33,7 +33,10 @@ const initialState: LocationState = {
 
 interface LocationStoreState extends LocationContextType {}
 
-export const useLocationStore = create<LocationStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<LocationStoreState> | ((s: LocationStoreState) => Partial<LocationStoreState>), replace?: boolean) => void;
+type StoreGet = () => LocationStoreState;
+
+export const useLocationStore = create<LocationStoreState>((set: StoreSet, get: StoreGet) => ({
   state: initialState,
 
   updateLocation: async (

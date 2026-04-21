@@ -13,7 +13,10 @@ interface OffersThemeStoreState {
   setMode: (mode: OffersThemeMode) => void;
 }
 
-export const useOffersThemeStore = create<OffersThemeStoreState>((set) => ({
+type StoreSet = (partial: Partial<OffersThemeStoreState> | ((s: OffersThemeStoreState) => Partial<OffersThemeStoreState>), replace?: boolean) => void;
+type StoreGet = () => OffersThemeStoreState;
+
+export const useOffersThemeStore = create<OffersThemeStoreState>((set: StoreSet) => ({
   theme: LightTheme,
   mode: 'light',
   isDark: false,

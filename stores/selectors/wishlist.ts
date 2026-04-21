@@ -5,7 +5,7 @@
 import { useWishlistStore } from '../wishlistStore';
 
 /** Only re-renders when wishlist count changes */
-export const useWishlistCount = () => useWishlistStore((s) => s.wishlistItems?.length ?? 0);
+export const useWishlistCount = () => useWishlistStore((s: ReturnType<typeof useWishlistStore.getState>) => s.wishlistItems?.length ?? 0);
 
 /** Stable function — never re-renders */
-export const useIsInWishlist = () => useWishlistStore((s) => s.isInWishlist);
+export const useIsInWishlist = () => useWishlistStore((s: ReturnType<typeof useWishlistStore.getState>) => s.isInWishlist);

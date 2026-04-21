@@ -31,7 +31,10 @@ export interface ToastStoreState {
 
 let _idCounter = 0;
 
-export const useToastStore = create<ToastStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<ToastStoreState> | ((s: ToastStoreState) => Partial<ToastStoreState>), replace?: boolean) => void;
+type StoreGet = () => ToastStoreState;
+
+export const useToastStore = create<ToastStoreState>((set: StoreSet, get: StoreGet) => ({
   currentToast: null,
   queue: [],
 

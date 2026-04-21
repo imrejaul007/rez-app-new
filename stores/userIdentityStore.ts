@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, SetState, GetState } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -58,16 +58,26 @@ const INITIAL_STATE = {
   _hydrated: false,
 };
 
+type StoreSet = SetState<UserIdentityState>;
+
 export const useUserIdentityStore = create<UserIdentityState>()(
   persist(
-    (set) => ({
+    (set: StoreSet) => ({
       ...INITIAL_STATE,
 
-      setIdentity: (data) =>
-        set((state) => ({ ...state, ...data })),
+      setIdentity: (data: Partial<UserIdentityState>) =>
+        set((state: UserIdentityState) => ({ ...state, ...data })),
 
-      hydrateFromBackend: (data) =>
-        set((state) => ({
+      hydrateFromBackend: (data: {
+        statedIdentity?: string | null;
+        featureLevel?: number;
+        segment?: string;
+        verificationSegment?: string;
+        instituteStatus?: string;
+        instituteName?: string | null;
+        companyName?: string | null;
+      }) =>
+        set((state: UserIdentityState) => ({
           ...state,
           segment: (data.segment as IdentitySegment) || state.segment,
           featureLevel: data.featureLevel || state.featureLevel,
@@ -90,7 +100,7 @@ export const useUserIdentityStore = create<UserIdentityState>()(
     {
       name: 'user-identity-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({
+      partialize: (state: UserIdentityState) => ({
         hasSkippedVerificationPrompt: state.hasSkippedVerificationPrompt,
         hasSkippedInstituteReferral: state.hasSkippedInstituteReferral,
         statedIdentity: state.statedIdentity,
@@ -104,7 +114,7 @@ export const useUserIdentityStore = create<UserIdentityState>()(
       }),
       // Mark store as hydrated once AsyncStorage has loaded —
       // prevents persona banner from flashing the wrong persona on first paint
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state: UserIdentityState | undefined) => {
         if (state) {
           state._hydrated = true;
         }

@@ -524,7 +524,7 @@ function OrderConfirmationPage() {
                 <View style={styles.summaryRow}>
                   <ThemedText style={[styles.summaryLabel, { color: Colors.brand.purpleLight }]}>
                     💎 Coins Used
-                    {(order.payment as unknown as OrderPaymentExtended).coinsUsed?.storePromoCoins > 0 && ' (includes Store Promo)'}
+                    {((order?.payment as unknown as OrderPaymentExtended)?.coinsUsed?.storePromoCoins ?? 0) > 0 ? ' (includes Store Promo)' : ''}
                   </ThemedText>
                   <ThemedText style={[styles.summaryValue, { color: Colors.brand.purpleLight }]}>
                     -{currencySymbol}

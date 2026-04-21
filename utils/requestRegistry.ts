@@ -1,5 +1,4 @@
 /**
-import { logger } from '@/utils/logger';
  * requestRegistry — OG-D005 FIX
  *
  * A lightweight in-process registry that lets payment hooks register their
@@ -31,6 +30,8 @@ import { logger } from '@/utils/logger';
  * requestRegistry.abortAll('app-backgrounded');
  * ```
  */
+
+import { logger } from '@/utils/logger';
 
 interface RegistryEntry {
   controller: AbortController;

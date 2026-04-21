@@ -19,7 +19,7 @@ import asyncStorageService from '@/services/asyncStorageService';
 import { platformAlert, platformAlertSimple } from '@/utils/platformAlert';
 import { errorReporter } from '@/utils/errorReporter';
 
-interface LocationData {
+export interface LocationData {
   address?: string;
   city?: string;
   state?: string;
@@ -44,6 +44,24 @@ export interface DynamicStoreData {
   cashback?: number | { percentage?: number; [key: string]: unknown };
   discount?: number | Record<string, unknown>;
   section?: string;
+  isVerified?: boolean;
+  offers?: {
+    cashback?: number;
+    [key: string]: unknown;
+  };
+  rewardRules?: {
+    reviewBonusCoins?: number;
+    [key: string]: unknown;
+  };
+  paymentSettings?: {
+    acceptPromoCoins?: boolean;
+    acceptRezCoins?: boolean;
+    acceptUPI?: boolean;
+    acceptCards?: boolean;
+    acceptPayLater?: boolean;
+    [key: string]: unknown;
+  };
+  coinMultiplier?: number;
   operationalInfo?: {
     hours?: {
       monday?: { open: string; close: string; closed?: boolean };
@@ -65,6 +83,7 @@ export interface DynamicStoreData {
     website?: string;
     whatsapp?: string;
   };
+  phone?: string;
   tags?: string[];
   createdAt?: string | Date;
   [key: string]: unknown;

@@ -6,8 +6,8 @@ import { useSubscriptionStore } from '../subscriptionStore';
 
 /** Only re-renders when subscription tier changes */
 export const useSubscriptionTier = () =>
-  useSubscriptionStore((s) => s.state?.currentSubscription?.tier);
+  useSubscriptionStore((s: ReturnType<typeof useSubscriptionStore.getState>) => s.state?.currentSubscription?.tier);
 
 /** Only re-renders when subscribed status changes */
 export const useIsSubscribed = () =>
-  useSubscriptionStore((s) => s.computed?.isSubscribed ?? false);
+  useSubscriptionStore((s: ReturnType<typeof useSubscriptionStore.getState>) => s.computed?.isSubscribed ?? false);

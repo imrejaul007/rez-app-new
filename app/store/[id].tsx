@@ -119,10 +119,14 @@ interface CampaignIdFields {
   title?: string;
 }
 
-interface ActiveRedemption extends DealRedemption {
+interface ActiveRedemption {
+  id?: string;
+  code?: string;
+  redemptionCode?: string;
+  expiresAt?: string;
+  campaignId?: CampaignIdFields | string;
   deal?: DealSnapshotFields;
   dealSnapshot?: DealSnapshotFields;
-  campaignId?: CampaignIdFields | string;
   campaignSnapshot?: { title?: string };
 }
 
@@ -323,8 +327,8 @@ const StoreDetailPage: React.FC = () => {
 
     // Add redemption info if a deal is selected
     if (selectedRedemption) {
-      baseParams.redemptionCode = selectedRedemption.redemptionCode!;
-      baseParams.redemptionId = selectedRedemption.id;
+      baseParams.redemptionCode = selectedRedemption.redemptionCode ?? '';
+      baseParams.redemptionId = selectedRedemption.id ?? '';
       // Add deal benefit info
       if (selectedRedemption.deal?.cashback) {
         baseParams.dealCashback = String(selectedRedemption.deal.cashback);
@@ -338,12 +342,12 @@ const StoreDetailPage: React.FC = () => {
     }
 
     if (isFitnessStore) {
-      router.push<{ '/fitness/book/[storeId]': typeof baseParams }>({
+      router.push({
         pathname: '/fitness/book/[storeId]',
         params: baseParams,
       });
     } else {
-      router.push<{ '/booking/appointment': typeof baseParams & { serviceType: string } }>({
+      router.push({
         pathname: '/booking/appointment',
         params: {
           ...baseParams,
@@ -355,10 +359,11 @@ const StoreDetailPage: React.FC = () => {
 
   // Get deal value display
   const getDealValue = (deal: ActiveRedemption) => {
-    if (deal.cashback) return { type: 'Cashback', value: deal.cashback, color: COLORS.green500 };
-    if (deal.coins) return { type: 'Coins', value: deal.coins, color: COLORS.amber500 };
-    if (deal.discount) return { type: 'Discount', value: deal.discount, color: COLORS.purple500 };
-    if (deal.bonus) return { type: 'Bonus', value: deal.bonus, color: COLORS.blue500 };
+    const d = deal as any;
+    if (d.cashback) return { type: 'Cashback', value: d.cashback, color: COLORS.green500 };
+    if (d.coins) return { type: 'Coins', value: d.coins, color: COLORS.amber500 };
+    if (d.discount) return { type: 'Discount', value: d.discount, color: COLORS.purple500 };
+    if (d.bonus) return { type: 'Bonus', value: d.bonus, color: COLORS.blue500 };
     return null;
   };
 
@@ -671,7 +676,7 @@ const StoreDetailPage: React.FC = () => {
                           <Ionicons name="qr-code-outline" size={12} color={COLORS.gray500} />
                           <Text style={styles.redemptionCode}>{redemption.redemptionCode}</Text>
                         </View>
-                        <Text style={styles.redemptionExpiry}>{getTimeRemaining(redemption.expiresAt)}</Text>
+                        <Text style={styles.redemptionExpiry}>{getTimeRemaining(redemption.expiresAt ?? '')}</Text>
                       </View>
                     </View>
                     {dealValue && (

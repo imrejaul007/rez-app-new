@@ -463,7 +463,7 @@ class PaymentVerificationService {
   async getSupportedBiometricTypes(): Promise<string[]> {
     try {
       const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
-      return types.map((type) => {
+      return types.map((type: number) => {
         switch (type) {
           case LocalAuthentication.AuthenticationType.FINGERPRINT:
             return 'FINGERPRINT';

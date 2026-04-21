@@ -114,7 +114,10 @@ const defaultActions: CartActions = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const useCartStore = create<CartStoreState>((set) => ({
+type StoreSet = (partial: Partial<CartStoreState> | ((s: CartStoreState) => Partial<CartStoreState>), replace?: boolean) => void;
+type StoreGet = () => CartStoreState;
+
+export const useCartStore = create<CartStoreState>((set: StoreSet) => ({
   state: initialState,
   refreshCart: noopAsync,
   actions: defaultActions,

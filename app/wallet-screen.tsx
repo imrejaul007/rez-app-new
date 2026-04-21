@@ -69,6 +69,26 @@ import { useHomeTabStore } from '@/stores/homeTabStore';
 import { getCoinExpiryWarning } from '@/utils/retentionHooks';
 import { logger } from '@/utils/logger';
 
+/** Local type for coin bucket items used in expiry breakdown */
+interface CoinBucketItem {
+  type?: string;
+  source?: string;
+  amount?: number;
+  expiresAt?: string;
+  daysLeft?: number;
+}
+
+/** Local type for lifetime stats returned by wallet balance API */
+interface ExpiryResData {
+  lifetimeEarned?: number;
+  lifetimeRedeemed?: number;
+  lifetimeExpired?: number;
+  expiringSoon?: {
+    amount?: number;
+    expiresAt?: string;
+  };
+}
+
 const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress }) => {
   const isMounted = useIsMounted();
   const user = useAuthUser();
@@ -263,10 +283,10 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               if (!coin) continue;
               const coinType: string = (coin as CoinBucketItem).type || (coin as CoinBucketItem).source || 'rez';
               const coinAmount: number =
-                typeof (coin as CoinBucketItem).amount === 'number' ? (coin as CoinBucketItem).amount : 0;
+                typeof (coin as CoinBucketItem).amount === 'number' ? ((coin as CoinBucketItem).amount as number) : 0;
               const coinExpiresAt: string = (coin as CoinBucketItem).expiresAt || '';
               const coinDaysLeft: number =
-                typeof (coin as CoinBucketItem).daysLeft === 'number' ? (coin as CoinBucketItem).daysLeft : 0;
+                typeof (coin as CoinBucketItem).daysLeft === 'number' ? ((coin as CoinBucketItem).daysLeft as number) : 0;
               const existing = typeMap.get(coinType);
               if (existing) {
                 existing.amount += coinAmount;
@@ -311,9 +331,9 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           setLifetimeEarned(data.lifetimeEarned ?? 0);
           setLifetimeRedeemed(data.lifetimeRedeemed ?? 0);
           setLifetimeExpired(data.lifetimeExpired ?? 0);
-          if (data.expiringSoon?.amount > 0) {
-            setExpiringSoonAmount(data.expiringSoon.amount);
-            setExpiringSoonDate(data.expiringSoon.expiresAt ?? '');
+          if ((data.expiringSoon?.amount ?? 0) > 0) {
+            setExpiringSoonAmount(data.expiringSoon!.amount!);
+            setExpiringSoonDate(data.expiringSoon!.expiresAt ?? '');
           }
         })
         .catch(() => {});
@@ -520,7 +540,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   const styles = useMemo(() => createStyles(screenData, insets), [screenData, insets]);
 
   // Determine expiry banner style based on urgency
-  const expiryBannerStyle = useMemo(() => {
+  const expiryBannerStyle = useMemo((): { backgroundColor: string; borderColor: string; iconColor: string } => {
     // Red/urgent if ≤24 hours (1 day)
     if (minDaysLeft <= 1) {
       return {
@@ -540,8 +560,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     // Orange/warning if 1 < daysLeft ≤ 7
     return {
       backgroundColor: colors.warningScale?.[50] ?? '#FFF9E6',
-      borderColor: (colors.warningScale as Record<string, Record<number, string>>)?.[300] ?? '#FCD34D',
-      iconColor: (colors.warningScale as Record<string, Record<number, string>>)?.[600] ?? '#D97706',
+      borderColor: (colors.warningScale as unknown as Record<string, string>)?.[300] ?? '#FCD34D',
+      iconColor: (colors.warningScale as unknown as Record<string, string>)?.[600] ?? '#D97706',
     };
   }, [minDaysLeft]);
 

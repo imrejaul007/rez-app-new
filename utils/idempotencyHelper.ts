@@ -37,7 +37,7 @@ export async function storeIdempotencyResult(
     };
     await AsyncStorage.setItem(cacheKey, JSON.stringify(entry));
   } catch (error) {
-    logger.error('Failed to store idempotency result:', error);
+    logger.error('Failed to store idempotency result:', error as Error | undefined);
   }
 }
 
@@ -61,7 +61,7 @@ export async function getIdempotencyResult(key: string): Promise<any | null> {
 
     return entry.result;
   } catch (error) {
-    logger.error('Failed to retrieve idempotency result:', error);
+    logger.error('Failed to retrieve idempotency result:', error as Error | undefined);
     return null;
   }
 }
@@ -74,7 +74,7 @@ export async function clearIdempotencyResult(key: string): Promise<void> {
     const cacheKey = `${IDEMPOTENCY_CACHE_PREFIX}${key}`;
     await AsyncStorage.removeItem(cacheKey);
   } catch (error) {
-    logger.error('Failed to clear idempotency result:', error);
+    logger.error('Failed to clear idempotency result:', error as Error | undefined);
   }
 }
 

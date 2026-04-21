@@ -28,7 +28,10 @@ interface RecommendationStoreState {
   clearAll: () => void;
 }
 
-export const useRecommendationStore = create<RecommendationStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<RecommendationStoreState> | ((s: RecommendationStoreState) => Partial<RecommendationStoreState>), replace?: boolean) => void;
+type StoreGet = () => RecommendationStoreState;
+
+export const useRecommendationStore = create<RecommendationStoreState>((set: StoreSet, get: StoreGet) => ({
   shownProducts: new Set<string>(),
   shownStores: new Set<string>(),
 

@@ -121,7 +121,10 @@ const formatters: Record<string, Intl.NumberFormat> = {
   CNY: new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }),
 };
 
-export const useAppStore = create<AppStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<AppStoreState> | ((s: AppStoreState) => Partial<AppStoreState>), replace?: boolean) => void;
+type StoreGet = () => AppStoreState;
+
+export const useAppStore = create<AppStoreState>((set: StoreSet, get: StoreGet) => ({
   state: initialAppState,
 
   actions: {

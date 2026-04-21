@@ -35,7 +35,10 @@ export interface OfflineQueueStoreState {
   getFailedCount: () => number;
 }
 
-export const useOfflineQueueStore = create<OfflineQueueStoreState>((set, get) => ({
+type StoreSet = (partial: Partial<OfflineQueueStoreState> | ((s: OfflineQueueStoreState) => Partial<OfflineQueueStoreState>), replace?: boolean) => void;
+type StoreGet = () => OfflineQueueStoreState;
+
+export const useOfflineQueueStore = create<OfflineQueueStoreState>((set: StoreSet, get: StoreGet) => ({
   queue: [],
   status: null,
   isSyncing: false,

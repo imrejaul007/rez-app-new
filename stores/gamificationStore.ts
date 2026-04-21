@@ -124,7 +124,10 @@ const defaultComputed: GamificationComputed = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const useGamificationStore = create<GamificationStoreState>((set) => ({
+type StoreSet = (partial: Partial<GamificationStoreState> | ((s: GamificationStoreState) => Partial<GamificationStoreState>), replace?: boolean) => void;
+type StoreGet = () => GamificationStoreState;
+
+export const useGamificationStore = create<GamificationStoreState>((set: StoreSet) => ({
   state: initialState,
   actions: defaultActions,
   computed: defaultComputed,

@@ -35,7 +35,7 @@ import { useAppStore } from './appStore';
  * Re-renders only when user preference OR native scheme flips.
  */
 export function useColorScheme(): 'light' | 'dark' {
-  const pref = useAppStore((s) => s.state.settings.colorScheme);
+  const pref = useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.settings.colorScheme);
   const native = useNativeColorScheme();
   if (pref === 'auto') return native === 'dark' ? 'dark' : 'light';
   return pref;
@@ -43,41 +43,41 @@ export function useColorScheme(): 'light' | 'dark' {
 
 /** Selected UI language. */
 export function useLanguage() {
-  return useAppStore((s) => s.state.settings.language);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.settings.language);
 }
 
 /** Notification preference flags (push/email/sms/offers/orders). */
 export function useNotificationPrefs() {
-  return useAppStore((s) => s.state.settings.notifications);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.settings.notifications);
 }
 
 /** Privacy preference flags (analytics/locationTracking/personalizedAds). */
 export function usePrivacyPrefs() {
-  return useAppStore((s) => s.state.settings.privacy);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.settings.privacy);
 }
 
 /** Currency / default location / autoLogin. */
 export function useAppPreferences() {
-  return useAppStore((s) => s.state.settings.preferences);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.settings.preferences);
 }
 
 /** Only the selected currency code — for components that just format money. */
 export function useCurrency() {
-  return useAppStore((s) => s.state.settings.preferences.currency);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.settings.preferences.currency);
 }
 
 // ── First-launch + lifecycle ───────────────────────────────────────
 
 export function useIsFirstLaunch() {
-  return useAppStore((s) => s.state.isFirstLaunch);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.isFirstLaunch);
 }
 
 export function useAppLoading() {
-  return useAppStore((s) => s.state.isLoading);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.isLoading);
 }
 
 export function useAppError() {
-  return useAppStore((s) => s.state.error);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.state.error);
 }
 
 // ── Actions (stable reference — subscribing does NOT cause re-renders) ──
@@ -86,7 +86,7 @@ export function useAppError() {
 // correct Zustand pattern; no need to split into per-action hooks.
 
 export function useAppActions() {
-  return useAppStore((s) => s.actions);
+  return useAppStore((s: ReturnType<typeof useAppStore.getState>) => s.actions);
 }
 
 // ── Derived helpers ────────────────────────────────────────────────
