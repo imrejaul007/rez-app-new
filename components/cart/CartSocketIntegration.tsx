@@ -16,6 +16,7 @@ import { platformAlertSimple } from '@/utils/platformAlert';
 import { useSocket } from '@/contexts/SocketContext';
 import { formatPrice } from '@/utils/priceFormatter';
 import { useCartState, useCartActions, useGetCurrencySymbol } from '@/stores/selectors';
+import { CartItemWithQuantity } from '@/stores/cartStore';
 
 export function CartSocketIntegration() {
   const cartState = useCartState();
@@ -31,7 +32,7 @@ export function CartSocketIntegration() {
 
       // Find cart item with this product ID
       const cartItem = cartState.items.find(
-        item => (item.productId || item.id) === payload.productId
+        (item: CartItemWithQuantity) => (item.productId || item.id) === payload.productId
       );
       if (!cartItem) return;
 
@@ -57,7 +58,7 @@ export function CartSocketIntegration() {
     // Listen for low stock alerts
     const unsubscribeLowStock = onLowStock((payload) => {
       const cartItem = cartState.items.find(
-        item => (item.productId || item.id) === payload.productId
+        (item: CartItemWithQuantity) => (item.productId || item.id) === payload.productId
       );
       if (!cartItem) return;
 
@@ -71,7 +72,7 @@ export function CartSocketIntegration() {
     const unsubscribeOut = onOutOfStock((payload) => {
 
       const cartItem = cartState.items.find(
-        item => (item.productId || item.id) === payload.productId
+        (item: CartItemWithQuantity) => (item.productId || item.id) === payload.productId
       );
       if (!cartItem) return;
 
@@ -84,7 +85,7 @@ export function CartSocketIntegration() {
     const unsubscribePrice = onPriceUpdate((payload) => {
 
       const cartItem = cartState.items.find(
-        item => (item.productId || item.id) === payload.productId
+        (item: CartItemWithQuantity) => (item.productId || item.id) === payload.productId
       );
       if (!cartItem) return;
 

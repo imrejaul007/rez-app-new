@@ -376,7 +376,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8});
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets[0]) {
         const imageUri = result.assets[0].uri;
         showToast('Compressing image...', 'info');
         const compressedUri = await compressImageIfNeeded(imageUri, {

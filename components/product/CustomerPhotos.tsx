@@ -106,7 +106,7 @@ function CustomerPhotos({
         allowsMultipleSelection: false,
       });
 
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets[0]) {
         await handleUpload(result.assets[0].uri);
       }
     } catch (error: any) {

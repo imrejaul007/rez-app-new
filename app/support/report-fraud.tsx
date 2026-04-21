@@ -23,6 +23,7 @@ import { useRouter, Stack } from 'expo-router';
 import { getImagePicker } from '@/utils/lazyImports';
 import { ThemedText } from '@/components/ThemedText';
 import supportService from '@/services/supportApi';
+import type { ImagePickerAsset } from 'expo-image-picker';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography, Gradients } from '@/constants/DesignSystem';
 import { CLOUDINARY_CONFIG, getCloudinaryUploadUrl } from '@/config/cloudinary.config';
@@ -57,8 +58,8 @@ function ReportFraudPage() {
       quality: 0.8,
     });
 
-    if (!result.canceled) {
-      const newImages = result.assets.map((a) => a.uri);
+    if (!result.canceled && result.assets) {
+      const newImages = result.assets.map((a: ImagePickerAsset) => a.uri);
       if (!isMounted()) return;
       setEvidence((prev) => [...prev, ...newImages].slice(0, 5));
     }

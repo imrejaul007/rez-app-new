@@ -15,9 +15,47 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
+interface OrderItem {
+  id?: string;
+  _id?: string;
+  image?: string;
+  name?: string;
+  price?: number;
+  subtotal?: number;
+  store?: { name?: string };
+}
+
+interface OrderFulfillmentDetails {
+  tableNumber?: string;
+  vehicleInfo?: string;
+  pickupInstructions?: string;
+}
+
+interface OrderPayment {
+  status?: string;
+  method?: string;
+  coinsUsed?: {
+    totalCoinsValue?: number;
+    rezCoins?: number;
+    promoCoins?: number;
+    storePromoCoins?: number;
+  };
+}
+
+interface OrderTotals {
+  subtotal?: number;
+  tax?: number;
+  discount?: number;
+  delivery?: number;
+  shipping?: number;
+  total?: number;
+  cashback?: number;
+  lockFeeDiscount?: number;
+}
+
 function OrderDetailsScreen() {
   const isMounted = useIsMounted();
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -171,7 +209,7 @@ function OrderDetailsScreen() {
             <View style={styles.headerTop}>
               <Text style={styles.orderNumber}>Order #{order.orderNumber}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                {(order as any).fulfillmentType && (order as any).fulfillmentType !== 'delivery' && (
+                {order && 'fulfillmentType' in order && (order as unknown as { fulfillmentType?: string }).fulfillmentType && (order as unknown as { fulfillmentType?: string }).fulfillmentType !== 'delivery' && (
                   <View
                     style={{
                       flexDirection: 'row',
@@ -184,11 +222,11 @@ function OrderDetailsScreen() {
                     }}
                   >
                     <Text style={{ fontSize: 11, fontWeight: '600', color: colors.nileBlue }}>
-                      {(order as any).fulfillmentType === 'pickup'
+                      {(order as unknown as { fulfillmentType?: string }).fulfillmentType === 'pickup'
                         ? '🛍 Pickup'
-                        : (order as any).fulfillmentType === 'drive_thru'
+                        : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'drive_thru'
                           ? '🚗 Drive-Thru'
-                          : (order as any).fulfillmentType === 'dine_in'
+                          : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'dine_in'
                             ? '🍽 Dine-In'
                             : ''}
                     </Text>
@@ -209,11 +247,12 @@ function OrderDetailsScreen() {
             <Text style={styles.sectionTitle}>Items Ordered</Text>
             {order.items.map((item, index) => {
               // Use mapped item properties directly (from dataMappers)
-              const productImage = (item as any).image;
-              const productName = (item as any).name || 'Product';
-              const storeName = (item as any).store?.name || 'Store';
+              const typedItem = item as OrderItem;
+              const productImage = typedItem.image;
+              const productName = typedItem.name || 'Product';
+              const storeName = typedItem.store?.name || 'Store';
               // Prefer a stable ID; fall back to composite key to avoid duplicate-key warnings
-              const itemKey = (item as any).id || (item as any)._id || `${productName}-${index}`;
+              const itemKey = typedItem.id || typedItem._id || `${productName}-${index}`;
 
               return (
                 <View key={itemKey} style={styles.itemCard}>
@@ -226,13 +265,13 @@ function OrderDetailsScreen() {
                       <Text style={styles.itemQuantity}>Qty: {item.quantity}</Text>
                       <Text style={styles.itemPrice}>
                         {currencySymbol}
-                        {(item as any).price || 0} each
+                        {typedItem.price || 0} each
                       </Text>
                     </View>
                   </View>
                   <Text style={styles.itemTotal}>
                     {currencySymbol}
-                    {(item as any).subtotal || 0}
+                    {typedItem.subtotal || 0}
                   </Text>
                 </View>
               );

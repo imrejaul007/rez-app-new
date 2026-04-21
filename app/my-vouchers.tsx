@@ -23,6 +23,7 @@ import { useRouter, useNavigation } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import vouchersService from '@/services/realVouchersApi';
 import realOffersApi from '@/services/realOffersApi';
+import { CartItemWithQuantity } from '@/stores/cartStore';
 import {
   useAuthUser,
   useIsAuthenticated,
@@ -308,7 +309,7 @@ const MyVouchersPage = () => {
         const maxDiscount = offer?.restrictions?.maxDiscountAmount;
 
         // Calculate estimated cashback based on cart total
-        const cartTotal = cartState.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const cartTotal = cartState.items.reduce((sum: number, item: CartItemWithQuantity) => sum + item.price * item.quantity, 0);
 
         // Check minimum order value
         if (minOrderValue > 0 && cartTotal < minOrderValue) {

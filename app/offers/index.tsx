@@ -74,7 +74,7 @@ const PALETTE = {
 function OffersScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
+  const segment: IdentitySegment = useUserIdentityStore.getState().segment;
   const heroConfig = SEGMENT_HERO[segment];
   const user = useAuthUser();
   const isAuthenticated = useIsAuthenticated();

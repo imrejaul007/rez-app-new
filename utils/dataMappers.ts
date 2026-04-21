@@ -7,24 +7,206 @@ import { Cart as BackendCart, CartItem as BackendCartItem } from '@/services/car
 import { Order as BackendOrder, CreateOrderRequest } from '@/services/ordersApi';
 
 // ============================================
+// INTERFACE DEFINITIONS
+// ============================================
+
+/** Frontend cart item — normalized from BackendCartItem */
+interface FrontendCartItem {
+  id: string;
+  productId: string;
+  name: string;
+  image: string;
+  price: number;
+  originalPrice: number;
+  discount: number;
+  lockedQuantity: number;
+  quantity: number;
+  store: { id: string; name: string; location?: string } | null;
+  variant?: unknown;
+  addedAt?: string;
+  notes?: string;
+  itemType: 'product' | 'service' | 'event';
+  serviceBookingDetails?: Record<string, unknown> | null;
+  metadata?: Record<string, unknown> | null;
+  subtotal: number;
+  savings: number;
+}
+
+/** Frontend cart — normalized from BackendCart */
+interface FrontendCart {
+  id: string;
+  userId: string;
+  items: FrontendCartItem[];
+  totals: {
+    subtotal: number;
+    tax: number;
+    shipping: number;
+    discount: number;
+    cashback: number;
+    total: number;
+    savings: number;
+  };
+  coupon: {
+    code: string;
+    discountType: string;
+    discountValue: number;
+    appliedAmount: number;
+    appliedAt: string;
+  } | null;
+  itemCount: number;
+  storeCount: number;
+  isActive: boolean;
+  expiresAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/** Frontend order item — normalized from backend order item */
+interface FrontendOrderItem {
+  id: string;
+  productId: string;
+  name?: string;
+  image?: string;
+  quantity: number;
+  price: number;
+  originalPrice?: number;
+  discount?: number;
+  subtotal?: number;
+  variant?: unknown;
+  store: { id: string; name: string } | null;
+}
+
+/** Frontend order — normalized from BackendOrder */
+interface FrontendOrder {
+  id: string;
+  orderNumber?: string;
+  userId?: string;
+  user?: unknown;
+  customer?: unknown;
+  status: string;
+  items: FrontendOrderItem[];
+  totals: {
+    subtotal: number;
+    shipping: number;
+    delivery: number;
+    tax: number;
+    discount: number;
+    lockFeeDiscount: number;
+    cashback: number;
+    total: number;
+    paidAmount: number;
+    refundAmount: number;
+  };
+  redemption?: Record<string, unknown>;
+  deliveryFee: number;
+  delivery_fee: number;
+  shippingCost: number;
+  deliveryAddress: FrontendAddress | null;
+  summary: {
+    subtotal: number;
+    shipping: number;
+    tax: number;
+    discount: number;
+    total: number;
+  };
+  payment: {
+    method: string;
+    status: string;
+    coinsUsed?: {
+      rezCoins?: number;
+      promoCoins?: number;
+      storePromoCoins?: number;
+      totalCoinsValue?: number;
+    } | null;
+  };
+  delivery: {
+    status: string;
+    method: string;
+    estimatedTime?: string;
+    deliveredAt?: string;
+    deliveryFee: number;
+    address: FrontendAddress | null;
+  };
+  timeline: Array<{ status: string; message: string; timestamp: string }>;
+  couponCode?: string;
+  specialInstructions?: string;
+  cancellation?: Record<string, unknown>;
+  rating?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Frontend address — normalized from backend address */
+interface FrontendAddress {
+  name?: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  phoneNumber?: string;
+  addressLine1?: string;
+  address1?: string;
+  addressLine2?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  zipCode?: string;
+  country: string;
+  landmark?: string;
+  addressType?: string;
+}
+
+/** Frontend checkout delivery address */
+interface FrontendCheckoutAddress {
+  addressLine1?: string;
+  address1?: string;
+  street?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  zipCode?: string;
+  postalCode?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  phoneNumber?: string;
+  addressLine2?: string;
+  address2?: string;
+  landmark?: string;
+  addressType?: string;
+}
+
+/** Frontend order list response */
+interface FrontendOrdersList {
+  orders: FrontendOrder[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  stats?: unknown;
+}
+
+// ============================================
 // CART MAPPERS
 // ============================================
 
 /**
  * Map backend cart item to frontend cart item format
  */
-export function mapBackendCartItemToFrontend(backendItem: BackendCartItem): any | null {
+export function mapBackendCartItemToFrontend(backendItem: BackendCartItem): FrontendCartItem | null {
   // Skip items with null product (data integrity issue)
   if (!backendItem.product) {
     return null;
   }
 
   // Handle both string array and object array for images
-
-  const imageUrl = backendItem.product.images?.[0]
-    ? (typeof backendItem.product.images[0] === 'string'
-        ? backendItem.product.images[0]
-        : (backendItem.product.images[0] as any)?.url || '')
+  const firstImage = backendItem.product.images?.[0];
+  const imageUrl = firstImage
+    ? (typeof firstImage === 'string' ? firstImage : (firstImage as { url?: string })?.url || '')
     : '';
 
   return {
@@ -35,7 +217,7 @@ export function mapBackendCartItemToFrontend(backendItem: BackendCartItem): any 
     price: backendItem.price,
     originalPrice: backendItem.originalPrice || backendItem.price,
     discount: backendItem.discount || 0, // Lock fee discount (only applies to lockedQuantity items)
-    lockedQuantity: (backendItem as any).lockedQuantity || 0, // How many items have lock fee applied
+    lockedQuantity: (backendItem as unknown as { lockedQuantity?: number }).lockedQuantity || 0,
     quantity: backendItem.quantity,
     store: backendItem.store ? {
       id: backendItem.store._id,
@@ -44,14 +226,10 @@ export function mapBackendCartItemToFrontend(backendItem: BackendCartItem): any 
     } : null,
     variant: backendItem.variant,
     addedAt: backendItem.addedAt,
-    notes: (backendItem as any).notes, // For lock fee notes
-    // Item type: 'product', 'service', or 'event'
-    itemType: (backendItem as any).itemType || 'product',
-    // Service booking details (for services)
-    serviceBookingDetails: (backendItem as any).serviceBookingDetails || null,
-    // Event/other metadata
-    metadata: (backendItem as any).metadata || null,
-    // Calculated fields - subtract lock fee discount from subtotal
+    notes: (backendItem as unknown as { notes?: string }).notes,
+    itemType: (backendItem as unknown as { itemType?: string }).itemType || 'product',
+    serviceBookingDetails: (backendItem as unknown as { serviceBookingDetails?: Record<string, unknown> | null }).serviceBookingDetails || null,
+    metadata: (backendItem as unknown as { metadata?: Record<string, unknown> | null }).metadata || null,
     subtotal: (backendItem.price * backendItem.quantity) - (backendItem.discount || 0),
     savings: backendItem.originalPrice
       ? (backendItem.originalPrice - backendItem.price) * backendItem.quantity
@@ -62,11 +240,11 @@ export function mapBackendCartItemToFrontend(backendItem: BackendCartItem): any 
 /**
  * Map backend cart to frontend cart format
  */
-export function mapBackendCartToFrontend(backendCart: BackendCart): any {
+export function mapBackendCartToFrontend(backendCart: BackendCart): FrontendCart {
   // Map and filter out null items (corrupted data)
   const mappedItems = backendCart.items
     .map(mapBackendCartItemToFrontend)
-    .filter((item): item is any => item !== null);
+    .filter((item): item is FrontendCartItem => item !== null);
 
   return {
     id: backendCart._id,
@@ -105,7 +283,7 @@ export function mapBackendCartToFrontend(backendCart: BackendCart): any {
  * Map frontend checkout data to backend order request
  */
 export function mapFrontendCheckoutToBackendOrder(checkoutData: {
-  deliveryAddress: any;
+  deliveryAddress: FrontendCheckoutAddress;
   paymentMethod: string;
   specialInstructions?: string;
   couponCode?: string;
@@ -217,28 +395,39 @@ function mapPaymentMethod(method: string): 'cod' | 'card' | 'upi' | 'wallet' | '
 /**
  * Map backend order to frontend order format
  */
-export function mapBackendOrderToFrontend(backendOrder: BackendOrder): any {
+export function mapBackendOrderToFrontend(backendOrder: BackendOrder): FrontendOrder {
   // Extract delivery address from backend - it can be in delivery.address or shippingAddress
-  const deliveryAddressData = (backendOrder as any).delivery?.address || backendOrder.shippingAddress;
+  const deliveryAddressData = (backendOrder as unknown as { delivery?: { address?: unknown }; shippingAddress?: unknown }).delivery?.address || backendOrder.shippingAddress;
   const mappedDeliveryAddress = mapBackendAddressToFrontend(deliveryAddressData);
 
   // Get delivery fee from multiple possible sources
-  const deliveryFee = (backendOrder as any).totals?.delivery ||
-                      (backendOrder as any).delivery?.deliveryFee ||
-                      backendOrder.summary?.shipping || 0;
+  const backendTotals = backendOrder as unknown as {
+    totals?: { delivery?: number; tax?: number; discount?: number; cashback?: number; total?: number; paidAmount?: number; refundAmount?: number; lockFeeDiscount?: number };
+    delivery?: { deliveryFee?: number; status?: string; method?: string; estimatedTime?: string; deliveredAt?: string };
+    user?: { _id?: string };
+    userId?: string;
+    payment?: { method?: string; status?: string; coinsUsed?: unknown };
+    redemption?: Record<string, unknown>;
+    couponCode?: string;
+    specialInstructions?: string;
+    cancellation?: Record<string, unknown>;
+    rating?: Record<string, unknown>;
+  };
+  const deliveryFee =
+    backendTotals.totals?.delivery ||
+    backendTotals.delivery?.deliveryFee ||
+    backendOrder.summary?.shipping || 0;
 
   return {
-    id: backendOrder.id || (backendOrder as any)._id,
+    id: backendOrder.id || (backendOrder as unknown as { _id?: string })._id || '',
     orderNumber: backendOrder.orderNumber,
-    userId: backendOrder.userId || (backendOrder as any).user?._id || (backendOrder as any).user,
-    // FM-02 FIX: Backend sends populated user as 'user'; some components access 'customer'.
-    // Expose both so either access pattern works without a type error.
-    user: (backendOrder as any).user || null,
-    customer: (backendOrder as any).user || (backendOrder as any).customer || null,
+    userId: backendOrder.userId || backendTotals.user?._id || '',
+    user: backendTotals.user || null,
+    customer: backendTotals.user || null,
     status: mapOrderStatus(backendOrder.status),
-    items: (backendOrder.items || []).map((item: any) => ({
-      id: item._id || item.id,
-      productId: item.product?._id || item.product,
+    items: (backendOrder.items || []).map((item) => ({
+      id: (item as unknown as { _id?: string })._id || item.id || '',
+      productId: typeof item.product === 'object' && item.product !== null ? (item.product as unknown as { _id?: string })._id || '' : String(item.product || ''),
       name: item.name,
       image: item.image,
       quantity: item.quantity,
@@ -248,63 +437,56 @@ export function mapBackendOrderToFrontend(backendOrder: BackendOrder): any {
       subtotal: item.subtotal,
       variant: item.variant,
       store: item.store ? {
-        id: item.store._id || item.store,
-        name: item.store.name,
+        id: (item.store as unknown as { _id?: string })._id || String(item.store),
+        name: (item.store as unknown as { name?: string }).name || '',
       } : null,
     })),
-    // Provide BOTH naming conventions for backwards compatibility
     totals: {
-      subtotal: backendOrder.summary?.subtotal || (backendOrder as any).totals?.subtotal || 0,
-      shipping: deliveryFee, // For legacy code expecting 'shipping'
-      delivery: deliveryFee, // For code expecting 'delivery'
-      tax: backendOrder.summary?.tax || (backendOrder as any).totals?.tax || 0,
-      discount: backendOrder.summary?.discount || (backendOrder as any).totals?.discount || 0,
-      lockFeeDiscount: (backendOrder as any).totals?.lockFeeDiscount || 0,
-      cashback: (backendOrder as any).totals?.cashback || 0,
-      total: backendOrder.summary?.total || (backendOrder as any).totals?.total || 0,
-      paidAmount: (backendOrder as any).totals?.paidAmount || 0,
-      refundAmount: (backendOrder as any).totals?.refundAmount || 0,
+      subtotal: backendOrder.summary?.subtotal || backendTotals.totals?.subtotal || 0,
+      shipping: deliveryFee,
+      delivery: deliveryFee,
+      tax: backendOrder.summary?.tax || backendTotals.totals?.tax || 0,
+      discount: backendOrder.summary?.discount || backendTotals.totals?.discount || 0,
+      lockFeeDiscount: backendTotals.totals?.lockFeeDiscount || 0,
+      cashback: backendTotals.totals?.cashback || 0,
+      total: backendOrder.summary?.total || backendTotals.totals?.total || 0,
+      paidAmount: backendTotals.totals?.paidAmount || 0,
+      refundAmount: backendTotals.totals?.refundAmount || 0,
     },
-    // Deal redemption info
-    redemption: (backendOrder as any).redemption || undefined,
-    // FM-01 FIX: Expose delivery fee under all known alias names at root level so
-    // any component using order.deliveryFee / order.delivery_fee / order.shippingCost resolves correctly.
-    deliveryFee: deliveryFee,
+    redemption: backendTotals.redemption,
+    deliveryFee,
     delivery_fee: deliveryFee,
     shippingCost: deliveryFee,
-    // Keep at root level for backwards compatibility
     deliveryAddress: mappedDeliveryAddress,
-    // Also provide legacy summary field
     summary: {
-      subtotal: backendOrder.summary?.subtotal || (backendOrder as any).totals?.subtotal || 0,
+      subtotal: backendOrder.summary?.subtotal || backendTotals.totals?.subtotal || 0,
       shipping: deliveryFee,
-      tax: backendOrder.summary?.tax || (backendOrder as any).totals?.tax || 0,
-      discount: backendOrder.summary?.discount || (backendOrder as any).totals?.discount || 0,
-      total: backendOrder.summary?.total || (backendOrder as any).totals?.total || 0,
+      tax: backendOrder.summary?.tax || backendTotals.totals?.tax || 0,
+      discount: backendOrder.summary?.discount || backendTotals.totals?.discount || 0,
+      total: backendOrder.summary?.total || backendTotals.totals?.total || 0,
     },
     payment: {
-      method: (backendOrder as any).payment?.method || 'cod',
-      status: backendOrder.paymentStatus || (backendOrder as any).payment?.status || 'pending',
-      coinsUsed: (backendOrder as any).payment?.coinsUsed || null,
+      method: backendTotals.payment?.method || 'cod',
+      status: backendOrder.paymentStatus || backendTotals.payment?.status || 'pending',
+      coinsUsed: backendTotals.payment?.coinsUsed as FrontendOrder['payment']['coinsUsed'],
     },
-    // Include address in delivery object for code expecting order.delivery.address
     delivery: {
-      status: (backendOrder as any).delivery?.status || 'pending',
-      method: (backendOrder as any).delivery?.method || 'standard',
-      estimatedTime: (backendOrder as any).delivery?.estimatedTime,
-      deliveredAt: (backendOrder as any).delivery?.deliveredAt,
-      deliveryFee: deliveryFee,
-      address: mappedDeliveryAddress, // Include address here for code checking order.delivery?.address
+      status: backendTotals.delivery?.status || 'pending',
+      method: backendTotals.delivery?.method || 'standard',
+      estimatedTime: backendTotals.delivery?.estimatedTime,
+      deliveredAt: backendTotals.delivery?.deliveredAt,
+      deliveryFee,
+      address: mappedDeliveryAddress,
     },
-    timeline: (backendOrder.timeline || []).map((entry: any) => ({
+    timeline: (backendOrder.timeline || []).map((entry) => ({
       status: entry.status,
       message: entry.message,
       timestamp: entry.timestamp,
     })),
-    couponCode: (backendOrder as any).couponCode || backendOrder.coupon?.code,
-    specialInstructions: (backendOrder as any).specialInstructions || backendOrder.notes,
-    cancellation: (backendOrder as any).cancellation,
-    rating: (backendOrder as any).rating,
+    couponCode: backendTotals.couponCode || backendOrder.coupon?.code,
+    specialInstructions: backendTotals.specialInstructions || backendOrder.notes,
+    cancellation: backendTotals.cancellation,
+    rating: backendTotals.rating,
     createdAt: backendOrder.createdAt,
     updatedAt: backendOrder.updatedAt,
   };
@@ -346,33 +528,39 @@ export function normalizeBookingType(rawType: string | undefined | null): string
 /**
  * Map backend address to frontend address format
  */
-function mapBackendAddressToFrontend(backendAddress: any): any {
-  if (!backendAddress) return null;
+function mapBackendAddressToFrontend(backendAddress: unknown): FrontendAddress | null {
+  if (!backendAddress || typeof backendAddress !== 'object') return null;
 
+  const addr = backendAddress as Record<string, unknown>;
   return {
-    name: backendAddress.name,
-    firstName: backendAddress.name?.split(' ')[0] || '',
-    lastName: backendAddress.name?.split(' ').slice(1).join(' ') || '',
-    phone: backendAddress.phone,
-    phoneNumber: backendAddress.phone,
-    addressLine1: backendAddress.addressLine1 || backendAddress.address1,
-    address1: backendAddress.addressLine1 || backendAddress.address1,
-    addressLine2: backendAddress.addressLine2 || backendAddress.address2,
-    address2: backendAddress.addressLine2 || backendAddress.address2,
-    city: backendAddress.city,
-    state: backendAddress.state,
-    pincode: backendAddress.pincode || backendAddress.postalCode || backendAddress.zipCode,
-    zipCode: backendAddress.pincode || backendAddress.postalCode || backendAddress.zipCode,
-    country: backendAddress.country || 'India',
-    landmark: backendAddress.landmark,
-    addressType: backendAddress.addressType || 'home',
+    name: addr.name as string || '',
+    firstName: String(addr.name || '').split(' ')[0] || '',
+    lastName: String(addr.name || '').split(' ').slice(1).join(' ') || '',
+    phone: addr.phone as string || '',
+    phoneNumber: addr.phone as string || '',
+    addressLine1: (addr.addressLine1 || addr.address1) as string || '',
+    address1: (addr.addressLine1 || addr.address1) as string || '',
+    addressLine2: (addr.addressLine2 || addr.address2) as string || '',
+    address2: (addr.addressLine2 || addr.address2) as string || '',
+    city: addr.city as string || '',
+    state: addr.state as string || '',
+    pincode: (addr.pincode || addr.postalCode || addr.zipCode) as string || '',
+    zipCode: (addr.pincode || addr.postalCode || addr.zipCode) as string || '',
+    country: (addr.country as string) || 'India',
+    landmark: addr.landmark as string || '',
+    addressType: (addr.addressType as string) || 'home',
   };
 }
 
 /**
  * Map orders list response
  */
-export function mapBackendOrdersListToFrontend(backendResponse: any): any {
+export function mapBackendOrdersListToFrontend(backendResponse: {
+  orders?: BackendOrder[];
+  pagination?: { page?: number; limit?: number; total?: number; totalPages?: number };
+  summary?: unknown;
+  stats?: unknown;
+}): FrontendOrdersList {
   return {
     orders: (backendResponse.orders || []).map(mapBackendOrderToFrontend),
     pagination: backendResponse.pagination || {

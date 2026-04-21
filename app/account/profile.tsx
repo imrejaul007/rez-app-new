@@ -156,7 +156,7 @@ function AccountProfilePage() {
       quality: 0.7,
     });
 
-    if (!result.canceled && result.assets[0]) {
+    if (!result.canceled && result.assets && result.assets[0]) {
       // Validate file size before upload (5 MB limit matches backend multer config)
       const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
       if (result.assets[0].fileSize && result.assets[0].fileSize > MAX_AVATAR_BYTES) {

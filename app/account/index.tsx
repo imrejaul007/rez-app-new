@@ -62,7 +62,7 @@ function AccountPage() {
 
   const { sections, loading, error, refreshing, refresh } = useAccountData(activeTab);
 
-  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
+  const segment: IdentitySegment = useUserIdentityStore.getState().segment;
   const { featureLevel, verificationSegment, statedIdentity } = useUserIdentityStore();
   // Wallet context for dynamic insights
   const rezBalance = useRezBalance();

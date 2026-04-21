@@ -47,7 +47,7 @@ function SubscriptionManagePage() {
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const isMounted = useIsMounted();
-  const segment = useUserIdentityStore((s: UserIdentityState) => s.segment);
+  const segment: IdentitySegment = useUserIdentityStore.getState().segment;
   const savingsTitle = SEGMENT_SAVINGS_TITLE[segment] ?? 'Total Savings';
 
   useEffect(() => {

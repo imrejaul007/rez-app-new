@@ -207,7 +207,7 @@ function VerificationPage() {
       aspect: [4, 3],
     });
 
-    if (!result.canceled && result.assets[0]) {
+    if (!result.canceled && result.assets && result.assets[0]) {
       if (!isMounted()) return;
       setDocumentImage(result.assets[0].uri);
       showAlert(
@@ -233,7 +233,7 @@ function VerificationPage() {
       aspect: [4, 3],
     });
 
-    if (!result.canceled && result.assets[0]) {
+    if (!result.canceled && result.assets && result.assets[0]) {
       if (!isMounted()) return;
       setDocumentImage(result.assets[0].uri);
       showAlert(

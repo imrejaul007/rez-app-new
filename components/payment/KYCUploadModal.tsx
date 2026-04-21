@@ -67,7 +67,7 @@ function KYCUploadModal({
         base64: true,
       });
 
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets[0]) {
         const imageUri = result.assets[0].uri;
         if (side === 'front') {
           if (!isMounted()) return;

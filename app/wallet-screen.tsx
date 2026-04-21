@@ -157,13 +157,13 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   // Compute coin balances for CoinProportionBar
   const rezBalance = useMemo(() => {
     // ETHAN: crash guard — walletData?.coins could be undefined; filter safely
-    const rezCoin = walletData?.coins?.find((c) => c?.type === 'rez');
+    const rezCoin = walletData?.coins?.find((c: CoinBalance) => c?.type === 'rez');
     return rezCoin?.amount ?? 0;
   }, [walletData?.coins]);
 
   const promoBalance = useMemo(() => {
     // ETHAN: crash guard — walletData?.coins could be undefined or contain null items
-    const promoCoin = walletData?.coins?.find((c) => c?.type === 'promo');
+    const promoCoin = walletData?.coins?.find((c: CoinBalance) => c?.type === 'promo');
     return promoCoin?.amount ?? 0;
   }, [walletData?.coins]);
 
@@ -941,7 +941,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
             </Pressable>
           </View>
-          {(walletData.coins ?? []).map((coin, idx) => (
+          {(walletData.coins ?? []).map((coin: CoinBalance, idx: number) => (
             <CoinDetailCard key={coin.id ?? `coin-${idx}`} coin={coin} onPress={handleCoinPress} />
           ))}
 

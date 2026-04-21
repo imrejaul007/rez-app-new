@@ -21,6 +21,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import discountsApi, { Discount } from '@/services/discountsApi';
+import { CartItemWithQuantity } from '@/stores/cartStore';
 import {
   useCartState,
   useCartActions,
@@ -77,7 +78,7 @@ function CardOffersPage() {
     if (!cartState?.items || !Array.isArray(cartState.items)) {
       return 0;
     }
-    return cartState.items.reduce((total, item) => {
+    return cartState.items.reduce((total: number, item: CartItemWithQuantity) => {
       return total + (item.discountedPrice || item.originalPrice || 0) * (item.quantity || 0);
     }, 0);
   }, [cartState?.items]);

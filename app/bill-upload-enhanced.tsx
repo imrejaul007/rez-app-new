@@ -148,7 +148,7 @@ function EnhancedBillUploadPage() {
         quality: 0.8,
       });
 
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets[0]) {
         if (!isMounted()) return;
         setBillImage(result.assets[0].uri);
 

@@ -152,7 +152,7 @@ function ReviewForm({
         allowsMultipleSelection: false,
       });
 
-      if (result.canceled || !result.assets[0]) {
+      if (result.canceled || !result.assets || !result.assets[0]) {
         return;
       }
 

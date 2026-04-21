@@ -24,6 +24,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useCartState } from '@/stores/selectors';
+import { CartItemWithQuantity } from '@/stores/cartStore';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { triggerImpact } from '@/utils/haptics';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
@@ -59,7 +60,7 @@ function StoreProductsPage() {
   const currencySymbol = getCurrencySymbol();
 
   const cartItemCount = useMemo(() => {
-    return cartState.items.reduce((total, item) => total + item.quantity, 0);
+    return cartState.items.reduce((total: number, item: CartItemWithQuantity) => total + item.quantity, 0);
   }, [cartState.items]);
 
   // ─── Animation refs ─────────────────────────────────────────────────────

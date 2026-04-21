@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import AchievementToast from './AchievementToast';
-import { useGamification } from '@/contexts/GamificationContext';
+import { useGamification, AchievementUnlock } from '@/contexts/GamificationContext';
 import { useRouter } from 'expo-router';
 
 export default function AchievementToastManager() {
@@ -11,7 +11,7 @@ export default function AchievementToastManager() {
 
   useEffect(() => {
     // Show the first unshown achievement from the queue
-    const nextAchievement = state.achievementQueue.find((item) => !item.shown);
+    const nextAchievement = state.achievementQueue.find((item: AchievementUnlock) => !item.shown);
 
     if (nextAchievement && !currentAchievement) {
       setCurrentAchievement(nextAchievement);

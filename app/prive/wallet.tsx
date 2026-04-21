@@ -510,7 +510,7 @@ function PriveWalletScreen() {
               {/* Branded coins breakdown */}
               {coins.brandedBreakdown && coins.brandedBreakdown.length > 0 && (
                 <View style={styles.brandedBreakdown}>
-                  {coins.brandedBreakdown.map((brand, index) => (
+                  {coins.brandedBreakdown.map((brand: any, index: number) => (
                     <View key={brand.brandId || index} style={styles.brandedRow}>
                       <Text style={styles.brandedName}>{brand.brandName}</Text>
                       <Text style={styles.brandedAmount}>{brand.amount.toLocaleString()}</Text>

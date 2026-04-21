@@ -101,7 +101,7 @@ function SubmitPickPage() {
           videoMaxDuration: 60,
         });
 
-        if (!result.canceled && result.assets[0]) {
+        if (!result.canceled && result.assets && result.assets[0]) {
           const asset = result.assets[0];
           if (!isMounted()) return;
           setError(null);

@@ -23,6 +23,7 @@ import { getImagePicker } from '@/utils/lazyImports';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import photoUploadApi, { PhotoUploadItem } from '@/services/photoUploadApi';
+import type { ImagePickerAsset } from 'expo-image-picker';
 import apiClient from '@/services/apiClient';
 import { platformAlert } from '@/utils/platformAlert';
 import { CLOUDINARY_CONFIG, getCloudinaryUploadUrl } from '@/config/cloudinary.config';
@@ -111,8 +112,8 @@ function PhotoUploadPage() {
       quality: 0.8,
     });
 
-    if (!result.canceled) {
-      const newPhotos = result.assets.map((a) => a.uri);
+    if (!result.canceled && result.assets) {
+      const newPhotos = result.assets.map((a: ImagePickerAsset) => a.uri);
       if (!isMounted()) return;
       setPhotos((prev) => [...prev, ...newPhotos].slice(0, 10));
     }

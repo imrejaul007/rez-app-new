@@ -45,6 +45,7 @@ import {
 } from '@/stores/selectors';
 import cartApi from '@/services/cartApi';
 import asyncStorageService from '@/services/asyncStorageService';
+import { RecentlyViewedProduct } from '@/types/recentlyViewed.types';
 import reviewsService from '@/services/reviewsApi';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
@@ -104,6 +105,7 @@ interface Store {
       order?: number;
     }>;
   };
+  [key: string]: any;
 }
 
 interface ProductAnalytics {
@@ -177,6 +179,30 @@ interface StoreReview {
   date?: string;
   text?: string;
   cashbackEarned?: number | null;
+}
+
+// Review type matching ProductTabbedSection's Review interface
+interface Review {
+  id: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  date: string;
+  text: string;
+  cashbackEarned?: number;
+}
+
+/** Maps StoreReview[] to Review[] for ProductTabbedSection */
+function toReviews(storeReviews: StoreReview[]): Review[] {
+  return storeReviews.map((r) => ({
+    id: String(r.id ?? Math.random()),
+    userName: r.userName ?? 'Anonymous',
+    userAvatar: r.userAvatar,
+    rating: r.rating ?? 0,
+    date: r.date ?? '',
+    text: r.text ?? '',
+    cashbackEarned: r.cashbackEarned ?? undefined,
+  }));
 }
 
 interface StoreOperatingHours {
@@ -276,6 +302,7 @@ interface DynamicCardData {
   };
   productType?: 'product' | 'service';
   features?: string[];
+  [key: string]: any;
 }
 
 // Stable empty array to avoid breaking React.memo on child components
@@ -298,7 +325,7 @@ function formatReviewDate(dateString: string): string {
 }
 
 function StorePage() {
-  const params = useLocalSearchParams<RouterNavParams>();
+  const params = useLocalSearchParams<any>();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
@@ -511,7 +538,7 @@ function StorePage() {
               updatedCardData.cashback?.percentage !== undefined
                 ? { percentage: updatedCardData.cashback.percentage }
                 : undefined,
-          } as RecentlyViewedProductInput)
+          } as RecentlyViewedProduct)
           .catch(() => {});
 
         // Fire analytics + view tracking in parallel (non-blocking)
@@ -925,7 +952,7 @@ function StorePage() {
       {/* Sticky Header - Outside ScrollView */}
       <View style={styles.stickyHeader}>
         <StoreHeader
-          dynamicData={isDynamic ? cardData : null}
+          dynamicData={(isDynamic ? cardData : null) as any}
           cardType={params.cardType as string}
           isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
           showImage={false}
@@ -954,7 +981,7 @@ function StorePage() {
         >
           {/* 1. Product Image Section */}
           <StoreHeader
-            dynamicData={isDynamic ? cardData : null}
+            dynamicData={(isDynamic ? cardData : null) as any}
             cardType={params.cardType as string}
             isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
             showImage={true}
@@ -1051,7 +1078,7 @@ function StorePage() {
               description={cardData.description || 'No description available for this product.'}
               features={cardData.features || EMPTY_ARRAY}
               specifications={specifications}
-              reviews={storeReviews}
+              reviews={toReviews(storeReviews)}
               averageRating={
                 cardData.ratings?.average ||
                 (typeof cardData.rating === 'object' ? cardData.rating?.value : cardData.rating) ||

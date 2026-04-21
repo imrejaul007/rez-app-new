@@ -38,7 +38,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const COLORS = {
+const COLORS: Record<string, string> = {
   white: colors.background.primary,
   navy: colors.nileBlue,
   gray50: colors.background.tertiary,
@@ -107,10 +107,35 @@ interface Store {
   isVerified: boolean;
 }
 
+interface DealSnapshotFields {
+  storeId?: string;
+  cashback?: string;
+  coins?: string;
+  discount?: string;
+  bonus?: string;
+}
+
+interface CampaignIdFields {
+  title?: string;
+}
+
+interface ActiveRedemption extends DealRedemption {
+  deal?: DealSnapshotFields;
+  dealSnapshot?: DealSnapshotFields;
+  campaignId?: CampaignIdFields | string;
+  campaignSnapshot?: { title?: string };
+}
+
+interface DealValue {
+  type: string;
+  value: number | string;
+  color: string;
+}
+
 const StoreDetailPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { id, redemptionCode: passedRedemptionCode } = useLocalSearchParams<any>();
+  const { id, redemptionCode: passedRedemptionCode } = useLocalSearchParams<{ id: string; redemptionCode?: string }>();
   const isAuthenticated = useIsAuthenticated();
   const [store, setStore] = useState<Store | null>(null);
   const [loading, setLoading] = useState(true);
@@ -123,8 +148,8 @@ const StoreDetailPage: React.FC = () => {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
   // Active redemptions for this store
-  const [activeRedemptions, setActiveRedemptions] = useState<DealRedemption[]>([]);
-  const [selectedRedemption, setSelectedRedemption] = useState<DealRedemption | null>(null);
+  const [activeRedemptions, setActiveRedemptions] = useState<ActiveRedemption[]>([]);
+  const [selectedRedemption, setSelectedRedemption] = useState<ActiveRedemption | null>(null);
   const [loadingRedemptions, setLoadingRedemptions] = useState(false);
 
   const fetchStore = useCallback(async () => {
@@ -132,7 +157,7 @@ const StoreDetailPage: React.FC = () => {
 
     try {
       const response = await apiClient.get(`/stores/${id}`);
-      const storeData = (response.data as any)?.store || response.data;
+      const storeData = ((response.data as unknown) as { store?: Store; _id?: string }).store || (response.data as unknown as Store);
 
       // Validate store data exists
       if (!storeData || !storeData._id) {
@@ -185,8 +210,8 @@ const StoreDetailPage: React.FC = () => {
       if (response.success && response.data) {
         // Filter redemptions for this store
         // Compare with both URL id (could be slug) and store._id (MongoDB ObjectId)
-        const storeRedemptions = (response.data.redemptions ?? []).filter((r) => {
-          const dealStoreId = (r as any).deal?.storeId ?? (r as any).dealSnapshot?.storeId;
+        const storeRedemptions = (response.data.redemptions ?? []).filter((r: ActiveRedemption) => {
+          const dealStoreId = r.dealSnapshot?.storeId ?? r.deal?.storeId;
           if (!dealStoreId) return false;
           // Match against URL param (id) or loaded store's _id
           return dealStoreId === id || (store && dealStoreId === store._id);
@@ -273,7 +298,7 @@ const StoreDetailPage: React.FC = () => {
 
   const handleWriteReview = () => {
     if (!store) return;
-    router.push({ pathname: '/store-reviews', params: { storeId: store._id, storeName: store.name } } as any);
+    router.push({ pathname: '/store-reviews', params: { storeId: store._id, storeName: store.name } });
   };
 
   const handleOpenPhoto = (index: number) => {
@@ -301,35 +326,35 @@ const StoreDetailPage: React.FC = () => {
       baseParams.redemptionCode = selectedRedemption.redemptionCode!;
       baseParams.redemptionId = selectedRedemption.id;
       // Add deal benefit info
-      if ((selectedRedemption as any).deal?.cashback) {
-        baseParams.dealCashback = (selectedRedemption as any).deal.cashback;
+      if (selectedRedemption.deal?.cashback) {
+        baseParams.dealCashback = String(selectedRedemption.deal.cashback);
       }
-      if ((selectedRedemption as any).deal?.coins) {
-        baseParams.dealCoins = (selectedRedemption as any).deal.coins;
+      if (selectedRedemption.deal?.coins) {
+        baseParams.dealCoins = String(selectedRedemption.deal.coins);
       }
-      if ((selectedRedemption as any).deal?.discount) {
-        baseParams.dealDiscount = (selectedRedemption as any).deal.discount;
+      if (selectedRedemption.deal?.discount) {
+        baseParams.dealDiscount = String(selectedRedemption.deal.discount);
       }
     }
 
     if (isFitnessStore) {
-      router.push({
+      router.push<{ '/fitness/book/[storeId]': typeof baseParams }>({
         pathname: '/fitness/book/[storeId]',
         params: baseParams,
-      } as any);
+      });
     } else {
-      router.push({
+      router.push<{ '/booking/appointment': typeof baseParams & { serviceType: string } }>({
         pathname: '/booking/appointment',
         params: {
           ...baseParams,
           serviceType: store.bookingType || 'SERVICE',
         },
-      } as any);
+      });
     }
   };
 
   // Get deal value display
-  const getDealValue = (deal: any) => {
+  const getDealValue = (deal: ActiveRedemption) => {
     if (deal.cashback) return { type: 'Cashback', value: deal.cashback, color: COLORS.green500 };
     if (deal.coins) return { type: 'Coins', value: deal.coins, color: COLORS.amber500 };
     if (deal.discount) return { type: 'Discount', value: deal.discount, color: COLORS.purple500 };
@@ -540,7 +565,7 @@ const StoreDetailPage: React.FC = () => {
           {store.photos && store.photos.length > 0 && (
             <View style={styles.photoSection}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="images-outline" size={20} color={(COLORS as any).navy} />
+                <Ionicons name="images-outline" size={20} color={COLORS.navy} />
                 <Text style={styles.sectionTitle}>Photos</Text>
               </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.photoStrip}>
@@ -619,7 +644,7 @@ const StoreDetailPage: React.FC = () => {
               </View>
 
               {activeRedemptions.map((redemption) => {
-                const dealValue = getDealValue((redemption as any).deal);
+                const dealValue = getDealValue(redemption as ActiveRedemption);
                 const isSelected = selectedRedemption?.id === redemption.id;
 
                 return (
@@ -638,8 +663,8 @@ const StoreDetailPage: React.FC = () => {
                       </View>
                       <View style={styles.redemptionInfo}>
                         <Text style={styles.redemptionCampaign} numberOfLines={1}>
-                          {typeof (redemption as any).campaignId === 'object'
-                            ? (redemption as any).campaignId?.title
+                          {typeof redemption.campaignId === 'object' && redemption.campaignId !== null
+                            ? redemption.campaignId?.title
                             : 'Campaign'}
                         </Text>
                         <View style={styles.redemptionCodeRow}>
@@ -672,7 +697,7 @@ const StoreDetailPage: React.FC = () => {
           {store.description && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="information-circle-outline" size={20} color={(COLORS as any).navy} />
+                <Ionicons name="information-circle-outline" size={20} color={COLORS.navy} />
                 <Text style={styles.sectionTitle}>About</Text>
               </View>
               <Text style={styles.descriptionText}>{store.description}</Text>
@@ -682,7 +707,7 @@ const StoreDetailPage: React.FC = () => {
           {/* Location Section */}
           <View style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
-              <Ionicons name="location-outline" size={20} color={(COLORS as any).navy} />
+              <Ionicons name="location-outline" size={20} color={COLORS.navy} />
               <Text style={styles.sectionTitle}>Location</Text>
             </View>
             <Pressable style={styles.locationBox} onPress={handleDirections}>
@@ -703,7 +728,7 @@ const StoreDetailPage: React.FC = () => {
           {store.operationalInfo?.hours && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="time-outline" size={20} color={(COLORS as any).navy} />
+                <Ionicons name="time-outline" size={20} color={COLORS.navy} />
                 <Text style={styles.sectionTitle}>Operating Hours</Text>
               </View>
               <View style={styles.hoursGrid}>
@@ -731,7 +756,7 @@ const StoreDetailPage: React.FC = () => {
           {store.serviceTypes && store.serviceTypes.length > 0 && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="grid-outline" size={20} color={(COLORS as any).navy} />
+                <Ionicons name="grid-outline" size={20} color={COLORS.navy} />
                 <Text style={styles.sectionTitle}>Services</Text>
               </View>
               <View style={styles.tagsContainer}>
@@ -754,7 +779,7 @@ const StoreDetailPage: React.FC = () => {
           {store.operationalInfo?.paymentMethods && store.operationalInfo.paymentMethods.length > 0 && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="wallet-outline" size={20} color={(COLORS as any).navy} />
+                <Ionicons name="wallet-outline" size={20} color={COLORS.navy} />
                 <Text style={styles.sectionTitle}>Payment Methods</Text>
               </View>
               <View style={styles.paymentContainer}>
@@ -786,7 +811,7 @@ const StoreDetailPage: React.FC = () => {
           {store.tags && store.tags.length > 0 && (
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="pricetags-outline" size={20} color={(COLORS as any).navy} />
+                <Ionicons name="pricetags-outline" size={20} color={COLORS.navy} />
                 <Text style={styles.sectionTitle}>Tags</Text>
               </View>
               <View style={styles.tagsContainer}>
@@ -905,7 +930,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   errorDescription: {
     fontSize: 15,
@@ -1048,7 +1073,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     lineHeight: 26,
   },
   storeCategory: {
@@ -1193,7 +1218,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   descriptionText: {
     fontSize: 14,
@@ -1224,7 +1249,7 @@ const styles = StyleSheet.create({
   addressText: {
     fontSize: 14,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   cityText: {
     fontSize: 13,
@@ -1257,7 +1282,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 14,
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     fontWeight: '500',
   },
   closedTimeText: {
@@ -1361,7 +1386,7 @@ const styles = StyleSheet.create({
   partnerLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   bookButton: {
     borderRadius: 28,
@@ -1421,7 +1446,7 @@ const styles = StyleSheet.create({
   activeDealsTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
   activeDealsSubtitle: {
     fontSize: 13,
@@ -1456,7 +1481,7 @@ const styles = StyleSheet.create({
   redemptionCampaign: {
     fontSize: 14,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
     marginBottom: 4,
   },
   redemptionCodeRow: {
@@ -1559,7 +1584,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: COLORS.navy,
   },
 
   // Full-screen photo modal

@@ -115,7 +115,7 @@ export function CrossPlatformAlertRenderer() {
             <Text style={styles.message}>{alertData.message}</Text>
           </View>
           <View style={styles.buttonsContainer}>
-            {buttons.map((button, index) => (
+            {buttons.map((button: AlertButton, index: number) => (
               <Pressable
                 key={index}
                 style={[

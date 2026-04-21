@@ -6,7 +6,8 @@
 import React, { useState, useEffect} from 'react';
 import { View, StyleSheet, ViewStyle, ImageStyle } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-import { Image, ImageProps } from 'expo-image';
+import { Image } from 'expo-image';
+import type { ImageProps } from 'expo-image';
 import { getCachedImageUri } from '@/hooks/useImagePreload';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -123,7 +124,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   // Preload image if requested
   useEffect(() => {
     if (preload && mainSourceUri) {
-      Image.prefetch(mainSourceUri).catch((err: Error) => {
+      Image.prefetch(mainSourceUri).catch((err: unknown) => {
       });
     }
   }, [preload, mainSourceUri]);

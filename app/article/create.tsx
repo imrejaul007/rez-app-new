@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { platformAlert, platformAlertSimple } from '@/utils/platformAlert';
 import * as ImagePicker from 'expo-image-picker';
+import type { ImagePickerAsset } from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -65,8 +66,8 @@ function CreateArticlePage() {
       selectionLimit: 5,
     });
 
-    if (!result.canceled) {
-      const newUris = result.assets.map((a) => a.uri);
+    if (!result.canceled && result.assets) {
+      const newUris = result.assets.map((a: ImagePickerAsset) => a.uri);
       setForm((f) => ({
         ...f,
         images: [...f.images, ...newUris].slice(0, 5),

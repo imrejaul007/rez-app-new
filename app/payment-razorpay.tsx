@@ -306,7 +306,7 @@ function PaymentPage() {
       }
       return false;
     } catch (error: any) {
-      logger.error('[Razorpay] Verification error: ' + (error instanceof Error ? error.message : String(error)));
+      logger.error('[Razorpay] Verification error: ' + String(error?.message ?? error));
       return false;
     }
   };

@@ -23,6 +23,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import ugcApi from '@/services/ugcApi';
+import type { ImagePickerAsset } from 'expo-image-picker';
 import apiClient from '@/services/apiClient';
 import { platformAlert } from '@/utils/platformAlert';
 import { videoUploadService } from '@/services/videoUploadService';
@@ -66,8 +67,8 @@ function UploadPage() {
       videoMaxDuration: 60,
     });
 
-    if (!result.canceled) {
-      const newMedia = result.assets.map((a) => a.uri);
+    if (!result.canceled && result.assets) {
+      const newMedia = result.assets.map((a: ImagePickerAsset) => a.uri);
       if (!isMounted()) return;
       setMedia((prev) => [...prev, ...newMedia].slice(0, contentType === 'reel' ? 1 : 10));
     }

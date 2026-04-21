@@ -225,7 +225,7 @@ function ProfileEditPage() {
         exif: false,
       });
 
-      if (!result.canceled && result.assets[0]) {
+      if (!result.canceled && result.assets && result.assets[0]) {
         if (!isMounted()) return;
         setUploadingImage(true);
 

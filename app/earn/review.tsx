@@ -22,6 +22,7 @@ import { useRouter } from 'expo-router';
 import { BRAND } from '@/constants/brand';
 import { useFocusEffect } from 'expo-router';
 import { getImagePicker } from '@/utils/lazyImports';
+import type { ImagePickerAsset } from 'expo-image-picker';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import apiClient from '@/services/apiClient';
@@ -99,8 +100,8 @@ function ReviewToEarnPage() {
       quality: 0.8,
     });
 
-    if (!result.canceled) {
-      const newPhotos = result.assets.map((a) => a.uri);
+    if (!result.canceled && result.assets) {
+      const newPhotos = result.assets.map((a: ImagePickerAsset) => a.uri);
       if (!isMounted()) return;
       setPhotos((prev) => [...prev, ...newPhotos].slice(0, 5));
     }

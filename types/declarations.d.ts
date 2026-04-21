@@ -22,10 +22,90 @@ declare module 'expo-web-browser';
 declare module 'expo-sharing';
 declare module '@expo-google-fonts/poppins';
 declare module '@expo-google-fonts/inter';
-declare module 'expo-image-picker';
+declare module 'expo-image-picker' {
+  export interface ImagePickerAsset {
+    uri: string;
+    width?: number;
+    height?: number;
+    fileName?: string;
+    type?: string;
+    base64?: string;
+    expires?: number;
+    metadata?: Record<string, string>;
+    fileSize?: number;
+    mimeType?: string;
+    duration?: number;
+  }
+  export interface ImagePickerOptions {
+    mediaTypes?: 'Images' | 'Videos' | 'All' | 'images' | 'videos' | 'mixed' | ('Images' | 'Videos' | 'All' | 'images' | 'videos' | 'mixed')[];
+    allowsEditing?: boolean;
+    allowsMultipleSelection?: boolean;
+    quality?: number;
+    selectionLimit?: number;
+    videoMaxDuration?: number;
+    base64?: boolean;
+    aspect?: [number, number];
+    exif?: boolean;
+  }
+  export interface ImagePickerResult {
+    canceled: boolean;
+    assets: ImagePickerAsset[] | null;
+  }
+  export interface PermissionResponse {
+    status: 'granted' | 'denied' | 'undetermined' | 'limited';
+    granted: boolean;
+    canAskAgain?: boolean;
+    expires?: 'never' | number;
+  }
+  export const MediaTypeOptions: {
+    Images: 'Images';
+    Videos: 'Videos';
+    All: 'All';
+  };
+  export function launchImageLibraryAsync(options?: ImagePickerOptions): Promise<ImagePickerResult>;
+  export function launchCameraAsync(options?: ImagePickerOptions): Promise<ImagePickerResult>;
+  export function getCameraPermissionsAsync(): Promise<PermissionResponse>;
+  export function getMediaLibraryPermissionsAsync(writeOnly?: boolean): Promise<PermissionResponse>;
+  export function requestCameraPermissionsAsync(): Promise<PermissionResponse>;
+  export function requestMediaLibraryPermissionsAsync(writeOnly?: boolean): Promise<PermissionResponse>;
+  export const useMediaLibraryPermissions: () => PermissionResponse;
+  export const useCameraPermissions: () => PermissionResponse;
+  export function getPendingResultAsync(): Promise<ImagePickerResult[]>;
+}
 declare module 'expo-clipboard';
 declare module 'expo-haptics';
 declare module 'expo-document-picker';
-declare module 'expo-image';
+declare module 'expo-image' {
+  import { Component, CSSProperties } from 'react';
+  import { ImageStyle as RNImageStyle, ViewStyle, StyleProp } from 'react-native';
+  export type ImageSource = { uri?: string | null; width?: number; height?: number; scale?: number; bundle?: string } | number;
+  export interface ImageProps {
+    source?: ImageSource | string | number | { uri: string };
+    contentFit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+    transition?: number;
+    fadeDuration?: number;
+    blurRadius?: number;
+    onLoadStart?: () => void;
+    onLoad?: (event: { source: { width: number; height: number } }) => void;
+    onError?: (error: Error) => void;
+    onLoadEnd?: () => void;
+    style?: StyleProp<RNImageStyle>;
+    className?: string;
+    placeholder?: string | { uri: string } | { blurhash: string } | null;
+    cachePolicy?: 'none' | 'disk' | 'memory' | 'memory-disk';
+    priority?: 'low' | 'normal' | 'high';
+    resizeMode?: 'cover' | 'contain' | 'stretch' | 'center';
+    tintColor?: string;
+    accessibilityLabel?: string;
+    testID?: string;
+    recyclingKey?: string;
+    portal_tag?: string;
+  }
+  export class Image extends Component<ImageProps> {
+    static prefetch(url: string | string[]): Promise<boolean>;
+  }
+  export { ImageStyle as ImageStyle };
+}
 declare module 'expo-blur';
 declare module 'expo-local-authentication';
+declare module 'expo-linking';

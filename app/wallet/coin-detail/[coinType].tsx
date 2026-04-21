@@ -20,7 +20,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useWalletData, useWalletLoading, useWalletRefreshing, useRefreshWallet } from '@/stores/selectors';
-import { COIN_TYPES, CoinType } from '@/types/wallet';
+import { COIN_TYPES, CoinType, CoinBalance } from '@/types/wallet';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { ThemedText } from '@/components/ThemedText';
 import { platformAlert } from '@/utils/platformAlert';
@@ -80,7 +80,7 @@ function CoinDetailPage() {
   const ruleKey = type;
   const rules = ruleSource[ruleKey] || DEFAULT_COIN_RULES.rez;
 
-  const coin = walletData?.coins.find((c) => c.type === type);
+  const coin = walletData?.coins.find((c: CoinBalance) => c.type === type);
   const brandedTotal = type === 'branded' ? walletData?.brandedCoinsTotal || 0 : 0;
   const amount = type === 'branded' ? brandedTotal : coin?.amount || 0;
 
@@ -209,7 +209,7 @@ function CoinDetailPage() {
         {type === 'branded' && walletData?.brandedCoins && walletData.brandedCoins.length > 0 && (
           <View style={styles.card}>
             <ThemedText style={styles.sectionTitle}>By Merchant</ThemedText>
-            {walletData.brandedCoins.map((bc, i) => (
+            {walletData.brandedCoins.map((bc: any, i: number) => (
               <View
                 key={bc.merchantId}
                 style={[styles.merchantRow, i < walletData.brandedCoins.length - 1 ? styles.merchantBorder : null]}
