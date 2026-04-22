@@ -16,9 +16,7 @@ module.exports = {
           jsx: 'react',
           esModuleInterop: true,
           allowSyntheticDefaultImports: true,
-        },
-        diagnostics: {
-          exclude: ['**/node_modules/**'],
+          isolatedModules: true,
         },
       },
     ],
