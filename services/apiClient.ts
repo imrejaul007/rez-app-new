@@ -616,7 +616,7 @@ class ApiClient {
   // OG-001: Pass headers: { 'Idempotency-Key': key } for mutating financial endpoints
   async post<T>(
     endpoint: string,
-    data?: Record<string, unknown> | unknown[] | FormData,
+    data?: unknown,
     options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string>; signal?: AbortSignal }
   ): Promise<ApiResponse<T>> {
     // POST requests are NOT deduplicated by default (usually mutating)
@@ -655,7 +655,7 @@ class ApiClient {
   // PATCH request (optional deduplication, optional timeout)
   async patch<T>(
     endpoint: string,
-    data?: Record<string, unknown> | unknown[] | FormData,
+    data?: unknown,
     options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // PATCH requests are NOT deduplicated by default (usually mutating)
