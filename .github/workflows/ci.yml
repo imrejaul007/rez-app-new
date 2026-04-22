@@ -33,7 +33,13 @@ jobs:
           npm ci || npm ci --force
 
       - name: Reinstall known-corrupted packages
-        run: npm install source-map@0.6.1 hermes-parser@0.35.0 --save-dev
+        run: |
+          # Delete corrupted packages and reinstall from registry
+          rm -rf node_modules/source-map
+          rm -rf node_modules/hermes-parser
+          rm -rf node_modules/@expo/vector-icons
+          rm -rf node_modules/@expo/metro-runtime
+          npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Lint
         run: npm run lint
