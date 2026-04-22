@@ -166,7 +166,7 @@ const DealDetailPage: React.FC = () => {
       } catch (err: unknown) {
         // CA-CMC-031 FIX: Log error instead of silently ignoring
         // Check redemption status failures should be visible for debugging
-        logger.error('Failed to check redemption status: ' + (err?.message || String(err)));
+        logger.error('Failed to check redemption status: ' + ((err as { message?: string })?.message || String(err)));
         // Don't show error banner — this is non-critical background check
       }
     };

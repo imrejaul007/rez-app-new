@@ -22,7 +22,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { GroceryHubSkeleton } from '@/components/grocery/GrocerySkeleton';
 import GroceryStoreCard from '@/components/grocery/GroceryStoreCard';
-import { categoriesApi } from '@/services/categoriesApi';
+import { categoriesApi, Category as ApiCategory } from '@/services/categoriesApi';
 import { storesApi } from '@/services/storesApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -72,7 +72,7 @@ const defaultCategories = [
   { id: 'beverages', title: 'Beverages', icon: '🥤', color: '#00BCD4', count: 0 },
 ];
 
-interface Category {
+interface GroceryCategory {
   id: string;
   title: string;
   icon: string;
@@ -80,14 +80,15 @@ interface Category {
   count: number;
 }
 
-interface Store {
+interface GroceryStore {
   id: string;
   name: string;
   rating: number;
   deliveryTime: string;
   cashback: string;
-  image: string;
+  image?: string;
   logo?: string;
+  [key: string]: unknown;
 }
 
 interface Stats {
@@ -103,9 +104,9 @@ const GroceryPage: React.FC = () => {
   const currencySymbol = getCurrencySymbol();
 
   // State
-  const [categories, setCategories] = useState<Category[]>(defaultCategories);
-  const [featuredStores, setFeaturedStores] = useState<Store[]>([]);
-  const [quickStores, setQuickStores] = useState<Store[]>([]);
+  const [categories, setCategories] = useState<GroceryCategory[]>(defaultCategories);
+  const [featuredStores, setFeaturedStores] = useState<GroceryStore[]>([]);
+  const [quickStores, setQuickStores] = useState<GroceryStore[]>([]);
   const [stats, setStats] = useState<Stats>({ storeCount: 50, maxCashback: 25, fastestDelivery: '10 min' });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -125,24 +126,27 @@ const GroceryPage: React.FC = () => {
 
       // Process categories
       if (categoriesRes.success && categoriesRes.data) {
-        const groceryCategory = categoriesRes.data.find(
-          (cat: Record<string, unknown>) =>
-            cat.slug === 'grocery' || (cat.name as string)?.toLowerCase().includes('grocery'),
+        const groceryCategory = (categoriesRes.data as unknown as ApiCategory[]).find(
+          (cat) => cat.slug === 'grocery' || (cat.name as unknown as string)?.toLowerCase().includes('grocery'),
         );
 
-        if (groceryCategory && ((groceryCategory.subcategories as unknown[]) || []).length > 0) {
-          const mappedCategories = ((groceryCategory.subcategories as unknown[]) || []).map(
-            (sub: Record<string, unknown>) => {
-              const config = categoryConfig[sub.slug as string] || { icon: '🛒', color: colors.success };
-              return {
-                id: sub.slug as string,
-                title: sub.name as string,
-                icon: config.icon,
-                color: config.color,
-                count: (sub.productCount as number) || 0,
-              };
-            },
-          );
+        if (
+          groceryCategory &&
+          (((groceryCategory as unknown as Record<string, unknown>).subcategories as unknown[]) || []).length > 0
+        ) {
+          const mappedCategories: GroceryCategory[] = (
+            ((groceryCategory as unknown as Record<string, unknown>).subcategories as unknown[]) || []
+          ).map((sub: unknown) => {
+            const sub2 = sub as Record<string, unknown>;
+            const config = categoryConfig[sub2.slug as string] || { icon: '🛒', color: colors.success };
+            return {
+              id: sub2.slug as string,
+              title: sub2.name as string,
+              icon: config.icon,
+              color: config.color,
+              count: (sub2.productCount as number) || 0,
+            };
+          });
           if (!isMounted()) return;
           setCategories(mappedCategories.length > 0 ? mappedCategories : defaultCategories);
         }
@@ -150,15 +154,19 @@ const GroceryPage: React.FC = () => {
 
       // Process stores
       if (storesRes.success && storesRes.data?.stores) {
-        const stores = storesRes.data.stores;
+        const stores = storesRes.data.stores as unknown as GroceryStore[];
 
         // Map stores to display format
-        const mappedStores: Store[] = stores.map((store: Record<string, unknown>) => ({
+        const mappedStores: GroceryStore[] = stores.map((store) => ({
           id: (store.id || store._id) as string,
           name: store.name as string,
           rating:
-            ((store.ratings as Record<string, unknown> | undefined)?.average as number | undefined) ||
-            ((store.rating as Record<string, unknown> | undefined)?.average as number | undefined) ||
+            ((store.ratings as unknown as Record<string, unknown> | undefined)?.average as unknown as
+              | number
+              | undefined) ||
+            ((store.rating as unknown as Record<string, unknown> | undefined)?.average as unknown as
+              | number
+              | undefined) ||
             4.5,
           deliveryTime: ((store.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as
             | string
@@ -176,7 +184,7 @@ const GroceryPage: React.FC = () => {
         // Filter quick delivery stores
         const quick = stores
           .filter(
-            (s: Record<string, unknown>) =>
+            (s: GroceryStore) =>
               (s.deliveryCategories as Record<string, boolean> | undefined)?.fastDelivery ||
               ((
                 (s.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as string | undefined
@@ -189,8 +197,8 @@ const GroceryPage: React.FC = () => {
             id: (store.id || store._id) as string,
             name: store.name as string,
             rating:
-              ((store.ratings as Record<string, unknown> | undefined)?.average as number | undefined) ||
-              ((store.rating as Record<string, unknown> | undefined)?.average as number | undefined) ||
+              ((store.ratings as Record<string, unknown> | undefined)?.average as unknown as number | undefined) ||
+              ((store.rating as Record<string, unknown> | undefined)?.average as unknown as number | undefined) ||
               4.5,
             deliveryTime: ((store.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as
               | string
@@ -206,10 +214,10 @@ const GroceryPage: React.FC = () => {
         setQuickStores(quick.slice(0, 4));
 
         // Calculate stats
-        const maxCashback = Math.max(...stores.map((s: Record<string, unknown>) => (s.maxCashback as number) || 0), 25);
+        const maxCashback = Math.max(...stores.map((s) => (s.maxCashback as number) || 0), 25);
         const fastestTime = Math.min(
           ...stores.map(
-            (s: Record<string, unknown>) =>
+            (s) =>
               ((s.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as { min?: number } | undefined)
                 ?.min || 30,
           ),
@@ -400,7 +408,7 @@ const GroceryPage: React.FC = () => {
                   <Ionicons name="flash" size={10} color="#FCD34D" />
                   <Text style={styles.quickBadgeText}>{store.deliveryTime}</Text>
                 </View>
-                <CachedImage source={store.logo || store.image} style={styles.quickStoreLogo} />
+                <CachedImage source={store.logo || store.image || ''} style={styles.quickStoreLogo} />
                 <Text style={styles.quickStoreName} numberOfLines={1}>
                   {store.name}
                 </Text>
@@ -425,7 +433,7 @@ const GroceryPage: React.FC = () => {
                 style={styles.storeCard}
                 onPress={() => router.push(`/MainStorePage?storeId=${store.id}`)}
               >
-                <CachedImage source={store.image} style={styles.storeImage} />
+                <CachedImage source={store.image || ''} style={styles.storeImage} />
                 <View style={styles.cashbackBadge}>
                   <Text style={styles.cashbackText}>{store.cashback}</Text>
                 </View>
@@ -468,7 +476,7 @@ const GroceryPage: React.FC = () => {
 };
 
 // Fallback stores data
-function getFallbackStores(): Store[] {
+function getFallbackStores(): GroceryStore[] {
   return [
     {
       id: 'bigbasket',

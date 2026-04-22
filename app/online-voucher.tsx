@@ -19,8 +19,6 @@ import Animated, {
   withSequence,
   withRepeat,
   interpolate,
-  multiply,
-  event,
 } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -29,7 +27,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useOnlineVoucher } from '@/hooks/useOnlineVoucher';
-import { Brand, Category } from '@/types/voucher.types';
+import { Brand, Category, HeroCarouselItem } from '@/types/voucher.types';
 import VoucherData from '@/data/voucherData';
 import { useDebounce } from '@/hooks/useDebounce';
 import ErrorState from '@/components/common/ErrorState';
@@ -96,7 +94,7 @@ function OnlineVoucherPage() {
 
     // Entrance animation
     fadeAnim.value = withTiming(1, { duration: 800 });
-    slideAnim.value = withSpring(0, { tension: 50, friction: 7 });
+    slideAnim.value = withSpring(0, { damping: 15, stiffness: 100 });
 
     // Shimmer animation loop
     shimmerAnim.value = withRepeat(withTiming(1, { duration: 2000 }), -1);
@@ -268,7 +266,7 @@ function OnlineVoucherPage() {
             styles.hero3DWrapper,
             {
               transform: [{ scale }],
-              opacity: multiply(opacity, fadeAnim),
+              opacity: (opacity * fadeAnim.value) as number,
             },
           ]}
         >
@@ -286,7 +284,7 @@ function OnlineVoucherPage() {
             style={styles.heroCard}
             onPress={() => {
               if (item.brandId) {
-                handlers.handleBrandSelect({ id: item.brandId } as { id: string });
+                handlers.handleBrandSelect({ id: item.brandId } as unknown as Brand);
               }
             }}
           >
@@ -364,15 +362,14 @@ function OnlineVoucherPage() {
                             </LinearGradient>
                           </View>
 
-                          {/* Brand Title with Strong Shadow */}
-                          <ThemedText style={styles.heroTitle}>{item.title}</ThemedText>
+                          <ThemedText style={styles.heroTitle}>{(item as any).title || ''}</ThemedText>
 
                           {/* Location Badge */}
-                          {(item as Record<string, unknown>).store && (
+                          {(item as any).store && (
                             <View style={styles.heroLocationBadge}>
                               <View style={styles.heroLocationDot} />
                               <ThemedText style={styles.heroLocationText}>
-                                {((item as Record<string, unknown>).store as { name: string }).name}
+                                {((item as any).store as { name: string }).name}
                               </ThemedText>
                             </View>
                           )}
@@ -403,7 +400,7 @@ function OnlineVoucherPage() {
                             >
                               <View style={styles.heroIconTopShine} />
                               <ThemedText style={styles.heroEmoji}>
-                                {item.image || (item as Record<string, unknown>).logo || '🎁'}
+                                {item.image || (item as any).logo || '🎁'}
                               </ThemedText>
                             </LinearGradient>
                           </View>
@@ -447,7 +444,9 @@ function OnlineVoucherPage() {
           <Animated.FlatList
             data={carouselData}
             renderItem={renderHeroCarouselItem}
-            keyExtractor={(item, index) => item.id || item._id || String(index)}
+            keyExtractor={(item, index) =>
+              (item as { id?: string; _id?: string }).id || (item as { _id?: string })._id || String(index)
+            }
             horizontal
             showsHorizontalScrollIndicator={false}
             snapToInterval={SNAP_INTERVAL}
@@ -455,13 +454,11 @@ function OnlineVoucherPage() {
             decelerationRate="fast"
             bounces={false}
             contentContainerStyle={styles.heroCarouselContent}
-            onScroll={event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
-              useNativeDriver: true,
-              listener: (event: { nativeEvent: { contentOffset: { x: number } } }) => {
-                const index = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL);
-                setCarouselIndex(index);
-              },
-            })}
+            onScroll={(e) => {
+              scrollX.value = e.nativeEvent.contentOffset.x;
+              const idx = Math.round(e.nativeEvent.contentOffset.x / SNAP_INTERVAL);
+              setCarouselIndex(idx);
+            }}
             scrollEventThrottle={16}
             getItemLayout={(data, index) => ({
               length: SNAP_INTERVAL,

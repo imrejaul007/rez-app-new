@@ -97,7 +97,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     };
   }, []);
 
-  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg']);
+  const spin = (interpolate(rotate.value, [0, 1], [0, 360]) as unknown as string) + 'deg';
 
   return (
     <Animated.View
@@ -340,7 +340,7 @@ const Quiz = () => {
     return { text: 'Keep Practicing!', icon: 'refresh' as const, color: COLORS.textMuted };
   };
 
-  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%']);
+  const progressWidth = (interpolate(progressAnim.value, [0, 1], [0, 100]) as unknown as string) + '%';
 
   return (
     <View style={styles.container}>
@@ -604,7 +604,12 @@ const Quiz = () => {
             {/* Time Progress Bar */}
             <View style={styles.progressWrapper}>
               <View style={styles.progressBg}>
-                <Animated.View style={[styles.progressFill, { width: progressWidth }]}>
+                <Animated.View
+                  style={[
+                    styles.progressFill,
+                    { width: progressWidth as unknown as import('react-native').DimensionValue },
+                  ]}
+                >
                   <LinearGradient
                     colors={
                       timeLeft <= 5 ? [COLORS.error, Colors.errorScale[700]] : [COLORS.purple, COLORS.purpleLight]

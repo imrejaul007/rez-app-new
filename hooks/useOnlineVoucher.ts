@@ -11,7 +11,8 @@ import {
   UseVoucherReturn,
   Brand,
   Category,
-  FilterOptions
+  FilterOptions,
+  HeroCarouselItem,
 } from '@/types/voucher.types';
 import VoucherData from '@/data/voucherData';
 import realVouchersApi from '@/services/realVouchersApi';
@@ -57,7 +58,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
   const [state, setState] = useState<VoucherState>(VoucherData.initialState);
   const searchAbortControllerRef = useRef<AbortController | null>(null);
 
-  const [heroCarousel, setHeroCarousel] = useState<any[]>([]);
+  const [heroCarousel, setHeroCarousel] = useState<HeroCarouselItem[]>([]);
 
   // Sync user coins from WalletContext (no extra API call)
   useEffect(() => {

@@ -80,7 +80,7 @@ interface OrderDetails {
     discount: number;
     dealTitle?: string;
   };
-  fulfillmentType?: 'delivery' | 'pickup' | 'drive_thru' | 'dine_in';
+  fulfillmentType?: string;
   fulfillmentDetails?: {
     storeAddress?: string;
     tableNumber?: string | number;
@@ -145,24 +145,27 @@ function PaymentSuccessPage() {
           if (response.success && response.data) {
             const orderData = response.data;
             // Extract store name from various possible locations in the response
-            const orderDataAny = orderData as Record<string, unknown>;
+            const orderDataAny = orderData as unknown as Record<string, unknown>;
+            const firstItem = (orderDataAny.items as unknown[])?.[0] as unknown as Record<string, unknown> | undefined;
+            const firstItemStore = firstItem?.['store'] as unknown;
             const extractedStoreName =
-              (orderDataAny.store as { name?: string } | string | null | undefined)?.name ||
-              orderDataAny.storeName ||
-              (((orderDataAny.items as unknown[]) || [])[0] as Record<string, unknown> | undefined)?.store?.name ||
-              ((orderDataAny.items as { storeName?: string }[]) || [])[0]?.storeName ||
-              (orderDataAny.store && typeof orderDataAny.store === 'string' ? orderDataAny.store : null) ||
-              `Order ${orderData.orderNumber?.slice(-4) || ''}`;
+              (typeof orderDataAny.store === 'object' && orderDataAny.store !== null
+                ? (orderDataAny.store as { name?: string }).name
+                : null) ||
+              (orderDataAny.storeName as string | undefined) ||
+              (firstItemStore != null ? (firstItemStore as { name?: string }).name : null) ||
+              (((orderDataAny.items as unknown[]) || [])[0] as unknown as { storeName?: string })?.storeName ||
+              (typeof orderDataAny.store === 'string' ? orderDataAny.store : null) ||
+              `Order ${((orderDataAny.orderNumber as string | undefined) || '').slice(-4)}`;
 
             // Extract store ID from various possible locations
-            const storeVal = orderDataAny.store as Record<string, unknown> | string | null | undefined;
+            const storeVal = orderDataAny.store;
             const extractedStoreId =
-              (storeVal && typeof storeVal === 'object'
-                ? ((storeVal._id || (storeVal as { id?: string }).id) as string | null)
+              (typeof storeVal === 'object' && storeVal !== null
+                ? (((storeVal as Record<string, unknown>)._id || (storeVal as { id?: string }).id) as string | null)
                 : null) ||
               (typeof storeVal === 'string' ? storeVal : null) ||
-              (storeVal as string | null) ||
-              (((orderDataAny.items as unknown[]) || [])[0] as Record<string, unknown> | undefined)?.store?.id ||
+              (firstItemStore != null ? (firstItemStore as { id?: string }).id : null) ||
               '';
 
             fetchedOrders.push({
@@ -170,13 +173,20 @@ function PaymentSuccessPage() {
               orderNumber: orderData.orderNumber || `NUQ${Date.now().toString().slice(-8)}`,
               status: orderData.status || 'placed',
               storeId: extractedStoreId,
-              storeName: extractedStoreName,
-              items: orderData.items || [],
+              storeName:
+                extractedStoreName !== null && extractedStoreName !== undefined ? extractedStoreName : undefined,
+              items: (orderData.items || []).map((item) => ({
+                name: item.product?.name || '',
+                quantity: item.quantity,
+                price: item.totalPrice,
+              })),
               totals: {
                 subtotal: orderData.totals?.subtotal || orderData.summary?.subtotal || 0,
                 delivery:
                   orderData.totals?.delivery ||
-                  (orderDataAny.totals as Record<string, unknown> | undefined)?.shipping ||
+                  ((orderDataAny.totals as unknown as Record<string, unknown> | undefined)?.shipping as
+                    | number
+                    | undefined) ||
                   orderData.delivery?.deliveryFee ||
                   orderData.summary?.shipping ||
                   0,
@@ -191,7 +201,7 @@ function PaymentSuccessPage() {
               payment: {
                 method: orderData.payment?.method || paymentMethod || 'unknown',
                 status: orderData.payment?.status || 'completed',
-                coinsUsed: (orderDataAny.payment as Record<string, unknown> | undefined)?.coinsUsed || {
+                coinsUsed: (orderDataAny.payment as unknown as Record<string, unknown> | undefined)?.coinsUsed || {
                   rezCoins: 0,
                   promoCoins: 0,
                   storePromoCoins: 0,
@@ -200,13 +210,20 @@ function PaymentSuccessPage() {
               },
               delivery: orderData.delivery || undefined,
               fulfillmentType:
-                (orderDataAny.fulfillmentType as string | undefined) ||
-                ((orderDataAny.fulfillment as Record<string, unknown> | undefined)?.type as string | undefined) ||
+                (orderDataAny.fulfillmentType as unknown as
+                  | 'delivery'
+                  | 'pickup'
+                  | 'drive_thru'
+                  | 'dine_in'
+                  | undefined) ||
+                ((orderDataAny.fulfillment as unknown as Record<string, unknown> | undefined)?.type as
+                  | string
+                  | undefined) ||
                 undefined,
               fulfillmentDetails:
-                (orderDataAny.fulfillmentDetails as OrderDetails['fulfillmentDetails']) ||
+                (orderDataAny.fulfillmentDetails as unknown as OrderDetails['fulfillmentDetails']) ||
                 ((orderDataAny.fulfillment as Record<string, unknown> | undefined)
-                  ?.details as OrderDetails['fulfillmentDetails']) ||
+                  ?.details as unknown as OrderDetails['fulfillmentDetails']) ||
                 undefined,
               createdAt: orderData.createdAt || new Date().toISOString(),
             });
@@ -280,7 +297,7 @@ function PaymentSuccessPage() {
           // estimate to determine if coins are pending, and show a pending message
           // instead of a false "0 coins earned" celebration.
           const totalCoinsEarned: number = fetchedOrders.reduce(
-            (s, o) => s + ((o as unknown as Record<string, unknown>).rewards?.coinsEarned ?? 0),
+            (s, o) => s + ((o as unknown as { rewards?: { coinsEarned?: number } }).rewards?.coinsEarned ?? 0),
             0,
           );
           // Phase 1.6: surface coin total for PostPaymentSummary section.

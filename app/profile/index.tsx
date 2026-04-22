@@ -14,6 +14,8 @@ import {
   Platform,
   RefreshControl,
   ActivityIndicator,
+  ViewStyle,
+  DimensionValue,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -589,7 +591,7 @@ function ProfilePage() {
                     <View
                       style={[
                         styles.rezProgressFill,
-                        { width: `${progressPct}%` as string, backgroundColor: tier.color },
+                        { width: `${progressPct}%` as unknown as DimensionValue, backgroundColor: tier.color },
                       ]}
                     />
                   </View>
