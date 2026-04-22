@@ -12,6 +12,20 @@ import { billUploadService, BillUploadData } from '@/services/billUploadService'
 import apiClient from '@/services/apiClient';
 import { Platform } from 'react-native';
 
+// Mock XMLHttpRequest type
+type MockXMLHttpRequest = jest.Mock & {
+  open: jest.Mock;
+  send: jest.Mock;
+  abort: jest.Mock;
+  setRequestHeader: jest.Mock;
+  timeout: number;
+  status: number;
+  statusText: string;
+  responseText: string;
+  upload: { addEventListener: jest.Mock };
+  addEventListener: jest.Mock;
+};
+
 // Mock dependencies
 jest.mock('@/services/apiClient');
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
@@ -40,7 +54,7 @@ describe('BillUploadService', () => {
       },
       addEventListener: jest.fn(),
       timeout: 0,
-    })) as any;
+    })) as MockXMLHttpRequest;
   });
 
   // =============================================================================
@@ -50,7 +64,7 @@ describe('BillUploadService', () => {
   describe('uploadBillWithProgress', () => {
     test('creates FormData with correct fields', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
 
@@ -68,7 +82,7 @@ describe('BillUploadService', () => {
 
     test('sends request to correct endpoint', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       (apiClient.getBaseURL as jest.Mock).mockReturnValue('https://api.test.com');
 
@@ -83,7 +97,7 @@ describe('BillUploadService', () => {
 
     test('includes auth token in request headers', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       (apiClient.getAuthToken as jest.Mock).mockReturnValue('test-token');
 
@@ -98,7 +112,7 @@ describe('BillUploadService', () => {
 
     test('sets correct timeout', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
       mockXHR.triggerLoad();
@@ -108,7 +122,7 @@ describe('BillUploadService', () => {
 
     test('tracks upload progress', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const progressCallback = jest.fn();
       const promise = billUploadService.uploadBillWithProgress(
@@ -130,7 +144,7 @@ describe('BillUploadService', () => {
 
     test('calculates upload speed correctly', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const progressCallback = jest.fn();
       const promise = billUploadService.uploadBillWithProgress(
@@ -149,7 +163,7 @@ describe('BillUploadService', () => {
 
     test('calculates time remaining correctly', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const progressCallback = jest.fn();
       const promise = billUploadService.uploadBillWithProgress(
@@ -174,7 +188,7 @@ describe('BillUploadService', () => {
   describe('Successful uploads', () => {
     test('returns success response with bill data', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const mockBill = {
         _id: 'bill-123',
@@ -199,7 +213,7 @@ describe('BillUploadService', () => {
 
     test('handles response without data wrapper', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const mockBill = { _id: 'bill-123' };
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
@@ -222,7 +236,7 @@ describe('BillUploadService', () => {
   describe('Error handling', () => {
     test('handles network errors', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
       mockXHR.triggerError();
@@ -235,7 +249,7 @@ describe('BillUploadService', () => {
 
     test('handles timeout errors', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
       mockXHR.triggerTimeout();
@@ -248,7 +262,7 @@ describe('BillUploadService', () => {
 
     test('handles abort/cancellation', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
       mockXHR.triggerAbort();
@@ -261,7 +275,7 @@ describe('BillUploadService', () => {
 
     test('handles HTTP 400 error', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
 
@@ -280,7 +294,7 @@ describe('BillUploadService', () => {
 
     test('handles HTTP 401 error', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
 
@@ -298,7 +312,7 @@ describe('BillUploadService', () => {
 
     test('handles HTTP 500 error', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
 
@@ -313,7 +327,7 @@ describe('BillUploadService', () => {
 
     test('handles invalid JSON response', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
 
@@ -335,7 +349,7 @@ describe('BillUploadService', () => {
   describe('uploadBillWithRetry', () => {
     test('succeeds on first attempt', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithRetry(mockBillData);
 
@@ -373,7 +387,7 @@ describe('BillUploadService', () => {
         }
 
         return mockXHR;
-      }) as any;
+      }) as unknown as MockXMLHttpRequest;
 
       const result = await billUploadService.uploadBillWithRetry(mockBillData, undefined, {
         maxAttempts: 3,
@@ -389,7 +403,7 @@ describe('BillUploadService', () => {
         const mockXHR = createMockXHR();
         setTimeout(() => mockXHR.triggerError(), 10);
         return mockXHR;
-      }) as any;
+      }) as unknown as MockXMLHttpRequest;
 
       const result = await billUploadService.uploadBillWithRetry(mockBillData, undefined, {
         maxAttempts: 2,
@@ -412,7 +426,7 @@ describe('BillUploadService', () => {
         const mockXHR = createMockXHR();
         setTimeout(() => mockXHR.triggerError(), 10);
         return mockXHR;
-      }) as any;
+      }) as unknown as MockXMLHttpRequest;
 
       await billUploadService.uploadBillWithRetry(mockBillData, undefined, {
         maxAttempts: 3,
@@ -435,7 +449,7 @@ describe('BillUploadService', () => {
         setTimeout(() => mockXHR.triggerLoad(), 10);
 
         return mockXHR;
-      }) as any;
+      }) as unknown as MockXMLHttpRequest;
 
       const result = await billUploadService.uploadBillWithRetry(mockBillData, undefined, {
         maxAttempts: 3,
@@ -461,7 +475,7 @@ describe('BillUploadService', () => {
           mockXHR.triggerLoad();
         }, 10);
         return mockXHR;
-      }) as any;
+      }) as unknown as MockXMLHttpRequest;
 
       await billUploadService.uploadBillWithRetry(
         mockBillData,
@@ -474,7 +488,7 @@ describe('BillUploadService', () => {
 
     test('calculates correct upload metrics', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const promise = billUploadService.uploadBillWithRetry(mockBillData);
 
@@ -502,7 +516,7 @@ describe('BillUploadService', () => {
   describe('cancelUpload', () => {
     test('cancels active upload', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const uploadId = `upload_${Date.now()}`;
       const promise = billUploadService.uploadBillWithProgress(mockBillData);
@@ -520,7 +534,7 @@ describe('BillUploadService', () => {
 
     test('cleans up after cancellation', async () => {
       const mockXHR = createMockXHR();
-      global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+      global.XMLHttpRequest = jest.fn(() => mockXHR) as unknown as MockXMLHttpRequest;
 
       const uploadId = `upload_${Date.now()}`;
       billUploadService.uploadBillWithProgress(mockBillData);

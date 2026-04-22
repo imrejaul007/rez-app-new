@@ -196,11 +196,11 @@ function FashionCategoryPage() {
   }, [activeModes, hasActiveFilters]);
 
   const handleCategoryPress = useCallback((category: any) => {
-    router.push(`/MainCategory/fashion/${category.slug || category.id}` as any);
+    router.push(`/MainCategory/fashion/${category.slug || category.id}` as string);
   }, [router]);
 
   const handleAISearch = useCallback((query: string) => {
-    router.push(`/MainCategory/fashion/search?q=${encodeURIComponent(query)}` as any);
+    router.push(`/MainCategory/fashion/search?q=${encodeURIComponent(query)}` as string);
   }, [router]);
 
   if (!categoryConfig) return null;
@@ -253,7 +253,7 @@ function FashionCategoryPage() {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[(COLORS as any).purple]} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS['purple']]} />}
     >
       <CategoryHeader
         categoryName={categoryConfig.name}
@@ -263,12 +263,12 @@ function FashionCategoryPage() {
       />
 
       {/* Rewards Strip */}
-      <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fashion/loyalty' as any)}>
+      <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fashion/loyalty' as string)}>
         <LinearGradient colors={['rgba(168,85,247,0.15)', 'rgba(124,58,237,0.1)']} style={styles.rewardsGradient}>
           <View style={styles.rewardsContent}>
-            <Ionicons name="star" size={20} color={(COLORS as any).purple} />
+            <Ionicons name="star" size={20} color={COLORS['purple']} />
             <Text style={styles.rewardsText}>{`Earn up to 25% Cashback + ${BRAND.COIN_NAME} on every fashion purchase`}</Text>
-            <Ionicons name="chevron-forward" size={16} color={(COLORS as any).purple} />
+            <Ionicons name="chevron-forward" size={16} color={COLORS['purple']} />
           </View>
           <Text style={styles.rewardsSubtext}>Works at boutiques, brands & online stores</Text>
         </LinearGradient>
@@ -294,7 +294,7 @@ function FashionCategoryPage() {
             </Text>
             <Pressable onPress={clearAllFilters} style={styles.clearFilters}>
               <Text style={styles.clearFiltersText}>Clear all</Text>
-              <Ionicons name="close-circle" size={14} color={(COLORS as any).purple} />
+              <Ionicons name="close-circle" size={14} color={COLORS['purple']} />
             </Pressable>
           </View>
         )}
@@ -312,18 +312,18 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="flame" size={20} color={colors.error} />
             <Text style={styles.sectionTitle}>Trending This Week</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as any)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as string)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingList}>
             {filteredTrending.map(w => (
-              <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fashion/search?q=${w.id}` as any)}>
-                <LinearGradient colors={[(COLORS as any).purple, COLORS.purpleDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+              <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fashion/search?q=${w.id}` as string)}>
+                <LinearGradient colors={[COLORS['purple'], COLORS.purpleDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                   <Text style={styles.trendingEmoji}>{w.emoji}</Text>
                   <Text style={styles.trendingName}>{w.name}</Text>
                   <View style={styles.trendingBadge}>
-                    <Ionicons name="trending-up" size={10} color={(COLORS as any).purple} />
+                    <Ionicons name="trending-up" size={10} color={COLORS['purple']} />
                     <Text style={styles.trendingBadgeText}>{w.bookings}+ sold</Text>
                   </View>
                   <Text style={styles.trendingPrice}>From {currencySymbol}{w.priceFrom}</Text>
@@ -340,13 +340,13 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>✨</Text>
             <Text style={styles.sectionTitle}>Fashion Services</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/try-and-buy' as any)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/try-and-buy' as string)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.servicesList}>
             {filteredServices.map(s => (
-              <Pressable key={s.id} style={styles.serviceCard} onPress={() => router.push(`/MainCategory/fashion/try-and-buy` as any)}>
+              <Pressable key={s.id} style={styles.serviceCard} onPress={() => router.push(`/MainCategory/fashion/try-and-buy` as string)}>
                 <View style={styles.serviceIcon}><Text style={styles.serviceEmoji}>{s.emoji}</Text></View>
                 <Text style={styles.serviceName}>{s.name}</Text>
                 <Text style={styles.serviceCashback}>Up to {s.cashback}% cashback</Text>
@@ -364,18 +364,18 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>🛍️</Text>
             <Text style={styles.sectionTitle}>Trending Now</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as any)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as string)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productsList}>
             {filteredProducts.slice(0, 6).map((p: any) => (
-              <Pressable key={p.id} style={styles.productCardCompact} onPress={() => router.push(`/product-page?productId=${p.id}` as any)}>
+              <Pressable key={p.id} style={styles.productCardCompact} onPress={() => router.push(`/product-page?productId=${p.id}` as string)}>
                 {p.image ? (
                   <CachedImage source={p.image} style={styles.productImageCompact} contentFit="cover" />
                 ) : (
                   <View style={[styles.productImageCompact, styles.productPlaceholder]}>
-                    <Ionicons name="shirt-outline" size={28} color={(COLORS as any).purple} />
+                    <Ionicons name="shirt-outline" size={28} color={COLORS['purple']} />
                   </View>
                 )}
                 <Text style={styles.productNameCompact} numberOfLines={2}>{p.name}</Text>
@@ -391,9 +391,9 @@ function FashionCategoryPage() {
       {filteredStores.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="shield-checkmark" size={20} color={(COLORS as any).purple} />
+            <Ionicons name="shield-checkmark" size={20} color={COLORS['purple']} />
             <Text style={styles.sectionTitle}>Top Stores & Boutiques</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/top-rated' as any)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/top-rated' as string)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -409,13 +409,13 @@ function FashionCategoryPage() {
                 .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1));
               const imageSource = store.logo || (Array.isArray(store.banner) ? store.banner[0] : store.banner);
               return (
-                <Pressable key={store._id || store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}>
+                <Pressable key={store._id || store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as string)}>
                   {/* Store image */}
                   {imageSource ? (
                     <CachedImage source={imageSource} style={styles.storeImage} contentFit="cover" />
                   ) : (
                     <View style={[styles.storeImage, styles.storePlaceholder]}>
-                      <Ionicons name="storefront" size={32} color={(COLORS as any).purple} />
+                      <Ionicons name="storefront" size={32} color={COLORS['purple']} />
                     </View>
                   )}
                   {/* Badges overlay */}
@@ -461,7 +461,7 @@ function FashionCategoryPage() {
                     )}
                     {/* New arrivals pill */}
                     <View style={styles.storeNewArrivalsRow}>
-                      <Ionicons name="sparkles-outline" size={11} color={(COLORS as any).purple} />
+                      <Ionicons name="sparkles-outline" size={11} color={COLORS['purple']} />
                       <Text style={styles.storeNewArrivalsText}>New arrivals this week</Text>
                     </View>
                   </View>
@@ -484,12 +484,12 @@ function FashionCategoryPage() {
         </View>
       )}
 
-      <OffersSection categorySlug={slug} title="Today's Top Fashion Deals" onSeeAll={() => router.push('/MainCategory/fashion/offers' as any)} filterTags={activeFilterTags} />
+      <OffersSection categorySlug={slug} title="Today's Top Fashion Deals" onSeeAll={() => router.push('/MainCategory/fashion/offers' as string)} filterTags={activeFilterTags} />
 
       {/* 60-min Try & Buy Banner */}
       <View style={styles.section}>
-        <Pressable style={styles.ctaBanner} onPress={() => router.push('/MainCategory/fashion/try-and-buy' as any)}>
-          <LinearGradient colors={[(COLORS as any).purple, COLORS.purpleDark]} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+        <Pressable style={styles.ctaBanner} onPress={() => router.push('/MainCategory/fashion/try-and-buy' as string)}>
+          <LinearGradient colors={[COLORS['purple'], COLORS.purpleDark]} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.ctaContent}>
               <Text style={styles.ctaEmoji}>⚡</Text>
               <View style={styles.ctaText}>
@@ -502,13 +502,13 @@ function FashionCategoryPage() {
         </Pressable>
       </View>
 
-      <StreakLoyaltySection categorySlug={slug} primaryColor={(COLORS as any).purple} />
+      <StreakLoyaltySection categorySlug={slug} primaryColor={COLORS['purple']} />
 
       <EnhancedUGCSocialProofSection
         categorySlug={slug} categoryName={categoryConfig.name} posts={ugcPosts}
         title="Real Shoppers, Real Style" subtitle="See how others are shopping!"
-        onPostPress={() => router.push('/MainCategory/fashion/fashion-stories' as any)}
-        onSharePress={() => router.push('/MainCategory/fashion/fashion-stories' as any)}
+        onPostPress={() => router.push('/MainCategory/fashion/fashion-stories' as string)}
+        onSharePress={() => router.push('/MainCategory/fashion/fashion-stories' as string)}
       />
 
       <FooterTrustSection />
@@ -540,19 +540,19 @@ const styles = StyleSheet.create({
   filterSummary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTopWidth: 1, borderTopColor: COLORS.border },
   filterSummaryText: { flex: 1, fontSize: 12, color: COLORS.textSecondary },
   clearFilters: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  clearFiltersText: { fontSize: 12, color: (COLORS as any).purple, fontWeight: '600' },
+  clearFiltersText: { fontSize: 12, color: COLORS['purple'], fontWeight: '600' },
   section: { marginTop: 24, paddingHorizontal: 16 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 },
   sectionEmoji: { fontSize: 20 },
   sectionTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: COLORS.textPrimary },
-  sectionSeeAll: { fontSize: 12, color: (COLORS as any).purple, fontWeight: '500' },
+  sectionSeeAll: { fontSize: 12, color: COLORS['purple'], fontWeight: '500' },
   trendingList: { gap: 12, paddingRight: 16 },
   trendingCard: { width: 140, borderRadius: 16, overflow: 'hidden' },
   trendingGradient: { padding: 14, height: 160, justifyContent: 'space-between' },
   trendingEmoji: { fontSize: 28 },
   trendingName: { fontSize: 14, fontWeight: '700', color: COLORS.white, marginTop: 4 },
   trendingBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.9)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8 },
-  trendingBadgeText: { fontSize: 10, fontWeight: '600', color: (COLORS as any).purple },
+  trendingBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS['purple'] },
   trendingPrice: { fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' },
   servicesList: { gap: 12, paddingRight: 16 },
   serviceCard: {
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   serviceIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: COLORS.purpleLight, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   serviceEmoji: { fontSize: 24 },
   serviceName: { fontSize: 13, fontWeight: '500', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 4 },
-  serviceCashback: { fontSize: 11, color: (COLORS as any).purple, textAlign: 'center' },
+  serviceCashback: { fontSize: 11, color: COLORS['purple'], textAlign: 'center' },
   productsList: { gap: 12, paddingRight: 16 },
   productCardCompact: {
     width: 140, padding: 8, borderRadius: 12, backgroundColor: COLORS.white,
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   productPlaceholder: { backgroundColor: COLORS.purpleLight, justifyContent: 'center', alignItems: 'center' },
   productNameCompact: { fontSize: 12, fontWeight: '500', color: COLORS.textPrimary, marginBottom: 4 },
   productPriceCompact: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 4 },
-  productCashbackCompact: { fontSize: 11, color: (COLORS as any).purple },
+  productCashbackCompact: { fontSize: 11, color: COLORS['purple'] },
   storesList: { gap: 12, paddingRight: 16 },
   storeCard: {
     width: 180,
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 12,
-    backgroundColor: (COLORS as any).purple,
+    backgroundColor: COLORS['purple'],
     gap: 3,
   },
   storeBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.white },
@@ -635,16 +635,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
-    backgroundColor: `${(COLORS as any).purple}14`,
+    backgroundColor: `${COLORS['purple']}14`,
   },
-  storeTagText: { fontSize: 10, color: (COLORS as any).purple, fontWeight: '500' },
+  storeTagText: { fontSize: 10, color: COLORS['purple'], fontWeight: '500' },
   storeNewArrivalsRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  storeNewArrivalsText: { fontSize: 10, color: (COLORS as any).purple, fontWeight: '500' },
+  storeNewArrivalsText: { fontSize: 10, color: COLORS['purple'], fontWeight: '500' },
   storeService: { fontSize: 11, color: COLORS.textSecondary, paddingHorizontal: 8, paddingBottom: 8 },
   filterEmptyState: { alignItems: 'center', padding: 40, marginTop: 24 },
   filterEmptyTitle: { fontSize: 16, fontWeight: '600', color: COLORS.textPrimary, marginTop: 16 },
   filterEmptySubtitle: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, textAlign: 'center' },
-  filterEmptyClearBtn: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: (COLORS as any).purple },
+  filterEmptyClearBtn: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: COLORS['purple'] },
   filterEmptyClearText: { color: COLORS.white, fontWeight: '600', fontSize: 14 },
   ctaBanner: { borderRadius: 16, overflow: 'hidden' },
   ctaGradient: { padding: 16 },
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   ctaTitle: { fontSize: 16, fontWeight: '700', color: COLORS.white },
   ctaSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   ctaBtn: { backgroundColor: COLORS.white, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  ctaBtnText: { fontSize: 13, fontWeight: '600', color: (COLORS as any).purple },
+  ctaBtnText: { fontSize: 13, fontWeight: '600', color: COLORS['purple'] },
 });
 
 export default React.memo(FashionCategoryPage);

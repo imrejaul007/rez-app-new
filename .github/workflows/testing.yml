@@ -31,8 +31,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clear corrupted npm cache and reinstall
+        run: |
+          rm -rf ~/.npm/_cacache
+          npm ci || npm ci --force
+
+      - name: Reinstall known-corrupted packages
+        run: npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Run unit tests
         run: npm test -- --testPathPattern="__tests__/(services|hooks|components|utils)" --coverage=false
@@ -58,8 +63,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clear corrupted npm cache and reinstall
+        run: |
+          rm -rf ~/.npm/_cacache
+          npm ci || npm ci --force
+
+      - name: Reinstall known-corrupted packages
+        run: npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Run integration tests
         run: npm test -- --testPathPattern="__tests__/integration" --coverage=false
@@ -85,8 +95,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clear corrupted npm cache and reinstall
+        run: |
+          rm -rf ~/.npm/_cacache
+          npm ci || npm ci --force
+
+      - name: Reinstall known-corrupted packages
+        run: npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Generate coverage report
         run: npm run test:coverage
@@ -140,8 +155,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clear corrupted npm cache and reinstall
+        run: |
+          rm -rf ~/.npm/_cacache
+          npm ci || npm ci --force
+
+      - name: Reinstall known-corrupted packages
+        run: npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Run ESLint
         run: npm run lint
@@ -171,8 +191,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clear corrupted npm cache and reinstall
+        run: |
+          rm -rf ~/.npm/_cacache
+          npm ci || npm ci --force
+
+      - name: Reinstall known-corrupted packages
+        run: npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Setup E2E environment
         run: echo "Setting up E2E test environment..."
@@ -210,8 +235,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clear corrupted npm cache and reinstall
+        run: |
+          rm -rf ~/.npm/_cacache
+          npm ci || npm ci --force
+
+      - name: Reinstall known-corrupted packages
+        run: npm install source-map@0.6.1 hermes-parser@0.35.0 @expo/vector-icons @expo/metro-runtime --force
 
       - name: Run performance tests
         run: node scripts/test-automation.js performance

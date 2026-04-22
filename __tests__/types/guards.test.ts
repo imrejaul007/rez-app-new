@@ -77,17 +77,17 @@ describe('Type Guards', () => {
     describe('isProductAvailable', () => {
       it('should return true for in_stock product', () => {
         const product = { ...validProduct, availabilityStatus: 'in_stock' as const };
-        expect(isProductAvailable(product as any)).toBe(true);
+        expect(isProductAvailable(product)).toBe(true);
       });
 
       it('should return true for low_stock product', () => {
         const product = { ...validProduct, availabilityStatus: 'low_stock' as const };
-        expect(isProductAvailable(product as any)).toBe(true);
+        expect(isProductAvailable(product)).toBe(true);
       });
 
       it('should return false for out_of_stock product', () => {
         const product = { ...validProduct, availabilityStatus: 'out_of_stock' as const };
-        expect(isProductAvailable(product as any)).toBe(false);
+        expect(isProductAvailable(product)).toBe(false);
       });
 
       it('should check inventory if no availability status', () => {
@@ -95,20 +95,20 @@ describe('Type Guards', () => {
           ...validProduct,
           inventory: { stock: 10, isAvailable: true },
         };
-        expect(isProductAvailable(available as any)).toBe(true);
+        expect(isProductAvailable(available)).toBe(true);
 
         const unavailable = {
           ...validProduct,
           inventory: { stock: 0, isAvailable: false },
         };
-        expect(isProductAvailable(unavailable as any)).toBe(false);
+        expect(isProductAvailable(unavailable)).toBe(false);
       });
     });
 
     describe('isProductLowStock', () => {
       it('should return true for low_stock status', () => {
         const product = { ...validProduct, availabilityStatus: 'low_stock' as const };
-        expect(isProductLowStock(product as any)).toBe(true);
+        expect(isProductLowStock(product)).toBe(true);
       });
 
       it('should return true if stock <= threshold', () => {
@@ -116,7 +116,7 @@ describe('Type Guards', () => {
           ...validProduct,
           inventory: { stock: 3, lowStockThreshold: 5, isAvailable: true },
         };
-        expect(isProductLowStock(product as any)).toBe(true);
+        expect(isProductLowStock(product)).toBe(true);
       });
 
       it('should return false if stock > threshold', () => {
@@ -124,26 +124,26 @@ describe('Type Guards', () => {
           ...validProduct,
           inventory: { stock: 10, lowStockThreshold: 5, isAvailable: true },
         };
-        expect(isProductLowStock(product as any)).toBe(false);
+        expect(isProductLowStock(product)).toBe(false);
       });
     });
 
     describe('isProductOutOfStock', () => {
       it('should return true for out_of_stock status', () => {
         const product = { ...validProduct, availabilityStatus: 'out_of_stock' as const };
-        expect(isProductOutOfStock(product as any)).toBe(true);
+        expect(isProductOutOfStock(product)).toBe(true);
       });
 
       it('should return true if stock is 0', () => {
         const product = { ...validProduct, inventory: { stock: 0, isAvailable: false } };
-        expect(isProductOutOfStock(product as any)).toBe(true);
+        expect(isProductOutOfStock(product)).toBe(true);
       });
     });
 
     describe('isProductOnSale', () => {
       it('should return true if isOnSale flag is true', () => {
         const product = { ...validProduct, isOnSale: true };
-        expect(isProductOnSale(product as any)).toBe(true);
+        expect(isProductOnSale(product)).toBe(true);
       });
 
       it('should return true if current < original price', () => {
@@ -151,11 +151,11 @@ describe('Type Guards', () => {
           ...validProduct,
           price: { current: 80, original: 100, currency: 'INR' },
         };
-        expect(isProductOnSale(product as any)).toBe(true);
+        expect(isProductOnSale(product)).toBe(true);
       });
 
       it('should return false if no sale', () => {
-        expect(isProductOnSale(validProduct as any)).toBe(false);
+        expect(isProductOnSale(validProduct)).toBe(false);
       });
     });
   });
@@ -183,44 +183,44 @@ describe('Type Guards', () => {
 
     describe('isStoreOpen', () => {
       it('should return true for open store', () => {
-        expect(isStoreOpen(validStore as any)).toBe(true);
+        expect(isStoreOpen(validStore)).toBe(true);
       });
 
       it('should return false for closed store', () => {
         const closed = { ...validStore, status: { isOpen: false, status: 'closed' as const } };
-        expect(isStoreOpen(closed as any)).toBe(false);
+        expect(isStoreOpen(closed)).toBe(false);
       });
     });
 
     describe('isStoreVerified', () => {
       it('should return true for verified store', () => {
-        expect(isStoreVerified(validStore as any)).toBe(true);
+        expect(isStoreVerified(validStore)).toBe(true);
       });
 
       it('should return false for unverified store', () => {
-        expect(isStoreVerified({ ...validStore, verified: false } as any)).toBe(false);
+        expect(isStoreVerified({ ...validStore, verified: false })).toBe(false);
       });
     });
 
     describe('isDeliveryAvailable', () => {
       it('should return true if delivery is available', () => {
         const store = { ...validStore, delivery: { isAvailable: true } };
-        expect(isDeliveryAvailable(store as any)).toBe(true);
+        expect(isDeliveryAvailable(store)).toBe(true);
       });
 
       it('should return false if delivery is not available', () => {
-        expect(isDeliveryAvailable(validStore as any)).toBe(false);
+        expect(isDeliveryAvailable(validStore)).toBe(false);
       });
     });
 
     describe('isPickupAvailable', () => {
       it('should return true if pickup is available', () => {
         const store = { ...validStore, pickup: { isAvailable: true } };
-        expect(isPickupAvailable(store as any)).toBe(true);
+        expect(isPickupAvailable(store)).toBe(true);
       });
 
       it('should return false if pickup is not available', () => {
-        expect(isPickupAvailable(validStore as any)).toBe(false);
+        expect(isPickupAvailable(validStore)).toBe(false);
       });
     });
   });
@@ -248,38 +248,38 @@ describe('Type Guards', () => {
 
     describe('isCartItemAvailable', () => {
       it('should return true for available item', () => {
-        expect(isCartItemAvailable(validCartItem as any)).toBe(true);
+        expect(isCartItemAvailable(validCartItem)).toBe(true);
       });
 
       it('should return false for out of stock', () => {
         const item = { ...validCartItem, availabilityStatus: 'out_of_stock' as const };
-        expect(isCartItemAvailable(item as any)).toBe(false);
+        expect(isCartItemAvailable(item)).toBe(false);
       });
 
       it('should check inventory stock', () => {
         const available = { ...validCartItem, inventory: { stock: 10 } };
-        expect(isCartItemAvailable(available as any)).toBe(true);
+        expect(isCartItemAvailable(available)).toBe(true);
 
         const unavailable = { ...validCartItem, quantity: 10, inventory: { stock: 5 } };
-        expect(isCartItemAvailable(unavailable as any)).toBe(false);
+        expect(isCartItemAvailable(unavailable)).toBe(false);
       });
     });
 
     describe('isCartItemLocked', () => {
       it('should return false if not locked', () => {
-        expect(isCartItemLocked(validCartItem as any)).toBe(false);
+        expect(isCartItemLocked(validCartItem)).toBe(false);
       });
 
       it('should return true if locked and not expired', () => {
         const future = new Date(Date.now() + 60000).toISOString();
         const item = { ...validCartItem, isLocked: true, lockExpiresAt: future };
-        expect(isCartItemLocked(item as any)).toBe(true);
+        expect(isCartItemLocked(item)).toBe(true);
       });
 
       it('should return false if locked but expired', () => {
         const past = new Date(Date.now() - 60000).toISOString();
         const item = { ...validCartItem, isLocked: true, lockExpiresAt: past };
-        expect(isCartItemLocked(item as any)).toBe(false);
+        expect(isCartItemLocked(item)).toBe(false);
       });
     });
   });
@@ -307,31 +307,31 @@ describe('Type Guards', () => {
 
     describe('isUserVerified', () => {
       it('should return true for verified user', () => {
-        expect(isUserVerified(validUser as any)).toBe(true);
+        expect(isUserVerified(validUser)).toBe(true);
       });
 
       it('should return false for unverified user', () => {
-        expect(isUserVerified({ ...validUser, emailVerified: false } as any)).toBe(false);
+        expect(isUserVerified({ ...validUser, emailVerified: false })).toBe(false);
       });
     });
 
     describe('isUserAdmin', () => {
       it('should return true for admin user', () => {
-        expect(isUserAdmin({ ...validUser, role: 'admin' } as any)).toBe(true);
+        expect(isUserAdmin({ ...validUser, role: 'admin' })).toBe(true);
       });
 
       it('should return false for non-admin user', () => {
-        expect(isUserAdmin(validUser as any)).toBe(false);
+        expect(isUserAdmin(validUser)).toBe(false);
       });
     });
 
     describe('isUserMerchant', () => {
       it('should return true for merchant user', () => {
-        expect(isUserMerchant({ ...validUser, role: 'merchant' } as any)).toBe(true);
+        expect(isUserMerchant({ ...validUser, role: 'merchant' })).toBe(true);
       });
 
       it('should return false for non-merchant user', () => {
-        expect(isUserMerchant(validUser as any)).toBe(false);
+        expect(isUserMerchant(validUser)).toBe(false);
       });
     });
   });
@@ -357,49 +357,49 @@ describe('Type Guards', () => {
 
     describe('canCancelOrder', () => {
       it('should return true for pending order', () => {
-        expect(canCancelOrder(validOrder as any)).toBe(true);
+        expect(canCancelOrder(validOrder)).toBe(true);
       });
 
       it('should return false for delivered order', () => {
-        expect(canCancelOrder({ ...validOrder, status: 'delivered' } as any)).toBe(false);
+        expect(canCancelOrder({ ...validOrder, status: 'delivered' })).toBe(false);
       });
 
       it('should return false if canCancel is false', () => {
-        expect(canCancelOrder({ ...validOrder, canCancel: false } as any)).toBe(false);
+        expect(canCancelOrder({ ...validOrder, canCancel: false })).toBe(false);
       });
     });
 
     describe('canReturnOrder', () => {
       it('should return true for delivered order', () => {
-        expect(canReturnOrder({ ...validOrder, status: 'delivered' } as any)).toBe(true);
+        expect(canReturnOrder({ ...validOrder, status: 'delivered' })).toBe(true);
       });
 
       it('should return false if already returned', () => {
-        expect(canReturnOrder({ ...validOrder, status: 'delivered', return: {} } as any)).toBe(false);
+        expect(canReturnOrder({ ...validOrder, status: 'delivered', return: {} })).toBe(false);
       });
 
       it('should return false if canReturn is false', () => {
-        expect(canReturnOrder({ ...validOrder, status: 'delivered', canReturn: false } as any)).toBe(false);
+        expect(canReturnOrder({ ...validOrder, status: 'delivered', canReturn: false })).toBe(false);
       });
     });
 
     describe('isOrderPaid', () => {
       it('should return true for paid order', () => {
-        expect(isOrderPaid(validOrder as any)).toBe(true);
+        expect(isOrderPaid(validOrder)).toBe(true);
       });
 
       it('should return false for pending payment', () => {
-        expect(isOrderPaid({ ...validOrder, paymentStatus: 'pending' } as any)).toBe(false);
+        expect(isOrderPaid({ ...validOrder, paymentStatus: 'pending' })).toBe(false);
       });
     });
 
     describe('isOrderDelivered', () => {
       it('should return true for delivered order', () => {
-        expect(isOrderDelivered({ ...validOrder, status: 'delivered' } as any)).toBe(true);
+        expect(isOrderDelivered({ ...validOrder, status: 'delivered' })).toBe(true);
       });
 
       it('should return false for non-delivered order', () => {
-        expect(isOrderDelivered(validOrder as any)).toBe(false);
+        expect(isOrderDelivered(validOrder)).toBe(false);
       });
     });
   });
@@ -428,47 +428,47 @@ describe('Type Guards', () => {
 
     describe('isVerifiedReview', () => {
       it('should return true for verified review', () => {
-        expect(isVerifiedReview(validReview as any)).toBe(true);
+        expect(isVerifiedReview(validReview)).toBe(true);
       });
 
       it('should return false for unverified review', () => {
-        expect(isVerifiedReview({ ...validReview, verified: false } as any)).toBe(false);
+        expect(isVerifiedReview({ ...validReview, verified: false })).toBe(false);
       });
     });
 
     describe('hasReviewImages', () => {
       it('should return true if review has images', () => {
         const review = { ...validReview, images: ['image1.jpg'] };
-        expect(hasReviewImages(review as any)).toBe(true);
+        expect(hasReviewImages(review)).toBe(true);
       });
 
       it('should return false if review has no images', () => {
-        expect(hasReviewImages(validReview as any)).toBe(false);
+        expect(hasReviewImages(validReview)).toBe(false);
       });
     });
 
     describe('hasMerchantReply', () => {
       it('should return true if review has merchant reply', () => {
         const review = { ...validReview, merchantReply: 'Thank you!' };
-        expect(hasMerchantReply(review as any)).toBe(true);
+        expect(hasMerchantReply(review)).toBe(true);
       });
 
       it('should return false if no merchant reply', () => {
-        expect(hasMerchantReply(validReview as any)).toBe(false);
+        expect(hasMerchantReply(validReview)).toBe(false);
       });
     });
 
     describe('isRecentReview', () => {
       it('should return true for review within 30 days', () => {
         const review = { ...validReview, createdAt: new Date().toISOString() };
-        expect(isRecentReview(review as any)).toBe(true);
+        expect(isRecentReview(review)).toBe(true);
       });
 
       it('should return false for old review', () => {
         const oldDate = new Date();
         oldDate.setDate(oldDate.getDate() - 31);
         const review = { ...validReview, createdAt: oldDate.toISOString() };
-        expect(isRecentReview(review as any)).toBe(false);
+        expect(isRecentReview(review)).toBe(false);
       });
     });
   });
