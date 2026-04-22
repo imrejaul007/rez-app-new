@@ -1,6 +1,33 @@
 // Mock expo-modules-core before any module loads (prevents EXDevLauncher undefined crash in Node env)
 jest.mock('expo-modules-core', () => ({}));
 
+// Mock apiClient singleton — must be here (before walletApi loads) to avoid
+// "apiClient_1.default.get is not a function" due to module evaluation order.
+// apiClient is captured at walletApi.ts import time; this ensures the mock is
+// registered before walletApi.ts loads and captures the reference.
+const mockApiClientGet = jest.fn();
+const mockApiClientPost = jest.fn();
+const mockApiClientPut = jest.fn();
+const mockApiClientDelete = jest.fn();
+
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: mockApiClientGet,
+    post: mockApiClientPost,
+    put: mockApiClientPut,
+    delete: mockApiClientDelete,
+  },
+}));
+
+// Expose mocks globally so individual test files can configure them
+global.__mockApiClient = {
+  get: mockApiClientGet,
+  post: mockApiClientPost,
+  put: mockApiClientPut,
+  delete: mockApiClientDelete,
+};
+
 // Mock expo-constants before any module loads (prevents NativeModules.EXDevLauncher crash in Node env)
 jest.mock('expo-constants', () => ({
   default: {
