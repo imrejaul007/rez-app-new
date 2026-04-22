@@ -1,6 +1,8 @@
 name: Runner Test
 
 on:
+  push:
+    branches: [debug/ci-workflow-dispatch]
   workflow_dispatch:
 
 jobs:
@@ -8,5 +10,5 @@ jobs:
     name: Runner Test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Echo
         run: echo "Hello World"
