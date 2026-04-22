@@ -81,12 +81,12 @@ class ReelApiService {
           success: true,
           data: {
             reels,
-            pagination: (data as Record<string, unknown>).pagination || (response.meta as Record<string, unknown> | undefined)?.pagination || {},
+            pagination: ((data as Record<string, unknown>).pagination || (response.meta as Record<string, unknown> | undefined)?.pagination || Object.assign({}, {})) as Record<string, unknown>,
           },
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -110,7 +110,7 @@ class ReelApiService {
         return { success: true, data: reels };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -137,12 +137,12 @@ class ReelApiService {
           success: true,
           data: {
             reels,
-            pagination: (data as Record<string, unknown>).pagination || {},
+            pagination: ((data as Record<string, unknown>).pagination || Object.assign({}, {})) as Record<string, unknown>,
           },
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -162,7 +162,7 @@ class ReelApiService {
         return { success: true, data: reel };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -188,12 +188,12 @@ class ReelApiService {
           success: true,
           data: {
             reels,
-            pagination: (data as Record<string, unknown>).pagination || {},
+            pagination: ((data as Record<string, unknown>).pagination || Object.assign({}, {})) as Record<string, unknown>,
           },
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -217,7 +217,7 @@ class ReelApiService {
         return { success: true, data: reels };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -244,12 +244,12 @@ class ReelApiService {
           success: true,
           data: {
             reels,
-            pagination: (data as Record<string, unknown>).pagination || {},
+            pagination: ((data as Record<string, unknown>).pagination || Object.assign({}, {})) as Record<string, unknown>,
           },
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -274,7 +274,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -298,7 +298,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -322,7 +322,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -360,12 +360,12 @@ class ReelApiService {
           success: true,
           data: {
             comments,
-            pagination: (data as Record<string, unknown>).pagination || {},
+            pagination: ((data as Record<string, unknown>).pagination || Object.assign({}, {})) as Record<string, unknown>,
           },
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -397,7 +397,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -420,7 +420,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -444,7 +444,7 @@ class ReelApiService {
         };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };
@@ -462,7 +462,7 @@ class ReelApiService {
         return { success: true, data: { reported: true } };
       }
 
-      return response;
+      return { success: response.success, error: response.error };
     } catch (error: unknown) {
       const err = error instanceof Error ? error.message : String(error);
       return { success: false, error: err };

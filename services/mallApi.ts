@@ -345,10 +345,10 @@ class MallApiService {
    */
   async getExclusiveOffers(limit: number = 10): Promise<MallOffer[]> {
     try {
-      const response = await apiClient.get<MallOffer[]>(
+      const response = await apiClient.get<{ offers?: MallOffer[] } | MallOffer[]>(
         `${MALL_ENDPOINTS.OFFERS_EXCLUSIVE}?limit=${limit}`
       );
-      return response.data || [];
+      return (response.data as { offers?: MallOffer[] })?.offers || (response.data as MallOffer[]) || [];
     } catch (error) {
       devLog.error('Error fetching exclusive offers:', error);
       throw error;
@@ -371,7 +371,7 @@ class MallApiService {
       );
 
       return {
-        offers: response.data?.offers || response.data || [],
+        offers: (response.data as { offers?: MallOffer[] })?.offers || (response.data as MallOffer[]) || [],
         total: response.data?.pagination?.total || response.meta?.pagination?.total || 0
       };
     } catch (error) {
@@ -764,16 +764,13 @@ class MallApiService {
     total: number;
   }> {
     try {
-      const response = await apiClient.get<{
-        stores?: MallStoreData[];
-        pagination?: { total?: number };
-      }>(
+      const response = await apiClient.get<{ stores?: MallStoreData[]; pagination?: { total?: number } } | MallStoreData[]>(
         `${MALL_ENDPOINTS.STORES}/category/${categoryId}?page=${page}&limit=${limit}`
       );
 
       return {
-        stores: response.data?.stores || response.data || [],
-        total: response.data?.pagination?.total || response.meta?.pagination?.total || 0,
+        stores: (response.data as { stores?: MallStoreData[] })?.stores || (response.data as MallStoreData[]) || [],
+        total: (response.data as { pagination?: { total?: number } })?.pagination?.total || 0,
       };
     } catch (error) {
       devLog.error('Error fetching mall stores by category:', error);
