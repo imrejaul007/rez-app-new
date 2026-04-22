@@ -9,6 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
@@ -19,7 +20,6 @@ import QuickActions from '@/components/store/QuickActions';
 import FastImage from '@/components/common/FastImage';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 // Custom comparison function for React.memo
 const arePropsEqual = (prevProps: any, nextProps: any) => {
@@ -360,7 +360,7 @@ function StoreCard({
             <>
               {banners.length > 1 ? (
                 <>
-                  <AnyFlashList
+                  <TypedFlashList
                     ref={flatListRef as any}
                     data={banners}
                     renderItem={renderBannerItem}

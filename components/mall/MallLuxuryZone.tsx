@@ -19,9 +19,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import MallLuxuryBrandCard from './cards/MallLuxuryBrandCard';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -198,7 +197,7 @@ const MallLuxuryZone: React.FC<MallLuxuryZoneProps> = ({
         </View>
 
         {/* Horizontal Brands List */}
-        <AnyFlashList
+        <TypedFlashList
           data={brands}
           renderItem={renderBrand}
           keyExtractor={keyExtractor}

@@ -8,6 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { Deal, DealCategory } from '@/types/deals';
@@ -292,7 +293,7 @@ function DealList({
     return (
       <View style={styles.container}>
         {renderHeader()}
-        <FlashList
+        <TypedFlashList
           data={Array(3).fill(null)}
           renderItem={renderSkeletonItem}
           keyExtractor={(_, index) => `skeleton-${index}`}
@@ -307,7 +308,7 @@ function DealList({
 
   return (
     <View style={styles.container}>
-      <FlashList
+      <TypedFlashList
         ref={flatListRef}
         data={processedDeals}
         renderItem={renderDealItem}

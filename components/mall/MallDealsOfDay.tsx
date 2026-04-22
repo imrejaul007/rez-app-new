@@ -20,9 +20,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallOffer } from '../../types/mall.types';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 interface MallDealsOfDayProps {
   offers: MallOffer[];
@@ -286,7 +285,7 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
         </View>
 
         {/* Offers List */}
-        <AnyFlashList
+        <TypedFlashList
           data={offers}
           renderItem={renderOffer}
           keyExtractor={keyExtractor}

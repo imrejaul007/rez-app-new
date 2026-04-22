@@ -14,8 +14,16 @@ import * as SecureStore from 'expo-secure-store';
 // OG-D005/OG-D006 FIX: Register every fetch's AbortController so the
 // app-level background listener can cancel in-flight requests on OS kill.
 import { requestRegistry } from '@/utils/requestRegistry';
-import { useSubscriptionStore } from '@/stores/subscriptionStore';
-import { usePriveStore } from '@/stores/priveStore';
+// CD-BLD-03 FIX: Lazy imports inside functions to break circular dependency.
+// Dynamic import avoids module-level Zustand store loading which caused circular deps
+// with stores that import from this client.
+async function getSubscriptionAndPrive(): Promise<{ subComputed: unknown; priveEligibility: unknown }> {
+  const { useSubscriptionStore } = await import('@/stores/subscriptionStore');
+  const { usePriveStore } = await import('@/stores/priveStore');
+  const subComputed = useSubscriptionStore.getState().computed;
+  const priveEligibility = usePriveStore.getState().eligibility;
+  return { subComputed, priveEligibility };
+}
 
 // Cached device fingerprint (loaded once, reused for all requests)
 let _cachedDeviceFingerprint: string | null = null;
@@ -531,8 +539,7 @@ class ApiClient {
 
       // Report API errors to Sentry with tier tags for filtering
       try {
-        const subComputed = useSubscriptionStore.getState().computed;
-        const priveEligibility = usePriveStore.getState().eligibility;
+        const { subComputed, priveEligibility } = await getSubscriptionAndPrive() as { subComputed: any; priveEligibility: any };
 
         Sentry?.withScope?.((scope: SentryScope) => {
           scope.setTag('endpoint', endpoint);

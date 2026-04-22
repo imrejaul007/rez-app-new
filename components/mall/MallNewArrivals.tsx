@@ -18,9 +18,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import MallNewArrivalCard from './cards/MallNewArrivalCard';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 interface MallNewArrivalsProps {
   brands: MallBrand[];
@@ -183,7 +182,7 @@ const MallNewArrivals: React.FC<MallNewArrivalsProps> = ({
         </View>
 
         {/* Brands List */}
-        <AnyFlashList
+        <TypedFlashList
           data={brands}
           renderItem={renderBrand}
           keyExtractor={keyExtractor}

@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { UGCVideoItem, PLAY_PAGE_COLORS } from '@/types/playPage.types';
 import SectionHeader from './SectionHeader';
 import ThumbnailVideoCard from './ThumbnailVideoCard';
-const AnyFlashList = FlashList as any;
 
 interface MerchantVideoSectionProps {
   videos: UGCVideoItem[];
@@ -35,7 +34,7 @@ function MerchantVideoSection({
         onViewAllPress={onViewAllPress}
       />
 
-      <AnyFlashList
+      <TypedFlashList
         data={videos.slice(0, 4)}
         renderItem={renderItem}
         keyExtractor={(item: any, index: number) => item.id || `merchant-video-${index}`}
