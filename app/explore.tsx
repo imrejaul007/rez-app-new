@@ -49,6 +49,7 @@ import { isSmallDevice, wp, responsiveFontSize } from '@/utils/responsive';
 const { width } = Dimensions.get('window');
 
 // AutoPlay Video Component for Trending Reels
+// eslint-disable-next-line react/display-name
 const AutoPlayVideoReel: React.FC<{ uri: string; poster?: string; style?: any }> = React.memo(
   ({ uri, poster, style }) => {
     const videoRef = useRef<Video>(null);

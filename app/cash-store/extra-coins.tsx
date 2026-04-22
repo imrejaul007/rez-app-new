@@ -172,6 +172,7 @@ const EARN_METHODS = [
 ];
 
 // ─── Animated Glow Component ────────────────────────────────
+// eslint-disable-next-line react/display-name
 const GlowRing = React.memo(() => {
   const pulse = useSharedValue(0.4);
 
@@ -190,6 +191,7 @@ const GlowRing = React.memo(() => {
 });
 
 // ─── Skeleton Shimmer ───────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SkeletonBlock = React.memo(
   ({
     width: w,

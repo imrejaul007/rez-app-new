@@ -32,6 +32,7 @@ const CouponCard: React.FC<{
   coupon: CashStoreCoupon;
   index: number;
   onCopy: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ coupon, index, onCopy }) => {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -204,6 +205,7 @@ const CouponCard: React.FC<{
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 

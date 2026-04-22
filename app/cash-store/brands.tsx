@@ -601,6 +601,7 @@ function CashStoreBrandsPage() {
 }
 
 // ─── Skeleton Card ──────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 

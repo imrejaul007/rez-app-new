@@ -601,6 +601,7 @@ function TrendingOffersPage() {
 }
 
 // ─── Offer Card (Horizontal) ────────────────────────────────
+// eslint-disable-next-line react/display-name
 const OfferCard = React.memo(
   ({
     offer,
@@ -729,6 +730,7 @@ const OfferCard = React.memo(
 );
 
 // ─── Brand Card (Full-Width Vertical) ────────────────────────
+// eslint-disable-next-line react/display-name
 const BrandCard = React.memo(
   ({
     brand,
@@ -858,6 +860,7 @@ const BrandCard = React.memo(
 );
 
 // ─── Skeleton: Offer Card ───────────────────────────────────
+// eslint-disable-next-line react/display-name
 const OfferSkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
@@ -882,6 +885,7 @@ const OfferSkeletonCard = React.memo(({ index }: { index: number }) => {
 });
 
 // ─── Skeleton: Brand Card ───────────────────────────────────
+// eslint-disable-next-line react/display-name
 const BrandSkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 

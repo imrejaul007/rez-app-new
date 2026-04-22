@@ -168,6 +168,7 @@ function SpinWheelPage() {
   };
 
   const handleBackPress = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

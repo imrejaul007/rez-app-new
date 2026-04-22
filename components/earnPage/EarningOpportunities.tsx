@@ -106,6 +106,7 @@ const OpportunityCard: React.FC<{
   opportunity: EarningOpportunity;
   fadeAnim: Animated.SharedValue<number>;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = React.memo(({ opportunity, fadeAnim, onPress }) => {
   const scaleAnim = useSharedValue(1);
   const isHighlight = opportunity.highlight;

@@ -40,6 +40,7 @@ interface ConfettiOverlayProps {
 }
 
 // Individual confetti piece component with its own shared values
+// eslint-disable-next-line react/display-name
 const ConfettiPieceView = React.memo(({ piece, visible }: { piece: ConfettiPiece; visible: boolean }) => {
   const fall = useSharedValue(0);
   const wobble = useSharedValue(0);

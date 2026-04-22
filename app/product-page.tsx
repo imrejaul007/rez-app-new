@@ -435,12 +435,15 @@ function StorePage() {
               productData.pricing?.basePrice ||
               0;
         // Get original price - check unified price object first, then raw pricing
-        const unifiedPriceOriginal = typeof priceField === 'object' && priceField !== null ? priceField.original : undefined;
+        const unifiedPriceOriginal =
+          typeof priceField === 'object' && priceField !== null ? priceField.original : undefined;
         const originalPriceField = productData.originalPrice;
         const actualOriginalPrice =
           unifiedPriceOriginal ||
           (typeof originalPriceField === 'number' ? originalPriceField : null) ||
-          (typeof originalPriceField === 'object' && originalPriceField !== null ? originalPriceField.original : undefined) ||
+          (typeof originalPriceField === 'object' && originalPriceField !== null
+            ? originalPriceField.original
+            : undefined) ||
           productData.pricing?.original ||
           productData.pricing?.compare ||
           productData.pricing?.mrp ||
@@ -455,17 +458,24 @@ function StorePage() {
         const actualRatingValue = (productData.rating?.value ?? productData.ratings?.average) || 0;
         const actualReviewCount = (productData.rating?.count ?? productData.ratings?.count) || 0;
 
-        const categoryValue = typeof productData.category === 'object' && productData.category !== null
-          ? productData.category.name || String(productData.category)
-          : productData.category || 'General';
+        const categoryValue =
+          typeof productData.category === 'object' && productData.category !== null
+            ? productData.category.name || String(productData.category)
+            : productData.category || 'General';
 
-        const imageUrl = typeof productData.images?.[0] === 'string'
-          ? productData.images[0]
-          : (typeof productData.images?.[0] === 'object' && productData.images[0] !== null ? productData.images[0].url : undefined) || productData.image || undefined;
+        const imageUrl =
+          typeof productData.images?.[0] === 'string'
+            ? productData.images[0]
+            : (typeof productData.images?.[0] === 'object' && productData.images[0] !== null
+                ? productData.images[0].url
+                : undefined) ||
+              productData.image ||
+              undefined;
 
-        const imageUrls: string[] = productData.images
-          ?.map((img) => typeof img === 'string' ? img : (img?.url ?? undefined))
-          .filter((img): img is string => img !== undefined) || [];
+        const imageUrls: string[] =
+          productData.images
+            ?.map((img) => (typeof img === 'string' ? img : (img?.url ?? undefined)))
+            .filter((img): img is string => img !== undefined) || [];
 
         const updatedCardData: DynamicCardData = {
           id: productData._id || productData.id,
@@ -490,7 +500,7 @@ function StorePage() {
           pricing: productData.pricing,
           inventory: productData.inventory,
           // Add full store data for navigation to MainStorePage
-          store: productData.store as Store ?? undefined,
+          store: (productData.store as Store) ?? undefined,
           storeId: (productData.store as Store | null)?._id || productData.store?.id,
           // Add computed fields from backend
           computedCashback: productData.computedCashback,
@@ -531,7 +541,9 @@ function StorePage() {
               value:
                 typeof updatedCardData.rating === 'number'
                   ? updatedCardData.rating
-                  : (typeof updatedCardData.rating === 'object' && updatedCardData.rating !== null ? updatedCardData.rating.value ?? 0 : 0),
+                  : typeof updatedCardData.rating === 'object' && updatedCardData.rating !== null
+                    ? (updatedCardData.rating.value ?? 0)
+                    : 0,
               count: updatedCardData.reviewCount || 0,
             },
             cashback:
@@ -1052,9 +1064,7 @@ function StorePage() {
           {!isLoadingBackend && cardData && (
             <CompletePurchaseSection
               storeInfo={storeInfo}
-              deliveryFee={
-                cardData?.store?.deliveryFee || cardData?.store?.operationalInfo?.deliveryFee || 49
-              }
+              deliveryFee={cardData?.store?.deliveryFee || cardData?.store?.operationalInfo?.deliveryFee || 49}
               onVisitStore={handleVisitStore}
               onBuyOnline={handleBuyPress}
               isLocked={isLocked}

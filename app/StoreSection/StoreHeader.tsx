@@ -123,6 +123,7 @@ function StoreHeader({
   // Handlers
   const handleBackPress = () => {
     triggerImpact('Medium');
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

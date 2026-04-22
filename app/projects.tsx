@@ -344,6 +344,7 @@ function AllProjectsPage() {
   };
 
   // Project Card Component
+  // eslint-disable-next-line react/display-name
   const ProjectCard = React.memo(
     ({
       project,

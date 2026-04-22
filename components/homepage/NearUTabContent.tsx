@@ -349,20 +349,15 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 5: TryBeforeYouBuyCard (Near U only) ───────────────────── */}
       <LazySection sectionId="try-before-you-buy" scrollY={scrollY} height={180}
-        renderSection={() => {
-          try {
-            return (
-              <TryBeforeYouBuyCard
-                onExplore={() => router.push('/try' as any)}
-                onFeaturedPress={() => router.push('/try' as any)}
-                onCategoryPress={(category) =>
-                  router.push(`/try?category=${category}` as any)
-                }
-              />
-            );
-          }
-          catch { return null; }
-        }} />
+        renderSection={() => (
+          <TryBeforeYouBuyCard
+            onExplore={() => router.push('/try' as any)}
+            onFeaturedPress={() => router.push('/try' as any)}
+            onCategoryPress={(category) =>
+              router.push(`/try?category=${category}` as any)
+            }
+          />
+        )} />
 
       {/* ── Section 7-11: Student persona sections ─────────────────────────── */}
       {isStudent && (

@@ -43,6 +43,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 type FeedTab = 'forYou' | 'following';
 
 // Individual video player component that cleans up native video resources on unmount
+// eslint-disable-next-line react/display-name
 const ReelVideoPlayer = React.memo(
   ({
     videoUrl,

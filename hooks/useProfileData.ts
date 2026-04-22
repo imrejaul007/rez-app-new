@@ -39,6 +39,9 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import type { ProfileIconGridItem } from '@/types/profile.types';
 import { profileIconGridItems } from '@/data/profileData';
 import type { UseQueryResult } from '@tanstack/react-query';
+
+// Need this import for the RezScore query
+import { useQuery } from '@tanstack/react-query';
 type GetScoreFn = typeof import('@/services/rezScoreApi')['getScore'];
 
 export interface ProfileUser {
@@ -279,6 +282,3 @@ export const useProfileData = (): UseProfileDataReturn => {
     router,
   };
 };
-
-// Need this import for the RezScore query
-import { useQuery } from '@tanstack/react-query';

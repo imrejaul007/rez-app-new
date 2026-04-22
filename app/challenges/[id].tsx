@@ -183,6 +183,7 @@ function ChallengeDetailPage() {
         logger.error('Available challenge IDs:', allChallenges.map((c: any) => c._id).slice(0, 5));
         logger.error('Progress IDs:', allProgress.map((p: any) => p._id).slice(0, 5));
         showAlert('Error', 'Challenge not found', undefined, 'error');
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
         return;
       }
@@ -195,6 +196,7 @@ function ChallengeDetailPage() {
     } catch (error: any) {
       logger.error('❌ [Challenge Detail] Error loading challenge:', error);
       showAlert('Error', 'Failed to load challenge details', undefined, 'error');
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } finally {
       if (!isMounted()) return;
@@ -262,11 +264,15 @@ function ChallengeDetailPage() {
       const claimIdempotencyKey = `challenge-${data.userProgress._id}-${beforeBalance}`;
 
       // Claim the reward with idempotency key
-      const response = await apiClient.post(`/gamification/challenges/${data.userProgress._id}/claim`, {}, {
-        headers: {
-          'Idempotency-Key': claimIdempotencyKey,
+      const response = await apiClient.post(
+        `/gamification/challenges/${data.userProgress._id}/claim`,
+        {},
+        {
+          headers: {
+            'Idempotency-Key': claimIdempotencyKey,
+          },
         },
-      });
+      );
 
       if (response.success) {
         triggerNotification('Success');
@@ -615,6 +621,7 @@ function ChallengeDetailPage() {
           visible={showClaimModal}
           onClose={() => {
             setShowClaimModal(false);
+            // eslint-disable-next-line no-unused-expressions
             router.canGoBack() ? router.back() : router.replace('/(tabs)');
           }}
           reward={{

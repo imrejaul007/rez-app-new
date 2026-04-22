@@ -22,6 +22,7 @@ import { useGetCurrencySymbol, useGetLocale } from '@/stores/selectors';
 import CachedImage from '@/components/ui/CachedImage';
 import { colors } from '@/constants/theme';
 
+// eslint-disable-next-line react/display-name
 const ProductCard: React.FC<ProductCardProps> = memo(({
   product,
   store,

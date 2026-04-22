@@ -21,6 +21,7 @@ interface CashbackModalProps {
 }
 
 // Separate component for floating coin (needs useAnimatedStyle)
+// eslint-disable-next-line react/display-name
 const FloatingCoin: React.FC<{ animValue: { value: number }; style: object; currencySymbol: string }> = React.memo(({ animValue, style, currencySymbol }) => {
   const coinStyle = useAnimatedStyle(() => ({
     transform: [

@@ -217,6 +217,7 @@ function ViewAllOffersScreen() {
   }, [page, loadingMore, hasMore, loading, fetchOffers]);
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -239,6 +240,7 @@ function ViewAllOffersScreen() {
     [router],
   );
 
+  // eslint-disable-next-line react/display-name
   const ProductCard = React.memo(({ offer }: { offer: Offer }) => {
     const [imageError, setImageError] = React.useState(false);
 

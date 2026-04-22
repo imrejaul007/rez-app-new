@@ -51,6 +51,7 @@ function PaymentPage() {
     if (amount <= 0 || amount > 1000000) {
       platformAlertSimple('Invalid Amount', 'The payment amount is invalid. Please go back and try again.');
       const t = setTimeout(() => {
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }, 300);
       return () => clearTimeout(t);
@@ -179,11 +180,13 @@ function PaymentPage() {
         () => {
           setIsProcessing(false);
           setCurrentStep('methods');
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         },
         'Go Back',
       );
     } else {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
   }, [isProcessing, router]);

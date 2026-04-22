@@ -110,6 +110,7 @@ interface OrderCardProps {
   onRefresh: () => void;
 }
 
+// eslint-disable-next-line react/display-name
 const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardProps) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

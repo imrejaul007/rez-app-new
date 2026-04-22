@@ -50,6 +50,7 @@ const ShimmerBlock: React.FC<{
 };
 
 // Cashback Summary Skeleton
+// eslint-disable-next-line react/display-name
 export const CashbackSummarySkeleton: React.FC = memo(() => (
   <View style={styles.summaryContainer}>
     <View style={styles.summaryGradient}>
@@ -65,6 +66,7 @@ export const CashbackSummarySkeleton: React.FC = memo(() => (
 ));
 
 // Hero Banner Skeleton
+// eslint-disable-next-line react/display-name
 export const HeroBannerSkeleton: React.FC = memo(() => (
   <View style={styles.heroBannerContainer}>
     <ShimmerBlock width={width - 32} height={160} borderRadius={16} />
@@ -72,6 +74,7 @@ export const HeroBannerSkeleton: React.FC = memo(() => (
 ));
 
 // Quick Actions Skeleton
+// eslint-disable-next-line react/display-name
 export const QuickActionsSkeleton: React.FC = memo(() => (
   <View style={styles.quickActionsContainer}>
     <ShimmerBlock width={(width - 44) / 2} height={100} borderRadius={16} />
@@ -80,6 +83,7 @@ export const QuickActionsSkeleton: React.FC = memo(() => (
 ));
 
 // Brand Grid Skeleton
+// eslint-disable-next-line react/display-name
 export const BrandGridSkeleton: React.FC = memo(() => (
   <View style={styles.sectionContainer}>
     <ShimmerBlock width={150} height={20} borderRadius={4} style={{ marginBottom: 16 }} />
@@ -96,6 +100,7 @@ export const BrandGridSkeleton: React.FC = memo(() => (
 ));
 
 // Horizontal Deals Skeleton
+// eslint-disable-next-line react/display-name
 export const HorizontalDealsSkeleton: React.FC = memo(() => (
   <View style={styles.sectionContainer}>
     <ShimmerBlock width={150} height={20} borderRadius={4} style={{ marginBottom: 16 }} />
@@ -108,6 +113,7 @@ export const HorizontalDealsSkeleton: React.FC = memo(() => (
 ));
 
 // Coupon Codes Skeleton
+// eslint-disable-next-line react/display-name
 export const CouponCodesSkeleton: React.FC = memo(() => (
   <View style={styles.sectionContainer}>
     <ShimmerBlock width={150} height={20} borderRadius={4} style={{ marginBottom: 16 }} />

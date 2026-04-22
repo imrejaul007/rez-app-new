@@ -23,6 +23,7 @@ interface CoinDetailCardProps {
   onPress?: (coin: CoinBalance) => void;
 }
 
+// eslint-disable-next-line react/display-name
 export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin, onPress }) => {
   const scaleAnim = useSharedValue(1);
   const scaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: scaleAnim.value }] }));

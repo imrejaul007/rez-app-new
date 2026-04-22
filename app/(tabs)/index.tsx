@@ -221,6 +221,7 @@ const fallbackStyles = StyleSheet.create({
   card: { height: 100, flex: 1, backgroundColor: colors.gray[50], borderRadius: borderRadius.md },
   footer: { height: 80, backgroundColor: colors.gray[50], borderRadius: borderRadius.md },
 });
+// eslint-disable-next-line react/display-name
 const TabContentFallback = React.memo(() => (
   <View style={fallbackStyles.container}>
     <View style={fallbackStyles.bar1} />

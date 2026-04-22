@@ -34,6 +34,7 @@ interface UtilityTileProps {
   onPress: (route?: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const UtilityTile: React.FC<UtilityTileProps> = memo(({ item, onPress }) => (
   <Pressable
     style={styles.tile}

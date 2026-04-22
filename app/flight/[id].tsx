@@ -800,6 +800,7 @@ function FlightDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => {
           setShowConfirmation(false);
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         }}
       >
@@ -809,6 +810,7 @@ function FlightDetailsPage() {
             bookingData={bookingData}
             onClose={() => {
               setShowConfirmation(false);
+              // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');
             }}
           />

@@ -35,6 +35,7 @@ const BrandCard: React.FC<{
   brand: CashStoreBrand;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ brand, index, onPress }) => {
   const scaleAnim = useSharedValue(0.9);
   const fadeAnim = useSharedValue(0);
@@ -133,6 +134,7 @@ const BrandCard: React.FC<{
 });
 
 // ─── Skeleton Card ──────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 
@@ -161,6 +163,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
 });
 
 // ─── Empty State ────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const EmptyState: React.FC<{ onViewAllPress: () => void }> = memo(({ onViewAllPress }) => (
   <View style={styles.emptyContainer}>
     <View style={styles.emptyIconWrap}>
@@ -188,6 +191,7 @@ const FILTER_DISPLAY_NAMES: Record<string, string> = {
 const FilteredEmptyState: React.FC<{
   filterName: string;
   onResetFilter?: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ filterName, onResetFilter }) => {
   const displayName = FILTER_DISPLAY_NAMES[filterName] || filterName;
   return (

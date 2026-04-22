@@ -185,6 +185,7 @@ const CATEGORY_SECTIONS: CategorySection[] = Object.values(CATEGORY_CONFIGS).map
 }));
 
 // ─── Sized Suspense placeholder to prevent layout collapse ───────────────────
+// eslint-disable-next-line react/display-name
 const SuspensePlaceholder: React.FC<{ height: number }> = React.memo(({ height }) => (
   <View style={{ height, backgroundColor: colors.tint.warmGray }} />
 ));

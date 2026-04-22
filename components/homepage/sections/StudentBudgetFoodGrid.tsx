@@ -49,6 +49,7 @@ interface TileProps {
   onPress: (slug: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const FoodTile: React.FC<TileProps> = memo(({ item, onPress }) => (
   <Pressable
     style={[styles.tile, { backgroundColor: item.bgColor }]}

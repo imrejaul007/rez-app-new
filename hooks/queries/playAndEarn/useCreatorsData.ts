@@ -7,7 +7,7 @@ export interface CreatorsQueryData {
   featuredCreators: Creator[];
   trendingPicks: CreatorPick[];
   creatorStatus: 'none' | 'pending' | 'approved' | 'rejected';
-  socialImpactPreview: Array<{ icon: string; label: string; coins: number }>;
+  socialImpactPreview: { icon: string; label: string; coins: number }[];
 }
 
 export function useCreatorsData() {

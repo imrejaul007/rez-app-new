@@ -44,6 +44,7 @@ const formatCount = (count: number): string => {
 // PICK CARD COMPONENT
 // ============================================
 
+// eslint-disable-next-line react/display-name
 const PickCard = React.memo(({ pick, onPress }: { pick: CreatorPick; onPress: () => void }) => (
   <Pressable style={styles.pickCard} onPress={onPress}>
     <View style={{ position: 'relative' }}>

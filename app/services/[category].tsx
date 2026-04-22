@@ -33,6 +33,7 @@ const CARD_WIDTH = Math.floor((AVAILABLE_WIDTH - CARD_GAP) / 2);
 
 // ReZ Design System Colors from TASK.md
 // Service Card Component - ReZ Premium Design
+// eslint-disable-next-line react/display-name
 const ServiceCard = memo(({ service, onPress }: { service: ServiceInCategory; onPress: () => void }) => {
   const imageUrl = service.images?.[0];
   const price = service.pricing?.selling || service.pricing?.original || 0;

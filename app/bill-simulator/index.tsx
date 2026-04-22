@@ -81,6 +81,7 @@ interface StoreCardProps {
   borderColor: string;
 }
 
+// eslint-disable-next-line react/display-name
 const StoreCard = React.memo(
   ({ store, isBest, onPress, isDark, cardColor, textColor, subtextColor, borderColor }: StoreCardProps) => (
     <Pressable

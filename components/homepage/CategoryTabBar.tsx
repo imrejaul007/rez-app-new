@@ -77,6 +77,7 @@ interface WebCategoryTabItemProps {
   themeColor: string;
 }
 
+// eslint-disable-next-line react/display-name
 const WebCategoryTabItem = memo<WebCategoryTabItemProps>(({ category, isActive, onPress, themeColor }) => {
   const handlePress = useCallback(() => {
     onPress(category);
@@ -124,6 +125,7 @@ const WebCategoryTabItem = memo<WebCategoryTabItemProps>(({ category, isActive, 
 });
 
 // Web component with glassy effect - using React Native components for proper image handling
+// eslint-disable-next-line react/display-name
 const WebCategoryTabBar: React.FC<CategoryTabBarProps> = memo(({ style, activeThemeColor }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -243,6 +245,7 @@ interface NativeCategoryTabItemProps {
   themeColor: string;
 }
 
+// eslint-disable-next-line react/display-name
 const NativeCategoryTabItem = memo<NativeCategoryTabItemProps>(({ category, isActive, onPress, themeColor }) => {
   const handlePress = useCallback(() => {
     onPress(category);
@@ -284,6 +287,7 @@ const NativeCategoryTabItem = memo<NativeCategoryTabItemProps>(({ category, isAc
 });
 
 // Native component
+// eslint-disable-next-line react/display-name
 const NativeCategoryTabBar: React.FC<CategoryTabBarProps> = memo(({ style, isSticky, activeThemeColor }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -351,6 +355,7 @@ const NativeCategoryTabBar: React.FC<CategoryTabBarProps> = memo(({ style, isSti
   return <View style={[styles.container, style]}>{content}</View>;
 });
 
+// eslint-disable-next-line react/display-name
 const CategoryTabBar: React.FC<CategoryTabBarProps> = memo((props) => {
   if (Platform.OS === 'web') {
     return <WebCategoryTabBar {...props} />;

@@ -96,6 +96,7 @@ const ActivityItem: React.FC<{
   index: number;
   isLast: boolean;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ activity, index, isLast, onPress }) => {
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(20);
@@ -215,6 +216,7 @@ const ActivityItem: React.FC<{
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SkeletonItem: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 

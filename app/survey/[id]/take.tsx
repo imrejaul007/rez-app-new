@@ -151,6 +151,7 @@ function SurveyTakePage() {
           }));
           await surveysApiService.saveProgress(id, answersArray, currentIndex);
         }
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       },
       'Exit',

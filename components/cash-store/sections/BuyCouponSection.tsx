@@ -32,6 +32,7 @@ const GiftCardCard: React.FC<{
   brand: GiftCardBrand;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ brand, index, onPress }) => {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -208,6 +209,7 @@ function adjustColor(color: string, percent: number): string {
   );
 }
 
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 

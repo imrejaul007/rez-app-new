@@ -290,7 +290,9 @@ const StoreListPage: React.FC = () => {
                 description: product.description || '',
                 price: getPrice(),
                 originalPrice: isNewStructure ? product.originalPrice || null : product.price?.original || null,
-                discountPercentage: isNewStructure ? product.discountPercentage || null : product.price?.discount || null,
+                discountPercentage: isNewStructure
+                  ? product.discountPercentage || null
+                  : product.price?.discount || null,
                 imageUrl: product.imageUrl || product.image,
                 imageAlt: product.imageAlt || product.name || product.title || 'Product image',
                 hasRezPay: product.hasRezPay !== undefined ? product.hasRezPay : false,
@@ -392,6 +394,7 @@ const StoreListPage: React.FC = () => {
 
   // Handle back navigation
   const handleBack = useCallback(() => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 

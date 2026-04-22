@@ -674,6 +674,7 @@ function BuyCouponsPage() {
 }
 
 // ─── Gift Card Card ──────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const GiftCardCard = React.memo(
   ({
     brand,
@@ -791,6 +792,7 @@ const GiftCardCard = React.memo(
 );
 
 // ─── Coupon Card ─────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const CouponCard = React.memo(
   ({
     coupon,
@@ -924,6 +926,7 @@ const CouponCard = React.memo(
 );
 
 // ─── Skeleton Card ───────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 

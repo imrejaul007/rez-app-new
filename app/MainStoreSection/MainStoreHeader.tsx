@@ -48,6 +48,7 @@ function MainStoreHeader({
   const handleBack = () => {
     triggerImpact('Medium');
     if (onBack) onBack();
+    // eslint-disable-next-line no-unused-expressions
     else router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

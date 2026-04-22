@@ -232,6 +232,7 @@ function BookingPage() {
 
   // Deep-link parameter validation guard
   if (!storeId || typeof storeId !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }
@@ -474,6 +475,7 @@ function BookingPage() {
 
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -561,6 +563,7 @@ function BookingPage() {
 
   const handleContinueShopping = () => {
     setShowAddedToCartModal(false);
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

@@ -41,6 +41,7 @@ interface TrendingCardProps {
   onPress: (id: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const TrendingCard: React.FC<TrendingCardProps> = memo(({ item, onPress }) => (
   <Pressable
     style={styles.card}

@@ -848,6 +848,7 @@ function CashbackPage() {
 }
 
 // ─── Summary Card Component ──────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SummaryCard = React.memo(
   ({
     title,
@@ -881,6 +882,7 @@ const SummaryCard = React.memo(
 );
 
 // ─── Cashback History Card Component ─────────────────────────
+// eslint-disable-next-line react/display-name
 const CashbackHistoryCard = React.memo(
   ({
     cashback,

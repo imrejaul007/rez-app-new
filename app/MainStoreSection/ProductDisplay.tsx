@@ -67,6 +67,7 @@ const ProductPaginationDot: React.FC<{
   index: number;
   activeIndex: SharedValue<number>;
   totalCount: number;
+  // eslint-disable-next-line react/display-name
 }> = memo(({ index, activeIndex, totalCount }) => {
   const dotStyle = useAnimatedStyle(() => {
     const isActive = activeIndex.value === index ? 1 : 0;

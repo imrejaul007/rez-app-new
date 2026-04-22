@@ -150,6 +150,7 @@ function CombosScreen() {
         return;
       }
       try {
+        // eslint-disable-next-line no-unused-expressions
         isRefresh ? setRefreshing(true) : setLoading(true);
         const res = await apiClient.get<{ combos: ComboProduct[] }>(`/stores/${storeId}/combos`);
         if (!isMounted()) return;

@@ -180,6 +180,7 @@ function StoreGiftCardsScreen() {
   const fetchCards = useCallback(
     async (isRefresh = false) => {
       try {
+        // eslint-disable-next-line no-unused-expressions
         isRefresh ? setRefreshing(true) : setLoading(true);
         const res = await apiClient.get<{ giftCards: StoreGiftCard[] }>('/user/store-gift-cards?status=all');
         if (!isMounted()) return;

@@ -169,6 +169,7 @@ function SurveyDetailPage() {
         } catch (error: any) {
           // silently handle
         }
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       },
       'Leave',

@@ -156,6 +156,7 @@ interface CategoryItemProps {
   index: number;
 }
 
+// eslint-disable-next-line react/display-name
 const CategoryItem: React.FC<CategoryItemProps> = memo(
   ({ filter, isSelected, onPress, index }) => {
     const scaleAnim = useSharedValue(0.8);
@@ -228,6 +229,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(
   }
 );
 
+// eslint-disable-next-line react/display-name
 const SkeletonItem: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 

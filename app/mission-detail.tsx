@@ -212,6 +212,7 @@ const MissionDetailScreen: React.FC = () => {
 
   // Deep-link parameter validation guard
   if (!challengeId || typeof challengeId !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }

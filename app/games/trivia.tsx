@@ -184,6 +184,7 @@ function TriviaPage() {
   const handleBackPress = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (moveTimerRef.current) clearTimeout(moveTimerRef.current);
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

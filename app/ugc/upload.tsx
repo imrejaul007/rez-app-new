@@ -165,6 +165,7 @@ function UGCUploadScreen() {
 
       const coinMsg = response.data?.coinReward ? `\nYou earned ${response.data.coinReward.coinsAwarded} coins!` : '';
       platformAlertSimple('Success!', `Your content has been submitted for review.${coinMsg}`);
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } catch (error: any) {
       const message = error?.message || 'Failed to upload content. Please try again.';
@@ -184,6 +185,7 @@ function UGCUploadScreen() {
         'Discard',
       );
     } else {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
   };

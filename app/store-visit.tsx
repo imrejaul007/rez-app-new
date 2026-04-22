@@ -668,6 +668,7 @@ function StoreVisitPageInner() {
                 // Reset form
                 setSelectedDate(null);
                 setSelectedTime('');
+                // eslint-disable-next-line no-unused-expressions
                 router.canGoBack() ? router.back() : router.replace('/(tabs)');
               },
             },

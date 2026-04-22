@@ -31,6 +31,7 @@ const DealCard: React.FC<{
   deal: HighCashbackDeal;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ deal, index, onPress }) => {
   const scaleAnim = useSharedValue(0.9);
   const fadeAnim = useSharedValue(0);
@@ -175,6 +176,7 @@ const DealCard: React.FC<{
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 

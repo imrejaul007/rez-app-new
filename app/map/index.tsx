@@ -83,6 +83,7 @@ function getCashback(store: NearbyStore): number {
 
 // ─── StoreListItem ────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line react/display-name
 const StoreListItem = React.memo(({ store, onPress }: { store: NearbyStore; onPress: (id: string) => void }) => (
   <Pressable
     style={({ pressed }) => [styles.storeRow, pressed && { opacity: 0.8 }]}

@@ -217,6 +217,7 @@ function MenuPage() {
                 params: { orderId: response.data._id },
               } as any);
             } else {
+              // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');
             }
           } else {

@@ -96,6 +96,7 @@ const CoinCard: React.FC<CoinCardProps> = ({
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
+// eslint-disable-next-line react/display-name
 export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
   ({ walletData, onCoinPress, currencySymbol = '₹' }) => {
     const [isHidden, setIsHidden] = useState(false);

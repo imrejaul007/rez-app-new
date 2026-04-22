@@ -80,7 +80,7 @@ interface RawWalletData { categoryBalances?: Record<string, { available?: number
 
 interface BackendOrderItem {
   id?: string; _id?: string; productId?: string;
-  product?: { id?: string; _id?: string; name?: string; images?: Array<{ url?: string } | string> };
+  product?: { id?: string; _id?: string; name?: string; images?: ({ url?: string } | string)[] };
   unitPrice?: number; totalPrice?: number; quantity?: number; name?: string;
 }
 

@@ -167,6 +167,7 @@ function ProjectDetailPage() {
       }
     } catch (error: any) {
       showAlert('Error', 'Failed to load project details');
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } finally {
       if (!isMounted()) return;

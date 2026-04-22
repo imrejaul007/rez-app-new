@@ -644,6 +644,7 @@ function UGCDetailScreen() {
 
   // Deep-link parameter validation guard: requires either item (JSON) or id
   if (!params.item && !params.id) {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }

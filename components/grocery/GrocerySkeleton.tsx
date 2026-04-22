@@ -21,6 +21,7 @@ const COLORS = {
 };
 
 // Shimmer animation component
+// eslint-disable-next-line react/display-name
 const Shimmer: React.FC<{ style?: any }> = React.memo(({ style }) => {
   const shimmerAnim = useSharedValue(0);
 
@@ -44,6 +45,7 @@ const Shimmer: React.FC<{ style?: any }> = React.memo(({ style }) => {
 });
 
 // Product Card Skeleton
+// eslint-disable-next-line react/display-name
 export const ProductCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | 'horizontal' }> = React.memo(({
   variant = 'default',
 }) => {
@@ -87,6 +89,7 @@ export const ProductCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | '
 });
 
 // Store Card Skeleton
+// eslint-disable-next-line react/display-name
 export const StoreCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | 'horizontal' | 'featured' }> = React.memo(({
   variant = 'default',
 }) => {
@@ -143,6 +146,7 @@ export const StoreCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | 'ho
 });
 
 // Category Card Skeleton
+// eslint-disable-next-line react/display-name
 export const CategoryCardSkeleton: React.FC = React.memo(() => {
   return (
     <View style={styles.categoryCard}>
@@ -153,6 +157,7 @@ export const CategoryCardSkeleton: React.FC = React.memo(() => {
 });
 
 // Header Skeleton
+// eslint-disable-next-line react/display-name
 export const HeaderSkeleton: React.FC = React.memo(() => {
   return (
     <View style={styles.headerSkeleton}>
@@ -169,6 +174,7 @@ export const HeaderSkeleton: React.FC = React.memo(() => {
 });
 
 // Filter Bar Skeleton
+// eslint-disable-next-line react/display-name
 export const FilterBarSkeleton: React.FC = React.memo(() => {
   return (
     <View style={styles.filterBar}>
@@ -180,6 +186,7 @@ export const FilterBarSkeleton: React.FC = React.memo(() => {
 });
 
 // Stats Row Skeleton
+// eslint-disable-next-line react/display-name
 export const StatsRowSkeleton: React.FC = React.memo(() => {
   return (
     <View style={styles.statsRow}>
@@ -194,6 +201,7 @@ export const StatsRowSkeleton: React.FC = React.memo(() => {
 });
 
 // Full Page Skeleton - Products Grid
+// eslint-disable-next-line react/display-name
 export const ProductsGridSkeleton: React.FC<{ count?: number }> = React.memo(({ count = 6 }) => {
   return (
     <View style={styles.productsGrid}>
@@ -205,6 +213,7 @@ export const ProductsGridSkeleton: React.FC<{ count?: number }> = React.memo(({ 
 });
 
 // Full Page Skeleton - Stores List
+// eslint-disable-next-line react/display-name
 export const StoresListSkeleton: React.FC<{ count?: number }> = React.memo(({ count = 4 }) => {
   return (
     <View style={styles.storesList}>
@@ -216,6 +225,7 @@ export const StoresListSkeleton: React.FC<{ count?: number }> = React.memo(({ co
 });
 
 // Full Grocery Page Skeleton
+// eslint-disable-next-line react/display-name
 export const GroceryPageSkeleton: React.FC = React.memo(() => {
   return (
     <View style={styles.pageSkeleton}>
@@ -229,6 +239,7 @@ export const GroceryPageSkeleton: React.FC = React.memo(() => {
 });
 
 // Grocery Hub Page Skeleton
+// eslint-disable-next-line react/display-name
 export const GroceryHubSkeleton: React.FC = React.memo(() => {
   return (
     <View style={styles.pageSkeleton}>

@@ -74,6 +74,7 @@ interface PopularServicesSectionProps {
 }
 
 // Simple Clean Service Card - matches screenshot style
+// eslint-disable-next-line react/display-name
 const PopularServiceCard = memo(({
   service,
   onPress,

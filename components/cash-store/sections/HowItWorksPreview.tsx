@@ -74,6 +74,7 @@ const StepItem: React.FC<{
   step: (typeof STEPS)[0];
   index: number;
   isLast: boolean;
+// eslint-disable-next-line react/display-name
 }> = memo(({ step, index, isLast }) => {
   const scaleAnim = useSharedValue(0);
   const iconBounceAnim = useSharedValue(0);

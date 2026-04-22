@@ -125,6 +125,7 @@ function getStoreId(storeId: string | { _id: string }): string {
 }
 
 // ─── Skeleton Shimmer ───────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SkeletonBlock = React.memo(
   ({
     width: w,

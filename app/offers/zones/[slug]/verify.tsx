@@ -196,6 +196,7 @@ function ZoneVerifyScreen() {
           'Verification Submitted',
           'Your verification request has been submitted. You will be notified once it is reviewed.',
         );
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       } else {
         if (!isMounted()) return;

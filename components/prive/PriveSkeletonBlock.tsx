@@ -16,6 +16,7 @@ interface PriveSkeletonBlockProps {
   borderRadius?: number;
 }
 
+// eslint-disable-next-line react/display-name
 export const PriveSkeletonBlock = React.memo(({ width, height, style, borderRadius = 8 }: PriveSkeletonBlockProps) => {
   const shimmer = useSharedValue(0);
 

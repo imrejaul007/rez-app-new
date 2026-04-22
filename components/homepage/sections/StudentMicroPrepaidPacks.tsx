@@ -35,6 +35,7 @@ interface PackCardProps {
   onPress: (pack: StudentMicroPack) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const PackCard: React.FC<PackCardProps> = memo(({ pack, onPress }) => {
   // Gradient based on pack category
   const gradients: Record<string, [string, string]> = {

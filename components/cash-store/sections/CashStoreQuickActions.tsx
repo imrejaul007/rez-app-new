@@ -86,6 +86,7 @@ const ActionCard: React.FC<{
   action: CashStoreQuickAction;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ action, index, onPress }) => {
   const scaleAnim = useSharedValue(0.9);
   const fadeAnim = useSharedValue(0);

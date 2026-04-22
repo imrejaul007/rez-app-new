@@ -119,6 +119,7 @@ function SharePage() {
 
       // Navigate back after successful share
       setTimeout(() => {
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }, 500);
     } catch (error: any) {

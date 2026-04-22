@@ -507,6 +507,7 @@ const FitnessBookingPage: React.FC = () => {
 
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

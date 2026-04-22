@@ -36,6 +36,7 @@ const TrendingDealCard: React.FC<{
   deal: TrendingDeal;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ deal, index, onPress }) => {
   const [timeRemaining, setTimeRemaining] = useState(getTimeRemainingMs(deal.validUntil));
   const scaleAnim = useSharedValue(0.9);
@@ -196,6 +197,7 @@ const TrendingDealCard: React.FC<{
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 

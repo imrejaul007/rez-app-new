@@ -143,6 +143,7 @@ const ShimmerSkeleton = () => {
 };
 
 // ─── Animated Progress Bar with Tier Milestones ──────────────────────────────
+// eslint-disable-next-line react/display-name
 const TierProgressBar = React.memo(({ score, nextTierThreshold }: { score: number; nextTierThreshold: number }) => {
   const widthAnim = useSharedValue(0);
   const maxScore = 100;
@@ -218,6 +219,7 @@ const TierProgressBar = React.memo(({ score, nextTierThreshold }: { score: numbe
 });
 
 // ─── Hero Score Section ──────────────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const HeroSection = React.memo(
   ({
     score,
@@ -315,6 +317,7 @@ const HeroSection = React.memo(
 );
 
 // ─── Tier Row ────────────────────────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const TierRow = React.memo(
   ({ tier, currentScore, currentTier }: { tier: TierDef; currentScore: number; currentTier: string }) => {
     const isAchieved = currentScore >= tier.minScore;

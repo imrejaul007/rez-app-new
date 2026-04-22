@@ -122,6 +122,7 @@ function ReviewPage() {
   };
 
   const handleBackPress = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -149,6 +150,7 @@ function ReviewPage() {
   const handleModalClose = () => {
     hideModal();
     if (isStoreReview) {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } else if (fromPrive === 'true') {
       router.replace('/prive/review-earn');
