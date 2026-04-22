@@ -273,7 +273,7 @@ function normalizeRating(data: any): ProductItem['rating'] {
     if (data.ratings && typeof data.ratings === 'object') {
       return {
         value: parseFloat(data.ratings.average || data.ratings.value || 0),
-        count: parseInt(data.ratings.count || 0, 10),
+        count: parseInt(data.ratings.count || data.ratings.total || 0, 10),
       };
     }
 
@@ -492,5 +492,6 @@ export function validateCriticalFields(data: any, requiredFields: string[]): boo
  * Normalize ID field (_id → id)
  */
 export function normalizeId(data: any): string | null {
+  if (!data) return null;
   return data.id || data._id || null;
 }
