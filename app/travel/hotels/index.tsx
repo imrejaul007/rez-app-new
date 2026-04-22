@@ -24,9 +24,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/constants/theme';
 import { BRAND } from '@/constants/brand';
-import { searchHotels, OtaHotel, rezSsoLogin } from '@/services/hotelOtaApi';
+import { searchHotels, OtaHotel, rezSsoLogin, getOtaToken } from '@/services/hotelOtaApi';
 import { useAuthStore } from '@/stores/authStore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width: SW } = Dimensions.get('window');
 
@@ -151,7 +150,7 @@ export default function HotelSearchScreen() {
   // Refresh OTA token if it is missing or within 5 minutes of expiry.
   useEffect(() => {
     if (!token) return;
-    AsyncStorage.getItem('@ota_access_token').then(async (existing) => {
+    getOtaToken().then(async (existing) => {
       let needsRefresh = !existing;
       if (existing && !needsRefresh) {
         try {
