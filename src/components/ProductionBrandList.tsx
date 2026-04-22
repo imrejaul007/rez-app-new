@@ -14,6 +14,18 @@ import Animated, {
 } from 'react-native-reanimated';
 import { FashionStore } from '@/hooks/useFashionData';
 
+interface ExtendedFashionStore extends FashionStore {
+  cashback?: number;
+  shortDescription?: string;
+  deliveryTime?: string;
+}
+
+interface ExtendedAddress {
+  street?: string;
+  address?: string;
+  city?: string;
+}
+
 interface ProductionBrandListProps {
   stores: FashionStore[];
   isLoading: boolean;
@@ -113,13 +125,13 @@ const BrandCard = ({ store, index, onPress }: { store: FashionStore; index: numb
     const rating = store.ratings?.average || 0;
 
     // Handle cashback from multiple possible sources - cast to any for additional properties
-    const storeAny = store as any;
+    const storeAny = store as ExtendedFashionStore;
     const cashback = store.offers?.cashback || storeAny.cashback || 0;
     const hasCashback = cashback > 0;
 
     // Handle address - backend sends it in 'address' field, not 'location'
     const storeAddress = store.address || store.location;
-    const addressStr = (storeAddress as any)?.street || (storeAddress as any)?.address || '';
+    const addressStr = (storeAddress as ExtendedAddress)?.street || (storeAddress as ExtendedAddress)?.address || '';
     const cityStr = storeAddress?.city || '';
     const address = addressStr && cityStr
       ? `${addressStr}, ${cityStr}`
@@ -230,11 +242,11 @@ const ProductionBrandList = ({ stores, isLoading, error, onRefresh }: Production
   const router = useRouter();
 
   const handleBrandPress = (store: FashionStore) => {
-    router.push(`/MainStorePage?storeId=${store._id}` as any);
+    router.push(`/MainStorePage?storeId=${store._id}` as string);
   };
 
   const handleViewAllPress = () => {
-    router.push('/StoreListPage' as any);
+    router.push('/StoreListPage' as string);
   };
 
   const renderBrand = (store: FashionStore, index: number) => {

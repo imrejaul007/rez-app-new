@@ -55,7 +55,7 @@ const CategoryCard = ({ category, index, activeIndex, onPress, totalOriginal, sc
     if (category.icon) {
       const metadataColor = category.metadata?.color || '#ffcd57';
       return {
-        icon: category.icon as any,
+        icon: category.icon as string,
         gradientColors: [metadataColor, adjustColor(metadataColor, -20)] as [string, string],
         iconColor: '#FFFFFF',
       };
@@ -260,7 +260,7 @@ const ProductionCategorySlider = ({ categories, isLoading, selectedSlug, onSelec
       onSelect(category);
     } else {
       // Fallback to navigation if no callback provided
-      router.push(`/category/${category.slug || category._id}` as any);
+      router.push(`/category/${category.slug || category._id}` as string);
     }
   };
 

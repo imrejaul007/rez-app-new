@@ -98,7 +98,7 @@ interface ApiResponse<T = any> {
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: Record<string, unknown> | unknown[] | FormData | string | null;
+  body?: unknown;
   timeout?: number;
   deduplicate?: boolean; // Enable/disable deduplication per-request
   signal?: AbortSignal; // AbortController signal for request cancellation
@@ -636,7 +636,7 @@ class ApiClient {
   // PUT request (optional deduplication, optional timeout)
   async put<T>(
     endpoint: string,
-    data?: Record<string, unknown> | unknown[] | FormData,
+    data?: unknown,
     options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // PUT requests are NOT deduplicated by default (usually mutating)

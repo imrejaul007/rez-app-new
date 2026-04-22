@@ -316,7 +316,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error fetching cart:', error);
+      logger.error('[CART API] Error fetching cart: ' + String(error));
       return createErrorResponse(error, 'Failed to load cart. Please try again.');
     }
   }
@@ -368,7 +368,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error adding to cart:', error);
+      logger.error('[CART API] Error adding to cart: ' + String(error));
       return createErrorResponse(
         error,
         'Failed to add item to cart. Please try again.'
@@ -457,7 +457,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error adding service to cart:', error);
+      logger.error('[CART API] Error adding service to cart: ' + String(error));
       return createErrorResponse(
         error,
         'Failed to add service to cart. Please try again.'
@@ -520,7 +520,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error updating cart item:', error);
+      logger.error('[CART API] Error updating cart item: ' + String(error));
       return createErrorResponse(
         error,
         'Failed to update cart item. Please try again.'
@@ -574,7 +574,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error removing cart item:', error);
+      logger.error('[CART API] Error removing cart item: ' + String(error));
       return createErrorResponse(
         error,
         'Failed to remove item from cart. Please try again.'
@@ -600,7 +600,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error clearing cart:', error);
+      logger.error('[CART API] Error clearing cart: ' + String(error));
       return createErrorResponse(error, 'Failed to clear cart. Please try again.');
     }
   }
@@ -657,7 +657,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error applying coupon:', error);
+      logger.error('[CART API] Error applying coupon: ' + String(error));
       return createErrorResponse(error, 'Failed to apply coupon. Please try again.');
     }
   }
@@ -692,7 +692,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error removing coupon:', error);
+      logger.error('[CART API] Error removing coupon: ' + String(error));
       return createErrorResponse(error, 'Failed to remove coupon. Please try again.');
     }
   }
@@ -727,7 +727,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error fetching cart summary:', error);
+      logger.error('[CART API] Error fetching cart summary: ' + String(error));
       return createErrorResponse(error, 'Failed to load cart summary. Please try again.');
     }
   }
@@ -768,7 +768,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error validating cart:', error);
+      logger.error('[CART API] Error validating cart: ' + String(error));
       return createErrorResponse(error, 'Failed to validate cart. Please try again.');
     }
   }
@@ -866,9 +866,9 @@ class CartService {
         };
       }
 
-      return response;
+      return createErrorResponse(response.error || 'Failed to load checkout summary');
     } catch (error: unknown) {
-      logger.error('[CART API] Error getting checkout summary:', error);
+      logger.error('[CART API] Error getting checkout summary: ' + String(error));
       return createErrorResponse(error, 'Failed to load checkout summary');
     }
   }
@@ -917,7 +917,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error locking item:', error);
+      logger.error('[CART API] Error locking item: ' + String(error));
       return createErrorResponse(error, 'Failed to lock item. Please try again.');
     }
   }
@@ -940,7 +940,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error fetching locked items:', error);
+      logger.error('[CART API] Error fetching locked items: ' + String(error));
       return createErrorResponse(error, 'Failed to load locked items');
     }
   }
@@ -990,7 +990,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error unlocking item:', error);
+      logger.error('[CART API] Error unlocking item: ' + String(error));
       return createErrorResponse(error, 'Failed to unlock item');
     }
   }
@@ -1040,7 +1040,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error moving locked item to cart:', error);
+      logger.error('[CART API] Error moving locked item to cart: ' + String(error));
       return createErrorResponse(error, 'Failed to move locked item to cart');
     }
   }
@@ -1076,7 +1076,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error getting lock fee options:', error);
+      logger.error('[CART API] Error getting lock fee options: ' + String(error));
       return createErrorResponse(error, 'Failed to get lock fee options');
     }
   }
@@ -1139,7 +1139,7 @@ class CartService {
 
       return response;
     } catch (error: unknown) {
-      logger.error('[CART API] Error locking item with payment:', error);
+      logger.error('[CART API] Error locking item with payment: ' + String(error));
       return createErrorResponse(error, 'Failed to lock item. Please try again.');
     }
   }

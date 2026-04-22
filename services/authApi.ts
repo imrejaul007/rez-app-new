@@ -370,7 +370,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateAuthResponse(response.data as RawAuthResponsePayload)) {
+        if (!validateAuthResponse(response.data as unknown as RawAuthResponsePayload)) {
           devLog.error('[AUTH API] Invalid auth response structure');
           return {
             success: false,
