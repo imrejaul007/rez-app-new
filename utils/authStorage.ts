@@ -59,7 +59,7 @@ async function secureSet(key: string, value: string): Promise<boolean> {
 /**
  * Read a value from SecureStore. Returns null on failure or if not found.
  */
-async function secureGet(key: string): Promise<string | null> {
+export async function secureGet(key: string): Promise<string | null> {
   if (!SecureStore) return null;
   try {
     return await SecureStore.getItemAsync(key);
