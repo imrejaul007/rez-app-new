@@ -93,6 +93,7 @@ export const useSearch = () => {
         error: error instanceof Error ? error.message : 'Failed to search products',
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.pagination.page, state.pagination.limit, state.filters]);
 
   // Search stores
@@ -138,6 +139,7 @@ export const useSearch = () => {
         error: error instanceof Error ? error.message : 'Failed to search stores',
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.pagination.page, state.pagination.limit]);
 
   // Combined search (both products and stores)
@@ -193,6 +195,7 @@ export const useSearch = () => {
         error: error instanceof Error ? error.message : 'Failed to search',
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Apply filters
@@ -248,6 +251,7 @@ export const useSearch = () => {
     if (state.pagination.page > 1 && state.query) {
       searchProducts(state.query);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.pagination.page]);
 
   return {

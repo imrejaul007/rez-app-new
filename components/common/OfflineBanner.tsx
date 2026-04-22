@@ -68,6 +68,7 @@ export function OfflineBanner() {
       hideBanner();
       hasShownInitialRef.current = true;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline, wasOffline]);
 
   const animatedStyle = useAnimatedStyle(() => ({

@@ -56,6 +56,7 @@ function PopularProductsSection({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]);
 
   useEffect(() => {
@@ -157,6 +158,7 @@ function PopularProductsSection({
         </ThemedView>
       </Pressable>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const keyExtractor = useCallback((item: HomepageProduct) => item._id || item.id, []);

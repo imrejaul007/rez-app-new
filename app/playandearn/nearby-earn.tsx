@@ -115,12 +115,14 @@ const NearbyEarnPage = () => {
         setLocationLoading(false);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch stores when location is available
   useEffect(() => {
     if (!location) return;
     fetchStores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   const fetchStores = useCallback(
@@ -157,6 +159,7 @@ const NearbyEarnPage = () => {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [location],
   );
 

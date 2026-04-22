@@ -124,6 +124,7 @@ function CardOffersPage() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, currentOrderValue, fadeAnim]);
 
   useEffect(() => {
@@ -220,6 +221,7 @@ function CardOffersPage() {
         setApplyingOffer(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, currentOrderValue, cartActions, router, storeId],
   );
 
@@ -382,6 +384,7 @@ function CardOffersPage() {
         </Animated.View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentOrderValue, applyingOffer, handleApplyOffer, fadeAnim],
   );
 

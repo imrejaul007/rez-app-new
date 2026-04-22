@@ -65,6 +65,7 @@ function RazorpayPaymentForm({
       // Auto-initiate payment when modal opens
       handlePayment();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const handlePayment = async () => {

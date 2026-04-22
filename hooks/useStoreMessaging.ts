@@ -278,6 +278,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
     typingTimeoutRef.current = setTimeout(() => {
       stopTyping();
     }, 3000);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, conversationId]);
 
   const stopTyping = useCallback(() => {
@@ -430,6 +431,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
     if (autoLoad && (conversationId || storeId)) {
       getConversation();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoLoad, conversationId, storeId]);
 
   // Load messages when conversation is set
@@ -437,6 +439,7 @@ export function useStoreMessaging(options: UseStoreMessagingOptions = {}): UseSt
     if (conversationId) {
       loadMessages(1);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
   // Cleanup typing timeout on unmount

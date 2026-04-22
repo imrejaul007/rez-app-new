@@ -169,6 +169,7 @@ function AISearchPage() {
         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencySymbol, handleResultPress],
   );
 

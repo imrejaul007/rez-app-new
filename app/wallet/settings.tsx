@@ -52,7 +52,11 @@ function WalletSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
   const mountedRef = useRef(true);
-  useEffect(() => { return () => { mountedRef.current = false; }; }, []);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Populate settings from WalletContext rawBackendData
   useEffect(() => {
@@ -72,10 +76,11 @@ function WalletSettingsPage() {
       // No data and not loading — trigger a refresh
       refreshWallet().finally(() => setLoading(false));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawBackendData, walletLoading]);
 
   const updateField = <K extends keyof WalletSettings>(key: K, value: WalletSettings[K]) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings((prev) => ({ ...prev, [key]: value }));
     setDirty(true);
   };
 
@@ -98,7 +103,7 @@ function WalletSettingsPage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
+        <Header onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} />
         <SectionListSkeleton />
       </View>
     );
@@ -107,7 +112,7 @@ function WalletSettingsPage() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
-      <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
+      <Header onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Auto Top-up Section */}
@@ -118,13 +123,11 @@ function WalletSettingsPage() {
             </View>
             <View style={styles.sectionHeaderText}>
               <ThemedText style={styles.sectionTitle}>Auto Top-up</ThemedText>
-              <ThemedText style={styles.sectionDescription}>
-                Automatically add funds when balance is low
-              </ThemedText>
+              <ThemedText style={styles.sectionDescription}>Automatically add funds when balance is low</ThemedText>
             </View>
             <Switch
               value={settings.autoTopup}
-              onValueChange={v => updateField('autoTopup', v)}
+              onValueChange={(v) => updateField('autoTopup', v)}
               trackColor={{ false: Colors.gray[300], true: Colors.primary[600] + '80' }}
               thumbColor={settings.autoTopup ? Colors.primary[600] : '#f4f3f4'}
             />
@@ -135,13 +138,13 @@ function WalletSettingsPage() {
               <SettingInput
                 label="Trigger when balance below"
                 value={String(settings.autoTopupThreshold)}
-                onChangeText={v => updateField('autoTopupThreshold', Number(v) || 0)}
+                onChangeText={(v) => updateField('autoTopupThreshold', Number(v) || 0)}
                 suffix={BRAND.CURRENCY_CODE}
               />
               <SettingInput
                 label="Top-up amount"
                 value={String(settings.autoTopupAmount)}
-                onChangeText={v => updateField('autoTopupAmount', Number(v) || 0)}
+                onChangeText={(v) => updateField('autoTopupAmount', Number(v) || 0)}
                 suffix={BRAND.CURRENCY_CODE}
               />
             </View>
@@ -156,13 +159,11 @@ function WalletSettingsPage() {
             </View>
             <View style={styles.sectionHeaderText}>
               <ThemedText style={styles.sectionTitle}>Low Balance Alert</ThemedText>
-              <ThemedText style={styles.sectionDescription}>
-                Get notified when your balance is running low
-              </ThemedText>
+              <ThemedText style={styles.sectionDescription}>Get notified when your balance is running low</ThemedText>
             </View>
             <Switch
               value={settings.lowBalanceAlert}
-              onValueChange={v => updateField('lowBalanceAlert', v)}
+              onValueChange={(v) => updateField('lowBalanceAlert', v)}
               trackColor={{ false: Colors.gray[300], true: Colors.primary[600] + '80' }}
               thumbColor={settings.lowBalanceAlert ? Colors.primary[600] : '#f4f3f4'}
             />
@@ -173,7 +174,7 @@ function WalletSettingsPage() {
               <SettingInput
                 label="Alert when balance below"
                 value={String(settings.lowBalanceThreshold)}
-                onChangeText={v => updateField('lowBalanceThreshold', Number(v) || 0)}
+                onChangeText={(v) => updateField('lowBalanceThreshold', Number(v) || 0)}
                 suffix={BRAND.CURRENCY_CODE}
               />
             </View>

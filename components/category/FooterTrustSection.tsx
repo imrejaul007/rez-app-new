@@ -60,6 +60,7 @@ const FooterTrustSection: React.FC<FooterTrustSectionProps> = ({
       }
     };
     fetchCoins();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loyaltyRoute = categorySlug

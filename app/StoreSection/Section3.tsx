@@ -46,6 +46,7 @@ export default memo(function Section3({ productPrice = 1000, storeId }: Section3
 
   useEffect(() => {
     fetchDiscounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productPrice, storeId]);
 
   const fetchDiscounts = async () => {

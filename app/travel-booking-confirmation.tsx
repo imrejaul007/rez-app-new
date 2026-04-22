@@ -56,6 +56,7 @@ function TravelBookingConfirmationPage() {
       setError('Booking ID not provided');
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingId]);
 
   useEffect(() => {
@@ -64,6 +65,7 @@ function TravelBookingConfirmationPage() {
       successAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
       contentAnim.value = withTiming(1, { duration: 300 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [booking]);
 
   const loadBookingDetails = async () => {

@@ -166,6 +166,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(
       fadeAnim.value = withDelay(index * 40, withTiming(1, { duration: 300 }));
       scaleAnim.value = withDelay(index * 40, withSpring(1));
       
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [index]);
 
     const handlePressIn = () => {
@@ -236,6 +237,7 @@ const SkeletonItem: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -264,6 +266,7 @@ const CategoryFilterRow: React.FC<CategoryFilterRowProps> = ({
 
   useEffect(() => {
     headerFadeAnim.value = withTiming(1, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Use passed categories, or fallback to defaults

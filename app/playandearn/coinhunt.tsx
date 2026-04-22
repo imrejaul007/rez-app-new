@@ -85,6 +85,7 @@ const AnimatedCoin: React.FC<{ coin: Coin; onCatch: () => void }> = ({ coin, onC
       scaleAnim.value = 0;
       pulseAnim.value = 1;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const bgColors: [string, string] =
@@ -124,6 +125,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as any);
@@ -185,6 +187,7 @@ const CoinHunt = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -199,6 +202,7 @@ const CoinHunt = () => {
     } else if (timeLeft === 0 && gameState === 'playing') {
       endGame();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState, timeLeft]);
 
   const endGame = async () => {

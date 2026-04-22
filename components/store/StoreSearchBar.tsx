@@ -90,6 +90,7 @@ const StoreSearchBar: React.FC<StoreSearchBarProps> = ({
         clearTimeout(searchTimeoutRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   const performSearch = async (searchQuery: string) => {

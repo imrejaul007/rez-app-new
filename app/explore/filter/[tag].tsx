@@ -25,12 +25,45 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width } = Dimensions.get('window');
 
 // Tag metadata for display
-const tagMeta: Record<string, { label: string; emoji: string; description: string; color: string; gradient: [string, string] }> = {
-  halal: { label: 'Halal', emoji: '☪️', description: 'Halal certified stores & services', color: colors.successScale[700], gradient: [colors.successScale[700], '#047857'] },
-  vegan: { label: 'Vegan', emoji: '🌱', description: 'Vegan-friendly stores & products', color: colors.brand.greenDark, gradient: [colors.brand.greenDark, colors.successScale[700]] },
-  veg: { label: 'Vegetarian', emoji: '🥗', description: 'Vegetarian-friendly stores', color: '#65A30D', gradient: ['#65A30D', '#4D7C0F'] },
-  adult: { label: 'Adult', emoji: '🔞', description: '18+ stores & services', color: colors.error, gradient: [colors.error, colors.errorScale[700]] },
-  occasion: { label: 'Occasion', emoji: '🎉', description: 'Gifts, events & celebrations', color: colors.warningScale[700], gradient: [colors.warningScale[700], colors.brand.amberDeep] },
+const tagMeta: Record<
+  string,
+  { label: string; emoji: string; description: string; color: string; gradient: [string, string] }
+> = {
+  halal: {
+    label: 'Halal',
+    emoji: '☪️',
+    description: 'Halal certified stores & services',
+    color: colors.successScale[700],
+    gradient: [colors.successScale[700], '#047857'],
+  },
+  vegan: {
+    label: 'Vegan',
+    emoji: '🌱',
+    description: 'Vegan-friendly stores & products',
+    color: colors.brand.greenDark,
+    gradient: [colors.brand.greenDark, colors.successScale[700]],
+  },
+  veg: {
+    label: 'Vegetarian',
+    emoji: '🥗',
+    description: 'Vegetarian-friendly stores',
+    color: '#65A30D',
+    gradient: ['#65A30D', '#4D7C0F'],
+  },
+  adult: {
+    label: 'Adult',
+    emoji: '🔞',
+    description: '18+ stores & services',
+    color: colors.error,
+    gradient: [colors.error, colors.errorScale[700]],
+  },
+  occasion: {
+    label: 'Occasion',
+    emoji: '🎉',
+    description: 'Gifts, events & celebrations',
+    color: colors.warningScale[700],
+    gradient: [colors.warningScale[700], colors.brand.amberDeep],
+  },
 };
 
 const filterChips = [
@@ -45,7 +78,13 @@ const TagFilterPage = () => {
   const router = useRouter();
   const { tag } = useLocalSearchParams();
   const tagId = tag as string;
-  const meta = tagMeta[tagId] || { label: tagId, emoji: '🏷️', description: 'Browse stores', color: colors.nileBlue, gradient: [colors.nileBlue, '#2d5a7b'] as [string, string] };
+  const meta = tagMeta[tagId] || {
+    label: tagId,
+    emoji: '🏷️',
+    description: 'Browse stores',
+    color: colors.nileBlue,
+    gradient: [colors.nileBlue, '#2d5a7b'] as [string, string],
+  };
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -53,47 +92,51 @@ const TagFilterPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [stores, setStores] = useState<ExploreStore[]>([]);
 
-  const fetchStores = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
-
-      const response = await exploreApi.getStoresByTag(tagId, { limit: 30 });
-
-      if (response.success && response.data) {
-        let fetchedStores = response.data.stores || [];
-
-        // Apply local sorting
-        if (selectedFilter === 'topRated') {
-          fetchedStores = [...fetchedStores].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        } else if (selectedFilter === 'highCashback') {
-          fetchedStores = [...fetchedStores].sort((a, b) => {
-            const aRate = parseInt(a.cashback?.replace('%', '') || '0');
-            const bRate = parseInt(b.cashback?.replace('%', '') || '0');
-            return bRate - aRate;
-          });
+  const fetchStores = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
         }
+        setError(null);
 
+        const response = await exploreApi.getStoresByTag(tagId, { limit: 30 });
+
+        if (response.success && response.data) {
+          let fetchedStores = response.data.stores || [];
+
+          // Apply local sorting
+          if (selectedFilter === 'topRated') {
+            fetchedStores = [...fetchedStores].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          } else if (selectedFilter === 'highCashback') {
+            fetchedStores = [...fetchedStores].sort((a, b) => {
+              const aRate = parseInt(a.cashback?.replace('%', '') || '0');
+              const bRate = parseInt(b.cashback?.replace('%', '') || '0');
+              return bRate - aRate;
+            });
+          }
+
+          if (!isMounted()) return;
+          setStores(fetchedStores);
+        } else {
+          if (!isMounted()) return;
+          setError(response.error || 'Failed to fetch stores');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setStores(fetchedStores);
-      } else {
+        setError(err.message || 'Something went wrong');
+      } finally {
         if (!isMounted()) return;
-        setError(response.error || 'Failed to fetch stores');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [tagId, selectedFilter]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [tagId, selectedFilter],
+  );
 
   useEffect(() => {
     fetchStores();
@@ -122,7 +165,7 @@ const TagFilterPage = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
@@ -130,19 +173,13 @@ const TagFilterPage = () => {
             <Text style={styles.headerEmoji}>{meta.emoji}</Text>
             <Text style={styles.headerTitle}>{meta.label}</Text>
           </View>
-          <Pressable
-            style={styles.searchButton}
-            onPress={() => navigateTo('/explore/search')}
-          >
+          <Pressable style={styles.searchButton} onPress={() => navigateTo('/explore/search')}>
             <Ionicons name="search" size={22} color={colors.nileBlue} />
           </Pressable>
         </View>
 
         {/* Hero Banner */}
-        <LinearGradient
-          colors={meta.gradient}
-          style={styles.heroBanner}
-        >
+        <LinearGradient colors={meta.gradient} style={styles.heroBanner}>
           <Text style={styles.heroEmoji}>{meta.emoji}</Text>
           <Text style={styles.heroTitle}>{meta.label}</Text>
           <Text style={styles.heroDescription}>{meta.description}</Text>
@@ -179,12 +216,7 @@ const TagFilterPage = () => {
               ]}
               onPress={() => setSelectedFilter(filter.id)}
             >
-              <Text
-                style={[
-                  styles.filterLabel,
-                  selectedFilter === filter.id && styles.filterLabelActive,
-                ]}
-              >
+              <Text style={[styles.filterLabel, selectedFilter === filter.id && styles.filterLabelActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -203,14 +235,10 @@ const TagFilterPage = () => {
           style={styles.storesList}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.storesContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[meta.color]} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[meta.color]} />}
         >
           {/* Loading */}
-          {loading && !refreshing && (
-            <CardGridSkeleton />
-          )}
+          {loading && !refreshing && <CardGridSkeleton />}
 
           {/* Error */}
           {error && !loading && (
@@ -231,93 +259,94 @@ const TagFilterPage = () => {
               <Text style={styles.emptySubtext}>
                 We're working on bringing more {meta.label.toLowerCase()} options near you. Check back soon!
               </Text>
-              <Pressable style={[styles.emptyButton, { backgroundColor: meta.color }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+              <Pressable
+                style={[styles.emptyButton, { backgroundColor: meta.color }]}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              >
                 <Text style={styles.emptyButtonText}>Explore Other Options</Text>
               </Pressable>
             </View>
           )}
 
           {/* Store Cards */}
-          {!loading && !error && stores.map((store) => (
-            <Pressable
-              key={store.id}
-              style={styles.storeCard}
-              onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-            >
-              {store.image ? (
-                <CachedImage source={store.image} style={styles.storeImage} />
-              ) : store.logo ? (
-                <CachedImage source={store.logo} style={styles.storeImage} />
-              ) : (
-                <View style={[styles.storeImage, styles.storeImagePlaceholder, { backgroundColor: meta.color }]}>
-                  <Text style={styles.storeInitial}>{store.name?.charAt(0) || 'S'}</Text>
-                </View>
-              )}
-
-              <View style={styles.storeContent}>
-                <View style={styles.storeNameRow}>
-                  <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-                  {store.isVerified && (
-                    <Ionicons name="checkmark-circle" size={16} color={meta.color} />
-                  )}
-                </View>
-
-                {store.rating != null && store.rating > 0 && (
-                  <View style={styles.ratingRow}>
-                    <Ionicons name="star" size={14} color={Colors.warning} />
-                    <Text style={styles.ratingText}>{store.rating}</Text>
-                    {store.reviews != null && store.reviews > 0 && (
-                      <Text style={styles.reviewsText}>({store.reviews})</Text>
-                    )}
-                  </View>
-                )}
-
-                {(store.offer || store.cashback) && (
-                  <View style={styles.offerBadge}>
-                    <Ionicons name="pricetag" size={12} color={colors.brand.amberDark} />
-                    <Text style={styles.offerText}>{store.offer || `${store.cashback} Cashback`}</Text>
-                  </View>
-                )}
-
-                <View style={styles.storeFooter}>
-                  {store.distance && (
-                    <View style={styles.infoItem}>
-                      <Ionicons name="location" size={13} color={colors.text.tertiary} />
-                      <Text style={styles.infoText}>{store.distance}</Text>
-                    </View>
-                  )}
-                  {store.isOpen != null && (
-                    <View style={styles.infoItem}>
-                      <View style={[styles.statusDot, { backgroundColor: store.isOpen ? Colors.success : Colors.error }]} />
-                      <Text style={[styles.infoText, { color: store.isOpen ? Colors.success : Colors.error }]}>
-                        {store.isOpen ? 'Open' : 'Closed'}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-
+          {!loading &&
+            !error &&
+            stores.map((store) => (
               <Pressable
-                style={[styles.visitButton, { backgroundColor: meta.color }]}
+                key={store.id}
+                style={styles.storeCard}
                 onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
               >
-                <Text style={styles.visitText}>Visit</Text>
+                {store.image ? (
+                  <CachedImage source={store.image} style={styles.storeImage} />
+                ) : store.logo ? (
+                  <CachedImage source={store.logo} style={styles.storeImage} />
+                ) : (
+                  <View style={[styles.storeImage, styles.storeImagePlaceholder, { backgroundColor: meta.color }]}>
+                    <Text style={styles.storeInitial}>{store.name?.charAt(0) || 'S'}</Text>
+                  </View>
+                )}
+
+                <View style={styles.storeContent}>
+                  <View style={styles.storeNameRow}>
+                    <Text style={styles.storeName} numberOfLines={1}>
+                      {store.name}
+                    </Text>
+                    {store.isVerified && <Ionicons name="checkmark-circle" size={16} color={meta.color} />}
+                  </View>
+
+                  {store.rating != null && store.rating > 0 && (
+                    <View style={styles.ratingRow}>
+                      <Ionicons name="star" size={14} color={Colors.warning} />
+                      <Text style={styles.ratingText}>{store.rating}</Text>
+                      {store.reviews != null && store.reviews > 0 && (
+                        <Text style={styles.reviewsText}>({store.reviews})</Text>
+                      )}
+                    </View>
+                  )}
+
+                  {(store.offer || store.cashback) && (
+                    <View style={styles.offerBadge}>
+                      <Ionicons name="pricetag" size={12} color={colors.brand.amberDark} />
+                      <Text style={styles.offerText}>{store.offer || `${store.cashback} Cashback`}</Text>
+                    </View>
+                  )}
+
+                  <View style={styles.storeFooter}>
+                    {store.distance && (
+                      <View style={styles.infoItem}>
+                        <Ionicons name="location" size={13} color={colors.text.tertiary} />
+                        <Text style={styles.infoText}>{store.distance}</Text>
+                      </View>
+                    )}
+                    {store.isOpen != null && (
+                      <View style={styles.infoItem}>
+                        <View
+                          style={[styles.statusDot, { backgroundColor: store.isOpen ? Colors.success : Colors.error }]}
+                        />
+                        <Text style={[styles.infoText, { color: store.isOpen ? Colors.success : Colors.error }]}>
+                          {store.isOpen ? 'Open' : 'Closed'}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+
+                <Pressable
+                  style={[styles.visitButton, { backgroundColor: meta.color }]}
+                  onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
+                >
+                  <Text style={styles.visitText}>Visit</Text>
+                </Pressable>
               </Pressable>
-            </Pressable>
-          ))}
+            ))}
 
           <View style={{ height: 100 }} />
         </ScrollView>
 
         {/* Floating Map Button */}
-        <Pressable
-          style={styles.mapButton}
-          onPress={() => navigateTo('/explore/map')}
-        >
-          <LinearGradient
-            colors={[meta.color, colors.nileBlue]}
-            style={styles.mapButtonGradient}
-          >
+        <Pressable style={styles.mapButton} onPress={() => navigateTo('/explore/map')}>
+          <LinearGradient colors={[meta.color, colors.nileBlue]} style={styles.mapButtonGradient}>
             <Ionicons name="map" size={20} color={colors.text.inverse} />
             <Text style={styles.mapButtonText}>Map View</Text>
           </LinearGradient>

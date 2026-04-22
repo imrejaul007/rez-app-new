@@ -383,6 +383,7 @@ const MissionsScreen: React.FC = () => {
       if (!isMounted()) return;
       if (isRefresh) setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

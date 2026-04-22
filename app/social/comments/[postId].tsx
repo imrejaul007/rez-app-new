@@ -125,6 +125,7 @@ function CommentsPage() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [videoId, authLoading, isAuthenticated, isMounted],
   );
 
@@ -205,6 +206,7 @@ function CommentsPage() {
         );
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [videoId],
   );
 
@@ -263,6 +265,7 @@ function CommentsPage() {
       if (!isMounted()) return;
       setSending(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newComment, videoId, sending, replyingTo, user]);
 
   const renderComment = useCallback(

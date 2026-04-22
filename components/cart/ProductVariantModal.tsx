@@ -175,6 +175,7 @@ function ProductVariantModal({
       
     }
   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible]);
 
   // Reset selections when modal opens

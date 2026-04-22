@@ -107,6 +107,7 @@ const ExclusiveOffersSection: React.FC<ExclusiveOffersSectionProps> = ({
     };
 
     fetchOffers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, offers]);
 
   const displayOffers = offers || apiOffers;

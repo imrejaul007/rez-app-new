@@ -102,6 +102,7 @@ function ProfileMenuModal({
       slideAnim.value = withTiming(MODAL_WIDTH, { duration: 250 });
       fadeAnim.value = withTiming(0, { duration: 200 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const mainBackdropStyle = useAnimatedStyle(() => ({

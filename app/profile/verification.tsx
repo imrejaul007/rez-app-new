@@ -174,6 +174,7 @@ function VerificationPage() {
 
   useEffect(() => {
     checkExistingStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zone]);
 
   const checkExistingStatus = async () => {

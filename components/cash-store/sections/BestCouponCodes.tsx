@@ -47,6 +47,7 @@ const CouponCard: React.FC<{
     // Staggered entry animation
     fadeAnim.value = withDelay(index * 80, withTiming(1, { duration: 400 }));
     scaleAnim.value = withDelay(index * 80, withSpring(1));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const handleCopy = () => {
@@ -212,6 +213,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -250,6 +252,7 @@ const BestCouponCodes: React.FC<BestCouponCodesProps> = ({
     // Shield pulse animation
     shieldPulseAnim.value = withRepeat(withSequence(withTiming(1.1, { duration: 600 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const renderCouponItem = useCallback(({ item, index }: { item: unknown; index: number }) =>

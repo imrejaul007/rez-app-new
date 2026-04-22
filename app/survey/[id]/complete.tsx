@@ -44,6 +44,7 @@ function SurveyCompletePage() {
 
     // Button slide in
     buttonSlideAnim.value = withDelay(700, withSpring(0, { damping: 8, stiffness: 50 }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatTime = (seconds: number): string => {

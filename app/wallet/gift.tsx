@@ -132,6 +132,7 @@ function GiftPage() {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Debounced recipient validation
@@ -167,6 +168,7 @@ function GiftPage() {
         }
       }
     }, 600);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleQuickAmount = (quickAmount: number) => {
@@ -208,15 +210,9 @@ function GiftPage() {
     if (biometricAvailable && biometricEnrolled) {
       authenticated = await authenticateWithBiometric();
     } else if (canPromptTransactionPin()) {
-      authenticated = await promptTransactionPin(
-        'Confirm Gift',
-        'Enter your 4-digit PIN to authorise this gift.',
-      );
+      authenticated = await promptTransactionPin('Confirm Gift', 'Enter your 4-digit PIN to authorise this gift.');
     } else {
-      platformAlertSimple(
-        'Authentication Required',
-        'Please enable biometric authentication to send gifts.',
-      );
+      platformAlertSimple('Authentication Required', 'Please enable biometric authentication to send gifts.');
       return;
     }
     if (!authenticated) {

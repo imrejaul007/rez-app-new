@@ -53,6 +53,7 @@ function ContactStoreModal({
     if (visible && storeId) {
       loadStoreAvailability();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, storeId]);
 
   const loadStoreAvailability = async () => {

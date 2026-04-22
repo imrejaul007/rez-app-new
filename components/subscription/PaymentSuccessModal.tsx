@@ -52,6 +52,7 @@ function PaymentSuccessModal({
       scaleAnim.value = 0;
       fadeAnim.value = 0;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const scaleAnimatedStyle = useAnimatedStyle(() => ({

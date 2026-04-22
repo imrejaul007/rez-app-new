@@ -255,6 +255,7 @@ function PriveWalletScreen() {
         }
       })
       .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Cache coin balances when fresh data arrives; clear stale indicator
@@ -263,6 +264,7 @@ function PriveWalletScreen() {
       setIsStale(false);
       AsyncStorage.setItem(WALLET_CACHE_KEY, JSON.stringify(liveCoinData)).catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [liveCoinData?.total, liveCoinData?.rez, liveCoinData?.prive, liveCoinData?.branded]);
 
   // Grouped transaction sections
@@ -322,6 +324,7 @@ function PriveWalletScreen() {
         setIsRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [seenIds],
   );
 

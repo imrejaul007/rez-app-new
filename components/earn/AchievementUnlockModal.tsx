@@ -186,6 +186,7 @@ const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
       if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
       if (closeAnimTimer.current) clearTimeout(closeAnimTimer.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, achievement, handleClose]);
 
   const handleClaim = useCallback(() => {

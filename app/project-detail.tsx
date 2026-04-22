@@ -119,6 +119,7 @@ function ProjectDetailPage() {
 
   useEffect(() => {
     loadProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // Auto-open form if requested and project is loaded

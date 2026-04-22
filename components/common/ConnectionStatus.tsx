@@ -17,6 +17,7 @@ function ConnectionStatus() {
       } else {
       pulseAnim.value = 1;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.reconnecting]);
 
   // Don't show anything if connected

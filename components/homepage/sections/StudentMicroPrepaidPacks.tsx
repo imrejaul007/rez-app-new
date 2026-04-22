@@ -100,6 +100,7 @@ const StudentMicroPrepaidPacks: React.FC = () => {
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePackPress = (pack: StudentMicroPack) => {

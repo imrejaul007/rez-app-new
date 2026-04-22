@@ -71,6 +71,7 @@ export function usePushNotifications() {
       subscription.remove();
       pushNotificationService.cleanup();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disableWebDevPush, isAuthenticated, user]);
 
   const initializePushNotifications = async () => {

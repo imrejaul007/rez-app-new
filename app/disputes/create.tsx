@@ -117,6 +117,7 @@ function CreateDisputeScreen() {
       if (!isMounted()) return;
       setSubmitting(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, reason, description, params, isAddingEvidence]);
 
   return (

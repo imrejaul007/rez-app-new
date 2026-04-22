@@ -456,6 +456,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
         refetchTimeoutRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewStats?.totalReviews, reviewStats?.averageRating]);
 
   // Review action handlers
@@ -586,6 +587,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
       storeId: storeIdParam || "store-001",
       category: "Fashion",
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialProduct, productId, isDynamic, storeData, currencySymbol]);
 
   // Fetch user visits data
@@ -724,6 +726,7 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
     } finally {
       setRefreshing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-dismiss error

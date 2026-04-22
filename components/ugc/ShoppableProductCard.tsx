@@ -110,6 +110,7 @@ function ShoppableProductCard({
       if (!isMounted()) return;
       setIsAdding(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onAddToCart, isInStock, scaleAnim]);
 
   /**

@@ -68,6 +68,7 @@ const MerchantSelector: React.FC<MerchantSelectorProps> = ({
     }, 300);
 
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   // Extract unique categories from merchants

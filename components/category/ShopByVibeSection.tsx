@@ -97,6 +97,7 @@ const ShopByVibeSection: React.FC<ShopByVibeSectionProps> = ({
     };
 
     fetchVibes();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, vibes]);
 
   const displayVibes = vibes || apiVibes;

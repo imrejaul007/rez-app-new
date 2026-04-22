@@ -349,6 +349,7 @@ function WishlistPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -406,6 +407,7 @@ function WishlistPage() {
       if (!isMounted()) return;
       setIsCreating(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newWishlistName, newWishlistDescription, fetchWishlists]);
 
   const handleWishlistPress = useCallback((wishlist: WishlistData) => {
@@ -806,6 +808,7 @@ function WishlistPage() {
         </View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleWishlistPress, handleDeleteWishlist, renderWishlistItem, handleItemPress, handleRemoveItem, currencySymbol],
   );
 

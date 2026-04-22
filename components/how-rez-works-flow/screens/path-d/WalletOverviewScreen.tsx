@@ -60,6 +60,7 @@ const WalletOverviewScreen: React.FC<Props> = ({ onNavigate, onBack }) => {
             withSpring(1.1, { damping: 8 }),
             withSpring(1, { damping: 12 })
         );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const walletStyle = useAnimatedStyle(() => ({

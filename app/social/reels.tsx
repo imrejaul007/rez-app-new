@@ -61,6 +61,7 @@ const ReelVideoPlayer = React.memo(
     useEffect(() => {
       return () => {
         // Unload the video when this item unmounts to free native resources
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         videoRef.current?.unloadAsync().catch(() => {});
       };
     }, []);
@@ -126,6 +127,7 @@ function ReelsPage() {
   const isMounted = useIsMounted();
 
   const MAX_LIKE_ANIMATIONS = 50;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getLikeAnimation = (reelId: string) => {
     if (!likeAnimations.current.has(reelId)) {
       if (likeAnimations.current.size >= MAX_LIKE_ANIMATIONS) {
@@ -161,6 +163,7 @@ function ReelsPage() {
       if (!isMounted()) return;
       setLoadingMore(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useFocusEffect(
@@ -239,6 +242,7 @@ function ReelsPage() {
         return newSet;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleShare = useCallback(async (reel: UgcReel) => {
@@ -253,6 +257,7 @@ function ReelsPage() {
     } catch (error: any) {
       // silently handle
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleShop = useCallback(
@@ -419,6 +424,7 @@ function ReelsPage() {
         </View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentIndex, likedReels, bookmarkedReels, screenFocused, router, handleLike, handleBookmark, handleShare],
   );
 

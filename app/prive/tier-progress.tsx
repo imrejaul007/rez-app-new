@@ -89,6 +89,7 @@ const ShimmerSkeleton = () => {
       withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
       -1,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const opacity = interpolate(shimmerAnim.value, [0, 1], [0.3, 0.7]);
@@ -150,6 +151,7 @@ const TierProgressBar = React.memo(({ score, nextTierThreshold }: { score: numbe
 
   useEffect(() => {
     widthAnim.value = withTiming(score, { duration: 1000 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [score]);
 
   const width = (interpolate as any)(widthAnim.value, [0, maxScore], ['0%', '100%']);
@@ -240,6 +242,7 @@ const HeroSection = React.memo(
     useEffect(() => {
       countAnim.value = 0;
       countAnim.value = withTiming(score, { duration: 1200 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [score]);
 
     useAnimatedReaction(
@@ -385,6 +388,7 @@ function TierProgressScreen() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   // Find the weakest pillar for contextual suggestion

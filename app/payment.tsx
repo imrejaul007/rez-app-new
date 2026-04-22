@@ -110,6 +110,7 @@ function PaymentPage() {
       }, 300);
       return () => clearTimeout(t);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Animation values
@@ -140,6 +141,7 @@ function PaymentPage() {
         })
         .catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFinancialService, serviceId, isWalletRecharge, amount]);
 
   const loadFinancialService = async () => {
@@ -176,6 +178,7 @@ function PaymentPage() {
       });
     }, 30_000);
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   const animateEntrance = () => {

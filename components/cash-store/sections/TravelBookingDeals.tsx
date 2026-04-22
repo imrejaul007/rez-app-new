@@ -104,6 +104,7 @@ const TravelCard: React.FC<{
     // Gentle floating icon animation
     iconFloatAnim.value = withRepeat(withSequence(withTiming(-3, { duration: 1800 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   const handlePressIn = () => {
@@ -190,6 +191,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -227,6 +229,7 @@ const TravelBookingDeals: React.FC<TravelBookingDealsProps> = ({
     // Bouncing airplane
     planeAnim.value = withRepeat(withSequence(withTiming(5, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   // Hide section when no deals and not loading

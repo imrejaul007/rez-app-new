@@ -74,6 +74,7 @@ function BonusZonePage() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regionState?.currentRegion]);
 
   useEffect(() => {

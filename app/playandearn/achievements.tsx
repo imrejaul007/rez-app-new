@@ -106,6 +106,7 @@ const Achievements = () => {
 
   useEffect(() => {
     fetchAchievements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredAchievements =

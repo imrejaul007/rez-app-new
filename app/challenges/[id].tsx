@@ -93,6 +93,7 @@ function ChallengeDetailPage() {
     if (isAuthenticated && id) {
       loadChallengeDetail();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, id]);
 
   // Refresh data when navigating back to this screen
@@ -106,6 +107,7 @@ function ChallengeDetailPage() {
       if (isAuthenticated && id) {
         loadChallengeDetail();
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, id]),
   );
 
@@ -134,6 +136,7 @@ function ChallengeDetailPage() {
         pulseAnim.value = 1;
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.userProgress?.completed, data?.userProgress?.rewardsClaimed]);
 
   const loadChallengeDetail = async () => {

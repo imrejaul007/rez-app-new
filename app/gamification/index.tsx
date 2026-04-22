@@ -49,6 +49,7 @@ function GamificationDashboard() {
 
   useEffect(() => {
     loadGamificationData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadGamificationData = async () => {

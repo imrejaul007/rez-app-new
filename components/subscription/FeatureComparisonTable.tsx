@@ -65,6 +65,7 @@ function FeatureComparisonTable({
     rowAnims.forEach((anim, i) => {
       anim.value = withDelay(i * 50, withTiming(1, { duration: 300 }));
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderCheckIcon = (hasFeature: boolean, tier?: SubscriptionTier) => {

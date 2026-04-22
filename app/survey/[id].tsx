@@ -65,6 +65,7 @@ function SurveyDetailPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const isMounted = useIsMounted();
 

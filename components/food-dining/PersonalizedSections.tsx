@@ -144,6 +144,7 @@ const PersonalizedSections: React.FC = () => {
     } catch {
       // Silent fail
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchNearby = useCallback(async () => {
@@ -162,6 +163,7 @@ const PersonalizedSections: React.FC = () => {
       if (!isMounted()) return;
       setIsLoadingNearby(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latitude, longitude]);
 
   useEffect(() => { fetchLocalData(); }, [fetchLocalData]);

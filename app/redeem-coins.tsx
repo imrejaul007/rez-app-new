@@ -143,6 +143,7 @@ export default function RedeemCoinsScreen() {
     } finally {
       setSubmitting(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canSubmit, submitting, parsedCoins]);
 
   // ── Success view ──────────────────────────────────────────────────────────

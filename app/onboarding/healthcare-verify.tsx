@@ -97,6 +97,7 @@ function HealthcareVerifyPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profession, documentType, setIdentity, router]);
 
   return (

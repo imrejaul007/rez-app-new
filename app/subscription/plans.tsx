@@ -99,6 +99,7 @@ function SubscriptionPlansPage() {
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 500 });
     slideAnim.value = withSpring(0, { damping: 8, stiffness: 50 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Safe navigation function for web compatibility

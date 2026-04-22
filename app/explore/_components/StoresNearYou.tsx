@@ -82,6 +82,7 @@ const StoresNearYou = () => {
     if (!isLocationLoading) {
       fetchNearbyStores();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation, isLocationLoading]);
 
   const navigateTo = (path: string) => {

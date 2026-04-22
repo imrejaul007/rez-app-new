@@ -237,6 +237,7 @@ function EarningOpportunities() {
 
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 600 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOpportunityPress = useCallback((opportunity: EarningOpportunity) => {

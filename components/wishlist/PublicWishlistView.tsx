@@ -56,6 +56,7 @@ function PublicWishlistView({
   useEffect(() => {
     loadWishlist();
     loadReservations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareCode]);
 
   const loadWishlist = useCallback(async () => {
@@ -79,6 +80,7 @@ function PublicWishlistView({
       setIsLoading(false);
       setIsRefreshing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareCode]);
 
   const loadReservations = useCallback(async () => {
@@ -91,6 +93,7 @@ function PublicWishlistView({
     } catch (err: any) {
       // silently handle
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareCode]);
 
   const handleRefresh = useCallback(() => {
@@ -119,6 +122,7 @@ function PublicWishlistView({
     } catch (err: any) {
       platformAlertSimple('Error', 'Failed to like wishlist');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareCode, isLiked, wishlist]);
 
   const handleComment = useCallback(async () => {
@@ -146,6 +150,7 @@ function PublicWishlistView({
       if (!isMounted()) return;
       setIsPosting(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareCode, comment, wishlist]);
 
   const handleReserveGift = useCallback(
@@ -164,6 +169,7 @@ function PublicWishlistView({
         platformAlertSimple('Error', 'Failed to reserve gift');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [shareCode, reservations]
   );
 

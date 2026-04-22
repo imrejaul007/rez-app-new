@@ -75,6 +75,7 @@ function ReferralQRModal({
       fadeAnim.value = withTiming(0, { duration: 200 });
       slideAnim.value = withTiming(300, { duration: 200 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   // Handle QR code download

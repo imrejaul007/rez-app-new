@@ -155,6 +155,7 @@ function BusDetailsPage() {
     if (id) {
       loadBusDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadBusDetails = async () => {

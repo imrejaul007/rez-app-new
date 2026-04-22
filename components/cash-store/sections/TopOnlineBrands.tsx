@@ -45,6 +45,7 @@ const BrandCard: React.FC<{
     fadeAnim.value = withDelay(index * 60, withTiming(1, { duration: 350 }));
       scaleAnim.value = withDelay(index * 60, withSpring(1));
     
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [index]);
 
   const handlePressIn = () => {
@@ -141,6 +142,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -230,6 +232,7 @@ const TopOnlineBrands: React.FC<TopOnlineBrandsProps> = ({
 
   useEffect(() => {
     headerFadeAnim.value = withTiming(1, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasActiveFilter = activeFilter && activeFilter !== 'all';

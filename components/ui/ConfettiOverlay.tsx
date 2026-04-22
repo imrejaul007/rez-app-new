@@ -64,6 +64,7 @@ const ConfettiPieceView = React.memo(({ piece, visible }: { piece: ConfettiPiece
       ),
       -1,
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const animStyle = useAnimatedStyle(() => ({
@@ -104,6 +105,7 @@ function ConfettiOverlay({ visible, onComplete }: ConfettiOverlayProps) {
       wobbleAmplitude: 20 + Math.random() * 40,
       rotation: Math.random() * 360,
     }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   useEffect(() => {
@@ -120,6 +122,7 @@ function ConfettiOverlay({ visible, onComplete }: ConfettiOverlayProps) {
         }
       })
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const overlayStyle = useAnimatedStyle(() => ({

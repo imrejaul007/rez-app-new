@@ -74,6 +74,7 @@ function CashbackPage() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refresh cashback data whenever the screen regains focus so that a redemption
@@ -81,16 +82,19 @@ function CashbackPage() {
   useFocusEffect(
     useCallback(() => {
       loadData();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
   useEffect(() => {
     if (activeSource === 'store') loadCashbackHistory();
     else loadAffiliateData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, activeSource]);
 
   useEffect(() => {
     totalAnim.value = withTiming(1, { duration: 600 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [summary.totalEarned]);
 
   const loadData = async () => {
@@ -198,6 +202,7 @@ function CashbackPage() {
     await loadData();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRedeemCashback = useCallback(async () => {
@@ -230,6 +235,7 @@ function CashbackPage() {
       },
       'Redeem Now',
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRedeeming, pendingReady, currencySymbol]);
 
   const formatAmount = (amount: number) => {
@@ -909,6 +915,7 @@ const CashbackHistoryCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 250 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     return (

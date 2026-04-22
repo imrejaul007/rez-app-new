@@ -107,6 +107,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
       // warnings (and potential crashes on some Reanimated versions) after unmount.
       cancelAnimation(scanLineAnim);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBarCodeScanned = (result: BarcodeScanningResult) => {

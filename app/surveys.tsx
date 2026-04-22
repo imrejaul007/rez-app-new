@@ -98,6 +98,7 @@ function SurveysPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeCategory],
   );
   const isMounted = useIsMounted();
@@ -105,11 +106,13 @@ function SurveysPage() {
   // Initial load
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Reload when category changes
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCategory]);
 
   // Pull to refresh

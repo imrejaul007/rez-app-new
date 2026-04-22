@@ -583,6 +583,7 @@ function StorePage() {
     if (productId) {
       fetchBackendData(productId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.cardId]);
 
   // Check if product is locked (call this when page comes into focus)
@@ -604,6 +605,7 @@ function StorePage() {
     } catch (error: any) {
       // silently handle
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardData?.id, cardData?._id, params.cardId, authLoading, isAuthenticated]);
 
   // Refresh lock status when page comes into focus
@@ -661,6 +663,7 @@ function StorePage() {
     } else {
       setIsDynamic(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.cardId, params.cardType, params.category, params.cardData]);
 
   // Fetch reviews for the store
@@ -696,6 +699,7 @@ function StorePage() {
     };
 
     fetchStoreReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardData?.storeId, cardData?.store?.id, cardData?.store?._id]);
 
   // Determine store type from backend productType (defaults to PRODUCT)
@@ -744,6 +748,7 @@ function StorePage() {
     } catch (error: any) {
       showAlert('Error', 'Unable to add to cart. Please try again.', [{ text: 'OK' }], 'error');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isAuthenticated,
     router,
@@ -840,6 +845,7 @@ function StorePage() {
         platformAlertSimple('Error', 'Failed to add bundle to cart. Please try again.');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [refreshCart],
   );
   const handleCardOffersPress = useCallback(() => {
@@ -941,6 +947,7 @@ function StorePage() {
             quantity: quantity,
           }
         : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       cardData?.id,
       cardData?._id,

@@ -92,6 +92,7 @@ const MyServicesPage = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   useEffect(() => {
@@ -188,6 +189,7 @@ const MyServicesPage = () => {
         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencySymbol],
   );
 

@@ -91,6 +91,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -150,6 +151,7 @@ const GuessPrice = () => {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startGame = async () => {

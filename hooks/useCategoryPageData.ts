@@ -284,6 +284,7 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
         image: child.image,
       };
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, categoryQuery.isError, categoryQuery.isSuccess, categorySuccess, cuisineCounts, slug]);
 
   // ---- Derive vibes, occasions, hashtags ----
@@ -466,6 +467,7 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
     );
 
     return { aiSuggestions: suggestions, aiFilterChips: filterChips, aiPlaceholders: placeholders };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vibes, occasions, hashtags, category, slug, categoryQuery.isError, categoryQuery.isSuccess, categorySuccess]);
 
   // ---- Load UGC (videos + reviews) and exclusive offers ----

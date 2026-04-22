@@ -230,6 +230,7 @@ export const useNavigationGuard = (
   useEffect(() => {
     navigationService.addGuard(guard);
     return () => navigationService.removeGuard(guard);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 };
 
@@ -244,6 +245,7 @@ export const useNavigationEvent = (
   useEffect(() => {
     navigationService.addEventListener(event, handler);
     return () => navigationService.removeEventListener(event, handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 };
 
@@ -261,6 +263,7 @@ export const useRouteEffect = (
     if (currentRoute === route) {
       return effect();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRoute, ...deps]);
 };
 

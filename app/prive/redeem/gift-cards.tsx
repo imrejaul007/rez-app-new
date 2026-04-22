@@ -49,6 +49,7 @@ function GiftCardsScreen() {
         // fallback to constants
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const computeValue = (coins: number) => Math.floor(coins * conversionRate);

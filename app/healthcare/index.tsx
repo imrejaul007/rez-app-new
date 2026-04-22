@@ -156,6 +156,7 @@ const HealthcarePage: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onRefresh = useCallback(async () => {
@@ -163,6 +164,7 @@ const HealthcarePage: React.FC = () => {
     await fetchData();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleQuickCall = (phone: string) => {

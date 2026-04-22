@@ -39,6 +39,7 @@ const FashionHeader = () => {
       stiffness: 200,
       mass: 0.8,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load user points and statistics
@@ -46,6 +47,7 @@ const FashionHeader = () => {
     if (authState.user) {
       loadUserStatistics();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState.user]);
 
   const loadUserStatistics = async () => {

@@ -35,6 +35,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
     initializeEarnSocialData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   const initializeEarnSocialData = useCallback(async () => {
@@ -183,6 +184,7 @@ export const useEarnFromSocialMedia = (orderId?: string): UseEarnSocialReturn =>
         uploadProgress: 0
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.instagramUrl, state.isValidUrl]);
 
   const resetForm = useCallback(() => {

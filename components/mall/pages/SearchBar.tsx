@@ -48,6 +48,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     if (externalValue !== undefined && externalValue !== query) {
       setQuery(externalValue);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalValue]);
 
   const handleClear = useCallback(() => {

@@ -219,6 +219,7 @@ function CampaignDetailPage() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   useEffect(() => {
@@ -234,6 +235,7 @@ function CampaignDetailPage() {
       const timer = setTimeout(() => setShowClaimSuccess(false), 5000);
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claimSuccess]);
 
   // ---- Live countdown timer ----
@@ -254,6 +256,7 @@ function CampaignDetailPage() {
     timerId = setTimeout(tick, urgentRef.current ? 1000 : 60000);
 
     return () => clearTimeout(timerId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign?.schedule.endTime]);
 
   // ---- Pull to refresh ----

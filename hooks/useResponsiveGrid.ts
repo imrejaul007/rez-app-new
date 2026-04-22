@@ -183,6 +183,7 @@ export function useResponsiveGridCustom(
     return () => {
       subscription?.remove();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gap, JSON.stringify(columnConfig)]);
 
   return config;

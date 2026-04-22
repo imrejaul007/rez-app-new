@@ -64,6 +64,7 @@ function LockConfirmPage() {
       setError('Missing payment information');
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentType, dealId, lockId]);
 
   const confirmPayment = async (attempt = 0) => {

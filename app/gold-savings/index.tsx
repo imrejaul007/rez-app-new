@@ -99,6 +99,7 @@ function GoldSavingsPage() {
       if (!isMounted()) return;
       setLoadingPrice(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch user holding
@@ -121,6 +122,7 @@ function GoldSavingsPage() {
       if (!isMounted()) return;
       setLoadingHolding(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading]);
 
   // Fetch transactions
@@ -160,6 +162,7 @@ function GoldSavingsPage() {
         setLoadingMoreTx(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, authLoading],
   );
 
@@ -179,6 +182,7 @@ function GoldSavingsPage() {
     await Promise.all([fetchPrice(), fetchHolding(), fetchTransactions(1)]);
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchPrice, fetchHolding, fetchTransactions]);
 
   const handleProceed = useCallback(() => {
@@ -225,6 +229,7 @@ function GoldSavingsPage() {
         },
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, goldPrice, pricePerGram, amount, activeTab, goldBalance, currencySymbol]);
 
   const executeBuy = async (buyAmount: number) => {

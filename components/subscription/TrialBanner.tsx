@@ -76,6 +76,7 @@ function TrialBanner({
     if (isExpired) {
       handleDismiss();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [daysRemaining]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({

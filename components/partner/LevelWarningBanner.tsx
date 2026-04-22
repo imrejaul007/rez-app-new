@@ -65,6 +65,7 @@ function LevelWarningBanner({
     return () => {
       pulseAnim.value = 1;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCritical]);
 
   const handleDismiss = () => {

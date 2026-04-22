@@ -220,6 +220,7 @@ function BeautyExperiencesPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterByCategory, selectedCategory]);
 
   useEffect(() => {
@@ -271,6 +272,7 @@ function BeautyExperiencesPage() {
       currencySymbol={currencySymbol}
       onPress={() => handleExperiencePress(item)}
     />
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   ), [currencySymbol]);
 
   // ─────────── Loading State ───────────

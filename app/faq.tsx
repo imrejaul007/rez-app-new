@@ -29,6 +29,7 @@ function FAQPage() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ function FAQPage() {
     } else if (searchQuery.length === 0) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const loadData = async () => {

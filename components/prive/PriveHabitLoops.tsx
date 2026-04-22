@@ -58,6 +58,7 @@ const SkeletonBlock: React.FC<{ width: number | string; height: number; borderRa
       ),
       -1
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shimmerStyle = useAnimatedStyle(() => ({
@@ -81,6 +82,7 @@ const AnimatedProgressBar: React.FC<{ progress: number; completed: boolean }> = 
 
   useEffect(() => {
     widthAnim.value = withTiming(progress, { duration: 600 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress]);
 
   const progressStyle = useAnimatedStyle(() => ({
@@ -106,6 +108,7 @@ const AnimatedCheckmark: React.FC = () => {
 
   useEffect(() => {
     scale.value = withSpring(1, { stiffness: 100, damping: 4 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkmarkStyle = useAnimatedStyle(() => ({

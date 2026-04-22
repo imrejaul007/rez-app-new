@@ -69,6 +69,7 @@ function NearbyProductsSection({
       setLoading(false);
       return null;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch nearby products
@@ -97,6 +98,7 @@ function NearbyProductsSection({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [radius, limit]);
 
   // Initialize: get location then fetch products

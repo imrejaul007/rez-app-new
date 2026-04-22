@@ -137,6 +137,7 @@ function BeautyCategoryPage() {
   const isMounted = useIsMounted();
 
   // Combined active filters for backward compat
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
 

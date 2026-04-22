@@ -130,6 +130,7 @@ function SponsoredCashbackPage() {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filter, currencySymbol],
   );
 
@@ -150,6 +151,7 @@ function SponsoredCashbackPage() {
     await fetchOffers(1, false);
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchOffers]);
 
   const handleLoadMore = useCallback(() => {

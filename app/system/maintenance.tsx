@@ -4,14 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Display when backend is under maintenance
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '@/services/apiClient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -25,7 +18,7 @@ function MaintenancePage() {
   const params = useLocalSearchParams();
 
   const [estimatedEndTime, setEstimatedEndTime] = useState<Date | null>(
-    params.endTime ? new Date(params.endTime as string) : new Date(Date.now() + 30 * 60 * 1000)
+    params.endTime ? new Date(params.endTime as string) : new Date(Date.now() + 30 * 60 * 1000),
   );
   const [timeRemaining, setTimeRemaining] = useState<string>('');
   const [isRetrying, setIsRetrying] = useState(false);
@@ -51,18 +44,19 @@ function MaintenancePage() {
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
       setTimeRemaining(
-        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`,
       );
     };
 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estimatedEndTime]);
 
   const handleRetry = useCallback(async () => {
     setIsRetrying(true);
-    setRetryCount(prev => prev + 1);
+    setRetryCount((prev) => prev + 1);
 
     try {
       const response = await apiClient.get('/health');
@@ -76,12 +70,13 @@ function MaintenancePage() {
       if (!isMounted()) return;
       setIsRetrying(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const handleNotifyMe = () => {
     // In production, register for push notification when maintenance ends
     // For now, just show a message
-    platformAlertSimple('Notification Set', 'We\'ll notify you when the app is back online!');
+    platformAlertSimple('Notification Set', "We'll notify you when the app is back online!");
   };
 
   return (
@@ -107,8 +102,7 @@ function MaintenancePage() {
 
         {/* Description */}
         <ThemedText style={styles.description}>
-          Our team is working hard to improve your experience.
-          We'll be back shortly!
+          Our team is working hard to improve your experience. We'll be back shortly!
         </ThemedText>
 
         {/* Countdown Timer */}

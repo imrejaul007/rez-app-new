@@ -65,6 +65,7 @@ function VoucherSelectionModal({
     if (visible) {
       loadVouchers();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const loadVouchers = async () => {

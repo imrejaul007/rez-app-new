@@ -87,6 +87,7 @@ function SplashScreen() {
       coinRotate.value = 0;
       pulseAnim.value = 1;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   // coinSpin handled by coinSpinStyle useAnimatedStyle above

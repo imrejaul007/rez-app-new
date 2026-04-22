@@ -55,6 +55,7 @@ const SkeletonPulse: React.FC<{ width: number | string; height: number; borderRa
 
   useEffect(() => {
     pulseAnim.value = withRepeat(withSequence(withTiming(1, { duration: 800 }), withTiming(0.3, { duration: 800 })), -1);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
   return (

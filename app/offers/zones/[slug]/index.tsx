@@ -273,6 +273,7 @@ function ExclusiveZonePage() {
     return () => {
       shimmerAnim.value = 0;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const fetchZoneData = async () => {

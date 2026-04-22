@@ -34,6 +34,7 @@ const RelatedBusesSection: React.FC<RelatedBusesSectionProps> = ({ currentBusId,
 
   useEffect(() => {
     loadRelatedBuses();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentBusId, route]);
 
   const loadRelatedBuses = async () => {

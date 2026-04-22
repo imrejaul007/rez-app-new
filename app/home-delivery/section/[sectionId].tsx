@@ -53,10 +53,12 @@ function SectionDetailPage() {
 
   useEffect(() => {
     loadSectionProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionId]);
 
   useEffect(() => {
     applyFiltersAndSort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, filters, sortBy]);
 
   const loadSectionProducts = async () => {

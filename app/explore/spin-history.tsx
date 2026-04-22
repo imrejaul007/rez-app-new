@@ -97,6 +97,7 @@ function SpinHistoryPage() {
       setLoadingMore(false);
       fetchingRef.current = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -149,6 +150,7 @@ function SpinHistoryPage() {
         </View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencySymbol],
   );
 

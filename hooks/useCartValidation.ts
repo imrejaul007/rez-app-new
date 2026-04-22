@@ -148,6 +148,7 @@ export function useCartValidation(
     } finally {
       isValidatingRef.current = false;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartState.items, showToastNotifications, validationState.validationResult]);
 
   /**

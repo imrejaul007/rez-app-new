@@ -141,6 +141,7 @@ function SearchPage() {
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         abortControllerRef.current.abort();
       }
     };

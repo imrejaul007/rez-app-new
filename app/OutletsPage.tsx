@@ -1,15 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Linking,
-  Platform,
-  Dimensions,
-} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Platform, Dimensions } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -38,6 +29,7 @@ function OutletsPage() {
     if (storeId) {
       fetchOutlets();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   const fetchOutlets = async () => {
@@ -109,9 +101,7 @@ function OutletsPage() {
     const today = new Date().getDay();
     const dayName = days[today];
 
-    const hours = outlet.openingHours?.find(
-      (h) => h.day.toLowerCase() === dayName
-    );
+    const hours = outlet.openingHours?.find((h) => h.day.toLowerCase() === dayName);
 
     if (!hours || hours.isClosed) return { isOpen: false, text: 'Closed today' };
 
@@ -124,7 +114,7 @@ function OutletsPage() {
       isOpen,
       text: `${hours.open} - ${hours.close}`,
       opensAt: hours.open,
-      closesAt: hours.close
+      closesAt: hours.close,
     };
   };
 
@@ -146,15 +136,13 @@ function OutletsPage() {
     >
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
         </Pressable>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>
-            {storeName ? `${storeName}` : 'Store Outlets'}
-          </Text>
+          <Text style={styles.headerTitle}>{storeName ? `${storeName}` : 'Store Outlets'}</Text>
           <Text style={styles.headerSubtitle}>
             {totalCount} {totalCount === 1 ? 'Location' : 'Locations'} Available
           </Text>
@@ -185,19 +173,22 @@ function OutletsPage() {
             </LinearGradient>
           </View>
           <View style={styles.outletHeaderInfo}>
-            <Text style={styles.outletName} numberOfLines={1}>{outlet.name}</Text>
-            <View style={[
-              styles.statusBadge,
-              { backgroundColor: hoursInfo.isOpen ? colors.tint.greenLight : colors.errorScale[50] }
-            ]}>
-              <View style={[
-                styles.statusDot,
-                { backgroundColor: hoursInfo.isOpen ? colors.successScale[400] : colors.error }
-              ]} />
-              <Text style={[
-                styles.statusText,
-                { color: hoursInfo.isOpen ? colors.successScale[400] : colors.error }
-              ]}>
+            <Text style={styles.outletName} numberOfLines={1}>
+              {outlet.name}
+            </Text>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: hoursInfo.isOpen ? colors.tint.greenLight : colors.errorScale[50] },
+              ]}
+            >
+              <View
+                style={[
+                  styles.statusDot,
+                  { backgroundColor: hoursInfo.isOpen ? colors.successScale[400] : colors.error },
+                ]}
+              />
+              <Text style={[styles.statusText, { color: hoursInfo.isOpen ? colors.successScale[400] : colors.error }]}>
                 {hoursInfo.isOpen ? 'Open Now' : 'Closed'}
               </Text>
             </View>
@@ -217,7 +208,9 @@ function OutletsPage() {
             <View style={styles.infoIconBg}>
               <Ionicons name="location-outline" size={16} color={colors.successScale[400]} />
             </View>
-            <Text style={styles.infoText} numberOfLines={2}>{outlet.address}</Text>
+            <Text style={styles.infoText} numberOfLines={2}>
+              {outlet.address}
+            </Text>
           </View>
 
           {/* Phone */}
@@ -235,14 +228,10 @@ function OutletsPage() {
             </View>
             <View style={styles.hoursContainer}>
               <Text style={styles.hoursLabel}>Today's Hours:</Text>
-              <Text style={[
-                styles.hoursValue,
-                { color: hoursInfo.isOpen ? colors.successScale[400] : colors.error }
-              ]}>
+              <Text style={[styles.hoursValue, { color: hoursInfo.isOpen ? colors.successScale[400] : colors.error }]}>
                 {hoursInfo.text === 'Closed today'
                   ? hoursInfo.text
-                  : `${formatTime(hoursInfo.opensAt || '09:00')} - ${formatTime(hoursInfo.closesAt || '21:00')}`
-                }
+                  : `${formatTime(hoursInfo.opensAt || '09:00')} - ${formatTime(hoursInfo.closesAt || '21:00')}`}
               </Text>
             </View>
           </View>
@@ -250,11 +239,7 @@ function OutletsPage() {
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
-          <Pressable
-            style={styles.callButton}
-            onPress={() => handleCall(outlet.phone)}
-           
-          >
+          <Pressable style={styles.callButton} onPress={() => handleCall(outlet.phone)}>
             <LinearGradient
               colors={[colors.successScale[400], colors.successScale[700]]}
               start={{ x: 0, y: 0 }}
@@ -266,11 +251,7 @@ function OutletsPage() {
             </LinearGradient>
           </Pressable>
 
-          <Pressable
-            style={styles.navigateButton}
-            onPress={() => handleNavigate(outlet)}
-           
-          >
+          <Pressable style={styles.navigateButton} onPress={() => handleNavigate(outlet)}>
             <Ionicons name="navigate" size={18} color={colors.successScale[400]} />
             <Text style={styles.navigateButtonText}>Get Directions</Text>
           </Pressable>
@@ -326,10 +307,7 @@ function OutletsPage() {
       >
         {outlets.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <LinearGradient
-              colors={[colors.tint.green, '#A7F3D0']}
-              style={styles.emptyIconBg}
-            >
+            <LinearGradient colors={[colors.tint.green, '#A7F3D0']} style={styles.emptyIconBg}>
               <Ionicons name="location-outline" size={56} color={colors.successScale[400]} />
             </LinearGradient>
             <Text style={styles.emptyTitle}>No Outlets Found</Text>
@@ -338,8 +316,7 @@ function OutletsPage() {
             </Text>
             <Pressable
               style={styles.backToStoreButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={18} color={colors.successScale[400]} />
               <Text style={styles.backToStoreText}>Back to Store</Text>
@@ -350,25 +327,17 @@ function OutletsPage() {
             {/* Quick Stats */}
             <View style={styles.statsContainer}>
               <View style={styles.statCard}>
-                <LinearGradient
-                  colors={[colors.successScale[400], colors.successScale[700]]}
-                  style={styles.statIconBg}
-                >
+                <LinearGradient colors={[colors.successScale[400], colors.successScale[700]]} style={styles.statIconBg}>
                   <Ionicons name="location" size={18} color={colors.background.primary} />
                 </LinearGradient>
                 <Text style={styles.statValue}>{totalCount}</Text>
                 <Text style={styles.statLabel}>Outlets</Text>
               </View>
               <View style={styles.statCard}>
-                <LinearGradient
-                  colors={[colors.infoScale[400], '#1D4ED8']}
-                  style={styles.statIconBg}
-                >
+                <LinearGradient colors={[colors.infoScale[400], '#1D4ED8']} style={styles.statIconBg}>
                   <Ionicons name="checkmark-circle" size={18} color={colors.background.primary} />
                 </LinearGradient>
-                <Text style={styles.statValue}>
-                  {outlets.filter(o => getCurrentDayHours(o).isOpen).length}
-                </Text>
+                <Text style={styles.statValue}>{outlets.filter((o) => getCurrentDayHours(o).isOpen).length}</Text>
                 <Text style={styles.statLabel}>Open Now</Text>
               </View>
             </View>

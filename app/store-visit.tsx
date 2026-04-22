@@ -263,6 +263,7 @@ function StoreVisitPageInner() {
 
       return timeMinutes >= openMinutes && timeMinutes <= closeMinutes;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, store, timeSlots, getHoursForDay]);
 
   // Legacy function wrapper for compatibility
@@ -288,6 +289,7 @@ function StoreVisitPageInner() {
         'warning',
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // Pre-fill user details when user data loads
@@ -313,6 +315,7 @@ function StoreVisitPageInner() {
         'info',
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
   // Fetch available slots from backend when date changes
@@ -347,6 +350,7 @@ function StoreVisitPageInner() {
     };
 
     fetchSlots();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, storeId]);
 
   // Memoized fetch store details function
@@ -378,6 +382,7 @@ function StoreVisitPageInner() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   // Memoized fetch store availability function
@@ -400,6 +405,7 @@ function StoreVisitPageInner() {
     } catch (err: any) {
       // Keep default 'Medium' if error occurs
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   // Fetch store details and availability
@@ -434,6 +440,7 @@ function StoreVisitPageInner() {
         refreshIntervalRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   // Memoized today's store hours
@@ -543,6 +550,7 @@ function StoreVisitPageInner() {
       if (!isMounted()) return;
       setGettingQueue(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, visitDetails, storeId, router, store, crowdLevel]);
 
   // Memoized handle visit scheduling
@@ -706,6 +714,7 @@ function StoreVisitPageInner() {
       if (!isMounted()) return;
       setSchedulingVisit(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isAuthenticated,
     visitDetails,

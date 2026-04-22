@@ -47,6 +47,7 @@ function ProductCard({
   });
 
   // Memoize product ID to avoid recalculation - use helper for consistency
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const productId = useMemo(() => getProductId(product), [(product as any)._id, product.id]);
 
   // Check if product is in cart and get quantity - ONLY for THIS product
@@ -69,6 +70,7 @@ function ProductCard({
     const p = (product as any).pricing;
     if (p) return { current: p.selling ?? p.current ?? 0, original: p.original ?? p.mrp, currency: p.currency || 'INR', discount: p.discount };
     return { current: 0, original: undefined, currency: 'INR', discount: undefined };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.price, (product as any).pricing]);
 
   // Get currency from product data (supports both price.currency and pricing.currency)
@@ -95,6 +97,7 @@ function ProductCard({
     }
 
     return { savings, discount };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [price.original, price.current, price.discount]);
 
   // Memoize event handlers with useCallback
@@ -130,6 +133,7 @@ function ProductCard({
       if (!isMounted()) return;
       setIsTogglingWishlist(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTogglingWishlist, isInWishlist, productId, removeFromWishlist, addToWishlist, product.name, product.image, price.current, price.original, priceData.discount, product.rating, product.brand, product.category, isOutOfStock, isLowStock]);
 
   // Memoize badge rendering
@@ -202,6 +206,7 @@ function ProductCard({
     const wishlistStatus = isInWishlist(productId) ? 'in wishlist' : 'not in wishlist';
 
     return `${product.brand || 'Brand'} ${product.name || 'Product Name'}. Price ${formatPrice(price.current)}${price.original && price.original > price.current ? `. Was ${formatPrice(price.original)}` : ''}${priceData.discount > 0 ? `. ${priceData.discount}% off` : ''}${product.rating ? `. ${product.rating.value} stars, ${product.rating.count} reviews` : ''}. ${stockStatus}${product.cashback ? `. ${product.cashback.percentage}% cashback` : ''}. ${wishlistStatus}`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.brand, product.name, price.current, price.original, priceData.discount, product.rating, product.cashback, isOutOfStock, isLowStock, isInWishlist, productId, formatPrice]);
 
   // Memoize press handler

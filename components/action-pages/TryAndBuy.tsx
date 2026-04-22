@@ -131,6 +131,7 @@ function TryAndBuyPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -173,6 +174,7 @@ function TryAndBuyPage() {
       if (!isMounted()) return;
       setIsLoadingAvailability(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

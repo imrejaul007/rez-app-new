@@ -168,6 +168,7 @@ const MyEarningsPage = () => {
     if (!authLoading && isAuthenticated) {
       fetchEarnings();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   // Refetch when period changes

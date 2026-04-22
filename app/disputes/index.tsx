@@ -73,11 +73,13 @@ function DisputeListScreen() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [authLoading, isAuthenticated],
   );
 
   useEffect(() => {
     fetchDisputes(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading]);
 
   const onRefresh = useCallback(async () => {
@@ -85,6 +87,7 @@ function DisputeListScreen() {
     await fetchDisputes(1);
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchDisputes]);
 
   const loadMore = useCallback(() => {
@@ -125,6 +128,7 @@ function DisputeListScreen() {
         </View>
       </TouchableOpacity>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading && !refreshing) {

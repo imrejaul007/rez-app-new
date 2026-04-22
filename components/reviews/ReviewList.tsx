@@ -94,6 +94,7 @@ function ReviewList({
       setIsRefreshing(false);
       setIsLoadingMore(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, sortBy, filterRating]);
 
   useEffect(() => {

@@ -159,6 +159,7 @@ function PharmacyPage() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter medicines based on search and category
@@ -191,6 +192,7 @@ function PharmacyPage() {
     await fetchData();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Cart functions

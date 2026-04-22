@@ -44,6 +44,7 @@ const CashStorePromoBanner: React.FC = () => {
       // animation auto-cancels
       // animation auto-cancels
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStartShopping = () => {

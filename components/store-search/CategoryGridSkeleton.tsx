@@ -36,6 +36,7 @@ const CategoryGridSkeleton: React.FC<CategoryGridSkeletonProps> = ({
       ),
       -1
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shimmerStyle = useAnimatedStyle(() => ({

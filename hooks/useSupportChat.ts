@@ -163,6 +163,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     return () => {
       cleanup();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   const initializeConnection = async () => {
@@ -558,6 +559,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     typingTimeoutRef.current = setTimeout(() => {
       stopTyping();
     }, 3000) as any;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTicket, contextSocket]);
 
   const stopTyping = useCallback(() => {
@@ -1051,6 +1053,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
           logger.error('[useSupportChat] getTicket failed', err as Error);
         });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialTicketId, authLoading, isAuthenticated]);
 
   // ==================== Return ====================

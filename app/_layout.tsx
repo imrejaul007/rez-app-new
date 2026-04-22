@@ -102,6 +102,7 @@ function RootLayout() {
     _startupChecksRun = true;
     checkAppStatus();
     checkOnboarding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Sprint 12: Deep Link Handling ──────────────────────────────────────────

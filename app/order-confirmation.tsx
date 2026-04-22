@@ -117,6 +117,7 @@ function OrderConfirmationPage() {
       setError('Order ID not provided');
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId]);
 
   useEffect(() => {
@@ -127,6 +128,7 @@ function OrderConfirmationPage() {
       successAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
       contentAnim.value = withTiming(1, { duration: 300 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order]);
 
   const loadOrderDetails = async () => {

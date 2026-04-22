@@ -270,6 +270,7 @@ function OrderTrackingScreen() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedTab],
   );
 
@@ -546,6 +547,7 @@ function OrderTrackingScreen() {
         </View>
       </View>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

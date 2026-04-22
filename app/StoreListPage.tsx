@@ -66,6 +66,7 @@ const StoreListPage: React.FC = () => {
     } catch {
       return defaultSearchFilters;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Local state for search and filters
@@ -178,6 +179,7 @@ const StoreListPage: React.FC = () => {
 
       setAvailableFilters(derivedFilters);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stores]);
 
   // Convert stores to SearchResults format

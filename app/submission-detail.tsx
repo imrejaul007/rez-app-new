@@ -81,6 +81,7 @@ function SubmissionDetailPage() {
 
   useEffect(() => {
     loadSubmission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submissionId, projectId]);
 
   // Deep-link parameter validation guard

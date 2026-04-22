@@ -48,6 +48,7 @@ function PollsPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchHistory = useCallback(async () => {

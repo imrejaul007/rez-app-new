@@ -331,6 +331,7 @@ function ServiceBookingModal({
     if (selectedDate && service) {
       fetchAvailableSlots();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, service]);
 
   const fetchAvailableSlots = async () => {

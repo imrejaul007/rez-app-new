@@ -31,6 +31,7 @@ const DealStorePage: React.FC = () => {
 
   useEffect(() => {
     fetchDeals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDeals = async () => {

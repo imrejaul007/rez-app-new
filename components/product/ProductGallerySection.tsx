@@ -88,11 +88,13 @@ function ProductGallerySection({ productId, variantId }: ProductGallerySectionPr
         });
       }
     }, 100);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, variantId]);
 
   // Filter items when category or tags change
   useEffect(() => {
     filterItems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, selectedTags, allGalleryItems, variantId]);
 
   const loadGallery = async (retry = false) => {

@@ -248,11 +248,13 @@ export function useLeaderboardRealtime(
       socket.off(SocketEvents.LEADERBOARD_RANK_CHANGE, handleRankChange);
 
       if (celebrationTimeoutRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         clearTimeout(celebrationTimeoutRef.current);
       }
 
       // Clear all tracked update timeouts
       updateTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       updateTimeoutsRef.current.clear();
     };
   }, [socket, handleLeaderboardUpdate, handleUserScored, handleRankChange]);

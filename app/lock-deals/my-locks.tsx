@@ -40,6 +40,7 @@ const MyLocksPage: React.FC = () => {
 
   useEffect(() => {
     fetchLocks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const fetchLocks = async () => {
@@ -66,6 +67,7 @@ const MyLocksPage: React.FC = () => {
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
     fetchLocks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const handlePayBalance = useCallback(
@@ -134,6 +136,7 @@ const MyLocksPage: React.FC = () => {
         },
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [fetchLocks],
   );
 
@@ -334,6 +337,7 @@ const MyLocksPage: React.FC = () => {
         </View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [cancellingId, router, handleCancelLock],
   );
 

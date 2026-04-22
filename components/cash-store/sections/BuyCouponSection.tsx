@@ -49,6 +49,7 @@ const GiftCardCard: React.FC<{
     // Subtle shimmer on header
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 2000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   const handlePressIn = () => {
@@ -216,6 +217,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -255,6 +257,7 @@ const BuyCouponSection: React.FC<BuyCouponSectionProps> = ({
     // Gift icon bounce animation
     giftBounceAnim.value = withRepeat(withSequence(withTiming(-4, { duration: 400 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const renderGiftCardItem = useCallback(({ item, index }: { item: unknown; index: number }) =>

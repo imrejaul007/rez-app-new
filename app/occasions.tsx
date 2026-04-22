@@ -110,6 +110,7 @@ function OccasionsPage() {
   // Load occasions
   useEffect(() => {
     loadOccasions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug]);
 
   const loadOccasions = async () => {

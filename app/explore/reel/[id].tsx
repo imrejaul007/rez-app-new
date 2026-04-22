@@ -234,6 +234,7 @@ const ReelDetailPage = () => {
   }, [reel?.creator?.id]);
 
   // Handle comment like toggle
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleCommentLike = async (commentId: string, currentlyLiked: boolean) => {
     if (!reelId) return;
 

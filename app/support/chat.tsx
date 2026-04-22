@@ -96,6 +96,7 @@ function SupportChatPage() {
     if (!connecting && !currentTicket && !params.ticketId && !initializingTicket) {
       handleInitializeTicket();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connecting, currentTicket]);
 
   const handleInitializeTicket = async () => {

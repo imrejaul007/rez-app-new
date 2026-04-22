@@ -221,6 +221,7 @@ function DentalCarePage() {
 
   useEffect(() => {
     fetchDentists();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter dentists based on search and selected service
@@ -251,6 +252,7 @@ function DentalCarePage() {
     await fetchDentists();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Generate dates for the next 7 days

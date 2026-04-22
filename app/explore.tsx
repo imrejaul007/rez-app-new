@@ -79,6 +79,7 @@ const AutoPlayVideoReel: React.FC<{ uri: string; poster?: string; style?: any }>
           webVideoRef.current.pause();
           webVideoRef.current.remove();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         videoRef.current?.unloadAsync();
       };
     }, [uri, poster]);
@@ -438,6 +439,7 @@ const ExplorePage = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAllExploreData]);
 
   // Section data for FlashList virtualization

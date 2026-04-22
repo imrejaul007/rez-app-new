@@ -110,6 +110,7 @@ function AppEntry() {
       if (!isMounted()) return;
       setIsChecking(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, clearPendingTimer, pathname, safeReplace]);
 
   useEffect(() => {

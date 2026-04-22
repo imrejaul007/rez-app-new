@@ -69,6 +69,7 @@ function ReviewPage() {
           if (mountedRef.current) setLoadingStore(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, isStoreReview]);
   const { reviewText, setReviewText, rating, setRating, isSubmitting, submitReview } = useReviewState();
 

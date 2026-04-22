@@ -561,6 +561,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         socket.off('loyalty:rewardAvailable', socketCallbacksRef.current.onRewardAvailable);
       }
       if (socketCallbacksRef.current.onChallengeCompleted) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         socket.off('loyalty:challengeCompleted', socketCallbacksRef.current.onChallengeCompleted);
       }
     };
@@ -575,6 +576,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
       loadChallenges();
       loadCheckInStatus();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoLoad]);
 
   return {

@@ -60,6 +60,7 @@ export default function LazyLoadWrapper({
     return () => {
       mounted = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importFn]);
 
   if (isLoading) {

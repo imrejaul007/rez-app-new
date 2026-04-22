@@ -165,6 +165,7 @@ function SlotsPage() {
       setShowResult(true);
       setSpinning(false);
     }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinning, balance]);
 
   const renderReel = (symbol: string, reelAnim: Animated.SharedValue<number>, index: number) => (

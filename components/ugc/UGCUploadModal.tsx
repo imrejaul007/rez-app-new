@@ -121,6 +121,7 @@ function UGCUploadModal({
       // Animation cleanup handled by reanimated
       if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const resetState = () => {

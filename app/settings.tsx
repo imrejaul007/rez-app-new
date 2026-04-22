@@ -69,6 +69,7 @@ function SettingsPage() {
         setSettingsLoaded(true);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Persist settings whenever they change (after initial load)
@@ -134,6 +135,7 @@ function SettingsPage() {
     } catch (e: any) {
       platformAlertSimple('Error', 'Could not verify biometric support. Please try again.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.biometrics]);
 
   const handleResetSettings = () => {

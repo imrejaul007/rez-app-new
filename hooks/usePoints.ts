@@ -263,6 +263,7 @@ export function usePoints(options: UsePointsOptions = {}): UsePointsReturn {
       fetchStats();
       fetchTransactions();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFetch]);
 
   // Polling for real-time updates

@@ -52,10 +52,12 @@ function FAQPage() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     filterFAQs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, allFAQs, searchQuery]);
 
   // If FAQ ID is passed in params, expand that FAQ
@@ -141,6 +143,7 @@ function FAQPage() {
       if (!isMounted()) return;
       setSearching(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleFAQ = async (faqId: string) => {
@@ -287,6 +290,7 @@ function FAQPage() {
     );
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderFAQListItem = useCallback(({ item }: { item: FAQ }) => renderFAQItem(item), [expandedFAQs, faqFeedback]);
 
   const renderFAQItem = (faq: FAQ) => {

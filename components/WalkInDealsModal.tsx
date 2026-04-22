@@ -102,6 +102,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
     if (visible && storeId) {
       fetchStoreDeals();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, storeId, filterType, sortBy]);
 
   const fetchStoreDeals = useCallback(async () => {
@@ -251,6 +252,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
       if (!isMounted()) return;
       setIsLoadingDeals(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, filterType, sortBy, currencySymbol]);
 
   // Use API deals if available, otherwise fallback to passed deals
@@ -265,6 +267,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
       fadeAnim.value = withTiming(0, { duration: 150 });
       slideAnim.value = withTiming(screenData.height, { duration: 200 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, fadeAnim, slideAnim]);
 
   const handleBackdropPress = () => onClose();

@@ -66,6 +66,7 @@ function OfferDetailPage() {
 
   useEffect(() => {
     loadOfferDetails(id as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isAuthenticated]);
 
   const loadOfferDetails = async (offerId: string) => {

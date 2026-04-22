@@ -115,6 +115,7 @@ const ActivityItem: React.FC<{
     return () => {
       pulseAnim.value = 1;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, activity.status]);
 
   const handlePressIn = () => {
@@ -223,6 +224,7 @@ const SkeletonItem: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -264,6 +266,7 @@ const CashbackActivitySection: React.FC<CashbackActivitySectionProps> = ({
 
   useEffect(() => {
     headerFadeAnim.value = withTiming(1, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (activities.length === 0 && !isLoading) {

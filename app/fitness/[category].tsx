@@ -196,6 +196,7 @@ const FitnessCategoryPage: React.FC = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, userLocation]);
 
   const applyFilter = (storesData: StoreItem[], filter: FilterType) => {
@@ -232,6 +233,7 @@ const FitnessCategoryPage: React.FC = () => {
     if (items.length > 0) {
       applyFilter(items, selectedFilter);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilter, items]);
 
   const handleRefresh = () => {

@@ -113,6 +113,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
           if (val === 'true') setIsHidden(true);
         })
         .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // totalBalance is the canonical value — already in RC units (not divided by rate)
@@ -132,6 +133,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
           easing: Easing.out(Easing.cubic),
         });
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isHidden, totalBalance]);
 
     const [animatedBalance, setAnimatedBalance] = useState(0);

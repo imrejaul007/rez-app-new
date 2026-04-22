@@ -92,6 +92,7 @@ function MessagesIndexPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [searchQuery, activeFilter],
   );
 

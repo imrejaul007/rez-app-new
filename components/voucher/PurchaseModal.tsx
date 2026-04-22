@@ -94,6 +94,7 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({
     } else {
       animateOut();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, brand]);
 
   const animateIn = () => {

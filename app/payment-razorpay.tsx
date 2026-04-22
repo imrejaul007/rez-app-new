@@ -56,6 +56,7 @@ function PaymentPage() {
       }, 300);
       return () => clearTimeout(t);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const orderId = params.orderId as string; // For travel/event: order ID; for deals/flash-sales: pre-created Razorpay order ID
   const bookingId = params.bookingId as string;
@@ -79,6 +80,7 @@ function PaymentPage() {
   useEffect(() => {
     return () => {
       navTimeoutsRef.current.forEach((t) => clearTimeout(t));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       navTimeoutsRef.current.clear();
     };
   }, []);
@@ -124,12 +126,14 @@ function PaymentPage() {
   useEffect(() => {
     loadPaymentMethods();
     animateEntrance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (currentStep === 'processing') {
       animateProgress();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   const animateEntrance = () => {

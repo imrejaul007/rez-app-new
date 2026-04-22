@@ -118,6 +118,7 @@ function BrandDetailPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {

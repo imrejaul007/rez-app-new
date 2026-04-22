@@ -75,6 +75,7 @@ const SocialProofSection: React.FC<SocialProofSectionProps> = ({
     };
 
     fetchStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stats, categorySlug]);
 
   const displayStats = stats || apiStats || socialProofStats;

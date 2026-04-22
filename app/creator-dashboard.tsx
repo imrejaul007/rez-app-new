@@ -81,6 +81,7 @@ function CreatorDashboard() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -125,6 +126,7 @@ function CreatorDashboard() {
         ],
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [picks],
   );
 

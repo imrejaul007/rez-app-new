@@ -38,6 +38,7 @@ const SkeletonItem: React.FC<{ circleSize: number; delay: number }> = ({
     }, delay);
 
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delay]);
 
   const shimmerStyle = useAnimatedStyle(() => ({

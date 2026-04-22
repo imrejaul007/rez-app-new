@@ -40,6 +40,7 @@ function SpinWheelPage() {
     // ✅ FIX: Load gamification data on mount to ensure coins are synced
     gamificationActions.loadGamificationData(true);
     loadSpinWheelData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSpinWheelData = async () => {

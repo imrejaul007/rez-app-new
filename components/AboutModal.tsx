@@ -140,6 +140,7 @@ function AboutModal({ visible, onClose, storeData }: AboutModalProps) {
       
     }
   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible, fadeAnim, slideAnim, scaleAnim]);
 
   const handleBackdropPress = () => {

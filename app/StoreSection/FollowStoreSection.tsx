@@ -137,6 +137,7 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
   // Animate toggle position
   useEffect(() => {
     toggleAnim.value = withSpring(notificationsEnabled ? 1 : 0, { damping: 8, stiffness: 100 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notificationsEnabled]);
 
   // Pulse animation for following state
@@ -147,6 +148,7 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
         -1,
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFollowing]);
 
   // Glow pulse animation — only run when following
@@ -159,6 +161,7 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
       withSequence(withTiming(0.6, { duration: 1500 }), withTiming(0.3, { duration: 1500 })),
       -1,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFollowing]);
 
   // Check follow status on mount
@@ -182,6 +185,7 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
     };
 
     checkFollowStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, isAuthenticated]);
 
   // Heart animation

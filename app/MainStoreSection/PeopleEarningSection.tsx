@@ -1,16 +1,12 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // PeopleEarningSection.tsx - People are earning here section
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-} from "@/constants/DesignSystem";
-import { storesApi } from "@/services/storesApi";
+import { ThemedText } from '@/components/ThemedText';
+import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { storesApi } from '@/services/storesApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -40,10 +36,7 @@ export interface PeopleEarningSectionProps {
 // Avatar colors for users without profile pictures - Nuqta palette
 const AVATAR_COLORS = [colors.lightPeach, colors.nileBlue, colors.lavenderMist, colors.lightMustard, colors.linen];
 
-function PeopleEarningSection({
-  storeId,
-  users: propUsers,
-}: PeopleEarningSectionProps) {
+function PeopleEarningSection({ storeId, users: propUsers }: PeopleEarningSectionProps) {
   const isMounted = useIsMounted();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -54,6 +47,7 @@ function PeopleEarningSection({
     if (storeId) {
       fetchRecentEarnings();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   const fetchRecentEarnings = async () => {
@@ -110,9 +104,7 @@ function PeopleEarningSection({
                 <CachedImage source={user.avatar} style={styles.avatar} />
               ) : (
                 <View style={[styles.avatarPlaceholder, { backgroundColor: getAvatarColor(index) }]}>
-                  <ThemedText style={styles.avatarInitial}>
-                    {user.name.charAt(0).toUpperCase()}
-                  </ThemedText>
+                  <ThemedText style={styles.avatarInitial}>{user.name.charAt(0).toUpperCase()}</ThemedText>
                 </View>
               )}
             </View>
@@ -120,18 +112,15 @@ function PeopleEarningSection({
             {/* User Info */}
             <View style={styles.userInfo}>
               <ThemedText style={styles.earningText}>
-                {user.name} earned {currencySymbol}{user.amountEarned}
+                {user.name} earned {currencySymbol}
+                {user.amountEarned}
               </ThemedText>
               <ThemedText style={styles.timeText}>{user.timeAgo}</ThemedText>
             </View>
 
             {/* Coins Earned */}
             <View style={styles.coinsContainer}>
-              <CachedImage
-                source={BRAND.COIN_IMAGE}
-                style={styles.coinIcon}
-                contentFit="contain"
-              />
+              <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
               <ThemedText style={styles.coinsText}>+{user.coinsEarned}</ThemedText>
             </View>
           </View>
@@ -148,7 +137,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.primary,
     marginBottom: Spacing.md,
   },
@@ -156,8 +145,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   userCard: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.background.primary,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -176,12 +165,12 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   avatarInitial: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.background.primary,
   },
   userInfo: {
@@ -189,7 +178,7 @@ const styles = StyleSheet.create({
   },
   earningText: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.text.primary,
   },
   timeText: {
@@ -198,8 +187,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   coinsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   coinIcon: {
@@ -208,13 +197,13 @@ const styles = StyleSheet.create({
   },
   coinsText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.lightMustard,
   },
   loadingContainer: {
     paddingVertical: Spacing.lg,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

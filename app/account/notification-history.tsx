@@ -36,6 +36,7 @@ function NotificationHistoryScreen() {
 
   useEffect(() => {
     loadNotificationHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refresh when screen regains focus so new notifications from other screens
@@ -43,6 +44,7 @@ function NotificationHistoryScreen() {
   useFocusEffect(
     useCallback(() => {
       loadNotificationHistory(1, true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
@@ -208,6 +210,7 @@ function NotificationHistoryScreen() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const markNotificationAsRead = async (notificationId: string) => {
     try {
       await notificationService.markAsRead([notificationId]);

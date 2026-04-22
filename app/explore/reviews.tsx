@@ -43,56 +43,60 @@ const AllReviewsPage = () => {
 
   const LIMIT = 10;
 
-  const fetchReviews = useCallback(async (pageNum: number, isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else if (pageNum === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
-      setError(null);
-
-      const response = await exploreApi.getVerifiedReviews({
-        limit: LIMIT,
-        page: pageNum
-      });
-
-      if (response.success && response.data) {
-        let newReviews = response.data.reviews || [];
-
-        // Client-side sorting
-        if (sortBy === 'highest') {
-          newReviews = [...newReviews].sort((a, b) => b.rating - a.rating);
-        } else if (sortBy === 'lowest') {
-          newReviews = [...newReviews].sort((a, b) => a.rating - b.rating);
-        }
-
-        if (pageNum === 1) {
-          if (!isMounted()) return;
-          setReviews(newReviews);
+  const fetchReviews = useCallback(
+    async (pageNum: number, isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else if (pageNum === 1) {
+          setLoading(true);
         } else {
-          if (!isMounted()) return;
-          setReviews(prev => [...prev, ...newReviews]);
+          setLoadingMore(true);
         }
+        setError(null);
+
+        const response = await exploreApi.getVerifiedReviews({
+          limit: LIMIT,
+          page: pageNum,
+        });
+
+        if (response.success && response.data) {
+          let newReviews = response.data.reviews || [];
+
+          // Client-side sorting
+          if (sortBy === 'highest') {
+            newReviews = [...newReviews].sort((a, b) => b.rating - a.rating);
+          } else if (sortBy === 'lowest') {
+            newReviews = [...newReviews].sort((a, b) => a.rating - b.rating);
+          }
+
+          if (pageNum === 1) {
+            if (!isMounted()) return;
+            setReviews(newReviews);
+          } else {
+            if (!isMounted()) return;
+            setReviews((prev) => [...prev, ...newReviews]);
+          }
+          if (!isMounted()) return;
+          setTotal(response.data.total || newReviews.length);
+          if (!isMounted()) return;
+          setHasMore(response.data.hasMore || false);
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setTotal(response.data.total || newReviews.length);
+        setError(err.message || 'Something went wrong');
+      } finally {
         if (!isMounted()) return;
-        setHasMore(response.data.hasMore || false);
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [sortBy]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [sortBy],
+  );
 
   useEffect(() => {
     setPage(1);
@@ -119,17 +123,11 @@ const AllReviewsPage = () => {
 
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(
-          <Ionicons key={i} name="star" size={16} color={Colors.warning} />
-        );
+        stars.push(<Ionicons key={i} name="star" size={16} color={Colors.warning} />);
       } else if (i === fullStars && hasHalf) {
-        stars.push(
-          <Ionicons key={i} name="star-half" size={16} color={Colors.warning} />
-        );
+        stars.push(<Ionicons key={i} name="star-half" size={16} color={Colors.warning} />);
       } else {
-        stars.push(
-          <Ionicons key={i} name="star-outline" size={16} color={colors.border.default} />
-        );
+        stars.push(<Ionicons key={i} name="star-outline" size={16} color={colors.border.default} />);
       }
     }
     return stars;
@@ -151,15 +149,13 @@ const AllReviewsPage = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>All Reviews</Text>
-            <Text style={styles.headerSubtitle}>
-              {total > 0 ? `${total} verified reviews` : 'Verified reviews'}
-            </Text>
+            <Text style={styles.headerSubtitle}>{total > 0 ? `${total} verified reviews` : 'Verified reviews'}</Text>
           </View>
         </View>
 
@@ -169,42 +165,24 @@ const AllReviewsPage = () => {
             style={[styles.sortTab, sortBy === 'recent' && styles.sortTabActive]}
             onPress={() => setSortBy('recent')}
           >
-            <Ionicons
-              name="time-outline"
-              size={16}
-              color={sortBy === 'recent' ? Colors.gold : colors.text.tertiary}
-            />
-            <Text style={[styles.sortText, sortBy === 'recent' && styles.sortTextActive]}>
-              Recent
-            </Text>
+            <Ionicons name="time-outline" size={16} color={sortBy === 'recent' ? Colors.gold : colors.text.tertiary} />
+            <Text style={[styles.sortText, sortBy === 'recent' && styles.sortTextActive]}>Recent</Text>
           </Pressable>
 
           <Pressable
             style={[styles.sortTab, sortBy === 'highest' && styles.sortTabActive]}
             onPress={() => setSortBy('highest')}
           >
-            <Ionicons
-              name="arrow-up"
-              size={16}
-              color={sortBy === 'highest' ? Colors.gold : colors.text.tertiary}
-            />
-            <Text style={[styles.sortText, sortBy === 'highest' && styles.sortTextActive]}>
-              Highest
-            </Text>
+            <Ionicons name="arrow-up" size={16} color={sortBy === 'highest' ? Colors.gold : colors.text.tertiary} />
+            <Text style={[styles.sortText, sortBy === 'highest' && styles.sortTextActive]}>Highest</Text>
           </Pressable>
 
           <Pressable
             style={[styles.sortTab, sortBy === 'lowest' && styles.sortTabActive]}
             onPress={() => setSortBy('lowest')}
           >
-            <Ionicons
-              name="arrow-down"
-              size={16}
-              color={sortBy === 'lowest' ? Colors.gold : colors.text.tertiary}
-            />
-            <Text style={[styles.sortText, sortBy === 'lowest' && styles.sortTextActive]}>
-              Lowest
-            </Text>
+            <Ionicons name="arrow-down" size={16} color={sortBy === 'lowest' ? Colors.gold : colors.text.tertiary} />
+            <Text style={[styles.sortText, sortBy === 'lowest' && styles.sortTextActive]}>Lowest</Text>
           </Pressable>
         </View>
 
@@ -213,9 +191,7 @@ const AllReviewsPage = () => {
           style={styles.reviewsList}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.reviewsContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
           onScroll={({ nativeEvent }) => {
             const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
             const paddingToBottom = 50;
@@ -226,9 +202,7 @@ const AllReviewsPage = () => {
           scrollEventThrottle={400}
         >
           {/* Loading State */}
-          {loading && !refreshing && (
-            <CardGridSkeleton />
-          )}
+          {loading && !refreshing && <CardGridSkeleton />}
 
           {/* Error State */}
           {error && !loading && (
@@ -251,59 +225,65 @@ const AllReviewsPage = () => {
           )}
 
           {/* Reviews */}
-          {!loading && !error && reviews.map((review) => (
-            <View key={review.id} style={styles.reviewCard}>
-              {/* Rating Row */}
-              <View style={styles.ratingRow}>
-                <View style={styles.starsContainer}>
-                  {renderStars(review.rating)}
-                  <Text style={styles.ratingNumber}>{review.rating}</Text>
-                </View>
-                {review.cashback > 0 && (
-                  <View style={styles.cashbackBadge}>
-                    <View style={styles.cashbackIcon}>
-                      <Ionicons name="wallet-outline" size={12} color={colors.text.inverse} />
+          {!loading &&
+            !error &&
+            reviews.map((review) => (
+              <View key={review.id} style={styles.reviewCard}>
+                {/* Rating Row */}
+                <View style={styles.ratingRow}>
+                  <View style={styles.starsContainer}>
+                    {renderStars(review.rating)}
+                    <Text style={styles.ratingNumber}>{review.rating}</Text>
+                  </View>
+                  {review.cashback > 0 && (
+                    <View style={styles.cashbackBadge}>
+                      <View style={styles.cashbackIcon}>
+                        <Ionicons name="wallet-outline" size={12} color={colors.text.inverse} />
+                      </View>
+                      <Text style={styles.cashbackText}>
+                        {currencySymbol}
+                        {review.cashback}
+                      </Text>
                     </View>
-                    <Text style={styles.cashbackText}>{currencySymbol}{review.cashback}</Text>
-                  </View>
-                )}
+                  )}
+                </View>
+
+                {/* Review Text */}
+                <Text style={styles.reviewText}>"{review.review}"</Text>
+
+                {/* Store & Verified Row */}
+                <Pressable
+                  style={styles.storeRow}
+                  onPress={() => navigateToStore(review.storeId)}
+                  disabled={!review.storeId}
+                >
+                  {review.storeLogo && <CachedImage source={review.storeLogo} style={styles.storeLogo} />}
+                  <Text style={styles.storeName}>{review.store}</Text>
+                  {review.verified && (
+                    <View style={styles.verifiedBadge}>
+                      <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
+                      <Text style={styles.verifiedText}>Verified Purchase</Text>
+                    </View>
+                  )}
+                  {review.storeId && (
+                    <Ionicons
+                      name="chevron-forward"
+                      size={16}
+                      color={colors.text.tertiary}
+                      style={{ marginLeft: 'auto' }}
+                    />
+                  )}
+                </Pressable>
+
+                {/* User & Time */}
+                <View style={styles.userRow}>
+                  {review.avatar && <CachedImage source={review.avatar} style={styles.userAvatar} />}
+                  <Text style={styles.userName}>{review.user}</Text>
+                  <Text style={styles.dotSeparator}>•</Text>
+                  <Text style={styles.timeText}>{review.time}</Text>
+                </View>
               </View>
-
-              {/* Review Text */}
-              <Text style={styles.reviewText}>"{review.review}"</Text>
-
-              {/* Store & Verified Row */}
-              <Pressable
-                style={styles.storeRow}
-                onPress={() => navigateToStore(review.storeId)}
-                disabled={!review.storeId}
-              >
-                {review.storeLogo && (
-                  <CachedImage source={review.storeLogo} style={styles.storeLogo} />
-                )}
-                <Text style={styles.storeName}>{review.store}</Text>
-                {review.verified && (
-                  <View style={styles.verifiedBadge}>
-                    <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
-                    <Text style={styles.verifiedText}>Verified Purchase</Text>
-                  </View>
-                )}
-                {review.storeId && (
-                  <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} style={{ marginLeft: 'auto' }} />
-                )}
-              </Pressable>
-
-              {/* User & Time */}
-              <View style={styles.userRow}>
-                {review.avatar && (
-                  <CachedImage source={review.avatar} style={styles.userAvatar} />
-                )}
-                <Text style={styles.userName}>{review.user}</Text>
-                <Text style={styles.dotSeparator}>•</Text>
-                <Text style={styles.timeText}>{review.time}</Text>
-              </View>
-            </View>
-          ))}
+            ))}
 
           {/* Load More Indicator */}
           {loadingMore && (

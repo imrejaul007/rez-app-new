@@ -158,6 +158,7 @@ function FlightDetailsPage() {
 
   useEffect(() => {
     if (id) loadFlightDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadFlightDetails = async () => {

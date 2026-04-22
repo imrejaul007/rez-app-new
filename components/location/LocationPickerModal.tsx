@@ -97,6 +97,7 @@ function LocationPickerModal({
       if (!isMounted()) return;
       setIsGettingCurrentLocation(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getCurrentLocation, onClose]);
 
   const handleSelectResult = useCallback((result: AddressSearchResult) => {

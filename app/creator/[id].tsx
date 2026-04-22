@@ -149,6 +149,7 @@ function CreatorProfilePage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
@@ -177,6 +178,7 @@ function CreatorProfilePage() {
       if (!isMounted()) return;
       setFollowLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isFollowing, followLoading]);
 
   const renderPickCard = useCallback(

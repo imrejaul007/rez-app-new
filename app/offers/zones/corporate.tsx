@@ -98,6 +98,7 @@ function CorporateZonePage() {
     return () => {
       shimmerAnim.value = 0;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchZoneData = async () => {

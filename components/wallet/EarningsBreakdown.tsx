@@ -106,6 +106,7 @@ function EarningsBreakdown({
     } else {
       shimmerAnim.value = 0;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status]);
 
   const mapResponse = (data: PartnerEarningsSummary): PartnerEarningsData => ({
@@ -154,6 +155,7 @@ function EarningsBreakdown({
         error: error?.message || 'Failed to load earnings',
         staleData: currentData });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefresh = useCallback(async () => {
@@ -166,6 +168,7 @@ function EarningsBreakdown({
 
   useEffect(() => {
     fetchEarnings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleExpanded = () => {

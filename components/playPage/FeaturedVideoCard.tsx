@@ -26,6 +26,7 @@ function FeaturedVideoCard({
   // Cleanup video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
   }, []);
@@ -57,6 +58,7 @@ function FeaturedVideoCard({
     };
     
     playVideo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, isPlaying]);
 
   const handleVideoLoad = (status: AVPlaybackStatus) => {

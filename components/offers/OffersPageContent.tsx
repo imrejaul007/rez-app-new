@@ -194,6 +194,7 @@ export const OffersPageContent: React.FC<OffersPageContentProps> = ({
     if (!isMounted()) return;
     await new Promise((resolve) => setTimeout(resolve, 500));
     setRefreshing(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onRefresh, refreshData]);
 
   const handleBucketPress = (bucket: DiscountBucket) => {

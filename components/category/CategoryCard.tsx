@@ -62,6 +62,7 @@ function CategoryCard({
       quantityInCart: qty,
       isInCart: inCart
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.id, cartState.items, cartState.items.length]);
   
   const handlePress = () => {

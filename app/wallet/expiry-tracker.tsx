@@ -68,7 +68,11 @@ function ExpiryTrackerPage() {
   const [grouped, setGrouped] = useState<GroupedCoins>({ thisWeek: [], thisMonth: [], nextMonth: [] });
   const [totalExpiringSoon, setTotalExpiringSoon] = useState(0);
   const mountedRef = useRef(true);
-  useEffect(() => { return () => { mountedRef.current = false; }; }, []);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const fetchExpiringCoins = useCallback(async () => {
     try {
@@ -101,6 +105,7 @@ function ExpiryTrackerPage() {
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
     fetchExpiringCoins().finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchExpiringCoins]);
 
   const handleRefresh = useCallback(async () => {
@@ -132,9 +137,12 @@ function ExpiryTrackerPage() {
 
   const getCoinIcon = (type: string) => {
     switch (type) {
-      case 'promo': return 'gift';
-      case 'store': return 'storefront';
-      default: return 'diamond';
+      case 'promo':
+        return 'gift';
+      case 'store':
+        return 'storefront';
+      default:
+        return 'diamond';
     }
   };
 
@@ -144,23 +152,16 @@ function ExpiryTrackerPage() {
     <View key={coin.id} style={styles.coinCard}>
       <View style={styles.coinCardHeader}>
         <View style={styles.coinTypeIcon}>
-          <Ionicons
-            name={getCoinIcon(coin.coinType) as any}
-            size={20}
-            color={Colors.primary[600]}
-          />
+          <Ionicons name={getCoinIcon(coin.coinType) as any} size={20} color={Colors.primary[600]} />
         </View>
         <View style={styles.coinInfo}>
-          <ThemedText style={styles.coinAmount}>{coin.amount} {BRAND.CURRENCY_CODE}</ThemedText>
-          <ThemedText style={styles.coinExpiry}>
-            Expires {formatDate(coin.expiryDate)}
+          <ThemedText style={styles.coinAmount}>
+            {coin.amount} {BRAND.CURRENCY_CODE}
           </ThemedText>
+          <ThemedText style={styles.coinExpiry}>Expires {formatDate(coin.expiryDate)}</ThemedText>
         </View>
         <View style={styles.daysLeftBadge}>
-          <ThemedText style={[
-            styles.daysLeftText,
-            coin.daysLeft <= 3 && styles.daysLeftUrgent,
-          ]}>
+          <ThemedText style={[styles.daysLeftText, coin.daysLeft <= 3 && styles.daysLeftUrgent]}>
             {coin.daysLeft}d left
           </ThemedText>
         </View>
@@ -184,12 +185,12 @@ function ExpiryTrackerPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Coin Expiry</ThemedText>
@@ -201,14 +202,10 @@ function ExpiryTrackerPage() {
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {/* Loading State */}
-        {loading && (
-          <TransactionListSkeleton />
-        )}
+        {loading && <TransactionListSkeleton />}
 
         {/* Error State */}
         {!loading && error && (
@@ -238,14 +235,9 @@ function ExpiryTrackerPage() {
               <ThemedText style={styles.alertTitle}>
                 {totalExpiringSoon} {BRAND.CURRENCY_CODE} expiring soon!
               </ThemedText>
-              <ThemedText style={styles.alertSubtitle}>
-                Use before they expire
-              </ThemedText>
+              <ThemedText style={styles.alertSubtitle}>Use before they expire</ThemedText>
             </View>
-            <Pressable
-              style={styles.useNowButton}
-              onPress={() => router.push('/(tabs)' as any)}
-            >
+            <Pressable style={styles.useNowButton} onPress={() => router.push('/(tabs)' as any)}>
               <ThemedText style={styles.useNowText}>Use Now</ThemedText>
             </Pressable>
           </View>
@@ -297,17 +289,11 @@ function ExpiryTrackerPage() {
         <View style={styles.suggestionsSection}>
           <ThemedText style={styles.sectionTitle}>Quick Spend Suggestions</ThemedText>
           <View style={styles.suggestionsGrid}>
-            <Pressable
-              style={styles.suggestionCard}
-              onPress={() => router.push('/search' as any)}
-            >
+            <Pressable style={styles.suggestionCard} onPress={() => router.push('/search' as any)}>
               <Ionicons name="location" size={24} color={Colors.primary[600]} />
               <ThemedText style={styles.suggestionText}>Nearby Stores</ThemedText>
             </Pressable>
-            <Pressable
-              style={styles.suggestionCard}
-              onPress={() => router.push('/bonus-zone' as any)}
-            >
+            <Pressable style={styles.suggestionCard} onPress={() => router.push('/bonus-zone' as any)}>
               <Ionicons name="pricetag" size={24} color={Colors.gold} />
               <ThemedText style={styles.suggestionText}>Online Deals</ThemedText>
             </Pressable>
@@ -320,9 +306,8 @@ function ExpiryTrackerPage() {
           <View style={styles.tipsContent}>
             <ThemedText style={styles.tipsTitle}>Tips to Maximize Your Coins</ThemedText>
             <ThemedText style={styles.tipsText}>
-              • Enable notifications for expiry reminders{'\n'}
-              • Use older coins first{'\n'}
-              • Combine with offers for bigger savings
+              • Enable notifications for expiry reminders{'\n'}• Use older coins first{'\n'}• Combine with offers for
+              bigger savings
             </ThemedText>
           </View>
         </View>

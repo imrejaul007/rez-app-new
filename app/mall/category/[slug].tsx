@@ -522,6 +522,7 @@ function CategoryProductsPage() {
         setIsLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [slug],
   );
 
@@ -534,6 +535,7 @@ function CategoryProductsPage() {
     } catch {
       // Non-fatal — category metadata is decorative
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   useEffect(() => {
@@ -541,6 +543,7 @@ function CategoryProductsPage() {
     setPage(1);
     fetchCategory();
     fetchProducts(1, false, activeSort);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const handleRefresh = useCallback(() => {
@@ -712,6 +715,7 @@ function CategoryProductsPage() {
         </View>
       </View>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [category, total, products.length, insets.top, quickFilters, activeVibe, activeSort, heroGradient],
   );
 

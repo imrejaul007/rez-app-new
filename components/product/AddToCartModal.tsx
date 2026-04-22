@@ -51,6 +51,7 @@ export const AddToCartModal: React.FC<AddToCartModalProps> = ({
     } else {
       scaleAnim.value = 0;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const animatedModalStyle = useAnimatedStyle(() => ({

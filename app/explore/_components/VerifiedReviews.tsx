@@ -23,6 +23,7 @@ const VerifiedReviews = () => {
 
   useEffect(() => {
     fetchVerifiedReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchVerifiedReviews = async () => {

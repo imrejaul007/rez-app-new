@@ -180,6 +180,7 @@ function RefundInitiatedPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refundId, orderId]);
 
   useEffect(() => {
@@ -192,6 +193,7 @@ function RefundInitiatedPage() {
     await fetchRefund();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchRefund]);
 
   const getStatusColor = (status: string) => {

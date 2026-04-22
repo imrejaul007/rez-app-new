@@ -115,6 +115,7 @@ function NearbyStores({
     if (currentLocation) {
       loadNearbyStores();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation, radius, limit]);
 
   const handleRefresh = async () => {

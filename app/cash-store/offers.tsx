@@ -145,6 +145,7 @@ const SkeletonBlock = React.memo(
         withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
         -1,
       );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const shimmerStyle = useAnimatedStyle(() => ({
@@ -242,11 +243,13 @@ function OffersPage() {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
     fetchData().finally(() => setIsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   const handleRefresh = useCallback(async () => {
@@ -254,6 +257,7 @@ function OffersPage() {
     await fetchData();
     if (!isMounted()) return;
     setIsRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   // ─── Handlers ──────────────────────────────────────────────

@@ -186,6 +186,7 @@ function ServiceCategoryPage() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [categorySlug, sortBy],
   );
 
@@ -193,6 +194,7 @@ function ServiceCategoryPage() {
     if (categorySlug) {
       fetchData(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, sortBy]);
 
   const handleRefresh = useCallback(() => {

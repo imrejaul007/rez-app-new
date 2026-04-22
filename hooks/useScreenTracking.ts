@@ -43,6 +43,7 @@ export function useScreenTracking(
         // Ignore
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screenName]); // Re-track if screenName changes (rare but possible in tabs)
 }
 

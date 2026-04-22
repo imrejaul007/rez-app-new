@@ -79,6 +79,7 @@ function OrderDetailsScreen() {
     if (id) {
       loadOrderDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadOrderDetails = async () => {

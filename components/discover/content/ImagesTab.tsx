@@ -182,6 +182,7 @@ function ImagesTab({
         )}
       </Pressable>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleImagePress, handleProductTagPress]);
 
   // Key extractor

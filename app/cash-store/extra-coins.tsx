@@ -181,6 +181,7 @@ const GlowRing = React.memo(() => {
       withSequence(withTiming(0.8, { duration: 2000 }), withTiming(0.4, { duration: 2000 })),
       -1,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const glowStyle = useAnimatedStyle(() => ({
@@ -211,6 +212,7 @@ const SkeletonBlock = React.memo(
         withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
         -1,
       );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const shimmerStyle = useAnimatedStyle(() => ({
@@ -296,11 +298,13 @@ function ExtraCoinsPage() {
       if (!isMounted()) return;
       setError('Something went wrong. Please try again.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
     fetchData().finally(() => setIsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   const handleRefresh = useCallback(async () => {
@@ -313,6 +317,7 @@ function ExtraCoinsPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   const handleCheckIn = useCallback(async () => {
@@ -336,6 +341,7 @@ function ExtraCoinsPage() {
       if (!isMounted()) return;
       setIsCheckingIn(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCheckingIn, streak?.hasCheckedInToday]);
 
   const handleCoinDropPress = useCallback(

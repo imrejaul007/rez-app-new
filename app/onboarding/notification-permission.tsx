@@ -51,6 +51,7 @@ function NotificationPermissionPage() {
   useEffect(() => {
     analyticsService.track('notification_permission_viewed');
     checkExistingPermission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const finishOnboarding = async () => {

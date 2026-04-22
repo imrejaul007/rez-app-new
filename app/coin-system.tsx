@@ -272,6 +272,7 @@ const FAQItemComponent = ({
 
   React.useEffect(() => {
     chevronAnim.value = withTiming(isExpanded ? 1 : 0, { duration: 250 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExpanded]);
 
   return (
@@ -321,6 +322,7 @@ const CoinSystemPage = () => {
       .catch(() => {
         /* use defaults */
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Convert expiryDays to user-friendly string

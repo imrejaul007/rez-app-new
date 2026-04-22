@@ -56,6 +56,7 @@ export function useCardOfferAutoApply({
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, orderValue]);
 
   const applyOffer = useCallback(async (offer: Discount) => {

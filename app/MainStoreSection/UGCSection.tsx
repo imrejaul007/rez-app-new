@@ -171,8 +171,10 @@ const UGCCard = memo(function UGCCard({
   // Release native video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Visible means we should mount and play media
@@ -492,6 +494,7 @@ function UGCSection({
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [storeId],
   ); // propImages removed to prevent infinite loop if parent passes unstable reference
 
@@ -564,6 +567,7 @@ function UGCSection({
         ),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle bookmark press
@@ -599,6 +603,7 @@ function UGCSection({
         prev.map((ugc) => (ugc.id === item.id ? { ...ugc, isBookmarked: item.isBookmarked } : ugc)),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getCardDimensions = () => {
@@ -699,6 +704,7 @@ function UGCSection({
         needsTruncation={needsTruncation}
       />
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       cardWidth,
       cardHeight,

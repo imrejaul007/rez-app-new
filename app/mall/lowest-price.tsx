@@ -104,6 +104,7 @@ function LowestPricePage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = useCallback(
@@ -235,6 +236,7 @@ function LowestPricePage() {
         </Pressable>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router, currencySymbol],
   );
 

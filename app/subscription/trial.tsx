@@ -67,6 +67,7 @@ function TrialPage() {
       // Not on trial, redirect
       router.replace('/subscription/manage');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnTrial]);
 
   const fetchTrialStats = async () => {

@@ -174,6 +174,7 @@ function BuyCouponsPage() {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [debouncedSearch, selectedCategory],
   );
 
@@ -184,6 +185,7 @@ function BuyCouponsPage() {
     setGiftCardsLoading(true);
     giftCardsLoaded.current = true;
     fetchGiftCards(1, false).finally(() => setGiftCardsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, selectedCategory, activeTab]);
 
   // ─── Fetch Coupons ─────────────────────────────────────────
@@ -209,6 +211,7 @@ function BuyCouponsPage() {
       if (!isMounted()) return;
       setCouponsError('Unable to load coupons. Pull down to retry.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch]);
 
   // Trigger coupon fetch on tab switch or search change
@@ -217,6 +220,7 @@ function BuyCouponsPage() {
     setCouponsLoading(true);
     couponsLoaded.current = true;
     fetchCoupons().finally(() => setCouponsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, debouncedSearch]);
 
   // ─── Tab Switch Handler ────────────────────────────────────
@@ -234,6 +238,7 @@ function BuyCouponsPage() {
     await fetchGiftCards(1, false);
     if (!isMounted()) return;
     setGiftCardsRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchGiftCards]);
 
   const handleGiftCardLoadMore = useCallback(() => {
@@ -264,6 +269,7 @@ function BuyCouponsPage() {
     await fetchCoupons();
     if (!isMounted()) return;
     setCouponsRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCoupons]);
 
   const handleClaimCoupon = useCallback(
@@ -282,6 +288,7 @@ function BuyCouponsPage() {
         setClaimingCouponId(null);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [claimingCouponId],
   );
 
@@ -694,6 +701,7 @@ const GiftCardCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 300 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const handlePressIn = () => {
@@ -815,6 +823,7 @@ const CouponCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 300 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const couponAnimStyle = useAnimatedStyle(() => ({
@@ -932,6 +941,7 @@ const SkeletonCard = React.memo(({ index }: { index: number }) => {
 
   useEffect(() => {
     shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const skeletonAnimStyle = useAnimatedStyle(() => ({

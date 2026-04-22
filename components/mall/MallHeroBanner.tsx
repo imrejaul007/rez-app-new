@@ -152,6 +152,7 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
 
   const animateDots = useCallback((activeIndex: number) => {
     activeIndexShared.value = activeIndex;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToIndex = useCallback((index: number) => {

@@ -33,6 +33,7 @@ function ReorderSuggestions({ onAddToCart }: ReorderSuggestionsProps) {
 
   useEffect(() => {
     refresh();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getTypeIcon = (type: string) => {

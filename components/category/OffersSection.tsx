@@ -94,6 +94,7 @@ function OffersSection({ categorySlug, categoryId, title, onSeeAll, filterTags }
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug]);
 
   useEffect(() => {

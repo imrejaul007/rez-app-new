@@ -106,6 +106,7 @@ const CreatorPickDetail = () => {
         },
       ],
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, pick, router]);
 
   const fetchPickData = useCallback(async () => {
@@ -146,6 +147,7 @@ const CreatorPickDetail = () => {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const isMounted = useIsMounted();

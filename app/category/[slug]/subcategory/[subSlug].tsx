@@ -151,6 +151,7 @@ function SubcategoryPage() {
       if (!isMounted()) return;
       setIsLoadingStores(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subSlug]);
 
   /**
@@ -218,6 +219,7 @@ function SubcategoryPage() {
       if (!isMounted()) return;
       setIsLoadingProducts(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subSlug]);
 
   /**

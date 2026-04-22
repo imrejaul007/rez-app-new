@@ -29,6 +29,7 @@ function ProjectStatusCard({
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 500 });
     scaleAnim.value = withSpring(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delay]);
 
   const cardAnimStyle = useAnimatedStyle(() => ({

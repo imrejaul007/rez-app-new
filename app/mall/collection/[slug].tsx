@@ -73,6 +73,7 @@ function CollectionBrandsPage() {
         setIsLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [slug],
   );
 
@@ -80,6 +81,7 @@ function CollectionBrandsPage() {
     setIsLoading(true);
     setPage(1);
     fetchCollectionBrands(1, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const handleRefresh = useCallback(() => {

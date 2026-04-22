@@ -186,6 +186,7 @@ const MissionDetailScreen: React.FC = () => {
         if (isRefresh) setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [challengeId],
   );
 

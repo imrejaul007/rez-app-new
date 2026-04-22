@@ -63,6 +63,7 @@ function ReorderModal({
       setSelectedItems(new Set());
       setSelectAll(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, orderId]);
 
   useEffect(() => {

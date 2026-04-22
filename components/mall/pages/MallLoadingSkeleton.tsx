@@ -25,6 +25,7 @@ const SkeletonItem: React.FC<{ type: 'card' | 'list' | 'grid' }> = ({ type }) =>
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withTiming(1, { duration: 1500 }), -1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shimmerStyle = useAnimatedStyle(() => ({

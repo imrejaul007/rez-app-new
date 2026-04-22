@@ -115,6 +115,7 @@ function VoucherBrandDetailPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const isMounted = useIsMounted();
 
@@ -181,6 +182,7 @@ function VoucherBrandDetailPage() {
       if (!isMounted()) return;
       setIsPurchasing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brand, selectedDenomination]);
 
   const handlePurchase = useCallback(async () => {
@@ -203,6 +205,7 @@ function VoucherBrandDetailPage() {
       type: 'confirm',
       onConfirm: () => executeWalletPurchase(),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brand, selectedDenomination, currencySymbol, executeWalletPurchase]);
 
   const cashbackAmount =

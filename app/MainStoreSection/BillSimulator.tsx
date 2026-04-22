@@ -34,6 +34,7 @@ function BillSimulator({
       duration: 220,
       useNativeDriver: true,
     }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [billAmount]);
 
   const clamp = (val: number) => Math.min(MAX_BILL, Math.max(MIN_BILL, val));

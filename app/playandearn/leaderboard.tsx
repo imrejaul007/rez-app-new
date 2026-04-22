@@ -206,6 +206,7 @@ const Leaderboard = () => {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedPeriod, user?.id, (user as any)?.name],
   );
 
@@ -254,6 +255,7 @@ const Leaderboard = () => {
       if (!isMounted()) return;
       setLoadingMore(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, loadingMore, hasMore, selectedPeriod, user?.id]);
 
   useEffect(() => {

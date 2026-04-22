@@ -125,6 +125,7 @@ const CampusHotDealsStrip: React.FC<CampusHotDealsStripProps> = ({ campusId = ''
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campusId]);
 
   const handleCardPress = useCallback((id: string) => {

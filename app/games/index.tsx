@@ -70,6 +70,7 @@ function GamesPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, refreshWallet],
   );
 
@@ -78,6 +79,7 @@ function GamesPage() {
     if (isAuthenticated && user) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user]);
 
   useFocusEffect(

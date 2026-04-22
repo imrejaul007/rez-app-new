@@ -35,6 +35,7 @@ function PaybackProgressBar({
   useEffect(() => {
     progressAnim.value = 0;
     progressAnim.value = withSpring(ratio, { damping: 20, stiffness: 80 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratio]);
 
   const animatedWidthStyle = useAnimatedStyle(() => ({

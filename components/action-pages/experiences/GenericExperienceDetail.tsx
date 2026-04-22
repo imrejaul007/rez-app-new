@@ -110,6 +110,7 @@ function GenericExperienceDetail() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => { if (id) fetchData(); }, [fetchData, id]);

@@ -31,6 +31,7 @@ function SectionSkeleton({
   showIndicator = true,
 }: SectionSkeletonProps) {
   // Determine which skeleton card to render based on card type
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderSkeletonCard = () => {
     switch (cardType) {
       case 'product':

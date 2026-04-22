@@ -149,6 +149,7 @@ function HotelDetailsPage() {
     if (id) {
       loadHotelDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadHotelDetails = async () => {

@@ -35,7 +35,7 @@ const ExploreSearchPage = () => {
   const currencySymbol = getCurrencySymbol();
   const { q: initialQuery } = useLocalSearchParams();
 
-  const [searchQuery, setSearchQuery] = useState(initialQuery as string || '');
+  const [searchQuery, setSearchQuery] = useState((initialQuery as string) || '');
   const [activeTab, setActiveTab] = useState<TabType>('stores');
   const [stores, setStores] = useState<ExploreStore[]>([]);
   const [products, setProducts] = useState<HotProduct[]>([]);
@@ -75,9 +75,10 @@ const ExploreSearchPage = () => {
 
       if (productsResponse.success && productsResponse.data) {
         // Filter products by search query (basic client-side filtering)
-        const filteredProducts = productsResponse.data.products.filter((p: HotProduct) =>
-          p.name.toLowerCase().includes(query.toLowerCase()) ||
-          (p.store && p.store.toLowerCase().includes(query.toLowerCase()))
+        const filteredProducts = productsResponse.data.products.filter(
+          (p: HotProduct) =>
+            p.name.toLowerCase().includes(query.toLowerCase()) ||
+            (p.store && p.store.toLowerCase().includes(query.toLowerCase())),
         );
         if (!isMounted()) return;
         setProducts(filteredProducts);
@@ -91,6 +92,7 @@ const ExploreSearchPage = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isInitialMount = useRef(true);
@@ -148,7 +150,7 @@ const ExploreSearchPage = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
@@ -215,9 +217,7 @@ const ExploreSearchPage = () => {
           }
         >
           {/* Loading State */}
-          {loading && !refreshing && (
-            <CardGridSkeleton />
-          )}
+          {loading && !refreshing && <CardGridSkeleton />}
 
           {/* Error State */}
           {error && !loading && (
@@ -249,82 +249,94 @@ const ExploreSearchPage = () => {
           )}
 
           {/* Store Results */}
-          {!loading && !error && activeTab === 'stores' && stores.map((store) => (
-            <Pressable
-              key={store.id}
-              style={styles.storeCard}
-              onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-            >
-              {store.image ? (
-                <CachedImage source={store.image} style={styles.storeImage} />
-              ) : (
-                <View style={[styles.storeImage, styles.storePlaceholder]}>
-                  <Ionicons name="storefront" size={28} color={colors.text.tertiary} />
-                </View>
-              )}
-
-              <View style={styles.storeContent}>
-                <Text style={styles.storeName}>{store.name}</Text>
-                <Text style={styles.storeCategory}>{store.category}</Text>
-
-                <View style={styles.storeFooter}>
-                  {store.rating && (
-                    <View style={styles.ratingBadge}>
-                      <Ionicons name="star" size={12} color={Colors.warning} />
-                      <Text style={styles.ratingText}>{store.rating}</Text>
-                    </View>
-                  )}
-                  {store.distance && (
-                    <View style={styles.infoBadge}>
-                      <Ionicons name="location" size={12} color={colors.text.tertiary} />
-                      <Text style={styles.infoText}>{store.distance}</Text>
-                    </View>
-                  )}
-                </View>
-
-                {store.cashback && (
-                  <View style={styles.cashbackBadge}>
-                    <Text style={styles.cashbackText}>{store.cashback} Cashback</Text>
+          {!loading &&
+            !error &&
+            activeTab === 'stores' &&
+            stores.map((store) => (
+              <Pressable
+                key={store.id}
+                style={styles.storeCard}
+                onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
+              >
+                {store.image ? (
+                  <CachedImage source={store.image} style={styles.storeImage} />
+                ) : (
+                  <View style={[styles.storeImage, styles.storePlaceholder]}>
+                    <Ionicons name="storefront" size={28} color={colors.text.tertiary} />
                   </View>
                 )}
-              </View>
-            </Pressable>
-          ))}
+
+                <View style={styles.storeContent}>
+                  <Text style={styles.storeName}>{store.name}</Text>
+                  <Text style={styles.storeCategory}>{store.category}</Text>
+
+                  <View style={styles.storeFooter}>
+                    {store.rating && (
+                      <View style={styles.ratingBadge}>
+                        <Ionicons name="star" size={12} color={Colors.warning} />
+                        <Text style={styles.ratingText}>{store.rating}</Text>
+                      </View>
+                    )}
+                    {store.distance && (
+                      <View style={styles.infoBadge}>
+                        <Ionicons name="location" size={12} color={colors.text.tertiary} />
+                        <Text style={styles.infoText}>{store.distance}</Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {store.cashback && (
+                    <View style={styles.cashbackBadge}>
+                      <Text style={styles.cashbackText}>{store.cashback} Cashback</Text>
+                    </View>
+                  )}
+                </View>
+              </Pressable>
+            ))}
 
           {/* Product Results */}
-          {!loading && !error && activeTab === 'products' && products.map((product) => (
-            <Pressable
-              key={product.id}
-              style={styles.productCard}
-              onPress={() => navigateTo(`/product-page?cardId=${product.id}&cardType=product`)}
-            >
-              {product.image ? (
-                <CachedImage source={product.image} style={styles.productImage} />
-              ) : (
-                <View style={[styles.productImage, styles.productPlaceholder]}>
-                  <Ionicons name="cube" size={28} color={colors.text.tertiary} />
-                </View>
-              )}
-
-              <View style={styles.productContent}>
-                <Text style={styles.productName}>{product.name}</Text>
-                {product.store && <Text style={styles.productStore}>{product.store}</Text>}
-
-                <View style={styles.priceRow}>
-                  <Text style={styles.productPrice}>{currencySymbol}{product.price}</Text>
-                  {product.originalPrice > product.price && (
-                    <Text style={styles.originalPrice}>{currencySymbol}{product.originalPrice}</Text>
-                  )}
-                </View>
-
-                {product.offer && (
-                  <View style={styles.offerBadge}>
-                    <Text style={styles.offerText}>{product.offer}</Text>
+          {!loading &&
+            !error &&
+            activeTab === 'products' &&
+            products.map((product) => (
+              <Pressable
+                key={product.id}
+                style={styles.productCard}
+                onPress={() => navigateTo(`/product-page?cardId=${product.id}&cardType=product`)}
+              >
+                {product.image ? (
+                  <CachedImage source={product.image} style={styles.productImage} />
+                ) : (
+                  <View style={[styles.productImage, styles.productPlaceholder]}>
+                    <Ionicons name="cube" size={28} color={colors.text.tertiary} />
                   </View>
                 )}
-              </View>
-            </Pressable>
-          ))}
+
+                <View style={styles.productContent}>
+                  <Text style={styles.productName}>{product.name}</Text>
+                  {product.store && <Text style={styles.productStore}>{product.store}</Text>}
+
+                  <View style={styles.priceRow}>
+                    <Text style={styles.productPrice}>
+                      {currencySymbol}
+                      {product.price}
+                    </Text>
+                    {product.originalPrice > product.price && (
+                      <Text style={styles.originalPrice}>
+                        {currencySymbol}
+                        {product.originalPrice}
+                      </Text>
+                    )}
+                  </View>
+
+                  {product.offer && (
+                    <View style={styles.offerBadge}>
+                      <Text style={styles.offerText}>{product.offer}</Text>
+                    </View>
+                  )}
+                </View>
+              </Pressable>
+            ))}
 
           <View style={{ height: 100 }} />
         </ScrollView>

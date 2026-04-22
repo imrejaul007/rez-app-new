@@ -92,6 +92,7 @@ export default function QRScanner({ onScan, onClose }: QRScannerProps) {
     return () => {
       stopScanning();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkWebcamAndStart = async () => {

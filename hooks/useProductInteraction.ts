@@ -114,6 +114,7 @@ export function useProductInteraction(
     } finally {
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSuccess, showError, trackAnalytics]);
 
   /**
@@ -195,6 +196,7 @@ export function useProductInteraction(
     } catch (err: any) {
       showError('Failed to open product details');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, trackAnalytics, showError]);
 
   /**

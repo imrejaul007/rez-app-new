@@ -181,6 +181,7 @@ function MemoryPage() {
       setGameState('completed');
       handleGameComplete();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matches, gameState]);
 
   const handleBackPress = () => {
@@ -303,6 +304,7 @@ function MemoryPage() {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [canFlip, gameState, cards, flippedCards],
   );
 

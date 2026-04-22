@@ -51,6 +51,7 @@ function ReportModal({
       fadeAnim.value = withTiming(0, { duration: 200 });
       slideAnim.value = withTiming(screenHeight, { duration: 250 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const overlayAnimatedStyle = useAnimatedStyle(() => ({
@@ -74,6 +75,7 @@ function ReportModal({
         }
       }, 2000);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
 
   // Reset form when modal closes
@@ -86,6 +88,7 @@ function ReportModal({
         reset();
       }, 300);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const handleClose = () => {

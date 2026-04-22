@@ -27,6 +27,7 @@ const Shimmer: React.FC<{ style?: any }> = React.memo(({ style }) => {
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animStyle = useAnimatedStyle(() => ({

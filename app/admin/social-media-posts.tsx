@@ -88,6 +88,7 @@ function AdminSocialMediaPosts() {
       return;
     }
     loadPosts(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user, selectedStatus]);
 
   const loadPosts = async (pageNum = 1) => {

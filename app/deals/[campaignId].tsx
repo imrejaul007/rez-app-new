@@ -75,6 +75,7 @@ const CampaignDetailPage: React.FC = () => {
       setError('Campaign ID is required');
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaignId]);
 
   const fetchCampaign = async () => {

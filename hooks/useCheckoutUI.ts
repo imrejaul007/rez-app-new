@@ -153,6 +153,7 @@ export function useCheckoutUI({
         message: checkoutState.error,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkoutState.error]);
 
   // Initialize offer redemption from route params
@@ -161,6 +162,7 @@ export function useCheckoutUI({
     if (offerRedemptionCode && !uiState.appliedOfferRedemption) {
       validateAndApplyOfferRedemption(offerRedemptionCode);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offerRedemptionCode, authLoading, isAuthenticated]);
 
   // --- Offer Redemption Validation ---

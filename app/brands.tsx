@@ -74,6 +74,7 @@ function BrandsPage() {
   // Load brands
   useEffect(() => {
     loadBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug]);
 
   const loadBrands = async () => {

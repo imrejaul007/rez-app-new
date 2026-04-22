@@ -62,6 +62,7 @@ function CategoryRecommendationsGrid({
 
   useEffect(() => {
     loadRecommendations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, showProducts, showStores]);
 
   const loadRecommendations = async () => {

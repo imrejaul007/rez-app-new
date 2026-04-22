@@ -156,6 +156,7 @@ const CategoryCashbackGrid: React.FC<CategoryCashbackGridProps> = memo(({ onCate
         setCashbackRates(rates);
       })
       .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCashbackRates]);
 
   // Get cashback rate for a category (API rate or default)

@@ -106,6 +106,7 @@ function BirthdayZonePage() {
       shimmerAnim.value = 0;
       confettiAnim.value = 0;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchZoneData = async () => {

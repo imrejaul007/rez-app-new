@@ -49,6 +49,7 @@ function StockWarningBanner({
       slideAnim.value = withTiming(0, { duration: 300 });
       fadeAnim.value = withTiming(1, { duration: 300 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issues.length, visible]);
 
   if (issues.length === 0 || !visible) {

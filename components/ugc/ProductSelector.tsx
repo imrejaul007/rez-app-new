@@ -77,6 +77,7 @@ function ProductSelector({
     } else {
       slideAnim.value = 0;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const modalAnimatedStyle = useAnimatedStyle(() => ({

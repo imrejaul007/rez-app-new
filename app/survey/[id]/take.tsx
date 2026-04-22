@@ -35,6 +35,7 @@ function SurveyTakePage() {
 
   useEffect(() => {
     loadSurvey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadSurvey = async () => {

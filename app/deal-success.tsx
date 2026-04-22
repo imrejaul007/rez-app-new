@@ -67,6 +67,7 @@ function DealSuccessPage() {
       setError('Missing payment information');
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [razorpayOrderId, razorpayPaymentId, razorpaySignature]);
 
   const verifyPayment = async (retryCount = 0): Promise<void> => {

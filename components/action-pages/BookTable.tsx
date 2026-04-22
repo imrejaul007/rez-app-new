@@ -128,6 +128,7 @@ function BookTablePage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -173,6 +174,7 @@ function BookTablePage() {
       if (!isMounted()) return;
       setIsLoadingAvailability(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

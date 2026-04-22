@@ -57,12 +57,14 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
     if (storeId) {
       fetchVoucherCount();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   useEffect(() => {
     if (storeId && showDetails) {
       fetchVouchers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, showDetails]);
 
   const fetchVoucherCount = async () => {

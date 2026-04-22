@@ -90,6 +90,7 @@ const EmergencyPage: React.FC = () => {
   useEffect(() => {
     fetchEmergencyContacts();
     checkActiveBooking();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchEmergencyContacts = async () => {

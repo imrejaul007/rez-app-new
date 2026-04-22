@@ -99,6 +99,7 @@ export function usePerformanceMetrics(
         );
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentName, trackMount]);
 
   // Track renders
@@ -243,6 +244,7 @@ export function useScreenPerformance(options: UseScreenPerformanceOptions): void
       });
 
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screenName, trackScreenLoad]);
 }
 
@@ -378,6 +380,7 @@ export function useListPerformance(
 
     scrollStartTime.current = 0;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listName, trackScrollPerformance]);
 
   const onItemRender = useCallback((index: number) => {

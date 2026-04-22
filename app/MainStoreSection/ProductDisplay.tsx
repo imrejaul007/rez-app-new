@@ -168,11 +168,13 @@ export default memo(function ProductDisplay({
     } else {
       heartPulseAnim.value = 1;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFavorited]);
 
   // Animate pagination dots on index change (reanimated)
   useEffect(() => {
     activeDotIndex.value = currentIndex;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
   // Staggered entrance animation for category tags

@@ -48,6 +48,7 @@ const LoopIndicator: React.FC = () => {
             -1,
             false
         );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -96,6 +97,7 @@ const FinalScreen: React.FC<Props> = ({ onNavigate, onBack }) => {
             -1,
             true
         );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const heroStyle = useAnimatedStyle(() => ({

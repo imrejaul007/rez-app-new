@@ -317,6 +317,7 @@ function OrderHistoryPage() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh, selectedFilter, searchQuery, buildServerFilter]);
 
   const handleOrderPress = useCallback(

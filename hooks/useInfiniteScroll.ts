@@ -174,6 +174,7 @@ export function useInfiniteScroll<T = any>(
     if (enabled && data.length === 0) {
       fetchPage(initialPage, false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, initialPage]);
 
   /**
@@ -362,6 +363,7 @@ export function useCursorInfiniteScroll<T = any>(
     if (enabled && data.length === 0) {
       fetchData(initialCursor, false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, initialCursor]);
 
   const fetchMore = useCallback(async (): Promise<void> => {

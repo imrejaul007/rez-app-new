@@ -44,6 +44,7 @@ const FilterChips: React.FC<FilterChipsProps & { parentCategorySlug?: string }> 
   };
 
   // Handle gender selection
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleGenderSelect = (genderId: string) => {
     const newGenders = filters.gender.includes(genderId as any)
       ? filters.gender.filter(g => g !== genderId)

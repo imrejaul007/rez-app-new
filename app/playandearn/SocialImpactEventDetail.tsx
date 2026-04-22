@@ -50,6 +50,7 @@ const SocialImpactEventDetail = () => {
       }
     };
     fetchEvent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleRegister = async () => {

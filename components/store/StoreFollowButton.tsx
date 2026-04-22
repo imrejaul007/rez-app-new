@@ -79,6 +79,7 @@ function StoreFollowButton({
     if (isAuthenticated && !hasCheckedStatus) {
       checkFollowStatus();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, hasCheckedStatus]);
 
   /**

@@ -260,6 +260,7 @@ export function useProductReviews({
       setIsLoading(true);
       loadReviews(1, false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, sortBy, filterRating, autoLoad]);
 
   return {

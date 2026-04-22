@@ -104,6 +104,7 @@ function useLazySectionNative(
       }, 100);
       return () => clearTimeout(timer);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollY, sectionY, rootMargin]);
 
   // Use useAnimatedReaction to observe scrollY changes
@@ -181,6 +182,7 @@ const LazySection: React.FC<LazySectionProps> = ({
       setHasLoaded(true);
       fadeAnim.value = withTiming(1, { duration: 200 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, hasLoaded]);
 
   const shouldRenderContent = hasLoaded && (keepMounted || isVisible || !unloadWhenOffscreen);

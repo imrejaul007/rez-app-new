@@ -36,6 +36,7 @@ const SaveAndEarnScreen: React.FC<Props> = ({ onNavigate, onBack }) => {
         cashbackScale.value = withDelay(300, withSpring(1, { damping: 12 }));
         coinsScale.value = withDelay(500, withSpring(1, { damping: 12 }));
         totalOpacity.value = withDelay(700, withSpring(1));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const discountStyle = useAnimatedStyle(() => ({

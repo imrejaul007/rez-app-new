@@ -75,6 +75,7 @@ function ProductReviewsSection({
     setShowReviewForm(true);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleEditReview = (review: Review) => {
     setEditingReview(review);
     setShowReviewForm(true);

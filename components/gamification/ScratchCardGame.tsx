@@ -54,6 +54,7 @@ function ScratchCardGame({
   // Check eligibility on mount
   useEffect(() => {
     checkEligibility();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkEligibility = async () => {

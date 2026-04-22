@@ -82,6 +82,7 @@ function CashbackModal({
       cancelAnimation(coin3Anim);
       cancelAnimation(coin4Anim);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const startCoinAnimations = () => {

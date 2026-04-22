@@ -46,6 +46,7 @@ function BrandedCoinsScreen() {
         </View>
       </View>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

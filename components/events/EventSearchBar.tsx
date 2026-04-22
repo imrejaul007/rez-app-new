@@ -53,6 +53,7 @@ function EventSearchBar({
 
   useEffect(() => {
     animatedValue.value = withTiming(isFocused ? 1 : 0, { duration: 200 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   const handleFocus = () => {

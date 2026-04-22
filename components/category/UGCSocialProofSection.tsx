@@ -150,6 +150,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
     };
 
     fetchVideos();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, maxItems]);
 
   const handleContentPress = useCallback((item: Partial<Video>) => {
@@ -189,6 +190,7 @@ const UGCSocialProofSection: React.FC<UGCSocialProofSectionProps> = ({
     } catch (err: any) {
       // silently handle
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderVideoItem = useCallback(({ item, index }: { item: Partial<Video>; index: number }) => {

@@ -444,6 +444,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
     // Default: treat as offline event (venue-based)
     return true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventDetails?.isOnline, eventDetails?.location]);
 
   // Get available slots for offline events - only use real data, no mock fallback
@@ -567,6 +568,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     } finally {
       setIsLoadingFavorite(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventDetails?.id, eventDetails?.title, isFavorited, isAuthenticated, user]);
 
   const handleOnlineBooking = useCallback(async () => {

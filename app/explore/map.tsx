@@ -99,39 +99,43 @@ const ExploreMapPage = () => {
   const [stores, setStores] = useState<NearbyStore[]>([]);
 
   // Fetch nearby stores from API using region-aware coordinates
-  const fetchNearbyStores = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchNearbyStores = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      const response = await exploreApi.getNearbyStores({
-        latitude: effectiveCoordinates.latitude,
-        longitude: effectiveCoordinates.longitude,
-        radius: 5,
-        limit: 20,
-      });
+        const response = await exploreApi.getNearbyStores({
+          latitude: effectiveCoordinates.latitude,
+          longitude: effectiveCoordinates.longitude,
+          radius: 5,
+          limit: 20,
+        });
 
-      if (response.success && response.data) {
+        if (response.success && response.data) {
+          if (!isMounted()) return;
+          setStores(response.data);
+        } else {
+          if (!isMounted()) return;
+          setError(response.error || 'Failed to fetch nearby stores');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setStores(response.data);
-      } else {
+        setError(err.message || 'Something went wrong');
+      } finally {
         if (!isMounted()) return;
-        setError(response.error || 'Failed to fetch nearby stores');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [effectiveCoordinates.latitude, effectiveCoordinates.longitude]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [effectiveCoordinates.latitude, effectiveCoordinates.longitude],
+  );
 
   useEffect(() => {
     fetchNearbyStores();
@@ -141,6 +145,7 @@ const ExploreMapPage = () => {
     if (currentRegion) {
       fetchNearbyStores();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRegion]);
 
   const onRefresh = useCallback(() => {
@@ -167,7 +172,10 @@ const ExploreMapPage = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>Stores in {regionName}</Text>
@@ -186,10 +194,7 @@ const ExploreMapPage = () => {
         {categories.map((cat) => (
           <Pressable
             key={cat.id}
-            style={[
-              styles.categoryChip,
-              selectedCategory === cat.id && styles.categoryChipActive,
-            ]}
+            style={[styles.categoryChip, selectedCategory === cat.id && styles.categoryChipActive]}
             onPress={() => setSelectedCategory(cat.id)}
           >
             <Ionicons
@@ -197,12 +202,7 @@ const ExploreMapPage = () => {
               size={16}
               color={selectedCategory === cat.id ? colors.background.primary : colors.neutral[500]}
             />
-            <Text
-              style={[
-                styles.categoryLabel,
-                selectedCategory === cat.id && styles.categoryLabelActive,
-              ]}
-            >
+            <Text style={[styles.categoryLabel, selectedCategory === cat.id && styles.categoryLabelActive]}>
               {cat.label}
             </Text>
           </Pressable>
@@ -241,124 +241,118 @@ const ExploreMapPage = () => {
             })}
           </MapView>
         ) : (
-        <View style={styles.mapBackground}>
-          {/* Fallback mock map for web */}
-          <LinearGradient
-            colors={['#E8F4F8', '#D1E7DD', colors.slateLight]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-
-          <View style={styles.roadHorizontal1} />
-          <View style={styles.roadHorizontal2} />
-          <View style={styles.roadVertical1} />
-          <View style={styles.roadVertical2} />
-          <View style={styles.roadDiagonal} />
-
-          <View style={styles.parkArea1} />
-          <View style={styles.parkArea2} />
-          <View style={styles.waterArea} />
-
-          <View style={styles.block1} />
-          <View style={styles.block2} />
-          <View style={styles.block3} />
-          <View style={styles.block4} />
-
-          {/* Store Markers */}
-          {stores.slice(0, 6).map((store, index) => {
-            const pos = markerPositions[index];
-            const color = markerColors[index % markerColors.length];
-            const isSelected = selectedStore === store.id;
-
-            return (
-              <Pressable
-                key={store.id}
-                style={[
-                  styles.storeMarker,
-                  { left: `${pos.left}%`, top: `${pos.top}%` },
-                  isSelected && styles.storeMarkerSelected,
-                ]}
-                onPress={() => {
-                  setSelectedStore(store.id);
-                  navigateTo(`/MainStorePage?storeId=${store.id}`);
-                }}
-               
-              >
-                {/* Pulse effect */}
-                <View style={[styles.markerPulse, { backgroundColor: color.shadow }]} />
-
-                {/* Pin shape */}
-                <View style={[styles.markerPin, { backgroundColor: color.bg }]}>
-                  <Text style={styles.markerInitial}>
-                    {store.name?.charAt(0)?.toUpperCase() || 'S'}
-                  </Text>
-                </View>
-                <View style={[styles.markerTail, { borderTopColor: color.bg }]} />
-
-                {/* Label */}
-                <View style={styles.markerLabelContainer}>
-                  <Text style={styles.markerLabel} numberOfLines={1}>
-                    {store.name?.split(' ')[0]}
-                  </Text>
-                </View>
-              </Pressable>
-            );
-          })}
-
-          {/* Current Location Marker */}
-          <View style={styles.currentLocation}>
-            <View style={styles.currentLocationOuter} />
-            <View style={styles.currentLocationMiddle} />
-            <View style={styles.currentLocationInner} />
-          </View>
-
-          {/* Floating Info Card */}
-          <View style={styles.infoCardContainer}>
+          <View style={styles.mapBackground}>
+            {/* Fallback mock map for web */}
             <LinearGradient
-              colors={[colors.background.primary, colors.tint.coolGray]}
-              style={styles.infoCard}
-            >
-              <View style={styles.infoCardLeft}>
-                <View style={styles.locationIconContainer}>
-                  <Ionicons name="navigate" size={16} color={colors.background.primary} />
-                </View>
-                <View>
-                  <Text style={styles.infoCardTitle}>{regionName}</Text>
-                  <Text style={styles.infoCardSubtitle}>Your location</Text>
-                </View>
-              </View>
-              <View style={styles.infoCardRight}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{stores.length}</Text>
-                  <Text style={styles.statLabel}>Stores</Text>
-                </View>
-                <View style={styles.statDivider} />
-                <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>5km</Text>
-                  <Text style={styles.statLabel}>Radius</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </View>
+              colors={['#E8F4F8', '#D1E7DD', colors.slateLight]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
 
-          {/* Zoom Controls */}
-          <View style={styles.zoomControls}>
-            <Pressable style={styles.zoomBtn}>
-              <Ionicons name="add" size={20} color={colors.neutral[700]} />
-            </Pressable>
-            <View style={styles.zoomDivider} />
-            <Pressable style={styles.zoomBtn}>
-              <Ionicons name="remove" size={20} color={colors.neutral[700]} />
-            </Pressable>
-          </View>
+            <View style={styles.roadHorizontal1} />
+            <View style={styles.roadHorizontal2} />
+            <View style={styles.roadVertical1} />
+            <View style={styles.roadVertical2} />
+            <View style={styles.roadDiagonal} />
 
-          {/* Compass */}
-          <View style={styles.compass}>
-            <Text style={styles.compassText}>N</Text>
-            <Ionicons name="navigate" size={14} color={colors.error} style={{ transform: [{ rotate: '-45deg' }] }} />
+            <View style={styles.parkArea1} />
+            <View style={styles.parkArea2} />
+            <View style={styles.waterArea} />
+
+            <View style={styles.block1} />
+            <View style={styles.block2} />
+            <View style={styles.block3} />
+            <View style={styles.block4} />
+
+            {/* Store Markers */}
+            {stores.slice(0, 6).map((store, index) => {
+              const pos = markerPositions[index];
+              const color = markerColors[index % markerColors.length];
+              const isSelected = selectedStore === store.id;
+
+              return (
+                <Pressable
+                  key={store.id}
+                  style={[
+                    styles.storeMarker,
+                    { left: `${pos.left}%`, top: `${pos.top}%` },
+                    isSelected && styles.storeMarkerSelected,
+                  ]}
+                  onPress={() => {
+                    setSelectedStore(store.id);
+                    navigateTo(`/MainStorePage?storeId=${store.id}`);
+                  }}
+                >
+                  {/* Pulse effect */}
+                  <View style={[styles.markerPulse, { backgroundColor: color.shadow }]} />
+
+                  {/* Pin shape */}
+                  <View style={[styles.markerPin, { backgroundColor: color.bg }]}>
+                    <Text style={styles.markerInitial}>{store.name?.charAt(0)?.toUpperCase() || 'S'}</Text>
+                  </View>
+                  <View style={[styles.markerTail, { borderTopColor: color.bg }]} />
+
+                  {/* Label */}
+                  <View style={styles.markerLabelContainer}>
+                    <Text style={styles.markerLabel} numberOfLines={1}>
+                      {store.name?.split(' ')[0]}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+
+            {/* Current Location Marker */}
+            <View style={styles.currentLocation}>
+              <View style={styles.currentLocationOuter} />
+              <View style={styles.currentLocationMiddle} />
+              <View style={styles.currentLocationInner} />
+            </View>
+
+            {/* Floating Info Card */}
+            <View style={styles.infoCardContainer}>
+              <LinearGradient colors={[colors.background.primary, colors.tint.coolGray]} style={styles.infoCard}>
+                <View style={styles.infoCardLeft}>
+                  <View style={styles.locationIconContainer}>
+                    <Ionicons name="navigate" size={16} color={colors.background.primary} />
+                  </View>
+                  <View>
+                    <Text style={styles.infoCardTitle}>{regionName}</Text>
+                    <Text style={styles.infoCardSubtitle}>Your location</Text>
+                  </View>
+                </View>
+                <View style={styles.infoCardRight}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statNumber}>{stores.length}</Text>
+                    <Text style={styles.statLabel}>Stores</Text>
+                  </View>
+                  <View style={styles.statDivider} />
+                  <View style={styles.statItem}>
+                    <Text style={styles.statNumber}>5km</Text>
+                    <Text style={styles.statLabel}>Radius</Text>
+                  </View>
+                </View>
+              </LinearGradient>
+            </View>
+
+            {/* Zoom Controls */}
+            <View style={styles.zoomControls}>
+              <Pressable style={styles.zoomBtn}>
+                <Ionicons name="add" size={20} color={colors.neutral[700]} />
+              </Pressable>
+              <View style={styles.zoomDivider} />
+              <Pressable style={styles.zoomBtn}>
+                <Ionicons name="remove" size={20} color={colors.neutral[700]} />
+              </Pressable>
+            </View>
+
+            {/* Compass */}
+            <View style={styles.compass}>
+              <Text style={styles.compassText}>N</Text>
+              <Ionicons name="navigate" size={14} color={colors.error} style={{ transform: [{ rotate: '-45deg' }] }} />
+            </View>
           </View>
-        </View>
         )}
       </View>
 
@@ -375,14 +369,10 @@ const ExploreMapPage = () => {
         style={styles.storeList}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.storeListContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.lightMustard]} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.lightMustard]} />}
       >
         {/* Loading State */}
-        {loading && !refreshing && (
-          <MapViewSkeleton />
-        )}
+        {loading && !refreshing && <MapViewSkeleton />}
 
         {/* Error State */}
         {error && !loading && (
@@ -405,74 +395,70 @@ const ExploreMapPage = () => {
         )}
 
         {/* Store Cards */}
-        {!loading && stores.filter((store) => {
-          if (selectedCategory === 'all') return true;
-          const cat = (store as any).category?.toLowerCase() || '';
-          return cat.includes(selectedCategory);
-        }).map((store, index) => {
-          const color = markerColors[index % markerColors.length];
-          const isOpen = store.isLive === true || store.status === 'Open';
+        {!loading &&
+          stores
+            .filter((store) => {
+              if (selectedCategory === 'all') return true;
+              const cat = (store as any).category?.toLowerCase() || '';
+              return cat.includes(selectedCategory);
+            })
+            .map((store, index) => {
+              const color = markerColors[index % markerColors.length];
+              const isOpen = store.isLive === true || store.status === 'Open';
 
-          return (
-            <Pressable
-              key={store.id}
-              style={[
-                styles.storeCard,
-                selectedStore === store.id && styles.storeCardSelected,
-              ]}
-              onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-             
-            >
-              {/* Store Icon */}
-              <View style={[styles.storeIcon, { backgroundColor: color.bg }]}>
-                <Text style={styles.storeIconText}>{store.name?.charAt(0)?.toUpperCase()}</Text>
-              </View>
+              return (
+                <Pressable
+                  key={store.id}
+                  style={[styles.storeCard, selectedStore === store.id && styles.storeCardSelected]}
+                  onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
+                >
+                  {/* Store Icon */}
+                  <View style={[styles.storeIcon, { backgroundColor: color.bg }]}>
+                    <Text style={styles.storeIconText}>{store.name?.charAt(0)?.toUpperCase()}</Text>
+                  </View>
 
-              {/* Store Info */}
-              <View style={styles.storeInfo}>
-                <View style={styles.storeNameRow}>
-                  <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-                  <View style={[styles.statusDot, { backgroundColor: isOpen ? colors.lightMustard : colors.error }]} />
-                </View>
-                <View style={styles.storeMetaRow}>
-                  {store.distance && (
-                    <View style={styles.metaItem}>
-                      <Ionicons name="location-outline" size={12} color={colors.neutral[500]} />
-                      <Text style={styles.metaText}>{store.distance}</Text>
+                  {/* Store Info */}
+                  <View style={styles.storeInfo}>
+                    <View style={styles.storeNameRow}>
+                      <Text style={styles.storeName} numberOfLines={1}>
+                        {store.name}
+                      </Text>
+                      <View
+                        style={[styles.statusDot, { backgroundColor: isOpen ? colors.lightMustard : colors.error }]}
+                      />
+                    </View>
+                    <View style={styles.storeMetaRow}>
+                      {store.distance && (
+                        <View style={styles.metaItem}>
+                          <Ionicons name="location-outline" size={12} color={colors.neutral[500]} />
+                          <Text style={styles.metaText}>{store.distance}</Text>
+                        </View>
+                      )}
+                      {store.waitTime && (
+                        <View style={styles.metaItem}>
+                          <Ionicons name="time-outline" size={12} color={colors.neutral[500]} />
+                          <Text style={styles.metaText}>{store.waitTime}</Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Cashback Badge */}
+                  {store.cashback && (
+                    <View style={styles.cashbackBadge}>
+                      <Text style={styles.cashbackText}>{store.cashback}</Text>
                     </View>
                   )}
-                  {store.waitTime && (
-                    <View style={styles.metaItem}>
-                      <Ionicons name="time-outline" size={12} color={colors.neutral[500]} />
-                      <Text style={styles.metaText}>{store.waitTime}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-
-              {/* Cashback Badge */}
-              {store.cashback && (
-                <View style={styles.cashbackBadge}>
-                  <Text style={styles.cashbackText}>{store.cashback}</Text>
-                </View>
-              )}
-            </Pressable>
-          );
-        })}
+                </Pressable>
+              );
+            })}
 
         <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Floating Action Button */}
-      <Pressable
-        style={styles.listViewButton}
-        onPress={() => navigateTo('/explore/stores')}
-       
-      >
-        <LinearGradient
-          colors={[colors.nileBlue, '#1E3A5F']}
-          style={styles.listViewGradient}
-        >
+      <Pressable style={styles.listViewButton} onPress={() => navigateTo('/explore/stores')}>
+        <LinearGradient colors={[colors.nileBlue, '#1E3A5F']} style={styles.listViewGradient}>
           <Ionicons name="list" size={18} color={colors.background.primary} />
           <Text style={styles.listViewText}>List View</Text>
         </LinearGradient>

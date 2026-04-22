@@ -163,7 +163,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       .get<{ data?: { upcomingDrop?: unknown; activeCampaigns?: unknown[] } }>(
         `/stores/${d.currentStoreId}/page-extras`,
         undefined,
-        { signal: abortController.signal }
+        { signal: abortController.signal },
       )
       .then((res) => {
         if (cancelled) return;
@@ -211,6 +211,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       hours: data?.hours || [],
       contact: data?.contact || {},
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [d.storeData, d.fetchedStoreData, d.productData, d.isDynamic]);
 
   // Sticky header animated style
@@ -374,7 +375,13 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                       🎯 Active Offers
                     </Text>
                     {activeCampaigns.map(
-                      (c: { _id: string; title?: string; description?: string; coinMultiplier?: number; [key: string]: unknown }) => (
+                      (c: {
+                        _id: string;
+                        title?: string;
+                        description?: string;
+                        coinMultiplier?: number;
+                        [key: string]: unknown;
+                      }) => (
                         <View
                           key={c._id}
                           style={{

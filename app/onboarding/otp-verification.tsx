@@ -53,6 +53,7 @@ function OTPVerificationScreen() {
       });
     }, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timerKey]);
 
   const handleOTPChange = (value: string, index: number) => {

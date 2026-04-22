@@ -134,6 +134,7 @@ const SocialProofSection: React.FC = () => {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Initial fetch and polling every 30 seconds

@@ -116,6 +116,7 @@ function FileUploader({
       if (!isMounted()) return;
       setIsSelecting(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSelecting, uploads.length, maxFiles, maxSizeMB, allowedTypes, options]);
 
   const startUploads = async (uploadsToStart: FileUpload[]) => {

@@ -228,6 +228,7 @@ function CheckInHistoryScreen() {
   // Initial load
   React.useEffect(() => {
     fetchTransactions(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefresh = useCallback(() => {

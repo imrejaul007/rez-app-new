@@ -176,6 +176,7 @@ function BookingPage() {
 
   useEffect(() => {
     loadDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, productId]);
 
   // Load staff list for service bookings

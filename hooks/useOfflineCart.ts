@@ -17,6 +17,7 @@ export function useOfflineCart() {
   useEffect(() => {
     loadLastSyncTime();
     updatePendingCount();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-sync when coming back online
@@ -26,6 +27,7 @@ export function useOfflineCart() {
       syncCart();
       resetWasOffline();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wasOffline, isOnline]);
 
   // Update pending operations count

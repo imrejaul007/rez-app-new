@@ -111,6 +111,7 @@ function CouponsPage() {
   // ── Data loading ──────────────────────────────────────────────
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const loadData = async () => {
@@ -957,6 +958,7 @@ function CouponsPage() {
       }
       return renderUserCard(item as UserCoupon);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeTab],
   );
 

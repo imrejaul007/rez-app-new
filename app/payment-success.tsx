@@ -344,6 +344,7 @@ function PaymentSuccessPage() {
     };
 
     fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId, paymentMethod]);
 
   // For backward compatibility, get first order

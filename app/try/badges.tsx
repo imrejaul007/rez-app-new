@@ -56,6 +56,7 @@ export default function BadgesScreen() {
 
   useEffect(() => {
     loadBadges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadBadges = useCallback(async () => {
@@ -140,6 +141,7 @@ export default function BadgesScreen() {
       return renderUndiscoveredCard({ item: item.data });
     }
     return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {

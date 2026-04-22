@@ -34,6 +34,7 @@ const RelatedHotelsSection: React.FC<RelatedHotelsSectionProps> = ({ currentHote
 
   useEffect(() => {
     loadRelatedHotels();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentHotelId, location]);
 
   const loadRelatedHotels = async () => {

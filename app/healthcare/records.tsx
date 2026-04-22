@@ -70,6 +70,7 @@ const HealthRecordsPage: React.FC = () => {
 
   useEffect(() => {
     fetchRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedType, showArchived]);
 
   const fetchRecords = async () => {

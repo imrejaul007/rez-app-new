@@ -230,12 +230,14 @@ function CreatorsPage() {
         clearTimeout(searchTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refetch on category or sort change
   useEffect(() => {
     if (isFirstMount.current) return;
     fetchCreators(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, sortBy]);
 
   // Debounced search (300ms)
@@ -248,11 +250,13 @@ function CreatorsPage() {
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const loadMore = useCallback(() => {
     if (loadingMore || page >= totalPages) return;
     fetchCreators(page + 1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, totalPages, loadingMore, fetchCreators]);
 
   const renderCreatorCard = useCallback(

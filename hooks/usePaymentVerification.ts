@@ -328,6 +328,7 @@ export function usePaymentVerification(paymentMethodId?: string) {
 
     const key = typeMap[type];
     return state.verificationStatus.verificationsCompleted[key] || false;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.verificationStatus]);
 
   const getVerificationProgress = useCallback((): number => {

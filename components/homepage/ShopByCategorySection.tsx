@@ -192,6 +192,7 @@ const ShopByCategorySection: React.FC = () => {
     };
 
     fetchCategories();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Reorder categories based on user segment, then take top 3

@@ -83,6 +83,7 @@ const StudentUtilityDealsSection: React.FC = () => {
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTilePress = (route?: string) => {

@@ -88,6 +88,7 @@ export function useStorePromotions(storeId: string): UseStorePromotionsResult {
 
   useEffect(() => {
     fetchPromotions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   return {

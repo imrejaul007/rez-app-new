@@ -44,6 +44,7 @@ function UploadProgress({
         easing: Easing.out(Easing.cubic),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress?.percentage]);
 
   // Pulse animation for processing state
@@ -59,6 +60,7 @@ function UploadProgress({
     } else {
       pulseAnim.value = withTiming(1, { duration: 200 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const iconAnimatedStyle = useAnimatedStyle(() => ({

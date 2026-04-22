@@ -35,6 +35,7 @@ function BankOfferDetailScreen() {
       setError('Invalid offer ID');
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchOffer = async () => {

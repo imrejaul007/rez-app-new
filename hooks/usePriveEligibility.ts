@@ -185,6 +185,7 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
   // L-14 FIX: token is intentionally omitted from the dependency array — eligibility
   // is re-evaluated when isAuthenticated or user changes, which already covers token
   // rotation. The null placeholder comment has been removed.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, eligibility.hasSeenGlowThisSession]);
 
   // Refresh eligibility data
@@ -222,6 +223,7 @@ export const usePriveEligibility = (): UsePriveEligibilityReturn => {
         setIsLoading(false);
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   return {

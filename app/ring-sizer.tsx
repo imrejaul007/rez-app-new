@@ -78,6 +78,7 @@ function RingSizerPage() {
   // Load saved ring size on mount
   useEffect(() => {
     loadSavedRingSize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSavedRingSize = useCallback(async () => {
@@ -131,6 +132,7 @@ function RingSizerPage() {
         setSaving(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [saving, selectedMethod],
   );
 

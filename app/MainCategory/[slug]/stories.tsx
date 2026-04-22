@@ -128,6 +128,7 @@ function CategoryStoriesPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -239,6 +240,7 @@ function CategoryStoriesPage() {
         </View>
       </Pressable>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router, categoryName],
   );
 

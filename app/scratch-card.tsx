@@ -67,6 +67,7 @@ function ScratchCardPage() {
       }
       // AuthContext navigation guard handles unauthenticated redirect
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading]);
 
   // Refresh on re-focus (skip initial focus — handled by useEffect above)
@@ -92,6 +93,7 @@ function ScratchCardPage() {
       fadeAnim.value = withTiming(1, { duration: 600 });
       scaleAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardState]);
 
   const handleBackPress = useCallback(() => {
@@ -159,6 +161,7 @@ function ScratchCardPage() {
       if (!isMounted()) return;
       setIsAnimating(false);
     }, 850);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, isAnimating, revealPrize, scratchAnim, prizeScaleAnim, gamificationActions, refreshWallet]);
 
   /** Retry failed claim */

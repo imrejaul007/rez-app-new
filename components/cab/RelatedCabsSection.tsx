@@ -28,6 +28,7 @@ const RelatedCabsSection: React.FC<RelatedCabsSectionProps> = ({ currentCabId })
 
   useEffect(() => {
     loadRelatedCabs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCabId]);
 
   const loadRelatedCabs = async () => {

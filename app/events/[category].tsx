@@ -164,12 +164,14 @@ const EventsCategoryPage: React.FC = () => {
         setIsRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [categoryKey],
   );
 
   useEffect(() => {
     setIsLoading(true);
     fetchEvents(selectedFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryKey]);
 
   const handleFilterChange = useCallback(

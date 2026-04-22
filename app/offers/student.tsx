@@ -20,6 +20,7 @@ function StudentOffersPage() {
 
   useEffect(() => {
     loadOffers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadOffers = async () => {

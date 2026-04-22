@@ -98,6 +98,7 @@ const TravelCategoryPage: React.FC = () => {
     };
 
     fetchServices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, selectedFilter, currentPage]);
 
   // Reset to page 1 when filter changes

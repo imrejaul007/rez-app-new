@@ -268,11 +268,13 @@ function AllProjectsPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedCategory, selectedDifficulty, searchQuery, sortBy, filterStatus, user, fadeAnim, slideAnim, cardAnims],
   );
 
   useEffect(() => {
     loadProjects(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, selectedDifficulty, sortBy, filterStatus]);
 
   useEffect(() => {

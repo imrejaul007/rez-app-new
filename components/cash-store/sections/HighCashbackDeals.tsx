@@ -47,6 +47,7 @@ const DealCard: React.FC<{
     // Arrow animation
     arrowAnim.value = withRepeat(withSequence(withTiming(4, { duration: 500 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   const handlePressIn = () => {
@@ -183,6 +184,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -224,6 +226,7 @@ const HighCashbackDeals: React.FC<HighCashbackDealsProps> = ({
     // Rocket bounce animation
     rocketAnim.value = withRepeat(withSequence(withTiming(-4, { duration: 400 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const renderDealItem = useCallback(({ item, index }: { item: unknown; index: number }) =>

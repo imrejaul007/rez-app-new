@@ -103,6 +103,7 @@ function MyEventsPage() {
         setIsRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated],
   );
 
@@ -241,6 +242,7 @@ function MyEventsPage() {
   const renderEventItem = useCallback(
     ({ item }: { item: EventBooking | FavoriteEvent }) =>
       activeTab === 'favorites' ? renderFavoriteCard(item as FavoriteEvent) : renderBookingCard(item as EventBooking),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeTab],
   );
 

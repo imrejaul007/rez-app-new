@@ -130,6 +130,7 @@ function ShareModal({
       loadShareLink();
       loadPrivacySettings();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, wishlistId]);
 
   const loadShareLink = useCallback(async () => {
@@ -146,6 +147,7 @@ function ShareModal({
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wishlistId]);
 
   const loadPrivacySettings = useCallback(async () => {
@@ -158,6 +160,7 @@ function ShareModal({
     } catch (error: any) {
       // silently handle
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wishlistId]);
 
   const handleUpdatePrivacySettings = useCallback(
@@ -183,6 +186,7 @@ function ShareModal({
         setIsSaving(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [wishlistId, privacySettings, loadPrivacySettings]
   );
 
@@ -244,6 +248,7 @@ function ShareModal({
         platformAlertSimple('Error', `Failed to share via ${platform.name}`);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [shareLink, wishlistId, wishlistName, ownerName, itemCount]
   );
 

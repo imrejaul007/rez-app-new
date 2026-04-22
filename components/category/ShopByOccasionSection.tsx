@@ -134,6 +134,7 @@ const ShopByOccasionSection: React.FC<ShopByOccasionSectionProps> = ({
     };
 
     fetchOccasions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, occasions]);
 
   const displayOccasions = occasions || apiOccasions;

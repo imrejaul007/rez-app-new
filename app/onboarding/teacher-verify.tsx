@@ -86,6 +86,7 @@ function TeacherVerifyPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instituteName, documentType, setIdentity, router]);
 
   return (

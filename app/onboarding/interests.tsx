@@ -40,6 +40,7 @@ function InterestsScreen() {
       Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
       Animated.spring(slideAnim, { toValue: 0, damping: 14, stiffness: 80, useNativeDriver: true }),
     ]).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleInterest = (id: string) => {

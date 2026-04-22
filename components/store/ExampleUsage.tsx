@@ -239,6 +239,7 @@ export const APIIntegrationExample = ({ storeId }: { storeId: string }) => {
 
   React.useEffect(() => {
     fetchStoreData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   const fetchStoreData = async () => {

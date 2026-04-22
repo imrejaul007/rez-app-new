@@ -54,6 +54,7 @@ function AddedToCartModal({
     } else {
       slideAnim.value = withTiming(300, { duration: 250 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const safePrice = typeof product.price === 'number' ? product.price : 0;

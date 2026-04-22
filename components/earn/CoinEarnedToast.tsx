@@ -58,6 +58,7 @@ const CoinEarnedToast: React.FC<CoinEarnedToastProps> = ({
     opacity.value = withTiming(0, { duration: 250 }, (finished) => {
       if (finished) runOnJS(onDismiss)();
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss]);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ const CoinEarnedToast: React.FC<CoinEarnedToastProps> = ({
         if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
       };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, dismissToast]);
 
   const handlePress = useCallback(() => {

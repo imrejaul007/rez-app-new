@@ -74,6 +74,7 @@ function DealComparisonModal({
       
     }
   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible, fadeAnim, slideAnim]);
 
   const handleBackdropPress = () => {

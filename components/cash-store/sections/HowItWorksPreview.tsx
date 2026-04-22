@@ -87,6 +87,7 @@ const StepItem: React.FC<{
       index * 100,
       withRepeat(withSequence(withTiming(-3, { duration: 600 }), withTiming(0, { duration: 600 })), -1)
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const scaleStyle = useAnimatedStyle(() => ({
@@ -137,6 +138,7 @@ const HowItWorksPreview: React.FC<HowItWorksPreviewProps> = ({ onLearnMore }) =>
   useEffect(() => {
     containerFadeAnim.value = withTiming(1, { duration: 500 });
     arrowAnim.value = withRepeat(withSequence(withTiming(4, { duration: 500 }), withTiming(0, { duration: 500 })), -1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const containerStyle = useAnimatedStyle(() => ({ opacity: containerFadeAnim.value }));

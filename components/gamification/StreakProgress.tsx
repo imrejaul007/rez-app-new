@@ -77,6 +77,7 @@ const StreakProgress: React.FC<StreakProgressProps> = ({
         }
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [streak]);
 
   const containerAnimStyle = useAnimatedStyle(() => ({

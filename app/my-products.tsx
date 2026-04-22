@@ -182,6 +182,7 @@ const MyProductsPage = () => {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeTab, authLoading, isAuthenticated],
   );
 
@@ -306,6 +307,7 @@ const MyProductsPage = () => {
         setReorderingProductId(null);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [reordering, reorderFull, validation, reorderError, refreshCart, router],
   );
 

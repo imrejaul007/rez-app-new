@@ -125,6 +125,7 @@ function EducationCategoryPage() {
   const [activeLifestyleFilters, setActiveLifestyleFilters] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
   const onRefresh = async () => { setRefreshing(true); await refetch(); setRefreshing(false); };

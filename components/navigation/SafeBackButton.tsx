@@ -58,6 +58,7 @@ export const SafeBackButton: React.FC<SafeBackButtonProps> = ({
     }
 
     await performNavigation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onPress, showConfirmation, confirmationMessage, canGoBack, fallbackRoute]);
 
   const performNavigation = useCallback(async (): Promise<void> => {

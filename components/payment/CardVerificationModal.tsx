@@ -43,6 +43,7 @@ function CardVerificationModal({
     if (visible && paymentMethodId) {
       initiateVerification();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, paymentMethodId]);
 
   const initiateVerification = async () => {

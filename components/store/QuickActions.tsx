@@ -278,6 +278,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
     const filtered = allActions.filter(action => action.visible !== false);
     const limit = maxActions || (variant === 'compact' ? 4 : 8);
     return filtered.slice(0, limit);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingType, contact, location, hasMenu, variant, maxActions]);
 
   if (actions.length === 0) {

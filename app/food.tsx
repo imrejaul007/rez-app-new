@@ -141,6 +141,7 @@ const FoodPage: React.FC = () => {
       if (!isMounted()) return;
       setLoadingSubcategories(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ---------- Fetch featured stores ----------
@@ -202,6 +203,7 @@ const FoodPage: React.FC = () => {
         else setLoadingMoreStores(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [maxCashback],
   );
 
@@ -226,6 +228,7 @@ const FoodPage: React.FC = () => {
       if (!isMounted()) return;
       setLoadingCuisines(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ---------- Fetch offers ----------
@@ -248,6 +251,7 @@ const FoodPage: React.FC = () => {
       if (!isMounted()) return;
       setLoadingOffers(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ---------- Initial data fetch ----------

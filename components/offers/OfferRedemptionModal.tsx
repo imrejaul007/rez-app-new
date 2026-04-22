@@ -93,6 +93,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
         copySuccessTimerRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const animateIn = () => {

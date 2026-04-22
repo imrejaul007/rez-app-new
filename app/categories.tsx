@@ -256,12 +256,14 @@ const CategoriesPage: React.FC = () => {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted]);
 
   // CA-DSC-035 FIX: Call fetchCategories directly without dependency array to prevent double-calls in strict mode
   useEffect(() => {
     setIsLoading(true);
     fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefresh = useCallback(() => {

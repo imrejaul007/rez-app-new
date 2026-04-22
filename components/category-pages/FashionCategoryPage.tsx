@@ -123,6 +123,7 @@ function FashionCategoryPage() {
   const [refreshing, setRefreshing] = useState(false);
   const isMounted = useIsMounted();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
 

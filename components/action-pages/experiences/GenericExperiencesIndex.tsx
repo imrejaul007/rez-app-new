@@ -49,6 +49,7 @@ function GenericExperiencesIndex() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   useEffect(() => { fetchExperiences(); }, [fetchExperiences]);

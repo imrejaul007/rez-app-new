@@ -172,6 +172,7 @@ const MyDealsPage: React.FC = () => {
         setIsRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, selectedFilter, page],
   );
 
@@ -379,6 +380,7 @@ const MyDealsPage: React.FC = () => {
         </View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [copiedCode],
   );
 

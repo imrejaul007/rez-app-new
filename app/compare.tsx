@@ -128,6 +128,7 @@ function ComparePage() {
       if (!isMounted()) return;
       setComparisonsLoaded(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // Load user's comparisons on mount
@@ -178,6 +179,7 @@ function ComparePage() {
         setIsAddingProduct(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, currentComparisonId, compareItems.length, router],
   );
 
@@ -263,6 +265,7 @@ function ComparePage() {
         setIsRemovingProduct(null);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, currentComparisonId, compareItems.length, handleDeleteComparison],
   );
 

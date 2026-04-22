@@ -345,6 +345,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
       if (locationLower === 'online' || locationLower === 'online event' || locationLower.includes('virtual')) return false;
     }
     return true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventDetails?.isOnline, eventDetails?.location]);
 
   const availableSlots = useMemo(() => {
@@ -410,6 +411,7 @@ export function useEventPage(props?: { eventId?: string; initialEvent?: EventIte
     } finally {
       setIsLoadingFavorite(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventDetails?.id, eventDetails?.title, isFavorited, isAuthenticated, user]);
 
   const handleOnlineBooking = useCallback(async () => {

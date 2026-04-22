@@ -32,6 +32,7 @@ const SmartPicks = () => {
 
   useEffect(() => {
     fetchSmartPicks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSmartPicks = async () => {

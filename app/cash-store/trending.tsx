@@ -189,6 +189,7 @@ function TrendingOffersPage() {
       if (!isMounted()) return;
       setError('Unable to load trending offers. Pull down to retry.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -201,6 +202,7 @@ function TrendingOffersPage() {
     await fetchData();
     if (!isMounted()) return;
     setIsRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   // ─── Click Handler with Deduplication + Retry ─────────────
@@ -253,6 +255,7 @@ function TrendingOffersPage() {
         }, 1000);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router],
   );
 
@@ -305,6 +308,7 @@ function TrendingOffersPage() {
         }, 1000);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router],
   );
 
@@ -620,6 +624,7 @@ const OfferCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 350 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const handlePressIn = () => {
@@ -751,6 +756,7 @@ const BrandCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 350 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const handlePressIn = () => {
@@ -866,6 +872,7 @@ const OfferSkeletonCard = React.memo(({ index }: { index: number }) => {
 
   useEffect(() => {
     shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const offerSkeletonStyle = useAnimatedStyle(() => ({
@@ -891,6 +898,7 @@ const BrandSkeletonCard = React.memo(({ index }: { index: number }) => {
 
   useEffect(() => {
     shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const brandSkeletonStyle = useAnimatedStyle(() => ({

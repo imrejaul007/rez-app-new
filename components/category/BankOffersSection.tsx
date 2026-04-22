@@ -115,6 +115,7 @@ const BankOffersSection: React.FC<BankOffersSectionProps> = ({
     };
 
     fetchOffers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, offers]);
 
   const displayOffers = offers || apiOffers;

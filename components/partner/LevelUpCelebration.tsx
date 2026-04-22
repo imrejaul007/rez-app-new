@@ -63,6 +63,7 @@ const ConfettiParticle = ({ delay, color }: { delay: number; color: string }) =>
     opacity.value = withTiming(0, { duration: 3000 });
 
     // cleanup handled by reanimated
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animStyle = useAnimatedStyle(() => ({
@@ -135,6 +136,7 @@ function LevelUpCelebration({
       scaleAnim.value = 0;
       badgeRotate.value = 0;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const scaleStyle = useAnimatedStyle(() => ({

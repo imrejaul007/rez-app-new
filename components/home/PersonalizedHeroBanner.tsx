@@ -55,7 +55,9 @@ const QuickLinkTile = memo(function QuickLinkTile({
     router.push(item.route as any);
   }, [router, item.route]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handlePressIn  = useCallback(() => { scale.value = withSpring(0.94, { damping: 12 }); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handlePressOut = useCallback(() => { scale.value = withSpring(1,    { damping: 12 }); }, []);
 
   return (

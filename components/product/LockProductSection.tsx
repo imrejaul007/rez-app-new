@@ -106,6 +106,7 @@ export const LockProductSection: React.FC<LockProductSectionProps> = ({
   // Refresh wallet on mount
   useEffect(() => {
     refreshWallet();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLock = useCallback(async () => {
@@ -153,6 +154,7 @@ export const LockProductSection: React.FC<LockProductSectionProps> = ({
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     productId,
     quantity,
@@ -181,6 +183,7 @@ export const LockProductSection: React.FC<LockProductSectionProps> = ({
       if (!isMounted()) return;
       setIsAddingToCart(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onAddToCart, isAddingToCart, isInCart]);
 
   return (
