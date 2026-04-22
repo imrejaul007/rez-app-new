@@ -7,10 +7,9 @@
 
 import React, { useCallback } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { useResponsiveGrid } from '@/hooks/useResponsiveGrid';
 import { spacing } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 interface Product {
   id: string;
   [key: string]: any;
@@ -119,7 +118,7 @@ function ResponsiveProductGrid({
   );
 
   return (
-    <AnyFlashList
+    <TypedFlashList
       data={products}
       renderItem={renderItem}
       keyExtractor={keyExtractor}

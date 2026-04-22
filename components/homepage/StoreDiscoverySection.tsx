@@ -5,7 +5,7 @@ import {
   Pressable,
   Platform,
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -14,7 +14,6 @@ import TopStoreCard from './cards/TopStoreCard';
 import PopularStoreCard from './cards/PopularStoreCard';
 import StoreDiscoverySkeleton from './skeletons/StoreDiscoverySkeleton';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 interface StoreDiscoverySectionProps {
   limit?: number;
@@ -153,7 +152,7 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
           {isLoadingTop ? (
             <StoreDiscoverySkeleton showTopStores={true} showPopularStores={false} />
           ) : (
-            <AnyFlashList
+            <TypedFlashList
               data={topStores}
               renderItem={renderTopStoreCard}
               keyExtractor={keyExtractorTop}
@@ -183,7 +182,7 @@ const StoreDiscoverySection = React.memo(function StoreDiscoverySection({
           {isLoadingPopular ? (
             <StoreDiscoverySkeleton showTopStores={false} showPopularStores={true} />
           ) : (
-            <AnyFlashList
+            <TypedFlashList
               data={popularStores}
               renderItem={renderPopularStoreCard}
               keyExtractor={keyExtractorPopular}

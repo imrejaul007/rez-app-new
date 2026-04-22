@@ -19,9 +19,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 interface MallTrendingNowProps {
   brands: MallBrand[];
@@ -255,7 +254,7 @@ const MallTrendingNow: React.FC<MallTrendingNowProps> = ({
         </View>
 
         {/* Brands List */}
-        <AnyFlashList
+        <TypedFlashList
           data={brands}
           renderItem={renderItem}
           keyExtractor={keyExtractor}

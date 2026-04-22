@@ -19,9 +19,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallOffer } from '../../types/mall.types';
 import MallOfferCard from './cards/MallOfferCard';
-import { FlashList } from '@shopify/flash-list';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 interface MallExclusiveOffersProps {
   offers: MallOffer[];
@@ -171,7 +170,7 @@ const MallExclusiveOffers: React.FC<MallExclusiveOffersProps> = ({
         </Text>
 
         {/* Offers List */}
-        <AnyFlashList
+        <TypedFlashList
           data={offers}
           renderItem={renderOffer}
           keyExtractor={keyExtractor}

@@ -31,9 +31,9 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBanner } from '../../types/mall.types';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
-const AnyFlashList = FlashList as any;
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_HORIZONTAL_PADDING = 32;
@@ -297,7 +297,7 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
 
   return (
     <View style={styles.container}>
-      <AnyFlashList
+      <TypedFlashList
         ref={flatListRef as any}
         data={displayBanners}
         renderItem={renderBanner}

@@ -20,11 +20,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ugcApi, { UGCComment } from '@/services/ugcApi';
 import { useToast } from '@/hooks/useToast';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useAuth } from '@/contexts/AuthContext';
-const AnyFlashList = FlashList as any;
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -592,7 +592,7 @@ function UGCCommentsModal({
             </View>
 
             {/* Comments List */}
-            <AnyFlashList
+            <TypedFlashList
               ref={flatListRef}
               data={comments}
               keyExtractor={(item: any) => item._id}
