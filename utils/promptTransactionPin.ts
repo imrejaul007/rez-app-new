@@ -2,7 +2,7 @@
  * Transaction PIN step-up helper.
  *
  * Used as a fallback when biometric step-up authentication is not available
- * or not enrolled on the device. Reuses the existing `/user/auth/verify-pin`
+ * or not enrolled on the device. Reuses the existing `/user/auth/login-pin`
  * endpoint (the same PIN the user set during onboarding).
  *
  * Behaviour:
@@ -18,7 +18,7 @@ import { Alert, Platform } from 'react-native';
 import apiClient from '@/services/apiClient';
 import { useAuthStore } from '@/stores/authStore';
 
-const VERIFY_PIN_ENDPOINT = '/user/auth/verify-pin';
+const VERIFY_PIN_ENDPOINT = '/user/auth/login-pin';
 
 interface VerifyPinResponse {
   user?: Record<string, unknown>;
