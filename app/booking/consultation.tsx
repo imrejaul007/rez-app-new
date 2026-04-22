@@ -52,24 +52,7 @@ function ConsultationBookingScreen() {
   const router = useRouter();
   const { storeId } = useLocalSearchParams<any>();
 
-  // ETHAN: crash guard — storeId from route params could be undefined
-  if (!storeId) {
-    return (
-      <ThemedView style={styles.container}>
-        <ThemedText style={styles.errorText}>Clinic not found</ThemedText>
-        <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
-          style={styles.backButton}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-        >
-          <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
-        </Pressable>
-      </ThemedView>
-    );
-  }
-
-  // Store data
+  // Store data — all hooks declared before any early returns
   const [store, setStore] = useState<Store | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -182,6 +165,24 @@ function ConsultationBookingScreen() {
 
     return slots;
   }, [selectedDate, store]);
+
+  // ETHAN: crash guard — storeId from route params could be undefined
+  // Early returns for invalid state — AFTER all hooks are declared
+  if (!storeId) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText style={styles.errorText}>Clinic not found</ThemedText>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+        >
+          <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
+        </Pressable>
+      </ThemedView>
+    );
+  }
 
   // Format date for display
   const formatDate = (date: Date) => {

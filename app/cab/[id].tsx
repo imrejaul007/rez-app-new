@@ -104,11 +104,11 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  passengerDetails: Array<{
+  passengerDetails: {
     firstName: string;
     lastName: string;
     age: number;
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }

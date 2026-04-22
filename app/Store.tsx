@@ -22,6 +22,17 @@ import { profileMenuSections } from '@/data/profileData';
 import { useRouter } from 'expo-router';
 import deal from '@/assets/images/deal.png';
 import CachedImage from '@/components/ui/CachedImage';
+import { ThemedText } from '@/components/ThemedText';
+import { Ionicons } from '@expo/vector-icons';
+import LocationDisplay from '@/components/location/LocationDisplay';
+import { storeSearchService, StoreCategory } from '@/services/storeSearchService';
+import CategoryGridSkeleton from '@/components/store-search/CategoryGridSkeleton';
+import { useRezBalance, useWalletLoading, useGetCurrencySymbol } from '@/stores';
+import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { BRAND } from '@/constants/brand';
+import { colors } from '@/constants/theme';
+import { useIsMounted } from '@/hooks/useIsMounted';
+import { isSmallDevice, getResponsiveCardWidth, responsiveFontSize } from '@/utils/responsive';
 
 // Store category images
 const storeImages = {
@@ -35,17 +46,6 @@ const storeImages = {
   cashStore: require('@/assets/images/stores/cash-store.png'),
   rezMall: require('@/assets/images/tabs/rez-mall.png'),
 };
-import { ThemedText } from '@/components/ThemedText';
-import { Ionicons } from '@expo/vector-icons';
-import LocationDisplay from '@/components/location/LocationDisplay';
-import { storeSearchService, StoreCategory } from '@/services/storeSearchService';
-import CategoryGridSkeleton from '@/components/store-search/CategoryGridSkeleton';
-import { useRezBalance, useWalletLoading, useGetCurrencySymbol } from '@/stores';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
-import { BRAND } from '@/constants/brand';
-import { colors } from '@/constants/theme';
-import { useIsMounted } from '@/hooks/useIsMounted';
-import { isSmallDevice, getResponsiveCardWidth, responsiveFontSize } from '@/utils/responsive';
 
 const { width } = Dimensions.get('window');
 const CARD_GAP = isSmallDevice ? 12 : 14;

@@ -54,13 +54,13 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  passengerDetails: Array<{
+  passengerDetails: {
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
     seatPreference?: 'window' | 'aisle' | 'no-preference';
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }
@@ -105,13 +105,13 @@ const BusBookingFlow: React.FC<BusBookingFlowProps> = ({
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const [passengerDetails, setPassengerDetails] = useState<Array<{
+  const [passengerDetails, setPassengerDetails] = useState<{
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
     seatPreference?: 'window' | 'aisle' | 'no-preference';
-  }>>([]);
+  }[]>([]);
 
   const totalSteps = 4;
   const totalPassengers = adults + children;

@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@/components/common/CrossPlatformSlider';
-const AnySlider = Slider as any;
 
 import { ThemedText } from '@/components/ThemedText';
 import { CategoryFilter } from '@/types/category.types';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
+const AnySlider = Slider as any;
 
 interface CategoryFiltersProps {
   filters: CategoryFilter[];

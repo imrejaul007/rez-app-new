@@ -20,8 +20,9 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallOffer } from '../../types/mall.types';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 interface MallDealsOfDayProps {
   offers: MallOffer[];
@@ -146,7 +147,7 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
     [onOfferPress]
   );
 
-  const keyExtractor = useCallback((item: MallOffer) => String(item.id ?? item._id ?? "unknown-offer"), []);
+  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id || String(Math.random()), []);
 
   if (isLoading) {
     return (
@@ -285,13 +286,13 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
         </View>
 
         {/* Offers List */}
-        <TypedFlashList
+        <AnyFlashList
           data={offers}
           renderItem={renderOffer}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           snapToInterval={200}
           decelerationRate="fast"
           estimatedItemSize={150}

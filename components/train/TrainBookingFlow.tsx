@@ -53,13 +53,13 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  passengerDetails: Array<{
+  passengerDetails: {
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
     berthPreference?: 'lower' | 'middle' | 'upper' | 'side-lower' | 'side-upper';
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }
@@ -104,13 +104,13 @@ const TrainBookingFlow: React.FC<TrainBookingFlowProps> = ({
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const [passengerDetails, setPassengerDetails] = useState<Array<{
+  const [passengerDetails, setPassengerDetails] = useState<{
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
     berthPreference?: 'lower' | 'middle' | 'upper' | 'side-lower' | 'side-upper';
-  }>>([]);
+  }[]>([]);
 
   const calculateTotalPrice = () => {
     const basePrice = train.classOptions[trainClass].price;

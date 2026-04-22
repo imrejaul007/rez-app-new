@@ -22,6 +22,7 @@ import QRCode from 'react-native-qrcode-svg';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 // @ts-ignore - react-native-view-shot types not available
+// eslint-disable-next-line import/no-unresolved
 import ViewShot from 'react-native-view-shot';
 import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
@@ -57,6 +58,14 @@ function ReferralQRModal({
   const slideAnim = useSharedValue(300);
   const viewShotRef = React.useRef<ViewShot>(null);
 
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+  }));
+
+  const modalSlideStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: slideAnim.value }],
+  }));
+
   // Animate modal entrance
   React.useEffect(() => {
     if (visible) {
@@ -67,14 +76,6 @@ function ReferralQRModal({
       slideAnim.value = withTiming(300, { duration: 200 });
     }
   }, [visible]);
-
-  const overlayStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-  }));
-
-  const modalSlideStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: slideAnim.value }],
-  }));
 
   // Handle QR code download
   const handleDownloadQR = async () => {

@@ -75,7 +75,7 @@ const MyProductsPage = () => {
   const [reorderModalData, setReorderModalData] = useState<{
     addedCount: number;
     skippedCount: number;
-    skippedItems: Array<{ productId: string; reason: string }>;
+    skippedItems: { productId: string; reason: string }[];
   } | null>(null);
 
   const { reorderFull, reordering, validation, error: reorderError } = useReorder();

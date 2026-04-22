@@ -77,24 +77,6 @@ import CoinExpiryBanner from '@/components/homepage/CoinExpiryBanner';
 import RebookingNudgeCard from '@/components/home/RebookingNudgeCard';
 import PersonalizedFeedSection, { PersonalizedFeedSectionHandle } from '@/components/homepage/PersonalizedFeedSection';
 import pushNotificationService from '@/services/pushNotificationService';
-
-function lazyWithRetry<T extends React.ComponentType<any>>(
-  factory: () => Promise<{ default: T }>,
-): React.LazyExoticComponent<T> {
-  return React.lazy(() =>
-    factory().catch(() => new Promise<{ default: T }>((resolve) => setTimeout(() => resolve(factory()), 1500))),
-  );
-}
-
-// Lazy-loaded tab containers (code-split — prefetched in background after mount)
-const MallSectionContainer = lazyWithRetry(() => import('@/components/mall/MallSectionContainer'));
-const MallHeaderWrapper = lazyWithRetry(() => import('@/components/mall/MallHeaderWrapper'));
-const CashStoreHeaderWrapper = lazyWithRetry(() => import('@/components/cash-store/CashStoreHeaderWrapper'));
-const CashStoreSectionContainer = lazyWithRetry(() => import('@/components/cash-store/CashStoreSectionContainer'));
-const PriveHeaderWrapper = lazyWithRetry(() => import('@/components/prive/PriveHeaderWrapper'));
-const PriveSectionContainer = lazyWithRetry(() =>
-  import('@/components/prive/PriveSectionContainer').then((m) => ({ default: m.PriveSectionContainer })),
-);
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 // Profile now from Zustand store (imported above)
 import { profileMenuSections } from '@/data/profileData';
@@ -125,6 +107,24 @@ import sessionTrackingService from '@/services/sessionTrackingService';
 import ProfileMenuModal from '@/components/profile/ProfileMenuModal';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { logger } from '@/utils/logger';
+
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>,
+): React.LazyExoticComponent<T> {
+  return React.lazy(() =>
+    factory().catch(() => new Promise<{ default: T }>((resolve) => setTimeout(() => resolve(factory()), 1500))),
+  );
+}
+
+// Lazy-loaded tab containers (code-split — prefetched in background after mount)
+const MallSectionContainer = lazyWithRetry(() => import('@/components/mall/MallSectionContainer'));
+const MallHeaderWrapper = lazyWithRetry(() => import('@/components/mall/MallHeaderWrapper'));
+const CashStoreHeaderWrapper = lazyWithRetry(() => import('@/components/cash-store/CashStoreHeaderWrapper'));
+const CashStoreSectionContainer = lazyWithRetry(() => import('@/components/cash-store/CashStoreSectionContainer'));
+const PriveHeaderWrapper = lazyWithRetry(() => import('@/components/prive/PriveHeaderWrapper'));
+const PriveSectionContainer = lazyWithRetry(() =>
+  import('@/components/prive/PriveSectionContainer').then((m) => ({ default: m.PriveSectionContainer })),
+);
 
 // Lazy-loaded components (below-the-fold / modals / secondary content)
 const HomeTabSection = lazyWithRetry(() => import('@/components/homepage/HomeTabSection'));

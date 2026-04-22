@@ -14,7 +14,7 @@ import { normalizeProductPrice, normalizeProductRating } from '@/utils/productDa
 import { formatPrice } from '@/utils/priceFormatter';
 import { colors } from '@/constants/theme';
 
-function _HomeDeliveryProductCardInner({
+function HomeDeliveryProductCardInner({
   product,
   onPress,
   showCashback = true,
@@ -355,4 +355,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export const HomeDeliveryProductCard = React.memo(_HomeDeliveryProductCardInner);
+export const HomeDeliveryProductCard = React.memo(HomeDeliveryProductCardInner);

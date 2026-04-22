@@ -21,7 +21,7 @@ interface OfferTileProps {
   distance?: number;
   saveAmount: number;
   cashbackPercent?: number;
-  badges?: Array<{ label: string; color: string }>;
+  badges?: { label: string; color: string }[];
   expiryDate?: string;
   onPress: () => void;
   currencySymbol: string;

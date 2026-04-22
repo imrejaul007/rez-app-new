@@ -575,8 +575,8 @@ function CategoryProductsPage() {
   );
 
   // Category vibes (from API) — horizontal quick filter
-  const vibes: Array<{ id: string; name: string; icon: string; color: string }> = category?.vibes || [];
-  const occasions: Array<{ id: string; name: string; icon: string; color: string; tag?: string; discount?: number }> =
+  const vibes: { id: string; name: string; icon: string; color: string }[] = category?.vibes || [];
+  const occasions: { id: string; name: string; icon: string; color: string; tag?: string; discount?: number }[] =
     category?.occasions || [];
   const quickFilters = [...vibes, ...occasions].slice(0, 8);
 

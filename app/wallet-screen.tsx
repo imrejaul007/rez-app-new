@@ -228,7 +228,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   const [expiringAmount, setExpiringAmount] = useState(0);
   const [expiringLabel, setExpiringLabel] = useState('');
   const [expiringByType, setExpiringByType] = useState<
-    Array<{ type: string; amount: number; expiresAt: string; daysLeft: number }>
+    { type: string; amount: number; expiresAt: string; daysLeft: number }[]
   >([]);
   const [minDaysLeft, setMinDaysLeft] = useState<number>(30); // Track minimum days to determine urgency
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { UGCVideoItem, PLAY_PAGE_COLORS } from '@/types/playPage.types';
 import SectionHeader from './SectionHeader';
 import ThumbnailVideoCard from './ThumbnailVideoCard';
+const AnyFlashList = FlashList as any;
 
 interface UGCVideoSectionProps {
   videos: UGCVideoItem[];
@@ -44,15 +45,17 @@ function UGCVideoSection({
         onViewAllPress={onViewAllPress}
       />
 
-      <TypedFlashList
+      <AnyFlashList
         data={videos.slice(0, 4)}
         renderItem={renderItem}
         keyExtractor={(item: any, index: number) => item.id || `ugc-video-${index}`}
         numColumns={2}
-        contentContainerStyle={styles.gridContainer}
+        contentContainerStyle={styles.gridContainer as any}
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
         estimatedItemSize={250}
+
+        // Performance Optimizations
       />
     </View>
   );

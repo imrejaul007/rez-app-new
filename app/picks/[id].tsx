@@ -226,41 +226,6 @@ const CreatorPickDetail = () => {
   );
 
   // ============================================
-  // LOADING / ERROR
-  // ============================================
-
-  if (loading) {
-    return (
-      <View style={s.container}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
-          {renderHeader()}
-        </LinearGradient>
-        <DetailPageSkeleton />
-      </View>
-    );
-  }
-
-  if (error || !pick) {
-    return (
-      <View style={s.container}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
-          {renderHeader()}
-        </LinearGradient>
-        <View style={s.center}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
-          <Text style={s.errorTitle}>Unable to Load</Text>
-          <Text style={s.errorBody}>{error || 'Pick details are not available'}</Text>
-          <Pressable style={s.retryBtn} onPress={fetchPickData}>
-            <Text style={s.retryBtnText}>Try Again</Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
-  // ============================================
   // RELATED PICK CARD
   // ============================================
 
@@ -297,6 +262,41 @@ const CreatorPickDetail = () => {
     },
     [router],
   );
+
+  // ============================================
+  // LOADING / ERROR
+  // ============================================
+
+  if (loading) {
+    return (
+      <View style={s.container}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
+          {renderHeader()}
+        </LinearGradient>
+        <DetailPageSkeleton />
+      </View>
+    );
+  }
+
+  if (error || !pick) {
+    return (
+      <View style={s.container}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
+          {renderHeader()}
+        </LinearGradient>
+        <View style={s.center}>
+          <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
+          <Text style={s.errorTitle}>Unable to Load</Text>
+          <Text style={s.errorBody}>{error || 'Pick details are not available'}</Text>
+          <Pressable style={s.retryBtn} onPress={fetchPickData}>
+            <Text style={s.retryBtnText}>Try Again</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
 
   // ============================================
   // MAIN CONTENT

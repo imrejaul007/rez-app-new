@@ -60,14 +60,14 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  passengerDetails: Array<{
+  passengerDetails: {
     firstName: string;
     lastName: string;
     dateOfBirth: Date;
     gender: 'male' | 'female' | 'other';
     passportNumber?: string;
     nationality?: string;
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }

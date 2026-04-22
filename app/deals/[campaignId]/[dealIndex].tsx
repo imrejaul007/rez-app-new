@@ -136,13 +136,13 @@ const DealDetailPage: React.FC = () => {
       try {
         // Fetch user's redemptions and check if this deal is already redeemed
         const response = await apiClient.get<{
-          redemptions: Array<{
+          redemptions: {
             code: string;
             campaignId?: string;
             dealIndex?: number;
             status: string;
             campaignSnapshot?: { title?: string };
-          }>;
+          }[];
         }>('/campaigns/my-redemptions', { limit: 100 });
 
         if (response.success && response.data?.redemptions) {

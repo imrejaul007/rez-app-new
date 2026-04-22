@@ -98,12 +98,12 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  travelerDetails: Array<{
+  travelerDetails: {
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }

@@ -21,7 +21,7 @@ interface KhataEntry {
   _id: string;
   merchantId: { _id: string; businessName: string };
   balance: number;
-  transactions: Array<{ amount: number; type: string; note: string; createdAt: string }>;
+  transactions: { amount: number; type: string; note: string; createdAt: string }[];
   updatedAt: string;
 }
 

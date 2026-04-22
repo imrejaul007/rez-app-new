@@ -27,8 +27,6 @@ export const SpecialProfilesSection: React.FC<SpecialProfilesSectionProps> = ({
   const router = useRouter();
   const { theme, isDark } = useOffersTheme();
 
-  if (profiles.length === 0) return null;
-
   const handleProfilePress = (profile: SpecialProfile) => {
     if (profile.isVerified) {
       router.push(`/offers/zones/${profile.slug}` as any);
@@ -145,6 +143,8 @@ export const SpecialProfilesSection: React.FC<SpecialProfilesSectionProps> = ({
       color: colors.background.primary,
     },
   }), [isDark, theme]);
+
+  if (profiles.length === 0) return null;
 
   return (
     <View style={styles.container}>

@@ -195,6 +195,14 @@ const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
     handleClose();
   }, [onClaim, handleClose]);
 
+  const iconAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: interpolate(iconScale.value, [0, 0.5, 1], [0, 1.2, 1]) }],
+  }));
+
+  const shimmerAnimStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(shimmerAnim.value, [0, 0.5, 1], [0.3, 0.8, 0.3]),
+  }));
+
   if (!achievement) return null;
 
   // Map icon string to Ionicons name
@@ -215,14 +223,6 @@ const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
     };
     return iconMap[icon] || 'trophy';
   };
-
-  const iconAnimStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(iconScale.value, [0, 0.5, 1], [0, 1.2, 1]) }],
-  }));
-
-  const shimmerAnimStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(shimmerAnim.value, [0, 0.5, 1], [0.3, 0.8, 0.3]),
-  }));
 
   return (
     <Modal

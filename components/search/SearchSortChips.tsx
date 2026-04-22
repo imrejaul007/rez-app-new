@@ -9,7 +9,7 @@ interface SearchSortChipsProps {
   resultCount?: number;
 }
 
-const SORT_OPTIONS: Array<{ label: string; value: SortOption }> = [
+const SORT_OPTIONS: { label: string; value: SortOption }[] = [
   { label: 'Best Saving', value: 'cashback_high' },
   { label: 'Nearest', value: 'distance' },
   { label: 'Top Rated', value: 'rating' },

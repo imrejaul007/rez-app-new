@@ -16,7 +16,7 @@ import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface RewardInfo {
-  rewards: Array<{ action: string; coins: number; description: string }>;
+  rewards: { action: string; coins: number; description: string }[];
   totalPotential: number;
 }
 

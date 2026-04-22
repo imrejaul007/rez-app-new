@@ -29,8 +29,6 @@ export const CoinDropsSection: React.FC<CoinDropsSectionProps> = ({
   const router = useRouter();
   const { theme, isDark } = useOffersTheme();
 
-  if (coinDrops.length === 0) return null;
-
   const handleCoinDropPress = (coinDrop: CoinDrop) => {
     router.push(`/MainStorePage?storeId=${coinDrop.id}`);
   };
@@ -143,6 +141,8 @@ export const CoinDropsSection: React.FC<CoinDropsSectionProps> = ({
       marginRight: 4,
     },
   }), [isDark, theme]);
+
+  if (coinDrops.length === 0) return null;
 
   return (
     <View style={styles.container}>

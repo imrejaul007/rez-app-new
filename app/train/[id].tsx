@@ -103,13 +103,13 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  passengerDetails: Array<{
+  passengerDetails: {
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
     berthPreference?: 'lower' | 'middle' | 'upper' | 'side-lower' | 'side-upper';
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }

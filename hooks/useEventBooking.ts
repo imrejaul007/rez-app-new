@@ -46,8 +46,8 @@ export function useEventBooking(): UseEventBookingReturn {
         throw new Error('Please select a time slot');
       }
 
-      // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
-      const idempotencyKey = `${event.id}-${uuid.v4() as string}`;
+      // IDEMPOTENCY FIX: crypto.randomUUID() replaces Date.now() + Math.random() for collision-safe idempotency.
+      const idempotencyKey = `${event.id}-${crypto.randomUUID()}`;
 
       // Call API to book event
       const result = await eventsApiService.bookEventSlot(event.id, { ...formData, idempotencyKey });

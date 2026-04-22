@@ -533,39 +533,6 @@ function BookingsPage() {
     }
   };
 
-  // ─── Unauthenticated state ───────────────────────────────
-  if (!isAuthenticated) {
-    return (
-      <ThemedView style={styles.container}>
-        <Stack.Screen options={{ headerShown: false }} />
-        <StatusBar barStyle="light-content" />
-        <LinearGradient colors={[C.primary, C.primaryDark]} style={styles.header}>
-          <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
-            style={styles.backBtn}
-          >
-            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
-          </Pressable>
-          <Text style={styles.headerTitle}>My Bookings</Text>
-          <View style={{ width: 40 }} />
-        </LinearGradient>
-        <View style={styles.centeredContainer}>
-          <View style={[styles.emptyIconCircle, { backgroundColor: colors.neutral[100] }]}>
-            <Ionicons name="lock-closed-outline" size={40} color={C.textSecondary} />
-          </View>
-          <Text style={styles.emptyTitle}>Login Required</Text>
-          <Text style={styles.emptySubtitle}>Please login to view your bookings</Text>
-          <Pressable
-            style={[styles.ctaButton, { backgroundColor: tintColor || C.primary }]}
-            onPress={() => router.push('/sign-in' as any)}
-          >
-            <Text style={styles.ctaButtonText}>Login</Text>
-          </Pressable>
-        </View>
-      </ThemedView>
-    );
-  }
-
   // ─── Callbacks for tab/pill presses ─────────────────────
   const handleTypeFilterPress = useCallback((key: BookingType) => {
     setTypeFilter(key);
@@ -789,6 +756,39 @@ function BookingsPage() {
     },
     [expandedBookingId, router],
   );
+
+  // ─── Unauthenticated state ───────────────────────────────
+  if (!isAuthenticated) {
+    return (
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="light-content" />
+        <LinearGradient colors={[C.primary, C.primaryDark]} style={styles.header}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
+          </Pressable>
+          <Text style={styles.headerTitle}>My Bookings</Text>
+          <View style={{ width: 40 }} />
+        </LinearGradient>
+        <View style={styles.centeredContainer}>
+          <View style={[styles.emptyIconCircle, { backgroundColor: colors.neutral[100] }]}>
+            <Ionicons name="lock-closed-outline" size={40} color={C.textSecondary} />
+          </View>
+          <Text style={styles.emptyTitle}>Login Required</Text>
+          <Text style={styles.emptySubtitle}>Please login to view your bookings</Text>
+          <Pressable
+            style={[styles.ctaButton, { backgroundColor: tintColor || C.primary }]}
+            onPress={() => router.push('/sign-in' as any)}
+          >
+            <Text style={styles.ctaButtonText}>Login</Text>
+          </Pressable>
+        </View>
+      </ThemedView>
+    );
+  }
 
   // ─── Empty state ─────────────────────────────────────────
   const renderEmpty = () => {

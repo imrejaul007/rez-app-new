@@ -133,7 +133,7 @@ const Quiz = () => {
   const [maxPlays, setMaxPlays] = useState(5);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [answers, setAnswers] = useState<Array<{ questionId: string; selectedAnswer: number; timeSpent: number }>>([]);
+  const [answers, setAnswers] = useState<{ questionId: string; selectedAnswer: number; timeSpent: number }[]>([]);
   const [correctCount, setCorrectCount] = useState(0);
 
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);

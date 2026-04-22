@@ -37,6 +37,10 @@ import {
   ErrorCallback,
   OrderStatusUpdateCallback,
   OrderListUpdatedCallback,
+  CashbackCreditedCallback,
+  CashbackReversedCallback,
+  StreakMilestoneCallback,
+  StreakBrokenCallback,
 } from '@/types/socket.types';
 
 // Get Socket URL from environment
@@ -107,6 +111,14 @@ interface SocketContextType {
   unsubscribeFromOrder: (orderId: string) => void;
   onOrderStatusUpdate: (callback: OrderStatusUpdateCallback) => () => void;
   onOrderListUpdated: (callback: OrderListUpdatedCallback) => () => void;
+
+  // Cashback event listeners
+  onCashbackCredited: (callback: CashbackCreditedCallback) => () => void;
+  onCashbackReversed: (callback: CashbackReversedCallback) => () => void;
+
+  // Streak/milestone event listeners
+  onStreakMilestone: (callback: StreakMilestoneCallback) => () => void;
+  onStreakBroken: (callback: StreakBrokenCallback) => () => void;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -559,6 +571,48 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     };
   }, []);
 
+  // Listen for cashback:credited events from the backend earnings service.
+  // Emitted to the user-${userId} room when cashback is awarded after order completion.
+  const onCashbackCredited = useCallback((callback: CashbackCreditedCallback) => {
+    if (!socketRef.current) return () => {};
+
+    socketRef.current.on(SocketEvents.CASHBACK_CREDITED, callback);
+    return () => {
+      socketRef.current?.off(SocketEvents.CASHBACK_CREDITED, callback);
+    };
+  }, []);
+
+  // Listen for cashback:reversed events (e.g. order cancellation).
+  const onCashbackReversed = useCallback((callback: CashbackReversedCallback) => {
+    if (!socketRef.current) return () => {};
+
+    socketRef.current.on(SocketEvents.CASHBACK_REVERSED, callback);
+    return () => {
+      socketRef.current?.off(SocketEvents.CASHBACK_REVERSED, callback);
+    };
+  }, []);
+
+  // Listen for streak:milestone events from the gamification service.
+  // Emitted to the user-${userId} room when a streak milestone is reached.
+  const onStreakMilestone = useCallback((callback: StreakMilestoneCallback) => {
+    if (!socketRef.current) return () => {};
+
+    socketRef.current.on(SocketEvents.STREAK_MILESTONE, callback);
+    return () => {
+      socketRef.current?.off(SocketEvents.STREAK_MILESTONE, callback);
+    };
+  }, []);
+
+  // Listen for streak:broken events when a daily streak is reset.
+  const onStreakBroken = useCallback((callback: StreakBrokenCallback) => {
+    if (!socketRef.current) return () => {};
+
+    socketRef.current.on(SocketEvents.STREAK_BROKEN, callback);
+    return () => {
+      socketRef.current?.off(SocketEvents.STREAK_BROKEN, callback);
+    };
+  }, []);
+
   // OPTIMIZED: Separate stable actions (empty deps) from volatile state so that
   // consumers who only use actions are not re-rendered on every connection change.
   const stableActions = useMemo(() => ({
@@ -586,6 +640,10 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     unsubscribeFromOrder,
     onOrderStatusUpdate,
     onOrderListUpdated,
+    onCashbackCredited,
+    onCashbackReversed,
+    onStreakMilestone,
+    onStreakBroken,
   }), []); // all action callbacks have stable identity (empty deps on each useCallback)
 
   const contextValue: SocketContextType = useMemo(() => ({
@@ -639,6 +697,10 @@ const SOCKET_DEFAULTS: SocketContextType = {
   unsubscribeFromOrder: () => {},
   onOrderStatusUpdate: () => noopUnsubscribe,
   onOrderListUpdated: () => noopUnsubscribe,
+  onCashbackCredited: () => noopUnsubscribe,
+  onCashbackReversed: () => noopUnsubscribe,
+  onStreakMilestone: () => noopUnsubscribe,
+  onStreakBroken: () => noopUnsubscribe,
 };
 
 // Hook — falls back to Zustand store (connection state only) for crash safety when outside Provider

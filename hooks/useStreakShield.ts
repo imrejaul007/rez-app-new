@@ -37,7 +37,7 @@ function getLastMonday(): string {
 
 interface UseStreakShieldResult {
   shieldAvailable: boolean;
-  useShield: () => Promise<boolean>;
+  shieldFn: () => Promise<boolean>;
   isLoading: boolean;
   lastUsedDate: string | null;
 }
@@ -86,7 +86,7 @@ export function useStreakShield(): UseStreakShieldResult {
 
   return {
     shieldAvailable,
-    useShield,
+    shieldFn: useShield,
     isLoading,
     lastUsedDate: usedAt,
   };

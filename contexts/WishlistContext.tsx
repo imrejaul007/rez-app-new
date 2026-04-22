@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import wishlistApi from '@/services/wishlistApi';
+import { v4 as uuidv4 } from 'uuid';
 import { useSocket } from '@/contexts/SocketContext';
 import { useAuthUser, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
 

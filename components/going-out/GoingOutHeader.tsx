@@ -18,7 +18,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { GoingOutHeaderProps } from '@/types/going-out.types';
 import { colors } from '@/constants/theme';
 
-function _GoingOutHeaderInner({
+function GoingOutHeaderInner({
   searchQuery,
   onSearchChange,
   onSearchSubmit,
@@ -252,4 +252,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export const GoingOutHeader = React.memo(_GoingOutHeaderInner);
+export const GoingOutHeader = React.memo(GoingOutHeaderInner);

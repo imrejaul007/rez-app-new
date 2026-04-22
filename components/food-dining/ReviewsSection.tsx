@@ -26,7 +26,7 @@ interface ReviewItem {
   title?: string;
   comment?: string;
   rating: number;
-  images?: Array<{ url: string; thumbnail?: string } | string>;
+  images?: ({ url: string; thumbnail?: string } | string)[];
   user?: { _id?: string; id?: string; name?: string; profile?: { firstName?: string; lastName?: string; avatar?: string }; avatar?: string };
   store?: { _id?: string; id?: string; name?: string };
   helpful?: number | { count?: number };

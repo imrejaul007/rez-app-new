@@ -31,8 +31,6 @@ export const FriendsRedeemedSection: React.FC<FriendsRedeemedSectionProps> = ({
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
-  if (offers.length === 0) return null;
-
   const handleOfferPress = (offer: FriendRedeemedOffer) => {
     router.push(`/offers/${offer.offer.id}`);
   };
@@ -152,6 +150,8 @@ export const FriendsRedeemedSection: React.FC<FriendsRedeemedSectionProps> = ({
       marginLeft: 3,
     },
   }), [isDark, theme]);
+
+  if (offers.length === 0) return null;
 
   return (
     <View style={styles.container}>

@@ -31,7 +31,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 type Platform = 'instagram' | 'twitter' | 'youtube';
 
-const PLATFORM_OPTIONS: Array<{ id: Platform; label: string; icon: string }> = [
+const PLATFORM_OPTIONS: { id: Platform; label: string; icon: string }[] = [
   { id: 'instagram', label: 'Instagram', icon: 'logo-instagram' },
   { id: 'twitter', label: 'Twitter/X', icon: 'logo-twitter' },
   { id: 'youtube', label: 'YouTube', icon: 'logo-youtube' },

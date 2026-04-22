@@ -97,7 +97,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
   const [isLoadingRelated, setIsLoadingRelated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rewardInfo, setRewardInfo] = useState<{
-    rewards: Array<{ action: string; coins: number; description: string }>;
+    rewards: { action: string; coins: number; description: string }[];
     totalPotential: number;
   } | null>(null);
 

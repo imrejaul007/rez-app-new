@@ -105,11 +105,11 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  guestDetails: Array<{
+  guestDetails: {
     firstName: string;
     lastName: string;
     email?: string;
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }

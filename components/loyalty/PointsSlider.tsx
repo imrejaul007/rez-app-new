@@ -7,10 +7,10 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@/components/common/CrossPlatformSlider';
-const AnySlider = Slider as any;
 import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
+const AnySlider = Slider as any;
 
 interface PointsSliderProps {
   availablePoints: number;

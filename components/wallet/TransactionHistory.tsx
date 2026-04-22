@@ -66,7 +66,7 @@ function getDateGroup(dateStr: string): string {
 
 function groupTransactionsByDate(
   transactions: TransactionResponse[]
-): Array<{ title: string; data: TransactionResponse[] }> {
+): { title: string; data: TransactionResponse[] }[] {
   const groupOrder = ['Today', 'Yesterday', 'This Week', 'Earlier'];
   const groups: Record<string, TransactionResponse[]> = {};
   for (const txn of transactions) {

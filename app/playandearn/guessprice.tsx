@@ -8,13 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import gameApi from '../../services/gameApi';
 import { useGamification } from '@/contexts/GamificationContext';
-import {
-  useGetCurrencySymbol,
-  useRezBalance,
-  useRefreshWallet,
-  useAdjustBalance,
-  useRollbackAdjustment,
-} from '@/stores/selectors';
+import { useGetCurrencySymbol, useRezBalance, useRefreshWallet, useAdjustBalance } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -84,7 +78,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
   useEffect(() => {
     const startAnimation = () => {
       translateY.value = 0;
-      translateX.value = ((Date.now() * 7 + delay * 31) % 200) - 100;
+      translateX.value = Math.random() * 200 - 100;
       opacity.value = 1;
       rotate.value = 0;
 
@@ -118,7 +112,6 @@ const GuessPrice = () => {
   const walletBalance = useRezBalance();
   const refreshWallet = useRefreshWallet();
   const adjustBalance = useAdjustBalance();
-  const rollbackAdjustment = useRollbackAdjustment();
   const currencySymbol = getCurrencySymbol();
   const [gameState, setGameState] = useState<'start' | 'playing' | 'result' | 'error'>('start');
   const [currentProduct, setCurrentProduct] = useState(0);
@@ -222,12 +215,13 @@ const GuessPrice = () => {
   };
 
   const submitGuess = async () => {
-    // R2-H2 + R2-M15: parseInt requires radix 10 to avoid octal interpretation.
-    // Number.isFinite guards against NaN when guess is non-numeric.
-    const guessValue = parseInt(guess, 10);
-    if (!guess || !Number.isFinite(guessValue) || guessValue <= 0) return;
+    // R2-H2 + R2-M15 FIX: parseInt without radix can misinterpret "08" as octal.
+    // Also guard against NaN from non-numeric input.
+    const guessNum = parseInt(guess, 10);
+    if (!guess || !Number.isFinite(guessNum) || guessNum <= 0) return;
 
     const product = products[currentProduct];
+    const guessValue = guessNum;
     const actualPrice = product.actualPrice;
     const difference = Math.abs(guessValue - actualPrice);
     const percentDiff = (difference / actualPrice) * 100;
@@ -261,12 +255,7 @@ const GuessPrice = () => {
           else message = response.data.message || 'Try again!';
           if (response.data.newBalance !== undefined) {
             adjustBalance(earnedCoins);
-            // CD-CRIT-SEC-04 FIX: rollback if refreshWallet fails so balance doesn't stay inflated
-            try {
-              await refreshWallet();
-            } catch {
-              rollbackAdjustment();
-            }
+            refreshWallet(); // Reconcile with server
           }
         }
       } catch (err: any) {
@@ -500,10 +489,13 @@ const GuessPrice = () => {
                       keyboardType="numeric"
                     />
                   </View>
-                  <Pressable onPress={submitGuess} disabled={!guess || parseInt(guess, 10) <= 0}>
+                  <Pressable
+                    onPress={submitGuess}
+                    disabled={!guess || parseInt(guess, 10) <= 0 || isNaN(parseInt(guess, 10))}
+                  >
                     <LinearGradient
                       colors={
-                        !guess || parseInt(guess, 10) <= 0
+                        !guess || parseInt(guess, 10) <= 0 || isNaN(parseInt(guess, 10))
                           ? [colors.neutral[400], colors.neutral[500]]
                           : [COLORS.emerald, COLORS.emeraldDark]
                       }

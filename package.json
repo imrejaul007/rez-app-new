@@ -111,6 +111,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@eslint/eslintrc": "^3.3.5",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^30.0.0",

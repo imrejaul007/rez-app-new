@@ -21,7 +21,7 @@ const STATUS_CONFIG: Record<BonusClaim['status'], { label: string; color: string
   expired: { label: 'Expired', color: colors.neutral[600], bg: colors.neutral[100], icon: 'hourglass-outline' },
 };
 
-const FILTER_TABS: Array<{ key: string; label: string }> = [
+const FILTER_TABS: { key: string; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'credited', label: 'Credited' },
   { key: 'pending', label: 'Pending' },

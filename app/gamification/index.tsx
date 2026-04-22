@@ -37,10 +37,10 @@ function GamificationDashboard() {
   const [stats, setStats] = useState<any>({});
   const [shieldUsedFeedback, setShieldUsedFeedback] = useState(false);
 
-  const { shieldAvailable, useShield, isLoading: shieldLoading } = useStreakShield();
+  const { shieldAvailable, shieldFn, isLoading: shieldLoading } = useStreakShield();
 
   const handleUseShield = async () => {
-    const success = await useShield();
+    const success = await shieldFn();
     if (success) {
       setShieldUsedFeedback(true);
       setTimeout(() => setShieldUsedFeedback(false), 2500);

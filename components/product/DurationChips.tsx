@@ -39,7 +39,7 @@ interface DurationChipsProps {
 }
 
 // Duration options configuration
-const DURATION_OPTIONS: Array<{ duration: LockDuration; label: string }> = [
+const DURATION_OPTIONS: { duration: LockDuration; label: string }[] = [
   { duration: 2, label: '2 Hours' },
   { duration: 4, label: '4 Hours' },
   { duration: 8, label: '8 Hours' },

@@ -139,10 +139,10 @@ const PAGE_CATEGORIES: PageCategory[] = [
 ];
 
 function TestPagesScreen() {
-  if (!__DEV__) return <Redirect href="/(tabs)" />;
-
   const router = useRouter();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+  if (!__DEV__) return <Redirect href="/(tabs)" />;
 
   const totalPages = PAGE_CATEGORIES.reduce((sum, cat) => sum + cat.pages.length, 0);
 

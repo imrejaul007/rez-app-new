@@ -13,12 +13,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import socialProofApi from '@/services/socialProofApi';
-
-type CategorySocialProofStats = any;
 import { socialProofStats, SocialProofStats } from '@/data/categoryDummyData';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+
+type CategorySocialProofStats = any;
 
 interface SocialProofSectionProps {
   stats?: SocialProofStats;

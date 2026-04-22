@@ -427,8 +427,8 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
     setError(null);
     // OG-D001 FIX: Regenerate the idempotency key when the user explicitly
     // resets — this represents a new payment intent, not a retry.
-    // IDEMPOTENCY FIX: uuid.v4() is collision-safe — Date.now() prefix removed.
-    idempotencyKeyRef.current = `store-pay-${uuid.v4() as string}`;
+    // IDEMPOTENCY FIX: crypto.randomUUID() replaces Date.now() + Math.random() for collision-safe idempotency.
+    idempotencyKeyRef.current = `store-pay-${crypto.randomUUID()}`;
     isSubmittingRef.current = false;
     // Allow loadPaymentData to be called again after a reset (new payment intent).
     hasLoadedRef.current = false;

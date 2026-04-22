@@ -57,12 +57,12 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  travelerDetails: Array<{
+  travelerDetails: {
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }
@@ -108,12 +108,12 @@ const PackageBookingFlow: React.FC<PackageBookingFlowProps> = ({
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const [travelerDetails, setTravelerDetails] = useState<Array<{
+  const [travelerDetails, setTravelerDetails] = useState<{
     firstName: string;
     lastName: string;
     age: number;
     gender: 'male' | 'female' | 'other';
-  }>>([]);
+  }[]>([]);
 
   const totalSteps = 4;
   const totalTravelers = adults + children;

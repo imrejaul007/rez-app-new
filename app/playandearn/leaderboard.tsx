@@ -83,7 +83,7 @@ const Leaderboard = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState('');
   const [prizePool, setPrizePool] = useState<
-    Array<{ rankStart: number; rankEnd: number; prizeAmount: number; prizeLabel: string }>
+    { rankStart: number; rankEnd: number; prizeAmount: number; prizeLabel: string }[]
   >([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);

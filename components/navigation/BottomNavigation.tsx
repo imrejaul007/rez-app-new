@@ -15,9 +15,6 @@ import { useRouter, usePathname } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-
-// Import the Pay in Store icon (REZ animated coin)
-const payInStoreIcon = require('@/assets/images/rez-coin-animated.gif');
 import Svg, { Path } from 'react-native-svg';
 import logger from '@/utils/logger';
 import { useHomeTab } from '@/contexts/HomeTabContext';
@@ -26,6 +23,9 @@ import { colors } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useAuthStore } from '@/stores/authStore';
 import { getActiveWebOrderCount } from '@/services/webOrderApi';
+
+// Import the Pay in Store icon (REZ animated coin)
+const payInStoreIcon = require('@/assets/images/rez-coin-animated.gif');
 
 // ─── Icon pairs: filled (active) / outline (inactive) ────────────────────────
 const ICON_MAP: Record<string, { active: string; inactive: string }> = {

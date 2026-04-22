@@ -1,7 +1,7 @@
 // Earning Opportunities Section Component
 // Displays various ways to earn rewards (bill upload, referrals, challenges, etc.)
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -101,6 +101,130 @@ const opportunities: EarningOpportunity[] = [
   },
 ];
 
+// Extracted card component so hooks are called at the top level
+const OpportunityCard: React.FC<{
+  opportunity: EarningOpportunity;
+  fadeAnim: Animated.SharedValue<number>;
+  onPress: () => void;
+}> = React.memo(({ opportunity, fadeAnim, onPress }) => {
+  const scaleAnim = useSharedValue(1);
+  const isHighlight = opportunity.highlight;
+
+  const handlePressIn = () => {
+    scaleAnim.value = withSpring(0.95, { stiffness: 300, damping: 10 });
+  };
+
+  const handlePressOut = () => {
+    scaleAnim.value = withSpring(1, { stiffness: 300, damping: 10 });
+  };
+
+  return (
+    <Animated.View
+      style={[
+        {
+          opacity: fadeAnim,
+          transform: [
+            {
+              translateY: interpolate(fadeAnim.value, [0, 1], [20, 0]),
+            },
+          ],
+        },
+      ]}
+    >
+      <Animated.View
+        style={[
+          {
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <Pressable
+          style={[
+            styles.opportunityCard,
+            isHighlight && styles.highlightCard,
+          ]}
+          onPress={onPress}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+
+        >
+          <LinearGradient
+            colors={opportunity.gradient as any}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            {/* Decorative background elements */}
+            <View style={styles.decorativeCircle1} />
+            <View style={styles.decorativeCircle2} />
+
+            {opportunity.badge && (
+              <View style={styles.badgeContainer}>
+                <LinearGradient
+                  colors={['rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.25)']}
+                  style={styles.badgeGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={styles.badgeText}>{opportunity.badge}</Text>
+                </LinearGradient>
+              </View>
+            )}
+
+            <View style={styles.cardContent}>
+              <View style={styles.iconContainer}>
+                <LinearGradient
+                  colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.15)']}
+                  style={styles.iconGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Ionicons
+                    name={opportunity.icon as any}
+                    size={isHighlight ? 36 : 32}
+                    color="white"
+                  />
+                </LinearGradient>
+              </View>
+
+              <View style={styles.cardInfo}>
+                <ThemedText style={styles.cardTitle}>
+                  {opportunity.title}
+                </ThemedText>
+                <ThemedText style={styles.cardDescription}>
+                  {opportunity.description}
+                </ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.cardFooter}>
+              <View style={styles.coinsContainer}>
+                <LinearGradient
+                  colors={['rgba(255, 215, 0, 0.9)', 'rgba(255, 193, 7, 0.9)']}
+                  style={styles.coinsGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Ionicons name="star" size={18} color={colors.background.primary} style={styles.starIcon} />
+                  <Text style={styles.coinsText}>
+                    {opportunity.coins}
+                  </Text>
+                </LinearGradient>
+              </View>
+
+              <View style={styles.arrowContainer}>
+                <View style={styles.arrowCircle}>
+                  <Ionicons name="chevron-forward" size={20} color="white" />
+                </View>
+              </View>
+            </View>
+          </LinearGradient>
+        </Pressable>
+      </Animated.View>
+    </Animated.View>
+  );
+});
+
 function EarningOpportunities() {
   const router = useRouter();
   const scrollX = useSharedValue(0);
@@ -112,133 +236,11 @@ function EarningOpportunities() {
 
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 600 });
-
-    // cleanup handled by reanimated
   }, []);
 
-  const handleOpportunityPress = (opportunity: EarningOpportunity) => {
+  const handleOpportunityPress = useCallback((opportunity: EarningOpportunity) => {
     router.push(opportunity.route as any);
-  };
-
-  const renderOpportunityCard = (opportunity: EarningOpportunity, index: number) => {
-    const isHighlight = opportunity.highlight;
-    const scaleAnim = useSharedValue(1);
-
-    const handlePressIn = () => {
-      scaleAnim.value = withSpring(0.95, { stiffness: 300, damping: 10 });
-    };
-
-    const handlePressOut = () => {
-      scaleAnim.value = withSpring(1, { stiffness: 300, damping: 10 });
-    };
-
-    return (
-      <Animated.View
-        key={opportunity.id}
-        style={[
-          {
-            opacity: fadeAnim,
-            transform: [
-              {
-                translateY: interpolate(fadeAnim.value, [0, 1], [20, 0]),
-              },
-            ],
-          },
-        ]}
-      >
-        <Animated.View
-          style={[
-            {
-              transform: [{ scale: scaleAnim }],
-            },
-          ]}
-        >
-          <Pressable
-            style={[
-              styles.opportunityCard,
-              isHighlight && styles.highlightCard,
-            ]}
-            onPress={() => handleOpportunityPress(opportunity)}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-           
-          >
-            <LinearGradient
-              colors={opportunity.gradient as any}
-              style={styles.cardGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              {/* Decorative background elements */}
-              <View style={styles.decorativeCircle1} />
-              <View style={styles.decorativeCircle2} />
-              
-              {opportunity.badge && (
-                <View style={styles.badgeContainer}>
-                  <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.25)']}
-                    style={styles.badgeGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.badgeText}>{opportunity.badge}</Text>
-                  </LinearGradient>
-                </View>
-              )}
-
-              <View style={styles.cardContent}>
-                <View style={styles.iconContainer}>
-                  <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.15)']}
-                    style={styles.iconGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Ionicons
-                      name={opportunity.icon as any}
-                      size={isHighlight ? 36 : 32}
-                      color="white"
-                    />
-                  </LinearGradient>
-                </View>
-
-                <View style={styles.cardInfo}>
-                  <ThemedText style={styles.cardTitle}>
-                    {opportunity.title}
-                  </ThemedText>
-                  <ThemedText style={styles.cardDescription}>
-                    {opportunity.description}
-                  </ThemedText>
-                </View>
-              </View>
-
-              <View style={styles.cardFooter}>
-                <View style={styles.coinsContainer}>
-                  <LinearGradient
-                    colors={['rgba(255, 215, 0, 0.9)', 'rgba(255, 193, 7, 0.9)']}
-                    style={styles.coinsGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Ionicons name="star" size={18} color={colors.background.primary} style={styles.starIcon} />
-                    <Text style={styles.coinsText}>
-                      {opportunity.coins}
-                    </Text>
-                  </LinearGradient>
-                </View>
-
-                <View style={styles.arrowContainer}>
-                  <View style={styles.arrowCircle}>
-                    <Ionicons name="chevron-forward" size={20} color="white" />
-                  </View>
-                </View>
-              </View>
-            </LinearGradient>
-          </Pressable>
-        </Animated.View>
-      </Animated.View>
-    );
-  };
+  }, [router]);
 
   return (
     <View style={styles.container}>
@@ -274,7 +276,14 @@ function EarningOpportunities() {
         scrollEventThrottle={16}
         onScroll={scrollHandler}
       >
-        {opportunities.map((opp, index) => renderOpportunityCard(opp, index))}
+        {opportunities.map((opp) => (
+          <OpportunityCard
+            key={opp.id}
+            opportunity={opp}
+            fadeAnim={fadeAnim}
+            onPress={() => handleOpportunityPress(opp)}
+          />
+        ))}
       </Animated.ScrollView>
     </View>
   );

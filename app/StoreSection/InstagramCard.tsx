@@ -18,7 +18,7 @@ interface InstagramCardProps {
     price?: number;
     pricing?: { selling?: number };
     image?: string;
-    images?: Array<{ url: string }>;
+    images?: { url: string }[];
     store?: {
       _id?: string;
       id?: string;

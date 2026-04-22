@@ -111,6 +111,30 @@ const ExperienceDetailPage: React.FC = () => {
 
   const capitalizeLine = (str: string) => str.replace(/\b\w/g, (l) => l.toUpperCase());
 
+  // Display Vars (Backend > Theme > Defaults) — computed before early returns so hooks stay at top
+  const displayTitle = experience?.title || capitalizeLine(type);
+  const displaySubtitle = experience?.subtitle || 'Curated for you';
+  const displayDesc = experience?.description || currentTheme.description;
+  const displayGradient = currentTheme.gradientColors;
+  const benefits =
+    experience?.benefits && experience.benefits.length > 0 ? experience.benefits : currentTheme.benefits || [];
+
+  const { avgRating, avgCashback } = useMemo(() => {
+    const withRating = stores.filter((s: any) => s.rating && s.rating > 0);
+    const rating =
+      withRating.length > 0
+        ? (withRating.reduce((sum: number, s: any) => sum + s.rating, 0) / withRating.length).toFixed(1)
+        : null;
+
+    const withCashback = stores.filter((s: any) => s.cashback && s.cashback > 0);
+    const cashback =
+      withCashback.length > 0
+        ? Math.round(withCashback.reduce((sum: number, s: any) => sum + s.cashback, 0) / withCashback.length)
+        : null;
+
+    return { avgRating: rating, avgCashback: cashback };
+  }, [stores]);
+
   // Filter Logic
   const filteredStores = useMemo(
     () =>
@@ -138,32 +162,6 @@ const ExperienceDetailPage: React.FC = () => {
       </View>
     );
   }
-
-  // Display Vars (Backend > Theme > Defaults)
-  const displayTitle = experience?.title || capitalizeLine(type);
-  const displaySubtitle = experience?.subtitle || 'Curated for you';
-  const displayDesc = experience?.description || currentTheme.description;
-  // Use Theme Gradient if backend missing or default, for better contrast
-  const displayGradient = currentTheme.gradientColors;
-  const benefits =
-    experience?.benefits && experience.benefits.length > 0 ? experience.benefits : currentTheme.benefits || [];
-
-  // Calculate real stats from stores data
-  const { avgRating, avgCashback } = useMemo(() => {
-    const withRating = stores.filter((s: any) => s.rating && s.rating > 0);
-    const rating =
-      withRating.length > 0
-        ? (withRating.reduce((sum: number, s: any) => sum + s.rating, 0) / withRating.length).toFixed(1)
-        : null;
-
-    const withCashback = stores.filter((s: any) => s.cashback && s.cashback > 0);
-    const cashback =
-      withCashback.length > 0
-        ? Math.round(withCashback.reduce((sum: number, s: any) => sum + s.cashback, 0) / withCashback.length)
-        : null;
-
-    return { avgRating: rating, avgCashback: cashback };
-  }, [stores]);
 
   return (
     <View style={styles.container}>

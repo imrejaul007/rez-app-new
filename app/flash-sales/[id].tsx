@@ -45,12 +45,12 @@ interface FlashSale {
   maxQuantity: number;
   soldQuantity: number;
   limitPerUser: number;
-  stores?: Array<{
+  stores?: {
     _id: string;
     name: string;
     logo?: string;
     location?: any;
-  }>;
+  }[];
   promoCode?: string;
   termsAndConditions?: string[];
   minimumPurchase?: number;

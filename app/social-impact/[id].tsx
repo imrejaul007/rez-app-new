@@ -333,10 +333,10 @@ function SocialImpactEventDetail() {
 
   // ======== CHECK-IN HANDLERS ========
 
-  const getAvailableMethods = (): Array<'qr' | 'otp' | 'geo'> => {
+  const getAvailableMethods = (): ('qr' | 'otp' | 'geo')[] => {
     const methods = event?.verificationConfig?.methods;
     if (methods && methods.length > 0) {
-      const mapped: Array<'qr' | 'otp' | 'geo'> = [];
+      const mapped: ('qr' | 'otp' | 'geo')[] = [];
       if (methods.includes('qr')) mapped.push('qr');
       if (methods.includes('otp')) mapped.push('otp');
       if (methods.includes('geo')) mapped.push('geo');

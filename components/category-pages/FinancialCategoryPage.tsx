@@ -90,29 +90,19 @@ function FinancialCategoryPage() {
   const categoryConfig = getCategoryConfig(slug);
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+  const isMounted = useIsMounted();
 
   const {
     subcategories, stores, products, ugcPosts, aiPlaceholders,
     isLoading, error, refetch,
   } = useCategoryPageData(slug);
 
-  // Wallet data for savings dashboard
-  const savingsInsights = useSavingsInsights();
-  const totalBalance = useTotalBalance();
-  const walletData = useWalletData();
-  const savingsThisMonth = savingsInsights?.thisMonth || 0;
-  const totalCoins = totalBalance || 0;
-  const cashbackBalance = walletData?.cashbackBalance || 0;
-
   const [activeServiceFilters, setActiveServiceFilters] = useState<string[]>([]);
   const [activeLifestyleFilters, setActiveLifestyleFilters] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const isMounted = useIsMounted();
 
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
-
-  if (!isMounted()) return;
   const onRefresh = async () => { setRefreshing(true); await refetch(); setRefreshing(false); };
 
   const toggleServiceFilter = (filterId: string) => {
@@ -185,7 +175,13 @@ function FinancialCategoryPage() {
     router.push(`/MainCategory/financial-lifestyle/search?q=${encodeURIComponent(query)}` as any);
   }, [router]);
 
-  if (!categoryConfig) return null;
+  // Wallet data for savings dashboard
+  const savingsInsights = useSavingsInsights();
+  const totalBalance = useTotalBalance();
+  const walletData = useWalletData();
+  const savingsThisMonth = savingsInsights?.thisMonth || 0;
+  const totalCoins = totalBalance || 0;
+  const cashbackBalance = walletData?.cashbackBalance || 0;
 
   if (isLoading && !refreshing && stores.length === 0) {
     return <LoadingState message="Loading financial services..." />;

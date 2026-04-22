@@ -14,13 +14,13 @@ interface TimelineStep {
 
 interface OrderTimelineProps {
   currentStatus: string;
-  timeline?: Array<{
+  timeline?: {
     status: string;
     message: string;
     timestamp: Date | string;
     updatedBy?: string;
     metadata?: any;
-  }>;
+  }[];
   estimatedDeliveryTime?: Date | string;
 }
 

@@ -126,6 +126,22 @@ export default function BadgesScreen() {
 
   const renderSectionHeader = (title: string) => <Text style={styles.sectionTitle}>{title}</Text>;
 
+  const renderFlatListItem = useCallback(({ item }: any) => {
+    if (item.type === 'header') {
+      return renderSectionHeader('Your Badges');
+    }
+    if (item.type === 'undiscovered-header') {
+      return renderSectionHeader('Discover More');
+    }
+    if (item.type === 'badge') {
+      return renderBadgeCard({ item: item.data });
+    }
+    if (item.type === 'undiscovered') {
+      return renderUndiscoveredCard({ item: item.data });
+    }
+    return null;
+  }, []);
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -165,21 +181,7 @@ export default function BadgesScreen() {
           { type: 'undiscovered-header', data: null },
           ...undiscovered.map((u) => ({ type: 'undiscovered', data: u })),
         ]}
-        renderItem={useCallback(({ item }: any) => {
-          if (item.type === 'header') {
-            return renderSectionHeader('Your Badges');
-          }
-          if (item.type === 'undiscovered-header') {
-            return renderSectionHeader('Discover More');
-          }
-          if (item.type === 'badge') {
-            return renderBadgeCard({ item: item.data });
-          }
-          if (item.type === 'undiscovered') {
-            return renderUndiscoveredCard({ item: item.data });
-          }
-          return null;
-        }, [])}
+        renderItem={renderFlatListItem}
         keyExtractor={(item, idx) => {
           if (item.type === 'header') return 'header';
           if (item.type === 'undiscovered-header') return 'undiscovered-header';

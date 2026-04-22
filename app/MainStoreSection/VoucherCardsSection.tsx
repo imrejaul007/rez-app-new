@@ -136,9 +136,6 @@ export default memo(function VoucherCardsSection({
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
-  // Don't render if no real vouchers provided - no dummy data
-  if (!vouchers || vouchers.length === 0) return null;
-
   const handleBuyVoucher = useCallback(
     (voucherId: string) => {
       triggerImpact('Medium');
@@ -157,6 +154,9 @@ export default memo(function VoucherCardsSection({
   );
 
   const keyExtractor = useCallback((item: VoucherCard) => item.id, []);
+
+  // Don't render if no real vouchers provided - no dummy data
+  if (!vouchers || vouchers.length === 0) return null;
 
   return (
     <View style={styles.container}>

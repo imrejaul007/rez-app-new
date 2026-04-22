@@ -21,8 +21,6 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
 import Animated, { runOnJS, useSharedValue, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import logger from '@/utils/logger';
@@ -63,6 +61,8 @@ import type {
 } from '@/services/categoriesApi';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // Per-section error boundary: isolates crashes so one section doesn't blank the whole page
 class SectionErrorBoundary extends React.Component<

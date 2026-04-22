@@ -16,10 +16,6 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import earningsApi, { PartnerEarningsSummary } from '@/services/earningsApi';
@@ -28,6 +24,10 @@ import { platformAlertSimple } from '@/utils/platformAlert';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface EarningsBreakdownProps {
   onViewDetails?: () => void;

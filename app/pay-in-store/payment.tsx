@@ -14,15 +14,6 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useRef } from 'react';
-import uuid from 'react-native-uuid';
-
-// Load native Razorpay SDK — not available in Expo Go / web
-let RazorpayCheckout: any = null;
-try {
-  RazorpayCheckout = require('react-native-razorpay').default;
-} catch {
-  // silently unavailable in Expo Go
-}
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Platform, Modal, TextInput } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -50,6 +41,14 @@ import { borderRadius, colors, shadows, spacing, typography } from '@/constants/
 import { useIsMounted } from '@/hooks/useIsMounted';
 // Phase 1.6: Pre-payment summary showing balance, estimated earnings, streak
 import PrePaymentSummary from '@/components/payment/PrePaymentSummary';
+
+// Load native Razorpay SDK — not available in Expo Go / web
+let RazorpayCheckout: any = null;
+try {
+  RazorpayCheckout = require('react-native-razorpay').default;
+} catch {
+  // silently unavailable in Expo Go
+}
 
 function PaymentScreen() {
   const isMounted = useIsMounted();
@@ -79,13 +78,8 @@ function PaymentScreen() {
     selectedOfferIds,
   });
 
-  // Idempotency key — generated fresh per payment attempt to prevent the backend
-  // from returning a cached response on retry (CD-CRIT-09 fix).
-  const idempotencyKeyRef = useRef(
-    `PAY-${Date.now()}-${
-      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : String(uuid.v4())
-    }`,
-  );
+  // IDEMPOTENCY FIX: crypto.randomUUID() replaces Date.now() + Math.random() for collision-safe idempotency.
+  const idempotencyKeyRef = useRef(`PAY-${crypto.randomUUID()}`);
 
   // Local state for modals
   const [currentPaymentData, setCurrentPaymentData] = useState<StorePaymentInitResponse | null>(null);
@@ -98,13 +92,7 @@ function PaymentScreen() {
   const handlePayment = async () => {
     paymentFlow.clearError();
 
-    // CD-CRIT-09 FIX: Generate a fresh idempotency key per attempt, not per mount.
-    // Mount-scoped keys cause the backend to return a cached response on retry,
-    // silently dropping the new attempt. Each payment attempt gets its own key.
-    const attemptKey = `PAY-${Date.now()}-${typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : String(uuid.v4())}`;
-    idempotencyKeyRef.current = attemptKey;
-
-    const paymentData = await paymentFlow.initiatePayment(attemptKey);
+    const paymentData = await paymentFlow.initiatePayment(idempotencyKeyRef.current);
 
     if (!paymentData) return;
 
@@ -220,6 +208,9 @@ function PaymentScreen() {
   };
 
   const handleUpiPayment = async () => {
+    // Fallback path: Expo Go / web — cannot do real Razorpay, so we collect UPI ID
+    // and ask the user to pay manually. The backend will reject with UPI_PAYMENT_ID_MISSING
+    // if it tries to verify. Show a clear error so the user knows to use the native app.
     if (upiProcessing) return;
     setUpiError(null);
 
@@ -240,33 +231,7 @@ function PaymentScreen() {
       return;
     }
 
-    // Wire up the UPI handler to call the backend — mirrors the Razorpay success path.
-    // The transactionId carries the user's UPI VPA so the backend can record it.
-    setUpiProcessing(true);
-    try {
-      const confirmResponse = await apiClient.post('/store-payment/confirm', {
-        paymentId: currentPaymentData.paymentId,
-        transactionId: upiId.trim(),
-        idempotencyKey: idempotencyKeyRef.current,
-      });
-
-      if (!isMounted()) return;
-      setUpiProcessing(false);
-
-      if (confirmResponse.success && confirmResponse.data) {
-        // Close modal and navigate to success
-        setShowUpiModal(false);
-        setUpiId('');
-        setCurrentPaymentData(null);
-        navigateToSuccess(confirmResponse.data);
-      } else {
-        setUpiError(confirmResponse.error || 'Payment could not be completed. Please try again.');
-      }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setUpiProcessing(false);
-      setUpiError(err?.message || 'Payment failed. Please try again.');
-    }
+    setUpiError('UPI payments require the REZ native app. Please open the REZ app to complete payment.');
   };
 
   const navigateToSuccess = async (paymentResult: any) => {
@@ -340,8 +305,8 @@ function PaymentScreen() {
                   merchantName: storeName || '',
                   currentVisits: (paymentFlow.membership as any)?.visitsCompleted ?? 0,
                   requiredVisits: (paymentFlow.membership as any)?.totalVisitsRequired ?? 5,
-                  currentTier: (paymentFlow.membership as any)?.tier ?? 'bronze',
-                  nextTier: 'silver',
+                  currentTier: (paymentFlow.membership as any)?.tier ?? 'Bronze',
+                  nextTier: 'Silver',
                 }
               : null
           }

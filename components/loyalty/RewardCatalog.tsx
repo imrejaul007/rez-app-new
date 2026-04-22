@@ -22,7 +22,7 @@ interface RewardCatalogProps {
   onFilter?: (category: RewardCategory | null) => void;
 }
 
-const CATEGORIES: Array<{ label: string; value: RewardCategory | 'all' }> = [
+const CATEGORIES: { label: string; value: RewardCategory | 'all' }[] = [
   { label: 'All', value: 'all' },
   { label: 'Vouchers', value: 'voucher' },
   { label: 'Discounts', value: 'discount' },

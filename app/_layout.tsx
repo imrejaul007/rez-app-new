@@ -4,6 +4,27 @@ import 'react-native-reanimated';
 
 // Sentry must initialize before any rendering
 import { initSentry, Sentry } from '@/config/sentry';
+
+import { useFonts } from 'expo-font';
+import * as Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
+import React, { useEffect, useRef, useState } from 'react';
+import { AppState, AppStateStatus, Linking, StyleSheet, View, useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { OfflineBanner } from '@/components/common/OfflineBanner';
+import { platformAlertConfirm } from '@/utils/platformAlert';
+import { useRouter } from 'expo-router';
+import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { useAppServices } from '@/hooks/useAppServices';
+import AppProviders from '@/utils/setup/AppProviders';
+import logger, { installProductionConsoleGuard } from '@/utils/logger';
+import { colors } from '@/constants/theme';
+import { getActiveDraft } from '@/stores/checkoutDraftStore';
+import apiClient from '@/services/apiClient';
+import * as authStorage from '@/utils/authStorage';
+import { lookupStoreBySlug } from '@/services/storePaymentApi';
 initSentry();
 
 // CONS-010: Validate required environment variables at startup
@@ -32,45 +53,14 @@ initSentry();
   if (missing.length > 0) {
     const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;
     // Never throw on missing env — crashes the app before anything renders
-    logger.error(`[Config] WARNING: ${msg}`, undefined, 'Config');
+    console.error(`[Config] WARNING: ${msg}`);
   }
   if (missingRecommended.length > 0 && __DEV__) {
-    logger.warn(
+    console.warn(
       `[Config] Recommended env vars not set: ${missingRecommended.map(([k, v]) => `${k} (${v})`).join(', ')}`,
-      undefined,
-      'Config',
     );
   }
 })();
-
-import { useFonts } from 'expo-font';
-import * as Constants from 'expo-constants';
-import * as Updates from 'expo-updates';
-import * as SecureStore from 'expo-secure-store';
-import React, { useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus, Linking, StyleSheet, View, useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { OfflineBanner } from '@/components/common/OfflineBanner';
-import { platformAlertConfirm } from '@/utils/platformAlert';
-import { useRouter } from 'expo-router';
-import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
-import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
-import { useAppServices } from '@/hooks/useAppServices';
-import AppProviders from '@/utils/setup/AppProviders';
-import logger, { installProductionConsoleGuard } from '@/utils/logger';
-import { colors } from '@/constants/theme';
-import { getActiveDraft } from '@/stores/checkoutDraftStore';
-import apiClient from '@/services/apiClient';
-import * as authStorage from '@/utils/authStorage';
-import { lookupStoreBySlug } from '@/services/storePaymentApi';
-
-interface StoreRouteInfo {
-  _id: string;
-  id?: string;
-  name: string;
-  logo?: string;
-}
 
 const FONT_TIMEOUT_MS = 5000;
 
@@ -93,25 +83,6 @@ function compareVersions(a: string, b: string): number {
 // where router.replace('/onboarding') triggers layout remounting.
 let _startupChecksRun = false;
 let _fontTimedOut = false;
-
-// F2: Push notification deep-link allowlist (CONS-SEC-001).
-// Notification payloads are remote-controlled; without this allowlist a malicious push
-// could navigate the user to an arbitrary in-app screen (route hijack).
-const ALLOWED_PUSH_ROUTES: RegExp[] = [
-  /^\/orders\/[a-zA-Z0-9-]+$/,
-  /^\/wallet$/,
-  /^\/wallet\/transactions$/,
-  /^\/notifications$/,
-  /^\/offers\/[a-zA-Z0-9-]+$/,
-  /^\/rewards$/,
-  /^\/pay-in-store(\/.*)?$/,
-  /^\/tabs(\/.*)?$/,
-];
-function isAllowedPushRoute(route: string): boolean {
-  if (typeof route !== 'string' || route.length === 0 || route.length > 200) return false;
-  if (route.includes('://')) return false; // reject absolute URLs
-  return ALLOWED_PUSH_ROUTES.some((re) => re.test(route));
-}
 
 function RootLayout() {
   const router = useRouter();
@@ -171,14 +142,14 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as any)._id || (store as any).id || '',
+            storeId: (store as any)._id || (store as any).id,
             storeName: store.name,
             storeLogo: store.logo || '',
             ...(tableNumber ? { tableNumber } : {}),
           },
-        });
+        } as any);
       } else {
-        router.push('/pay-in-store');
+        router.push('/pay-in-store' as any);
       }
       return;
     }
@@ -197,20 +168,6 @@ function RootLayout() {
     if (nowOrderMatch) {
       // Open the order detail page in an in-app browser
       import('expo-web-browser').then(({ openBrowserAsync }) => openBrowserAsync(url)).catch(() => {});
-      return;
-    }
-
-    // 0c. REZ Now wallet / coins-earned links from push notifications
-    //     https://now.rez.money/wallet → consumer app wallet
-    //     https://now.rez.money/wallet/transactions → transaction history
-    const nowWalletMatch = url.match(/https?:\/\/now\.rez\.money\/wallet(\/.*)?$/i);
-    if (nowWalletMatch) {
-      const subpath = nowWalletMatch[1] || '';
-      if (subpath === '/transactions' || subpath === '/history') {
-        router.push('/wallet/transactions');
-      } else {
-        router.push('/wallet');
-      }
       return;
     }
 
@@ -233,13 +190,13 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as any)._id || (store as any).id || '',
+            storeId: (store as any)._id || (store as any).id,
             storeName: store.name,
             storeLogo: store.logo || '',
           },
-        });
+        } as any);
       } else {
-        router.push('/pay-in-store');
+        router.push('/pay-in-store' as any);
       }
       return;
     }
@@ -278,7 +235,7 @@ function RootLayout() {
     // 2. Store check-in deep links: rezapp://checkin?storeId=XYZ
     if (path === 'checkin' && params.storeId) {
       try {
-        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}`);
+        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}` as any);
       } catch {
         // If router isn't ready, navigate to tab root
       }
@@ -288,7 +245,7 @@ function RootLayout() {
     // 3. Generic route deep links (notification-tapped links, etc.)
     if (path && path !== '') {
       try {
-        router.push(`/${path}`);
+        router.push(`/${path}` as any);
       } catch {
         // Ignore navigation errors if route doesn't exist
       }
@@ -343,19 +300,10 @@ function RootLayout() {
           }
 
           if (data?.route && typeof data.route === 'string') {
-            // F2: Only navigate if the route matches the allowlist — remote-controlled
-            // payloads cannot be trusted to deep-link anywhere in the app.
-            if (isAllowedPushRoute(data.route)) {
-              try {
-                router.push(data.route);
-              } catch {
-                // Ignore if route is invalid
-              }
-            } else {
-              Sentry.captureMessage('[Push] Rejected push route (not in allowlist)', {
-                level: 'warning',
-                extra: { route: String(data.route).slice(0, 200) },
-              });
+            try {
+              router.push(data.route as any);
+            } catch {
+              // Ignore if route is invalid
             }
           } else if (data?.url && typeof data.url === 'string') {
             handleDeepLink(data.url);
@@ -387,42 +335,11 @@ function RootLayout() {
       // If AsyncStorage fails, do not block the app — proceed normally.
     }
 
-    // CA-ONB-004 FIX: Retry a deferred setStatedIdentity call if the user picked an
-    // identity during onboarding but the network request failed. We persist the choice
-    // in AsyncStorage under `rez_pending_identity` and replay it here once per startup.
-    try {
-      const pendingIdentity = await AsyncStorage.getItem('rez_pending_identity');
-      if (pendingIdentity) {
-        const token = await authStorage.getAuthToken();
-        if (token) {
-          const { setStatedIdentity } = await import('@/services/identityApi');
-          try {
-            await setStatedIdentity(pendingIdentity);
-            await AsyncStorage.removeItem('rez_pending_identity');
-          } catch {
-            // Leave the pending value in place; we'll retry on the next startup.
-          }
-        }
-      }
-    } catch {
-      // Non-blocking — AsyncStorage failures should not crash startup.
-    }
-
     // Non-blocking: establish Hotel OTA SSO session if REZ token exists and OTA token is absent.
     // This ensures users who navigate directly to hotel screens (deep links, notifications) are pre-logged in.
     try {
       const rezTokenVal = await authStorage.getAuthToken();
-      // HIGH-12 FIX: Use SecureStore for OTA token (sensitive).
-      // CD-CRIT-03 FIX: Removed AsyncStorage fallback — hotel booking auth tokens must NEVER
-      // be stored in plain AsyncStorage on Android where they are trivially extractable.
-      // If SecureStore is unavailable, skip OTA auto-login rather than degrading security.
-      let otaTokenRaw: string | null = null;
-      try {
-        otaTokenRaw = await SecureStore.getItemAsync('@ota_access_token');
-      } catch {
-        // SecureStore unavailable — do not fall back to AsyncStorage.
-        // Users of unsupported devices navigate to hotel screens normally without pre-auth.
-      }
+      const otaTokenRaw = await AsyncStorage.getItem('@ota_access_token');
       const hasRez = !!rezTokenVal;
       const hasOta = !!otaTokenRaw;
       if (hasRez && !hasOta) {
@@ -440,9 +357,7 @@ function RootLayout() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
-      // Fallback to the production gateway (see SOURCE-OF-TRUTH/API-ENDPOINTS.md).
-      // The `/api/config/app-status` route is served by the gateway.
-      const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://rez-api-gateway.onrender.com/api';
+      const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
       const resp = await fetch(`${apiUrl}/config/app-status`, { signal: controller.signal });
       clearTimeout(timeoutId);
       let json: any;
@@ -489,28 +404,6 @@ function RootLayout() {
 
   // Track whether an OTA update has been downloaded and is ready to apply
   const updateReadyRef = useRef(false);
-
-  // ── Phase 4: Refresh wallet on foreground ────────────────────────────────────
-  // When the app returns to foreground (user switched away and back from REZ Now QR payment),
-  // the server has already credited coins. Pull the updated balance so the UI is current.
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', async (nextState: AppStateStatus) => {
-      if (nextState !== 'active') return;
-      // Skip if a payment is in progress — refreshWallet would overwrite optimistic state
-      const activeDraft = getActiveDraft();
-      if (activeDraft?.paymentMethod != null) return;
-      // Only refresh if the user is authenticated (wallet requires auth)
-      const token = await authStorage.getAuthToken().catch(() => null);
-      if (!token) return;
-      try {
-        const { useWalletStore } = await import('@/stores/walletStore');
-        useWalletStore.getState().refreshWallet();
-      } catch {
-        // Non-blocking — wallet refresh is best-effort
-      }
-    });
-    return () => subscription.remove();
-  }, []);
 
   useEffect(() => {
     if (__DEV__) return;

@@ -101,8 +101,6 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
     return () => clearTimeout(coinTimer);
   }, [visible, coinReward, scale, opacity, coinBounce, onDone]);
 
-  if (!visible) return null;
-
   // LUCA: Overlay fade animation
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -117,6 +115,8 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
   const coinBadgeStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: coinBounce.value }],
   }));
+
+  if (!visible) return null;
 
   return (
     <Animated.View

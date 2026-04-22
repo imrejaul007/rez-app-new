@@ -63,7 +63,7 @@ interface Service {
   description?: string;
   price: number;
   comparePrice?: number;
-  images?: Array<{ url: string; alt?: string }>;
+  images?: { url: string; alt?: string }[];
   serviceDetails?: {
     duration: number; // in minutes
     serviceType: 'home' | 'store' | 'online';
@@ -145,7 +145,7 @@ function BookingPage() {
   const [dealValidationError, setDealValidationError] = useState<string | null>(null);
   const [validatedDeal, setValidatedDeal] = useState<ActiveDeal | null>(activeDeal);
   // Staff picker state
-  const [availableStaff, setAvailableStaff] = useState<Array<{ _id: string; name: string; speciality?: string }>>([]);
+  const [availableStaff, setAvailableStaff] = useState<{ _id: string; name: string; speciality?: string }[]>([]);
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [selectedStaffName, setSelectedStaffName] = useState<string | null>(null);
   const [showStaffPicker, setShowStaffPicker] = useState(false);
@@ -207,7 +207,7 @@ function BookingPage() {
         })();
         const res = await apiClient.get(`/service-appointments/slots/${storeId}?date=${dateStr}`);
         if (cancelled) return;
-        const raw: Array<{ time: string; available: boolean }> = Array.isArray(res.data)
+        const raw: { time: string; available: boolean }[] = Array.isArray(res.data)
           ? res.data
           : (res as any).data?.slots || [];
         if (raw.length > 0) {

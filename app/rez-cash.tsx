@@ -158,7 +158,7 @@ function RezCashScreen() {
     }
     setBankSubmitting(true);
     try {
-      // IDEMPOTENCY FIX: crypto.randomUUID() is collision-safe — Date.now() prefix removed.
+      // IDEMPOTENCY FIX: crypto.randomUUID() replaces Date.now() + Math.random() for collision-safe idempotency.
       const idempotencyKey = `bank-withdraw-${crypto.randomUUID()}`;
       const res = await walletService.withdraw({
         amount,

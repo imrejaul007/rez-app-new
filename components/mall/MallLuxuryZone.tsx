@@ -19,8 +19,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import MallLuxuryBrandCard from './cards/MallLuxuryBrandCard';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -44,7 +45,7 @@ const MallLuxuryZone: React.FC<MallLuxuryZoneProps> = ({
     [onBrandPress]
   );
 
-  const keyExtractor = useCallback((item: MallBrand) => String(item.id ?? item._id ?? "unknown-brand"), []);
+  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id || String(Math.random()), []);
 
   // Loading skeleton
   if (isLoading) {
@@ -197,13 +198,13 @@ const MallLuxuryZone: React.FC<MallLuxuryZoneProps> = ({
         </View>
 
         {/* Horizontal Brands List */}
-        <TypedFlashList
+        <AnyFlashList
           data={brands}
           renderItem={renderBrand}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           snapToInterval={SCREEN_WIDTH * 0.75 + 14}
           decelerationRate="fast"
           estimatedItemSize={180}

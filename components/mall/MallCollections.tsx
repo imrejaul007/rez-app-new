@@ -18,8 +18,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallCollection } from '../../types/mall.types';
 import MallCollectionCard from './cards/MallCollectionCard';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 interface MallCollectionsProps {
   collections: MallCollection[];
@@ -41,7 +42,7 @@ const MallCollections: React.FC<MallCollectionsProps> = ({
     [onCollectionPress]
   );
 
-  const keyExtractor = useCallback((item: MallCollection) => String(item.id ?? item._id ?? "unknown-collection"), []);
+  const keyExtractor = useCallback((item: MallCollection) => item.id || item._id || String(Math.random()), []);
 
   // Loading skeleton
   if (isLoading) {
@@ -157,13 +158,13 @@ const MallCollections: React.FC<MallCollectionsProps> = ({
         </View>
 
         {/* Collections List */}
-        <TypedFlashList
+        <AnyFlashList
           data={collections}
           renderItem={renderCollection}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           estimatedItemSize={150}
         />
       </LinearGradient>

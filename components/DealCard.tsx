@@ -7,10 +7,6 @@ import {
   Dimensions,
   Platform} from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { DealCardProps } from '@/types/deals';
@@ -18,6 +14,10 @@ import { calculateDealDiscount } from '@/utils/deal-validation';
 import FastImage from '@/components/common/FastImage';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 function DealCard({
   deal,

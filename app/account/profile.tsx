@@ -9,13 +9,6 @@ import * as ImagePicker from 'expo-image-picker';
 import profileApi from '@/services/profileApi';
 import CachedImage from '@/components/ui/CachedImage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const SEGMENT_BADGES: Record<string, { label: string; icon: string; bg: string; text: string }> = {
-  verified_student: { label: 'Verified Student', icon: '🎓', bg: '#DBEAFE', text: '#1D4ED8' },
-  verified_employee: { label: 'Corporate Member', icon: '💼', bg: '#EDE9FE', text: '#5B21B6' },
-  verified_defence: { label: 'Defence Member', icon: '🎖️', bg: '#FEE2E2', text: '#991B1B' },
-  verified_healthcare: { label: 'Healthcare Worker', icon: '⚕️', bg: '#DCFCE7', text: '#166534' },
-};
 import {
   View,
   ScrollView,
@@ -41,6 +34,13 @@ import { useAppPreferences } from '@/contexts/AppPreferencesContext';
 import userSettingsApi from '@/services/userSettingsApi';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
+
+const SEGMENT_BADGES: Record<string, { label: string; icon: string; bg: string; text: string }> = {
+  verified_student: { label: 'Verified Student', icon: '🎓', bg: '#DBEAFE', text: '#1D4ED8' },
+  verified_employee: { label: 'Corporate Member', icon: '💼', bg: '#EDE9FE', text: '#5B21B6' },
+  verified_defence: { label: 'Defence Member', icon: '🎖️', bg: '#FEE2E2', text: '#991B1B' },
+  verified_healthcare: { label: 'Healthcare Worker', icon: '⚕️', bg: '#DCFCE7', text: '#166534' },
+};
 
 interface UserSettings {
   _id: string;

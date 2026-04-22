@@ -135,9 +135,6 @@ const RestaurantCompareSection: React.FC<RestaurantCompareSectionProps> = ({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showTable, setShowTable] = useState(false);
 
-  // Don't render if fewer than 2 restaurants
-  if (restaurants.length < MIN_COMPARE) return null;
-
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -182,6 +179,9 @@ const RestaurantCompareSection: React.FC<RestaurantCompareSectionProps> = ({
   const handleViewMenu = useCallback((storeId: string) => {
     router.push(`/MainStorePage?storeId=${storeId}` as any);
   }, [router]);
+
+  // Don't render if fewer than 2 restaurants
+  if (restaurants.length < MIN_COMPARE) return null;
 
   // --- Selection chips ---
   const renderChips = () => (

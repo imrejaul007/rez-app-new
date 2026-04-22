@@ -43,7 +43,7 @@ interface EventBooking {
   amount: number;
   currency: string;
   createdAt: string;
-  rewardsEarned?: Array<{ action: string; coins: number }>;
+  rewardsEarned?: { action: string; coins: number }[];
 }
 
 interface FavoriteEvent {
@@ -154,36 +154,6 @@ function MyEventsPage() {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <View style={styles.container}>
-        <Stack.Screen options={{ headerShown: false }} />
-        <View style={styles.authRequired}>
-          <Ionicons name="lock-closed-outline" size={64} color={C.textSecondary} />
-          <Text style={styles.authTitle}>Login Required</Text>
-          <Text style={styles.authSubtitle}>Please login to view your events</Text>
-          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
-  const tabs: { id: TabType; label: string; icon: string }[] = [
-    { id: 'upcoming', label: 'Upcoming', icon: 'calendar-outline' },
-    { id: 'past', label: 'Past', icon: 'time-outline' },
-    { id: 'favorites', label: 'Favorites', icon: 'heart-outline' },
-  ];
-
-  const currentData = activeTab === 'upcoming' ? upcomingBookings : activeTab === 'past' ? pastBookings : favorites;
-
-  const renderEventItem = useCallback(
-    ({ item }: { item: EventBooking | FavoriteEvent }) =>
-      activeTab === 'favorites' ? renderFavoriteCard(item as FavoriteEvent) : renderBookingCard(item as EventBooking),
-    [activeTab],
-  );
-
   const renderBookingCard = (booking: EventBooking) => {
     const event = booking.eventId;
     const eventTitle = typeof event === 'object' ? event?.title : 'Event';
@@ -267,6 +237,38 @@ function MyEventsPage() {
       </Pressable>
     );
   };
+
+  const renderEventItem = useCallback(
+    ({ item }: { item: EventBooking | FavoriteEvent }) =>
+      activeTab === 'favorites' ? renderFavoriteCard(item as FavoriteEvent) : renderBookingCard(item as EventBooking),
+    [activeTab],
+  );
+
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.authRequired}>
+          <Ionicons name="lock-closed-outline" size={64} color={C.textSecondary} />
+          <Text style={styles.authTitle}>Login Required</Text>
+          <Text style={styles.authSubtitle}>Please login to view your events</Text>
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
+
+  const tabs: { id: TabType; label: string; icon: string }[] = [
+    { id: 'upcoming', label: 'Upcoming', icon: 'calendar-outline' },
+    { id: 'past', label: 'Past', icon: 'time-outline' },
+    { id: 'favorites', label: 'Favorites', icon: 'heart-outline' },
+  ];
+
+  const currentData = activeTab === 'upcoming' ? upcomingBookings : activeTab === 'past' ? pastBookings : favorites;
+
+  // renderBookingCard and renderFavoriteCard must be defined before renderEventItem
 
   const renderEmptyState = () => {
     const config = {

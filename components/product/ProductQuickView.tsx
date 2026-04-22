@@ -40,9 +40,9 @@ interface ProductQuickViewProps {
 }
 
 interface ProductDetails extends ProductItem {
-  images?: Array<{ url: string; alt?: string }>;
+  images?: { url: string; alt?: string }[];
   fullDescription?: string;
-  variants?: Array<{
+  variants?: {
     id: string;
     size?: string;
     color?: string;
@@ -51,7 +51,7 @@ interface ProductDetails extends ProductItem {
     price: number;
     stock: number;
     available: boolean;
-  }>;
+  }[];
 }
 
 function ProductQuickView({

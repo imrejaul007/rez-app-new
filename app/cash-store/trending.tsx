@@ -309,6 +309,18 @@ function TrendingOffersPage() {
   );
 
   // ─── Computed ──────────────────────────────────────────────
+  const renderOfferItem = useCallback(
+    ({ item, index }: { item: TransformedOffer; index: number }) => (
+      <OfferCard
+        offer={item}
+        index={index}
+        onPress={() => handleOfferPress(item)}
+        isTracking={trackingBrandId === item.brand._id}
+      />
+    ),
+    [handleOfferPress, trackingBrandId],
+  );
+
   const hasNoData =
     !isLoading && activeOffers.length === 0 && popularBrands.length === 0 && highCashbackBrands.length === 0;
 
@@ -427,18 +439,6 @@ function TrendingOffersPage() {
       </View>
     );
   }
-
-  const renderOfferItem = useCallback(
-    ({ item, index }: { item: TransformedOffer; index: number }) => (
-      <OfferCard
-        offer={item}
-        index={index}
-        onPress={() => handleOfferPress(item)}
-        isTracking={trackingBrandId === item.brand._id}
-      />
-    ),
-    [handleOfferPress, trackingBrandId],
-  );
 
   // ─── Main Render ──────────────────────────────────────────
   return (

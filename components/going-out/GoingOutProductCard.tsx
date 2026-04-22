@@ -17,7 +17,7 @@ import { useCartState, useCartActions } from '@/stores/selectors';
 import type { CartItemWithQuantity } from '@/stores/cartStore';
 import { colors } from '@/constants/theme';
 
-function _GoingOutProductCardInner({
+function GoingOutProductCardInner({
   product,
   onPress,
   onAddToCart,
@@ -635,4 +635,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export const GoingOutProductCard = React.memo(_GoingOutProductCardInner);
+export const GoingOutProductCard = React.memo(GoingOutProductCardInner);

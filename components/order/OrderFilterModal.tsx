@@ -30,7 +30,7 @@ const OrderFilterModal: React.FC<OrderFilterModalProps> = ({
 }) => {
   const [filter, setFilter] = useState<OrderFilter>(currentFilter);
 
-  const statusOptions: Array<{ value: 'all' | OrderStatus; label: string }> = [
+  const statusOptions: { value: 'all' | OrderStatus; label: string }[] = [
     { value: 'all', label: 'All Orders' },
     { value: 'placed', label: 'Placed' },
     { value: 'confirmed', label: 'Confirmed' },
@@ -43,7 +43,7 @@ const OrderFilterModal: React.FC<OrderFilterModalProps> = ({
     { value: 'returned', label: 'Returned' },
   ];
 
-  const dateRangeOptions: Array<{ value: OrderFilter['dateRange']; label: string }> = [
+  const dateRangeOptions: { value: OrderFilter['dateRange']; label: string }[] = [
     { value: 'all', label: 'All Time' },
     { value: 'today', label: 'Today' },
     { value: 'week', label: 'This Week' },
@@ -51,7 +51,7 @@ const OrderFilterModal: React.FC<OrderFilterModalProps> = ({
     { value: 'year', label: 'This Year' },
   ];
 
-  const sortOptions: Array<{ value: OrderFilter['sortBy']; label: string }> = [
+  const sortOptions: { value: OrderFilter['sortBy']; label: string }[] = [
     { value: 'newest', label: 'Newest First' },
     { value: 'oldest', label: 'Oldest First' },
     { value: 'amount_high', label: 'Amount: High to Low' },
@@ -73,7 +73,7 @@ const OrderFilterModal: React.FC<OrderFilterModalProps> = ({
 
   const renderOption = (
     title: string,
-    options: Array<{ value: any; label: string }>,
+    options: { value: any; label: string }[],
     currentValue: any,
     onSelect: (value: any) => void
   ) => (

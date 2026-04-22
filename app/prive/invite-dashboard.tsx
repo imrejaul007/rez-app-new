@@ -8,8 +8,17 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, ActivityIndicator, RefreshControl, Share, Platform } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+  RefreshControl,
+  Share,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProfileSkeleton } from '@/components/skeletons';
 import { Ionicons } from '@expo/vector-icons';
@@ -120,14 +129,6 @@ function PriveInviteDashboard() {
 
   const tierLabel = (tier || 'entry').charAt(0).toUpperCase() + (tier || 'entry').slice(1);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ProfileSkeleton />
-      </View>
-    );
-  }
-
   const renderLeaderboardItem = useCallback(
     ({ item }: { item: any }) => (
       <View style={styles.leaderboardRow}>
@@ -142,125 +143,131 @@ function PriveInviteDashboard() {
     [],
   );
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ProfileSkeleton />
+      </View>
+    );
+  }
+
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <FlashList
-        data={leaderboard}
-        keyExtractor={(item) => `${item.rank}-${item.userId}`}
+    <>
+      {/* Stats Header */}
+      <LinearGradient colors={['#1A1510', colors.midGrayAlt]} style={styles.statsHeader}>
+        <View style={styles.tierBadge}>
+          <Text style={styles.tierBadgeText}>Prive {tierLabel}</Text>
+        </View>
+
+        {isWhitelisted && (
+          <View style={styles.adminBadge}>
+            <Ionicons name="shield-checkmark" size={12} color={PRIVE_COLORS.gold.primary} />
+            <Text style={styles.adminBadgeText}>Admin Granted</Text>
+          </View>
+        )}
+
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{stats?.activeInvites || 0}</Text>
+            <Text style={styles.statLabel}>Qualified</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{stats?.totalCoinsEarned || 0}</Text>
+            <Text style={styles.statLabel}>Earned</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{stats?.successRate || 0}%</Text>
+            <Text style={styles.statLabel}>Success</Text>
+          </View>
+        </View>
+      </LinearGradient>
+
+      {/* Generate Code */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Share & Earn</Text>
+        <Pressable
+          style={[styles.generateButton, (!stats?.canGenerate || generatingCode) && styles.buttonDisabled]}
+          onPress={handleGenerateCode}
+          disabled={!stats?.canGenerate || generatingCode}
+        >
+          <LinearGradient
+            colors={[colors.brand.goldAccent, '#A88B4A']}
+            style={styles.generateGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            {generatingCode ? (
+              <ActivityIndicator size="small" color={colors.midGrayAlt} />
+            ) : (
+              <>
+                <Ionicons name="share-social" size={20} color={colors.midGrayAlt} />
+                <Text style={styles.generateText}>Invite Friends</Text>
+                <Text style={styles.generateSubtext}>Earn coins per referral</Text>
+              </>
+            )}
+          </LinearGradient>
+        </Pressable>
+        {!stats?.canGenerate && stats?.canGenerateReason && (
+          <Text style={styles.disabledReason}>{stats.canGenerateReason}</Text>
+        )}
+      </View>
+
+      {/* Active Codes */}
+      {stats?.activeCodes && stats.activeCodes.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Your Referral Codes</Text>
+          {stats.activeCodes.map((codeItem: any) => (
+            <View key={codeItem.code || codeItem.id} style={styles.codeCard}>
+              <View style={styles.codeInfo}>
+                <Text style={styles.codeText}>{codeItem.code}</Text>
+                <Text style={styles.codeUsage}>
+                  {codeItem.usageCount}/{codeItem.maxUses} used
+                </Text>
+              </View>
+              <View style={styles.codeActions}>
+                <Pressable style={styles.codeActionBtn} onPress={() => handleCopyCode(codeItem.code)}>
+                  <Ionicons
+                    name={copiedCode === codeItem.code ? 'checkmark' : 'copy-outline'}
+                    size={18}
+                    color={copiedCode === codeItem.code ? PRIVE_COLORS.status.success : PRIVE_COLORS.gold.primary}
+                  />
+                </Pressable>
+                <Pressable style={styles.codeActionBtn} onPress={() => handleShareCode(codeItem.code)}>
+                  <Ionicons name="share-outline" size={18} color={PRIVE_COLORS.gold.primary} />
+                </Pressable>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Leaderboard */}
+      <View style={styles.leaderboardHeader}>
+        <Text style={styles.sectionTitle}>Leaderboard</Text>
+        {myRank && <Text style={styles.myRank}>Your rank: #{myRank.rank}</Text>}
+      </View>
+
+      <ScrollView
+        style={{ flex: 1 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
         }
-        estimatedItemSize={60}
-        ListHeaderComponent={
-          <>
-            {/* Stats Header */}
-            <LinearGradient colors={['#1A1510', colors.midGrayAlt]} style={styles.statsHeader}>
-              <View style={styles.tierBadge}>
-                <Text style={styles.tierBadgeText}>Prive {tierLabel}</Text>
-              </View>
-
-              {isWhitelisted && (
-                <View style={styles.adminBadge}>
-                  <Ionicons name="shield-checkmark" size={12} color={PRIVE_COLORS.gold.primary} />
-                  <Text style={styles.adminBadgeText}>Admin Granted</Text>
-                </View>
-              )}
-
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{stats?.activeInvites || 0}</Text>
-                  <Text style={styles.statLabel}>Qualified</Text>
-                </View>
-                <View style={styles.statDivider} />
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{stats?.totalCoinsEarned || 0}</Text>
-                  <Text style={styles.statLabel}>Earned</Text>
-                </View>
-                <View style={styles.statDivider} />
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{stats?.successRate || 0}%</Text>
-                  <Text style={styles.statLabel}>Success</Text>
-                </View>
-              </View>
-            </LinearGradient>
-
-            {/* Generate Code */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Share & Earn</Text>
-              <Pressable
-                style={[styles.generateButton, (!stats?.canGenerate || generatingCode) && styles.buttonDisabled]}
-                onPress={handleGenerateCode}
-                disabled={!stats?.canGenerate || generatingCode}
-              >
-                <LinearGradient
-                  colors={[colors.brand.goldAccent, '#A88B4A']}
-                  style={styles.generateGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  {generatingCode ? (
-                    <ActivityIndicator size="small" color={colors.midGrayAlt} />
-                  ) : (
-                    <>
-                      <Ionicons name="share-social" size={20} color={colors.midGrayAlt} />
-                      <Text style={styles.generateText}>Invite Friends</Text>
-                      <Text style={styles.generateSubtext}>Earn coins per referral</Text>
-                    </>
-                  )}
-                </LinearGradient>
-              </Pressable>
-              {!stats?.canGenerate && stats?.canGenerateReason && (
-                <Text style={styles.disabledReason}>{stats.canGenerateReason}</Text>
-              )}
-            </View>
-
-            {/* Active Codes */}
-            {stats?.activeCodes && stats.activeCodes.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Your Referral Codes</Text>
-                {stats.activeCodes.map((codeItem: any) => (
-                  <View key={codeItem.code || codeItem.id} style={styles.codeCard}>
-                    <View style={styles.codeInfo}>
-                      <Text style={styles.codeText}>{codeItem.code}</Text>
-                      <Text style={styles.codeUsage}>
-                        {codeItem.usageCount}/{codeItem.maxUses} used
-                      </Text>
-                    </View>
-                    <View style={styles.codeActions}>
-                      <Pressable style={styles.codeActionBtn} onPress={() => handleCopyCode(codeItem.code)}>
-                        <Ionicons
-                          name={copiedCode === codeItem.code ? 'checkmark' : 'copy-outline'}
-                          size={18}
-                          color={copiedCode === codeItem.code ? PRIVE_COLORS.status.success : PRIVE_COLORS.gold.primary}
-                        />
-                      </Pressable>
-                      <Pressable style={styles.codeActionBtn} onPress={() => handleShareCode(codeItem.code)}>
-                        <Ionicons name="share-outline" size={18} color={PRIVE_COLORS.gold.primary} />
-                      </Pressable>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {/* Leaderboard Title */}
-            <View style={styles.leaderboardHeader}>
-              <Text style={styles.sectionTitle}>Leaderboard</Text>
-              {myRank && <Text style={styles.myRank}>Your rank: #{myRank.rank}</Text>}
-            </View>
-          </>
-        }
-        renderItem={renderLeaderboardItem}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Ionicons name="trophy-outline" size={40} color={PRIVE_COLORS.text.tertiary} />
-            <Text style={styles.emptyText}>No leaderboard data yet</Text>
-            <Text style={styles.emptySubtext}>Be the first to invite friends!</Text>
-          </View>
-        }
         contentContainerStyle={{ paddingBottom: 120 }}
-      />
-    </View>
+      >
+        {leaderboard.length > 0 ? (
+          leaderboard.map((item: any, index: number) => (
+            <View key={item.rank || index}>{renderLeaderboardItem({ item })}</View>
+          ))
+        ) : (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>No invites yet</Text>
+            <Text style={styles.emptySubtext}>Share your code to climb the leaderboard</Text>
+          </View>
+        )}
+      </ScrollView>
+    </>
   );
 }
 
@@ -411,6 +418,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 12,
+  },
+  leaderboardList: {
+    paddingHorizontal: 20,
   },
   myRank: {
     fontSize: 13,

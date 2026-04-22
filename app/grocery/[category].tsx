@@ -168,7 +168,7 @@ interface Product {
   _id?: string;
   name: string;
   description?: string;
-  images?: Array<{ url: string; alt?: string }>;
+  images?: { url: string; alt?: string }[];
   pricing?: { basePrice?: number; salePrice?: number };
   unit?: string;
   rating?: { average?: number; count?: number };

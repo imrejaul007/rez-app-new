@@ -43,6 +43,32 @@ function TransactionDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const isMounted = useIsMounted();
 
+  useEffect(() => {
+    if (!id) return;
+    fetchTransaction();
+  }, [id]);
+
+  const fetchTransaction = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await walletApi.getTransactionById(id!);
+      if (!isMounted()) return;
+      if (res?.data?.transaction) {
+        setTransaction(res.data.transaction);
+      } else {
+        setError(res.message || res.error || 'Transaction not found');
+      }
+    } catch {
+      if (!isMounted()) return;
+      setError('Failed to load transaction details');
+    } finally {
+      if (isMounted()) {
+        setLoading(false);
+      }
+    }
+  };
+
   // ETHAN: crash guard — transaction id from route params could be undefined
   if (!id) {
     return (
@@ -72,32 +98,6 @@ function TransactionDetailPage() {
       </View>
     );
   }
-
-  useEffect(() => {
-    if (!id) return;
-    fetchTransaction();
-  }, [id]);
-
-  const fetchTransaction = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await walletApi.getTransactionById(id!);
-      if (!isMounted()) return;
-      if (res?.data?.transaction) {
-        setTransaction(res.data.transaction);
-      } else {
-        setError(res.message || res.error || 'Transaction not found');
-      }
-    } catch {
-      if (!isMounted()) return;
-      setError('Failed to load transaction details');
-    } finally {
-      if (isMounted()) {
-        setLoading(false);
-      }
-    }
-  };
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);

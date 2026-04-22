@@ -21,6 +21,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const CARD_EMOJIS = ['🍎', '🍋', '🍇', '🍒', '🌟', '🎯', '🎨', '🎵'];
 const GRID_SIZE = 4; // 4x4 = 16 cards = 8 pairs
+const TOTAL_CARDS = GRID_SIZE * GRID_SIZE;
 const rezCoinImage = BRAND.COIN_IMAGE;
 
 interface Card {
@@ -123,7 +124,42 @@ function MemoryPage() {
   const [canFlip, setCanFlip] = useState(true);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const flipAnimations = useRef<any[]>(Array.from({ length: 16 }, () => useSharedValue(0))).current;
+  // 16 shared values for card flip animations (must be called at top level)
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const _f0 = useSharedValue(0); // eslint-disable-line
+  const _f1 = useSharedValue(0); // eslint-disable-line
+  const _f2 = useSharedValue(0); // eslint-disable-line
+  const _f3 = useSharedValue(0); // eslint-disable-line
+  const _f4 = useSharedValue(0); // eslint-disable-line
+  const _f5 = useSharedValue(0); // eslint-disable-line
+  const _f6 = useSharedValue(0); // eslint-disable-line
+  const _f7 = useSharedValue(0); // eslint-disable-line
+  const _f8 = useSharedValue(0); // eslint-disable-line
+  const _f9 = useSharedValue(0); // eslint-disable-line
+  const _f10 = useSharedValue(0); // eslint-disable-line
+  const _f11 = useSharedValue(0); // eslint-disable-line
+  const _f12 = useSharedValue(0); // eslint-disable-line
+  const _f13 = useSharedValue(0); // eslint-disable-line
+  const _f14 = useSharedValue(0); // eslint-disable-line
+  const _f15 = useSharedValue(0); // eslint-disable-line
+  const flipAnimations: Animated.SharedValue<number>[] = [
+    _f0,
+    _f1,
+    _f2,
+    _f3,
+    _f4,
+    _f5,
+    _f6,
+    _f7,
+    _f8,
+    _f9,
+    _f10,
+    _f11,
+    _f12,
+    _f13,
+    _f14,
+    _f15,
+  ];
 
   // Timer effect
   useEffect(() => {

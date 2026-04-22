@@ -161,11 +161,6 @@ const HealthcareCategoryPage: React.FC = () => {
 
   const config = categoryConfig[category || 'doctors'] || categoryConfig['doctors'];
 
-  // Redirect to dedicated pages if they exist
-  if (config.dedicatedPage) {
-    return <Redirect href={config.dedicatedPage as any} />;
-  }
-
   // Fetch stores from API
   const fetchStores = async () => {
     try {
@@ -215,6 +210,11 @@ const HealthcareCategoryPage: React.FC = () => {
     if (!isMounted()) return;
     setRefreshing(false);
   }, [category, selectedFilter]);
+
+  // Redirect to dedicated pages if they exist
+  if (config.dedicatedPage) {
+    return <Redirect href={config.dedicatedPage as any} />;
+  }
 
   const handleCallStore = (phone?: string) => {
     if (phone) {

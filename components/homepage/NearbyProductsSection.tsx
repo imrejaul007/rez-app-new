@@ -5,7 +5,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -14,6 +14,7 @@ import { productApi, HomepageProduct } from '@/services/productApi';
 import HomepageProductCard from './cards/HomepageProductCard';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+const AnyFlashList = FlashList as any;
 
 interface NearbyProductsSectionProps {
   title?: string;
@@ -191,13 +192,13 @@ function NearbyProductsSection({
           </Pressable>
         </View>
       ) : (
-        <TypedFlashList
+        <AnyFlashList
           data={products}
           renderItem={renderProduct}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           estimatedItemSize={220}
         />
       )}

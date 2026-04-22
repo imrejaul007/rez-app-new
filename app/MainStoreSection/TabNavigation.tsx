@@ -29,6 +29,36 @@ interface TabNavigationProps {
   menuTabLabel?: string;
 }
 
+// Extracted so useAnimatedStyle is called at the top level of a component (not inside a callback)
+const TabItem: React.FC<{
+  tab: TabData;
+  index: number;
+  isActive: boolean;
+  scaleAnim: Animated.SharedValue<number>;
+  compact: boolean;
+  onPress: () => void;
+  onLayout: (e: LayoutChangeEvent) => void;
+}> = ({ tab, isActive, scaleAnim, compact, onPress, onLayout }) => {
+  const scaleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.tabWrapper, scaleStyle]} onLayout={onLayout}>
+      <Pressable
+        style={[styles.tab, compact ? styles.tabCompact : null]}
+        onPress={onPress}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: isActive }}
+      >
+        <ThemedText style={[styles.label, isActive && styles.labelActive, compact && styles.labelCompact]}>
+          {tab.title}
+        </ThemedText>
+      </Pressable>
+    </Animated.View>
+  );
+};
+
 function TabNavigation({ activeTab, onTabChange, compact = false, menuTabLabel }: TabNavigationProps) {
   const [containerWidth, setContainerWidth] = useState<number>(Dimensions.get('window').width);
   const [tabPositions, setTabPositions] = useState<{ [key: string]: { x: number; width: number } }>({});
@@ -98,29 +128,18 @@ function TabNavigation({ activeTab, onTabChange, compact = false, menuTabLabel }
         <View style={styles.tabsRow}>
           {tabs.map((tab, index) => {
             const isActive = tab.key === activeTab;
-            const scaleStyle = useAnimatedStyle(() => ({
-              transform: [{ scale: scaleAnims[index].value }],
-            }));
 
             return (
-              <Animated.View
+              <TabItem
                 key={tab.key}
-                style={[styles.tabWrapper, scaleStyle]}
-                onLayout={(e) => handleTabLayout(tab.key, e)}
-              >
-                <Pressable
-                  style={[styles.tab, compact ? styles.tabCompact : null]}
-                  onPress={() => handlePress(tab.key)}
-                  onPressIn={() => handlePressIn(index)}
-                  onPressOut={() => handlePressOut(index)}
-                  accessibilityRole="tab"
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <ThemedText style={[styles.label, isActive && styles.labelActive, compact && styles.labelCompact]}>
-                    {tab.title}
-                  </ThemedText>
-                </Pressable>
-              </Animated.View>
+                tab={tab}
+                index={index}
+                isActive={isActive}
+                scaleAnim={scaleAnims[index]}
+                compact={compact}
+                onPress={() => handlePress(tab.key)}
+                onLayout={(e: LayoutChangeEvent) => handleTabLayout(tab.key, e)}
+              />
             );
           })}
         </View>

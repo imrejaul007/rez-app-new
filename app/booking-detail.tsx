@@ -56,24 +56,6 @@ function BookingDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
-  // ETHAN: crash guard — unguarded route param would crash on getBookingById(undefined)
-  if (!bookingId) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
-        <View style={styles.centered}>
-          <Text style={styles.errorText}>Booking not found. Please try again.</Text>
-          <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as any))}
-            style={styles.retryBtn}
-          >
-            <Text style={styles.retryBtnText}>Go Back</Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
   const loadBooking = useCallback(async () => {
     if (!bookingId) {
       setError('No booking ID provided');
@@ -101,6 +83,24 @@ function BookingDetailPage() {
   useEffect(() => {
     loadBooking();
   }, [loadBooking]);
+
+  // ETHAN: crash guard — unguarded route param would crash on getBookingById(undefined)
+  if (!bookingId) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>Booking not found. Please try again.</Text>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as any))}
+            style={styles.retryBtn}
+          >
+            <Text style={styles.retryBtnText}>Go Back</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
 
   const handleCancel = () => {
     platformAlertDestructive(

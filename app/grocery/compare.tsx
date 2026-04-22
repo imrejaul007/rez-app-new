@@ -22,7 +22,7 @@ interface CompareItem {
   id: string;
   name: string;
   image: string;
-  stores: Array<{
+  stores: {
     storeId: string;
     storeName: string;
     storeLogo?: string;
@@ -31,7 +31,7 @@ interface CompareItem {
     cashback: number;
     deliveryTime: string;
     inStock: boolean;
-  }>;
+  }[];
   lowestPrice: number;
   highestPrice: number;
   averagePrice: number;

@@ -191,7 +191,7 @@ function AppointmentBookingPage() {
 
   // Group booking state
   const [isGroupBooking, setIsGroupBooking] = useState(false);
-  const [groupFriends, setGroupFriends] = useState<Array<{ name: string; phone: string }>>([]);
+  const [groupFriends, setGroupFriends] = useState<{ name: string; phone: string }[]>([]);
 
   useEffect(() => {
     if (storeId) {

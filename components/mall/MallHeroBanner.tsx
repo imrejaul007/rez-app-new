@@ -31,9 +31,9 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBanner } from '../../types/mall.types';
-import TypedFlashList from '@/components/ui/TypedFlashList';
-import type { FlashList } from '@shopify/flash-list';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_HORIZONTAL_PADDING = 32;
@@ -273,7 +273,7 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
     );
   }, [handleBannerPress]);
 
-  const keyExtractor = useCallback((item: MallBanner) => String(item.id ?? item._id ?? "unknown-banner"), []);
+  const keyExtractor = useCallback((item: MallBanner) => item.id || item._id || String(Math.random()), []);
 
 
   const ItemSeparator = useCallback(() => (
@@ -297,8 +297,8 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
 
   return (
     <View style={styles.container}>
-      <TypedFlashList
-        ref={flatListRef}
+      <AnyFlashList
+        ref={flatListRef as any}
         data={displayBanners}
         renderItem={renderBanner}
         keyExtractor={keyExtractor}
@@ -311,9 +311,9 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
         snapToInterval={SNAP_INTERVAL}
         snapToAlignment="start"
         decelerationRate="fast"
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={styles.listContent as any}
         estimatedItemSize={200}
-        ItemSeparatorComponent={ItemSeparator}
+        ItemSeparatorComponent={ItemSeparator as any}
       />
 
       {/* External animated pagination dots */}

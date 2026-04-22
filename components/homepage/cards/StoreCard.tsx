@@ -8,8 +8,7 @@ import {
   NativeSyntheticEvent,
   Platform,
 } from 'react-native';
-import TypedFlashList from '@/components/ui/TypedFlashList';
-import type { FlashList } from '@shopify/flash-list';
+import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
@@ -20,6 +19,7 @@ import QuickActions from '@/components/store/QuickActions';
 import FastImage from '@/components/common/FastImage';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 // Custom comparison function for React.memo
 const arePropsEqual = (prevProps: any, nextProps: any) => {
@@ -360,8 +360,8 @@ function StoreCard({
             <>
               {banners.length > 1 ? (
                 <>
-                  <TypedFlashList
-                    ref={flatListRef}
+                  <AnyFlashList
+                    ref={flatListRef as any}
                     data={banners}
                     renderItem={renderBannerItem}
                     keyExtractor={(item: string, index: number) => `banner-${store.id || store.name}-${index}`}

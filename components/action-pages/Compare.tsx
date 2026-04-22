@@ -52,7 +52,7 @@ interface SelectedProduct {
   inventory?: { isAvailable?: boolean; stock?: number };
   cashback?: { percentage?: number; maxAmount?: number };
   weight?: number;
-  specifications?: Array<{ key: string; value: string; group?: string }>;
+  specifications?: { key: string; value: string; group?: string }[];
   deliveryInfo?: { estimatedDays?: string; expressAvailable?: boolean };
   store?: { _id?: string; name?: string; logo?: string };
 }
@@ -395,7 +395,7 @@ function ComparePage() {
   };
 
   // Build all comparison rows data (label + cell renderer + winner)
-  const comparisonRows: Array<{ label: string; renderCell: (p: SelectedProduct) => React.ReactNode; winnerId?: string | null }> = [
+  const comparisonRows: { label: string; renderCell: (p: SelectedProduct) => React.ReactNode; winnerId?: string | null }[] = [
     {
       label: 'Price',
       winnerId: cheapestId,

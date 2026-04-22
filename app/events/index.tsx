@@ -86,7 +86,7 @@ const EventsPage: React.FC = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<DisplayEvent[]>([]);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [rewardConfig, setRewardConfig] = useState<{
-    rewards: Array<{ action: string; coins: number; description: string }>;
+    rewards: { action: string; coins: number; description: string }[];
     totalPotential: number;
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');

@@ -54,11 +54,11 @@ interface BookingData {
     email: string;
     phone: string;
   };
-  guestDetails: Array<{
+  guestDetails: {
     firstName: string;
     lastName: string;
     email?: string;
-  }>;
+  }[];
   bookingId?: string;
   bookingNumber?: string;
 }
@@ -104,7 +104,7 @@ const HotelBookingFlow: React.FC<HotelBookingFlowProps> = ({
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const [guestDetails, setGuestDetails] = useState<Array<{ firstName: string; lastName: string; email?: string }>>([]);
+  const [guestDetails, setGuestDetails] = useState<{ firstName: string; lastName: string; email?: string }[]>([]);
 
   const calculateNights = () => {
     const diffTime = checkOutDate.getTime() - checkInDate.getTime();

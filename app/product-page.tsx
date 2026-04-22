@@ -94,7 +94,7 @@ interface Store {
   // Action buttons configuration for ProductPage
   actionButtons?: {
     enabled: boolean;
-    buttons: Array<{
+    buttons: {
       id: 'call' | 'product' | 'location' | 'custom';
       enabled: boolean;
       label?: string;
@@ -103,7 +103,7 @@ interface Store {
         value: string;
       };
       order?: number;
-    }>;
+    }[];
   };
   [key: string]: any;
 }

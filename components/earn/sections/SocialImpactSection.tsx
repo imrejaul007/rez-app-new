@@ -7,7 +7,7 @@ import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
 interface SocialImpactSectionProps {
-  socialImpactPreview: Array<{ icon: string; label: string; coins: number }>;
+  socialImpactPreview: { icon: string; label: string; coins: number }[];
   navigateTo: (path: string) => void;
 }
 

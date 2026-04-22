@@ -77,7 +77,7 @@ interface FeaturedCoupon {
   isFeatured?: boolean;
   tags?: string[];
   applicableTo?: {
-    stores?: Array<string | { _id: string; name: string }>;
+    stores?: (string | { _id: string; name: string })[];
   };
 }
 

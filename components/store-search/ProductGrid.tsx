@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ProductGridProps, ProductItem } from '@/types/store-search';
 import ProductCard from './ProductCard';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
 import {
   COLORS,
@@ -17,6 +17,7 @@ import {
   BORDER_RADIUS,
   PRODUCT_GRID
 } from '@/constants/search-constants';
+const AnyFlashList = FlashList as any;
 
 // Estimated card height for getItemLayout optimization
 const ESTIMATED_CARD_HEIGHT = 220; // Approximate height of a product card row
@@ -50,7 +51,7 @@ const ProductGrid: React.FC<ProductGridProps> = memo(({
 
   // Memoized key extractor
   const keyExtractor = useCallback((item: ProductItem) =>
-    item.productId ?? 'unknown-product',
+    item.productId || String(Math.random()),
   []);
 
   // Empty state
@@ -67,7 +68,7 @@ const ProductGrid: React.FC<ProductGridProps> = memo(({
   return (
     <View style={styles.container}>
       {/* Virtualized Product Grid with FlatList */}
-      <TypedFlashList
+      <AnyFlashList
         data={productsToShow}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

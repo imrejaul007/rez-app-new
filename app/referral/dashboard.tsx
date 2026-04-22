@@ -4,7 +4,6 @@ import {
   View,
   Text,
   ScrollView,
-  FlatList,
   Pressable,
   StyleSheet,
   Dimensions,
@@ -140,17 +139,6 @@ function ReferralDashboard() {
     router.push('/leaderboard' as any);
   };
 
-  if (loading) {
-    return <ProfileSkeleton />;
-  }
-
-  const currentTier = stats?.currentTier || 'STARTER';
-  const currentTierData = REFERRAL_TIERS[currentTier];
-  const tierGradient = TIER_GRADIENTS[currentTier];
-
-  // Prepare leaderboard data for FlatList
-  const leaderboardData = leaderboard.slice(0, 5);
-
   const renderLeaderboardItem = useCallback(
     ({ item: entry }: { item: LeaderboardEntry }) => (
       <View style={styles.leaderboardItem}>
@@ -172,17 +160,249 @@ function ReferralDashboard() {
     [currencySymbol],
   );
 
+  if (loading) {
+    return <ProfileSkeleton />;
+  }
+
+  const currentTier = stats?.currentTier || 'STARTER';
+  const currentTierData = REFERRAL_TIERS[currentTier];
+  const tierGradient = TIER_GRADIENTS[currentTier];
+
+  // Prepare leaderboard data for FlatList
+  const leaderboardData = leaderboard.slice(0, 5);
+
   return (
-    <FlatList
-      contentContainerStyle={{ paddingBottom: 120 }}
+    <ScrollView
       style={styles.container}
+      contentContainerStyle={{ paddingBottom: 120 }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      data={leaderboardData}
-      keyExtractor={(item) => item.userId}
-      renderItem={renderLeaderboardItem}
-      scrollEnabled={true}
-      ListEmptyComponent={
-        !loading ? (
+    >
+      {/* Back Button Row */}
+      <View style={styles.backButtonRow}>
+        <Pressable
+          style={styles.backButtonCircle}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+        >
+          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
+        </Pressable>
+      </View>
+
+      {/* Header with Tier Badge */}
+      <LinearGradient colors={tierGradient as any} style={styles.header}>
+        <View style={styles.headerContent}>
+          <View style={styles.tierBadge}>
+            <Ionicons name="ribbon" size={32} color={colors.background.primary} />
+            <Text style={styles.tierName}>{currentTierData.name}</Text>
+            <Text style={styles.tierBadgeText}>{currentTierData.badge}</Text>
+          </View>
+
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{stats?.qualifiedReferrals || 0}</Text>
+              <Text style={styles.statLabel}>Qualified</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>
+                {currencySymbol}
+                {stats?.lifetimeEarnings || 0}
+              </Text>
+              <Text style={styles.statLabel}>Earned</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{stats?.successRate?.toFixed(0) || 0}%</Text>
+              <Text style={styles.statLabel}>Success</Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
+
+      {/* Progress to Next Tier */}
+      {progress?.nextTier && (
+        <View style={styles.progressSection}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressTitle}>Progress to {REFERRAL_TIERS[progress.nextTier].name}</Text>
+            <Text style={styles.progressSubtitle}>{progress.referralsNeeded} more referrals needed</Text>
+          </View>
+
+          <View style={styles.progressBarContainer}>
+            <View style={styles.progressBarBackground}>
+              <LinearGradient
+                colors={TIER_GRADIENTS[progress.nextTier] as any}
+                style={[styles.progressBarFill, { width: `${progress.progress}%` }]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              />
+            </View>
+            <Text style={styles.progressPercentage}>{progress.progress.toFixed(0)}%</Text>
+          </View>
+
+          {progress.nextTierData && (
+            <View style={styles.nextTierRewards}>
+              <Text style={styles.nextTierRewardsTitle}>Unlock Rewards:</Text>
+              <View style={styles.rewardsList}>
+                {progress.nextTierData.rewards.tierBonus && (
+                  <View style={styles.rewardItem}>
+                    <Ionicons name="cash" size={16} color={Colors.brand.purple} />
+                    <Text style={styles.rewardText}>
+                      {currencySymbol}
+                      {progress.nextTierData.rewards.tierBonus} Tier Bonus
+                    </Text>
+                  </View>
+                )}
+                {progress.nextTierData.rewards.voucher && (
+                  <View style={styles.rewardItem}>
+                    <Ionicons name="gift" size={16} color={Colors.brand.purple} />
+                    <Text style={styles.rewardText}>
+                      {progress.nextTierData.rewards.voucher.type} {currencySymbol}
+                      {progress.nextTierData.rewards.voucher.amount} Voucher
+                    </Text>
+                  </View>
+                )}
+                {progress.nextTierData.rewards.lifetimePremium && (
+                  <View style={styles.rewardItem}>
+                    <Ionicons name="star" size={16} color={Colors.warning} />
+                    <Text style={styles.rewardText}>Lifetime Premium</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+        </View>
+      )}
+
+      {/* Share Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Share & Earn</Text>
+
+        <Pressable
+          style={styles.shareButton}
+          onPress={handleShare}
+          accessibilityLabel={`Invite friends. Earn ${currencySymbol}${currentTierData.rewards.perReferral} per referral`}
+          accessibilityRole="button"
+          accessibilityHint="Opens share options to invite friends"
+        >
+          <LinearGradient colors={[Colors.brand.purple, '#a78bfa']} style={styles.shareButtonGradient}>
+            <Ionicons name="share-social" size={24} color={colors.text.inverse} />
+            <View style={styles.shareButtonText}>
+              <Text style={styles.shareButtonTitle}>Invite Friends</Text>
+              <Text style={styles.shareButtonSubtitle}>
+                Earn {currencySymbol}
+                {currentTierData.rewards.perReferral} per referral
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={colors.text.inverse} />
+          </LinearGradient>
+        </Pressable>
+
+        <View style={styles.referralCodeBox}>
+          <Text style={styles.referralCodeLabel}>Your Referral Code</Text>
+          <Text style={styles.referralCode}>{qrData?.referralCode || '—'}</Text>
+          <Pressable
+            style={styles.copyButton}
+            onPress={handleCopyCode}
+            accessibilityLabel={`Copy referral code ${qrData?.referralCode}`}
+            accessibilityRole="button"
+            accessibilityHint="Copies your referral code to clipboard"
+          >
+            <Ionicons name="copy-outline" size={20} color={Colors.brand.purple} />
+            <Text style={styles.copyButtonText}>Copy Code</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      {/* Claimable Rewards */}
+      {rewards && rewards.claimable.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Claimable Rewards</Text>
+
+          {rewards.claimable.map((reward, index) => (
+            <View key={index} style={styles.rewardCard}>
+              <View style={styles.rewardCardLeft}>
+                <Ionicons
+                  name={reward.type === 'coins' ? 'cash' : reward.type === 'voucher' ? 'gift' : 'star'}
+                  size={32}
+                  color={Colors.brand.purple}
+                />
+                <View style={styles.rewardCardInfo}>
+                  <Text style={styles.rewardCardTitle}>{reward.description}</Text>
+                  <Text style={styles.rewardCardAmount}>
+                    {reward.type === 'coins' && `${currencySymbol}${reward.amount}`}
+                    {reward.type === 'voucher' && `${reward.voucherType} ${currencySymbol}${reward.amount}`}
+                    {reward.type === 'premium' && 'Lifetime Premium'}
+                  </Text>
+                </View>
+              </View>
+
+              <Pressable
+                style={styles.claimButton}
+                onPress={() => handleClaimReward(reward.referralId!, reward.rewardIndex!)}
+                accessibilityLabel={`Claim ${reward.description}`}
+                accessibilityRole="button"
+                accessibilityHint={`Claims your reward of ${(reward.amount ?? 0) > 0 ? currencySymbol + reward.amount : 'premium access'}`}
+              >
+                <Text style={styles.claimButtonText}>Claim</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          <View style={styles.totalClaimable}>
+            <Text style={styles.totalClaimableText}>
+              Total Claimable: {currencySymbol}
+              {rewards.totalClaimableValue}
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* Leaderboard Section Header */}
+      <View style={[styles.section, { paddingBottom: 0 }]}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Leaderboard</Text>
+          <Pressable
+            onPress={handleViewLeaderboard}
+            accessibilityLabel="View full leaderboard"
+            accessibilityRole="button"
+            accessibilityHint="Opens complete leaderboard page"
+          >
+            <Text style={styles.viewAllButton}>View All</Text>
+          </Pressable>
+        </View>
+
+        {userRank && (
+          <View style={styles.userRankCard}>
+            <Ionicons name="trophy" size={24} color={Colors.warning} />
+            <View style={styles.userRankInfo}>
+              <Text style={styles.userRankText}>Your Rank</Text>
+              <Text style={styles.userRankNumber}>#{userRank.rank}</Text>
+            </View>
+            <Text style={styles.userRankReferrals}>{userRank.totalReferrals} referrals</Text>
+          </View>
+        )}
+
+        {/* Leaderboard Items */}
+        {leaderboardData.map((entry) => (
+          <View key={entry.userId} style={styles.leaderboardItem}>
+            <View style={styles.leaderboardRank}>
+              <Text style={styles.leaderboardRankText}>#{entry.rank}</Text>
+            </View>
+            <View style={styles.leaderboardInfo}>
+              <Text style={styles.leaderboardName}>{entry.fullName || entry.username}</Text>
+              <Text style={styles.leaderboardStats}>
+                {entry.totalReferrals} referrals · {currencySymbol}
+                {entry.lifetimeEarnings}
+              </Text>
+            </View>
+            <View style={styles.leaderboardTierBadge}>
+              <Text style={styles.leaderboardTierText}>{REFERRAL_TIERS[entry.tier]?.badge || 'Starter'}</Text>
+            </View>
+          </View>
+        ))}
+
+        {leaderboardData.length === 0 && (
           <View style={styles.emptyState}>
             <Ionicons name="people-outline" size={48} color={colors.text.tertiary} />
             <Text style={[styles.emptyText, { color: colors.text.secondary }]}>No leaderboard data yet</Text>
@@ -190,222 +410,11 @@ function ReferralDashboard() {
               Start referring friends to climb the ranks
             </Text>
           </View>
-        ) : null
-      }
-      ListHeaderComponent={() => (
-        <>
-          {/* Back Button Row */}
-          <View style={styles.backButtonRow}>
-            <Pressable
-              style={styles.backButtonCircle}
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
-              accessibilityLabel="Go back"
-              accessibilityRole="button"
-            >
-              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
-            </Pressable>
-          </View>
+        )}
+      </View>
 
-          {/* Header with Tier Badge */}
-          <LinearGradient colors={tierGradient as any} style={styles.header}>
-            <View style={styles.headerContent}>
-              <View style={styles.tierBadge}>
-                <Ionicons name="ribbon" size={32} color={colors.background.primary} />
-                <Text style={styles.tierName}>{currentTierData.name}</Text>
-                <Text style={styles.tierBadgeText}>{currentTierData.badge}</Text>
-              </View>
-
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{stats?.qualifiedReferrals || 0}</Text>
-                  <Text style={styles.statLabel}>Qualified</Text>
-                </View>
-                <View style={styles.statDivider} />
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>
-                    {currencySymbol}
-                    {stats?.lifetimeEarnings || 0}
-                  </Text>
-                  <Text style={styles.statLabel}>Earned</Text>
-                </View>
-                <View style={styles.statDivider} />
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{stats?.successRate?.toFixed(0) || 0}%</Text>
-                  <Text style={styles.statLabel}>Success</Text>
-                </View>
-              </View>
-            </View>
-          </LinearGradient>
-
-          {/* Progress to Next Tier */}
-          {progress?.nextTier && (
-            <View style={styles.progressSection}>
-              <View style={styles.progressHeader}>
-                <Text style={styles.progressTitle}>Progress to {REFERRAL_TIERS[progress.nextTier].name}</Text>
-                <Text style={styles.progressSubtitle}>{progress.referralsNeeded} more referrals needed</Text>
-              </View>
-
-              <View style={styles.progressBarContainer}>
-                <View style={styles.progressBarBackground}>
-                  <LinearGradient
-                    colors={TIER_GRADIENTS[progress.nextTier] as any}
-                    style={[styles.progressBarFill, { width: `${progress.progress}%` }]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                  />
-                </View>
-                <Text style={styles.progressPercentage}>{progress.progress.toFixed(0)}%</Text>
-              </View>
-
-              {progress.nextTierData && (
-                <View style={styles.nextTierRewards}>
-                  <Text style={styles.nextTierRewardsTitle}>Unlock Rewards:</Text>
-                  <View style={styles.rewardsList}>
-                    {progress.nextTierData.rewards.tierBonus && (
-                      <View style={styles.rewardItem}>
-                        <Ionicons name="cash" size={16} color={Colors.brand.purple} />
-                        <Text style={styles.rewardText}>
-                          {currencySymbol}
-                          {progress.nextTierData.rewards.tierBonus} Tier Bonus
-                        </Text>
-                      </View>
-                    )}
-                    {progress.nextTierData.rewards.voucher && (
-                      <View style={styles.rewardItem}>
-                        <Ionicons name="gift" size={16} color={Colors.brand.purple} />
-                        <Text style={styles.rewardText}>
-                          {progress.nextTierData.rewards.voucher.type} {currencySymbol}
-                          {progress.nextTierData.rewards.voucher.amount} Voucher
-                        </Text>
-                      </View>
-                    )}
-                    {progress.nextTierData.rewards.lifetimePremium && (
-                      <View style={styles.rewardItem}>
-                        <Ionicons name="star" size={16} color={Colors.warning} />
-                        <Text style={styles.rewardText}>Lifetime Premium</Text>
-                      </View>
-                    )}
-                  </View>
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* Share Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Share & Earn</Text>
-
-            <Pressable
-              style={styles.shareButton}
-              onPress={handleShare}
-              accessibilityLabel={`Invite friends. Earn ${currencySymbol}${currentTierData.rewards.perReferral} per referral`}
-              accessibilityRole="button"
-              accessibilityHint="Opens share options to invite friends"
-            >
-              <LinearGradient colors={[Colors.brand.purple, '#a78bfa']} style={styles.shareButtonGradient}>
-                <Ionicons name="share-social" size={24} color={colors.text.inverse} />
-                <View style={styles.shareButtonText}>
-                  <Text style={styles.shareButtonTitle}>Invite Friends</Text>
-                  <Text style={styles.shareButtonSubtitle}>
-                    Earn {currencySymbol}
-                    {currentTierData.rewards.perReferral} per referral
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={24} color={colors.text.inverse} />
-              </LinearGradient>
-            </Pressable>
-
-            <View style={styles.referralCodeBox}>
-              <Text style={styles.referralCodeLabel}>Your Referral Code</Text>
-              <Text style={styles.referralCode}>{qrData?.referralCode || '—'}</Text>
-              <Pressable
-                style={styles.copyButton}
-                onPress={handleCopyCode}
-                accessibilityLabel={`Copy referral code ${qrData?.referralCode}`}
-                accessibilityRole="button"
-                accessibilityHint="Copies your referral code to clipboard"
-              >
-                <Ionicons name="copy-outline" size={20} color={Colors.brand.purple} />
-                <Text style={styles.copyButtonText}>Copy Code</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          {/* Claimable Rewards */}
-          {rewards && rewards.claimable.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Claimable Rewards</Text>
-
-              {rewards.claimable.map((reward, index) => (
-                <View key={index} style={styles.rewardCard}>
-                  <View style={styles.rewardCardLeft}>
-                    <Ionicons
-                      name={reward.type === 'coins' ? 'cash' : reward.type === 'voucher' ? 'gift' : 'star'}
-                      size={32}
-                      color={Colors.brand.purple}
-                    />
-                    <View style={styles.rewardCardInfo}>
-                      <Text style={styles.rewardCardTitle}>{reward.description}</Text>
-                      <Text style={styles.rewardCardAmount}>
-                        {reward.type === 'coins' && `${currencySymbol}${reward.amount}`}
-                        {reward.type === 'voucher' && `${reward.voucherType} ${currencySymbol}${reward.amount}`}
-                        {reward.type === 'premium' && 'Lifetime Premium'}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <Pressable
-                    style={styles.claimButton}
-                    onPress={() => handleClaimReward(reward.referralId!, reward.rewardIndex!)}
-                    accessibilityLabel={`Claim ${reward.description}`}
-                    accessibilityRole="button"
-                    accessibilityHint={`Claims your reward of ${(reward.amount ?? 0) > 0 ? currencySymbol + reward.amount : 'premium access'}`}
-                  >
-                    <Text style={styles.claimButtonText}>Claim</Text>
-                  </Pressable>
-                </View>
-              ))}
-
-              <View style={styles.totalClaimable}>
-                <Text style={styles.totalClaimableText}>
-                  Total Claimable: {currencySymbol}
-                  {rewards.totalClaimableValue}
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {/* Leaderboard Section Header */}
-          <View style={[styles.section, { paddingBottom: 0 }]}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Leaderboard</Text>
-              <Pressable
-                onPress={handleViewLeaderboard}
-                accessibilityLabel="View full leaderboard"
-                accessibilityRole="button"
-                accessibilityHint="Opens complete leaderboard page"
-              >
-                <Text style={styles.viewAllButton}>View All</Text>
-              </Pressable>
-            </View>
-
-            {userRank && (
-              <View style={styles.userRankCard}>
-                <Ionicons name="trophy" size={24} color={Colors.warning} />
-                <View style={styles.userRankInfo}>
-                  <Text style={styles.userRankText}>Your Rank</Text>
-                  <Text style={styles.userRankNumber}>#{userRank.rank}</Text>
-                </View>
-                <Text style={styles.userRankReferrals}>{userRank.totalReferrals} referrals</Text>
-              </View>
-            )}
-          </View>
-        </>
-      )}
-      ListFooterComponent={() => <View style={{ height: 8 }} />}
-      maxToRenderPerBatch={5}
-      removeClippedSubviews={true}
-    />
+      <View style={{ height: 8 }} />
+    </ScrollView>
   );
 }
 

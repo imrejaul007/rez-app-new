@@ -100,13 +100,13 @@ export interface FoodRestaurant {
     estimatedCoins?: number;
     reviewBonusCoins?: number;
     baseCashbackPercent?: number;
-    visitMilestoneRewards?: Array<{ visits: number; reward: number }>;
+    visitMilestoneRewards?: { visits: number; reward: number }[];
   };
   category?: { name?: string; slug?: string };
   location?: { city?: string; coordinates?: { lat: number; lng: number }; [key: string]: any };
   distance?: number;
   isFeatured?: boolean;
   isActive?: boolean;
-  hours?: Array<{ day: string; open: string; close: string; closed?: boolean }>;
+  hours?: { day: string; open: string; close: string; closed?: boolean }[];
   [key: string]: any; // Allow additional fields from backend
 }

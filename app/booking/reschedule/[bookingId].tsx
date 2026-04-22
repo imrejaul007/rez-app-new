@@ -25,6 +25,10 @@ function RescheduleBookingScreen() {
   const router = useRouter();
   const isMounted = useIsMounted();
 
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [loading, setLoading] = useState(false);
+
   // ETHAN: crash guard — bookingId from route params could be undefined
   if (!bookingId) {
     return (
@@ -50,10 +54,6 @@ function RescheduleBookingScreen() {
       </SafeAreaView>
     );
   }
-
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
-  const [loading, setLoading] = useState(false);
 
   // Generate next 30 days
   const getNextDays = (): string[] => {

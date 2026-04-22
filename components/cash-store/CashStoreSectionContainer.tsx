@@ -26,8 +26,6 @@ import {
 import { catchAndWarn } from '@/utils/catchAndReport';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as WebBrowser from 'expo-web-browser';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { useRouter } from 'expo-router';
 import { BRAND } from '@/constants/brand';
 import { useCashStoreSection } from '../../hooks/useCashStoreSection';
@@ -58,6 +56,8 @@ import HowItWorksPreview from './sections/HowItWorksPreview';
 import CashbackActivitySection from './sections/CashbackActivitySection';
 import CashStoreSkeleton from './skeletons/CashStoreSkeleton';
 import { colors } from '@/constants/theme';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface CashStoreSectionContainerProps {
   onScrollToTop?: () => void;

@@ -19,8 +19,9 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 interface MallTrendingNowProps {
   brands: MallBrand[];
@@ -112,7 +113,7 @@ const MallTrendingNow: React.FC<MallTrendingNowProps> = ({
     [onBrandPress]
   );
 
-  const keyExtractor = useCallback((item: MallBrand) => String(item.id ?? item._id ?? "unknown-brand"), []);
+  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id || String(Math.random()), []);
 
   if (isLoading) {
     return (
@@ -254,13 +255,13 @@ const MallTrendingNow: React.FC<MallTrendingNowProps> = ({
         </View>
 
         {/* Brands List */}
-        <TypedFlashList
+        <AnyFlashList
           data={brands}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           snapToInterval={155}
           decelerationRate="fast"
           estimatedItemSize={150}

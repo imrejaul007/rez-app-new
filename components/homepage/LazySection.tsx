@@ -89,6 +89,7 @@ function useLazySectionNative(
   onVisibleRef.current = onVisible;
 
   useEffect(() => {
+    // On web, native hooks return false immediately — skip all logic
     if (Platform.OS === 'web' || visibleRef.current) return;
 
     // If no scrollY provided, fall back to showing immediately
@@ -169,10 +170,10 @@ const LazySection: React.FC<LazySectionProps> = ({
     }
   }, []);
 
-  // Use appropriate hook based on platform
-  const isVisible = Platform.OS === 'web'
-    ? useLazySectionWeb(ref as React.RefObject<View>, threshold, rootMargin, onVisible)
-    : useLazySectionNative(sectionY, scrollY, rootMargin, onVisible);
+  // Always call both hooks (unconditional) — each returns false early on the wrong platform
+  const isVisibleWeb = useLazySectionWeb(ref as React.RefObject<View>, threshold, rootMargin, onVisible);
+  const isVisibleNative = useLazySectionNative(sectionY, scrollY, rootMargin, onVisible);
+  const isVisible = Platform.OS === 'web' ? isVisibleWeb : isVisibleNative;
 
   // Track if section has ever been loaded — fade in content
   useEffect(() => {

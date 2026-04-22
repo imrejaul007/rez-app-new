@@ -20,14 +20,14 @@ import articlesService from '@/services/articlesApi';
 
 // CategoryHeader stays eager — used in error/loading states before content renders
 import CategoryHeader from '@/components/playPage/CategoryHeader';
+import logger from '@/utils/logger';
+import { colors } from '@/constants/theme';
+import { useIsMounted } from '@/hooks/useIsMounted';
 
 // Lazy-loaded content sections (play tab is never the initial screen)
 const MerchantVideoSection = React.lazy(() => import('@/components/playPage/MerchantVideoSection'));
 const ArticleSection = React.lazy(() => import('@/components/playPage/ArticleSection'));
 const UGCVideoSection = React.lazy(() => import('@/components/playPage/UGCVideoSection'));
-import logger from '@/utils/logger';
-import { colors } from '@/constants/theme';
-import { useIsMounted } from '@/hooks/useIsMounted';
 
 function PlayScreen() {
   const isMounted = useIsMounted();

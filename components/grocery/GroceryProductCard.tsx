@@ -39,7 +39,7 @@ export interface GroceryProduct {
   name: string;
   description?: string;
   // images can be array of strings or array of objects with url
-  images?: Array<string | { url: string; alt?: string }>;
+  images?: (string | { url: string; alt?: string })[];
   image?: string;
   // pricing supports both API format (original/selling) and legacy (basePrice/salePrice)
   pricing?: {

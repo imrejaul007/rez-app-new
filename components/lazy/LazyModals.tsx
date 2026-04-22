@@ -256,9 +256,8 @@ export const LazyFilterModal = lazyLoad(
 );
 
 export const LazySortModal = lazyLoad(
-  // @ts-ignore - SortModal module may not exist yet
-  () => import('@/components/search/SortModal'),
-  { componentName: 'SortModal', fallback: <ModalLoader /> }
+  () => import('@/components/search/SearchSortChips'),
+  { componentName: 'SearchSortChips', fallback: <ModalLoader /> }
 );
 
 // ============================================================================

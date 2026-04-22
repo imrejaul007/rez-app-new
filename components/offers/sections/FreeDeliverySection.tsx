@@ -28,8 +28,6 @@ export const FreeDeliverySection: React.FC<FreeDeliverySectionProps> = ({
   const router = useRouter();
   const { theme, isDark } = useOffersTheme();
 
-  if (offers.length === 0) return null;
-
   const handleOfferPress = (offer: FreeDeliveryOffer) => {
     router.push(`/offers/${offer.id}`);
   };
@@ -160,6 +158,8 @@ export const FreeDeliverySection: React.FC<FreeDeliverySectionProps> = ({
       marginLeft: 3,
     },
   }), [isDark, theme]);
+
+  if (offers.length === 0) return null;
 
   return (
     <View style={styles.container}>

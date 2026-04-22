@@ -63,6 +63,39 @@ interface FollowStoreSectionProps {
   onFollowChange?: (isFollowing: boolean) => void;
 }
 
+// Extracted so useAnimatedStyle is called at top level of a component (not inside a regular function)
+const HeartIconContainer: React.FC<{
+  isLoading: boolean;
+  isFollowing: boolean;
+  heartScale: Animated.SharedValue<number>;
+  pulseAnim: Animated.SharedValue<number>;
+  glowAnimStyle: Animated.AnimatedStyle<{ opacity: number }>;
+}> = ({ isLoading, isFollowing, heartScale, pulseAnim, glowAnimStyle }) => {
+  const iconAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartScale.value * (isFollowing ? pulseAnim.value : 1) }],
+  }));
+
+  return (
+    <Animated.View
+      style={[
+        styles.iconContainer,
+        isFollowing ? styles.iconContainerFollowing : styles.iconContainerDefault,
+        iconAnimStyle,
+      ]}
+    >
+      {isLoading ? (
+        <ActivityIndicator size="small" color={isFollowing ? colors.nileBlue : Colors.gold} />
+      ) : (
+        <Ionicons
+          name={isFollowing ? 'heart' : 'heart-outline'}
+          size={28}
+          color={isFollowing ? colors.nileBlue : Colors.gold}
+        />
+      )}
+    </Animated.View>
+  );
+};
+
 function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: FollowStoreSectionProps) {
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -273,25 +306,13 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
           {/* Glow effect behind icon */}
           {isFollowing && <Animated.View style={[styles.iconGlow, glowAnimStyle, { backgroundColor: Colors.gold }]} />}
 
-          <Animated.View
-            style={[
-              styles.iconContainer,
-              isFollowing ? styles.iconContainerFollowing : styles.iconContainerDefault,
-              useAnimatedStyle(() => ({
-                transform: [{ scale: heartScale.value * (isFollowing ? pulseAnim.value : 1) }],
-              })),
-            ]}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color={isFollowing ? colors.nileBlue : Colors.gold} />
-            ) : (
-              <Ionicons
-                name={isFollowing ? 'heart' : 'heart-outline'}
-                size={28}
-                color={isFollowing ? colors.nileBlue : Colors.gold}
-              />
-            )}
-          </Animated.View>
+          <HeartIconContainer
+            isLoading={isLoading}
+            isFollowing={isFollowing}
+            heartScale={heartScale}
+            pulseAnim={pulseAnim}
+            glowAnimStyle={glowAnimStyle}
+          />
         </View>
 
         {/* Center: Text Content */}

@@ -100,6 +100,7 @@ function EntertainmentCategoryPage() {
   const categoryConfig = getCategoryConfig(slug);
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+  const isMounted = useIsMounted();
 
   const {
     subcategories, stores, products, ugcPosts, aiPlaceholders,
@@ -109,12 +110,9 @@ function EntertainmentCategoryPage() {
   const [activeServiceFilters, setActiveServiceFilters] = useState<string[]>([]);
   const [activeLifestyleFilters, setActiveLifestyleFilters] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const isMounted = useIsMounted();
 
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
-
-  if (!isMounted()) return;
   const onRefresh = async () => { setRefreshing(true); await refetch(); setRefreshing(false); };
 
   const toggleServiceFilter = (filterId: string) => {
@@ -191,8 +189,6 @@ function EntertainmentCategoryPage() {
   const handleAISearch = useCallback((query: string) => {
     router.push(`/MainCategory/entertainment/search?q=${encodeURIComponent(query)}` as any);
   }, [router]);
-
-  if (!categoryConfig) return null;
 
   if (isLoading && !refreshing && stores.length === 0) {
     return <LoadingState message="Loading entertainment..." />;

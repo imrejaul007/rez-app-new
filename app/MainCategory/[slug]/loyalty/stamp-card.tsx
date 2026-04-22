@@ -26,11 +26,11 @@ interface StampCardData {
   rewardValue: number;
   rewardDescription: string;
   isRewardReady: boolean;
-  stampHistory: Array<{
+  stampHistory: {
     date: string;
     billNumber: string;
     billAmount: number;
-  }>;
+  }[];
 }
 
 export default function StampCardScreen() {

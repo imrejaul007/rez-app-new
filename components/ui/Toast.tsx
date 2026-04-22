@@ -13,11 +13,11 @@ interface ToastProps {
   type?: 'success' | 'error' | 'info' | 'warning';
   duration?: number;
   onDismiss?: () => void;
-  actions?: Array<{
+  actions?: {
     text: string;
     onPress: () => void;
     style?: 'default' | 'cancel';
-  }>;
+  }[];
 }
 
 const ICON_MAP: Record<string, keyof typeof Ionicons.glyphMap> = {

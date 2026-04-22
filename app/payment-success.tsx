@@ -41,11 +41,11 @@ interface OrderDetails {
   status: string;
   storeId?: string;
   storeName?: string;
-  items: Array<{
+  items: {
     name: string;
     quantity: number;
     price: number;
-  }>;
+  }[];
   totals: {
     subtotal: number;
     delivery: number;

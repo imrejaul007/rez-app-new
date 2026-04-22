@@ -34,11 +34,11 @@ export interface ToastConfig {
   visible: boolean;
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
-  actions?: Array<{
+  actions?: {
     text: string;
     onPress: () => void;
     style?: 'default' | 'cancel';
-  }>;
+  }[];
 }
 
 export interface BillUploadHookReturn {

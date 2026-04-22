@@ -19,8 +19,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { MallBrand } from '../../types/mall.types';
 import MallBrandCard from './cards/MallBrandCard';
-import TypedFlashList from '@/components/ui/TypedFlashList';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
+const AnyFlashList = FlashList as any;
 
 interface MallFeaturedBrandsProps {
   brands: MallBrand[];
@@ -42,7 +43,7 @@ const MallFeaturedBrands: React.FC<MallFeaturedBrandsProps> = ({
     [onBrandPress]
   );
 
-  const keyExtractor = useCallback((item: MallBrand) => String(item.id ?? item._id ?? "unknown-brand"), []);
+  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id || String(Math.random()), []);
 
   // Loading skeleton
   if (isLoading) {
@@ -151,13 +152,13 @@ const MallFeaturedBrands: React.FC<MallFeaturedBrandsProps> = ({
         </View>
 
         {/* Brands List */}
-        <TypedFlashList
+        <AnyFlashList
           data={brands}
           renderItem={renderBrand}
           keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={styles.listContent as any}
           estimatedItemSize={180}
         />
       </LinearGradient>

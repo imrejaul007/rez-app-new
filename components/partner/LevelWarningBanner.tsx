@@ -83,10 +83,6 @@ function LevelWarningBanner({
     }
   };
 
-  if (!isVisible || ordersNeeded <= 0 || daysRemaining <= 0) {
-    return null;
-  }
-
   const backgroundColor = isCritical ? COLORS.dangerLight : COLORS.warningLight;
   const accentColor = isCritical ? COLORS.danger : COLORS.warning;
   const iconName = isCritical ? 'warning' : 'alert-circle';
@@ -98,6 +94,10 @@ function LevelWarningBanner({
     ],
     opacity: slideAnim.value,
   }));
+
+  if (!isVisible || ordersNeeded <= 0 || daysRemaining <= 0) {
+    return null;
+  }
 
   return (
     <Animated.View
