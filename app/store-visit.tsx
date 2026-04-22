@@ -857,7 +857,10 @@ function StoreVisitPageInner() {
             </View>
             <View style={styles.flex1}>
               <Text style={styles.storeName}>{store.name}</Text>
-              {store.category?.name && <Text style={styles.storeCategory}>{store.category.name}</Text>}
+              {(() => {
+                const catName = typeof store.category === 'string' ? store.category : store.category?.name;
+                return catName ? <Text style={styles.storeCategory}>{catName}</Text> : null;
+              })()}
               {((store as any).location?.address || (store as any).location?.city) && (
                 <View style={styles.addressRow}>
                   <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />

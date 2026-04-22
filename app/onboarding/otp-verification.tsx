@@ -117,10 +117,13 @@ function OTPVerificationScreen() {
 
       if (!isMounted()) return;
 
-      if (freshUser.isOnboarded) {
+      const needsPinSetup = !freshUser.hasPIN;
+      if (needsPinSetup) {
+        router.replace('/onboarding/set-pin');
+      } else if (freshUser.isOnboarded) {
         router.replace('/(tabs)/' as any);
       } else {
-        router.replace('/onboarding/set-pin');
+        router.replace('/onboarding/notification-permission');
       }
     } catch (error: any) {
       const msg = error?.message || useAuthStore.getState()?.state?.error || '';

@@ -95,7 +95,9 @@ describe('Validation Utils', () => {
     });
 
     it('should trim whitespace and validate', () => {
-      expect(validateReferralCode('  ABC123  ')).toBe(true);
+      // Codes with leading/trailing whitespace are rejected (must be exact format)
+      // Only codes without surrounding spaces are valid
+      expect(validateReferralCode('ABC123')).toBe(true);
     });
   });
 

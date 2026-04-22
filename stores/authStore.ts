@@ -14,7 +14,7 @@ interface AuthState {
 
 interface AuthActions {
   sendOTP: (phoneNumber: string, email?: string, referralCode?: string, flow?: 'login' | 'signup') => Promise<void>;
-  login: (phoneNumber: string, otp: string) => Promise<void>;
+  login: (phoneNumber: string, otp: string) => Promise<User | undefined>;
   register: (phoneNumber: string, email: string, referralCode?: string) => Promise<void>;
   // FR-D003 FIX: verifyOTP returns the fresh User so callers can read isOnboarded
   // from the server response rather than stale Zustand state.
@@ -51,7 +51,7 @@ const noop = () => {};
 
 const defaultActions: AuthActions = {
   sendOTP: noopAsync,
-  login: noopAsync,
+  login: async (_phoneNumber: string, _otp: string) => undefined,
   register: noopAsync,
   // Typed noops: signatures must match AuthActions interface even for defaults.
   // These are immediately replaced by AuthProvider on mount via _setFromProvider.

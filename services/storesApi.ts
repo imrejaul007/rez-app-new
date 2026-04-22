@@ -14,6 +14,7 @@ import {
 // Keep the old Store interface for backwards compatibility during migration
 export interface Store {
   id: string;
+  _id?: string;
   name: string;
   description: string;
   slug: string;
@@ -38,7 +39,7 @@ export interface Store {
     coordinates?: [number, number];
     landmark?: string;
   };
-  category: {
+  category: string | {
     id: string;
     name: string;
     slug: string;
@@ -51,11 +52,19 @@ export interface Store {
     deliveryRadius?: number;
     processingTime: string;
   };
+  rating?: { average: number };
   ratings: {
     average: number;
     count: number;
     breakdown: Record<number, number>;
   };
+  offers?: { cashback?: number };
+  distance?: number;
+  rewardRules?: unknown;
+  priceForTwo?: number;
+  operationalInfo?: { deliveryTime?: string; openTime?: string; closeTime?: string; deliveryFee?: number; freeDeliveryAbove?: number; minimumOrder?: number };
+  deliveryCategories?: { fastDelivery?: boolean };
+  bookingType?: string;
   analytics: {
     totalOrders: number;
     totalRevenue: number;
@@ -800,9 +809,10 @@ class StoresService {
       id: string;
       store: {
         id: string;
+        _id?: string;
         name: string;
         logo?: string;
-        address: any;
+        address?: { address?: string; city?: string; state?: string };
       };
       visitDate: string;
       visitType: string;

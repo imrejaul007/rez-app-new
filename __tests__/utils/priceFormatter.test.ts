@@ -310,7 +310,8 @@ describe('priceFormatter', () => {
     it('should handle very large numbers', () => {
       const result = formatPrice(999999999.99);
       expect(result).not.toBeNull();
-      expect(result).toContain('999,999,999.99');
+      // INR uses Indian numbering system (lakh/crore grouping): 99,99,99,999.99
+      expect(result).toContain('99,99,99,999.99');
     });
 
     it('should handle very small decimals', () => {

@@ -59,6 +59,8 @@ export interface User {
   role: 'user' | 'admin' | 'merchant' | 'support' | 'operator' | 'super_admin' | 'consumer';
   isVerified: boolean;
   isOnboarded: boolean;
+  /** Set to true when the user has configured a login PIN. */
+  hasPIN?: boolean;
   wallet?: {
     balance: number;
     totalEarned?: number;
