@@ -10,6 +10,7 @@ import { API_CONFIG as ENV_API_CONFIG } from '@/config/env';
 import { globalDeduplicator, createRequestKey } from '@/utils/requestDeduplicator';
 import { globalConcurrencyLimiter } from '@/utils/concurrencyLimiter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 // OG-D005/OG-D006 FIX: Register every fetch's AbortController so the
 // app-level background listener can cancel in-flight requests on OS kill.
 import { requestRegistry } from '@/utils/requestRegistry';
@@ -49,12 +50,24 @@ function readCsrfTokenFromDocument(): string | null {
   return null;
 }
 
+// CD-CRIT-FP FIX: Read device fingerprint from SecureStore instead of AsyncStorage.
+// AsyncStorage is plaintext — device fingerprint stored there is readable by any app
+// on rooted/jailbroken devices, enabling fingerprint spoofing and fraud bypass.
+// SecureStore uses iOS Keychain / Android Keystore (not accessible to other apps).
 async function getDeviceFingerprintHeader(): Promise<string | null> {
   if (_cachedDeviceFingerprint) return _cachedDeviceFingerprint;
   if (_fingerprintLoadPromise) return _fingerprintLoadPromise;
   _fingerprintLoadPromise = (async () => {
     try {
-      const stored = await AsyncStorage.getItem('@security_device_fingerprint');
+      let stored: string | null = null;
+      if (Platform.OS !== 'web') {
+        stored = await SecureStore.getItemAsync('@security_device_fingerprint');
+      } else {
+        // Web: fall back to sessionStorage
+        try {
+          stored = sessionStorage.getItem('@security_device_fingerprint');
+        } catch { /* non-critical */ }
+      }
       if (stored) {
         const fp = JSON.parse(stored);
         _cachedDeviceFingerprint = fp.hash || fp.id || null;
