@@ -98,7 +98,7 @@ interface AuthContextType {
   state: AuthState;
   actions: {
     sendOTP: (phoneNumber: string, email?: string, referralCode?: string, flow?: 'login' | 'signup') => Promise<void>;
-    login: (phoneNumber: string, otp: string) => Promise<void>;
+    login: (phoneNumber: string, otp: string) => Promise<User | undefined>;
     register: (phoneNumber: string, email: string, referralCode?: string) => Promise<void>;
     // FR-D003 FIX: verifyOTP returns the fresh User so the OTP screen can navigate
     // correctly using the server response instead of stale Zustand state.
@@ -319,7 +319,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       throw error;
     }
   };
-  const login = async (phoneNumber: string, otp: string) => {
+  const login = async (phoneNumber: string, otp: string): Promise<User> => {
     try {
 
       dispatch({ type: 'AUTH_LOADING', payload: true });

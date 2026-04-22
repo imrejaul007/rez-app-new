@@ -316,7 +316,7 @@ function SignInScreen() {
         user: Record<string, any>;
         tokens: { accessToken: string; refreshToken: string };
         attemptsLeft?: number;
-      }>('/user/auth/verify-pin', {
+      }>('/user/auth/login-pin', {
         phoneNumber: formattedPhone,
         pin: formData.pin,
       });
@@ -333,8 +333,11 @@ function SignInScreen() {
         try {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch {}
-        // Navigate based on onboarding status
-        if (user.isOnboarded) {
+        // Navigate based on hasPIN and onboarding status
+        const needsPinSetup = !user.hasPIN;
+        if (needsPinSetup) {
+          router.replace('/onboarding/set-pin');
+        } else if (user.isOnboarded) {
           router.replace('/(tabs)/' as any);
         } else {
           router.replace('/onboarding/notification-permission');
@@ -409,8 +412,11 @@ function SignInScreen() {
       // Navigate using the freshly-returned user — do NOT read from store as fallback
       // (store user may be stale from a prior session, causing wrong destination).
       if (!isMounted()) return;
-      const user = (result as any);
-      if (user?.isOnboarded) {
+      const user = result;
+      const needsPinSetup = !user?.hasPIN;
+      if (needsPinSetup) {
+        router.replace('/onboarding/set-pin');
+      } else if (user?.isOnboarded) {
         router.replace('/(tabs)/' as any);
       } else {
         router.replace('/onboarding/notification-permission');
