@@ -17,6 +17,9 @@ module.exports = {
           esModuleInterop: true,
           allowSyntheticDefaultImports: true,
         },
+        diagnostics: {
+          exclude: ['**/node_modules/**'],
+        },
       },
     ],
   },

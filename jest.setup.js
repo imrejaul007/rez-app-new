@@ -1,3 +1,27 @@
+// Mock expo-constants before any module loads (prevents NativeModules.EXDevLauncher crash in Node env)
+jest.mock('expo-constants', () => ({
+  default: {
+    manifest: {},
+    expoConfig: { extra: {} },
+    sessionId: 'test-session-id',
+    platform: 'ios',
+    releaseId: 'test-release-id',
+    version: '1.0.0',
+    name: null,
+    slug: null,
+    runningSimulator: false,
+    systemFonts: [],
+    linkedRouter: false,
+    design: { name: 'default' },
+    appOwnership: 'expo',
+    __unsafeNoWarnManifest: null,
+    __unsafeNoWarnManifest2: null,
+  },
+  AppOwnership: { EXPO: 'expo', STANDALONE: 'standalone', ADHOC: 'adhoc', INVALID: null },
+  ExecutionEnvironment: { BARE: 'bare', STANDALONE: 'standalone', UNKNOWN: 'unknown' },
+  UserInterfaceIdiom: { PHONEPAD: 'phonepad', TABLETPAD: 'tabletpad', UNKNOWN: 'unknown' },
+}));
+
 // Import Jest Native matchers for @testing-library/react-native
 import '@testing-library/jest-native/extend-expect';
 

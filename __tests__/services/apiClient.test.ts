@@ -1,7 +1,8 @@
-import { apiClient } from '@/services/apiClient';
+import apiClient from '@/services/apiClient';
 
 jest.mock('@/services/apiClient', () => ({
-  apiClient: {
+  __esModule: true,
+  default: {
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),

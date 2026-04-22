@@ -62,7 +62,7 @@ describe('bookingApi', () => {
       const res = await bookingApi.getBookingById('book1');
       expect(res.success).toBe(true);
       expect(res.data?.id).toBe('book1');
-      expect(mockClient.get).toHaveBeenCalledWith('/bookings/book1');
+      expect(mockClient.get).toHaveBeenCalledWith('/service-bookings/book1');
     });
 
     it('handles not found', async () => {
@@ -74,7 +74,7 @@ describe('bookingApi', () => {
 
   describe('cancelBooking', () => {
     it('cancels a booking with reason', async () => {
-      mockClient.post.mockResolvedValueOnce({ success: true, data: { ...mockBooking, status: 'cancelled' } });
+      mockClient.put.mockResolvedValueOnce({ success: true, data: { ...mockBooking, status: 'cancelled' } });
       const res = await bookingApi.cancelBooking('book1', 'Changed plans');
       expect(res.success).toBe(true);
     });
@@ -82,7 +82,7 @@ describe('bookingApi', () => {
 
   describe('rescheduleBooking', () => {
     it('reschedules to new date and slot', async () => {
-      mockClient.post.mockResolvedValueOnce({ success: true, data: { ...mockBooking, bookingDate: '2026-04-15', timeSlot: { start: '14:00', end: '15:00' } } });
+      mockClient.put.mockResolvedValueOnce({ success: true, data: { ...mockBooking, bookingDate: '2026-04-15', timeSlot: { start: '14:00', end: '15:00' } } });
       const res = await bookingApi.rescheduleBooking('book1', { newDate: '2026-04-15', newTimeSlot: '14:00' });
       expect(res.success).toBe(true);
     });

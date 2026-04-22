@@ -147,6 +147,7 @@ describe('walletApi', () => {
       const result = await walletApi.initiateTransfer({
         recipientId: 'user_456',
         amount: 100,
+        coinType: 'rez',
       });
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
@@ -154,6 +155,7 @@ describe('walletApi', () => {
         {
           recipientId: 'user_456',
           amount: 100,
+          coinType: 'rez',
         }
       );
       expect(result.success).toBe(true);
@@ -166,6 +168,7 @@ describe('walletApi', () => {
       const result = await walletApi.initiateTransfer({
         recipientId: 'user_456',
         amount: 100,
+        coinType: 'rez',
       });
 
       expect(result.success).toBe(false);

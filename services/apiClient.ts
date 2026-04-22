@@ -621,7 +621,7 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     // POST requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
-    const requestOpts: RequestOptions = { method: 'POST', body: data };
+    const requestOpts: RequestOptions = { method: 'POST', body: data as unknown as RequestOptions['body'] };
     if (options?.timeout) requestOpts.timeout = options.timeout;
     if (options?.headers) requestOpts.headers = options.headers;
 
@@ -660,7 +660,7 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     // PATCH requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
-    const requestOpts: RequestOptions = { method: 'PATCH', body: data };
+    const requestOpts: RequestOptions = { method: 'PATCH', body: data as unknown as RequestOptions['body'] };
     if (options?.timeout) requestOpts.timeout = options.timeout;
 
     if (shouldDeduplicate) {
