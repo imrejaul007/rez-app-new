@@ -1,5 +1,70 @@
 // Mock expo-modules-core before any module loads (prevents EXDevLauncher undefined crash in Node env)
-jest.mock('expo-modules-core', () => ({}));
+jest.mock('expo-modules-core', () => ({
+  requireNativeModule: jest.fn(() => ({})),
+  NativeModulesProxy: {},
+  __esModule: true,
+}));
+
+// Mock expo-secure-store (used by apiClient.ts) — needs expo-modules-core
+jest.mock('expo-secure-store', () => ({
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  setItemAsync: jest.fn(() => Promise.resolve()),
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
+  __esModule: true,
+}));
+
+// Mock react-native/Libraries/Components/Pressable/Pressable — RN jest preset
+// doesn't include it, causing "type is invalid: got undefined" in all component tests.
+// Also mock its transitive dependencies to break the import chain.
+jest.mock('react-native/Libraries/Pressability/PressabilityDebug', () => ({
+  __esModule: true,
+  PressabilityDebugView: null,
+}));
+
+jest.mock('react-native/Libraries/StyleSheet/normalizeColor', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('@react-native/normalize-colors', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('react-native/Libraries/StyleSheet/Rect', () => ({
+  __esModule: true,
+  RectOrSize: null,
+  normalizeRect: () => ({}),
+  default: null,
+}));
+
+jest.mock('react-native/Libraries/Pressability/usePressability', () => ({
+  __esModule: true,
+  default: () => ({}),
+}));
+
+jest.mock('react-native/Libraries/StyleSheet/processColor', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+  __esModule: true,
+  default: { OS: 'ios' },
+}));
+
+jest.mock('react-native/Libraries/Utilities/useMergeRefs', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('react-native/Libraries/Components/Pressable/Pressable', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: React.forwardRef((props, ref) => React.createElement('View', { ...props, ref })),
+  };
+});
 
 // Mock apiClient singleton — must be here (before walletApi loads) to avoid
 // "apiClient_1.default.get is not a function" due to module evaluation order.

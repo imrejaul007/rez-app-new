@@ -2,6 +2,8 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FlatCompat } from '@eslint/eslintrc';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsparser from '@typescript-eslint/parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,6 +36,8 @@ const nodeGlobals = {
 };
 
 export default [
+  // Load @typescript-eslint plugin — required by eslint-config-expo for TS files
+  { plugins: { '@typescript-eslint': tseslint } },
   ...compat.extends('eslint-config-expo'),
 
   // Jest globals for test files
@@ -53,7 +57,9 @@ export default [
       'constants/theme.ts', 'constants/DesignTokens.ts', 'constants/DesignSystem.ts',
       '**/*.test.*', '**/__tests__/**', 'coverage/**',
     ],
-    languageOptions: { globals: rnGlobals },
+    languageOptions: {
+      globals: rnGlobals,
+    },
     rules: {
       'no-restricted-syntax': ['warn', {
         selector: "Literal[value=/^#[0-9A-Fa-f]{3,8}$/]",
@@ -61,9 +67,11 @@ export default [
       }],
       'no-undef': 'warn',
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      // Expo packages (expo-haptics, expo-image, etc.) may not resolve in ESLint's TS resolver
-      // but work fine in Metro/TypeScript. Downgrade to warn to unblock CI.
-      'import/no-unresolved': 'warn',
+      // Disabled: TypeScript + Metro handle module resolution. ESLint's resolver cannot
+      // understand @/* aliases (Expo/React Native path mapping). 9,588 false positives.
+      'import/no-unresolved': 'off',
+      // Disable ban-types rule since @typescript-eslint plugin lookup fails in this setup
+      '@typescript-eslint/ban-types': 'off',
     },
   },
 ];
