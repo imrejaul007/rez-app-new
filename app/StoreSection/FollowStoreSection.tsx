@@ -69,7 +69,7 @@ const HeartIconContainer: React.FC<{
   isFollowing: boolean;
   heartScale: Animated.SharedValue<number>;
   pulseAnim: Animated.SharedValue<number>;
-  glowAnimStyle: Animated.AnimatedStyle<{ opacity: number }>;
+  glowAnimStyle: Animated.AnimateStyle<{ opacity: number }>;
 }> = ({ isLoading, isFollowing, heartScale, pulseAnim, glowAnimStyle }) => {
   const iconAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: heartScale.value * (isFollowing ? pulseAnim.value : 1) }],

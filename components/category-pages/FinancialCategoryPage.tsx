@@ -87,7 +87,7 @@ function getPriceTier(priceForTwo?: number): { label: string; color: string } {
 function FinancialCategoryPage() {
   const router = useRouter();
   const slug = 'financial-lifestyle';
-  const categoryConfig = getCategoryConfig(slug);
+  const categoryConfig = getCategoryConfig(slug)!;
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const isMounted = useIsMounted();

@@ -1,3 +1,6 @@
+// Mock expo-modules-core before any module loads (prevents EXDevLauncher undefined crash in Node env)
+jest.mock('expo-modules-core', () => ({}));
+
 // Mock expo-constants before any module loads (prevents NativeModules.EXDevLauncher crash in Node env)
 jest.mock('expo-constants', () => ({
   default: {
