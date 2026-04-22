@@ -43,7 +43,7 @@ const MallFeaturedBrands: React.FC<MallFeaturedBrandsProps> = ({
     [onBrandPress]
   );
 
-  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id || String(Math.random()), []);
+  const keyExtractor = useCallback((item: MallBrand, index: number) => item.id || item._id || String(index), []);
 
   // Loading skeleton
   if (isLoading) {

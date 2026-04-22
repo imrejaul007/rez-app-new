@@ -50,8 +50,8 @@ const ProductGrid: React.FC<ProductGridProps> = memo(({
   ), [store, onProductSelect, styles.productContainer]);
 
   // Memoized key extractor
-  const keyExtractor = useCallback((item: ProductItem) =>
-    item.productId || String(Math.random()),
+  const keyExtractor = useCallback((item: ProductItem, index: number) =>
+    item.productId || String(index),
   []);
 
   // Empty state
