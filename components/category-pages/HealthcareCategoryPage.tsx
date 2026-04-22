@@ -96,7 +96,7 @@ function getPriceTier(priceForTwo?: number): { label: string; color: string } {
 function HealthcareCategoryPage() {
   const router = useRouter();
   const slug = 'healthcare';
-  const categoryConfig = getCategoryConfig(slug);
+  const categoryConfig = getCategoryConfig(slug)!;
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const isMounted = useIsMounted();
