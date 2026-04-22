@@ -21,8 +21,8 @@ export interface ValidationResult {
  */
 export const VALIDATION_CONFIG = {
   amount: {
-    min: 1,
-    max: 1000000,
+    min: 50,
+    max: 100000,
     currencySymbol: '₹',
     decimalPlaces: 2,
   },
@@ -33,7 +33,8 @@ export const VALIDATION_CONFIG = {
   billNumber: {
     minLength: 3,
     maxLength: 50,
-    pattern: /^[a-zA-Z0-9\-\/\_\s]*$/,
+    // Alphanumeric with hyphens/slashes/underscores only — no spaces
+    pattern: /^[a-zA-Z0-9\-\/\_]*$/,
   },
   notes: {
     maxLength: 500,
@@ -78,6 +79,31 @@ export function validateAmount(amount: string | number): ValidationResult {
     };
   }
 
+  // If string input, validate that it is fully numeric (no trailing non-numeric chars except e/E for scientific notation)
+  if (typeof amount === 'string') {
+    const trimmed = amount.trim();
+    // Allow digits, one decimal point, optional negative sign, optional scientific notation
+    if (!/^-?\d+(\.\d+)?([eE][+-]?\d+)?$/.test(trimmed)) {
+      return {
+        isValid: false,
+        error: 'Please enter a valid amount',
+      };
+    }
+    // Check decimal places (only for non-scientific notation)
+    if (!/[eE]/.test(trimmed)) {
+      const decimalIdx = trimmed.indexOf('.');
+      if (decimalIdx !== -1) {
+        const decimals = trimmed.slice(decimalIdx + 1);
+        if (decimals.length > VALIDATION_CONFIG.amount.decimalPlaces) {
+          return {
+            isValid: false,
+            error: `Amount can have maximum ${VALIDATION_CONFIG.amount.decimalPlaces} decimal places`,
+          };
+        }
+      }
+    }
+  }
+
   // Check minimum amount
   if (numAmount < VALIDATION_CONFIG.amount.min) {
     return {
@@ -94,16 +120,7 @@ export function validateAmount(amount: string | number): ValidationResult {
     };
   }
 
-  // Check decimal places
-  const decimalPlaces = (numAmount.toString().split('.')[1] || '').length;
-  if (decimalPlaces > VALIDATION_CONFIG.amount.decimalPlaces) {
-    return {
-      isValid: false,
-      error: `Amount can have maximum ${VALIDATION_CONFIG.amount.decimalPlaces} decimal places`,
-    };
-  }
-
-  // Valid amount - return rounded value
+  // Valid amount - return rounded value (truncate to 2 decimal places)
   const roundedAmount = Math.round(numAmount * 100) / 100;
 
   return {

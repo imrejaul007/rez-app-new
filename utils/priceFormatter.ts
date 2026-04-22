@@ -21,10 +21,10 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   JPY: '\u00A5', // ¥
   AUD: 'A$',
   CAD: 'C$',
-  AED: '\u062F.\u0625', // د.إ (UAE Dirham)
+  AED: '\u062F\u0625', // دإ (UAE Dirham — no period)
   CNY: '\u00A5', // ¥ (Chinese Yuan - same symbol as JPY)
   SGD: 'S$',
-  SAR: '\u0631.\u0633', // ر.س (Saudi Riyal)
+  SAR: '\u0631\u0633', // رس (Saudi Riyal — no period)
 };
 
 /**
@@ -33,7 +33,7 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 const CURRENCY_LOCALES: Record<string, string> = {
   INR: 'en-IN',
   USD: 'en-US',
-  EUR: 'de-DE',
+  EUR: 'en-US', // de-DE uses comma decimal (€100,00) — use en-US for Western format (€100.00)
   GBP: 'en-GB',
   JPY: 'ja-JP',
   AUD: 'en-AU',
@@ -399,8 +399,11 @@ export function parsePrice(priceString: string | null | undefined): number | nul
   // This regex removes: ₹ $ € £ ¥ د.إ ر.س A$ C$ S$ and common currency codes
   const cleaned = priceString
     .replace(/[₹$€£¥,\s]/g, '')
-    .replace(/[د.إ]/g, '')
-    .replace(/[ر.س]/g, '')
+    // Arabic thousands separator (U+066C) and Arabic decimal separator (U+066B)
+    .replace(/[\u066C\u066B]/g, '')
+    // Remove Arabic currency symbols: د.إ (AED), ر.س (SAR) — note: . in the original was an ASCII period bug
+    .replace(/[دإ]/g, '')
+    .replace(/[رس]/g, '')
     .replace(/A\$/g, '')
     .replace(/C\$/g, '')
     .replace(/S\$/g, '')

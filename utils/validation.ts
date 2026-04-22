@@ -58,8 +58,12 @@ export function validateReferralCode(code: string): boolean {
     return false;
   }
 
-  const trimmedCode = code.trim();
-  return REFERRAL_CODE_REGEX.test(trimmedCode);
+  // Reject if code has leading or trailing whitespace (must be exact format)
+  if (code !== code.trim()) {
+    return false;
+  }
+
+  return REFERRAL_CODE_REGEX.test(code);
 }
 
 /**

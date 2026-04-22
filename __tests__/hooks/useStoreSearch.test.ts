@@ -5,36 +5,36 @@
 import { renderHook, waitFor, act } from '@testing-library/react-native';
 import { useStoreSearch } from '@/hooks/useStoreSearch';
 
-jest.mock('@/services/searchApi', () => ({
-  searchStores: jest.fn(() => Promise.resolve({ stores: [], products: [] })),
+jest.mock('@/services/storeSearchService', () => ({
+  storeSearchService: {
+    advancedStoreSearch: jest.fn(() => Promise.resolve({ stores: [], total: 0 })),
+    searchStoresByCategory: jest.fn(() => Promise.resolve({ stores: [], total: 0 })),
+    formatLocationForAPI: jest.fn(),
+  },
+}));
+
+jest.mock('@/hooks/useLocation', () => ({
+  useCurrentLocation: jest.fn(() => ({ currentLocation: null })),
 }));
 
 describe('useStoreSearch', () => {
   it('should search stores', async () => {
-    const { result } = renderHook(() => useStoreSearch());
+    const { result } = renderHook(() => useStoreSearch({ autoFetch: false }));
 
     act(() => {
-      result.current.search('test query');
+      result.current.fetchStores(1);
     });
 
     await waitFor(() => {
-      expect(result.current.results).toBeDefined();
+      expect(result.current.stores).toBeDefined();
     });
   });
 
-  it('should debounce search', async () => {
-    const searchApi = require('@/services/searchApi');
-    const { result } = renderHook(() => useStoreSearch());
-
-    act(() => {
-      result.current.search('t');
-      result.current.search('te');
-      result.current.search('tes');
-      result.current.search('test');
-    });
+  it('should fetch stores with category', async () => {
+    const { result } = renderHook(() => useStoreSearch({ category: 'restaurants' }));
 
     await waitFor(() => {
-      expect(searchApi.searchStores).toHaveBeenCalledTimes(1);
+      expect(result.current.stores).toBeDefined();
     });
   });
 });

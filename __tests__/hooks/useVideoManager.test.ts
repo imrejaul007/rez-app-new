@@ -2,32 +2,28 @@
  * Unit Tests for useVideoManager hook
  */
 
-import { renderHook, waitFor, act } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react-native';
 import { useVideoManager } from '@/hooks/useVideoManager';
 
 describe('useVideoManager', () => {
   it('should manage video playback state', () => {
-    const { result } = renderHook(() => useVideoManager());
+    const { result } = renderHook(() => useVideoManager('test-video-id'));
 
-    expect(result.current.currentVideo).toBeNull();
+    expect(result.current.isLoaded).toBe(false);
+    expect(result.current.isPlaying).toBe(false);
   });
 
-  it('should play video', () => {
-    const { result } = renderHook(() => useVideoManager());
+  it('should start and stop playback', async () => {
+    const { result } = renderHook(() => useVideoManager('test-video-id'));
 
-    act(() => {
-      result.current.playVideo('video-123');
+    await act(async () => {
+      await result.current.startPlayback();
     });
 
-    expect(result.current.currentVideo).toBe('video-123');
-  });
+    expect(result.current.isPlaying).toBe(true);
 
-  it('should pause video', () => {
-    const { result } = renderHook(() => useVideoManager());
-
-    act(() => {
-      result.current.playVideo('video-123');
-      result.current.pauseVideo();
+    await act(async () => {
+      await result.current.stopPlayback();
     });
 
     expect(result.current.isPlaying).toBe(false);
