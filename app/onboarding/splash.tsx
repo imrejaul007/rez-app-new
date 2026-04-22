@@ -132,7 +132,7 @@ function SplashScreen() {
           <Text style={styles.brandText}>{BRAND.APP_NAME}</Text>
           <View style={styles.brandUnderline}>
             <LinearGradient
-              colors={[COLORS.gold, (COLORS as any).goldDark]}
+              colors={[COLORS.gold, COLORS.goldDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.underlineGradient}

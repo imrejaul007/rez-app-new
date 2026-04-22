@@ -125,7 +125,7 @@ function NotificationPermissionPage() {
         <View style={styles.illustrationContainer}>
           <View style={styles.bellContainer}>
             <View style={styles.bellCircle}>
-              <Ionicons name="notifications" size={56} color={Colors.primary[600]} />
+              <Ionicons name="notifications" size={56} color={colors.primary[600]} />
             </View>
             <View style={styles.notificationBadge}>
               <ThemedText style={styles.badgeText}>3</ThemedText>
@@ -162,7 +162,7 @@ function NotificationPermissionPage() {
           {BENEFITS.map((benefit, index) => (
             <View key={index} style={styles.benefitItem}>
               <View style={styles.benefitIcon}>
-                <Ionicons name={benefit.icon as any} size={24} color={Colors.primary[600]} />
+                <Ionicons name={benefit.icon as keyof typeof Ionicons.glyphMap} size={24} color={colors.primary[600]} />
               </View>
               <View style={styles.benefitContent}>
                 <ThemedText style={styles.benefitTitle}>{benefit.title}</ThemedText>
@@ -184,7 +184,7 @@ function NotificationPermissionPage() {
           accessibilityLabel="Enable notifications"
           accessibilityRole="button"
         >
-          <LinearGradient colors={[Colors.primary[600], Colors.primary[700]]} style={styles.enableButtonGradient}>
+          <LinearGradient colors={[colors.primary[600], colors.primary[700]]} style={styles.enableButtonGradient}>
             {loading ? (
               <ActivityIndicator color={colors.background.primary} />
             ) : (
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.primary[50],
+    backgroundColor: colors.primary[50],
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.medium,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: Colors.primary[100],
+    backgroundColor: colors.primary[100],
   },
   previewLines: {
     flex: 1,
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.primary[50],
+    backgroundColor: colors.primary[50],
     justifyContent: 'center',
     alignItems: 'center',
   },
