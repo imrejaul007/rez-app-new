@@ -42,7 +42,7 @@ interface Store {
     premium?: boolean;
   };
   isOpen?: boolean;
-  distance?: string;
+  distance?: number | string;
 }
 
 const GroceryStoresPage: React.FC = () => {

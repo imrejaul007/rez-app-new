@@ -100,11 +100,14 @@ export const RecommendedStoresSection: React.FC = () => {
             {item.name}
           </Text>
 
-          {item.category?.name && (
-            <Text style={styles.category} numberOfLines={1}>
-              {item.category.name}
-            </Text>
-          )}
+          {(() => {
+            const catName = typeof item.category === 'string' ? item.category : item.category?.name;
+            return catName ? (
+              <Text style={styles.category} numberOfLines={1}>
+                {catName}
+              </Text>
+            ) : null;
+          })()}
 
           {item.distance && (
             <View style={styles.distanceContainer}>

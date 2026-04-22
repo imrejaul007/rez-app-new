@@ -237,7 +237,10 @@ function StoreMapScreen() {
               <Callout tooltip onPress={() => handleNavigateToStore(store.id)}>
                 <View style={styles.callout}>
                   <Text style={styles.storeName}>{store.name}</Text>
-                  {store.category?.name && <Text style={styles.category}>{store.category.name}</Text>}
+                  {(() => {
+                    const catName = typeof store.category === 'string' ? store.category : store.category?.name;
+                    return catName ? <Text style={styles.category}>{catName}</Text> : null;
+                  })()}
                   {store.distance && (
                     <Text style={styles.distance}>
                       {typeof store.distance === 'number' ? `${store.distance.toFixed(1)} km away` : store.distance}

@@ -608,7 +608,10 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           <View style={styles.storeInfo}>
             {/* ETHAN: crash guard — store.name could be undefined */}
             <ThemedText style={styles.storeName}>{store?.name ?? 'Store'}</ThemedText>
-            {store?.category?.name && <ThemedText style={styles.storeCategory}>{store.category.name}</ThemedText>}
+            {(() => {
+              const catName = typeof store?.category === 'string' ? store.category : store?.category?.name;
+              return catName ? <ThemedText style={styles.storeCategory}>{catName}</ThemedText> : null;
+            })()}
           </View>
         </LinearGradient>
 

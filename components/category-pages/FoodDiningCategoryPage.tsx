@@ -31,9 +31,46 @@ import { LoadingState } from '@/components/common/LoadingState';
 import { foodCategoryData, foodQuickActions } from '@/data/category/foodCategoryData';
 import { categoriesApi } from '@/services/categoriesApi';
 import ordersApi, { Order } from '@/services/ordersApi';
-import tableBookingApi from '@/services/tableBookingApi';
 import { storesApi } from '@/services/storesApi';
+import tableBookingApi from '@/services/tableBookingApi';
 import productsApi from '@/services/productsApi';
+import type { CategoryStoreItem } from '@/hooks/useCategoryPageData';
+
+// Local type that covers all fields added by useCategoryPageData's stores useMemo
+type FoodStore = CategoryStoreItem & {
+  _id?: string;
+  banner?: string;
+  ratings?: { average: number; count: number };
+  category?: { id?: string; name?: string; slug?: string };
+  tags?: string[];
+  rewardRules?: unknown;
+  priceForTwo?: number;
+  offers?: { cashback?: number };
+  operationalInfo?: {
+    deliveryTime?: string;
+    deliveryFee?: number;
+    freeDeliveryAbove?: number;
+    minimumOrder?: number;
+    isCurrentlyOpen?: boolean;
+  };
+  deliveryCategories?: { fastDelivery?: boolean };
+  location?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+    country?: string;
+    coordinates?: [number, number];
+  };
+  bookingType?: string;
+  bookingConfig?: { enabled?: boolean };
+  storeVisitConfig?: { enabled?: boolean };
+  isFeatured?: boolean;
+  isOpen?: boolean;
+  type?: string;
+  isDineIn?: boolean;
+  serviceCapabilities?: { storePickup?: { enabled?: boolean } };
+};
 
 // Extracted food-dining components
 import {
@@ -45,6 +82,7 @@ import {
   RestaurantCompareSection,
   ReviewsSection,
   PersonalizedSections,
+  type FoodRestaurant,
 } from '@/components/food-dining';
 import storeComparisonApi from '@/services/storeComparisonApi';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -169,7 +207,7 @@ function FoodDiningCategoryPage() {
         if (response.success && response.data?.visits) {
           const counts: Record<string, number> = {};
           response.data.visits.forEach(visit => {
-            const storeId = (visit.store as any)?._id || visit.store?.id;
+            const storeId = visit.store?._id || visit.store?.id;
             if (!storeId) return;
             counts[storeId] = (counts[storeId] || 0) + 1;
           });
@@ -334,14 +372,12 @@ function FoodDiningCategoryPage() {
         ? (Array.isArray(response.data) ? response.data : response.data?.stores || [])
         : [];
       if (storesArr.length > 0) {
-        const formatted = storesArr.map((store: any) => ({
-          id: (store as any)._id || store.id, _id: (store as any)._id || store.id, name: store.name, slug: store.slug,
-          logo: store.logo, banner: store.banner, rating: store.rating?.average || 0, ratings: store.rating,
-          cashback: store.offers?.cashback, distance: store.distance, tags: store.tags || [],
-          rewardRules: store.rewardRules, priceForTwo: store.priceForTwo, offers: store.offers,
-          operationalInfo: store.operationalInfo, deliveryCategories: store.deliveryCategories, location: store.location,
-          is60Min: store.deliveryCategories?.fastDelivery || false, isDineIn: store.bookingType === 'RESTAURANT' || false,
-          category: store.category,
+        const formatted = storesArr.map((store) => ({
+          ...store,
+          ratings: store.rating || store.ratings,
+          cashback: store.offers?.cashback,
+          is60Min: store.deliveryCategories?.fastDelivery || false,
+          isDineIn: store.bookingType === 'RESTAURANT',
         }));
         setExtraStores(prev => [...prev, ...formatted]);
         setAllRestaurantsPage(nextPage);
@@ -363,12 +399,12 @@ function FoodDiningCategoryPage() {
   // ===== Filtering & Sorting =====
 
   const filteredStores = useMemo(() => {
-    let result = [...stores];
+    let result: FoodStore[] = [...(stores as FoodStore[])];
 
     // Cuisine filter
     if (activeCuisine !== 'all') {
       const cuisineTags = CUISINE_TAG_MAP[activeCuisine] || [activeCuisine];
-      result = result.filter((store: any) => {
+      result = result.filter((store: FoodStore) => {
         if (store.tags && Array.isArray(store.tags)) {
           const storeTags = store.tags.map((tag: string) => tag.toLowerCase());
           return cuisineTags.some(ct => storeTags.some((st: string) => st.includes(ct.toLowerCase())));
@@ -382,7 +418,7 @@ function FoodDiningCategoryPage() {
     // Dietary filter
     if (activeDietary.length > 0) {
       const dietaryTags = activeDietary.flatMap(d => dynamicDietaryOptions.find(o => o.id === d)?.tags || []);
-      result = result.filter((store: any) => {
+      result = result.filter((store: FoodStore) => {
         if (!store.tags || !Array.isArray(store.tags)) return false;
         const storeTags = store.tags.map((t: string) => t.toLowerCase());
         return dietaryTags.some(dt => storeTags.includes(dt.toLowerCase()));
@@ -391,40 +427,44 @@ function FoodDiningCategoryPage() {
 
     // Rating filter
     if (activeFilters.minRating) {
-      result = result.filter(s => ((s as any).rating?.average || (s as any).rating || 0) >= activeFilters.minRating!);
+      result = result.filter(s => ((s as FoodStore).ratings?.average || (s as FoodStore).rating || 0) >= activeFilters.minRating!);
     }
 
     // Price filter
     if (activeFilters.priceMax) {
-      result = result.filter(s => ((s as any).priceForTwo || 0) <= activeFilters.priceMax!);
+      result = result.filter(s => ((s as FoodStore).priceForTwo || 0) <= activeFilters.priceMax!);
     }
 
     // Open Now filter
     if (activeFilters.openNow) {
-      result = result.filter(s => isRestaurantOpen(s as any).isOpen);
+      result = result.filter(s => isRestaurantOpen(s as FoodRestaurant).isOpen);
     }
 
     // Sort
     result.sort((a, b) => {
+      const aRating = a.ratings?.average || a.rating || 0;
+      const bRating = b.ratings?.average || b.rating || 0;
+      const aCount = a.ratings?.count || 0;
+      const bCount = b.ratings?.count || 0;
       switch (sortOption) {
-        case 'rating': return ((b as any).rating?.average || (b as any).rating || 0) - ((a as any).rating?.average || (a as any).rating || 0);
+        case 'rating': return bRating - aRating;
         case 'delivery_time': {
-          const aTime = parseInt((a as any).operationalInfo?.deliveryTime, 10) || 60;
-          const bTime = parseInt((b as any).operationalInfo?.deliveryTime, 10) || 60;
+          const aTime = parseInt((a as FoodStore).operationalInfo?.deliveryTime || '60', 10) || 60;
+          const bTime = parseInt((b as FoodStore).operationalInfo?.deliveryTime || '60', 10) || 60;
           return aTime - bTime;
         }
         case 'newest': return 0;
-        default: return ((b as any).rating?.count || 0) - ((a as any).rating?.count || 0);
+        default: return bCount - aCount;
       }
     });
 
     return result;
   }, [stores, activeCuisine, activeDietary, activeFilters, sortOption, dynamicDietaryOptions]);
 
-  const fastDeliveryStores = filteredStores.filter((s: any) => s.is60Min);
-  const topRatedStores = filteredStores.filter((s: any) => (s.rating || 0) >= 4.5);
+  const fastDeliveryStores = filteredStores.filter((s: FoodStore) => s.is60Min);
+  const topRatedStores = filteredStores.filter((s: FoodStore) => (s.rating || 0) >= 4.5);
   const actualTakeawayStores = useMemo(
-    () => filteredStores.filter((s: any) => s.hasPickup || s.serviceCapabilities?.storePickup?.enabled),
+    () => filteredStores.filter((s: FoodStore) => s.hasPickup || s.serviceCapabilities?.storePickup?.enabled),
     [filteredStores]
   );
   const takeawayStores = useMemo(
@@ -432,23 +472,23 @@ function FoodDiningCategoryPage() {
     [actualTakeawayStores, filteredStores]
   );
   const isTakeawayFallback = actualTakeawayStores.length === 0 && filteredStores.length > 0;
-  const actualDineInStores = useMemo(() => filteredStores.filter((s: any) => s.isDineIn), [filteredStores]);
+  const actualDineInStores = useMemo(() => filteredStores.filter((s: FoodStore) => s.isDineIn), [filteredStores]);
   const dineInStores = useMemo(() => actualDineInStores.length > 0 ? actualDineInStores : filteredStores, [actualDineInStores, filteredStores]);
   const isDineInFallback = actualDineInStores.length === 0 && filteredStores.length > 0;
 
   // Filter newStores by active cuisine/dietary filters
   const filteredNewStores = useMemo(() => {
-    let result = [...newStores];
+    let result: FoodStore[] = [...(newStores as FoodStore[])];
     if (activeCuisine !== 'all') {
       const cuisineTags = CUISINE_TAG_MAP[activeCuisine] || [activeCuisine];
-      result = result.filter((store: any) => {
+      result = result.filter((store: FoodStore) => {
         const storeTags = (store.tags || []).map((t: string) => t.toLowerCase());
         return cuisineTags.some(ct => storeTags.some((st: string) => st.includes(ct.toLowerCase())));
       });
     }
     if (activeDietary.length > 0) {
       const dietaryTags = activeDietary.flatMap(d => dynamicDietaryOptions.find(o => o.id === d)?.tags || []);
-      result = result.filter((store: any) => {
+      result = result.filter((store: FoodStore) => {
         const storeTags = (store.tags || []).map((t: string) => t.toLowerCase());
         return dietaryTags.some(dt => storeTags.includes(dt.toLowerCase()));
       });
@@ -853,7 +893,7 @@ function FoodDiningCategoryPage() {
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.restaurantsList}>
                   {fastDeliveryStores.slice(0, 5).map((store) => (
-                    <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} variant="compact" userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
+                    <RestaurantCard key={store._id || store.id} restaurant={store as any} variant="compact" userVisitCount={visitCounts[store._id || store.id] || 0} />
                   ))}
                 </ScrollView>
               </View>
@@ -876,7 +916,7 @@ function FoodDiningCategoryPage() {
                 </View>
                 <View style={styles.restaurantsGrid}>
                   {topRatedStores.slice(0, 4).map((store) => (
-                    <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
+                    <RestaurantCard key={store._id || store.id} restaurant={store as any} userVisitCount={visitCounts[store._id || store.id] || 0} />
                   ))}
                 </View>
               </View>
@@ -895,8 +935,8 @@ function FoodDiningCategoryPage() {
                   <Text style={styles.sectionTitle}>New on {BRAND.APP_NAME}</Text>
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.restaurantsList}>
-                  {filteredNewStores.map((store: any) => (
-                    <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} variant="compact" showNewBadge />
+                  {filteredNewStores.map((store: FoodStore) => (
+                    <RestaurantCard key={store._id || store.id} restaurant={store as any} variant="compact" showNewBadge />
                   ))}
                 </ScrollView>
               </View>
@@ -921,10 +961,10 @@ function FoodDiningCategoryPage() {
                 ) : (
                   <>
                     {filteredStores.slice(0, RESTAURANTS_PER_PAGE).map((store) => (
-                      <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
+                      <RestaurantCard key={store._id || store.id} restaurant={store as any} userVisitCount={visitCounts[store._id || store.id] || 0} />
                     ))}
                     {extraStores.map((store) => (
-                      <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
+                      <RestaurantCard key={store._id || store.id} restaurant={store as any} userVisitCount={visitCounts[store._id || store.id] || 0} />
                     ))}
                     {hasMoreRestaurants && (
                       <Pressable style={styles.loadMoreButton} onPress={loadMoreRestaurants} disabled={isLoadingMore} accessibilityLabel="Load more restaurants" accessibilityRole="button">
@@ -1037,7 +1077,7 @@ function FoodDiningCategoryPage() {
               </View>
               <View style={styles.restaurantsGrid}>
                 {dineInStores.map((store) => (
-                  <RestaurantCard key={(store as any)._id || store.id} restaurant={store as any} showReserveButton={!isDineInFallback} userVisitCount={visitCounts[(store as any)._id || store.id] || 0} />
+                  <RestaurantCard key={store._id || store.id} restaurant={store as any} showReserveButton={!isDineInFallback} userVisitCount={visitCounts[store._id || store.id] || 0} />
                 ))}
               </View>
             </View>
@@ -1065,9 +1105,9 @@ function FoodDiningCategoryPage() {
               <View style={styles.restaurantsGrid}>
                 {takeawayStores.map((store) => (
                   <RestaurantCard
-                    key={(store as any)._id || store.id}
+                    key={store._id || store.id}
                     restaurant={store as any}
-                    userVisitCount={visitCounts[(store as any)._id || store.id] || 0}
+                    userVisitCount={visitCounts[store._id || store.id] || 0}
                   />
                 ))}
               </View>

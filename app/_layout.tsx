@@ -343,11 +343,11 @@ function RootLayout() {
       // Hotel booking auth tokens must not be stored in plain AsyncStorage
       // (extractable on Android/rooted devices). If SecureStore unavailable,
       // skip auto-login rather than storing in plaintext.
-      const otaTokenRaw = await authStorage.secureGet('@ota_access_token');
+      const { rezSsoLogin, getOtaToken } = await import('@/services/hotelOtaApi');
+      const otaTokenRaw = await getOtaToken();
       const hasRez = !!rezTokenVal;
       const hasOta = !!otaTokenRaw;
       if (hasRez && !hasOta) {
-        const { rezSsoLogin } = await import('@/services/hotelOtaApi');
         await rezSsoLogin(rezTokenVal!).catch(() => {
           /* Non-fatal */
         });
