@@ -31,7 +31,13 @@ const BillCamera = React.memo(function BillCamera({
       <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType}>
         <View style={styles.cameraOverlay}>
           {/* Close button */}
-          <Pressable style={styles.cameraCloseButton} onPress={onClose}>
+          <Pressable
+            style={styles.cameraCloseButton}
+            onPress={onClose}
+            accessible={true}
+            accessibilityLabel="Close camera"
+            accessibilityRole="button"
+          >
             <Ionicons name="close" size={32} color={colors.text.inverse} />
           </Pressable>
 
@@ -48,11 +54,23 @@ const BillCamera = React.memo(function BillCamera({
 
           {/* Controls */}
           <View style={styles.cameraControls}>
-            <Pressable style={styles.cameraFlipButton} onPress={onFlipCamera}>
+            <Pressable
+              style={styles.cameraFlipButton}
+              onPress={onFlipCamera}
+              accessible={true}
+              accessibilityLabel="Flip camera"
+              accessibilityRole="button"
+            >
               <Ionicons name="camera-reverse" size={32} color={colors.text.inverse} />
             </Pressable>
 
-            <Pressable style={styles.cameraCaptureButton} onPress={onCapture}>
+            <Pressable
+              style={styles.cameraCaptureButton}
+              onPress={onCapture}
+              accessible={true}
+              accessibilityLabel="Capture bill photo"
+              accessibilityRole="button"
+            >
               <View style={styles.cameraCaptureButtonInner} />
             </Pressable>
 
