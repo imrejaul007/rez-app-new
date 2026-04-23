@@ -221,6 +221,7 @@ export const useCategoryPageConfig = (slug: string): UseCategoryPageConfigResult
         setIsLoading(false);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   /**

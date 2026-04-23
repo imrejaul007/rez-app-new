@@ -52,6 +52,7 @@ function BankVerificationModal({
     if (visible) {
       initiateVerification();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const initiateVerification = async () => {

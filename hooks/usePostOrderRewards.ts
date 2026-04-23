@@ -147,6 +147,7 @@ export function usePostOrderRewards({
     }
 
     return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId, isAuthenticated, authLoading]);
 
   // Check review status on mount

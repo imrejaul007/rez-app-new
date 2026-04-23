@@ -141,6 +141,7 @@ function SearchPage() {
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         abortControllerRef.current.abort();
       }
     };
@@ -151,6 +152,7 @@ function SearchPage() {
   // ============================================
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

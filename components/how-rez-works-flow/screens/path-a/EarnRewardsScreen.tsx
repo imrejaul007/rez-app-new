@@ -47,6 +47,7 @@ const FloatingCoin: React.FC<{ delay: number; startX: number }> = ({ delay, star
             2,
             false
         ));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const style = useAnimatedStyle(() => ({
@@ -84,6 +85,7 @@ const EarnRewardsScreen: React.FC<Props> = ({ onNavigate, onBack }) => {
             -1,
             true
         );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const iconStyle = useAnimatedStyle(() => ({

@@ -202,6 +202,7 @@ const HealthcareCategoryPage: React.FC = () => {
 
   useEffect(() => {
     fetchStores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, selectedFilter]);
 
   const onRefresh = useCallback(async () => {
@@ -209,6 +210,7 @@ const HealthcareCategoryPage: React.FC = () => {
     await fetchStores();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, selectedFilter]);
 
   // Redirect to dedicated pages if they exist

@@ -151,6 +151,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isOffline, trackEvent]);
 
   useEffect(() => {
@@ -164,6 +165,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
     });
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const timeSpent = Date.now() - startTimeRef.current;
       trackEvent('financial_service_time_spent', {
         service_id: id,

@@ -54,6 +54,7 @@ function ReportToast({
     return () => {
       if (dismissTimer.current) clearTimeout(dismissTimer.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const getIconName = () => {

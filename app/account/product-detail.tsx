@@ -26,6 +26,7 @@ function ProductDetailScreen() {
     if (id) {
       loadProductDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadProductDetails = async () => {

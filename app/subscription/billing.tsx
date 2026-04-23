@@ -35,6 +35,7 @@ function BillingHistoryPage() {
 
   useEffect(() => {
     loadBillingData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadBillingData = async () => {
@@ -66,11 +67,15 @@ function BillingHistoryPage() {
     await loadBillingData();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDownloadInvoice = async (invoiceId: string) => {
     try {
-      platformAlertSimple('Download Invoice', 'Invoice download functionality will be available soon. For now, you can view invoice details.');
+      platformAlertSimple(
+        'Download Invoice',
+        'Invoice download functionality will be available soon. For now, you can view invoice details.',
+      );
 
       // In production, this would download the PDF
       // const blob = await subscriptionAPI.downloadInvoice(invoiceId);
@@ -87,10 +92,10 @@ function BillingHistoryPage() {
       platformAlertSimple(
         'Invoice Details',
         `Invoice #${invoice.invoiceNumber}\n\n` +
-        `Date: ${new Date(invoice.date).toLocaleDateString()}\n` +
-        `Amount: ${currencySymbol}${invoice.total}\n` +
-        `Status: ${invoice.status}\n` +
-        `Payment Method: ${invoice.paymentMethod}`
+          `Date: ${new Date(invoice.date).toLocaleDateString()}\n` +
+          `Amount: ${currencySymbol}${invoice.total}\n` +
+          `Status: ${invoice.status}\n` +
+          `Payment Method: ${invoice.paymentMethod}`,
       );
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load invoice details');
@@ -123,7 +128,7 @@ function BillingHistoryPage() {
       <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -140,9 +145,7 @@ function BillingHistoryPage() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Summary Cards */}
         {summary && !loading && (
@@ -155,7 +158,10 @@ function BillingHistoryPage() {
                 accessibilityRole="text"
               >
                 <Ionicons name="wallet-outline" size={24} color={Colors.brand.purpleLight} />
-                <ThemedText style={styles.summaryValue}>{currencySymbol}{summary.totalSpent}</ThemedText>
+                <ThemedText style={styles.summaryValue}>
+                  {currencySymbol}
+                  {summary.totalSpent}
+                </ThemedText>
                 <ThemedText style={styles.summaryLabel}>Total Spent</ThemedText>
               </View>
 
@@ -177,7 +183,10 @@ function BillingHistoryPage() {
                 accessibilityRole="text"
               >
                 <Ionicons name="trending-up-outline" size={24} color={Colors.warning} />
-                <ThemedText style={styles.summaryValue}>{currencySymbol}{summary.totalSavings}</ThemedText>
+                <ThemedText style={styles.summaryValue}>
+                  {currencySymbol}
+                  {summary.totalSavings}
+                </ThemedText>
                 <ThemedText style={styles.summaryLabel}>Total Savings</ThemedText>
               </View>
 
@@ -188,11 +197,11 @@ function BillingHistoryPage() {
                 accessibilityRole="text"
               >
                 <Ionicons name="analytics-outline" size={24} color={Colors.info} />
-                <ThemedText style={[
-                  styles.summaryValue,
-                  { color: summary.netSavings >= 0 ? Colors.success : Colors.error }
-                ]}>
-                  {currencySymbol}{summary.netSavings}
+                <ThemedText
+                  style={[styles.summaryValue, { color: summary.netSavings >= 0 ? Colors.success : Colors.error }]}
+                >
+                  {currencySymbol}
+                  {summary.netSavings}
                 </ThemedText>
                 <ThemedText style={styles.summaryLabel}>Net Savings</ThemedText>
               </View>
@@ -202,9 +211,10 @@ function BillingHistoryPage() {
               <View style={styles.membershipInfo}>
                 <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.membershipText}>
-                  Member since {new Date(summary.memberSince).toLocaleDateString('en-US', {
+                  Member since{' '}
+                  {new Date(summary.memberSince).toLocaleDateString('en-US', {
                     month: 'long',
-                    year: 'numeric'
+                    year: 'numeric',
                   })}
                 </ThemedText>
               </View>

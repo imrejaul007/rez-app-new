@@ -90,6 +90,7 @@ const SkeletonPulse: React.FC<{ style?: any }> = ({ style }) => {
     return () => {
       anim.value = 0.3;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <Animated.View style={[{ backgroundColor: C.skeleton, borderRadius: 8 }, style, animStyle]} />;
 };
@@ -260,10 +261,12 @@ const TravelPage: React.FC = () => {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     fetchTravelData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefresh = useCallback(() => {

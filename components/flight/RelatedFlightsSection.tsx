@@ -44,6 +44,7 @@ const RelatedFlightsSection: React.FC<RelatedFlightsSectionProps> = ({
 
   useEffect(() => {
     loadRelatedFlights();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadRelatedFlights = async () => {

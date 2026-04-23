@@ -73,6 +73,7 @@ function PromotionsBanner({
     if (sortedBanners.length > 0) {
       slideAnim.value = withSpring(0, { damping: 8, stiffness: 50 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortedBanners.length]);
 
   // Auto-rotation logic
@@ -106,6 +107,7 @@ function PromotionsBanner({
     if (dismissedBanners.size + 1 >= banners.length) {
       slideAnim.value = withTiming(-100, { duration: 300 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss, dismissedBanners.size, banners.length]);
 
   const handleBannerPress = useCallback((banner: PromotionBanner) => {
@@ -216,6 +218,7 @@ function PromotionBannerItem({
         -1
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [banner.expiryDate, isActive]);
 
   const pulseAnimatedStyle = useAnimatedStyle(() => ({

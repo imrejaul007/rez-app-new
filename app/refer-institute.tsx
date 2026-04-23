@@ -62,6 +62,7 @@ function ReferInstitutePage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instituteName, instituteType, city, email]);
 
   if (submitted) {

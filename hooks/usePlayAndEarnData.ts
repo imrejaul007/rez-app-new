@@ -278,6 +278,7 @@ export function usePlayAndEarnData() {
 
   // Live countdown timer for tournaments
   const [liveTournaments, setLiveTournaments] = useState<LiveTournament[]>([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const tournamentsFromQuery = games.data?.tournaments || [];
 
   useEffect(() => {

@@ -106,6 +106,7 @@ const ShopByExperienceSection: React.FC = () => {
     };
 
     fetchExperiences();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePress = (slug: string) => {

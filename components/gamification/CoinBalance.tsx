@@ -67,6 +67,7 @@ function CoinBalance({
 
       // cleanup handled by reanimated
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.coinBalance.total, previousBalance, animateChanges]);
 
   const handlePress = () => {

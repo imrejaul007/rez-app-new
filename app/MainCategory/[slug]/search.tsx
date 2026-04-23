@@ -127,6 +127,7 @@ function SharedCategoryPage() {
     if (q) {
       performSearch(q);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
   // Fetch recent searches
@@ -205,6 +206,7 @@ function SharedCategoryPage() {
         setIsSearching(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [slug],
   );
 

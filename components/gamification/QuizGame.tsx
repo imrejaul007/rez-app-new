@@ -40,6 +40,7 @@ function QuizGame({ difficulty, category, onGameComplete }: QuizGameProps) {
     return () => {
       if (timerInterval.current) clearInterval(timerInterval.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Start quiz

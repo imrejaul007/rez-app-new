@@ -197,6 +197,7 @@ function ScheduledDropsPage() {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [claimingId, fetchDrops],
   );
 

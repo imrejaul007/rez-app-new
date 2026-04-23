@@ -31,6 +31,7 @@ function RecentProjectsSection({
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 500 });
     slideAnim.value = withTiming(0, { duration: 500 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const containerStyle = useAnimatedStyle(() => ({

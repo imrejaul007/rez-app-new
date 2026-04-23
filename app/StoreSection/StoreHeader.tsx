@@ -108,6 +108,7 @@ function StoreHeader({
       if (!isMounted()) return;
       setIsSaved(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, isAuthenticated]);
 
   useEffect(() => {
@@ -123,6 +124,7 @@ function StoreHeader({
   // Handlers
   const handleBackPress = () => {
     triggerImpact('Medium');
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -189,6 +191,7 @@ function StoreHeader({
       if (!isMounted()) return;
       setIsWishlistLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, productId, isSaved, refreshWishlist, router]);
 
   // Animation helper

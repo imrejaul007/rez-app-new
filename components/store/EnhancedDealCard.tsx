@@ -80,6 +80,7 @@ function EnhancedDealCard({
   // Initialize card animation
   useEffect(() => {
     cardAnim.value = withSpring(1, { damping: 8, stiffness: 100 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Pulse animation for expiring soon deals
@@ -95,6 +96,7 @@ function EnhancedDealCard({
     } else {
       pulseAnim.value = 1;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExpiringSoon, countdown.isExpired]);
 
   const cardAnimatedStyle = useAnimatedStyle(() => ({

@@ -124,6 +124,7 @@ const FinancialPage: React.FC = () => {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOffline, trackEvent]);
 
   useEffect(() => {
@@ -135,6 +136,7 @@ const FinancialPage: React.FC = () => {
     trackScreen('financial_services_hub', {});
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const timeSpent = Date.now() - startTimeRef.current;
       trackEvent('financial_hub_time_spent', {
         time_spent_ms: timeSpent,

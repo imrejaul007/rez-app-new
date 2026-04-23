@@ -55,10 +55,12 @@ const StoreExperienceCard: React.FC<StoreExperienceCardProps> = memo(({
 
   const handlePressIn = useCallback(() => {
     scale.value = withSpring(0.98, { damping: 15 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePressOut = useCallback(() => {
     scale.value = withSpring(1, { damping: 15 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePress = useCallback(() => {

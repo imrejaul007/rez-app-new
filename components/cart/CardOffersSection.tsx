@@ -93,6 +93,7 @@ function CardOffersSection({
     };
 
     fetchOffers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, orderValue]);
 
   const handleViewAllOffers = useCallback(() => {

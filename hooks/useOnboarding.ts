@@ -42,6 +42,7 @@ export const useOnboarding = () => {
   // (including during the OTP flow), causing storm-writes to AsyncStorage.
   useEffect(() => {
     saveProgress();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentStep, state.userData, state.isCompleted]);
 
   const loadSavedProgress = async () => {

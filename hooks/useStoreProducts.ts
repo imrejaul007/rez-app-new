@@ -138,6 +138,7 @@ export function useStoreProducts(
   useEffect(() => {
     setPage(1);
     fetchProducts(1, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, filters]);
 
   /**

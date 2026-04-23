@@ -51,6 +51,7 @@ function SpinWheelGame({
   // Check spin eligibility on mount and when spinsRemaining changes
   useEffect(() => {
     checkSpinEligibility();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinsRemaining]);
 
   const checkSpinEligibility = async () => {

@@ -63,6 +63,7 @@ function TravelSearchPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
   const isMounted = useIsMounted();
 

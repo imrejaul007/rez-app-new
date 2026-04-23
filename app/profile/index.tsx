@@ -79,7 +79,7 @@ function ProfilePage() {
           router.push('/my-earnings');
           break;
         default:
-          if (item.route) router.push(item.route);
+          if (item.route) router.push(item.route as any);
           break;
       }
     },
@@ -141,7 +141,7 @@ function ProfilePage() {
           router.push('/bill-simulator');
           break;
         default:
-          if (item.route) router.push(item.route);
+          if (item.route) router.push(item.route as any);
           break;
       }
     },

@@ -67,6 +67,7 @@ function IdentitySectionContainer() {
         hydrateFromBackend(data);
       }
     }).catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading]);
 
   // Fetch leaderboard data for verified users
@@ -79,6 +80,7 @@ function IdentitySectionContainer() {
     } else if (segment === 'verified_employee' && companyName) {
       identityApi.getCompanyLeaderboard(companyName).then((data) => { if (isMounted()) setLeaderboardData(data); }).catch(() => {});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, segment, featureLevel, instituteName, companyName]);
 
   // No identity set or general user → render nothing

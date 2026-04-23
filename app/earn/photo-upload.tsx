@@ -70,6 +70,7 @@ function PhotoUploadPage() {
       if (!isMounted()) return;
       setLoadingHistory(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -102,6 +103,7 @@ function PhotoUploadPage() {
     }, 400);
 
     return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeSearch]);
 
   const handlePickPhotos = async () => {

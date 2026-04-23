@@ -117,6 +117,7 @@ interface VenueCardProps {
   onPress: (slug: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const VenueCard: React.FC<VenueCardProps> = memo(({ venue, onPress }) => (
   <Pressable
     style={styles.card}

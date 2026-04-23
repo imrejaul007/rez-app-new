@@ -74,6 +74,7 @@ function InsurancePage() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch featured plans
@@ -94,6 +95,7 @@ function InsurancePage() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch plans when type filter or page changes
@@ -129,6 +131,7 @@ function InsurancePage() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedType],
   );
 
@@ -299,6 +302,7 @@ function InsurancePage() {
         </View>
       </View>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       types,
       typesLoading,
@@ -349,6 +353,7 @@ function InsurancePage() {
         </Pressable>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [handlePlanPress, currencySymbol],
   );
 

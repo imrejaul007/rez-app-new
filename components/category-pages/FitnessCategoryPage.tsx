@@ -79,8 +79,8 @@ const TRENDING_WORKOUTS = [
 
 // Helper: check if a store matches a given filter
 function storeMatchesFilter(store: any, filterId: string): boolean {
-  const tags = ((store.tags || []) as string[]).map((t: string) => t.toLowerCase());
-  const serviceTypes = ((store.serviceTypes || []) as string[]).map((t: string) => t.toLowerCase());
+  const tags = ((store.tags || []) as any[]).map((t: string) => t.toLowerCase());
+  const serviceTypes = ((store.serviceTypes || []) as any[]).map((t: string) => t.toLowerCase());
   const allTags = [...tags, ...serviceTypes];
 
   switch (filterId) {
@@ -125,6 +125,7 @@ function FitnessCategoryPage() {
   const [activeLifestyleFilters, setActiveLifestyleFilters] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
   const onRefresh = async () => { setRefreshing(true); await refetch(); setRefreshing(false); };
@@ -197,11 +198,11 @@ function FitnessCategoryPage() {
   }, [activeModes, hasActiveFilters]);
 
   const handleCategoryPress = useCallback((category: any) => {
-    router.push(`/MainCategory/fitness-sports/${category.slug || category.id}` as string);
+    router.push(`/MainCategory/fitness-sports/${category.slug || category.id}` as any);
   }, [router]);
 
   const handleAISearch = useCallback((query: string) => {
-    router.push(`/MainCategory/fitness-sports/search?q=${encodeURIComponent(query)}` as string);
+    router.push(`/MainCategory/fitness-sports/search?q=${encodeURIComponent(query)}` as any);
   }, [router]);
 
   if (isLoading && !refreshing && stores.length === 0) {
@@ -246,6 +247,8 @@ function FitnessCategoryPage() {
     );
   };
 
+  if (!categoryConfig) return null;
+
   return (
     <ErrorBoundary onError={() => { /* silently handle */ }}>
     <ScrollView
@@ -262,7 +265,7 @@ function FitnessCategoryPage() {
       />
 
       {/* Rewards Strip */}
-      <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fitness-sports/loyalty' as string)}>
+      <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fitness-sports/loyalty' as any)}>
         <LinearGradient colors={['rgba(249,115,22,0.15)', 'rgba(234,88,12,0.1)']} style={styles.rewardsGradient}>
           <View style={styles.rewardsContent}>
             <Ionicons name="star" size={20} color={COLORS['orange']} />
@@ -311,13 +314,13 @@ function FitnessCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="flame" size={20} color={colors.error} />
             <Text style={styles.sectionTitle}>Trending This Week</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/search?q=trending' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/search?q=trending' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingList}>
             {filteredTrending.map(w => (
-              <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fitness-sports/book-class?service=${w.id}` as string)}>
+              <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fitness-sports/book-class?service=${w.id}` as any)}>
                 <LinearGradient colors={[COLORS['orange'], COLORS.orangeDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                   <Text style={styles.trendingEmoji}>{w.emoji}</Text>
                   <Text style={styles.trendingName}>{w.name}</Text>
@@ -339,13 +342,13 @@ function FitnessCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>💪</Text>
             <Text style={styles.sectionTitle}>Book & Train</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/book-class' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/book-class' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.servicesList}>
             {filteredServices.map(s => (
-              <Pressable key={s.id} style={styles.serviceCard} onPress={() => router.push(`/MainCategory/fitness-sports/book-class?service=${s.id}` as string)}>
+              <Pressable key={s.id} style={styles.serviceCard} onPress={() => router.push(`/MainCategory/fitness-sports/book-class?service=${s.id}` as any)}>
                 <View style={styles.serviceIcon}><Text style={styles.serviceEmoji}>{s.emoji}</Text></View>
                 <Text style={styles.serviceName}>{s.name}</Text>
                 <Text style={styles.serviceCashback}>Up to {s.cashback}% cashback</Text>
@@ -363,13 +366,13 @@ function FitnessCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>🛍️</Text>
             <Text style={styles.sectionTitle}>Fitness Gear</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/search?q=equipment' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/search?q=equipment' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productsList}>
             {filteredProducts.slice(0, 6).map((p: any) => (
-              <Pressable key={p.id} style={styles.productCardCompact} onPress={() => router.push(`/product-page?productId=${p.id}` as string)}>
+              <Pressable key={p.id} style={styles.productCardCompact} onPress={() => router.push(`/product-page?productId=${p.id}` as any)}>
                 {p.image ? (
                   <CachedImage source={p.image} style={styles.productImageCompact} contentFit="cover" />
                 ) : (
@@ -392,7 +395,7 @@ function FitnessCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="shield-checkmark" size={20} color={COLORS['orange']} />
             <Text style={styles.sectionTitle}>Top Gyms & Studios</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/top-rated' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fitness-sports/top-rated' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -401,7 +404,7 @@ function FitnessCategoryPage() {
               const pt = getPriceTier(store.priceForTwo);
               const topSvc = store.serviceTypes?.[0] || '';
               return (
-                <Pressable key={store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as string)}>
+                <Pressable key={store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}>
                   {(store.logo || store.banner?.[0]) ? (
                     <CachedImage source={store.logo || store.banner?.[0]} style={styles.storeImage} contentFit="cover" />
                   ) : (
@@ -439,11 +442,11 @@ function FitnessCategoryPage() {
         </View>
       )}
 
-      <OffersSection categorySlug={slug} title="Today's Top Fitness Deals" onSeeAll={() => router.push('/MainCategory/fitness-sports/offers' as string)} filterTags={activeFilterTags} />
+      <OffersSection categorySlug={slug} title="Today's Top Fitness Deals" onSeeAll={() => router.push('/MainCategory/fitness-sports/offers' as any)} filterTags={activeFilterTags} />
 
       {/* 30-Day Challenge */}
       <View style={styles.section}>
-        <Pressable style={styles.challengeBanner} onPress={() => router.push('/MainCategory/fitness-sports/challenges' as string)}>
+        <Pressable style={styles.challengeBanner} onPress={() => router.push('/MainCategory/fitness-sports/challenges' as any)}>
           <LinearGradient colors={[COLORS['orange'], COLORS.orangeDark]} style={styles.challengeGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.challengeContent}>
               <Text style={styles.challengeEmoji}>🏆</Text>
@@ -462,8 +465,8 @@ function FitnessCategoryPage() {
       <EnhancedUGCSocialProofSection
         categorySlug={slug} categoryName={categoryConfig.name} posts={ugcPosts}
         title="Fitness Transformations" subtitle="Real results from our community!"
-        onPostPress={() => router.push('/MainCategory/fitness-sports/fitness-stories' as string)}
-        onSharePress={() => router.push('/MainCategory/fitness-sports/fitness-stories' as string)}
+        onPostPress={() => router.push('/MainCategory/fitness-sports/fitness-stories' as any)}
+        onSharePress={() => router.push('/MainCategory/fitness-sports/fitness-stories' as any)}
       />
 
       <FooterTrustSection />

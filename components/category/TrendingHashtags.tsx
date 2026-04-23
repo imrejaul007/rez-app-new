@@ -94,6 +94,7 @@ const TrendingHashtags: React.FC<TrendingHashtagsProps> = ({
     };
 
     fetchHashtags();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, hashtags]);
 
   const displayHashtags = hashtags || apiHashtags;

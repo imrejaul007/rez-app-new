@@ -317,7 +317,8 @@ function CheckoutPage() {
 
   const handleContinueToCheckout = useCallback(() => {
     // CA-CMC-037 FIX: Only close modal if checkout can proceed (no unresolved issues)
-    const hasUnresolvedIssues = validationState.validationResult?.issues && validationState.validationResult.issues.length > 0;
+    const hasUnresolvedIssues =
+      validationState.validationResult?.issues && validationState.validationResult.issues.length > 0;
 
     if (hasUnresolvedIssues) {
       // Warn user that they need to resolve issues before proceeding
@@ -330,11 +331,13 @@ function CheckoutPage() {
 
     // Only close modal if all issues are resolved
     dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationState.validationResult?.issues]);
 
   const handleRemoveInvalidItems = useCallback(async () => {
     await removeInvalidItems();
     dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [removeInvalidItems]);
 
   return (

@@ -154,6 +154,7 @@ function FriendsRedeemedPage() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [authLoading, currencySymbol],
   );
 
@@ -161,6 +162,7 @@ function FriendsRedeemedPage() {
     if (authLoading) return;
     setPage(1);
     fetchOffers(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   const handleLoadMore = useCallback(() => {

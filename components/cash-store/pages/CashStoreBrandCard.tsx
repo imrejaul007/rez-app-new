@@ -26,6 +26,7 @@ const CashStoreBrandCard: React.FC<CashStoreBrandCardProps> = ({ brand, index, o
 
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 350 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const handlePressIn = () => {

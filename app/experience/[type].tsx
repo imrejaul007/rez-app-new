@@ -107,6 +107,7 @@ const ExperienceDetailPage: React.FC = () => {
     );
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, searchQuery, currentLocation]);
 
   const capitalizeLine = (str: string) => str.replace(/\b\w/g, (l) => l.toUpperCase());

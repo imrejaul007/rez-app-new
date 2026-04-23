@@ -67,6 +67,7 @@ function TrialPage() {
       // Not on trial, redirect
       router.replace('/subscription/manage');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnTrial]);
 
   const fetchTrialStats = async () => {
@@ -85,6 +86,7 @@ function TrialPage() {
   };
 
   const handleGoBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -126,6 +128,7 @@ function TrialPage() {
       'Remind Me Later',
       "We'll send you a notification when your trial is about to end.",
       () => {
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       },
       'Set Reminder',

@@ -34,7 +34,7 @@ interface StoreDetailResponse {
       offers: any;
       isFeatured: boolean;
     };
-    services: Array<{
+    services: {
       _id: string;
       name: string;
       price: number;
@@ -42,22 +42,22 @@ interface StoreDetailResponse {
       duration: number;
       category: string;
       images: string[];
-    }>;
-    reviews: Array<{
+    }[];
+    reviews: {
       _id: string;
       rating: number;
       comment: string;
       createdAt: string;
       userId: string;
       userName: string;
-    }>;
-    campaigns: Array<{
+    }[];
+    campaigns: {
       _id: string;
       title: string;
       description: string;
       coinReward: number;
       expiresAt: string;
-    }>;
+    }[];
     isWishlisted: boolean;
   };
 }

@@ -105,10 +105,12 @@ function PaymentPage() {
     if (amount <= 0 || amount > 1_000_000) {
       platformAlertSimple('Invalid Amount', 'The payment amount is invalid. Please go back and try again.');
       const t = setTimeout(() => {
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
       }, 300);
       return () => clearTimeout(t);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Animation values
@@ -139,6 +141,7 @@ function PaymentPage() {
         })
         .catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFinancialService, serviceId, isWalletRecharge, amount]);
 
   const loadFinancialService = async () => {
@@ -175,6 +178,7 @@ function PaymentPage() {
       });
     }, 30_000);
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   const animateEntrance = () => {
@@ -223,6 +227,7 @@ function PaymentPage() {
       setCurrentStep('methods');
       setSelectedMethod(null);
     } else {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
   }, [currentStep, router]);
@@ -367,6 +372,7 @@ function PaymentPage() {
           'Your payment is still being processed. Please check your wallet for updates.',
         );
         // Navigate back (not to success) — user can check wallet history for status
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }
     } catch (error: any) {

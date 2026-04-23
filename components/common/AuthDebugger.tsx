@@ -39,6 +39,7 @@ function AuthDebugger() {
 
   useEffect(() => {
     checkStorageData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAuthenticated, authLoading, authError]);
 
   if (!isVisible) {

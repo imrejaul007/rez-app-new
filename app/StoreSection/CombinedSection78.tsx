@@ -106,6 +106,7 @@ export default memo(function CombinedSection78({
     } else {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   const animatePress = (anim: { value: number }, toValue: number) => {

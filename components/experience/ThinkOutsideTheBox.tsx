@@ -46,6 +46,7 @@ const ThinkOutsideTheBox: React.FC<Props> = ({ experienceType = 'default', searc
         }, 300);
 
         return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [experienceType, searchQuery]);
 
     const handlePress = (item: any) => {

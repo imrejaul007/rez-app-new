@@ -107,6 +107,7 @@ function TierUpgradeCelebration({
         }, delay);
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const fadeStyle = useAnimatedStyle(() => ({

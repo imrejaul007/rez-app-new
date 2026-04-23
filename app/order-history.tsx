@@ -303,6 +303,7 @@ function OrderHistoryPage() {
   }, []);
 
   const handleBackPress = useCallback(() => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 
@@ -316,6 +317,7 @@ function OrderHistoryPage() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh, selectedFilter, searchQuery, buildServerFilter]);
 
   const handleOrderPress = useCallback(

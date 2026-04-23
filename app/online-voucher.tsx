@@ -115,6 +115,7 @@ function OnlineVoucherPage() {
     if (debouncedSearchQuery !== state.searchQuery) {
       handlers.handleSearch(debouncedSearchQuery);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchQuery]);
 
   const handleSearchChange = (text: string) => {
@@ -429,6 +430,7 @@ function OnlineVoucherPage() {
         </Animated.View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [scrollX, fadeAnim],
   );
 
@@ -652,6 +654,7 @@ function OnlineVoucherPage() {
         </Pressable>
       </Animated.View>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [fadeAnim, slideAnim, handlers.handleBrandSelect],
   );
 

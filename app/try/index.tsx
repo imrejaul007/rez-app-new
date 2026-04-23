@@ -75,6 +75,7 @@ function SkeletonCard({ half = false }: { half?: boolean }) {
   const opacity = useSharedValue(0.4);
   useEffect(() => {
     opacity.value = withRepeat(withTiming(1, { duration: 800 }), -1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const anim = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
@@ -263,6 +264,7 @@ export default function TryHomeScreen() {
   const floatScale = useSharedValue(1);
   useEffect(() => {
     floatScale.value = withRepeat(withTiming(1.08, { duration: 1200 }), -1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const floatAnim = useAnimatedStyle(() => ({ transform: [{ scale: floatScale.value }] }));
 
@@ -284,6 +286,7 @@ export default function TryHomeScreen() {
         setLoading(false);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAll = useCallback(

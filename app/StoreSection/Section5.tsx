@@ -146,6 +146,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
     // If we get here, item is not saved
     if (!isMounted()) return;
     setIsSaved(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountData, dynamicData, isAuthenticated]);
 
   // Check if item is already saved on mount

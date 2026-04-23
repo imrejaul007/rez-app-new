@@ -53,10 +53,12 @@ function SectionDetailPage() {
 
   useEffect(() => {
     loadSectionProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionId]);
 
   useEffect(() => {
     applyFiltersAndSort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, filters, sortBy]);
 
   const loadSectionProducts = async () => {
@@ -229,6 +231,7 @@ function SectionDetailPage() {
   };
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

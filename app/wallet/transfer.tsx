@@ -211,10 +211,7 @@ function TransferPage() {
         'Enter your 4-digit PIN to authorise this transfer.',
       );
     } else {
-      platformAlertSimple(
-        'Authentication Required',
-        'Please enable biometric authentication to send coins.',
-      );
+      platformAlertSimple('Authentication Required', 'Please enable biometric authentication to send coins.');
       return;
     }
     if (!authenticated) {
@@ -330,6 +327,7 @@ function TransferPage() {
   };
 
   const handleDone = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

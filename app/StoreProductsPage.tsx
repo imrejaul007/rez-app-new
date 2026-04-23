@@ -3,21 +3,10 @@ import { colors } from '@/constants/theme';
 // Displays all products for a specific store in an Amazon-style grid layout.
 // Orchestrates SearchHeader, FilterPanel, ActiveFiltersBar, and ProductGrid components.
 
-import React, { useEffect, useCallback, useMemo} from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { Stack } from 'expo-router';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Platform,
-  StatusBar,
-  Text,
-  Pressable
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring } from 'react-native-reanimated';
+import { View, StyleSheet, Dimensions, Platform, StatusBar, Text, Pressable } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter, usePathname } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
@@ -94,7 +83,9 @@ function StoreProductsPage() {
         try {
           const searchInput = document.querySelector?.('[data-search-input]') as any;
           searchInput?.focus?.();
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
 
       if ((event.ctrlKey || event.metaKey) && event.key === 'f' && !event.shiftKey) {
@@ -111,7 +102,9 @@ function StoreProductsPage() {
         try {
           const searchInput = document.querySelector?.('[data-search-input]') as any;
           searchInput?.focus?.();
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
     };
 
@@ -123,6 +116,7 @@ function StoreProductsPage() {
 
   const handleBack = useCallback(() => {
     triggerImpact('Medium');
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 
@@ -147,26 +141,33 @@ function StoreProductsPage() {
 
   // ─── Error boundary handler ───────────────────────────────────────────────
 
-  const handleErrorBoundaryError = useCallback((error: Error, errorInfo: React.ErrorInfo) => {
-    analyticsService.track('error_boundary_caught', {
-      storeId,
-      errorMessage: error.message,
-      errorStack: error.stack?.substring(0, 500),
-      componentStack: errorInfo.componentStack?.substring(0, 500),
-      timestamp: new Date().toISOString() });
-  }, [storeId]);
+  const handleErrorBoundaryError = useCallback(
+    (error: Error, errorInfo: React.ErrorInfo) => {
+      analyticsService.track('error_boundary_caught', {
+        storeId,
+        errorMessage: error.message,
+        errorStack: error.stack?.substring(0, 500),
+        componentStack: errorInfo.componentStack?.substring(0, 500),
+        timestamp: new Date().toISOString(),
+      });
+    },
+    [storeId],
+  );
 
   // ─── Layout ───────────────────────────────────────────────────────────────
 
   const { height } = Dimensions.get('window');
-  const topPadding = Platform.OS === 'ios' ? (height >= 812 ? 44 : 20) : StatusBar.currentHeight ?? 24;
+  const topPadding = Platform.OS === 'ios' ? (height >= 812 ? 44 : 20) : (StatusBar.currentHeight ?? 24);
 
   // ─── Filter clear handlers ────────────────────────────────────────────────
 
   const handleClearCategory = useCallback(() => data.setSelectedCategory(null), [data]);
   const handleClearSort = useCallback(() => data.setSortBy('newest'), [data]);
   const handleClearAvailability = useCallback(() => data.setAvailabilityFilter('all'), [data]);
-  const handleClearPrice = useCallback(() => { data.setMinPrice(''); data.setMaxPrice(''); }, [data]);
+  const handleClearPrice = useCallback(() => {
+    data.setMinPrice('');
+    data.setMaxPrice('');
+  }, [data]);
   const handleClearAll = useCallback(() => {
     data.setSelectedCategory(null);
     data.setSortBy('newest');
@@ -175,9 +176,12 @@ function StoreProductsPage() {
     data.setMaxPrice('');
   }, [data]);
 
-  const handleSearchChange = useCallback((query: string) => {
-    data.setSearchQuery(query);
-  }, [data]);
+  const handleSearchChange = useCallback(
+    (query: string) => {
+      data.setSearchQuery(query);
+    },
+    [data],
+  );
 
   const handleSearchClear = useCallback(() => {
     data.setSearchQuery('');
@@ -187,12 +191,16 @@ function StoreProductsPage() {
     // Search is debounced in the hook; this is a no-op placeholder for enter key
   }, []);
 
-  const handleSuggestionSelect = useCallback((suggestion: string) => {
-    data.setSearchQuery(suggestion);
-  }, [data]);
+  const handleSuggestionSelect = useCallback(
+    (suggestion: string) => {
+      data.setSearchQuery(suggestion);
+    },
+    [data],
+  );
 
   // Deep-link parameter validation guard
   if (!storeId || typeof storeId !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }
@@ -210,9 +218,7 @@ function StoreProductsPage() {
           {data.isOffline && (
             <View style={styles.networkBanner}>
               <Ionicons name="cloud-offline-outline" size={16} color={colors.text.inverse} />
-              <ThemedText style={styles.networkBannerText}>
-                No internet connection
-              </ThemedText>
+              <ThemedText style={styles.networkBannerText}>No internet connection</ThemedText>
             </View>
           )}
 
@@ -295,9 +301,7 @@ function StoreProductsPage() {
                       <Ionicons name="bag" size={22} color={colors.text.inverse} />
                       {cartItemCount > 0 && (
                         <View style={styles.badge}>
-                          <Text style={styles.badgeText}>
-                            {cartItemCount > 99 ? '99+' : cartItemCount}
-                          </Text>
+                          <Text style={styles.badgeText}>{cartItemCount > 99 ? '99+' : cartItemCount}</Text>
                         </View>
                       )}
                     </View>
@@ -397,7 +401,8 @@ function StoreProductsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   networkBanner: {
     backgroundColor: Colors.error,
     flexDirection: 'row',
@@ -405,27 +410,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   networkBannerText: {
     color: colors.text.inverse,
     ...Typography.body,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   headerGradient: {
     paddingBottom: Spacing.base,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],
     overflow: 'hidden',
-    ...Shadows.strong },
+    ...Shadows.strong,
+  },
   headerInner: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
-    paddingBottom: Spacing.sm },
+    paddingBottom: Spacing.sm,
+  },
   iconButton: {
     width: 40,
     height: 40,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   iconButtonBackground: {
     width: 40,
     height: 40,
@@ -433,23 +443,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative' },
+    position: 'relative',
+  },
   headerContent: {
     flex: 1,
-    marginHorizontal: Spacing.md },
+    marginHorizontal: Spacing.md,
+  },
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
     color: colors.text.inverse,
-    marginBottom: 2 },
+    marginBottom: 2,
+  },
   headerSubtitle: {
     ...Typography.body,
     color: 'rgba(255, 255, 255, 0.9)',
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   badge: {
     position: 'absolute',
     top: -4,
@@ -462,11 +477,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.xs,
     borderWidth: 2,
-    borderColor: colors.nileBlue },
+    borderColor: colors.nileBlue,
+  },
   badgeText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: colors.text.inverse } });
+    color: colors.text.inverse,
+  },
+});
 
 const MemoizedStoreProductsPage = React.memo(StoreProductsPage);
 export default withErrorBoundary(MemoizedStoreProductsPage, 'Store Products');

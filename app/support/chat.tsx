@@ -96,6 +96,7 @@ function SupportChatPage() {
     if (!connecting && !currentTicket && !params.ticketId && !initializingTicket) {
       handleInitializeTicket();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connecting, currentTicket]);
 
   const handleInitializeTicket = async () => {
@@ -113,6 +114,7 @@ function SupportChatPage() {
 
     if (!ticket) {
       platformAlertSimple('Error', 'Failed to create support ticket. Please try again.');
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } else {
       analyticsService.track('support_ticket_created', { category });
@@ -125,6 +127,7 @@ function SupportChatPage() {
   };
 
   const handleBackPress = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

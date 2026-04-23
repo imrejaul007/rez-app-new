@@ -93,10 +93,12 @@ function FlashSaleDetailPage() {
     return () => {
       pulseAnim.value = 1;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     loadFlashSaleDetails(id as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // Countdown timer

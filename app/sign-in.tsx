@@ -143,6 +143,7 @@ function SignInScreen() {
     checkAuth();
     const unsub = useAuthStore.subscribe(checkAuth);
     return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootNavigationState?.key]);
 
   const validatePhoneRealTime = (value: string) => {

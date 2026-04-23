@@ -3,8 +3,6 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import * as billVerificationServiceModule from '@/services/billVerificationService';
-
-const billVerificationService = billVerificationServiceModule as any;
 import {
   BillVerificationWorkflow,
   BillVerificationState,
@@ -13,6 +11,8 @@ import {
   ManualCorrectionData,
   BillImageAnalysis,
 } from '@/types/billVerification.types';
+
+const billVerificationService = billVerificationServiceModule as any;
 
 export interface UseBillVerificationReturn {
   // State

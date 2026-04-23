@@ -109,6 +109,7 @@ function LockedItem({
       }
       pulseAnim.value = 1;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft.isCritical, timeLeft.isExpired]);
 
   const { hours: hoursRemaining, minutes: minutesRemaining, seconds: secondsRemaining, isExpired } = timeLeft;

@@ -73,6 +73,7 @@ const formatDateForApi = (date: Date) => {
 };
 
 // Date Picker Component
+// eslint-disable-next-line react/display-name
 const DatePicker = memo(({
   dates,
   selectedDate,
@@ -134,6 +135,7 @@ const DatePicker = memo(({
 });
 
 // Time Slot Picker Component
+// eslint-disable-next-line react/display-name
 const TimeSlotPicker = memo(({
   slots,
   selectedSlot,
@@ -193,6 +195,7 @@ const TimeSlotPicker = memo(({
 });
 
 // Address Form Component
+// eslint-disable-next-line react/display-name
 const AddressForm = memo(({
   address,
   onChange
@@ -328,6 +331,7 @@ function ServiceBookingModal({
     if (selectedDate && service) {
       fetchAvailableSlots();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, service]);
 
   const fetchAvailableSlots = async () => {

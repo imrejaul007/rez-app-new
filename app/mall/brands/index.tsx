@@ -222,6 +222,7 @@ function BrandsListingPage() {
         setIsLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [searchQuery, activeFilter],
   );
 
@@ -229,6 +230,7 @@ function BrandsListingPage() {
     setIsLoading(true);
     setPage(1);
     fetchBrands(1, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, activeFilter]);
 
   const handleRefresh = useCallback(() => {

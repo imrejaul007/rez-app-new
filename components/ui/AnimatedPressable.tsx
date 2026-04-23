@@ -102,6 +102,7 @@ const AnimatedPressableComponent = React.forwardRef<any, AnimatedPressableProps>
       });
 
       onPressIn?.(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [disabled, haptic, hapticType, onPressIn]);
 
     const handlePressOut = useCallback((e: any) => {
@@ -113,6 +114,7 @@ const AnimatedPressableComponent = React.forwardRef<any, AnimatedPressableProps>
       });
 
       onPressOut?.(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onPressOut]);
 
     const handlePress = useCallback((e: any) => {

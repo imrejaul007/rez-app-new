@@ -118,6 +118,7 @@ function RechargePage() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ============================================
@@ -147,6 +148,7 @@ function RechargePage() {
       if (!isMounted()) return;
       setLoadingMorePlans(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -222,6 +224,7 @@ function RechargePage() {
       if (!isMounted()) return;
       setSubmitting(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileNumber, amount, selectedOperator, selectedPlan, isAuthenticated, router]);
 
   // ============================================
@@ -452,6 +455,7 @@ function RechargePage() {
         )}
       </>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       error,
       mobileNumber,

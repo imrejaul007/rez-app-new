@@ -220,6 +220,7 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
       -1,
       false
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Animated styles

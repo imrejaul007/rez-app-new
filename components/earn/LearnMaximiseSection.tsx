@@ -101,6 +101,7 @@ const LearnMaximiseSection = () => {
       }
     };
     fetchContent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigateToContent = (slug: string) => {

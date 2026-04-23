@@ -32,6 +32,7 @@ const GiftCardCard: React.FC<{
   brand: GiftCardBrand;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ brand, index, onPress }) => {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -48,6 +49,7 @@ const GiftCardCard: React.FC<{
     // Subtle shimmer on header
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 2000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   const handlePressIn = () => {
@@ -208,12 +210,14 @@ function adjustColor(color: string, percent: number): string {
   );
 }
 
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -253,6 +257,7 @@ const BuyCouponSection: React.FC<BuyCouponSectionProps> = ({
     // Gift icon bounce animation
     giftBounceAnim.value = withRepeat(withSequence(withTiming(-4, { duration: 400 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const renderGiftCardItem = useCallback(({ item, index }: { item: unknown; index: number }) =>

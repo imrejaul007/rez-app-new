@@ -74,6 +74,7 @@ export default memo(function Section4({
 
   useEffect(() => {
     fetchCardOffers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productPrice, storeId]);
 
   const fetchCardOffers = async () => {

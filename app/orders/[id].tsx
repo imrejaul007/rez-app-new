@@ -67,6 +67,7 @@ function OrderDetailsScreen() {
   const handleBackPress = () => {
     // Check if we can go back in navigation stack
     if (navigation.canGoBack()) {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } else {
       // If no history, go to tracking page (order history)
@@ -78,6 +79,7 @@ function OrderDetailsScreen() {
     if (id) {
       loadOrderDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadOrderDetails = async () => {
@@ -123,6 +125,7 @@ function OrderDetailsScreen() {
 
       if (response.success) {
         platformAlertSimple('Success', 'Order cancelled successfully');
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       } else {
         throw new Error(response.message || 'Failed to cancel order');
@@ -209,29 +212,32 @@ function OrderDetailsScreen() {
             <View style={styles.headerTop}>
               <Text style={styles.orderNumber}>Order #{order.orderNumber}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                {order && 'fulfillmentType' in order && (order as unknown as { fulfillmentType?: string }).fulfillmentType && (order as unknown as { fulfillmentType?: string }).fulfillmentType !== 'delivery' && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      backgroundColor: '#f0f6fa',
-                      paddingHorizontal: 8,
-                      paddingVertical: 3,
-                      borderRadius: 6,
-                      gap: 4,
-                    }}
-                  >
-                    <Text style={{ fontSize: 11, fontWeight: '600', color: colors.nileBlue }}>
-                      {(order as unknown as { fulfillmentType?: string }).fulfillmentType === 'pickup'
-                        ? '🛍 Pickup'
-                        : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'drive_thru'
-                          ? '🚗 Drive-Thru'
-                          : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'dine_in'
-                            ? '🍽 Dine-In'
-                            : ''}
-                    </Text>
-                  </View>
-                )}
+                {order &&
+                  'fulfillmentType' in order &&
+                  (order as unknown as { fulfillmentType?: string }).fulfillmentType &&
+                  (order as unknown as { fulfillmentType?: string }).fulfillmentType !== 'delivery' && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        backgroundColor: '#f0f6fa',
+                        paddingHorizontal: 8,
+                        paddingVertical: 3,
+                        borderRadius: 6,
+                        gap: 4,
+                      }}
+                    >
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: colors.nileBlue }}>
+                        {(order as unknown as { fulfillmentType?: string }).fulfillmentType === 'pickup'
+                          ? '🛍 Pickup'
+                          : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'drive_thru'
+                            ? '🚗 Drive-Thru'
+                            : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'dine_in'
+                              ? '🍽 Dine-In'
+                              : ''}
+                      </Text>
+                    </View>
+                  )}
                 <View
                   style={[styles.statusBadge, { backgroundColor: getStatusColor(normalizeOrderStatus(order.status)) }]}
                 >
@@ -256,7 +262,11 @@ function OrderDetailsScreen() {
 
               return (
                 <View key={itemKey} style={styles.itemCard}>
-                  <CachedImage source={{ uri: productImage || '' }} style={styles.itemImage} cachePolicy="memory-disk" />
+                  <CachedImage
+                    source={{ uri: productImage || '' }}
+                    style={styles.itemImage}
+                    cachePolicy="memory-disk"
+                  />
                   <View style={styles.itemInfo}>
                     <Text style={styles.itemName}>{productName}</Text>
                     <Text style={styles.storeName}>{storeName}</Text>

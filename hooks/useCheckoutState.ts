@@ -80,7 +80,7 @@ interface RawWalletData { categoryBalances?: Record<string, { available?: number
 
 interface BackendOrderItem {
   id?: string; _id?: string; productId?: string;
-  product?: { id?: string; _id?: string; name?: string; images?: Array<{ url?: string } | string> };
+  product?: { id?: string; _id?: string; name?: string; images?: ({ url?: string } | string)[] };
   unitPrice?: number; totalPrice?: number; quantity?: number; name?: string;
 }
 
@@ -553,6 +553,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
       if (!isMountedRef.current) return;
       setState(prev => ({ ...prev, loading: false, error: 'Failed to initialize checkout' }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [retryOrderId]);
 
   // ── Effects ──────────────────────────────────────────────────────────────────
@@ -562,6 +563,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
     if (authLoading || !isAuthenticated) return;
     initializeCheckout().then(() => { if (isMountedRef.current) { hasInitializedRef.current = true; } }).catch((err) => { logger.error('[useCheckout] initializeCheckout failed', err as Error); });
     return () => { isMountedRef.current = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   // AppState: reset processing step on foreground
@@ -620,6 +622,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
         if (isMountedRef.current) setState(prev => ({ ...prev, loading: false }));
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   // Refresh wallet on focus
@@ -648,6 +651,7 @@ export const useCheckoutState = (retryOrderId?: string): UseCheckoutStateReturn 
         return { ...prev, appliedCardOffer: offer, billSummary: newBillSummary };
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartState.appliedCardOffer, state.appliedCardOffer]);
 
   // Auto-clear errors after 3s

@@ -81,6 +81,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
 
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   const fetchProducts = async () => {

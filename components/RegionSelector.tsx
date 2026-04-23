@@ -71,6 +71,7 @@ export function RegionSelector({
       },
       'Continue'
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentRegion, setRegion, onRegionChange]);
 
   if (compact) {

@@ -67,6 +67,7 @@ const ProductPaginationDot: React.FC<{
   index: number;
   activeIndex: SharedValue<number>;
   totalCount: number;
+  // eslint-disable-next-line react/display-name
 }> = memo(({ index, activeIndex, totalCount }) => {
   const dotStyle = useAnimatedStyle(() => {
     const isActive = activeIndex.value === index ? 1 : 0;
@@ -167,11 +168,13 @@ export default memo(function ProductDisplay({
     } else {
       heartPulseAnim.value = 1;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFavorited]);
 
   // Animate pagination dots on index change (reanimated)
   useEffect(() => {
     activeDotIndex.value = currentIndex;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
   // Staggered entrance animation for category tags

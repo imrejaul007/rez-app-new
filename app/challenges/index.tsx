@@ -99,6 +99,7 @@ function ChallengesPage() {
         params: { returnTo: '/challenges' },
       } as any);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user]);
 
   const loadChallengesData = async () => {
@@ -481,6 +482,7 @@ function ChallengesPage() {
         </Pressable>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getDifficultyColor, getTypeIcon, claimingId, handleClaimReward, router],
   );
 

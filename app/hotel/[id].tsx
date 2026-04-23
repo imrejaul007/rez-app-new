@@ -149,6 +149,7 @@ function HotelDetailsPage() {
     if (id) {
       loadHotelDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadHotelDetails = async () => {
@@ -217,10 +218,10 @@ function HotelDetailsPage() {
       // Star rating: prefer specs, fallback to name/price
       const specStarRating = getSpec('starRating');
       const starRating = specStarRating
-        ? parseInt(specStarRating, 10)  // CA-TRV-005 FIX: add radix 10
+        ? parseInt(specStarRating, 10) // CA-TRV-005 FIX: add radix 10
         : (() => {
             const starMatch = productData.name.match(/(\d+)\s*star/i);
-            if (starMatch) return parseInt(starMatch[1], 10);  // CA-TRV-006 FIX: add radix 10
+            if (starMatch) return parseInt(starMatch[1], 10); // CA-TRV-006 FIX: add radix 10
             if (basePrice >= 10000) return 5;
             if (basePrice >= 5000) return 4;
             if (basePrice >= 2000) return 3;
@@ -233,7 +234,7 @@ function HotelDetailsPage() {
       // Room features: prefer specs
       const beds = getSpec('beds') || '1 King Bed';
       const roomSize = getSpec('roomSize') || '25 sqm';
-      const maxGuests = getSpec('maxGuests') ? parseInt(getSpec('maxGuests'), 10) : 2;  // CA-TRV-006 FIX: add radix 10
+      const maxGuests = getSpec('maxGuests') ? parseInt(getSpec('maxGuests'), 10) : 2; // CA-TRV-006 FIX: add radix 10
 
       // Room types: prefer specs, fallback to all available
       const specRoomTypes = getSpec('roomTypes');
@@ -287,8 +288,7 @@ function HotelDetailsPage() {
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
           return processedImages;
         })(),
-        description:
-          productData.description || 'Comfortable accommodation with excellent service.',
+        description: productData.description || 'Comfortable accommodation with excellent service.',
         checkInTime,
         checkOutTime,
         cashback: {
@@ -363,6 +363,7 @@ function HotelDetailsPage() {
   };
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -720,6 +721,7 @@ function HotelDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => {
           setShowConfirmation(false);
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         }}
       >
@@ -729,6 +731,7 @@ function HotelDetailsPage() {
             bookingData={bookingData}
             onClose={() => {
               setShowConfirmation(false);
+              // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');
             }}
           />

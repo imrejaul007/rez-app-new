@@ -132,6 +132,7 @@ const StreakLoyaltySection: React.FC<StreakLoyaltySectionProps> = ({
     };
 
     fetchLoyalty();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, categorySlug, authLoading, isAuthenticated]);
 
   const displayData = data || apiData;

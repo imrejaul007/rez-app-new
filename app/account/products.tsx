@@ -22,6 +22,7 @@ function ProductsScreen() {
 
   useEffect(() => {
     loadProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilter]);
 
   const loadProducts = async () => {

@@ -203,6 +203,7 @@ function TierProgressScreen() {
         return;
       }
       try {
+        // eslint-disable-next-line no-unused-expressions
         isRefresh ? setRefreshing(true) : setLoading(true);
         const res = await apiClient.get<LoyaltyData>(`/stores/${storeId}/loyalty-program`);
         if (!isMounted()) return;

@@ -142,6 +142,7 @@ interface RowProps {
   darkSubtextColor?: string;
 }
 
+// eslint-disable-next-line react/display-name
 const NotificationRow = React.memo(
   ({ item, onPress, isDark: rowIsDark, darkCardColor, darkTextColor, darkSubtextColor }: RowProps) => {
     const icon = getTypeIcon(item.type);

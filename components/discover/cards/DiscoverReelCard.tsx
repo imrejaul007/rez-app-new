@@ -45,6 +45,7 @@ function DiscoverReelCard({
   // Cleanup video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
   }, []);
@@ -71,6 +72,7 @@ function DiscoverReelCard({
     };
 
     handlePlayback();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, autoPlay, videoLoaded]);
 
   // Press animation

@@ -61,19 +61,21 @@ const ComparePage = () => {
       if (response.success && response.data?.comparison) {
         const comp = response.data.comparison;
         // Create a list with the featured comparison
-        const comparisonList: ComparisonItem[] = [{
-          id: comp.id,
-          name: comp.name,
-          category: 'Featured',
-          stores: comp.stores.map(s => ({
-            id: s.id,
-            name: s.name,
-            logo: s.logo,
-            cashbackRate: s.cashbackRate || 0,
-            rating: typeof s.ratings === 'object' ? s.ratings?.average : s.ratings,
-          })),
-          bestDeal: comp.stores.length > 0 ? comp.stores[0].name : undefined,
-        }];
+        const comparisonList: ComparisonItem[] = [
+          {
+            id: comp.id,
+            name: comp.name,
+            category: 'Featured',
+            stores: comp.stores.map((s) => ({
+              id: s.id,
+              name: s.name,
+              logo: s.logo,
+              cashbackRate: s.cashbackRate || 0,
+              rating: typeof s.ratings === 'object' ? s.ratings?.average : s.ratings,
+            })),
+            bestDeal: comp.stores.length > 0 ? comp.stores[0].name : undefined,
+          },
+        ];
         if (!isMounted()) return;
         setComparisons(comparisonList);
       } else {
@@ -89,6 +91,7 @@ const ComparePage = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -113,7 +116,7 @@ const ComparePage = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
@@ -126,9 +129,7 @@ const ComparePage = () => {
         {/* Info Banner */}
         <View style={styles.infoBanner}>
           <Ionicons name="information-circle" size={20} color={Colors.info} />
-          <Text style={styles.infoText}>
-            Compare prices and cashback rates to get the best value
-          </Text>
+          <Text style={styles.infoText}>Compare prices and cashback rates to get the best value</Text>
         </View>
 
         {/* Comparisons List */}
@@ -136,14 +137,10 @@ const ComparePage = () => {
           style={styles.comparisonsList}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.comparisonsContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
         >
           {/* Loading State */}
-          {loading && !refreshing && (
-            <CardGridSkeleton />
-          )}
+          {loading && !refreshing && <CardGridSkeleton />}
 
           {/* Error State */}
           {error && !loading && (
@@ -161,100 +158,91 @@ const ComparePage = () => {
             <View style={styles.centerContainer}>
               <Ionicons name="git-compare-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyTitle}>No Comparisons Available</Text>
-              <Text style={styles.emptySubtext}>
-                Start shopping to see price comparisons across stores
-              </Text>
+              <Text style={styles.emptySubtext}>Start shopping to see price comparisons across stores</Text>
             </View>
           )}
 
           {/* Comparison Cards */}
-          {!loading && !error && comparisons.map((comparison) => (
-            <View key={comparison.id} style={styles.comparisonCard}>
-              {/* Card Header */}
-              <View style={styles.cardHeader}>
-                <View>
-                  <Text style={styles.comparisonName}>{comparison.name}</Text>
-                  <Text style={styles.comparisonCategory}>{comparison.category}</Text>
-                </View>
-                {comparison.bestDeal && (
-                  <View style={styles.bestDealBadge}>
-                    <Ionicons name="trophy" size={12} color={Colors.warning} />
-                    <Text style={styles.bestDealText}>Best: {comparison.bestDeal}</Text>
+          {!loading &&
+            !error &&
+            comparisons.map((comparison) => (
+              <View key={comparison.id} style={styles.comparisonCard}>
+                {/* Card Header */}
+                <View style={styles.cardHeader}>
+                  <View>
+                    <Text style={styles.comparisonName}>{comparison.name}</Text>
+                    <Text style={styles.comparisonCategory}>{comparison.category}</Text>
                   </View>
-                )}
-              </View>
-
-              {/* Stores Table */}
-              <View style={styles.storesTable}>
-                {/* Table Header */}
-                <View style={styles.tableHeader}>
-                  <Text style={[styles.tableHeaderText, { flex: 2 }]}>Store</Text>
-                  <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'center' }]}>Cashback</Text>
-                  <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'right' }]}>Rating</Text>
+                  {comparison.bestDeal && (
+                    <View style={styles.bestDealBadge}>
+                      <Ionicons name="trophy" size={12} color={Colors.warning} />
+                      <Text style={styles.bestDealText}>Best: {comparison.bestDeal}</Text>
+                    </View>
+                  )}
                 </View>
 
-                {/* Store Rows */}
-                {comparison.stores.map((store, index) => (
-                  <Pressable
-                    key={store.id}
-                    style={[
-                      styles.storeRow,
-                      index === 0 && styles.storeRowBest,
-                    ]}
-                    onPress={() => navigateToStore(store.id)}
-                  >
-                    <View style={[styles.storeCell, { flex: 2 }]}>
-                      {store.logo ? (
-                        <CachedImage source={store.logo} style={styles.storeLogo} />
-                      ) : (
-                        <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
-                          <Ionicons name="storefront" size={16} color={colors.text.tertiary} />
-                        </View>
-                      )}
-                      <Text style={styles.storeName}>{store.name}</Text>
-                      {index === 0 && (
-                        <View style={styles.topBadge}>
-                          <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
-                        </View>
-                      )}
-                    </View>
-                    <View style={[styles.storeCell, { flex: 1, justifyContent: 'center' }]}>
-                      <View style={[
-                        styles.cashbackBadge,
-                        index === 0 && styles.cashbackBadgeBest,
-                      ]}>
-                        <Text style={[
-                          styles.cashbackText,
-                          index === 0 && styles.cashbackTextBest,
-                        ]}>
-                          {store.cashbackRate > 0 ? `${store.cashbackRate}%` : 'N/A'}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={[styles.storeCell, { flex: 1, justifyContent: 'flex-end' }]}>
-                      {store.rating ? (
-                        <View style={styles.ratingContainer}>
-                          <Ionicons name="star" size={14} color={Colors.warning} />
-                          <Text style={styles.ratingText}>{store.rating.toFixed(1)}</Text>
-                        </View>
-                      ) : (
-                        <Text style={styles.naText}>N/A</Text>
-                      )}
-                    </View>
-                  </Pressable>
-                ))}
-              </View>
+                {/* Stores Table */}
+                <View style={styles.storesTable}>
+                  {/* Table Header */}
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, { flex: 2 }]}>Store</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'center' }]}>Cashback</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'right' }]}>Rating</Text>
+                  </View>
 
-              {/* Action Button */}
-              <Pressable
-                style={styles.viewStoreButton}
-                onPress={() => comparison.stores[0] && navigateToStore(comparison.stores[0].id)}
-              >
-                <Text style={styles.viewStoreText}>View Best Deal</Text>
-                <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
-              </Pressable>
-            </View>
-          ))}
+                  {/* Store Rows */}
+                  {comparison.stores.map((store, index) => (
+                    <Pressable
+                      key={store.id}
+                      style={[styles.storeRow, index === 0 && styles.storeRowBest]}
+                      onPress={() => navigateToStore(store.id)}
+                    >
+                      <View style={[styles.storeCell, { flex: 2 }]}>
+                        {store.logo ? (
+                          <CachedImage source={store.logo} style={styles.storeLogo} />
+                        ) : (
+                          <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
+                            <Ionicons name="storefront" size={16} color={colors.text.tertiary} />
+                          </View>
+                        )}
+                        <Text style={styles.storeName}>{store.name}</Text>
+                        {index === 0 && (
+                          <View style={styles.topBadge}>
+                            <Ionicons name="checkmark-circle" size={14} color={Colors.gold} />
+                          </View>
+                        )}
+                      </View>
+                      <View style={[styles.storeCell, { flex: 1, justifyContent: 'center' }]}>
+                        <View style={[styles.cashbackBadge, index === 0 && styles.cashbackBadgeBest]}>
+                          <Text style={[styles.cashbackText, index === 0 && styles.cashbackTextBest]}>
+                            {store.cashbackRate > 0 ? `${store.cashbackRate}%` : 'N/A'}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={[styles.storeCell, { flex: 1, justifyContent: 'flex-end' }]}>
+                        {store.rating ? (
+                          <View style={styles.ratingContainer}>
+                            <Ionicons name="star" size={14} color={Colors.warning} />
+                            <Text style={styles.ratingText}>{store.rating.toFixed(1)}</Text>
+                          </View>
+                        ) : (
+                          <Text style={styles.naText}>N/A</Text>
+                        )}
+                      </View>
+                    </Pressable>
+                  ))}
+                </View>
+
+                {/* Action Button */}
+                <Pressable
+                  style={styles.viewStoreButton}
+                  onPress={() => comparison.stores[0] && navigateToStore(comparison.stores[0].id)}
+                >
+                  <Text style={styles.viewStoreText}>View Best Deal</Text>
+                  <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
+                </Pressable>
+              </View>
+            ))}
 
           {/* How It Works Section */}
           <View style={styles.howItWorksCard}>

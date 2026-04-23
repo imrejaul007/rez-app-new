@@ -12,6 +12,7 @@ import { View, StyleSheet } from 'react-native';
 import SkeletonLoader from './SkeletonLoader';
 import { spacing, colors } from '@/constants/theme';
 
+// eslint-disable-next-line react/display-name
 export const BookingCardSkeleton = React.memo(() => (
   <View
     style={styles.container}

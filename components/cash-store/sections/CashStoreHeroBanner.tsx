@@ -61,6 +61,7 @@ const CashStoreHeroBanner: React.FC<CashStoreHeroBannerProps> = ({
       // animation auto-cancels
       // animation auto-cancels
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Keep ref in sync with state

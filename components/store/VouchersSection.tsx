@@ -34,6 +34,7 @@ const VouchersSection: React.FC<VouchersSectionProps> = ({ storeId, storeName })
 
   useEffect(() => {
     loadVouchers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   const loadVouchers = async () => {

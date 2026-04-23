@@ -175,6 +175,7 @@ function RedeemScreen() {
     // Animate the balance number
     animatedValue.value = prevBalance;
     animatedValue.value = withTiming(availableCoins, { duration: 800 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableCoins, isLoading]);
 
   // React to animated balance value changes
@@ -200,6 +201,7 @@ function RedeemScreen() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priveRefresh, refreshWallet, fetchConfig]);
 
   const combinedError = error || priveError;

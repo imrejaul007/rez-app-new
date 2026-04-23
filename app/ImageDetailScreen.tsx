@@ -102,6 +102,7 @@ function ImageDetailScreen() {
       if (!isMounted()) return;
       setLikesCount((prev) => (newLikedState ? Math.max(0, prev - 1) : prev + 1));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image, isLiked]);
 
   // Handle bookmark toggle
@@ -117,6 +118,7 @@ function ImageDetailScreen() {
       if (!isMounted()) return;
       setIsBookmarked(!newBookmarkedState);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image, isBookmarked]);
 
   // Handle share

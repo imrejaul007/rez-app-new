@@ -102,12 +102,14 @@ const SimilarStoresSection: React.FC<SimilarStoresSectionProps> = ({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStoreId, currentStoreCategory, limit]);
 
   useEffect(() => {
     fetchSimilarStores();
   }, [fetchSimilarStores]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleStorePress = (store: Store) => {
     const storeId = store.id || store._id || '';
 

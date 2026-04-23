@@ -290,6 +290,7 @@ const FitnessBookingPage: React.FC = () => {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   useEffect(() => {
@@ -507,6 +508,7 @@ const FitnessBookingPage: React.FC = () => {
 
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

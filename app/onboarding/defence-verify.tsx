@@ -100,6 +100,7 @@ function DefenceVerifyPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentType, serviceType, serviceNumber, setIdentity, router]);
 
   return (

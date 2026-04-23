@@ -71,6 +71,7 @@ function OrderAgainSection({ orders: ordersProp, categorySlug, limit = 10 }: Ord
             }
         };
         fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [categorySlug, ordersProp, limit]);
 
     const orders = ordersProp && ordersProp.length > 0 ? ordersProp : fetchedOrders;

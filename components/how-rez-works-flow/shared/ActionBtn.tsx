@@ -57,6 +57,7 @@ const ActionBtn: React.FC<ActionBtnProps> = ({
                 false
             );
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isPrimary]);
 
     const containerStyle = useAnimatedStyle(() => ({

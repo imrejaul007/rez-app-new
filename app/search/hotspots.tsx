@@ -94,6 +94,7 @@ function HotspotsPage() {
     };
 
     fetchHotspots();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
 
   const filteredHotspots = hotspots;

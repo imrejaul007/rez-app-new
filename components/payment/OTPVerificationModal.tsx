@@ -58,6 +58,7 @@ function OTPVerificationModal({
       setResendTimer(60);
       setAttemptsRemaining(3);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   useEffect(() => {

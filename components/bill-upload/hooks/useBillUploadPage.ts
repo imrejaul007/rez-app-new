@@ -138,6 +138,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
   useEffect(() => {
     initializePage();
     fadeAnim.value = withTiming(1, { duration: 300 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializePage = async () => {
@@ -314,6 +315,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
   // Watch for debounced changes
   useEffect(() => {
     updateCashbackPreview();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedAmount, debouncedMerchantId]);
 
   const openCamera = async () => {

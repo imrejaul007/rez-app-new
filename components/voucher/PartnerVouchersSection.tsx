@@ -46,6 +46,7 @@ function PartnerVouchersSection({
 
   useEffect(() => {
     fetchPartnerOffers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchPartnerOffers = async () => {

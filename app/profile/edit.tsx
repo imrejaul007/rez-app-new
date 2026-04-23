@@ -147,6 +147,7 @@ function ProfileEditPage() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -182,6 +183,7 @@ function ProfileEditPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleGenderSelect = (gender: string) => {
     setFormData((prev) => ({ ...prev, gender }));
     setShowGenderModal(false);

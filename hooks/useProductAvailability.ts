@@ -152,6 +152,7 @@ export const useProductAvailability = ({
     if (autoCheck && (productId || selectedVariant)) {
       checkAvailability(1);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, variantId, selectedVariant, autoCheck]);
 
   return {

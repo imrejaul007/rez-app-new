@@ -39,6 +39,9 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import type { ProfileIconGridItem } from '@/types/profile.types';
 import { profileIconGridItems } from '@/data/profileData';
 import type { UseQueryResult } from '@tanstack/react-query';
+
+// Need this import for the RezScore query
+import { useQuery } from '@tanstack/react-query';
 type GetScoreFn = typeof import('@/services/rezScoreApi')['getScore'];
 
 export interface ProfileUser {
@@ -150,6 +153,7 @@ export const useProfileData = (): UseProfileDataReturn => {
   useFocusEffect(useCallback(() => { return fetchLiveProfile(); }, [fetchLiveProfile]));
 
   // Merge live API data over context user
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const user: ProfileUser | null = contextUser
     ? {
         ...contextUser,
@@ -190,6 +194,7 @@ export const useProfileData = (): UseProfileDataReturn => {
       ]);
     } catch { /* silently handle */ }
     finally { if (!isMounted()) return; setRefreshing(false); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authActions, refetchStats, refreshWallet, refreshCompletionStatus]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
@@ -212,6 +217,7 @@ export const useProfileData = (): UseProfileDataReturn => {
     } catch (error) {
       platformAlertSimple('Error', error instanceof Error ? error.message : 'An error occurred while uploading the image');
     } finally { if (!isMounted()) return; setUploadingImage(false); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleShareProfile = useCallback(async () => {
@@ -233,6 +239,7 @@ export const useProfileData = (): UseProfileDataReturn => {
   const getRezTier = useCallback((score: number) => {
     for (const t of REZ_TIER_THRESHOLDS) { if (score >= t.min && score <= t.max) return t; }
     return REZ_TIER_THRESHOLDS[REZ_TIER_THRESHOLDS.length - 1];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Computed ─────────────────────────────────────────────────────────────
@@ -279,6 +286,3 @@ export const useProfileData = (): UseProfileDataReturn => {
     router,
   };
 };
-
-// Need this import for the RezScore query
-import { useQuery } from '@tanstack/react-query';

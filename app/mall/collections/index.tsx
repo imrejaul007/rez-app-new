@@ -6,15 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  Text,
-  Pressable,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, Text, Pressable, Dimensions, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, Stack } from 'expo-router';
@@ -54,24 +46,13 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onPress }) 
   };
 
   return (
-    <Pressable
-      style={styles.collectionCard}
-      onPress={() => onPress(collection)}
-     
-    >
+    <Pressable style={styles.collectionCard} onPress={() => onPress(collection)}>
       {collection.image ? (
-        <CachedImage
-          source={collection.image}
-          style={styles.collectionImage}
-          contentFit="cover"
-        />
+        <CachedImage source={collection.image} style={styles.collectionImage} contentFit="cover" />
       ) : (
         <View style={[styles.collectionImage, { backgroundColor: colors.nileBlue }]} />
       )}
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.8)']}
-        style={styles.cardOverlay}
-      />
+      <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.cardOverlay} />
       <View style={styles.cardContent}>
         <View style={styles.typeBadge}>
           <Ionicons name={getTypeIcon(collection.type) as any} size={12} color={colors.text.inverse} />
@@ -119,6 +100,7 @@ function AllCollectionsPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -130,26 +112,30 @@ function AllCollectionsPage() {
     fetchCollections();
   }, [fetchCollections]);
 
-  const handleCollectionPress = useCallback((collection: MallCollection) => {
-    const slug = collection.slug || collection._id || collection.id;
-    if (slug) router.push(`/mall/collection/${slug}` as any);
-  }, [router]);
+  const handleCollectionPress = useCallback(
+    (collection: MallCollection) => {
+      const slug = collection.slug || collection._id || collection.id;
+      if (slug) router.push(`/mall/collection/${slug}` as any);
+    },
+    [router],
+  );
 
-  const renderItem = useCallback(({ item }: { item: MallCollection }) => (
-    <CollectionCard collection={item} onPress={handleCollectionPress} />
-  ), [handleCollectionPress]);
+  const renderItem = useCallback(
+    ({ item }: { item: MallCollection }) => <CollectionCard collection={item} onPress={handleCollectionPress} />,
+    [handleCollectionPress],
+  );
 
-  const keyExtractor = useCallback((item: MallCollection) =>
-    item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallCollection) => item.id || item._id, []);
 
-  const ListHeader = useCallback(() => (
-    <View style={styles.listHeader}>
-      <Text style={styles.headerTitle}>Curated Collections</Text>
-      <Text style={styles.headerSubtitle}>
-        Discover handpicked brands for every occasion
-      </Text>
-    </View>
-  ), []);
+  const ListHeader = useCallback(
+    () => (
+      <View style={styles.listHeader}>
+        <Text style={styles.headerTitle}>Curated Collections</Text>
+        <Text style={styles.headerSubtitle}>Discover handpicked brands for every occasion</Text>
+      </View>
+    ),
+    [],
+  );
 
   if (isLoading) {
     return (

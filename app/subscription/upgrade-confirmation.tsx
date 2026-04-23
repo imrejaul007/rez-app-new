@@ -56,6 +56,7 @@ function UpgradeConfirmationPage() {
     return () => {
       arrowAnim.value = 0;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Get tier price from available tiers (DB-driven, not hardcoded)
@@ -74,6 +75,7 @@ function UpgradeConfirmationPage() {
   // Calculate prorated pricing
   useEffect(() => {
     calculateProration();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timing, state.availableTiers]);
 
   const calculateProration = () => {

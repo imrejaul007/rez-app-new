@@ -184,11 +184,13 @@ function EarningsHistoryPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedFilter, startDate, endDate],
   );
 
   useEffect(() => {
     loadEarningsHistory(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilter, startDate, endDate]);
 
   const handleRefresh = useCallback(() => {

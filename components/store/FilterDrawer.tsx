@@ -83,6 +83,7 @@ function FilterDrawer({
       fadeAnim.value = withTiming(0, { duration: 200 });
       slideAnim.value = withTiming(height, { duration: 250 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const overlayAnimatedStyle = useAnimatedStyle(() => ({

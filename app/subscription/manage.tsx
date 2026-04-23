@@ -53,6 +53,7 @@ function SubscriptionManagePage() {
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
     fetchUsageStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading]);
 
   // Fetch usage statistics

@@ -74,6 +74,7 @@ function PickupTrackingScreen() {
 
   // Deep-link parameter validation guard
   if (!orderId || typeof orderId !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }

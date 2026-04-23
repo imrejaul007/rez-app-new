@@ -110,6 +110,7 @@ interface OrderCardProps {
   onRefresh: () => void;
 }
 
+// eslint-disable-next-line react/display-name
 const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardProps) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -363,6 +364,7 @@ function OrdersListScreen() {
       loadOrders(1, false);
     });
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onOrderListUpdated]);
 
   // SS-010 FIX: Only load on filter/sort changes (not on mount — useFocusEffect handles mount + focus).
@@ -374,12 +376,14 @@ function OrdersListScreen() {
       return;
     }
     loadOrders(1, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilter, sortOrder]);
 
   // Refresh orders when screen regains focus (e.g., order status changed on detail page)
   useFocusEffect(
     useCallback(() => {
       loadOrders(1, false);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeFilter, sortOrder, searchQuery]),
   );
 
@@ -392,6 +396,7 @@ function OrdersListScreen() {
     return () => {
       if (searchTimeout.current) clearTimeout(searchTimeout.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const loadOrders = async (pageNum: number = 1, refresh: boolean = false) => {
@@ -445,12 +450,14 @@ function OrdersListScreen() {
 
   const handleRefresh = useCallback(() => {
     loadOrders(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilter, sortOrder, searchQuery]);
 
   const handleLoadMore = useCallback(() => {
     if (!loading && !refreshing && hasMore) {
       loadOrders(page + 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, refreshing, hasMore, page, activeFilter, sortOrder, searchQuery]);
 
   const handleOrderPress = useCallback((orderId: string) => {

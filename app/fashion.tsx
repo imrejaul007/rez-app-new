@@ -131,6 +131,7 @@ const FashionPage: React.FC = () => {
     } catch (_) {
       // fail silently — empty state UI will show
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Fetch products (paginated) ───────────────────────────────
@@ -208,6 +209,7 @@ const FashionPage: React.FC = () => {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedFilter],
   );
 
@@ -241,6 +243,7 @@ const FashionPage: React.FC = () => {
     } catch (e: any) {
       catchAndReport(e, setError, 'Fashion/fetchTrending');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Fetch fashion stores (brands) ────────────────────────────
@@ -266,6 +269,7 @@ const FashionPage: React.FC = () => {
     } catch (e: any) {
       catchAndReport(e, setError, 'Fashion/fetchStores');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Initial load ─────────────────────────────────────────────
@@ -331,6 +335,7 @@ const FashionPage: React.FC = () => {
         </View>
       </Pressable>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencySymbol, router],
   );
 

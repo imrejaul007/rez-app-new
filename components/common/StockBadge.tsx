@@ -30,6 +30,7 @@ function StockBadge({
   // Entrance animation
   useEffect(() => {
     scaleAnim.value = withSpring(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Pulse animation for low stock
@@ -38,6 +39,7 @@ function StockBadge({
       pulseAnim.value = withRepeat(withSequence(withTiming(1.05, { duration: 800 })), -1);
       
       }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLowStock]);
 
   // Determine badge styling based on stock status

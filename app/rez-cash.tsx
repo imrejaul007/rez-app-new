@@ -121,6 +121,7 @@ function RezCashScreen() {
     } finally {
       if (isMounted()) setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useFocusEffect(

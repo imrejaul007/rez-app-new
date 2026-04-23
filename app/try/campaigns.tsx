@@ -73,6 +73,7 @@ export default function CampaignsScreen() {
       setCity(resolvedCity);
       loadCampaigns(resolvedCity);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadCampaigns = useCallback(

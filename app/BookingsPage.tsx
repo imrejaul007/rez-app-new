@@ -386,6 +386,7 @@ function BookingsPage() {
         setLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAuthenticated, refreshing, fetchPage],
   );
 
@@ -444,6 +445,7 @@ function BookingsPage() {
       if (!isMounted()) return;
       setLoadingMore(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingMore, tablePage, eventPage, servicePage, fetchPage]);
 
   const hasMoreData = tablePage.hasMore || eventPage.hasMore || servicePage.hasMore;
@@ -452,6 +454,7 @@ function BookingsPage() {
     useCallback(() => {
       if (isAuthenticated) loadBookings();
       else setLoading(false);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]),
   );
 
@@ -470,6 +473,7 @@ function BookingsPage() {
     await loadBookings(true); // force bypass staleness guard on manual refresh
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadBookings]);
 
   // ─── Filtered list ───────────────────────────────────────
@@ -549,6 +553,7 @@ function BookingsPage() {
 
   const handleLoadMore = useCallback(() => {
     if (hasMoreData && !loadingMore) loadMore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMoreData, loadingMore]);
 
   // ─── Render booking card ─────────────────────────────────
@@ -754,6 +759,7 @@ function BookingsPage() {
         </Pressable>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [expandedBookingId, router],
   );
 

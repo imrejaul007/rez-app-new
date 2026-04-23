@@ -72,6 +72,7 @@ const ParticleView: React.FC<{
   particle: ReturnType<typeof generateParticles>[0];
   progress: { value: number };
   opacity: { value: number };
+// eslint-disable-next-line react/display-name
 }> = React.memo(({ particle, progress, opacity }) => {
   const rotationDeg = useRef(Math.random() * 720).current;
   const particleStyle = useAnimatedStyle(() => ({
@@ -185,6 +186,7 @@ const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
       if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
       if (closeAnimTimer.current) clearTimeout(closeAnimTimer.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, achievement, handleClose]);
 
   const handleClaim = useCallback(() => {

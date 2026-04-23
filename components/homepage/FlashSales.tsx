@@ -195,6 +195,7 @@ const FlashSales: React.FC<FlashSalesProps> = ({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Initial fetch

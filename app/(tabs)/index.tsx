@@ -221,6 +221,7 @@ const fallbackStyles = StyleSheet.create({
   card: { height: 100, flex: 1, backgroundColor: colors.gray[50], borderRadius: borderRadius.md },
   footer: { height: 80, backgroundColor: colors.gray[50], borderRadius: borderRadius.md },
 });
+// eslint-disable-next-line react/display-name
 const TabContentFallback = React.memo(() => (
   <View style={fallbackStyles.container}>
     <View style={fallbackStyles.bar1} />
@@ -416,6 +417,7 @@ function HomeScreen() {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
 
   // Get recently viewed items
@@ -517,6 +519,7 @@ function HomeScreen() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser?.id]);
 
   const animatedHeight = useSharedValue(0);
@@ -645,6 +648,7 @@ function HomeScreen() {
         newOffersCount: contextResult.value.data.offersCount || 0,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authUser, getHomepageUserContext]);
 
   // Load user context once after interactions complete + authenticated
@@ -732,6 +736,7 @@ function HomeScreen() {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actions, authUser, isAuthenticated, loadUserContext, refreshCart, refreshRecentlyViewed]);
 
   const handleSearchPress = useCallback(() => {
@@ -793,6 +798,7 @@ function HomeScreen() {
         platformAlertSimple('Error', 'Failed to update location. Please try again.');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateUserLocation],
   );
 

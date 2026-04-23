@@ -97,6 +97,7 @@ function HeroesZonePage() {
     return () => {
       shimmerAnim.value = 0;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-select profile from URL param after profiles are loaded
@@ -109,6 +110,7 @@ function HeroesZonePage() {
         fetchProfileOffersForParam(profileParam);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileParam, profiles]);
 
   const fetchProfileOffersForParam = async (slug: string) => {

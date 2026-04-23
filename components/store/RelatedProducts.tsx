@@ -82,6 +82,7 @@ function RelatedProducts({
     if (productId) {
       fetchRelatedProducts();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
   // Handle product press

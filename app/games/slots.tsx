@@ -72,6 +72,7 @@ function calculateSpinResult(): SpinResult {
   return { reels, win: false, winAmount: 0, winType: 'none' };
 }
 
+// eslint-disable-next-line react/display-name
 const ReelView = React.memo(({ reelAnim, symbol }: { reelAnim: Animated.SharedValue<number>; symbol: string }) => {
   const reelStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(reelAnim.value, [0, 0.8, 1], [-100, 10, 0]) }],
@@ -107,6 +108,7 @@ function SlotsPage() {
   }));
 
   const handleBackPress = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -163,6 +165,7 @@ function SlotsPage() {
       setShowResult(true);
       setSpinning(false);
     }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinning, balance]);
 
   const renderReel = (symbol: string, reelAnim: Animated.SharedValue<number>, index: number) => (

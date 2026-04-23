@@ -67,6 +67,7 @@ function HotspotDetailPage() {
       }
     };
     fetchOffers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.slug]);
 
   const handleDirections = () => {

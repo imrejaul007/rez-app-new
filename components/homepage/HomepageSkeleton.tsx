@@ -17,6 +17,7 @@ import { colors } from '@/constants/theme';
  */
 
 /** Header skeleton: location pill + icon buttons */
+// eslint-disable-next-line react/display-name
 const HeaderSkeleton = React.memo(() => (
   <View style={headerStyles.container}>
     <View style={headerStyles.top}>
@@ -38,6 +39,7 @@ const HeaderSkeleton = React.memo(() => (
 ));
 
 /** Hero banner skeleton: 1 large card */
+// eslint-disable-next-line react/display-name
 const HeroBannerSkeleton = React.memo(() => (
   <View style={bannerStyles.container}>
     <SkeletonCard width="100%" height={140} borderRadius={16} />
@@ -45,6 +47,7 @@ const HeroBannerSkeleton = React.memo(() => (
 ));
 
 /** Tab section skeleton: 4 tabs */
+// eslint-disable-next-line react/display-name
 const TabSectionSkeleton = React.memo(() => (
   <View style={tabStyles.container}>
     <View style={tabStyles.row}>
@@ -68,6 +71,7 @@ const TabSectionSkeleton = React.memo(() => (
 ));
 
 /** Quick actions skeleton: 4 icon buttons */
+// eslint-disable-next-line react/display-name
 const QuickActionsSkeleton = React.memo(() => (
   <View style={quickStyles.container}>
     <View style={quickStyles.row}>
@@ -82,6 +86,7 @@ const QuickActionsSkeleton = React.memo(() => (
 ));
 
 /** Horizontal card section skeleton: title + scrollable cards */
+// eslint-disable-next-line react/display-name
 const CardSectionSkeleton = React.memo(({
   cardWidth = 280,
   cardHeight = 160,
@@ -117,6 +122,7 @@ const CardSectionSkeleton = React.memo(({
 ));
 
 /** Product grid skeleton: 2-column grid of product cards */
+// eslint-disable-next-line react/display-name
 const ProductGridSkeleton = React.memo(() => (
   <View style={gridStyles.container}>
     <View style={sectionStyles.header}>

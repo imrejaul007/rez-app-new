@@ -84,6 +84,7 @@ function CreatorEditProfilePage() {
       }
     };
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const validate = useCallback((): boolean => {
@@ -145,6 +146,7 @@ function CreatorEditProfilePage() {
       if (!isMounted()) return;
       setSaving(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayName, bio, avatar, coverImage, selectedTags, socialLinks, validate, router]);
 
   const toggleTag = useCallback((tag: string) => {

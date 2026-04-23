@@ -36,6 +36,7 @@ const CashStoreSearchBar: React.FC<CashStoreSearchBarProps> = ({
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 400 });
     slideAnim.value = withTiming(0, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({

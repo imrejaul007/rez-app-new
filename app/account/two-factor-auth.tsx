@@ -106,6 +106,7 @@ function TwoFactorAuthPage() {
         try {
           const success = await disableTwoFactorAuth();
           if (success) {
+            // eslint-disable-next-line no-unused-expressions
             router.canGoBack() ? router.back() : router.replace('/(tabs)');
           }
         } catch (error: any) {

@@ -20,6 +20,12 @@ const rnGlobals = {
   navigator: 'readonly', self: 'readonly', caches: 'readonly',
   URLSearchParams: 'readonly', crypto: 'readonly',
   require: 'readonly', console: 'readonly', process: 'readonly',
+  document: 'readonly', React: 'readonly', AbortController: 'readonly',
+  performance: 'readonly', URL: 'readonly', NodeJS: 'readonly',
+  File: 'readonly', Blob: 'readonly', sessionStorage: 'readonly',
+  localStorage: 'readonly', IntersectionObserver: 'readonly',
+  KeyboardEvent: 'readonly', FileReader: 'readonly', Buffer: 'readonly',
+  HTMLVideoElement: 'readonly', JSX: 'readonly', PermissionStatus: 'readonly',
 };
 
 const jestGlobals = {

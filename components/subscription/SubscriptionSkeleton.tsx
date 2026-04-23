@@ -9,6 +9,7 @@ import { colors } from '@/constants/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+// eslint-disable-next-line react/display-name
 const SkeletonBlock = React.memo(({ width, height, style, borderRadius = 8 }: {
   width: number | string;
   height: number;
@@ -42,6 +43,7 @@ const SkeletonBlock = React.memo(({ width, height, style, borderRadius = 8 }: {
 });
 
 /** Skeleton for the Manage Subscription page */
+// eslint-disable-next-line react/display-name
 export const ManageSubscriptionSkeleton = React.memo(() => (
   <View style={styles.container}>
     {/* Tier Card Skeleton */}
@@ -80,6 +82,7 @@ export const ManageSubscriptionSkeleton = React.memo(() => (
 ));
 
 /** Skeleton for the Plans page */
+// eslint-disable-next-line react/display-name
 export const PlansPageSkeleton = React.memo(() => (
   <View style={styles.container}>
     {/* Billing Toggle */}
@@ -105,6 +108,7 @@ export const PlansPageSkeleton = React.memo(() => (
 ));
 
 /** Skeleton for the Upgrade Confirmation page */
+// eslint-disable-next-line react/display-name
 export const UpgradeConfirmationSkeleton = React.memo(() => (
   <View style={styles.container}>
     {/* Tier Transition */}

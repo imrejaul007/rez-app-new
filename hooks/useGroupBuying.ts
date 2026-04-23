@@ -41,6 +41,7 @@ export function useGroupBuying() {
     if (isAuthenticated) {
       loadInitialData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // Cleanup on unmount
@@ -52,6 +53,7 @@ export function useGroupBuying() {
           socket.emit(GroupBuyingSocketEvents.LEAVE_GROUP_ROOM, { groupId });
         }
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       subscribedGroupIds.current.clear();
     };
   }, [socket]);

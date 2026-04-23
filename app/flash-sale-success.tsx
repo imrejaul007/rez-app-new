@@ -62,6 +62,7 @@ function FlashSaleSuccessPage() {
       setError('Missing payment information');
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purchaseId, razorpay_order_id, razorpay_payment_id, razorpay_signature]);
 
   const verifyPayment = async (attempt = 0) => {

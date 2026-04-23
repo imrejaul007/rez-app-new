@@ -50,13 +50,18 @@ const formatCount = (count: number): string => {
 // SKELETON CARD
 // ============================================
 
+// eslint-disable-next-line react/display-name
 const CreatorCardSkeleton = React.memo(() => (
   <View style={styles.creatorCard}>
     <View style={styles.creatorHeader}>
       <View style={[styles.avatarContainer, { backgroundColor: colors.neutral[200] }]} />
       <View style={styles.creatorInfo}>
-        <View style={{ width: 120, height: 16, backgroundColor: colors.neutral[200], borderRadius: 4, marginBottom: 6 }} />
-        <View style={{ width: 80, height: 12, backgroundColor: colors.neutral[100], borderRadius: 4, marginBottom: 4 }} />
+        <View
+          style={{ width: 120, height: 16, backgroundColor: colors.neutral[200], borderRadius: 4, marginBottom: 6 }}
+        />
+        <View
+          style={{ width: 80, height: 12, backgroundColor: colors.neutral[100], borderRadius: 4, marginBottom: 4 }}
+        />
         <View style={{ width: 160, height: 12, backgroundColor: colors.neutral[100], borderRadius: 4 }} />
       </View>
     </View>
@@ -81,17 +86,11 @@ const CreatorCardSkeleton = React.memo(() => (
 // CREATOR CARD
 // ============================================
 
+// eslint-disable-next-line react/display-name
 const CreatorCard = React.memo(({ creator, onPress }: { creator: Creator; onPress: () => void }) => (
-  <Pressable
-    style={styles.creatorCard}
-    onPress={onPress}
-   
-  >
+  <Pressable style={styles.creatorCard} onPress={onPress}>
     <View style={styles.creatorHeader}>
-      <LinearGradient
-        colors={['#9333EA', colors.brand.pink]}
-        style={styles.avatarContainer}
-      >
+      <LinearGradient colors={['#9333EA', colors.brand.pink]} style={styles.avatarContainer}>
         {creator.avatar ? (
           <CachedImage source={creator.avatar} style={styles.avatarImage} />
         ) : (
@@ -100,10 +99,10 @@ const CreatorCard = React.memo(({ creator, onPress }: { creator: Creator; onPres
       </LinearGradient>
       <View style={styles.creatorInfo}>
         <View style={styles.nameRow}>
-          <Text style={styles.creatorName} numberOfLines={1}>{creator.name}</Text>
-          {creator.verified && (
-            <Ionicons name="checkmark-circle" size={16} color={colors.infoScale[400]} />
-          )}
+          <Text style={styles.creatorName} numberOfLines={1}>
+            {creator.name}
+          </Text>
+          {creator.verified && <Ionicons name="checkmark-circle" size={16} color={colors.infoScale[400]} />}
           {creator.isFeatured && (
             <View style={styles.featuredBadge}>
               <Ionicons name="star" size={10} color={colors.warningScale[400]} />
@@ -112,12 +111,12 @@ const CreatorCard = React.memo(({ creator, onPress }: { creator: Creator; onPres
           )}
         </View>
         {creator.tier && (
-          <Text style={styles.tierText}>
-            {creator.tier.charAt(0).toUpperCase() + creator.tier.slice(1)} Creator
-          </Text>
+          <Text style={styles.tierText}>{creator.tier.charAt(0).toUpperCase() + creator.tier.slice(1)} Creator</Text>
         )}
         {creator.bio ? (
-          <Text style={styles.bio} numberOfLines={1}>{creator.bio}</Text>
+          <Text style={styles.bio} numberOfLines={1}>
+            {creator.bio}
+          </Text>
         ) : null}
       </View>
     </View>
@@ -172,53 +171,53 @@ function CreatorsPage() {
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstMount = useRef(true);
 
-  const fetchCreators = useCallback(async (
-    pageNum: number = 1,
-    append: boolean = false,
-  ) => {
-    try {
-      if (!append) setLoading(true);
-      else setLoadingMore(true);
-      setError(null);
+  const fetchCreators = useCallback(
+    async (pageNum: number = 1, append: boolean = false) => {
+      try {
+        if (!append) setLoading(true);
+        else setLoadingMore(true);
+        setError(null);
 
-      const params: {
-        page: number;
-        limit: number;
-        sort: string;
-        category?: string;
-        search?: string;
-      } = {
-        page: pageNum,
-        limit: 20,
-        sort: sortBy,
-      };
-      if (selectedCategory !== 'all') params.category = selectedCategory;
-      if (searchQuery.trim()) params.search = searchQuery.trim();
+        const params: {
+          page: number;
+          limit: number;
+          sort: string;
+          category?: string;
+          search?: string;
+        } = {
+          page: pageNum,
+          limit: 20,
+          sort: sortBy,
+        };
+        if (selectedCategory !== 'all') params.category = selectedCategory;
+        if (searchQuery.trim()) params.search = searchQuery.trim();
 
-      const response = await creatorsApi.getApprovedCreators(params);
+        const response = await creatorsApi.getApprovedCreators(params);
 
-      // CA-DSC-044 FIX: Validate API response shape before using
-      if (response.success && response.data && Array.isArray(response.data.creators)) {
-        if (append) {
-          setCreators(prev => [...prev, ...response.data!.creators]);
+        // CA-DSC-044 FIX: Validate API response shape before using
+        if (response.success && response.data && Array.isArray(response.data.creators)) {
+          if (append) {
+            setCreators((prev) => [...prev, ...response.data!.creators]);
+          } else {
+            setCreators(response.data.creators);
+          }
+          setPage(response.data.page || 1);
+          setTotalPages(response.data.totalPages || 1);
+          setTotal(response.data.total || 0);
         } else {
-          setCreators(response.data.creators);
+          if (!append) setCreators([]);
+          setError(response.error || 'Invalid response from server');
         }
-        setPage(response.data.page || 1);
-        setTotalPages(response.data.totalPages || 1);
-        setTotal(response.data.total || 0);
-      } else {
+      } catch (err: any) {
         if (!append) setCreators([]);
-        setError(response.error || 'Invalid response from server');
+        setError(err.message || 'Failed to load creators');
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!append) setCreators([]);
-      setError(err.message || 'Failed to load creators');
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, [selectedCategory, sortBy, searchQuery]);
+    },
+    [selectedCategory, sortBy, searchQuery],
+  );
 
   // Initial fetch and cleanup on unmount
   useEffect(() => {
@@ -231,12 +230,14 @@ function CreatorsPage() {
         clearTimeout(searchTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refetch on category or sort change
   useEffect(() => {
     if (isFirstMount.current) return;
     fetchCreators(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, sortBy]);
 
   // Debounced search (300ms)
@@ -249,19 +250,19 @@ function CreatorsPage() {
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const loadMore = useCallback(() => {
     if (loadingMore || page >= totalPages) return;
     fetchCreators(page + 1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, totalPages, loadingMore, fetchCreators]);
 
-  const renderCreatorCard = useCallback(({ item }: { item: Creator }) => (
-    <CreatorCard
-      creator={item}
-      onPress={() => router.push(`/creator/${item.id}`)}
-    />
-  ), [router]);
+  const renderCreatorCard = useCallback(
+    ({ item }: { item: Creator }) => <CreatorCard creator={item} onPress={() => router.push(`/creator/${item.id}`)} />,
+    [router],
+  );
 
   const renderFooter = useCallback(() => {
     if (!loadingMore) return <View style={{ height: 100 }} />;
@@ -280,9 +281,7 @@ function CreatorsPage() {
         <Ionicons name="people-outline" size={56} color={colors.neutral[300]} />
         <Text style={styles.emptyTitle}>No creators found</Text>
         <Text style={styles.emptySubtitle}>
-          {searchQuery
-            ? 'Try a different search term'
-            : 'No creators match the selected filters'}
+          {searchQuery ? 'Try a different search term' : 'No creators match the selected filters'}
         </Text>
       </View>
     );
@@ -298,7 +297,10 @@ function CreatorsPage() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.neutral[800]} />
         </Pressable>
         <View style={{ flex: 1 }}>
@@ -307,10 +309,7 @@ function CreatorsPage() {
             {loading ? 'Loading...' : `${total} creator${total !== 1 ? 's' : ''}`}
           </Text>
         </View>
-        <Pressable
-          onPress={() => router.push('/creator-apply')}
-         
-        >
+        <Pressable onPress={() => router.push('/creator-apply')}>
           <LinearGradient
             colors={['#9333EA', colors.brand.pink]}
             start={{ x: 0, y: 0 }}
@@ -349,10 +348,7 @@ function CreatorsPage() {
             <Pressable
               key={cat.id}
               onPress={() => setSelectedCategory(cat.id)}
-              style={[
-                styles.categoryPill,
-                selectedCategory === cat.id && styles.categoryPillActive,
-              ]}
+              style={[styles.categoryPill, selectedCategory === cat.id && styles.categoryPillActive]}
             >
               {selectedCategory === cat.id ? (
                 <LinearGradient
@@ -377,22 +373,14 @@ function CreatorsPage() {
           <Pressable
             key={sort.id}
             onPress={() => setSortBy(sort.id)}
-            style={[
-              styles.sortPill,
-              sortBy === sort.id && styles.sortPillActive,
-            ]}
+            style={[styles.sortPill, sortBy === sort.id && styles.sortPillActive]}
           >
             <Ionicons
               name={sort.icon}
               size={14}
               color={sortBy === sort.id ? colors.background.primary : colors.neutral[500]}
             />
-            <Text style={[
-              styles.sortPillText,
-              sortBy === sort.id && styles.sortPillTextActive,
-            ]}>
-              {sort.name}
-            </Text>
+            <Text style={[styles.sortPillText, sortBy === sort.id && styles.sortPillTextActive]}>{sort.name}</Text>
           </Pressable>
         ))}
       </View>
@@ -410,10 +398,7 @@ function CreatorsPage() {
           <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
           <Text style={styles.errorTitle}>Failed to load creators</Text>
           <Text style={styles.errorMessage}>{error}</Text>
-          <Pressable
-            style={styles.retryButton}
-            onPress={() => fetchCreators(1)}
-          >
+          <Pressable style={styles.retryButton} onPress={() => fetchCreators(1)}>
             <Text style={styles.retryButtonText}>Try Again</Text>
           </Pressable>
         </View>
@@ -432,7 +417,6 @@ function CreatorsPage() {
           estimatedItemSize={280}
         />
       )}
-
     </View>
   );
 }

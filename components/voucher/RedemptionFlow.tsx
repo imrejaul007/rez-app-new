@@ -99,6 +99,7 @@ function RedemptionFlow({
       if (!isMounted()) return;
       setIsProcessing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVoucher, selectedMethod, onRedeem, handleNext]);
 
   const handleClose = useCallback(() => {

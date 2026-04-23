@@ -86,6 +86,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [programSlug]);
 
   useEffect(() => {

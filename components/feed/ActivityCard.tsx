@@ -39,6 +39,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onLike, onComment
   // Load activity stats
   React.useEffect(() => {
     loadStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activity._id]);
 
   const loadStats = async () => {

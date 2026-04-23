@@ -384,14 +384,17 @@ function App() {
   }, []);
 
   // CA-DSC-036 FIX: Memoize formatted badges to prevent unnecessary updates when currency changes
-  const formatBadgeWithCurrency = React.useCallback((badge: string | undefined): string => {
-    if (!badge) return '';
-    // If badge is a pure number, prefix with currency symbol
-    if (/^\d+$/.test(badge)) {
-      return `${currencySymbol}${badge}`;
-    }
-    return badge;
-  }, [currencySymbol]);
+  const formatBadgeWithCurrency = React.useCallback(
+    (badge: string | undefined): string => {
+      if (!badge) return '';
+      // If badge is a pure number, prefix with currency symbol
+      if (/^\d+$/.test(badge)) {
+        return `${currencySymbol}${badge}`;
+      }
+      return badge;
+    },
+    [currencySymbol],
+  );
 
   // Fetch categories from backend
   const fetchCategories = React.useCallback(async () => {
@@ -427,6 +430,7 @@ function App() {
       if (!isMounted()) return;
       setIsLoadingCategories(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencySymbol]);
 
   // Fetch categories on mount

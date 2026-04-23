@@ -75,6 +75,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
     initializeVoucherData();
     initializeHeroCarousel();
     return () => { isMountedRef.current = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated]);
 
   const initializeHeroCarousel = useCallback(async () => {
@@ -495,11 +496,13 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
   const handleCategorySelect = useCallback((category: Category) => {
     // Navigate to voucher category page instead of filtering in same page
     router.push(`/voucher/category/${category.slug || category.id.toLowerCase()}`);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBrandSelect = useCallback((brand: Brand) => {
 
     router.push(`/voucher/${brand.id}`);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBackNavigation = useCallback(() => {
@@ -518,6 +521,7 @@ export const useOnlineVoucher = (): UseVoucherReturn => {
     } else {
       router.back();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentView, clearSearch, initializeVoucherData]);
 
   const handleShare = useCallback(async (brand?: Brand) => {

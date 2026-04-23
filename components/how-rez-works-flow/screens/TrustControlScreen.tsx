@@ -55,6 +55,7 @@ const TrustControlScreen: React.FC<Props> = ({ onNavigate, onBack }) => {
             withSpring(1, { damping: 15 })
         );
         shieldOpacity.value = withSpring(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const shieldStyle = useAnimatedStyle(() => ({

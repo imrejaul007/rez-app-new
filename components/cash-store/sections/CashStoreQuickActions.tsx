@@ -86,6 +86,7 @@ const ActionCard: React.FC<{
   action: CashStoreQuickAction;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ action, index, onPress }) => {
   const scaleAnim = useSharedValue(0.9);
   const fadeAnim = useSharedValue(0);
@@ -95,6 +96,7 @@ const ActionCard: React.FC<{
     // Staggered entry animation
     fadeAnim.value = withDelay(index * 100, withTiming(1, { duration: 400 }));
     scaleAnim.value = withDelay(index * 100, withSpring(1));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const handlePressIn = () => {

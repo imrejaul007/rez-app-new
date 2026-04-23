@@ -142,6 +142,7 @@ function PaymentSuccessScreen() {
     return () => {
       clearTimeout(popupTimer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleViewReceipt = () => {

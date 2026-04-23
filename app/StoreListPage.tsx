@@ -66,6 +66,7 @@ const StoreListPage: React.FC = () => {
     } catch {
       return defaultSearchFilters;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Local state for search and filters
@@ -178,6 +179,7 @@ const StoreListPage: React.FC = () => {
 
       setAvailableFilters(derivedFilters);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stores]);
 
   // Convert stores to SearchResults format
@@ -290,7 +292,9 @@ const StoreListPage: React.FC = () => {
                 description: product.description || '',
                 price: getPrice(),
                 originalPrice: isNewStructure ? product.originalPrice || null : product.price?.original || null,
-                discountPercentage: isNewStructure ? product.discountPercentage || null : product.price?.discount || null,
+                discountPercentage: isNewStructure
+                  ? product.discountPercentage || null
+                  : product.price?.discount || null,
                 imageUrl: product.imageUrl || product.image,
                 imageAlt: product.imageAlt || product.name || product.title || 'Product image',
                 hasRezPay: product.hasRezPay !== undefined ? product.hasRezPay : false,
@@ -392,6 +396,7 @@ const StoreListPage: React.FC = () => {
 
   // Handle back navigation
   const handleBack = useCallback(() => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 

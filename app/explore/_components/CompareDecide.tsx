@@ -29,6 +29,7 @@ const CompareDecide = () => {
 
   useEffect(() => {
     fetchFeaturedComparison();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchFeaturedComparison = async () => {

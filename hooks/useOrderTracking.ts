@@ -76,13 +76,13 @@ export interface OrderPartnerAssigned {
 export interface OrderTimelineUpdate {
   orderId: string;
   orderNumber: string;
-  timeline: Array<{
+  timeline: {
     status: string;
     message: string;
     timestamp: Date;
     updatedBy?: string;
     metadata?: any;
-  }>;
+  }[];
   timestamp: Date;
 }
 

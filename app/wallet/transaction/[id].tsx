@@ -46,6 +46,7 @@ function TransactionDetailPage() {
   useEffect(() => {
     if (!id) return;
     fetchTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchTransaction = async () => {

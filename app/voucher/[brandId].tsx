@@ -87,10 +87,12 @@ function BrandDetailPage() {
         isMounted = false;
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brand]);
 
   useEffect(() => {
     loadBrandDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brandId]);
 
   const loadBrandDetails = async () => {

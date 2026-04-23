@@ -139,6 +139,7 @@ function ComparePage() {
       }
     };
     fetchSaved();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Collect all unique spec keys across selected products
@@ -208,6 +209,7 @@ function ComparePage() {
       if (!isMounted()) return;
       setIsSearching(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProducts]);
 
   const handleSearchQueryChange = (text: string) => {

@@ -201,6 +201,7 @@ function AppointmentBookingPage() {
         if (isMounted()) setLoading(false);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   // Check patch test status for color/tint services
@@ -249,6 +250,7 @@ function AppointmentBookingPage() {
       .catch(() => {
         // Backend unavailable — fall back to local past-time-only check (silent)
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, storeId]);
 
   // Guard: storeId must be present (placed after all hooks to comply with Rules of Hooks)

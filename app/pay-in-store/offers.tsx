@@ -48,6 +48,7 @@ function OffersScreen() {
     useCallback(() => {
       if (authLoading || !isAuthenticated) return;
       loadOffers();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authLoading, isAuthenticated, storeId, amount]),
   );
 

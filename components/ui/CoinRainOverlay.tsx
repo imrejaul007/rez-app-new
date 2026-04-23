@@ -29,6 +29,7 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
       wobbleAmplitude: 15 + Math.random() * 30,
       spinStart: Math.random() * 360,
     }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   useEffect(() => {
@@ -75,6 +76,7 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
     masterAnim.start(() => { onComplete?.(); });
 
     return () => { masterAnim.stop(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   if (!visible) return null;

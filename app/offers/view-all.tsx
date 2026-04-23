@@ -189,6 +189,7 @@ function ViewAllOffersScreen() {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [category, discount],
   );
 
@@ -200,6 +201,7 @@ function ViewAllOffersScreen() {
     setAllOffers([]);
     fetchOffers(1, false);
     fetchUserPoints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, discount]);
 
   const handleRefresh = useCallback(() => {
@@ -217,6 +219,7 @@ function ViewAllOffersScreen() {
   }, [page, loadingMore, hasMore, loading, fetchOffers]);
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -239,6 +242,7 @@ function ViewAllOffersScreen() {
     [router],
   );
 
+  // eslint-disable-next-line react/display-name
   const ProductCard = React.memo(({ offer }: { offer: Offer }) => {
     const [imageError, setImageError] = React.useState(false);
 
@@ -283,6 +287,7 @@ function ViewAllOffersScreen() {
     );
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderItem = useCallback(({ item }: { item: Offer }) => <ProductCard offer={item} />, [handleOfferPress]);
 
   const ListHeader = useCallback(
@@ -318,6 +323,7 @@ function ViewAllOffersScreen() {
         )}
       </>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [loading, error, allOffers.length, totalCount, category, title, discount],
   );
 

@@ -112,6 +112,7 @@ interface MallHeroBannerProps {
 }
 
 // Individual pagination dot with reanimated
+// eslint-disable-next-line react/display-name
 const PaginationDot: React.FC<{ index: number; activeIndex: SharedValue<number> }> = memo(({ index, activeIndex }) => {
   const dotStyle = useAnimatedStyle(() => {
     const isActive = activeIndex.value === index ? 1 : 0;
@@ -151,6 +152,7 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
 
   const animateDots = useCallback((activeIndex: number) => {
     activeIndexShared.value = activeIndex;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToIndex = useCallback((index: number) => {

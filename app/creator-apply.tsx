@@ -61,6 +61,7 @@ function CreatorApplyPage() {
   // Check eligibility on mount and when returning from upload
   useEffect(() => {
     checkEligibility();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Re-check when page regains focus (e.g., returning from upload)
@@ -70,6 +71,7 @@ function CreatorApplyPage() {
       window.addEventListener('focus', onFocus);
       return () => window.removeEventListener('focus', onFocus);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkEligibility = async () => {
@@ -116,20 +118,20 @@ function CreatorApplyPage() {
   const addTag = useCallback(() => {
     const trimmed = tagInput.trim();
     if (trimmed && tags.length < 5 && !tags.includes(trimmed)) {
-      setTags(prev => [...prev, trimmed]);
+      setTags((prev) => [...prev, trimmed]);
       setTagInput('');
     }
   }, [tagInput, tags]);
 
   const removeTag = useCallback((index: number) => {
-    setTags(prev => prev.filter((_, i) => i !== index));
+    setTags((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const updateSocialLink = useCallback((platform: string, url: string) => {
-    setSocialLinks(prev => {
-      const existing = prev.findIndex(l => l.platform === platform);
+    setSocialLinks((prev) => {
+      const existing = prev.findIndex((l) => l.platform === platform);
       if (existing >= 0) {
-        if (!url.trim()) return prev.filter(l => l.platform !== platform);
+        if (!url.trim()) return prev.filter((l) => l.platform !== platform);
         const next = [...prev];
         next[existing] = { platform, url: url.trim() };
         return next;
@@ -139,8 +141,7 @@ function CreatorApplyPage() {
     });
   }, []);
 
-  const getSocialUrl = (platform: string) =>
-    socialLinks.find(l => l.platform === platform)?.url || '';
+  const getSocialUrl = (platform: string) => socialLinks.find((l) => l.platform === platform)?.url || '';
 
   const handleSubmit = async () => {
     if (!selectedCategory || !displayName.trim() || !bio.trim()) {
@@ -187,7 +188,10 @@ function CreatorApplyPage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} title="Become a Creator" />
+        <Header
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          title="Become a Creator"
+        />
         <View style={styles.centerContainer}>
           <FormPageSkeleton />
         </View>
@@ -203,7 +207,10 @@ function CreatorApplyPage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} title="Application Status" />
+        <Header
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          title="Application Status"
+        />
         <View style={styles.centerContainer}>
           <View style={styles.statusIcon}>
             <Ionicons name="time-outline" size={48} color={Colors.warning} />
@@ -212,7 +219,10 @@ function CreatorApplyPage() {
           <Text style={styles.statusSubtitle}>
             Your creator application is being reviewed. We'll notify you once a decision is made.
           </Text>
-          <Pressable style={styles.primaryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.primaryButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.primaryButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -225,20 +235,27 @@ function CreatorApplyPage() {
   // ============================================
 
   if (step === 0 && eligibility && !eligibility.eligible) {
-    const needsVideos = eligibility.requirements.some(r => r.label.toLowerCase().includes('video') && !r.met);
+    const needsVideos = eligibility.requirements.some((r) => r.label.toLowerCase().includes('video') && !r.met);
 
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} title="Become a Creator" />
+        <Header
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          title="Become a Creator"
+        />
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           <View style={styles.eligibilityCard}>
             <View style={[styles.statusIcon, { backgroundColor: Colors.warningScale[50] }]}>
-              <Ionicons name={needsVideos ? 'videocam-outline' : 'rocket-outline'} size={48} color={colors.warningScale[700]} />
+              <Ionicons
+                name={needsVideos ? 'videocam-outline' : 'rocket-outline'}
+                size={48}
+                color={colors.warningScale[700]}
+              />
             </View>
             <Text style={styles.statusTitle}>Almost There!</Text>
             <Text style={styles.statusSubtitle}>
@@ -249,7 +266,13 @@ function CreatorApplyPage() {
 
             <View style={styles.requirementsList}>
               {eligibility.requirements.map((req, index) => (
-                <View key={index} style={[styles.requirementRow, { backgroundColor: req.met ? Colors.successScale[50] : Colors.warningScale[50] }]}>
+                <View
+                  key={index}
+                  style={[
+                    styles.requirementRow,
+                    { backgroundColor: req.met ? Colors.successScale[50] : Colors.warningScale[50] },
+                  ]}
+                >
                   <Ionicons
                     name={req.met ? 'checkmark-circle' : 'ellipse-outline'}
                     size={22}
@@ -266,11 +289,7 @@ function CreatorApplyPage() {
             </View>
 
             {needsVideos && (
-              <Pressable
-                style={styles.uploadCta}
-                onPress={() => router.push('/ugc-upload')}
-               
-              >
+              <Pressable style={styles.uploadCta} onPress={() => router.push('/ugc-upload')}>
                 <LinearGradient
                   colors={[Colors.brand.purple, Colors.brand.purple]}
                   start={{ x: 0, y: 0 }}
@@ -283,11 +302,7 @@ function CreatorApplyPage() {
               </Pressable>
             )}
 
-            <Pressable
-              style={styles.recheckBtn}
-              onPress={checkEligibility}
-             
-            >
+            <Pressable style={styles.recheckBtn} onPress={checkEligibility}>
               <Ionicons name="refresh-outline" size={16} color={colors.brand.purple} />
               <Text style={styles.recheckBtnText}>Re-check Eligibility</Text>
             </Pressable>
@@ -296,9 +311,7 @@ function CreatorApplyPage() {
               <View style={styles.rejectionBox}>
                 <Text style={styles.rejectionTitle}>Previous Application Rejected</Text>
                 {eligibility.existingProfile.rejectionReason && (
-                  <Text style={styles.rejectionReason}>
-                    {eligibility.existingProfile.rejectionReason}
-                  </Text>
+                  <Text style={styles.rejectionReason}>{eligibility.existingProfile.rejectionReason}</Text>
                 )}
               </View>
             )}
@@ -317,7 +330,10 @@ function CreatorApplyPage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} title="Application Submitted" />
+        <Header
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          title="Application Submitted"
+        />
         <View style={styles.centerContainer}>
           <LinearGradient colors={[Colors.brand.purple, colors.brand.pink]} style={styles.successIcon}>
             <Ionicons name="checkmark" size={48} color={colors.text.inverse} />
@@ -326,10 +342,7 @@ function CreatorApplyPage() {
           <Text style={styles.statusSubtitle}>
             Your creator application has been submitted successfully. We'll review it and notify you soon.
           </Text>
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => router.replace('/playandearn')}
-          >
+          <Pressable style={styles.primaryButton} onPress={() => router.replace('/playandearn')}>
             <Text style={styles.primaryButtonText}>Back to Play & Earn</Text>
           </Pressable>
         </View>
@@ -344,42 +357,33 @@ function CreatorApplyPage() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-      <Header onBack={() => step > 1 ? setStep(step - 1) : router.canGoBack() ? router.back() : router.replace('/(tabs)')} title="Become a Creator" />
+      <Header
+        onBack={() => (step > 1 ? setStep(step - 1) : router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        title="Become a Creator"
+      />
 
       {/* Progress Bar */}
       <View style={styles.progressBar}>
-        {[1, 2, 3, 4].map(s => (
+        {[1, 2, 3, 4].map((s) => (
           <View
             key={s}
-            style={[
-              styles.progressDot,
-              s <= step && styles.progressDotActive,
-              s === step && styles.progressDotCurrent,
-            ]}
+            style={[styles.progressDot, s <= step && styles.progressDotActive, s === step && styles.progressDotCurrent]}
           />
         ))}
       </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* STEP 1: Category */}
           {step === 1 && (
             <View>
               <Text style={styles.stepTitle}>Choose Your Category</Text>
-              <Text style={styles.stepSubtitle}>
-                What type of content do you create?
-              </Text>
+              <Text style={styles.stepSubtitle}>What type of content do you create?</Text>
               <View style={styles.categoryGrid}>
-                {categoryOptions.map(cat => (
+                {categoryOptions.map((cat) => (
                   <Pressable
                     key={cat.id}
-                    style={[
-                      styles.categoryCard,
-                      selectedCategory === cat.id && styles.categoryCardActive,
-                    ]}
+                    style={[styles.categoryCard, selectedCategory === cat.id && styles.categoryCardActive]}
                     onPress={() => setSelectedCategory(cat.id)}
                   >
                     <Ionicons
@@ -387,10 +391,7 @@ function CreatorApplyPage() {
                       size={28}
                       color={selectedCategory === cat.id ? Colors.brand.purple : colors.text.tertiary}
                     />
-                    <Text style={[
-                      styles.categoryName,
-                      selectedCategory === cat.id && styles.categoryNameActive,
-                    ]}>
+                    <Text style={[styles.categoryName, selectedCategory === cat.id && styles.categoryNameActive]}>
                       {cat.name}
                     </Text>
                     {selectedCategory === cat.id && (
@@ -408,9 +409,7 @@ function CreatorApplyPage() {
           {step === 2 && (
             <View>
               <Text style={styles.stepTitle}>Your Creator Profile</Text>
-              <Text style={styles.stepSubtitle}>
-                Tell your audience about yourself
-              </Text>
+              <Text style={styles.stepSubtitle}>Tell your audience about yourself</Text>
 
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Display Name *</Text>
@@ -460,11 +459,7 @@ function CreatorApplyPage() {
                 {tags.length > 0 && (
                   <View style={styles.tagsRow}>
                     {tags.map((tag, idx) => (
-                      <Pressable
-                        key={idx}
-                        style={styles.tagChip}
-                        onPress={() => removeTag(idx)}
-                      >
+                      <Pressable key={idx} style={styles.tagChip} onPress={() => removeTag(idx)}>
                         <Text style={styles.tagChipText}>{tag}</Text>
                         <Ionicons name="close" size={14} color={Colors.brand.purple} />
                       </Pressable>
@@ -479,11 +474,9 @@ function CreatorApplyPage() {
           {step === 3 && (
             <View>
               <Text style={styles.stepTitle}>Social Links</Text>
-              <Text style={styles.stepSubtitle}>
-                Add your social media profiles (optional)
-              </Text>
+              <Text style={styles.stepSubtitle}>Add your social media profiles (optional)</Text>
 
-              {socialPlatforms.map(platform => (
+              {socialPlatforms.map((platform) => (
                 <View key={platform.id} style={styles.socialInputGroup}>
                   <View style={styles.socialInputLabel}>
                     <Ionicons name={platform.icon as any} size={20} color={colors.text.tertiary} />
@@ -507,15 +500,13 @@ function CreatorApplyPage() {
           {step === 4 && (
             <View>
               <Text style={styles.stepTitle}>Review Your Application</Text>
-              <Text style={styles.stepSubtitle}>
-                Make sure everything looks good before submitting
-              </Text>
+              <Text style={styles.stepSubtitle}>Make sure everything looks good before submitting</Text>
 
               <View style={styles.reviewCard}>
                 <View style={styles.reviewRow}>
                   <Text style={styles.reviewLabel}>Category</Text>
                   <Text style={styles.reviewValue}>
-                    {categoryOptions.find(c => c.id === selectedCategory)?.name || selectedCategory}
+                    {categoryOptions.find((c) => c.id === selectedCategory)?.name || selectedCategory}
                   </Text>
                 </View>
                 <View style={styles.reviewRow}>

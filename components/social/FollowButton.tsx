@@ -18,6 +18,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ userId, onFollowChange, sty
 
   useEffect(() => {
     loadFollowStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const loadFollowStatus = async () => {

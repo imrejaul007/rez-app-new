@@ -89,6 +89,7 @@ function SocialMediaPage() {
 
     loadData();
     loadCompletedOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, authLoading]);
 
   const loadCompletedOrders = async () => {

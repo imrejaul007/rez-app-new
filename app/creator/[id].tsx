@@ -44,6 +44,7 @@ const formatCount = (count: number): string => {
 // PICK CARD COMPONENT
 // ============================================
 
+// eslint-disable-next-line react/display-name
 const PickCard = React.memo(({ pick, onPress }: { pick: CreatorPick; onPress: () => void }) => (
   <Pressable style={styles.pickCard} onPress={onPress}>
     <View style={{ position: 'relative' }}>
@@ -148,6 +149,7 @@ function CreatorProfilePage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
@@ -176,6 +178,7 @@ function CreatorProfilePage() {
       if (!isMounted()) return;
       setFollowLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isFollowing, followLoading]);
 
   const renderPickCard = useCallback(

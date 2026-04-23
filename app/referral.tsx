@@ -118,6 +118,7 @@ const ReferralPageContent = () => {
         clearTimeout(loadingTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // ✅ FIX #2: Individual try-catch for each API (fix race condition)
@@ -229,6 +230,7 @@ const ReferralPageContent = () => {
     }
     setRefreshing(true);
     fetchReferralData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const referralCode = codeInfo?.referralCode || 'LOADING...';
@@ -291,6 +293,7 @@ const ReferralPageContent = () => {
     };
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'completed':
@@ -613,6 +616,7 @@ const ReferralPage = () => {
       }}
       onReset={() => {
         // Optionally navigate back or refresh
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }}
     >

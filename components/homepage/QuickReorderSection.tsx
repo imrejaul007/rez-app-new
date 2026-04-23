@@ -48,6 +48,7 @@ const QuickReorderSection: React.FC<QuickReorderSectionProps> = ({ limit = 5 }) 
     if (!authLoading && isAuthenticated) {
       refresh();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading]);
 
   const handleItemPress = useCallback((item: FrequentlyOrderedItem) => {

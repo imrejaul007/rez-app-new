@@ -60,6 +60,7 @@ export default function FaqScreen() {
     if (!isAuthenticated || !user || user.role !== 'admin') {
       router.replace('/');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, isAuthenticated, user]);
 
   return (

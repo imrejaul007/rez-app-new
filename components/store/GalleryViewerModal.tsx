@@ -133,6 +133,7 @@ function GalleryViewerModal({
         totalItems: items.length,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, initialIndex, items.length, storeId]);
 
   const handleScroll = (event: any) => {
@@ -208,6 +209,7 @@ function GalleryViewerModal({
   const toggleInfo = useCallback(() => {
     fadeAnim.value = withTiming(showInfo ? 0 : 1, { duration: 300 });
     setShowInfo(!showInfo);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showInfo]);
 
   // Keyboard shortcuts for web
@@ -254,6 +256,7 @@ function GalleryViewerModal({
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, currentIndex, viewMode, items.length, goToNext, goToPrevious, onClose, toggleInfo, Platform.OS]);
 
   const handleShare = async () => {

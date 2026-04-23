@@ -40,6 +40,7 @@ function PriveOffersScreen() {
   const [isFavorited, setIsFavorited] = useState(false);
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

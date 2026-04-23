@@ -119,6 +119,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     };
 
     loadImage();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainSourceUri, useCache]);
 
   // Preload image if requested

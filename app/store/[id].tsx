@@ -161,7 +161,8 @@ const StoreDetailPage: React.FC = () => {
 
     try {
       const response = await apiClient.get(`/stores/${id}`);
-      const storeData = ((response.data as unknown) as { store?: Store; _id?: string }).store || (response.data as unknown as Store);
+      const storeData =
+        (response.data as unknown as { store?: Store; _id?: string }).store || (response.data as unknown as Store);
 
       // Validate store data exists
       if (!storeData || !storeData._id) {
@@ -198,6 +199,7 @@ const StoreDetailPage: React.FC = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
@@ -239,6 +241,7 @@ const StoreDetailPage: React.FC = () => {
       if (!isMounted()) return;
       setLoadingRedemptions(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, id, passedRedemptionCode, store]);
 
   useEffect(() => {
@@ -344,7 +347,7 @@ const StoreDetailPage: React.FC = () => {
     if (isFitnessStore) {
       router.push({
         pathname: '/fitness/book/[storeId]',
-        params: baseParams,
+        params: { ...baseParams, storeId: (store as any).id } as any,
       });
     } else {
       router.push({

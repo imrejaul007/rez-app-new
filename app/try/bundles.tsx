@@ -60,6 +60,7 @@ export default function BundlesScreen() {
 
   useEffect(() => {
     loadBundles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadBundles = useCallback(async () => {

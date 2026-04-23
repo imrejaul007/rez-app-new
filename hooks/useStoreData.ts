@@ -75,6 +75,7 @@ export function useStoreData(storeId: string): UseStoreDataResult {
 
   useEffect(() => {
     fetchStore();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   return {

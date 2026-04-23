@@ -67,6 +67,7 @@ function LoadingScreen({ duration = 5000, onComplete }: LoadingScreenProps) {
     return () => {
       clearTimeout(timer);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [duration, onComplete]);
 
   const fadeStyle = useAnimatedStyle(() => ({

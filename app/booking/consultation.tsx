@@ -105,6 +105,7 @@ function ConsultationBookingScreen() {
     };
 
     fetchStoreDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   // Generate next 60 days

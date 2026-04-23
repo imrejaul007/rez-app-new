@@ -43,6 +43,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
       return;
     }
     fetchValue(selectedTier.tier);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTier?.tier, fetchValue]);
 
   // Don't render for free tier or no selection

@@ -149,6 +149,7 @@ function TriviaPage() {
       if (timerRef.current) clearInterval(timerRef.current);
       cancelAnimation(progressAnim);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState, currentIndex]);
 
   // BUG-022 (part 1): declare a stable ref; it will be populated after handleTimeUp
@@ -172,6 +173,7 @@ function TriviaPage() {
       });
       return () => optionAnimations.forEach((anim) => cancelAnimation(anim));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState, currentIndex]);
 
   // Cleanup moveTimerRef on unmount to prevent state updates after unmount
@@ -184,6 +186,7 @@ function TriviaPage() {
   const handleBackPress = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (moveTimerRef.current) clearTimeout(moveTimerRef.current);
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

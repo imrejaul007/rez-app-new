@@ -97,6 +97,7 @@ const FinancialCategoryPage: React.FC = () => {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, selectedFilter, isOffline, trackEvent]);
 
   useEffect(() => {
@@ -110,6 +111,7 @@ const FinancialCategoryPage: React.FC = () => {
     });
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const timeSpent = Date.now() - startTimeRef.current;
       trackEvent('financial_category_time_spent', {
         category: categorySlug,

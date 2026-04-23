@@ -48,6 +48,7 @@ function AchievementToast({
       if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
       if (dismissTimer.current) clearTimeout(dismissTimer.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDismiss = () => {

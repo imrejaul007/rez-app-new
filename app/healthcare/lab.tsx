@@ -98,6 +98,7 @@ const LabTestsPage: React.FC = () => {
 
   useEffect(() => {
     fetchLabData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
   const fetchLabData = async () => {

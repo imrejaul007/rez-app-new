@@ -8,9 +8,10 @@ import { colors } from '@/constants/theme';
 const WhatsNewPage: React.FC = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const startIndex = parseInt(params.startIndex as string || '0', 10);
+  const startIndex = parseInt((params.startIndex as string) || '0', 10);
 
   const handleClose = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

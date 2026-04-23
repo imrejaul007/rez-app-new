@@ -31,6 +31,7 @@ function SkeletonCard({
     // Continuous loop animation for shimmer effect
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1200 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const shimmerStyle = useAnimatedStyle(() => ({

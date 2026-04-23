@@ -29,6 +29,7 @@ const LiveStatsStrip = () => {
 
   useEffect(() => {
     fetchLiveStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchLiveStats = async () => {

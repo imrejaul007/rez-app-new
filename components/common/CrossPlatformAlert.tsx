@@ -49,6 +49,7 @@ export function CrossPlatformAlertRenderer() {
       fadeAnim.value = withTiming(0, { duration: 150 });
       scaleAnim.value = withTiming(0.9, { duration: 150 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const overlayStyle = useAnimatedStyle(() => ({

@@ -40,6 +40,7 @@ export default function IdentityPromptModal() {
         analyticsService.track(IdentityAnalyticsEvents.IDENTITY_GATE_SEEN, { source: 'modal' });
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, statedIdentity]);
 
   const handleSelect = async (id: 'student' | 'corporate' | 'general') => {

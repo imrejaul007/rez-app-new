@@ -81,6 +81,7 @@ const EventReviews: React.FC<EventReviewsProps> = ({ eventId, eventTitle }) => {
       setLoading(false);
       setLoadingMore(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, sortBy]);
 
   const loadUserReview = useCallback(async () => {
@@ -99,6 +100,7 @@ const EventReviews: React.FC<EventReviewsProps> = ({ eventId, eventTitle }) => {
     } catch (err: any) {
       // silently handle
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, isAuthenticated]);
 
   useEffect(() => {

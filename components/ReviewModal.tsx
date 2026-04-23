@@ -110,6 +110,7 @@ function ReviewModal({
       fadeAnim.value = withTiming(0, { duration: 200 });
       slideAnim.value = withTiming(screenData.height, { duration: 250 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, screenData.height]);
 
   const blurContainerStyle = useAnimatedStyle(() => ({

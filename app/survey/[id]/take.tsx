@@ -35,6 +35,7 @@ function SurveyTakePage() {
 
   useEffect(() => {
     loadSurvey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadSurvey = async () => {
@@ -151,6 +152,7 @@ function SurveyTakePage() {
           }));
           await surveysApiService.saveProgress(id, answersArray, currentIndex);
         }
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       },
       'Exit',

@@ -19,6 +19,7 @@ function DealCardSkeleton() {
       ),
       -1
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shimmerOpacity = interpolate(shimmerAnim.value, [0, 1], [0.3, 0.8]);

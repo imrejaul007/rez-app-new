@@ -65,6 +65,7 @@ function SurveyDetailPage() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const isMounted = useIsMounted();
 
@@ -169,6 +170,7 @@ function SurveyDetailPage() {
         } catch (error: any) {
           // silently handle
         }
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       },
       'Leave',

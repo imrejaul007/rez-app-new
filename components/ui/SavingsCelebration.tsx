@@ -73,6 +73,7 @@ function SavingsCelebration({
       delay + 800,
       withTiming(1, { duration: 600 }),
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedAmount]);
 
   const cardStyle = useAnimatedStyle(() => ({

@@ -56,6 +56,7 @@ const FitnessSportsSection: React.FC = () => {
     };
 
     fetchStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleViewAll = () => {

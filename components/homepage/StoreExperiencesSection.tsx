@@ -116,6 +116,7 @@ const StoreExperiencesSection: React.FC<StoreExperiencesSectionProps> = memo(({
     };
 
     fetchExperiences();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {

@@ -30,6 +30,7 @@ function HomeDeliveryPage() {
   const { state, actions, handlers } = useHomeDeliveryPage();
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

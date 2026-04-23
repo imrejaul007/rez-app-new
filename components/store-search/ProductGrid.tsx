@@ -21,6 +21,7 @@ import {
 // Estimated card height for getItemLayout optimization
 const ESTIMATED_CARD_HEIGHT = 220; // Approximate height of a product card row
 
+// eslint-disable-next-line react/display-name
 const ProductGrid: React.FC<ProductGridProps> = memo(({
   products,
   store,

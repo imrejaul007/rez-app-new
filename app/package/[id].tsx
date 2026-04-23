@@ -146,6 +146,7 @@ function PackageDetailsPage() {
     if (id) {
       loadPackageDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadPackageDetails = async () => {
@@ -368,6 +369,7 @@ function PackageDetailsPage() {
   };
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -698,6 +700,7 @@ function PackageDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => {
           setShowConfirmation(false);
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         }}
       >
@@ -707,6 +710,7 @@ function PackageDetailsPage() {
             bookingData={bookingData}
             onClose={() => {
               setShowConfirmation(false);
+              // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');
             }}
           />

@@ -42,6 +42,7 @@ const LIST_IMAGE_SIZE = 85;
 const MAX_VISIBLE_STORES = 3;
 
 // Skeleton Loading List Item
+// eslint-disable-next-line react/display-name
 const SkeletonListItem = memo(() => (
   <View style={styles.listItem}>
     <View style={[styles.listImageContainer, styles.skeletonImage]} />
@@ -54,6 +55,7 @@ const SkeletonListItem = memo(() => (
 ));
 
 // Category Chip Component
+// eslint-disable-next-line react/display-name
 const CategoryChip = memo(({
   label,
   isActive,
@@ -75,6 +77,7 @@ const CategoryChip = memo(({
 ));
 
 // Store List Item Component (Cobone-style)
+// eslint-disable-next-line react/display-name
 const StoreListItem = memo(({
   store,
   index,

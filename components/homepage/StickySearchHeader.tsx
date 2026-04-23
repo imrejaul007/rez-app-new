@@ -39,6 +39,7 @@ interface StickySearchHeaderProps {
 }
 
 // Memoized header content component to prevent re-renders
+// eslint-disable-next-line react/display-name
 const HeaderContentComponent = memo<{
   paddingTop: number;
   onSearchPress: () => void;

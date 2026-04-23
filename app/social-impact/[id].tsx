@@ -147,6 +147,7 @@ function SocialImpactEventDetail() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [id],
   );
 
@@ -493,6 +494,7 @@ function SocialImpactEventDetail() {
         // Silently ignore polling errors
       }
     }, 3000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const stopCheckInPolling = useCallback(() => {

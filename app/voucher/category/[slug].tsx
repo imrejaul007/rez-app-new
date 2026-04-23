@@ -121,12 +121,14 @@ function VoucherCategoryPage() {
     fadeAnim.value = withTiming(1, { duration: 600 });
     slideAnim.value = withSpring(0, { damping: 8, stiffness: 50 });
     headerScale.value = withSpring(1, { damping: 7, stiffness: 50 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (slug) {
       loadCategoryBrands();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const loadCategoryBrands = async () => {

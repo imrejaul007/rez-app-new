@@ -102,6 +102,7 @@ export function DynamicProductExample() {
   React.useEffect(() => {
     // Load product from API
     loadProduct();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadProduct = async () => {

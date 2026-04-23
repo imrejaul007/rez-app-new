@@ -64,6 +64,7 @@ function AddressSearch({
         clearTimeout(debounceRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, debounceMs]);
 
   const performSearch = async (searchQuery: string) => {

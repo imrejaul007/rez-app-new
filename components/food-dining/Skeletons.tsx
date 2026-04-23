@@ -7,6 +7,7 @@ import { View } from 'react-native';
 import SkeletonLoader from '@/components/skeletons/SkeletonLoader';
 import { colors } from '@/constants/theme';
 
+// eslint-disable-next-line react/display-name
 export const SectionHeaderSkeleton = React.memo(() => (
   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12, paddingHorizontal: 16 }}>
     <SkeletonLoader width={20} height={20} variant="circle" />
@@ -16,6 +17,7 @@ export const SectionHeaderSkeleton = React.memo(() => (
   </View>
 ));
 
+// eslint-disable-next-line react/display-name
 export const RestaurantCardSkeleton = React.memo(({ count = 3, variant = 'default' }: { count?: number; variant?: 'default' | 'compact' }) => {
   const isCompact = variant === 'compact';
   return (
@@ -44,6 +46,7 @@ export const RestaurantCardSkeleton = React.memo(({ count = 3, variant = 'defaul
   );
 });
 
+// eslint-disable-next-line react/display-name
 export const DishCardSkeleton = React.memo(({ count = 4 }: { count?: number }) => (
   <View style={{ flexDirection: 'row', paddingHorizontal: 16, gap: 12 }}>
     {Array.from({ length: count }).map((_, i) => (

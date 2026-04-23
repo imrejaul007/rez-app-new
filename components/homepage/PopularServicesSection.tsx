@@ -74,6 +74,7 @@ interface PopularServicesSectionProps {
 }
 
 // Simple Clean Service Card - matches screenshot style
+// eslint-disable-next-line react/display-name
 const PopularServiceCard = memo(({
   service,
   onPress,
@@ -167,6 +168,7 @@ function PopularServicesSection({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]);
 
   useEffect(() => {

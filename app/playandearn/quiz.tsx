@@ -95,6 +95,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const spin = (interpolate(rotate.value, [0, 1], [0, 360]) as unknown as string) + 'deg';
@@ -165,6 +166,7 @@ const Quiz = () => {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -179,6 +181,7 @@ const Quiz = () => {
     } else if (timeLeft === 0 && selectedAnswer === null) {
       handleAnswer(-1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, gameState, selectedAnswer]);
 
   const startGame = async () => {

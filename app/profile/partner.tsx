@@ -78,6 +78,7 @@ function PartnerProfilePage() {
 
   useEffect(() => {
     loadPartnerData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Normalise raw API milestone → type-safe OrderMilestone
@@ -289,6 +290,7 @@ function PartnerProfilePage() {
     if (currentLevel) {
       previousLevelRef.current = currentLevel;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [partnerState.profile?.level?.level, partnerState.levels]);
 
   // Pull-to-refresh handler
@@ -297,6 +299,7 @@ function PartnerProfilePage() {
     await loadPartnerData();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Close level-up modal

@@ -344,6 +344,7 @@ function StoreActionButtons({
         </Animated.View>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       buttonState,
       stateManager,

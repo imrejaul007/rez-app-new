@@ -66,6 +66,7 @@ const ShimmerPlaceholder: React.FC<{ style?: any }> = ({ style }) => {
     return () => {
       shimmerAnim.value = 0;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -235,6 +236,7 @@ function LoyaltyRewardsPage() {
 
   useEffect(() => {
     fetchMilestones();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onRefresh = () => {

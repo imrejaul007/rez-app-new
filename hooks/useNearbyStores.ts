@@ -189,6 +189,7 @@ export function useNearbyStores(options: UseNearbyStoresOptions = {}): UseNearby
       // Region changed after initial fetch - refetch with new region context
       fetchNearbyStores();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRegion]); // Only depend on currentRegion, not fetchNearbyStores to avoid loops
 
   // Cleanup timeout on unmount

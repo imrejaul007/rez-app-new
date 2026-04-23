@@ -72,6 +72,7 @@ function DealSharingModal({
       
     }
   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible, fadeAnim, slideAnim]);
 
   // Copy feedback animation

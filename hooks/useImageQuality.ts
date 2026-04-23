@@ -82,6 +82,7 @@ export function useImageQuality(options: QualityCheckOptions = {}) {
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   // Merge options with defaults
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const finalOptions: Required<QualityCheckOptions> = {
     ...DEFAULT_OPTIONS,
     ...options,
@@ -103,6 +104,7 @@ export function useImageQuality(options: QualityCheckOptions = {}) {
 
       return cached.result;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

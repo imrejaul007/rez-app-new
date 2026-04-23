@@ -55,6 +55,7 @@ export default function SurpriseScreen() {
     }, 1000);
     updateCountdown();
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const loadSurpriseData = async () => {

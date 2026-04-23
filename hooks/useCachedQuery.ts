@@ -235,6 +235,7 @@ export function useCachedQuery<T = any>(
     return () => {
       isMounted.current = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, cacheKeyString]); // Re-run when queryKey changes
 
   return {

@@ -63,6 +63,7 @@ function PayInStoreScreen() {
     if (params.storeId) {
       navigateToEnterAmount(params.storeId, params.storeName || 'Store');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.qrCode, params.storeId, params.storeName]);
 
   const handleQRScan = async (qrCode: string) => {

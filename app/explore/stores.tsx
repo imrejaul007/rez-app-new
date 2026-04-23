@@ -146,6 +146,7 @@ const ExploreStoresPage = () => {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedCategory, searchQuery],
   );
 
@@ -159,6 +160,7 @@ const ExploreStoresPage = () => {
     if (currentRegion) {
       fetchStores();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRegion]);
 
   // Debounced search
@@ -169,6 +171,7 @@ const ExploreStoresPage = () => {
       }
     }, 500);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const onRefresh = useCallback(() => {

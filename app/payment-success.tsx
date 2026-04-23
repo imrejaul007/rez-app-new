@@ -344,6 +344,7 @@ function PaymentSuccessPage() {
     };
 
     fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId, paymentMethod]);
 
   // For backward compatibility, get first order
@@ -352,7 +353,7 @@ function PaymentSuccessPage() {
   // Handle hardware back button - redirect to home
   useEffect(() => {
     const backAction = () => {
-      router.replace('/(tabs)/');
+      router.replace('/(tabs)/' as any);
       return true;
     };
 
@@ -381,7 +382,7 @@ function PaymentSuccessPage() {
   };
 
   const handleGoHome = () => {
-    router.replace('/(tabs)/');
+    router.replace('/(tabs)/' as any);
   };
 
   const getPaymentMethodIcon = (method: string) => {

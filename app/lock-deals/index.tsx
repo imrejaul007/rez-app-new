@@ -48,6 +48,7 @@ const LockDealsPage: React.FC = () => {
 
   useEffect(() => {
     fetchDeals(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const fetchDeals = async (reset = false) => {
@@ -107,12 +108,14 @@ const LockDealsPage: React.FC = () => {
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
     fetchDeals(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       fetchDeals(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, hasMore, page]);
 
   const handleDealPress = useCallback(

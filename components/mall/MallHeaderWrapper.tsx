@@ -36,6 +36,7 @@ const MallHeaderWrapper: React.FC = () => {
     };
     fetchBanners();
     return () => { mounted = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBannerPress = useCallback((banner: MallBanner) => {

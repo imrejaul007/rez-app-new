@@ -16,6 +16,7 @@ interface CoinChipProps {
   compact?: boolean;
 }
 
+// eslint-disable-next-line react/display-name
 export const CoinChip: React.FC<CoinChipProps> = React.memo(({ type, amount, onPress, compact }) => {
   const coinInfo = COIN_TYPES[type] || COIN_TYPES.rez;
   const chipBg = coinInfo.backgroundColor;

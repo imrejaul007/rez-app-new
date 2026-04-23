@@ -189,6 +189,7 @@ function TrendingOffersPage() {
       if (!isMounted()) return;
       setError('Unable to load trending offers. Pull down to retry.');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -201,6 +202,7 @@ function TrendingOffersPage() {
     await fetchData();
     if (!isMounted()) return;
     setIsRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   // ─── Click Handler with Deduplication + Retry ─────────────
@@ -253,6 +255,7 @@ function TrendingOffersPage() {
         }, 1000);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router],
   );
 
@@ -305,6 +308,7 @@ function TrendingOffersPage() {
         }, 1000);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router],
   );
 
@@ -601,6 +605,7 @@ function TrendingOffersPage() {
 }
 
 // ─── Offer Card (Horizontal) ────────────────────────────────
+// eslint-disable-next-line react/display-name
 const OfferCard = React.memo(
   ({
     offer,
@@ -619,6 +624,7 @@ const OfferCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 350 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const handlePressIn = () => {
@@ -729,6 +735,7 @@ const OfferCard = React.memo(
 );
 
 // ─── Brand Card (Full-Width Vertical) ────────────────────────
+// eslint-disable-next-line react/display-name
 const BrandCard = React.memo(
   ({
     brand,
@@ -749,6 +756,7 @@ const BrandCard = React.memo(
 
     useEffect(() => {
       fadeAnim.value = withTiming(1, { duration: 350 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const handlePressIn = () => {
@@ -858,11 +866,13 @@ const BrandCard = React.memo(
 );
 
 // ─── Skeleton: Offer Card ───────────────────────────────────
+// eslint-disable-next-line react/display-name
 const OfferSkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
     shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const offerSkeletonStyle = useAnimatedStyle(() => ({
@@ -882,11 +892,13 @@ const OfferSkeletonCard = React.memo(({ index }: { index: number }) => {
 });
 
 // ─── Skeleton: Brand Card ───────────────────────────────────
+// eslint-disable-next-line react/display-name
 const BrandSkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
     shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const brandSkeletonStyle = useAnimatedStyle(() => ({

@@ -112,6 +112,7 @@ function VouchersScreen() {
         setIsRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filter],
   );
   const isMounted = useIsMounted();

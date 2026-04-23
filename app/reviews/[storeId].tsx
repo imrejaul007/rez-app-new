@@ -118,6 +118,7 @@ function ReviewsPage() {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [storeId],
   );
 
@@ -165,6 +166,7 @@ function ReviewsPage() {
     );
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderReviewItem = useCallback(({ item }: { item: Review }) => renderReview(item), []);
 
   // Render review card

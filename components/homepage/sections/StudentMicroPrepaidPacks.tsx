@@ -35,6 +35,7 @@ interface PackCardProps {
   onPress: (pack: StudentMicroPack) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const PackCard: React.FC<PackCardProps> = memo(({ pack, onPress }) => {
   // Gradient based on pack category
   const gradients: Record<string, [string, string]> = {
@@ -99,6 +100,7 @@ const StudentMicroPrepaidPacks: React.FC = () => {
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePackPress = (pack: StudentMicroPack) => {

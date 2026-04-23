@@ -44,6 +44,7 @@ const ShimmerCard = ({ index }: { index: number }) => {
       withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
       -1,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const opacity = interpolate(shimmerAnim.value, [0, 1], [0.3, 0.7]);
@@ -74,6 +75,7 @@ const AnimatedProgressBar = ({ score, color }: { score: number; color: string })
 
   useEffect(() => {
     widthAnim.value = withTiming(score, { duration: 800 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [score]);
 
   const width = (interpolate as any)(widthAnim.value, [0, 100], ['0%', '100%'], 'clamp');
@@ -108,6 +110,7 @@ const HeroScoreSection = ({
   useEffect(() => {
     countAnim.value = 0;
     countAnim.value = withTiming(totalScore, { duration: 1200 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalScore]);
 
   useAnimatedReaction(
@@ -249,6 +252,7 @@ function PillarsScreen() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   const getTrendInfo = (trend: string) => {

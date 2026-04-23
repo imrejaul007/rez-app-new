@@ -57,6 +57,7 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
     const isOnline = (event as any).isOnline || (event.location as any)?.isOnline;
     const displayCurrency = isOnline ? currencySymbol : (event.price?.currency || currencySymbol);
     return `${displayCurrency}${event.price?.amount || 0}`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event.price, event.location, currencySymbol]);
 
   const isFree = event.price?.isFree;

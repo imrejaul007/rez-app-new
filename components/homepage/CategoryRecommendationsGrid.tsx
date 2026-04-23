@@ -62,6 +62,7 @@ function CategoryRecommendationsGrid({
 
   useEffect(() => {
     loadRecommendations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, showProducts, showStores]);
 
   const loadRecommendations = async () => {
@@ -358,7 +359,7 @@ function CategoryRecommendationsGrid({
       {/* Recommendations Grid */}
       <View style={styles.grid}>
         {recommendations.map((card) => (
-          <RecommendationCard
+          <RecommendationCardItem
             key={card.id}
             card={card}
             onPress={() => handleCardPress(card)}
@@ -375,7 +376,7 @@ interface RecommendationCardProps {
   onPress: () => void;
 }
 
-function RecommendationCard({ card, onPress }: RecommendationCardProps) {
+function RecommendationCardItem({ card, onPress }: RecommendationCardProps) {
   return (
     <Pressable
       style={styles.card}

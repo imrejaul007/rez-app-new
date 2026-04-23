@@ -61,6 +61,7 @@ function CreateDisputeScreen() {
         const response = await disputeApi.addEvidence(params.disputeId!, description.trim(), []);
         if (response.success) {
           platformAlert('Success', 'Evidence added successfully');
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         } else {
           platformAlert('Error', (response as any).message || 'Failed to add evidence');
@@ -116,6 +117,7 @@ function CreateDisputeScreen() {
       if (!isMounted()) return;
       setSubmitting(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, reason, description, params, isAddingEvidence]);
 
   return (

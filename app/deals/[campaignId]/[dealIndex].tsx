@@ -112,6 +112,7 @@ const DealDetailPage: React.FC = () => {
       setError('Invalid deal information');
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaignId, dealIndex]);
 
   useEffect(() => {
@@ -172,6 +173,7 @@ const DealDetailPage: React.FC = () => {
     };
 
     checkRedemptionStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, campaign, dealIndex]);
 
   const fetchDealDetails = async () => {

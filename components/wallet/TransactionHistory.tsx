@@ -265,6 +265,7 @@ function TransactionHistory({
   // Reload when tab changes
   useEffect(() => {
     loadTransactions(activeTab, 1, false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const handleTabPress = useCallback(

@@ -92,6 +92,7 @@ function MessagesIndexPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [searchQuery, activeFilter],
   );
 
@@ -147,6 +148,7 @@ function MessagesIndexPage() {
   }, [socket]);
 
   const handleBackPress = useCallback(() => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 

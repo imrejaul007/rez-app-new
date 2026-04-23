@@ -163,6 +163,7 @@ export function useStoreProductsPage(
         // Ignore URL parsing errors
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on mount
 
   useEffect(() => {

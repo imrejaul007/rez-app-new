@@ -63,6 +63,7 @@ function MyParticipationsScreen() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
   const isMounted = useIsMounted();
 
@@ -76,6 +77,7 @@ function MyParticipationsScreen() {
     await fetchEnrollments();
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEnrollments]);
 
   const formatDate = (dateStr?: string) => {

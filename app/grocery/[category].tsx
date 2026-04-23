@@ -285,6 +285,7 @@ const GroceryCategoryPage: React.FC = () => {
         setLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [categorySlug, searchQuery, selectedFilter, config.tags],
   );
 

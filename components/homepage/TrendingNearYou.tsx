@@ -99,6 +99,7 @@ const NativeVideoPlayer: React.FC<{
   // Cleanup video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
   }, []);
@@ -116,6 +117,7 @@ const NativeVideoPlayer: React.FC<{
       }
     };
     startPlayback();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, uri]);
 
   return (
@@ -312,6 +314,7 @@ const TrendingNearYou: React.FC<TrendingNearYouProps> = ({
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

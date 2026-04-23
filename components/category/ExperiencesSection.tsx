@@ -70,6 +70,7 @@ function ExperiencesSection({ categorySlug, pageConfig }: ExperiencesSectionProp
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug]);
 
   useEffect(() => { fetchExperiences(); }, [fetchExperiences]);

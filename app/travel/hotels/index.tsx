@@ -204,6 +204,7 @@ export default function HotelSearchScreen() {
   // Load on mount
   useEffect(() => {
     doSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

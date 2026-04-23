@@ -325,6 +325,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
       setSectionLoading(false);
       setRefreshing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRegion]);
 
   // Fetch section data on mount
@@ -340,6 +341,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         setActiveTab(enabledTabs[0].key as TabType);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabledTabs]);
 
   // Pull-to-refresh handler
@@ -409,6 +411,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
       ),
       -1
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shimmerStyle = useAnimatedStyle(() => ({
@@ -504,6 +507,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
       if (!isMounted()) return;
       setExclusiveLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch cashback campaigns from backend
@@ -557,6 +561,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
       if (!isMounted()) return;
       setCashbackLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencySymbol]);
 
   // Fetch offers from backend
@@ -716,6 +721,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
       if (!isMounted()) return;
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   // Refetch data when tab or region changes

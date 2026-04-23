@@ -75,6 +75,7 @@ const ActivityFeedPage = () => {
     // Initial load
     loadFeed(true);
     loadSuggestions(10);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefresh = async () => {

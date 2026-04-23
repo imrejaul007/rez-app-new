@@ -94,6 +94,7 @@ function TabNavigation({ activeTab, onTabChange, compact = false, menuTabLabel }
       underlineLeft.value = withSpring(activePosition.x, { damping: 18, stiffness: 180 });
       underlineWidth.value = withSpring(activePosition.width, { damping: 18, stiffness: 180 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, tabPositions]);
 
   const onLayout = (e: LayoutChangeEvent) => {

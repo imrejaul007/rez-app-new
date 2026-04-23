@@ -89,6 +89,7 @@ const ShimmerSkeleton = () => {
       withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
       -1,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const opacity = interpolate(shimmerAnim.value, [0, 1], [0.3, 0.7]);
@@ -143,12 +144,14 @@ const ShimmerSkeleton = () => {
 };
 
 // ─── Animated Progress Bar with Tier Milestones ──────────────────────────────
+// eslint-disable-next-line react/display-name
 const TierProgressBar = React.memo(({ score, nextTierThreshold }: { score: number; nextTierThreshold: number }) => {
   const widthAnim = useSharedValue(0);
   const maxScore = 100;
 
   useEffect(() => {
     widthAnim.value = withTiming(score, { duration: 1000 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [score]);
 
   const width = (interpolate as any)(widthAnim.value, [0, maxScore], ['0%', '100%']);
@@ -218,6 +221,7 @@ const TierProgressBar = React.memo(({ score, nextTierThreshold }: { score: numbe
 });
 
 // ─── Hero Score Section ──────────────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const HeroSection = React.memo(
   ({
     score,
@@ -238,6 +242,7 @@ const HeroSection = React.memo(
     useEffect(() => {
       countAnim.value = 0;
       countAnim.value = withTiming(score, { duration: 1200 });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [score]);
 
     useAnimatedReaction(
@@ -315,6 +320,7 @@ const HeroSection = React.memo(
 );
 
 // ─── Tier Row ────────────────────────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const TierRow = React.memo(
   ({ tier, currentScore, currentTier }: { tier: TierDef; currentScore: number; currentTier: string }) => {
     const isAchieved = currentScore >= tier.minScore;
@@ -382,6 +388,7 @@ function TierProgressScreen() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   // Find the weakest pillar for contextual suggestion

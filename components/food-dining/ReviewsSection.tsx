@@ -93,6 +93,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({ maxItems = 6 }) => {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxItems]);
 
   useEffect(() => { fetchReviews(); }, [fetchReviews]);

@@ -52,6 +52,7 @@ function CategoryPage() {
     if (slug) {
       loadCategoryData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   // Refresh category data when screen comes into focus (product prices/availability may have changed)
@@ -60,6 +61,7 @@ function CategoryPage() {
       if (slug && state.currentCategory) {
         loadCategoryData();
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slug, state.currentCategory]),
   );
 
@@ -257,6 +259,7 @@ function CategoryPage() {
   };
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

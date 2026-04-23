@@ -47,6 +47,7 @@ function RingSizerPage() {
   const [selectedSize, setSelectedSize] = useState<RingSize | null>(null);
 
   const handleBackPress = useCallback(() => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 
@@ -77,6 +78,7 @@ function RingSizerPage() {
   // Load saved ring size on mount
   useEffect(() => {
     loadSavedRingSize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSavedRingSize = useCallback(async () => {
@@ -130,6 +132,7 @@ function RingSizerPage() {
         setSaving(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [saving, selectedMethod],
   );
 

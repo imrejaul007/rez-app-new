@@ -129,6 +129,7 @@ function CouponsPage() {
         setIsRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [coupons.length],
   );
 
@@ -173,6 +174,7 @@ function CouponsPage() {
     } catch (err: any) {
       // silently handle
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderCouponCard = useCallback(

@@ -34,6 +34,7 @@ const RelatedTrainsSection: React.FC<RelatedTrainsSectionProps> = ({ currentTrai
 
   useEffect(() => {
     loadRelatedTrains();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrainId, route]);
 
   const loadRelatedTrains = async () => {

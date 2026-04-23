@@ -143,6 +143,7 @@ function AIRecommendedPage() {
       if (!isMounted()) return;
       setError(err?.message || 'Something went wrong');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -158,6 +159,7 @@ function AIRecommendedPage() {
     await fetchOffers(1);
     if (!isMounted()) return;
     setRefreshing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchOffers]);
 
   const handleLoadMore = useCallback(() => {

@@ -73,6 +73,7 @@ const AllCampaignsPage: React.FC = () => {
 
   useEffect(() => {
     fetchCampaigns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCampaigns = async () => {

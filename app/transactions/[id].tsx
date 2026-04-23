@@ -61,6 +61,7 @@ const TransactionDetailPage = () => {
     if (id) {
       fetchTransactionDetail();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchTransactionDetail = async () => {

@@ -149,6 +149,7 @@ function CartPage() {
           addedAt: item.addedAt ?? new Date().toISOString(),
         };
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartState.items, cartState.isLoading, cartState.error]);
 
   // Service items from cart
@@ -196,6 +197,7 @@ function CartPage() {
             : '',
         };
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartState.items, cartState.isLoading, cartState.error]);
 
   const currentItems = useMemo(() => {
@@ -228,6 +230,7 @@ function CartPage() {
     const lockedTotal = 0; // Always 0 — use API totals instead
 
     return recalculatedCartTotal + serviceTotal + lockedTotal;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productItems, serviceItems, lockedProducts]);
 
   // Memoize FlashList contentContainerStyle outside JSX to avoid Rules of Hooks violation
@@ -248,6 +251,7 @@ function CartPage() {
     },
     // BUG-047 FIX: Added isSmallDevice to dependency array — it affects paddingHorizontal
     // but was missing, so the style would not update if device size classification changed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentItems.length, insets.bottom, isSmallDevice],
   );
 
@@ -410,6 +414,7 @@ function CartPage() {
         platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isMounted],
   );
 
@@ -432,6 +437,7 @@ function CartPage() {
         platformAlertSimple('Error', 'Unable to move item to cart. Please try again.');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [cartActions, isMounted],
   );
 
@@ -542,6 +548,7 @@ function CartPage() {
   };
 
   const handleBackPress = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 

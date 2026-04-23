@@ -204,6 +204,7 @@ const ElectronicsPage: React.FC = () => {
     };
 
     fetchInitial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading]);
 
   // --- Fetch products (on filter / page change) ---
@@ -273,6 +274,7 @@ const ElectronicsPage: React.FC = () => {
         if (isMounted()) setLoadingProducts(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedFilter],
   );
 

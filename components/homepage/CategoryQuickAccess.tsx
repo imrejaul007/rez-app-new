@@ -51,6 +51,7 @@ interface ChipProps {
   onPress: (id: string, route: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const CategoryChip: React.FC<ChipProps> = memo(({ category, onPress }) => {
   const handlePress = useCallback(() => {
     onPress(category.id, category.route);

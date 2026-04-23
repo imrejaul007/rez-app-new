@@ -88,6 +88,7 @@ function OffersIndexPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -258,6 +259,7 @@ function OffersIndexPage() {
       if (item.couponCode || item.code) return renderCoupon(item);
       return renderDeal(item);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencySymbol, router, slug],
   );
 

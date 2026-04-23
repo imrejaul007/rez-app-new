@@ -103,6 +103,7 @@ function ProductCarousel({
         />
       </View>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onProductPress, onAddToCart, showAddButton, products.length]);
 
   /**
@@ -197,6 +198,7 @@ function ProductCarousel({
       offset: (CARD_WIDTH + CARD_SPACING) * index,
       index,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

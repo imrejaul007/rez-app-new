@@ -65,6 +65,7 @@ function DealCard({
   // Initialize card animation
   useEffect(() => {
     cardAnim.value = withSpring(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update countdown timer

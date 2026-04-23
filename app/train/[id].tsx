@@ -149,6 +149,7 @@ function TrainDetailsPage() {
     if (id) {
       loadTrainDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadTrainDetails = async () => {
@@ -422,6 +423,7 @@ function TrainDetailsPage() {
   };
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -782,6 +784,7 @@ function TrainDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => {
           setShowConfirmation(false);
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         }}
       >
@@ -791,6 +794,7 @@ function TrainDetailsPage() {
             bookingData={bookingData}
             onClose={() => {
               setShowConfirmation(false);
+              // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');
             }}
           />

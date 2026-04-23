@@ -56,6 +56,7 @@ const EarnLikeThem = () => {
 
   useEffect(() => {
     fetchStatsSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchStatsSummary = async () => {

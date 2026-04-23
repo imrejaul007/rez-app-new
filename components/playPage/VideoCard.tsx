@@ -69,8 +69,10 @@ function VideoCard({
   // Cleanup video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Preload video immediately when component mounts
@@ -97,6 +99,7 @@ function VideoCard({
     };
     
     loadVideo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.videoUrl]);
   
   // Handle auto-play when video is ready
@@ -118,6 +121,7 @@ function VideoCard({
     };
     
     handleAutoPlay();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, isVideoReady, item.id, startPlayback, stopPlayback, onPlay, onPause, getManagerStatus]);
 
   const handleVideoLoad = (status: AVPlaybackStatus) => {

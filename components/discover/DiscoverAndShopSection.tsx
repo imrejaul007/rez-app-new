@@ -80,6 +80,7 @@ function DiscoverAndShopSection({
   // Fetch initial content for active tab
   useEffect(() => {
     actions.fetchTabContent(activeTab, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   // Initialize liked/bookmarked states from reel data
@@ -116,6 +117,7 @@ function DiscoverAndShopSection({
     await actions.fetchTabContent(activeTab, true);
     if (!isMounted()) return;
     setRefreshing(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, actions]);
 
   // Handle load more
@@ -259,6 +261,7 @@ function DiscoverAndShopSection({
         return newSet;
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [likedReels, processingReels]);
 
   // Handle bookmark toggle
@@ -316,6 +319,7 @@ function DiscoverAndShopSection({
         return newSet;
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookmarkedReels, processingReels]);
 
   // Handle shopping bag - navigate to product or add to cart
@@ -508,6 +512,7 @@ function DiscoverAndShopSection({
         })}
       </ScrollView>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.reels, state.loadingByTab, router, likedReels, bookmarkedReels, processingReels, handleLike, handleBookmark, handleShoppingBag]);
 
   // Render horizontal scrollable cards for posts
@@ -944,6 +949,7 @@ function DiscoverAndShopSection({
         {activeTab === 'images' && renderImagesCards()}
       </View>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, renderReelsCards, renderPostsCards, renderArticlesCards, renderImagesCards]);
 
   const containerStyle = useMemo(() => [

@@ -109,12 +109,14 @@ function HotDealsSection({
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchHotDeals]);
 
   const handleViewAll = () => {
     router.push('/search?sortBy=cashback');
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleProductPress = (product: HotDealProduct) => {
     const productId = product._id || product.id;
     router.push(`/product-page?cardId=${productId}&cardType=product`);

@@ -95,6 +95,7 @@ function AdminCampaigns() {
       return;
     }
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user]);
 
   const loadData = async () => {

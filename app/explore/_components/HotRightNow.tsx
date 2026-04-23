@@ -22,6 +22,7 @@ const HotRightNow = () => {
 
   useEffect(() => {
     fetchHotDeals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchHotDeals = async () => {

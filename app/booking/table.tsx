@@ -93,6 +93,7 @@ function TableBookingPage() {
 
   useEffect(() => {
     loadStoreDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
 
   useEffect(() => {
@@ -115,6 +116,7 @@ function TableBookingPage() {
         // tablesLeft: real-time availability not yet exposed by API. Show neutral state.
         setAvailabilityBySlot({});
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, selectedDate]);
 
   const loadStoreDetails = async () => {
@@ -223,6 +225,7 @@ function TableBookingPage() {
     return slots;
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const timeSlots = useMemo(() => generateTimeSlots(), [selectedDate, store, availabilityBySlot]);
 
   // Guard: storeId must be present (placed after all hooks to comply with Rules of Hooks)

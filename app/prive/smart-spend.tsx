@@ -96,11 +96,13 @@ function SmartSpendScreen() {
         setIsLoadingMore(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedSection],
   );
 
   useEffect(() => {
     fetchCatalog(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSection]);
 
   const handleRefresh = useCallback(() => {

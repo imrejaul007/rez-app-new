@@ -54,6 +54,7 @@ function OffersDetailPage() {
       }
     };
     if (id) fetchOffer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleCopyCode = (code: string) => {

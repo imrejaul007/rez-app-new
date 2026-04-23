@@ -289,9 +289,9 @@ export function useDeepLinkHandler() {
         await handler.trackAttribution('wallet', linkData.data);
         // Subpath: /transactions → transaction history, otherwise → wallet overview
         if (linkData.data.subpath === 'transactions') {
-          router.push('/wallet/transactions');
+          router.push('/wallet/transactions' as any);
         } else {
-          router.push('/wallet');
+          router.push('/wallet' as any);
         }
         break;
 

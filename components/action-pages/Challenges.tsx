@@ -134,6 +134,7 @@ function ChallengesPage() {
     if (!isMounted()) return;
     await new Promise(resolve => setTimeout(resolve, 800));
     setRefreshing(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleJoinChallenge = (challenge: Challenge) => {

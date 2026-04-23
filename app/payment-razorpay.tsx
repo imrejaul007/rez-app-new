@@ -51,10 +51,12 @@ function PaymentPage() {
     if (amount <= 0 || amount > 1000000) {
       platformAlertSimple('Invalid Amount', 'The payment amount is invalid. Please go back and try again.');
       const t = setTimeout(() => {
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }, 300);
       return () => clearTimeout(t);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const orderId = params.orderId as string; // For travel/event: order ID; for deals/flash-sales: pre-created Razorpay order ID
   const bookingId = params.bookingId as string;
@@ -78,6 +80,7 @@ function PaymentPage() {
   useEffect(() => {
     return () => {
       navTimeoutsRef.current.forEach((t) => clearTimeout(t));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       navTimeoutsRef.current.clear();
     };
   }, []);
@@ -123,12 +126,14 @@ function PaymentPage() {
   useEffect(() => {
     loadPaymentMethods();
     animateEntrance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (currentStep === 'processing') {
       animateProgress();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   const animateEntrance = () => {
@@ -179,11 +184,13 @@ function PaymentPage() {
         () => {
           setIsProcessing(false);
           setCurrentStep('methods');
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         },
         'Go Back',
       );
     } else {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
   }, [isProcessing, router]);

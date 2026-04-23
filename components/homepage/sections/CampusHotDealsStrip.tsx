@@ -41,6 +41,7 @@ interface TrendingCardProps {
   onPress: (id: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const TrendingCard: React.FC<TrendingCardProps> = memo(({ item, onPress }) => (
   <Pressable
     style={styles.card}
@@ -124,6 +125,7 @@ const CampusHotDealsStrip: React.FC<CampusHotDealsStripProps> = ({ campusId = ''
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campusId]);
 
   const handleCardPress = useCallback((id: string) => {

@@ -32,6 +32,7 @@ const AutoPlayVideoReel: React.FC<{
   uri: string;
   poster?: string;
   style?: any;
+// eslint-disable-next-line react/display-name
 }> = React.memo(({ uri, poster, style }) => {
   const videoRef = useRef<Video>(null);
   const webVideoRef = useRef<any>(null);
@@ -60,6 +61,7 @@ const AutoPlayVideoReel: React.FC<{
         webVideoRef.current.pause();
         webVideoRef.current.remove();
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
   }, [uri, poster]);

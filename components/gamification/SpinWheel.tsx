@@ -55,6 +55,7 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
 
   useEffect(() => {
     checkEligibility();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Check if user can spin

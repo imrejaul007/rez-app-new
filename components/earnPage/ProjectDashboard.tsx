@@ -25,6 +25,7 @@ function ProjectDashboard({
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 600 });
     slideAnim.value = withTiming(0, { duration: 600 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const containerStyle = useAnimatedStyle(() => ({

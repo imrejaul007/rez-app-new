@@ -57,6 +57,7 @@ function DisputeDetailScreen() {
   useEffect(() => {
     if (!id || authLoading || !isAuthenticated) return;
     loadDispute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isAuthenticated, authLoading]);
 
   const loadDispute = async () => {

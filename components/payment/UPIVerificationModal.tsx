@@ -46,6 +46,7 @@ function UPIVerificationModal({
       setTestVPA(vpa);
       handleVerify();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, vpa]);
 
   const handleVerify = async () => {

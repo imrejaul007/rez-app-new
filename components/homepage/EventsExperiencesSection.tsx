@@ -117,6 +117,7 @@ const EventsExperiencesSection: React.FC = () => {
     };
 
     fetchEventData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regionState.currentRegion]); // Refetch when region changes
 
   const handleViewAll = () => {

@@ -78,6 +78,7 @@ function LockPriceModal({
       setError(null);
       refreshWallet();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   // Execute the lock operation
@@ -124,6 +125,7 @@ function LockPriceModal({
       if (!isMounted()) return;
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, quantity, variant, selectedDuration, hasEnoughBalance, lockFee, walletBalance, onLockSuccess, onClose, currencySymbol]);
 
   return (

@@ -78,6 +78,7 @@ function PlayScreen() {
       if (!isMounted()) return;
       setArticlesLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Animate FAB entrance on mount & fetch articles
@@ -85,7 +86,9 @@ function PlayScreen() {
     fabScale.value = withSpring(1, { damping: 12, stiffness: 40 });
 
     // Fetch articles on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchArticles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchArticles]);
 
   const handleRefresh = React.useCallback(async () => {

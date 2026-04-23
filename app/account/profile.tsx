@@ -127,7 +127,9 @@ function AccountProfilePage() {
         // Previously only the local `savedFirstName` state was updated, so
         // the rest of the app kept rendering the stale name until the next
         // full auth re-check.
-        authActions.checkAuthStatus().catch(() => { /* non-blocking */ });
+        authActions.checkAuthStatus().catch(() => {
+          /* non-blocking */
+        });
         platformAlertSimple('Success', 'Profile updated successfully.');
       } else {
         platformAlertSimple('Error', 'Could not update profile. Please try again.');
@@ -182,6 +184,7 @@ function AccountProfilePage() {
 
   useEffect(() => {
     loadSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Keep display names in sync if the auth store updates independently
@@ -198,6 +201,7 @@ function AccountProfilePage() {
   useFocusEffect(
     React.useCallback(() => {
       loadSettings();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 

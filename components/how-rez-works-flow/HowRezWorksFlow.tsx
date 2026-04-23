@@ -76,6 +76,7 @@ const HowRezWorksFlow: React.FC = () => {
         );
 
         return () => backHandler.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [history]);
 
     const renderScreen = () => {

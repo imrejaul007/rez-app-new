@@ -49,6 +49,7 @@ function RewardCatalog({
     onSearch?.(text);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleCategoryChange = (category: RewardCategory | 'all') => {
     setSelectedCategory(category);
     onFilter?.(category === 'all' ? null : category);

@@ -42,6 +42,7 @@ function SkeletonLoader({
     return () => {
       cancelAnimation(shimmerAnim);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animatedTranslateStyle = useAnimatedStyle(() => ({

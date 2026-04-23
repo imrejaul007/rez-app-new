@@ -115,6 +115,7 @@ export function CartSocketIntegration() {
       if (typeof unsubscribeOut === 'function') unsubscribeOut();
       if (typeof unsubscribePrice === 'function') unsubscribePrice();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartState.items, onStockUpdate, onOutOfStock, onPriceUpdate, onLowStock]);
 
   // This component doesn't render anything

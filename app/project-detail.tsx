@@ -119,6 +119,7 @@ function ProjectDetailPage() {
 
   useEffect(() => {
     loadProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // Auto-open form if requested and project is loaded
@@ -167,6 +168,7 @@ function ProjectDetailPage() {
       }
     } catch (error: any) {
       showAlert('Error', 'Failed to load project details');
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } finally {
       if (!isMounted()) return;

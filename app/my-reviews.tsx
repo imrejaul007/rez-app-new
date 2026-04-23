@@ -62,6 +62,7 @@ function MyReviewsPage() {
 
   useEffect(() => {
     loadReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // CA-DSC-011 FIX: Reset page when filter changes to avoid showing misaligned data
@@ -167,6 +168,7 @@ function MyReviewsPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderReviewItem = useCallback(({ item }: { item: UserReview }) => renderReviewCard(item), []);
 
   const renderReviewCard = (review: UserReview) => {

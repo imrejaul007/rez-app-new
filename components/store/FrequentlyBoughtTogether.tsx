@@ -55,6 +55,7 @@ function FrequentlyBoughtTogether({
     if (storeId || currentProduct.id) {
       loadBundleProducts();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProduct.id, storeId]);
 
   // Auto-select current product by default (only on product pages, not store pages)
@@ -64,6 +65,7 @@ function FrequentlyBoughtTogether({
     } else {
       setSelectedProducts(new Set());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProduct.id, storeId]);
 
   const loadBundleProducts = async () => {

@@ -4,14 +4,15 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Success/failure screen after subscription payment
 
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, StatusBar} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, StatusBar } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -54,6 +55,7 @@ function PaymentConfirmationPage() {
     // Animate success icon
     scaleAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
     fadeAnim.value = withTiming(1, { duration: 500 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getNextBillingDate = () => {
@@ -66,7 +68,7 @@ function PaymentConfirmationPage() {
     return date.toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -100,7 +102,7 @@ function PaymentConfirmationPage() {
         <LinearGradient colors={[Colors.error, Colors.errorScale[700]] as any} style={styles.header}>
           <View style={styles.headerContainer}>
             <Pressable
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.backButton}
               accessibilityLabel="Go back"
               accessibilityRole="button"
@@ -113,7 +115,11 @@ function PaymentConfirmationPage() {
           </View>
         </LinearGradient>
 
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           <View style={styles.failureContainer}>
             <Ionicons name="close-circle" size={120} color={Colors.error} />
             <ThemedText style={styles.failureTitle}>Payment Failed</ThemedText>
@@ -181,7 +187,11 @@ function PaymentConfirmationPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         {/* Success Animation */}
         <View
           style={styles.successContainer}
@@ -196,15 +206,10 @@ function PaymentConfirmationPage() {
           </Animated.View>
 
           <Animated.View style={fadeStyle}>
-            <ThemedText
-              style={styles.successTitle}
-              accessibilityRole="header"
-            >
+            <ThemedText style={styles.successTitle} accessibilityRole="header">
               Welcome to {TIER_NAMES[tier]}!
             </ThemedText>
-            <ThemedText style={styles.successMessage}>
-              Your subscription has been activated successfully
-            </ThemedText>
+            <ThemedText style={styles.successMessage}>Your subscription has been activated successfully</ThemedText>
           </Animated.View>
         </View>
 
@@ -219,14 +224,15 @@ function PaymentConfirmationPage() {
 
           <View style={styles.detailRow}>
             <ThemedText style={styles.detailLabel}>Amount Paid</ThemedText>
-            <ThemedText style={styles.detailValue}>{currencySymbol}{amount}</ThemedText>
+            <ThemedText style={styles.detailValue}>
+              {currencySymbol}
+              {amount}
+            </ThemedText>
           </View>
 
           <View style={styles.detailRow}>
             <ThemedText style={styles.detailLabel}>Billing Cycle</ThemedText>
-            <ThemedText style={styles.detailValue}>
-              {billingCycle === 'monthly' ? 'Monthly' : 'Yearly'}
-            </ThemedText>
+            <ThemedText style={styles.detailValue}>{billingCycle === 'monthly' ? 'Monthly' : 'Yearly'}</ThemedText>
           </View>
 
           <View style={styles.detailRow}>
@@ -236,9 +242,7 @@ function PaymentConfirmationPage() {
 
           <View style={styles.detailRow}>
             <ThemedText style={styles.detailLabel}>Transaction ID</ThemedText>
-            <ThemedText style={[styles.detailValue, styles.transactionId]}>
-              {transactionId}
-            </ThemedText>
+            <ThemedText style={[styles.detailValue, styles.transactionId]}>{transactionId}</ThemedText>
           </View>
 
           <Pressable
@@ -260,13 +264,7 @@ function PaymentConfirmationPage() {
           <ThemedText style={styles.sectionTitle}>Benefits Unlocked</ThemedText>
           <View style={styles.benefitsContainer}>
             {getBenefits().map((benefit, index) => (
-              <Animated.View
-                key={index}
-                style={[
-                  styles.benefitRow,
-                  benefitSlideStyle,
-                ]}
-              >
+              <Animated.View key={index} style={[styles.benefitRow, benefitSlideStyle]}>
                 <View style={styles.benefitIcon}>
                   <Ionicons name={benefit.icon as any} size={20} color={Colors.brand.purpleLight} />
                 </View>
@@ -308,32 +306,40 @@ function PaymentConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.lg,
-    paddingHorizontal: Spacing.lg },
+    paddingHorizontal: Spacing.lg,
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   backButton: {
     width: 40,
-    padding: Spacing.sm },
+    padding: Spacing.sm,
+  },
   headerTitle: {
     color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   headerRight: {
-    width: 40 },
+    width: 40,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   successContainer: {
     alignItems: 'center',
     paddingVertical: Spacing['3xl'],
-    paddingHorizontal: Spacing.lg },
+    paddingHorizontal: Spacing.lg,
+  },
   successCircle: {
     width: 160,
     height: 160,
@@ -342,55 +348,66 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.xl,
-    ...Shadows.strong },
+    ...Shadows.strong,
+  },
   successTitle: {
     ...Typography.h1,
     fontWeight: 'bold',
     color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   successMessage: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   detailsCard: {
     margin: Spacing.lg,
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   tierBadge: {
     marginBottom: Spacing.lg,
     marginHorizontal: -Spacing.lg,
-    marginTop: -Spacing.lg },
+    marginTop: -Spacing.lg,
+  },
   tierBadgeGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.base,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   tierBadgeText: {
     color: colors.text.inverse,
     ...Typography.h4,
-    fontWeight: 'bold' },
+    fontWeight: 'bold',
+  },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.default },
+    borderBottomColor: colors.border.default,
+  },
   detailLabel: {
     ...Typography.body,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   detailValue: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   transactionId: {
     ...Typography.bodySmall,
     fontFamily: 'monospace',
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   receiptButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -399,30 +416,36 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
     marginTop: Spacing.base,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   receiptButtonText: {
     color: Colors.brand.purpleLight,
     ...Typography.body,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   section: {
     marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   benefitsContainer: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   benefitRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.background.secondary },
+    borderBottomColor: colors.background.secondary,
+  },
   benefitIcon: {
     width: 40,
     height: 40,
@@ -430,15 +453,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand.purpleLight + '10',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   benefitText: {
     flex: 1,
     ...Typography.body,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   actionsContainer: {
     padding: Spacing.lg,
     gap: Spacing.md,
-    paddingBottom: Spacing['3xl'] },
+    paddingBottom: Spacing['3xl'],
+  },
   primaryButton: {
     flexDirection: 'row',
     backgroundColor: Colors.brand.purpleLight,
@@ -446,55 +472,66 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   primaryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: 'bold' },
+    fontWeight: 'bold',
+  },
   secondaryButton: {
     backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   secondaryButtonText: {
     color: colors.text.tertiary,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   // Failure styles
   failureContainer: {
     alignItems: 'center',
     padding: Spacing.lg,
-    paddingTop: Spacing['3xl'] },
+    paddingTop: Spacing['3xl'],
+  },
   failureTitle: {
     ...Typography.h1,
     fontWeight: 'bold',
     color: Colors.error,
     marginTop: Spacing.xl,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   failureMessage: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: Spacing['2xl'] },
+    marginBottom: Spacing['2xl'],
+  },
   errorDetails: {
     backgroundColor: Colors.errorScale[50],
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing['2xl'],
-    width: '100%' },
+    width: '100%',
+  },
   errorTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
     color: '#991B1B',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   errorText: {
     ...Typography.body,
     color: Colors.errorScale[700],
-    lineHeight: 20 },
+    lineHeight: 20,
+  },
   actions: {
     width: '100%',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   retryButton: {
     flexDirection: 'row',
     backgroundColor: Colors.error,
@@ -502,26 +539,33 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   retryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: 'bold' },
+    fontWeight: 'bold',
+  },
   supportButton: {
     backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   supportButtonText: {
     color: colors.text.tertiary,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   homeButton: {
     paddingVertical: Spacing.base,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   homeButtonText: {
     color: colors.text.tertiary,
     ...Typography.body,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(PaymentConfirmationPage, 'SubscriptionPaymentConfirmation');

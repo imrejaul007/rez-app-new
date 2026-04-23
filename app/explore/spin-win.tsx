@@ -133,6 +133,7 @@ function SpinWinPage() {
       fetchingRef.current = false;
       hasFetchedRef.current = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

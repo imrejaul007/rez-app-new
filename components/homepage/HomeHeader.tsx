@@ -100,6 +100,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
         withSpring(1, { stiffness: 200, damping: 10 }),
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartItemCount]);
 
   const handleSubscriptionPress = useCallback(() => {

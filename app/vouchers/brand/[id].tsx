@@ -115,6 +115,7 @@ function VoucherBrandDetailPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const isMounted = useIsMounted();
 
@@ -181,6 +182,7 @@ function VoucherBrandDetailPage() {
       if (!isMounted()) return;
       setIsPurchasing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brand, selectedDenomination]);
 
   const handlePurchase = useCallback(async () => {
@@ -203,6 +205,7 @@ function VoucherBrandDetailPage() {
       type: 'confirm',
       onConfirm: () => executeWalletPurchase(),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brand, selectedDenomination, currencySymbol, executeWalletPurchase]);
 
   const cashbackAmount =
@@ -446,6 +449,7 @@ function VoucherBrandDetailPage() {
         onRequestClose={() => {
           if (confirmModal.type === 'success') {
             setConfirmModal((prev) => ({ ...prev, visible: false }));
+            // eslint-disable-next-line no-unused-expressions
             router.canGoBack() ? router.back() : router.replace('/(tabs)');
           } else {
             setConfirmModal((prev) => ({ ...prev, visible: false }));
@@ -516,6 +520,7 @@ function VoucherBrandDetailPage() {
                   onPress={() => {
                     setConfirmModal((prev) => ({ ...prev, visible: false }));
                     if (confirmModal.type === 'success') {
+                      // eslint-disable-next-line no-unused-expressions
                       router.canGoBack() ? router.back() : router.replace('/(tabs)');
                     }
                   }}

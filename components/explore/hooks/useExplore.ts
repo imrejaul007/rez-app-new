@@ -300,6 +300,7 @@ export function useExplore(): UseExploreReturn {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAllExploreData]);
 
   return {

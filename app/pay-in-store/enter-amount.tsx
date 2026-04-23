@@ -61,6 +61,7 @@ function EnterAmountScreen() {
     if (authLoading || !isAuthenticated) return;
     loadStoreDetails();
     getUserLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, authLoading, isAuthenticated]);
 
   // Load offers when store is loaded
@@ -68,6 +69,7 @@ function EnterAmountScreen() {
     if (store && !authLoading && isAuthenticated) {
       loadOffers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store, authLoading, isAuthenticated]);
 
   // Calculate distance when both user location and store coordinates are available

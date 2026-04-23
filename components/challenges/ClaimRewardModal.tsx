@@ -101,6 +101,7 @@ function ClaimRewardModal({
         a.opacity.value = withDelay(delayMs + 1000, withTiming(0, { duration: 2000 }));
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const confettiColors = [colors.brand.purpleLight, colors.successScale[400], colors.warningScale[400], colors.error, colors.infoScale[400], colors.brand.pink];

@@ -50,6 +50,7 @@ const StoreReviews: React.FC<StoreReviewsProps> = ({
     if (visible && storeId) {
       loadReviews();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, storeId, selectedRating, sortBy]);
 
   const loadReviews = async (pageNum: number = 1, append: boolean = false) => {

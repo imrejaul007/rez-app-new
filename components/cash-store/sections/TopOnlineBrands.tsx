@@ -35,6 +35,7 @@ const BrandCard: React.FC<{
   brand: CashStoreBrand;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ brand, index, onPress }) => {
   const scaleAnim = useSharedValue(0.9);
   const fadeAnim = useSharedValue(0);
@@ -44,6 +45,7 @@ const BrandCard: React.FC<{
     fadeAnim.value = withDelay(index * 60, withTiming(1, { duration: 350 }));
       scaleAnim.value = withDelay(index * 60, withSpring(1));
     
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [index]);
 
   const handlePressIn = () => {
@@ -133,12 +135,14 @@ const BrandCard: React.FC<{
 });
 
 // ─── Skeleton Card ──────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -161,6 +165,7 @@ const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
 });
 
 // ─── Empty State ────────────────────────────────────────────
+// eslint-disable-next-line react/display-name
 const EmptyState: React.FC<{ onViewAllPress: () => void }> = memo(({ onViewAllPress }) => (
   <View style={styles.emptyContainer}>
     <View style={styles.emptyIconWrap}>
@@ -188,6 +193,7 @@ const FILTER_DISPLAY_NAMES: Record<string, string> = {
 const FilteredEmptyState: React.FC<{
   filterName: string;
   onResetFilter?: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ filterName, onResetFilter }) => {
   const displayName = FILTER_DISPLAY_NAMES[filterName] || filterName;
   return (
@@ -226,6 +232,7 @@ const TopOnlineBrands: React.FC<TopOnlineBrandsProps> = ({
 
   useEffect(() => {
     headerFadeAnim.value = withTiming(1, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasActiveFilter = activeFilter && activeFilter !== 'all';

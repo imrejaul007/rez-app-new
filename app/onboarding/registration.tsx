@@ -54,6 +54,7 @@ function RegistrationScreen() {
       }
     };
     loadReferralCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.referralCode]);
 
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(

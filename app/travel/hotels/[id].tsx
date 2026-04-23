@@ -217,6 +217,7 @@ export default function HotelDetailScreen() {
     return () => {
       if (burnDebounceRef.current) clearTimeout(burnDebounceRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, selectedRoom, useOtaCoins, useRezCoins, useBrandCoins]);
 
   const handleBookPress = useCallback(async () => {
@@ -279,6 +280,7 @@ export default function HotelDetailScreen() {
     } finally {
       setBooking(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     id,
     selectedRoom,

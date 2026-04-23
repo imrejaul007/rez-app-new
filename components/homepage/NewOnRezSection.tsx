@@ -46,6 +46,7 @@ const AutoPlayVideo: React.FC<{ uri: string; poster?: string; style?: any }> = (
   // Cleanup video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
   }, []);
@@ -474,6 +475,7 @@ const NewOnRezSection: React.FC = () => {
       setIncomingStore(null);
       setIsAnimating(false);
     }, totalAnimationTime);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allStores, isPaused, isAnimating, currentIndex, rotateStores]);
 
   // Fetch stores and set up initial display
@@ -517,6 +519,7 @@ const NewOnRezSection: React.FC = () => {
     };
 
     fetchTrendingStores();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-rotation timer

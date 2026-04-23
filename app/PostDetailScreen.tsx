@@ -139,6 +139,7 @@ function PostDetailScreen() {
       if (!isMounted()) return;
       setLikesCount((prev) => (newLikedState ? Math.max(0, prev - 1) : prev + 1));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post, isLiked]);
 
   // Handle bookmark toggle
@@ -154,6 +155,7 @@ function PostDetailScreen() {
       if (!isMounted()) return;
       setIsBookmarked(!newBookmarkedState);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post, isBookmarked]);
 
   // Handle share
@@ -203,6 +205,7 @@ function PostDetailScreen() {
 
   // Deep-link parameter validation guard
   if (!params.item || typeof params.item !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }

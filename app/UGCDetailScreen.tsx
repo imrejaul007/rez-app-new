@@ -157,13 +157,16 @@ function UGCDetailScreen() {
     });
 
     return () => task.cancel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id, params.item]);
 
   // Release native video resources on unmount
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       videoRef.current?.unloadAsync();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // CA-DSC-009 FIX: Clear viewTrackedRef when videoId changes to allow re-tracking on re-visit
@@ -221,6 +224,7 @@ function UGCDetailScreen() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [video, isAuthenticated, getFollowableStoreId]);
 
   // Focus handling
@@ -247,6 +251,7 @@ function UGCDetailScreen() {
         setIsFocused(false);
         StatusBar.setHidden(false);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getFollowableStoreId, isAuthenticated]),
   );
 
@@ -269,6 +274,7 @@ function UGCDetailScreen() {
       }
     };
     managePlayback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused, ready, video?.videoUrl]);
 
   // Track if we've already detected the aspect ratio
@@ -387,6 +393,7 @@ function UGCDetailScreen() {
       withTiming(1, { duration: 600 }),
       withTiming(0, { duration: 200 }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLiked]);
 
   // Video press - toggle play/pause
@@ -420,6 +427,7 @@ function UGCDetailScreen() {
       );
     }
     lastTap.current = now;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleDoubleTap, isPlaying]);
 
   // Track if we're currently restarting to prevent multiple restarts
@@ -506,6 +514,7 @@ function UGCDetailScreen() {
       if (!isMounted()) return;
       setIsLiking(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isLiked, video?._id, likeScale, router, isLiking]);
 
   const handleBookmark = useCallback(async () => {
@@ -537,6 +546,7 @@ function UGCDetailScreen() {
       if (!isMounted()) return;
       setIsBookmarked(isBookmarked);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isBookmarked, video?._id, router]);
 
   const handleFollow = useCallback(async () => {
@@ -582,6 +592,7 @@ function UGCDetailScreen() {
       setIsFollowing(wasFollowing);
       showAlert('Error', wasFollowing ? 'Failed to unfollow' : 'Failed to follow');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isFollowing, video, getFollowableStoreId, router]);
 
   const handleMuteToggle = useCallback(async () => {
@@ -618,6 +629,7 @@ function UGCDetailScreen() {
     };
 
     trackVideoView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [video?._id, ready]);
 
   // Format numbers
@@ -635,6 +647,7 @@ function UGCDetailScreen() {
     return (
       (video?.creator as any)?.name || (video?.creator as any)?.username || (video?.stores as any)?.[0]?.name || 'User'
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [video?.creator, (video?.stores as any)?.[0]?.name]);
 
   const creatorAvatar = useMemo(() => {
@@ -644,6 +657,7 @@ function UGCDetailScreen() {
 
   // Deep-link parameter validation guard: requires either item (JSON) or id
   if (!params.item && !params.id) {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }

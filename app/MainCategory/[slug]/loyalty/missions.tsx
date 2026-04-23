@@ -49,6 +49,7 @@ function ElectronicsMissionsPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -93,6 +94,7 @@ function ElectronicsMissionsPage() {
         setClaiming(null);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencySymbol, fetchMissions],
   );
 

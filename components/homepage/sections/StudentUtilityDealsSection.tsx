@@ -34,6 +34,7 @@ interface UtilityTileProps {
   onPress: (route?: string) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const UtilityTile: React.FC<UtilityTileProps> = memo(({ item, onPress }) => (
   <Pressable
     style={styles.tile}
@@ -82,6 +83,7 @@ const StudentUtilityDealsSection: React.FC = () => {
         if (!isMounted()) return;
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTilePress = (route?: string) => {

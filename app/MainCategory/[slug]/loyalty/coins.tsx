@@ -84,6 +84,7 @@ function ElectronicsCoinsPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

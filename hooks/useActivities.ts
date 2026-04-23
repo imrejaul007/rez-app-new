@@ -223,6 +223,7 @@ export const useActivities = ({
       fetchActivities(currentPage, currentLimit, currentType);
       fetchSummary();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFetch]); // Only run on mount
 
   return {

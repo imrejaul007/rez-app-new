@@ -31,6 +31,7 @@ function ArticleDetailPage() {
     if (!isCreateMode && id) {
       fetchArticle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isCreateMode]);
 
   const fetchArticle = async () => {

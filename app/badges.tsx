@@ -149,6 +149,7 @@ const BadgesScreen: React.FC = () => {
       setRefreshing(false);
       fetchingRef.current = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

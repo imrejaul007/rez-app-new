@@ -75,6 +75,7 @@ export default function HotelBookingConfirmedScreen() {
     scaleAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
     fadeAnim.value = withTiming(1, { duration: 500 });
     scheduleCheckInReminder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function scheduleCheckInReminder() {

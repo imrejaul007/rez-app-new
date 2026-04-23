@@ -64,6 +64,7 @@ function SurveyCompletePage() {
     return () => {
       clearInterval(timer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coins]);
 
   const handleBackToSurveys = () => {

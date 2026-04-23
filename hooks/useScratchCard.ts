@@ -53,6 +53,7 @@ export const useScratchCard = (): UseScratchCardReturn => {
       }, 1000);
     }
     return () => { if (cooldownRef.current) clearInterval(cooldownRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cooldownSeconds > 0]); // Only re-setup when transitioning to/from cooldown
 
   const checkEligibility = useCallback(async (): Promise<void> => {

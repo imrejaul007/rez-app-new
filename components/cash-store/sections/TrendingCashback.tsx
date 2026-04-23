@@ -36,6 +36,7 @@ const TrendingDealCard: React.FC<{
   deal: TrendingDeal;
   index: number;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ deal, index, onPress }) => {
   const [timeRemaining, setTimeRemaining] = useState(getTimeRemainingMs(deal.validUntil));
   const scaleAnim = useSharedValue(0.9);
@@ -71,6 +72,7 @@ const TrendingDealCard: React.FC<{
       // animation auto-cancels
       // animation auto-cancels
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deal.validUntil, index]);
 
   const handlePressIn = () => {
@@ -196,12 +198,14 @@ const TrendingDealCard: React.FC<{
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SkeletonCard: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -238,6 +242,7 @@ const TrendingCashback: React.FC<TrendingCashbackProps> = ({
     // Flame pulse animation
     flamePulseAnim.value = withRepeat(withSequence(withTiming(1.15, { duration: 500 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const renderTrendingItem = useCallback(({ item, index }: { item: unknown; index: number }) =>

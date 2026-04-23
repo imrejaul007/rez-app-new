@@ -92,6 +92,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as any);
@@ -161,6 +162,7 @@ const LuckyDraw = () => {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Pulse animation for spin button
@@ -171,6 +173,7 @@ const LuckyDraw = () => {
         -1,
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState, todayPlays, maxPlays]);
 
   const spin = async () => {

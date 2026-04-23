@@ -97,6 +97,7 @@ function LocationDisplay({
         locationListeners.delete(handleLocationChange);
       };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializeWebLocation = async () => {

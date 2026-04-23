@@ -28,17 +28,20 @@ export function useOfflineSync() {
       customerEmail?: string;
       paymentMethod?: 'pay_at_store' | 'none';
     }) => store.enqueue('visit_submission', data),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [store.enqueue]
   );
 
   const queueReferralShare = useCallback(
     (platform: 'whatsapp' | 'telegram' | 'email' | 'sms') =>
       store.enqueue('referral_share', { platform }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [store.enqueue]
   );
 
   const queueRewardClaim = useCallback(
     () => store.enqueue('reward_claim', {}),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [store.enqueue]
   );
 

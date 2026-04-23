@@ -107,6 +107,7 @@ function ProductQuickView({
       setExpandedDescription(false);
       setError(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, productId]);
 
   const loadProductDetails = async () => {

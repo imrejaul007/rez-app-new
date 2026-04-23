@@ -66,6 +66,7 @@ const WhatsNewStoriesFlow: React.FC<WhatsNewStoriesFlowProps> = ({ onClose, star
     };
 
     fetchStories();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Jump to startIndex when stories load
@@ -80,6 +81,7 @@ const WhatsNewStoriesFlow: React.FC<WhatsNewStoriesFlowProps> = ({ onClose, star
     if (currentStory && currentSlideIndex === 0) {
       whatsNewApi.trackView(currentStory._id);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStoryIndex]);
 
   // Auto-advance timer
@@ -101,6 +103,7 @@ const WhatsNewStoriesFlow: React.FC<WhatsNewStoriesFlowProps> = ({ onClose, star
     timerRef.current = setTimeout(() => {
       goToNextSlide();
     }, duration);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStoryIndex, currentSlideIndex, currentSlide]);
 
   useEffect(() => {

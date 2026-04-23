@@ -355,6 +355,7 @@ function ArticleDetailScreen() {
 
   // Deep-link parameter validation guard
   if (!params.item || typeof params.item !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }

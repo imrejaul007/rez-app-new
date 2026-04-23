@@ -80,6 +80,7 @@ export const useProductAnalytics = ({
    */
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const timeSpent = Date.now() - startTimeRef.current.getTime();
       devLog.log(`⏱️ [ProductAnalytics] Time spent on product page: ${timeSpent}ms`);
 

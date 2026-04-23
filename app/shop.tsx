@@ -226,6 +226,7 @@ function ShopPage() {
     };
 
     fetchFilterInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vibeId, occasionId, categorySlug]);
 
   // Fetch products
@@ -299,11 +300,13 @@ function ShopPage() {
         setRefreshing(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [categorySlug, vibeId, occasionId, brandId, page],
   );
 
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefresh = () => {

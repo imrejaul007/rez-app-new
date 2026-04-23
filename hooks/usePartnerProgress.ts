@@ -106,6 +106,7 @@ export function usePartnerProgress(options: UsePartnerProgressOptions = {}) {
     } finally {
       setRefreshing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Detect changes between old and new data

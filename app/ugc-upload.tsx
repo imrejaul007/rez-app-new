@@ -65,11 +65,13 @@ function UGCUploadScreen() {
         'Are you sure you want to cancel the upload?',
         () => {
           clearVideo();
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         },
         'Yes',
       );
     } else {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
   };
@@ -98,6 +100,7 @@ function UGCUploadScreen() {
 
     if (success) {
       platformAlertSimple('Success', 'Your video has been uploaded successfully!');
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
   };

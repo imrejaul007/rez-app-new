@@ -1,23 +1,14 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // NearbyStoresSection.tsx - Nearby ReZ stores section
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-} from "@/constants/DesignSystem";
-import { storesApi } from "@/services/storesApi";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { storesApi } from '@/services/storesApi';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -50,12 +41,7 @@ const formatDistance = (distanceKm: number): string => {
   return `${distanceKm.toFixed(1)}km`;
 };
 
-function NearbyStoresSection({
-  stores: propStores,
-  currentStoreId,
-  userLat,
-  userLng,
-}: NearbyStoresSectionProps) {
+function NearbyStoresSection({ stores: propStores, currentStoreId, userLat, userLng }: NearbyStoresSectionProps) {
   const isMounted = useIsMounted();
   const router = useRouter();
   const [stores, setStores] = useState<NearbyStore[]>(propStores || []);
@@ -65,6 +51,7 @@ function NearbyStoresSection({
     if (userLat && userLng) {
       fetchNearbyStores();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userLat, userLng, currentStoreId]);
 
   const fetchNearbyStores = async () => {
@@ -120,7 +107,6 @@ function NearbyStoresSection({
           <Pressable
             key={store.id}
             style={styles.storeItem}
-           
             onPress={() => handleStorePress(store)}
             accessibilityRole="button"
             accessibilityLabel={`${store.name}, ${store.distance}`}
@@ -147,7 +133,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.primary,
     marginBottom: Spacing.md,
   },
@@ -155,9 +141,9 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   storeItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: Colors.gray[100],

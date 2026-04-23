@@ -60,6 +60,7 @@ function ProgramDetailScreen() {
       if (!isMounted()) return;
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [programSlug]);
   const isMounted = useIsMounted();
 

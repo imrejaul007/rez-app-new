@@ -155,6 +155,7 @@ function BusDetailsPage() {
     if (id) {
       loadBusDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadBusDetails = async () => {
@@ -422,6 +423,7 @@ function BusDetailsPage() {
   };
 
   const handleBack = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -739,6 +741,7 @@ function BusDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => {
           setShowConfirmation(false);
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         }}
       >
@@ -748,6 +751,7 @@ function BusDetailsPage() {
             bookingData={bookingData as any}
             onClose={() => {
               setShowConfirmation(false);
+              // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');
             }}
           />

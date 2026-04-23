@@ -28,6 +28,7 @@ const RelatedPackagesSection: React.FC<RelatedPackagesSectionProps> = ({ current
 
   useEffect(() => {
     loadRelatedPackages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPackageId]);
 
   const loadRelatedPackages = async () => {

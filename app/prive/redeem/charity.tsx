@@ -51,6 +51,7 @@ function CharityScreen() {
         // fallback
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const computeValue = (coins: number) => Math.floor(coins * conversionRate);

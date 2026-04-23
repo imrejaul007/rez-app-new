@@ -37,6 +37,7 @@ const ExclusiveOffers = () => {
 
   useEffect(() => {
     fetchOffers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchOffers = async () => {

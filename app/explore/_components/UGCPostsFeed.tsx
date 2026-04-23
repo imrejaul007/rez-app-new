@@ -124,6 +124,7 @@ const UGCPostsFeed = () => {
 
   useEffect(() => {
     fetchUgcPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigateTo = (path: string) => {

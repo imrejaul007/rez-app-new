@@ -92,6 +92,7 @@ const FriendsActivityPage = () => {
       if (!isMounted()) return;
       setRefreshing(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -139,7 +140,7 @@ const FriendsActivityPage = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
@@ -147,10 +148,7 @@ const FriendsActivityPage = () => {
             <Text style={styles.headerTitle}>Friends Activity</Text>
             <Text style={styles.headerSubtitle}>See what your friends are saving</Text>
           </View>
-          <Pressable
-            style={styles.inviteButton}
-            onPress={navigateToReferral}
-          >
+          <Pressable style={styles.inviteButton} onPress={navigateToReferral}>
             <Ionicons name="person-add" size={20} color={Colors.gold} />
           </Pressable>
         </View>
@@ -167,7 +165,7 @@ const FriendsActivityPage = () => {
               color={activeTab === 'shopping' ? colors.lightMustard : colors.neutral[500]}
             />
             <Text style={[styles.tabText, activeTab === 'shopping' && styles.tabTextActive]}>
-              Shopping Now ({friends.filter(f => f.isLive).length})
+              Shopping Now ({friends.filter((f) => f.isLive).length})
             </Text>
           </Pressable>
 
@@ -191,14 +189,10 @@ const FriendsActivityPage = () => {
           style={styles.contentList}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.contentContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
         >
           {/* Loading State */}
-          {loading && !refreshing && (
-            <CardGridSkeleton />
-          )}
+          {loading && !refreshing && <CardGridSkeleton />}
 
           {/* Error State */}
           {error && !loading && (
@@ -214,13 +208,11 @@ const FriendsActivityPage = () => {
           {/* Shopping Now Tab */}
           {!loading && !error && activeTab === 'shopping' && (
             <>
-              {friends.filter(f => f.isLive).length === 0 ? (
+              {friends.filter((f) => f.isLive).length === 0 ? (
                 <View style={styles.centerContainer}>
                   <Ionicons name="people-outline" size={48} color={colors.text.tertiary} />
                   <Text style={styles.emptyTitle}>No Friends Shopping</Text>
-                  <Text style={styles.emptySubtext}>
-                    Invite friends to see their shopping activity
-                  </Text>
+                  <Text style={styles.emptySubtext}>Invite friends to see their shopping activity</Text>
                   <Pressable style={styles.inviteMainButton} onPress={navigateToReferral}>
                     <Ionicons name="person-add" size={18} color={colors.text.inverse} />
                     <Text style={styles.inviteMainText}>Invite Friends</Text>
@@ -228,23 +220,23 @@ const FriendsActivityPage = () => {
                 </View>
               ) : (
                 <View style={styles.friendsGrid}>
-                  {friends.filter(f => f.isLive).map((friend) => (
-                    <Pressable key={friend.id} style={styles.friendCard}>
-                      <View style={styles.friendAvatarContainer}>
-                        <CachedImage source={friend.avatar} style={styles.friendAvatar} />
-                        <View style={styles.liveDot} />
-                      </View>
-                      <Text style={styles.friendName}>{friend.name}</Text>
-                      {friend.store && (
-                        <Text style={styles.friendStore}>at {friend.store}</Text>
-                      )}
-                      {friend.totalSaved && friend.totalSaved > 0 && (
-                        <View style={styles.savedBadge}>
-                          <Text style={styles.savedText}>Saved Rs.{friend.totalSaved}</Text>
+                  {friends
+                    .filter((f) => f.isLive)
+                    .map((friend) => (
+                      <Pressable key={friend.id} style={styles.friendCard}>
+                        <View style={styles.friendAvatarContainer}>
+                          <CachedImage source={friend.avatar} style={styles.friendAvatar} />
+                          <View style={styles.liveDot} />
                         </View>
-                      )}
-                    </Pressable>
-                  ))}
+                        <Text style={styles.friendName}>{friend.name}</Text>
+                        {friend.store && <Text style={styles.friendStore}>at {friend.store}</Text>}
+                        {friend.totalSaved && friend.totalSaved > 0 && (
+                          <View style={styles.savedBadge}>
+                            <Text style={styles.savedText}>Saved Rs.{friend.totalSaved}</Text>
+                          </View>
+                        )}
+                      </Pressable>
+                    ))}
                 </View>
               )}
 
@@ -276,39 +268,25 @@ const FriendsActivityPage = () => {
                 <View style={styles.centerContainer}>
                   <Ionicons name="pulse-outline" size={48} color={colors.text.tertiary} />
                   <Text style={styles.emptyTitle}>No Recent Activity</Text>
-                  <Text style={styles.emptySubtext}>
-                    Activity from your friends will appear here
-                  </Text>
+                  <Text style={styles.emptySubtext}>Activity from your friends will appear here</Text>
                 </View>
               ) : (
                 <View style={styles.activityList}>
                   {activities.map((activity, index) => (
-                    <Pressable
-                      key={activity.id || `activity-${index}`}
-                      style={styles.activityItem}
-                    >
+                    <Pressable key={activity.id || `activity-${index}`} style={styles.activityItem}>
                       <View style={styles.activityIconContainer}>
                         {activity.user?.avatar ? (
-                          <CachedImage
-                            source={activity.user.avatar}
-                            style={styles.activityAvatar}
-                          />
+                          <CachedImage source={activity.user.avatar} style={styles.activityAvatar} />
                         ) : (
-                          <View style={styles.activityIconBadge}>
-                            {renderActivityIcon(activity.type)}
-                          </View>
+                          <View style={styles.activityIconBadge}>{renderActivityIcon(activity.type)}</View>
                         )}
                       </View>
 
                       <View style={styles.activityContent}>
                         <Text style={styles.activityText}>
-                          {activity.user?.name && (
-                            <Text style={styles.activityUserName}>{activity.user.name} </Text>
-                          )}
+                          {activity.user?.name && <Text style={styles.activityUserName}>{activity.user.name} </Text>}
                           {activity.message}
-                          {activity.store && (
-                            <Text style={styles.activityStore}> at {activity.store}</Text>
-                          )}
+                          {activity.store && <Text style={styles.activityStore}> at {activity.store}</Text>}
                         </Text>
                         <View style={styles.activityMeta}>
                           <Text style={styles.activityTime}>{activity.time}</Text>

@@ -156,6 +156,7 @@ interface CategoryItemProps {
   index: number;
 }
 
+// eslint-disable-next-line react/display-name
 const CategoryItem: React.FC<CategoryItemProps> = memo(
   ({ filter, isSelected, onPress, index }) => {
     const scaleAnim = useSharedValue(0.8);
@@ -165,6 +166,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(
       fadeAnim.value = withDelay(index * 40, withTiming(1, { duration: 300 }));
       scaleAnim.value = withDelay(index * 40, withSpring(1));
       
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [index]);
 
     const handlePressIn = () => {
@@ -228,12 +230,14 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(
   }
 );
 
+// eslint-disable-next-line react/display-name
 const SkeletonItem: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -262,6 +266,7 @@ const CategoryFilterRow: React.FC<CategoryFilterRowProps> = ({
 
   useEffect(() => {
     headerFadeAnim.value = withTiming(1, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Use passed categories, or fallback to defaults

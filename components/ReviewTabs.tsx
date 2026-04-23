@@ -27,6 +27,7 @@ const ReviewTabs: React.FC<ReviewTabsProps> = ({
   useEffect(() => {
     const targetX = activeTab === 'reviews' ? 0 : tabWidth;
     translateX.value = withSpring(targetX, { damping: 18, stiffness: 150 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, tabWidth]);
 
   const indicatorStyle = useAnimatedStyle(() => ({

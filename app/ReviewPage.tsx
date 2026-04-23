@@ -69,6 +69,7 @@ function ReviewPage() {
           if (mountedRef.current) setLoadingStore(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId, isStoreReview]);
   const { reviewText, setReviewText, rating, setRating, isSubmitting, submitReview } = useReviewState();
 
@@ -122,6 +123,7 @@ function ReviewPage() {
   };
 
   const handleBackPress = () => {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -149,6 +151,7 @@ function ReviewPage() {
   const handleModalClose = () => {
     hideModal();
     if (isStoreReview) {
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } else if (fromPrive === 'true') {
       router.replace('/prive/review-earn');

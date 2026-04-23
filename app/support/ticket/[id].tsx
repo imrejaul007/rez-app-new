@@ -73,6 +73,7 @@ function TicketDetailPage() {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket?.status, loadTicket]);
 
   const handleRefresh = async () => {

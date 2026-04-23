@@ -214,6 +214,7 @@ function UploadPage() {
             ? `Your reel has been submitted for review. You'll earn ${coins} coins once approved!`
             : 'Your reel has been submitted for review.';
           platformAlert('Reel Submitted!', msg);
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         } else {
           platformAlert('Upload Failed', result.error || 'Failed to upload reel. Please try again.');
@@ -276,6 +277,7 @@ function UploadPage() {
           ? `Your ${contentType} has been submitted for review. You'll earn ${coins} coins once approved!`
           : `Your ${contentType} has been submitted for review.`;
         platformAlert(`${contentType === 'story' ? 'Story' : 'Post'} Submitted!`, msg);
+        // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace('/(tabs)');
       } else {
         platformAlert('Upload Failed', result.error || `Failed to upload ${contentType}. Please try again.`);

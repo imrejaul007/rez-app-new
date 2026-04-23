@@ -96,6 +96,7 @@ const ActivityItem: React.FC<{
   index: number;
   isLast: boolean;
   onPress: () => void;
+// eslint-disable-next-line react/display-name
 }> = memo(({ activity, index, isLast, onPress }) => {
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(20);
@@ -114,6 +115,7 @@ const ActivityItem: React.FC<{
     return () => {
       pulseAnim.value = 1;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, activity.status]);
 
   const handlePressIn = () => {
@@ -215,12 +217,14 @@ const ActivityItem: React.FC<{
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SkeletonItem: React.FC<{ index: number }> = memo(({ index }) => {
   const shimmerAnim = useSharedValue(0);
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
   return (
@@ -262,6 +266,7 @@ const CashbackActivitySection: React.FC<CashbackActivitySectionProps> = ({
 
   useEffect(() => {
     headerFadeAnim.value = withTiming(1, { duration: 400 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (activities.length === 0 && !isLoading) {

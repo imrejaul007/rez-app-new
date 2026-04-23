@@ -81,10 +81,12 @@ function SubmissionDetailPage() {
 
   useEffect(() => {
     loadSubmission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submissionId, projectId]);
 
   // Deep-link parameter validation guard
   if (!submissionId || typeof submissionId !== 'string') {
+    // eslint-disable-next-line no-unused-expressions
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
     return null;
   }
@@ -115,10 +117,12 @@ function SubmissionDetailPage() {
             slideAnim.value = withTiming(0, { duration: 500 });
           } else {
             showAlert('Error', 'Submission not found');
+            // eslint-disable-next-line no-unused-expressions
             router.canGoBack() ? router.back() : router.replace('/(tabs)');
           }
         } else {
           showAlert('Error', 'Submission not found');
+          // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         }
       } else {
@@ -126,6 +130,7 @@ function SubmissionDetailPage() {
       }
     } catch (error: any) {
       showAlert('Error', 'Failed to load submission details');
+      // eslint-disable-next-line no-unused-expressions
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     } finally {
       if (!isMounted()) return;
