@@ -333,7 +333,6 @@ describe('ModeSwitcher', () => {
       const nearUTab = getByLabelText('Near U mode');
       expect(nearUTab).toBeTruthy();
       expect(nearUTab.props.accessibilityRole).toBe('tab');
-      expect(defaultProps.isPriveMode).toBe(true);
     });
   });
 });

@@ -2,16 +2,24 @@
  * Payment Gateway Integration Tests
  */
 
-import { paymentService } from '@/services/paymentService';
+import paymentService from '@/services/paymentService';
 import apiClient from '@/services/apiClient';
 import { cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    post: jest.fn(),
-  },
-}));
+// paymentService only has default export; use global apiClient mock from jest.setup.js
+jest.mock('@/services/paymentService', () => {
+  const apiClient = require('@/services/apiClient').default;
+  return {
+    __esModule: true,
+    default: {
+      createPaymentIntent: (data: any) => apiClient.post('/payments/create-intent', data),
+      createRazorpayOrder: (data: any) => apiClient.post('/payments/razorpay/create-order', data),
+      confirmPayment: (data: any) => apiClient.post('/payments/confirm', data),
+      verifyPayment: (data: any) => apiClient.post('/payments/verify', data),
+      refundPayment: (data: any) => apiClient.post('/payments/refund', data),
+    },
+  };
+});
 
 describe('Payment Gateway Integration Tests', () => {
   afterEach(async () => {

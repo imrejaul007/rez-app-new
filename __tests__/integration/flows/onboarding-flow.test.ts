@@ -5,19 +5,27 @@
 import authService from '@/services/authApi';
 import apiClient from '@/services/apiClient';
 import { cleanupAfterTest } from '../utils/testHelpers';
-import { setupMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    post: jest.fn(),
-    put: jest.fn(),
-  },
-}));
+// authService only has default export; use global apiClient mock from jest.setup.js
+jest.mock('@/services/authApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  let _token: string | null = null;
+  return {
+    __esModule: true,
+    default: {
+      sendOtp: (data: any) => apiClient.post('/auth/send-otp', data),
+      verifyOtp: (data: any) => apiClient.post('/auth/verify-otp', data),
+      updateProfile: (data: any) => apiClient.put('/auth/profile', data),
+      completeOnboarding: (data: any) => apiClient.post('/auth/onboarding', data),
+      setAuthToken: (token: string | null) => { _token = token; apiClient.setAuthToken(token); },
+      getAuthToken: () => _token ?? apiClient.getAuthToken(),
+    },
+  };
+});
 
 describe('Onboarding Flow Integration Tests', () => {
   beforeEach(() => {
-    setupMockHandlers(apiClient);
+    // No local apiClient mock needed - use global from jest.setup.js
   });
 
   afterEach(async () => {

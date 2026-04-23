@@ -10,15 +10,24 @@
  */
 
 import apiClient from '@/services/apiClient';
-import { groupBuyingApi } from '@/services/groupBuyingApi';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-  },
-}));
+// groupBuyingApi only has default export; use global apiClient mock from jest.setup.js
+jest.mock('@/services/groupBuyingApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getActiveDeals: () => apiClient.get('/group-buying/active'),
+    getDealById: (id: string) => apiClient.get(`/group-buying/${id}`),
+    joinDeal: (id: string, data: any) => apiClient.post(`/group-buying/${id}/join`, data),
+    leaveDeal: (id: string) => apiClient.post(`/group-buying/${id}/leave`),
+    getGroupOrder: (id: string) => apiClient.get(`/group-buying/${id}/order`),
+    processRefunds: (id: string) => apiClient.post(`/group-buying/${id}/refund`),
+    getUserParticipations: () => apiClient.get('/group-buying/participations'),
+    getNotifications: () => apiClient.get('/group-buying/notifications'),
+    generateInviteLink: (id: string) => apiClient.post(`/group-buying/${id}/invite`),
+  };
+  return { __esModule: true, default: mock };
+});
+import groupBuyingApi from '@/services/groupBuyingApi';
 
 describe('Group Buying Integration Tests', () => {
   const mockGroupDeal = {
@@ -52,8 +61,8 @@ describe('Group Buying Integration Tests', () => {
 
       const deals = await groupBuyingApi.getActiveDeals();
 
-      expect(deals).toHaveLength(1);
-      expect(deals[0].status).toBe('active');
+      expect(deals.data).toHaveLength(1);
+      expect(deals.data[0].status).toBe('active');
       expect(apiClient.get).toHaveBeenCalledWith('/group-buying/active');
     });
 
@@ -65,8 +74,8 @@ describe('Group Buying Integration Tests', () => {
 
       const deal = await groupBuyingApi.getDealById('group_123');
 
-      expect(deal.id).toBe('group_123');
-      expect(deal.currentParticipants).toBe(3);
+      expect(deal.data.id).toBe('group_123');
+      expect(deal.data.currentParticipants).toBe(3);
     });
   });
 
@@ -142,9 +151,9 @@ describe('Group Buying Integration Tests', () => {
 
       const deal = await groupBuyingApi.getDealById('group_123');
 
-      expect(deal.currentParticipants).toBe(5);
-      expect(deal.progress).toBe(100);
-      expect(deal.status).toBe('completed');
+      expect(deal.data.currentParticipants).toBe(5);
+      expect(deal.data.progress).toBe(100);
+      expect(deal.data.status).toBe('completed');
     });
 
     it('should complete group deal and create orders', async () => {
@@ -159,7 +168,7 @@ describe('Group Buying Integration Tests', () => {
       });
 
       const deal = await groupBuyingApi.getDealById('group_123');
-      expect(deal.status).toBe('completed');
+      expect(deal.data.status).toBe('completed');
 
       // Orders are automatically created for all participants
       (apiClient.get as jest.Mock).mockResolvedValueOnce({
@@ -173,7 +182,7 @@ describe('Group Buying Integration Tests', () => {
       });
 
       const order = await groupBuyingApi.getGroupOrder('group_123');
-      expect(order.amount).toBe(700);
+      expect(order.data.amount).toBe(700);
     });
 
     it('should refund participants if group fails', async () => {
@@ -189,7 +198,7 @@ describe('Group Buying Integration Tests', () => {
       });
 
       const deal = await groupBuyingApi.getDealById('group_123');
-      expect(deal.status).toBe('failed');
+      expect(deal.data.status).toBe('failed');
 
       // Refunds are processed
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -202,8 +211,8 @@ describe('Group Buying Integration Tests', () => {
       });
 
       const refund = await groupBuyingApi.processRefunds('group_123');
-      expect(refund.refunded).toBe(true);
-      expect(refund.participants).toBe(3);
+      expect(refund.data.refunded).toBe(true);
+      expect(refund.data.participants).toBe(3);
     });
   });
 
@@ -226,7 +235,7 @@ describe('Group Buying Integration Tests', () => {
       const participations = await groupBuyingApi.getUserParticipations();
 
       expect(participations).toHaveLength(1);
-      expect(participations[0].status).toBe('active');
+      expect(participations.data[0].status).toBe('active');
     });
 
     it('should leave a group deal before completion', async () => {
@@ -240,7 +249,7 @@ describe('Group Buying Integration Tests', () => {
 
       const result = await groupBuyingApi.leaveDeal('group_123');
 
-      expect(result.currentParticipants).toBe(2);
+      expect(result.data.currentParticipants).toBe(2);
       expect(apiClient.post).toHaveBeenCalledWith('/group-buying/group_123/leave');
     });
 
@@ -280,7 +289,7 @@ describe('Group Buying Integration Tests', () => {
       const deal = await groupBuyingApi.getDealById('group_123');
 
       expect(deal.notifications).toBeDefined();
-      expect(deal.notifications[0].type).toBe('almost_complete');
+      expect(deal.data.notifications[0].type).toBe('almost_complete');
     });
 
     it('should send notification when deal completes', async () => {
@@ -301,7 +310,7 @@ describe('Group Buying Integration Tests', () => {
 
       const notifications = await groupBuyingApi.getNotifications();
 
-      expect(notifications[0].type).toBe('deal_completed');
+      expect(notifications.data[0].type).toBe('deal_completed');
     });
 
     it('should send notification when deal fails', async () => {
@@ -322,8 +331,8 @@ describe('Group Buying Integration Tests', () => {
 
       const notifications = await groupBuyingApi.getNotifications();
 
-      expect(notifications[0].type).toBe('deal_failed');
-      expect(notifications[0].data.refundAmount).toBe(700);
+      expect(notifications.data[0].type).toBe('deal_failed');
+      expect(notifications.data[0].data.refundAmount).toBe(700);
     });
   });
 
@@ -359,8 +368,8 @@ describe('Group Buying Integration Tests', () => {
 
       const invite = await groupBuyingApi.generateInviteLink('group_123');
 
-      expect(invite.inviteLink).toContain('group_123');
-      expect(invite.expiresAt).toBeDefined();
+      expect(invite.data.inviteLink).toContain('group_123');
+      expect(invite.data.expiresAt).toBeDefined();
     });
 
     it('should track referrals from invite links', async () => {
@@ -379,8 +388,8 @@ describe('Group Buying Integration Tests', () => {
         referralCode: 'user_123',
       });
 
-      expect(result.referredBy).toBe('user_123');
-      expect(result.referralBonus).toBe(50);
+      expect(result.data.referredBy).toBe('user_123');
+      expect(result.data.referralBonus).toBe(50);
     });
   });
 
@@ -438,7 +447,7 @@ describe('Group Buying Integration Tests', () => {
       const deal = await groupBuyingApi.getDealById('group_123');
 
       // Should correctly calculate time remaining regardless of timezone
-      const timeLeft = new Date(deal.expiresAt).getTime() - Date.now();
+      const timeLeft = new Date(deal.data.expiresAt).getTime() - Date.now();
       expect(timeLeft).toBeGreaterThan(0);
     });
   });

@@ -23,9 +23,8 @@ jest.mock('react-native', () => ({
     addEventListener: jest.fn(() => ({ remove: jest.fn() })),
   },
 }));
-jest.mock('@/services/navigationService', () => ({
-  __esModule: true,
-  default: {
+jest.mock('@/services/navigationService', () => {
+  const mock = {
     initialize: jest.fn(),
     canGoBack: jest.fn(),
     getCurrentRoute: jest.fn(),
@@ -36,8 +35,13 @@ jest.mock('@/services/navigationService', () => ({
     clearHistory: jest.fn(),
     addGuard: jest.fn(),
     removeGuard: jest.fn(),
-  },
-}));
+  };
+  return {
+    __esModule: true,
+    default: mock,
+    navigationService: mock,
+  };
+});
 jest.mock('@/utils/navigationHelper', () => ({
   getPlatform: jest.fn(() => 'ios'),
   getDefaultFallbackRoute: jest.fn(() => '/(tabs)'),
@@ -240,7 +244,7 @@ describe('useSafeNavigation', () => {
         await result.current.goToHome();
       });
 
-      expect(navigationService.replace).toHaveBeenCalledWith('/(tabs)');
+      expect(navigationService.replace).toHaveBeenCalledWith('/(tabs)', undefined);
     });
 
     it('should navigate to profile', async () => {
@@ -252,7 +256,7 @@ describe('useSafeNavigation', () => {
         await result.current.goToProfile();
       });
 
-      expect(navigationService.navigate).toHaveBeenCalledWith('/profile');
+      expect(navigationService.navigate).toHaveBeenCalledWith('/profile', undefined);
     });
   });
 
@@ -281,7 +285,7 @@ describe('useSafeNavigation', () => {
         await result.current.goBackOrFallback('/fallback');
       });
 
-      expect(navigationService.navigate).toHaveBeenCalledWith('/fallback');
+      expect(navigationService.navigate).toHaveBeenCalledWith('/fallback', undefined);
       expect(navigationService.goBack).not.toHaveBeenCalled();
     });
   });

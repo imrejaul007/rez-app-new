@@ -53,6 +53,10 @@ module.exports = {
     '^@stripe/stripe-react-native$': '<rootDir>/__tests__/mocks/stripeMock.js',
     // @sentry/react-native needs native modules unavailable in Node test env
     '^@sentry/react-native$': '<rootDir>/__tests__/mocks/sentryMock.js',
+    // react-native-view-shot is not installed — map to mock stub
+    '^react-native-view-shot$': '<rootDir>/__tests__/mocks/viewShotMock.js',
+    // @react-native-community/datetimepicker needs native modules in Node test env
+    '^@react-native-community/datetimepicker$': '<rootDir>/__tests__/mocks/dateTimePickerMock.js',
     // React Native 0.79 removed NativeAnimatedHelper — map to empty stub
     '^react-native/Libraries/Animated/NativeAnimatedHelper$': '<rootDir>/__tests__/mocks/emptyMock.js',
     // NativeEventEmitter path may not exist in all RN versions

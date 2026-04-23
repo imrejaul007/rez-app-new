@@ -8,7 +8,7 @@
  * @coverage 85%+ target
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react-hooks';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useBillUpload } from '@/hooks/useBillUpload';
 import { billUploadService, BillUploadData } from '@/services/billUploadService';
@@ -65,11 +65,13 @@ describe('useBillUpload', () => {
 
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(savedData));
 
-      const { result, waitForNextUpdate } = renderHook(() => useBillUpload());
+      const { result } = renderHook(() => useBillUpload());
 
-      await waitForNextUpdate();
+      // Wait for async loadFormData useEffect to complete and update state
+      await waitFor(() => {
+        expect(result.current.formData).toBeDefined();
+      }, { timeout: 3000 });
 
-      expect(result.current.formData).toBeDefined();
       expect(result.current.formData?.amount).toBe('500');
     });
 

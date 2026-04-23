@@ -19,6 +19,9 @@ jest.mock('@/services/gamificationApi', () => ({
 jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn(),
 }));
+jest.mock('expo-image', () => ({
+  Image: 'Image',
+}));
 
 // Mock segments
 const mockSegments: SpinWheelSegment[] = [

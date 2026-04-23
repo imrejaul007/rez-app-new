@@ -11,9 +11,9 @@
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import useDebouncedSearch from '../../hooks/useDebouncedSearch';
-import { searchCacheService } from '../../services/searchCacheService';
-import { searchAnalyticsService } from '../../services/searchAnalyticsService';
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
+import { searchCacheService } from '@/services/searchCacheService';
+import { searchAnalyticsService } from '@/services/searchAnalyticsService';
 
 describe('Search Functionality', () => {
   beforeEach(async () => {

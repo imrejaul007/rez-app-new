@@ -110,7 +110,7 @@ describe('SpinWheelGame Component', () => {
         />
       );
 
-      expect(getByText(/Tap "SPIN NOW" to try your luck/i)).toBeTruthy();
+      expect(getByText(/try your luck and win amazing rewards/i)).toBeTruthy();
     });
   });
 
@@ -277,8 +277,9 @@ describe('SpinWheelGame Component', () => {
         />
       );
 
-      expect(getByText('No Spins Left')).toBeTruthy();
-      const button = getByText('No Spins Left').parent?.parent;
+      // When spinsRemaining is 0, canSpin becomes false and the button shows "Come Back Later"
+      expect(getByText('Come Back Later')).toBeTruthy();
+      const button = getByText('Come Back Later').parent?.parent;
       expect(button?.props.disabled).toBeTruthy();
     });
 
@@ -553,7 +554,7 @@ describe('SpinWheelGame Component', () => {
         />
       );
 
-      expect(getByText('No Spins Left')).toBeTruthy();
+      expect(getByText('Come Back Later')).toBeTruthy();
     });
 
     it('should have descriptive instructions', () => {

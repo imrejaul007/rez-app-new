@@ -1,7 +1,7 @@
 // Payment Integration Test
 // Tests the complete payment flow from frontend to backend
 
-const { PaymentValidator } = require('../../services/paymentValidation');
+const { PaymentValidator } = require('../services/paymentValidation');
 
 describe('Payment Integration Tests', () => {
   describe('Payment Validation', () => {

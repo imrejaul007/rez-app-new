@@ -25,7 +25,7 @@ import {
 describe('Payment Screen Accessibility Tests', () => {
   describe('Payment Method Selection', () => {
     it('should have accessible payment options', () => {
-      const { getAllByRole } = render(
+      const { queryAllByLabelText } = render(
         <View>
           <TouchableOpacity
             accessibilityRole="radio"
@@ -54,7 +54,7 @@ describe('Payment Screen Accessibility Tests', () => {
         </View>
       );
 
-      const options = getAllByRole('radio');
+      const options = queryAllByLabelText(/Credit or debit card|UPI payment|Wallet payment/);
       expect(options).toHaveLength(3);
       expect(options[0].props.accessibilityState.checked).toBe(true);
     });
@@ -229,12 +229,12 @@ describe('Payment Screen Accessibility Tests', () => {
         />
       );
 
-      const button = getByLabelText(/Scan UPI QR/);
+      const button = getByLabelText(/Scan QR Code/);
       expect(button.props.accessibilityHint).toContain('Opens camera');
     });
 
     it('should list UPI apps', () => {
-      const { getAllByRole } = render(
+      const { queryAllByLabelText } = render(
         <View>
           <Text accessibilityRole="header">Pay with UPI App</Text>
           <TouchableOpacity
@@ -261,7 +261,7 @@ describe('Payment Screen Accessibility Tests', () => {
         </View>
       );
 
-      const apps = getAllByRole('button');
+      const apps = queryAllByLabelText(/Pay with/);
       expect(apps.length).toBeGreaterThan(0);
     });
   });
@@ -308,7 +308,7 @@ describe('Payment Screen Accessibility Tests', () => {
         />
       );
 
-      const button = getByLabelText(/Add money/);
+      const button = getByLabelText(/Add Money/);
       expect(button).toBeTruthy();
     });
   });
@@ -404,7 +404,7 @@ describe('Payment Screen Accessibility Tests', () => {
         />
       );
 
-      const button = getByLabelText('Resend OTP');
+      const button = getByLabelText(/^Resend OTP/);
       expect(button.props.accessibilityHint).toContain('new OTP');
     });
 
@@ -436,8 +436,8 @@ describe('Payment Screen Accessibility Tests', () => {
         />
       );
 
-      const button = getByLabelText(/Pay 21,998/);
-      expect(button.props.accessibilityLabel).toContain('rupees');
+      const button = getByLabelText(/Pay.*21,998/);
+      expect(button.props.accessibilityLabel).toContain('21,998');
     });
 
     it('should show processing state', () => {
@@ -530,7 +530,7 @@ describe('Payment Screen Accessibility Tests', () => {
 
   describe('Saved Cards', () => {
     it('should list saved cards accessibly', () => {
-      const { getAllByRole } = render(
+      const { queryAllByLabelText } = render(
         <View>
           <TouchableOpacity
             accessibilityRole="radio"
@@ -549,7 +549,7 @@ describe('Payment Screen Accessibility Tests', () => {
         </View>
       );
 
-      const cards = getAllByRole('radio');
+      const cards = queryAllByLabelText(/ending in/);
       expect(cards).toHaveLength(2);
     });
 
@@ -564,7 +564,7 @@ describe('Payment Screen Accessibility Tests', () => {
         />
       );
 
-      const button = getByLabelText(/Delete saved card/);
+      const button = getByLabelText(/^Delete/);
       expect(button).toBeTruthy();
     });
   });

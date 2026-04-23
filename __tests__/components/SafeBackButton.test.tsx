@@ -185,10 +185,9 @@ describe('SafeBackButton', () => {
 
       const button = getByTestId('safe-back-button');
 
-      // Should not throw error
-      expect(() => {
-        fireEvent.press(button);
-      }).not.toThrow();
+      // Should not throw error when navigation fails
+      fireEvent.press(button);
+      // The error is caught internally by the component's handlePress
     });
 
     it('should update text when canGoBack changes', () => {

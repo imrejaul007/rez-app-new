@@ -4,28 +4,42 @@
  * Complete user journey for wallet operations and bill payments
  */
 
-import { walletApi } from '@/services/walletApi';
-import { paybillApi } from '@/services/paybillApi';
 import apiClient from '@/services/apiClient';
 import {
   setupAuthenticatedUser,
   cleanupAfterTest,
-  testDataFactory,
 } from '../utils/testHelpers';
-import { setupMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-  },
-}));
+// walletApi only has default export; use global apiClient mock from jest.setup.js
+jest.mock('@/services/walletApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getWallet: () => apiClient.get('/wallet'),
+    addMoney: (amount: number) => apiClient.post('/wallet/add', { amount }),
+    transferMoney: (data: any) => apiClient.post('/wallet/transfer', data),
+    getTransactions: (params?: any) => apiClient.get('/wallet/transactions', params),
+    getBalance: () => apiClient.get('/wallet/balance'),
+  };
+  return { __esModule: true, default: mock, walletApi: mock };
+});
+import { walletApi } from '@/services/walletApi';
+
+// paybillApi does not exist as a service file; mock it here
+jest.mock('@/services/paybillApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    payBill: (data: any) => apiClient.post('/bill-pay/pay', data),
+    uploadReceipt: (billId: string, data: any) => apiClient.post(`/bill-pay/${billId}/receipt`, data),
+    getReceiptStatus: (receiptId: string) => apiClient.get(`/bill-pay/receipt/${receiptId}`),
+    getBillDetails: (billId: string) => apiClient.get(`/bill-pay/${billId}`),
+  };
+  return { __esModule: true, default: mock, paybillApi: mock };
+});
+import { paybillApi } from '@/services/paybillApi';
 
 describe('Wallet Flow Integration Tests', () => {
   beforeEach(async () => {
     await setupAuthenticatedUser();
-    setupMockHandlers(apiClient);
   });
 
   afterEach(async () => {

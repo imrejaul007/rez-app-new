@@ -356,9 +356,11 @@ describe('AccessibleButton', () => {
       );
 
       const text = getByText('Custom Text');
-      expect(text.props.style).toContainEqual(
-        expect.objectContaining({ fontSize: 20 })
+      // Style is an array — check if any element contains fontSize: 20
+      const hasCustomFontSize = (Array.isArray(text.props.style) ? text.props.style : [text.props.style]).some(
+        (s) => s && (s.fontSize === 20 || (Array.isArray(s) && s.some((ss) => ss && ss.fontSize === 20)))
       );
+      expect(hasCustomFontSize).toBe(true);
     });
   });
 

@@ -4,11 +4,6 @@
  * Complete user journey from browsing products to order completion
  */
 
-import { cartApi } from '@/services/cartApi';
-import { productsApi } from '@/services/productsApi';
-import { orderApi } from '@/services/orderApi';
-import { paymentService } from '@/services/paymentService';
-import { addressApi } from '@/services/addressApi';
 import apiClient from '@/services/apiClient';
 import {
   setupAuthenticatedUser,
@@ -17,23 +12,77 @@ import {
   generateMockProducts,
   measurePerformance,
 } from '../utils/testHelpers';
-import { setupMockHandlers, resetMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn(),
-  },
-}));
+// cartApi exports: named cartApi + default cartService
+jest.mock('@/services/cartApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getCart: () => apiClient.get('/cart'),
+    addToCart: (data: any) => apiClient.post('/cart/add', data),
+    updateCartItem: (id: string, data: any) => apiClient.put(`/cart/item/${id}`, data),
+    removeFromCart: (id: string) => apiClient.delete(`/cart/item/${id}`),
+    clearCart: () => apiClient.post('/cart/clear'),
+    validateCart: () => apiClient.post('/cart/validate'),
+    getCategories: () => apiClient.get('/categories'),
+    getHomepageProducts: () => apiClient.get('/products/homepage'),
+  };
+  return { __esModule: true, default: mock, cartApi: mock };
+});
+import { cartApi } from '@/services/cartApi';
+
+// productsApi exports: named productsApi + default productsService
+jest.mock('@/services/productsApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getProducts: (params?: any) => apiClient.get('/products', params),
+    getProductById: (id: string) => apiClient.get(`/products/${id}`),
+    searchProducts: (q: string) => apiClient.get('/products/search', { q }),
+    getCategories: () => apiClient.get('/categories'),
+    getHomepageProducts: () => apiClient.get('/products/homepage'),
+  };
+  return { __esModule: true, default: mock, productsApi: mock };
+});
+import { productsApi } from '@/services/productsApi';
+
+// orderApi exports: named orderApi + default orderApi
+jest.mock('@/services/orderApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    createOrder: (data: any) => apiClient.post('/orders', data),
+    validateCoupon: (code: string, subtotal: number) => apiClient.post('/orders/validate-coupon', { code, subtotal }),
+  };
+  return { __esModule: true, default: mock, orderApi: mock };
+});
+import { orderApi } from '@/services/orderApi';
+
+// paymentService only has default export
+jest.mock('@/services/paymentService', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    createPaymentIntent: (data: any) => apiClient.post('/payments/create-intent', data),
+    confirmPayment: (data: any) => apiClient.post('/payments/confirm', data),
+    refundPayment: (id: string) => apiClient.post('/payments/refund', { id }),
+  };
+  return { __esModule: true, default: mock };
+});
+import paymentService from '@/services/paymentService';
+
+// addressApi exports: named addressApi + default AddressApiService
+jest.mock('@/services/addressApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getAddresses: () => apiClient.get('/addresses'),
+    createAddress: (data: any) => apiClient.post('/addresses', data),
+    updateAddress: (id: string, data: any) => apiClient.put(`/addresses/${id}`, data),
+    deleteAddress: (id: string) => apiClient.delete(`/addresses/${id}`),
+  };
+  return { __esModule: true, default: mock, addressApi: mock };
+});
+import { addressApi } from '@/services/addressApi';
 
 describe('Shopping Flow Integration Tests', () => {
   beforeEach(async () => {
     await setupAuthenticatedUser();
-    resetMockHandlers();
-    setupMockHandlers(apiClient);
   });
 
   afterEach(async () => {
@@ -53,7 +102,7 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const productsResponse = await productsApi.getProducts({ page: 1, limit: 20 });
-      expect(productsResponse.products).toHaveLength(10);
+      expect(productsResponse.data.products).toHaveLength(10);
 
       // Step 2: View Product Details
       const selectedProduct = mockProducts[0];
@@ -63,7 +112,7 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const productDetails = await productsApi.getProductById(selectedProduct.id);
-      expect(productDetails.id).toBe(selectedProduct.id);
+      expect(productDetails.data.id).toBe(selectedProduct.id);
 
       // Step 3: Add to Cart
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -83,7 +132,7 @@ describe('Shopping Flow Integration Tests', () => {
         productId: selectedProduct.id,
         quantity: 2,
       });
-      expect(cartItem.item.quantity).toBe(2);
+      expect(cartItem.data.item.quantity).toBe(2);
 
       // Step 4: View Cart
       const mockCart = testDataFactory.cart();
@@ -93,8 +142,8 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const cart = await cartApi.getCart();
-      expect(cart.items.length).toBeGreaterThan(0);
-      expect(cart.total).toBeGreaterThan(0);
+      expect(cart.data.items.length).toBeGreaterThan(0);
+      expect(cart.data.total).toBeGreaterThan(0);
 
       // Step 5: Select Delivery Address
       const mockAddress = testDataFactory.address();
@@ -104,7 +153,7 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const addresses = await addressApi.getAddresses();
-      const defaultAddress = addresses.find(addr => addr.isDefault);
+      const defaultAddress = (addresses.data as any[]).find((addr: any) => addr.isDefault);
       expect(defaultAddress).toBeDefined();
 
       // Step 6: Create Payment Intent
@@ -121,7 +170,7 @@ describe('Shopping Flow Integration Tests', () => {
         amount: cart.total,
         currency: 'usd',
       });
-      expect(paymentIntent.clientSecret).toBeDefined();
+      expect(paymentIntent.data.clientSecret).toBeDefined();
 
       // Step 7: Confirm Payment
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -133,10 +182,10 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const payment = await paymentService.confirmPayment({
-        paymentIntentId: paymentIntent.paymentIntentId,
+        paymentIntentId: paymentIntent.data.paymentIntentId,
         paymentMethodId: 'pm_test_card',
       });
-      expect(payment.status).toBe('succeeded');
+      expect(payment.data.status).toBe('succeeded');
 
       // Step 8: Create Order
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -170,9 +219,9 @@ describe('Shopping Flow Integration Tests', () => {
         })),
       });
 
-      expect(order.id).toBeDefined();
-      expect(order.orderNumber).toBeDefined();
-      expect(order.status).toBe('pending');
+      expect(order.data.id).toBeDefined();
+      expect(order.data.orderNumber).toBeDefined();
+      expect(order.data.status).toBe('pending');
 
       // Step 9: Clear Cart
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -199,7 +248,7 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const searchResults = await productsApi.searchProducts(searchQuery);
-      expect(searchResults.products).toBeDefined();
+      expect(searchResults.data.products).toBeDefined();
 
       // Apply filters
       (apiClient.get as jest.Mock).mockResolvedValueOnce({
@@ -218,7 +267,7 @@ describe('Shopping Flow Integration Tests', () => {
         minPrice: 1000,
         maxPrice: 5000,
       });
-      expect(filteredProducts.products.length).toBeGreaterThan(0);
+      expect(filteredProducts.data.products.length).toBeGreaterThan(0);
     });
 
     it('should handle cart modifications during shopping', async () => {
@@ -272,7 +321,7 @@ describe('Shopping Flow Integration Tests', () => {
       });
 
       const cart = await cartApi.getCart();
-      expect(cart.items).toBeDefined();
+      expect(cart.data.items).toBeDefined();
     });
   });
 
@@ -304,10 +353,10 @@ describe('Shopping Flow Integration Tests', () => {
       const categoryProducts = await productsApi.getProducts({
         category: 'cat_1',
       });
-      expect(categoryProducts.products).toBeDefined();
+      expect(categoryProducts.data.products).toBeDefined();
 
       // View product details
-      const product = categoryProducts.products[0];
+      const product = categoryProducts.data.products[0];
       (apiClient.get as jest.Mock).mockResolvedValueOnce({
         success: true,
         data: {
@@ -377,7 +426,7 @@ describe('Shopping Flow Integration Tests', () => {
         })),
       });
 
-      expect(guestOrder.id).toBeDefined();
+      expect(guestOrder.data.id).toBeDefined();
     });
 
     it('should handle express checkout flow', async () => {
@@ -410,7 +459,7 @@ describe('Shopping Flow Integration Tests', () => {
         })),
       });
 
-      expect(expressOrder.expressCheckout).toBe(true);
+      expect(expressOrder.data.expressCheckout).toBe(true);
     });
 
     it('should handle buy now flow (skip cart)', async () => {
@@ -452,7 +501,7 @@ describe('Shopping Flow Integration Tests', () => {
         ],
       });
 
-      expect(quickOrder.items).toHaveLength(1);
+      expect(quickOrder.data.items).toHaveLength(1);
     });
   });
 
@@ -534,7 +583,7 @@ describe('Shopping Flow Integration Tests', () => {
         paymentMethodId: 'pm_card_success',
       });
 
-      expect(payment.status).toBe('succeeded');
+      expect(payment.data.status).toBe('succeeded');
     });
 
     it('should handle address validation errors', async () => {
@@ -561,8 +610,6 @@ describe('Shopping Flow Integration Tests', () => {
 
   describe('Performance Tests', () => {
     it('should complete shopping flow within acceptable time', async () => {
-      setupMockHandlers(apiClient);
-
       const { duration } = await measurePerformance(async () => {
         // Browse products
         await productsApi.getProducts({ page: 1 });

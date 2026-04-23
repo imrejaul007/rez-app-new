@@ -27,6 +27,15 @@ jest.mock('@/services/referralApi', () => ({
   },
 }));
 jest.mock('expo-clipboard');
+jest.mock('react-native-svg', () => ({
+  SvgUri: 'SvgUri',
+  Svg: 'Svg',
+  Circle: 'Circle',
+  Rect: 'Rect',
+  Path: 'Path',
+  G: 'G',
+  Text: 'Text',
+}));
 jest.mock('react-native-qrcode-svg', () => 'QRCode');
 
 describe('ShareModal', () => {

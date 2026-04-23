@@ -33,6 +33,16 @@ jest.mock('expo-clipboard');
 jest.mock('@/utils/privacy', () => ({
   anonymizeEmail: jest.fn((email) => `${email.slice(0, 3)}***@***`),
 }));
+jest.mock('react-native-svg', () => ({
+  SvgUri: 'SvgUri',
+  Svg: 'Svg',
+  Circle: 'Circle',
+  Rect: 'Rect',
+  Path: 'Path',
+  G: 'G',
+  Text: 'Text',
+}));
+jest.mock('react-native-qrcode-svg', () => 'QRCode');
 
 const mockUseIsAuthenticated = useIsAuthenticated as jest.MockedFunction<typeof useIsAuthenticated>;
 

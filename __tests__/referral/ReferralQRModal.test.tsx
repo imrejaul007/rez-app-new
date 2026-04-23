@@ -22,17 +22,17 @@ import ReferralQRModal from '@/components/referral/ReferralQRModal';
 // Mock dependencies
 jest.mock('expo-sharing');
 jest.mock('expo-file-system');
+jest.mock('react-native-svg', () => ({
+  SvgUri: 'SvgUri',
+  Svg: 'Svg',
+  Circle: 'Circle',
+  Rect: 'Rect',
+  Path: 'Path',
+  G: 'G',
+  Text: 'Text',
+}));
 jest.mock('react-native-qrcode-svg', () => 'QRCode');
-jest.mock('react-native-view-shot', () => {
-  const React = require('react');
-  return React.forwardRef((props: any, ref: any) => {
-    // Expose capture method for tests
-    React.useImperativeHandle(ref, () => ({
-      capture: jest.fn(() => Promise.resolve('file:///mock/path/qr.png')),
-    }));
-    return React.createElement('View', props, props.children);
-  });
-});
+// react-native-view-shot is mapped via moduleNameMapper in jest.config.js
 
 describe('ReferralQRModal', () => {
   const mockProps = {

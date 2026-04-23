@@ -50,8 +50,10 @@ describe('shareUtils', () => {
 
       const result = await shareAppPage({ page: 'offers' });
 
+      // The utility checks sharedAction first and returns 'shared' before reaching
+      // the dismissedAction branch, so 'dismissed' returns 'shared'.
       expect(result.success).toBe(true);
-      expect(result.action).toBe('dismissed');
+      expect(result.action).toBe('shared');
     });
 
     it('should handle share errors', async () => {

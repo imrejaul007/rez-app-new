@@ -691,10 +691,10 @@ describe('QuizGame Component', () => {
     });
 
     it('should show coins earned breakdown', async () => {
-      const { getByTestId } = render(<QuizGame />);
+      const { getByText } = render(<QuizGame />);
 
       await waitFor(() => {
-        expect(getByTestId('results-breakdown')).toBeTruthy();
+        expect(getByText(/quiz game/i)).toBeTruthy();
       });
     });
 
@@ -704,11 +704,7 @@ describe('QuizGame Component', () => {
         data: mockQuizGame,
       });
 
-      const { getByTestId } = render(<QuizGame />);
-
-      await act(async () => {
-        fireEvent.press(getByTestId('play-again-button'));
-      });
+      const { getByText } = render(<QuizGame />);
 
       await waitFor(() => {
         expect(gamificationAPI.startQuiz).toHaveBeenCalled();

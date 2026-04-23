@@ -4,24 +4,26 @@
  */
 
 import serviceBookingApi from '@/services/serviceBookingApi';
-import productsApi from '@/services/productsApi';
 import apiClient from '@/services/apiClient';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-  },
-}));
-jest.mock('@/services/productsApi', () => ({
-  __esModule: true,
-  default: {
+// Mock productsApi — productsApi.ts exports named { productsService as productsApi }
+// and default. We mock it with all methods the test uses.
+jest.mock('@/services/productsApi', () => {
+  const mock = {
     getProductById: jest.fn(),
-  },
-}));
+    getProducts: jest.fn(),
+    searchProducts: jest.fn(),
+  };
+  return {
+    __esModule: true,
+    default: mock,
+    productsApi: mock,
+  };
+});
+import { productsApi } from '@/services/productsApi';
 
-const mockApiClient = apiClient as jest.Mocked<typeof apiClient>;
+// Use the global apiClient mock (from jest.setup.js) via the module
+const mockApi = apiClient as any;
 
 describe('End-to-End Booking Flow Tests', () => {
   beforeEach(() => {
@@ -44,7 +46,7 @@ describe('End-to-End Booking Flow Tests', () => {
         },
       };
 
-      (mockApiClient.get as jest.Mock).mockResolvedValueOnce({
+      (productsApi.getProductById as jest.Mock).mockResolvedValueOnce({
         success: true,
         data: mockFlight,
       });
@@ -110,7 +112,7 @@ describe('End-to-End Booking Flow Tests', () => {
         },
       };
 
-      (mockApiClient.post as jest.Mock).mockResolvedValueOnce(mockBookingResponse);
+      (mockApi.post as jest.Mock).mockResolvedValueOnce(mockBookingResponse);
 
       const bookingResponse = await serviceBookingApi.createBooking(bookingData);
 
@@ -120,7 +122,7 @@ describe('End-to-End Booking Flow Tests', () => {
       expect(bookingResponse.data?._id).toBe('booking_123');
 
       // Step 6: Verify API was called correctly
-      expect(mockApiClient.post).toHaveBeenCalledWith(
+      expect(mockApi.post).toHaveBeenCalledWith(
         '/service-bookings',
         expect.objectContaining({
           serviceId: 'flight_123',
@@ -154,7 +156,7 @@ describe('End-to-End Booking Flow Tests', () => {
         },
       };
 
-      (mockApiClient.get as jest.Mock).mockResolvedValueOnce({
+      (productsApi.getProductById as jest.Mock).mockResolvedValueOnce({
         success: true,
         data: mockHotel,
       });
@@ -205,7 +207,7 @@ describe('End-to-End Booking Flow Tests', () => {
         },
       };
 
-      (mockApiClient.post as jest.Mock).mockResolvedValueOnce(mockBookingResponse);
+      (mockApi.post as jest.Mock).mockResolvedValueOnce(mockBookingResponse);
 
       const bookingResponse = await serviceBookingApi.createBooking(bookingData);
 
@@ -217,7 +219,7 @@ describe('End-to-End Booking Flow Tests', () => {
 
   describe('Error Scenarios', () => {
     it('should handle network errors gracefully', async () => {
-      (mockApiClient.post as jest.Mock).mockRejectedValueOnce(
+      (mockApi.post as jest.Mock).mockRejectedValueOnce(
         new Error('Network request failed')
       );
 
@@ -234,7 +236,7 @@ describe('End-to-End Booking Flow Tests', () => {
     });
 
     it('should handle invalid service response', async () => {
-      (mockApiClient.post as jest.Mock).mockResolvedValueOnce({
+      (mockApi.post as jest.Mock).mockResolvedValueOnce({
         success: false,
         error: 'Service not found',
       });
@@ -252,7 +254,7 @@ describe('End-to-End Booking Flow Tests', () => {
     });
 
     it('should handle missing booking number in response', async () => {
-      (mockApiClient.post as jest.Mock).mockResolvedValueOnce({
+      (mockApi.post as jest.Mock).mockResolvedValueOnce({
         success: true,
         data: {
           _id: 'booking_123',

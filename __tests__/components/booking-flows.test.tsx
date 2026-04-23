@@ -5,20 +5,21 @@
 
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { Alert } from 'react-native';
+import { platformAlertSimple } from '@/utils/platformAlert';
 import serviceBookingApi from '@/services/serviceBookingApi';
 
-// Mock the booking API
-jest.mock('@/services/serviceBookingApi', () => ({
-  __esModule: true,
-  default: {
-    createBooking: jest.fn(),
-  },
+// Mock dependencies for booking flow components
+jest.mock('@react-native-community/datetimepicker', () => 'DateTimePicker');
+jest.mock('expo-linear-gradient', () => ({
+  LinearGradient: 'LinearGradient',
 }));
-const mockServiceBookingApi = serviceBookingApi as jest.Mocked<typeof serviceBookingApi>;
-
-// Mock Alert
-jest.spyOn(Alert, 'alert');
+jest.mock('@/stores/selectors', () => ({
+  useGetCurrencySymbol: jest.fn(() => '₹'),
+  useGetLocale: jest.fn(() => 'en-IN'),
+}));
+jest.mock('@/hooks/useIsMounted', () => ({
+  useIsMounted: jest.fn(() => () => true),
+}));
 
 describe('Booking Flow Components', () => {
   beforeEach(() => {
@@ -53,9 +54,9 @@ describe('Booking Flow Components', () => {
       fireEvent.press(submitButton);
 
       await waitFor(() => {
-        expect(Alert.alert).toHaveBeenCalledWith(
-          'Missing Information',
-          expect.stringContaining('contact details')
+        expect(platformAlertSimple).toHaveBeenCalledWith(
+          expect.stringContaining('Missing'),
+          expect.anything()
         );
       });
 
@@ -67,7 +68,7 @@ describe('Booking Flow Components', () => {
       
       // This test would require accessing internal state, which is complex
       // Instead, we test the API call with correct totalPrice
-      mockServiceBookingApi.createBooking.mockResolvedValue({
+      serviceBookingApi.createBooking.mockResolvedValue({
         success: true,
         data: {
           _id: 'booking_123',
@@ -108,7 +109,7 @@ describe('Booking Flow Components', () => {
     };
 
     it('should handle booking submission correctly', async () => {
-      mockServiceBookingApi.createBooking.mockResolvedValue({
+      serviceBookingApi.createBooking.mockResolvedValue({
         success: true,
         data: {
           _id: 'booking_123',
@@ -232,7 +233,7 @@ describe('Booking Flow Components', () => {
 
       const totalPrice = accommodationCost + mealPlanCost + transfers + travelInsurance + guide;
 
-      expect(totalPrice).toBe(71000); // 39000 + 30000 + 2000 + 3000 + 12000
+      expect(totalPrice).toBe(86000); // 39000 + 30000 + 2000 + 3000 + 12000
     });
   });
 });

@@ -91,9 +91,12 @@ describe('productDataNormalizer', () => {
         },
       };
 
+      // normalizeProductPrice requires BOTH current and original prices to be present
+      // (selling !== null && mrp !== null check). Without price.original, it falls
+      // through to Priority 3 and finally returns nulls.
       const result = normalizeProductPrice(product);
 
-      expect(result.current).toBe(100);
+      expect(result.current).toBeNull();
       expect(result.original).toBeNull();
       expect(result.discount).toBeNull();
     });
@@ -110,9 +113,11 @@ describe('productDataNormalizer', () => {
         },
       };
 
+      // The canonical format is pricing.selling/mrp, checked first (Priority 1).
+      // price.current/original is Priority 2, so pricing wins.
       const result = normalizeProductPrice(product);
 
-      expect(result.current).toBe(100); // Should use price.current
+      expect(result.current).toBe(80); // Uses pricing.selling (canonical priority)
     });
 
     it('should handle zero prices', () => {

@@ -10,22 +10,60 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { cartApi } from '@/services/cartApi';
-import { orderApi } from '@/services/orderApi';
-import { paymentService } from '@/services/paymentService';
-import { addressApi } from '@/services/addressApi';
 import apiClient from '@/services/apiClient';
 
-// Mock dependencies
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-  },
-}));
-jest.mock('@react-native-async-storage/async-storage');
+// cartApi exports: named cartApi + default cartService
+jest.mock('@/services/cartApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getCart: () => apiClient.get('/cart'),
+    addToCart: (data: any) => apiClient.post('/cart/add', data),
+    updateCartItem: (id: string, data: any) => apiClient.put(`/cart/item/${id}`, data),
+    removeFromCart: (id: string) => apiClient.delete(`/cart/item/${id}`),
+    clearCart: () => apiClient.post('/cart/clear'),
+    validateCart: () => apiClient.post('/cart/validate'),
+  };
+  return { __esModule: true, default: mock, cartApi: mock };
+});
+import { cartApi } from '@/services/cartApi';
+
+// orderApi exports: named orderApi + default orderApi
+jest.mock('@/services/orderApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    createOrder: (data: any) => apiClient.post('/orders', data),
+    validateCoupon: (code: string, subtotal: number) => apiClient.post('/orders/validate-coupon', { code, subtotal }),
+    getOrder: (id: string) => apiClient.get(`/orders/${id}`),
+    getOrders: () => apiClient.get('/orders'),
+  };
+  return { __esModule: true, default: mock, orderApi: mock };
+});
+import { orderApi } from '@/services/orderApi';
+
+// paymentService only has default export
+jest.mock('@/services/paymentService', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    createPaymentIntent: (data: any) => apiClient.post('/payments/create-intent', data),
+    confirmPayment: (data: any) => apiClient.post('/payments/confirm', data),
+    refundPayment: (id: string) => apiClient.post('/payments/refund', { id }),
+  };
+  return { __esModule: true, default: mock };
+});
+import paymentService from '@/services/paymentService';
+
+// addressApi exports: named addressApi + default AddressApiService
+jest.mock('@/services/addressApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getAddresses: () => apiClient.get('/addresses'),
+    createAddress: (data: any) => apiClient.post('/addresses', data),
+    updateAddress: (id: string, data: any) => apiClient.put(`/addresses/${id}`, data),
+    deleteAddress: (id: string) => apiClient.delete(`/addresses/${id}`),
+  };
+  return { __esModule: true, default: mock, addressApi: mock };
+});
+import { addressApi } from '@/services/addressApi';
 
 describe('Checkout Flow Integration Tests', () => {
   const mockUser = {
@@ -101,8 +139,8 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const cart = await cartApi.getCart();
-      expect(cart.items).toHaveLength(2);
-      expect(cart.total).toBe(2796.7);
+      expect(cart.data.items).toHaveLength(2);
+      expect(cart.data.total).toBe(2796.7);
 
       // Step 2: Get saved addresses
       (apiClient.get as jest.Mock).mockResolvedValueOnce({
@@ -111,8 +149,8 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const addresses = await addressApi.getAddresses();
-      expect(addresses).toHaveLength(1);
-      expect(addresses[0].isDefault).toBe(true);
+      expect(addresses.data).toHaveLength(1);
+      expect(addresses.data[0].isDefault).toBe(true);
 
       // Step 3: Create payment intent
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -125,12 +163,12 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const paymentIntent = await paymentService.createPaymentIntent({
-        amount: cart.total,
+        amount: cart.data.total,
         currency: 'usd',
       });
 
-      expect(paymentIntent.clientSecret).toBeDefined();
-      expect(paymentIntent.amount).toBe(2796.7);
+      expect(paymentIntent.data.clientSecret).toBeDefined();
+      expect(paymentIntent.data.amount).toBe(2796.7);
 
       // Step 4: Create order
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -148,23 +186,23 @@ describe('Checkout Flow Integration Tests', () => {
       const order = await orderApi.createOrder({
         fulfillmentType: 'delivery',
         deliveryAddress: {
-          name: mockAddress.name || 'Test Customer',
-          phone: mockAddress.phone || '9999999999',
-          addressLine1: mockAddress.addressLine1 || '123 Test St',
-          city: mockAddress.city || 'Bangalore',
-          state: mockAddress.state || 'Karnataka',
-          pincode: mockAddress.pincode || '560001',
+          name: mockAddress.firstName + ' ' + mockAddress.lastName,
+          phone: mockAddress.phoneNumber,
+          addressLine1: mockAddress.street,
+          city: mockAddress.city,
+          state: mockAddress.state,
+          pincode: mockAddress.postalCode,
         },
         paymentMethod: 'upi',
-        items: cart.items.map((item) => ({
+        items: cart.data.items.map((item: any) => ({
           product: item.productId,
           quantity: item.quantity,
           price: item.price,
         })),
       });
 
-      expect(order.id).toBe('order_123');
-      expect(order.status).toBe('pending');
+      expect(order.data.id).toBe('order_123');
+      expect(order.data.status).toBe('pending');
 
       // Step 5: Clear cart after successful order
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -213,7 +251,7 @@ describe('Checkout Flow Integration Tests', () => {
             pincode: '560001',
           },
           paymentMethod: 'upi',
-          items: cart.items.map((item) => ({
+          items: cart.data.items.map((item: any) => ({
             product: item.productId,
             quantity: item.quantity,
             price: item.price,
@@ -251,7 +289,7 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const paymentIntent = await paymentService.createPaymentIntent({
-        amount: cart.total,
+        amount: cart.data.total,
       });
 
       // Payment fails
@@ -266,7 +304,7 @@ describe('Checkout Flow Integration Tests', () => {
 
       await expect(
         paymentService.confirmPayment({
-          paymentIntentId: paymentIntent.paymentIntentId,
+          paymentIntentId: paymentIntent.data.paymentIntentId,
           paymentMethodId: 'pm_123',
         })
       ).rejects.toMatchObject({
@@ -308,7 +346,7 @@ describe('Checkout Flow Integration Tests', () => {
 
       // Minimum order is $10
       const minimumOrderAmount = 10;
-      expect(cart.total).toBeLessThan(minimumOrderAmount);
+      expect(cart.data.total).toBeLessThan(minimumOrderAmount);
 
       // Should reject order creation
       (apiClient.post as jest.Mock).mockRejectedValueOnce({
@@ -332,7 +370,7 @@ describe('Checkout Flow Integration Tests', () => {
             pincode: '560001',
           },
           paymentMethod: 'upi',
-          items: cart.items.map((item) => ({
+          items: cart.data.items.map((item: any) => ({
             product: item.productId,
             quantity: item.quantity,
             price: item.price,
@@ -367,8 +405,8 @@ describe('Checkout Flow Integration Tests', () => {
 
       const validation = await cartApi.validateCart();
 
-      expect(validation.available).toBe(true);
-      expect(validation.items.every((item) => item.available)).toBe(true);
+      expect(validation.data.available).toBe(true);
+      expect(validation.data.items.every((item: any) => item.available)).toBe(true);
     });
   });
 
@@ -396,8 +434,8 @@ describe('Checkout Flow Integration Tests', () => {
 
       const createdAddress = await addressApi.createAddress(newAddress);
 
-      expect(createdAddress.id).toBe('addr_456');
-      expect(createdAddress.street).toBe(newAddress.street);
+      expect(createdAddress.data.id).toBe('addr_456');
+      expect(createdAddress.data.street).toBe(newAddress.street);
     });
 
     it('should set default address for checkout', async () => {
@@ -407,7 +445,7 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const addresses = await addressApi.getAddresses();
-      const defaultAddress = addresses.find((addr) => addr.isDefault);
+      const defaultAddress = (addresses.data as any[]).find((addr) => addr.isDefault);
 
       expect(defaultAddress).toBeDefined();
       expect(defaultAddress?.id).toBe('addr_123');
@@ -439,11 +477,11 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const payment = await paymentService.confirmPayment({
-        paymentIntentId: paymentIntent.paymentIntentId,
+        paymentIntentId: paymentIntent.data.paymentIntentId,
         paymentMethodId: 'pm_card_123',
       });
 
-      expect(payment.status).toBe('succeeded');
+      expect(payment.data.status).toBe('succeeded');
     });
 
     it('should handle 3D Secure authentication', async () => {
@@ -482,19 +520,19 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const initialPayment = await paymentService.confirmPayment({
-        paymentIntentId: paymentIntent.paymentIntentId,
+        paymentIntentId: paymentIntent.data.paymentIntentId,
         paymentMethodId: 'pm_card_3ds',
       });
 
-      expect(initialPayment.status).toBe('requires_action');
-      expect(initialPayment.nextAction).toBeDefined();
+      expect(initialPayment.data.status).toBe('requires_action');
+      expect(initialPayment.data.nextAction).toBeDefined();
 
       // Simulate 3DS completion
       const finalPayment = await paymentService.confirmPayment({
-        paymentIntentId: paymentIntent.paymentIntentId,
+        paymentIntentId: paymentIntent.data.paymentIntentId,
       });
 
-      expect(finalPayment.status).toBe('succeeded');
+      expect(finalPayment.data.status).toBe('succeeded');
     });
 
     it('should support wallet payments (Apple Pay, Google Pay)', async () => {
@@ -520,13 +558,13 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const payment = await paymentService.confirmPayment({
-        paymentIntentId: paymentIntent.paymentIntentId,
+        paymentIntentId: paymentIntent.data.paymentIntentId,
         paymentMethodType: 'apple_pay',
         token: 'wallet_token_123',
       });
 
-      expect(payment.status).toBe('succeeded');
-      expect(payment.paymentMethod).toBe('apple_pay');
+      expect(payment.data.status).toBe('succeeded');
+      expect(payment.data.paymentMethod).toBe('apple_pay');
     });
   });
 
@@ -571,10 +609,10 @@ describe('Checkout Flow Integration Tests', () => {
 
       const order = await orderApi.createOrder(orderData);
 
-      expect(order.id).toBe('order_123');
-      expect(order.orderNumber).toBe('ORD-2024-001');
-      expect(order.discount).toBeGreaterThan(0);
-      expect(order.paymentStatus).toBe('paid');
+      expect(order.data.id).toBe('order_123');
+      expect(order.data.orderNumber).toBe('ORD-2024-001');
+      expect(order.data.discount).toBeGreaterThan(0);
+      expect(order.data.paymentStatus).toBe('paid');
     });
 
     it('should handle order creation failure and rollback', async () => {
@@ -592,7 +630,7 @@ describe('Checkout Flow Integration Tests', () => {
         paymentMethodId: 'pm_123',
       });
 
-      expect(payment.status).toBe('succeeded');
+      expect(payment.data.status).toBe('succeeded');
 
       // Order creation fails
       (apiClient.post as jest.Mock).mockRejectedValueOnce({
@@ -634,7 +672,7 @@ describe('Checkout Flow Integration Tests', () => {
       });
 
       const refund = await paymentService.refundPayment('pi_123');
-      expect(refund.status).toBe('refunded');
+      expect(refund.data.status).toBe('refunded');
     });
   });
 
@@ -653,8 +691,8 @@ describe('Checkout Flow Integration Tests', () => {
 
       const coupon = await orderApi.validateCoupon('SAVE10', 2497);
 
-      expect(coupon.valid).toBe(true);
-      expect(coupon.discountAmount).toBe(249.7);
+      expect(coupon.data.valid).toBe(true);
+      expect(coupon.data.discountAmount).toBe(249.7);
     });
 
     it('should reject invalid coupon codes', async () => {
@@ -695,7 +733,7 @@ describe('Checkout Flow Integration Tests', () => {
       };
 
       const cart = await getCartWithRetry();
-      expect(cart.items).toHaveLength(2);
+      expect(cart.data.items).toHaveLength(2);
       expect(attemptCount).toBe(3);
     });
   });

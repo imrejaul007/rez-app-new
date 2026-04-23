@@ -21,7 +21,13 @@ import storesApi from '@/services/storesApi';
 // Mocks
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('expo-camera');
-jest.mock('expo-image-picker');
+jest.mock('expo-image-picker', () => ({
+  requestMediaLibraryPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
+  requestCameraPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
+  launchImageLibraryAsync: jest.fn().mockResolvedValue({ cancelled: true }),
+  launchCameraAsync: jest.fn().mockResolvedValue({ cancelled: true }),
+  MediaTypeOptions: { Images: 'Images', Videos: 'Videos', All: 'All' },
+}));
 jest.mock('@/services/billUploadService', () => ({
   __esModule: true,
   default: {

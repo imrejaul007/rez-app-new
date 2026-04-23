@@ -2,13 +2,22 @@
 import walletApi from '@/services/walletApi';
 import apiClient from '@/services/apiClient';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-  },
-}));
+// walletApi only has default export; use global apiClient mock from jest.setup.js
+jest.mock('@/services/walletApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  return {
+    __esModule: true,
+    default: {
+      getBalance: () => apiClient.get('/wallet/balance'),
+      redeemCoins: (data: any) => apiClient.post('/wallet/redeem-coins', data),
+      getTransactions: (params?: any) => apiClient.get('/wallet/transactions', params),
+      getWallet: () => apiClient.get('/wallet'),
+      addMoney: (amount: number) => apiClient.post('/wallet/add', { amount }),
+      transferMoney: (data: any) => apiClient.post('/wallet/transfer', data),
+      getEarningsHistory: () => apiClient.get('/wallet/earnings'),
+    },
+  };
+});
 beforeEach(() => { jest.clearAllMocks(); });
 
 describe('Balance fetch returns a number', () => {

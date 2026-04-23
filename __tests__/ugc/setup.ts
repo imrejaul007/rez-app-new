@@ -5,20 +5,13 @@ import { jest } from '@jest/globals';
 
 // ============================================
 // Mock API Client
+// NOTE: The global mock in jest.setup.js already provides a complete apiClient
+// mock including getBaseURL. Do NOT re-mock here — it would override the global
+// mock and break EventsApiService which requires getBaseURL().
+// Instead, export references to the global mock for test configuration.
 // ============================================
-export const mockApiClient = {
-  get: jest.fn(),
-  post: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn(),
-  put: jest.fn(),
-  uploadFile: jest.fn(),
-};
-
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: mockApiClient,
-}));
+import apiClient from '@/services/apiClient';
+export const mockApiClient = apiClient;
 
 // ============================================
 // Mock Videos API
@@ -58,6 +51,7 @@ export const mockProductsApi = {
 jest.mock('@/services/productsApi', () => ({
   __esModule: true,
   default: mockProductsApi,
+  productsApi: mockProductsApi,
 }));
 
 // ============================================
@@ -318,11 +312,11 @@ export const resetAllMocks = () => {
   jest.clearAllMocks();
 
   // Reset mock implementations
-  mockApiClient.get.mockReset();
-  mockApiClient.post.mockReset();
-  mockApiClient.patch.mockReset();
-  mockApiClient.delete.mockReset();
-  mockApiClient.uploadFile.mockReset();
+  mockApiClient.get.mockReset?.();
+  mockApiClient.post.mockReset?.();
+  mockApiClient.patch.mockReset?.();
+  mockApiClient.delete.mockReset?.();
+  mockApiClient.uploadFile.mockReset?.();
 
   mockVideosApi.getVideos.mockReset();
   mockVideosApi.getVideoById.mockReset();

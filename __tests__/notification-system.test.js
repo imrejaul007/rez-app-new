@@ -301,12 +301,21 @@ describe('Notification System - Production Readiness Tests', () => {
         createdAt: 'invalid-date'
       };
       
-      const sanitizeNotification = (data) => ({
-        title: data.title || 'Untitled',
-        message: data.message || 'No message',
-        deliveryChannels: Array.isArray(data.deliveryChannels) ? data.deliveryChannels : ['in_app'],
-        createdAt: new Date(data.createdAt).toISOString() || new Date().toISOString()
-      });
+      const sanitizeNotification = (data) => {
+        let createdAt;
+        try {
+          const d = new Date(data.createdAt);
+          createdAt = !isNaN(d.getTime()) ? d.toISOString() : new Date().toISOString();
+        } catch {
+          createdAt = new Date().toISOString();
+        }
+        return {
+          title: data.title || 'Untitled',
+          message: data.message || 'No message',
+          deliveryChannels: Array.isArray(data.deliveryChannels) ? data.deliveryChannels : ['in_app'],
+          createdAt,
+        };
+      };
       
       const sanitized = sanitizeNotification(malformedData);
       

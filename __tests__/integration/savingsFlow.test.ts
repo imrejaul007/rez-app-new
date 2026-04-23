@@ -2,12 +2,7 @@
 import nearbyEarnApi from '@/services/nearbyEarnApi';
 import apiClient from '@/services/apiClient';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-  },
-}));
+// Use global apiClient mock from jest.setup.js — DO NOT re-mock here
 jest.mock('expo-location', () => ({
   getLastKnownPositionAsync: jest.fn().mockResolvedValue({
     coords: { latitude: 12.9716, longitude: 77.5946 },

@@ -33,6 +33,9 @@ jest.mock('expo-router', () => ({
     Screen: jest.fn(({ children }) => children),
   },
 }));
+jest.mock('expo-image', () => ({
+  Image: 'Image',
+}));
 
 const mockUseAuthUser = useAuthUser as jest.MockedFunction<typeof useAuthUser>;
 const mockUseIsAuthenticated = useIsAuthenticated as jest.MockedFunction<typeof useIsAuthenticated>;

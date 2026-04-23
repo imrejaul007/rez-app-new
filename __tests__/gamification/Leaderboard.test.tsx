@@ -200,15 +200,20 @@ describe('Leaderboard System', () => {
 
   describe('Period Filtering', () => {
     it('should load daily leaderboard', async () => {
-      (gamificationAPI.getLeaderboard as jest.Mock).mockResolvedValue({
-        success: true,
-        data: { ...mockLeaderboardData, period: 'daily' },
-      });
+      (gamificationAPI.getLeaderboard as jest.Mock)
+        .mockResolvedValueOnce({ success: true, data: mockLeaderboardData })
+        .mockResolvedValueOnce({ success: true, data: { ...mockLeaderboardData, period: 'daily' } });
 
       const { getByTestId } = render(<LeaderboardComponent />);
 
+      await waitFor(() => {
+        expect(gamificationAPI.getLeaderboard).toHaveBeenCalledWith('monthly', 50);
+      });
+
+      const button = getByTestId('daily-tab');
       await act(async () => {
-        fireEvent.press(getByTestId('daily-tab'));
+        fireEvent.press(button);
+        await new Promise(r => setTimeout(r, 10));
       });
 
       await waitFor(() => {
@@ -217,15 +222,20 @@ describe('Leaderboard System', () => {
     });
 
     it('should load weekly leaderboard', async () => {
-      (gamificationAPI.getLeaderboard as jest.Mock).mockResolvedValue({
-        success: true,
-        data: { ...mockLeaderboardData, period: 'weekly' },
-      });
+      (gamificationAPI.getLeaderboard as jest.Mock)
+        .mockResolvedValueOnce({ success: true, data: mockLeaderboardData })
+        .mockResolvedValueOnce({ success: true, data: { ...mockLeaderboardData, period: 'weekly' } });
 
       const { getByTestId } = render(<LeaderboardComponent />);
 
+      await waitFor(() => {
+        expect(gamificationAPI.getLeaderboard).toHaveBeenCalledWith('monthly', 50);
+      });
+
+      const button = getByTestId('weekly-tab');
       await act(async () => {
-        fireEvent.press(getByTestId('weekly-tab'));
+        fireEvent.press(button);
+        await new Promise(r => setTimeout(r, 10));
       });
 
       await waitFor(() => {
@@ -247,15 +257,20 @@ describe('Leaderboard System', () => {
     });
 
     it('should load all-time leaderboard', async () => {
-      (gamificationAPI.getLeaderboard as jest.Mock).mockResolvedValue({
-        success: true,
-        data: { ...mockLeaderboardData, period: 'all-time' },
-      });
+      (gamificationAPI.getLeaderboard as jest.Mock)
+        .mockResolvedValueOnce({ success: true, data: mockLeaderboardData })
+        .mockResolvedValueOnce({ success: true, data: { ...mockLeaderboardData, period: 'all-time' } });
 
       const { getByTestId } = render(<LeaderboardComponent />);
 
+      await waitFor(() => {
+        expect(gamificationAPI.getLeaderboard).toHaveBeenCalledWith('monthly', 50);
+      });
+
+      const button = getByTestId('all-time-tab');
       await act(async () => {
-        fireEvent.press(getByTestId('all-time-tab'));
+        fireEvent.press(button);
+        await new Promise(r => setTimeout(r, 10));
       });
 
       await waitFor(() => {
@@ -265,14 +280,8 @@ describe('Leaderboard System', () => {
 
     it('should update leaderboard on period change', async () => {
       (gamificationAPI.getLeaderboard as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: mockLeaderboardData,
-        })
-        .mockResolvedValueOnce({
-          success: true,
-          data: { ...mockLeaderboardData, period: 'daily', entries: mockLeaderboardEntries.slice(0, 2) },
-        });
+        .mockResolvedValueOnce({ success: true, data: mockLeaderboardData })
+        .mockResolvedValueOnce({ success: true, data: { ...mockLeaderboardData, period: 'daily', entries: mockLeaderboardEntries.slice(0, 2) } });
 
       const { getByTestId } = render(<LeaderboardComponent />);
 
@@ -282,6 +291,7 @@ describe('Leaderboard System', () => {
 
       await act(async () => {
         fireEvent.press(getByTestId('daily-tab'));
+        await new Promise(r => setTimeout(r, 10));
       });
 
       await waitFor(() => {
@@ -461,7 +471,7 @@ describe('Leaderboard System', () => {
       const { getByTestId } = render(<LeaderboardComponent />);
 
       await waitFor(() => {
-        expect(getByTestId('username-1').props.children).toBe('pro_gamer');
+        expect(getByTestId('username-1').props.children).toBe('champion123');
       });
     });
   });
@@ -482,10 +492,12 @@ describe('Leaderboard System', () => {
         data: tiedData,
       });
 
-      const { getByTestId } = render(<LeaderboardComponent />);
+      const { getAllByTestId } = render(<LeaderboardComponent />);
 
       await waitFor(() => {
-        expect(getByTestId('rank-1').props.children).toBe(1);
+        const rank1Elements = getAllByTestId('rank-1');
+        expect(rank1Elements.length).toBe(2);
+        expect(rank1Elements[0].props.children).toBe(1);
       });
     });
 

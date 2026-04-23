@@ -5,32 +5,42 @@ import gamificationAPI from '@/services/gamificationApi';
 import walletApi from '@/services/walletApi';
 import pointsApi from '@/services/pointsApi';
 
-// Mock services
-jest.mock('@/services/gamificationApi', () => ({
-  __esModule: true,
-  default: {
-    spinWheel: jest.fn(),
-    submitQuizAnswer: jest.fn(),
-    scratchCard: jest.fn(),
-    getCoinTransactions: jest.fn(),
-    getGamificationStats: jest.fn(),
-  },
-}));
-jest.mock('@/services/walletApi', () => ({
-  __esModule: true,
-  default: {
-    getBalance: jest.fn(),
-    getTransactions: jest.fn(),
-  },
-}));
-jest.mock('@/services/pointsApi', () => ({
-  __esModule: true,
-  default: {
-    earnPoints: jest.fn(),
-    spendPoints: jest.fn(),
-    performDailyCheckIn: jest.fn(),
-  },
-}));
+// gamificationApi exports: default + named { gamificationApi }
+jest.mock('@/services/gamificationApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    spinWheel: () => apiClient.post('/gamification/spin'),
+    submitQuizAnswer: (gameId: string, questionId: string, answerIdx: number) =>
+      apiClient.post('/gamification/quiz/answer', { gameId, questionId, answerIdx }),
+    scratchCard: (cardId: string) => apiClient.post(`/gamification/scratch/${cardId}`),
+    getCoinTransactions: (params?: any) => apiClient.get('/gamification/coin-transactions', params),
+    getGamificationStats: () => apiClient.get('/gamification/stats'),
+  };
+  return { __esModule: true, default: mock, gamificationApi: mock };
+});
+
+// walletApi only has default export; use apiClient directly
+jest.mock('@/services/walletApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getBalance: () => apiClient.get('/wallet/balance'),
+    getTransactions: (params?: any) => apiClient.get('/wallet/transactions', params),
+    getWallet: () => apiClient.get('/wallet'),
+  };
+  return { __esModule: true, default: mock, walletApi: mock };
+});
+
+// pointsApi only has default export; use apiClient directly
+jest.mock('@/services/pointsApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    earnPoints: (data: any) => apiClient.post('/points/earn', data),
+    spendPoints: (data: any) => apiClient.post('/points/spend', data),
+    performDailyCheckIn: () => apiClient.post('/points/daily-checkin'),
+    getBalance: () => apiClient.get('/points/balance'),
+  };
+  return { __esModule: true, default: mock, pointsApi: mock };
+});
 
 describe('Games-Wallet Integration', () => {
   beforeEach(() => {

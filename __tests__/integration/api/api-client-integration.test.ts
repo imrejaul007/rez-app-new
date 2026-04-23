@@ -8,14 +8,26 @@ import apiClient from '@/services/apiClient';
 import authService from '@/services/authApi';
 import { setupAuthenticatedUser, cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-  },
-}));
+// Use global apiClient mock from jest.setup.js — DO NOT re-mock here
+// authService only has default export
+jest.mock('@/services/authApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  let _token: string | null = null;
+  return {
+    __esModule: true,
+    default: {
+      sendOtp: (data: any) => apiClient.post('/auth/send-otp', data),
+      verifyOtp: (data: any) => apiClient.post('/auth/verify-otp', data),
+      refreshToken: (token: string) => apiClient.post('/auth/refresh', { refreshToken: token }),
+      logout: () => apiClient.post('/auth/logout'),
+      setAuthToken: (token: string | null) => { _token = token; apiClient.setAuthToken(token); },
+      getAuthToken: () => _token ?? apiClient.getAuthToken(),
+      getProfile: () => apiClient.get('/auth/profile'),
+      updateProfile: (data: any) => apiClient.put('/auth/profile', data),
+      completeOnboarding: (data: any) => apiClient.post('/auth/onboarding', data),
+    },
+  };
+});
 
 describe('API Client Integration Tests', () => {
   beforeEach(async () => {

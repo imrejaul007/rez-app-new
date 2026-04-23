@@ -4,29 +4,62 @@
  * Complete user journey for UGC and social interactions
  */
 
-import { ugcApi } from '@/services/ugcApi';
-import { followApi } from '@/services/followApi';
 import apiClient from '@/services/apiClient';
 import {
   setupAuthenticatedUser,
   cleanupAfterTest,
   testDataFactory,
 } from '../utils/testHelpers';
-import { setupMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    delete: jest.fn(),
-  },
-}));
+// ugcApi only has default export
+jest.mock('@/services/ugcApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  const mock = {
+    getUGCFeed: (params?: any) => apiClient.get('/ugc/feed', params),
+    getTrendingContent: () => apiClient.get('/ugc/trending'),
+    searchByHashtag: (tag: string) => apiClient.get('/ugc/search', { hashtag: tag }),
+    getContentByProduct: (productId: string) => apiClient.get('/ugc/product', { productId }),
+    likeContent: (contentId: string) => apiClient.post('/ugc/like', { contentId }),
+    addComment: (contentId: string, comment: string) => apiClient.post('/ugc/comment', { contentId, comment }),
+    uploadContent: (data: any) => apiClient.post('/ugc/upload', data),
+    shareContent: (contentId: string, platform: string) => apiClient.post('/ugc/share', { contentId, platform }),
+    trackVideoView: (contentId: string, data: any) => apiClient.post('/ugc/view', { contentId, ...data }),
+    reportContent: (contentId: string, data: any) => apiClient.post('/ugc/report', { contentId, ...data }),
+    getFollowingFeed: () => apiClient.get('/ugc/following'),
+  };
+  return { __esModule: true, default: mock };
+});
+import ugcApi from '@/services/ugcApi';
+
+// followApi exports named functions directly (no default export)
+jest.mock('@/services/followApi', () => {
+  const apiClient = require('@/services/apiClient').default;
+  return {
+    __esModule: true,
+    followUser: (userId: string) => apiClient.post('/social/follow', { userId }),
+    unfollowUser: (userId: string) => apiClient.delete(`/social/follow/${userId}`),
+    getFollowers: (userId: string) => apiClient.get(`/social/followers/${userId}`),
+    getFollowing: (userId: string) => apiClient.get(`/social/following/${userId}`),
+    getFollowSuggestions: (limit: number) => apiClient.get('/social/suggestions', { limit }),
+    checkFollowStatus: (userId: string) => apiClient.get(`/social/status/${userId}`),
+    getFollowCounts: (userId: string) => apiClient.get(`/social/counts/${userId}`),
+    toggleFollow: (userId: string) => apiClient.post('/social/toggle', { userId }),
+    removeFollower: (userId: string) => apiClient.delete(`/social/followers/${userId}`),
+    blockUser: (userId: string) => apiClient.post('/social/block', { userId }),
+    unblockUser: (userId: string) => apiClient.delete(`/social/block/${userId}`),
+    getBlockedUsers: () => apiClient.get('/social/blocked'),
+    searchUsers: (query: string) => apiClient.get('/social/search', { q: query }),
+    getPendingFollowRequests: () => apiClient.get('/social/requests'),
+    acceptFollowRequest: (requestId: string) => apiClient.post('/social/requests/accept', { requestId }),
+    rejectFollowRequest: (requestId: string) => apiClient.post('/social/requests/reject', { requestId }),
+    getMutualFollowers: (userId: string) => apiClient.get(`/social/mutual/${userId}`),
+  };
+});
+import * as followApi from '@/services/followApi';
 
 describe('Social Flow Integration Tests', () => {
   beforeEach(async () => {
     await setupAuthenticatedUser();
-    setupMockHandlers(apiClient);
   });
 
   afterEach(async () => {
@@ -45,7 +78,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const feed = await ugcApi.getUGCFeed({ page: 1 });
-      expect(feed.content.length).toBeGreaterThan(0);
+      expect(feed.data.content.length).toBeGreaterThan(0);
 
       // Step 2: Like content
       const contentId = feed.content[0].id;
@@ -55,7 +88,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const likeResult = await ugcApi.likeContent(contentId);
-      expect(likeResult.liked).toBe(true);
+      expect(likeResult.data.liked).toBe(true);
 
       // Step 3: Comment on content
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -69,7 +102,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const comment = await ugcApi.addComment(contentId, 'Great content!');
-      expect(comment.comment).toBe('Great content!');
+      expect(comment.data.comment).toBe('Great content!');
 
       // Step 4: Upload own content
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -87,7 +120,7 @@ describe('Social Flow Integration Tests', () => {
         caption: 'My new video',
         productIds: ['prod_1', 'prod_2'],
       });
-      expect(uploadResult.id).toBeDefined();
+      expect(uploadResult.data.id).toBeDefined();
 
       // Step 5: Share content
       (apiClient.post as jest.Mock).mockResolvedValueOnce({
@@ -95,8 +128,8 @@ describe('Social Flow Integration Tests', () => {
         data: { shared: true, platform: 'instagram' },
       });
 
-      const shareResult = await ugcApi.shareContent(uploadResult.id, 'instagram');
-      expect(shareResult.shared).toBe(true);
+      const shareResult = await ugcApi.shareContent(uploadResult.data.id, 'instagram');
+      expect(shareResult.data.shared).toBe(true);
     });
 
     it('should handle follow/unfollow flow', async () => {
@@ -107,7 +140,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const followResult = await followApi.followUser('user_456');
-      expect(followResult.following).toBe(true);
+      expect(followResult.data.following).toBe(true);
 
       // Get follower's content
       (apiClient.get as jest.Mock).mockResolvedValueOnce({
@@ -118,7 +151,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const followingFeed = await ugcApi.getFollowingFeed();
-      expect(followingFeed.content).toBeDefined();
+      expect(followingFeed.data.content).toBeDefined();
 
       // Unfollow user
       (apiClient.delete as jest.Mock).mockResolvedValueOnce({
@@ -127,7 +160,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const unfollowResult = await followApi.unfollowUser('user_456');
-      expect(unfollowResult.following).toBe(false);
+      expect(unfollowResult.data.following).toBe(false);
     });
   });
 
@@ -144,7 +177,7 @@ describe('Social Flow Integration Tests', () => {
       });
 
       const trending = await ugcApi.getTrendingContent();
-      expect(trending.trending.length).toBeGreaterThan(0);
+      expect(trending.data.trending.length).toBeGreaterThan(0);
     });
 
     it('should search content by hashtags', async () => {

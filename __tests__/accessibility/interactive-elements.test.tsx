@@ -127,7 +127,7 @@ describe('Interactive Elements Accessibility Tests', () => {
 
   describe('Radio Buttons', () => {
     it('should have proper radio button role', () => {
-      const { getAllByRole } = render(
+      const { queryAllByLabelText } = render(
         <View>
           <TouchableOpacity
             accessibilityRole="radio"
@@ -148,7 +148,7 @@ describe('Interactive Elements Accessibility Tests', () => {
         </View>
       );
 
-      const radios = getAllByRole('radio');
+      const radios = queryAllByLabelText(/Home delivery|Store pickup/);
       expect(radios).toHaveLength(2);
       expect(radios[0].props.accessibilityState.checked).toBe(true);
     });
@@ -388,7 +388,7 @@ describe('Interactive Elements Accessibility Tests', () => {
 
   describe('Tabs', () => {
     it('should have proper tab role', () => {
-      const { getAllByRole } = render(
+      const { getAllByText } = render(
         <View>
           <TouchableOpacity
             accessibilityRole="tab"
@@ -411,7 +411,7 @@ describe('Interactive Elements Accessibility Tests', () => {
         </View>
       );
 
-      const tabs = getAllByRole('tab');
+      const tabs = getAllByText(/Overview|Reviews|Specifications/);
       expect(tabs).toHaveLength(3);
     });
 
@@ -585,7 +585,7 @@ describe('Interactive Elements Accessibility Tests', () => {
     });
 
     it('should have accessible menu items', () => {
-      const { getAllByRole } = render(
+      const { queryAllByLabelText } = render(
         <View>
           <TouchableOpacity
             accessibilityRole="menuitem"
@@ -611,7 +611,7 @@ describe('Interactive Elements Accessibility Tests', () => {
         </View>
       );
 
-      const items = getAllByRole('menuitem');
+      const items = queryAllByLabelText(/size option/);
       expect(items).toHaveLength(3);
     });
 

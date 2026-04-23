@@ -6,45 +6,38 @@
 
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { CartContext } from '@/contexts/CartContext';
 import apiClient from '@/services/apiClient';
 import { setupAuthenticatedUser, cleanupAfterTest, testDataFactory } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn(),
-  },
-}));
+// Use global apiClient mock from jest.setup.js — DO NOT re-mock here
 
-// Mock Cart Component
+// Mock Cart Component — uses React Native components, not HTML elements
 const MockCartPage = () => {
-  const { cart, addItem, removeItem, updateQuantity } = React.useContext(CartContext as any);
+  const { cart, removeItem, updateQuantity } = React.useContext(CartContext as any);
 
   return (
     <>
       {cart?.items?.map((item: any) => (
-        <div key={item.id} testID={`cart-item-${item.id}`}>
-          <span testID="item-name">{item.product.name}</span>
-          <span testID="item-quantity">{item.quantity}</span>
-          <button
+        <View key={item.id} testID={`cart-item-${item.id}`}>
+          <Text testID="item-name">{item.product.name}</Text>
+          <Text testID="item-quantity">{item.quantity}</Text>
+          <TouchableOpacity
             testID={`remove-${item.id}`}
             onPress={() => removeItem(item.id)}
           >
-            Remove
-          </button>
-          <button
+            <Text>Remove</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             testID={`increase-${item.id}`}
             onPress={() => updateQuantity(item.id, item.quantity + 1)}
           >
-            +
-          </button>
-        </div>
+            <Text>+</Text>
+          </TouchableOpacity>
+        </View>
       ))}
-      <span testID="cart-total">{cart?.total || 0}</span>
+      <Text testID="cart-total">{cart?.total || 0}</Text>
     </>
   );
 };
@@ -86,11 +79,11 @@ describe('Cart Component Integration Tests', () => {
     expect(addResponse.data.item.id).toBe(mockCart.items[0].id);
 
     // Remove an item — cart is back to 0 items
-    (apiClient.delete as jest.Mock) = jest.fn().mockResolvedValueOnce({
+    (apiClient.delete as jest.Mock).mockResolvedValueOnce({
       success: true,
       data: { removed: true },
     });
-    const removeResponse = await (apiClient as any).delete(`/cart/item/${mockCart.items[0].id}`);
+    const removeResponse = await apiClient.delete(`/cart/item/${mockCart.items[0].id}`);
     expect(removeResponse.data.removed).toBe(true);
   });
 

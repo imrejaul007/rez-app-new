@@ -13,7 +13,7 @@ import type { BillUploadData } from '../types/billVerification.types';
 // Mock dependencies
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('@react-native-community/netinfo');
-jest.mock('../services/billVerificationService');
+jest.mock('@/services/billVerificationService');
 
 describe('BillUploadQueueService', () => {
   // Test data
