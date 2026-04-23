@@ -63,7 +63,10 @@ function MainStoreHeader({
         message: `Check out ${storeName} on ${BRAND.APP_NAME}! Get amazing cashback and rewards.`,
         title: storeName,
       });
-    } catch (error: any) {}
+    } catch (error: unknown) {
+      if (__DEV__)
+        console.warn('[MainStoreHeader] Share failed:', error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleCoinPress = () => {
