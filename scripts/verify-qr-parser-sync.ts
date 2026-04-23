@@ -65,10 +65,26 @@ const VECTORS: TestVector[] = [
     raw: '{"intent":"redeem-deal","dealId":"deal001","v":1}',
     expected: { ok: true, intent: 'redeem-deal' },
   },
+  // Optional field edge cases (Hard Risk #2: align consumer parser with Zod)
+  {
+    description: 'store-visit: optional storeSlug as empty string (reject)',
+    raw: '{"intent":"store-visit","storeId":"store123","storeSlug":"","v":1}',
+    expected: { ok: false, reason: 'invalid-schema' },
+  },
+  {
+    description: 'pay-bill: optional billId as empty string (reject)',
+    raw: '{"intent":"pay-bill","storeId":"store789","billId":"","v":1}',
+    expected: { ok: false, reason: 'invalid-schema' },
+  },
+  {
+    description: 'redeem-deal: optional storeId as empty string (reject)',
+    raw: '{"intent":"redeem-deal","dealId":"deal001","storeId":"","v":1}',
+    expected: { ok: false, reason: 'invalid-schema' },
+  },
   // Redeem-voucher
   {
     description: 'redeem-voucher: valid',
-    raw: '{"intent":"redeem-voucher","voucherCode":"ABC123","v":1}',
+    raw: '{"intent":"redeem-voucher","voucherId":"ABC123","v":1}',
     expected: { ok: true, intent: 'redeem-voucher' },
   },
   // Claim-stamp
@@ -92,14 +108,14 @@ const VECTORS: TestVector[] = [
   // Wallet-transfer
   {
     description: 'wallet-transfer: valid',
-    raw: '{"intent":"wallet-transfer","recipientId":"user456","v":1}',
+    raw: '{"intent":"wallet-transfer","toUserId":"user456","v":1}',
     expected: { ok: true, intent: 'wallet-transfer' },
   },
   // Short URL resolution marker
   {
-    description: 'short-url marker (caller resolves first)',
+    description: 'short-url marker (test harness artifact — resolves to not-json)',
     raw: '__SHORT_URL__',
-    expected: { ok: false, reason: 'short-url-marker' },
+    expected: { ok: false, reason: 'not-json' },
   },
   // Errors
   {
@@ -188,19 +204,19 @@ async function main() {
 
   for (const vector of VECTORS) {
     const result = parseQrPayload(vector.raw) as ParseResult;
-    const resultKey = result.ok ? 'ok' : 'reason';
-    const expectedKey = vector.expected.ok ? 'ok' : 'reason';
+    // intent lives on payload, not at the top level of the result.
+    const resultIntent = result.ok && 'intent' in (result.payload as Record<string, unknown>)
+      ? String((result.payload as Record<string, unknown>).intent)
+      : result.ok ? 'SHORT_URL' : (result as { reason: string }).reason;
+    const expectedIntent = vector.expected.ok ? String(vector.expected.intent) : vector.expected.reason;
 
-    const resultVal = result.ok ? result.intent : result[resultKey];
-    const expectedVal = vector.expected.ok ? vector.expected.intent : vector.expected[expectedKey];
-
-    if (result.ok === vector.expected.ok && resultVal === expectedVal) {
+    if (result.ok === vector.expected.ok && resultIntent === expectedIntent) {
       console.log(`  PASS  ${vector.description}`);
       passed++;
     } else {
       console.log(`  FAIL  ${vector.description}`);
-      console.log(`         Consumer:  ok=${result.ok} ${result.ok ? 'intent=' + result.intent : 'reason=' + (result as any).reason}`);
-      console.log(`         Expected: ok=${vector.expected.ok} ${vector.expected.ok ? 'intent=' + vector.expected.intent : 'reason=' + (vector.expected as any).reason}`);
+      console.log(`         Consumer:  ok=${result.ok} ${result.ok ? 'intent=' + resultIntent : 'reason=' + (result as { reason: string }).reason}`);
+      console.log(`         Expected: ok=${vector.expected.ok} ${vector.expected.ok ? 'intent=' + vector.expected.intent : 'reason=' + vector.expected.reason}`);
       failed++;
     }
   }

@@ -109,7 +109,7 @@ export const SHORT_URL_PATH_PREFIX = '/q/';
 // ─── String helpers ─────────────────────────────────────────────────────────
 
 function isNonEmptyString(x: unknown): x is string {
-  return typeof x === 'string' && x.length > 0;
+  return typeof x === 'string' && x.trim().length > 0;
 }
 
 function isNonNegativeNumber(x: unknown): x is number {
@@ -267,11 +267,14 @@ export function parseQrPayload(raw: string | null | undefined): ParseResult {
   const obj = parsed as Record<string, unknown>;
 
   // Version check first.
-  if ('v' in obj && obj.v !== 1) {
-    return { ok: false, reason: 'unsupported-version', version: obj.v };
-  }
   if (!('v' in obj)) {
     return { ok: false, reason: 'invalid-schema', issues: ['v: required; must be 1'] };
+  }
+  if (obj.v === 0 || typeof obj.v !== 'number') {
+    return { ok: false, reason: 'invalid-schema', issues: ['v: must be 1'] };
+  }
+  if (obj.v !== 1) {
+    return { ok: false, reason: 'unsupported-version', version: obj.v };
   }
 
   const intent = obj.intent;
