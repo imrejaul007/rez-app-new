@@ -45,6 +45,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: QR Parser Sync Check
+        run: npm run verify:qr-sync
+
       - name: Run tests
         run: npm test
 

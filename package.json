@@ -21,6 +21,7 @@
     "test:e2e:build:android": "detox build --configuration android.emu.debug",
     "verify:production": "ts-node scripts/verify-production-readiness.ts",
     "check:backend": "node scripts/check-backend.js",
+    "verify:qr-sync": "npx ts-node scripts/verify-qr-parser-sync.ts",
     "build:render": "npx expo export --platform web",
     "serve:render": "npx serve dist -p ${PORT:-3000} -s",
     "serve:web": "npx serve dist",
@@ -146,9 +147,11 @@
   },
   "lint-staged": {
     "app/**/*.ts": [
+      "eslint --fix",
       "prettier --write"
     ],
     "app/**/*.tsx": [
+      "eslint --fix",
       "prettier --write"
     ]
   }
