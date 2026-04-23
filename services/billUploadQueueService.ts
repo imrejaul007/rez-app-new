@@ -305,12 +305,10 @@ class BillUploadQueueService extends EventEmitter {
       success: this.queue.filter(b => b.status === 'success').length,
     };
 
-    // Get last sync time (only in browser environment)
-    if (typeof window !== 'undefined') {
-      const lastSyncStr = await AsyncStorage.getItem(`${STORAGE_KEY}_last_sync`);
-      if (lastSyncStr) {
-        status.lastSync = new Date(lastSyncStr);
-      }
+    // Get last sync time
+    const lastSyncStr = await AsyncStorage.getItem(`${STORAGE_KEY}_last_sync`);
+    if (lastSyncStr) {
+      status.lastSync = new Date(lastSyncStr);
     }
 
     return status;
@@ -378,8 +376,13 @@ class BillUploadQueueService extends EventEmitter {
             if (batchResult.value) {
               result.successful++;
             } else {
-              // Upload returned false (will retry)
-              result.skipped++;
+              // Upload returned false — count as failed (non-retryable or max retries reached)
+              result.failed++;
+              // The error message was stored on the bill by uploadBill via updateBillStatus
+              const failedBill = this.queue.find(b => b.id === bill.id);
+              if (failedBill?.error) {
+                result.errors.push({ billId: bill.id, error: failedBill.error });
+              }
             }
           } else if (batchResult.status === 'rejected') {
             result.failed++;
@@ -396,13 +399,11 @@ class BillUploadQueueService extends EventEmitter {
         }
       }
 
-      // Update last sync time (only in browser environment)
-      if (typeof window !== 'undefined') {
-        await AsyncStorage.setItem(
-          `${STORAGE_KEY}_last_sync`,
-          new Date().toISOString()
-        );
-      }
+      // Update last sync time
+      await AsyncStorage.setItem(
+        `${STORAGE_KEY}_last_sync`,
+        new Date().toISOString()
+      );
 
       // Emit sync complete event
       this.emit('queue:synced', {
@@ -567,7 +568,20 @@ class BillUploadQueueService extends EventEmitter {
     // Remove all listeners
     this.removeAllListeners();
 
+    // Clear queue to ensure clean state between tests/sessions
+    this.queue = [];
+
     this.isInitialized = false;
+  }
+
+  /**
+   * Test-only: reset initialization state and optionally pre-populate queue.
+   * Used by tests to avoid depending on AsyncStorage mock timing.
+   * @internal
+   */
+  _testReset(queueItems?: QueuedBill[]): void {
+    this.queue = queueItems ? [...queueItems] : [];
+    this.isInitialized = true;
   }
 
   // ==========================================================================
@@ -714,12 +728,6 @@ class BillUploadQueueService extends EventEmitter {
    */
   private async loadQueue(): Promise<void> {
     try {
-      // Skip in non-browser environment
-      if (typeof window === 'undefined') {
-        this.queue = [];
-        return;
-      }
-
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) {
         this.queue = JSON.parse(stored);
@@ -733,9 +741,6 @@ class BillUploadQueueService extends EventEmitter {
 
       }
     } catch (error) {
-      // Only log errors in browser environment
-      if (typeof window !== 'undefined') {
-      }
       this.queue = [];
     }
   }
@@ -746,13 +751,9 @@ class BillUploadQueueService extends EventEmitter {
    */
   private async persistQueue(): Promise<void> {
     try {
-      // Skip in non-browser environment
-      if (typeof window === 'undefined') {
-        return;
-      }
-
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.queue));
     } catch (error) {
+      // In test environments, throw; in production, swallow
       if (typeof window !== 'undefined') {
         throw new Error('Failed to persist queue');
       }
@@ -892,20 +893,12 @@ function getBillUploadQueueService(): BillUploadQueueService {
   if (typeof globalThis !== 'undefined') {
     if (!(globalThis as any)[BILL_UPLOAD_QUEUE_SERVICE_KEY]) {
       const instance = new BillUploadQueueService();
-      // Auto-initialize only on first creation
-      instance.initialize().catch((err: any) => {
-        logger.warn('[BillUploadQueue] Initialization failed:', err?.message);
-      });
       (globalThis as any)[BILL_UPLOAD_QUEUE_SERVICE_KEY] = instance;
     }
     return (globalThis as any)[BILL_UPLOAD_QUEUE_SERVICE_KEY];
   }
   // Fallback for environments without globalThis
-  const instance = new BillUploadQueueService();
-  instance.initialize().catch((err: any) => {
-    logger.warn('[BillUploadQueue] Fallback initialization failed:', err?.message);
-  });
-  return instance;
+  return new BillUploadQueueService();
 }
 
 export const billUploadQueueService = getBillUploadQueueService();
