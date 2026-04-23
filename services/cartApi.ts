@@ -500,7 +500,7 @@ class CartService {
       logApiRequest('PUT', url, data);
 
       const response = await withRetry(
-        () => apiClient.put<Cart>(url, data as unknown as UpdateCartItemRequest),
+        () => apiClient.put<Cart>(url, data as unknown as Record<string, unknown>),
         { maxRetries: 2 }
       );
 

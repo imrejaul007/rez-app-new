@@ -218,6 +218,8 @@ function TravelCategoryPage() {
     );
   };
 
+  if (!categoryConfig) return null;
+
   return (
     <ErrorBoundary onError={() => { /* silently handle */ }}>
     <ScrollView

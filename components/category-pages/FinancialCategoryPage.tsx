@@ -226,6 +226,8 @@ function FinancialCategoryPage() {
     );
   };
 
+  if (!categoryConfig) return null;
+
   return (
     <ErrorBoundary onError={() => { /* silently handle */ }}>
     <ScrollView

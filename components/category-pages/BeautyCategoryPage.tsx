@@ -80,8 +80,8 @@ const TRENDING_TREATMENTS = [
 
 // Helper: check if a store matches a given filter
 function storeMatchesFilter(store: any, filterId: string): boolean {
-  const tags = ((store.tags || []) as string[]).map((t: string) => t.toLowerCase());
-  const serviceTypes = ((store.serviceTypes || []) as string[]).map((t: string) => t.toLowerCase());
+  const tags = ((store.tags || []) as any[]).map((t: string) => t.toLowerCase());
+  const serviceTypes = ((store.serviceTypes || []) as any[]).map((t: string) => t.toLowerCase());
   const allTags = [...tags, ...serviceTypes];
 
   switch (filterId) {
@@ -235,11 +235,11 @@ function BeautyCategoryPage() {
   }, [activeModes, hasActiveFilters]);
 
   const handleCategoryPress = useCallback((category: any) => {
-    router.push(`/MainCategory/beauty-wellness/${category.slug || category.id}` as string);
+    router.push(`/MainCategory/beauty-wellness/${category.slug || category.id}` as any);
   }, [router]);
 
   const handleAISearch = useCallback((query: string) => {
-    router.push(`/MainCategory/beauty-wellness/search?q=${encodeURIComponent(query)}` as string);
+    router.push(`/MainCategory/beauty-wellness/search?q=${encodeURIComponent(query)}` as any);
   }, [router]);
 
   if (!categoryConfig) return null;
@@ -322,7 +322,7 @@ function BeautyCategoryPage() {
       <Pressable
         style={styles.rewardsStrip}
        
-        onPress={() => router.push('/MainCategory/beauty-wellness/loyalty' as string)}
+        onPress={() => router.push('/MainCategory/beauty-wellness/loyalty' as any)}
       >
         <LinearGradient
           colors={['rgba(249, 168, 212, 0.15)', 'rgba(219, 39, 119, 0.08)']}
@@ -398,7 +398,7 @@ function BeautyCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="flame" size={20} color={colors.error} />
             <Text style={styles.sectionTitle}>Trending This Week</Text>
-            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/search?q=trending' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/search?q=trending' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -407,7 +407,7 @@ function BeautyCategoryPage() {
               <Pressable
                 key={treatment.id}
                 style={styles.trendingCard}
-                onPress={() => router.push(`/MainCategory/beauty-wellness/book-appointment?service=${treatment.id}` as string)}
+                onPress={() => router.push(`/MainCategory/beauty-wellness/book-appointment?service=${treatment.id}` as any)}
                
               >
                 <LinearGradient
@@ -436,7 +436,7 @@ function BeautyCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>💆</Text>
             <Text style={styles.sectionTitle}>Book & Earn Services</Text>
-            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/book-appointment' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/book-appointment' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -445,7 +445,7 @@ function BeautyCategoryPage() {
               <Pressable
                 key={service.id}
                 style={styles.serviceCard}
-                onPress={() => router.push(`/MainCategory/beauty-wellness/book-appointment?service=${service.id}` as string)}
+                onPress={() => router.push(`/MainCategory/beauty-wellness/book-appointment?service=${service.id}` as any)}
               >
                 <View style={styles.serviceIcon}>
                   <Text style={styles.serviceEmoji}>{service.emoji}</Text>
@@ -467,7 +467,7 @@ function BeautyCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>🛍️</Text>
             <Text style={styles.sectionTitle}>Beauty Products</Text>
-            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/search?q=products' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/search?q=products' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -476,7 +476,7 @@ function BeautyCategoryPage() {
               <Pressable
                 key={product.id}
                 style={styles.productCardCompact}
-                onPress={() => router.push(`/product-page?productId=${product.id}` as string)}
+                onPress={() => router.push(`/product-page?productId=${product.id}` as any)}
               >
                 {product.image ? (
                   <CachedImage
@@ -508,7 +508,7 @@ function BeautyCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="shield-checkmark" size={20} color={COLORS.pinkText} />
             <Text style={styles.sectionTitle}>Verified Clinics & Salons</Text>
-            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/top-rated' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/top-rated' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -520,7 +520,7 @@ function BeautyCategoryPage() {
                 <Pressable
                   key={store.id}
                   style={styles.storeCard}
-                  onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as string)}
+                  onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
                 >
                   {(store.logo || store.banner?.[0]) ? (
                     <CachedImage
@@ -577,7 +577,7 @@ function BeautyCategoryPage() {
       <OffersSection
         categorySlug={slug}
         title="Today's Top Beauty Deals"
-        onSeeAll={() => router.push('/MainCategory/beauty-wellness/offers' as string)}
+        onSeeAll={() => router.push('/MainCategory/beauty-wellness/offers' as any)}
         filterTags={activeFilterTags}
       />
 
@@ -586,7 +586,7 @@ function BeautyCategoryPage() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionEmoji}>🌸</Text>
           <Text style={styles.sectionTitle}>Beauty Experiences</Text>
-          <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/experiences' as string)}>
+          <Pressable onPress={() => router.push('/MainCategory/beauty-wellness/experiences' as any)}>
             <Text style={styles.sectionSeeAll}>View All</Text>
           </Pressable>
         </View>
@@ -603,7 +603,7 @@ function BeautyCategoryPage() {
             </Text>
             <Pressable
               style={styles.experienceBtn}
-              onPress={() => router.push('/MainCategory/beauty-wellness/experiences' as string)}
+              onPress={() => router.push('/MainCategory/beauty-wellness/experiences' as any)}
             >
               <Text style={styles.experienceBtnText}>Explore</Text>
               <Ionicons name="arrow-forward" size={14} color={COLORS.pinkText} />
@@ -622,8 +622,8 @@ function BeautyCategoryPage() {
         posts={ugcPosts}
         title="Real Glow-ups, Real Reviews"
         subtitle="See transformations from our community!"
-        onPostPress={() => router.push('/MainCategory/beauty-wellness/beauty-stories' as string)}
-        onSharePress={() => router.push('/MainCategory/beauty-wellness/beauty-stories' as string)}
+        onPostPress={() => router.push('/MainCategory/beauty-wellness/beauty-stories' as any)}
+        onSharePress={() => router.push('/MainCategory/beauty-wellness/beauty-stories' as any)}
       />
 
       <FooterTrustSection />

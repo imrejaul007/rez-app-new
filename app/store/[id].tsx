@@ -347,7 +347,7 @@ const StoreDetailPage: React.FC = () => {
     if (isFitnessStore) {
       router.push({
         pathname: '/fitness/book/[storeId]',
-        params: baseParams,
+        params: { ...baseParams, storeId: (store as any).id } as any,
       });
     } else {
       router.push({

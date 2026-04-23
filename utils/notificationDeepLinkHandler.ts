@@ -57,14 +57,14 @@ export function handleNotificationDeepLink(data: NotificationData): void {
   try {
     // Direct deep link takes precedence
     if (data.deepLink) {
-      router.push(data.deepLink as DeepLinkRoute);
+      router.push(data.deepLink as any);
       return;
     }
 
     // Handle rebooking / revisit push notifications: { screen: 'store', storeId: '...' }
     // Sent by backend when it's time for a consumer to revisit a store.
     if (data.screen === 'store' && data.storeId) {
-      router.push(`/MainStorePage?storeId=${data.storeId}` as DeepLinkRoute);
+      router.push(`/MainStorePage?storeId=${data.storeId}` as any);
       return;
     }
 
@@ -81,9 +81,9 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'order_delivered':
       case 'order_cancelled':
         if (data.orderId) {
-          router.push(`/tracking/${data.orderId}` as DeepLinkRoute);
+          router.push(`/tracking/${data.orderId}` as any);
         } else {
-          router.push('/order-history' as DeepLinkRoute);
+          router.push('/order-history' as any);
         }
         break;
 
@@ -91,11 +91,11 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'payment_failed':
       case 'payment_pending':
         if (data.orderId) {
-          router.push(`/tracking/${data.orderId}` as DeepLinkRoute);
+          router.push(`/tracking/${data.orderId}` as any);
         } else if (data.transactionId) {
-          router.push(`/transactions/${data.transactionId}` as DeepLinkRoute);
+          router.push(`/transactions/${data.transactionId}` as any);
         } else {
-          router.push('/transactions/index' as DeepLinkRoute);
+          router.push('/transactions/index' as any);
         }
         break;
 
@@ -104,7 +104,7 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'delivery_partner_arrived':
       case 'out_for_delivery':
         if (data.orderId) {
-          router.push(`/tracking/${data.orderId}` as DeepLinkRoute);
+          router.push(`/tracking/${data.orderId}` as any);
         }
         break;
 
@@ -112,9 +112,9 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'offer':
       case 'discount':
         if (data.offerId) {
-          router.push(`/offers/${data.offerId}` as DeepLinkRoute);
+          router.push(`/offers/${data.offerId}` as any);
         } else {
-          router.push('/offers/index' as DeepLinkRoute);
+          router.push('/offers/index' as any);
         }
         break;
 
@@ -122,21 +122,21 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'product_price_drop':
       case 'product_back_in_stock':
         if (data.productId) {
-          router.push(`/product-page?cardId=${data.productId}&cardType=product` as DeepLinkRoute);
+          router.push(`/product-page?cardId=${data.productId}&cardType=product` as any);
         }
         break;
 
       case 'store_update':
       case 'store_offer':
         if (data.storeId) {
-          router.push(`/MainStorePage?storeId=${data.storeId}` as DeepLinkRoute);
+          router.push(`/MainStorePage?storeId=${data.storeId}` as any);
         }
         break;
 
       case 'event_reminder':
       case 'event_update':
         if (data.eventId) {
-          router.push({ pathname: '/EventPage', params: { id: data.eventId } } as unknown as DeepLinkRoute);
+          router.push({ pathname: '/EventPage', params: { id: data.eventId } } as any);
         }
         break;
 
@@ -146,90 +146,90 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'coins_earned':
       case 'coin_earned':
         if (data.walletAction === 'view_transactions') {
-          router.push('/transactions/index' as DeepLinkRoute);
+          router.push('/transactions/index' as any);
         } else if (data.walletAction === 'view_coins') {
-          router.push('/coin-detail' as DeepLinkRoute);
+          router.push('/coin-detail' as any);
         } else {
-          router.push('/wallet-screen' as DeepLinkRoute);
+          router.push('/wallet-screen' as any);
         }
         break;
 
       case 'streak_milestone':
       case 'streak_at_risk':
-        router.push('/wallet-screen' as DeepLinkRoute);
+        router.push('/wallet-screen' as any);
         break;
 
       case 'new_offer':
         if (data.offerId) {
-          router.push(`/offers/${data.offerId}` as DeepLinkRoute);
+          router.push(`/offers/${data.offerId}` as any);
         } else {
-          router.push('/offers/index' as DeepLinkRoute);
+          router.push('/offers/index' as any);
         }
         break;
 
       case 'referral_reward':
       case 'referral_joined':
-        router.push('/referral/index' as DeepLinkRoute);
+        router.push('/referral/index' as any);
         break;
 
       case 'social_mention':
       case 'social_like':
       case 'social_comment':
-        router.push('/feed/index' as DeepLinkRoute);
+        router.push('/feed/index' as any);
         break;
 
       case 'review_request':
       case 'review_response':
         if (data.orderId) {
-          router.push(`/tracking/${data.orderId}` as DeepLinkRoute);
+          router.push(`/tracking/${data.orderId}` as any);
         } else if (data.storeId) {
-          router.push(`/reviews/${data.storeId}` as DeepLinkRoute);
+          router.push(`/reviews/${data.storeId}` as any);
         }
         break;
 
       case 'cart_reminder':
       case 'cart_price_drop':
-        router.push('/cart' as DeepLinkRoute);
+        router.push('/cart' as any);
         break;
 
       case 'wishlist_update':
       case 'wishlist_price_drop':
-        router.push('/wishlist' as DeepLinkRoute);
+        router.push('/wishlist' as any);
         break;
 
       case 'security_alert':
       case 'login_alert':
-        router.push('/account/settings' as DeepLinkRoute);
+        router.push('/account/settings' as any);
         break;
 
       case 'account_update':
-        router.push('/account/index' as DeepLinkRoute);
+        router.push('/account/index' as any);
         break;
 
       case 'subscription_reminder':
       case 'subscription_renewal':
-        router.push('/subscription/index' as DeepLinkRoute);
+        router.push('/subscription/index' as any);
         break;
 
       default:
         // If we have specific IDs, navigate there
         if (data.orderId) {
-          router.push(`/tracking/${data.orderId}` as DeepLinkRoute);
+          router.push(`/tracking/${data.orderId}` as any);
         } else if (data.storeId) {
-          router.push(`/MainStorePage?storeId=${data.storeId}` as DeepLinkRoute);
+          router.push(`/MainStorePage?storeId=${data.storeId}` as any);
         } else if (data.productId) {
-          router.push(`/product-page?cardId=${data.productId}&cardType=product` as DeepLinkRoute);
+          router.push(`/product-page?cardId=${data.productId}&cardType=product` as any);
         } else if (data.categoryId) {
-          router.push(`/category/${data.categoryId}` as DeepLinkRoute);
+          router.push(`/category/${data.categoryId}` as any);
         } else {
           // Default to notification history
-          router.push('/account/notification-history' as DeepLinkRoute);
+          router.push('/account/notification-history' as any);
         }
         break;
     }
   } catch (error) {
     // Fallback to home or notification history
-    router.push('/account/notification-history' as DeepLinkRoute);
+    router.push('/account/notification-history' as any);
   }
 }
 

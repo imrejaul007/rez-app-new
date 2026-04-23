@@ -173,13 +173,13 @@ function OrderConfirmationPage() {
       const oid = order._id || order.id;
       const ft = (order as unknown as OrderWithExtras).fulfillmentType;
       if (ft === 'pickup') {
-        router.push(`/pickup-tracking?orderId=${oid}` as unknown as ConfirmationRoute);
+        router.push(`/pickup-tracking?orderId=${oid}` as any);
       } else if (ft === 'drive_thru') {
-        router.push(`/drivethru-tracking?orderId=${oid}` as unknown as ConfirmationRoute);
+        router.push(`/drivethru-tracking?orderId=${oid}` as any);
       } else if (ft === 'dine_in') {
-        router.push(`/dinein-tracking?orderId=${oid}` as unknown as ConfirmationRoute);
+        router.push(`/dinein-tracking?orderId=${oid}` as any);
       } else {
-        router.push(`/tracking?orderId=${oid}` as unknown as ConfirmationRoute);
+        router.push(`/tracking?orderId=${oid}` as any);
       }
     }
   };
@@ -306,7 +306,7 @@ function OrderConfirmationPage() {
             currencySymbol={currencySymbol}
             totalSavedAllTime={savingsInsights?.totalSaved}
             delay={800}
-            onViewWallet={() => router.push('/wallet-screen' as unknown as ConfirmationRoute)}
+            onViewWallet={() => router.push('/wallet-screen' as any)}
           />
         )}
 

@@ -77,8 +77,8 @@ const TRENDING_ITEMS = [
 
 // Helper: check if a store matches a given filter
 function storeMatchesFilter(store: any, filterId: string): boolean {
-  const tags = ((store.tags || []) as string[]).map((t: string) => t.toLowerCase());
-  const serviceTypes = ((store.serviceTypes || []) as string[]).map((t: string) => t.toLowerCase());
+  const tags = ((store.tags || []) as any[]).map((t: string) => t.toLowerCase());
+  const serviceTypes = ((store.serviceTypes || []) as any[]).map((t: string) => t.toLowerCase());
   const allTags = [...tags, ...serviceTypes];
 
   switch (filterId) {
@@ -197,11 +197,11 @@ function FashionCategoryPage() {
   }, [activeModes, hasActiveFilters]);
 
   const handleCategoryPress = useCallback((category: any) => {
-    router.push(`/MainCategory/fashion/${category.slug || category.id}` as string);
+    router.push(`/MainCategory/fashion/${category.slug || category.id}` as any);
   }, [router]);
 
   const handleAISearch = useCallback((query: string) => {
-    router.push(`/MainCategory/fashion/search?q=${encodeURIComponent(query)}` as string);
+    router.push(`/MainCategory/fashion/search?q=${encodeURIComponent(query)}` as any);
   }, [router]);
 
   if (!categoryConfig) return null;
@@ -264,7 +264,7 @@ function FashionCategoryPage() {
       />
 
       {/* Rewards Strip */}
-      <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fashion/loyalty' as string)}>
+      <Pressable style={styles.rewardsStrip} onPress={() => router.push('/MainCategory/fashion/loyalty' as any)}>
         <LinearGradient colors={['rgba(168,85,247,0.15)', 'rgba(124,58,237,0.1)']} style={styles.rewardsGradient}>
           <View style={styles.rewardsContent}>
             <Ionicons name="star" size={20} color={COLORS['purple']} />
@@ -313,13 +313,13 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="flame" size={20} color={colors.error} />
             <Text style={styles.sectionTitle}>Trending This Week</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingList}>
             {filteredTrending.map(w => (
-              <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fashion/search?q=${w.id}` as string)}>
+              <Pressable key={w.id} style={styles.trendingCard} onPress={() => router.push(`/MainCategory/fashion/search?q=${w.id}` as any)}>
                 <LinearGradient colors={[COLORS['purple'], COLORS.purpleDark]} style={styles.trendingGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                   <Text style={styles.trendingEmoji}>{w.emoji}</Text>
                   <Text style={styles.trendingName}>{w.name}</Text>
@@ -341,13 +341,13 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>✨</Text>
             <Text style={styles.sectionTitle}>Fashion Services</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/try-and-buy' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/try-and-buy' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.servicesList}>
             {filteredServices.map(s => (
-              <Pressable key={s.id} style={styles.serviceCard} onPress={() => router.push(`/MainCategory/fashion/try-and-buy` as string)}>
+              <Pressable key={s.id} style={styles.serviceCard} onPress={() => router.push(`/MainCategory/fashion/try-and-buy` as any)}>
                 <View style={styles.serviceIcon}><Text style={styles.serviceEmoji}>{s.emoji}</Text></View>
                 <Text style={styles.serviceName}>{s.name}</Text>
                 <Text style={styles.serviceCashback}>Up to {s.cashback}% cashback</Text>
@@ -365,13 +365,13 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionEmoji}>🛍️</Text>
             <Text style={styles.sectionTitle}>Trending Now</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/search?q=trending' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productsList}>
             {filteredProducts.slice(0, 6).map((p: any) => (
-              <Pressable key={p.id} style={styles.productCardCompact} onPress={() => router.push(`/product-page?productId=${p.id}` as string)}>
+              <Pressable key={p.id} style={styles.productCardCompact} onPress={() => router.push(`/product-page?productId=${p.id}` as any)}>
                 {p.image ? (
                   <CachedImage source={p.image} style={styles.productImageCompact} contentFit="cover" />
                 ) : (
@@ -394,7 +394,7 @@ function FashionCategoryPage() {
           <View style={styles.sectionHeader}>
             <Ionicons name="shield-checkmark" size={20} color={COLORS['purple']} />
             <Text style={styles.sectionTitle}>Top Stores & Boutiques</Text>
-            <Pressable onPress={() => router.push('/MainCategory/fashion/top-rated' as string)}>
+            <Pressable onPress={() => router.push('/MainCategory/fashion/top-rated' as any)}>
               <Text style={styles.sectionSeeAll}>View All</Text>
             </Pressable>
           </View>
@@ -410,7 +410,7 @@ function FashionCategoryPage() {
                 .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1));
               const imageSource = store.logo || (Array.isArray(store.banner) ? store.banner[0] : store.banner);
               return (
-                <Pressable key={store._id || store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as string)}>
+                <Pressable key={store._id || store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}>
                   {/* Store image */}
                   {imageSource ? (
                     <CachedImage source={imageSource} style={styles.storeImage} contentFit="cover" />
@@ -485,11 +485,11 @@ function FashionCategoryPage() {
         </View>
       )}
 
-      <OffersSection categorySlug={slug} title="Today's Top Fashion Deals" onSeeAll={() => router.push('/MainCategory/fashion/offers' as string)} filterTags={activeFilterTags} />
+      <OffersSection categorySlug={slug} title="Today's Top Fashion Deals" onSeeAll={() => router.push('/MainCategory/fashion/offers' as any)} filterTags={activeFilterTags} />
 
       {/* 60-min Try & Buy Banner */}
       <View style={styles.section}>
-        <Pressable style={styles.ctaBanner} onPress={() => router.push('/MainCategory/fashion/try-and-buy' as string)}>
+        <Pressable style={styles.ctaBanner} onPress={() => router.push('/MainCategory/fashion/try-and-buy' as any)}>
           <LinearGradient colors={[COLORS['purple'], COLORS.purpleDark]} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.ctaContent}>
               <Text style={styles.ctaEmoji}>⚡</Text>
@@ -508,8 +508,8 @@ function FashionCategoryPage() {
       <EnhancedUGCSocialProofSection
         categorySlug={slug} categoryName={categoryConfig.name} posts={ugcPosts}
         title="Real Shoppers, Real Style" subtitle="See how others are shopping!"
-        onPostPress={() => router.push('/MainCategory/fashion/fashion-stories' as string)}
-        onSharePress={() => router.push('/MainCategory/fashion/fashion-stories' as string)}
+        onPostPress={() => router.push('/MainCategory/fashion/fashion-stories' as any)}
+        onSharePress={() => router.push('/MainCategory/fashion/fashion-stories' as any)}
       />
 
       <FooterTrustSection />

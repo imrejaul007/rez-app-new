@@ -73,7 +73,7 @@ function ChallengeDetailPage() {
   const [data, setData] = useState<ChallengeDetailData | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
-  const dismissTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dismissTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [claimData, setClaimData] = useState<{
     coins: number;
     beforeBalance: number;
