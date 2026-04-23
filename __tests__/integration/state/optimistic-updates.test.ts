@@ -5,7 +5,13 @@
 import apiClient from '@/services/apiClient';
 import { cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 describe('Optimistic Updates Tests', () => {
   afterEach(async () => {

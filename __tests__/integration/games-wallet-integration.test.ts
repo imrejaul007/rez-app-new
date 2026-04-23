@@ -6,9 +6,31 @@ import walletApi from '@/services/walletApi';
 import pointsApi from '@/services/pointsApi';
 
 // Mock services
-jest.mock('@/services/gamificationApi');
-jest.mock('@/services/walletApi');
-jest.mock('@/services/pointsApi');
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    spinWheel: jest.fn(),
+    submitQuizAnswer: jest.fn(),
+    scratchCard: jest.fn(),
+    getCoinTransactions: jest.fn(),
+    getGamificationStats: jest.fn(),
+  },
+}));
+jest.mock('@/services/walletApi', () => ({
+  __esModule: true,
+  default: {
+    getBalance: jest.fn(),
+    getTransactions: jest.fn(),
+  },
+}));
+jest.mock('@/services/pointsApi', () => ({
+  __esModule: true,
+  default: {
+    earnPoints: jest.fn(),
+    spendPoints: jest.fn(),
+    performDailyCheckIn: jest.fn(),
+  },
+}));
 
 describe('Games-Wallet Integration', () => {
   beforeEach(() => {

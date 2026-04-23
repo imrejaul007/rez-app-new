@@ -5,9 +5,30 @@ import achievementApi from '@/services/achievementApi';
 import gamificationAPI from '@/services/gamificationApi';
 import pointsApi from '@/services/pointsApi';
 
-jest.mock('@/services/achievementApi');
-jest.mock('@/services/gamificationApi');
-jest.mock('@/services/pointsApi');
+jest.mock('@/services/achievementApi', () => ({
+  __esModule: true,
+  default: {
+    recalculateAchievements: jest.fn(),
+    getAchievementProgress: jest.fn(),
+    unlockAchievement: jest.fn(),
+  },
+}));
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    spinWheel: jest.fn(),
+    submitQuizAnswer: jest.fn(),
+    claimChallengeReward: jest.fn(),
+  },
+}));
+jest.mock('@/services/pointsApi', () => ({
+  __esModule: true,
+  default: {
+    getBalance: jest.fn(),
+    performDailyCheckIn: jest.fn(),
+    getDailyCheckIn: jest.fn(),
+  },
+}));
 
 describe('Achievement Unlock Integration', () => {
   beforeEach(() => {

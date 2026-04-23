@@ -52,7 +52,7 @@ const CONVERSION_RATES: Record<string, number> = {
 // =============================================================================
 
 function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
-  const levels: Array<'L1' | 'L2' | 'L3' | 'L4'> = ['L1', 'L2', 'L3', 'L4'];
+  const levels: ('L1' | 'L2' | 'L3' | 'L4')[] = ['L1', 'L2', 'L3', 'L4'];
   const currentIdx = levels.indexOf(level);
 
   return (

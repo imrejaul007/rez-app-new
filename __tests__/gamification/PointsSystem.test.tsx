@@ -7,8 +7,23 @@ import pointsApi from '@/services/pointsApi';
 import gamificationAPI from '@/services/gamificationApi';
 
 // Mock dependencies
-jest.mock('@/services/pointsApi');
-jest.mock('@/services/gamificationApi');
+jest.mock('@/services/pointsApi', () => ({
+  __esModule: true,
+  default: {
+    getBalance: jest.fn(),
+    earnPoints: jest.fn(),
+    performDailyCheckIn: jest.fn(),
+    spendPoints: jest.fn(),
+    getDailyCheckIn: jest.fn(),
+  },
+}));
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    getCoinBalance: jest.fn(),
+    getCoinTransactions: jest.fn(),
+  },
+}));
 
 const mockPointsBalance = {
   total: 1000,

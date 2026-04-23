@@ -9,7 +9,13 @@ import gamificationAPI from '@/services/gamificationApi';
 import { SpinWheelResult, SpinWheelSegment } from '@/types/gamification.types';
 
 // Mock dependencies
-jest.mock('@/services/gamificationApi');
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    canSpinWheel: jest.fn(),
+    spinWheel: jest.fn(),
+  },
+}));
 jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn(),
 }));

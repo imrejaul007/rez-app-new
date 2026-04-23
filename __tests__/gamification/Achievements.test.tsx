@@ -8,7 +8,13 @@ import achievementApi from '@/services/achievementApi';
 import { Achievement, AchievementProgress } from '@/services/achievementApi';
 
 // Mock dependencies
-jest.mock('@/services/achievementApi');
+jest.mock('@/services/achievementApi', () => ({
+  __esModule: true,
+  default: {
+    getAchievementProgress: jest.fn(),
+    recalculateAchievements: jest.fn(),
+  },
+}));
 jest.mock('@/contexts/AuthContext', () => ({
   useAuth: () => ({
     state: { isAuthenticated: true, user: { id: 'user-1' } },

@@ -9,7 +9,12 @@ import { Alert } from 'react-native';
 import serviceBookingApi from '@/services/serviceBookingApi';
 
 // Mock the booking API
-jest.mock('@/services/serviceBookingApi');
+jest.mock('@/services/serviceBookingApi', () => ({
+  __esModule: true,
+  default: {
+    createBooking: jest.fn(),
+  },
+}));
 const mockServiceBookingApi = serviceBookingApi as jest.Mocked<typeof serviceBookingApi>;
 
 // Mock Alert

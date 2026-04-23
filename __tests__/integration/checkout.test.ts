@@ -17,7 +17,14 @@ import { addressApi } from '@/services/addressApi';
 import apiClient from '@/services/apiClient';
 
 // Mock dependencies
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+  },
+}));
 jest.mock('@react-native-async-storage/async-storage');
 
 describe('Checkout Flow Integration Tests', () => {

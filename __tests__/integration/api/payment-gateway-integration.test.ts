@@ -6,7 +6,12 @@ import { paymentService } from '@/services/paymentService';
 import apiClient from '@/services/apiClient';
 import { cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    post: jest.fn(),
+  },
+}));
 
 describe('Payment Gateway Integration Tests', () => {
   afterEach(async () => {

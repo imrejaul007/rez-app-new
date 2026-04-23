@@ -2,7 +2,13 @@
 import walletApi from '@/services/walletApi';
 import apiClient from '@/services/apiClient';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 beforeEach(() => { jest.clearAllMocks(); });
 
 describe('Balance fetch returns a number', () => {

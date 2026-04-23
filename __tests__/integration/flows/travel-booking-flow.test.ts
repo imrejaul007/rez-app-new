@@ -8,8 +8,19 @@ import productsApi from '@/services/productsApi';
 import apiClient from '@/services/apiClient';
 
 // Mock the API client
-jest.mock('@/services/apiClient');
-jest.mock('@/services/productsApi');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
+jest.mock('@/services/productsApi', () => ({
+  __esModule: true,
+  default: {
+    getProductById: jest.fn(),
+  },
+}));
 
 const mockApiClient = apiClient as jest.Mocked<typeof apiClient>;
 const mockProductsApi = productsApi as jest.Mocked<typeof productsApi>;

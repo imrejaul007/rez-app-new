@@ -12,7 +12,13 @@
 import apiClient from '@/services/apiClient';
 import { groupBuyingApi } from '@/services/groupBuyingApi';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 describe('Group Buying Integration Tests', () => {
   const mockGroupDeal = {

@@ -5,9 +5,40 @@ import gamificationAPI from '@/services/gamificationApi';
 import pointsApi from '@/services/pointsApi';
 import achievementApi from '@/services/achievementApi';
 
-jest.mock('@/services/gamificationApi');
-jest.mock('@/services/pointsApi');
-jest.mock('@/services/achievementApi');
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    canSpinWheel: jest.fn(),
+    spinWheel: jest.fn(),
+    getChallenges: jest.fn(),
+    getChallenge: jest.fn(),
+    claimChallengeReward: jest.fn(),
+    startQuiz: jest.fn(),
+    submitQuizAnswer: jest.fn(),
+    canCreateScratchCard: jest.fn(),
+    createScratchCard: jest.fn(),
+    scratchCard: jest.fn(),
+    getCurrentQuiz: jest.fn(),
+    getGamificationStats: jest.fn(),
+  },
+}));
+jest.mock('@/services/pointsApi', () => ({
+  __esModule: true,
+  default: {
+    getBalance: jest.fn(),
+    earnPoints: jest.fn(),
+    spendPoints: jest.fn(),
+    performDailyCheckIn: jest.fn(),
+    getDailyCheckIn: jest.fn(),
+  },
+}));
+jest.mock('@/services/achievementApi', () => ({
+  __esModule: true,
+  default: {
+    recalculateAchievements: jest.fn(),
+    getAchievementProgress: jest.fn(),
+  },
+}));
 
 describe('Game Play Flow Integration', () => {
   beforeEach(() => {

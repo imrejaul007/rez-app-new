@@ -23,7 +23,12 @@ import fraudDetectionService, {
 import apiClient from '@/services/apiClient';
 
 // Mock dependencies
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    post: jest.fn(),
+  },
+}));
 jest.mock('@react-native-async-storage/async-storage');
 
 describe('FraudDetectionService', () => {

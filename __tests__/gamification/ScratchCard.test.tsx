@@ -9,7 +9,15 @@ import scratchCardApi from '@/services/scratchCardApi';
 import { ScratchCard, ScratchCardPrize, EligibilityStatus } from '@/services/scratchCardApi';
 
 // Mock dependencies
-jest.mock('@/services/scratchCardApi');
+jest.mock('@/services/scratchCardApi', () => ({
+  __esModule: true,
+  default: {
+    checkEligibility: jest.fn(),
+    createScratchCard: jest.fn(),
+    scratchCard: jest.fn(),
+    claimPrize: jest.fn(),
+  },
+}));
 jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn(),
 }));

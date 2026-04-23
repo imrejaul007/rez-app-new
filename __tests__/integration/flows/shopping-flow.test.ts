@@ -19,7 +19,15 @@ import {
 } from '../utils/testHelpers';
 import { setupMockHandlers, resetMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
 
 describe('Shopping Flow Integration Tests', () => {
   beforeEach(async () => {

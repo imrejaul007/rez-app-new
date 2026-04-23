@@ -11,9 +11,29 @@ import gamificationAPI from '@/services/gamificationApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Mock dependencies
-jest.mock('@/services/achievementApi');
-jest.mock('@/services/pointsApi');
-jest.mock('@/services/gamificationApi');
+jest.mock('@/services/achievementApi', () => ({
+  __esModule: true,
+  default: {
+    getAchievementProgress: jest.fn(),
+    recalculateAchievements: jest.fn(),
+  },
+}));
+jest.mock('@/services/pointsApi', () => ({
+  __esModule: true,
+  default: {
+    getBalance: jest.fn(),
+    earnPoints: jest.fn(),
+    spendPoints: jest.fn(),
+    performDailyCheckIn: jest.fn(),
+    getDailyCheckIn: jest.fn(),
+  },
+}));
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    getChallenges: jest.fn(),
+  },
+}));
 jest.mock('@/stores/selectors', () => ({
   ...jest.requireActual('@/stores/selectors'),
   useIsAuthenticated: jest.fn(),

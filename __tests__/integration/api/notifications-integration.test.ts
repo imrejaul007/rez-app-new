@@ -5,7 +5,14 @@
 import apiClient from '@/services/apiClient';
 import { testDataFactory, cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    put: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 describe('Notifications Integration Tests', () => {
   afterEach(async () => {

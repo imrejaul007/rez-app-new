@@ -8,7 +8,14 @@ import gamificationAPI from '@/services/gamificationApi';
 import { Challenge } from '@/types/gamification.types';
 
 // Mock dependencies
-jest.mock('@/services/gamificationApi');
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    getChallenges: jest.fn(),
+    getChallenge: jest.fn(),
+    claimChallengeReward: jest.fn(),
+  },
+}));
 jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn(),
 }));

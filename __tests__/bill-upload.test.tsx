@@ -22,8 +22,18 @@ import storesApi from '@/services/storesApi';
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('expo-camera');
 jest.mock('expo-image-picker');
-jest.mock('@/services/billUploadService');
-jest.mock('@/services/storesApi');
+jest.mock('@/services/billUploadService', () => ({
+  __esModule: true,
+  default: {
+    uploadBillWithProgress: jest.fn(),
+  },
+}));
+jest.mock('@/services/storesApi', () => ({
+  __esModule: true,
+  default: {
+    getStores: jest.fn(),
+  },
+}));
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: jest.fn(),

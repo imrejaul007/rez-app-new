@@ -10,7 +10,13 @@ import apiClient from '@/services/apiClient';
 import { cleanupAfterTest, simulateNetworkConditions } from '../utils/testHelpers';
 
 // Mock I/O dependencies so the singleton initialises synchronously
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 jest.mock('@react-native-community/netinfo');
 jest.mock('@/services/asyncStorageService', () => ({
   __esModule: true,

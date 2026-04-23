@@ -6,7 +6,13 @@ import { searchApi } from '@/services/searchApi';
 import apiClient from '@/services/apiClient';
 import { generateMockProducts, generateMockStores, cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 describe('Search Integration Tests', () => {
   afterEach(async () => {

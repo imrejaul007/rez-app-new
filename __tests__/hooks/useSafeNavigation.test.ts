@@ -23,7 +23,21 @@ jest.mock('react-native', () => ({
     addEventListener: jest.fn(() => ({ remove: jest.fn() })),
   },
 }));
-jest.mock('@/services/navigationService');
+jest.mock('@/services/navigationService', () => ({
+  __esModule: true,
+  default: {
+    initialize: jest.fn(),
+    canGoBack: jest.fn(),
+    getCurrentRoute: jest.fn(),
+    navigate: jest.fn(),
+    goBack: jest.fn(),
+    replace: jest.fn(),
+    getHistory: jest.fn(),
+    clearHistory: jest.fn(),
+    addGuard: jest.fn(),
+    removeGuard: jest.fn(),
+  },
+}));
 jest.mock('@/utils/navigationHelper', () => ({
   getPlatform: jest.fn(() => 'ios'),
   getDefaultFallbackRoute: jest.fn(() => '/(tabs)'),

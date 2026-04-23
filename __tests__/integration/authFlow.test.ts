@@ -7,7 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService from '@/services/authApi';
 import apiClient from '@/services/apiClient';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    post: jest.fn(),
+  },
+}));
 jest.mock('@react-native-async-storage/async-storage');
 
 const PHONE = '+919876543210';

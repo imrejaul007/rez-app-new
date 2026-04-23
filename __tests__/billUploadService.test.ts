@@ -27,7 +27,16 @@ type MockXMLHttpRequest = jest.Mock & {
 };
 
 // Mock dependencies
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    getBaseURL: jest.fn(),
+    getAuthToken: jest.fn(),
+    uploadFile: jest.fn(),
+  },
+}));
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
   OS: 'ios',
   select: jest.fn((obj) => obj.ios),

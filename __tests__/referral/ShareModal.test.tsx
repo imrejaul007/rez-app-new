@@ -20,7 +20,12 @@ import ShareModal from '@/components/referral/ShareModal';
 import referralService from '@/services/referralApi';
 
 // Mock dependencies
-jest.mock('@/services/referralApi');
+jest.mock('@/services/referralApi', () => ({
+  __esModule: true,
+  default: {
+    shareReferralLink: jest.fn(),
+  },
+}));
 jest.mock('expo-clipboard');
 jest.mock('react-native-qrcode-svg', () => 'QRCode');
 

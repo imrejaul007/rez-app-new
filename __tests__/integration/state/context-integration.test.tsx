@@ -7,7 +7,13 @@
 import apiClient from '@/services/apiClient';
 import { setupAuthenticatedUser, cleanupAfterTest, testDataFactory, mockUser } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 describe('Context Integration Tests', () => {
   beforeEach(async () => {

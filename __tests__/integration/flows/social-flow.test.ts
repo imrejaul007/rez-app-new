@@ -14,7 +14,14 @@ import {
 } from '../utils/testHelpers';
 import { setupMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
 
 describe('Social Flow Integration Tests', () => {
   beforeEach(async () => {

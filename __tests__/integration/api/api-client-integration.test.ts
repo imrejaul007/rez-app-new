@@ -8,7 +8,14 @@ import apiClient from '@/services/apiClient';
 import authService from '@/services/authApi';
 import { setupAuthenticatedUser, cleanupAfterTest } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+  },
+}));
 
 describe('API Client Integration Tests', () => {
   beforeEach(async () => {

@@ -14,7 +14,13 @@ import {
 } from '../utils/testHelpers';
 import { setupMockHandlers } from '../utils/mockApiHandlers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
 
 describe('Wallet Flow Integration Tests', () => {
   beforeEach(async () => {

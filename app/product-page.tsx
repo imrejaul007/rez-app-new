@@ -141,7 +141,7 @@ interface ProductsApiProductResponse {
   ratings?: { average?: number; count?: number };
   category?: string | { name?: string };
   merchant?: string;
-  images?: Array<string | { url?: string }>;
+  images?: (string | { url?: string })[];
   image?: string;
   inventory?: { isAvailable?: boolean; stock?: number };
   availabilityStatus?: string;

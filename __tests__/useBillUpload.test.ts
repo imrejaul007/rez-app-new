@@ -15,7 +15,13 @@ import { billUploadService, BillUploadData } from '@/services/billUploadService'
 
 // Mocks
 jest.mock('@react-native-async-storage/async-storage');
-jest.mock('@/services/billUploadService');
+jest.mock('@/services/billUploadService', () => ({
+  __esModule: true,
+  default: {
+    uploadBillWithRetry: jest.fn(),
+    cancelUpload: jest.fn(),
+  },
+}));
 
 describe('useBillUpload', () => {
   const mockBillData: BillUploadData = {

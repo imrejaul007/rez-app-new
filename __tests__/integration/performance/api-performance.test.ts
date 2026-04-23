@@ -5,7 +5,12 @@
 import apiClient from '@/services/apiClient';
 import { measurePerformance, generateMockProducts } from '../utils/testHelpers';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+  },
+}));
 
 describe('API Performance Integration Tests', () => {
   it('should complete API calls within acceptable time', async () => {

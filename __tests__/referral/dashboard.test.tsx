@@ -21,7 +21,16 @@ import referralTierApi from '@/services/referralTierApi';
 import { useRouter } from 'expo-router';
 
 // Mock dependencies
-jest.mock('@/services/referralTierApi');
+jest.mock('@/services/referralTierApi', () => ({
+  __esModule: true,
+  default: {
+    getTier: jest.fn(),
+    getRewards: jest.fn(),
+    getLeaderboard: jest.fn(),
+    generateQR: jest.fn(),
+    claimReward: jest.fn(),
+  },
+}));
 jest.mock('expo-router');
 
 describe('ReferralDashboard', () => {

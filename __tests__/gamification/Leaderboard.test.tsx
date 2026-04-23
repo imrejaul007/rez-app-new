@@ -7,7 +7,12 @@ import gamificationAPI from '@/services/gamificationApi';
 import { LeaderboardData, LeaderboardEntry } from '@/types/gamification.types';
 
 // Mock dependencies
-jest.mock('@/services/gamificationApi');
+jest.mock('@/services/gamificationApi', () => ({
+  __esModule: true,
+  default: {
+    getLeaderboard: jest.fn(),
+  },
+}));
 
 const mockLeaderboardEntries: LeaderboardEntry[] = [
   {

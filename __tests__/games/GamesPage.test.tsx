@@ -18,7 +18,12 @@ jest.mock('@/stores/selectors', () => ({
   useAuthLoading: jest.fn(),
 }));
 jest.mock('@/contexts/GamificationContext');
-jest.mock('@/services/walletApi');
+jest.mock('@/services/walletApi', () => ({
+  __esModule: true,
+  default: {
+    getBalance: jest.fn(),
+  },
+}));
 jest.mock('expo-router', () => ({
   router: {
     push: jest.fn(),

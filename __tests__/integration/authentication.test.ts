@@ -13,7 +13,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService from '@/services/authApi';
 import apiClient from '@/services/apiClient';
 
-jest.mock('@/services/apiClient');
+jest.mock('@/services/apiClient', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+  },
+}));
 jest.mock('@react-native-async-storage/async-storage');
 
 describe('Authentication Flow Integration Tests', () => {

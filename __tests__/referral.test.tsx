@@ -22,7 +22,13 @@ jest.mock('@/stores/selectors', () => ({
   ...jest.requireActual('@/stores/selectors'),
   useIsAuthenticated: jest.fn(),
 }));
-jest.mock('@/services/referralApi');
+jest.mock('@/services/referralApi', () => ({
+  __esModule: true,
+  getReferralCode: jest.fn(),
+  getReferralStats: jest.fn(),
+  getReferralHistory: jest.fn(),
+  trackShare: jest.fn(),
+}));
 jest.mock('expo-clipboard');
 jest.mock('@/utils/privacy', () => ({
   anonymizeEmail: jest.fn((email) => `${email.slice(0, 3)}***@***`),

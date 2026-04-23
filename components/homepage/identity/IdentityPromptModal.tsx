@@ -46,7 +46,7 @@ export default function IdentityPromptModal() {
     analyticsService.track(IdentityAnalyticsEvents.IDENTITY_SELECTED, { choice: id, source: 'modal' });
     setIdentity({ statedIdentity: id });
     if (!isMounted()) return;
-    identityApi.setStatedIdentity(id).catch(() => {});
+    identityApi.setStatedIdentity(id).catch((e) => console.warn('[Identity] setStatedIdentity failed:', e));
     if (!isMounted()) return;
     await AsyncStorage.setItem(STORAGE_KEY, 'true');
     setVisible(false);
@@ -61,7 +61,7 @@ export default function IdentityPromptModal() {
   const handleDismiss = async () => {
     setIdentity({ statedIdentity: 'general' });
     if (!isMounted()) return;
-    identityApi.setStatedIdentity('general').catch(() => {});
+    identityApi.setStatedIdentity('general').catch((e) => console.warn('[Identity] setStatedIdentity failed:', e));
     if (!isMounted()) return;
     await AsyncStorage.setItem(STORAGE_KEY, 'true');
     setVisible(false);
