@@ -1,0 +1,101 @@
+/**
+ * QR Intent Router — maps a parsed QrPayload to a consumer app route.
+ *
+ * Pure function: given a payload, returns a `{ pathname, params }`
+ * object suitable for `router.push()`. The UnifiedQrScanner calls
+ * this and does the navigation itself — keeping routing concerns out
+ * of the parser and the parser concerns out of the navigator.
+ *
+ * Adding a new intent is a one-line change here + the corresponding
+ * entry in qrPayload.ts.
+ */
+
+import type { QrPayload, ShortUrlIntent } from './qrPayload';
+
+export interface RouteTarget {
+  pathname: string;
+  params?: Record<string, string>;
+}
+
+/**
+ * Map a typed QR payload to an in-app route target. Paths match the
+ * existing expo-router file layout.
+ */
+export function routeFromPayload(
+  payload: QrPayload | ShortUrlIntent,
+): RouteTarget | null {
+  switch (payload.intent) {
+    case 'store-visit':
+      return {
+        pathname: '/qr-checkin',
+        params: {
+          storeId: payload.storeId,
+          ...(payload.storeSlug ? { storeSlug: payload.storeSlug } : {}),
+        },
+      };
+
+    case 'pay-bill':
+      return {
+        pathname: '/pay-in-store',
+        params: {
+          storeId: payload.storeId,
+          ...(payload.billId ? { billId: payload.billId } : {}),
+          ...(payload.amount != null ? { amount: String(payload.amount) } : {}),
+        },
+      };
+
+    case 'redeem-deal':
+      return {
+        pathname: '/my-vouchers',
+        params: {
+          dealId: payload.dealId,
+          ...(payload.storeId ? { storeId: payload.storeId } : {}),
+        },
+      };
+
+    case 'redeem-voucher':
+      return {
+        pathname: '/my-vouchers',
+        params: { voucherId: payload.voucherId },
+      };
+
+    case 'claim-stamp':
+      // Stamp-card claim uses the same check-in flow the merchant's POS
+      // wires into; the storeId+stampCardId tuple drives that screen's
+      // effect.
+      return {
+        pathname: '/qr-checkin',
+        params: {
+          storeId: payload.storeId,
+          stampCardId: payload.stampCardId,
+        },
+      };
+
+    case 'event-checkin':
+      return {
+        pathname: '/karma/scan',
+        params: { eventId: payload.eventId },
+      };
+
+    case 'referral':
+      return {
+        pathname: '/referral',
+        params: { code: payload.referralCode },
+      };
+
+    case 'wallet-transfer':
+      return {
+        pathname: '/wallet/transfer',
+        params: {
+          toUserId: payload.toUserId,
+          ...(payload.amount != null ? { amount: String(payload.amount) } : {}),
+        },
+      };
+
+    case 'short-url':
+      // Caller fetches the inflated payload via the backend, then calls
+      // routeFromPayload again. Returning null here signals "route on the
+      // resolved payload, not on this marker".
+      return null;
+  }
+}
