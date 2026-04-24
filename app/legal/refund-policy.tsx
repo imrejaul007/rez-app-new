@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Refund terms with FAQ accordion
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl } from 'react-native';
 import { SectionListSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +15,8 @@ import { colors } from '@/constants/theme';
 
 const REFUND_CONTENT = {
   lastUpdated: '2024-12-01',
-  overview: 'We want you to be completely satisfied with your purchases. If you\'re not happy, we\'re here to help with returns and refunds.',
+  overview:
+    "We want you to be completely satisfied with your purchases. If you're not happy, we're here to help with returns and refunds.",
   sections: [
     {
       title: 'Eligibility for Refunds',
@@ -102,23 +95,28 @@ Coins refunded maintain their original expiry date.`,
   faqs: [
     {
       question: 'How long do I have to request a refund?',
-      answer: 'You have 7 days from the delivery date to request a refund for most items. Food and perishable items must be reported within 24 hours.',
+      answer:
+        'You have 7 days from the delivery date to request a refund for most items. Food and perishable items must be reported within 24 hours.',
     },
     {
       question: 'Can I get a refund for a service booking?',
-      answer: 'Yes, if the service was not provided or was significantly different from what was described. Cancellations made 24+ hours before the appointment receive full refunds.',
+      answer:
+        'Yes, if the service was not provided or was significantly different from what was described. Cancellations made 24+ hours before the appointment receive full refunds.',
     },
     {
       question: 'What if my refund is taking too long?',
-      answer: 'If your refund hasn\'t arrived after the expected timeline, please contact our support team with your order ID. Bank processing times may vary.',
+      answer:
+        "If your refund hasn't arrived after the expected timeline, please contact our support team with your order ID. Bank processing times may vary.",
     },
     {
       question: 'Can I exchange instead of getting a refund?',
-      answer: 'Yes, for most physical products, you can choose to exchange for a different size, color, or product of equal value instead of a refund.',
+      answer:
+        'Yes, for most physical products, you can choose to exchange for a different size, color, or product of equal value instead of a refund.',
     },
     {
       question: 'Do I need to return the product for a refund?',
-      answer: 'For most refunds, yes. We\'ll provide a prepaid return label. Some low-value items may not require return - we\'ll let you know.',
+      answer:
+        "For most refunds, yes. We'll provide a prepaid return label. Some low-value items may not require return - we'll let you know.",
     },
   ],
 };
@@ -154,7 +152,10 @@ function RefundPolicyPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
         <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Refund Policy</ThemedText>
@@ -173,14 +174,11 @@ function RefundPolicyPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessible={true}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -196,24 +194,18 @@ function RefundPolicyPage() {
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {/* Last Updated */}
         <View style={styles.updateBadge}>
           <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-          <ThemedText style={styles.updateText}>
-            Last updated: {REFUND_CONTENT.lastUpdated}
-          </ThemedText>
+          <ThemedText style={styles.updateText}>Last updated: {REFUND_CONTENT.lastUpdated}</ThemedText>
         </View>
 
         {/* Overview Card */}
         <View style={styles.overviewCard}>
           <Ionicons name="refresh-circle" size={32} color={Colors.primary[600]} />
-          <ThemedText style={styles.overviewText}>
-            {REFUND_CONTENT.overview}
-          </ThemedText>
+          <ThemedText style={styles.overviewText}>{REFUND_CONTENT.overview}</ThemedText>
         </View>
 
         {/* Policy Sections */}
@@ -231,7 +223,7 @@ function RefundPolicyPage() {
               <View style={styles.sectionTitleContainer}>
                 <View style={styles.iconContainer}>
                   <Ionicons
-                    name={section.icon as any}
+                    name={section.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={24}
                     color={Colors.primary[600]}
                   />
@@ -287,13 +279,11 @@ function RefundPolicyPage() {
           <Ionicons name="headset" size={32} color={Colors.primary[600]} />
           <View style={styles.supportContent}>
             <ThemedText style={styles.supportTitle}>Need Help?</ThemedText>
-            <ThemedText style={styles.supportDescription}>
-              Contact our support team for refund assistance
-            </ThemedText>
+            <ThemedText style={styles.supportDescription}>Contact our support team for refund assistance</ThemedText>
           </View>
           <Pressable
             style={styles.supportButton}
-            onPress={() => router.push('/support' as any)}
+            onPress={() => router.push('/support' as unknown as string)}
             accessible={true}
             accessibilityLabel="Contact support"
             accessibilityRole="button"

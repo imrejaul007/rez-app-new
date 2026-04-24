@@ -312,8 +312,11 @@ export default function TryHomeScreen() {
         if (scoreData.status === 'fulfilled') {
           setExplorerScore({
             score: scoreData.value.score,
-            tier: (scoreData.value as any).currentTier ?? scoreData.value.tier,
-            streak: (scoreData.value as any).dayStreak ?? scoreData.value.stats?.currentStreak,
+            tier:
+              ((scoreData.value as unknown as Record<string, unknown>).currentTier as string) ?? scoreData.value.tier,
+            streak:
+              ((scoreData.value as unknown as Record<string, unknown>).dayStreak as number) ??
+              scoreData.value.stats?.currentStreak,
           });
         }
       } finally {
@@ -417,7 +420,8 @@ export default function TryHomeScreen() {
                   style={[
                     styles.progressBarFill,
                     {
-                      width: `${Math.min(100, (missionProgress.current / missionProgress.total) * 100)}%` as any,
+                      width:
+                        `${Math.min(100, (missionProgress.current / missionProgress.total) * 100)}%` as unknown as string,
                     },
                   ]}
                 />
@@ -591,7 +595,11 @@ export default function TryHomeScreen() {
             { label: '📅 My Bookings', route: '/try/history' },
             { label: '🎯 Campaigns', route: '/try/campaigns' },
           ].map((item) => (
-            <Pressable key={item.route} style={styles.quickNavChip} onPress={() => router.push(item.route as any)}>
+            <Pressable
+              key={item.route}
+              style={styles.quickNavChip}
+              onPress={() => router.push(item.route as unknown as string)}
+            >
               <Text style={styles.quickNavText}>{item.label}</Text>
             </Pressable>
           ))}

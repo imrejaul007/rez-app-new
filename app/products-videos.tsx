@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  TextInput,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Dimensions, TextInput, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -39,28 +31,31 @@ function ProductsVideosPage() {
   ];
 
   // Filter products based on search and category
-  const filteredProducts = useMemo(() => state.merchantVideos.filter((video) => {
-    const matchesSearch = video.description
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === 'all' || video.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  }), [state.merchantVideos, searchQuery, selectedCategory]);
+  const filteredProducts = useMemo(
+    () =>
+      state.merchantVideos.filter((video) => {
+        const matchesSearch = video.description.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = selectedCategory === 'all' || video.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      }),
+    [state.merchantVideos, searchQuery, selectedCategory],
+  );
 
-  const handleVideoPress = useCallback((video: UGCVideoItem) => {
-    actions.navigateToDetail(video);
-  }, [actions]);
+  const handleVideoPress = useCallback(
+    (video: UGCVideoItem) => {
+      actions.navigateToDetail(video);
+    },
+    [actions],
+  );
 
-  const renderVideoCard = useCallback(({ item }: { item: UGCVideoItem }) => (
-    <View style={{ width: CARD_WIDTH }}>
-      <ThumbnailVideoCard
-        item={item}
-        onPress={handleVideoPress}
-        showHashtags={true}
-      />
-    </View>
-  ), [handleVideoPress]);
+  const renderVideoCard = useCallback(
+    ({ item }: { item: UGCVideoItem }) => (
+      <View style={{ width: CARD_WIDTH }}>
+        <ThumbnailVideoCard item={item} onPress={handleVideoPress} showHashtags={true} />
+      </View>
+    ),
+    [handleVideoPress],
+  );
 
   return (
     <View style={styles.container}>
@@ -77,8 +72,7 @@ function ProductsVideosPage() {
               {/* Back Button */}
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-               
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               >
                 <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
@@ -86,9 +80,7 @@ function ProductsVideosPage() {
               {/* Title */}
               <View style={styles.headerTitleContainer}>
                 <ThemedText style={styles.headerTitle}>Products</ThemedText>
-                <ThemedText style={styles.headerSubtitle}>
-                  {filteredProducts.length} videos
-                </ThemedText>
+                <ThemedText style={styles.headerSubtitle}>{filteredProducts.length} videos</ThemedText>
               </View>
 
               {/* Filter Button */}
@@ -102,8 +94,7 @@ function ProductsVideosPage() {
             {/* Back Button */}
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -111,9 +102,7 @@ function ProductsVideosPage() {
             {/* Title */}
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>Products</ThemedText>
-              <ThemedText style={styles.headerSubtitle}>
-                {filteredProducts.length} videos
-              </ThemedText>
+              <ThemedText style={styles.headerSubtitle}>{filteredProducts.length} videos</ThemedText>
             </View>
 
             {/* Filter Button */}
@@ -127,12 +116,7 @@ function ProductsVideosPage() {
       {/* Search Bar with Glassmorphism */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color={Colors.brand.purple}
-            style={styles.searchIcon}
-          />
+          <Ionicons name="search-outline" size={20} color={Colors.brand.purple} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search products..."
@@ -141,10 +125,7 @@ function ProductsVideosPage() {
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
-            <Pressable
-              onPress={() => setSearchQuery('')}
-              style={styles.clearButton}
-            >
+            <Pressable onPress={() => setSearchQuery('')} style={styles.clearButton}>
               <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
@@ -161,23 +142,16 @@ function ProductsVideosPage() {
         {categories.map((category) => (
           <Pressable
             key={category.id}
-            style={[
-              styles.categoryPill,
-              selectedCategory === category.id && styles.categoryPillActive,
-            ]}
+            style={[styles.categoryPill, selectedCategory === category.id && styles.categoryPillActive]}
             onPress={() => setSelectedCategory(category.id)}
-           
           >
             <Ionicons
-              name={category.icon as any}
+              name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
               size={18}
               color={selectedCategory === category.id ? colors.background.primary : colors.brand.purpleLight}
             />
             <ThemedText
-              style={[
-                styles.categoryPillText,
-                selectedCategory === category.id && styles.categoryPillTextActive,
-              ]}
+              style={[styles.categoryPillText, selectedCategory === category.id && styles.categoryPillTextActive]}
             >
               {category.label}
             </ThemedText>
@@ -190,7 +164,7 @@ function ProductsVideosPage() {
         data={filteredProducts}
         renderItem={renderVideoCard}
         keyExtractor={(item) => item.id}
-          estimatedItemSize={250}
+        estimatedItemSize={250}
         numColumns={2}
         contentContainerStyle={styles.gridContent}
         showsVerticalScrollIndicator={false}
@@ -202,9 +176,7 @@ function ProductsVideosPage() {
             >
               <Ionicons name="videocam-off-outline" size={64} color="#C084FC" />
               <ThemedText style={styles.emptyTitle}>No Products Found</ThemedText>
-              <ThemedText style={styles.emptySubtitle}>
-                Try adjusting your search or filters
-              </ThemedText>
+              <ThemedText style={styles.emptySubtitle}>Try adjusting your search or filters</ThemedText>
             </LinearGradient>
           </View>
         )}

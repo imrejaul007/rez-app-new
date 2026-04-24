@@ -1,6 +1,15 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -52,7 +61,7 @@ function DisputeListScreen() {
       try {
         const response = await disputeApi.getMyDisputes(pageNum, 20);
         if (response.success && response.data) {
-          const data = response.data as any;
+          const data = response.data as unknown as Record<string, unknown>;
           const items = data.disputes || [];
           const pagination = data.pagination;
 
@@ -162,7 +171,10 @@ function DisputeListScreen() {
           </View>
         }
         contentContainerStyle={
-          [disputes.length === 0 && { flex: 1, justifyContent: 'center' }, { paddingBottom: 120 }] as any
+          [
+            disputes.length === 0 && { flex: 1, justifyContent: 'center' },
+            { paddingBottom: 120 },
+          ] as unknown as StyleProp<ViewStyle>
         }
       />
     </View>

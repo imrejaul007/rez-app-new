@@ -243,7 +243,11 @@ export default function ConfirmationScreen() {
         {/* Status card */}
         <Animated.View entering={ZoomIn.springify()} style={[styles.statusCard, { backgroundColor: statusConf.bg }]}>
           <View style={[styles.statusIconBox, { backgroundColor: statusConf.color + '22' }]}>
-            <Ionicons name={statusConf.icon as any} size={36} color={statusConf.color} />
+            <Ionicons
+              name={statusConf.icon as unknown as keyof typeof Ionicons.glyphMap}
+              size={36}
+              color={statusConf.color}
+            />
           </View>
           <Text style={[styles.statusLabel, { color: statusConf.color }]}>{statusConf.label}</Text>
           <Text style={styles.statusMsg}>{statusConf.msg}</Text>
@@ -269,7 +273,14 @@ export default function ConfirmationScreen() {
         <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.card}>
           <Text style={styles.sectionTitle}>Your Order</Text>
           {order.items.map((item, idx) => (
-            <View key={(item as any).id || (item as any)._id || `${item.name}-${idx}`} style={styles.itemRow}>
+            <View
+              key={
+                (item as unknown as Record<string, unknown>).id ||
+                (item as unknown as Record<string, unknown>)._id ||
+                `${item.name}-${idx}`
+              }
+              style={styles.itemRow}
+            >
               <View style={styles.itemQty}>
                 <Text style={styles.itemQtyText}>{item.quantity}×</Text>
               </View>

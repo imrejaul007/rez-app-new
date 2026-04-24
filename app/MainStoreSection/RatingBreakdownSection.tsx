@@ -1,23 +1,12 @@
 // RatingBreakdownSection.tsx - Magicpin-inspired rating breakdown with progress bars
-import React, { memo } from "react";
-import {
-  View,
-  StyleSheet,
-  Pressable,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { triggerImpact } from "@/utils/haptics";
+import React, { memo } from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { triggerImpact } from '@/utils/haptics';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  Gradients,
-} from "@/constants/DesignSystem";
+import { Colors, Spacing, Shadows, BorderRadius, Typography, Gradients } from '@/constants/DesignSystem';
 
 export interface RatingCategory {
   label: string;
@@ -41,11 +30,7 @@ const getScoreColor = (score: number): string => {
 };
 
 // Rating Category Row Component
-const RatingCategoryRow = memo(function RatingCategoryRow({
-  category,
-}: {
-  category: RatingCategory;
-}) {
+const RatingCategoryRow = memo(function RatingCategoryRow({ category }: { category: RatingCategory }) {
   const barColor = getScoreColor(category.score);
 
   return (
@@ -54,7 +39,7 @@ const RatingCategoryRow = memo(function RatingCategoryRow({
       <View style={styles.categoryLabelContainer}>
         {category.icon && (
           <Ionicons
-            name={category.icon as any}
+            name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
             size={14}
             color={Colors.gray[500]}
             style={styles.categoryIcon}
@@ -79,9 +64,7 @@ const RatingCategoryRow = memo(function RatingCategoryRow({
 
       {/* Score Percentage */}
       <View style={styles.scoreContainer}>
-        <ThemedText style={[styles.scoreText, { color: barColor }]}>
-          {category.score}%
-        </ThemedText>
+        <ThemedText style={[styles.scoreText, { color: barColor }]}>{category.score}%</ThemedText>
       </View>
     </View>
   );
@@ -99,7 +82,7 @@ export default memo(function RatingBreakdownSection({
   }
 
   const handleSeeAllPress = () => {
-    triggerImpact("Light");
+    triggerImpact('Light');
     if (onSeeAllReviews) {
       onSeeAllReviews();
     }
@@ -112,13 +95,8 @@ export default memo(function RatingBreakdownSection({
         <View style={styles.headerLeft}>
           {/* Big Rating Display */}
           <View style={styles.ratingCircle}>
-            <LinearGradient
-              colors={Gradients.primary}
-              style={styles.ratingCircleGradient}
-            >
-              <ThemedText style={styles.ratingNumber}>
-                {averageRating.toFixed(1)}
-              </ThemedText>
+            <LinearGradient colors={Gradients.primary} style={styles.ratingCircleGradient}>
+              <ThemedText style={styles.ratingNumber}>{averageRating.toFixed(1)}</ThemedText>
               <View style={styles.starContainer}>
                 <Ionicons name="star" size={12} color={colors.background.primary} />
               </View>
@@ -128,19 +106,13 @@ export default memo(function RatingBreakdownSection({
           {/* Rating Info */}
           <View style={styles.ratingInfo}>
             <ThemedText style={styles.ratingTitle}>Overall Rating</ThemedText>
-            <ThemedText style={styles.ratingSubtitle}>
-              Based on {totalReviews.toLocaleString()} reviews
-            </ThemedText>
+            <ThemedText style={styles.ratingSubtitle}>Based on {totalReviews.toLocaleString()} reviews</ThemedText>
           </View>
         </View>
 
         {/* See All Button */}
         {onSeeAllReviews && (
-          <Pressable
-            style={styles.seeAllButton}
-            onPress={handleSeeAllPress}
-           
-          >
+          <Pressable style={styles.seeAllButton} onPress={handleSeeAllPress}>
             <ThemedText style={styles.seeAllText}>See All</ThemedText>
             <Ionicons name="chevron-forward" size={14} color={Colors.primary[700]} />
           </Pressable>
@@ -159,9 +131,7 @@ export default memo(function RatingBreakdownSection({
       {/* Bottom Hint */}
       <View style={styles.hintContainer}>
         <Ionicons name="information-circle-outline" size={14} color={Colors.gray[400]} />
-        <ThemedText style={styles.hintText}>
-          Ratings are based on customer feedback in the last 6 months
-        </ThemedText>
+        <ThemedText style={styles.hintText}>Ratings are based on customer feedback in the last 6 months</ThemedText>
       </View>
     </View>
   );
@@ -175,36 +145,36 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: Spacing.lg,
   },
   headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.md,
   },
   ratingCircle: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    overflow: "hidden",
+    overflow: 'hidden',
     ...Shadows.purpleMedium,
   },
   ratingCircleGradient: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
   },
   ratingNumber: {
     fontSize: 22,
-    fontWeight: "800",
+    fontWeight: '800',
     color: colors.background.primary,
   },
   starContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 6,
     right: 6,
   },
@@ -221,8 +191,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   seeAllButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 2,
   },
   seeAllText: {
@@ -235,13 +205,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   categoryRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   categoryLabelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     width: 110,
     gap: Spacing.xs,
   },
@@ -261,25 +231,25 @@ const styles = StyleSheet.create({
     height: 8,
     backgroundColor: Colors.gray[100],
     borderRadius: 4,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   progressBarFill: {
-    height: "100%",
+    height: '100%',
     borderRadius: 4,
   },
   scoreContainer: {
     width: 44,
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
   },
   scoreText: {
     ...Typography.label,
-    fontWeight: "700",
+    fontWeight: '700',
   },
 
   // Hint
   hintContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
     marginTop: Spacing.lg,
     paddingTop: Spacing.md,

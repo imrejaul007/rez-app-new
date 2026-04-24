@@ -50,7 +50,7 @@ const QRCodePage = () => {
   };
 
   const handleScan = () => {
-    router.push('/wallet-screen' as any);
+    router.push('/wallet-screen' as unknown as string);
   };
 
   return (

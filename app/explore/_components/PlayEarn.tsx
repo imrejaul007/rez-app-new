@@ -100,32 +100,34 @@ const PlayEarn = () => {
 
         // If API returns activities, use them
         if (
-          (data as any).activities &&
-          Array.isArray((data as any).activities) &&
-          (data as any).activities.length > 0
+          (data as unknown as Record<string, unknown>).activities &&
+          Array.isArray((data as unknown as Record<string, unknown>).activities) &&
+          (data as unknown as Record<string, unknown>).activities.length > 0
         ) {
-          const transformedActivities = (data as any).activities.map((activity: any) => ({
-            id: activity.id || activity._id,
-            title: activity.title || activity.name,
-            description: activity.description,
-            icon: activity.icon || 'gift',
-            reward: activity.reward || activity.rewardText || '10 coins',
-            color: activity.color || Colors.info,
-            gradient: activity.gradient || [activity.color || Colors.info, activity.color || Colors.info],
-            path: activity.path || '/playandearn',
-            streak: activity.streak,
-            spinsLeft: activity.spinsLeft || activity.spinsRemaining,
-            available: activity.available ?? activity.isAvailable,
-            pending: activity.pending || activity.pendingCount,
-          }));
+          const transformedActivities = (data as unknown as Record<string, unknown>).activities.map(
+            (activity: any) => ({
+              id: activity.id || activity._id,
+              title: activity.title || activity.name,
+              description: activity.description,
+              icon: activity.icon || 'gift',
+              reward: activity.reward || activity.rewardText || '10 coins',
+              color: activity.color || Colors.info,
+              gradient: activity.gradient || [activity.color || Colors.info, activity.color || Colors.info],
+              path: activity.path || '/playandearn',
+              streak: activity.streak,
+              spinsLeft: activity.spinsLeft || activity.spinsRemaining,
+              available: activity.available ?? activity.isAvailable,
+              pending: activity.pending || activity.pendingCount,
+            }),
+          );
           if (!isMounted()) return;
           setDynamicActivities(transformedActivities);
         }
 
         // Extract stats if included
-        if ((data as any).stats) {
+        if ((data as unknown as Record<string, unknown>).stats) {
           if (!isMounted()) return;
-          setStats((data as any).stats);
+          setStats((data as unknown as Record<string, unknown>).stats);
         }
       }
 
@@ -144,7 +146,7 @@ const PlayEarn = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as any);
+    router.push(path as unknown as string);
   };
 
   // Build activities with dynamic data overlay from stats
@@ -232,7 +234,11 @@ const PlayEarn = () => {
               >
                 {/* Icon */}
                 <View style={styles.iconContainer}>
-                  <Ionicons name={activity.icon as any} size={28} color={colors.text.inverse} />
+                  <Ionicons
+                    name={activity.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    size={28}
+                    color={colors.text.inverse}
+                  />
                 </View>
 
                 {/* Content */}

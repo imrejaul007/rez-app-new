@@ -250,7 +250,7 @@ const FitnessBookingPage: React.FC = () => {
         apiClient.get(`/fitness/stores/${storeId}/classes`).catch(() => null),
       ]);
 
-      const storeData = (storeRes.data as any)?.store || storeRes.data;
+      const storeData = (storeRes.data as unknown as Record<string, unknown>)?.store || storeRes.data;
       if (!isMounted()) return;
       setStore(storeData);
 
@@ -339,7 +339,7 @@ const FitnessBookingPage: React.FC = () => {
   const getTrainerPrice = () => {
     // M-13 FIX: Use API-driven pricing from store/trainer data when available;
     // fall back to sensible defaults only when the API returns no pricing.
-    const apiPrices = (store as any)?.trainerPricing;
+    const apiPrices = (store as unknown as Record<string, unknown>)?.trainerPricing;
     if (apiPrices) {
       switch (sessionType) {
         case 'single':
@@ -367,7 +367,7 @@ const FitnessBookingPage: React.FC = () => {
 
   // M-13 FIX: Use API-driven day-pass price when available; fallback to 499 default
   const getDayPassPrice = () => {
-    const apiDayPassPrice = (store as any)?.dayPassPrice ?? 499;
+    const apiDayPassPrice = (store as unknown as Record<string, unknown>)?.dayPassPrice ?? 499;
     return apiDayPassPrice * dayPassCount;
   };
 
@@ -530,7 +530,7 @@ const FitnessBookingPage: React.FC = () => {
             accessibilityState={{ selected: activeTab === tab.id }}
           >
             <Ionicons
-              name={tab.icon as any}
+              name={tab.icon as unknown as keyof typeof Ionicons.glyphMap}
               size={18}
               color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
             />

@@ -135,7 +135,7 @@ const AllReviewsPage = () => {
 
   const navigateToStore = (storeId?: string) => {
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as any);
+      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
     }
   };
 

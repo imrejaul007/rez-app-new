@@ -62,14 +62,14 @@ function BenefitsPage() {
         title: 'Personal Shopper',
         description: 'Dedicated assistant for your shopping needs',
         tip: 'Book appointments via the profile section',
-        color: colors.brand.pink as any,
+        color: colors.brand.pink as unknown as string,
       },
       {
         icon: 'calendar',
         title: 'Premium Events',
         description: 'Exclusive access to VIP shopping events',
         tip: 'Get early access to sales and product launches',
-        color: (colors.brand as any).indigo || '#8B5CF6',
+        color: (colors.brand as unknown as Record<string, string>).indigo || '#8B5CF6',
       },
     );
   }
@@ -98,7 +98,7 @@ function BenefitsPage() {
       <StatusBar barStyle="light-content" backgroundColor={tierColor} />
 
       {/* Header */}
-      <LinearGradient colors={tierGradient as any} style={styles.header}>
+      <LinearGradient colors={tierGradient as unknown as string[]} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -118,7 +118,7 @@ function BenefitsPage() {
       >
         {/* Current Tier Badge */}
         <View style={styles.tierBadgeContainer}>
-          <LinearGradient colors={tierGradient as any} style={styles.tierBadge}>
+          <LinearGradient colors={tierGradient as unknown as string[]} style={styles.tierBadge}>
             <Ionicons
               name={currentTier === 'vip' ? 'diamond' : currentTier === 'premium' ? 'star' : 'person-outline'}
               size={32}
@@ -148,7 +148,11 @@ function BenefitsPage() {
           {benefits.map((benefit, index) => (
             <View key={index} style={styles.benefitCard}>
               <View style={[styles.benefitIconContainer, { backgroundColor: `${benefit.color}20` }]}>
-                <Ionicons name={benefit.icon as any} size={28} color={benefit.color} />
+                <Ionicons
+                  name={benefit.icon as unknown as keyof typeof Ionicons.glyphMap}
+                  size={28}
+                  color={benefit.color}
+                />
               </View>
               <View style={styles.benefitContent}>
                 <ThemedText style={styles.benefitTitle}>{benefit.title}</ThemedText>

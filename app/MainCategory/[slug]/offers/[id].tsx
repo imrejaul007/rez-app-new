@@ -250,7 +250,7 @@ function OffersDetailPage() {
                   style={styles.storeCard}
                   onPress={() => {
                     if (storeId) {
-                      router.push(`/MainStorePage?storeId=${storeId}` as any);
+                      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
                     }
                   }}
                   disabled={!storeId}
@@ -270,7 +270,9 @@ function OffersDetailPage() {
         {applicableStores.length === 0 && offer.store?.name && (
           <Pressable
             style={styles.singleStoreCard}
-            onPress={() => router.push(`/MainStorePage?storeId=${offer.store?.id || offer.store?._id}` as any)}
+            onPress={() =>
+              router.push(`/MainStorePage?storeId=${offer.store?.id || offer.store?._id}` as unknown as string)
+            }
           >
             <Ionicons name="laptop-outline" size={24} color={theme.primaryColor} />
             <View style={{ flex: 1 }}>
@@ -393,7 +395,7 @@ const styles = StyleSheet.create({
   descriptionText: { ...Typography.body, color: colors.text.tertiary, lineHeight: 20, marginBottom: Spacing.base },
   detailsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   detailItem: {
-    width: '47%' as any,
+    width: '47%' as unknown as string | number,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.infoScale[50],

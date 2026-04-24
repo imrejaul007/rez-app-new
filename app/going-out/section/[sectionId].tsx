@@ -92,7 +92,7 @@ function GoingOutSectionPage() {
 
   const handleProductPress = useCallback(
     (item: SectionProduct) => {
-      router.push(`/product-page?cardId=${item._id}` as any);
+      router.push(`/product-page?cardId=${item._id}` as unknown as string);
     },
     [router],
   );
@@ -140,7 +140,7 @@ function GoingOutSectionPage() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <Pressable onPress={() => goBack('/going-out' as any)} style={styles.backButton}>
+        <Pressable onPress={() => goBack('/going-out' as unknown as string)} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>

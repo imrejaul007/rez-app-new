@@ -287,7 +287,7 @@ function ArticleDetailScreen() {
   const handleAddToCart = useCallback(
     async (product: DiscoverProduct) => {
       try {
-        await addItem({ productId: product._id, quantity: 1 } as any);
+        await addItem({ productId: product._id, quantity: 1 } as unknown as Record<string, unknown>);
       } catch (error: any) {
         // silently handle
       }

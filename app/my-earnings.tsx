@@ -119,7 +119,7 @@ const MyEarningsPage = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<EarningsPeriod>('all');
 
   const handleBackPress = useCallback(() => {
-    goBack('/profile' as any);
+    goBack('/profile' as unknown as string);
   }, [goBack]);
 
   const fetchEarnings = useCallback(
@@ -194,7 +194,7 @@ const MyEarningsPage = () => {
       source: 'my_earnings',
       available_balance: data?.availableBalance,
     });
-    router.push('/wallet-screen' as any);
+    router.push('/wallet-screen' as unknown as string);
   };
 
   const handleExportReport = async () => {
@@ -354,7 +354,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             >
               <Ionicons name="download-outline" size={22} color={colors.text.inverse} />
             </Pressable>
-            <Pressable style={styles.headerIconButton} onPress={() => router.push('/earnings-history' as any)}>
+            <Pressable
+              style={styles.headerIconButton}
+              onPress={() => router.push('/earnings-history' as unknown as string)}
+            >
               <Ionicons name="time-outline" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>
@@ -443,7 +446,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <Text style={styles.zeroStateDescription}>
               Complete projects, refer friends, share on social media, play games, and shop to earn coins.
             </Text>
-            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as any)}>
+            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as unknown as string)}>
               <Text style={styles.zeroStateCtaText}>Explore Earning Opportunities</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.brand.pink} />
             </Pressable>
@@ -468,7 +471,11 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
                   return (
                     <View key={cat.key} style={styles.breakdownCard}>
                       <View style={[styles.breakdownIcon, { backgroundColor: cat.bgColor }]}>
-                        <Ionicons name={cat.icon as any} size={24} color={cat.color} />
+                        <Ionicons
+                          name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
+                          size={24}
+                          color={cat.color}
+                        />
                       </View>
                       <Text style={styles.breakdownLabel}>{cat.label}</Text>
                       <Text style={styles.breakdownValue}>
@@ -501,7 +508,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Recent Earnings</Text>
-                <Pressable onPress={() => router.push('/earnings-history' as any)}>
+                <Pressable onPress={() => router.push('/earnings-history' as unknown as string)}>
                   <Text style={styles.viewAllText}>View All</Text>
                 </Pressable>
               </View>
@@ -524,7 +531,11 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
                       accessibilityRole="text"
                     >
                       <View style={[styles.transactionIcon, { backgroundColor: `${display.color}20` }]}>
-                        <Ionicons name={display.icon as any} size={20} color={display.color} />
+                        <Ionicons
+                          name={display.icon as unknown as keyof typeof Ionicons.glyphMap}
+                          size={20}
+                          color={display.color}
+                        />
                       </View>
                       <View style={styles.transactionInfo}>
                         <Text style={styles.transactionDescription} numberOfLines={1}>

@@ -107,13 +107,16 @@ const mapOrderToTracking = (order: Order): TrackingOrder => {
   const deliveryAddress = addr
     ? order.delivery?.address
       ? `${addr.addressLine1}, ${addr.city}, ${addr.state} ${addr.pincode}`
-      : `${(addr as any).address1}, ${addr.city}, ${addr.state} ${(addr as any).zipCode}`
+      : `${(addr as unknown as Record<string, string | number>).address1}, ${addr.city}, ${addr.state} ${(addr as unknown as Record<string, string | number>).zipCode}`
     : 'Address not available';
 
   // Get store info - use top-level store field first, then fallback to item's store
-  const storeData = order.store || (order.items?.[0] as any)?.store;
-  const storeName = (storeData as any)?.name || (order.items?.[0] as any)?.storeName || 'Store';
-  const storeLogo = (storeData as any)?.logo || undefined;
+  const storeData = order.store || (order.items?.[0] as unknown as Record<string, unknown>)?.store;
+  const storeName =
+    (storeData as unknown as Record<string, unknown>)?.name ||
+    (order.items?.[0] as unknown as Record<string, unknown>)?.storeName ||
+    'Store';
+  const storeLogo = (storeData as unknown as Record<string, unknown>)?.logo || undefined;
 
   // Calculate total if it's 0 (fallback calculation)
   let totalAmount = order.totals?.total || order.summary?.total || 0;
@@ -134,8 +137,8 @@ const mapOrderToTracking = (order: Order): TrackingOrder => {
     totalAmount,
     status: trackingStatus,
     statusColor: colorMap[trackingStatus],
-    estimatedDelivery: (order as any).calculatedETA
-      ? formatETA((order as any).calculatedETA)
+    estimatedDelivery: (order as unknown as Record<string, unknown>).calculatedETA
+      ? formatETA((order as unknown as Record<string, unknown>).calculatedETA)
       : order.tracking?.estimatedDelivery || 'Calculating...',
     trackingSteps: steps,
     items,
@@ -143,7 +146,7 @@ const mapOrderToTracking = (order: Order): TrackingOrder => {
     deliveryPersonName: order.tracking?.carrier,
     deliveryPersonPhone: order.tracking?.number,
     progress: dynamicProgress,
-    fulfillmentType: (order as any).fulfillmentType || 'delivery',
+    fulfillmentType: (order as unknown as Record<string, unknown>).fulfillmentType || 'delivery',
   };
 };
 
@@ -368,7 +371,11 @@ function OrderTrackingScreen() {
           <View style={styles.statusHeaderContent}>
             <View style={styles.statusLeft}>
               <View style={[styles.modernStatusIcon, { backgroundColor: order.statusColor + '20' }]}>
-                <Ionicons name={getStatusIcon(order.status) as any} size={18} color={order.statusColor} />
+                <Ionicons
+                  name={getStatusIcon(order.status) as unknown as keyof typeof Ionicons.glyphMap}
+                  size={18}
+                  color={order.statusColor}
+                />
               </View>
               <View style={styles.statusLeftText}>
                 <ThemedText style={styles.orderNumberLarge} numberOfLines={1} ellipsizeMode="middle">
@@ -499,7 +506,7 @@ function OrderTrackingScreen() {
         <View style={styles.actionButtons}>
           <Pressable
             style={styles.secondaryButton}
-            onPress={() => router.push(`/orders/${order.id}` as any)}
+            onPress={() => router.push(`/orders/${order.id}` as unknown as string)}
             accessibilityLabel={`View details for order ${order.orderNumber}`}
             accessibilityRole="button"
             accessibilityHint="Double tap to view full order details"
@@ -514,13 +521,13 @@ function OrderTrackingScreen() {
               onPress={() => {
                 const ft = order.fulfillmentType;
                 if (ft === 'pickup') {
-                  router.push(`/pickup-tracking?orderId=${order.id}` as any);
+                  router.push(`/pickup-tracking?orderId=${order.id}` as unknown as string);
                 } else if (ft === 'drive_thru') {
-                  router.push(`/drivethru-tracking?orderId=${order.id}` as any);
+                  router.push(`/drivethru-tracking?orderId=${order.id}` as unknown as string);
                 } else if (ft === 'dine_in') {
-                  router.push(`/dinein-tracking?orderId=${order.id}` as any);
+                  router.push(`/dinein-tracking?orderId=${order.id}` as unknown as string);
                 } else {
-                  router.push(`/orders/${order.id}/tracking` as any);
+                  router.push(`/orders/${order.id}/tracking` as unknown as string);
                 }
               }}
               accessibilityLabel={`Track order ${order.orderNumber}`}
@@ -535,7 +542,7 @@ function OrderTrackingScreen() {
           {order.status === 'DELIVERED' && (
             <Pressable
               style={styles.shareButton}
-              onPress={() => router.push(`/social-media?orderId=${order.id}` as any)}
+              onPress={() => router.push(`/social-media?orderId=${order.id}` as unknown as string)}
               accessibilityLabel={`Share order ${order.orderNumber} on social media and earn 5 percent cashback`}
               accessibilityRole="button"
               accessibilityHint="Double tap to share and earn rewards"
@@ -632,7 +639,7 @@ function OrderTrackingScreen() {
           data={orders}
           renderItem={renderModernOrderCard}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }] as any}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }] as unknown as StyleProp<ViewStyle>}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -723,7 +730,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
-    ...Platform.select({ web: { backdropFilter: 'blur(20px)' } as any, default: {} }),
+    ...Platform.select({
+      web: { backdropFilter: 'blur(20px)' } as unknown as Record<string, unknown>,
+      default: {},
+    } as unknown as Record<string, unknown>),
   },
   headerCenter: {
     flex: 1,

@@ -335,7 +335,7 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
   return (
     <Pressable
       style={styles.storeCard}
-      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}
+      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown as string)}
     >
       <View style={styles.storeImageContainer}>
         {imageUri && !imageError ? (
@@ -660,7 +660,7 @@ function SharedCategoryPage() {
             <Text style={styles.headerSubtitle}>{filteredStores.length} stores</Text>
           </View>
         </View>
-        <Pressable onPress={() => router.push(`/MainCategory/${slug}/search` as any)}>
+        <Pressable onPress={() => router.push(`/MainCategory/${slug}/search` as unknown as string)}>
           <Ionicons name="search-outline" size={22} color={SHARED_COLORS.textPrimary} />
         </Pressable>
       </View>
@@ -675,7 +675,7 @@ function SharedCategoryPage() {
               onPress={() => setActiveSort(sort.id)}
             >
               <Ionicons
-                name={sort.icon as any}
+                name={sort.icon as unknown as keyof typeof Ionicons.glyphMap}
                 size={14}
                 color={activeSort === sort.id ? SHARED_COLORS.white : SHARED_COLORS.textSecondary}
               />

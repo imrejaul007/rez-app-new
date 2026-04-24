@@ -103,6 +103,6 @@ function TypedFlashListInner<T>(props: TypedFlashListProps<T>) {
 
 export const TypedFlashList = memo(TypedFlashListInner) as <T>(
   props: TypedFlashListProps<T>
-) => JSX.Element;
+) => React.JSX.Element;
 
 export default TypedFlashList;

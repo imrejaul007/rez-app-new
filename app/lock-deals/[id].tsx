@@ -89,7 +89,7 @@ const LockDealDetailPage: React.FC = () => {
           if (response?.data) {
             // Navigate to the universal Razorpay payment hub
             router.push({
-              pathname: '/payment-razorpay' as any,
+              pathname: '/payment-razorpay' as unknown as string,
               params: {
                 bookingType: 'lock_deal',
                 // Pre-created Razorpay order (no need for hub to call API again)
@@ -118,7 +118,7 @@ const LockDealDetailPage: React.FC = () => {
 
   const handleViewMyLock = () => {
     if (userLock) {
-      router.push(`/lock-deals/my-locks` as any);
+      router.push(`/lock-deals/my-locks` as unknown as string);
     }
   };
 

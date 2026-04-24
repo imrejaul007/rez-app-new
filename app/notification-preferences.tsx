@@ -138,7 +138,11 @@ function NotificationPreferencesScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
+        contentContainerStyle={
+          [styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as unknown as import('react-native').StyleProp<
+            import('react-native').ViewStyle
+          >
+        }
       >
         <Text style={styles.sectionDesc}>Choose which notifications you receive from REZ.</Text>
 

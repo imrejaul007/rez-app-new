@@ -531,7 +531,7 @@ function PriveWalletScreen() {
                   styles.actionButtonGold,
                   redeemDisabled ? styles.actionButtonDisabled : null,
                 ]}
-                onPress={() => router.push('/prive/redeem' as any)}
+                onPress={() => router.push('/prive/redeem' as unknown as string)}
                 disabled={redeemDisabled}
               >
                 <View style={styles.actionIcon}>
@@ -543,7 +543,7 @@ function PriveWalletScreen() {
               </Pressable>
               <Pressable
                 style={[styles.actionButton, styles.actionButtonGold]}
-                onPress={() => router.push('/prive/earnings' as any)}
+                onPress={() => router.push('/prive/earnings' as unknown as string)}
               >
                 <View style={styles.actionIcon}>
                   <Text style={styles.actionEmoji}>📈</Text>
@@ -552,7 +552,7 @@ function PriveWalletScreen() {
               </Pressable>
               <Pressable
                 style={[styles.actionButton, styles.actionButtonGold]}
-                onPress={() => router.push('/prive/vouchers' as any)}
+                onPress={() => router.push('/prive/vouchers' as unknown as string)}
               >
                 <View style={styles.actionIcon}>
                   <Text style={styles.actionEmoji}>🎟️</Text>
@@ -561,7 +561,7 @@ function PriveWalletScreen() {
               </Pressable>
               <Pressable
                 style={[styles.actionButton, styles.actionButtonGold]}
-                onPress={() => router.push('/prive/smart-spend' as any)}
+                onPress={() => router.push('/prive/smart-spend' as unknown as string)}
               >
                 <View style={styles.actionIcon}>
                   <Text style={styles.actionEmoji}>💎</Text>

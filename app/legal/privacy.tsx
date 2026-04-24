@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Privacy policy with section navigation
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl } from 'react-native';
 import { SectionListSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +15,8 @@ import { colors } from '@/constants/theme';
 
 const PRIVACY_CONTENT = {
   lastUpdated: '2024-12-01',
-  summary: 'We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information.',
+  summary:
+    'We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information.',
   sections: [
     {
       title: 'Information We Collect',
@@ -116,7 +109,7 @@ You can manage cookie preferences in your device settings.`,
 You can request deletion by contacting support.`,
     },
     {
-      title: 'Children\'s Privacy',
+      title: "Children's Privacy",
       icon: 'people-outline',
       content: `Our app is not intended for children under 18. We do not knowingly collect data from children. If you believe we have collected data from a child, please contact us immediately.`,
     },
@@ -160,7 +153,10 @@ function PrivacyPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
         <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Privacy Policy</ThemedText>
@@ -179,14 +175,11 @@ function PrivacyPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessible={true}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -202,24 +195,18 @@ function PrivacyPage() {
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {/* Last Updated */}
         <View style={styles.updateBadge}>
           <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-          <ThemedText style={styles.updateText}>
-            Last updated: {PRIVACY_CONTENT.lastUpdated}
-          </ThemedText>
+          <ThemedText style={styles.updateText}>Last updated: {PRIVACY_CONTENT.lastUpdated}</ThemedText>
         </View>
 
         {/* Summary Card */}
         <View style={styles.summaryCard}>
           <Ionicons name="shield-checkmark" size={32} color={Colors.primary[600]} />
-          <ThemedText style={styles.summaryText}>
-            {PRIVACY_CONTENT.summary}
-          </ThemedText>
+          <ThemedText style={styles.summaryText}>{PRIVACY_CONTENT.summary}</ThemedText>
         </View>
 
         {/* Sections */}
@@ -236,7 +223,7 @@ function PrivacyPage() {
               <View style={styles.sectionTitleContainer}>
                 <View style={styles.iconContainer}>
                   <Ionicons
-                    name={section.icon as any}
+                    name={section.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={24}
                     color={Colors.primary[600]}
                   />

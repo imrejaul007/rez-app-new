@@ -37,7 +37,7 @@ export default function StampCardScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { slug } = useLocalSearchParams<any>();
-  const theme = getCategoryTheme(slug || 'food') as any;
+  const theme = getCategoryTheme(slug || 'food') as unknown as Record<string, unknown>;
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -49,7 +49,7 @@ export default function StampCardScreen() {
     if (!slug) return;
     try {
       setLoading(true);
-      const response = await (userLoyaltyApi as any).getStampCard(slug);
+      const response = await (userLoyaltyApi as unknown as Record<string, unknown>).getStampCard(slug);
       if (response.success && response.data?.stampCard) {
         if (!isMounted()) return;
         setStampCard(response.data.stampCard);
@@ -79,7 +79,7 @@ export default function StampCardScreen() {
     if (!stampCard?.isRewardReady) return;
 
     try {
-      const response = await (userLoyaltyApi as any).claimStampReward(stampCard.storeId);
+      const response = await (userLoyaltyApi as unknown as Record<string, unknown>).claimStampReward(stampCard.storeId);
       if (response.success) {
         platformAlertSimple(
           'Reward Claimed!',

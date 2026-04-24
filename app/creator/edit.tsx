@@ -336,7 +336,7 @@ function CreatorEditProfilePage() {
                             ? 'logo-twitter'
                             : link.platform === 'tiktok'
                               ? 'musical-notes'
-                              : ('globe-outline' as any)
+                              : ('globe-outline' as unknown as string)
                     }
                     size={16}
                     color={colors.text.tertiary}

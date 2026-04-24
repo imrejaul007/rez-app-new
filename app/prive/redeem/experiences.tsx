@@ -264,7 +264,7 @@ function ExperiencesScreen() {
                 style={styles.viewVouchersButton}
                 onPress={() => {
                   setShowVoucherModal(false);
-                  router.push('/prive/vouchers' as any);
+                  router.push('/prive/vouchers' as unknown as string);
                 }}
               >
                 <Text style={styles.viewVouchersText}>View All Vouchers</Text>

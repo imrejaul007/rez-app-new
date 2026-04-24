@@ -59,7 +59,7 @@ function ReviewPage() {
         .getStoreById(storeId)
         .then((res) => {
           if (mountedRef.current && res.success && res.data) {
-            const store = res.data as any;
+            const store = res.data as unknown as Record<string, unknown>;
             setStoreName(store.name || 'Store');
             setStoreLogo(store.logo || '');
           }
@@ -293,7 +293,7 @@ function ReviewPage() {
                     color: colors.text.secondary,
                     lineHeight: 20,
                     outlineStyle: 'none', // Web only
-                  } as any
+                  } as unknown as Record<string, unknown>
                 }
                 placeholder="Write your experience here..."
                 placeholderTextColor={colors.neutral[400]}

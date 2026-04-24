@@ -118,7 +118,7 @@ function HotspotsPage() {
           lng: String(hotspot.coordinates?.lng || ''),
           city: hotspot.city || '',
         },
-      } as any);
+      } as unknown as string);
     },
     [router],
   );
@@ -135,7 +135,7 @@ function HotspotsPage() {
   }, []);
 
   const locationText = currentLocation?.coordinates
-    ? (currentLocation as any).city || 'Your Location'
+    ? (currentLocation as unknown as Record<string, unknown>).city || 'Your Location'
     : 'Location unavailable';
 
   const renderHotspot = useCallback(
@@ -299,8 +299,8 @@ function HotspotsPage() {
               }
               apiClient
                 .get('/offers/hotspots', params)
-                .then((r: any) => {
-                  setHotspots(Array.isArray(r.data) ? r.data : []);
+                .then((r: Record<string, unknown>) => {
+                  setHotspots(Array.isArray(r.data) ? (r.data as unknown as HotspotFromAPI[]) : []);
                 })
                 .catch(() => setError('Failed to load hotspots.'))
                 .finally(() => setLoading(false));

@@ -86,7 +86,7 @@ const StoresNearYou = () => {
   }, [currentLocation, isLocationLoading]);
 
   const navigateTo = (path: string) => {
-    router.push(path as any);
+    router.push(path as unknown as string);
   };
 
   // Retry function

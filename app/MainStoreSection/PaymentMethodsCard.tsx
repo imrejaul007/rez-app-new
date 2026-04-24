@@ -1,12 +1,9 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // PaymentMethodsCard.tsx - Shows accepted payment methods at store
-import React from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
@@ -75,13 +72,13 @@ function PaymentMethodsCard({
               <View style={[styles.iconCircle, { backgroundColor: `${method.color}15` }]}>
                 {method.iconType === 'material' ? (
                   <MaterialCommunityIcons
-                    name={method.icon as any}
+                    name={method.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={22}
                     color={method.color}
                   />
                 ) : (
                   <Ionicons
-                    name={method.icon as any}
+                    name={method.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={22}
                     color={method.color}
                   />
@@ -91,17 +88,14 @@ function PaymentMethodsCard({
                 <ThemedText style={styles.methodName}>{method.name}</ThemedText>
                 <View style={styles.statusRow}>
                   <Ionicons
-                    name={method.accepted ? "checkmark" : "close"}
+                    name={method.accepted ? 'checkmark' : 'close'}
                     size={14}
                     color={method.accepted ? colors.lightMustard : colors.error}
                   />
                   <ThemedText
-                    style={[
-                      styles.statusText,
-                      { color: method.accepted ? colors.lightMustard : colors.error }
-                    ]}
+                    style={[styles.statusText, { color: method.accepted ? colors.lightMustard : colors.error }]}
                   >
-                    {method.accepted ? "Accepted" : "Not accepted"}
+                    {method.accepted ? 'Accepted' : 'Not accepted'}
                   </ThemedText>
                 </View>
               </View>
@@ -112,9 +106,7 @@ function PaymentMethodsCard({
         {/* Info Note */}
         <View style={styles.infoNote}>
           <Ionicons name="information-circle" size={18} color={colors.nileBlue} />
-          <ThemedText style={styles.infoText}>
-            Coins are auto-applied for maximum savings
-          </ThemedText>
+          <ThemedText style={styles.infoText}>Coins are auto-applied for maximum savings</ThemedText>
         </View>
       </View>
     </View>
@@ -128,7 +120,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.nileBlue,
     marginBottom: 12,
   },
@@ -136,23 +128,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderRadius: 16,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.04)",
+    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
   grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
   },
   methodItem: {
-    width: "47%",
-    flexDirection: "row",
-    alignItems: "center",
+    width: '47%',
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
     paddingVertical: 8,
   },
@@ -160,30 +152,30 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   methodInfo: {
     flex: 1,
   },
   methodName: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.nileBlue,
     marginBottom: 2,
   },
   statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   infoNote: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     backgroundColor: colors.lavenderMist,
     padding: 12,

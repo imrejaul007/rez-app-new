@@ -30,7 +30,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-const C = Colors as any;
+const C: Record<string, unknown> = Colors;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 type TabType = 'upcoming' | 'past' | 'favorites';
@@ -86,13 +86,17 @@ function MyEventsPage() {
 
         if (tab === 'upcoming') {
           if (!isMounted()) return;
-          setUpcomingBookings((result as any)?.bookings ?? []);
+          setUpcomingBookings((result as unknown as Record<string, unknown>)?.bookings ?? []);
         } else if (tab === 'past') {
           if (!isMounted()) return;
-          setPastBookings((result as any)?.bookings ?? []);
+          setPastBookings((result as unknown as Record<string, unknown>)?.bookings ?? []);
         } else {
           if (!isMounted()) return;
-          setFavorites((result as any)?.events || (result as any)?.favorites || []);
+          setFavorites(
+            (result as unknown as Record<string, unknown>)?.events ||
+              (result as unknown as Record<string, unknown>)?.favorites ||
+              [],
+          );
         }
       } catch (error: any) {
         showAlert('Error', 'Failed to load events. Pull down to refresh.');
@@ -127,7 +131,7 @@ function MyEventsPage() {
   };
 
   const handleEventPress = (eventId: string) => {
-    router.push({ pathname: '/EventPage', params: { id: eventId } } as any);
+    router.push({ pathname: '/EventPage', params: { id: eventId } } as unknown as string);
   };
 
   const handleCheckIn = async (booking: EventBooking) => {
@@ -138,7 +142,7 @@ function MyEventsPage() {
     try {
       const result = await eventsApiService.checkInToEvent(eventId, booking._id, 'manual');
       if (result?.success) {
-        const coins = (result.data as any)?.reward?.coinsAwarded || 0;
+        const coins = (result.data as unknown as Record<string, unknown>)?.reward?.coinsAwarded || 0;
         showAlert(
           'Checked In!',
           coins > 0 ? `You've checked in successfully and earned +${coins} coins!` : `You've checked in successfully!`,
@@ -181,7 +185,11 @@ function MyEventsPage() {
           )}
           <View style={styles.bookingMeta}>
             <View style={[styles.statusBadge, { backgroundColor: statusConfig.bg }]}>
-              <Ionicons name={statusConfig.icon as any} size={12} color={statusConfig.color} />
+              <Ionicons
+                name={statusConfig.icon as unknown as keyof typeof Ionicons.glyphMap}
+                size={12}
+                color={statusConfig.color}
+              />
               <Text style={[styles.statusText, { color: statusConfig.color }]}>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Text>
@@ -254,7 +262,7 @@ function MyEventsPage() {
           <Ionicons name="lock-closed-outline" size={64} color={C.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Please login to view your events</Text>
-          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as unknown as string)}>
             <Text style={styles.loginButtonText}>Login</Text>
           </Pressable>
         </View>
@@ -290,10 +298,10 @@ function MyEventsPage() {
 
     return (
       <View style={styles.emptyState}>
-        <Ionicons name={icon as any} size={64} color={C.textSecondary} />
+        <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={64} color={C.textSecondary} />
         <Text style={styles.emptyTitle}>{title}</Text>
         <Text style={styles.emptySubtitle}>{subtitle}</Text>
-        <Pressable style={styles.exploreButton} onPress={() => router.push('/events' as any)}>
+        <Pressable style={styles.exploreButton} onPress={() => router.push('/events' as unknown as string)}>
           <Ionicons name="compass-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.exploreButtonText}>Explore Events</Text>
         </Pressable>
@@ -323,7 +331,7 @@ function MyEventsPage() {
             <Text style={styles.headerTitle}>My Events</Text>
             <Text style={styles.headerSubtitle}>Bookings & favorites</Text>
           </View>
-          <Pressable onPress={() => router.push('/events' as any)} style={styles.backButton}>
+          <Pressable onPress={() => router.push('/events' as unknown as string)} style={styles.backButton}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -337,7 +345,11 @@ function MyEventsPage() {
             style={[styles.tab, activeTab === tab.id ? styles.tabActive : null]}
             onPress={() => handleTabChange(tab.id)}
           >
-            <Ionicons name={tab.icon as any} size={18} color={activeTab === tab.id ? C.purple : C.textSecondary} />
+            <Ionicons
+              name={tab.icon as unknown as keyof typeof Ionicons.glyphMap}
+              size={18}
+              color={activeTab === tab.id ? C.purple : C.textSecondary}
+            />
             <Text style={[styles.tabText, activeTab === tab.id ? styles.tabTextActive : null]}>{tab.label}</Text>
           </Pressable>
         ))}

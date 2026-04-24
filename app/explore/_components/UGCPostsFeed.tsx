@@ -75,41 +75,49 @@ const UGCPostsFeed = () => {
       setIsLoading(true);
       setError(null);
       const response = await reelApi.getTrendingReels({ limit: 5 });
-      if (response.success && (response.data as any) && (response.data as any).length > 0) {
-        const transformed = (response.data as any).map((video: any, index: number) => ({
-          id: video.id || video._id,
-          // Use real storeId from backend
-          storeId: video.storeId || video.store?.id || video.store?._id || null,
-          user: {
-            name:
-              video.creator?.name ||
-              video.creator?.username ||
-              (video.creator?.profile
-                ? `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim()
-                : null) ||
-              `User ${index + 1}`,
-            avatar:
-              video.creator?.avatar || video.creator?.profile?.avatar || `https://i.pravatar.cc/100?img=${10 + index}`,
-            // Use real distance from store/location data, or show area name
-            distance: video.store?.distance
-              ? `${video.store.distance.toFixed(1)} km away`
-              : video.store?.location?.city || 'Nearby',
-          },
-          // Use real store name from backend
-          store: video.storeName || video.store?.name || 'Local Store',
-          storeEmoji: getStoreEmoji(video.category, video.storeName || video.store?.name),
-          image: video.thumbnail || video.thumbnailUrl,
-          caption: video.description || video.caption || `Great experience with ${BRAND.APP_NAME} cashback!`,
-          // Use real saved amount from backend, default to 0 if not available
-          saved: video.amountSaved || video.cashbackEarned || 0,
-          // Use real likes count from backend
-          helpful: video.likesCount || video.likes || 0,
-          // Use real comments count from backend
-          comments: video.commentsCount || video.comments?.length || 0,
-          time: formatTimeAgo(video.createdAt),
-          // Use real isLiked status from backend
-          isLiked: video.liked || false,
-        }));
+      if (
+        response.success &&
+        (response.data as unknown as Record<string, unknown>) &&
+        (response.data as unknown as Record<string, unknown>).length > 0
+      ) {
+        const transformed = (response.data as unknown as Record<string, unknown>).map(
+          (video: unknown, index: number) => ({
+            id: video.id || video._id,
+            // Use real storeId from backend
+            storeId: video.storeId || video.store?.id || video.store?._id || null,
+            user: {
+              name:
+                video.creator?.name ||
+                video.creator?.username ||
+                (video.creator?.profile
+                  ? `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim()
+                  : null) ||
+                `User ${index + 1}`,
+              avatar:
+                video.creator?.avatar ||
+                video.creator?.profile?.avatar ||
+                `https://i.pravatar.cc/100?img=${10 + index}`,
+              // Use real distance from store/location data, or show area name
+              distance: video.store?.distance
+                ? `${video.store.distance.toFixed(1)} km away`
+                : video.store?.location?.city || 'Nearby',
+            },
+            // Use real store name from backend
+            store: video.storeName || video.store?.name || 'Local Store',
+            storeEmoji: getStoreEmoji(video.category, video.storeName || video.store?.name),
+            image: video.thumbnail || video.thumbnailUrl,
+            caption: video.description || video.caption || `Great experience with ${BRAND.APP_NAME} cashback!`,
+            // Use real saved amount from backend, default to 0 if not available
+            saved: video.amountSaved || video.cashbackEarned || 0,
+            // Use real likes count from backend
+            helpful: video.likesCount || video.likes || 0,
+            // Use real comments count from backend
+            comments: video.commentsCount || video.comments?.length || 0,
+            time: formatTimeAgo(video.createdAt),
+            // Use real isLiked status from backend
+            isLiked: video.liked || false,
+          }),
+        );
         if (!isMounted()) return;
         setUgcPosts(transformed);
       }
@@ -128,7 +136,7 @@ const UGCPostsFeed = () => {
   }, []);
 
   const navigateTo = (path: string) => {
-    router.push(path as any);
+    router.push(path as unknown as string);
   };
 
   // Handle like/helpful button
@@ -158,15 +166,16 @@ const UGCPostsFeed = () => {
       const response = await reelApi.toggleLike(postId);
 
       // Update with actual server response if available
-      if (response.success && (response.data as any)) {
+      if (response.success && (response.data as unknown as Record<string, unknown>)) {
         if (!isMounted()) return;
+        const respData = response.data as unknown as Record<string, unknown>;
         setUgcPosts((prev) =>
           prev.map((post) => {
             if (post.id === postId) {
               return {
                 ...post,
-                isLiked: (response.data as any).liked ?? (response.data as any).liked ?? !wasLiked,
-                helpful: (response.data as any).likesCount ?? (response.data as any).totalLikes ?? post.helpful,
+                isLiked: respData.liked ?? !wasLiked,
+                helpful: respData.likesCount ?? respData.totalLikes ?? post.helpful,
               };
             }
             return post;

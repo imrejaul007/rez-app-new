@@ -220,7 +220,11 @@ function ReferralSharePage() {
                 accessibilityRole="button"
               >
                 <View style={[styles.platformIcon, { backgroundColor: template.color }]}>
-                  <Ionicons name={template.icon as any} size={24} color={colors.text.inverse} />
+                  <Ionicons
+                    name={template.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    size={24}
+                    color={colors.text.inverse}
+                  />
                 </View>
                 <Text style={styles.platformText}>
                   {template.type.charAt(0).toUpperCase() + template.type.slice(1)}

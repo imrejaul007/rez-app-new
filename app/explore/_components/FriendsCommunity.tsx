@@ -85,7 +85,7 @@ const FriendsCommunity = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as any);
+    router.push(path as unknown as string);
   };
 
   const renderActivityIcon = (type: string) => {

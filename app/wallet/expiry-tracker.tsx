@@ -152,7 +152,11 @@ function ExpiryTrackerPage() {
     <View key={coin.id} style={styles.coinCard}>
       <View style={styles.coinCardHeader}>
         <View style={styles.coinTypeIcon}>
-          <Ionicons name={getCoinIcon(coin.coinType) as any} size={20} color={Colors.primary[600]} />
+          <Ionicons
+            name={getCoinIcon(coin.coinType) as unknown as keyof typeof Ionicons.glyphMap}
+            size={20}
+            color={Colors.primary[600]}
+          />
         </View>
         <View style={styles.coinInfo}>
           <ThemedText style={styles.coinAmount}>
@@ -171,7 +175,7 @@ function ExpiryTrackerPage() {
           style={[
             styles.progressFill,
             {
-              width: getProgressWidth(coin.daysLeft) as any,
+              width: getProgressWidth(coin.daysLeft) as unknown as number,
               backgroundColor: getProgressColor(coin.daysLeft),
             },
           ]}
@@ -237,7 +241,7 @@ function ExpiryTrackerPage() {
               </ThemedText>
               <ThemedText style={styles.alertSubtitle}>Use before they expire</ThemedText>
             </View>
-            <Pressable style={styles.useNowButton} onPress={() => router.push('/(tabs)' as any)}>
+            <Pressable style={styles.useNowButton} onPress={() => router.push('/(tabs)' as unknown as string)}>
               <ThemedText style={styles.useNowText}>Use Now</ThemedText>
             </Pressable>
           </View>
@@ -289,11 +293,11 @@ function ExpiryTrackerPage() {
         <View style={styles.suggestionsSection}>
           <ThemedText style={styles.sectionTitle}>Quick Spend Suggestions</ThemedText>
           <View style={styles.suggestionsGrid}>
-            <Pressable style={styles.suggestionCard} onPress={() => router.push('/search' as any)}>
+            <Pressable style={styles.suggestionCard} onPress={() => router.push('/search' as unknown as string)}>
               <Ionicons name="location" size={24} color={Colors.primary[600]} />
               <ThemedText style={styles.suggestionText}>Nearby Stores</ThemedText>
             </Pressable>
-            <Pressable style={styles.suggestionCard} onPress={() => router.push('/bonus-zone' as any)}>
+            <Pressable style={styles.suggestionCard} onPress={() => router.push('/bonus-zone' as unknown as string)}>
               <Ionicons name="pricetag" size={24} color={Colors.gold} />
               <ThemedText style={styles.suggestionText}>Online Deals</ThemedText>
             </Pressable>

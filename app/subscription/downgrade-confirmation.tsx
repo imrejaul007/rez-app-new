@@ -144,7 +144,7 @@ function DowngradeConfirmationPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.warning} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.warning, colors.warningScale[700]] as any} style={styles.header}>
+      <LinearGradient colors={[Colors.warning, colors.warningScale[700]] as unknown as string[]} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}

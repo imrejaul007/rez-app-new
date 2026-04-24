@@ -45,7 +45,7 @@ const TierBadge: React.FC<{ tier: PriveTier; score: number }> = ({ tier, score }
       case 'entry':
         return {
           label: 'ENTRY',
-          colors: [COLORS.gold, (COLORS as any).goldDark] as const,
+          colors: [COLORS.gold, (COLORS as unknown as Record<string, string>).goldDark] as const,
           icon: 'checkmark-circle' as const,
         };
       default:
@@ -119,7 +119,12 @@ const PillarCard: React.FC<{ pillar: PillarScore; onPress: () => void }> = ({ pi
 
       <View style={styles.pillarProgressBg}>
         <Animated.View
-          style={[styles.pillarProgressFill, { width: progressWidth, backgroundColor: pillar.color }] as any}
+          style={
+            [
+              styles.pillarProgressFill,
+              { width: progressWidth, backgroundColor: pillar.color },
+            ] as unknown as StyleProp<ViewStyle>
+          }
         />
       </View>
 
@@ -295,7 +300,10 @@ function PriveEligibilityScreen() {
         {/* CTA for eligible users */}
         {eligibility.isEligible && (
           <Pressable style={styles.ctaButton} onPress={() => router.push('/(tabs)')}>
-            <LinearGradient colors={[COLORS.gold, (COLORS as any).goldDark]} style={styles.ctaGradient}>
+            <LinearGradient
+              colors={[COLORS.gold, (COLORS as unknown as Record<string, string>).goldDark]}
+              style={styles.ctaGradient}
+            >
               <Text style={styles.ctaText}>{tier === 'elite' ? 'Access Elite Exclusives' : 'Explore Privé Mode'}</Text>
               <Ionicons name="arrow-forward" size={20} color={colors.text.primary} />
             </LinearGradient>
@@ -423,7 +431,7 @@ const styles = StyleSheet.create({
   },
   markerDotActive: {
     backgroundColor: COLORS.gold,
-    borderColor: (COLORS as any).goldDark,
+    borderColor: (COLORS as unknown as Record<string, string>).goldDark,
   },
   markerDotElite: {
     backgroundColor: colors.brand.goldBright,

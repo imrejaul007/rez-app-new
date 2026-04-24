@@ -77,7 +77,9 @@ const TournamentDetail = () => {
         setLeaderboard((prev) => {
           if (prev.length === 0) return prev;
           const updated = prev.map((existing) => {
-            const userId = (existing as any).user?._id || (existing as any).userId;
+            const userId =
+              (existing as unknown as Record<string, unknown>).user?._id ||
+              (existing as unknown as Record<string, unknown>).userId;
             const socketEntry = data.leaderboard.find((e) => e.userId === userId);
             if (socketEntry) {
               return { ...existing, score: socketEntry.score, rank: socketEntry.rank };
@@ -96,7 +98,9 @@ const TournamentDetail = () => {
         }
         setLeaderboard((prev) =>
           prev.map((entry) => {
-            const userId = (entry as any).user?._id || (entry as any).userId;
+            const userId =
+              (entry as unknown as Record<string, unknown>).user?._id ||
+              (entry as unknown as Record<string, unknown>).userId;
             if (userId === data.userId) {
               return { ...entry, score: data.newScore, rank: data.newRank };
             }
@@ -173,7 +177,10 @@ const TournamentDetail = () => {
         if (refreshed?.data) setTournament(refreshed.data);
         platformAlertSimple('Joined!', 'You have joined the tournament. Start playing to earn points!');
       } else {
-        platformAlertSimple('Error', (res as any).message || 'Failed to join tournament');
+        platformAlertSimple(
+          'Error',
+          (res as unknown as Record<string, unknown>).message || 'Failed to join tournament',
+        );
       }
     } catch (err: any) {
       platformAlertSimple('Error', err.message || 'Failed to join tournament');
@@ -186,7 +193,7 @@ const TournamentDetail = () => {
   const handlePlayGame = () => {
     if (!tournament) return;
     const route = GAME_TYPE_ROUTES[tournament.gameType] || '/games';
-    router.push(route as any);
+    router.push(route as unknown as string);
   };
 
   const icon = tournament ? GAME_TYPE_ICONS[tournament.gameType] || '🏆' : '🏆';
@@ -234,7 +241,11 @@ const TournamentDetail = () => {
 
           {/* Status badge */}
           <View style={[styles.statusBadge, { backgroundColor: statusCfg.colors[0] }]}>
-            <Ionicons name={statusCfg.icon as any} size={12} color={colors.background.primary} />
+            <Ionicons
+              name={statusCfg.icon as unknown as keyof typeof Ionicons.glyphMap}
+              size={12}
+              color={colors.background.primary}
+            />
             <Text style={styles.statusText}>{statusCfg.label}</Text>
           </View>
 
@@ -394,7 +405,8 @@ const TournamentDetail = () => {
                   const rankColors = [colors.warningScale[400], '#94A3B8', '#CD7F32'];
                   const isCurrentUser =
                     currentUserId &&
-                    ((entry as any).user?._id === currentUserId || (entry as any).userId === currentUserId);
+                    ((entry as unknown as Record<string, unknown>).user?._id === currentUserId ||
+                      (entry as unknown as Record<string, unknown>).userId === currentUserId);
 
                   return (
                     <View

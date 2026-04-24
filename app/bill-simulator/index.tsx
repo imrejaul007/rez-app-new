@@ -165,7 +165,7 @@ export default function BillSimulatorScreen() {
 
   const handleStorePress = useCallback(
     (_storeId: string) => {
-      router.push('/smart-spend' as any);
+      router.push('/smart-spend' as unknown as string);
     },
     [router],
   );
@@ -196,7 +196,7 @@ export default function BillSimulatorScreen() {
       <View style={[styles.header, { backgroundColor: themeColors.card, borderBottomColor: themeColors.border }]}>
         <Pressable
           style={styles.backBtn}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown as string))}
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >

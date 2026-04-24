@@ -1,7 +1,18 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { logger } from '@/utils/logger';
-import { ScrollView, StyleSheet, View, Modal, Pressable, ActivityIndicator, Platform, Dimensions } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Modal,
+  Pressable,
+  ActivityIndicator,
+  Platform,
+  Dimensions,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/ThemedView';
@@ -597,7 +608,8 @@ function StorePage() {
 
       if (lockedResponse.success && lockedResponse.data) {
         const lockedItem = lockedResponse.data.lockedItems.find(
-          (item: any) => item.product?._id === productId || (item.product as any)?.id === productId,
+          (item: Record<string, unknown>) =>
+            item.product?._id === productId || (item.product as unknown as Record<string, unknown>)?.id === productId,
         );
         if (!isMounted()) return;
         setIsLocked(!!lockedItem);
@@ -716,7 +728,7 @@ function StorePage() {
     try {
       // Auth guard — redirect to sign-in if not logged in
       if (!isAuthenticated) {
-        router.push('/sign-in' as any);
+        router.push('/sign-in' as unknown as string);
         return;
       }
 
@@ -733,7 +745,7 @@ function StorePage() {
         productId: productId!,
         quantity: quantity,
         storeId: storeId || undefined,
-        variant: cardData.selectedVariant as any,
+        variant: cardData.selectedVariant as unknown as Record<string, unknown>,
       });
 
       if (cartResponse.success) {
@@ -800,7 +812,7 @@ function StorePage() {
   const handleVisitStore = useCallback(() => {
     const storeId = cardData?.store?._id || cardData?.store?.id || cardData?.storeId;
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as any);
+      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, router]);
 
@@ -809,7 +821,7 @@ function StorePage() {
       router.push({
         pathname: '/product-page',
         params: { cardId: prodId, cardType: 'product' },
-      } as any);
+      } as unknown as string);
     },
     [router],
   );
@@ -853,7 +865,7 @@ function StorePage() {
     const storeName = cardData?.store?.name || 'Store';
     if (storeId) {
       router.push(
-        `/CardOffersPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&orderValue=${productPrice}` as any,
+        `/CardOffersPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&orderValue=${productPrice}` as unknown as string,
       );
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, cardData?.store?.name, productPrice, router]);
@@ -971,7 +983,7 @@ function StorePage() {
       {/* Sticky Header - Outside ScrollView */}
       <View style={styles.stickyHeader}>
         <StoreHeader
-          dynamicData={(isDynamic ? cardData : null) as any}
+          dynamicData={(isDynamic ? cardData : null) as unknown as Record<string, unknown>}
           cardType={params.cardType as string}
           isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
           showImage={false}
@@ -989,7 +1001,7 @@ function StorePage() {
               paddingBottom: 100, // Space for sticky bottom bar
               paddingTop: Platform.OS === 'ios' ? 120 : 75, // Space for sticky header
             },
-          ] as any
+          ] as unknown as StyleProp<ViewStyle>
         }
       >
         <View
@@ -1000,7 +1012,7 @@ function StorePage() {
         >
           {/* 1. Product Image Section */}
           <StoreHeader
-            dynamicData={(isDynamic ? cardData : null) as any}
+            dynamicData={(isDynamic ? cardData : null) as unknown as Record<string, unknown>}
             cardType={params.cardType as string}
             isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
             showImage={true}
@@ -1285,7 +1297,7 @@ function StorePage() {
           productName={cardData.title || cardData.name || ''}
           productPrice={cardData.price || cardData.pricing?.selling || 0}
           quantity={quantity}
-          variant={cardData.selectedVariant as any}
+          variant={cardData.selectedVariant as unknown as Record<string, unknown>}
           onLockSuccess={handleLockSuccess}
         />
       )}

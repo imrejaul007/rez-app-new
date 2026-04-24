@@ -73,10 +73,10 @@ const ExploreReelsPage = () => {
         if (response?.success) {
           if (activeTab === 'trending') {
             if (!isMounted()) return;
-            setReels((response.data as any) || []);
+            setReels((response.data as unknown as Record<string, unknown>) || []);
           } else {
             if (!isMounted()) return;
-            setReels((response.data as any)?.reels || []);
+            setReels((response.data as unknown as Record<string, unknown>)?.reels || []);
           }
         } else {
           if (!isMounted()) return;
@@ -108,7 +108,7 @@ const ExploreReelsPage = () => {
 
   const navigateTo = useCallback(
     (path: string) => {
-      router.push(path as any);
+      router.push(path as unknown as string);
     },
     [router],
   );
@@ -224,7 +224,7 @@ const ExploreReelsPage = () => {
               onPress={() => setActiveTab(tab.id)}
             >
               <Ionicons
-                name={tab.icon as any}
+                name={tab.icon as unknown as keyof typeof Ionicons.glyphMap}
                 size={16}
                 color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
               />

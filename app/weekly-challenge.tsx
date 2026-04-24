@@ -70,19 +70,25 @@ interface PastChallenge {
 // ---------------------------------------------------------------------------
 async function fetchCurrentChallenges(): Promise<WeeklyChallenge[]> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/gamification/challenges/weekly/current')) as any;
+  const res = (await apiService.get('/gamification/challenges/weekly/current')) as unknown as Record<string, unknown>;
   return res.data?.data ?? res.data ?? [];
 }
 
 async function fetchPastChallenges(): Promise<PastChallenge[]> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/gamification/challenges/weekly/history?limit=5')) as any;
+  const res = (await apiService.get('/gamification/challenges/weekly/history?limit=5')) as unknown as Record<
+    string,
+    unknown
+  >;
   return res.data?.data ?? res.data ?? [];
 }
 
 async function claimChallenge(progressId: string): Promise<{ coins: number }> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.post(`/gamification/challenges/weekly/${progressId}/claim`)) as any;
+  const res = (await apiService.post(`/gamification/challenges/weekly/${progressId}/claim`)) as unknown as Record<
+    string,
+    unknown
+  >;
   return res.data?.data ?? res.data;
 }
 

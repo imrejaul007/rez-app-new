@@ -267,7 +267,7 @@ const GroceryCategoryPage: React.FC = () => {
             setPagination({ current: 1, pages: 1, total: 10 });
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (page === 1) {
           if (!isMounted()) return;
           setProducts(getFallbackProducts(categorySlug));
@@ -324,9 +324,9 @@ const GroceryCategoryPage: React.FC = () => {
   const handleAddToCart = async (product: Product) => {
     try {
       const productId = product.id || product._id || '';
-      await cartApi.addToCart({ productId, quantity: 1 } as any);
+      await cartApi.addToCart({ productId, quantity: 1 } as unknown as { productId: string; quantity: number });
       // Could show a toast here
-    } catch (err: any) {
+    } catch (err: unknown) {
       // silently handle
     }
   };
@@ -473,7 +473,7 @@ const GroceryCategoryPage: React.FC = () => {
                 <GroceryProductCard
                   key={product.id || product._id}
                   product={product}
-                  onAddToCart={handleAddToCart as any}
+                  onAddToCart={handleAddToCart as unknown as (product: Product) => void}
                   showStore
                 />
               ))}
@@ -513,7 +513,7 @@ function getFallbackProducts(category: string): Product[] {
     store: { id: 'store-1', name: 'Local Store' },
     inStock: true,
     tags: config?.tags || [category],
-  })) as any;
+  })) as unknown as string[];
 }
 
 const styles = StyleSheet.create({
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: Spacing.sm,
   },
   emptyText: {

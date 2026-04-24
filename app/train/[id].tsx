@@ -165,7 +165,7 @@ function TrainDetailsPage() {
         return;
       }
 
-      const productData = response.data as any;
+      const productData = response.data as unknown as Record<string, unknown>;
 
       // Check if this is a train service
       const isTrain =
@@ -182,7 +182,7 @@ function TrainDetailsPage() {
 
       // Helper to read from specifications array
       const specs = productData.specifications || [];
-      const getSpec = (key: string) => specs.find((s: any) => s.key === key)?.value || '';
+      const getSpec = (key: string) => specs.find((s: Record<string, unknown>) => s.key === key)?.value || '';
 
       // Route: prefer specs, fallback to name parsing
       const specFrom = getSpec('routeFrom');
@@ -316,9 +316,15 @@ function TrainDetailsPage() {
             return [];
           }
           const processedImages = productData.images
-            .map((img: any) => {
+            .map((img: unknown) => {
               if (typeof img === 'string') return img.trim();
-              if (img && typeof img === 'object') return img.url || img.uri || img.src || null;
+              if (img && typeof img === 'object')
+                return (
+                  (img as Record<string, unknown>).url ||
+                  (img as Record<string, unknown>).uri ||
+                  (img as Record<string, unknown>).src ||
+                  null
+                );
               return null;
             })
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
@@ -369,7 +375,9 @@ function TrainDetailsPage() {
         cancellationPolicy: {
           freeCancellation:
             productData.specifications?.some(
-              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
+              (s: Record<string, unknown>) =>
+                (s.key as string)?.toLowerCase().includes('cancellation') &&
+                (s.value as string)?.toLowerCase().includes('free'),
             ) || true,
           cancellationDeadline: '24',
           refundPercentage: 80,
@@ -379,7 +387,7 @@ function TrainDetailsPage() {
 
       if (!isMounted()) return;
       setTrain(trainDetails);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (!isMounted()) return;
       setError('Failed to load train details. Please try again.');
     } finally {
@@ -404,17 +412,17 @@ function TrainDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as any).requiresPayment) {
+    if ((data as unknown as Record<string, unknown>).requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as any).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as any);
+      } as unknown as Record<string, unknown>);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -434,9 +442,9 @@ function TrainDetailsPage() {
       if (isInWishlist(train.id)) {
         await removeFromWishlist(train.id);
       } else {
-        await addToWishlist(train.id as any);
+        await addToWishlist(train.id as unknown as string);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // silently handle
     }
   };
@@ -481,7 +489,7 @@ function TrainDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl as any}
+                  source={imageUrl as unknown as string}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => setImageError(true)}
@@ -584,7 +592,7 @@ function TrainDetailsPage() {
               </View>
               <Pressable
                 style={styles.viewStoreButton}
-                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as any)}
+                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as unknown as string)}
               >
                 <Text style={styles.viewStoreButtonText}>View</Text>
                 <Ionicons name="chevron-forward" size={16} color={Colors.gold} />
@@ -726,14 +734,14 @@ function TrainDetailsPage() {
           </View>
           <ProductReviewsSection
             productId={train.id}
-            reviews={reviews as any}
-            summary={reviewSummary as any}
+            reviews={reviews as unknown as Record<string, unknown>}
+            summary={reviewSummary as unknown as Record<string, unknown>}
             isLoading={reviewsLoading}
-            onRefresh={refreshReviews as any}
+            onRefresh={refreshReviews as unknown as () => void}
             productName={train.name}
             isRefreshing={false}
             hasMore={false}
-            sortBy={'newest' as any}
+            sortBy={'newest' as unknown as string}
             filterRating={null}
             onSortChange={() => {}}
             onFilterChange={() => {}}

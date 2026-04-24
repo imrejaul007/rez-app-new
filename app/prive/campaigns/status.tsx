@@ -126,7 +126,11 @@ function CampaignStatusScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Status Indicator */}
         <View style={styles.statusIndicator}>
-          <Ionicons name={currentStatus.icon as any} size={64} color={currentStatus.color} />
+          <Ionicons
+            name={currentStatus.icon as unknown as keyof typeof Ionicons.glyphMap}
+            size={64}
+            color={currentStatus.color}
+          />
           <Text style={styles.statusTitle}>{currentStatus.title}</Text>
           <Text style={styles.statusSubtitle}>{currentStatus.subtitle}</Text>
         </View>

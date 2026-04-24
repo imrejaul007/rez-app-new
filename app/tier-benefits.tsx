@@ -469,7 +469,7 @@ export default function TierBenefitsScreen() {
           </Pressable>
           <Text style={styles.headerTitle}>Tier Benefits</Text>
           <Pressable
-            onPress={() => router.push('/rez-score' as any)}
+            onPress={() => router.push('/rez-score' as unknown as string)}
             hitSlop={8}
             accessibilityLabel="View REZ Score"
             accessibilityRole="button"
@@ -540,7 +540,7 @@ export default function TierBenefitsScreen() {
         {/* CTA to full REZ Score screen */}
         <Pressable
           style={styles.scoreCta}
-          onPress={() => router.push('/rez-score' as any)}
+          onPress={() => router.push('/rez-score' as unknown as string)}
           accessibilityLabel="View full REZ Score details"
           accessibilityRole="button"
         >

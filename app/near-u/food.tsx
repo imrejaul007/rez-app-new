@@ -25,63 +25,56 @@ export default function FoodScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.safe as any} edges={['top']}>
-      <View style={styles.header as any}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.backBtn as any}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color={colors.text?.primary || '#111'} />
         </Pressable>
-        <Text style={styles.headerTitle as any}>Food Near You 🍱</Text>
-        <View style={styles.headerRight as any} />
+        <Text style={styles.headerTitle}>Food Near You 🍱</Text>
+        <View style={styles.headerRight} />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content as any}>
-        <LinearGradient
-          colors={['#1a3a52', '#FFC857']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.hero as any}
-        >
-          <View style={styles.heroInner as any}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        <LinearGradient colors={['#1a3a52', '#FFC857']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
+          <View style={styles.heroInner}>
             <View>
-              <Text style={styles.heroTitle as any}>🍴 Lunch sorted</Text>
-              <Text style={styles.heroSub as any}>
-                Great food from nearby restaurants, delivered fast or ready to pick up
-              </Text>
+              <Text style={styles.heroTitle}>🍴 Lunch sorted</Text>
+              <Text style={styles.heroSub}>Great food from nearby restaurants, delivered fast or ready to pick up</Text>
             </View>
-            <Text style={styles.heroEmoji as any}>🍱</Text>
+            <Text style={styles.heroEmoji}>🍱</Text>
           </View>
         </LinearGradient>
 
-        <Text style={styles.sectionTitle as any}>What are you in the mood for?</Text>
-        <View style={styles.grid as any}>
+        <Text style={styles.sectionTitle}>What are you in the mood for?</Text>
+        <View style={styles.grid}>
           {FOOD_CATEGORIES.map((cat) => (
             <Pressable
               key={cat.id}
-              style={[styles.categoryCard as any, { backgroundColor: cat.color }]}
+              style={[styles.categoryCard, { backgroundColor: cat.color }]}
               onPress={() =>
                 router.push({
                   pathname: '/StoreListPage',
                   params: { category: cat.id, sort: 'rating' },
-                } as any)
+                } as unknown as string)
               }
             >
-              <Text style={styles.catEmoji as any}>{cat.emoji}</Text>
-              <Text style={styles.catLabel as any}>{cat.label}</Text>
-              <Text style={styles.catSublabel as any}>{cat.sublabel}</Text>
+              <Text style={styles.catEmoji}>{cat.emoji}</Text>
+              <Text style={styles.catLabel}>{cat.label}</Text>
+              <Text style={styles.catSublabel}>{cat.sublabel}</Text>
             </Pressable>
           ))}
         </View>
 
         <Pressable
-          style={styles.allBtn as any}
+          style={styles.allBtn}
           onPress={() =>
             router.push({
               pathname: '/StoreListPage',
               params: { category: 'food', sort: 'rating' },
-            } as any)
+            } as unknown as string)
           }
         >
-          <Text style={styles.allBtnText as any}>Browse all food spots</Text>
+          <Text style={styles.allBtnText}>Browse all food spots</Text>
           <Ionicons name="arrow-forward" size={16} color="#FFC857" />
         </Pressable>
       </ScrollView>

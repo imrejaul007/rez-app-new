@@ -147,7 +147,7 @@ function OccasionsPage() {
       router.push({
         pathname: '/shop',
         params: { occasion: occasion.id, category: categorySlug },
-      } as any);
+      } as unknown as string);
     },
     [router, categorySlug],
   );
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: Spacing.xs,
   },
   pageSubtitle: {
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   occasionName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     textAlign: 'center',
     marginBottom: 10,
   },
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

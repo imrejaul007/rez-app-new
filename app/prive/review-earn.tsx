@@ -8,7 +8,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { catchSilent } from '@/utils/catchAndReport';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -47,7 +56,13 @@ const SkeletonBlock: React.FC<{ width: number | string; height: number; borderRa
   return (
     <Animated.View
       style={[
-        { width: width as any, height, borderRadius, backgroundColor: PRIVE_COLORS.border.primary, opacity },
+        {
+          width: width as unknown as number | string,
+          height,
+          borderRadius,
+          backgroundColor: PRIVE_COLORS.border.primary,
+          opacity,
+        },
         style,
       ]}
     />
@@ -286,7 +301,9 @@ function PriveReviewEarnPage() {
         renderItem={renderItem}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }] as any}
+        contentContainerStyle={
+          [styles.listContent, { paddingBottom: insets.bottom + 80 }] as unknown as StyleProp<ViewStyle>
+        }
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

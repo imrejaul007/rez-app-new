@@ -495,7 +495,7 @@ function CategoryProductsPage() {
         );
         if (!isMounted()) return;
 
-        const fetchedProducts: Product[] = (response.data as any) || [];
+        const fetchedProducts: Product[] = (response.data as unknown as Record<string, unknown>) || [];
         const pagination = response.meta?.pagination;
 
         if (!isMounted()) return;
@@ -572,7 +572,7 @@ function CategoryProductsPage() {
 
   const handleProductPress = useCallback(
     (product: Product) => {
-      router.push(`/product-page?cardId=${product._id}&cardType=product` as any);
+      router.push(`/product-page?cardId=${product._id}&cardType=product` as unknown as string);
     },
     [router],
   );
@@ -683,9 +683,11 @@ function CategoryProductsPage() {
                   >
                     <Text style={headerStyles.vibeEmoji}>{vibe.icon}</Text>
                     <Text style={[headerStyles.vibeLabel, isActive && headerStyles.vibeLabelActive]}>{vibe.name}</Text>
-                    {'discount' in vibe && (vibe as any).discount && (
+                    {'discount' in vibe && (vibe as unknown as Record<string, unknown>).discount && (
                       <View style={headerStyles.vibeDiscountBadge}>
-                        <Text style={headerStyles.vibeDiscountText}>{(vibe as any).discount}%</Text>
+                        <Text style={headerStyles.vibeDiscountText}>
+                          {(vibe as unknown as Record<string, unknown>).discount}%
+                        </Text>
                       </View>
                     )}
                   </Pressable>
@@ -747,7 +749,7 @@ function CategoryProductsPage() {
           message="We're adding more products to this category soon!"
           icon="bag-outline"
           actionLabel="Browse Mall"
-          onAction={() => router.push('/mall' as any)}
+          onAction={() => router.push('/mall' as unknown as string)}
         />
       </View>
     );

@@ -103,7 +103,7 @@ function IdentitySelectPage() {
       import('@/contexts/ToastContext')
         .then(({ showGlobalToast }) => {
           if (typeof showGlobalToast === 'function') {
-            showGlobalToast('Couldn\'t save your choice — we\'ll retry automatically.');
+            showGlobalToast("Couldn't save your choice — we'll retry automatically.");
           }
         })
         .catch(() => {});
@@ -119,7 +119,7 @@ function IdentitySelectPage() {
     } else {
       // Going to student-verify, corporate-verify, etc.
       // completeOnboarding will be called in verification-success or skip handlers.
-      router.push(identity.next as any);
+      router.push(identity.next as unknown as string);
     }
   };
 
@@ -135,7 +135,7 @@ function IdentitySelectPage() {
       import('@/contexts/ToastContext')
         .then(({ showGlobalToast }) => {
           if (typeof showGlobalToast === 'function') {
-            showGlobalToast('Couldn\'t save your choice — we\'ll retry automatically.');
+            showGlobalToast("Couldn't save your choice — we'll retry automatically.");
           }
         })
         .catch(() => {});

@@ -1,22 +1,14 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // MenuSection.tsx - Menu list with coin earnings
-import React, { useCallback } from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-} from "@/constants/DesignSystem";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -43,63 +35,62 @@ export interface MenuSectionProps {
 //   { id: "4", name: "Cold Brew", variant: "Venti", price: 360, coinsToEarn: 18 },
 // ];
 
-function MenuSection({
-  items = [],
-  onItemPress,
-}: MenuSectionProps) {
+function MenuSection({ items = [], onItemPress }: MenuSectionProps) {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
-  const handleItemPress = useCallback((item: MenuItem) => {
-    triggerImpact('Light');
-    if (onItemPress) {
-      onItemPress(item);
-    } else {
-      // Navigate to product page
-      router.push(`/product-page?productId=${item.id}` as any);
-    }
-  }, [onItemPress, router]);
+  const handleItemPress = useCallback(
+    (item: MenuItem) => {
+      triggerImpact('Light');
+      if (onItemPress) {
+        onItemPress(item);
+      } else {
+        // Navigate to product page
+        router.push(`/product-page?productId=${item.id}` as unknown as string);
+      }
+    },
+    [onItemPress, router],
+  );
 
-  const renderItem = useCallback(({ item }: { item: MenuItem }) => (
-    <Pressable
-      style={styles.menuItem}
-     
-      onPress={() => handleItemPress(item)}
-      accessibilityRole="button"
-      accessibilityLabel={`${item.name}, ${item.variant}, ${item.price} rupees, earn ${item.coinsToEarn} coins`}
-    >
-      {/* Product Image */}
-      <View style={styles.imageContainer}>
-        {item.image ? (
-          <CachedImage source={item.image} style={styles.itemImage} contentFit="cover" />
-        ) : (
-          <View style={styles.imagePlaceholder}>
-            <Ionicons name="cafe" size={24} color={Colors.gray[300]} />
-          </View>
-        )}
-      </View>
+  const renderItem = useCallback(
+    ({ item }: { item: MenuItem }) => (
+      <Pressable
+        style={styles.menuItem}
+        onPress={() => handleItemPress(item)}
+        accessibilityRole="button"
+        accessibilityLabel={`${item.name}, ${item.variant}, ${item.price} rupees, earn ${item.coinsToEarn} coins`}
+      >
+        {/* Product Image */}
+        <View style={styles.imageContainer}>
+          {item.image ? (
+            <CachedImage source={item.image} style={styles.itemImage} contentFit="cover" />
+          ) : (
+            <View style={styles.imagePlaceholder}>
+              <Ionicons name="cafe" size={24} color={Colors.gray[300]} />
+            </View>
+          )}
+        </View>
 
-      {/* Product Info */}
-      <View style={styles.itemInfo}>
-        <ThemedText style={styles.itemName}>{item.name}</ThemedText>
-        {item.variant && (
-          <ThemedText style={styles.itemVariant}>{item.variant}</ThemedText>
-        )}
-        <ThemedText style={styles.itemPrice}>{currencySymbol}{item.price}</ThemedText>
-      </View>
+        {/* Product Info */}
+        <View style={styles.itemInfo}>
+          <ThemedText style={styles.itemName}>{item.name}</ThemedText>
+          {item.variant && <ThemedText style={styles.itemVariant}>{item.variant}</ThemedText>}
+          <ThemedText style={styles.itemPrice}>
+            {currencySymbol}
+            {item.price}
+          </ThemedText>
+        </View>
 
-      {/* Coins to Earn */}
-      <View style={styles.coinsContainer}>
-        <CachedImage
-          source={BRAND.COIN_IMAGE}
-          style={styles.coinIcon}
-          contentFit="contain"
-        />
-        <ThemedText style={styles.coinsText}>+{item.coinsToEarn} coins</ThemedText>
-      </View>
-    </Pressable>
-  ), [handleItemPress, currencySymbol]);
+        {/* Coins to Earn */}
+        <View style={styles.coinsContainer}>
+          <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
+          <ThemedText style={styles.coinsText}>+{item.coinsToEarn} coins</ThemedText>
+        </View>
+      </Pressable>
+    ),
+    [handleItemPress, currencySymbol],
+  );
 
   // Don't render section if no menu items are available
   if (!items || items.length === 0) {
@@ -126,8 +117,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
   },
@@ -144,15 +135,15 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.gray[100],
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   itemInfo: {
     flex: 1,
   },
   itemName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.text.primary,
     marginBottom: 2,
   },
@@ -163,12 +154,12 @@ const styles = StyleSheet.create({
   },
   itemPrice: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.primary,
   },
   coinsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   coinIcon: {
@@ -177,8 +168,8 @@ const styles = StyleSheet.create({
   },
   coinsText: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#FF9500",
+    fontWeight: '600',
+    color: '#FF9500',
   },
   separator: {
     height: 1,

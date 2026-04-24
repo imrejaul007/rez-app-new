@@ -347,7 +347,11 @@ function ShareToEarnPage() {
                   onPress={() => handleShare(selectedContent, platform.id)}
                 >
                   <View style={[styles.platformIcon, { backgroundColor: platform.color + '20' }]}>
-                    <Ionicons name={platform.icon as any} size={24} color={platform.color} />
+                    <Ionicons
+                      name={platform.icon as unknown as keyof typeof Ionicons.glyphMap}
+                      size={24}
+                      color={platform.color}
+                    />
                   </View>
                   <ThemedText style={styles.platformName}>{platform.name}</ThemedText>
                 </Pressable>

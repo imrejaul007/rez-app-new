@@ -177,14 +177,17 @@ function StoreActionButtons({
     switch (buttonGroup) {
       case 'buy-lock':
         // Only show Buy, Lock, Booking buttons
-        return defaultButtonConfigs as any[];
+        return defaultButtonConfigs;
       case 'store-actions':
         // Only show Call, Product, Location buttons
-        return storeActionButtonConfigs as any[];
+        return storeActionButtonConfigs;
       case 'all':
       default:
         // Show all buttons - store actions first, then buy/lock
-        return [...storeActionButtonConfigs, ...defaultButtonConfigs] as any[];
+        return [...storeActionButtonConfigs, ...defaultButtonConfigs] as (
+          | (typeof storeActionButtonConfigs)[number]
+          | ActionButtonConfig
+        )[];
     }
   }, [storeActionButtonConfigs, defaultButtonConfigs, buttonGroup]);
 
@@ -284,15 +287,15 @@ function StoreActionButtons({
   // Render individual button with animation
   const renderButton = useCallback(
     (config: (typeof buttonConfigs)[0]) => {
-      const isCurrentlyLoading = (buttonState.loadingStates as any)[config.id];
-      const hasError = (buttonState.errorStates as any)[config.id] !== null;
+      const isCurrentlyLoading = (buttonState.loadingStates as Record<string, boolean>)[config.id];
+      const hasError = (buttonState.errorStates as Record<string, string | null>)[config.id] !== null;
       const isAnyLoading = stateManager.hasAnyLoading();
       const shouldDisable = !config.isEnabled || isAnyLoading;
       const scaleAnim = getAnimRef(config.id);
       const scaleStyle = getAnimStyle(config.id);
 
       return (
-        <Animated.View key={config.id} style={[scaleStyle, { width: layout.buttonWidth } as any]}>
+        <Animated.View key={config.id} style={[scaleStyle, { width: layout.buttonWidth }]}>
           <Pressable
             style={[styles.buttonContainer, shouldDisable && styles.buttonDisabled, buttonStyle]}
             onPress={() => handleButtonPress(config.id)}
@@ -323,7 +326,11 @@ function StoreActionButtons({
                   <ActivityIndicator size="small" color={colors.background.primary} style={styles.buttonIcon} />
                 ) : (
                   <Ionicons
-                    name={config.id === 'lock' && !config.isEnabled ? 'lock-closed' : (config.iconName as any)}
+                    name={
+                      config.id === 'lock' && !config.isEnabled
+                        ? 'lock-closed'
+                        : (config.iconName as unknown as keyof typeof Ionicons.glyphMap)
+                    }
                     size={IconSize.md}
                     color={config.textColor || colors.text.white}
                     style={styles.buttonIcon}

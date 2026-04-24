@@ -339,7 +339,7 @@ function DoubleCashbackPage() {
           </View>
 
           {/* Browse Stores CTA */}
-          <Pressable onPress={() => router.push('/explore' as any)}>
+          <Pressable onPress={() => router.push('/explore' as unknown as string)}>
             <LinearGradient colors={heroGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaBanner}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ctaTitle}>Start Shopping Now</Text>
@@ -364,7 +364,11 @@ function DoubleCashbackPage() {
                 {heroCampaign.eligibleCategories.map((cat, idx) => (
                   <View key={idx} style={styles.categoryCard}>
                     <View style={styles.categoryIconWrap}>
-                      <Ionicons name={getCategoryIcon(cat) as any} size={22} color={colors.nileBlue} />
+                      <Ionicons
+                        name={getCategoryIcon(cat) as unknown as keyof typeof Ionicons.glyphMap}
+                        size={22}
+                        color={colors.nileBlue}
+                      />
                     </View>
                     <Text style={styles.categoryName}>{cat}</Text>
                     <Text style={styles.categoryMultiplier}>{heroCampaign.multiplier}X</Text>

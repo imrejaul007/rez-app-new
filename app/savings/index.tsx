@@ -64,17 +64,17 @@ interface NearbyStore {
 // API helpers — apiClient handles auth token automatically
 async function fetchSummary(): Promise<SavingsSummary | null> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get('/user/savings/summary')) as any;
+  const res = (await api.get('/user/savings/summary')) as { data: { data: SavingsSummary | null } };
   return res.data?.data ?? null;
 }
 async function fetchMissed(lat: number = DEFAULT_LAT, lng: number = DEFAULT_LNG): Promise<MissedItem[]> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get(`/user/savings/missed?lat=${lat}&lng=${lng}`)) as any;
+  const res = (await api.get(`/user/savings/missed?lat=${lat}&lng=${lng}`)) as { data: { data: MissedItem[] } };
   return res.data?.data ?? [];
 }
 async function fetchBestNearby(lat: number = DEFAULT_LAT, lng: number = DEFAULT_LNG): Promise<NearbyStore[]> {
   const { default: api } = await import('@/services/apiClient');
-  const res = (await api.get(`/user/savings/best-nearby?lat=${lat}&lng=${lng}`)) as any;
+  const res = (await api.get(`/user/savings/best-nearby?lat=${lat}&lng=${lng}`)) as { data: { data: NearbyStore[] } };
   return res.data?.data ?? [];
 }
 
@@ -146,7 +146,10 @@ function SpendingBreakdownCard({ summary }: { summary: SavingsSummary }) {
             <View
               style={[
                 s.barFill,
-                { width: `${Math.round((row.amount / maxAmt) * 100)}%` as any, backgroundColor: row.color },
+                {
+                  width: `${Math.round((row.amount / maxAmt) * 100)}%` as unknown as string,
+                  backgroundColor: row.color,
+                },
               ]}
             />
           </View>
@@ -208,7 +211,7 @@ function VisitStreakCard({ router }: { router: ReturnType<typeof useRouter> }) {
       {current === 0 ? (
         <Pressable
           style={s.visitStreakCTA}
-          onPress={() => router.push('/explore' as any)}
+          onPress={() => router.push('/explore' as unknown as string)}
           accessibilityRole="button"
           accessibilityLabel="Visit a REZ store today"
         >
@@ -218,7 +221,7 @@ function VisitStreakCard({ router }: { router: ReturnType<typeof useRouter> }) {
       ) : (
         <Pressable
           style={[s.visitStreakCTA, { backgroundColor: '#059669' }]}
-          onPress={() => router.push('/explore' as any)}
+          onPress={() => router.push('/explore' as unknown as string)}
           accessibilityRole="button"
           accessibilityLabel="Keep your streak going"
         >
@@ -381,7 +384,7 @@ function BestNearbyTab({
           </View>
           <View style={s.starsRow}>
             {starIcons(store.rating).map((icon, i) => (
-              <Ionicons key={i} name={icon as any} size={13} color="#f59e0b" />
+              <Ionicons key={i} name={icon as unknown as keyof typeof Ionicons.glyphMap} size={13} color="#f59e0b" />
             ))}
             <Text style={s.ratingNum}>{store.rating.toFixed(1)}</Text>
           </View>
@@ -564,14 +567,14 @@ function SavingsDashboard() {
             <MissedSavingsTab
               items={missed}
               loading={missedLoading}
-              onExplore={(id) => router.push(`/store/${id}` as any)}
+              onExplore={(id) => router.push(`/store/${id}` as unknown as string)}
             />
           )}
           {activeTab === 'nearby' && (
             <BestNearbyTab
               stores={nearby}
               loading={nearbyLoading}
-              onPress={(id) => router.push(`/store/${id}` as any)}
+              onPress={(id) => router.push(`/store/${id}` as unknown as string)}
             />
           )}
           <View style={{ height: 40 }} />

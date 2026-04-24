@@ -155,7 +155,7 @@ function ZoneVerifyScreen() {
 
         // If already eligible, redirect to zone page
         if (response.data.isEligible) {
-          router.replace(`/offers/zones/${slug}` as any);
+          router.replace(`/offers/zones/${slug}` as unknown as string);
         }
       }
     } catch (err: any) {
@@ -190,7 +190,10 @@ function ZoneVerifyScreen() {
       setSubmitting(true);
       setError(null);
 
-      const response = await apiClient.post<any>(`/zones/${slug}/verify`, formData as any);
+      const response = await apiClient.post<Record<string, unknown>>(
+        `/zones/${slug}/verify`,
+        formData as unknown as Record<string, unknown>,
+      );
 
       if (response.success) {
         platformAlertSimple(
@@ -233,7 +236,7 @@ function ZoneVerifyScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={COLORS.textMuted} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Please login to verify your eligibility for this exclusive zone</Text>
-          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as unknown as string)}>
             <Text style={styles.loginButtonText}>Login</Text>
           </Pressable>
           <Pressable

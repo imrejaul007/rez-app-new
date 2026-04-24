@@ -218,7 +218,10 @@ function StoreEMIInfoPage() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Pressable style={styles.proceedButton} onPress={() => router.push('/checkout/emi-selection' as any)}>
+        <Pressable
+          style={styles.proceedButton}
+          onPress={() => router.push('/checkout/emi-selection' as unknown as string)}
+        >
           <ThemedText style={styles.proceedButtonText}>
             Proceed with {calculateEMI(selectedTenure).emi}/mo EMI
           </ThemedText>

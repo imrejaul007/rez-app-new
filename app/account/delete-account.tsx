@@ -57,7 +57,7 @@ function DeleteAccountPage() {
       // FIX CA-AUT-001: Use correct endpoint /user/auth/account (not /auth/account)
       const response = await apiClient.delete('/user/auth/account');
 
-      const data = response.data as any;
+      const data = response.data as unknown as Record<string, unknown>;
       if (data?.success) {
         platformAlertConfirm(
           'Account Deleted',

@@ -334,7 +334,11 @@ const CategoriesPage: React.FC = () => {
               <Text style={styles.sectionTitle}>{section.section}</Text>
               <View style={styles.categoriesGrid}>
                 {section.items.map((cat) => (
-                  <Pressable key={cat.id} style={styles.categoryCard} onPress={() => router.push(cat.route as any)}>
+                  <Pressable
+                    key={cat.id}
+                    style={styles.categoryCard}
+                    onPress={() => router.push(cat.route as unknown as string)}
+                  >
                     <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                       <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                     </View>
@@ -430,7 +434,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginLeft: Spacing.md,
   },
   section: {
@@ -439,7 +443,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: Spacing.base,
   },
   categoriesGrid: {
@@ -468,7 +472,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.caption,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     textAlign: 'center',
   },
   emptyState: {
@@ -482,7 +486,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {

@@ -159,7 +159,7 @@ function CampaignDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Required Hashtag</Text>
           <View style={styles.hashtagBox}>
-            <Ionicons name={'hash' as any} size={20} color={Colors.primary} />
+            <Ionicons name={'hash' as unknown as keyof typeof Ionicons.glyphMap} size={20} color={Colors.primary} />
             <Text style={styles.hashtagText}>{campaign.requiredHashtag}</Text>
           </View>
         </View>
@@ -248,7 +248,7 @@ function InfoCard({ icon, label, value }: InfoCardProps) {
       end={{ x: 1, y: 1 }}
       style={styles.infoCard}
     >
-      <Ionicons name={icon as any} size={24} color={Colors.primary} />
+      <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={Colors.primary} />
       <Text style={styles.infoCardLabel}>{label}</Text>
       <Text style={styles.infoCardValue}>{value}</Text>
     </LinearGradient>

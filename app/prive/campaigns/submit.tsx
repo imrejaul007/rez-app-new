@@ -139,7 +139,7 @@ function CampaignSubmitScreen() {
                   style={[styles.platformButton, selectedPlatform === platform.id ? styles.platformButtonActive : null]}
                 >
                   <Ionicons
-                    name={platform.icon as any}
+                    name={platform.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={32}
                     color={selectedPlatform === platform.id ? Colors.primary : Colors.textSecondary}
                   />

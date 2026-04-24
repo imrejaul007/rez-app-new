@@ -207,7 +207,7 @@ function RechargePage() {
         // was therefore dead after this step. Navigate to the payment screen so the
         // user can complete the Razorpay/payment flow and wallet is actually debited.
         router.push(
-          `/payment?type=recharge&amount=${amount}&mobile=${e164Phone}&txnId=${response.data.transactionId}` as any,
+          `/payment?type=recharge&amount=${amount}&mobile=${e164Phone}&txnId=${response.data.transactionId}` as unknown as string,
         );
       } else {
         const msg = response.message || 'Failed to initiate recharge';

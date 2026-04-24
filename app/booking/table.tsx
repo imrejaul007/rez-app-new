@@ -15,6 +15,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
+import { type ImageSource } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { ThemedText } from '@/components/ThemedText';
@@ -124,7 +125,7 @@ function TableBookingPage() {
       setLoading(true);
       const response = await storesApi.getStoreById(storeId as string);
       if (response.success && response.data) {
-        setStore(response.data as any);
+        setStore(response.data as unknown as Record<string, unknown>);
       } else {
         platformAlertSimple('Error', 'Failed to load store details');
       }
@@ -311,7 +312,7 @@ function TableBookingPage() {
         const selectedTimeSlot = timeSlots.find((s) => s.id === selectedTime);
         platformAlertConfirm(
           'Booking Confirmed!',
-          `Your table has been booked!\nBooking Number: ${(response.data as any).bookingId || (response.data as any).confirmationCode || 'N/A'}\nDate: ${formatDate(selectedDate)}\nTime: ${selectedTimeSlot?.time}\nParty Size: ${partySize}`,
+          `Your table has been booked!\nBooking Number: ${(response.data as unknown as Record<string, unknown>).bookingId || (response.data as unknown as Record<string, unknown>).confirmationCode || 'N/A'}\nDate: ${formatDate(selectedDate)}\nTime: ${selectedTimeSlot?.time}\nParty Size: ${partySize}`,
           () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
           'OK',
         );
@@ -771,7 +772,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // BUG-066 FIX: properly typed style, removed (styles as any) cast
+  // BUG-066 FIX: properly typed style, removed (styles as unknown as ViewStyle) cast
   backButtonText: {
     ...Typography.body,
     fontWeight: '600',

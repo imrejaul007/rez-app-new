@@ -216,8 +216,11 @@ function AppointmentBookingPage() {
       apiClient
         .get('/consumer/patch-tests/check?category=hair_colour')
         .then((res) => {
-          if ((res as any)?.success && (res as any)?.data) {
-            setPatchTestStatus((res as any).data?.data ?? null);
+          if (
+            (res as unknown as Record<string, unknown>)?.success &&
+            (res as unknown as Record<string, unknown>)?.data
+          ) {
+            setPatchTestStatus((res as unknown as Record<string, unknown>).data?.data ?? null);
           }
         })
         .catch((err) => {
@@ -241,7 +244,7 @@ function AppointmentBookingPage() {
       .then((resp) => {
         if (resp.success && Array.isArray(resp.data)) {
           const map: Record<string, boolean> = {};
-          (resp.data as any[]).forEach((slot) => {
+          (resp.data as unknown[]).forEach((slot) => {
             if (slot.time) map[slot.time] = slot.available;
           });
           if (isMounted()) setBackendAvailability(map);
@@ -414,7 +417,7 @@ function AppointmentBookingPage() {
       if (selectedService?.id) {
         try {
           const serviceResp = await servicesApi.getServiceById(selectedService.id);
-          const svc = (serviceResp.data as any)?.data || serviceResp.data;
+          const svc = (serviceResp.data as unknown as Record<string, unknown>)?.data || serviceResp.data;
           requiresUpfront = svc?.serviceDetails?.requiresPaymentUpfront || svc?.requiresPaymentUpfront || false;
           servicePrice = svc?.pricing?.selling || svc?.price || selectedService.price || 0;
         } catch (e: any) {
@@ -471,14 +474,18 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         },
       });
 
-      if (!(orderResponse as any).data?.data?.razorpayOrderId) {
+      if (!((orderResponse as unknown as Record<string, unknown>).data as Record<string, unknown>)?.data) {
         throw new Error('Failed to create payment order');
       }
 
       // Initiate checkout
-      const paymentResult = await (razorpayApi as any).checkout({
+      const orderData = (orderResponse as unknown as Record<string, unknown>).data as Record<string, unknown>;
+      const razorpayOrderId = (orderData.data as Record<string, unknown>)?.razorpayOrderId;
+      const paymentResult = await (
+        razorpayApi as unknown as { checkout: (opts: Record<string, unknown>) => Promise<unknown> }
+      ).checkout({
         amount: Math.round(amount * 100),
-        orderId: (orderResponse as any).data.data.razorpayOrderId,
+        orderId: razorpayOrderId,
         notes: {
           serviceId: selectedService?.id,
           serviceName: selectedService?.name,
@@ -530,7 +537,10 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
 
       if (response.success) {
         // Show appointmentNumber if available, fall back to id
-        const appointmentNumber = (response.data as any)?.appointmentNumber || response.data?.id || 'N/A';
+        const appointmentNumber =
+          (response.data as unknown as Record<string, unknown>)?.appointmentNumber ||
+          (response.data as unknown as Record<string, unknown>)?.id ||
+          'N/A';
 
         // Success alert with appointment details
         const successMessage = `
@@ -549,7 +559,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
       } else {
         platformAlertSimple(
           'Booking Failed',
-          (response as any).error || 'Unable to create appointment. Please try again.',
+          (response as unknown as Record<string, unknown>).error || 'Unable to create appointment. Please try again.',
         );
       }
     } catch (error: any) {
@@ -687,34 +697,37 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
             </View>
 
             {/* Dynamic Pricing Badge */}
-            {selectedService && (selectedService as any).pricingRule && (
+            {selectedService && (selectedService as unknown as Record<string, unknown>).pricingRule && (
               <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  backgroundColor: (selectedService as any).discount > 0 ? '#f0fdf4' : '#fff7ed',
+                  backgroundColor:
+                    (selectedService as unknown as Record<string, unknown>).discount > 0 ? '#f0fdf4' : '#fff7ed',
                   padding: 10,
                   borderRadius: 8,
                   marginBottom: 12,
                 }}
               >
                 <Ionicons
-                  name={(selectedService as any).discount > 0 ? 'pricetag' : 'trending-up'}
+                  name={
+                    (selectedService as unknown as Record<string, unknown>).discount > 0 ? 'pricetag' : 'trending-up'
+                  }
                   size={16}
-                  color={(selectedService as any).discount > 0 ? '#16a34a' : '#d97706'}
+                  color={(selectedService as unknown as Record<string, unknown>).discount > 0 ? '#16a34a' : '#d97706'}
                 />
                 <Text
                   style={{
                     marginLeft: 8,
                     fontSize: 13,
-                    color: (selectedService as any).discount > 0 ? '#16a34a' : '#d97706',
+                    color: (selectedService as unknown as Record<string, unknown>).discount > 0 ? '#16a34a' : '#d97706',
                     fontWeight: '500',
                   }}
                 >
-                  {(selectedService as any).pricingRule.label}
-                  {(selectedService as any).discount > 0
-                    ? ` · Save ${currencySymbol}${(selectedService as any).discount}`
-                    : ` · +${currencySymbol}${(selectedService as any).surcharge}`}
+                  {(selectedService as unknown as Record<string, unknown>).pricingRule.label}
+                  {(selectedService as unknown as Record<string, unknown>).discount > 0
+                    ? ` · Save ${currencySymbol}${(selectedService as unknown as Record<string, unknown>).discount}`
+                    : ` · +${currencySymbol}${(selectedService as unknown as Record<string, unknown>).surcharge}`}
                 </Text>
               </View>
             )}
@@ -954,30 +967,31 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                 <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
                 <View style={styles.summaryCard}>
                   {/* Deposit Banner */}
-                  {(selectedService as any).requiresPaymentUpfront && selectedService.price > 0 && (
-                    <View
-                      style={[
-                        styles.depositBanner,
-                        { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight },
-                      ]}
-                    >
-                      <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
-                      <View style={{ flex: 1, marginLeft: Spacing.xs }}>
-                        <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
-                          Payment required at booking · {currencySymbol}
-                          {selectedService.price}
-                        </ThemedText>
-                        <ThemedText
-                          style={[
-                            styles.depositSub,
-                            { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 },
-                          ]}
-                        >
-                          Full amount charged now · Free cancellation 24h before
-                        </ThemedText>
+                  {(selectedService as unknown as Record<string, unknown>).requiresPaymentUpfront &&
+                    selectedService.price > 0 && (
+                      <View
+                        style={[
+                          styles.depositBanner,
+                          { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight },
+                        ]}
+                      >
+                        <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
+                        <View style={{ flex: 1, marginLeft: Spacing.xs }}>
+                          <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
+                            Payment required at booking · {currencySymbol}
+                            {selectedService.price}
+                          </ThemedText>
+                          <ThemedText
+                            style={[
+                              styles.depositSub,
+                              { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 },
+                            ]}
+                          >
+                            Full amount charged now · Free cancellation 24h before
+                          </ThemedText>
+                        </View>
                       </View>
-                    </View>
-                  )}
+                    )}
                   <View style={styles.summaryRow}>
                     <ThemedText style={styles.summaryLabel}>Service</ThemedText>
                     <ThemedText style={styles.summaryValue}>{selectedService.name}</ThemedText>

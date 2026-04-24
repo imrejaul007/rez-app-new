@@ -104,12 +104,12 @@ function AdminSocialMediaPosts() {
       }
 
       const response = await apiClient.get('/social-media/posts', params);
-      const postsData = (response.data as any)?.posts || [];
-      const pagination = (response.data as any)?.pagination;
+      const postsData = (response.data as unknown as Record<string, unknown>)?.posts || [];
+      const pagination = (response.data as unknown as Record<string, unknown>)?.pagination;
 
       // Use pagination metadata from backend for stats if on first page
-      if (pageNum === 1 && (response.data as any)?.stats) {
-        const s = (response.data as any).stats;
+      if (pageNum === 1 && (response.data as unknown as Record<string, unknown>)?.stats) {
+        const s = (response.data as unknown as Record<string, unknown>).stats as Record<string, unknown>;
         if (!isMounted()) return;
         setStats({
           total: s.total || 0,
@@ -122,7 +122,7 @@ function AdminSocialMediaPosts() {
         // Fetch stats with a lightweight count-only request
         try {
           const statsResp = await apiClient.get('/social-media/posts', { limit: 1, page: 1 });
-          const p = (statsResp.data as any)?.pagination;
+          const p = (statsResp.data as unknown as Record<string, unknown>)?.pagination;
           if (p?.totalItems) {
             // If backend provides status counts in pagination, use them
             // Otherwise leave stats from response.data.stats
@@ -443,7 +443,7 @@ function AdminSocialMediaPosts() {
               <View style={styles.postHeader} accessibilityRole="header">
                 <View style={styles.postPlatform} accessibilityLabel={`Platform: ${post.platform}`}>
                   <Ionicons
-                    name={getPlatformIcon(post.platform) as any}
+                    name={getPlatformIcon(post.platform) as unknown as keyof typeof Ionicons.glyphMap}
                     size={20}
                     color={getPlatformColor(post.platform)}
                   />

@@ -15,6 +15,8 @@ import {
   RefreshControl,
   Platform,
   Dimensions,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -460,21 +462,21 @@ const MissionDetailScreen: React.FC = () => {
                 <Ionicons name="checkmark-circle" size={20} color={colors.primary[500]} />
                 <Text style={styles.requirementText}>
                   {challenge.requirements.action === 'visit_stores' &&
-                    `Visit ${(challenge.requirements as any).count} stores`}
+                    `Visit ${(challenge.requirements as unknown as { count?: number }).count} stores`}
                   {challenge.requirements.action === 'upload_bills' &&
-                    `Upload ${(challenge.requirements as any).count} bills`}
+                    `Upload ${(challenge.requirements as unknown as { count?: number }).count} bills`}
                   {challenge.requirements.action === 'order_count' &&
-                    `Place ${(challenge.requirements as any).count} orders`}
+                    `Place ${(challenge.requirements as unknown as { count?: number }).count} orders`}
                   {challenge.requirements.action === 'refer_friends' &&
-                    `Refer ${(challenge.requirements as any).count} friends`}
+                    `Refer ${(challenge.requirements as unknown as { count?: number }).count} friends`}
                   {challenge.requirements.action === 'review_count' &&
-                    `Write ${(challenge.requirements as any).count} reviews`}
+                    `Write ${(challenge.requirements as unknown as { count?: number }).count} reviews`}
                   {challenge.requirements.action === 'spend_amount' &&
-                    `Spend ${currencySymbol}${(challenge.requirements as any).count}`}
+                    `Spend ${currencySymbol}${(challenge.requirements as unknown as { count?: number }).count}`}
                   {challenge.requirements.action === 'login_streak' &&
-                    `Maintain ${(challenge.requirements as any).count} day login streak`}
+                    `Maintain ${(challenge.requirements as unknown as { count?: number }).count} day login streak`}
                   {challenge.requirements.action === 'share_deals' &&
-                    `Share ${(challenge.requirements as any).count} deals`}
+                    `Share ${(challenge.requirements as unknown as { count?: number }).count} deals`}
                 </Text>
               </View>
               {challenge.requirements.minAmount && (
@@ -530,7 +532,7 @@ const MissionDetailScreen: React.FC = () => {
   );
 };
 
-const styles = (StyleSheet.create as any)({
+const styles = (StyleSheet.create as unknown as (s: Record<string, unknown>) => Record<string, unknown>)({
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -579,7 +581,7 @@ const styles = (StyleSheet.create as any)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as any,
+      ios: shadows.md as unknown as ViewStyle,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -651,7 +653,7 @@ const styles = (StyleSheet.create as any)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as any,
+      ios: shadows.md as unknown as ViewStyle,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -730,7 +732,7 @@ const styles = (StyleSheet.create as any)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as any,
+      ios: shadows.md as unknown as ViewStyle,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -799,7 +801,7 @@ const styles = (StyleSheet.create as any)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as any,
+      ios: shadows.md as unknown as ViewStyle,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -820,7 +822,7 @@ const styles = (StyleSheet.create as any)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as any,
+      ios: shadows.md as unknown as ViewStyle,
       android: { elevation: 4 },
     }) || {}),
   },

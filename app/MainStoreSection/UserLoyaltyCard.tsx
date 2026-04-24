@@ -1,14 +1,10 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // UserLoyaltyCard.tsx - User's loyalty progress with a store
-import React from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import React from 'react';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
 
 interface LoyaltyReward {
@@ -28,8 +24,8 @@ interface UserLoyaltyCardProps {
 function UserLoyaltyCard({
   visitsCompleted = 0,
   totalVisitsRequired = 5,
-  nextReward = "Free Coffee",
-  rewardIcon = "cafe",
+  nextReward = 'Free Coffee',
+  rewardIcon = 'cafe',
   onViewDetails,
 }: UserLoyaltyCardProps) {
   const progress = Math.min(visitsCompleted / totalVisitsRequired, 1);
@@ -80,7 +76,7 @@ function UserLoyaltyCard({
           <View style={styles.rightContent}>
             <View style={styles.iconCircle}>
               <Ionicons
-                name={rewardIcon as any || "cafe"}
+                name={(rewardIcon as unknown as keyof typeof Ionicons.glyphMap) || 'cafe'}
                 size={28}
                 color={colors.nileBlue}
               />
@@ -89,11 +85,7 @@ function UserLoyaltyCard({
         </View>
 
         {/* View Details Button */}
-        <Pressable
-          style={styles.detailsButton}
-          onPress={onViewDetails}
-         
-        >
+        <Pressable style={styles.detailsButton} onPress={onViewDetails}>
           <ThemedText style={styles.detailsButtonText}>View Loyalty Details</ThemedText>
         </Pressable>
       </LinearGradient>
@@ -108,31 +100,31 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.nileBlue,
     marginBottom: 12,
   },
   card: {
     borderRadius: 16,
     padding: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   cardContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   leftContent: {
     flex: 1,
   },
   visitsLabel: {
     fontSize: 13,
-    color: "rgba(255, 255, 255, 0.9)",
-    fontWeight: "500",
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '500',
     marginBottom: 4,
   },
   visitsCount: {
     fontSize: 36,
-    fontWeight: "800",
+    fontWeight: '800',
     color: colors.background.primary,
     letterSpacing: -1,
     marginBottom: 12,
@@ -142,23 +134,23 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 4,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   progressBarFill: {
-    height: "100%",
+    height: '100%',
     backgroundColor: colors.background.primary,
     borderRadius: 4,
   },
   rewardRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   rewardText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.background.primary,
     flex: 1,
   },
@@ -166,7 +158,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   rightContent: {
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
     paddingLeft: 16,
   },
   iconCircle: {
@@ -174,19 +166,19 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     backgroundColor: colors.background.primary,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   detailsButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     paddingVertical: 14,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 16,
   },
   detailsButtonText: {
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.nileBlue,
   },
 });

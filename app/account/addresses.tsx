@@ -146,7 +146,7 @@ function SavedAddressesPage() {
       if (!isMounted()) return;
 
       if (response.success && response.data) {
-        const ordersData = response.data as any;
+        const ordersData = response.data as unknown as Record<string, unknown>;
         const orderList = ordersData.orders ?? ordersData.data ?? (Array.isArray(ordersData) ? ordersData : []);
 
         const seen = new Set<string>();
@@ -217,7 +217,7 @@ function SavedAddressesPage() {
   const handleSaveHistoryAddress = useCallback(
     async (hist: HistoryAddress) => {
       const newAddress: AddressCreate = {
-        type: 'OTHER' as any,
+        type: 'OTHER' as AddressType,
         title: hist.name || hist.addressLine1.split(' ').slice(0, 3).join(' '),
         phone: hist.phone,
         addressLine1: hist.addressLine1,
@@ -729,7 +729,7 @@ function SavedAddressesPage() {
           selectedAddress
             ? {
                 ...selectedAddress,
-                type: selectedAddress.type as any,
+                type: selectedAddress.type as AddressType,
               }
             : null
         }

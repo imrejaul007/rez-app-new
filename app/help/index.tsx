@@ -243,13 +243,13 @@ function HelpPage() {
     <Pressable
       key={action.id}
       style={styles.quickAction}
-      onPress={() => router.push(action.route as any)}
+      onPress={() => router.push(action.route as unknown as string)}
       accessibilityLabel={`${action.title}. ${action.description}`}
       accessibilityRole="button"
       accessibilityHint="Double tap to access this support option"
     >
       <View style={[styles.quickActionIcon, { backgroundColor: action.iconColor + '15' }]}>
-        <Ionicons name={action.icon as any} size={24} color={action.iconColor} />
+        <Ionicons name={action.icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={action.iconColor} />
       </View>
       <ThemedText style={styles.quickActionTitle}>{action.title}</ThemedText>
       <ThemedText style={styles.quickActionDescription}>{action.description}</ThemedText>
@@ -260,14 +260,18 @@ function HelpPage() {
     <Pressable
       key={category.id}
       style={styles.helpCategory}
-      onPress={() => router.push(category.route as any)}
+      onPress={() => router.push(category.route as unknown as string)}
       accessibilityLabel={`${category.title} category. ${category.itemCount} articles available`}
       accessibilityRole="button"
       accessibilityHint="Double tap to browse articles in this category"
     >
       <View style={styles.categoryLeft}>
         <View style={[styles.categoryIcon, { backgroundColor: category.iconColor + '15' }]}>
-          <Ionicons name={category.icon as any} size={20} color={category.iconColor} />
+          <Ionicons
+            name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
+            size={20}
+            color={category.iconColor}
+          />
         </View>
 
         <View style={styles.categoryText}>

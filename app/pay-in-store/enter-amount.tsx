@@ -253,8 +253,8 @@ function EnterAmountScreen() {
     }
 
     // Fallback to address object if exists
-    if ((store as any).address) {
-      const addr = (store as any).address;
+    if ((store as unknown as Record<string, unknown>).address) {
+      const addr = (store as unknown as Record<string, unknown>).address;
       if (typeof addr === 'string') return addr;
       const parts = [addr.street, addr.city, addr.state, addr.formattedAddress].filter(Boolean);
       if (parts.length > 0) return parts[parts.length - 1]; // Use formattedAddress if available
@@ -409,7 +409,11 @@ function EnterAmountScreen() {
               {offers.map((offer) => (
                 <View key={offer.id} style={styles.offerCard}>
                   <View style={styles.offerIconContainer}>
-                    <Ionicons name={getOfferIcon(offer) as any} size={20} color={Colors.gold} />
+                    <Ionicons
+                      name={getOfferIcon(offer) as unknown as keyof typeof Ionicons.glyphMap}
+                      size={20}
+                      color={Colors.gold}
+                    />
                   </View>
                   <Text style={styles.offerTitle}>{offer.title}</Text>
                   <Text style={styles.offerDescription} numberOfLines={2}>

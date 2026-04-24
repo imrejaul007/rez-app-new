@@ -62,7 +62,7 @@ function PhotoUploadPage() {
     try {
       const result = await photoUploadApi.getMyUploads(1, 20);
       if (result.success && result.data) {
-        setUploads((result.data as any).uploads);
+        setUploads((result.data as unknown as Record<string, unknown>).uploads as Record<string, unknown>[]);
       }
     } catch (error: any) {
       // silently handle
@@ -140,7 +140,7 @@ function PhotoUploadPage() {
       const filename = uri.split('/').pop() || `photo_${Date.now()}.jpg`;
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : 'image/jpeg';
-      formData.append('file', { uri, name: filename, type } as any);
+      formData.append('file', { uri, name: filename, type } as unknown as Record<string, unknown>);
     }
 
     formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.images);

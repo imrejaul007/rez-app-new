@@ -146,9 +146,9 @@ function ReelsPage() {
 
       const result = await ugcApi.getReelFeed(pageNum, 10);
       if (result.success && result.data) {
-        const newReels = (result.data as any).reels;
+        const newReels = (result.data as unknown as Record<string, unknown>).reels;
         setReels((prev) => (append ? [...prev, ...newReels] : newReels));
-        setHasMore((result.data as any).pagination.hasMore);
+        setHasMore((result.data as unknown as Record<string, unknown>).pagination.hasMore);
         setPage(pageNum);
       } else {
         if (!isMounted()) return;
@@ -263,7 +263,7 @@ function ReelsPage() {
   const handleShop = useCallback(
     (reel: UgcReel) => {
       if (reel.store) {
-        router.push(`/store/${reel.store.id}` as any);
+        router.push(`/store/${reel.store.id}` as unknown as string);
       }
     },
     [router],
@@ -311,7 +311,10 @@ function ReelsPage() {
           <View style={styles.actionsContainer}>
             {/* Creator Avatar */}
             {item.creator && (
-              <Pressable style={styles.avatarButton} onPress={() => router.push(`/creator/${item.creator!.id}` as any)}>
+              <Pressable
+                style={styles.avatarButton}
+                onPress={() => router.push(`/creator/${item.creator!.id}` as unknown as string)}
+              >
                 <LinearGradient colors={['#FF6B6B', '#FFD93D', '#6BCB77']} style={styles.avatarRing}>
                   {item.creator.avatar ? (
                     <CachedImage source={item.creator.avatar} style={styles.avatarImage} />
@@ -340,7 +343,10 @@ function ReelsPage() {
             </Pressable>
 
             {/* Comments */}
-            <Pressable style={styles.actionButton} onPress={() => router.push(`/social/comments/${item.id}` as any)}>
+            <Pressable
+              style={styles.actionButton}
+              onPress={() => router.push(`/social/comments/${item.id}` as unknown as string)}
+            >
               <Ionicons name="chatbubble-ellipses-outline" size={28} color={colors.text.inverse} />
               <Text style={styles.actionCount}>{formatNumber(item.comments)}</Text>
             </Pressable>
@@ -372,7 +378,10 @@ function ReelsPage() {
           <View style={styles.bottomContainer}>
             {/* Creator Name */}
             {item.creator && (
-              <Pressable style={styles.creatorRow} onPress={() => router.push(`/creator/${item.creator!.id}` as any)}>
+              <Pressable
+                style={styles.creatorRow}
+                onPress={() => router.push(`/creator/${item.creator!.id}` as unknown as string)}
+              >
                 <Text style={styles.creatorName}>@{item.creator.name}</Text>
                 {item.views > 100 && (
                   <View style={styles.verifiedBadge}>
@@ -437,7 +446,7 @@ function ReelsPage() {
         </LinearGradient>
         <Text style={styles.emptyTitle}>No Reels Yet</Text>
         <Text style={styles.emptySubtext}>Be the first to create a reel and earn coins!</Text>
-        <Pressable style={styles.createReelButton} onPress={() => router.push('/social/upload' as any)}>
+        <Pressable style={styles.createReelButton} onPress={() => router.push('/social/upload' as unknown as string)}>
           <LinearGradient
             colors={['#FF6B6B', '#FF8E53']}
             start={{ x: 0, y: 0 }}
@@ -478,7 +487,7 @@ function ReelsPage() {
           </Pressable>
         </View>
 
-        <Pressable style={styles.headerButton} onPress={() => router.push('/social/upload' as any)}>
+        <Pressable style={styles.headerButton} onPress={() => router.push('/social/upload' as unknown as string)}>
           <Ionicons name="camera-outline" size={22} color={colors.text.inverse} />
         </Pressable>
       </View>

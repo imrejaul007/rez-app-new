@@ -1,17 +1,10 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // PaymentMethodsSection.tsx - How you can pay here section
-import React from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-} from "@/constants/DesignSystem";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
@@ -30,42 +23,40 @@ export interface PaymentMethodsSectionProps {
 
 const DEFAULT_METHODS: PaymentMethod[] = [
   {
-    id: "promo",
-    name: "Promo Coins",
-    icon: "ticket-outline",
+    id: 'promo',
+    name: 'Promo Coins',
+    icon: 'ticket-outline',
     iconColor: colors.lightMustard,
-    iconBgColor: "rgba(255, 205, 87, 0.1)",
+    iconBgColor: 'rgba(255, 205, 87, 0.1)',
     isAccepted: true,
   },
   {
-    id: "branded",
-    name: "Branded Coins",
-    icon: "star",
+    id: 'branded',
+    name: 'Branded Coins',
+    icon: 'star',
     iconColor: colors.brand.ios,
-    iconBgColor: "rgba(0, 122, 255, 0.1)",
+    iconBgColor: 'rgba(0, 122, 255, 0.1)',
     isAccepted: true,
   },
   {
-    id: "rez",
+    id: 'rez',
     name: BRAND.COIN_NAME,
-    icon: "server",
-    iconColor: "#FF9500",
-    iconBgColor: "rgba(255, 149, 0, 0.1)",
+    icon: 'server',
+    iconColor: '#FF9500',
+    iconBgColor: 'rgba(255, 149, 0, 0.1)',
     isAccepted: true,
   },
   {
-    id: "upi",
-    name: "UPI / Card",
-    icon: "card-outline",
+    id: 'upi',
+    name: 'UPI / Card',
+    icon: 'card-outline',
     iconColor: colors.lightMustard,
-    iconBgColor: "rgba(255, 205, 87, 0.1)",
+    iconBgColor: 'rgba(255, 205, 87, 0.1)',
     isAccepted: true,
   },
 ];
 
-function PaymentMethodsSection({
-  methods = DEFAULT_METHODS,
-}: PaymentMethodsSectionProps) {
+function PaymentMethodsSection({ methods = DEFAULT_METHODS }: PaymentMethodsSectionProps) {
   return (
     <View style={styles.container}>
       {/* Section Header */}
@@ -76,7 +67,11 @@ function PaymentMethodsSection({
         {methods.map((method) => (
           <View key={method.id} style={styles.methodCard}>
             <View style={[styles.iconContainer, { backgroundColor: method.iconBgColor }]}>
-              <Ionicons name={method.icon as any} size={24} color={method.iconColor} />
+              <Ionicons
+                name={method.icon as unknown as keyof typeof Ionicons.glyphMap}
+                size={24}
+                color={method.iconColor}
+              />
             </View>
             <View style={styles.methodInfo}>
               <ThemedText style={styles.methodName}>{method.name}</ThemedText>
@@ -94,9 +89,7 @@ function PaymentMethodsSection({
       {/* Info Banner */}
       <View style={styles.infoBanner}>
         <Ionicons name="information-circle" size={18} color={colors.brand.ios} />
-        <ThemedText style={styles.infoText}>
-          Coins are auto-applied for maximum savings
-        </ThemedText>
+        <ThemedText style={styles.infoText}>Coins are auto-applied for maximum savings</ThemedText>
       </View>
     </View>
   );
@@ -109,19 +102,19 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.sm,
   },
   methodCard: {
-    width: "48%",
-    flexDirection: "row",
-    alignItems: "center",
+    width: '48%',
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.background.primary,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -133,32 +126,32 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   methodInfo: {
     flex: 1,
   },
   methodName: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.text.primary,
   },
   acceptedRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
     marginTop: 2,
   },
   acceptedText: {
     fontSize: 12,
     color: colors.lightMustard,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   infoBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 122, 255, 0.08)",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 122, 255, 0.08)',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -168,7 +161,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.brand.ios,
-    fontWeight: "500",
+    fontWeight: '500',
     flex: 1,
   },
 });

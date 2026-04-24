@@ -227,7 +227,7 @@ function SectionDetailPage() {
         cardType: 'product',
         cardData: JSON.stringify(product),
       },
-    } as any);
+    } as unknown as Record<string, unknown>);
   };
 
   const handleBack = () => {

@@ -90,7 +90,7 @@ function ProfileEditPage() {
         const response = await authService.getProfile();
         if (cancelled || !isMounted()) return;
         if (response.success && response.data) {
-          const d = response.data as any;
+          const d = response.data as unknown as Record<string, unknown>;
           const profileData: ProfileFormData = {
             name:
               d.profile?.firstName && d.profile?.lastName
@@ -170,12 +170,12 @@ function ProfileEditPage() {
         'Unsaved Changes',
         'You have unsaved changes. Are you sure you want to leave?',
         () => {
-          goBack('/profile' as any);
+          goBack('/profile' as unknown as string);
         },
         'Leave',
       );
     } else {
-      goBack('/profile' as any);
+      goBack('/profile' as unknown as string);
     }
   };
 
@@ -315,7 +315,7 @@ function ProfileEditPage() {
         },
       };
 
-      const response = await authService.updateProfile(profileUpdateData as any);
+      const response = await authService.updateProfile(profileUpdateData as unknown as Record<string, unknown>);
 
       if (!response.success) {
         throw new Error(response.error || response.message || 'Failed to update profile');
@@ -346,7 +346,7 @@ function ProfileEditPage() {
 
       // Navigate back after a short delay
       setTimeout(() => {
-        if (isMounted()) goBack('/profile' as any);
+        if (isMounted()) goBack('/profile' as unknown as string);
       }, 500);
     } catch (error: any) {
       const message = error instanceof Error ? error.message : 'Unknown error';

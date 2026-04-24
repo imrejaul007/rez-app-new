@@ -121,19 +121,27 @@ const HealthcarePage: React.FC = () => {
       setStats({
         doctors:
           doctorsRes.status === 'fulfilled'
-            ? (doctorsRes.value.data as any)?.total || (doctorsRes.value.data as any)?.stores?.length || 30
+            ? (doctorsRes.value.data as unknown as Record<string, unknown>)?.total ||
+              (doctorsRes.value.data as unknown as Record<string, unknown>)?.stores?.length ||
+              30
             : 30,
         pharmacies:
           pharmaciesRes.status === 'fulfilled'
-            ? (pharmaciesRes.value.data as any)?.total || (pharmaciesRes.value.data as any)?.stores?.length || 15
+            ? (pharmaciesRes.value.data as unknown as Record<string, unknown>)?.total ||
+              (pharmaciesRes.value.data as unknown as Record<string, unknown>)?.stores?.length ||
+              15
             : 15,
         labs:
           labsRes.status === 'fulfilled'
-            ? (labsRes.value.data as any)?.total || (labsRes.value.data as any)?.stores?.length || 10
+            ? (labsRes.value.data as unknown as Record<string, unknown>)?.total ||
+              (labsRes.value.data as unknown as Record<string, unknown>)?.stores?.length ||
+              10
             : 10,
         tests:
           productsRes.status === 'fulfilled'
-            ? (productsRes.value.data as any)?.total || (productsRes.value.data as any)?.products?.length || 48
+            ? (productsRes.value.data as unknown as Record<string, unknown>)?.total ||
+              (productsRes.value.data as unknown as Record<string, unknown>)?.products?.length ||
+              48
             : 48,
       });
 
@@ -141,10 +149,10 @@ const HealthcarePage: React.FC = () => {
       if (
         productsRes.status === 'fulfilled' &&
         productsRes.value.success &&
-        (productsRes.value.data as any)?.products
+        (productsRes.value.data as unknown as Record<string, unknown>)?.products
       ) {
         if (!isMounted()) return;
-        setFeaturedServices((productsRes.value.data as any).products.slice(0, 6));
+        setFeaturedServices((productsRes.value.data as unknown as Record<string, unknown>).products.slice(0, 6));
       }
     } catch (error: any) {
       // silently handle
@@ -195,7 +203,7 @@ const HealthcarePage: React.FC = () => {
   };
 
   const navigateToCategory = (route: string) => {
-    router.push(route as any);
+    router.push(route as unknown as string);
   };
 
   return (
@@ -222,7 +230,7 @@ const HealthcarePage: React.FC = () => {
           </View>
           <Pressable
             style={styles.searchButton}
-            onPress={() => router.push('/healthcare/records' as any)}
+            onPress={() => router.push('/healthcare/records' as unknown as string)}
             accessibilityRole="button"
             accessibilityLabel="View health records"
           >
@@ -267,7 +275,11 @@ const HealthcarePage: React.FC = () => {
                 accessibilityLabel={`Call ${action.title}: ${action.phone}`}
                 accessibilityHint={`Double tap to dial ${action.phone}`}
               >
-                <Ionicons name={action.icon as any} size={20} color={COLORS.white} />
+                <Ionicons
+                  name={action.icon as unknown as keyof typeof Ionicons.glyphMap}
+                  size={20}
+                  color={COLORS.white}
+                />
                 <Text style={styles.quickActionText}>{action.title}</Text>
                 <Text style={styles.quickActionPhone}>{action.phone}</Text>
               </Pressable>
@@ -288,7 +300,7 @@ const HealthcarePage: React.FC = () => {
                 accessibilityLabel={`${cat.title} healthcare services`}
               >
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
-                  <Ionicons name={cat.icon as any} size={24} color={cat.color} />
+                  <Ionicons name={cat.icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={cat.color} />
                 </View>
                 <Text style={styles.categoryTitle}>{cat.title}</Text>
                 <Text style={styles.categoryCount}>{getCategoryCount(cat.id)}</Text>
@@ -302,7 +314,7 @@ const HealthcarePage: React.FC = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Popular Services</Text>
             <Pressable
-              onPress={() => router.push('/healthcare/doctors' as any)}
+              onPress={() => router.push('/healthcare/doctors' as unknown as string)}
               accessibilityRole="button"
               accessibilityLabel="View all healthcare services"
             >
@@ -344,7 +356,7 @@ const HealthcarePage: React.FC = () => {
                       } else if (serviceType.includes('record')) {
                         route = '/healthcare/records';
                       }
-                      router.push(route as any);
+                      router.push(route as unknown as string);
                     }}
                   >
                     <CachedImage source={service.images?.[0] || ''} style={styles.serviceImage} />
@@ -390,7 +402,7 @@ const HealthcarePage: React.FC = () => {
         {/* Health Records Banner */}
         <Pressable
           style={styles.recordsBanner}
-          onPress={() => router.push('/healthcare/records' as any)}
+          onPress={() => router.push('/healthcare/records' as unknown as string)}
           accessibilityRole="button"
           accessibilityLabel="Manage your health records — prescriptions, reports and medical documents"
         >
@@ -416,7 +428,7 @@ const HealthcarePage: React.FC = () => {
         {/* Emergency Services Banner */}
         <Pressable
           style={styles.emergencyBanner}
-          onPress={() => router.push('/healthcare/emergency' as any)}
+          onPress={() => router.push('/healthcare/emergency' as unknown as string)}
           accessibilityRole="button"
           accessibilityLabel="Emergency services — ambulance, hospitals, 24x7 emergency contacts"
         >
@@ -576,7 +588,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: Spacing.md,
   },
   viewAllText: {
@@ -607,7 +619,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: 2,
     textAlign: 'center',
   },
@@ -676,7 +688,7 @@ const styles = StyleSheet.create({
   serviceName: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: 2,
     minHeight: 32,
   },

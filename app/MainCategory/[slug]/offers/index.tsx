@@ -145,9 +145,9 @@ function OffersIndexPage() {
   const renderBankOffer = (offer: any) => (
     <Pressable
       style={styles.bankCard}
-      onPress={() => router.push(`/MainCategory/' + slug + '/offers/${offer._id}` as any)}
+      onPress={() => router.push(`/MainCategory/' + slug + '/offers/${offer._id}` as unknown as string)}
     >
-      <LinearGradient colors={getBankGradient(offer.bankName || '') as any} style={styles.bankGradient}>
+      <LinearGradient colors={getBankGradient(offer.bankName || '') as unknown as string[]} style={styles.bankGradient}>
         <View style={styles.bankContent}>
           <Text style={styles.bankIcon}>
             {offer.cardType === 'upi' ? '\u{1F4F1}' : offer.cardType === 'wallet' ? '\u{1F45B}' : '\u{1F4B3}'}
@@ -192,7 +192,7 @@ function OffersIndexPage() {
     return (
       <Pressable
         style={styles.dealCard}
-        onPress={() => router.push(`/MainCategory/' + slug + '/offers/${deal._id}` as any)}
+        onPress={() => router.push(`/MainCategory/' + slug + '/offers/${deal._id}` as unknown as string)}
       >
         <Text style={styles.dealIcon}>{icon}</Text>
         <Text style={styles.dealTitle} numberOfLines={1}>
@@ -298,7 +298,7 @@ function OffersIndexPage() {
               onPress={() => setActiveTab(tab.id)}
             >
               <Ionicons
-                name={tab.icon as any}
+                name={tab.icon as unknown as keyof typeof Ionicons.glyphMap}
                 size={16}
                 color={activeTab === tab.id ? SHARED_COLORS.white : SHARED_COLORS.textSecondary}
               />

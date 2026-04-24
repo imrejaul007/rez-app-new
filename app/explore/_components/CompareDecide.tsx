@@ -47,7 +47,7 @@ const CompareDecide = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as any);
+    router.push(path as unknown as string);
   };
 
   // Build options from comparison stores

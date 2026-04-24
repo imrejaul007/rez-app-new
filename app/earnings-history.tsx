@@ -10,6 +10,8 @@ import {
   Platform,
   Dimensions,
   Share,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
@@ -365,7 +367,11 @@ function EarningsHistoryPage() {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                   >
-                    <Ionicons name={getTypeIcon(transaction.type) as any} size={20} color={colors.text.inverse} />
+                    <Ionicons
+                      name={getTypeIcon(transaction.type) as unknown as keyof typeof Ionicons.glyphMap}
+                      size={20}
+                      color={colors.text.inverse}
+                    />
                   </LinearGradient>
                   <View style={styles.transactionInfo}>
                     <ThemedText style={styles.transactionSource}>{transaction.source}</ThemedText>
@@ -568,7 +574,7 @@ function EarningsHistoryPage() {
             <Pressable
               key={filter.value}
               style={[styles.filterChip, selectedFilter === filter.value && styles.filterChipActive]}
-              onPress={() => setSelectedFilter(filter.value as any)}
+              onPress={() => setSelectedFilter(filter.value as unknown as string)}
               accessibilityLabel={`Filter by ${filter.label}`}
               accessibilityRole="button"
               accessibilityState={{ selected: selectedFilter === filter.value }}
@@ -581,12 +587,20 @@ function EarningsHistoryPage() {
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <Ionicons name={filter.icon as any} size={16} color={colors.text.inverse} />
+                  <Ionicons
+                    name={filter.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    size={16}
+                    color={colors.text.inverse}
+                  />
                   <ThemedText style={styles.filterTextActive}>{filter.label}</ThemedText>
                 </LinearGradient>
               ) : (
                 <>
-                  <Ionicons name={filter.icon as any} size={16} color={colors.text.tertiary} />
+                  <Ionicons
+                    name={filter.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    size={16}
+                    color={colors.text.tertiary}
+                  />
                   <ThemedText style={styles.filterText}>{filter.label}</ThemedText>
                 </>
               )}
@@ -618,7 +632,7 @@ function EarningsHistoryPage() {
         <FlashList
           data={transactions}
           keyExtractor={(item) => item._id}
-          contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }] as any}
+          contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }] as unknown as StyleProp<ViewStyle>}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           onEndReached={() => {
             if (hasMore && !loading) handleLoadMore();

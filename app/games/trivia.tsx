@@ -178,7 +178,11 @@ function TriviaPage() {
     if (gameState === 'playing') {
       optionAnimations.forEach((anim, i) => {
         anim.value = 0;
-        anim.value = withTiming(1, { duration: 300, delay: i * 100, easing: Easing.out(Easing.back(1.2)) } as any);
+        anim.value = withTiming(1, {
+          duration: 300,
+          delay: i * 100,
+          easing: Easing.out(Easing.back(1.2)),
+        } as WithSpringConfig);
       });
       return () => optionAnimations.forEach((anim) => cancelAnimation(anim));
     }
@@ -559,7 +563,7 @@ function TriviaPage() {
           </Pressable>
           <Pressable
             style={styles.backToGamesBtn}
-            onPress={() => router.push('/games' as any)}
+            onPress={() => router.push('/games' as unknown as string)}
             accessibilityRole="button"
             accessibilityLabel="Browse more games"
           >

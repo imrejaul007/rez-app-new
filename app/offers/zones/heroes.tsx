@@ -162,7 +162,7 @@ function HeroesZonePage() {
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setProfileOffers((prev) => ({ ...prev, [profileSlug]: response.data as any }));
+        setProfileOffers((prev) => ({ ...prev, [profileSlug]: response.data as unknown as Record<string, unknown> }));
       }
     } catch (err: any) {
       // silently handle
@@ -196,17 +196,17 @@ function HeroesZonePage() {
     router.push({
       pathname: '/profile/verification',
       params: { zone },
-    } as any);
+    } as unknown as string);
   };
 
   const handleDealPress = (offer: ProfileOffer) => {
-    router.push(`/offers/${offer._id}` as any);
+    router.push(`/offers/${offer._id}` as unknown as string);
   };
 
   const isProfileVerified = (profile: SpecialProfile): boolean => {
     if (profile.userEligible) return true;
 
-    const verifications = (user as any)?.verifications;
+    const verifications = (user as unknown as Record<string, unknown>)?.verifications;
     if (!verifications) return false;
 
     // Map profile slugs to verification keys
@@ -387,7 +387,11 @@ function HeroesZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
+        contentContainerStyle={
+          [styles.scrollContent, { paddingBottom: bottomPadding }] as unknown as import('react-native').StyleProp<
+            import('react-native').ViewStyle
+          >
+        }
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -459,7 +463,7 @@ function HeroesZonePage() {
             router.push({
               pathname: '/profile/verification',
               params: { zone: profile?.slug || 'defence' },
-            } as any);
+            } as unknown as string);
           }}
         >
           <LinearGradient

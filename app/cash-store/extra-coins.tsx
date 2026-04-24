@@ -10,6 +10,8 @@ import {
   Platform,
   StatusBar,
   Dimensions,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -222,7 +224,7 @@ const SkeletonBlock = React.memo(
     return (
       <Animated.View
         style={[
-          { width: w as any, height: h, borderRadius: BorderRadius.lg, backgroundColor: '#E8E2DB' },
+          { width: w, height: h, borderRadius: BorderRadius.lg, backgroundColor: '#E8E2DB' },
           shimmerStyle,
           style,
         ]}
@@ -328,11 +330,20 @@ function ExtraCoinsPage() {
       if (result.success && result.data) {
         setStreak((prev) =>
           prev
-            ? { ...prev, hasCheckedInToday: true, currentStreak: (result.data as any).streak || prev.currentStreak + 1 }
+            ? {
+                ...prev,
+                hasCheckedInToday: true,
+                currentStreak: (result.data as unknown as Record<string, unknown>).streak || prev.currentStreak + 1,
+              }
             : prev,
         );
-        if ((result.data as any).coinsEarned) {
-          setCoinBalance((prev) => prev + (result.data as any).coinsEarned + ((result.data as any).bonusEarned || 0));
+        if ((result.data as unknown as Record<string, unknown>).coinsEarned) {
+          setCoinBalance(
+            (prev) =>
+              prev +
+              (result.data as unknown as Record<string, unknown>).coinsEarned +
+              ((result.data as unknown as Record<string, unknown>).bonusEarned || 0),
+          );
         }
       }
     } catch (err: any) {
@@ -347,13 +358,13 @@ function ExtraCoinsPage() {
   const handleCoinDropPress = useCallback(
     (drop: CoinDrop) => {
       const storeId = getStoreId(drop.storeId);
-      if (storeId) router.push(`/MainStorePage?storeId=${storeId}` as any);
+      if (storeId) router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
     },
     [router],
   );
 
   const handleCampaignPress = useCallback(() => {
-    router.push('/offers/double-cashback' as any);
+    router.push('/offers/double-cashback' as unknown as string);
   }, [router]);
 
   const headerTop = Platform.OS === 'web' ? 0 : insets.top;
@@ -669,7 +680,7 @@ function ExtraCoinsPage() {
                   <Ionicons name="gift" size={16} color={colors.deepPink} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Bonus Zone</Text>
-                <Pressable onPress={() => router.push('/bonus-zone' as any)} style={styles.seeAllBtn}>
+                <Pressable onPress={() => router.push('/bonus-zone' as unknown as string)} style={styles.seeAllBtn}>
                   <Text style={styles.seeAllText}>View All</Text>
                   <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                 </Pressable>
@@ -692,7 +703,11 @@ function ExtraCoinsPage() {
             </View>
             <View style={styles.earnGrid}>
               {EARN_METHODS.map((method) => (
-                <Pressable key={method.id} style={styles.earnCard} onPress={() => router.push(method.route as any)}>
+                <Pressable
+                  key={method.id}
+                  style={styles.earnCard}
+                  onPress={() => router.push(method.route as unknown as string)}
+                >
                   <LinearGradient
                     colors={method.gradient}
                     start={{ x: 0, y: 0 }}
@@ -762,7 +777,7 @@ function ExtraCoinsPage() {
           </View>
 
           {/* ─── Bottom CTA ───────────────────────────────── */}
-          <Pressable style={styles.bottomCta} onPress={() => router.push('/cash-store' as any)}>
+          <Pressable style={styles.bottomCta} onPress={() => router.push('/cash-store' as unknown as string)}>
             <LinearGradient
               colors={[colors.nileBlue, '#0F172A']}
               start={{ x: 0, y: 0 }}

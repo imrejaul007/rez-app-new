@@ -129,7 +129,7 @@ function BillHistoryPage() {
         if (!isMounted()) return;
 
         if (response.success && response.data) {
-          const data = response.data as any;
+          const data = response.data as unknown as Record<string, unknown>;
           const newBills = Array.isArray(data) ? data : data.bills || [];
           if (append) {
             setBills((prev) => [...prev, ...newBills]);

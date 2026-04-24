@@ -91,7 +91,7 @@ function BrandsPage() {
           id: b.id,
           name: b.name,
           logo: b.logo,
-          cashback: typeof b.cashback === 'object' ? b.cashback.percentage : (b.cashback as any),
+          cashback: typeof b.cashback === 'object' ? b.cashback.percentage : (b.cashback as unknown as number),
           tag: b.badges?.[0] ?? null,
           rating: b.rating,
         }));
@@ -148,7 +148,7 @@ function BrandsPage() {
       router.push({
         pathname: '/brand/[name]',
         params: { name: brand.id },
-      } as any);
+      } as unknown as string);
     },
     [router],
   );

@@ -162,7 +162,7 @@ function SponsoredCashbackPage() {
 
   const renderOffer = useCallback(
     ({ item }: { item: SponsoredOffer }) => (
-      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any)}>
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as unknown as string)}>
         <View style={styles.sponsoredBadge}>
           <Ionicons name="megaphone" size={12} color={Colors.gold} />
           <ThemedText style={styles.sponsoredText}>Sponsored</ThemedText>
@@ -266,7 +266,7 @@ function SponsoredCashbackPage() {
           <Pressable
             key={f.key}
             style={[styles.filterButton, filter === f.key ? styles.filterButtonActive : null]}
-            onPress={() => setFilter(f.key as any)}
+            onPress={() => setFilter(f.key as unknown as string)}
           >
             <ThemedText style={[styles.filterButtonText, filter === f.key ? styles.filterButtonTextActive : null]}>
               {f.label}
@@ -287,7 +287,11 @@ function SponsoredCashbackPage() {
           data={offers}
           renderItem={renderOffer}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={[styles.listContent, offers.length === 0 && { flex: 1 }] as any}
+          contentContainerStyle={
+            [styles.listContent, offers.length === 0 && { flex: 1 }] as unknown as import('react-native').StyleProp<
+              import('react-native').ViewStyle
+            >
+          }
           showsVerticalScrollIndicator={false}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.3}

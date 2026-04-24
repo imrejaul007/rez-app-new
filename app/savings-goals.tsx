@@ -62,19 +62,19 @@ interface PastGoal {
 // ---------------------------------------------------------------------------
 async function fetchCurrentGoal(): Promise<SavingsGoal | null> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/goals/current')) as any;
+  const res = (await apiService.get('/goals/current')) as { data: { data: SavingsGoal | null } };
   return res.data?.data ?? null;
 }
 
 async function fetchGoalHistory(): Promise<PastGoal[]> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/goals/history?limit=6')) as any;
+  const res = (await apiService.get('/goals/history?limit=6')) as { data: { data: PastGoal[] } };
   return res.data?.data ?? [];
 }
 
 async function saveGoal(targetAmount: number): Promise<SavingsGoal> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.post('/goals', { targetAmount })) as any;
+  const res = (await apiService.post('/goals', { targetAmount })) as { data: { data: SavingsGoal } };
   return res.data?.data ?? res.data;
 }
 
@@ -461,7 +461,7 @@ function SavingsGoalsScreen() {
                   style={[
                     styles.linearFill,
                     {
-                      width: `${Math.min(100, goal.progressPct)}%` as any,
+                      width: `${Math.min(100, goal.progressPct)}%` as unknown as string,
                       backgroundColor: goal.isAchieved ? '#10b981' : '#1a3a52',
                     },
                   ]}
@@ -504,7 +504,7 @@ function SavingsGoalsScreen() {
                       style={[
                         styles.historyBarFill,
                         {
-                          width: `${item.progressPct}%` as any,
+                          width: `${item.progressPct}%` as unknown as string,
                           backgroundColor: item.isAchieved ? '#10b981' : '#1a3a52',
                         },
                       ]}

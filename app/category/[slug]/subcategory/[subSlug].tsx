@@ -171,7 +171,9 @@ function SubcategoryPage() {
 
       if (response.success && response.data) {
         // Handle potential array or paginated object
-        const data = Array.isArray(response.data) ? response.data : (response.data as any)?.products || [];
+        const data = Array.isArray(response.data)
+          ? response.data
+          : (response.data as unknown as Record<string, unknown>)?.products || [];
         if (data.length > 0) {
           productsData = data;
         }
@@ -259,7 +261,7 @@ function SubcategoryPage() {
    */
   const handleStorePress = useCallback(
     (store: StoreItem) => {
-      router.push(`/MainStorePage?storeId=${store.id}` as any);
+      router.push(`/MainStorePage?storeId=${store.id}` as unknown as string);
     },
     [router],
   );
@@ -269,7 +271,7 @@ function SubcategoryPage() {
    */
   const handleProductPress = useCallback(
     (product: ProductItem) => {
-      router.push(`/product-page?cardId=${product.id}&cardType=product` as any);
+      router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown as string);
     },
     [router],
   );
@@ -286,7 +288,7 @@ function SubcategoryPage() {
         <CachedImage source={item.banner || item.logo || ''} style={styles.storeBanner} />
         <View style={styles.storeInfo}>
           <View style={styles.storeHeader}>
-            {item.logo && <CachedImage source={item.logo as any} style={styles.storeLogo} />}
+            {item.logo && <CachedImage source={item.logo as unknown as string} style={styles.storeLogo} />}
             <View style={styles.storeNameContainer}>
               <View style={styles.storeNameRow}>
                 <ThemedText style={styles.storeName} numberOfLines={1}>
@@ -392,7 +394,10 @@ function SubcategoryPage() {
                 {stores.length} stores, {products.length} products
               </ThemedText>
             </View>
-            <Pressable onPress={() => router.push(`/search?category=${subSlug}` as any)} style={styles.searchButton}>
+            <Pressable
+              onPress={() => router.push(`/search?category=${subSlug}` as unknown as string)}
+              style={styles.searchButton}
+            >
               <Ionicons name="search" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>

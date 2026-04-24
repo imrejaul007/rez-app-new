@@ -91,7 +91,7 @@ const mapChallengeToMission = (cp: ChallengeProgress): Mission => {
     special: challenge.type === 'special' || challenge.type === 'monthly',
     icon: challenge.icon,
     userState:
-      (cp as any).userState ||
+      (cp as unknown as Record<string, unknown>).userState ||
       ((cp.completed ? 'completed' : cp.rewardsClaimed ? 'claimed' : 'in_progress') as Mission['userState']),
   };
 };
@@ -697,7 +697,7 @@ const MissionsScreen: React.FC = () => {
   );
 };
 
-const styles = (StyleSheet.create as any)({
+const styles = (StyleSheet.create as unknown as (s: Record<string, unknown>) => Record<string, unknown>)({
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -819,7 +819,7 @@ const styles = (StyleSheet.create as any)({
     alignItems: 'center',
     backgroundColor: colors.background.primary,
     ...(Platform.select({
-      ios: shadows.sm as any,
+      ios: shadows.sm as unknown as ViewStyle,
       android: { elevation: 2 },
     }) || {}),
   },
@@ -874,7 +874,7 @@ const styles = (StyleSheet.create as any)({
     backgroundColor: colors.background.primary,
     marginBottom: spacing.sm,
     ...(Platform.select({
-      ios: shadows.md as any,
+      ios: shadows.md as unknown as ViewStyle,
       android: { elevation: 4 },
     }) || {}),
   },

@@ -76,7 +76,7 @@ function TeacherVerifyPage() {
       router.push({
         pathname: '/onboarding/verification-success',
         params: { zone: 'teacher', type: 'provisional' },
-      } as any);
+      } as unknown as string);
     } catch (e: any) {
       const msg = e?.message || 'Verification failed. Please try again.';
       if (!isMounted()) return;

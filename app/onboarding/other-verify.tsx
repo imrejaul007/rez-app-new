@@ -45,23 +45,20 @@ function OtherVerifyPage() {
       <StatusBar barStyle="dark-content" />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerIcon}>
           <Ionicons name="shield-checkmark" size={40} color={colors.successScale[600]} />
         </View>
         <ThemedText style={styles.headerTitle}>Choose Your Category</ThemedText>
-        <ThemedText style={styles.headerSubtitle}>
-          Select your professional identity for verification
-        </ThemedText>
+        <ThemedText style={styles.headerSubtitle}>Select your professional identity for verification</ThemedText>
       </View>
 
-      <ScrollView
-        style={styles.body}
-        contentContainerStyle={styles.bodyContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} showsVerticalScrollIndicator={false}>
         {CATEGORIES.map((cat) => (
           <IdentityCard
             key={cat.id}
@@ -70,7 +67,7 @@ function OtherVerifyPage() {
             subtitle={cat.subtitle}
             accentColor={cat.accentColor}
             backgroundColor={cat.backgroundColor}
-            onPress={() => router.push(cat.next as any)}
+            onPress={() => router.push(cat.next as unknown as string)}
           />
         ))}
       </ScrollView>

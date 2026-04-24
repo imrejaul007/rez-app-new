@@ -40,7 +40,12 @@ const STATUS_COLORS: Record<string, string> = {
 function InfoRow({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
     <View style={styles.infoRow}>
-      <Ionicons name={icon as any} size={16} color={C.slate} style={{ width: 22 }} />
+      <Ionicons
+        name={icon as unknown as keyof typeof Ionicons.glyphMap}
+        size={16}
+        color={C.slate}
+        style={{ width: 22 }}
+      />
       <View style={{ flex: 1 }}>
         <Text style={styles.infoLabel}>{label}</Text>
         <Text style={styles.infoValue}>{value}</Text>
@@ -172,8 +177,12 @@ export default function HotelBookingDetailScreen() {
             label="Rooms"
             value={`${booking.numRooms} room${booking.numRooms !== 1 ? 's' : ''}`}
           />
-          {(booking as any).specialRequests && (
-            <InfoRow icon="chatbubble-outline" label="Special Requests" value={(booking as any).specialRequests} />
+          {(booking as unknown as Record<string, unknown>).specialRequests && (
+            <InfoRow
+              icon="chatbubble-outline"
+              label="Special Requests"
+              value={(booking as unknown as Record<string, unknown>).specialRequests}
+            />
           )}
         </View>
 
@@ -220,7 +229,7 @@ export default function HotelBookingDetailScreen() {
             style={styles.reviewBtn}
             onPress={() =>
               router.push({
-                pathname: '/travel/hotels/[id]/review' as any,
+                pathname: '/travel/hotels/[id]/review' as unknown as string,
                 params: { id: booking.hotelId, bookingRef: booking.bookingRef, hotelName: booking.hotelName },
               })
             }

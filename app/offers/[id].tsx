@@ -96,16 +96,16 @@ function OfferDetailPage() {
           JSON.stringify(
             {
               category: offerData.category,
-              exclusiveZone: (offerData as any).exclusiveZone,
+              exclusiveZone: (offerData as unknown as Record<string, unknown>).exclusiveZone,
               userTypeRestriction: offerData.restrictions?.userTypeRestriction,
-              eligibilityRequirement: (offerData as any).eligibilityRequirement,
+              eligibilityRequirement: (offerData as unknown as Record<string, unknown>).eligibilityRequirement,
             },
             null,
             2,
           ),
         );
         // Check multiple fields for zone restriction
-        const exclusiveZone = (offerData as any).exclusiveZone;
+        const exclusiveZone = (offerData as unknown as Record<string, unknown>).exclusiveZone;
         const userTypeRestriction = offerData.restrictions?.userTypeRestriction;
         const categoryZone = ZONE_VERIFICATION_MAP[offerData.category];
 
@@ -177,7 +177,9 @@ function OfferDetailPage() {
 
       if (response.success && response.data) {
         // Handle both direct array and paginated response
-        const redemptionsArray = Array.isArray(response.data) ? response.data : (response.data as any)?.data || [];
+        const redemptionsArray = Array.isArray(response.data)
+          ? response.data
+          : (response.data as unknown as Record<string, unknown>)?.data || [];
         logger.log('📋 [REDEMPTION CHECK] Redemptions found:', redemptionsArray.length);
         logger.log(
           '📋 [REDEMPTION CHECK] All redemptions:',
@@ -216,7 +218,7 @@ function OfferDetailPage() {
         if (redemption) {
           if (!isMounted()) return;
           setIsAlreadyRedeemed(true);
-          const code = (redemption as any).redemptionCode || 'Check My Vouchers';
+          const code = (redemption as unknown as Record<string, unknown>).redemptionCode || 'Check My Vouchers';
           if (!isMounted()) return;
           setExistingVoucherCode(code);
           logger.log('✅ [REDEMPTION CHECK] User already redeemed this offer!', {
@@ -273,7 +275,7 @@ function OfferDetailPage() {
           router.push({
             pathname: '/profile/verification',
             params: { zone: requiredZone },
-          } as any),
+          } as unknown as string),
         'Verify Now',
       );
       return;
@@ -377,7 +379,7 @@ function OfferDetailPage() {
 
   const handleStorePress = () => {
     if (offer?.store?.id) {
-      router.push(`/MainStorePage?storeId=${offer.store.id}` as any);
+      router.push(`/MainStorePage?storeId=${offer.store.id}` as unknown as string);
     }
   };
 
@@ -639,7 +641,7 @@ function OfferDetailPage() {
                     router.push({
                       pathname: '/profile/verification',
                       params: { zone: requiredZone },
-                    } as any)
+                    } as unknown as string)
                   }
                 >
                   <ThemedText style={styles.verifyNowButtonText}>Verify</ThemedText>
@@ -754,12 +756,16 @@ function OfferDetailPage() {
                   </ThemedText>
                 </View>
               )}
-              {(offer.restrictions as any).usageLimitPerUser && (
+              {(offer.restrictions as unknown as { usageLimitPerUser?: number })?.usageLimitPerUser && (
                 <View style={styles.restrictionItem}>
                   <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
-                    Can be used {(offer.restrictions as any).usageLimitPerUser} time
-                    {(offer.restrictions as any).usageLimitPerUser > 1 ? 's' : ''} per user
+                    Can be used {(offer.restrictions as unknown as { usageLimitPerUser?: number })?.usageLimitPerUser}{' '}
+                    time
+                    {(offer.restrictions as unknown as { usageLimitPerUser?: number })?.usageLimitPerUser > 1
+                      ? 's'
+                      : ''}{' '}
+                    per user
                   </ThemedText>
                 </View>
               )}
@@ -835,7 +841,7 @@ function OfferDetailPage() {
                 router.push({
                   pathname: '/profile/verification',
                   params: { zone: requiredZone },
-                } as any);
+                } as unknown as string);
               }
             }}
             accessibilityLabel={verificationStatus?.status === 'pending' ? 'Verification pending' : 'Verify to unlock'}

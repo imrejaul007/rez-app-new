@@ -162,7 +162,7 @@ function PackageDetailsPage() {
         return;
       }
 
-      const productData = response.data as any;
+      const productData = response.data as unknown as Record<string, unknown>;
 
       // Check if this is a package service
       const isPackage =
@@ -178,7 +178,7 @@ function PackageDetailsPage() {
 
       // Helper to read from specifications array
       const specs = productData.specifications || [];
-      const getSpec = (key: string) => specs.find((s: any) => s.key === key)?.value || '';
+      const getSpec = (key: string) => specs.find((s: unknown) => (s as { key?: string })?.key === key)?.value || '';
 
       // Destination: prefer specs, fallback to name parsing
       const specDestination = getSpec('destination');
@@ -350,17 +350,17 @@ function PackageDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as any).requiresPayment) {
+    if ((data as unknown as Record<string, unknown>).requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as any).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as any);
+      } as unknown as string);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -380,7 +380,7 @@ function PackageDetailsPage() {
       if (isInWishlist(packageData.id)) {
         await removeFromWishlist(packageData.id);
       } else {
-        await addToWishlist(packageData.id as any);
+        await addToWishlist(packageData.id as unknown as string);
       }
     } catch (error: any) {
       // silently handle
@@ -427,7 +427,7 @@ function PackageDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl as any}
+                  source={imageUrl as unknown as { uri: string }}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => setImageError(true)}

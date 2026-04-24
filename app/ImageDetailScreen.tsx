@@ -20,6 +20,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthUser, useIsAuthenticated, useCartActions, useGetCurrencySymbol } from '@/stores/selectors';
 import { DiscoverImage, DiscoverProduct } from '@/types/discover.types';
+import type { CartItemType } from '@/types/unified';
 import { realVideosApi } from '@/services/realVideosApi';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -154,7 +155,7 @@ function ImageDetailScreen() {
           image: product.image || product.images?.[0] || '',
           cashback: product.cashbackPercent ? `${product.cashbackPercent}%` : '0%',
           category: 'products',
-        } as any);
+        } as unknown as CartItemType);
       } catch (error: any) {
         // silently handle
       }

@@ -61,7 +61,7 @@ function CampusLeaderboardPage() {
     }
   };
 
-  const userId = (user as any)?._id || (user as any)?.id;
+  const userId = (user as unknown as Record<string, unknown>)?._id || (user as unknown as Record<string, unknown>)?.id;
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => {

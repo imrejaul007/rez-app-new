@@ -120,7 +120,9 @@ function TransactionHistoryScreen() {
           params.cursor = cursorRef.current;
         }
 
-        const response = await apiClient.get('/user/transactions', { params: params as any });
+        const response = await apiClient.get('/user/transactions', {
+          params: params as unknown as Record<string, unknown>,
+        });
         const data = response.data as TransactionPage | undefined;
         if (!data) return;
 
@@ -246,7 +248,7 @@ function TransactionHistoryScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown as string))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />

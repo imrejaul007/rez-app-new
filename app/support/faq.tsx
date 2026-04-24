@@ -197,13 +197,13 @@ function FAQPage() {
       router.back();
     } else {
       // If no previous screen (e.g., page was refreshed), navigate to account page
-      router.push('/account' as any);
+      router.push('/account' as unknown as string);
     }
   };
 
   const handleContactSupport = () => {
     // Navigate to support hub for live chat/ticket creation
-    router.push('/support' as any);
+    router.push('/support' as unknown as string);
   };
 
   const getCategoryColor = (category: string) => {
@@ -213,7 +213,7 @@ function FAQPage() {
       product: Colors.warning,
       account: Colors.error,
       technical: Colors.secondary[500],
-      delivery: (colors as any).brand?.pink || Colors.error,
+      delivery: (colors as unknown as Record<string, string>).brand?.pink || Colors.error,
       refund: Colors.success,
       other: Colors.gray[600],
     };
@@ -259,7 +259,7 @@ function FAQPage() {
               onPress={() => setSelectedCategory(category.key)}
             >
               <Ionicons
-                name={getCategoryIcon(category.key) as any}
+                name={getCategoryIcon(category.key) as unknown as keyof typeof Ionicons.glyphMap}
                 size={16}
                 color={selectedCategory === category.key ? 'white' : Colors.gray[600]}
               />
@@ -303,7 +303,11 @@ function FAQPage() {
         <Pressable style={styles.faqHeader} onPress={() => toggleFAQ(faq._id)}>
           <View style={styles.questionContainer}>
             <View style={[styles.categoryIndicator, { backgroundColor: `${categoryColor}20` }]}>
-              <Ionicons name={getCategoryIcon(faq.category) as any} size={14} color={categoryColor} />
+              <Ionicons
+                name={getCategoryIcon(faq.category) as unknown as keyof typeof Ionicons.glyphMap}
+                size={14}
+                color={categoryColor}
+              />
             </View>
             <ThemedText style={styles.questionText}>{faq.question}</ThemedText>
           </View>
@@ -384,7 +388,7 @@ function FAQPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.secondary[600]} translucent={true} />
 
         {/* Header */}
-        <LinearGradient colors={Gradients.nileBlue as any} style={styles.header}>
+        <LinearGradient colors={Gradients.nileBlue as unknown as string[]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable onPress={handleBackPress} style={styles.backButton}>
               <View style={styles.backButtonInner}>
@@ -478,7 +482,7 @@ function FAQPage() {
               <>
                 {/* Contact Support Card */}
                 <Pressable style={styles.contactCard} onPress={handleContactSupport}>
-                  <LinearGradient colors={Gradients.nileBlue as any} style={styles.contactGradient}>
+                  <LinearGradient colors={Gradients.nileBlue as unknown as string[]} style={styles.contactGradient}>
                     <View style={styles.contactContent}>
                       <Ionicons name="chatbubble-ellipses" size={24} color="white" />
                       <View style={styles.contactText}>

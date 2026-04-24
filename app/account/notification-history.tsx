@@ -1,7 +1,17 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+  Platform,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -256,7 +266,11 @@ function NotificationHistoryScreen() {
         accessibilityState={{ disabled: item.read }}
       >
         <View style={styles.notificationIcon}>
-          <Ionicons name={getNotificationIcon(item.type) as any} size={20} color={getNotificationColor(item.type)} />
+          <Ionicons
+            name={getNotificationIcon(item.type) as unknown as keyof typeof Ionicons.glyphMap}
+            size={20}
+            color={getNotificationColor(item.type)}
+          />
         </View>
 
         <View style={styles.notificationContent}>
@@ -328,7 +342,7 @@ function NotificationHistoryScreen() {
         data={notifications}
         renderItem={renderNotificationItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ ...styles.scrollContent, paddingBottom: 120 } as any}
+        contentContainerStyle={{ ...styles.scrollContent, paddingBottom: 120 } as unknown as StyleProp<ViewStyle>}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}

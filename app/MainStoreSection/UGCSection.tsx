@@ -20,6 +20,8 @@ import {
   Platform,
   RefreshControl,
   ScrollView,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -728,7 +730,9 @@ function UGCSection({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as any}
+          contentContainerStyle={
+            [styles.imagesList, { paddingHorizontal: horizontalPadding }] as unknown as StyleProp<ViewStyle>
+          }
           scrollEnabled={false}
         >
           {Array.from({ length: 3 }).map((_, index) => (
@@ -818,13 +822,15 @@ function UGCSection({
       </View>
 
       <FlashList
-        data={images as any[]}
+        data={images as unknown as UGCImage[]}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         estimatedItemSize={250}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as any}
+        contentContainerStyle={
+          [styles.imagesList, { paddingHorizontal: horizontalPadding }] as unknown as StyleProp<ViewStyle>
+        }
         ItemSeparatorComponent={() => <View style={{ width: cardSpacing }} />}
         snapToInterval={cardWidth + cardSpacing}
         decelerationRate="fast"

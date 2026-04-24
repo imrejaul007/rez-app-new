@@ -1,27 +1,15 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // StoreBottomActionBar.tsx - Sticky bottom action bar
-import React, {} from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  Platform,
-  Linking} from "react-native";
-import Animated, {
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
+import React from 'react';
+import { View, Pressable, StyleSheet, Platform, Linking } from 'react-native';
+import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows } from "@/constants/DesignSystem";
+import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 
 export interface StoreBottomActionBarProps {
   storeId?: string;
@@ -99,8 +87,8 @@ function StoreBottomActionBar({
     } else {
       router.push({
         pathname: '/CardOffersPage',
-        params: { storeId: storeId || '' }
-      } as any);
+        params: { storeId: storeId || '' },
+      } as unknown as string);
     }
   };
 
@@ -112,7 +100,7 @@ function StoreBottomActionBar({
       onOrderFood();
     } else {
       // Navigate to the menu tab of this store
-      router.push(`/MainStorePage?storeId=${storeId || ''}&tab=menu` as any);
+      router.push(`/MainStorePage?storeId=${storeId || ''}&tab=menu` as unknown as string);
     }
   };
 
@@ -122,7 +110,7 @@ function StoreBottomActionBar({
       onBookTable();
     } else {
       router.push(
-        `/MainCategory/food-dining/book-table?storeId=${storeId || ''}&storeName=${encodeURIComponent(storeName || '')}` as any
+        `/MainCategory/food-dining/book-table?storeId=${storeId || ''}&storeName=${encodeURIComponent(storeName || '')}` as unknown as string,
       );
     }
   };
@@ -143,8 +131,8 @@ function StoreBottomActionBar({
     } else {
       router.push({
         pathname: '/pay-in-store/enter-amount',
-        params: { storeId: storeId || '', storeName: storeName || '' }
-      } as any);
+        params: { storeId: storeId || '', storeName: storeName || '' },
+      } as unknown as string);
     }
   };
 
@@ -227,7 +215,6 @@ function StoreBottomActionBar({
         <Animated.View style={[styles.mainButtonWrapper, { transform: [{ scale: scanPayScale }] }]}>
           <Pressable
             style={styles.mainButton}
-
             onPress={handleScanPayEarn}
             onPressIn={() => animateScale(scanPayScale, 0.97)}
             onPressOut={() => animateScale(scanPayScale, 1)}
@@ -243,7 +230,6 @@ function StoreBottomActionBar({
         <Animated.View style={{ transform: [{ scale: walletScale }] }}>
           <Pressable
             style={styles.iconButton}
-
             onPress={handleWallet}
             onPressIn={() => animateScale(walletScale, 0.9)}
             onPressOut={() => animateScale(walletScale, 1)}
@@ -258,7 +244,6 @@ function StoreBottomActionBar({
         <Animated.View style={{ transform: [{ scale: offersScale }] }}>
           <Pressable
             style={styles.iconButton}
-
             onPress={handleOffers}
             onPressIn={() => animateScale(offersScale, 0.9)}
             onPressOut={() => animateScale(offersScale, 1)}
@@ -275,7 +260,7 @@ function StoreBottomActionBar({
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
@@ -287,32 +272,40 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 8 },
+        shadowRadius: 8,
+      },
       android: {
-        elevation: 10 } }) },
+        elevation: 10,
+      },
+    }),
+  },
   inner: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.sm,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   // Non-food styles
   mainButtonWrapper: {
-    flex: 1 },
+    flex: 1,
+  },
   mainButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.lightMustard,
     paddingVertical: 16,
     minHeight: 52,
     borderRadius: BorderRadius.md,
     gap: 8,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   mainButtonText: {
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.background.primary },
+    fontWeight: '700',
+    color: colors.background.primary,
+  },
   iconButton: {
     width: 52,
     height: 52,
@@ -320,28 +313,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.gray[200],
     backgroundColor: colors.background.primary,
-    justifyContent: "center",
-    alignItems: "center" },
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   // Food-store styles
   orderFoodWrapper: {
-    flex: 1 },
+    flex: 1,
+  },
   orderFoodButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.success,
     paddingVertical: 16,
     minHeight: 52,
     borderRadius: BorderRadius.md,
     gap: 8,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   orderFoodButtonText: {
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.background.primary },
+    fontWeight: '700',
+    color: colors.background.primary,
+  },
   iconButtonFood: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -349,10 +346,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.gray[200],
     backgroundColor: colors.background.primary,
     minWidth: 54,
-    gap: 3 },
+    gap: 3,
+  },
   iconButtonFoodLabel: {
     fontSize: 10,
-    fontWeight: "600",
-    color: colors.text.secondary } });
+    fontWeight: '600',
+    color: colors.text.secondary,
+  },
+});
 
 export default withErrorBoundary(StoreBottomActionBar, 'MainStoreSectionStoreBottomActionBar');

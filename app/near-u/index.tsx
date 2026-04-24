@@ -16,7 +16,7 @@ export default function NearUIndex() {
   useEffect(() => {
     // Activate the near-u tab on the home screen and navigate there
     setActiveTab('near-u');
-    router.replace('/(tabs)' as any);
+    router.replace('/(tabs)' as unknown as string);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

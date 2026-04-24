@@ -108,7 +108,7 @@ const FoodPage: React.FC = () => {
       // Get the food-dining parent category which includes populated childCategories
       const response = await categoriesService.getCategoryBySlug(FOOD_CATEGORY_SLUG);
       if (response.success && response.data) {
-        const parentCat = response.data as any;
+        const parentCat = response.data as unknown as Record<string, unknown>;
         const children = parentCat.childCategories || [];
         if (!isMounted()) return;
         setSubcategories(
@@ -157,11 +157,12 @@ const FoodPage: React.FC = () => {
           limit: PAGE_LIMIT,
           isFeatured: true,
           sortBy: 'rating',
-        } as any);
+        } as unknown as Record<string, unknown>);
 
         if (response.success && response.data) {
-          const data = response.data as any;
-          const stores: FoodStore[] = data.stores || (Array.isArray(data) ? data : []);
+          const data = response.data as unknown as Record<string, unknown>;
+          const stores: FoodStore[] = (data.stores ||
+            (Array.isArray(response.data) ? response.data : [])) as FoodStore[];
 
           if (append) {
             if (!isMounted()) return;
@@ -213,8 +214,9 @@ const FoodPage: React.FC = () => {
     try {
       const response = await storesService.getCuisineCounts();
       if (response.success && response.data) {
-        const data = response.data as any;
-        const items: CuisineCount[] = data.cuisines || (Array.isArray(data) ? data : []);
+        const data = response.data as unknown as Record<string, unknown>;
+        const items: CuisineCount[] = (data.cuisines ||
+          (Array.isArray(response.data) ? response.data : [])) as CuisineCount[];
         if (!isMounted()) return;
         setCuisines(items.slice(0, 8)); // Show top 8 cuisines
       }
@@ -460,7 +462,7 @@ const FoodPage: React.FC = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Offers For You</Text>
             {offers.length > 3 && (
-              <Pressable onPress={() => router.push('/offers' as any)}>
+              <Pressable onPress={() => router.push('/offers' as unknown as string)}>
                 <Text style={styles.viewAllText}>View All</Text>
               </Pressable>
             )}
@@ -507,7 +509,7 @@ const FoodPage: React.FC = () => {
                 <Pressable
                   key={cat._id}
                   style={styles.categoryCard}
-                  onPress={() => router.push(`/explore/category/${cat._id}` as any)}
+                  onPress={() => router.push(`/explore/category/${cat._id}` as unknown as string)}
                 >
                   {cat.image ? (
                     <CachedImage
@@ -548,7 +550,7 @@ const FoodPage: React.FC = () => {
                 <Pressable
                   key={cuisine.tag}
                   style={styles.cuisineCard}
-                  onPress={() => router.push(`/explore/filter/${cuisine.tag}` as any)}
+                  onPress={() => router.push(`/explore/filter/${cuisine.tag}` as unknown as string)}
                 >
                   <Text style={styles.cuisineEmoji}>{getCuisineEmoji(cuisine.tag)}</Text>
                   <Text style={styles.cuisineName}>{cuisine.tag}</Text>
@@ -587,7 +589,7 @@ const FoodPage: React.FC = () => {
                   <Pressable
                     key={store._id}
                     style={styles.restaurantCard}
-                    onPress={() => router.push(`/store/${store.slug || store._id}` as any)}
+                    onPress={() => router.push(`/store/${store.slug || store._id}` as unknown as string)}
                   >
                     {imageUri ? (
                       <CachedImage
@@ -661,7 +663,7 @@ const FoodPage: React.FC = () => {
             <Text style={styles.promoSubtitle}>Discover new places near you and earn cashback on every order</Text>
             <Pressable
               style={styles.promoButton}
-              onPress={() => router.push(`/explore/category/${FOOD_CATEGORY_SLUG}` as any)}
+              onPress={() => router.push(`/explore/category/${FOOD_CATEGORY_SLUG}` as unknown as string)}
             >
               <Text style={styles.promoButtonText}>Browse Now</Text>
             </Pressable>

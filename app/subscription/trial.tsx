@@ -141,7 +141,11 @@ function TrialPage() {
       <View style={styles.detailsHeader}>
         <ThemedText style={styles.detailsTitle}>Trial Information</ThemedText>
         <View style={styles.autoRenewBadge}>
-          <Ionicons name={'auto-repeat' as any} size={14} color={Colors.brand.purpleLight} />
+          <Ionicons
+            name={'auto-repeat' as unknown as keyof typeof Ionicons.glyphMap}
+            size={14}
+            color={Colors.brand.purpleLight}
+          />
           <ThemedText style={styles.autoRenewText}>Auto-renewal off</ThemedText>
         </View>
       </View>

@@ -50,13 +50,17 @@ function MyEventCard({ booking, onPress }: { booking: BookingWithEvent; onPress:
         <Image source={{ uri: ev.image }} style={styles.eventImage} resizeMode="cover" />
       ) : (
         <View style={[styles.eventImagePlaceholder, { backgroundColor: category.bg }]}>
-          <Ionicons name={category.icon as any} size={36} color={category.color} />
+          <Ionicons
+            name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
+            size={36}
+            color={category.color}
+          />
         </View>
       )}
       <View style={styles.eventBody}>
         <View style={styles.eventTop}>
           <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
-            <Ionicons name={status.icon as any} size={12} color={status.color} />
+            <Ionicons name={status.icon as unknown as keyof typeof Ionicons.glyphMap} size={12} color={status.color} />
             <Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text>
           </View>
           {booking.status === 'completed' && karmaEarned > 0 && (

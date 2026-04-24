@@ -85,7 +85,7 @@ function SurveyCompletePage() {
               styles.coinsContainer,
               {
                 transform: [{ scale: coinScaleAnim }, { rotate: coinRotation }],
-              } as any,
+              } as unknown as import('react-native').StyleProp<import('react-native').ViewStyle>,
             ]}
           >
             <LinearGradient colors={[colors.brand.goldBright, '#FFA500']} style={styles.coinsGradient}>

@@ -188,9 +188,9 @@ const HealthcareCategoryPage: React.FC = () => {
 
       const response = await apiClient.get(url);
 
-      if (response.success && (response.data as any)?.stores) {
+      if (response.success && (response.data as unknown as Record<string, unknown>)?.stores) {
         if (!isMounted()) return;
-        setStores((response.data as any).stores);
+        setStores((response.data as unknown as Record<string, unknown>).stores);
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load data. Please try again.');
@@ -215,7 +215,7 @@ const HealthcareCategoryPage: React.FC = () => {
 
   // Redirect to dedicated pages if they exist
   if (config.dedicatedPage) {
-    return <Redirect href={config.dedicatedPage as any} />;
+    return <Redirect href={config.dedicatedPage as unknown as string} />;
   }
 
   const handleCallStore = (phone?: string) => {
@@ -239,7 +239,7 @@ const HealthcareCategoryPage: React.FC = () => {
         storeName: store.name,
         fee: store.metadata?.consultationFee || 500,
       },
-    } as any);
+    } as unknown as string);
   };
 
   const renderStoreCard = (store: Store) => {
@@ -250,7 +250,7 @@ const HealthcareCategoryPage: React.FC = () => {
       <Pressable
         key={store._id}
         style={styles.itemCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as any)}
+        onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as unknown as string)}
         accessibilityRole="button"
         accessibilityLabel={`${store.name}${store.metadata?.specialization ? `, ${store.metadata.specialization}` : ''}, ${store.location.city}, rating ${store.ratings.average.toFixed(1)}${cashback > 0 ? `, ${cashback}% cashback` : ''}`}
       >
@@ -262,7 +262,11 @@ const HealthcareCategoryPage: React.FC = () => {
               <CachedImage source={store.banner} style={styles.storeImage} />
             ) : (
               <View style={styles.storeImagePlaceholder}>
-                <Ionicons name={config.icon as any} size={32} color={config.gradientColors[0]} />
+                <Ionicons
+                  name={config.icon as unknown as keyof typeof Ionicons.glyphMap}
+                  size={32}
+                  color={config.gradientColors[0]}
+                />
               </View>
             )}
           </View>
@@ -409,7 +413,11 @@ const HealthcareCategoryPage: React.FC = () => {
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <View style={styles.headerTitleRow}>
-              <Ionicons name={config.icon as any} size={24} color={COLORS.white} />
+              <Ionicons
+                name={config.icon as unknown as keyof typeof Ionicons.glyphMap}
+                size={24}
+                color={COLORS.white}
+              />
               <Text style={styles.headerTitle}>{config.title}</Text>
             </View>
             <Text style={styles.headerSubtitle}>
@@ -465,7 +473,11 @@ const HealthcareCategoryPage: React.FC = () => {
               <CardGridSkeleton />
             ) : stores.length === 0 ? (
               <View style={styles.emptyContainer}>
-                <Ionicons name={config.icon as any} size={64} color={COLORS.gray200} />
+                <Ionicons
+                  name={config.icon as unknown as keyof typeof Ionicons.glyphMap}
+                  size={64}
+                  color={COLORS.gray200}
+                />
                 <Text style={styles.emptyText}>No {config.title.toLowerCase()} found</Text>
                 <Text style={styles.emptySubtext}>Try adjusting your filters or check back later</Text>
               </View>
@@ -558,7 +570,7 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginTop: Spacing.base,
   },
   emptySubtext: {
@@ -623,7 +635,7 @@ const styles = StyleSheet.create({
   itemName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginBottom: 6,
   },
   typeBadge: {
@@ -673,7 +685,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
   },
   languagesContainer: {
     flexDirection: 'row',
@@ -737,7 +749,7 @@ const styles = StyleSheet.create({
   comingSoonTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

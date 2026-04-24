@@ -68,7 +68,7 @@ export default function StudentOffersScreen() {
           {!isStudent && (
             <Pressable
               style={styles.verifyBtn}
-              onPress={() => router.push('/profile/verification?zone=student' as any)}
+              onPress={() => router.push('/profile/verification?zone=student' as unknown as string)}
             >
               <Text style={styles.verifyBtnText}>Verify Student ID →</Text>
             </Pressable>
@@ -86,7 +86,7 @@ export default function StudentOffersScreen() {
                 router.push({
                   pathname: '/StoreListPage',
                   params: { category: cat.id, audience: 'student', sort: 'discount_high' },
-                } as any)
+                } as unknown as string)
               }
             >
               <Text style={styles.catEmoji}>{cat.emoji}</Text>
@@ -97,7 +97,7 @@ export default function StudentOffersScreen() {
         </View>
 
         {/* TRY nudge */}
-        <Pressable style={styles.tryNudge} onPress={() => router.push('/try' as any)}>
+        <Pressable style={styles.tryNudge} onPress={() => router.push('/try' as unknown as string)}>
           <LinearGradient
             colors={[colors.nileBlue, colors.brand.nileBlueLight]}
             start={{ x: 0, y: 0 }}

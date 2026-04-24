@@ -347,7 +347,10 @@ const StoreDetailPage: React.FC = () => {
     if (isFitnessStore) {
       router.push({
         pathname: '/fitness/book/[storeId]',
-        params: { ...baseParams, storeId: (store as any).id } as any,
+        params: { ...baseParams, storeId: (store as unknown as Record<string, unknown>).id } as unknown as Record<
+          string,
+          string
+        >,
       });
     } else {
       router.push({
@@ -362,7 +365,7 @@ const StoreDetailPage: React.FC = () => {
 
   // Get deal value display
   const getDealValue = (deal: ActiveRedemption) => {
-    const d = deal as any;
+    const d = deal as unknown as Record<string, unknown>;
     if (d.cashback) return { type: 'Cashback', value: d.cashback, color: COLORS.green500 };
     if (d.coins) return { type: 'Coins', value: d.coins, color: COLORS.amber500 };
     if (d.discount) return { type: 'Discount', value: d.discount, color: COLORS.purple500 };

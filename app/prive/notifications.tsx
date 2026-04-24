@@ -34,8 +34,10 @@ function NotificationsScreen() {
     try {
       const response = await priveApi.getNotifications();
       if (response.success && response.data) {
-        setNotifications((response.data as any)?.notifications || []);
-        setCounts((response.data as any)?.counts || { critical: 0, warning: 0, info: 0 });
+        setNotifications((response.data as unknown as Record<string, unknown>)?.notifications || []);
+        setCounts(
+          (response.data as unknown as Record<string, unknown>)?.counts || { critical: 0, warning: 0, info: 0 },
+        );
       }
     } catch (e: any) {
       catchAndReport(e, setError, 'Notifications/fetchData');
@@ -73,7 +75,10 @@ function NotificationsScreen() {
 
   const renderNotificationItem = useCallback(
     ({ item }: { item: NotificationItem }) => (
-      <Pressable style={styles.notifCard} onPress={() => item.deepLink && router.push(item.deepLink as any)}>
+      <Pressable
+        style={styles.notifCard}
+        onPress={() => item.deepLink && router.push(item.deepLink as unknown as string)}
+      >
         <Text style={styles.notifIcon}>{getUrgencyIcon(item.type)}</Text>
         <View style={{ flex: 1 }}>
           <Text style={styles.notifTitle}>{item.title}</Text>

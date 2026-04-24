@@ -76,7 +76,7 @@ interface SuccessData {
 function GiftPage() {
   const router = useRouter();
   const user = useAuthUser();
-  const senderName = (user as any)?.fullName || user?.phoneNumber || 'You';
+  const senderName = (user as unknown as Record<string, unknown>)?.fullName || user?.phoneNumber || 'You';
 
   // Server-driven config state
   const [themes, setThemes] = useState<GiftTheme[]>(FALLBACK_THEMES);
@@ -237,7 +237,8 @@ function GiftPage() {
       if (response.data) {
         // Refresh wallet balance via context FIRST, then regenerate idempotency key
         await refreshWallet();
-        const newBalance = (response.data as any).newBalance ?? walletBalance - Number(amount);
+        const newBalance =
+          (response.data as unknown as Record<string, unknown>).newBalance ?? walletBalance - Number(amount);
         if (!isMounted()) return;
         setSuccessData({
           giftId: response.data.giftId,
@@ -288,7 +289,7 @@ function GiftPage() {
         <ScrollView contentContainerStyle={styles.successContainer}>
           {/* Animated gift card */}
           <View style={styles.successCardWrapper}>
-            <LinearGradient colors={successData.theme.colors as any} style={styles.successGiftCard}>
+            <LinearGradient colors={successData.theme.colors as unknown as string[]} style={styles.successGiftCard}>
               <ThemedText style={styles.successEmoji}>{successData.theme.emoji}</ThemedText>
               <View style={styles.successAmountRow}>
                 <CachedImage source={rezCoinImage} style={styles.successCoinIcon} />
@@ -420,7 +421,7 @@ function GiftPage() {
                   style={[styles.themeCard, selectedTheme.id === theme.id ? styles.themeCardSelected : null]}
                   onPress={() => setSelectedTheme(theme)}
                 >
-                  <LinearGradient colors={theme.colors as any} style={styles.themeGradient}>
+                  <LinearGradient colors={theme.colors as unknown as string[]} style={styles.themeGradient}>
                     <ThemedText style={styles.themeEmoji}>{theme.emoji}</ThemedText>
                   </LinearGradient>
                   <ThemedText style={styles.themeLabel}>{theme.label}</ThemedText>
@@ -564,7 +565,7 @@ function GiftPage() {
 
           {showPreview && (
             <View style={styles.previewCard}>
-              <LinearGradient colors={selectedTheme.colors as any} style={styles.previewGradient}>
+              <LinearGradient colors={selectedTheme.colors as unknown as string[]} style={styles.previewGradient}>
                 <ThemedText style={styles.previewEmoji}>{selectedTheme.emoji}</ThemedText>
                 <ThemedText style={styles.previewAmount}>
                   {amount || '0'} {BRAND.CURRENCY_CODE}

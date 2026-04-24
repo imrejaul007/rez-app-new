@@ -6,7 +6,18 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions, RefreshControl } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  Dimensions,
+  RefreshControl,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -254,7 +265,7 @@ function LoyaltyRewardsPage() {
 
   const handleMilestonePress = (milestone: LoyaltyMilestone) => {
     // Navigate to mission detail which shows milestone/mission progress
-    router.push(`/mission-detail?milestoneId=${milestone._id}` as any);
+    router.push(`/mission-detail?milestoneId=${milestone._id}` as unknown as string);
   };
 
   const renderMilestoneCard = (milestone: LoyaltyMilestone) => {
@@ -398,7 +409,9 @@ function LoyaltyRewardsPage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
+        contentContainerStyle={
+          [styles.scrollContent, { paddingBottom: bottomPadding }] as unknown as StyleProp<ViewStyle>
+        }
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.nileBlue]} />}
       >
@@ -550,7 +563,7 @@ function LoyaltyRewardsPage() {
 
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as any)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown as string)}>
           <LinearGradient
             colors={Gradients.primary}
             start={{ x: 0, y: 0 }}

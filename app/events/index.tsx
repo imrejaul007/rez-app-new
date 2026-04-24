@@ -103,10 +103,13 @@ const EventsPage: React.FC = () => {
         isOnline: false,
       };
 
-    const cashbackValue = (event as any).cashback;
+    const cashbackValue = (event as unknown as Record<string, unknown>).cashback;
     const cashbackText = cashbackValue && cashbackValue > 0 ? `${cashbackValue}%` : undefined;
 
-    const isOnline = (event as any).isOnline || (event.location as any)?.isOnline || false;
+    const isOnline =
+      (event as unknown as Record<string, unknown>).isOnline ||
+      (event.location as unknown as { isOnline?: boolean })?.isOnline ||
+      false;
     const displayCurrency = isOnline ? currencySymbol : event.price?.currency || currencySymbol;
 
     let formattedDate = 'TBD';
@@ -123,12 +126,15 @@ const EventsPage: React.FC = () => {
       title: event.title || 'Untitled Event',
       type: event.category || 'Event',
       date: formattedDate,
-      location: typeof event.location === 'string' ? event.location : (event.location as any)?.name || 'Venue',
+      location:
+        typeof event.location === 'string'
+          ? event.location
+          : (event.location as unknown as { name?: string })?.name || 'Venue',
       price: event.price?.isFree ? 'Free' : `${displayCurrency}${event.price?.amount ?? 0}`,
       image: event.image || '',
       cashback: cashbackText,
-      rating: (event as any).rating,
-      reviewCount: (event as any).reviewCount,
+      rating: (event as unknown as Record<string, unknown>).rating,
+      reviewCount: (event as unknown as Record<string, unknown>).reviewCount,
       isOnline,
     };
   };
@@ -202,18 +208,18 @@ const EventsPage: React.FC = () => {
   }, [fetchEvents]);
 
   const handleCategoryPress = (slug: string) => {
-    router.push(`/events/${slug}` as any);
+    router.push(`/events/${slug}` as unknown as string);
   };
 
   const handleEventPress = (eventId: string) => {
-    router.push({ pathname: '/EventPage', params: { id: eventId } } as any);
+    router.push({ pathname: '/EventPage', params: { id: eventId } } as unknown as string);
   };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push(`/events-list?search=${encodeURIComponent(searchQuery.trim())}` as any);
+      router.push(`/events-list?search=${encodeURIComponent(searchQuery.trim())}` as unknown as string);
     } else {
-      router.push('/events-list' as any);
+      router.push('/events-list' as unknown as string);
     }
   };
 
@@ -328,7 +334,7 @@ const EventsPage: React.FC = () => {
           <View style={styles.headerActions}>
             <Pressable
               style={styles.myEventsBtn}
-              onPress={() => router.push('/my-events' as any)}
+              onPress={() => router.push('/my-events' as unknown as string)}
               accessibilityLabel="My Events"
             >
               <Ionicons name="ticket-outline" size={16} color={colors.text.inverse} />
@@ -339,7 +345,7 @@ const EventsPage: React.FC = () => {
 
         {/* Search Bar */}
         <View style={styles.searchBarContainer}>
-          <Pressable style={styles.searchBar} onPress={() => router.push('/events-list' as any)}>
+          <Pressable style={styles.searchBar} onPress={() => router.push('/events-list' as unknown as string)}>
             <Ionicons name="search" size={18} color={colors.text.tertiary} />
             <TextInput
               style={styles.searchInput}
@@ -370,7 +376,7 @@ const EventsPage: React.FC = () => {
         <View style={styles.categoriesSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Browse Categories</Text>
-            <Pressable onPress={() => router.push('/events-list' as any)}>
+            <Pressable onPress={() => router.push('/events-list' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -383,9 +389,11 @@ const EventsPage: React.FC = () => {
                 <Text style={styles.categoryTitle} numberOfLines={1}>
                   {cat.name}
                 </Text>
-                {(cat as any).eventCount !== undefined && (cat as any).eventCount > 0 ? (
+                {(cat as unknown as Record<string, unknown>).eventCount !== undefined &&
+                (cat as unknown as Record<string, unknown>).eventCount > 0 ? (
                   <Text style={styles.categoryCount}>
-                    {(cat as any).eventCount} {(cat as any).eventCount === 1 ? 'event' : 'events'}
+                    {(cat as unknown as Record<string, unknown>).eventCount}{' '}
+                    {(cat as unknown as Record<string, unknown>).eventCount === 1 ? 'event' : 'events'}
                   </Text>
                 ) : (
                   <Text style={[styles.categoryCount, { color: colors.border.dark }]}>Browse</Text>
@@ -422,7 +430,7 @@ const EventsPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Events</Text>
-            <Pressable onPress={() => router.push('/events-list' as any)}>
+            <Pressable onPress={() => router.push('/events-list' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -491,7 +499,7 @@ const EventsPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Events</Text>
-            <Pressable onPress={() => router.push('/events-list' as any)}>
+            <Pressable onPress={() => router.push('/events-list' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>

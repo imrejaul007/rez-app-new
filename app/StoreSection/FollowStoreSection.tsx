@@ -406,7 +406,11 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
             ].map((benefit, index) => (
               <View key={index} style={styles.benefitCard}>
                 <LinearGradient colors={benefit.colors as [string, string]} style={styles.benefitIconBg}>
-                  <Ionicons name={benefit.icon as any} size={18} color={benefit.iconColor} />
+                  <Ionicons
+                    name={benefit.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    size={18}
+                    color={benefit.iconColor}
+                  />
                 </LinearGradient>
                 <ThemedText style={styles.benefitText}>{benefit.label}</ThemedText>
               </View>

@@ -129,16 +129,19 @@ function SmartSpendScreen() {
       // Track click analytics
       priveApi.trackSmartSpendClick(item._id).catch(() => {});
 
-      if (item.itemType === 'store' && (item.store?._id || (item.store as any)?.id)) {
+      if (item.itemType === 'store' && (item.store?._id || (item.store as unknown as Record<string, unknown>)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.store!._id || (item.store as any).id}&source=smart_spend&ssId=${item._id}` as any,
+          `/MainStorePage?storeId=${item.store!._id || (item.store as unknown as Record<string, unknown>).id}&source=smart_spend&ssId=${item._id}` as unknown as string,
         );
-      } else if (item.itemType === 'product' && (item.product?.store?._id || (item.product?.store as any)?.id)) {
+      } else if (
+        item.itemType === 'product' &&
+        (item.product?.store?._id || (item.product?.store as unknown as Record<string, unknown>)?.id)
+      ) {
         router.push(
-          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as any).id}&source=smart_spend&ssId=${item._id}` as any,
+          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as unknown as Record<string, unknown>).id}&source=smart_spend&ssId=${item._id}` as unknown as string,
         );
       } else if (item.itemType === 'product' && item.product?._id) {
-        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as any);
+        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as unknown as string);
       }
     },
     [router],

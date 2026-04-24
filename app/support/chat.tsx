@@ -13,6 +13,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
   ActivityIndicator,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -196,7 +198,7 @@ function SupportChatPage() {
           uri: asset.uri,
           name: `image_${Date.now()}.jpg`,
           type: 'image/jpeg',
-        } as any,
+        } as unknown as Record<string, unknown>,
         'image',
       );
       if (attachment) {
@@ -221,7 +223,7 @@ function SupportChatPage() {
           uri: file.uri,
           name: file.name,
           type: file.mimeType || 'application/octet-stream',
-        } as any,
+        } as unknown as Record<string, unknown>,
         'file',
       );
       if (attachment) {
@@ -552,7 +554,7 @@ function SupportChatPage() {
               colors={
                 (inputText.trim() || attachments.length > 0
                   ? [Colors.primary[500], Colors.primary[700]]
-                  : [Colors.gray[200], Colors.gray[300]]) as any
+                  : [Colors.gray[200], Colors.gray[300]]) as unknown as string[]
               }
               style={styles.sendButtonGradient}
             >

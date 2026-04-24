@@ -126,7 +126,7 @@ function SurveyTakePage() {
 
       // Navigate to completion page with result
       router.replace({
-        pathname: `/survey/${id}/complete` as any,
+        pathname: `/survey/${id}/complete` as unknown as string,
         params: {
           coinsEarned: result.coinsEarned.toString(),
           timeSpent: result.timeSpent.toString(),

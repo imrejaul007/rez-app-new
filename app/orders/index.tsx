@@ -12,6 +12,8 @@ import {
   ScrollView,
   Platform,
   FlatList,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
@@ -180,7 +182,7 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
             onPress={action.onPress}
           >
             <Ionicons
-              name={action.icon as any}
+              name={action.icon as unknown as keyof typeof Ionicons.glyphMap}
               size={14}
               color={
                 action.variant === 'primary'
@@ -213,19 +215,20 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
           <Text style={styles.orderDate}>{formatDate(item.createdAt)}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          {(item as any).fulfillmentType && (item as any).fulfillmentType !== 'delivery' && (
-            <View style={styles.fulfillmentBadge}>
-              <Text style={styles.fulfillmentText}>
-                {(item as any).fulfillmentType === 'pickup'
-                  ? '🛍 Pickup'
-                  : (item as any).fulfillmentType === 'drive_thru'
-                    ? '🚗 Drive-Thru'
-                    : (item as any).fulfillmentType === 'dine_in'
-                      ? '🍽 Dine-In'
-                      : ''}
-              </Text>
-            </View>
-          )}
+          {(item as unknown as Record<string, unknown>).fulfillmentType &&
+            (item as unknown as Record<string, unknown>).fulfillmentType !== 'delivery' && (
+              <View style={styles.fulfillmentBadge}>
+                <Text style={styles.fulfillmentText}>
+                  {(item as unknown as Record<string, unknown>).fulfillmentType === 'pickup'
+                    ? '🛍 Pickup'
+                    : (item as unknown as Record<string, unknown>).fulfillmentType === 'drive_thru'
+                      ? '🚗 Drive-Thru'
+                      : (item as unknown as Record<string, unknown>).fulfillmentType === 'dine_in'
+                        ? '🍽 Dine-In'
+                        : ''}
+                </Text>
+              </View>
+            )}
           <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
             <Text style={styles.statusText}>{getStatusLabel(item.status)}</Text>
           </View>
@@ -524,7 +527,7 @@ function OrdersListScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Gradient Header */}
-      <LinearGradient colors={Gradients.nileBlue as any} style={styles.gradientHeader}>
+      <LinearGradient colors={Gradients.nileBlue as unknown as string[]} style={styles.gradientHeader}>
         <View style={styles.headerContent}>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -596,9 +599,11 @@ function OrdersListScreen() {
       ) : Platform.OS === 'web' ? (
         <FlatList
           data={orders}
-          renderItem={renderOrderItem as any}
+          renderItem={renderOrderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as any}
+          contentContainerStyle={
+            (orders.length === 0 ? styles.emptyListContent : styles.listContent) as unknown as StyleProp<ViewStyle>
+          }
           ListHeaderComponent={renderListHeader}
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={renderFooter}
@@ -618,7 +623,9 @@ function OrdersListScreen() {
           data={orders}
           renderItem={renderOrderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as any}
+          contentContainerStyle={
+            (orders.length === 0 ? styles.emptyListContent : styles.listContent) as unknown as StyleProp<ViewStyle>
+          }
           ListHeaderComponent={renderListHeader}
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={renderFooter}

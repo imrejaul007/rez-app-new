@@ -264,7 +264,7 @@ function CoinsScreen() {
         )}
 
         {/* Learn More Button */}
-        <TouchableOpacity style={styles.learnBtn} onPress={() => router.push('/coin-system' as any)}>
+        <TouchableOpacity style={styles.learnBtn} onPress={() => router.push('/coin-system' as unknown as string)}>
           <Ionicons name="book" size={20} color="#1a3a52" />
           <Text style={styles.learnBtnText}>Learn More About Coins</Text>
         </TouchableOpacity>

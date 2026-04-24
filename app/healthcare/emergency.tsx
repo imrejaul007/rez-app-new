@@ -555,7 +555,12 @@ const styles = StyleSheet.create({
   sosText: { ...Typography.body, fontWeight: '800', color: COLORS.red500 },
 
   quickCallSection: { padding: Spacing.base },
-  quickCallTitle: { ...Typography.bodyLarge, fontWeight: '700', color: (COLORS as any).navy, marginBottom: Spacing.md },
+  quickCallTitle: {
+    ...Typography.bodyLarge,
+    fontWeight: '700',
+    color: (COLORS as unknown as Record<string, string>).navy,
+    marginBottom: Spacing.md,
+  },
   quickCallGrid: { flexDirection: 'row', justifyContent: 'space-between' },
   quickCallCard: {
     width: (SCREEN_WIDTH - 48) / 4,
@@ -566,7 +571,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   quickCallIcon: { fontSize: 24, marginBottom: 4 },
-  quickCallNumber: { ...Typography.bodyLarge, fontWeight: '800', color: (COLORS as any).navy },
+  quickCallNumber: {
+    ...Typography.bodyLarge,
+    fontWeight: '800',
+    color: (COLORS as unknown as Record<string, string>).navy,
+  },
   quickCallLabel: { ...Typography.overline, color: COLORS.gray600, marginTop: 2 },
 
   activeBookingCard: { margin: Spacing.base, borderRadius: BorderRadius.lg, overflow: 'hidden' },
@@ -611,7 +620,12 @@ const styles = StyleSheet.create({
   bookAmbulanceSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
 
   contactsSection: { padding: Spacing.base },
-  sectionTitle: { ...Typography.h4, fontWeight: '700', color: (COLORS as any).navy, marginBottom: Spacing.md },
+  sectionTitle: {
+    ...Typography.h4,
+    fontWeight: '700',
+    color: (COLORS as unknown as Record<string, string>).navy,
+    marginBottom: Spacing.md,
+  },
   contactTypeSection: { marginBottom: Spacing.sm },
   contactTypeHeader: {
     flexDirection: 'row',
@@ -632,7 +646,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
     marginLeft: Spacing.md,
   },
   contactTypeCount: { ...Typography.bodySmall, color: COLORS.gray600, marginRight: Spacing.sm },
@@ -648,7 +662,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.gray200,
   },
   contactInfo: { flex: 1 },
-  contactName: { ...Typography.body, fontWeight: '600', color: (COLORS as any).navy },
+  contactName: { ...Typography.body, fontWeight: '600', color: (COLORS as unknown as Record<string, string>).navy },
   contactDescription: { ...Typography.bodySmall, color: COLORS.gray600, marginTop: 2 },
   contactMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   contactHours: { ...Typography.caption, color: COLORS.gray600, marginLeft: Spacing.xs },
@@ -680,7 +694,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   tipIcon: { fontSize: 28, marginBottom: 8 },
-  tipTitle: { ...Typography.bodySmall, fontWeight: '600', color: (COLORS as any).navy },
+  tipTitle: { ...Typography.bodySmall, fontWeight: '600', color: (COLORS as unknown as Record<string, string>).navy },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: {
@@ -697,18 +711,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray200,
   },
-  modalTitle: { ...Typography.h4, fontWeight: '700', color: (COLORS as any).navy },
+  modalTitle: { ...Typography.h4, fontWeight: '700', color: (COLORS as unknown as Record<string, string>).navy },
   modalBody: { padding: Spacing.base },
   modalFooter: { padding: Spacing.base, borderTopWidth: 1, borderTopColor: COLORS.gray200 },
   formGroup: { marginBottom: Spacing.base },
-  formLabel: { ...Typography.bodySmall, fontWeight: '600', color: (COLORS as any).navy, marginBottom: Spacing.sm },
+  formLabel: {
+    ...Typography.bodySmall,
+    fontWeight: '600',
+    color: (COLORS as unknown as Record<string, string>).navy,
+    marginBottom: Spacing.sm,
+  },
   formInput: {
     borderWidth: 1,
     borderColor: COLORS.gray200,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     ...Typography.body,
-    color: (COLORS as any).navy,
+    color: (COLORS as unknown as Record<string, string>).navy,
   },
   formTextArea: { height: 80, textAlignVertical: 'top' },
   emergencyTypeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },

@@ -281,7 +281,7 @@ const QuickDeliveryPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Fast Delivery Stores</Text>
-            <Pressable onPress={() => router.push('/grocery/stores' as any)}>
+            <Pressable onPress={() => router.push('/grocery/stores' as unknown as string)}>
               <Text style={styles.seeAllText}>See All</Text>
             </Pressable>
           </View>
@@ -290,7 +290,7 @@ const QuickDeliveryPage: React.FC = () => {
               <Pressable
                 key={store.id}
                 style={styles.quickStoreCard}
-                onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
+                onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as unknown as string)}
               >
                 <View style={styles.quickStoreBadge}>
                   <Ionicons name="flash" size={10} color="#FCD34D" />

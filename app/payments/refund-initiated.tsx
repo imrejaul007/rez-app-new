@@ -387,7 +387,7 @@ function RefundInitiatedPage() {
             </View>
             <View style={styles.detailRow}>
               <ThemedText style={styles.detailLabel}>Order</ThemedText>
-              <Pressable onPress={() => router.push(`/orders/${refund.orderId}` as any)}>
+              <Pressable onPress={() => router.push(`/orders/${refund.orderId}` as unknown as string)}>
                 <ThemedText style={[styles.detailValue, styles.detailLink]}>
                   {refund.orderNumber || refund.orderId}
                 </ThemedText>
@@ -412,7 +412,7 @@ function RefundInitiatedPage() {
                 If your refund is delayed or you have questions, our support team is here to help.
               </ThemedText>
             </View>
-            <Pressable style={styles.helpButton} onPress={() => router.push('/support' as any)}>
+            <Pressable style={styles.helpButton} onPress={() => router.push('/support' as unknown as string)}>
               <ThemedText style={styles.helpButtonText}>Contact Support</ThemedText>
             </Pressable>
           </View>

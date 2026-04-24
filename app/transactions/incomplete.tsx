@@ -57,7 +57,7 @@ const IncompleteTransactionsPage = () => {
         if (response.success && response.data?.orders) {
           // Filter for incomplete orders
           const incompleteOrders = response.data.orders.filter((order: Order) =>
-            INCOMPLETE_STATUSES.includes(order.status as any),
+            INCOMPLETE_STATUSES.includes(order.status as unknown as string),
           );
           setOrders(incompleteOrders);
         } else {
@@ -128,19 +128,19 @@ const IncompleteTransactionsPage = () => {
 
   const handleAction = useCallback(
     (order: Order) => {
-      switch (order.status as any) {
+      switch (order.status as unknown as string) {
         case 'payment_pending':
         case 'payment_failed':
           // Navigate to checkout to retry payment
-          router.push(`/checkout?orderId=${order._id}` as any);
+          router.push(`/checkout?orderId=${order._id}` as unknown as string);
           break;
         case 'cancelled':
           // Navigate to order details where user can reorder
-          router.push(`/orders/${order._id}` as any);
+          router.push(`/orders/${order._id}` as unknown as string);
           break;
         default:
           // View order details
-          router.push(`/orders/${order._id}` as any);
+          router.push(`/orders/${order._id}` as unknown as string);
           break;
       }
     },
@@ -153,9 +153,9 @@ const IncompleteTransactionsPage = () => {
         <View style={styles.orderHeader}>
           <View style={styles.orderHeaderLeft}>
             <Ionicons
-              name={getStatusIcon(item.status as any) as any}
+              name={getStatusIcon(item.status as unknown as string)}
               size={24}
-              color={getStatusColor(item.status as any)}
+              color={getStatusColor(item.status as unknown as string)}
             />
             <View style={styles.orderInfo}>
               <ThemedText style={styles.orderId}>Order #{item.orderNumber || item._id.substring(0, 8)}</ThemedText>
@@ -168,9 +168,11 @@ const IncompleteTransactionsPage = () => {
               </ThemedText>
             </View>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status as any)}20` }]}>
-            <Text style={[styles.statusText, { color: getStatusColor(item.status as any) }]}>
-              {(item.status as any).replace('_', ' ').toUpperCase()}
+          <View
+            style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status as unknown as string)}20` }]}
+          >
+            <Text style={[styles.statusText, { color: getStatusColor(item.status as unknown as string) }]}>
+              {(item.status as unknown as string).replace('_', ' ').toUpperCase()}
             </Text>
           </View>
         </View>
@@ -190,13 +192,13 @@ const IncompleteTransactionsPage = () => {
         </View>
 
         <Pressable
-          style={[styles.actionButton, { borderColor: getStatusColor(item.status as any) }]}
+          style={[styles.actionButton, { borderColor: getStatusColor(item.status as unknown as string) }]}
           onPress={() => handleAction(item)}
         >
-          <Text style={[styles.actionButtonText, { color: getStatusColor(item.status as any) }]}>
-            {getActionLabel(item.status as any)}
+          <Text style={[styles.actionButtonText, { color: getStatusColor(item.status as unknown as string) }]}>
+            {getActionLabel(item.status as unknown as string)}
           </Text>
-          <Ionicons name="arrow-forward" size={16} color={getStatusColor(item.status as any)} />
+          <Ionicons name="arrow-forward" size={16} color={getStatusColor(item.status as unknown as string)} />
         </Pressable>
       </View>
     ),

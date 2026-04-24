@@ -7,7 +7,7 @@
  * @version 3.0.0 - refactored from monolithic bill-upload.tsx
  */
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { View, Text, StyleSheet, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -129,7 +129,7 @@ function BillUploadPage() {
                   cursor: 'pointer',
                   border: 'none',
                   fontSize: 16,
-                } as any
+                } as unknown as CSSProperties
               }
             />
           </View>
@@ -162,7 +162,7 @@ function BillUploadPage() {
               if (router.canGoBack()) {
                 router.back();
               } else {
-                router.replace('/(tabs)/' as any);
+                router.replace('/(tabs)/' as unknown as string);
               }
             }}
             iconColor={colors.darkGray}
@@ -174,7 +174,7 @@ function BillUploadPage() {
         </View>
 
         <Animated.ScrollView
-          ref={scrollViewRef as any}
+          ref={scrollViewRef as unknown as React.RefObject<Animated.ScrollView>}
           style={[styles.scrollView, { opacity: fadeAnim }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"

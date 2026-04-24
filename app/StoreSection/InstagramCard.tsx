@@ -71,7 +71,7 @@ function InstagramCard({ productData, disabled = false, onError }: InstagramCard
       router.push({
         pathname: '/earn-from-social-media',
         params,
-      } as any);
+      } as unknown as string);
     } catch (error: any) {
       // Call error callback if provided
       if (onError) {

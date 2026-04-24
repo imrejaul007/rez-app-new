@@ -161,12 +161,12 @@ function CourierPreferencesScreen() {
     if (!preferences) return;
 
     const weekdays = [...preferences.deliveryTimePreference.weekdays];
-    const index = weekdays.indexOf(day as any);
+    const index = weekdays.indexOf(day as 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN');
 
     if (index > -1) {
       weekdays.splice(index, 1);
     } else {
-      weekdays.push(day as any);
+      weekdays.push(day as 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN');
     }
 
     savePreferences({
@@ -244,7 +244,9 @@ function CourierPreferencesScreen() {
             <Pressable
               key={courier.value}
               style={styles.radioItem}
-              onPress={() => savePreferences({ preferredCourier: courier.value as any })}
+              onPress={() =>
+                savePreferences({ preferredCourier: courier.value as CourierPreferences['preferredCourier'] })
+              }
               accessibilityLabel={`${courier.label}${preferences.preferredCourier === courier.value ? ', selected' : ''}`}
               accessibilityRole="radio"
               accessibilityState={{ checked: preferences.preferredCourier === courier.value }}
@@ -263,7 +265,9 @@ function CourierPreferencesScreen() {
           <Text style={styles.sectionTitle}>Delivery Days</Text>
           <View style={styles.weekdaysContainer}>
             {WEEKDAYS.map((day) => {
-              const isEnabled = preferences.deliveryTimePreference.weekdays.includes(day as any);
+              const isEnabled = preferences.deliveryTimePreference.weekdays.includes(
+                day as 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN',
+              );
               return (
                 <Pressable
                   key={day}

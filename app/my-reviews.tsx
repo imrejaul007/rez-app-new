@@ -218,7 +218,9 @@ function MyReviewsPage() {
             {review.images.map((image, index) => (
               <CachedImage
                 key={index}
-                source={{ uri: typeof image === 'string' ? image : (image as any)?.uri || '' }}
+                source={{
+                  uri: typeof image === 'string' ? image : (image as unknown as Record<string, unknown>)?.uri || '',
+                }}
                 style={styles.reviewImage}
               />
             ))}
@@ -256,7 +258,7 @@ function MyReviewsPage() {
             style={styles.actionButton}
             onPress={() => {
               const storeId = typeof review.store === 'object' ? review.store._id : review.store;
-              router.push(`/MainStorePage?storeId=${storeId}` as any);
+              router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
             }}
             accessibilityLabel="View store"
             accessibilityRole="button"
@@ -272,7 +274,7 @@ function MyReviewsPage() {
               if (!isPending) return;
               const storeId = typeof review.store === 'object' ? review.store._id : review.store;
               router.push(
-                `/ReviewPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&fromStore=true` as any,
+                `/ReviewPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&fromStore=true` as unknown as string,
               );
             }}
             accessibilityLabel="Edit review"
@@ -394,7 +396,7 @@ function MyReviewsPage() {
                   </Text>
                   <Pressable
                     style={styles.shopButton}
-                    onPress={() => router.push('/(tabs)' as any)}
+                    onPress={() => router.push('/(tabs)' as unknown as string)}
                     accessibilityLabel="Write a Review"
                     accessibilityRole="button"
                     accessibilityHint="Browse stores to write your first review"

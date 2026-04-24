@@ -142,7 +142,7 @@ function EnhancedBillUploadPage() {
     try {
       const ImagePicker = await getImagePicker();
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images' as any,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
@@ -252,7 +252,7 @@ function EnhancedBillUploadPage() {
 
     return (
       <View style={styles.cameraContainer}>
-        <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType as any}>
+        <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType}>
           <View style={styles.cameraOverlay}>
             <Pressable style={styles.cameraCloseButton} onPress={() => setShowCamera(false)}>
               <Ionicons name="close" size={32} color={colors.text.inverse} />
@@ -394,7 +394,10 @@ function EnhancedBillUploadPage() {
           {/* Submit Button */}
           {billImage && (
             <Pressable
-              style={[styles.submitButton, (!canProceed || isUploading || isProcessing || isSubmittingRef.current) && styles.submitButtonDisabled]}
+              style={[
+                styles.submitButton,
+                (!canProceed || isUploading || isProcessing || isSubmittingRef.current) && styles.submitButtonDisabled,
+              ]}
               onPress={handleSubmit}
               disabled={!canProceed || isUploading || isProcessing || isSubmittingRef.current}
             >

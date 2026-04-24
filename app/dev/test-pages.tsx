@@ -209,9 +209,17 @@ function TestPagesScreen() {
             {expandedCategory === category.title && (
               <View style={styles.pagesContainer}>
                 {category.pages.map((page) => (
-                  <Pressable key={page.path} style={styles.pageItem} onPress={() => router.push(page.path as any)}>
+                  <Pressable
+                    key={page.path}
+                    style={styles.pageItem}
+                    onPress={() => router.push(page.path as unknown as string)}
+                  >
                     <View style={[styles.pageIcon, { backgroundColor: category.color + '20' }]}>
-                      <Ionicons name={page.icon as any} size={18} color={category.color} />
+                      <Ionicons
+                        name={page.icon as unknown as keyof typeof Ionicons.glyphMap}
+                        size={18}
+                        color={category.color}
+                      />
                     </View>
                     <ThemedText style={styles.pageName}>{page.name}</ThemedText>
                     <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
@@ -229,10 +237,14 @@ function TestPagesScreen() {
               <Pressable
                 key={category.title}
                 style={[styles.quickLinkCard, { borderColor: category.color }]}
-                onPress={() => router.push(category.pages[0].path as any)}
+                onPress={() => router.push(category.pages[0].path as unknown as string)}
               >
                 <View style={[styles.quickLinkIcon, { backgroundColor: category.color }]}>
-                  <Ionicons name={category.pages[0].icon as any} size={20} color={colors.background.primary} />
+                  <Ionicons
+                    name={category.pages[0].icon as unknown as keyof typeof Ionicons.glyphMap}
+                    size={20}
+                    color={colors.background.primary}
+                  />
                 </View>
                 <ThemedText style={styles.quickLinkText} numberOfLines={1}>
                   {category.title}

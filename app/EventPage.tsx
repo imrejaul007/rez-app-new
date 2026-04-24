@@ -631,9 +631,9 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             text: 'My Events',
             onPress: () => {
               if (Platform.OS === 'ios') {
-                setTimeout(() => router.push('/my-events' as any), 50);
+                setTimeout(() => router.push('/my-events' as unknown as string), 50);
               } else {
-                router.push('/my-events' as any);
+                router.push('/my-events' as unknown as string);
               }
             },
           },
@@ -703,7 +703,10 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                   <Ionicons name="arrow-back" size={20} color={colors.background.primary} />
                   <Text style={styles.notFoundBackText}>Go Back</Text>
                 </Pressable>
-                <Pressable style={styles.notFoundExploreButton} onPress={() => router.push('/events' as any)}>
+                <Pressable
+                  style={styles.notFoundExploreButton}
+                  onPress={() => router.push('/events' as unknown as string)}
+                >
                   <Ionicons name="compass-outline" size={20} color={Colors.brand.purpleLight} />
                   <Text style={styles.notFoundExploreText}>Explore Events</Text>
                 </Pressable>
@@ -834,7 +837,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               <View style={styles.heroContent}>
                 <View style={[styles.categoryBadge, { backgroundColor: categoryTheme.badgeBackground }]}>
                   <Ionicons
-                    name={categoryTheme.icon as any}
+                    name={categoryTheme.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={14}
                     color={colors.background.primary}
                     style={{ marginRight: 6 }}
@@ -894,12 +897,16 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             />
-            <Ionicons name={categoryTheme.icon as any} size={80} color="rgba(255,255,255,0.3)" />
+            <Ionicons
+              name={categoryTheme.icon as unknown as keyof typeof Ionicons.glyphMap}
+              size={80}
+              color="rgba(255,255,255,0.3)"
+            />
             <LinearGradient colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.7)']} style={styles.heroOverlay}>
               <View style={styles.heroContent}>
                 <View style={[styles.categoryBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
                   <Ionicons
-                    name={categoryTheme.icon as any}
+                    name={categoryTheme.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={14}
                     color={colors.background.primary}
                     style={{ marginRight: 6 }}
@@ -1016,50 +1023,55 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         )}
 
         {/* Schedule Section */}
-        {realEventData && (realEventData as any).schedule && (realEventData as any).schedule.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Schedule</Text>
-            {(realEventData as any).schedule.map((item: any, index: number) => (
-              <View
-                key={index}
-                style={[
-                  styles.scheduleRow,
-                  index < (realEventData as any).schedule.length - 1 && styles.scheduleRowBorder,
-                ]}
-              >
-                <View style={styles.scheduleTimeCol}>
-                  <Ionicons name="time-outline" size={18} color={Colors.brand.purpleLight} />
-                  <Text style={styles.scheduleTimeText}>{item.startTime || ''}</Text>
-                </View>
-                <View style={styles.scheduleContent}>
-                  <Text style={styles.scheduleItemTitle}>{item.title}</Text>
-                  {item.description && <Text style={styles.scheduleItemDesc}>{item.description}</Text>}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Sponsors Section */}
-        {realEventData && (realEventData as any).sponsors && (realEventData as any).sponsors.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sponsors</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.sponsorsScroll}>
-              {(realEventData as any).sponsors.map((sponsor: any, index: number) => (
-                <View key={index} style={styles.sponsorCard}>
-                  {sponsor.logo ? (
-                    <CachedImage source={sponsor.logo} style={styles.sponsorLogo} />
-                  ) : (
-                    <View style={styles.sponsorLogoPlaceholder}>
-                      <Ionicons name="business-outline" size={20} color={colors.neutral[400]} />
-                    </View>
-                  )}
-                  <Text style={styles.sponsorName}>{sponsor.name}</Text>
+        {realEventData &&
+          (realEventData as unknown as Record<string, unknown>).schedule &&
+          (realEventData as unknown as Record<string, unknown>).schedule.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Schedule</Text>
+              {(realEventData as unknown as Record<string, unknown>).schedule.map((item: any, index: number) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.scheduleRow,
+                    index < (realEventData as unknown as Record<string, unknown>).schedule.length - 1 &&
+                      styles.scheduleRowBorder,
+                  ]}
+                >
+                  <View style={styles.scheduleTimeCol}>
+                    <Ionicons name="time-outline" size={18} color={Colors.brand.purpleLight} />
+                    <Text style={styles.scheduleTimeText}>{item.startTime || ''}</Text>
+                  </View>
+                  <View style={styles.scheduleContent}>
+                    <Text style={styles.scheduleItemTitle}>{item.title}</Text>
+                    {item.description && <Text style={styles.scheduleItemDesc}>{item.description}</Text>}
+                  </View>
                 </View>
               ))}
-            </ScrollView>
-          </View>
-        )}
+            </View>
+          )}
+
+        {/* Sponsors Section */}
+        {realEventData &&
+          (realEventData as unknown as Record<string, unknown>).sponsors &&
+          (realEventData as unknown as Record<string, unknown>).sponsors.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Sponsors</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.sponsorsScroll}>
+                {(realEventData as unknown as Record<string, unknown>).sponsors.map((sponsor: any, index: number) => (
+                  <View key={index} style={styles.sponsorCard}>
+                    {sponsor.logo ? (
+                      <CachedImage source={sponsor.logo} style={styles.sponsorLogo} />
+                    ) : (
+                      <View style={styles.sponsorLogoPlaceholder}>
+                        <Ionicons name="business-outline" size={20} color={colors.neutral[400]} />
+                      </View>
+                    )}
+                    <Text style={styles.sponsorName}>{sponsor.name}</Text>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+          )}
 
         {/* Time Slots for Offline Events */}
         {isOfflineEvent && (
@@ -1310,7 +1322,7 @@ function EventActionButton({
           <ActivityIndicator size="small" color={colors.background.primary} style={{ marginRight: 8 }} />
         ) : (
           <Ionicons
-            name={getButtonIcon() as any}
+            name={getButtonIcon() as unknown as keyof typeof Ionicons.glyphMap}
             size={20}
             color={colors.background.primary}
             style={{ marginRight: 8 }}

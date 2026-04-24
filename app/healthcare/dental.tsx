@@ -351,7 +351,11 @@ function DentalCarePage() {
         accessibilityState={{ selected: isSelected }}
       >
         <View style={[styles.serviceIcon, isSelected ? styles.serviceIconSelected : null]}>
-          <Ionicons name={service.icon as any} size={24} color={isSelected ? colors.text.inverse : colors.brand.cyan} />
+          <Ionicons
+            name={service.icon as unknown as keyof typeof Ionicons.glyphMap}
+            size={24}
+            color={isSelected ? colors.text.inverse : colors.brand.cyan}
+          />
         </View>
         <Text style={[styles.serviceName, isSelected ? styles.serviceNameSelected : null]}>{service.name}</Text>
         <Text style={styles.servicePrice}>{service.priceRange}</Text>

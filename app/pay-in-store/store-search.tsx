@@ -220,7 +220,12 @@ function StoreSearchScreen() {
         {/* Main Content */}
         <AnimatedScrollView
           style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
+          contentContainerStyle={
+            [
+              styles.scrollContent,
+              { paddingBottom: insets.bottom + 120 },
+            ] as unknown as import('react-native').StyleProp<import('react-native').ViewStyle>
+          }
           onScroll={scrollHandler}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}

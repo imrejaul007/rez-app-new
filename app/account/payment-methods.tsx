@@ -411,7 +411,11 @@ function PaymentMethodsManagementPage() {
           <View style={styles.cardHeader}>
             <View style={styles.cardIconRow}>
               <View style={[styles.cardIcon, { backgroundColor: `${brandColor}20` }]}>
-                <Ionicons name={getCardBrandIcon(method.card.brand) as any} size={24} color={brandColor} />
+                <Ionicons
+                  name={getCardBrandIcon(method.card.brand) as unknown as keyof typeof Ionicons.glyphMap}
+                  size={24}
+                  color={brandColor}
+                />
               </View>
               <View style={styles.cardInfo}>
                 <ThemedText style={styles.cardBrand}>{method.card.brand}</ThemedText>

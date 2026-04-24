@@ -22,6 +22,7 @@ import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive } f
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { orderApi } from '@/services/orderApi';
+import type { OrderTrackingState } from '@/hooks/useOrderTracking';
 
 function OrderTrackingScreen() {
   const { orderId } = useLocalSearchParams<any>();
@@ -41,7 +42,10 @@ function OrderTrackingScreen() {
     isReconnecting,
     reconnectAttempts,
     refresh,
-  } = useOrderTracking(orderId || null) as any;
+  } = useOrderTracking(orderId || null) as unknown as OrderTrackingState & {
+    refresh: () => void;
+    isConnected: boolean;
+  };
 
   // Show notification when status changes
   useEffect(() => {

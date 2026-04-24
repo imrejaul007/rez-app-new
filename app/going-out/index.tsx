@@ -32,16 +32,17 @@ function GoingOutPage() {
   const { state, actions, handlers } = useGoingOutPage();
 
   const handleBack = () => {
-    goBack('/' as any); // Fallback to home page
+    goBack('/' as unknown as string); // Fallback to home page
   };
 
-   const handleProductPress = (product:GoingOutProduct) => {
-     router.push(`/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as any);
-   };
-   
+  const handleProductPress = (product: GoingOutProduct) => {
+    router.push(
+      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as unknown as string,
+    );
+  };
 
   const handleViewAllSection = (sectionId: string) => {
-    router.push(`/going-out/section/${sectionId}` as any);
+    router.push(`/going-out/section/${sectionId}` as unknown as string);
   };
 
   const handleHideSearch = () => {
@@ -66,7 +67,7 @@ function GoingOutPage() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} />
-      
+
       {/* Header */}
       <GoingOutHeader
         searchQuery={state.searchQuery}
@@ -86,243 +87,233 @@ function GoingOutPage() {
         accessibilityRole="list"
         accessibilityLabel="Going out products list"
       >
-          {/* Category Tabs */}
-          <CategoryTabs
-            categories={state.categories}
-            activeCategory={state.activeCategory}
-            onCategoryChange={handlers.handleCategoryChange}
-          />
+        {/* Category Tabs */}
+        <CategoryTabs
+          categories={state.categories}
+          activeCategory={state.activeCategory}
+          onCategoryChange={handlers.handleCategoryChange}
+        />
 
-          {/* Filter Chips */}
-          <FilterChips
-            filters={state.filters}
-            onFilterChange={handlers.handleFilterChange}
-            activeFilters={activeFilters}
-          />
+        {/* Filter Chips */}
+        <FilterChips
+          filters={state.filters}
+          onFilterChange={handlers.handleFilterChange}
+          activeFilters={activeFilters}
+        />
 
-          {/* Cashback Hub Sections - Only show when no search query and "All" category is selected */}
-          {!state.searchQuery.trim() && state.activeCategory === 'all' && (
-            <>
-              {state.cashbackHubSections.map((section) => (
-                <CashbackHubSection
-                  key={section.id}
-                  section={section}
-                  onProductPress={handleProductPress}
-                  onToggleWishlist={handlers.handleToggleWishlist}
-                  onViewAll={() => handleViewAllSection(section.id)}
-                  wishlist={state.wishlist}
-                />
-              ))}
-              
-              {/* Empty state when no sections have products */}
-              {state.cashbackHubSections.every(section => !section.products || section.products.length === 0) && (
-                <View
-                  style={styles.emptyState}
-                  accessibilityRole="text"
-                  accessibilityLabel="No products available. We're working on adding amazing products for you. Check back soon for the latest deals!"
-                >
-                  <View style={styles.emptyIconContainer}>
-                    <Ionicons name="storefront-outline" size={64} color={colors.border.default} />
-                  </View>
-                  <ThemedText style={styles.emptyTitle}>No products available</ThemedText>
-                  <ThemedText style={styles.emptySubtitle}>
-                    We're working on adding amazing products for you.{'\n'}Check back soon for the latest deals!
-                  </ThemedText>
-                </View>
-              )}
-            </>
-          )}
-
-          {/* Category Filtered Products - Show when a specific category is selected */}
-          {!state.searchQuery.trim() && state.activeCategory !== 'all' && (
-            <View style={styles.categoryResults}>
-              <View
-                style={styles.categoryHeader}
-                accessibilityRole="header"
-                accessibilityLabel={`${state.categories.find(cat => cat.id === state.activeCategory)?.name || 'Products'}. ${state.filteredProducts.length === 1 ? '1 product found' : `${state.filteredProducts.length} products found`}`}
-              >
-                <View style={styles.categoryTitleContainer}>
-                  <ThemedText style={styles.categoryTitle}>
-                    {state.categories.find(cat => cat.id === state.activeCategory)?.name || 'Products'}
-                  </ThemedText>
-                  <View
-                    style={styles.categoryBadge}
-                    accessibilityLabel={`${state.filteredProducts.length} items`}
-                  >
-                    <ThemedText style={styles.categoryBadgeText}>
-                      {state.filteredProducts.length}
-                    </ThemedText>
-                  </View>
-                </View>
-                <ThemedText style={styles.categoryCount}>
-                  {state.filteredProducts.length === 1 ? '1 product found' : `${state.filteredProducts.length} products found`}
-                </ThemedText>
-              </View>
-              
-              {state.filteredProducts.length > 0 ? (
-                <View style={styles.productsContainer}>
-                  <ProductGrid
-                    products={state.filteredProducts}
-                    onProductPress={handleProductPress}
-                    onToggleWishlist={handlers.handleToggleWishlist}
-                    loading={state.loading}
-                    onLoadMore={handlers.handleLoadMore}
-                    hasMore={state.hasMore}
-                    numColumns={2}
-                    wishlist={state.wishlist}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={styles.emptyState}
-                  accessibilityRole="text"
-                  accessibilityLabel="No products found in this category. Try selecting a different category or browse all products."
-                >
-                  <View style={styles.emptyIconContainer}>
-                    <Ionicons name="search-outline" size={64} color={colors.border.default} />
-                  </View>
-                  <ThemedText style={styles.emptyTitle}>No products found</ThemedText>
-                  <ThemedText style={styles.emptySubtitle}>
-                    We couldn't find any products in this category.{'\n'}Try selecting a different category or browse all products.
-                  </ThemedText>
-                  <View style={styles.emptyActionContainer}>
-                    <Pressable
-                      style={styles.emptyActionButton}
-                      onPress={() => handlers.handleCategoryChange('all')}
-                      accessibilityLabel="Browse all products"
-                      accessibilityRole="button"
-                      accessibilityHint="Double tap to view all available products"
-                    >
-                      <ThemedText style={styles.emptyActionText}>Browse All Products</ThemedText>
-                    </Pressable>
-                  </View>
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* Search Results - Show when there's a search query */}
-          {state.searchQuery.trim() && (
-            <>
-              <View
-                style={styles.searchResultsHeader}
-                accessibilityRole="header"
-                accessibilityLabel={
-                  state.searchQuery.trim().length < 2
-                    ? "Search Results. Type at least 2 characters to search"
-                    : state.loading
-                    ? "Search Results. Searching"
-                    : `Search Results. ${state.filteredProducts.length} ${state.filteredProducts.length === 1 ? 'product' : 'products'} found for ${state.searchQuery}`
-                }
-              >
-                <View style={styles.searchResultsTitleContainer}>
-                  <Ionicons name="search" size={20} color={Colors.brand.purpleLight} />
-                  <ThemedText style={styles.searchResultsTitle}>
-                    Search Results
-                  </ThemedText>
-                </View>
-                {state.searchQuery.trim().length < 2 ? (
-                  <ThemedText style={styles.searchHint}>
-                    Type at least 2 characters to search...
-                  </ThemedText>
-                ) : (
-                  <>
-                    <ThemedText style={styles.searchResultsCount}>
-                      {state.loading ? 'Searching...' : `${state.filteredProducts.length} ${state.filteredProducts.length === 1 ? 'product' : 'products'} found`}
-                    </ThemedText>
-                    <ThemedText style={styles.searchQueryText}>
-                      for "{state.searchQuery}"
-                    </ThemedText>
-                  </>
-                )}
-              </View>
-
-              {state.searchQuery.trim().length < 2 ? (
-                <View
-                  style={styles.searchHintContainer}
-                  accessibilityRole="text"
-                  accessibilityLabel="Keep typing. Enter at least 2 characters to start searching"
-                >
-                  <Ionicons name="information-circle-outline" size={48} color={colors.border.default} />
-                  <ThemedText style={styles.searchHintTitle}>Keep typing...</ThemedText>
-                  <ThemedText style={styles.searchHintText}>
-                    Enter at least 2 characters to start searching
-                  </ThemedText>
-                </View>
-              ) : state.loading ? (
-                <View
-                  style={styles.loadingContainer}
-                  accessibilityRole="progressbar"
-                  accessibilityLabel="Searching products"
-                  accessibilityValue={{ text: "Loading" }}
-                >
-                  <ActivityIndicator size="large" color={Colors.brand.purpleLight} />
-                  <ThemedText style={styles.loadingText}>Searching products...</ThemedText>
-                </View>
-              ) : state.filteredProducts.length > 0 ? (
-                <View style={styles.searchResultsContainer}>
-                  <ProductGrid
-                    products={state.filteredProducts}
-                    loading={false}
-                    onProductPress={handleProductPress}
-                    onToggleWishlist={handlers.handleToggleWishlist}
-                    onLoadMore={handlers.handleLoadMore}
-                    hasMore={state.hasMore}
-                    numColumns={2}
-                    wishlist={state.wishlist}
-                    showHeader={false}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={styles.searchEmptyState}
-                  accessibilityRole="text"
-                  accessibilityLabel={`No results found for ${state.searchQuery}. Try different keywords or browse our categories`}
-                >
-                  <View style={styles.emptyIconContainer}>
-                    <Ionicons name="search-outline" size={80} color={colors.border.default} />
-                  </View>
-                  <ThemedText style={styles.emptyTitle}>No results found</ThemedText>
-                  <ThemedText style={styles.emptySubtitle}>
-                    We couldn't find any products matching "{state.searchQuery}"
-                  </ThemedText>
-                  <ThemedText style={styles.emptySuggestion}>
-                    Try different keywords or browse our categories
-                  </ThemedText>
-                  <View style={styles.emptyActionContainer}>
-                    <Pressable
-                      style={styles.emptyActionButton}
-                      onPress={() => handlers.handleSearchChange('')}
-                      accessibilityLabel="Clear search"
-                      accessibilityRole="button"
-                      accessibilityHint="Double tap to clear search and view all products"
-                    >
-                      <ThemedText style={styles.emptyActionText}>Clear Search</ThemedText>
-                    </Pressable>
-                  </View>
-                </View>
-              )}
-            </>
-          )}
-
-          {/* All Products Grid - Show when no search query and there are products */}
-          {!state.searchQuery.trim() && state.filteredProducts.length > 0 && (
-            <View style={styles.allProductsContainer}>
-              <ProductGrid
-                products={state.filteredProducts}
-                loading={state.loading}
+        {/* Cashback Hub Sections - Only show when no search query and "All" category is selected */}
+        {!state.searchQuery.trim() && state.activeCategory === 'all' && (
+          <>
+            {state.cashbackHubSections.map((section) => (
+              <CashbackHubSection
+                key={section.id}
+                section={section}
                 onProductPress={handleProductPress}
                 onToggleWishlist={handlers.handleToggleWishlist}
-                onLoadMore={handlers.handleLoadMore}
-                hasMore={state.hasMore}
-                numColumns={2}
+                onViewAll={() => handleViewAllSection(section.id)}
                 wishlist={state.wishlist}
               />
+            ))}
+
+            {/* Empty state when no sections have products */}
+            {state.cashbackHubSections.every((section) => !section.products || section.products.length === 0) && (
+              <View
+                style={styles.emptyState}
+                accessibilityRole="text"
+                accessibilityLabel="No products available. We're working on adding amazing products for you. Check back soon for the latest deals!"
+              >
+                <View style={styles.emptyIconContainer}>
+                  <Ionicons name="storefront-outline" size={64} color={colors.border.default} />
+                </View>
+                <ThemedText style={styles.emptyTitle}>No products available</ThemedText>
+                <ThemedText style={styles.emptySubtitle}>
+                  We're working on adding amazing products for you.{'\n'}Check back soon for the latest deals!
+                </ThemedText>
+              </View>
+            )}
+          </>
+        )}
+
+        {/* Category Filtered Products - Show when a specific category is selected */}
+        {!state.searchQuery.trim() && state.activeCategory !== 'all' && (
+          <View style={styles.categoryResults}>
+            <View
+              style={styles.categoryHeader}
+              accessibilityRole="header"
+              accessibilityLabel={`${state.categories.find((cat) => cat.id === state.activeCategory)?.name || 'Products'}. ${state.filteredProducts.length === 1 ? '1 product found' : `${state.filteredProducts.length} products found`}`}
+            >
+              <View style={styles.categoryTitleContainer}>
+                <ThemedText style={styles.categoryTitle}>
+                  {state.categories.find((cat) => cat.id === state.activeCategory)?.name || 'Products'}
+                </ThemedText>
+                <View style={styles.categoryBadge} accessibilityLabel={`${state.filteredProducts.length} items`}>
+                  <ThemedText style={styles.categoryBadgeText}>{state.filteredProducts.length}</ThemedText>
+                </View>
+              </View>
+              <ThemedText style={styles.categoryCount}>
+                {state.filteredProducts.length === 1
+                  ? '1 product found'
+                  : `${state.filteredProducts.length} products found`}
+              </ThemedText>
             </View>
-          )}
-        </ScrollView>
+
+            {state.filteredProducts.length > 0 ? (
+              <View style={styles.productsContainer}>
+                <ProductGrid
+                  products={state.filteredProducts}
+                  onProductPress={handleProductPress}
+                  onToggleWishlist={handlers.handleToggleWishlist}
+                  loading={state.loading}
+                  onLoadMore={handlers.handleLoadMore}
+                  hasMore={state.hasMore}
+                  numColumns={2}
+                  wishlist={state.wishlist}
+                />
+              </View>
+            ) : (
+              <View
+                style={styles.emptyState}
+                accessibilityRole="text"
+                accessibilityLabel="No products found in this category. Try selecting a different category or browse all products."
+              >
+                <View style={styles.emptyIconContainer}>
+                  <Ionicons name="search-outline" size={64} color={colors.border.default} />
+                </View>
+                <ThemedText style={styles.emptyTitle}>No products found</ThemedText>
+                <ThemedText style={styles.emptySubtitle}>
+                  We couldn't find any products in this category.{'\n'}Try selecting a different category or browse all
+                  products.
+                </ThemedText>
+                <View style={styles.emptyActionContainer}>
+                  <Pressable
+                    style={styles.emptyActionButton}
+                    onPress={() => handlers.handleCategoryChange('all')}
+                    accessibilityLabel="Browse all products"
+                    accessibilityRole="button"
+                    accessibilityHint="Double tap to view all available products"
+                  >
+                    <ThemedText style={styles.emptyActionText}>Browse All Products</ThemedText>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Search Results - Show when there's a search query */}
+        {state.searchQuery.trim() && (
+          <>
+            <View
+              style={styles.searchResultsHeader}
+              accessibilityRole="header"
+              accessibilityLabel={
+                state.searchQuery.trim().length < 2
+                  ? 'Search Results. Type at least 2 characters to search'
+                  : state.loading
+                    ? 'Search Results. Searching'
+                    : `Search Results. ${state.filteredProducts.length} ${state.filteredProducts.length === 1 ? 'product' : 'products'} found for ${state.searchQuery}`
+              }
+            >
+              <View style={styles.searchResultsTitleContainer}>
+                <Ionicons name="search" size={20} color={Colors.brand.purpleLight} />
+                <ThemedText style={styles.searchResultsTitle}>Search Results</ThemedText>
+              </View>
+              {state.searchQuery.trim().length < 2 ? (
+                <ThemedText style={styles.searchHint}>Type at least 2 characters to search...</ThemedText>
+              ) : (
+                <>
+                  <ThemedText style={styles.searchResultsCount}>
+                    {state.loading
+                      ? 'Searching...'
+                      : `${state.filteredProducts.length} ${state.filteredProducts.length === 1 ? 'product' : 'products'} found`}
+                  </ThemedText>
+                  <ThemedText style={styles.searchQueryText}>for "{state.searchQuery}"</ThemedText>
+                </>
+              )}
+            </View>
+
+            {state.searchQuery.trim().length < 2 ? (
+              <View
+                style={styles.searchHintContainer}
+                accessibilityRole="text"
+                accessibilityLabel="Keep typing. Enter at least 2 characters to start searching"
+              >
+                <Ionicons name="information-circle-outline" size={48} color={colors.border.default} />
+                <ThemedText style={styles.searchHintTitle}>Keep typing...</ThemedText>
+                <ThemedText style={styles.searchHintText}>Enter at least 2 characters to start searching</ThemedText>
+              </View>
+            ) : state.loading ? (
+              <View
+                style={styles.loadingContainer}
+                accessibilityRole="progressbar"
+                accessibilityLabel="Searching products"
+                accessibilityValue={{ text: 'Loading' }}
+              >
+                <ActivityIndicator size="large" color={Colors.brand.purpleLight} />
+                <ThemedText style={styles.loadingText}>Searching products...</ThemedText>
+              </View>
+            ) : state.filteredProducts.length > 0 ? (
+              <View style={styles.searchResultsContainer}>
+                <ProductGrid
+                  products={state.filteredProducts}
+                  loading={false}
+                  onProductPress={handleProductPress}
+                  onToggleWishlist={handlers.handleToggleWishlist}
+                  onLoadMore={handlers.handleLoadMore}
+                  hasMore={state.hasMore}
+                  numColumns={2}
+                  wishlist={state.wishlist}
+                  showHeader={false}
+                />
+              </View>
+            ) : (
+              <View
+                style={styles.searchEmptyState}
+                accessibilityRole="text"
+                accessibilityLabel={`No results found for ${state.searchQuery}. Try different keywords or browse our categories`}
+              >
+                <View style={styles.emptyIconContainer}>
+                  <Ionicons name="search-outline" size={80} color={colors.border.default} />
+                </View>
+                <ThemedText style={styles.emptyTitle}>No results found</ThemedText>
+                <ThemedText style={styles.emptySubtitle}>
+                  We couldn't find any products matching "{state.searchQuery}"
+                </ThemedText>
+                <ThemedText style={styles.emptySuggestion}>Try different keywords or browse our categories</ThemedText>
+                <View style={styles.emptyActionContainer}>
+                  <Pressable
+                    style={styles.emptyActionButton}
+                    onPress={() => handlers.handleSearchChange('')}
+                    accessibilityLabel="Clear search"
+                    accessibilityRole="button"
+                    accessibilityHint="Double tap to clear search and view all products"
+                  >
+                    <ThemedText style={styles.emptyActionText}>Clear Search</ThemedText>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+          </>
+        )}
+
+        {/* All Products Grid - Show when no search query and there are products */}
+        {!state.searchQuery.trim() && state.filteredProducts.length > 0 && (
+          <View style={styles.allProductsContainer}>
+            <ProductGrid
+              products={state.filteredProducts}
+              loading={state.loading}
+              onProductPress={handleProductPress}
+              onToggleWishlist={handlers.handleToggleWishlist}
+              onLoadMore={handlers.handleLoadMore}
+              hasMore={state.hasMore}
+              numColumns={2}
+              wishlist={state.wishlist}
+            />
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({

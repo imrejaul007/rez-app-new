@@ -106,7 +106,7 @@ function UGCDetailScreen() {
     if (params.item && typeof params.item === 'string') {
       try {
         const parsedItem = JSON.parse(params.item);
-        setVideo(parsedItem as any);
+        setVideo(parsedItem as unknown as Record<string, unknown>);
         setLoading(false);
         return;
       } catch (err: any) {
@@ -179,7 +179,7 @@ function UGCDetailScreen() {
   // Get the store ID to use for follow - prioritize store over creator
   const getFollowableStoreId = useCallback(() => {
     if (!video) return null;
-    const videoAny = video as any;
+    const videoAny = video as unknown as Record<string, unknown>;
     // Priority: video.stores > video.storesId > creator.storesId > creator.stores > creator.id
     return (
       videoAny.stores?.id ||
@@ -197,7 +197,7 @@ function UGCDetailScreen() {
   useEffect(() => {
     let cancelled = false;
     if (video) {
-      const videoAny = video as any;
+      const videoAny = video as unknown as Record<string, unknown>;
       const likes = videoAny.metrics?.likes || video.engagement?.likes;
       setLikesCount(Array.isArray(likes) ? likes.length : Number(likes) || 0);
       setViewsCount(videoAny.metrics?.views || video.engagement?.views || 0);
@@ -575,7 +575,10 @@ function UGCDetailScreen() {
         }
       } else {
         // Follow - use wishlistApi (backend supports this)
-        const creatorName = (video?.creator as any)?.name || (video?.creator as any)?.username || 'this creator';
+        const creatorName =
+          (video?.creator as unknown as Record<string, unknown>)?.name ||
+          (video?.creator as unknown as Record<string, unknown>)?.username ||
+          'this creator';
         const response = await wishlistApi.addToWishlist({
           itemType: 'store',
           itemId: storeIdToFollow,
@@ -645,14 +648,21 @@ function UGCDetailScreen() {
       return `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim() || 'User';
     }
     return (
-      (video?.creator as any)?.name || (video?.creator as any)?.username || (video?.stores as any)?.[0]?.name || 'User'
+      (video?.creator as unknown as Record<string, unknown>)?.name ||
+      (video?.creator as unknown as Record<string, unknown>)?.username ||
+      ((video?.stores as unknown as Record<string, unknown>)?.[0] as Record<string, unknown>)?.name ||
+      'User'
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [video?.creator, (video?.stores as any)?.[0]?.name]);
+  }, [video?.creator, ((video?.stores as unknown as Record<string, unknown>)?.[0] as Record<string, unknown>)?.name]);
 
   const creatorAvatar = useMemo(() => {
     const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(creatorName)}&background=8B5CF6&color=fff&size=100`;
-    return video?.creator?.profile?.avatar || (video?.creator as any)?.avatar || defaultAvatarUrl;
+    return (
+      video?.creator?.profile?.avatar ||
+      (video?.creator as unknown as Record<string, unknown>)?.avatar ||
+      defaultAvatarUrl
+    );
   }, [video?.creator, creatorName]);
 
   // Deep-link parameter validation guard: requires either item (JSON) or id
@@ -854,9 +864,9 @@ function UGCDetailScreen() {
         <View style={styles.creatorAvatarContainer}>
           <Pressable
             onPress={() => {
-              const creatorId = video?.creator?._id || (video?.creator as any)?.id;
+              const creatorId = video?.creator?._id || (video?.creator as unknown as Record<string, unknown>)?.id;
               if (creatorId) {
-                router.push(`/creator/${creatorId}` as any);
+                router.push(`/creator/${creatorId}` as unknown as string);
               }
             }}
           >
@@ -1229,7 +1239,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: BorderRadius.md,
     padding: 10,
-    ...Platform.select({ web: { backdropFilter: 'blur(10px)' } as any, default: {} }),
+    ...Platform.select({
+      web: { backdropFilter: 'blur(10px)' } as unknown as Record<string, unknown>,
+      default: {},
+    } as unknown as Record<string, unknown>),
   },
   productsHeader: {
     flexDirection: 'row',

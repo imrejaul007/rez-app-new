@@ -121,7 +121,7 @@ function StudentZonePage() {
   // Check verification status
   const isVerified =
     verificationStatus?.verified === true ||
-    (user as any)?.verifications?.student?.verified === true ||
+    (user as unknown as Record<string, unknown>)?.verifications?.student?.verified === true ||
     zoneInfo?.userEligible === true;
   const isPending = verificationStatus?.status === 'pending';
   const isRejected = verificationStatus?.status === 'rejected';
@@ -228,11 +228,11 @@ function StudentZonePage() {
     router.push({
       pathname: '/profile/verification',
       params: { zone: 'student' },
-    } as any);
+    } as unknown as string);
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as any);
+    router.push(`/offers/${offer._id}` as unknown as string);
   };
 
   const renderSkeletonCard = () => (
@@ -336,7 +336,9 @@ function StudentZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
+        contentContainerStyle={
+          [styles.scrollContent, { paddingBottom: bottomPadding }] as unknown as StyleProp<ViewStyle>
+        }
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}

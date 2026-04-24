@@ -154,7 +154,7 @@ const ActivityFeedPage = () => {
               <Text style={styles.suggestedName} numberOfLines={1}>
                 {suggestedUser.name}
               </Text>
-              {(suggestedUser as any).isMutual === true && (
+              {(suggestedUser as unknown as Record<string, unknown>).isMutual === true && (
                 <View style={styles.mutualBadge}>
                   <Ionicons name="people" size={10} color={colors.brand.ios} />
                   <Text style={styles.mutualText}>Mutual</Text>
