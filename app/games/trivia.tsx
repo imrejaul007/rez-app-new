@@ -29,6 +29,15 @@ interface Question {
   category: string;
 }
 
+/**
+ * CRITICAL: correctIndex is exposed in the client bundle.
+ * Any user can inspect the JS bundle and read all answers.
+ * For production: move question delivery to a backend API endpoint and validate
+ * answers server-side. The backend should award coins only after verifying the
+ * answer server-side via POST /games/quiz/verify with an idempotency key.
+ * This hardcoded array is fine for development but MUST NOT be used for
+ * production coin awards without server-side answer validation.
+ */
 const HARDCODED_QUESTIONS: Question[] = [
   {
     id: '1',

@@ -9,7 +9,13 @@ import { Platform } from 'react-native';
 import { BaseAnalyticsProvider } from './BaseProvider';
 import { PurchaseTransaction, AnalyticsEvent } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import uuid from 'react-native-uuid';
+/** CD-CRIT-01 FIX: Use crypto.randomUUID instead of react-native-uuid (Math.random based). */
+const generateId = (): string => {
+  if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
 
 interface CustomProviderConfig {
   apiUrl: string;
@@ -176,7 +182,7 @@ export class CustomAnalyticsProvider extends BaseAnalyticsProvider {
   }
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${generateId()}`;
   }
 
   private async persistEvents(): Promise<void> {

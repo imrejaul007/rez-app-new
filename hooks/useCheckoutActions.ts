@@ -21,6 +21,7 @@
  */
 import { useCallback, Dispatch, SetStateAction } from 'react';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CheckoutPageState, PromoCode, PaymentMethod, FulfillmentType, FulfillmentDetails, CheckoutDeliveryAddress } from '@/types/checkout.types';
 import { CheckoutData } from '@/data/checkoutData';
 import cartService from '@/services/cartApi';
@@ -35,6 +36,67 @@ import analyticsService from '@/services/analyticsService';
 import discountsApi from '@/services/discountsApi';
 import { createRazorpayPayment } from '@/services/razorpayApi';
 import { logger } from '@/utils/logger';
+
+// ── Recovery helpers ────────────────────────────────────────────────────────────
+
+/** CD-CRIT-03 & CD-CRIT-06 FIX: Persist Razorpay payment data so order creation can be
+ * recovered if the app is killed after payment capture but before order confirmation.
+ * Key survives app restart unlike in-memory state. */
+interface RazorpayRecoveryData {
+  razorpayPaymentId: string;
+  razorpayOrderId: string;
+  transactionId: string;
+  amount: number;
+  timestamp: number;
+}
+const RAZORPAY_RECOVERY_KEY = '@checkout:razorpay_recovery';
+
+async function persistRazorpayRecoveryData(data: RazorpayRecoveryData): Promise<void> {
+  try {
+    await AsyncStorage.setItem(RAZORPAY_RECOVERY_KEY, JSON.stringify(data));
+  } catch (e) {
+    logger.error('[Recovery] Failed to persist Razorpay recovery data', e as Error);
+  }
+}
+async function clearRazorpayRecoveryData(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(RAZORPAY_RECOVERY_KEY);
+  } catch (e) {
+    logger.error('[Recovery] Failed to clear Razorpay recovery data', e as Error);
+  }
+}
+async function getRazorpayRecoveryData(): Promise<RazorpayRecoveryData | null> {
+  try {
+    const raw = await AsyncStorage.getItem(RAZORPAY_RECOVERY_KEY);
+    return raw ? (JSON.parse(raw) as RazorpayRecoveryData) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Check and attempt recovery on page mount — exported so checkout page can call this on mount. */
+export async function checkRazorpayRecoveryOnLaunch(): Promise<{ orderId: string; recovered: boolean } | null> {
+  const recovery = await getRazorpayRecoveryData();
+  if (!recovery) return null;
+  // Only try recovery if the data is less than 30 minutes old
+  if (Date.now() - recovery.timestamp > 30 * 60 * 1000) {
+    await clearRazorpayRecoveryData();
+    return null;
+  }
+  // Poll server up to 3 times checking for an existing order
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const resp = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/orders/by-payment/${recovery.razorpayPaymentId}`);
+      if (resp.ok) {
+        const data = await resp.json() as { id?: string; _id?: string };
+        const orderId = (data.id || data._id) as string;
+        await clearRazorpayRecoveryData();
+        return { orderId, recovered: true };
+      }
+    } catch {}
+  }
+  return null;
+}
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -485,9 +547,27 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
           } else { failedStores.push(storeGroup.storeName); }
         } catch { failedStores.push(storeGroup.storeName); }
       }
-      if (createdOrderIds.length === 0) { setState(prev => ({ ...prev, loading: false, error: 'Failed to create any orders. Please try again.', currentStep: 'checkout' })); isSubmittingRef.current = false; return; }
-      if (failedStores.length > 0 && createdOrderIds.length > 0) showToast({ message: `Orders created for some stores. Failed: ${failedStores.join(', ')}`, type: 'warning', duration: 5000 });
-      try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}
+      if (createdOrderIds.length === 0) {
+        // All stores failed — clear cart and show error
+        try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}
+        setState(prev => ({ ...prev, loading: false, error: 'Failed to create any orders. Please try again.', currentStep: 'checkout' }));
+        isSubmittingRef.current = false;
+        return;
+      }
+      if (failedStores.length > 0) {
+        // CD-CRIT-03 FIX: Partial success — do NOT clear cart. Persist failed stores for retry.
+        // User still has items in cart for the failed stores. Previously cart was cleared here,
+        // silently losing the failed orders with no way to retry.
+        showToast({ message: `Orders created for ${createdOrderIds.length} store(s). Retrying for: ${failedStores.join(', ')}`, type: 'warning', duration: 6000 });
+        try {
+          await AsyncStorage.setItem('@checkout:partial_order_failure', JSON.stringify({ failedStores, createdOrderIds, timestamp: Date.now() }));
+        } catch (e) {
+          logger.error('[Checkout] Failed to persist partial order failure data', e as Error);
+        }
+      } else {
+        // All succeeded — clear cart
+        try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}
+      }
       const transactionId = orderIdempotencyKeyRef.current || globalThis.crypto?.randomUUID?.() || `COD_${Date.now()}`;
       try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId: createdOrderIds[0] || '', cartValue: state.billSummary.itemTotal, paymentMethod: 'cod' }); } catch {}
       refreshSharedWallet().catch(() => {});
@@ -557,8 +637,26 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
               const discountAmt = appliedCardOfferData.type === 'percentage' ? Math.round((state.billSummary?.totalPayable || 0) * appliedCardOfferData.value / 100) : appliedCardOfferData.value;
               (orderData as unknown as Record<string, unknown>).cardOfferDiscount = Math.min(discountAmt, appliedCardOfferData.maxDiscountAmount || discountAmt);
             }
+            // CD-CRIT-06 FIX: Persist payment data BEFORE attempting order creation.
+            // If the app is killed between payment capture and order creation, the recovery
+            // check on next launch will find this data and retry order creation.
+            await persistRazorpayRecoveryData({
+              razorpayPaymentId: paymentResponse.paymentId,
+              razorpayOrderId: paymentResponse.orderId,
+              transactionId: paymentResponse.transactionId,
+              amount: paymentResponse.amount,
+              timestamp: Date.now(),
+            });
+
             const orderResponse = await ordersService.createOrder(orderData as unknown as Parameters<typeof ordersService.createOrder>[0], orderIdempotencyKeyRef.current);
-            if (!orderResponse.success || !orderResponse.data) { showToast({ message: 'Payment successful but order creation failed. Please contact support.', type: 'error' }); setState(prev => ({ ...prev, loading: false, error: 'Order creation failed. Please contact support.', currentStep: 'checkout' })); return; }
+            if (!orderResponse.success || !orderResponse.data) {
+              // Payment captured but order creation failed. Keep recovery data for retry.
+              showToast({ message: 'Payment received. Restoring your order...', type: 'warning', duration: 8000 });
+              setState(prev => ({ ...prev, loading: false, error: 'Order creation in progress — please wait.', currentStep: 'checkout' }));
+              return;
+            }
+            // Order created successfully — clear recovery data and cart
+            await clearRazorpayRecoveryData();
             try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}
             const orderId = (orderResponse.data as { id?: string }).id || (orderResponse.data as { _id?: string })._id || '';
             showToast({ message: 'Payment successful! Order placed', type: 'success' });

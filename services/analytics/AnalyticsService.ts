@@ -10,7 +10,13 @@ import { AnalyticsProvider, AnalyticsConfig, PurchaseTransaction, UserProperties
 import { CustomAnalyticsProvider } from './providers/CustomProvider';
 import apiClient from '../apiClient';
 import { ANALYTICS_EVENTS } from './events';
-import uuid from 'react-native-uuid';
+/** CD-CRIT-01 FIX: Use crypto.randomUUID instead of react-native-uuid (Math.random based). */
+const generateId = (): string => {
+  if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
 
 const DEFAULT_CONFIG: AnalyticsConfig = {
   enabled: true,
@@ -369,7 +375,7 @@ export class AnalyticsService {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${generateId()}`;
   }
 
   /**
