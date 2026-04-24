@@ -439,6 +439,8 @@ export const useCheckoutActions = (params: CheckoutActionsParams): UseCheckoutAc
         fulfillmentDetails: { tableNumber: state.fulfillment.tableNumber, vehicleInfo: state.fulfillment.vehicleInfo, pickupInstructions: state.fulfillment.pickupInstructions },
       });
       (orderData as unknown as Record<string, unknown>).coinsUsed = { rezCoins: state.coinSystem.rezCoin.used || 0, promoCoins: state.coinSystem.promoCoin.used || 0, storePromoCoins: state.coinSystem.storePromoCoin.used || 0, totalCoinsValue: (state.coinSystem.rezCoin.used || 0) + (state.coinSystem.promoCoin.used || 0) + (state.coinSystem.storePromoCoin.used || 0) };
+      // SECURITY NOTE: The server computes the authoritative order total from cart contents.
+      // Client-side billSummary is for display only — do not trust it for payment capture.
       const response = await ordersService.createOrder(orderData as unknown as Parameters<typeof ordersService.createOrder>[0], orderIdempotencyKeyRef.current || undefined);
       if (response.success && response.data) {
         try { await cartService.clearCart(); await cartActions.clearCart(); } catch {}

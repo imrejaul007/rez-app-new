@@ -392,6 +392,9 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       const resolvedKey = idempotencyKey ?? idempotencyKeyRef.current;
 
       // Map rezCoins back to rezCoins for backend
+      // SECURITY NOTE: billAmount is sent as a display hint only. The server MUST
+      // independently verify the authoritative total from the cart contents stored
+      // server-side before capturing payment. A malicious client can modify this value.
       const response: any = await apiClient.post('/store-payment/initiate', {
         storeId,
         amount: billAmount,
