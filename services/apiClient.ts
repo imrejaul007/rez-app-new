@@ -170,6 +170,15 @@ class ApiClient {
         logger.error('[ApiClient] WARNING: EXPO_PUBLIC_API_BASE_URL is not configured. API calls will fail at runtime.');
       }
     }
+    // CD-CRIT-05 FIX: Remove localhost fallback in production.
+    // If EXPO_PUBLIC_API_BASE_URL is not set in production builds, fail fast with a clear error.
+    // Previously defaulted to http://localhost:5001/api which would silently route API calls to localhost.
+    if (!rawURL && !__DEV__) {
+      throw new Error(
+        'FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production. ' +
+        'API calls will fail. Set this environment variable in your production build config.'
+      );
+    }
     const resolvedURL = resolveBaseURL(rawURL || 'http://localhost:5001/api');
 
     // CA-AUT-033 FIX: On web, enforce HTTPS to prevent credential leakage over plaintext.
