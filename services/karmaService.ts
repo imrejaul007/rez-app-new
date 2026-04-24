@@ -198,13 +198,6 @@ class KarmaService {
   }
 
   /**
-   * Get nearby karma-enabled events
-   */
-  async getNearbyEvents(filters?: EventFilters): Promise<ApiResponse<KarmaEvent[]>> {
-    return apiClient.get<KarmaEvent[]>('/karma/events', filters as Record<string, string>);
-  }
-
-  /**
    * Get single event detail
    */
   async getEventDetail(eventId: string): Promise<ApiResponse<KarmaEvent>> {
@@ -284,10 +277,10 @@ class KarmaService {
   }
 
   /**
-   * Get user's joined events
+   * Get user's joined events (bookings) with optional status filter
    */
-  async getMyEvents(status?: 'upcoming' | 'ongoing' | 'past'): Promise<ApiResponse<KarmaEvent[]>> {
-    return apiClient.get<KarmaEvent[]>('/karma/my-events', status ? { status } : undefined);
+  async getMyEvents(status?: 'upcoming' | 'ongoing' | 'past'): Promise<ApiResponse<BookingWithEvent[]>> {
+    return apiClient.get<BookingWithEvent[]>('/karma/my-bookings', status ? { status } : undefined);
   }
 
   /**
@@ -296,7 +289,46 @@ class KarmaService {
   async getMyBooking(eventId: string): Promise<ApiResponse<Booking | null>> {
     return apiClient.get<Booking | null>(`/karma/booking/${eventId}`);
   }
+
+  /**
+   * Get nearby events with filters
+   */
+  async getNearbyEvents(filters?: EventFilters): Promise<ApiResponse<EventListResponse>> {
+    return apiClient.get<EventListResponse>('/karma/events', filters as Record<string, string>);
+  }
 }
+
+export interface BookingWithEvent extends Booking {
+  event: {
+    _id: string;
+    name: string;
+    description: string;
+    image?: string;
+    date: string;
+    time?: { start: string; end: string };
+    location?: { address: string; city?: string; coordinates?: { lat: number; lng: number } };
+    organizer?: { name: string; logo?: string; ngoId?: string };
+    category?: string;
+    difficulty?: string;
+    expectedDurationHours?: number;
+    baseKarmaPerHour?: number;
+    maxKarmaPerEvent?: number;
+    impactUnit?: string;
+    impactMultiplier?: number;
+    maxVolunteers?: number;
+    confirmedVolunteers?: number;
+    status?: string;
+  };
+}
+
+export interface EventListResponse {
+  success: boolean;
+  events: KarmaEvent[];
+  total: number;
+}
+
+const karmaService = new KarmaService();
+export default karmaService;
 
 const karmaService = new KarmaService();
 export default karmaService;

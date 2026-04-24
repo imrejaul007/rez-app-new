@@ -72,7 +72,7 @@ function KarmaEventDetailScreen() {
 
   const handleJoin = async () => {
     if (!isAuthenticated) {
-      router.push('/sign-in' as any);
+      router.push('/sign-in' as unknown as string);
       return;
     }
     if (!event) return;
@@ -196,7 +196,11 @@ function KarmaEventDetailScreen() {
             <CachedImage source={event.image} style={styles.heroImage} contentFit="cover" />
           ) : (
             <View style={[styles.heroPlaceholder, { backgroundColor: catCfg.bg }]}>
-              <Ionicons name={catCfg.icon as any} size={80} color={catCfg.color} />
+              <Ionicons
+                name={catCfg.icon as unknown as keyof typeof Ionicons.glyphMap}
+                size={80}
+                color={catCfg.color}
+              />
             </View>
           )}
           {/* Gradient overlay */}
@@ -204,7 +208,11 @@ function KarmaEventDetailScreen() {
           {/* Category + Status */}
           <View style={styles.heroBadges}>
             <View style={[styles.catBadge, { backgroundColor: catCfg.bg }]}>
-              <Ionicons name={catCfg.icon as any} size={12} color={catCfg.color} />
+              <Ionicons
+                name={catCfg.icon as unknown as keyof typeof Ionicons.glyphMap}
+                size={12}
+                color={catCfg.color}
+              />
               <Text style={[styles.catBadgeText, { color: catCfg.color }]}>
                 {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
               </Text>

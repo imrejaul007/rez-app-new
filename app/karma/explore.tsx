@@ -69,7 +69,7 @@ function ExploreEventCard({ event, onPress }: EventCardProps) {
           <CachedImage source={event.image} style={styles.eventImage} contentFit="cover" />
         ) : (
           <View style={[styles.eventImagePlaceholder, { backgroundColor: cat.bg }]}>
-            <Ionicons name={cat.icon as any} size={40} color={cat.color} />
+            <Ionicons name={cat.icon as unknown as keyof typeof Ionicons.glyphMap} size={40} color={cat.color} />
           </View>
         )}
         {/* Status badge */}
@@ -90,15 +90,26 @@ function ExploreEventCard({ event, onPress }: EventCardProps) {
         {/* Category + Difficulty */}
         <View style={styles.eventTopRow}>
           <View style={[styles.catChip, { backgroundColor: cat.bg }]}>
-            <Ionicons name={cat.icon as any} size={11} color={cat.color} />
+            <Ionicons name={cat.icon as unknown as keyof typeof Ionicons.glyphMap} size={11} color={cat.color} />
             <Text style={[styles.catChipText, { color: cat.color }]}>{cat.label}</Text>
           </View>
-          <View style={[styles.diffChip, {
-            backgroundColor: event.difficulty === 'easy' ? '#DCFCE7' : event.difficulty === 'hard' ? '#FFF1F2' : '#EFF6FF',
-          }]}>
-            <Text style={[styles.diffChipText, {
-              color: event.difficulty === 'easy' ? '#22C55E' : event.difficulty === 'hard' ? '#EF4444' : '#3B82F6',
-            }]}>
+          <View
+            style={[
+              styles.diffChip,
+              {
+                backgroundColor:
+                  event.difficulty === 'easy' ? '#DCFCE7' : event.difficulty === 'hard' ? '#FFF1F2' : '#EFF6FF',
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.diffChipText,
+                {
+                  color: event.difficulty === 'easy' ? '#22C55E' : event.difficulty === 'hard' ? '#EF4444' : '#3B82F6',
+                },
+              ]}
+            >
               {event.difficulty.charAt(0).toUpperCase() + event.difficulty.slice(1)}
             </Text>
           </View>
@@ -147,7 +158,8 @@ function ExploreEventCard({ event, onPress }: EventCardProps) {
           <View style={styles.impactRow}>
             <Ionicons name="trending-up" size={13} color={Colors.success} />
             <Text style={styles.impactText}>
-              ~{Math.round(event.maxKarmaPerEvent / event.expectedDurationHours)} karma/hr {event.impactUnit && `\u2022 ${event.impactUnit}`}
+              ~{Math.round(event.maxKarmaPerEvent / event.expectedDurationHours)} karma/hr{' '}
+              {event.impactUnit && `\u2022 ${event.impactUnit}`}
             </Text>
           </View>
         )}
@@ -176,7 +188,9 @@ function ExploreEventCard({ event, onPress }: EventCardProps) {
           </View>
           <View style={styles.footerStat}>
             <Ionicons name="people-outline" size={14} color={Colors.textSecondary} />
-            <Text style={styles.footerStatText}>{event.confirmedVolunteers}/{event.maxVolunteers}</Text>
+            <Text style={styles.footerStatText}>
+              {event.confirmedVolunteers}/{event.maxVolunteers}
+            </Text>
           </View>
           <View style={[styles.footerStat, styles.footerCta]}>
             <Text style={styles.footerCtaText}>View</Text>
@@ -218,7 +232,7 @@ function KarmaExploreScreen() {
         const res = await karmaService.getNearbyEvents(filters);
         if (!isMounted()) return;
 
-        let data = res.data ?? [];
+        let data = (res.data?.events ?? []) as KarmaEvent[];
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           data = data.filter(
@@ -268,11 +282,7 @@ function KarmaExploreScreen() {
 
   return (
     <View style={styles.container}>
-      <KarmaHeader
-        title="Explore Events"
-        subtitle="Find your next impact"
-        showBack
-      />
+      <KarmaHeader title="Explore Events" subtitle="Find your next impact" showBack />
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -295,11 +305,7 @@ function KarmaExploreScreen() {
       </View>
 
       {/* Category Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoryScroll}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryScroll}>
         {CATEGORIES.map((cat) => {
           const isActive = selectedCategory === cat.id;
           return (
@@ -308,11 +314,7 @@ function KarmaExploreScreen() {
               style={[styles.categoryChip, isActive && { backgroundColor: cat.bg, borderColor: cat.color }]}
               onPress={() => handleCategoryChange(cat.id)}
             >
-              <Ionicons
-                name={cat.icon}
-                size={14}
-                color={isActive ? cat.color : Colors.textSecondary}
-              />
+              <Ionicons name={cat.icon} size={14} color={isActive ? cat.color : Colors.textSecondary} />
               <Text style={[styles.categoryChipText, isActive && { color: cat.color, fontWeight: '600' }]}>
                 {cat.label}
               </Text>
@@ -358,10 +360,7 @@ function KarmaExploreScreen() {
         <FlashList
           data={filteredEvents}
           renderItem={({ item }) => (
-            <ExploreEventCard
-              event={item}
-              onPress={() => router.push(`/karma/event/${item._id}`)}
-            />
+            <ExploreEventCard event={item} onPress={() => router.push(`/karma/event/${item._id}`)} />
           )}
           keyExtractor={(item) => item._id}
           estimatedItemSize={380}
@@ -392,13 +391,33 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing['2xl'] },
-  emptyTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.deepNavy, marginTop: Spacing.base },
-  emptySubtitle: { fontSize: Typography.body.fontSize, color: Colors.textSecondary, textAlign: 'center', marginTop: Spacing.sm, marginBottom: Spacing.xl },
-  emptyExploreBtn: { backgroundColor: KARMA_PURPLE, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius.xl },
+  emptyTitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    fontWeight: '700',
+    color: colors.deepNavy,
+    marginTop: Spacing.base,
+  },
+  emptySubtitle: {
+    fontSize: Typography.body.fontSize,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  emptyExploreBtn: {
+    backgroundColor: KARMA_PURPLE,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.xl,
+  },
   emptyExploreBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
 
   // Search
-  searchContainer: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, backgroundColor: colors.text.inverse },
+  searchContainer: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    backgroundColor: colors.text.inverse,
+  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -411,7 +430,12 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: Typography.body.fontSize, color: colors.deepNavy, padding: 0 },
 
   // Category chips
-  categoryScroll: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, backgroundColor: colors.text.inverse, gap: Spacing.sm },
+  categoryScroll: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    backgroundColor: colors.text.inverse,
+    gap: Spacing.sm,
+  },
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -427,8 +451,20 @@ const styles = StyleSheet.create({
   categoryChipText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: Colors.textSecondary },
 
   // Status tabs
-  statusTabsContainer: { flexDirection: 'row', backgroundColor: colors.text.inverse, paddingHorizontal: Spacing.base, paddingBottom: Spacing.sm, gap: Spacing.sm },
-  statusTab: { flex: 1, paddingVertical: 10, borderRadius: BorderRadius.md, alignItems: 'center', backgroundColor: colors.background.secondary },
+  statusTabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.text.inverse,
+    paddingHorizontal: Spacing.base,
+    paddingBottom: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  statusTab: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+  },
   statusTabActive: { backgroundColor: KARMA_PURPLE },
   statusTabText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.textSecondary },
   statusTabTextActive: { color: colors.text.inverse },
@@ -472,14 +508,28 @@ const styles = StyleSheet.create({
   karmaRewardChipText: { fontSize: 11, fontWeight: '700', color: '#FCD34D' },
   eventContent: { padding: Spacing.md },
   eventTopRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: Spacing.sm },
-  catChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, gap: 4 },
+  catChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    gap: 4,
+  },
   catChipText: { fontSize: 10, fontWeight: '700' },
   diffChip: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
   diffChipText: { fontSize: 10, fontWeight: '700' },
   eventTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy, marginBottom: 6 },
   organizerRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: Spacing.sm },
   orgLogo: { width: 20, height: 20, borderRadius: 4 },
-  orgEmojiWrap: { width: 20, height: 20, borderRadius: 4, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  orgEmojiWrap: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   orgEmoji: { fontSize: 12 },
   orgName: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, flex: 1 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 4 },
@@ -487,10 +537,24 @@ const styles = StyleSheet.create({
   impactRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 4 },
   impactText: { fontSize: Typography.caption.fontSize, color: Colors.success, fontWeight: '500' },
   capacityRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: Spacing.sm },
-  capacityBar: { flex: 1, height: 4, backgroundColor: colors.background.secondary, borderRadius: 2, overflow: 'hidden' },
+  capacityBar: {
+    flex: 1,
+    height: 4,
+    backgroundColor: colors.background.secondary,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
   capacityFill: { height: '100%', backgroundColor: KARMA_PURPLE, borderRadius: 2 },
   capacityText: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary },
-  eventFooter: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginTop: Spacing.sm, paddingTop: Spacing.sm, borderTopWidth: 1, borderTopColor: colors.border.default },
+  eventFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.default,
+  },
   footerStat: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   footerStatText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: Colors.textSecondary },
   footerCta: { marginLeft: 'auto' },

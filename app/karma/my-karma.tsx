@@ -230,7 +230,7 @@ function KarmaMyKarmaScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Sign in to track your karma journey</Text>
-          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any)}>
+          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as unknown as string)}>
             <Text style={styles.loginBtnText}>Sign In</Text>
           </Pressable>
         </View>

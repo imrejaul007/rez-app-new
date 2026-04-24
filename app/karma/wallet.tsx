@@ -54,7 +54,7 @@ function TransactionItem({ tx }: { tx: Transaction }) {
     <View style={txStyles.item}>
       <View style={txStyles.left}>
         <View style={[txStyles.iconWrap, { backgroundColor: txCfg.color + '20' }]}>
-          <Ionicons name={txCfg.icon as any} size={18} color={txCfg.color} />
+          <Ionicons name={txCfg.icon as unknown as keyof typeof Ionicons.glyphMap} size={18} color={txCfg.color} />
         </View>
         <View style={txStyles.info}>
           <Text style={txStyles.desc} numberOfLines={1}>
@@ -71,7 +71,7 @@ function TransactionItem({ tx }: { tx: Transaction }) {
           {tx.amount}
         </Text>
         <View style={[txStyles.coinBadge, { backgroundColor: coinCfg.color + '15' }]}>
-          <Ionicons name={coinCfg.icon as any} size={10} color={coinCfg.color} />
+          <Ionicons name={coinCfg.icon as unknown as keyof typeof Ionicons.glyphMap} size={10} color={coinCfg.color} />
         </View>
       </View>
     </View>
@@ -152,7 +152,7 @@ function KarmaWalletScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Sign in to view your wallet</Text>
-          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any)}>
+          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as unknown as string)}>
             <Text style={styles.loginBtnText}>Sign In</Text>
           </Pressable>
         </View>
@@ -286,7 +286,7 @@ function KarmaWalletScreen() {
                   onPress={() => setSelectedCoin(key as KarmaCoinFilter)}
                 >
                   <Ionicons
-                    name={cfg.icon as any}
+                    name={cfg.icon as unknown as keyof typeof Ionicons.glyphMap}
                     size={14}
                     color={selectedCoin === key ? colors.text.inverse : Colors.textSecondary}
                   />

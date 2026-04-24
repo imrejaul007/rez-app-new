@@ -179,12 +179,12 @@ function EventCard({ event, onPress }: EventCardProps) {
           <CachedImage source={event.image} style={styles.eventImage} contentFit="cover" />
         ) : (
           <View style={[styles.eventImagePlaceholder, { backgroundColor: catCfg.bg }]}>
-            <Ionicons name={catCfg.icon as any} size={32} color={catCfg.color} />
+            <Ionicons name={catCfg.icon as unknown as keyof typeof Ionicons.glyphMap} size={32} color={catCfg.color} />
           </View>
         )}
         {/* Category badge */}
         <View style={[styles.categoryBadge, { backgroundColor: catCfg.bg }]}>
-          <Ionicons name={catCfg.icon as any} size={12} color={catCfg.color} />
+          <Ionicons name={catCfg.icon as unknown as keyof typeof Ionicons.glyphMap} size={12} color={catCfg.color} />
           <Text style={[styles.categoryText, { color: catCfg.color }]}>
             {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
           </Text>
@@ -268,8 +268,8 @@ function KarmaHomeScreen() {
         const profileRes = isAuthenticated ? await karmaService.getKarmaProfile('me') : { success: false as const };
         const eventsRes = await karmaService.getNearbyEvents({ status: 'published' });
 
-        if (profileRes.success && 'data' in profileRes && (profileRes as any).data) {
-          setProfile((profileRes as any).data);
+        if (profileRes.success && 'data' in profileRes && (profileRes as unknown as Record<string, unknown>).data) {
+          setProfile((profileRes as unknown as Record<string, unknown>).data);
         } else if (isAuthenticated) {
           setProfileError(true);
         }
