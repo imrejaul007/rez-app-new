@@ -9,11 +9,18 @@ import { Platform } from 'react-native';
 import { BaseAnalyticsProvider } from './BaseProvider';
 import { PurchaseTransaction, AnalyticsEvent } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-/** CD-CRIT-01 FIX: Use crypto.randomUUID instead of react-native-uuid (Math.random based). */
+/** CD-CRIT-01 FIX: Use crypto.randomUUID for cryptographically random IDs. */
 const generateId = (): string => {
   if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
     return globalThis.crypto.randomUUID();
   }
+  // Fallback: crypto.getRandomValues via Uint8Array (always available in RN environments)
+  const buf = new Uint8Array(8);
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    crypto.getRandomValues(buf);
+    return Array.from(buf, (b) => b.toString(36).padStart(2, '0')).join('').substring(0, 16);
+  }
+  // Last-resort fallback: timestamp-based (non-cryptographic, acceptable for analytics only)
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 };
 
