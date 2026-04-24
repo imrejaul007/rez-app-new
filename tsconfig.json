@@ -6,6 +6,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@rez/ui": [
+        "../../packages/rez-ui/src"
       ]
     }
   },

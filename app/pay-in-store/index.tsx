@@ -12,7 +12,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, TextI
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import QRScanner from '@/components/store-payment/QRScanner';
+import { UnifiedQrScanner } from '@/components/qr/UnifiedQrScanner';
 import { ScannerPlaceholder } from '@/components/store-payment';
 import { FilterChips, StoreTabs, PaymentStoreCard } from '@/components/pay-store-search';
 import { StorePaymentInfo, PayInStoreParams } from '@/types/storePayment.types';
@@ -159,7 +159,13 @@ function PayInStoreScreen() {
   }
 
   if (showScanner) {
-    return <QRScanner onScan={handleQRScan} onClose={() => setShowScanner(false)} onManualEntry={handleManualEntry} />;
+    return (
+      <UnifiedQrScanner
+        onLegacyQrCode={handleQRScan}
+        onClose={() => setShowScanner(false)}
+        onManualEntry={handleManualEntry}
+      />
+    );
   }
 
   return (

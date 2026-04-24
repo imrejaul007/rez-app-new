@@ -26,8 +26,40 @@ import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-ca
 import { Ionicons } from '@expo/vector-icons';
 
 import apiClient from '@/services/apiClient';
-import { parseQrPayload, type QrPayload } from '@/utils/qr/qrPayload';
-import { routeFromPayload, type RouteTarget } from '@/utils/qr/qrIntentRouter';
+import { parseQrPayload } from '@/utils/qr/qrPayload';
+import type { QrPayload } from '@/utils/qr/qrPayload';
+import { routeFromPayload } from '@/utils/qr/qrIntentRouter';
+import type { RouteTarget } from '@/utils/qr/qrIntentRouter';
+
+// ─── Legacy QR format detection ────────────────────────────────────────────────
+// Old store-payment QR codes had the shape:
+//   {"type":"NUQTA_STORE_PAYMENT","code":"<storeId>","v":"1"}
+// These are handled by the pay-in-store backend lookup flow, not by the
+// Phase I intent router.
+
+interface LegacyQrPayload {
+  type: string;
+  code: string;
+  v?: string;
+}
+
+function tryParseLegacyQrCode(raw: string): string | null {
+  try {
+    const parsed = JSON.parse(raw) as LegacyQrPayload;
+    if (
+      parsed &&
+      typeof parsed === 'object' &&
+      parsed.type === 'NUQTA_STORE_PAYMENT' &&
+      typeof parsed.code === 'string' &&
+      parsed.code.trim().length > 0
+    ) {
+      return parsed.code.trim();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 type ScanState = 'idle' | 'resolving' | 'error' | 'done';
 
@@ -42,6 +74,18 @@ export interface UnifiedQrScannerProps {
   /** Optional — caller handles navigation itself. If provided, the
    *  scanner does NOT call router.push(). */
   onPayloadResolved?: (payload: QrPayload) => void;
+  /** Optional — called when the user dismisses the scanner. */
+  onClose?: () => void;
+  /** Optional — called when the user chooses manual entry. */
+  onManualEntry?: () => void;
+  /**
+   * Optional — for screens that handle legacy QR codes (e.g. store-payment
+   * codes with type:'NUQTA_STORE_PAYMENT') via their own backend lookup.
+   * When the scanner encounters a legacy QR code it cannot parse as a
+   * ReZ Phase I payload, it calls this instead of showing "Not a ReZ QR".
+   * The string argument is the `code` field from the legacy JSON payload.
+   */
+  onLegacyQrCode?: (code: string) => void;
 }
 
 interface ShortUrlResolveResponse {
@@ -54,6 +98,9 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
   onScanned,
   onError,
   onPayloadResolved,
+  onClose,
+  onManualEntry,
+  onLegacyQrCode,
 }) => {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
@@ -126,9 +173,16 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
             handleError('This QR uses a newer format — please update the app.');
             return;
           case 'invalid-schema':
-          case 'not-json':
+          case 'not-json': {
+            // Try legacy format before declaring "Not a ReZ QR".
+            const legacyCode = tryParseLegacyQrCode(raw);
+            if (legacyCode && onLegacyQrCode) {
+              onLegacyQrCode(legacyCode);
+              return;
+            }
             handleError('Not a ReZ QR code.');
             return;
+          }
           case 'empty':
             handleError('Empty scan — please try again.');
             return;
@@ -139,7 +193,7 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
         dispatchPayload(parsed.payload);
       }
     },
-    [state, handleError, resolveShortUrl, dispatchPayload],
+    [state, handleError, resolveShortUrl, dispatchPayload, onLegacyQrCode],
   );
 
   if (!permission) {
@@ -171,11 +225,40 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
         onBarcodeScanned={state === 'idle' ? handleBarCodeScanned : undefined}
       >
         <View style={styles.overlay}>
+          {/* Top bar with close */}
+          <View style={styles.topBar}>
+            <Pressable
+              style={styles.iconButton}
+              onPress={() => onClose?.()}
+              hitSlop={8}
+              accessibilityLabel="Close scanner"
+              accessibilityRole="button"
+            >
+              <Ionicons name="close" size={24} color="#ffffff" />
+            </Pressable>
+          </View>
+
+          {/* Scan frame */}
           <View style={styles.frame}>
             <View style={[styles.corner, styles.cornerTL]} />
             <View style={[styles.corner, styles.cornerTR]} />
             <View style={[styles.corner, styles.cornerBL]} />
             <View style={[styles.corner, styles.cornerBR]} />
+          </View>
+
+          {/* Bottom bar with manual entry */}
+          <View style={styles.bottomBar}>
+            {onManualEntry && (
+              <Pressable
+                style={styles.manualButton}
+                onPress={onManualEntry}
+                accessibilityLabel="Enter code manually"
+                accessibilityRole="button"
+              >
+                <Ionicons name="keypad-outline" size={20} color="#ffffff" />
+                <Text style={styles.manualButtonText}>Enter Manually</Text>
+              </Pressable>
+            )}
           </View>
         </View>
       </CameraView>
@@ -248,6 +331,49 @@ const styles = StyleSheet.create({
   cornerTR: { top: 0, right: 0, borderTopWidth: 3, borderRightWidth: 3, borderTopRightRadius: 12 },
   cornerBL: { bottom: 0, left: 0, borderBottomWidth: 3, borderLeftWidth: 3, borderBottomLeftRadius: 12 },
   cornerBR: { bottom: 0, right: 0, borderBottomWidth: 3, borderRightWidth: 3, borderBottomRightRadius: 12 },
+  topBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    paddingTop: 40,
+    paddingHorizontal: 16,
+    alignItems: 'flex-start',
+    zIndex: 10,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    paddingBottom: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  manualButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  manualButtonText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '500',
+  },
   overlayAbove: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
