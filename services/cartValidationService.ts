@@ -51,15 +51,15 @@ class CartValidationService {
    * Validate entire cart for stock availability and price changes
    * Calls backend /api/cart/validate endpoint
    */
-  async validateCart(): Promise<ApiResponse<ValidateCartResponse>> {
+  async validateCart(): Promise<ApiResponse<ValidationResult>> {
     try {
       const response = await apiClient.get<ValidateCartResponse>('/cart/validate');
 
       if (response.success && response.data) {
-        return this.transformValidationResponse(response.data) as any;
+        return { success: true, data: this.transformValidationResponse(response.data) };
       }
 
-      return response as any;
+      return { success: false, error: response.error || 'Validation failed' };
     } catch (error) {
       throw error;
     }
@@ -86,7 +86,7 @@ class CartValidationService {
 
       }
 
-      return response as any;
+      return response;
     } catch (error) {
       throw error;
     }
@@ -109,7 +109,7 @@ class CartValidationService {
 
       }
 
-      return response as any;
+      return response;
     } catch (error) {
       throw error;
     }
@@ -135,7 +135,7 @@ class CartValidationService {
 
       }
 
-      return response as any;
+      return response;
     } catch (error) {
       throw error;
     }
@@ -162,7 +162,7 @@ class CartValidationService {
 
       }
 
-      return response as any;
+      return response;
     } catch (error) {
       throw error;
     }

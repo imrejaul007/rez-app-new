@@ -39,15 +39,16 @@ jest.mock('expo-linking', () => ({
       }
       if (url.includes('/product/')) {
         const id = url.split('/product/')[1].split('?')[0].split('#')[0];
-        return { hostname: 'product', path: `product/${id}`, queryParams };
+        // Use /product/<id> path so path?.includes('/product/') returns true
+        return { hostname: 'product', path: `/product/${id}`, queryParams };
       }
       if (url.includes('/store/')) {
         const id = url.split('/store/')[1].split('?')[0].split('#')[0];
-        return { hostname: 'store', path: `store/${id}`, queryParams };
+        return { hostname: 'store', path: `/store/${id}`, queryParams };
       }
       if (url.includes('/offer/')) {
         const id = url.split('/offer/')[1].split('?')[0].split('#')[0];
-        return { hostname: 'offer', path: `offer/${id}`, queryParams };
+        return { hostname: 'offer', path: `/offer/${id}`, queryParams };
       }
       // For edge case URLs (malformed, fragment-only, relative, no scheme),
       // return the original URL data so the handler returns 'unknown' type.
@@ -103,27 +104,28 @@ describe('deepLinkHandler', () => {
     });
 
     it('should parse product link', () => {
-      const url = 'https://rez.app/product/PROD123';
+      // IDs must be valid MongoDB ObjectIds (24 hex characters)
+      const url = 'https://rez.app/product/507f1f77bcf86cd799439011';
       const result = handler.parseDeepLink(url);
 
       expect(result.type).toBe('product');
-      expect(result.data.productId).toBe('PROD123');
+      expect(result.data.productId).toBe('507f1f77bcf86cd799439011');
     });
 
     it('should parse store link', () => {
-      const url = 'https://rez.app/store/STORE456';
+      const url = 'https://rez.app/store/507f1f77bcf86cd799439012';
       const result = handler.parseDeepLink(url);
 
       expect(result.type).toBe('store');
-      expect(result.data.storeId).toBe('STORE456');
+      expect(result.data.storeId).toBe('507f1f77bcf86cd799439012');
     });
 
     it('should parse offer link', () => {
-      const url = 'https://rez.app/offer/OFFER789';
+      const url = 'https://rez.app/offer/507f1f77bcf86cd799439013';
       const result = handler.parseDeepLink(url);
 
       expect(result.type).toBe('offer');
-      expect(result.data.offerId).toBe('OFFER789');
+      expect(result.data.offerId).toBe('507f1f77bcf86cd799439013');
     });
 
     it('should return unknown type for unrecognized URL', () => {

@@ -595,7 +595,7 @@ class WalletService {
     filters?: TransactionFilters
   ): Promise<ApiResponse<TransactionListResponse>> {
     try {
-      return await apiClient.get<TransactionListResponse>('/wallet/transactions', filters as any);
+      return await apiClient.get<TransactionListResponse>('/wallet/transactions', filters as Record<string, string | number | boolean | undefined | null>);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getTransactions failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch transactions', data: undefined };
@@ -635,7 +635,7 @@ class WalletService {
     data: WithdrawalRequest
   ): Promise<ApiResponse<WithdrawalResponse>> {
     try {
-      return await apiClient.post<WithdrawalResponse>('/wallet/withdraw', data as any);
+      return await apiClient.post<WithdrawalResponse>('/wallet/withdraw', data);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] withdraw failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to withdraw funds', data: undefined };
@@ -688,7 +688,7 @@ class WalletService {
     settings: WalletSettingsRequest
   ): Promise<ApiResponse<{ settings: WalletSettingsRequest }>> {
     try {
-      return await apiClient.put<{ settings: WalletSettingsRequest }>('/wallet/settings', settings as any);
+      return await apiClient.put<{ settings: WalletSettingsRequest }>('/wallet/settings', settings);
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] updateSettings failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to update settings', data: undefined };

@@ -86,10 +86,10 @@ class PaymentService {
       if (currency) params.currency = currency;
       if (fiatCurrency) params.fiatCurrency = fiatCurrency;
 
-      const response = await apiClient.get<any>('/wallet/payment-methods', params);
+      const response = await apiClient.get<PaymentMethod[]>('/wallet/payment-methods', params);
 
       if (response.success && response.data) {
-        return response as ApiResponse<PaymentMethod[]>;
+        return response;
       }
 
       // Fallback only for dev if backend is down
@@ -170,10 +170,10 @@ class PaymentService {
         ...paymentRequest,
         paymentMethodType: normalizePaymentMethod(paymentRequest.paymentMethodType),
       };
-      const response = await apiClient.post<any>('/wallet/initiate-payment', normalizedRequest as any);
+      const response = await apiClient.post<PaymentResponse>('/wallet/initiate-payment', normalizedRequest);
 
       if (response.success && response.data) {
-        return response as ApiResponse<PaymentResponse>;
+        return response;
       }
 
       return {
@@ -193,10 +193,10 @@ class PaymentService {
    */
   async checkPaymentStatus(paymentId: string, gateway: string): Promise<ApiResponse<PaymentStatusResponse>> {
     try {
-      const response = await apiClient.get<any>(`/wallet/payment-status/${paymentId}`, { gateway });
+      const response = await apiClient.get<PaymentStatusResponse>(`/wallet/payment-status/${paymentId}`, { gateway });
 
       if (response.success && response.data) {
-        return response as ApiResponse<PaymentStatusResponse>;
+        return response;
       }
 
       return {
@@ -258,7 +258,7 @@ class PaymentService {
           await new Promise(r => setTimeout(r, intervalMs));
           continue;
         }
-        return response as any;
+        return response;
       }
 
       const rawStatus = response.data?.status ?? '';
@@ -269,7 +269,7 @@ class PaymentService {
       //   paid → payment succeeded (normalizePaymentStatus maps 'completed', 'success', 'captured' → 'paid')
       //   failed | cancelled | expired → terminal failure
       if (status === 'paid' || status === 'failed' || status === 'cancelled' || status === 'expired') {
-        return response as any;
+        return response;
       }
 
       await new Promise(r => setTimeout(r, intervalMs));
@@ -321,9 +321,9 @@ class PaymentService {
    */
   async previewCashback(amount: number): Promise<ApiResponse<CashbackPreview>> {
     try {
-      const response = await apiClient.get<any>('/wallet/recharge/preview', { amount: amount.toString() });
+      const response = await apiClient.get<CashbackPreview>('/wallet/recharge/preview', { amount: amount.toString() });
       if (response.success && response.data) {
-        return response as ApiResponse<CashbackPreview>;
+        return response;
       }
       return { success: false, error: response.error || 'Failed to preview cashback' };
     } catch (error) {

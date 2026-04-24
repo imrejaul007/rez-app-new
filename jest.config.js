@@ -61,6 +61,10 @@ module.exports = {
     '^react-native/Libraries/Animated/NativeAnimatedHelper$': '<rootDir>/__tests__/mocks/emptyMock.js',
     // NativeEventEmitter path may not exist in all RN versions
     '^react-native/Libraries/EventEmitter/NativeEventEmitter$': '<rootDir>/__tests__/mocks/emptyMock.js',
+    // babel-preset-expo does require("expo/config") but expo's empty "exports": {}
+    // field (v53+) blocks subpath imports in Node.js resolution.
+    // Map to the actual file to bypass the exports field restriction.
+    '^expo/config$': '<rootDir>/node_modules/expo/config.js',
   },
 
   // Coverage configuration
