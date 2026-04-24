@@ -101,7 +101,7 @@ const AllCampaignsPage: React.FC = () => {
   };
 
   const handleCampaignPress = (campaign: Campaign) => {
-    router.push(`/deals/${campaign.campaignId || campaign._id}` as unknown as string);
+    router.push(`/deals/${campaign.campaignId || campaign._id}` as unknown);
   };
 
   const formatDate = (dateString: string) => {
@@ -198,7 +198,7 @@ const AllCampaignsPage: React.FC = () => {
               style={[styles.filterChip, selectedType === type.id ? styles.filterChipActive : null]}
             >
               <Ionicons
-                name={type.icon as unknown as keyof typeof Ionicons.glyphMap}
+                name={type.icon as unknown}
                 size={16}
                 color={selectedType === type.id ? COLORS.white : COLORS.gray600}
               />
@@ -225,7 +225,7 @@ const AllCampaignsPage: React.FC = () => {
                 <Pressable key={campaign._id} style={styles.campaignCard} onPress={() => handleCampaignPress(campaign)}>
                   {/* Card Header with Gradient */}
                   <LinearGradient
-                    colors={(campaign.gradientColors || [colors.success, colors.tealGreen]) as unknown as string[]}
+                    colors={(campaign.gradientColors || [colors.success, colors.tealGreen]) as unknown}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.cardHeader}
@@ -234,11 +234,7 @@ const AllCampaignsPage: React.FC = () => {
                       <CachedImage source={campaign.icon} style={styles.campaignIcon} />
                     ) : (
                       <View style={[styles.campaignIconPlaceholder, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                        <Ionicons
-                          name={typeStyle.icon as unknown as keyof typeof Ionicons.glyphMap}
-                          size={24}
-                          color={COLORS.white}
-                        />
+                        <Ionicons name={typeStyle.icon as unknown} size={24} color={COLORS.white} />
                       </View>
                     )}
                     <View style={styles.cardHeaderText}>
@@ -253,12 +249,7 @@ const AllCampaignsPage: React.FC = () => {
 
                   {/* Badge */}
                   <View style={[styles.badge, { backgroundColor: campaign.badgeBg || COLORS.white }]}>
-                    <Text
-                      style={[
-                        styles.badgeText,
-                        { color: campaign.badgeColor || (COLORS as unknown as Record<string, string>).navy },
-                      ]}
-                    >
+                    <Text style={[styles.badgeText, { color: campaign.badgeColor || (COLORS as unknown).navy }]}>
                       {campaign.badge}
                     </Text>
                   </View>
@@ -275,11 +266,7 @@ const AllCampaignsPage: React.FC = () => {
                   <View style={styles.cardContent}>
                     {/* Type Tag */}
                     <View style={[styles.typeTag, { backgroundColor: typeStyle.bg }]}>
-                      <Ionicons
-                        name={typeStyle.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={12}
-                        color={typeStyle.text}
-                      />
+                      <Ionicons name={typeStyle.icon as unknown} size={12} color={typeStyle.text} />
                       <Text style={[styles.typeTagText, { color: typeStyle.text }]}>
                         {campaign.type.replace('-', ' ')}
                       </Text>
@@ -658,7 +645,7 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h4,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtext: {

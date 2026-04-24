@@ -1,20 +1,11 @@
 // AIReviewSummary.tsx - AI-generated review summary (Magicpin-inspired)
-import React, { memo } from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import React, { memo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-} from "@/constants/DesignSystem";
+import { Colors, Spacing, Shadows, BorderRadius, Typography } from '@/constants/DesignSystem';
 
 interface AIReviewSummaryProps {
   summary?: string[];
@@ -40,7 +31,7 @@ export default memo(function AIReviewSummary({
       <View style={styles.header}>
         <View style={styles.aiBadge}>
           <LinearGradient
-            colors={[colors.nileBlue, "#243f55"]}
+            colors={[colors.nileBlue, '#243f55']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.aiBadgeGradient}
@@ -49,9 +40,7 @@ export default memo(function AIReviewSummary({
             <ThemedText style={styles.aiBadgeText}>AI Summary</ThemedText>
           </LinearGradient>
         </View>
-        <ThemedText style={styles.basedOnText}>
-          Based on {basedOnReviews.toLocaleString()} reviews
-        </ThemedText>
+        <ThemedText style={styles.basedOnText}>Based on {basedOnReviews.toLocaleString()} reviews</ThemedText>
       </View>
 
       {/* Summary Points */}
@@ -106,9 +95,7 @@ export default memo(function AIReviewSummary({
       {/* Disclaimer */}
       <View style={styles.disclaimer}>
         <Ionicons name="information-circle-outline" size={12} color={Colors.gray[400]} />
-        <ThemedText style={styles.disclaimerText}>
-          AI-generated summary from verified customer reviews
-        </ThemedText>
+        <ThemedText style={styles.disclaimerText}>AI-generated summary from verified customer reviews</ThemedText>
       </View>
     </View>
   );
@@ -120,29 +107,29 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: "rgba(26, 58, 82, 0.15)",
+    borderColor: 'rgba(26, 58, 82, 0.15)',
     ...Shadows.subtle,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: Spacing.md,
   },
   aiBadge: {
     borderRadius: BorderRadius.full,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   aiBadgeGradient: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     gap: Spacing.xs,
   },
   aiBadgeText: {
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.background.primary,
   },
   basedOnText: {
@@ -156,8 +143,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   summaryRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: Spacing.sm,
   },
   bulletPoint: {
@@ -181,8 +168,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   highlightHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
   },
   highlightTitle: {
@@ -190,8 +177,8 @@ const styles = StyleSheet.create({
     color: Colors.gray[600],
   },
   tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.xs,
   },
   positiveTag: {
@@ -205,7 +192,7 @@ const styles = StyleSheet.create({
   positiveTagText: {
     ...Typography.caption,
     color: Colors.primary[700],
-    fontWeight: "600",
+    fontWeight: '600',
   },
   negativeTag: {
     backgroundColor: colors.linen,
@@ -218,13 +205,13 @@ const styles = StyleSheet.create({
   negativeTagText: {
     ...Typography.caption,
     color: colors.nileBlue,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
   // Disclaimer
   disclaimer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
     marginTop: Spacing.md,
     paddingTop: Spacing.sm,

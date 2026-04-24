@@ -140,9 +140,10 @@ function BuyCouponsPage() {
         const response = await realVouchersApi.getVoucherBrands(params);
 
         if (response.success && response.data) {
-          const brands = (response.data as unknown as Record<string, unknown>)?.brands || response.data;
+          const data = response.data as Record<string, unknown>;
+          const brands = data?.brands || response.data;
           const brandsArray = Array.isArray(brands) ? brands : [];
-          const total = (response.data as unknown as Record<string, unknown>)?.total || brandsArray.length;
+          const total = Number(data?.total) || brandsArray.length;
 
           const mapped: VoucherBrandItem[] = brandsArray.map((b: any) => ({
             _id: b._id,

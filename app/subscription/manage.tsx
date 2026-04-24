@@ -99,7 +99,7 @@ function SubscriptionManagePage() {
   const renderStatCard = (title: string, value: string | number, icon: string, color: string) => (
     <View style={styles.statCard}>
       <View style={[styles.statIcon, { backgroundColor: `${color}20` }]}>
-        <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={color} />
+        <Ionicons name={icon as unknown} size={24} color={color} />
       </View>
       <View style={styles.statContent}>
         <ThemedText style={styles.statValue}>{value}</ThemedText>
@@ -114,7 +114,7 @@ function SubscriptionManagePage() {
       return (
         <View style={styles.benefitRow}>
           <View style={[styles.benefitIcon, { backgroundColor: Colors.success + '20' }]}>
-            <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={20} color={Colors.success} />
+            <Ionicons name={icon as unknown} size={20} color={Colors.success} />
           </View>
           <ThemedText style={styles.benefitText}>{title}</ThemedText>
           <View style={styles.activeBadge}>
@@ -134,7 +134,7 @@ function SubscriptionManagePage() {
           <View style={styles.lockOverlay}>
             <Ionicons name="lock-closed" size={12} color={colors.text.tertiary} />
           </View>
-          <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={20} color={colors.text.tertiary} />
+          <Ionicons name={icon as unknown} size={20} color={colors.text.tertiary} />
         </View>
         <View style={{ flex: 1 }}>
           <ThemedText style={styles.benefitTextInactive}>{title}</ThemedText>
@@ -154,7 +154,7 @@ function SubscriptionManagePage() {
       <StatusBar barStyle="light-content" backgroundColor={tierColor} />
 
       {/* Header */}
-      <LinearGradient colors={tierGradient as unknown as string[]} style={styles.header}>
+      <LinearGradient colors={tierGradient as unknown} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -187,12 +187,8 @@ function SubscriptionManagePage() {
       >
         {/* Current Plan Card */}
         <View style={styles.currentPlanCard}>
-          <LinearGradient colors={tierGradient as unknown as string[]} style={styles.planHeaderGradient}>
-            <Ionicons
-              name={tierIcon as unknown as keyof typeof Ionicons.glyphMap}
-              size={48}
-              color={colors.text.inverse}
-            />
+          <LinearGradient colors={tierGradient as unknown} style={styles.planHeaderGradient}>
+            <Ionicons name={tierIcon as unknown} size={48} color={colors.text.inverse} />
             <ThemedText style={styles.planTierName}>
               {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)} Plan
             </ThemedText>

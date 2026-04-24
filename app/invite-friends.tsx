@@ -48,7 +48,7 @@ function HowItWorksStep({
         <Text style={styles.stepNumberText}>{step}</Text>
       </View>
       <View style={styles.stepIcon}>
-        <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={22} color={colors.lightMustard} />
+        <Ionicons name={icon as unknown} size={22} color={colors.lightMustard} />
       </View>
       <View style={styles.stepText}>
         <Text style={styles.stepTitle}>{title}</Text>

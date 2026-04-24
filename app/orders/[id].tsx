@@ -301,9 +301,9 @@ function OrderDetailsScreen() {
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>
-                  {(order as unknown as Record<string, unknown>).fulfillmentType === 'pickup' ||
-                  (order as unknown as Record<string, unknown>).fulfillmentType === 'drive_thru' ||
-                  (order as unknown as Record<string, unknown>).fulfillmentType === 'dine_in'
+                  {(order as unknown).fulfillmentType === 'pickup' ||
+                  (order as unknown).fulfillmentType === 'drive_thru' ||
+                  (order as unknown).fulfillmentType === 'dine_in'
                     ? 'Service Fee'
                     : 'Delivery'}
                 </Text>
@@ -367,7 +367,7 @@ function OrderDetailsScreen() {
                   <Text style={[styles.summaryLabel, { color: colors.nileBlue }]}>Lock Fee Already Paid</Text>
                   <Text style={[styles.summaryValue, { color: colors.nileBlue }]}>
                     -{currencySymbol}
-                    {((order.totals as unknown as { lockFeeDiscount?: number })?.lockFeeDiscount ?? 0).toFixed(2)}
+                    {(order.totals as unknown).lockFeeDiscount.toFixed(2)}
                   </Text>
                 </View>
               )}
@@ -383,7 +383,7 @@ function OrderDetailsScreen() {
               )}
               {/* Coins Used at Checkout */}
               {(() => {
-                const coinsUsed = (order.payment as unknown as { coinsUsed?: unknown })?.coinsUsed;
+                const coinsUsed = (order.payment as unknown)?.coinsUsed;
                 const totalCoins =
                   coinsUsed?.totalCoinsValue ||
                   (coinsUsed?.rezCoins || 0) + (coinsUsed?.promoCoins || 0) + (coinsUsed?.storePromoCoins || 0);
@@ -492,41 +492,37 @@ function OrderDetailsScreen() {
           )}
 
           {/* Fulfillment Details */}
-          {(order as unknown as Record<string, unknown>).fulfillmentType &&
-            (order as unknown as Record<string, unknown>).fulfillmentType !== 'delivery' &&
-            (order as unknown as Record<string, unknown>).fulfillmentDetails && (
+          {(order as unknown).fulfillmentType &&
+            (order as unknown).fulfillmentType !== 'delivery' &&
+            (order as unknown).fulfillmentDetails && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>
-                  {(order as unknown as Record<string, unknown>).fulfillmentType === 'pickup'
+                  {(order as unknown).fulfillmentType === 'pickup'
                     ? 'Pickup Details'
-                    : (order as unknown as Record<string, unknown>).fulfillmentType === 'drive_thru'
+                    : (order as unknown).fulfillmentType === 'drive_thru'
                       ? 'Drive-Thru Details'
-                      : (order as unknown as Record<string, unknown>).fulfillmentType === 'dine_in'
+                      : (order as unknown).fulfillmentType === 'dine_in'
                         ? 'Dine-In Details'
                         : 'Fulfillment Details'}
                 </Text>
                 <View style={styles.trackingCard}>
-                  {(order as unknown as Record<string, unknown>).fulfillmentDetails.tableNumber && (
+                  {(order as unknown).fulfillmentDetails.tableNumber && (
                     <View style={styles.trackingRow}>
                       <Text style={styles.trackingLabel}>Table Number</Text>
-                      <Text style={styles.trackingValue}>
-                        {(order as unknown as Record<string, unknown>).fulfillmentDetails.tableNumber}
-                      </Text>
+                      <Text style={styles.trackingValue}>{(order as unknown).fulfillmentDetails.tableNumber}</Text>
                     </View>
                   )}
-                  {(order as unknown as Record<string, unknown>).fulfillmentDetails.vehicleInfo && (
+                  {(order as unknown).fulfillmentDetails.vehicleInfo && (
                     <View style={styles.trackingRow}>
                       <Text style={styles.trackingLabel}>Vehicle</Text>
-                      <Text style={styles.trackingValue}>
-                        {(order as unknown as Record<string, unknown>).fulfillmentDetails.vehicleInfo}
-                      </Text>
+                      <Text style={styles.trackingValue}>{(order as unknown).fulfillmentDetails.vehicleInfo}</Text>
                     </View>
                   )}
-                  {(order as unknown as Record<string, unknown>).fulfillmentDetails.pickupInstructions && (
+                  {(order as unknown).fulfillmentDetails.pickupInstructions && (
                     <View style={styles.trackingRow}>
                       <Text style={styles.trackingLabel}>Instructions</Text>
                       <Text style={styles.trackingValue}>
-                        {(order as unknown as Record<string, unknown>).fulfillmentDetails.pickupInstructions}
+                        {(order as unknown).fulfillmentDetails.pickupInstructions}
                       </Text>
                     </View>
                   )}
@@ -600,13 +596,13 @@ function OrderDetailsScreen() {
                 style={[styles.actionButton, { backgroundColor: colors.warningScale[400] }]}
                 onPress={() =>
                   router.push({
-                    pathname: '/support/create-ticket',
+                    pathname: '/support/create-ticket' as unknown,
                     params: {
                       category: 'order',
                       subject: `Issue with Order #${order.orderNumber}`,
                       relatedOrderId: order.id,
                     },
-                  } as unknown as string)
+                  })
                 }
               >
                 <Text style={styles.actionButtonText}>Report Issue</Text>

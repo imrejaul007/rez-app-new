@@ -221,7 +221,7 @@ export default function HotelBookingConfirmedScreen() {
           )}
 
           {/* Actions */}
-          <Pressable style={styles.primaryBtn} onPress={() => router.replace('/my-bookings' as unknown as string)}>
+          <Pressable style={styles.primaryBtn} onPress={() => router.replace('/my-bookings' as unknown)}>
             <LinearGradient colors={['#0891B2', '#06B6D4']} style={styles.primaryBtnGrad}>
               <Ionicons name="list" size={18} color="#fff" />
               <Text style={styles.primaryBtnText}>View My Bookings</Text>
@@ -233,7 +233,7 @@ export default function HotelBookingConfirmedScreen() {
             <Text style={styles.secondaryBtnText}>Share Booking</Text>
           </Pressable>
 
-          <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/travel/hotels' as unknown as string)}>
+          <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/travel/hotels' as unknown)}>
             <Ionicons name="bed-outline" size={18} color={C.cyanDark} />
             <Text style={styles.secondaryBtnText}>Browse More Hotels</Text>
           </Pressable>

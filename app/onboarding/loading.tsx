@@ -16,7 +16,7 @@ function OnboardingLoadingScreen() {
 
   const handleLoadingComplete = () => {
     navigationDebugger.logNavigation('loading', 'identity-select', 'loading-completed');
-    router.replace('/onboarding/identity-select' as unknown as string);
+    router.replace('/onboarding/identity-select' as unknown);
   };
 
   return <LoadingScreen duration={5000} onComplete={handleLoadingComplete} />;

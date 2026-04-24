@@ -106,7 +106,7 @@ function PaymentPage() {
       platformAlertSimple('Invalid Amount', 'The payment amount is invalid. Please go back and try again.');
       const t = setTimeout(() => {
         // eslint-disable-next-line no-unused-expressions
-        router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown as string);
+        router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown);
       }, 300);
       return () => clearTimeout(t);
     }
@@ -265,7 +265,7 @@ function PaymentPage() {
 
   const navigateAfterSuccess = () => {
     if (isFinancialService) {
-      router.replace('/financial' as unknown as string);
+      router.replace('/financial' as unknown);
     } else if (isMobileRecharge) {
       // FR-D004 FIX: after mobile recharge payment navigate to wallet so user
       // can see the debited amount + promo coins, rather than looping back to

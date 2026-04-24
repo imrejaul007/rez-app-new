@@ -4,18 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows user's service bookings with travel-specific enhancements
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-  Platform,
-  Alert,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
@@ -101,9 +90,7 @@ const MyBookingsPage = () => {
       // even when the ServiceBooking API fails or returns no data.
       const rawAppointments: any[] =
         appointmentsResponse?.data?.appointments ??
-        (Array.isArray(appointmentsResponse?.data as unknown)
-          ? (appointmentsResponse?.data as unknown as Record<string, unknown>)
-          : []);
+        (Array.isArray(appointmentsResponse?.data as unknown) ? (appointmentsResponse?.data as unknown) : []);
 
       const normalizedAppointments: ServiceBooking[] = rawAppointments.map(
         (appt: any) =>
@@ -138,7 +125,7 @@ const MyBookingsPage = () => {
             createdAt: appt.createdAt || new Date().toISOString(),
             updatedAt: appt.updatedAt || new Date().toISOString(),
             _isServiceAppointment: true,
-          }) as unknown as ServiceBooking,
+          }) as unknown,
       );
 
       const serviceBookings: ServiceBooking[] = response?.success && Array.isArray(response.data) ? response.data : [];
@@ -149,7 +136,7 @@ const MyBookingsPage = () => {
         if (activeTab === 'courses') {
           // ED-02: Filter education-related bookings
           filteredBookings = filteredBookings.filter((booking) => {
-            const sType = (booking as unknown as Record<string, unknown>).serviceType?.toLowerCase() || '';
+            const sType = (booking as unknown).serviceType?.toLowerCase() || '';
             const catSlug = booking.serviceCategory?.slug?.toLowerCase() || '';
             return EDUCATION_KEYWORDS.some((kw) => sType.includes(kw) || catSlug.includes(kw));
           });
@@ -259,7 +246,7 @@ const MyBookingsPage = () => {
       // Determine whether this is a ServiceAppointment (Pattern A) or ServiceBooking (Pattern B)
       // so we call the correct cancel endpoint.
       const targetBooking = bookingsRef.current.find((b) => b._id === bookingId);
-      const isServiceAppt = (targetBooking as unknown as Record<string, unknown>)?._isServiceAppointment === true;
+      const isServiceAppt = (targetBooking as unknown)?._isServiceAppointment === true;
 
       platformAlertDestructive(
         'Cancel Booking',
@@ -272,7 +259,7 @@ const MyBookingsPage = () => {
           let previousBookings: ServiceBooking[] = [];
           setBookings((prev) => {
             previousBookings = prev;
-            return prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' as unknown as string } : b));
+            return prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' as unknown } : b));
           });
 
           try {
@@ -284,19 +271,13 @@ const MyBookingsPage = () => {
             if (response.success) {
               // For ServiceAppointment, response.data has shape { message, appointment }
               const updatedRecord = isServiceAppt
-                ? ((response.data as unknown as Record<string, unknown>)?.appointment ?? response.data)
+                ? ((response.data as unknown)?.appointment ?? response.data)
                 : response.data;
 
               if (updatedRecord) {
                 setBookings((prev) =>
                   prev.map((b) =>
-                    b._id === bookingId
-                      ? {
-                          ...b,
-                          ...(updatedRecord as unknown as Record<string, unknown>),
-                          status: 'cancelled' as unknown as string,
-                        }
-                      : b,
+                    b._id === bookingId ? { ...b, ...updatedRecord, status: 'cancelled' as unknown } : b,
                   ),
                 );
               }
@@ -306,10 +287,7 @@ const MyBookingsPage = () => {
             } else {
               // SS-D002 FIX: Revert optimistic update on API failure.
               setBookings(previousBookings);
-              platformAlertSimple(
-                'Error',
-                (response as unknown as Record<string, unknown>).error || 'Failed to cancel booking',
-              );
+              platformAlertSimple('Error', (response as unknown).error || 'Failed to cancel booking');
             }
           } catch (error: any) {
             // SS-D002 FIX: Revert on network / unexpected error too.
@@ -406,17 +384,13 @@ const MyBookingsPage = () => {
       return (
         <Pressable
           style={styles.bookingCard}
-          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown as string)}
+          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown)}
         >
           {/* Header with category icon */}
           <View style={styles.cardHeader}>
             <View style={styles.travelHeaderLeft}>
               <View style={[styles.categoryIcon, { backgroundColor: '#F0F9FF' }]}>
-                <Ionicons
-                  name={categoryIcon as unknown as keyof typeof Ionicons.glyphMap}
-                  size={20}
-                  color={colors.nileBlue}
-                />
+                <Ionicons name={categoryIcon as unknown} size={20} color={colors.nileBlue} />
               </View>
               <View style={styles.serviceInfo}>
                 <Text style={styles.serviceName} numberOfLines={1}>
@@ -534,7 +508,7 @@ const MyBookingsPage = () => {
       return (
         <Pressable
           style={styles.bookingCard}
-          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown as string)}
+          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown)}
         >
           {/* Header */}
           <View style={styles.cardHeader}>
@@ -589,7 +563,7 @@ const MyBookingsPage = () => {
                   style={styles.rescheduleButton}
                   onPress={(e) => {
                     e.stopPropagation();
-                    router.push(`/booking/reschedule/${item._id}` as unknown as string);
+                    router.push(`/booking/reschedule/${item._id}` as unknown);
                   }}
                 >
                   <Ionicons name="calendar-outline" size={14} color={colors.nileBlue} />
@@ -653,7 +627,7 @@ const MyBookingsPage = () => {
             : 'Your completed bookings will appear here'}
       </Text>
       {(activeTab === 'upcoming' || activeTab === 'courses') && (
-        <Pressable style={styles.browseButton} onPress={() => router.push('/(tabs)' as unknown as string)}>
+        <Pressable style={styles.browseButton} onPress={() => router.push('/(tabs)' as unknown)}>
           <Ionicons name={activeTab === 'courses' ? 'book-outline' : 'search'} size={20} color={colors.text.inverse} />
           <Text style={styles.browseButtonText}>{activeTab === 'courses' ? 'Explore Courses' : 'Browse Services'}</Text>
         </Pressable>
@@ -733,7 +707,7 @@ const MyBookingsPage = () => {
               <Ionicons name="bed-outline" size={80} color={colors.border.default} />
               <Text style={styles.emptyTitle}>No Hotel Bookings</Text>
               <Text style={styles.emptyText}>Book a hotel to see your stays here</Text>
-              <Pressable style={styles.browseButton} onPress={() => router.push('/travel/hotels' as unknown as string)}>
+              <Pressable style={styles.browseButton} onPress={() => router.push('/travel/hotels' as unknown)}>
                 <Ionicons name="bed-outline" size={20} color={colors.text.inverse} />
                 <Text style={styles.browseButtonText}>Browse Hotels</Text>
               </Pressable>
@@ -771,7 +745,7 @@ const MyBookingsPage = () => {
                       shadowOffset: { width: 0, height: 2 },
                       elevation: 2,
                     }}
-                    onPress={() => router.push(`/travel/hotels/booking/${item.id}` as unknown as string)}
+                    onPress={() => router.push(`/travel/hotels/booking/${item.id}` as unknown)}
                   >
                     <View
                       style={{
@@ -844,7 +818,7 @@ const MyBookingsPage = () => {
                             onPress={(e) => {
                               e.stopPropagation();
                               router.push({
-                                pathname: '/travel/hotels/[id]/review' as unknown as string,
+                                pathname: '/travel/hotels/[id]/review' as unknown,
                                 params: { id: item.hotelId, bookingRef: item.bookingRef, hotelName: item.hotelName },
                               });
                             }}

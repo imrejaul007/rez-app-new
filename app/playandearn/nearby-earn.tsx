@@ -243,11 +243,7 @@ const NearbyEarnPage = () => {
     const color = markerColors[index % markerColors.length];
 
     return (
-      <Pressable
-        key={store._id}
-        style={styles.storeCard}
-        onPress={() => router.push(`/store/${store._id}` as unknown as string)}
-      >
+      <Pressable key={store._id} style={styles.storeCard} onPress={() => router.push(`/store/${store._id}` as unknown)}>
         {/* Store Logo / Placeholder */}
         <View style={styles.storeCardLeft}>
           {store.logo ? (
@@ -349,8 +345,8 @@ const NearbyEarnPage = () => {
             return (
               <Pressable
                 key={store._id}
-                style={[styles.mapMarker, { left: `${pos.left}%`, top: `${pos.top}%` }]}
-                onPress={() => router.push(`/store/${store._id}` as unknown as string)}
+                style={[styles.mapMarker, { left: `${pos.left}%` as unknown, top: `${pos.top}%` as unknown }]}
+                onPress={() => router.push(`/store/${store._id}` as unknown)}
               >
                 {/* Pulse */}
                 <View style={[styles.markerPulse, { backgroundColor: color.shadow }]} />
@@ -427,7 +423,7 @@ const NearbyEarnPage = () => {
             <Pressable
               key={store._id}
               style={styles.mapStoreItem}
-              onPress={() => router.push(`/store/${store._id}` as unknown as string)}
+              onPress={() => router.push(`/store/${store._id}` as unknown)}
             >
               <View style={[styles.mapStoreIcon, { backgroundColor: color.bg }]}>
                 <Text style={styles.mapStoreIconText}>{store.name?.charAt(0)?.toUpperCase() || 'S'}</Text>

@@ -48,7 +48,7 @@ async function fetchCreatorPosts(storeId: string): Promise<CreatorPost[]> {
   const mod = await import('@/services/apiClient');
   const client = mod.default;
   const res = await client.get(`/creator/store/${storeId}/content?limit=6`);
-  return (res.data as unknown as Record<string, unknown>)?.posts ?? [];
+  return (res.data as unknown)?.posts ?? [];
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ function StoreCreatorSection({ storeId, posts: propPosts, onViewAll }: StoreCrea
   if (!posts.length) return null;
 
   const handlePostPress = (post: CreatorPost) => {
-    router.push((post.deepLink ?? `/ugc/${post.id}`) as unknown as string);
+    router.push((post.deepLink ?? `/ugc/${post.id}`) as unknown);
   };
 
   return (

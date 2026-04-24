@@ -10,6 +10,7 @@ import {
   Dimensions,
   Keyboard,
 } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useCheckout } from '@/hooks/useCheckout';
@@ -169,8 +170,9 @@ function AOVRewardNudge({
         const data = (res.data as unknown as Record<string, unknown>)?.data as
           | { nextTier?: { rewardType: string; rewardValue: number; label: string; amountToNextTierPaise: number } }
           | undefined;
-        if (!cancelled && data?.nextTier && data.amountToNextTierPaise > 0) {
-          setNudge({ amountToNextTierPaise: data.amountToNextTierPaise, nextTier: data.nextTier });
+        const tierAmount = (data as { amountToNextTierPaise?: number; nextTier?: object })?.amountToNextTierPaise;
+        if (!cancelled && data?.nextTier && tierAmount && tierAmount > 0) {
+          setNudge({ amountToNextTierPaise: tierAmount, nextTier: data.nextTier });
         }
       } catch {
         /* silent fail */

@@ -150,7 +150,7 @@ function TravelBookingConfirmationPage() {
       <ThemedView style={styles.errorContainer}>
         <Ionicons name="alert-circle" size={48} color={Colors.error} />
         <ThemedText style={styles.errorText}>{error || 'Booking not found'}</ThemedText>
-        <Pressable style={styles.retryButton} onPress={() => router.replace('/my-bookings' as unknown as string)}>
+        <Pressable style={styles.retryButton} onPress={() => router.replace('/my-bookings' as unknown)}>
           <ThemedText style={styles.retryButtonText}>Go to My Bookings</ThemedText>
         </Pressable>
       </ThemedView>
@@ -188,11 +188,7 @@ function TravelBookingConfirmationPage() {
                 <ThemedText style={styles.bookingNumber}>{booking.bookingNumber}</ThemedText>
               </View>
               <View style={styles.categoryBadge}>
-                <Ionicons
-                  name={getCategoryIcon() as unknown as keyof typeof Ionicons.glyphMap}
-                  size={20}
-                  color={colors.nileBlue}
-                />
+                <Ionicons name={getCategoryIcon() as unknown} size={20} color={colors.nileBlue} />
               </View>
             </View>
             {booking.pnr && (
@@ -329,7 +325,7 @@ function TravelBookingConfirmationPage() {
 
           {/* Action Buttons */}
           <View style={styles.actions}>
-            <Pressable style={styles.primaryButton} onPress={() => router.replace('/my-bookings' as unknown as string)}>
+            <Pressable style={styles.primaryButton} onPress={() => router.replace('/my-bookings' as unknown)}>
               <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.primaryButtonGradient}>
                 <Ionicons name="list" size={20} color={colors.text.inverse} />
                 <ThemedText style={styles.primaryButtonText}>View My Bookings</ThemedText>
@@ -341,7 +337,7 @@ function TravelBookingConfirmationPage() {
               <ThemedText style={styles.secondaryButtonText}>Share Booking</ThemedText>
             </Pressable>
 
-            <Pressable style={styles.secondaryButton} onPress={() => router.replace('/travel' as unknown as string)}>
+            <Pressable style={styles.secondaryButton} onPress={() => router.replace('/travel' as unknown)}>
               <Ionicons name="airplane-outline" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.secondaryButtonText}>Browse More Travel</ThemedText>
             </Pressable>

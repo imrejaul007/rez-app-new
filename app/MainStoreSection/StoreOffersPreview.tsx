@@ -1,14 +1,9 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // StoreOffersPreview.tsx - Store offers section with offer cards
-import React from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import React from 'react';
+import { View, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -32,11 +27,7 @@ interface StoreOffersPreviewProps {
   onApplyOffer?: (offer: StoreOffer) => void;
 }
 
-function StoreOffersPreview({
-  offers = [],
-  onViewAll,
-  onApplyOffer,
-}: StoreOffersPreviewProps) {
+function StoreOffersPreview({ offers = [], onViewAll, onApplyOffer }: StoreOffersPreviewProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -98,9 +89,7 @@ function StoreOffersPreview({
                 <View style={[styles.offerBadge, { backgroundColor: badge.bgColor }]}>
                   <ThemedText style={styles.offerBadgeText}>{badge.text}</ThemedText>
                 </View>
-                {validity && (
-                  <ThemedText style={styles.validityText}>{validity}</ThemedText>
-                )}
+                {validity && <ThemedText style={styles.validityText}>{validity}</ThemedText>}
               </View>
 
               {/* Title */}
@@ -116,32 +105,23 @@ function StoreOffersPreview({
               )}
               {offer.minOrderAmount && !offer.description && (
                 <ThemedText style={styles.offerDescription}>
-                  On orders above {currencySymbol}{offer.minOrderAmount}
+                  On orders above {currencySymbol}
+                  {offer.minOrderAmount}
                 </ThemedText>
               )}
-              {offer.code && (
-                <ThemedText style={styles.offerDescription}>
-                  Use code: {offer.code}
-                </ThemedText>
-              )}
+              {offer.code && <ThemedText style={styles.offerDescription}>Use code: {offer.code}</ThemedText>}
 
               {/* Bottom Row - Coins & Apply Button */}
               <View style={styles.offerBottomRow}>
                 {offer.coinsToEarn && offer.coinsToEarn > 0 ? (
                   <View style={styles.coinsContainer}>
                     <ThemedText style={styles.coinEmoji}>🪙</ThemedText>
-                    <ThemedText style={styles.coinsText}>
-                      Earn {offer.coinsToEarn} coins
-                    </ThemedText>
+                    <ThemedText style={styles.coinsText}>Earn {offer.coinsToEarn} coins</ThemedText>
                   </View>
                 ) : (
                   <View />
                 )}
-                <Pressable
-                  style={styles.applyButton}
-                  onPress={() => onApplyOffer?.(offer)}
-                 
-                >
+                <Pressable style={styles.applyButton} onPress={() => onApplyOffer?.(offer)}>
                   <ThemedText style={styles.applyButtonText}>Apply Offer</ThemedText>
                 </Pressable>
               </View>
@@ -161,28 +141,28 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.base,
     marginTop: Spacing.md,
     // Shadow
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.04)",
+    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: Spacing.base,
   },
   headerTitle: {
     ...Typography.bodyLarge,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.nileBlue,
   },
   viewAllText: {
     ...Typography.body,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.gold,
   },
   offersList: {
@@ -196,8 +176,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border.default,
   },
   offerTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
     marginBottom: 8,
   },
@@ -208,9 +188,9 @@ const styles = StyleSheet.create({
   },
   offerBadgeText: {
     ...Typography.caption,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.inverse,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
   validityText: {
     ...Typography.bodySmall,
@@ -218,7 +198,7 @@ const styles = StyleSheet.create({
   },
   offerTitle: {
     ...Typography.body,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
@@ -228,13 +208,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   offerBottomRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   coinsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   coinEmoji: {
@@ -242,7 +222,7 @@ const styles = StyleSheet.create({
   },
   coinsText: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.brand.amberDeep,
   },
   applyButton: {
@@ -253,7 +233,7 @@ const styles = StyleSheet.create({
   },
   applyButtonText: {
     ...Typography.bodySmall,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.inverse,
   },
 });

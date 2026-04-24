@@ -14,8 +14,6 @@ import {
   Dimensions,
   ActivityIndicator,
   Share,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
@@ -469,10 +467,7 @@ const CreatorPickDetail = () => {
             {/* Action buttons */}
             <View style={s.ownPickActions}>
               {(pick.status === 'draft' || pick.status === 'rejected') && (
-                <Pressable
-                  style={s.editPickBtn}
-                  onPress={() => router.push(`/submit-pick?editId=${id}` as unknown as string)}
-                >
+                <Pressable style={s.editPickBtn} onPress={() => router.push(`/submit-pick?editId=${id}` as unknown)}>
                   <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                   <Text style={s.editPickText}>Edit Pick</Text>
                 </Pressable>
@@ -643,7 +638,7 @@ const CreatorPickDetail = () => {
               keyExtractor={(item) => item.id}
               estimatedItemSize={150}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: 10 } as unknown as StyleProp<ViewStyle>}
+              contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: 10 } as unknown}
             />
           </View>
         )}

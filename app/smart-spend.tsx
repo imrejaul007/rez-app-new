@@ -250,12 +250,12 @@ export default function SmartSpendScreen() {
       ]);
 
       if (summaryRes.status === 'fulfilled') {
-        const d = (summaryRes.value as unknown as Record<string, unknown>)?.data ?? summaryRes.value;
-        setSummary(d as unknown as SavingsSummary);
+        const d = (summaryRes.value as unknown)?.data ?? (summaryRes.value as unknown);
+        setSummary(d as SavingsSummary);
       }
 
       if (nearbyRes.status === 'fulfilled') {
-        const d = (nearbyRes.value as unknown as Record<string, unknown>)?.data ?? nearbyRes.value;
+        const d = (nearbyRes.value as unknown)?.data ?? (nearbyRes.value as unknown);
         setNearbyStores(Array.isArray(d) ? d : []);
       }
     } catch (err: any) {
@@ -278,7 +278,7 @@ export default function SmartSpendScreen() {
 
   const handleStorePress = useCallback(
     (storeId: string) => {
-      router.push(`/store-detail?storeId=${storeId}` as unknown as string);
+      router.push(`/store-detail?storeId=${storeId}` as unknown);
     },
     [router],
   );

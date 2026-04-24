@@ -100,11 +100,7 @@ function PartnerLeaderboard() {
         {/* Rank Badge */}
         <View style={[styles.rankBadge, { backgroundColor: getRankColor(rank) + '20' }]}>
           {isTop3 ? (
-            <Ionicons
-              name={getRankIcon(rank) as unknown as keyof typeof Ionicons.glyphMap}
-              size={20}
-              color={getRankColor(rank)}
-            />
+            <Ionicons name={getRankIcon(rank) as unknown} size={20} color={getRankColor(rank)} />
           ) : (
             <Text style={[styles.rankNumber, { color: getRankColor(rank) }]}>#{rank}</Text>
           )}

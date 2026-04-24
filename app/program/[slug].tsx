@@ -100,7 +100,7 @@ function ProgramDetailScreen() {
           ? 'corporate'
           : null;
     if (zone) {
-      router.push({ pathname: '/profile/verification', params: { zone } } as unknown as string);
+      router.push({ pathname: '/profile/verification', params: { zone } } as unknown);
     }
   };
 

@@ -112,7 +112,7 @@ const CampaignDetailPage: React.FC = () => {
   };
 
   const handleDealPress = (deal: CampaignDeal, dealIndex: number) => {
-    router.push(`/deals/${campaignId}/${dealIndex}` as unknown as string);
+    router.push(`/deals/${campaignId}/${dealIndex}` as unknown);
   };
 
   const renderDealValue = (deal: CampaignDeal) => {
@@ -274,12 +274,7 @@ const CampaignDetailPage: React.FC = () => {
             </View>
             {campaign.badge && (
               <View style={[styles.heroBadge, { backgroundColor: campaign.badgeBg || COLORS.gold }]}>
-                <Text
-                  style={[
-                    styles.heroBadgeText,
-                    { color: campaign.badgeColor || (COLORS as unknown as Record<string, string>).navy },
-                  ]}
-                >
+                <Text style={[styles.heroBadgeText, { color: campaign.badgeColor || (COLORS as unknown).navy }]}>
                   {campaign.badge}
                 </Text>
               </View>
@@ -290,7 +285,7 @@ const CampaignDetailPage: React.FC = () => {
         {/* Premium Stats Card */}
         <View style={styles.statsCardContainer}>
           <LinearGradient
-            colors={[(COLORS as unknown as Record<string, string>).navy, COLORS.navyLight]}
+            colors={[(COLORS as unknown).navy, COLORS.navyLight]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.statsCard}
@@ -385,11 +380,7 @@ const CampaignDetailPage: React.FC = () => {
             ].map((item, idx) => (
               <View key={idx} style={styles.highlightItem}>
                 <View style={[styles.highlightIcon, { backgroundColor: `${item.color}15` }]}>
-                  <Ionicons
-                    name={item.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={18}
-                    color={item.color}
-                  />
+                  <Ionicons name={item.icon as unknown} size={18} color={item.color} />
                 </View>
                 <Text style={styles.highlightLabel}>{item.label}</Text>
               </View>
@@ -624,11 +615,7 @@ const CampaignDetailPage: React.FC = () => {
                 </View>
                 <View style={styles.stepContent}>
                   <View style={styles.stepIconContainer}>
-                    <Ionicons
-                      name={item.icon as unknown as keyof typeof Ionicons.glyphMap}
-                      size={20}
-                      color={(COLORS as unknown as Record<string, string>).navy}
-                    />
+                    <Ionicons name={item.icon as unknown} size={20} color={(COLORS as unknown).navy} />
                   </View>
                   <View style={styles.stepTextContainer}>
                     <Text style={styles.stepTitle}>{item.title}</Text>
@@ -691,7 +678,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
   },
   errorText: {
@@ -704,7 +691,7 @@ const styles = StyleSheet.create({
   errorButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: (COLORS as unknown as Record<string, string>).navy,
+    backgroundColor: (COLORS as unknown).navy,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
@@ -929,7 +916,7 @@ const styles = StyleSheet.create({
   countdownNumber: {
     fontSize: 28,
     fontWeight: '800',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   countdownNumberUrgent: {
     color: COLORS.red500,
@@ -976,7 +963,7 @@ const styles = StyleSheet.create({
   sectionHeaderTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     flex: 1,
   },
 
@@ -1005,7 +992,7 @@ const styles = StyleSheet.create({
   highlightLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     flex: 1,
   },
 
@@ -1045,7 +1032,7 @@ const styles = StyleSheet.create({
   offerDetailValue: {
     fontSize: 22,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 4,
   },
   offerDetailLabel: {
@@ -1116,7 +1103,7 @@ const styles = StyleSheet.create({
   validityValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: 2,
   },
   validityArrow: {
@@ -1220,7 +1207,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     left: 8,
-    backgroundColor: (COLORS as unknown as Record<string, string>).navy,
+    backgroundColor: (COLORS as unknown).navy,
     padding: 5,
     borderRadius: 6,
   },
@@ -1239,7 +1226,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 6,
   },
   dealValueRow: {
@@ -1338,7 +1325,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 2,
   },
   stepDesc: {

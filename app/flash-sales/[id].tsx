@@ -234,7 +234,7 @@ function FlashSaleDetailPage() {
         const { purchaseId, razorpayOrderId, razorpayKeyId, amount, currency } = response.data;
         // Navigate to payment-razorpay with flash-sale context
         router.push(
-          `/payment-razorpay?bookingId=${purchaseId}&bookingType=flash_sale&orderId=${razorpayOrderId}&razorpayKeyId=${razorpayKeyId}&amount=${amount}&currency=${currency}` as unknown as string,
+          `/payment-razorpay?bookingId=${purchaseId}&bookingType=flash_sale&orderId=${razorpayOrderId}&razorpayKeyId=${razorpayKeyId}&amount=${amount}&currency=${currency}` as unknown,
         );
       } else {
         throw new Error(response.message || 'Failed to initiate payment');
@@ -263,7 +263,7 @@ function FlashSaleDetailPage() {
 
   const handleStorePress = () => {
     if (flashSale?.stores?.[0]?._id) {
-      router.push(`/MainStorePage?storeId=${flashSale.stores[0]._id}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${flashSale.stores[0]._id}` as unknown);
     }
   };
 
@@ -517,12 +517,7 @@ function FlashSaleDetailPage() {
                     <View style={styles.stepNumber}>
                       <ThemedText style={styles.stepNumberText}>{item.step}</ThemedText>
                     </View>
-                    <Ionicons
-                      name={item.icon as unknown as keyof typeof Ionicons.glyphMap}
-                      size={20}
-                      color={colors.midGray}
-                      style={styles.stepIcon}
-                    />
+                    <Ionicons name={item.icon as unknown} size={20} color={colors.midGray} style={styles.stepIcon} />
                     <ThemedText style={styles.stepText}>{item.text}</ThemedText>
                   </View>
                 ))}

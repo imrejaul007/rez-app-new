@@ -57,7 +57,7 @@ function StoreCard({
   return (
     <Pressable
       style={styles.storeCard}
-      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown as string)}
+      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown)}
     >
       <View style={styles.storeImageContainer}>
         {imageUri && !imageError ? (
@@ -243,7 +243,7 @@ function SharedCategoryPage() {
 
   const handleVisitNow = useCallback(
     (store: any) => {
-      router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown);
     },
     [router],
   );
@@ -333,7 +333,7 @@ function SharedCategoryPage() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons
-              name={(theme.defaultMissionIcon || 'storefront-outline') as unknown as string}
+              name={(theme.defaultMissionIcon || 'storefront-outline') as unknown}
               size={48}
               color={theme.primaryColor}
             />

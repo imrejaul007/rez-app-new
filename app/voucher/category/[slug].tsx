@@ -75,11 +75,7 @@ const CATEGORY_INFO: { [key: string]: { icon: string; gradient: string[]; bgColo
     bgColor: 'rgba(139, 92, 246, 0.1)',
   },
   fashion: { icon: '👗', gradient: ['#F472B6', colors.brand.pink], bgColor: 'rgba(244, 114, 182, 0.1)' },
-  food: {
-    icon: '🍔',
-    gradient: [COLORS.primary, COLORS.primaryDark],
-    bgColor: (COLORS as unknown as Record<string, string>).primaryLight,
-  },
+  food: { icon: '🍔', gradient: [COLORS.primary, COLORS.primaryDark], bgColor: (COLORS as unknown).primaryLight },
   grocery: {
     icon: '🛒',
     gradient: [colors.warningScale[400], colors.warningScale[700]],
@@ -205,7 +201,7 @@ function VoucherCategoryPage() {
   const renderHeader = () => (
     <Animated.View style={headerScaleStyle}>
       <LinearGradient
-        colors={(categoryInfo?.gradient || [COLORS.primary, COLORS.primaryDark]) as unknown as string[]}
+        colors={(categoryInfo?.gradient || [COLORS.primary, COLORS.primaryDark]) as unknown}
         style={styles.header}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -289,12 +285,7 @@ function VoucherCategoryPage() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <ThemedText
-                style={[
-                  styles.brandLogoText,
-                  { color: brand.logoColor || (COLORS as unknown as Record<string, string>).navy },
-                ]}
-              >
+              <ThemedText style={[styles.brandLogoText, { color: brand.logoColor || (COLORS as unknown).navy }]}>
                 {brand.logo}
               </ThemedText>
             </LinearGradient>
@@ -307,7 +298,7 @@ function VoucherCategoryPage() {
               </ThemedText>
               {brand.featured && (
                 <LinearGradient
-                  colors={[COLORS.gold, (COLORS as unknown as Record<string, string>).goldDark]}
+                  colors={[COLORS.gold, (COLORS as unknown).goldDark]}
                   style={styles.featuredBadge}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -461,7 +452,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: (COLORS as unknown as Record<string, string>).goldGlow,
+    backgroundColor: (COLORS as unknown).goldGlow,
     bottom: 100,
     left: -50,
     opacity: 0.25,
@@ -658,7 +649,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h3,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
     letterSpacing: -0.3,
   },
@@ -730,7 +721,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 17,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     letterSpacing: -0.2,
   },
   featuredBadge: {
@@ -741,7 +732,7 @@ const styles = StyleSheet.create({
   featuredText: {
     ...Typography.overline,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     letterSpacing: 0.3,
   },
   cashbackRow: {
@@ -754,7 +745,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 7,
-    backgroundColor: (COLORS as unknown as Record<string, string>).primaryLight,
+    backgroundColor: (COLORS as unknown).primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -772,7 +763,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 6,
-    backgroundColor: (COLORS as unknown as Record<string, string>).goldLight,
+    backgroundColor: (COLORS as unknown).goldLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -780,7 +771,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   ratingCount: {
     ...Typography.bodySmall,

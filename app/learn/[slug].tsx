@@ -110,7 +110,7 @@ const LearnDetailPage = () => {
       'platform-guide': Colors.brand.purpleLight,
       'coin-types': Colors.warning,
     };
-    return colors[cat] || (colors as unknown as Record<string, string>).text?.tertiary;
+    return colors[cat] || (colors as unknown).text?.tertiary;
   };
 
   if (loading) {
@@ -182,11 +182,7 @@ const LearnDetailPage = () => {
         {/* Meta Row */}
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Ionicons
-              name="time-outline"
-              size={16}
-              color={(colors.text as unknown as Record<string, string>).tertiary}
-            />
+            <Ionicons name="time-outline" size={16} color={(colors.text as unknown).tertiary} />
             <Text style={styles.metaText}>{content.estimatedMinutes} min read</Text>
           </View>
           <View style={styles.metaItem}>
@@ -313,7 +309,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: (colors.text as unknown as Record<string, string>).tertiary,
+    color: (colors.text as unknown).tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -398,7 +394,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: (colors.text as unknown as Record<string, string>).tertiary,
+    color: (colors.text as unknown).tertiary,
   },
   divider: {
     height: 1,
@@ -439,7 +435,7 @@ const styles = StyleSheet.create({
   },
   bullet: {
     ...Typography.body,
-    color: (colors.text as unknown as Record<string, string>).tertiary,
+    color: (colors.text as unknown).tertiary,
     marginRight: Spacing.sm,
     lineHeight: 22,
   },
@@ -456,7 +452,7 @@ const styles = StyleSheet.create({
   },
   noContent: {
     ...Typography.body,
-    color: (colors.text as unknown as Record<string, string>).tertiary,
+    color: (colors.text as unknown).tertiary,
     textAlign: 'center',
     marginTop: 40,
   },

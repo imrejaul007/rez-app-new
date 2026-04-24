@@ -78,7 +78,7 @@ function CorporateVerifyPage() {
           zone: 'corporate',
           type: result.autoVerified ? 'instant' : 'provisional',
         },
-      } as unknown as string);
+      } as unknown);
     } catch (e: any) {
       const msg = e?.message || 'Verification failed. Please try again.';
       if (!isMounted()) return;

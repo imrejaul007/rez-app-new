@@ -45,7 +45,7 @@ function FirstScanScreen() {
 
   const handleStartEarning = async () => {
     await AsyncStorage.setItem(REZ_ONBOARDING_DONE_KEY, 'true').catch(() => {});
-    router.replace('/(tabs)/' as unknown as string);
+    router.replace('/(tabs)/' as unknown);
   };
 
   return (

@@ -116,7 +116,7 @@ const HomeServicesCategoryPage: React.FC = () => {
   const handleServicePress = (service: HomeService) => {
     const serviceId = service._id || service.id;
     if (serviceId) {
-      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown as string);
+      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown);
     }
   };
 
@@ -124,7 +124,7 @@ const HomeServicesCategoryPage: React.FC = () => {
     const serviceId = service._id || service.id;
     const storeId = service.store?._id;
     if (serviceId && storeId) {
-      router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown as string);
+      router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown);
     }
   };
 
@@ -146,7 +146,7 @@ const HomeServicesCategoryPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={gradientColors as unknown as string[]}
+        colors={gradientColors as unknown}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.header}

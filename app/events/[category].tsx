@@ -93,17 +93,13 @@ const EventsCategoryPage: React.FC = () => {
   ];
 
   const transformEventToDisplay = (event: EventItem): DisplayEvent => {
-    const cashbackValue = (event as unknown as Record<string, unknown>).cashback;
+    const cashbackValue = (event as unknown).cashback;
     const cashbackText = cashbackValue && cashbackValue > 0 ? `${cashbackValue}%` : undefined;
 
     const locationName =
-      typeof event.location === 'string'
-        ? event.location
-        : (event.location as unknown as { name?: string })?.name || 'Venue';
+      typeof event.location === 'string' ? event.location : (event.location as unknown)?.name || 'Venue';
 
-    const isOnline =
-      (event as unknown as Record<string, unknown>).isOnline ||
-      (event.location as unknown as { isOnline?: boolean })?.isOnline;
+    const isOnline = (event as unknown).isOnline || (event.location as unknown)?.isOnline;
     const displayCurrency = isOnline ? currencySymbol : event.price?.currency || currencySymbol;
 
     return {
@@ -113,8 +109,8 @@ const EventsCategoryPage: React.FC = () => {
       time: event.time || 'TBD',
       date: event.date ? new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'TBD',
       price: event.price?.isFree ? 'Free' : `${displayCurrency}${event.price?.amount || 0}`,
-      rating: (event as unknown as Record<string, unknown>).rating || 0,
-      reviewCount: (event as unknown as Record<string, unknown>).reviewCount || 0,
+      rating: (event as unknown).rating || 0,
+      reviewCount: (event as unknown).reviewCount || 0,
       image: event.image || '',
       cashback: cashbackText,
     };
@@ -194,7 +190,7 @@ const EventsCategoryPage: React.FC = () => {
   }, [fetchEvents, selectedFilter]);
 
   const handleEventPress = (eventId: string) => {
-    router.push({ pathname: '/EventPage', params: { id: eventId } } as unknown as string);
+    router.push({ pathname: '/EventPage', params: { id: eventId } } as unknown);
   };
 
   if (isLoading) {
@@ -212,7 +208,7 @@ const EventsCategoryPage: React.FC = () => {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <LinearGradient
-          colors={displayGradient as unknown as string[]}
+          colors={displayGradient as unknown}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.header}
@@ -260,7 +256,7 @@ const EventsCategoryPage: React.FC = () => {
 
       {/* Header */}
       <LinearGradient
-        colors={displayGradient as unknown as string[]}
+        colors={displayGradient as unknown}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.header}
@@ -278,7 +274,7 @@ const EventsCategoryPage: React.FC = () => {
             </Text>
             <Text style={styles.headerSubtitle}>{totalEvents} events available</Text>
           </View>
-          <Pressable style={styles.searchButton} onPress={() => router.push('/events-list' as unknown as string)}>
+          <Pressable style={styles.searchButton} onPress={() => router.push('/events-list' as unknown)}>
             <Ionicons name="search" size={24} color={COLORS.background} />
           </Pressable>
         </View>
@@ -305,11 +301,7 @@ const EventsCategoryPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={[COLORS.primary as unknown as string]}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[COLORS.primary] as unknown} />
         }
       >
         {/* Events List */}
@@ -575,7 +567,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: (COLORS as unknown as Record<string, string>).errorLight || colors.errorScale[100],
+    backgroundColor: (COLORS as unknown).errorLight || colors.errorScale[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,

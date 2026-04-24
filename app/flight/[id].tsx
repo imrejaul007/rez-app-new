@@ -173,7 +173,7 @@ function FlightDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown as Record<string, unknown>;
+      const productData = response.data as unknown;
       const isFlight =
         productData.serviceCategory?.slug === 'flights' ||
         productData.category?.slug === 'flights' ||
@@ -186,7 +186,7 @@ function FlightDetailsPage() {
 
       // Helper to read from specifications array
       const specs = productData.specifications || [];
-      const getSpec = (key: string) => specs.find((s: Record<string, unknown>) => s.key === key)?.value || '';
+      const getSpec = (key: string) => specs.find((s: any) => s.key === key)?.value || '';
 
       // Route: prefer specifications, fallback to name parsing
       const specFrom = getSpec('routeFrom');
@@ -252,11 +252,7 @@ function FlightDetailsPage() {
           return [];
         }
         const imgs = productData.images
-          .map((img: unknown) =>
-            typeof img === 'string'
-              ? img.trim()
-              : (img as Record<string, unknown>)?.url || (img as Record<string, unknown>)?.uri || null,
-          )
+          .map((img: any) => (typeof img === 'string' ? img.trim() : img?.url || img?.uri || null))
           .filter((u: string | null): u is string => Boolean(u && u.length > 0));
         return imgs;
       };
@@ -323,7 +319,7 @@ function FlightDetailsPage() {
         },
         classOptions: buildClassOptions(),
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Failed to load flight details. Please try again.');
     } finally {
@@ -346,17 +342,17 @@ function FlightDetailsPage() {
   const handleBookNow = () => setShowBookingFlow(true);
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown as Record<string, unknown>).requiresPayment) {
+    if ((data as unknown).requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as Record<string, unknown>).totalAmount,
+          amount: (data as unknown).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown as Record<string, unknown>);
+      } as unknown);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -368,7 +364,7 @@ function FlightDetailsPage() {
     if (!flight) return;
     try {
       if (isInWishlist(flight.id)) await removeFromWishlist(flight.id);
-      else await addToWishlist(flight.id as unknown as string);
+      else await addToWishlist(flight.id as unknown);
     } catch (_err) {
       /* silently handle */
     }
@@ -420,7 +416,7 @@ function FlightDetailsPage() {
         <View style={s.hero}>
           {hasValidImage && !imageError ? (
             <CachedImage
-              source={imageUrl as unknown as string}
+              source={imageUrl as unknown}
               style={s.heroImg}
               contentFit="cover"
               onError={() => setImageError(true)}
@@ -618,7 +614,7 @@ function FlightDetailsPage() {
           {flight.store && (
             <Pressable
               style={s.airlineCard}
-              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as unknown as string)}
+              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as unknown)}
             >
               {flight.store.logo ? (
                 <CachedImage source={flight.store.logo} style={s.airlineLogo} contentFit="contain" />
@@ -881,10 +877,7 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
-    ...Platform.select({
-      web: { backdropFilter: 'blur(10px)' } as unknown as Record<string, unknown>,
-      default: {},
-    } as unknown as Record<string, unknown>),
+    ...Platform.select({ web: { backdropFilter: 'blur(10px)' } as unknown, default: {} }),
   },
   navRight: { flexDirection: 'row', gap: 10 },
   discBadge: {

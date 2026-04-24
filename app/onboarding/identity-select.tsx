@@ -119,7 +119,7 @@ function IdentitySelectPage() {
     } else {
       // Going to student-verify, corporate-verify, etc.
       // completeOnboarding will be called in verification-success or skip handlers.
-      router.push(identity.next as unknown as string);
+      router.push(identity.next as unknown);
     }
   };
 

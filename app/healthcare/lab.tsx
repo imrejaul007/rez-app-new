@@ -120,12 +120,12 @@ const LabTestsPage: React.FC = () => {
 
       if (testsResponse.success && testsResponse.data) {
         if (!isMounted()) return;
-        setTests((testsResponse.data as unknown as Record<string, unknown>).products || []);
+        setTests((testsResponse.data as unknown).products || []);
       }
 
       if (providersResponse.success && providersResponse.data) {
         if (!isMounted()) return;
-        setProviders((providersResponse.data as unknown as Record<string, unknown>).stores || []);
+        setProviders((providersResponse.data as unknown).stores || []);
       }
     } catch (error: any) {
       // silently handle
@@ -189,13 +189,10 @@ const LabTestsPage: React.FC = () => {
         setShowBookingModal(false);
         platformAlertSimple(
           'Booked!',
-          `Your ${selectedTest?.name || 'lab test'} has been booked. Appointment: ${(res as unknown as Record<string, unknown>).data?.appointmentNumber || 'Confirmed'}`,
+          `Your ${selectedTest?.name || 'lab test'} has been booked. Appointment: ${(res as unknown).data?.appointmentNumber || 'Confirmed'}`,
         );
       } else {
-        platformAlertSimple(
-          'Booking Failed',
-          (res as unknown as Record<string, unknown>).error || 'Could not book. Please try again.',
-        );
+        platformAlertSimple('Booking Failed', (res as unknown).error || 'Could not book. Please try again.');
       }
     } catch (err: any) {
       platformAlertSimple('Error', err?.message || 'Something went wrong');

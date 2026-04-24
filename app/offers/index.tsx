@@ -187,7 +187,7 @@ function OffersScreen() {
                   </View>
                   <View style={styles.heroIconContainer}>
                     <Ionicons
-                      name={(heroConfig?.icon ?? 'gift') as unknown as keyof typeof Ionicons.glyphMap}
+                      name={(heroConfig?.icon ?? 'gift') as unknown}
                       size={40}
                       color={heroConfig ? '#FFFFFF' : PALETTE.lightMustard}
                     />

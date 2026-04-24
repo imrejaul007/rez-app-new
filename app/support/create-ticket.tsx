@@ -98,8 +98,8 @@ function CreateTicketPage() {
     try {
       const response = await supportService.createTicket({
         subject: subject.trim(),
-        category: selectedCategory as unknown as string,
-        priority: selectedPriority as unknown as string,
+        category: selectedCategory as unknown,
+        priority: selectedPriority as unknown,
         message: message.trim(),
         idempotencyKey,
         ...(params.relatedOrderId
@@ -111,7 +111,7 @@ function CreateTicketPage() {
 
       if (response.success && response.data?.ticket) {
         platformAlertSimple('Success', 'Your support ticket has been created.');
-        router.replace(`/support/ticket/${response.data.ticket._id}` as unknown as string);
+        router.replace(`/support/ticket/${response.data.ticket._id}` as unknown);
       } else {
         platformAlertSimple('Error', 'Failed to create ticket. Please try again.');
       }
@@ -187,7 +187,7 @@ function CreateTicketPage() {
                   }}
                 >
                   <Ionicons
-                    name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    name={cat.icon as unknown}
                     size={22}
                     color={selectedCategory === cat.id ? Colors.secondary[600] : Colors.gray[500]}
                   />
@@ -237,7 +237,7 @@ function CreateTicketPage() {
                   onPress={() => setSelectedPriority(pri.id)}
                 >
                   <Ionicons
-                    name={pri.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    name={pri.icon as unknown}
                     size={18}
                     color={selectedPriority === pri.id ? pri.color : Colors.gray[400]}
                   />
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: (Colors.text as unknown as { primary?: string })?.primary || Colors.text,
+    color: (Colors.text as unknown)?.primary || Colors.text,
     ...Shadows.subtle,
   },
   textArea: {
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: (Colors.text as unknown as { primary?: string })?.primary || Colors.text,
+    color: (Colors.text as unknown)?.primary || Colors.text,
     minHeight: 140,
     ...Shadows.subtle,
   },

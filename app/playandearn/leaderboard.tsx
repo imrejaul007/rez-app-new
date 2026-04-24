@@ -174,7 +174,7 @@ const Leaderboard = () => {
             setMyRank({
               rank: responseData.myRank.rank,
               userId: user?.id || '',
-              name: (user as unknown as Record<string, unknown>)?.name || 'You',
+              name: (user as unknown)?.name || 'You',
               coins: responseData.myRank.value,
               tier: 'free',
               isCurrentUser: true,
@@ -207,7 +207,7 @@ const Leaderboard = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedPeriod, user?.id, (user as unknown as Record<string, unknown>)?.name],
+    [selectedPeriod, user?.id, (user as unknown)?.name],
   );
 
   // Load more entries (pagination)
@@ -285,9 +285,9 @@ const Leaderboard = () => {
       case 1:
         return COLORS.gold;
       case 2:
-        return (COLORS as unknown as Record<string, string>).silver;
+        return (COLORS as unknown).silver;
       case 3:
-        return (COLORS as unknown as Record<string, string>).bronze;
+        return (COLORS as unknown).bronze;
       default:
         return COLORS.gray500;
     }
@@ -372,7 +372,7 @@ const Leaderboard = () => {
         </View>
 
         {/* Tier Badge */}
-        {entry.tier && <TierBadge tier={entry.tier as unknown as string} size="small" showIcon={false} />}
+        {entry.tier && <TierBadge tier={entry.tier as unknown} size="small" showIcon={false} />}
 
         {/* Rank Up Indicator */}
         {hasRankedUp && (
@@ -633,13 +633,8 @@ const Leaderboard = () => {
                   {currencySymbol}
                   {entries[1].coins.toLocaleString()}
                 </Text>
-                <View
-                  style={[
-                    styles.podiumBar,
-                    { height: 80, backgroundColor: `${(COLORS as unknown as Record<string, string>).silver}30` },
-                  ]}
-                >
-                  <Ionicons name="medal" size={28} color={(COLORS as unknown as Record<string, string>).silver} />
+                <View style={[styles.podiumBar, { height: 80, backgroundColor: `${(COLORS as unknown).silver}30` }]}>
+                  <Ionicons name="medal" size={28} color={(COLORS as unknown).silver} />
                   <Text style={styles.podiumRank}>2</Text>
                 </View>
               </View>
@@ -686,13 +681,8 @@ const Leaderboard = () => {
                   {currencySymbol}
                   {entries[2].coins.toLocaleString()}
                 </Text>
-                <View
-                  style={[
-                    styles.podiumBar,
-                    { height: 64, backgroundColor: `${(COLORS as unknown as Record<string, string>).bronze}30` },
-                  ]}
-                >
-                  <Ionicons name="medal" size={24} color={(COLORS as unknown as Record<string, string>).bronze} />
+                <View style={[styles.podiumBar, { height: 64, backgroundColor: `${(COLORS as unknown).bronze}30` }]}>
+                  <Ionicons name="medal" size={24} color={(COLORS as unknown).bronze} />
                   <Text style={styles.podiumRank}>3</Text>
                 </View>
               </View>
@@ -741,7 +731,7 @@ const Leaderboard = () => {
             <Text style={styles.sectionSubtitle}>Shop more to increase your rank</Text>
 
             <Pressable
-              onPress={() => router.push('/mall' as unknown as string)}
+              onPress={() => router.push('/mall' as unknown)}
               accessibilityLabel="Browse mall"
               accessibilityRole="button"
             >
@@ -758,7 +748,7 @@ const Leaderboard = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push('/offers' as unknown as string)}
+              onPress={() => router.push('/offers' as unknown)}
               accessibilityLabel="View offers"
               accessibilityRole="button"
             >
@@ -775,7 +765,7 @@ const Leaderboard = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push('/referral' as unknown as string)}
+              onPress={() => router.push('/referral' as unknown)}
               accessibilityLabel="Refer friends"
               accessibilityRole="button"
             >
@@ -913,7 +903,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -949,7 +939,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.md,
   },
   sectionSubtitle: {
@@ -968,7 +958,7 @@ const styles = StyleSheet.create({
   prizeTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: Spacing.md,
     marginBottom: Spacing.base,
   },
@@ -1046,7 +1036,7 @@ const styles = StyleSheet.create({
   noRankTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
   },
@@ -1085,14 +1075,14 @@ const styles = StyleSheet.create({
     borderColor: COLORS.gold,
   },
   podiumSecond: {
-    backgroundColor: `${(COLORS as unknown as Record<string, string>).silver}30`,
+    backgroundColor: `${(COLORS as unknown).silver}30`,
     borderWidth: 2,
-    borderColor: (COLORS as unknown as Record<string, string>).silver,
+    borderColor: (COLORS as unknown).silver,
   },
   podiumThird: {
-    backgroundColor: `${(COLORS as unknown as Record<string, string>).bronze}30`,
+    backgroundColor: `${(COLORS as unknown).bronze}30`,
     borderWidth: 2,
-    borderColor: (COLORS as unknown as Record<string, string>).bronze,
+    borderColor: (COLORS as unknown).bronze,
   },
   podiumAvatarImage: {
     width: '100%',
@@ -1107,17 +1097,17 @@ const styles = StyleSheet.create({
   podiumAvatarText: {
     ...Typography.h2,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   podiumAvatarTextLarge: {
     fontSize: 32,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   podiumName: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 2,
   },
   podiumCoins: {
@@ -1136,7 +1126,7 @@ const styles = StyleSheet.create({
   podiumRank: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   entryCard: {
     flexDirection: 'row',
@@ -1211,7 +1201,7 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
   },
   userStats: {
@@ -1303,7 +1293,7 @@ const styles = StyleSheet.create({
   ctaTitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 2,
   },
   ctaDesc: {

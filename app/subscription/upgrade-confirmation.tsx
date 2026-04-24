@@ -122,12 +122,12 @@ function UpgradeConfirmationPage() {
         setProratedAmount(result.proratedAmount);
 
         // Navigate to the Razorpay payment hub for subscription upgrade payment
-        const razorpayOrderId = (result as unknown as Record<string, unknown>).razorpayOrderId;
-        const razorpayKeyId = (result as unknown as Record<string, unknown>).razorpayKeyId;
+        const razorpayOrderId = (result as unknown).razorpayOrderId;
+        const razorpayKeyId = (result as unknown).razorpayKeyId;
 
         if (razorpayOrderId) {
           router.push({
-            pathname: '/payment-razorpay' as unknown as string,
+            pathname: '/payment-razorpay' as unknown,
             params: {
               bookingType: 'subscription',
               razorpayOrderId,
@@ -210,10 +210,7 @@ function UpgradeConfirmationPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.brand.purpleLight, Colors.brand.purple] as unknown as string[]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple] as unknown} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -266,11 +263,7 @@ function UpgradeConfirmationPage() {
             {getUpgradeBenefits().map((benefit, index) => (
               <View key={index} style={styles.benefitRow}>
                 <View style={[styles.benefitIcon, { backgroundColor: `${benefit.color}20` }]}>
-                  <Ionicons
-                    name={benefit.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={20}
-                    color={benefit.color}
-                  />
+                  <Ionicons name={benefit.icon as unknown} size={20} color={benefit.color} />
                 </View>
                 <ThemedText style={styles.benefitText}>{benefit.text}</ThemedText>
               </View>

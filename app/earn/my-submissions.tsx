@@ -72,14 +72,14 @@ const TYPE_CONFIG = {
   reel: {
     icon: 'videocam' as const,
     label: 'Reel',
-    color: (COLORS as unknown as Record<string, string>).purple,
+    color: (COLORS as unknown).purple,
     bg: COLORS.purpleLight,
     gradient: ['#AF52DE', '#FF2D55'] as [string, string],
   },
   comment: {
     icon: 'chatbubble-ellipses' as const,
     label: 'Comment',
-    color: (COLORS as unknown as Record<string, string>).teal,
+    color: (COLORS as unknown).teal,
     bg: COLORS.tealLight,
     gradient: ['#5AC8FA', '#34AADC'] as [string, string],
   },
@@ -130,9 +130,7 @@ function MySubmissionsPage() {
             status: p.moderationStatus === 'approved' ? 'credited' : p.moderationStatus,
             coinsAwarded: p.coinsAwarded || 0,
             createdAt: p.createdAt,
-            thumbnail:
-              ((p as unknown as Record<string, unknown>).imageUrl as string | undefined) ||
-              ((p as unknown as Record<string, unknown>).thumbnailUrl as string | undefined),
+            thumbnail: (p as unknown).imageUrl || (p as unknown).thumbnailUrl,
           });
         }
       }
@@ -149,9 +147,7 @@ function MySubmissionsPage() {
             status: r.moderationStatus === 'approved' ? 'credited' : r.moderationStatus,
             coinsAwarded: 0,
             createdAt: r.createdAt,
-            thumbnail:
-              (r as unknown as Record<string, unknown>).thumbnailUrl ||
-              (r as unknown as Record<string, unknown>).coverImage,
+            thumbnail: (r as unknown).thumbnailUrl || (r as unknown).coverImage,
           });
         }
       }
@@ -341,10 +337,7 @@ function MySubmissionsPage() {
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
-      <LinearGradient
-        colors={[(COLORS as unknown as Record<string, string>).navy, COLORS.navyLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[(COLORS as unknown).navy, COLORS.navyLight]} style={styles.header}>
         {/* Nav bar */}
         <View style={styles.navBar}>
           <Pressable
@@ -450,7 +443,7 @@ function MySubmissionsPage() {
                   ? 'Upload photos, create reels, vote in polls, or comment on offers to earn coins!'
                   : 'Nothing here yet. Start contributing to earn rewards!'}
               </Text>
-              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as unknown as string)}>
+              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as unknown)}>
                 <Ionicons name="add-circle" size={18} color={COLORS.white} />
                 <Text style={styles.emptyCtaText}>Start Earning</Text>
               </Pressable>
@@ -552,7 +545,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   filterTabActive: {
-    backgroundColor: (COLORS as unknown as Record<string, string>).navy,
+    backgroundColor: (COLORS as unknown).navy,
   },
   filterTabText: {
     ...Typography.bodySmall,
@@ -661,7 +654,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     lineHeight: 19,
     marginBottom: 2,
   },
@@ -733,7 +726,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
@@ -747,7 +740,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: (COLORS as unknown as Record<string, string>).navy,
+    backgroundColor: (COLORS as unknown).navy,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,

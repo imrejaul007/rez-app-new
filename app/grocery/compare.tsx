@@ -5,17 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  Platform,
-  TextInput,
-  ImageSourcePropType,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Platform, TextInput } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -171,7 +161,7 @@ const GroceryComparePage: React.FC = () => {
       <View key={item.id} style={styles.compareCard}>
         {/* Product Header */}
         <View style={styles.productHeader}>
-          <CachedImage source={item.image as unknown as ImageSourcePropType} style={styles.productImage} />
+          <CachedImage source={item.image as unknown} style={styles.productImage} />
           <View style={styles.productInfo}>
             <Text style={styles.productName} numberOfLines={2}>
               {item.name}
@@ -204,17 +194,14 @@ const GroceryComparePage: React.FC = () => {
             <Pressable
               key={store.storeId}
               style={[styles.storeRow, index === 0 && styles.bestDealRow]}
-              onPress={() => router.push(`/MainStorePage?storeId=${store.storeId}` as unknown as string)}
+              onPress={() => router.push(`/MainStorePage?storeId=${store.storeId}` as unknown)}
             >
               {index === 0 && (
                 <View style={styles.bestDealBadge}>
                   <Text style={styles.bestDealText}>Best Price</Text>
                 </View>
               )}
-              <CachedImage
-                source={(store.storeLogo || '') as unknown as ImageSourcePropType}
-                style={styles.storeLogo}
-              />
+              <CachedImage source={(store.storeLogo || '') as unknown} style={styles.storeLogo} />
               <View style={styles.storeInfo}>
                 <Text style={styles.storeName}>{store.storeName}</Text>
                 <Text style={styles.deliveryTime}>{store.deliveryTime}</Text>
@@ -340,10 +327,10 @@ function getFallbackStores() {
 
 function getFallbackCompareItems(): CompareItem[] {
   const products = [
-    { name: 'Amul Butter 500g', image: undefined as unknown as ImageSourcePropType },
-    { name: 'Tata Salt 1kg', image: undefined as unknown as ImageSourcePropType },
-    { name: 'Fortune Oil 1L', image: undefined as unknown as ImageSourcePropType },
-    { name: 'Aashirvaad Atta 5kg', image: undefined as unknown as ImageSourcePropType },
+    { name: 'Amul Butter 500g', image: undefined as unknown },
+    { name: 'Tata Salt 1kg', image: undefined as unknown },
+    { name: 'Fortune Oil 1L', image: undefined as unknown },
+    { name: 'Aashirvaad Atta 5kg', image: undefined as unknown },
   ];
 
   const stores = getFallbackStores();
@@ -356,7 +343,7 @@ function getFallbackCompareItems(): CompareItem[] {
         storeName: store.name,
         storeLogo: store.logo,
         price: basePrice + storeIdx * 10, // G-02: deterministic fallback prices, no random
-        cashback: (store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback || 0,
+        cashback: (store as unknown).offers?.cashback || store.maxCashback || 0,
         deliveryTime: `${15 + storeIdx * 10}-${30 + storeIdx * 10} min`,
         inStock: true,
       }))

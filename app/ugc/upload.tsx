@@ -64,7 +64,7 @@ function UGCUploadScreen() {
     try {
       const ImagePicker = await getImagePicker();
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'mixed' as unknown as string,
+        mediaTypes: 'mixed' as unknown,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
@@ -354,12 +354,10 @@ function UGCUploadScreen() {
         <View style={styles.userInfo}>
           <View style={styles.userAvatarPlaceholder}>
             <ThemedText style={styles.userAvatarText}>
-              {(user?.profile as unknown as Record<string, unknown>)?.fullName?.charAt(0) || 'U'}
+              {(user?.profile as unknown)?.fullName?.charAt(0) || 'U'}
             </ThemedText>
           </View>
-          <ThemedText style={styles.userName}>
-            {(user?.profile as unknown as Record<string, unknown>)?.fullName || 'User'}
-          </ThemedText>
+          <ThemedText style={styles.userName}>{(user?.profile as unknown)?.fullName || 'User'}</ThemedText>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -70,7 +70,7 @@ function QuizPage() {
   };
 
   const handleViewChallenges = () => {
-    router.push('/gamification' as unknown as string);
+    router.push('/gamification' as unknown);
   };
 
   if (gameComplete) {

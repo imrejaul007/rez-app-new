@@ -151,11 +151,11 @@ function LockConfirmPage() {
   };
 
   const handleViewMyLocks = () => {
-    router.replace('/lock-deals/my-locks' as unknown as string);
+    router.replace('/lock-deals/my-locks' as unknown);
   };
 
   const handleGoHome = () => {
-    router.replace('/(tabs)' as unknown as string);
+    router.replace('/(tabs)' as unknown);
   };
 
   const formatDate = (dateStr: string) => {
@@ -206,7 +206,7 @@ function LockConfirmPage() {
               Your payment was received. If the lock doesn't appear in My Locks within a few minutes, please contact
               support.
             </ThemedText>
-            <Pressable style={styles.supportButton} onPress={() => router.push('/support' as unknown as string)}>
+            <Pressable style={styles.supportButton} onPress={() => router.push('/support' as unknown)}>
               <ThemedText style={styles.supportButtonText}>Contact Support</ThemedText>
             </Pressable>
             <Pressable style={styles.myLocksButton} onPress={handleViewMyLocks}>

@@ -518,7 +518,7 @@ function BillPaymentPage() {
           }}
         >
           <View style={[styles.billTypeIcon, { backgroundColor: type.color + '20' }]}>
-            <Ionicons name={type.icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={type.color} />
+            <Ionicons name={type.icon as unknown} size={24} color={type.color} />
           </View>
           <Text style={styles.billTypeName}>{type.label}</Text>
           {type.providerCount > 0 && <Text style={styles.billTypeCount}>{type.providerCount}</Text>}
@@ -545,11 +545,7 @@ function BillPaymentPage() {
             <CachedImage source={{ uri: provider.logo }} style={styles.providerLogo} contentFit="contain" />
           ) : (
             <View style={styles.providerIcon}>
-              <Ionicons
-                name={getBillTypeMeta(provider.type).icon as unknown as keyof typeof Ionicons.glyphMap}
-                size={20}
-                color={Colors.gold}
-              />
+              <Ionicons name={getBillTypeMeta(provider.type).icon as unknown} size={20} color={Colors.gold} />
             </View>
           )}
           <View style={{ flex: 1 }}>
@@ -578,7 +574,7 @@ function BillPaymentPage() {
       return (
         <Pressable style={styles.recentCard}>
           <View style={styles.recentIcon}>
-            <Ionicons name={meta.icon as unknown as keyof typeof Ionicons.glyphMap} size={20} color={Colors.gold} />
+            <Ionicons name={meta.icon as unknown} size={20} color={Colors.gold} />
           </View>
           <View style={styles.recentInfo}>
             <Text style={styles.recentType}>{meta.label}</Text>
@@ -669,7 +665,7 @@ function BillPaymentPage() {
               <View style={styles.emptyState}>
                 <View style={styles.emptyIcon}>
                   <Ionicons
-                    name={(typeMeta?.icon as unknown as string) || 'business-outline'}
+                    name={(typeMeta?.icon as unknown) || 'business-outline'}
                     size={28}
                     color={colors.text.secondary}
                   />

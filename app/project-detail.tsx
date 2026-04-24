@@ -144,7 +144,7 @@ function ProjectDetailPage() {
       const response = await apiClient.get<{ project: Project; similarProjects?: Project[] }>(`/projects/${projectId}`);
 
       if (response.success && response.data) {
-        const projectData = response.data.project || (response.data as unknown as Record<string, unknown>);
+        const projectData = response.data.project || (response.data as unknown);
         if (!isMounted()) return;
         setProject(projectData);
 
@@ -543,7 +543,7 @@ function ProjectDetailPage() {
                             submissionId: userSubmission._id,
                             projectId: projectId,
                           },
-                        } as unknown as string);
+                        } as unknown);
                       }}
                       accessible={true}
                       accessibilityLabel="View full submission details"

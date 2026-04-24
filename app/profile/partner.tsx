@@ -183,7 +183,7 @@ function PartnerProfilePage() {
 
         if (!isMounted()) return;
         setPartnerState({
-          profile: dashboardResponse.data.profile as unknown as Record<string, unknown>,
+          profile: dashboardResponse.data.profile as unknown,
           milestones: (dashboardResponse.data.milestones || []).map(normalizeMilestone),
           tasks: (dashboardResponse.data.tasks || []).map(normalizeTask),
           jackpotProgress: (dashboardResponse.data.jackpotProgress || []).map(normalizeJackpot),
@@ -223,7 +223,7 @@ function PartnerProfilePage() {
               daysRemaining: 0,
               validUntil: '',
               currentBenefits: [],
-            } as unknown as Record<string, unknown>,
+            } as unknown,
             milestones: [],
             tasks: [],
             jackpotProgress: [],
@@ -308,7 +308,7 @@ function PartnerProfilePage() {
   };
 
   const handleGoBack = () => {
-    goBack('/profile' as unknown as string);
+    goBack('/profile' as unknown);
   };
 
   const handleClaimReward = async (milestoneId: string) => {
@@ -383,7 +383,7 @@ function PartnerProfilePage() {
   };
 
   const handleContactSupport = () => {
-    router.push('/support/chat' as unknown as string);
+    router.push('/support/chat' as unknown);
   };
 
   const handleJackpotMilestonePress = async (milestone: JackpotMilestone) => {
@@ -396,8 +396,7 @@ function PartnerProfilePage() {
     }
 
     if (!milestone.achieved) {
-      const remaining =
-        (milestone.spendAmount ?? 0) - ((partnerState.profile as unknown as Record<string, unknown>)?.totalSpent || 0);
+      const remaining = (milestone.spendAmount ?? 0) - ((partnerState.profile as unknown)?.totalSpent || 0);
       platformAlertSimple(
         milestone.title,
         `${milestone.description}\n\nSpend ${currencySymbol}${remaining.toLocaleString()} more to unlock this jackpot!`,
@@ -643,7 +642,7 @@ function PartnerProfilePage() {
           <Pressable
             style={styles.menuButton}
             onPress={() => {
-              router.push('/profile/activity' as unknown as string);
+              router.push('/profile/activity' as unknown);
             }}
           >
             <View style={styles.menuButtonInner}>
@@ -718,7 +717,7 @@ function PartnerProfilePage() {
               <View style={styles.statItem}>
                 <Text style={styles.statValue}>
                   {currencySymbol}
-                  {(profile as unknown as Record<string, unknown>)?.totalSpent?.toLocaleString() || '0'}
+                  {(profile as unknown)?.totalSpent?.toLocaleString() || '0'}
                 </Text>
                 <Text style={styles.statLabel}>Spent</Text>
               </View>
@@ -881,7 +880,7 @@ function PartnerProfilePage() {
         {/* Jackpot Timeline */}
         <JackpotTimeline
           milestones={partnerState.jackpotProgress}
-          currentSpent={(profile as unknown as Record<string, unknown>)?.totalSpent || 0}
+          currentSpent={(profile as unknown)?.totalSpent || 0}
           onMilestonePress={handleJackpotMilestonePress}
         />
 

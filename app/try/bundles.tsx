@@ -96,7 +96,7 @@ export default function BundlesScreen() {
         bundleId: purchaseModal.bundle.id,
         amount: purchaseModal.bundle.price,
       });
-      const order = (orderResp as unknown as Record<string, unknown>).data || orderResp;
+      const order = (orderResp as unknown).data || orderResp;
 
       // Open Razorpay checkout
       try {

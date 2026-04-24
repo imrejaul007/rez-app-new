@@ -56,7 +56,7 @@ function MessagesIndexPage() {
           page,
           limit: 20,
           search: searchQuery || undefined,
-          status: activeFilter === 'all' ? undefined : (activeFilter as unknown as string),
+          status: activeFilter === 'all' ? undefined : (activeFilter as unknown),
         };
 
         const response = await storeMessagingService.getConversations(filter);

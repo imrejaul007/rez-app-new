@@ -6,17 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  Platform,
-  TextInput,
-  ImageSourcePropType,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Platform, TextInput } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -150,22 +140,20 @@ const GroceryStoresPage: React.FC = () => {
       <Pressable
         key={storeId}
         style={styles.featuredCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown)}
       >
-        <CachedImage source={store.banner || store.logo || ('' as unknown as string)} style={styles.featuredImage} />
+        <CachedImage source={store.banner || store.logo || ('' as unknown)} style={styles.featuredImage} />
         <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.featuredOverlay}>
-          {((store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback) &&
-            ((store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback) > 0 && (
+          {((store as unknown).offers?.cashback || store.maxCashback) &&
+            ((store as unknown).offers?.cashback || store.maxCashback) > 0 && (
               <View style={styles.cashbackBadge}>
                 <Text style={styles.cashbackText}>
-                  {(store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback}% Cashback
+                  {(store as unknown).offers?.cashback || store.maxCashback}% Cashback
                 </Text>
               </View>
             )}
           <View style={styles.featuredContent}>
-            {store.logo && (
-              <CachedImage source={store.logo as unknown as ImageSourcePropType} style={styles.storeLogo} />
-            )}
+            {store.logo && <CachedImage source={store.logo as unknown} style={styles.storeLogo} />}
             <View style={styles.featuredInfo}>
               <Text style={styles.featuredName} numberOfLines={1}>
                 {store.name}
@@ -207,15 +195,13 @@ const GroceryStoresPage: React.FC = () => {
       <Pressable
         key={storeId}
         style={styles.storeCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown)}
       >
-        <CachedImage source={store.logo || store.banner || ('' as unknown as string)} style={styles.storeImage} />
-        {((store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback) &&
-          ((store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback) > 0 && (
+        <CachedImage source={store.logo || store.banner || ('' as unknown)} style={styles.storeImage} />
+        {((store as unknown).offers?.cashback || store.maxCashback) &&
+          ((store as unknown).offers?.cashback || store.maxCashback) > 0 && (
             <View style={styles.storeCashbackBadge}>
-              <Text style={styles.storeCashbackText}>
-                {(store as unknown as Record<string, unknown>).offers?.cashback || store.maxCashback}%
-              </Text>
+              <Text style={styles.storeCashbackText}>{(store as unknown).offers?.cashback || store.maxCashback}%</Text>
             </View>
           )}
         <View style={styles.storeInfo}>
@@ -316,7 +302,7 @@ const GroceryStoresPage: React.FC = () => {
               onPress={() => setSelectedFilter(filter.key)}
             >
               <Ionicons
-                name={filter.icon as unknown as keyof typeof Ionicons.glyphMap}
+                name={filter.icon as unknown}
                 size={16}
                 color={selectedFilter === filter.key ? colors.background.primary : colors.neutral[500]}
               />

@@ -113,7 +113,7 @@ function DealsIndexPage() {
             </Text>
           </View>
           <Pressable
-            onPress={() => router.push('/bonus-zone' as unknown as string)}
+            onPress={() => router.push('/bonus-zone' as unknown)}
             style={{
               backgroundColor: 'rgba(255,255,255,0.15)',
               borderRadius: 20,
@@ -151,11 +151,7 @@ function DealsIndexPage() {
                   backgroundColor: isActive ? colors.nileBlue : '#F1F5F9',
                 }}
               >
-                <Ionicons
-                  name={tab.icon as unknown as keyof typeof Ionicons.glyphMap}
-                  size={13}
-                  color={isActive ? '#fff' : '#64748b'}
-                />
+                <Ionicons name={tab.icon as unknown} size={13} color={isActive ? '#fff' : '#64748b'} />
                 <Text
                   style={{
                     fontSize: 12,
@@ -229,7 +225,7 @@ function DealsIndexPage() {
               {featuredCampaigns.map((campaign) => (
                 <Pressable
                   key={campaign._id}
-                  onPress={() => router.push(`/deals/${campaign._id}` as unknown as string)}
+                  onPress={() => router.push(`/deals/${campaign._id}` as unknown)}
                   style={{
                     backgroundColor: '#fff',
                     borderRadius: 14,

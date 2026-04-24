@@ -200,7 +200,7 @@ const CategoryDetailPage = () => {
   const categoryEmoji = getEmojiForCategory(categoryInfo?.icon, categoryInfo?.name);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as unknown);
   };
 
   return (
@@ -330,8 +330,8 @@ const CategoryDetailPage = () => {
               >
                 {store.image ? (
                   <CachedImage source={store.image} style={styles.storeImage} />
-                ) : (store as unknown as Record<string, unknown>).logo ? (
-                  <CachedImage source={(store as unknown as Record<string, unknown>).logo} style={styles.storeImage} />
+                ) : (store as unknown).logo ? (
+                  <CachedImage source={(store as unknown).logo} style={styles.storeImage} />
                 ) : (
                   <View style={[styles.storeImage, styles.storeImagePlaceholder]}>
                     <Text style={styles.storeInitial}>{store.name?.charAt(0) || 'S'}</Text>

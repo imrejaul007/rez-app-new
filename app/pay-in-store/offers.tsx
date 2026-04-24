@@ -348,11 +348,7 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
       <View style={styles.offerCardContent}>
         {/* Source Badge */}
         <View style={[styles.sourceBadge, { backgroundColor: getSourceColor(offer.source) + '20' }]}>
-          <Ionicons
-            name={getSourceIcon(offer.source) as unknown as keyof typeof Ionicons.glyphMap}
-            size={14}
-            color={getSourceColor(offer.source)}
-          />
+          <Ionicons name={getSourceIcon(offer.source) as unknown} size={14} color={getSourceColor(offer.source)} />
           <Text style={[styles.sourceBadgeText, { color: getSourceColor(offer.source) }]}>{offer.source}</Text>
         </View>
 

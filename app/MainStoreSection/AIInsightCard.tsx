@@ -1,17 +1,11 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // AIInsightCard.tsx - AI-powered savings insight card
 import { colors } from '@/constants/theme';
-import React from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Spacing,
-  BorderRadius,
-} from "@/constants/DesignSystem";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 
 export interface AIInsightCardProps {
   insightText?: string;
@@ -19,8 +13,8 @@ export interface AIInsightCardProps {
 }
 
 function AIInsightCard({
-  insightText = "You usually save more here on weekends",
-  bestTimeToVisit = "7-9pm",
+  insightText = 'You usually save more here on weekends',
+  bestTimeToVisit = '7-9pm',
 }: AIInsightCardProps) {
   return (
     <View style={styles.container}>
@@ -35,9 +29,7 @@ function AIInsightCard({
           <ThemedText style={styles.title}>AI Insight</ThemedText>
           <ThemedText style={styles.insightText}>{insightText}</ThemedText>
           {bestTimeToVisit && (
-            <ThemedText style={styles.bestTimeText}>
-              Best time to visit: {bestTimeToVisit}
-            </ThemedText>
+            <ThemedText style={styles.bestTimeText}>Best time to visit: {bestTimeToVisit}</ThemedText>
           )}
         </View>
       </View>
@@ -51,40 +43,40 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   card: {
-    flexDirection: "row",
-    backgroundColor: "rgba(155, 89, 182, 0.08)",
+    flexDirection: 'row',
+    backgroundColor: 'rgba(155, 89, 182, 0.08)',
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
     gap: Spacing.md,
   },
   iconContainer: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "rgba(155, 89, 182, 0.12)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(155, 89, 182, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,
   },
   title: {
     fontSize: 14,
-    fontWeight: "700",
-    color: "#9B59B6",
+    fontWeight: '700',
+    color: '#9B59B6',
     marginBottom: 4,
   },
   insightText: {
     fontSize: 14,
-    color: "#333333",
+    color: '#333333',
     lineHeight: 20,
   },
   bestTimeText: {
     fontSize: 13,
     color: colors.midGray,
     marginTop: 6,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });
 

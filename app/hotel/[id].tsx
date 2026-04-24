@@ -165,7 +165,7 @@ function HotelDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown as Record<string, unknown>;
+      const productData = response.data as unknown;
 
       // Check if this is a hotel service
       const isHotel =
@@ -181,7 +181,7 @@ function HotelDetailsPage() {
 
       // Helper to read from specifications array
       const specs = productData.specifications || [];
-      const getSpec = (key: string) => specs.find((s: Record<string, unknown>) => s.key === key)?.value || '';
+      const getSpec = (key: string) => specs.find((s: any) => s.key === key)?.value || '';
 
       // Location: prefer specs, fallback to name parsing
       const specCity = getSpec('location') || getSpec('city');
@@ -280,15 +280,9 @@ function HotelDetailsPage() {
             return [];
           }
           const processedImages = productData.images
-            .map((img: unknown) => {
+            .map((img: any) => {
               if (typeof img === 'string') return img.trim();
-              if (img && typeof img === 'object')
-                return (
-                  (img as Record<string, unknown>).url ||
-                  (img as Record<string, unknown>).uri ||
-                  (img as Record<string, unknown>).src ||
-                  null
-                );
+              if (img && typeof img === 'object') return img.url || img.uri || img.src || null;
               return null;
             })
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
@@ -325,9 +319,7 @@ function HotelDetailsPage() {
         cancellationPolicy: {
           freeCancellation:
             productData.specifications?.some(
-              (s: Record<string, unknown>) =>
-                (s.key as string)?.toLowerCase().includes('cancellation') &&
-                (s.value as string)?.toLowerCase().includes('free'),
+              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
             ) || true,
           cancellationDeadline: '24',
           refundPercentage: 80,
@@ -338,7 +330,7 @@ function HotelDetailsPage() {
 
       if (!isMounted()) return;
       setHotel(hotelDetails);
-    } catch (error: unknown) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setError('Failed to load hotel details. Please try again.');
     } finally {
@@ -352,17 +344,17 @@ function HotelDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown as Record<string, unknown>).requiresPayment) {
+    if ((data as unknown).requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as string).totalAmount,
+          amount: (data as unknown).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown as Record<string, unknown>);
+      } as unknown);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -382,9 +374,9 @@ function HotelDetailsPage() {
       if (isInWishlist(hotel.id)) {
         await removeFromWishlist(hotel.id);
       } else {
-        await addToWishlist(hotel.id as unknown as string);
+        await addToWishlist(hotel.id as unknown);
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
       // silently handle
     }
   };
@@ -429,7 +421,7 @@ function HotelDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl as unknown as string}
+                  source={imageUrl as unknown}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => {
@@ -534,7 +526,7 @@ function HotelDetailsPage() {
               </View>
               <Pressable
                 style={styles.viewStoreButton}
-                onPress={() => router.push(`/MainStorePage?storeId=${hotel.store.id}` as unknown as string)}
+                onPress={() => router.push(`/MainStorePage?storeId=${hotel.store.id}` as unknown)}
               >
                 <Text style={styles.viewStoreButtonText}>View</Text>
                 <Ionicons name="chevron-forward" size={16} color={colors.brand.pink} />

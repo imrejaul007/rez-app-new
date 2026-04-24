@@ -62,19 +62,19 @@ interface PastGoal {
 // ---------------------------------------------------------------------------
 async function fetchCurrentGoal(): Promise<SavingsGoal | null> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/goals/current')) as { data: { data: SavingsGoal | null } };
+  const res = (await apiService.get('/goals/current')) as unknown;
   return res.data?.data ?? null;
 }
 
 async function fetchGoalHistory(): Promise<PastGoal[]> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/goals/history?limit=6')) as { data: { data: PastGoal[] } };
+  const res = (await apiService.get('/goals/history?limit=6')) as unknown;
   return res.data?.data ?? [];
 }
 
 async function saveGoal(targetAmount: number): Promise<SavingsGoal> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.post('/goals', { targetAmount })) as { data: { data: SavingsGoal } };
+  const res = (await apiService.post('/goals', { targetAmount })) as unknown;
   return res.data?.data ?? res.data;
 }
 
@@ -461,7 +461,7 @@ function SavingsGoalsScreen() {
                   style={[
                     styles.linearFill,
                     {
-                      width: `${Math.min(100, goal.progressPct)}%` as unknown as string,
+                      width: `${Math.min(100, goal.progressPct)}%` as unknown,
                       backgroundColor: goal.isAchieved ? '#10b981' : '#1a3a52',
                     },
                   ]}
@@ -504,7 +504,7 @@ function SavingsGoalsScreen() {
                       style={[
                         styles.historyBarFill,
                         {
-                          width: `${item.progressPct}%` as unknown as string,
+                          width: `${item.progressPct}%` as unknown,
                           backgroundColor: item.isAchieved ? '#10b981' : '#1a3a52',
                         },
                       ]}

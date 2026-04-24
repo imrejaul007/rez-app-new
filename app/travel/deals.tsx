@@ -82,19 +82,19 @@ const HotDealsPage: React.FC = () => {
 
     // Route to appropriate detail page based on category
     if (category === 'flights') {
-      router.push(`/flight/${serviceId}` as unknown as string);
+      router.push(`/flight/${serviceId}` as unknown);
     } else if (category === 'hotels') {
-      router.push(`/hotel/${serviceId}` as unknown as string);
+      router.push(`/hotel/${serviceId}` as unknown);
     } else if (category === 'trains') {
-      router.push(`/train/${serviceId}` as unknown as string);
+      router.push(`/train/${serviceId}` as unknown);
     } else if (category === 'bus') {
-      router.push(`/bus/${serviceId}` as unknown as string);
+      router.push(`/bus/${serviceId}` as unknown);
     } else if (category === 'cab') {
-      router.push(`/cab/${serviceId}` as unknown as string);
+      router.push(`/cab/${serviceId}` as unknown);
     } else if (category === 'packages') {
-      router.push(`/package/${serviceId}` as unknown as string);
+      router.push(`/package/${serviceId}` as unknown);
     } else {
-      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown as string);
+      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown);
     }
   };
 
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
     minHeight: 40,
   },
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   dealCategory: {
     ...Typography.caption,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

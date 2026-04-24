@@ -161,11 +161,7 @@ export default function CampaignsScreen() {
 
           {/* Goal */}
           <View style={styles.goalSection}>
-            <Ionicons
-              name={'target' as unknown as keyof typeof Ionicons.glyphMap}
-              size={16}
-              color={colors.text.secondary}
-            />
+            <Ionicons name={'target' as unknown} size={16} color={colors.text.secondary} />
             <Text style={styles.goalText}>{item.goal}</Text>
           </View>
 

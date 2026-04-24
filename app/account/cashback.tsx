@@ -368,7 +368,7 @@ function CashbackPage() {
             <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Track Cashback</Text>
-          <Pressable onPress={() => router.push('/wallet' as unknown as string)} style={styles.walletButton}>
+          <Pressable onPress={() => router.push('/wallet' as unknown)} style={styles.walletButton}>
             <Ionicons name="wallet-outline" size={18} color={colors.nileBlue} />
           </Pressable>
         </View>
@@ -702,7 +702,7 @@ function CashbackPage() {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Double Cashback</Text>
-                  <Pressable onPress={() => router.push('/offers/double-cashback' as unknown as string)}>
+                  <Pressable onPress={() => router.push('/offers/double-cashback' as unknown)}>
                     <Text style={styles.seeAllText}>See All</Text>
                   </Pressable>
                 </View>
@@ -743,31 +743,25 @@ function CashbackPage() {
 
             {/* ─── Quick Actions ─────────────────────────────────── */}
             <View style={styles.quickActions}>
-              <Pressable style={styles.quickAction} onPress={() => router.push('/wallet' as unknown as string)}>
+              <Pressable style={styles.quickAction} onPress={() => router.push('/wallet' as unknown)}>
                 <View style={[styles.quickActionIcon, { backgroundColor: Colors.success + '1A' }]}>
                   <Ionicons name="wallet-outline" size={18} color={Colors.success} />
                 </View>
                 <Text style={styles.quickActionLabel}>My Wallet</Text>
               </Pressable>
-              <Pressable
-                style={styles.quickAction}
-                onPress={() => router.push('/cash-store/offers' as unknown as string)}
-              >
+              <Pressable style={styles.quickAction} onPress={() => router.push('/cash-store/offers' as unknown)}>
                 <View style={[styles.quickActionIcon, { backgroundColor: Colors.warning + '1A' }]}>
                   <Ionicons name="flash-outline" size={18} color={Colors.warning} />
                 </View>
                 <Text style={styles.quickActionLabel}>Offers</Text>
               </Pressable>
-              <Pressable style={styles.quickAction} onPress={() => router.push('/my-vouchers' as unknown as string)}>
+              <Pressable style={styles.quickAction} onPress={() => router.push('/my-vouchers' as unknown)}>
                 <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(139,92,246,0.1)' }]}>
                   <Ionicons name="ticket-outline" size={18} color={colors.brand.purpleLight} />
                 </View>
                 <Text style={styles.quickActionLabel}>Vouchers</Text>
               </Pressable>
-              <Pressable
-                style={styles.quickAction}
-                onPress={() => router.push('/account/coupons' as unknown as string)}
-              >
+              <Pressable style={styles.quickAction} onPress={() => router.push('/account/coupons' as unknown)}>
                 <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(232,184,150,0.15)' }]}>
                   <Ionicons name="pricetag-outline" size={18} color={colors.brand.sand} />
                 </View>
@@ -880,7 +874,7 @@ const SummaryCard = React.memo(
     <View style={[styles.summaryCard, { borderLeftColor: color, borderLeftWidth: 3 }]}>
       <View style={styles.summaryTop}>
         <View style={[styles.summaryIconWrap, { backgroundColor: `${color}15` }]}>
-          <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={16} color={color} />
+          <Ionicons name={icon as unknown} size={16} color={color} />
         </View>
         <Text style={[styles.summaryCountBadge, { color }]}>{count}</Text>
       </View>
@@ -928,11 +922,7 @@ const CashbackHistoryCard = React.memo(
       <Animated.View style={[styles.historyCard, fadeAnimStyle]}>
         {/* Source icon */}
         <View style={[styles.historyIcon, { backgroundColor: `${statusColor}12` }]}>
-          <Ionicons
-            name={getSourceIcon(cashback.source) as unknown as keyof typeof Ionicons.glyphMap}
-            size={20}
-            color={statusColor}
-          />
+          <Ionicons name={getSourceIcon(cashback.source) as unknown} size={20} color={statusColor} />
         </View>
 
         {/* Info */}

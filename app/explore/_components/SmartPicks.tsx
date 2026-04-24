@@ -41,9 +41,7 @@ const SmartPicks = () => {
       setError(null);
       // Fetch products for smart picks
       const response = await exploreApi.getProducts({ limit: 12 });
-      const productsData =
-        (response.data as unknown as Record<string, unknown>)?.products ||
-        (Array.isArray(response.data) ? response.data : []);
+      const productsData = (response.data as unknown)?.products || (Array.isArray(response.data) ? response.data : []);
       if (response.success && productsData.length > 0) {
         // Group products into categories
         const products = productsData;
@@ -85,7 +83,7 @@ const SmartPicks = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as unknown);
   };
 
   // Loading state
@@ -147,11 +145,7 @@ const SmartPicks = () => {
               {/* Category Header */}
               <View style={styles.pickHeader}>
                 <View style={[styles.iconBadge, { backgroundColor: category.color + '20' }]}>
-                  <Ionicons
-                    name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={20}
-                    color={category.color}
-                  />
+                  <Ionicons name={category.icon as unknown} size={20} color={category.color} />
                 </View>
                 <Text style={styles.pickTitle}>{category.title}</Text>
               </View>

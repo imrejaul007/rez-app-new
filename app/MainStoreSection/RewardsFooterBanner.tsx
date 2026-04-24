@@ -1,14 +1,11 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // RewardsFooterBanner.tsx - Premium glassy footer banner
-import React from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { Spacing } from "@/constants/DesignSystem";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { Spacing } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
@@ -18,7 +15,7 @@ export interface RewardsFooterBannerProps {
 }
 
 function RewardsFooterBanner({
-  message = "This store rewards you for shopping smarter",
+  message = 'This store rewards you for shopping smarter',
   subMessage = `— only on ${BRAND.APP_NAME}.`,
 }: RewardsFooterBannerProps) {
   return (

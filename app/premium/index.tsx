@@ -52,9 +52,7 @@ function PremiumScreen() {
   const fetchSubscriptionStatus = useCallback(async () => {
     try {
       const response = await apiClient.get('/user/subscription');
-      const data =
-        (response.data as unknown as Record<string, unknown>)?.data ??
-        (response.data as unknown as Record<string, unknown>);
+      const data = (response.data as unknown)?.data ?? (response.data as unknown);
       if (!isMounted()) return;
       setSubscriptionStatus({
         isActive: data?.isActive ?? data?.status === 'active' ?? false,
@@ -94,7 +92,7 @@ function PremiumScreen() {
   }, [subscribing, isMounted]);
 
   const handleCancel = useCallback(() => {
-    router.push('/subscription/cancel-feedback' as unknown as string);
+    router.push('/subscription/cancel-feedback' as unknown);
   }, [router]);
 
   if (loading) {
@@ -112,7 +110,7 @@ function PremiumScreen() {
       {/* Header */}
       <LinearGradient colors={[NAVY, '#1A2E4A']} style={styles.headerGradient}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown as string))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />

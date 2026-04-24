@@ -72,7 +72,7 @@ function ViewAllOffersScreen() {
       if (response.success && response.data) {
         const points =
           response.data.userEngagement?.userPoints ||
-          (response.data as unknown as Record<string, unknown>).userPoints ||
+          (response.data as unknown).userPoints ||
           user?.wallet?.balance ||
           0;
         if (!isMounted()) return;
@@ -118,7 +118,7 @@ function ViewAllOffersScreen() {
         }
 
         if (response.success && response.data) {
-          const responseData = response.data as unknown as Record<string, unknown>;
+          const responseData = response.data as unknown;
           let offers: Offer[] = [];
 
           // Handle both paginated and array responses
@@ -171,7 +171,7 @@ function ViewAllOffersScreen() {
         } else {
           if (pageNum === 1) {
             if (!isMounted()) return;
-            setError((response as unknown as Record<string, unknown>).message || 'Failed to load offers');
+            setError((response as unknown).message || 'Failed to load offers');
           }
           if (!isMounted()) return;
           setHasMore(false);
@@ -240,7 +240,7 @@ function ViewAllOffersScreen() {
 
   const handleOfferPress = useCallback(
     (offer: Offer) => {
-      router.push(`/offers/${offer._id}` as unknown as string);
+      router.push(`/offers/${offer._id}` as unknown);
     },
     [router],
   );

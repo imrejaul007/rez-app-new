@@ -98,7 +98,7 @@ function GamesPage() {
   return (
     <FeatureErrorBoundary
       featureName="Games Hub"
-      onSecondaryAction={() => router.push('/' as unknown as string)}
+      onSecondaryAction={() => router.push('/' as unknown)}
       secondaryActionLabel="Back to Home"
       secondaryActionIcon="home"
       onReset={() => loadData()}
@@ -106,7 +106,7 @@ function GamesPage() {
       <Stack.Screen
         options={{
           title: 'Games',
-          headerStyle: { backgroundColor: (COLORS as unknown as Record<string, string>).navy },
+          headerStyle: { backgroundColor: (COLORS as unknown).navy },
           headerTintColor: colors.text.inverse,
           headerTitleStyle: { fontWeight: 'bold' },
         }}
@@ -128,7 +128,7 @@ function GamesPage() {
         }
       >
         {/* Header Stats */}
-        <LinearGradient colors={[(COLORS as unknown as Record<string, string>).navy, '#234B6B']} style={styles.header}>
+        <LinearGradient colors={[(COLORS as unknown).navy, '#234B6B']} style={styles.header}>
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.headerTitle}>Play & Earn</Text>
@@ -136,7 +136,7 @@ function GamesPage() {
             </View>
             <Pressable
               style={styles.coinsBadge}
-              onPress={() => router.push('/wallet' as unknown as string)}
+              onPress={() => router.push('/wallet' as unknown)}
               accessibilityRole="button"
               accessibilityLabel={`Your coins balance: ${userCoins.toLocaleString()}. Tap to view wallet`}
             >
@@ -190,7 +190,7 @@ function GamesPage() {
                 return (
                   <Pressable
                     key={game.id}
-                    onPress={() => router.push(game.path as unknown as string)}
+                    onPress={() => router.push(game.path as unknown)}
                     accessibilityRole="button"
                     accessibilityLabel={
                       isExhausted
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 14,
   },
   gamesGrid: {
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   gameTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 2,
   },
   gameDescription: {

@@ -176,12 +176,10 @@ function AnalyticsScreen() {
         {data.pillarMomentum && (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Pillar Momentum</Text>
-            {Object.entries(data.pillarMomentum).map(([pillarId, info]: [string, Record<string, unknown>]) => {
+            {Object.entries(data.pillarMomentum).map(([pillarId, info]: [string, any]) => {
               const pillarConfig = Object.values(PILLAR_CONFIG).find(
-                (p: unknown) =>
-                  (p as Record<string, unknown>).id === pillarId ||
-                  (p as Record<string, unknown>).label?.toLowerCase().includes(pillarId.toLowerCase()),
-              ) as unknown as Record<string, unknown>;
+                (p: any) => p.id === pillarId || p.label?.toLowerCase().includes(pillarId.toLowerCase()),
+              ) as unknown;
               const color = pillarConfig?.color || PRIVE_COLORS.text.secondary;
               return (
                 <View key={pillarId} style={styles.pillarRow}>

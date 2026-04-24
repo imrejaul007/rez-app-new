@@ -159,12 +159,12 @@ function ShopPage() {
           // Try API first
           const response = await categoryMetadataApi.getVibes(categorySlug);
           if (response.success && response.data?.vibes) {
-            const vibe = response.data.vibes.find((v: Record<string, unknown>) => v.id === vibeId);
+            const vibe = response.data.vibes.find((v: any) => v.id === vibeId);
             if (vibe) {
               setFilterTitle(vibe.name);
               setFilterSubtitle(vibe.description || '');
               setFilterIcon(vibe.icon || '');
-              setFilterColor((vibe.color || COLORS.primaryGreen) as unknown as string);
+              setFilterColor((vibe.color || COLORS.primaryGreen) as unknown);
               return;
             }
           }
@@ -175,18 +175,18 @@ function ShopPage() {
             setFilterTitle(vibe.name);
             setFilterSubtitle(vibe.description || '');
             setFilterIcon(vibe.icon || '');
-            setFilterColor((vibe.color || COLORS.primaryGreen) as unknown as string);
+            setFilterColor((vibe.color || COLORS.primaryGreen) as unknown);
           }
         } else if (occasionId && categorySlug) {
           // Try API first
           const response = await categoryMetadataApi.getOccasions(categorySlug);
           if (response.success && response.data?.occasions) {
-            const occasion = response.data.occasions.find((o: Record<string, unknown>) => o.id === occasionId);
+            const occasion = response.data.occasions.find((o: any) => o.id === occasionId);
             if (occasion) {
               setFilterTitle(occasion.name);
               setFilterSubtitle(`Up to ${occasion.discount}% off`);
               setFilterIcon(occasion.icon || '');
-              setFilterColor((occasion.color || COLORS.primaryGreen) as unknown as string);
+              setFilterColor((occasion.color || COLORS.primaryGreen) as unknown);
               return;
             }
           }
@@ -197,13 +197,13 @@ function ShopPage() {
             setFilterTitle(occasion.name);
             setFilterSubtitle(`Up to ${occasion.discount}% off`);
             setFilterIcon(occasion.icon || '');
-            setFilterColor((occasion.color || COLORS.primaryGreen) as unknown as string);
+            setFilterColor((occasion.color || COLORS.primaryGreen) as unknown);
           }
         } else if (categorySlug) {
           if (!isMounted()) return;
           setFilterTitle(categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()));
         }
-      } catch (error: unknown) {
+      } catch (error: any) {
         // Use fallback data on error
         if (vibeId && categorySlug) {
           const vibes = getVibesForCategory(categorySlug);
@@ -271,10 +271,10 @@ function ShopPage() {
 
           if (isRefresh) {
             if (!isMounted()) return;
-            setProducts(newProducts as unknown as Product[]);
+            setProducts(newProducts as unknown);
           } else {
             if (!isMounted()) return;
-            setProducts((prev: Product[]) => [...prev, ...newProducts]);
+            setProducts((prev: any) => [...prev, ...newProducts]);
           }
 
           // Stop pagination if fewer than limit products returned
@@ -285,7 +285,7 @@ function ShopPage() {
           if (!isMounted()) return;
           setHasMore(false);
         }
-      } catch (error: unknown) {
+      } catch (error: any) {
         // Stop pagination on error to prevent infinite loop
         if (!isMounted()) return;
         setHasMore(false);
@@ -324,7 +324,7 @@ function ShopPage() {
   const handleProductPress = useCallback(
     (product: Product) => {
       const productId = product._id || product.id;
-      router.push(`/product-page?cardId=${productId}&cardType=product` as unknown as string);
+      router.push(`/product-page?cardId=${productId}&cardType=product` as unknown);
     },
     [router],
   );
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   filterTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
     lineHeight: 18,
   },
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   originalPrice: {
     ...Typography.bodySmall,
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

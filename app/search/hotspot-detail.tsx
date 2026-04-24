@@ -52,13 +52,13 @@ function HotspotDetailPage() {
       try {
         const response = await apiClient.get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 });
         if (response.success && response.data) {
-          const data = response.data as unknown as Record<string, unknown>;
+          const data = response.data as unknown;
           setOffers(Array.isArray(data.offers) ? data.offers : Array.isArray(data) ? data : []);
         } else {
           if (!isMounted()) return;
           setOffers([]);
         }
-      } catch (err: unknown) {
+      } catch (err: any) {
         if (!isMounted()) return;
         setError('Failed to load offers. Please try again.');
       } finally {
@@ -101,10 +101,7 @@ function HotspotDetailPage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[colors.nileBlue, (colors as unknown as Record<string, string>).nileBlueLight || '#243f55']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.nileBlue, (colors as unknown).nileBlueLight || '#243f55']} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
@@ -156,13 +153,9 @@ function HotspotDetailPage() {
               setError(null);
               apiClient
                 .get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 })
-                .then((r: Record<string, unknown>) => {
-                  const data = r.data as unknown as Record<string, unknown>;
-                  setOffers(
-                    Array.isArray((data as Record<string, unknown>)?.offers)
-                      ? ((data as Record<string, unknown>).offers as unknown as OfferFromAPI[])
-                      : [],
-                  );
+                .then((r: any) => {
+                  const data = r.data as unknown;
+                  setOffers(Array.isArray(data?.offers) ? data.offers : []);
                 })
                 .catch(() => setError('Failed to load offers.'))
                 .finally(() => setLoading(false));

@@ -84,7 +84,7 @@ function TrialDetailScreen() {
 
         // Fetch trial details from API
         const trialDetails = await tryApi.getTrialDetails(trialId);
-        setTrial(trialDetails as unknown as Record<string, unknown>);
+        setTrial(trialDetails as unknown);
 
         // Fetch coin balance
         const coinsData = await tryApi.getCoins();

@@ -187,10 +187,7 @@ function TicketsPage() {
       const lastMessage = ticket.messages?.[ticket.messages.length - 1];
 
       return (
-        <Pressable
-          style={styles.ticketCard}
-          onPress={() => router.push(`/support/ticket/${ticket._id}` as unknown as string)}
-        >
+        <Pressable style={styles.ticketCard} onPress={() => router.push(`/support/ticket/${ticket._id}` as unknown)}>
           <View style={styles.ticketHeader}>
             <View style={styles.ticketTitleRow}>
               <ThemedText style={styles.ticketNumber}>{ticket.ticketNumber}</ThemedText>
@@ -262,10 +259,7 @@ function TicketsPage() {
             ? `You don't have any ${activeFilter.replace(/_/g, ' ')} tickets.`
             : "You haven't created any support tickets yet."}
         </ThemedText>
-        <Pressable
-          style={styles.emptyButton}
-          onPress={() => router.push('/support/create-ticket' as unknown as string)}
-        >
+        <Pressable style={styles.emptyButton} onPress={() => router.push('/support/create-ticket' as unknown)}>
           <Ionicons name="add-circle-outline" size={20} color={colors.background.primary} />
           <ThemedText style={styles.emptyButtonText}>Create Ticket</ThemedText>
         </Pressable>
@@ -290,10 +284,7 @@ function TicketsPage() {
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>My Tickets</ThemedText>
-            <Pressable
-              style={styles.addButton}
-              onPress={() => router.push('/support/create-ticket' as unknown as string)}
-            >
+            <Pressable style={styles.addButton} onPress={() => router.push('/support/create-ticket' as unknown)}>
               <Ionicons name="add" size={24} color={colors.background.primary} />
             </Pressable>
           </View>
@@ -443,7 +434,7 @@ const styles = StyleSheet.create({
   ticketSubject: {
     fontSize: 15,
     fontWeight: '600',
-    color: (Colors as unknown as Record<string, string>).text?.primary || colors.deepNavy,
+    color: (Colors as unknown).text?.primary || colors.deepNavy,
   },
   lastMessage: {
     fontSize: 13,

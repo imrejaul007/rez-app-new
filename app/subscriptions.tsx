@@ -97,7 +97,7 @@ function SubscriptionsPage() {
   const handleSubscribe = () => {
     if (!selectedTier) return;
     router.push(
-      `/payment?type=subscription&tier=${selectedTier.tier}&cycle=${selectedCycle}&amount=${getSelectedPrice()}` as unknown as string,
+      `/payment?type=subscription&tier=${selectedTier.tier}&cycle=${selectedCycle}&amount=${getSelectedPrice()}` as unknown,
     );
   };
 
@@ -206,7 +206,7 @@ function SubscriptionsPage() {
               </View>
               <Pressable
                 style={[styles.recoveryButton, { backgroundColor: Colors.primary }]}
-                onPress={() => router.push('/payment?type=subscription&action=retry' as unknown as string)}
+                onPress={() => router.push('/payment?type=subscription&action=retry' as unknown)}
               >
                 <Text style={styles.recoveryButtonText}>Update Payment</Text>
               </Pressable>

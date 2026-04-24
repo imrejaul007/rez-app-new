@@ -73,7 +73,7 @@ function StoreProductsPage() {
     if (Platform.OS !== 'web' || typeof window === 'undefined') return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as unknown as EventTarget & { tagName?: string; isContentEditable?: boolean };
+      const target = event.target as unknown;
       if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable) {
         return;
       }
@@ -81,7 +81,7 @@ function StoreProductsPage() {
       if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
         event.preventDefault();
         try {
-          const searchInput = document.querySelector?.('[data-search-input]') as unknown as HTMLInputElement | null;
+          const searchInput = document.querySelector?.('[data-search-input]') as unknown;
           searchInput?.focus?.();
         } catch {
           /* ignore */
@@ -100,7 +100,7 @@ function StoreProductsPage() {
       if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         try {
-          const searchInput = document.querySelector?.('[data-search-input]') as unknown as HTMLInputElement | null;
+          const searchInput = document.querySelector?.('[data-search-input]') as unknown;
           searchInput?.focus?.();
         } catch {
           /* ignore */

@@ -14,8 +14,6 @@ import {
   RefreshControl,
   Modal,
   Dimensions,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -118,7 +116,7 @@ function AchievementsPage() {
           ]}
         >
           <Ionicons
-            name={achievement.icon as unknown as keyof typeof Ionicons.glyphMap}
+            name={achievement.icon as unknown}
             size={32}
             color={isLocked ? colors.text.tertiary : achievement.color}
           />
@@ -286,18 +284,12 @@ function AchievementsPage() {
       ) : (
         <FlashList
           data={filteredAchievements}
-          keyExtractor={(item) =>
-            String(
-              (item as unknown as Record<string, unknown>).id ??
-                (item as unknown as Record<string, unknown>)._id ??
-                'unknown-achievement',
-            )
-          }
+          keyExtractor={(item) => String((item as unknown).id ?? (item as unknown)._id ?? 'unknown-achievement')}
           estimatedItemSize={150}
           renderItem={renderAchievementItem}
           numColumns={2}
           style={styles.content}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }] as unknown as StyleProp<ViewStyle>}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }] as unknown}
           refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -327,11 +319,7 @@ function AchievementsPage() {
             {selectedAchievement && (
               <>
                 <View style={[styles.modalIconContainer, { backgroundColor: `${selectedAchievement.color}20` }]}>
-                  <Ionicons
-                    name={selectedAchievement.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={48}
-                    color={selectedAchievement.color}
-                  />
+                  <Ionicons name={selectedAchievement.icon as unknown} size={48} color={selectedAchievement.color} />
                 </View>
 
                 <ThemedText style={styles.modalTitle}>{selectedAchievement.title}</ThemedText>

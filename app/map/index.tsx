@@ -61,7 +61,7 @@ const MAP_DELTA = 0.02;
 
 async function fetchNearbyStores(lat: number, lng: number): Promise<NearbyStore[]> {
   const res = await apiClient.get<any>(`/stores/feed?lat=${lat}&lng=${lng}&limit=20`);
-  const payload = (res as unknown as Record<string, unknown>)?.data ?? res;
+  const payload = (res as unknown)?.data ?? res;
   return Array.isArray(payload?.stores) ? payload.stores : Array.isArray(payload) ? payload : [];
 }
 
@@ -160,7 +160,7 @@ export default function NearbyMapScreen() {
 
   const handleStorePress = useCallback(
     (storeId: string) => {
-      router.push(`/store-detail?storeId=${storeId}` as unknown as string);
+      router.push(`/store-detail?storeId=${storeId}` as unknown);
     },
     [router],
   );

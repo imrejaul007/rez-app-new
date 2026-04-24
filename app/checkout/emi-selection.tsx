@@ -151,7 +151,7 @@ function EMISelectionPage() {
       // FEAT-25: Pass EMI details to payment screen via route params
       const emiPlan = calculateEMI(selectedTenure, selectedBank);
       router.push({
-        pathname: '/payment' as unknown as string,
+        pathname: '/payment' as unknown,
         params: {
           emiMonths: selectedTenure.toString(),
           emiBankCode: selectedBank.id,

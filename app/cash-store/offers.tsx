@@ -10,8 +10,6 @@ import {
   Platform,
   StatusBar,
   Dimensions,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -158,7 +156,7 @@ const SkeletonBlock = React.memo(
       <Animated.View
         style={[
           {
-            width: w,
+            width: w as unknown,
             height: h,
             borderRadius: 12,
             backgroundColor: '#E8E2DB',
@@ -267,7 +265,7 @@ function OffersPage() {
     (drop: CoinDrop) => {
       const storeId = getStoreId(drop.storeId);
       if (storeId) {
-        router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+        router.push(`/MainStorePage?storeId=${storeId}` as unknown);
       }
     },
     [router],
@@ -381,7 +379,7 @@ function OffersPage() {
             </View>
             <Text style={styles.emptyTitle}>No offers right now</Text>
             <Text style={styles.emptySubtitle}>Check back soon for coupons, cashback deals & more!</Text>
-            <Pressable onPress={() => router.push('/cash-store' as unknown as string)} style={styles.browseBtn}>
+            <Pressable onPress={() => router.push('/cash-store' as unknown)} style={styles.browseBtn}>
               <Text style={styles.browseBtnText}>Browse Cash Store</Text>
               <Ionicons name="arrow-forward" size={14} color={colors.text.inverse} />
             </Pressable>
@@ -423,10 +421,7 @@ function OffersPage() {
                     <Ionicons name="pricetag" size={15} color={colors.brand.pink} />
                   </View>
                   <Text style={styles.sectionTitle}>Featured Coupons</Text>
-                  <Pressable
-                    onPress={() => router.push('/account/coupons' as unknown as string)}
-                    style={styles.seeAllBtn}
-                  >
+                  <Pressable onPress={() => router.push('/account/coupons' as unknown)} style={styles.seeAllBtn}>
                     <Text style={styles.seeAllText}>See All</Text>
                     <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
@@ -443,7 +438,7 @@ function OffersPage() {
                   return (
                     <Pressable
                       key={coupon._id}
-                      onPress={() => router.push('/account/coupons' as unknown as string)}
+                      onPress={() => router.push('/account/coupons' as unknown)}
                       style={styles.couponCard}
                     >
                       <View style={styles.couponLeft}>
@@ -493,10 +488,7 @@ function OffersPage() {
                     <Ionicons name="flame" size={15} color={Colors.warning} />
                   </View>
                   <Text style={styles.sectionTitle}>Double Cashback</Text>
-                  <Pressable
-                    onPress={() => router.push('/offers/double-cashback' as unknown as string)}
-                    style={styles.seeAllBtn}
-                  >
+                  <Pressable onPress={() => router.push('/offers/double-cashback' as unknown)} style={styles.seeAllBtn}>
                     <Text style={styles.seeAllText}>See All</Text>
                     <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
@@ -515,7 +507,7 @@ function OffersPage() {
                     return (
                       <Pressable
                         key={campaign._id}
-                        onPress={() => router.push('/offers/double-cashback' as unknown as string)}
+                        onPress={() => router.push('/offers/double-cashback' as unknown)}
                         style={styles.campaignCard}
                       >
                         <LinearGradient
@@ -642,10 +634,7 @@ function OffersPage() {
                     <Ionicons name="diamond" size={15} color={colors.brand.purpleLight} />
                   </View>
                   <Text style={styles.sectionTitle}>Top Cashback Brands</Text>
-                  <Pressable
-                    onPress={() => router.push('/cash-store/brands' as unknown as string)}
-                    style={styles.seeAllBtn}
-                  >
+                  <Pressable onPress={() => router.push('/cash-store/brands' as unknown)} style={styles.seeAllBtn}>
                     <Text style={styles.seeAllText}>See All</Text>
                     <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
@@ -661,7 +650,7 @@ function OffersPage() {
                     return (
                       <Pressable
                         key={brand._id}
-                        onPress={() => router.push(`/vouchers/brand/${brand._id}` as unknown as string)}
+                        onPress={() => router.push(`/vouchers/brand/${brand._id}` as unknown)}
                         style={styles.brandCard}
                       >
                         <View style={styles.brandLogoWrap}>
@@ -728,7 +717,7 @@ function OffersPage() {
                 ].map((action, i) => (
                   <Pressable
                     key={i}
-                    onPress={() => router.push(action.route as unknown as string)}
+                    onPress={() => router.push(action.route as unknown)}
                     style={styles.quickActionCard}
                   >
                     <View style={[styles.quickActionIcon, { backgroundColor: action.bg }]}>

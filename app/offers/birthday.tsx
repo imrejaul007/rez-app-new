@@ -116,7 +116,7 @@ function BirthdayRewardsPage() {
   }, [isAuthenticated, loadBirthdayData]);
 
   const handleClaimGift = (deal: BirthdayDeal) => {
-    router.push(`/offers/${deal.id}` as unknown as string);
+    router.push(`/offers/${deal.id}` as unknown);
   };
 
   const renderGiftCard = (deal: BirthdayDeal) => (
@@ -194,11 +194,7 @@ function BirthdayRewardsPage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={
-          [styles.scrollContent, { paddingBottom: bottomPadding }] as unknown as import('react-native').StyleProp<
-            import('react-native').ViewStyle
-          >
-        }
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
         showsVerticalScrollIndicator={false}
       >
         {loading && (

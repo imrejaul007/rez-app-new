@@ -231,13 +231,10 @@ function SpinWinPage() {
           <Text style={styles.headerTitle}>Spin & Win</Text>
         </View>
         <View style={styles.headerRight}>
-          <Pressable
-            style={styles.historyButton}
-            onPress={() => router.push('/explore/spin-history' as unknown as string)}
-          >
+          <Pressable style={styles.historyButton} onPress={() => router.push('/explore/spin-history' as unknown)}>
             <Ionicons name="time-outline" size={20} color={colors.text.tertiary} />
           </Pressable>
-          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown as string)}>
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown)}>
             <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
@@ -398,7 +395,7 @@ function SpinWinPage() {
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Prize Distribution</Text>
-              <Pressable onPress={() => router.push('/explore/spin-history' as unknown as string)}>
+              <Pressable onPress={() => router.push('/explore/spin-history' as unknown)}>
                 <Text style={styles.seeAllText}>History</Text>
               </Pressable>
             </View>

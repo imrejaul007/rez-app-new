@@ -122,7 +122,7 @@ function ElectronicsCoinsPage() {
       const config = TYPE_CONFIG[item.type] || TYPE_CONFIG.earned;
       return (
         <View style={styles.txCard}>
-          <Ionicons name={config.icon as unknown as keyof typeof Ionicons.glyphMap} size={28} color={config.color} />
+          <Ionicons name={config.icon as unknown} size={28} color={config.color} />
           <View style={styles.txInfo}>
             <Text style={styles.txDesc} numberOfLines={1}>
               {item.description}
@@ -207,7 +207,7 @@ function ElectronicsCoinsPage() {
                 </View>
                 <Pressable
                   style={styles.useNowBtn}
-                  onPress={() => router.push(('/MainCategory/' + slug + '/offers') as unknown as string)}
+                  onPress={() => router.push(('/MainCategory/' + slug + '/offers') as unknown)}
                 >
                   <Text style={styles.useNowText}>Use Now</Text>
                 </Pressable>

@@ -39,11 +39,7 @@ function ConciergeScreen() {
     try {
       const response = await priveApi.getConciergeTickets();
       if (response.success && response.data) {
-        setTickets(
-          (response.data as unknown as Record<string, unknown>)?.tickets ||
-            (response.data as unknown as Record<string, unknown>) ||
-            [],
-        );
+        setTickets((response.data as unknown)?.tickets || (response.data as unknown) || []);
       }
     } catch (e: any) {
       catchAndReport(e, setError, 'Concierge/fetchTickets');
@@ -80,8 +76,8 @@ function ConciergeScreen() {
         setShowForm(false);
         await fetchTickets();
       }
-    } catch (e: unknown) {
-      catchAndReport(e as Error, setError, 'Concierge/submitTicket');
+    } catch (e: any) {
+      catchAndReport(e, setError, 'Concierge/submitTicket');
     } finally {
       setIsSubmitting(false);
     }

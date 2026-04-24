@@ -101,7 +101,7 @@ function SubmissionDetailPage() {
       );
 
       if (response.success && response.data) {
-        const projectData = response.data.project || (response.data as unknown as Record<string, unknown>);
+        const projectData = response.data.project || (response.data as unknown);
         if (!isMounted()) return;
         setProject(projectData);
 

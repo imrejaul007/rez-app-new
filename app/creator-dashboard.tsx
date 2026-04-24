@@ -528,19 +528,9 @@ function CreatorDashboard() {
                         },
                       ]}
                     >
-                      {isActive && (
-                        <Ionicons
-                          name={icon.filled as unknown as keyof typeof Ionicons.glyphMap}
-                          size={13}
-                          color={tColors.border}
-                        />
-                      )}
+                      {isActive && <Ionicons name={icon.filled as unknown} size={13} color={tColors.border} />}
                       {isPast && !isActive && (
-                        <Ionicons
-                          name={icon.outline as unknown as keyof typeof Ionicons.glyphMap}
-                          size={10}
-                          color={colors.text.inverse}
-                        />
+                        <Ionicons name={icon.outline as unknown} size={10} color={colors.text.inverse} />
                       )}
                     </View>
                     <Text

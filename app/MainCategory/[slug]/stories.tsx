@@ -178,7 +178,7 @@ function CategoryStoriesPage() {
         style={styles.card}
         onPress={() => {
           if (item.store?._id) {
-            router.push(`/MainStorePage?storeId=${item.store._id}` as unknown as string);
+            router.push(`/MainStorePage?storeId=${item.store._id}` as unknown);
           }
         }}
       >

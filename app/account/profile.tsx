@@ -115,7 +115,7 @@ function AccountProfilePage() {
           firstName: trimmedFirst,
           lastName: trimmedLast,
         },
-      } as unknown as Record<string, unknown>);
+      } as unknown);
       if (response.success) {
         // Update local display names immediately — the auth store may not
         // re-hydrate synchronously after a profile save
@@ -209,7 +209,7 @@ function AccountProfilePage() {
     try {
       const response = await userSettingsApi.getUserSettings();
       if (response.success && response.data) {
-        setSettings(response.data as unknown as Record<string, unknown>);
+        setSettings(response.data as unknown);
       }
     } catch (error: any) {
       // silently handle
@@ -290,7 +290,7 @@ function AccountProfilePage() {
   };
 
   const handleNavigateToSetting = (route: string) => {
-    router.push(route as unknown as string);
+    router.push(route as unknown);
   };
 
   if (loading) {
@@ -420,9 +420,9 @@ function AccountProfilePage() {
               {/* Verified identity badge — falls back to a generic badge for
                   segments not yet in SEGMENT_BADGES so new programs render
                   something rather than silently hiding the verification */}
-              {(user as unknown as Record<string, unknown>).segment &&
+              {(user as unknown).segment &&
                 (() => {
-                  const badge = SEGMENT_BADGES[(user as unknown as Record<string, unknown>).segment] ?? {
+                  const badge = SEGMENT_BADGES[(user as unknown).segment] ?? {
                     label: 'Verified Member',
                     icon: '✅',
                     bg: '#F3F4F6',
@@ -562,7 +562,7 @@ function AccountProfilePage() {
           <View style={styles.settingsCard}>
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/profile-visibility' as unknown as string)}
+              onPress={() => router.push('/account/profile-visibility' as unknown)}
               accessibilityLabel={`Profile visibility. Current setting: ${privacySettings?.profileVisibility || 'FRIENDS'}`}
               accessibilityRole="button"
               accessibilityHint="Double tap to change who can see your profile"
@@ -581,7 +581,7 @@ function AccountProfilePage() {
 
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/two-factor-auth' as unknown as string)}
+              onPress={() => router.push('/account/two-factor-auth' as unknown)}
               accessibilityLabel={`Two-factor authentication. Status: ${securitySettings?.twoFactorAuth.enabled ? 'Enabled' : 'Disabled'}`}
               accessibilityRole="button"
               accessibilityHint="Double tap to manage two-factor authentication settings"
@@ -739,7 +739,7 @@ function AccountProfilePage() {
           <View style={styles.settingsCard}>
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/profile/edit' as unknown as string)}
+              onPress={() => router.push('/profile/edit' as unknown)}
               accessibilityLabel="Edit profile information"
               accessibilityRole="button"
               accessibilityHint="Navigate to edit profile screen"
@@ -758,7 +758,7 @@ function AccountProfilePage() {
 
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/change-password' as unknown as string)}
+              onPress={() => router.push('/account/change-password' as unknown)}
               accessibilityLabel="Change password"
               accessibilityRole="button"
               accessibilityHint="Navigate to change password screen"
@@ -777,7 +777,7 @@ function AccountProfilePage() {
 
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/delete-account' as unknown as string)}
+              onPress={() => router.push('/account/delete-account' as unknown)}
               accessibilityLabel="Delete account permanently"
               accessibilityRole="button"
               accessibilityHint="Navigate to account deletion screen. Warning: This action is permanent"

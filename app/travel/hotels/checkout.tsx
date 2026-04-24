@@ -7,18 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-  Platform,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -200,7 +189,7 @@ function HotelCheckoutScreen() {
       }
     } catch (e: any) {
       // Razorpay throws {code, description} on cancellation
-      if ((e as unknown as { code?: number })?.code === 0) {
+      if ((e as unknown)?.code === 0) {
         Alert.alert('Payment Cancelled', 'You cancelled the payment. Your booking hold is still active.');
       } else {
         Alert.alert('Payment Failed', e.message ?? e.description ?? 'Please try again.');
@@ -212,7 +201,7 @@ function HotelCheckoutScreen() {
 
   const navigateToSuccess = (result: any) => {
     router.replace({
-      pathname: '/travel/hotels/booking-confirmed' as unknown as string,
+      pathname: '/travel/hotels/booking-confirmed' as unknown,
       params: {
         bookingId: result.bookingId,
         bookingRef: result.bookingRef,

@@ -1,32 +1,20 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // StoreOffersSection.tsx - Offers at this store section
-import React, {} from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  ScrollView
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring } from 'react-native-reanimated';
+import React from 'react';
+import { View, Pressable, StyleSheet, ScrollView } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
-import { Ionicons } from "@expo/vector-icons";
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows } from "@/constants/DesignSystem";
+import { Ionicons } from '@expo/vector-icons';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
 export interface Offer {
   id: string;
-  type: "percentage" | "flat" | "cashback";
+  type: 'percentage' | 'flat' | 'cashback';
   value: number;
   title: string;
   description: string;
@@ -49,33 +37,30 @@ export interface StoreOffersSectionProps {
 //   { id: "3", type: "cashback", value: 15, title: "Extra 15% Cashback with UPI", description: "Max cashback 150", validity: "Valid for 7 days", coinsToEarn: 30 },
 // ];
 
-function StoreOffersSection({
-  offers = [],
-  onViewAll,
-  onApplyOffer }: StoreOffersSectionProps) {
+function StoreOffersSection({ offers = [], onViewAll, onApplyOffer }: StoreOffersSectionProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
   const getOfferBadge = (offer: Offer) => {
     switch (offer.type) {
-      case "percentage":
+      case 'percentage':
         return `${offer.value}% OFF`;
-      case "flat":
+      case 'flat':
         return `${currencySymbol}${offer.value} OFF`;
-      case "cashback":
+      case 'cashback':
         return `${offer.value}% CASHBACK`;
       default:
-        return "OFFER";
+        return 'OFFER';
     }
   };
 
   const getBadgeColor = (type: string) => {
     switch (type) {
-      case "percentage":
-        return "#FF3B30";
-      case "flat":
+      case 'percentage':
+        return '#FF3B30';
+      case 'flat':
         return colors.lightMustard;
-      case "cashback":
+      case 'cashback':
         return colors.brand.ios;
       default:
         return colors.lightMustard;
@@ -154,17 +139,12 @@ function OfferCard({ offer, badgeText, badgeColor, onApply }: OfferCardProps) {
       {/* Coins and Apply Button */}
       <View style={styles.offerFooter}>
         <View style={styles.coinsEarn}>
-          <CachedImage
-            source={BRAND.COIN_IMAGE}
-            style={styles.coinIcon}
-            contentFit="contain"
-          />
+          <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
           <ThemedText style={styles.coinsText}>Earn {offer.coinsToEarn} coins</ThemedText>
         </View>
         <Animated.View style={scaleStyle}>
           <Pressable
             style={styles.applyButton}
-           
             onPress={handleApply}
             onPressIn={() => animateScale(0.95)}
             onPressOut={() => animateScale(1)}
@@ -181,79 +161,98 @@ function OfferCard({ offer, badgeText, badgeColor, onApply }: OfferCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Spacing.md },
+    paddingTop: Spacing.md,
+  },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: Spacing.base,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   title: {
     fontSize: 18,
-    fontWeight: "700",
-    color: colors.text.primary },
+    fontWeight: '700',
+    color: colors.text.primary,
+  },
   viewAll: {
     fontSize: 14,
-    fontWeight: "600",
-    color: colors.lightMustard },
+    fontWeight: '600',
+    color: colors.lightMustard,
+  },
   offersList: {
     paddingHorizontal: Spacing.base,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   offerCard: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.gray[100],
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   offerHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: Spacing.sm },
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.sm,
+  },
   badge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   badgeText: {
     fontSize: 11,
-    fontWeight: "700",
-    color: colors.background.primary },
+    fontWeight: '700',
+    color: colors.background.primary,
+  },
   validity: {
     fontSize: 12,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   offerTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: 4 },
+    marginBottom: 4,
+  },
   offerDescription: {
     fontSize: 13,
     color: colors.text.secondary,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   offerFooter: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between" },
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   coinsEarn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6 },
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   coinIcon: {
     width: 20,
-    height: 20 },
+    height: 20,
+  },
   coinsText: {
     fontSize: 13,
-    fontWeight: "600",
-    color: "#FF9500" },
+    fontWeight: '600',
+    color: '#FF9500',
+  },
   applyButton: {
     backgroundColor: colors.lightMustard,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   applyButtonText: {
     fontSize: 14,
-    fontWeight: "600",
-    color: colors.background.primary } });
+    fontWeight: '600',
+    color: colors.background.primary,
+  },
+});
 
 export default withErrorBoundary(StoreOffersSection, 'MainStoreSectionStoreOffersSection');

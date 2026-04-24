@@ -187,11 +187,8 @@ function CardOffersPage() {
       try {
         if (cartActions && typeof cartActions.applyCoupon === 'function' && offer.code) {
           await cartActions.applyCoupon(offer.code);
-        } else if (
-          cartActions &&
-          typeof (cartActions as unknown as Record<string, unknown>).setCardOffer === 'function'
-        ) {
-          await (cartActions as unknown as Record<string, unknown>).setCardOffer(offer);
+        } else if (cartActions && typeof (cartActions as unknown).setCardOffer === 'function') {
+          await (cartActions as unknown).setCardOffer(offer);
         }
 
         triggerNotification('Success');
@@ -267,10 +264,7 @@ function CardOffersPage() {
               {/* Card Header */}
               <View style={styles.cardHeader}>
                 <View style={styles.cardIconContainer}>
-                  <LinearGradient
-                    colors={Gradients.purplePrimary as unknown as string[]}
-                    style={styles.cardIconGradient}
-                  >
+                  <LinearGradient colors={Gradients.purplePrimary as unknown} style={styles.cardIconGradient}>
                     <MaterialCommunityIcons
                       name="credit-card-chip-outline"
                       size={24}
@@ -357,7 +351,7 @@ function CardOffersPage() {
                     disabled={applyingOffer}
                   >
                     <LinearGradient
-                      colors={Gradients.purplePrimary as unknown as string[]}
+                      colors={Gradients.purplePrimary as unknown}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.applyBtnGradient}
@@ -399,7 +393,7 @@ function CardOffersPage() {
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
         {/* Header */}
-        <LinearGradient colors={Gradients.purplePrimary as unknown as string[]} style={styles.header}>
+        <LinearGradient colors={Gradients.purplePrimary as unknown} style={styles.header}>
           <View style={styles.headerTop}>
             <Pressable
               style={styles.backBtn}
@@ -508,7 +502,7 @@ function CardOffersPage() {
               {selectedOffer && (
                 <>
                   {/* Modal Header */}
-                  <LinearGradient colors={Gradients.purplePrimary as unknown as string[]} style={styles.modalHeader}>
+                  <LinearGradient colors={Gradients.purplePrimary as unknown} style={styles.modalHeader}>
                     <Pressable style={styles.modalCloseBtn} onPress={() => setShowOfferDetails(false)}>
                       <Ionicons name="close" size={24} color={colors.background.primary} />
                     </Pressable>
@@ -637,7 +631,7 @@ function CardOffersPage() {
                         disabled={applyingOffer}
                       >
                         <LinearGradient
-                          colors={Gradients.purplePrimary as unknown as string[]}
+                          colors={Gradients.purplePrimary as unknown}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 0 }}
                           style={styles.modalApplyBtnGradient}

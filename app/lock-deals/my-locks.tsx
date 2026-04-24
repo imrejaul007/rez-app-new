@@ -48,7 +48,7 @@ const MyLocksPage: React.FC = () => {
       setIsLoading(true);
       const tab = TABS.find((t) => t.key === activeTab)!;
       // Pass comma-separated statuses
-      const response = await lockDealApi.getMyLocks(tab.statuses as unknown as string);
+      const response = await lockDealApi.getMyLocks(tab.statuses as unknown);
 
       if (response?.data) {
         if (!isMounted()) return;
@@ -85,7 +85,7 @@ const MyLocksPage: React.FC = () => {
             if (!isMounted()) return;
             if (response?.data) {
               router.push({
-                pathname: '/payment-razorpay' as unknown as string,
+                pathname: '/payment-razorpay' as unknown,
                 params: {
                   bookingType: 'lock_deal',
                   razorpayOrderId: response.data.razorpayOrderId,
@@ -398,7 +398,7 @@ const MyLocksPage: React.FC = () => {
                     : 'No cancelled or expired deals'}
               </Text>
               {activeTab === 'active' && (
-                <Pressable style={styles.browseCta} onPress={() => router.push('/lock-deals' as unknown as string)}>
+                <Pressable style={styles.browseCta} onPress={() => router.push('/lock-deals' as unknown)}>
                   <Text style={styles.browseCtaText}>Browse Lock Deals</Text>
                 </Pressable>
               )}

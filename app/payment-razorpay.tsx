@@ -305,10 +305,7 @@ function PaymentPage() {
       // CA-PAY-011 FIX: Only return true if backend explicitly confirms payment is valid
       if (response.success && response.data) {
         // Additional safety: ensure response contains order/payment confirmation
-        if (
-          !(response.data as unknown as Record<string, unknown>).orderId &&
-          !(response.data as unknown as Record<string, unknown>).paymentId
-        ) {
+        if (!(response.data as unknown).orderId && !(response.data as unknown).paymentId) {
           logger.warn('[Razorpay] Verification response missing orderId or paymentId');
           return false;
         }
@@ -419,7 +416,7 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           router.replace(
-            `/deal-success?razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}&redemptionId=${bookingId}` as unknown as string,
+            `/deal-success?razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}&redemptionId=${bookingId}` as unknown,
           );
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -433,7 +430,7 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           router.replace(
-            `/flash-sale-success?purchaseId=${bookingId}&razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}` as unknown as string,
+            `/flash-sale-success?purchaseId=${bookingId}&razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}` as unknown,
           );
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -453,7 +450,7 @@ function PaymentPage() {
             paymentType,
             ...(paymentType === 'balance' ? { lockId: bookingId } : { dealId }),
           }).toString();
-          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as unknown as string);
+          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as unknown);
         }, 500);
         navTimeoutsRef.current.add(t);
         return;
@@ -466,7 +463,7 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           router.replace({
-            pathname: '/subscription/payment-confirmation' as unknown as string,
+            pathname: '/subscription/payment-confirmation' as unknown,
             params: {
               status: 'success',
               tier: subscriptionTier,
@@ -494,9 +491,9 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           if (isTravelPayment) {
-            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as unknown as string);
+            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as unknown);
           } else {
-            router.replace(`/order-confirmation?orderId=${orderId}` as unknown as string);
+            router.replace(`/order-confirmation?orderId=${orderId}` as unknown);
           }
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -511,7 +508,7 @@ function PaymentPage() {
       platformAlertConfirm(
         'Verification Failed',
         'Payment was received but verification failed. Please contact support.',
-        () => router.push('/support' as unknown as string),
+        () => router.push('/support' as unknown),
         'Contact Support',
       );
     }

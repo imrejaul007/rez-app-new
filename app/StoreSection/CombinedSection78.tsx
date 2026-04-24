@@ -275,7 +275,7 @@ export default memo(function CombinedSection78({
                   <ThemedText style={styles.modalLabel}>Discount</ThemedText>
                   <View style={styles.discountValueRow}>
                     <LinearGradient
-                      colors={[COLORS.gold, (COLORS as unknown as Record<string, string>).goldDark]}
+                      colors={[COLORS.gold, (COLORS as unknown).goldDark]}
                       style={styles.discountBadgeLarge}
                     >
                       <ThemedText style={styles.discountBadgeText}>
@@ -361,10 +361,7 @@ export default memo(function CombinedSection78({
           </View>
 
           {/* Save Badge */}
-          <LinearGradient
-            colors={[COLORS.gold, (COLORS as unknown as Record<string, string>).goldDark]}
-            style={styles.saveBadge}
-          >
+          <LinearGradient colors={[COLORS.gold, (COLORS as unknown).goldDark]} style={styles.saveBadge}>
             <ThemedText style={styles.saveBadgeText}>{displaySavePercentage}</ThemedText>
           </LinearGradient>
         </View>
@@ -439,7 +436,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: (COLORS as unknown as Record<string, string>).navy,
+        shadowColor: (COLORS as unknown).navy,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.12,
         shadowRadius: 20,
@@ -521,7 +518,7 @@ const styles = StyleSheet.create({
   saveBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     letterSpacing: 0.2,
   },
 
@@ -646,7 +643,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: (COLORS as unknown as Record<string, string>).navy,
+        shadowColor: (COLORS as unknown).navy,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: 0.2,
         shadowRadius: 24,
@@ -726,7 +723,7 @@ const styles = StyleSheet.create({
   discountBadgeText: {
     fontSize: 24,
     fontWeight: '800',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
 
   restrictionsList: {

@@ -101,23 +101,13 @@ const ShimmerSkeleton = () => {
         <View style={styles.heroContent}>
           <View>
             <Animated.View style={[styles.shimmerLine, { width: 80, height: 12, opacity }]} />
-            <Animated.View
-              style={[
-                styles.shimmerLine,
-                { width: 100 as unknown as number | string, height: 42, marginTop: 8, opacity },
-              ]}
-            />
+            <Animated.View style={[styles.shimmerLine, { width: 100 as unknown, height: 42, marginTop: 8, opacity }]} />
           </View>
           <View style={{ alignItems: 'flex-end' }}>
             <Animated.View
               style={[styles.shimmerLine, { width: 90, height: 32, borderRadius: PRIVE_RADIUS.sm, opacity }]}
             />
-            <Animated.View
-              style={[
-                styles.shimmerLine,
-                { width: 70 as unknown as number | string, height: 12, marginTop: 8, opacity },
-              ]}
-            />
+            <Animated.View style={[styles.shimmerLine, { width: 70 as unknown, height: 12, marginTop: 8, opacity }]} />
           </View>
         </View>
         <View style={{ marginTop: PRIVE_SPACING.lg }}>
@@ -164,7 +154,7 @@ const TierProgressBar = React.memo(({ score, nextTierThreshold }: { score: numbe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [score]);
 
-  const width = interpolate(widthAnim.value, [0, maxScore], ['0%', '100%']);
+  const width = (interpolate as unknown)(widthAnim.value, [0, maxScore], ['0%', '100%']);
 
   return (
     <View>

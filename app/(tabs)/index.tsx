@@ -187,12 +187,12 @@ function prefetchOtherTabs() {
   import('@/services/homepageDataService')
     .then((m) => {
       const service = m.default;
-      if (service && typeof (service as any).getCachedSections === 'function') {
-        const sections = (service as any).getCachedSections?.();
+      if (service && typeof (service as unknown).getCachedSections === 'function') {
+        const sections = (service as unknown).getCachedSections?.();
         if (sections) {
           const imageUrls: string[] = [];
           for (const section of sections) {
-            const items = (section as any).items || (section as any).data || [];
+            const items = (section as unknown).items || (section as unknown).data || [];
             for (const item of items.slice(0, 10)) {
               const url = item.image || item.imageUrl || item.logo || item.banner?.[0];
               if (url && typeof url === 'string' && url.startsWith('http')) {
@@ -302,7 +302,7 @@ function HomeScreen() {
           savingsStreak: number;
         };
       }>('/user/savings/summary');
-      return (response.data as any).data as {
+      return (response.data as unknown).data as {
         lifetimeSavedPaise: number;
         thisMonthSavedPaise: number;
         lastMonthSavedPaise: number;
@@ -768,7 +768,7 @@ function HomeScreen() {
   }, [router]);
 
   const handleNotificationPress = useCallback(() => {
-    router.push('/account/notification-history' as any);
+    router.push('/account/notification-history' as unknown);
   }, [router]);
 
   const handleProfilePress = useCallback(() => {
@@ -791,7 +791,7 @@ function HomeScreen() {
           state: selectedLocation.state,
           pincode: selectedLocation.pincode,
           neighbourhood: selectedLocation.neighbourhood,
-        } as any);
+        } as unknown);
         if (!isMounted()) return;
         setIsLocationModalVisible(false);
       } catch (error: any) {
@@ -841,11 +841,11 @@ function HomeScreen() {
       switch (action) {
         case 'booking':
           sessionTrackingService.trackFeatureTouch('booking');
-          router.push('/booking' as any);
+          router.push('/booking' as unknown);
           break;
         case 'earn':
           sessionTrackingService.trackFeatureTouch('earn');
-          router.push('/(tabs)/earn' as any);
+          router.push('/(tabs)/earn' as unknown);
           break;
         case 'store':
           sessionTrackingService.trackFeatureTouch('mall');
@@ -1009,7 +1009,7 @@ function HomeScreen() {
               {/* Section 4: Streak pill — solid orange rgba(255,152,40,.82), fire emoji + bold dark number */}
               {streakCount > 0 && (
                 <Pressable
-                  onPress={() => router.push('/(tabs)/earn' as any)}
+                  onPress={() => router.push('/(tabs)/earn' as unknown)}
                   accessibilityRole="button"
                   accessibilityLabel={`${streakCount}-day streak`}
                   accessibilityHint="Tap to see your streak and earn missions"
@@ -1147,7 +1147,7 @@ function HomeScreen() {
                   savingsStreak={savingsSummaryData?.savingsStreak ?? 0}
                   missedSavingsCount={savingsSummaryData?.missedSavingsCount ?? 0}
                   topCategory={savingsSummaryData?.topCategory}
-                  onMissedPress={() => router.push('/savings?tab=missed' as any)}
+                  onMissedPress={() => router.push('/savings?tab=missed' as unknown)}
                 />
               </FeatureErrorBoundary>
             </View>
@@ -1237,7 +1237,7 @@ function HomeScreen() {
               borderWidth: 1,
               borderColor: '#DDD6FE',
             }}
-            onPress={() => router.push('/explore' as any)}
+            onPress={() => router.push('/explore' as unknown)}
             accessibilityRole="button"
             accessibilityLabel="Explore REZ network stores"
             accessibilityHint="Tap to discover stores where your REZ coins work"
@@ -1277,7 +1277,7 @@ function HomeScreen() {
         {activeTab !== 'prive' && activeTab !== 'mall' && (
           <Pressable
             style={viewStyles.tryBanner}
-            onPress={() => router.push('/try' as any)}
+            onPress={() => router.push('/try' as unknown)}
             accessibilityLabel="Try before you buy"
             accessibilityRole="button"
             accessibilityHint="Tap to explore products you can try risk-free and earn coins"
@@ -1316,7 +1316,7 @@ function HomeScreen() {
               borderColor: '#fcd34d',
               gap: 12,
             }}
-            onPress={() => router.push('/savings?tab=missed' as any)}
+            onPress={() => router.push('/savings?tab=missed' as unknown)}
             accessibilityRole="button"
             accessibilityLabel={`You could have saved more this month: ${savingsSummaryData?.missedSavingsCount} missed savings`}
             accessibilityHint="Tap to view missed savings opportunities"
@@ -1487,7 +1487,7 @@ function HomeScreen() {
           <ProfileMenuModal
             visible={isModalVisible}
             onClose={hideModal}
-            user={(profileUser || authUser) as any}
+            user={(profileUser || authUser) as unknown}
             menuSections={profileMenuSections}
             onMenuItemPress={handleMenuItemPress}
           />
@@ -1552,7 +1552,7 @@ const textStyles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     numberOfLines: 1,
-  } as any,
+  } as unknown,
 });
 
 // ── CRED Light design tokens (mapped to theme — do NOT add raw hex values here) ─

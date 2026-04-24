@@ -55,7 +55,7 @@ function PollsPage() {
     try {
       const result = await pollApi.getMyVotes(1, 50);
       if (result.success && result.data) {
-        setVoteHistory((result.data as unknown as Record<string, unknown>).votes as PollVoteHistory[]);
+        setVoteHistory((result.data as unknown).votes);
       }
     } catch (error: any) {
       // silently handle
@@ -80,7 +80,7 @@ function PollsPage() {
     try {
       const result = await pollApi.vote(pollId, optionId);
       if (result.success && result.data) {
-        const coins = (result.data as unknown as Record<string, unknown>).coinReward?.coinsAwarded;
+        const coins = (result.data as unknown).coinReward?.coinsAwarded;
 
         // Update local state optimistically
         setPolls((prev) =>

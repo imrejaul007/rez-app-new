@@ -359,7 +359,7 @@ function FAQPage() {
             </View>
             <Pressable
               style={styles.contactButton}
-              onPress={() => router.push('/support' as unknown as string)}
+              onPress={() => router.push('/support' as unknown)}
               accessible={true}
               accessibilityLabel="Contact support team"
               accessibilityRole="button"

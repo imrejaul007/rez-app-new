@@ -269,13 +269,13 @@ function KarmaHomeScreen() {
         const eventsRes = await karmaService.getNearbyEvents({ status: 'published' });
 
         if (profileRes.success && 'data' in profileRes && (profileRes as unknown as Record<string, unknown>).data) {
-          setProfile((profileRes as unknown as Record<string, unknown>).data);
+          setProfile((profileRes as unknown as { data: KarmaProfile | null }).data);
         } else if (isAuthenticated) {
           setProfileError(true);
         }
 
         if (eventsRes.success && eventsRes.data) {
-          setNearbyEvents(eventsRes.data.slice(0, 10));
+          setNearbyEvents(eventsRes.data.events.slice(0, 10));
         }
       } catch {
         setProfileError(true);

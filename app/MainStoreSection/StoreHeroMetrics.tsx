@@ -1,21 +1,11 @@
 // StoreHeroMetrics.tsx - Magicpin-inspired store engagement metrics
-import React, { memo } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { GlassCard } from "@/components/ui";
+import React, { memo } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { GlassCard } from '@/components/ui';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-} from "@/constants/DesignSystem";
+import { Colors, Spacing, Shadows, BorderRadius, Typography } from '@/constants/DesignSystem';
 
 interface StoreHeroMetricsProps {
   visits?: number;
@@ -51,11 +41,7 @@ export default memo(function StoreHeroMetrics({
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Visits Metric */}
         {visits !== undefined && visits > 0 && (
           <GlassCard
@@ -154,9 +140,7 @@ export default memo(function StoreHeroMetrics({
                 <Ionicons name="pricetag" size={14} color={Colors.gold} />
               </View>
               <View>
-                <ThemedText style={[styles.metricValue, styles.savingsValue]}>
-                  Up to {savingsPercent}%
-                </ThemedText>
+                <ThemedText style={[styles.metricValue, styles.savingsValue]}>Up to {savingsPercent}%</ThemedText>
                 <ThemedText style={styles.metricLabel}>savings</ThemedText>
               </View>
             </View>
@@ -199,21 +183,21 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
   },
   metricInner: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   iconCircle: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   metricValue: {
     ...Typography.label,
     color: colors.text.primary,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 14,
   },
   metricLabel: {
@@ -224,7 +208,7 @@ const styles = StyleSheet.create({
   },
   savingsPill: {
     borderWidth: 1,
-    borderColor: "rgba(255, 200, 87, 0.3)",
+    borderColor: 'rgba(255, 200, 87, 0.3)',
   },
   savingsValue: {
     color: colors.lightMustard,
@@ -234,13 +218,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary[100],
   },
   verifiedInner: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
   },
   verifiedText: {
     ...Typography.labelSmall,
     color: Colors.primary[700],
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

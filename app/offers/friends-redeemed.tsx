@@ -198,7 +198,7 @@ function FriendsRedeemedPage() {
 
   const renderOffer = useCallback(
     ({ item }: { item: FriendOffer }) => (
-      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as unknown as string)}>
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as unknown)}>
         <View style={styles.friendInfo}>
           <View style={styles.friendAvatarLarge}>
             <ThemedText style={styles.friendAvatarText}>{item.friend.avatar}</ThemedText>

@@ -307,7 +307,7 @@ function PriveOfferDetailScreen() {
       <View style={styles.ctaContainer}>
         <Pressable
           style={[styles.ctaButton, isOfferExpired ? styles.ctaButtonDisabled : null]}
-          onPress={() => !isOfferExpired && router.push('/prive/redeem' as unknown as string)}
+          onPress={() => !isOfferExpired && router.push('/prive/redeem' as unknown)}
           disabled={isOfferExpired}
         >
           <Ionicons

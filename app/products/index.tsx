@@ -234,12 +234,12 @@ const ProductsPage: React.FC = () => {
 
   // Handle product press
   const handleProductPress = (product: DisplayProduct) => {
-    router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown as string);
+    router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown);
   };
 
   // Handle add to cart
   const handleAddToCart = (product: DisplayProduct) => {
-    router.push(`/product-page?cardId=${product.id}&cardType=product&action=buy` as unknown as string);
+    router.push(`/product-page?cardId=${product.id}&cardType=product&action=buy` as unknown);
   };
 
   // Loading state
@@ -268,7 +268,7 @@ const ProductsPage: React.FC = () => {
             </Text>
             <Text style={styles.headerSubtitle}>{filteredProducts.length} products available</Text>
           </View>
-          <Pressable onPress={() => router.push('/cart' as unknown as string)} style={styles.cartButton}>
+          <Pressable onPress={() => router.push('/cart' as unknown)} style={styles.cartButton}>
             <Ionicons name="cart-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -301,7 +301,7 @@ const ProductsPage: React.FC = () => {
               style={[styles.filterChip, selectedFilter === filter.id && { backgroundColor: config.color }]}
             >
               <Ionicons
-                name={filter.icon as unknown as keyof typeof Ionicons.glyphMap}
+                name={filter.icon as unknown}
                 size={14}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
@@ -320,7 +320,7 @@ const ProductsPage: React.FC = () => {
           {sortOptions.map((option) => (
             <Pressable
               key={option.id}
-              onPress={() => setSortBy(option.id as unknown as string)}
+              onPress={() => setSortBy(option.id as unknown)}
               style={[styles.sortChip, sortBy === option.id ? styles.sortChipActive : null]}
             >
               <Text style={[styles.sortChipText, sortBy === option.id ? styles.sortChipTextActive : null]}>

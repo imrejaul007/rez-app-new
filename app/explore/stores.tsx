@@ -179,7 +179,7 @@ const ExploreStoresPage = () => {
   }, [fetchStores]);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as unknown);
   };
 
   // Stores are already filtered by category from the API call, apply local sort
@@ -199,14 +199,10 @@ const ExploreStoresPage = () => {
   const handleSort = () => {
     // Cycle through sort options: default -> rating -> name -> default
     const sortOrder = ['default', 'rating', 'name'] as const;
-    const currentIndex = sortOrder.indexOf(sortBy as 'default' | 'rating' | 'name');
+    const currentIndex = sortOrder.indexOf(sortBy as unknown);
     const nextIndex = (currentIndex + 1) % sortOrder.length;
     const nextSort = sortOrder[nextIndex];
-    const sortLabels: Record<'default' | 'rating' | 'name', string> = {
-      default: 'Default',
-      rating: 'Top Rated',
-      name: 'Name (A-Z)',
-    };
+    const sortLabels = { default: 'Default', rating: 'Top Rated', name: 'Name (A-Z)' };
     setSortBy(nextSort);
   };
 
@@ -428,20 +424,12 @@ const ExploreStoresPage = () => {
                   end={{ x: 1, y: 0 }}
                   style={styles.categoryGradient}
                 >
-                  <Ionicons
-                    name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={14}
-                    color={colors.background.primary}
-                  />
+                  <Ionicons name={cat.icon as unknown} size={14} color={colors.background.primary} />
                   <Text style={styles.categoryLabelActive}>{cat.label}</Text>
                 </LinearGradient>
               ) : (
                 <>
-                  <Ionicons
-                    name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={14}
-                    color={colors.neutral[500]}
-                  />
+                  <Ionicons name={cat.icon as unknown} size={14} color={colors.neutral[500]} />
                   <Text style={styles.categoryLabel}>{cat.label}</Text>
                 </>
               )}
@@ -492,12 +480,7 @@ const ExploreStoresPage = () => {
         <ScrollView
           style={styles.storesList}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={
-            [
-              styles.storesContainer,
-              viewMode === 'grid' && styles.storesContainerGrid,
-            ] as unknown as StyleProp<ViewStyle>
-          }
+          contentContainerStyle={[styles.storesContainer, viewMode === 'grid' && styles.storesContainerGrid] as unknown}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.lightMustard]} />
           }

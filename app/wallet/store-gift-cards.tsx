@@ -159,11 +159,7 @@ function EmptyState({ tab }: { tab: FilterTab }) {
   const m = messages[tab];
   return (
     <View style={styles.emptyState}>
-      <Ionicons
-        name={m.icon as unknown as keyof typeof Ionicons.glyphMap}
-        size={48}
-        color={(colors as unknown as Record<string, string>).textMuted || '#9CA3AF'}
-      />
+      <Ionicons name={m.icon as unknown} size={48} color={(colors as unknown).textMuted || '#9CA3AF'} />
       <Text style={styles.emptyTitle}>{m.title}</Text>
       <Text style={styles.emptyBody}>{m.body}</Text>
     </View>
@@ -220,11 +216,7 @@ function StoreGiftCardsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color={(colors.text as unknown as Record<string, string>)?.primary || '#111827'}
-          />
+          <Ionicons name="arrow-back" size={24} color={(colors.text as unknown) || '#111827'} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Store Gift Cards</Text>
         <View style={{ width: 40 }} />

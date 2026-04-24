@@ -394,7 +394,7 @@ function SettingsPage() {
       style={styles.settingsItem}
       onPress={() => {
         if (item.route) {
-          router.push(item.route as unknown as string);
+          router.push(item.route as unknown);
         } else if (item.onPress) {
           item.onPress();
         }
@@ -403,7 +403,7 @@ function SettingsPage() {
     >
       <View style={styles.settingsItemLeft}>
         <View style={[styles.settingsIcon, { backgroundColor: item.iconColor + '15' }]}>
-          <Ionicons name={item.icon as unknown as keyof typeof Ionicons.glyphMap} size={20} color={item.iconColor} />
+          <Ionicons name={item.icon as unknown} size={20} color={item.iconColor} />
         </View>
 
         <View style={styles.settingsText}>

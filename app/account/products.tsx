@@ -29,8 +29,7 @@ function ProductsScreen() {
     try {
       setLoading(true);
       setError(null);
-      const filters =
-        selectedFilter !== 'all' ? { status: selectedFilter as 'active' | 'warranty_expired' } : undefined;
+      const filters = selectedFilter !== 'all' ? { status: selectedFilter as unknown } : undefined;
       const response = await userProductService.getUserProducts(filters);
 
       if (response.success && response.data) {

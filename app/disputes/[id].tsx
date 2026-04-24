@@ -66,7 +66,7 @@ function DisputeDetailScreen() {
     try {
       const response = await disputeApi.getDispute(id!);
       if (response.success && response.data) {
-        setDispute(response.data as unknown as Record<string, unknown>);
+        setDispute(response.data as unknown);
       } else {
         if (!isMounted()) return;
         setError('Dispute not found');

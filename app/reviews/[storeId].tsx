@@ -82,15 +82,15 @@ function ReviewsPage() {
         });
 
         if (response.success && response.data) {
-          const newReviews = (response.data as unknown as Record<string, unknown>).reviews || [];
+          const newReviews = (response.data as unknown).reviews || [];
           if (pageNum === 1) {
-            setReviews(newReviews as unknown as Review[]);
+            setReviews(newReviews as unknown);
           } else {
             if (!isMounted()) return;
-            setReviews((prev) => [...prev, ...(newReviews as unknown as Review[])]);
+            setReviews((prev) => [...prev, ...(newReviews as unknown)]);
           }
           if (!isMounted()) return;
-          setStats((response.data as unknown as Record<string, unknown>).stats || null);
+          setStats((response.data as unknown).stats || null);
           if (!isMounted()) return;
           setPage(pageNum);
           if (!isMounted()) return;
@@ -215,9 +215,7 @@ function ReviewsPage() {
             {review.images.map((image, index) => (
               <CachedImage
                 key={index}
-                source={{
-                  uri: typeof image === 'string' ? image : (image as unknown as Record<string, unknown>)?.uri || '',
-                }}
+                source={{ uri: typeof image === 'string' ? image : (image as unknown)?.uri || '' }}
                 style={styles.reviewImage}
               />
             ))}

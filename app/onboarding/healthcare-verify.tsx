@@ -87,7 +87,7 @@ function HealthcareVerifyPage() {
       router.push({
         pathname: '/onboarding/verification-success',
         params: { zone: 'healthcare', type: 'provisional' },
-      } as unknown as string);
+      } as unknown);
     } catch (e: any) {
       const msg = e?.message || 'Verification failed. Please try again.';
       if (!isMounted()) return;

@@ -237,7 +237,7 @@ function SharedCategoryPage() {
     ({ item }: { item: any }) => (
       <Pressable
         style={styles.resultCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${item._id || item.id}` as unknown as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${item._id || item.id}` as unknown)}
       >
         <CachedImage
           source={item.banner?.[0] || item.logo || undefined}
@@ -247,7 +247,7 @@ function SharedCategoryPage() {
         {!item.banner?.[0] && !item.logo && (
           <View style={[styles.resultImage, styles.resultImagePlaceholder]}>
             <Ionicons
-              name={(theme.defaultMissionIcon || 'storefront-outline') as unknown as string}
+              name={(theme.defaultMissionIcon || 'storefront-outline') as unknown}
               size={24}
               color={theme.primaryColor}
             />
@@ -277,7 +277,7 @@ function SharedCategoryPage() {
     ({ item }: { item: any }) => (
       <Pressable
         style={styles.resultCard}
-        onPress={() => router.push(`/product-page?id=${item._id || item.id}` as unknown as string)}
+        onPress={() => router.push(`/product-page?id=${item._id || item.id}` as unknown)}
       >
         <CachedImage source={item.images?.[0]?.url || item.image} style={styles.resultImage} contentFit="cover" />
         <View style={styles.resultContent}>

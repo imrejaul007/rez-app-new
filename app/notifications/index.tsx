@@ -116,7 +116,7 @@ function formatTime(iso: string): string {
 async function fetchNotifications(): Promise<NotificationsResponse> {
   const res = await apiClient.get<any>('/user/notifications?page=1&limit=30');
   // Support both direct and nested shapes
-  const payload = (res as unknown as Record<string, unknown>)?.data ?? res;
+  const payload = (res as unknown)?.data ?? res;
   return {
     notifications: payload?.notifications ?? [],
     unreadCount: payload?.unreadCount ?? 0,
@@ -160,7 +160,7 @@ const NotificationRow = React.memo(
       >
         {/* Icon */}
         <View style={[styles.iconBox, { backgroundColor: icon.bg }]}>
-          <Ionicons name={icon.name as unknown as keyof typeof Ionicons.glyphMap} size={20} color={icon.color} />
+          <Ionicons name={icon.name as unknown} size={20} color={icon.color} />
         </View>
 
         {/* Content */}
@@ -229,7 +229,7 @@ export default function NotificationsScreen() {
         markOneMutation.mutate(item._id);
       }
       if (item.data?.route) {
-        router.push(item.data.route as unknown as string);
+        router.push(item.data.route as unknown);
       }
     },
     [markOneMutation, router],

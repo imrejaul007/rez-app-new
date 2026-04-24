@@ -353,7 +353,7 @@ function PaymentSuccessPage() {
   // Handle hardware back button - redirect to home
   useEffect(() => {
     const backAction = () => {
-      router.replace('/(tabs)/' as unknown as string);
+      router.replace('/(tabs)/' as unknown);
       return true;
     };
 
@@ -382,7 +382,7 @@ function PaymentSuccessPage() {
   };
 
   const handleGoHome = () => {
-    router.replace('/(tabs)/' as unknown as string);
+    router.replace('/(tabs)/' as unknown);
   };
 
   const getPaymentMethodIcon = (method: string) => {

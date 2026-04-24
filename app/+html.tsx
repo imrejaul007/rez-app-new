@@ -14,7 +14,10 @@ export default function Root({ children }: { children: React.ReactNode }) {
 
         {/* SEO & Social sharing meta tags */}
         <title>Rez - Earn, Save & Shop Smarter</title>
-        <meta name="description" content="Rez is your all-in-one rewards and shopping platform. Earn coins, discover deals, and shop from local stores." />
+        <meta
+          name="description"
+          content="Rez is your all-in-one rewards and shopping platform. Earn coins, discover deals, and shop from local stores."
+        />
         <meta property="og:title" content="Rez - Earn, Save & Shop Smarter" />
         <meta property="og:description" content="Discover deals, earn rewards, and shop from local stores with Rez." />
         <meta property="og:type" content="website" />
@@ -50,17 +53,23 @@ export default function Root({ children }: { children: React.ReactNode }) {
               async
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.EXPO_PUBLIC_GA_TRACKING_ID}`}
             />
-            <script dangerouslySetInnerHTML={{ __html: `
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', '${process.env.EXPO_PUBLIC_GA_TRACKING_ID}');
-            `}} />
+            `,
+              }}
+            />
           </>
         )}
 
         {/* Responsive desktop layout + body reset */}
-        <style dangerouslySetInnerHTML={{ __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
           body {
             margin: 0;
             padding: 0;
@@ -82,7 +91,9 @@ export default function Root({ children }: { children: React.ReactNode }) {
               background-color: #ffffff;
             }
           }
-        `}} />
+        `,
+          }}
+        />
 
         {/* Expo's ScrollView reset for web */}
         <ScrollViewStyleReset />

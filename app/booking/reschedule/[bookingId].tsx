@@ -40,15 +40,15 @@ function RescheduleBookingScreen() {
           <Text style={[styles.title, { color: colors.text.primary }]}>Reschedule Appointment</Text>
           <View style={{ width: 24 }} />
         </View>
-        <View style={(styles as unknown as Record<string, unknown>).errorContainer}>
-          <Text style={(styles as unknown as Record<string, unknown>).errorText}>Booking not found</Text>
+        <View style={(styles as unknown).errorContainer}>
+          <Text style={(styles as unknown).errorText}>Booking not found</Text>
           <TouchableOpacity
             onPress={() => router.back()}
-            style={(styles as unknown as Record<string, unknown>).retryButton}
+            style={(styles as unknown).retryButton}
             accessibilityRole="button"
             accessibilityLabel="Go back to previous screen"
           >
-            <Text style={(styles as unknown as Record<string, unknown>).retryButtonText}>Go Back</Text>
+            <Text style={(styles as unknown).retryButtonText}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -99,18 +99,15 @@ function RescheduleBookingScreen() {
 
     setLoading(true);
     try {
-      const response = await (serviceBookingApi as unknown as Record<string, unknown>).rescheduleBooking(
-        bookingId || '',
-        {
-          newDate: selectedDate,
-          newTime: selectedTime,
-        },
-      );
+      const response = await (serviceBookingApi as unknown).rescheduleBooking(bookingId || '', {
+        newDate: selectedDate,
+        newTime: selectedTime,
+      });
 
       if (response.success) {
         platformAlertSimple('Success!', 'Your appointment has been rescheduled. The merchant will be notified.');
         if (isMounted()) {
-          setTimeout(() => router.replace('/my-bookings' as unknown as string), 1500);
+          setTimeout(() => router.replace('/my-bookings' as unknown), 1500);
         }
       } else {
         platformAlertSimple('Error', response.error || 'Could not reschedule booking');

@@ -31,6 +31,17 @@ export interface KarmaBadge {
   earnedAt: string;
 }
 
+export interface KarmaMission {
+  id: string;
+  type: string;
+  name: string;
+  description: string;
+  requirement: number;
+  progress: number;
+  isComplete: boolean;
+  reward?: { karmaBonus: number; badgeId?: string };
+}
+
 export interface LevelInfo {
   level: 'L1' | 'L2' | 'L3' | 'L4';
   activeKarma: number;
@@ -296,6 +307,21 @@ class KarmaService {
   async getNearbyEvents(filters?: EventFilters): Promise<ApiResponse<EventListResponse>> {
     return apiClient.get<EventListResponse>('/karma/events', filters as Record<string, string>);
   }
+
+  /**
+   * Get active missions with progress for the authenticated user
+   */
+  async getMissions(): Promise<ApiResponse<{ success: boolean; missions: KarmaMission[] }>> {
+    return apiClient.get<{ success: boolean; missions: KarmaMission[] }>('/karma/missions');
+  }
+
+  /**
+   * Get all earned badges for the authenticated user
+   */
+  async getBadges(): Promise<ApiResponse<{ success: boolean; badges: KarmaBadge[] }>> {
+    return apiClient.get<{ success: boolean; badges: KarmaBadge[] }>('/karma/badges');
+  }
+
 }
 
 export interface BookingWithEvent extends Booking {
@@ -326,9 +352,6 @@ export interface EventListResponse {
   events: KarmaEvent[];
   total: number;
 }
-
-const karmaService = new KarmaService();
-export default karmaService;
 
 const karmaService = new KarmaService();
 export default karmaService;

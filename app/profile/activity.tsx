@@ -80,7 +80,7 @@ function ActivityFeedPage() {
     ({ item }: { item: Activity }) => (
       <Pressable style={styles.activityCard}>
         <View style={[styles.activityIcon, { backgroundColor: `${item.color}20` }]}>
-          <Ionicons name={item.icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={item.color} />
+          <Ionicons name={item.icon as unknown} size={24} color={item.color} />
         </View>
 
         <View style={styles.activityContent}>

@@ -118,7 +118,9 @@ function MenuItemCard({
       <View style={{ flex: 1 }}>
         <View style={styles.itemTopRow}>
           <VegDot isVeg={item.isVeg} />
-          {item.spicyLevel > 0 && <View style={styles.spicyBadge}>{'🌶'.repeat(Math.min(item.spicyLevel, 3))}</View>}
+          {item.spicyLevel > 0 && (
+            <View style={styles.spicyBadge as unknown}>{'🌶'.repeat(Math.min(item.spicyLevel, 3))}</View>
+          )}
         </View>
         <Text style={styles.itemName} numberOfLines={2}>
           {item.name}

@@ -186,7 +186,7 @@ function SearchPage() {
   const handleCategoryPress = async (category: SearchCategory) => {
     await actions.handleCategoryPress(category);
     router.push({
-      pathname: '/category/[slug]' as unknown as string,
+      pathname: '/category/[slug]' as unknown,
       params: {
         slug: category.slug,
         name: category.name,
@@ -197,18 +197,14 @@ function SearchPage() {
 
   const handleResultPress = async (result: SearchResult, position: number) => {
     await actions.handleResultPress(result, position);
-    const resultId =
-      result.id ||
-      (result as unknown as Record<string, unknown>).productId ||
-      (result as unknown as Record<string, unknown>).storeId ||
-      '';
+    const resultId = result.id || (result as unknown).productId || (result as unknown).storeId || '';
     if (!resultId) return;
 
     if (result.category === 'Store') {
       router.push(`/MainStorePage?storeId=${resultId}`);
     } else {
       router.push({
-        pathname: '/product-page' as unknown as string,
+        pathname: '/product-page' as unknown,
         params: { cardId: resultId, cardType: 'product' },
       });
     }
@@ -217,7 +213,7 @@ function SearchPage() {
   const handleSellerPress = (seller: any) => {
     if (seller.productId) {
       router.push({
-        pathname: '/product-page' as unknown as string,
+        pathname: '/product-page' as unknown,
         params: { cardId: seller.productId, cardType: 'product', storeId: seller.storeId },
       });
     } else if (seller.storeId) {

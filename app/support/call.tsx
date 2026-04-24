@@ -487,7 +487,7 @@ function CallSupportPage() {
                     accessibilityState={{ selected: selectedCategory === category.id }}
                   >
                     <Ionicons
-                      name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
+                      name={category.icon as unknown}
                       size={24}
                       color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
                     />

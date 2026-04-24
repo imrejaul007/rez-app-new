@@ -14,10 +14,10 @@ export default function NotFoundScreen() {
         <View style={styles.iconWrap}>
           <Ionicons name="map-outline" size={48} color={colors.brand.purple} />
         </View>
-        <ThemedText type="title" style={styles.title}>Oops! Page not found</ThemedText>
-        <ThemedText style={styles.subtitle}>
-          This page doesn't exist yet. Go back to find great deals.
+        <ThemedText type="title" style={styles.title}>
+          Oops! Page not found
         </ThemedText>
+        <ThemedText style={styles.subtitle}>This page doesn't exist yet. Go back to find great deals.</ThemedText>
         <Link href="/" style={styles.link}>
           <ThemedText type="link">Go to Home</ThemedText>
         </Link>

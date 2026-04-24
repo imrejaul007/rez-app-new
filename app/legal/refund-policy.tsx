@@ -222,11 +222,7 @@ function RefundPolicyPage() {
             >
               <View style={styles.sectionTitleContainer}>
                 <View style={styles.iconContainer}>
-                  <Ionicons
-                    name={section.icon as unknown as keyof typeof Ionicons.glyphMap}
-                    size={24}
-                    color={Colors.primary[600]}
-                  />
+                  <Ionicons name={section.icon as unknown} size={24} color={Colors.primary[600]} />
                 </View>
                 <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
               </View>
@@ -283,7 +279,7 @@ function RefundPolicyPage() {
           </View>
           <Pressable
             style={styles.supportButton}
-            onPress={() => router.push('/support' as unknown as string)}
+            onPress={() => router.push('/support' as unknown)}
             accessible={true}
             accessibilityLabel="Contact support"
             accessibilityRole="button"

@@ -301,7 +301,7 @@ function AllProjectsPage() {
       router.push({
         pathname: '/project-detail',
         params: { projectId: project._id },
-      } as unknown as string);
+      } as unknown);
     },
     [router],
   );
@@ -419,7 +419,7 @@ function AllProjectsPage() {
                     end={{ x: 1, y: 1 }}
                   >
                     <Ionicons
-                      name={getCategoryIcon(project.category) as unknown as keyof typeof Ionicons.glyphMap}
+                      name={getCategoryIcon(project.category) as unknown}
                       size={22}
                       color={colors.text.inverse}
                     />
@@ -599,20 +599,12 @@ function AllProjectsPage() {
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                     >
-                      <Ionicons
-                        name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={16}
-                        color={colors.text.inverse}
-                      />
+                      <Ionicons name={cat.icon as unknown} size={16} color={colors.text.inverse} />
                       <ThemedText style={styles.filterChipTextActive}>{cat.label}</ThemedText>
                     </LinearGradient>
                   ) : (
                     <View style={styles.filterChip}>
-                      <Ionicons
-                        name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={16}
-                        color={colors.text.tertiary}
-                      />
+                      <Ionicons name={cat.icon as unknown} size={16} color={colors.text.tertiary} />
                       <ThemedText style={styles.filterChipText}>{cat.label}</ThemedText>
                     </View>
                   )}
@@ -661,7 +653,7 @@ function AllProjectsPage() {
                 const options = ['newest', 'popular', 'trending'];
                 const currentIndex = options.indexOf(sortBy);
                 const nextIndex = (currentIndex + 1) % options.length;
-                setSortBy(options[nextIndex] as unknown as string);
+                setSortBy(options[nextIndex] as unknown);
               }}
             >
               <LinearGradient
@@ -742,7 +734,7 @@ function AllProjectsPage() {
                 <ProjectCard
                   key={project._id}
                   project={project}
-                  cardAnim={cardAnims[project._id] as unknown as Record<string, unknown>}
+                  cardAnim={cardAnims[project._id] as unknown}
                   onPress={() => handleProjectPress(project)}
                   getCategoryGradient={getCategoryGradient}
                   getDifficultyColor={getDifficultyColor}

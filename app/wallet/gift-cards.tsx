@@ -108,9 +108,9 @@ function GiftCardsPage() {
       const response = await walletApi.getGiftCardCatalog(params);
       const data = response?.data;
       if (mountedRef.current) {
-        setCatalogCards((data as unknown as Record<string, unknown>)?.giftCards ?? []);
-        if ((data as unknown as Record<string, unknown>)?.categories?.length) {
-          setCategories(['All', ...(data as unknown as Record<string, unknown>).categories]);
+        setCatalogCards((data as unknown)?.giftCards ?? []);
+        if ((data as unknown)?.categories?.length) {
+          setCategories(['All', ...(data as unknown).categories]);
         }
       }
     } catch (err: any) {
@@ -124,7 +124,7 @@ function GiftCardsPage() {
     setMyCardsLoading(true);
     try {
       const response = await walletApi.getMyGiftCards();
-      if (mountedRef.current) setMyGiftCards((response?.data as unknown as Record<string, unknown>)?.giftCards ?? []);
+      if (mountedRef.current) setMyGiftCards((response?.data as unknown)?.giftCards ?? []);
     } catch (err: any) {
       if (mountedRef.current) setMyGiftCards([]);
     } finally {
@@ -162,7 +162,7 @@ function GiftCardsPage() {
             giftCardId: selectedCard._id,
             amount: numAmount,
             idempotencyKey,
-          } as unknown as Record<string, unknown>);
+          } as unknown);
           if (mountedRef.current) {
             setIdempotencyKey(generateIdempotencyKey('gift-card'));
             platformAlert('Success', 'Gift card purchased successfully!');
@@ -249,7 +249,7 @@ function GiftCardsPage() {
                 onPress={async () => {
                   try {
                     const response = await walletApi.revealGiftCardCode(item._id);
-                    if ((response as unknown as Record<string, unknown>)?.requiresReAuth) {
+                    if ((response as unknown)?.requiresReAuth) {
                       platformAlertSimple(
                         'Verification Required',
                         'Please verify your identity via OTP to reveal the gift card code.',

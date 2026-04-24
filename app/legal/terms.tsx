@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Terms of service with markdown content viewer
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl } from 'react-native';
 import { SectionListSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -132,7 +124,10 @@ function TermsPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
         <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Terms & Conditions</ThemedText>
@@ -151,14 +146,11 @@ function TermsPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessible={true}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -174,27 +166,19 @@ function TermsPage() {
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {/* Last Updated Badge */}
         <View style={styles.updateBadge}>
           <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-          <ThemedText style={styles.updateText}>
-            Last updated: {TERMS_CONTENT.lastUpdated}
-          </ThemedText>
+          <ThemedText style={styles.updateText}>Last updated: {TERMS_CONTENT.lastUpdated}</ThemedText>
         </View>
 
         {/* Table of Contents */}
         <View style={styles.tocCard}>
           <ThemedText style={styles.tocTitle}>Table of Contents</ThemedText>
           {TERMS_CONTENT.sections.map((section, index) => (
-            <Pressable
-              key={index}
-              style={styles.tocItem}
-              onPress={() => toggleSection(index)}
-            >
+            <Pressable key={index} style={styles.tocItem} onPress={() => toggleSection(index)}>
               <ThemedText style={styles.tocNumber}>{index + 1}.</ThemedText>
               <ThemedText style={styles.tocText}>{section.title}</ThemedText>
             </Pressable>
@@ -232,9 +216,7 @@ function TermsPage() {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <ThemedText style={styles.footerText}>
-            {`By using ${BRAND.APP_NAME}, you agree to these terms.`}
-          </ThemedText>
+          <ThemedText style={styles.footerText}>{`By using ${BRAND.APP_NAME}, you agree to these terms.`}</ThemedText>
         </View>
       </ScrollView>
     </View>

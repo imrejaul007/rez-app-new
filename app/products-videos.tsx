@@ -146,7 +146,7 @@ function ProductsVideosPage() {
             onPress={() => setSelectedCategory(category.id)}
           >
             <Ionicons
-              name={category.icon as unknown as keyof typeof Ionicons.glyphMap}
+              name={category.icon as unknown}
               size={18}
               color={selectedCategory === category.id ? colors.background.primary : colors.brand.purpleLight}
             />

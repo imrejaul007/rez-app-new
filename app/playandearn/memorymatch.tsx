@@ -370,7 +370,7 @@ const MemoryMatch = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="chevron-back" size={24} color={(COLORS as unknown as Record<string, string>).navy} />
+          <Ionicons name="chevron-back" size={24} color={(COLORS as unknown).navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -387,7 +387,7 @@ const MemoryMatch = () => {
             <Text style={[styles.timerText, timeLeft <= 10 ? styles.timerTextWarning : null]}>{timeLeft}s</Text>
           </View>
         ) : (
-          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown as string)}>
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown)}>
             <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
@@ -521,11 +521,7 @@ const MemoryMatch = () => {
                       <Text style={styles.stepDesc}>{step.desc}</Text>
                     </View>
                     <View style={[styles.stepIconBg, { backgroundColor: `${step.color}10` }]}>
-                      <Ionicons
-                        name={step.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={18}
-                        color={step.color}
-                      />
+                      <Ionicons name={step.icon as unknown} size={18} color={step.color} />
                     </View>
                   </View>
                 ))}
@@ -612,7 +608,7 @@ const MemoryMatch = () => {
                     colors={
                       timeLeft <= 10
                         ? [Colors.error, Colors.errorScale[700]]
-                        : [COLORS.primary, (COLORS as unknown as Record<string, string>).primaryLight]
+                        : [COLORS.primary, (COLORS as unknown).primaryLight]
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
@@ -684,9 +680,7 @@ const MemoryMatch = () => {
                     styles.resultTitle,
                     {
                       color:
-                        matched.length === cardEmojis.length
-                          ? colors.background.primary
-                          : (COLORS as unknown as Record<string, string>).navy,
+                        matched.length === cardEmojis.length ? colors.background.primary : (COLORS as unknown).navy,
                     },
                   ]}
                 >
@@ -787,10 +781,7 @@ const MemoryMatch = () => {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable
-                onPress={() => router.push('/playandearn' as unknown as string)}
-                style={styles.secondaryAction}
-              >
+              <Pressable onPress={() => router.push('/playandearn' as unknown)} style={styles.secondaryAction}>
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
                 <Text style={styles.secondaryActionText}>Back to Games</Text>
               </Pressable>
@@ -844,7 +835,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -887,7 +878,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   coinsText: {
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).goldDark,
+    color: (COLORS as unknown).goldDark,
   },
 
   scrollView: {
@@ -999,7 +990,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   howToPlayTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   stepsContainer: {
     gap: 14,
@@ -1026,7 +1017,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   stepTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 2,
   },
   stepDesc: {
@@ -1088,7 +1079,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   gameStatValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   gameStatTotal: {
     fontSize: 14,
@@ -1302,7 +1293,7 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 4,
   },
   statLabel: {

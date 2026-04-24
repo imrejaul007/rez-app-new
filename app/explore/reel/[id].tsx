@@ -290,7 +290,7 @@ const ReelDetailPage = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as unknown);
   };
 
   const renderCommentItem = useCallback(
@@ -392,11 +392,11 @@ const ReelDetailPage = () => {
                 loop
                 muted
                 playsInline
-                style={{ width: '100%', height: '100%', objectFit: 'cover' } as unknown as Record<string, unknown>}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' } as unknown}
               />
             ) : (
               <Video
-                source={{ uri: reel.videoUrl } as unknown as Record<string, string>}
+                source={{ uri: reel.videoUrl } as unknown}
                 posterSource={reel.thumbnailUrl ? { uri: reel.thumbnailUrl } : undefined}
                 style={styles.mediaVideo}
                 resizeMode={ResizeMode.COVER}
@@ -407,7 +407,7 @@ const ReelDetailPage = () => {
               />
             )
           ) : (
-            <CachedImage source={reel.thumbnailUrl || ('' as unknown as string)} style={styles.mediaImage} />
+            <CachedImage source={reel.thumbnailUrl || ('' as unknown)} style={styles.mediaImage} />
           )}
 
           {/* Top Header */}

@@ -5,17 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Dimensions,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -97,9 +87,7 @@ function CorporateZonePage() {
   }));
   const bottomPadding = 80 + 70 + insets.bottom;
 
-  const isVerified =
-    (user as unknown as Record<string, unknown>)?.verifications?.corporate?.verified === true ||
-    zoneInfo?.userEligible === true;
+  const isVerified = (user as unknown)?.verifications?.corporate?.verified === true || zoneInfo?.userEligible === true;
 
   useEffect(() => {
     fetchZoneData();
@@ -154,14 +142,14 @@ function CorporateZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown as string);
+    router.push(`/offers/${offer._id}` as unknown);
   };
 
   const handleVerify = () => {
     router.push({
       pathname: '/profile/verification',
       params: { zone: 'corporate' },
-    } as unknown as string);
+    } as unknown);
   };
 
   const renderSkeletonCard = () => (
@@ -250,9 +238,7 @@ function CorporateZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={
-          [styles.scrollContent, { paddingBottom: bottomPadding }] as unknown as StyleProp<ViewStyle>
-        }
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -330,7 +316,7 @@ function CorporateZonePage() {
         <View style={styles.quickCategories}>
           {QUICK_CATEGORIES.map((cat, i) => (
             <Pressable key={i} style={[styles.quickCategory, { backgroundColor: `${cat.color}15` }]}>
-              <Ionicons name={cat.icon as unknown as keyof typeof Ionicons.glyphMap} size={24} color={cat.color} />
+              <Ionicons name={cat.icon as unknown} size={24} color={cat.color} />
               <ThemedText style={styles.quickCategoryLabel}>{cat.label}</ThemedText>
             </Pressable>
           ))}

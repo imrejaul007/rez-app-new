@@ -35,11 +35,7 @@ function SavedOffersScreen() {
     try {
       const response = await realOffersApi.getUserFavoriteOffers();
       if (response.success && response.data) {
-        setOffers(
-          Array.isArray(response.data)
-            ? response.data
-            : (response.data as unknown as Record<string, unknown>).offers || [],
-        );
+        setOffers(Array.isArray(response.data) ? response.data : (response.data as unknown).offers || []);
       }
     } catch (err: any) {
       logger.error('[SavedOffers] Error:', err);

@@ -107,11 +107,7 @@ function MyParticipationsScreen() {
               {event?.organizer?.name && <Text style={styles.cardOrganizer}>{event.organizer.name}</Text>}
             </View>
             <View style={[styles.statusBadge, { backgroundColor: `${statusCfg.color}15` }]}>
-              <Ionicons
-                name={statusCfg.icon as unknown as keyof typeof Ionicons.glyphMap}
-                size={12}
-                color={statusCfg.color}
-              />
+              <Ionicons name={statusCfg.icon as unknown} size={12} color={statusCfg.color} />
               <Text style={[styles.statusText, { color: statusCfg.color }]}>{statusCfg.label}</Text>
             </View>
           </View>

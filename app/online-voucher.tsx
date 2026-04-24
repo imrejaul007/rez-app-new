@@ -363,16 +363,14 @@ function OnlineVoucherPage() {
                             </LinearGradient>
                           </View>
 
-                          <ThemedText style={styles.heroTitle}>
-                            {(item as unknown as Record<string, unknown>).title || ''}
-                          </ThemedText>
+                          <ThemedText style={styles.heroTitle}>{(item as unknown).title || ''}</ThemedText>
 
                           {/* Location Badge */}
-                          {(item as unknown as Record<string, unknown>).store && (
+                          {(item as unknown).store && (
                             <View style={styles.heroLocationBadge}>
                               <View style={styles.heroLocationDot} />
                               <ThemedText style={styles.heroLocationText}>
-                                {((item as unknown as Record<string, unknown>).store as { name: string }).name}
+                                {((item as unknown).store as { name: string }).name}
                               </ThemedText>
                             </View>
                           )}
@@ -403,7 +401,7 @@ function OnlineVoucherPage() {
                             >
                               <View style={styles.heroIconTopShine} />
                               <ThemedText style={styles.heroEmoji}>
-                                {item.image || (item as unknown as Record<string, unknown>).logo || '🎁'}
+                                {item.image || (item as unknown).logo || '🎁'}
                               </ThemedText>
                             </LinearGradient>
                           </View>

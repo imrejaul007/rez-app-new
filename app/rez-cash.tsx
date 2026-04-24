@@ -178,13 +178,13 @@ function RezCashScreen() {
         setBankName('');
         platformAlertSimple(
           'Transfer Initiated',
-          `Bank transfer of ₹${amount} initiated. Processing time: ${(res.data as unknown as Record<string, unknown>)?.estimatedProcessingTime || '2-3 business days'}.`,
+          `Bank transfer of ₹${amount} initiated. Processing time: ${(res.data as unknown)?.estimatedProcessingTime || '2-3 business days'}.`,
         );
         // Refresh identity data
         load();
       } else {
-        const msg = (res as unknown as Record<string, unknown>).message || 'Transfer failed';
-        if ((res as unknown as Record<string, unknown>).requiresReAuth) {
+        const msg = (res as unknown).message || 'Transfer failed';
+        if ((res as unknown).requiresReAuth) {
           platformAlertSimple(
             'Verification Required',
             'Please complete OTP verification before initiating a bank transfer. This is a security requirement for fund withdrawals.',
@@ -304,11 +304,7 @@ function RezCashScreen() {
                   {identity.equivalents.map((e, i) => (
                     <View key={i} style={styles.equivItem}>
                       <View style={styles.equivIcon}>
-                        <Ionicons
-                          name={e.icon as unknown as keyof typeof Ionicons.glyphMap}
-                          size={22}
-                          color="#7C3AED"
-                        />
+                        <Ionicons name={e.icon as unknown} size={22} color="#7C3AED" />
                       </View>
                       <Text style={styles.equivCount}>{e.count}×</Text>
                       <Text style={styles.equivLabel}>{e.count === 1 ? e.singular : e.label}</Text>
@@ -325,7 +321,7 @@ function RezCashScreen() {
                 <View style={styles.milestoneRow}>
                   {(identity.milestones.unlocked ?? []).map((m) => (
                     <View key={m.id} style={[styles.badge, { borderColor: m.color }]}>
-                      <Ionicons name={m.icon as unknown as keyof typeof Ionicons.glyphMap} size={20} color={m.color} />
+                      <Ionicons name={m.icon as unknown} size={20} color={m.color} />
                       <Text style={[styles.badgeLabel, { color: m.color }]}>{m.label}</Text>
                     </View>
                   ))}
@@ -384,11 +380,7 @@ function RezCashScreen() {
                     onPress={() => handleVoucherPress(opt)}
                   >
                     <View style={[styles.voucherIcon, { backgroundColor: `${opt.color}18` }]}>
-                      <Ionicons
-                        name={opt.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={22}
-                        color={opt.color}
-                      />
+                      <Ionicons name={opt.icon as unknown} size={22} color={opt.color} />
                     </View>
                     <Text style={styles.voucherLabel}>{opt.label}</Text>
                     {!opt.available && (

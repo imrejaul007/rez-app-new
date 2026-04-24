@@ -248,12 +248,7 @@ function ModernCardIllustration({
     <View style={styles.illustrationContainer}>
       {/* Gradient Background */}
       <LinearGradient
-        colors={
-          [
-            ...(gradient as unknown as string[]),
-            (gradient as unknown as string[])[1] || (gradient as unknown as string[])[0],
-          ] as unknown as [string, string, ...string[]]
-        }
+        colors={[...(gradient as unknown), (gradient as unknown)[1] || (gradient as unknown)[0]] as unknown}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradientBackground}
@@ -282,7 +277,7 @@ function ModernCardIllustration({
           <CachedImage source={image} style={styles.categoryImage} contentFit="contain" cachePolicy="memory-disk" />
         ) : icon ? (
           <View style={styles.iconContainer}>
-            <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={32} color="white" />
+            <Ionicons name={icon as unknown} size={32} color="white" />
           </View>
         ) : null}
       </LinearGradient>
@@ -311,7 +306,7 @@ function StoreCard({ item, index }: { item: Store; index: number }) {
   const handleStorePress = async () => {
     const category = item.id;
     router.push({
-      pathname: '/StoreListPage' as unknown as string,
+      pathname: '/StoreListPage' as unknown,
       params: {
         category,
         title: item.title,
@@ -455,7 +450,7 @@ function App() {
   const handleSearchSubmit = () => {
     if (searchQuery.trim()) {
       router.push({
-        pathname: '/StoreListPage' as unknown as string,
+        pathname: '/StoreListPage' as unknown,
         params: {
           search: searchQuery.trim(),
         },

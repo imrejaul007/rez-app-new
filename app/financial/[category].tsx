@@ -4,17 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  RefreshControl,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, RefreshControl } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -86,7 +76,7 @@ const FinancialCategoryPage: React.FC = () => {
             color: response.data.category.metadata?.color || fallbackData.gradientColors[0],
             cashbackPercentage: response.data.category.cashbackPercentage,
             maxCashback: response.data.category.maxCashback,
-            serviceCount: (response.data.category as unknown as Record<string, unknown>).serviceCount || 0,
+            serviceCount: (response.data.category as unknown).serviceCount || 0,
             metadata: response.data.category.metadata,
           });
         }
@@ -96,10 +86,10 @@ const FinancialCategoryPage: React.FC = () => {
           filter: selectedFilter,
         });
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
       trackEvent('financial_category_error', {
         category: categorySlug,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error.message || 'Unknown error',
       });
     } finally {
       if (!isMounted()) return;
@@ -145,7 +135,7 @@ const FinancialCategoryPage: React.FC = () => {
         category: categorySlug,
         source: 'category_page',
       });
-      router.push(`/financial/service/${serviceId}` as unknown as string);
+      router.push(`/financial/service/${serviceId}` as unknown);
     }
   };
 

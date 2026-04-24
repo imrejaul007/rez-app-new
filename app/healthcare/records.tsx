@@ -17,8 +17,6 @@ import {
   Modal,
   RefreshControl,
   ActivityIndicator,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { TransactionListSkeleton } from '@/components/skeletons';
@@ -774,7 +772,7 @@ const HealthRecordsPage: React.FC = () => {
           renderItem={renderRecordItem}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-          contentContainerStyle={[styles.recordsList, { paddingBottom: 120 }] as unknown as StyleProp<ViewStyle>}
+          contentContainerStyle={[styles.recordsList, { paddingBottom: 120 }] as unknown}
           estimatedItemSize={80}
         />
       )}

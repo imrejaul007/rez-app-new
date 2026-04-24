@@ -6,12 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';

@@ -13,8 +13,6 @@ import {
   Linking,
   StatusBar,
   Dimensions,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -122,7 +120,7 @@ function StoreVisitPageInner() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [visitDetails, setVisitDetails] = useState<VisitDetails>({
-    name: (user as unknown as Record<string, unknown>)?.name || '',
+    name: (user as unknown)?.name || '',
     phone: user?.phoneNumber || '',
     email: user?.email || '',
     visitDate: null,
@@ -218,7 +216,7 @@ function StoreVisitPageInner() {
     (dayName: string) => {
       const dayKey = dayName.toLowerCase();
       // Try operationalInfo.hours first (raw backend), then unified hours object
-      const hoursObj = (store as unknown as Record<string, unknown>)?.operationalInfo?.hours || store?.hours;
+      const hoursObj = (store as unknown)?.operationalInfo?.hours || store?.hours;
       if (!hoursObj || typeof hoursObj !== 'object') return null;
       const dayData = hoursObj[dayKey];
       if (!dayData) return null;
@@ -299,7 +297,7 @@ function StoreVisitPageInner() {
     if (user) {
       setVisitDetails((prev) => ({
         ...prev,
-        name: (user as unknown as Record<string, unknown>).name || prev.name,
+        name: (user as unknown).name || prev.name,
         phone: user.phoneNumber || prev.phone,
         email: user.email || prev.email,
       }));
@@ -370,7 +368,7 @@ function StoreVisitPageInner() {
 
       if (response.success && response.data) {
         // Backend returns { store, products, productsCount }, extract just the store
-        const storeData = (response.data as unknown as Record<string, unknown>).store || response.data;
+        const storeData = (response.data as unknown).store || response.data;
         if (!isMounted()) return;
         setStore(storeData);
       } else {
@@ -732,10 +730,7 @@ function StoreVisitPageInner() {
 
   // Memoized handle directions
   const handleGetDirections = useCallback(() => {
-    if (
-      !(store as unknown as Record<string, unknown>)?.location?.address &&
-      !(store as unknown as Record<string, unknown>)?.location?.city
-    ) {
+    if (!(store as unknown)?.location?.address && !(store as unknown)?.location?.city) {
       showAlert('Address Not Available', 'Store address information is not available', undefined, 'warning');
       return;
     }
@@ -744,21 +739,16 @@ function StoreVisitPageInner() {
     analyticsService.track('directions_clicked', {
       storeId,
       storeName: store?.name,
-      address: [
-        (store as unknown as Record<string, unknown>).location?.address,
-        (store as unknown as Record<string, unknown>).location?.city,
-      ]
-        .filter(Boolean)
-        .join(', '),
+      address: [(store as unknown).location?.address, (store as unknown).location?.city].filter(Boolean).join(', '),
       crowdLevel,
       timestamp: new Date().toISOString(),
     });
 
     const address = [
-      (store as unknown as Record<string, unknown>).location?.address,
-      (store as unknown as Record<string, unknown>).location?.city,
-      (store as unknown as Record<string, unknown>).location?.state,
-      (store as unknown as Record<string, unknown>).location?.pincode,
+      (store as unknown).location?.address,
+      (store as unknown).location?.city,
+      (store as unknown).location?.state,
+      (store as unknown).location?.pincode,
     ]
       .filter(Boolean)
       .join(', ');
@@ -881,15 +871,11 @@ function StoreVisitPageInner() {
                 const catName = typeof store.category === 'string' ? store.category : store.category?.name;
                 return catName ? <Text style={styles.storeCategory}>{catName}</Text> : null;
               })()}
-              {((store as unknown as Record<string, unknown>).location?.address ||
-                (store as unknown as Record<string, unknown>).location?.city) && (
+              {((store as unknown).location?.address || (store as unknown).location?.city) && (
                 <View style={styles.addressRow}>
                   <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
                   <Text style={styles.addressText} numberOfLines={1}>
-                    {[
-                      (store as unknown as Record<string, unknown>).location?.address,
-                      (store as unknown as Record<string, unknown>).location?.city,
-                    ]
+                    {[(store as unknown).location?.address, (store as unknown).location?.city]
                       .filter(Boolean)
                       .join(', ')}
                   </Text>
@@ -1253,9 +1239,7 @@ function StoreVisitPageInner() {
           </View>
 
           <Pressable
-            style={
-              [styles.primaryButton, schedulingVisit ? styles.buttonDisabled : null] as unknown as StyleProp<ViewStyle>
-            }
+            style={[styles.primaryButton, schedulingVisit ? styles.buttonDisabled : null] as unknown}
             onPress={handleScheduleVisit}
             disabled={schedulingVisit}
           >

@@ -267,7 +267,7 @@ function ScratchCardPage() {
     return (
       <FeatureErrorBoundary
         featureName="Scratch Card"
-        onSecondaryAction={() => router.push('/games' as unknown as string)}
+        onSecondaryAction={() => router.push('/games' as unknown)}
         secondaryActionLabel="Back to Games"
         secondaryActionIcon="game-controller"
       >
@@ -319,7 +319,7 @@ function ScratchCardPage() {
     return (
       <FeatureErrorBoundary
         featureName="Scratch Card"
-        onSecondaryAction={() => router.push('/games' as unknown as string)}
+        onSecondaryAction={() => router.push('/games' as unknown)}
         secondaryActionLabel="Back to Games"
         secondaryActionIcon="game-controller"
       >
@@ -351,7 +351,7 @@ function ScratchCardPage() {
   return (
     <FeatureErrorBoundary
       featureName="Scratch Card"
-      onSecondaryAction={() => router.push('/games' as unknown as string)}
+      onSecondaryAction={() => router.push('/games' as unknown)}
       secondaryActionLabel="Back to Games"
       secondaryActionIcon="game-controller"
       onReset={() => checkEligibility()}
@@ -395,11 +395,7 @@ function ScratchCardPage() {
               {cardState === 'revealed' && prize && (
                 <Animated.View style={[styles.prizeContent, { transform: [{ scale: prizeScaleAnim }] }]}>
                   <View style={[styles.prizeIcon, { backgroundColor: getPrizeColor(prize.type) }]}>
-                    <Ionicons
-                      name={getPrizeIcon(prize.type) as unknown as keyof typeof Ionicons.glyphMap}
-                      size={40}
-                      color={colors.text.inverse}
-                    />
+                    <Ionicons name={getPrizeIcon(prize.type) as unknown} size={40} color={colors.text.inverse} />
                   </View>
                   <ThemedText style={styles.prizeTitle}>
                     {prize.type === 'coins' || (prize.type as string) === 'coin'

@@ -103,7 +103,7 @@ const ComparePage = () => {
   }, [fetchComparisons]);
 
   const navigateToStore = (storeId: string) => {
-    router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${storeId}` as unknown);
   };
 
   return (

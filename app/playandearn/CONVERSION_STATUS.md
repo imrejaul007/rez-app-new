@@ -28,6 +28,7 @@
 The following files need to be converted from React.js to React Native:
 
 ### Files to Convert:
+
 1. **CollegeAmbassador.jsx** ❌
 2. **BrandTasks.jsx** ❌
 3. **UGCCreator.jsx** ❌
@@ -37,6 +38,7 @@ The following files need to be converted from React.js to React Native:
 7. **TournamentDetail.jsx** ❌
 
 ### Already React Native Compatible:
+
 - ✅ `quiz.tsx`
 - ✅ `memorymatch.tsx`
 - ✅ `luckydraw.tsx`
@@ -50,6 +52,7 @@ The following files need to be converted from React.js to React Native:
 For each `.jsx` file, you need to:
 
 ### 1. Replace HTML Elements with React Native Components:
+
 - `<div>` → `<View>`
 - `<button>` → `<TouchableOpacity>` or `<Pressable>`
 - `<span>`, `<p>`, `<h1>`, etc. → `<Text>`
@@ -58,25 +61,30 @@ For each `.jsx` file, you need to:
 - `<input>` → `<TextInput>`
 
 ### 2. Replace CSS Classes with StyleSheet:
-- Remove `className="..."` 
+
+- Remove `className="..."`
 - Add `style={styles.xxx}` using StyleSheet
 - Convert Tailwind classes to React Native styles
 
 ### 3. Replace Icons:
+
 - Remove `lucide-react` imports
 - Replace with `@expo/vector-icons` (Ionicons)
 - Example: `<ArrowLeft />` → `<Ionicons name="arrow-back" size={24} color="#000" />`
 
 ### 4. Update Navigation:
+
 - Already using `useRouter` from `expo-router` ✅
 - Replace `Link` from `react-router-dom` with `Link` from `expo-router`
 - Update `href` prop to match expo-router format
 
 ### 5. Handle Dark Mode:
+
 - Replace Tailwind dark mode classes with theme-based styles
 - Use `useColorScheme()` hook if needed
 
 ### 6. Replace Web-Specific Features:
+
 - `hover:` states → Use `activeOpacity` on TouchableOpacity
 - `backdrop-blur` → Use `expo-blur` if needed
 - CSS Grid/Flexbox → React Native Flexbox
@@ -84,10 +92,12 @@ For each `.jsx` file, you need to:
 ## 📍 How to Access Pages
 
 ### Main Page:
+
 - Navigate to: `/playandearn`
 - Or use: `router.push('/playandearn')`
 
 ### Sub-pages:
+
 - College Ambassador: `/playandearn/CollegeAmbassador`
 - Brand Tasks: `/playandearn/BrandTasks`
 - UGC Creator: `/playandearn/UGCCreator`
@@ -121,5 +131,3 @@ For each `.jsx` file, you need to:
 - All routes are registered and should be accessible
 - The `.tsx` files in the folder are already React Native compatible
 - Only the `.jsx` files copied from React.js need conversion
-
-

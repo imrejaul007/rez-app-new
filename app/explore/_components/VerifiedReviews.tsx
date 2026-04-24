@@ -45,7 +45,7 @@ const VerifiedReviews = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as unknown);
   };
 
   const renderStars = (rating: number) => {

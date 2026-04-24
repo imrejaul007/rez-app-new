@@ -99,8 +99,8 @@ function VoucherBrandDetailPage() {
       const response = await realVouchersApi.getVoucherBrandById(id);
       if (response.success && response.data) {
         setBrand(response.data as unknown as VoucherBrand);
-        if ((response.data as unknown as Record<string, unknown>).denominations?.length > 0 && !selectedDenomination) {
-          setSelectedDenomination((response.data as unknown as Record<string, unknown>).denominations[0]);
+        if ((response.data as unknown).denominations?.length > 0 && !selectedDenomination) {
+          setSelectedDenomination((response.data as unknown).denominations[0]);
         }
       } else {
         if (!isMounted()) return;
@@ -166,8 +166,7 @@ function VoucherBrandDetailPage() {
         setConfirmModal({
           visible: true,
           title: 'Purchase Failed',
-          message:
-            (response as unknown as Record<string, unknown>).error || 'Failed to purchase voucher. Please try again.',
+          message: (response as unknown).error || 'Failed to purchase voucher. Please try again.',
           type: 'error',
         });
       }
@@ -214,7 +213,7 @@ function VoucherBrandDetailPage() {
 
   const brandGradient = brand?.backgroundColor
     ? [brand.backgroundColor, adjustColor(brand.backgroundColor, -20)]
-    : [(COLORS as unknown as Record<string, string>).navy, colors.brand.nileBlueLight];
+    : [(COLORS as unknown).navy, colors.brand.nileBlueLight];
 
   if (isLoading) {
     return <DetailPageSkeleton />;
@@ -246,7 +245,7 @@ function VoucherBrandDetailPage() {
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.headerBackButton}
         >
-          <Ionicons name="arrow-back" size={24} color={(COLORS as unknown as Record<string, string>).navy} />
+          <Ionicons name="arrow-back" size={24} color={(COLORS as unknown).navy} />
         </Pressable>
         <Text style={styles.headerTitle} numberOfLines={1}>
           {brand.name}
@@ -261,7 +260,7 @@ function VoucherBrandDetailPage() {
       >
         {/* Brand Hero */}
         <LinearGradient
-          colors={brandGradient as unknown as string[]}
+          colors={brandGradient as unknown}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroSection}
@@ -393,11 +392,7 @@ function VoucherBrandDetailPage() {
           <View style={styles.section}>
             <Pressable style={styles.termsHeader} onPress={() => setShowTerms(!showTerms)}>
               <Text style={styles.sectionTitle}>Terms & Conditions</Text>
-              <Ionicons
-                name={showTerms ? 'chevron-up' : 'chevron-down'}
-                size={20}
-                color={(COLORS as unknown as Record<string, string>).navy}
-              />
+              <Ionicons name={showTerms ? 'chevron-up' : 'chevron-down'} size={20} color={(COLORS as unknown).navy} />
             </Pressable>
             {showTerms && (
               <View style={styles.termsContent}>
@@ -486,7 +481,7 @@ function VoucherBrandDetailPage() {
                     ? COLORS.green
                     : confirmModal.type === 'error'
                       ? Colors.error
-                      : (COLORS as unknown as Record<string, string>).navy
+                      : (COLORS as unknown).navy
                 }
               />
             </View>
@@ -598,7 +593,7 @@ const styles = StyleSheet.create({
   },
   backLinkText: {
     ...Typography.body,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     fontWeight: '500',
     textDecorationLine: 'underline',
   },
@@ -626,7 +621,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     textAlign: 'center',
     marginHorizontal: Spacing.md,
   },
@@ -677,7 +672,7 @@ const styles = StyleSheet.create({
   logoInitial: {
     fontSize: 32,
     fontWeight: '800',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   heroName: {
     ...Typography.h2,
@@ -743,7 +738,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.md,
   },
   descriptionText: {
@@ -775,11 +770,11 @@ const styles = StyleSheet.create({
   denomAmount: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
   },
   denomAmountSelected: {
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   denomCashback: {
     ...Typography.overline,
@@ -808,7 +803,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   paymentMethodCardSelected: {
-    borderColor: (COLORS as unknown as Record<string, string>).purple,
+    borderColor: (COLORS as unknown).purple,
     backgroundColor: '#FAF5FF',
   },
   paymentMethodWalletSelected: {
@@ -830,7 +825,7 @@ const styles = StyleSheet.create({
     color: COLORS.gray500,
   },
   paymentMethodLabelSelected: {
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   paymentMethodCheck: {
     marginLeft: 'auto',
@@ -855,7 +850,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   summaryDivider: {
     height: 1,
@@ -890,12 +885,12 @@ const styles = StyleSheet.create({
   effectiveCostLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   effectiveCostValue: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
 
   // Terms
@@ -986,7 +981,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 20 },
       android: { elevation: 10 },
-      web: { boxShadow: '0 8px 30px rgba(0,0,0,0.15)' } as unknown as import('react-native').ViewStyle,
+      web: { boxShadow: '0 8px 30px rgba(0,0,0,0.15)' } as unknown,
     }),
   },
   alertIconCircle: {
@@ -1009,7 +1004,7 @@ const styles = StyleSheet.create({
   alertTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -1058,7 +1053,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 14,
-    backgroundColor: (COLORS as unknown as Record<string, string>).navy,
+    backgroundColor: (COLORS as unknown).navy,
     alignItems: 'center',
   },
   alertButtonOkText: {

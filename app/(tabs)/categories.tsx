@@ -260,7 +260,7 @@ function CategoriesScreen() {
           parentCategory: parentSlug,
           title: subcategory.name,
         },
-      } as unknown as string);
+      } as unknown);
     },
     [router],
   );
@@ -338,7 +338,7 @@ function CategoriesScreen() {
         {/* Search bar — tap navigates to /search */}
         <Pressable
           style={styles.searchBar}
-          onPress={() => router.push('/search' as unknown as string)}
+          onPress={() => router.push('/search' as unknown)}
           android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
           accessibilityRole="search"
           accessibilityLabel="Search everything"

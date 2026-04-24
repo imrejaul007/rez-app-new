@@ -103,16 +103,13 @@ function AdminCampaigns() {
     try {
       // Load campaigns
       const campaignResponse = await apiClient.get('/campaigns/admin/all');
-      const campaignsData = (campaignResponse.data as unknown as Record<string, unknown>)?.campaigns || [];
+      const campaignsData = (campaignResponse.data as unknown)?.campaigns || [];
       if (!isMounted()) return;
       setCampaigns(campaignsData);
 
       // Load stores for selection
       const storeResponse = await apiClient.get('/stores', { limit: 200 });
-      const storesData =
-        (storeResponse.data as unknown as Record<string, unknown>)?.stores ||
-        (storeResponse.data as unknown as Record<string, unknown>)?.data ||
-        [];
+      const storesData = (storeResponse.data as unknown)?.stores || (storeResponse.data as unknown)?.data || [];
       if (!isMounted()) return;
       setStores(storesData);
     } catch (error: any) {

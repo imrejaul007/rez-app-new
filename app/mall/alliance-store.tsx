@@ -81,10 +81,7 @@ function AllianceStorePage() {
 
   const renderStore = useCallback(
     ({ item }: { item: AllianceStore }) => (
-      <Pressable
-        style={styles.storeCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${item._id}` as unknown as string)}
-      >
+      <Pressable style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${item._id}` as unknown)}>
         {/* Store Image */}
         <View style={styles.storeImageContainer}>
           {item.logo ? (

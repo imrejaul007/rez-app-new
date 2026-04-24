@@ -4,17 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // micro-interactions, skeleton loading, and production-ready design tokens.
 
 import React, { useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, runOnJS } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -157,7 +147,7 @@ function AccountPage() {
           break;
         default:
           if (category.route) {
-            router.push(category.route as unknown as string);
+            router.push(category.route as unknown);
           }
           break;
       }
@@ -219,9 +209,7 @@ function AccountPage() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          [styles.scrollContent, { paddingBottom: insets.bottom + 100 }] as unknown as StyleProp<ViewStyle>
-        }
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }] as unknown}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -293,9 +281,9 @@ function AccountPage() {
                     onPress={() => {
                       if (isVerified) {
                         const route = SEGMENT_ROUTES[segment];
-                        if (route) router.push(route as unknown as string);
+                        if (route) router.push(route as unknown);
                       } else {
-                        router.push('/onboarding/identity-select' as unknown as string);
+                        router.push('/onboarding/identity-select' as unknown);
                       }
                     }}
                     style={{
@@ -504,7 +492,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
       },
       android: { elevation: 2 },
-      web: { boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } as unknown as ViewStyle,
+      web: { boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } as unknown,
     }),
   },
 

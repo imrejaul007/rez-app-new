@@ -18,9 +18,6 @@ import {
   Dimensions,
   Clipboard,
   FlatList,
-  StyleProp,
-  ViewStyle,
-  ListRenderItemInfo,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -202,7 +199,7 @@ const MyDealsPage: React.FC = () => {
 
   const handleDealPress = (redemption: DealRedemption) => {
     if (redemption.campaignId && redemption.dealIndex !== undefined) {
-      router.push(`/deals/${redemption.campaignId}/${redemption.dealIndex}` as unknown as string);
+      router.push(`/deals/${redemption.campaignId}/${redemption.dealIndex}` as unknown);
     }
   };
 
@@ -226,7 +223,7 @@ const MyDealsPage: React.FC = () => {
         storeData: JSON.stringify({ id: storeId, name: storeName }),
         redemptionCode,
       },
-    } as unknown as Record<string, unknown>);
+    } as unknown);
   };
 
   const formatDate = (dateString: string) => {
@@ -305,17 +302,13 @@ const MyDealsPage: React.FC = () => {
             {/* Store & Status Row */}
             <View style={styles.storeStatusRow}>
               <View style={styles.storeInfo}>
-                <Ionicons name="storefront" size={16} color={(COLORS as unknown as Record<string, string>).navy} />
+                <Ionicons name="storefront" size={16} color={(COLORS as unknown).navy} />
                 <Text style={styles.storeName} numberOfLines={1}>
                   {redemption.dealSnapshot?.store || 'Store'}
                 </Text>
               </View>
               <View style={[styles.statusBadge, { backgroundColor: statusConfig.bgColor }]}>
-                <Ionicons
-                  name={statusConfig.icon as unknown as keyof typeof Ionicons.glyphMap}
-                  size={12}
-                  color={statusConfig.color}
-                />
+                <Ionicons name={statusConfig.icon as unknown} size={12} color={statusConfig.color} />
                 <Text style={[styles.statusText, { color: statusConfig.color }]}>{statusConfig.label}</Text>
               </View>
             </View>
@@ -402,7 +395,7 @@ const MyDealsPage: React.FC = () => {
       </Text>
       <Pressable
         style={styles.exploreButton}
-        onPress={() => router.push('/(tabs)' as unknown as string)}
+        onPress={() => router.push('/(tabs)' as unknown)}
         accessibilityLabel="Find Deals"
         accessibilityRole="button"
         accessibilityHint="Browse available deals"
@@ -429,7 +422,7 @@ const MyDealsPage: React.FC = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="arrow-back" size={24} color={(COLORS as unknown as Record<string, string>).navy} />
+          <Ionicons name="arrow-back" size={24} color={(COLORS as unknown).navy} />
         </Pressable>
         <Text style={styles.headerTitle}>My Deals</Text>
         <View style={styles.headerRight} />
@@ -503,15 +496,13 @@ const MyDealsPage: React.FC = () => {
       ) : Platform.OS === 'web' ? (
         <FlatList
           data={redemptions}
-          renderItem={
-            renderDealCard as unknown as (item: ListRenderItemInfo<DealRedemption>) => React.ReactElement | null
-          }
-          keyExtractor={(item) => (item as unknown as Record<string, unknown>)._id || item.id}
+          renderItem={renderDealCard as unknown}
+          keyExtractor={(item) => (item as unknown)._id || item.id}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={COLORS.green500} />
           }
-          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }] as unknown as StyleProp<ViewStyle>}
+          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }] as unknown}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           ListFooterComponent={
@@ -526,12 +517,12 @@ const MyDealsPage: React.FC = () => {
         <FlashList
           data={redemptions}
           renderItem={renderDealCard}
-          keyExtractor={(item) => (item as unknown as Record<string, unknown>)._id || item.id}
+          keyExtractor={(item) => (item as unknown)._id || item.id}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={COLORS.green500} />
           }
-          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }] as unknown as StyleProp<ViewStyle>}
+          contentContainerStyle={[styles.dealsListContent, { paddingBottom: 120 }] as unknown}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           ListFooterComponent={
@@ -579,7 +570,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   headerRight: {
     width: 40,
@@ -638,7 +629,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   filterChipActive: {
-    backgroundColor: (COLORS as unknown as Record<string, string>).navy,
+    backgroundColor: (COLORS as unknown).navy,
   },
   filterChipText: {
     ...Typography.body,
@@ -726,7 +717,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
@@ -826,7 +817,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     flex: 1,
   },
   statusBadge: {
@@ -892,7 +883,7 @@ const styles = StyleSheet.create({
   codeText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     letterSpacing: 1.5,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },

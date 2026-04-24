@@ -386,11 +386,7 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
         {/* Transaction Amount Card */}
         <View style={styles.amountCard}>
           <View style={[styles.typeIconContainer, { backgroundColor: `${typeColor}20` }]}>
-            <Ionicons
-              name={getTypeIcon(transaction.type) as unknown as keyof typeof Ionicons.glyphMap}
-              size={32}
-              color={typeColor}
-            />
+            <Ionicons name={getTypeIcon(transaction.type) as unknown} size={32} color={typeColor} />
           </View>
           <Text style={[styles.amountText, { color: typeColor }]}>
             {transaction.type === 'credit' ? '+' : '-'}

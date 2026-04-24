@@ -21,8 +21,6 @@ import {
   RefreshControl,
   Share,
   Modal,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -129,7 +127,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         trackEvent(ANALYTICS_EVENTS.SERVICE_VIEWED, {
           service_id: id,
           service_name: response.data.name,
-          service_type: (response.data.serviceCategory as unknown as Record<string, unknown>)?.slug || 'unknown',
+          service_type: (response.data.serviceCategory as unknown)?.slug || 'unknown',
           cashback_percentage: response.data.cashback?.percentage || 0,
         });
       } else {
@@ -185,17 +183,13 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
   // Determine service type from category slug
   const getServiceType = () => {
     if (!service?.serviceCategory) return 'bills';
-    const categorySlug = (service.serviceCategory as unknown as Record<string, unknown>)?.slug || '';
+    const categorySlug = (service.serviceCategory as unknown)?.slug || '';
     return categorySlug;
   };
 
   const serviceType = getServiceType();
-  const cashbackPercentage =
-    service?.cashback?.percentage ||
-    (service?.serviceCategory as unknown as Record<string, unknown>)?.cashbackPercentage ||
-    0;
-  const maxCashback =
-    service?.cashback?.maxAmount || (service?.serviceCategory as unknown as Record<string, unknown>)?.maxCashback || 0;
+  const cashbackPercentage = service?.cashback?.percentage || service?.serviceCategory?.cashbackPercentage || 0;
+  const maxCashback = service?.cashback?.maxAmount || (service?.serviceCategory as unknown)?.maxCashback || 0;
 
   // Sanitize input - remove any non-numeric characters
   const sanitizeNumericInput = (input: string): string => {
@@ -393,7 +387,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         payment_method: 'financial_service',
       });
 
-      router.push(`/payment?${paymentParams.toString()}` as unknown as string);
+      router.push(`/payment?${paymentParams.toString()}` as unknown);
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to proceed. Please try again.');
       trackEvent('financial_service_payment_error', {
@@ -727,9 +721,8 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
     );
   }
 
-  const categoryColor =
-    (service.serviceCategory as unknown as Record<string, unknown>)?.metadata?.color || COLORS.blue500;
-  const categoryName = (service.serviceCategory as unknown as Record<string, unknown>)?.name || 'Financial Service';
+  const categoryColor = (service.serviceCategory as unknown)?.metadata?.color || COLORS.blue500;
+  const categoryName = (service.serviceCategory as unknown)?.name || 'Financial Service';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -916,7 +909,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -993,7 +986,7 @@ const styles = StyleSheet.create({
   cashbackTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
   },
   cashbackSubtitle: {
@@ -1007,7 +1000,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.md,
   },
   description: {
@@ -1025,7 +1018,7 @@ const styles = StyleSheet.create({
   formTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
   },
   formSubtitle: {
@@ -1039,7 +1032,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
   },
   input: {
@@ -1049,7 +1042,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     padding: 14,
     ...Typography.bodyLarge,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   phoneInputContainer: {
     flexDirection: 'row',
@@ -1072,7 +1065,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 14,
     ...Typography.bodyLarge,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   fetchButton: {
     backgroundColor: COLORS.purple500,
@@ -1110,7 +1103,7 @@ const styles = StyleSheet.create({
   billAmount: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   billDate: {
     ...Typography.body,
@@ -1138,7 +1131,7 @@ const styles = StyleSheet.create({
   amountChipText: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   amountChipTextActive: {
     color: COLORS.white,
@@ -1166,7 +1159,7 @@ const styles = StyleSheet.create({
   planName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   planPrice: {
     ...Typography.h4,

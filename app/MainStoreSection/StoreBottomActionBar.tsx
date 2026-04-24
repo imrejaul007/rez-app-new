@@ -88,7 +88,7 @@ function StoreBottomActionBar({
       router.push({
         pathname: '/CardOffersPage',
         params: { storeId: storeId || '' },
-      } as unknown as string);
+      } as unknown);
     }
   };
 
@@ -100,7 +100,7 @@ function StoreBottomActionBar({
       onOrderFood();
     } else {
       // Navigate to the menu tab of this store
-      router.push(`/MainStorePage?storeId=${storeId || ''}&tab=menu` as unknown as string);
+      router.push(`/MainStorePage?storeId=${storeId || ''}&tab=menu` as unknown);
     }
   };
 
@@ -110,7 +110,7 @@ function StoreBottomActionBar({
       onBookTable();
     } else {
       router.push(
-        `/MainCategory/food-dining/book-table?storeId=${storeId || ''}&storeName=${encodeURIComponent(storeName || '')}` as unknown as string,
+        `/MainCategory/food-dining/book-table?storeId=${storeId || ''}&storeName=${encodeURIComponent(storeName || '')}` as unknown,
       );
     }
   };
@@ -132,7 +132,7 @@ function StoreBottomActionBar({
       router.push({
         pathname: '/pay-in-store/enter-amount',
         params: { storeId: storeId || '', storeName: storeName || '' },
-      } as unknown as string);
+      } as unknown);
     }
   };
 

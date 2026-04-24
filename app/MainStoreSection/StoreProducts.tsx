@@ -121,14 +121,14 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
     router.push({
       pathname: '/product-page',
       params: { cardId: productId, cardType: 'product' },
-    } as unknown as string);
+    } as unknown);
   };
 
   const handleViewAll = () => {
     router.push({
       pathname: '/StoreProductsPage',
       params: { storeId, storeName: storeName || 'Store' },
-    } as unknown as string);
+    } as unknown);
   };
 
   const formatPrice = (price: number) => price.toLocaleString('en-IN');
@@ -193,7 +193,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
             {/* Premium Discount Badge */}
             {discount > 0 && (
               <LinearGradient
-                colors={[COLORS.gold, (COLORS as unknown as Record<string, string>).goldDark]}
+                colors={[COLORS.gold, (COLORS as unknown).goldDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.discountBadge}
@@ -226,7 +226,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
             {/* Rating Badge - Glass Style */}
             {item.ratings?.average > 0 && (
               <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={11} color={(COLORS as unknown as Record<string, string>).goldDark} />
+                <Ionicons name="star" size={11} color={(COLORS as unknown).goldDark} />
                 <Text style={styles.ratingText}>{item.ratings.average.toFixed(1)}</Text>
               </View>
             )}
@@ -338,9 +338,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
       {/* Products Grid */}
       <View style={styles.productsRow}>
         {displayProducts.map((product, index) => (
-          <View key={(product as unknown as Record<string, unknown>)._id || product.id}>
-            {renderProduct({ item: product, index })}
-          </View>
+          <View key={(product as unknown)._id || product.id}>{renderProduct({ item: product, index })}</View>
         ))}
       </View>
     </View>
@@ -414,7 +412,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: (COLORS as unknown as Record<string, string>).navy,
+        shadowColor: (COLORS as unknown).navy,
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.08,
         shadowRadius: 8,
@@ -491,7 +489,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: 10,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     letterSpacing: 0.3,
   },
 
@@ -546,7 +544,7 @@ const styles = StyleSheet.create({
 
   ratingText: {
     fontSize: 11,
-    color: (COLORS as unknown as Record<string, string>).goldDark,
+    color: (COLORS as unknown).goldDark,
     marginLeft: 4,
     fontWeight: '700',
   },

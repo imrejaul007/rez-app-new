@@ -88,7 +88,7 @@ function NearbyStoresSection({ stores: propStores, currentStoreId, userLat, user
   const handleStorePress = (store: NearbyStore) => {
     triggerImpact('Light');
     // Navigate to the store page
-    router.push(`/MainStorePage?storeId=${store.id}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${store.id}` as unknown);
   };
 
   // Don't render section if no nearby stores are available

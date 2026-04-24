@@ -210,7 +210,7 @@ function BookingPage() {
         if (cancelled) return;
         const raw: { time: string; available: boolean }[] = Array.isArray(res.data)
           ? res.data
-          : (res as unknown as Record<string, unknown>).data?.slots || [];
+          : (res as unknown).data?.slots || [];
         if (raw.length > 0) {
           const mapped: TimeSlot[] = raw.map((s) => {
             const [h, m] = s.time.split(':').map(Number);
@@ -245,14 +245,14 @@ function BookingPage() {
       // Load store details
       const storeResponse = await storesApi.getStoreById(storeId as string);
       if (storeResponse.success && storeResponse.data) {
-        setStore(storeResponse.data as unknown as Record<string, unknown>);
+        setStore(storeResponse.data as unknown);
       }
 
       // If service booking, also load service details
       if (isServiceBooking && productId) {
         const serviceResponse = await productsApi.getProductById(productId as string);
         if (serviceResponse.success && serviceResponse.data) {
-          const productData = serviceResponse.data as unknown as Record<string, unknown>;
+          const productData = serviceResponse.data as unknown;
           setService({
             _id: productData.id || productData._id,
             name: productData.name,

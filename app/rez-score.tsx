@@ -389,7 +389,7 @@ export default function RezScoreScreen() {
                 styles.shareBtnSecondary,
                 pressed ? styles.shareBtnPressed : null,
               ]}
-              onPress={() => router.push('/share-savings' as unknown as string)}
+              onPress={() => router.push('/share-savings' as unknown)}
             >
               <Ionicons name="image-outline" size={18} color={colors.lightMustard} />
               <ThemedText style={[styles.shareBtnText, styles.shareBtnTextSecondary]}>View savings card</ThemedText>

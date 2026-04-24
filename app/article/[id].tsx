@@ -41,9 +41,9 @@ function ArticleDetailPage() {
 
       const response = await articlesService.getArticleById(id as string);
 
-      if (response.success && response.data && (response.data as unknown as Record<string, unknown>).article) {
+      if (response.success && response.data && (response.data as unknown).article) {
         if (!isMounted()) return;
-        setArticle((response.data as unknown as Record<string, unknown>).article as unknown as Record<string, unknown>);
+        setArticle((response.data as unknown).article as unknown);
       } else {
         if (!isMounted()) return;
         setError('Article not found');

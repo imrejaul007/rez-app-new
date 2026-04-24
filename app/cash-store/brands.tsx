@@ -241,7 +241,7 @@ function CashStoreBrandsPage() {
             controlsColor: colors.background.primary,
           });
         } else if (brand.storeId) {
-          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown as string);
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown);
         }
       } catch (error: any) {
         if (brand.externalUrl) {
@@ -320,24 +320,12 @@ function CashStoreBrandsPage() {
                     end={{ x: 1, y: 1 }}
                     style={[styles.chip, styles.chipActive]}
                   >
-                    {cat.icon ? (
-                      <Ionicons
-                        name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={12}
-                        color={colors.text.inverse}
-                      />
-                    ) : null}
+                    {cat.icon ? <Ionicons name={cat.icon as unknown} size={12} color={colors.text.inverse} /> : null}
                     <Text style={[styles.chipText, styles.chipTextActive]}>{cat.name}</Text>
                   </LinearGradient>
                 ) : (
                   <View style={styles.chip}>
-                    {cat.icon ? (
-                      <Ionicons
-                        name={cat.icon as unknown as keyof typeof Ionicons.glyphMap}
-                        size={12}
-                        color="#7C8A97"
-                      />
-                    ) : null}
+                    {cat.icon ? <Ionicons name={cat.icon as unknown} size={12} color="#7C8A97" /> : null}
                     <Text style={styles.chipText}>{cat.name}</Text>
                   </View>
                 )}
@@ -595,7 +583,7 @@ function CashStoreBrandsPage() {
                 >
                   <View style={[styles.modalOptionIcon, isActive ? styles.modalOptionIconActive : null]}>
                     <Ionicons
-                      name={option.icon as unknown as keyof typeof Ionicons.glyphMap}
+                      name={option.icon as unknown}
                       size={16}
                       color={isActive ? colors.background.primary : colors.neutral[400]}
                     />

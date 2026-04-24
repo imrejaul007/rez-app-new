@@ -229,7 +229,7 @@ function CancelFeedbackPage() {
               {selectedReason === reason.value && <View style={styles.radioButtonInner} />}
             </View>
             <Ionicons
-              name={reason.icon as unknown as keyof typeof Ionicons.glyphMap}
+              name={reason.icon as unknown}
               size={24}
               color={selectedReason === reason.value ? Colors.error : colors.text.tertiary}
             />

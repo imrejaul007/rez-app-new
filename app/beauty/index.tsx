@@ -187,20 +187,20 @@ const BeautyPage: React.FC = () => {
   }, [fetchData]);
 
   const handleCategoryPress = (route: string) => {
-    router.push(route as unknown as string);
+    router.push(route as unknown);
   };
 
   const handleSalonPress = (salonId: string) => {
-    router.push(`/MainStorePage?storeId=${salonId}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${salonId}` as unknown);
   };
 
   const handleProductPress = (productId: string) => {
-    router.push(`/product-page?productId=${productId}` as unknown as string);
+    router.push(`/product-page?productId=${productId}` as unknown);
   };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&category=beauty` as unknown as string);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&category=beauty` as unknown);
     }
   };
 
@@ -299,7 +299,7 @@ const BeautyPage: React.FC = () => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Featured Salons & Spas</Text>
-              <Pressable onPress={() => router.push('/stores?category=beauty-wellness' as unknown as string)}>
+              <Pressable onPress={() => router.push('/stores?category=beauty-wellness' as unknown)}>
                 <Text style={styles.viewAllText}>View All</Text>
               </Pressable>
             </View>
@@ -341,7 +341,7 @@ const BeautyPage: React.FC = () => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Trending Products</Text>
-              <Pressable onPress={() => router.push('/products?category=beauty-wellness' as unknown as string)}>
+              <Pressable onPress={() => router.push('/products?category=beauty-wellness' as unknown)}>
                 <Text style={styles.viewAllText}>View All</Text>
               </Pressable>
             </View>
@@ -386,11 +386,7 @@ const BeautyPage: React.FC = () => {
           <Text style={styles.sectionTitle}>Top Brands</Text>
           <View style={styles.brandsGrid}>
             {TOP_BRANDS.map((brand) => (
-              <Pressable
-                key={brand.id}
-                style={styles.brandCard}
-                onPress={() => router.push(brand.route as unknown as string)}
-              >
+              <Pressable key={brand.id} style={styles.brandCard} onPress={() => router.push(brand.route as unknown)}>
                 <Text style={styles.brandLogo}>{brand.logo}</Text>
                 <Text style={styles.brandName}>{brand.name}</Text>
                 <Text style={styles.brandDiscount}>{brand.discount}</Text>
@@ -412,7 +408,7 @@ const BeautyPage: React.FC = () => {
               <Text style={styles.promoTitle}>Beauty Week Special</Text>
               <Text style={styles.promoSubtitle}>Extra 15% cashback on all bookings</Text>
             </View>
-            <Pressable style={styles.promoButton} onPress={() => router.push('/offers' as unknown as string)}>
+            <Pressable style={styles.promoButton} onPress={() => router.push('/offers' as unknown)}>
               <Text style={styles.promoButtonText}>View Offers</Text>
             </Pressable>
           </LinearGradient>
@@ -424,7 +420,7 @@ const BeautyPage: React.FC = () => {
           <View style={styles.quickActionsRow}>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/stores?category=beauty-wellness&filter=verified' as unknown as string)}
+              onPress={() => router.push('/stores?category=beauty-wellness&filter=verified' as unknown)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#E0F2FE' }]}>
                 <Ionicons name="shield-checkmark" size={24} color={colors.brand.sky} />
@@ -433,17 +429,14 @@ const BeautyPage: React.FC = () => {
             </Pressable>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/stores?category=beauty-wellness&filter=nearby' as unknown as string)}
+              onPress={() => router.push('/stores?category=beauty-wellness&filter=nearby' as unknown)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: Colors.warningScale[200] }]}>
                 <Ionicons name="location" size={24} color={Colors.warning} />
               </View>
               <Text style={styles.quickActionLabel}>Near{'\n'}Me</Text>
             </Pressable>
-            <Pressable
-              style={styles.quickActionCard}
-              onPress={() => router.push('/offers?type=cashback' as unknown as string)}
-            >
+            <Pressable style={styles.quickActionCard} onPress={() => router.push('/offers?type=cashback' as unknown)}>
               <View style={[styles.quickActionIcon, { backgroundColor: colors.tint.green }]}>
                 <Ionicons name="wallet" size={24} color={Colors.success} />
               </View>
@@ -451,7 +444,7 @@ const BeautyPage: React.FC = () => {
             </Pressable>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/stores?category=beauty-wellness&filter=try-buy' as unknown as string)}
+              onPress={() => router.push('/stores?category=beauty-wellness&filter=try-buy' as unknown)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: colors.pinkMist }]}>
                 <Ionicons name="flash" size={24} color={colors.deepPink} />
@@ -523,7 +516,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   statsRow: {
     flexDirection: 'row',
@@ -562,7 +555,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.md,
   },
   viewAllText: {
@@ -596,7 +589,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     textAlign: 'center',
   },
   horizontalList: {
@@ -641,7 +634,7 @@ const styles = StyleSheet.create({
   salonName: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: 2,
   },
   salonCategory: {
@@ -662,7 +655,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   distanceText: {
     ...Typography.bodySmall,
@@ -706,7 +699,7 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
     minHeight: 32,
   },
@@ -719,7 +712,7 @@ const styles = StyleSheet.create({
   productPrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   originalPrice: {
     ...Typography.caption,
@@ -750,7 +743,7 @@ const styles = StyleSheet.create({
   brandName: {
     ...Typography.body,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.xs,
   },
   brandDiscount: {
@@ -814,7 +807,7 @@ const styles = StyleSheet.create({
   },
   quickActionLabel: {
     ...Typography.caption,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     textAlign: 'center',
     fontWeight: '500',
   },

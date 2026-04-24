@@ -106,9 +106,7 @@ function CommentsPage() {
 
           const pagination = response.data.pagination;
           if (!isMounted()) return;
-          setHasMore(
-            (pagination as unknown as Record<string, unknown>)?.hasNext ?? transformed.length >= COMMENTS_PER_PAGE,
-          );
+          setHasMore((pagination as unknown)?.hasNext ?? transformed.length >= COMMENTS_PER_PAGE);
           if (!isMounted()) return;
           setPage(pageNum);
           if (!isMounted()) return;
@@ -229,10 +227,8 @@ function CommentsPage() {
         const addedComment: Comment = {
           id: response.data.id,
           user: {
-            name: response.data.userName || (user as unknown as Record<string, unknown>)?.fullName || 'You',
-            avatar:
-              response.data.userAvatar ||
-              ((user as unknown as Record<string, unknown>)?.fullName || 'Y').charAt(0).toUpperCase(),
+            name: response.data.userName || (user as unknown)?.fullName || 'You',
+            avatar: response.data.userAvatar || ((user as unknown)?.fullName || 'Y').charAt(0).toUpperCase(),
             verified: false,
           },
           text: response.data.comment,

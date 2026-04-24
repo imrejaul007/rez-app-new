@@ -372,7 +372,7 @@ const ExplorePage = () => {
       // Update trending stores
       if (storesRes.status === 'fulfilled') {
         const sRes = storesRes.value;
-        const storesData: any[] = (sRes.data as unknown as Record<string, unknown>)?.stores || sRes.data || [];
+        const storesData: any[] = (sRes.data as unknown)?.stores || sRes.data || [];
         if (sRes.success && storesData && storesData.length > 0) {
           const transformedStores = storesData.slice(0, 5).map((store: any) => ({
             id: store.id || store._id,
@@ -424,7 +424,7 @@ const ExplorePage = () => {
 
   const navigateTo = useCallback(
     (path: string) => {
-      router.push(path as unknown as string);
+      router.push(path as unknown);
     },
     [router],
   );
@@ -848,7 +848,7 @@ const ExplorePage = () => {
               accessibilityState={{ selected: selectedChip === chip.id }}
             >
               <Ionicons
-                name={chip.icon as unknown as keyof typeof Ionicons.glyphMap}
+                name={chip.icon as unknown}
                 size={16}
                 color={selectedChip === chip.id ? chip.color : colors.text.tertiary}
               />

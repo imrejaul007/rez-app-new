@@ -77,14 +77,14 @@ function AISearchPage() {
     try {
       const response = await apiClient.get('/search/ai-search', { q });
       if (response.success && response.data) {
-        const data = response.data as unknown as Record<string, unknown>;
+        const data = response.data as unknown;
         setResults(data.results || []);
         setParsedInfo({ keywords: data.parsedKeywords, filters: data.filters });
       } else {
         if (!isMounted()) return;
         setResults([]);
       }
-    } catch (err: unknown) {
+    } catch (err: any) {
       if (!isMounted()) return;
       setError('Search failed. Please check your connection and try again.');
       if (!isMounted()) return;
@@ -105,7 +105,7 @@ function AISearchPage() {
         router.push(`/MainStorePage?storeId=${item.storeId}`);
       } else if (item.type === 'product' && item.id) {
         router.push({
-          pathname: '/product-page' as unknown as string,
+          pathname: '/product-page' as unknown,
           params: { cardId: item.id, cardType: 'product' },
         });
       }

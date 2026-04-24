@@ -267,7 +267,7 @@ const GroceryCategoryPage: React.FC = () => {
             setPagination({ current: 1, pages: 1, total: 10 });
           }
         }
-      } catch (err: unknown) {
+      } catch (err: any) {
         if (page === 1) {
           if (!isMounted()) return;
           setProducts(getFallbackProducts(categorySlug));
@@ -324,9 +324,9 @@ const GroceryCategoryPage: React.FC = () => {
   const handleAddToCart = async (product: Product) => {
     try {
       const productId = product.id || product._id || '';
-      await cartApi.addToCart({ productId, quantity: 1 } as unknown as { productId: string; quantity: number });
+      await cartApi.addToCart({ productId, quantity: 1 } as unknown);
       // Could show a toast here
-    } catch (err: unknown) {
+    } catch (err: any) {
       // silently handle
     }
   };
@@ -473,7 +473,7 @@ const GroceryCategoryPage: React.FC = () => {
                 <GroceryProductCard
                   key={product.id || product._id}
                   product={product}
-                  onAddToCart={handleAddToCart as unknown as (product: Product) => void}
+                  onAddToCart={handleAddToCart as unknown}
                   showStore
                 />
               ))}
@@ -513,7 +513,7 @@ function getFallbackProducts(category: string): Product[] {
     store: { id: 'store-1', name: 'Local Store' },
     inStock: true,
     tags: config?.tags || [category],
-  })) as unknown as string[];
+  })) as unknown;
 }
 
 const styles = StyleSheet.create({
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown as Record<string, string>).navy,
+    color: (COLORS as unknown).navy,
     marginBottom: Spacing.sm,
   },
   emptyText: {

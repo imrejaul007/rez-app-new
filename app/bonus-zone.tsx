@@ -247,10 +247,7 @@ function BonusZonePage() {
         ListFooterComponent={() => (
           <>
             {/* Claim History Link */}
-            <Pressable
-              style={styles.historyLink}
-              onPress={() => router.push('/bonus-zone-history' as unknown as string)}
-            >
+            <Pressable style={styles.historyLink} onPress={() => router.push('/bonus-zone-history' as unknown)}>
               <Ionicons name="receipt-outline" size={18} color={colors.text.tertiary} />
               <Text style={styles.historyLinkText}>View Claim History</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />

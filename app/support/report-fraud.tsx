@@ -91,7 +91,7 @@ function ReportFraudPage() {
       const filename = uri.split('/').pop() || `fraud_evidence_${Date.now()}.jpg`;
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : 'image/jpeg';
-      formData.append('file', { uri, name: filename, type } as unknown as Record<string, unknown>);
+      formData.append('file', { uri, name: filename, type } as unknown);
     }
 
     formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.images);
@@ -261,7 +261,7 @@ function ReportFraudPage() {
                   onPress={() => setSelectedType(type.id)}
                 >
                   <Ionicons
-                    name={type.icon as unknown as keyof typeof Ionicons.glyphMap}
+                    name={type.icon as unknown}
                     size={24}
                     color={selectedType === type.id ? Colors.error : colors.text.tertiary}
                   />

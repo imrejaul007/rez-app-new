@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
@@ -288,12 +289,10 @@ function BookingsPage() {
           tableBookingApi
             .getUserTableBookings({ page: tPage, limit: PAGE_SIZE })
             .then((res) => {
-              const data = res.data;
-              const bookings = Array.isArray(data)
-                ? data
-                : (data as unknown as Record<string, unknown>)?.bookings || [];
-              const hasNext =
-                (data as unknown as Record<string, unknown>)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const data = res.data as unknown;
+              const bookings = Array.isArray(data) ? data : (data as Record<string, unknown>)?.bookings || [];
+              const hasNext = (data as Record<string, unknown>)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
               return { type: 'table' as const, bookings, hasMore: hasNext };
             })
             .catch(() => ({ type: 'table' as const, bookings: [], hasMore: false })),

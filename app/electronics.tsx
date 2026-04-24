@@ -248,8 +248,7 @@ const ElectronicsPage: React.FC = () => {
           }
 
           // Determine hasMore from pagination meta or item count
-          const totalPages =
-            res.meta?.pagination?.pages || (res.meta?.pagination as unknown as Record<string, unknown>)?.totalPages;
+          const totalPages = res.meta?.pagination?.pages || (res.meta?.pagination as unknown)?.totalPages;
           if (totalPages) {
             setHasMore(pageNum < totalPages);
           } else {
@@ -313,7 +312,7 @@ const ElectronicsPage: React.FC = () => {
 
   const renderSubcategoryItem = useCallback(
     ({ item }: { item: Subcategory }) => (
-      <Pressable style={styles.categoryCard} onPress={() => router.push(`/category/${item.slug}` as unknown as string)}>
+      <Pressable style={styles.categoryCard} onPress={() => router.push(`/category/${item.slug}` as unknown)}>
         <View style={styles.categoryIcon}>
           {item.image ? (
             <CachedImage source={{ uri: item.image }} style={{ width: 28, height: 28 }} />
@@ -332,7 +331,7 @@ const ElectronicsPage: React.FC = () => {
 
   const renderStoreItem = useCallback(
     ({ item }: { item: Store }) => (
-      <Pressable style={styles.brandCard} onPress={() => router.push(`/store/${item._id}` as unknown as string)}>
+      <Pressable style={styles.brandCard} onPress={() => router.push(`/store/${item._id}` as unknown)}>
         {item.logo ? (
           <CachedImage source={{ uri: item.logo }} style={styles.brandLogoImage} />
         ) : (
@@ -370,7 +369,7 @@ const ElectronicsPage: React.FC = () => {
       return (
         <Pressable
           style={styles.productCard}
-          onPress={() => router.push(`/product-page?cardId=${item._id}&cardType=product` as unknown as string)}
+          onPress={() => router.push(`/product-page?cardId=${item._id}&cardType=product` as unknown)}
         >
           {imageUri ? (
             <CachedImage source={{ uri: imageUri }} style={styles.productImage} />
@@ -440,7 +439,7 @@ const ElectronicsPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Top Brands</Text>
-            <Pressable onPress={() => router.push(`/stores?category=${CATEGORY_SLUG}` as unknown as string)}>
+            <Pressable onPress={() => router.push(`/stores?category=${CATEGORY_SLUG}` as unknown)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -470,7 +469,7 @@ const ElectronicsPage: React.FC = () => {
         <View style={[styles.section, { paddingBottom: 0 }]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Products</Text>
-            <Pressable onPress={() => router.push(`/products?category=${CATEGORY_SLUG}` as unknown as string)}>
+            <Pressable onPress={() => router.push(`/products?category=${CATEGORY_SLUG}` as unknown)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -501,7 +500,7 @@ const ElectronicsPage: React.FC = () => {
             <Text style={styles.promoSubtitle}>Up to 50% off on select electronics</Text>
             <Pressable
               style={styles.promoButton}
-              onPress={() => router.push(`/products?category=${CATEGORY_SLUG}&sortBy=price_low` as unknown as string)}
+              onPress={() => router.push(`/products?category=${CATEGORY_SLUG}&sortBy=price_low` as unknown)}
             >
               <Text style={styles.promoButtonText}>Shop Now</Text>
             </Pressable>
@@ -569,7 +568,7 @@ const ElectronicsPage: React.FC = () => {
             <Text style={styles.headerTitle}>Electronics</Text>
             <Text style={styles.headerSubtitle}>Latest gadgets & accessories</Text>
           </View>
-          <Pressable style={styles.cartButton} onPress={() => router.push('/cart' as unknown as string)}>
+          <Pressable style={styles.cartButton} onPress={() => router.push('/cart' as unknown)}>
             <Ionicons name="cart-outline" size={24} color={colors.background.primary} />
           </Pressable>
         </View>

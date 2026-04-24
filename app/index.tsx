@@ -46,7 +46,7 @@ function AppEntry() {
       }
 
       lastRedirectRef.current = { path: targetPath, at: now };
-      router.replace(targetPath as unknown as string);
+      router.replace(targetPath as unknown);
     },
     [router],
   );

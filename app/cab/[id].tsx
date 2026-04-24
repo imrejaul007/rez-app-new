@@ -17,6 +17,7 @@ import {
   Dimensions,
   Modal,
 } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -170,7 +171,8 @@ function CabDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown as Record<string, unknown>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const productData = response.data as unknown;
 
       // Check if this is a cab service
       const isCab =
@@ -405,7 +407,8 @@ function CabDetailsPage() {
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as string).totalAmount,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          amount: (data as unknown).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
@@ -430,7 +433,7 @@ function CabDetailsPage() {
       if (isInWishlist(cab.id)) {
         await removeFromWishlist(cab.id);
       } else {
-        await addToWishlist(cab.id as unknown as string);
+        await addToWishlist({ productId: cab.id, name: cab.name, price: cab.price, image: cab.images[0] });
       }
     } catch (error: unknown) {
       // silently handle

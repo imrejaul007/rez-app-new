@@ -93,7 +93,7 @@ function BrandDetailPage() {
         try {
           const storeData = await mallApi.getMallStoreById(id);
           if (storeData) {
-            router.replace(`/MainStorePage?storeId=${id}` as unknown as string);
+            router.replace(`/MainStorePage?storeId=${id}` as unknown);
             return;
           }
         } catch {}
@@ -106,7 +106,7 @@ function BrandDetailPage() {
       try {
         const storeData = await mallApi.getMallStoreById(id);
         if (storeData) {
-          router.replace(`/MainStorePage?storeId=${id}` as unknown as string);
+          router.replace(`/MainStorePage?storeId=${id}` as unknown);
           return;
         }
       } catch {}
@@ -337,8 +337,7 @@ function BrandDetailPage() {
               <Pressable
                 style={styles.categoryItem}
                 onPress={() =>
-                  brand.mallCategory?.slug &&
-                  router.push(`/mall/category/${brand.mallCategory.slug}` as unknown as string)
+                  brand.mallCategory?.slug && router.push(`/mall/category/${brand.mallCategory.slug}` as unknown)
                 }
               >
                 <Text style={styles.categoryIcon}>{brand.mallCategory.icon}</Text>
@@ -356,7 +355,7 @@ function BrandDetailPage() {
                 <Pressable
                   key={collection.id || collection._id}
                   style={styles.collectionItem}
-                  onPress={() => router.push(`/mall/collection/${collection.slug}` as unknown as string)}
+                  onPress={() => router.push(`/mall/collection/${collection.slug}` as unknown)}
                 >
                   <Text style={styles.collectionName}>{collection.name}</Text>
                   <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />

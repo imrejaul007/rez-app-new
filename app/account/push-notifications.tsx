@@ -10,8 +10,6 @@ import {
   ActivityIndicator,
   Platform,
   StatusBar,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FormPageSkeleton } from '@/components/skeletons';
@@ -190,9 +188,7 @@ function PushNotificationsScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={
-          [styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as unknown as StyleProp<ViewStyle>
-        }
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as unknown}
       >
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

@@ -68,7 +68,7 @@ function PriveInviteDashboard() {
         setStats(statsRes.value.data as InviteStats);
       }
       if (leaderboardRes.status === 'fulfilled' && leaderboardRes.value.success) {
-        const data = leaderboardRes.value.data as unknown as Record<string, unknown>;
+        const data = leaderboardRes.value.data as unknown;
         if (!isMounted()) return;
         setLeaderboard(data?.leaderboard || []);
         if (!isMounted()) return;

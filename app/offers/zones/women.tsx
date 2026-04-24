@@ -5,17 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Dimensions,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -159,7 +149,7 @@ function WomenZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown as string);
+    router.push(`/offers/${offer._id}` as unknown);
   };
 
   const renderSkeletonCard = () => (
@@ -248,9 +238,7 @@ function WomenZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={
-          [styles.scrollContent, { paddingBottom: bottomPadding }] as unknown as StyleProp<ViewStyle>
-        }
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -350,7 +338,7 @@ function WomenZonePage() {
 
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown as string)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown)}>
           <LinearGradient
             colors={[colors.brand.pink, colors.brand.purpleSoft]}
             start={{ x: 0, y: 0 }}

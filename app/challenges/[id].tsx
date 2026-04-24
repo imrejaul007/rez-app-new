@@ -150,10 +150,8 @@ function ChallengeDetailPage() {
         apiClient.get('/gamification/challenges/my-progress?includeCompleted=true'),
       ]);
 
-      const allChallenges = challengeRes.success ? (challengeRes.data as unknown as Record<string, unknown>) || [] : [];
-      const allProgress = progressRes.success
-        ? (progressRes.data as unknown as Record<string, unknown>)?.challenges || []
-        : [];
+      const allChallenges = challengeRes.success ? (challengeRes.data as unknown) || [] : [];
+      const allProgress = progressRes.success ? (progressRes.data as unknown)?.challenges || [] : [];
 
       logger.debug('📊 [Challenge Detail] All challenges:', allChallenges.length);
       logger.debug('📊 [Challenge Detail] User progress:', allProgress.length);
@@ -244,7 +242,7 @@ function ChallengeDetailPage() {
 
     const route = actionRoutes[action];
     if (route) {
-      router.push(route as unknown as string);
+      router.push(route as unknown);
     } else {
       showAlert('Info', 'Complete this challenge by using the app!', undefined, 'info');
     }
@@ -442,11 +440,7 @@ function ChallengeDetailPage() {
           style={styles.heroSection}
         >
           <View style={styles.iconContainer}>
-            <Ionicons
-              name={challenge.icon as unknown as keyof typeof Ionicons.glyphMap}
-              size={60}
-              color={colors.text.inverse}
-            />
+            <Ionicons name={challenge.icon as unknown} size={60} color={colors.text.inverse} />
           </View>
           <Text style={styles.heroTitle}>{challenge.title}</Text>
           <Text style={styles.heroDescription}>{challenge.description}</Text>
