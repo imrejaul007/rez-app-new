@@ -60,8 +60,26 @@ class CartValidationService {
       }
 
       return response as any;
-    } catch (error) {
-      throw error;
+    } catch {
+      return {
+        success: true,
+        data: {
+          valid: false,
+          canCheckout: false,
+          issues: [{
+            itemId: 'NETWORK_ERROR',
+            productId: 'NETWORK_ERROR',
+            productName: 'Network',
+            type: 'unavailable' as const,
+            message: 'Cart validation unavailable — please try again',
+            severity: 'error' as const,
+          }],
+          validItems: [],
+          invalidItems: [],
+          warnings: [],
+          timestamp: new Date().toISOString(),
+        } as ValidateCartResponse,
+      };
     }
   }
 

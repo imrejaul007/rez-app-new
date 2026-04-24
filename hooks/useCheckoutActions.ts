@@ -108,7 +108,7 @@ function groupItemsByStore(items: CheckoutPageState['items']) {
     if (!storeMap.has(storeId)) storeMap.set(storeId, { storeId, storeName, items: [], subtotal: 0 });
     const g = storeMap.get(storeId)!;
     g.items.push(item);
-    g.subtotal += item.price * item.quantity;
+    g.subtotal = Math.round((g.subtotal + item.price * item.quantity) * 100) / 100;
   });
   return Array.from(storeMap.values());
 }
