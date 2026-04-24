@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from '@rez/ui';
+import Button from '@/components/ui/Button';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { borderRadius, colors, spacing, typography } from '@/constants/theme';
 
