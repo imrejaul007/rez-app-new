@@ -16,6 +16,7 @@ import karmaService, { GPSCoords } from '@/services/karmaService';
 import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { parseQrPayload } from '@/utils/qr/qrPayload';
 
 const KARMA_PURPLE = '#8B5CF6';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -69,7 +70,17 @@ function KarmaScanScreen() {
     async (result: BarcodeScanningResult) => {
       if (scanState !== 'idle') return;
       const qrCode = result.data;
-      if (!qrCode || !activeEventId) return;
+      if (!qrCode) return;
+
+      // Phase I event-checkin payload: navigate to this screen pre-filled with the eventId.
+      const parsed = parseQrPayload(qrCode);
+      if (parsed.ok && parsed.payload.intent === 'event-checkin') {
+        const payload = parsed.payload as { intent: 'event-checkin'; eventId: string };
+        router.replace({ pathname: '/karma/scan', params: { eventId: payload.eventId } });
+        return;
+      }
+
+      if (!activeEventId) return;
 
       setScanState('processing');
       try {

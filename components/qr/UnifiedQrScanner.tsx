@@ -86,6 +86,14 @@ export interface UnifiedQrScannerProps {
    * The string argument is the `code` field from the legacy JSON payload.
    */
   onLegacyQrCode?: (code: string) => void;
+  /**
+   * Optional — called with the raw scanned string for callers that want
+   * full control over parsing. Fires for ALL valid scans (Phase I payloads
+   * AND legacy/unrecognised formats). Caller is responsible for dismissing
+   * the scanner after handling. If provided, all other routing callbacks
+   * are suppressed (the scanner acts as a raw barcode reader only).
+   */
+  onRawScan?: (raw: string) => void;
 }
 
 interface ShortUrlResolveResponse {
@@ -101,6 +109,7 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
   onClose,
   onManualEntry,
   onLegacyQrCode,
+  onRawScan,
 }) => {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
@@ -166,6 +175,13 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
     (result: BarcodeScanningResult) => {
       if (state !== 'idle') return;
       const raw = result.data;
+
+      // Raw-scan mode: caller owns all parsing and routing.
+      if (onRawScan) {
+        onRawScan(raw);
+        return;
+      }
+
       const parsed = parseQrPayload(raw);
       if (!parsed.ok) {
         switch (parsed.reason) {
@@ -193,7 +209,7 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
         dispatchPayload(parsed.payload);
       }
     },
-    [state, handleError, resolveShortUrl, dispatchPayload, onLegacyQrCode],
+    [state, handleError, resolveShortUrl, dispatchPayload, onLegacyQrCode, onRawScan],
   );
 
   if (!permission) {
