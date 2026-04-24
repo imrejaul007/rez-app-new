@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { KarmaHeader } from './_layout';
 import karmaService, { GPSCoords } from '@/services/karmaService';
+import { useAuthStore } from '@/stores/authStore';
 import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -28,6 +29,7 @@ type ScanState = 'idle' | 'scanning' | 'processing' | 'success' | 'error';
 function KarmaScanScreen() {
   const { eventId, mode } = useLocalSearchParams<{ eventId?: string; mode?: string }>();
   const router = useRouter();
+  const userId = useAuthStore((s) => s.state.user?.id ?? '');
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [locationPermission, requestLocationPermission] = Location.useForegroundPermissions();
@@ -75,8 +77,8 @@ function KarmaScanScreen() {
       try {
         const res =
           scanMode === 'checkin'
-            ? await karmaService.checkIn('', activeEventId, 'qr', qrCode, undefined)
-            : await karmaService.checkOut('', activeEventId, 'qr', qrCode, undefined);
+            ? await karmaService.checkIn(userId, activeEventId, 'qr', qrCode, undefined)
+            : await karmaService.checkOut(userId, activeEventId, 'qr', qrCode, undefined);
 
         if (res.success && res.data) {
           setLastResult({
@@ -113,8 +115,8 @@ function KarmaScanScreen() {
     try {
       const res =
         scanMode === 'checkin'
-          ? await karmaService.checkIn('', activeEventId, 'gps', undefined, gpsCoords)
-          : await karmaService.checkOut('', activeEventId, 'gps', undefined, gpsCoords);
+          ? await karmaService.checkIn(userId, activeEventId, 'gps', undefined, gpsCoords)
+          : await karmaService.checkOut(userId, activeEventId, 'gps', undefined, gpsCoords);
 
       if (res.success && res.data) {
         setLastResult({
