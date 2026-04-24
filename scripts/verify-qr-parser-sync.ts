@@ -205,9 +205,13 @@ async function main() {
   for (const vector of VECTORS) {
     const result = parseQrPayload(vector.raw) as ParseResult;
     // intent lives on payload, not at the top level of the result.
-    const resultIntent = result.ok && 'intent' in (result.payload as Record<string, unknown>)
-      ? String((result.payload as Record<string, unknown>).intent)
-      : result.ok ? 'SHORT_URL' : (result as { reason: string }).reason;
+    let resultIntent: string;
+    if (result.ok) {
+      const payload = result as unknown as { payload: Record<string, unknown> };
+      resultIntent = 'intent' in payload.payload ? String(payload.payload.intent) : 'SHORT_URL';
+    } else {
+      resultIntent = (result as { reason: string }).reason;
+    }
     const expectedIntent = vector.expected.ok ? String(vector.expected.intent) : vector.expected.reason;
 
     if (result.ok === vector.expected.ok && resultIntent === expectedIntent) {
