@@ -87,14 +87,46 @@ jest.mock('@/utils/platformAlert', () => ({
   platformAlertConfirm: jest.fn(),
 }));
 jest.mock('@/constants/DesignSystem', () => ({
-  Colors: {},
-  Spacing: {},
-  BorderRadius: {},
-  Shadows: {},
-  Typography: {},
+  Colors: {
+    text: {
+      inverse: '#ffffff',
+      primary: '#000000',
+      secondary: '#666666',
+    },
+    primary: '#007AFF',
+    secondary: '#5856D6',
+    error: '#FF3B30',
+    errorScale: { 50: '#FFEBEE', 100: '#FFCDD2', 200: '#EF9A9A', 700: '#D32F2F', 900: '#B71C1C' },
+    warning: '#FF9500',
+    success: '#34C759',
+    background: '#F2F2F7',
+  },
+  Spacing: {
+    xs: 4, sm: 8, md: 16, lg: 24, xl: 32,
+    '2xl': 40, '3xl': 48, '4xl': 64, '5xl': 80,
+    base: 16,
+  },
+  BorderRadius: { sm: 4, md: 8, lg: 12, xl: 16, full: 9999 },
+  Shadows: { sm: {}, md: {}, lg: {} },
+  Typography: {
+    body: { fontSize: 16 },
+    bodyLarge: { fontSize: 18 },
+    caption: { fontSize: 12 },
+    h1: { fontSize: 32 },
+    h2: { fontSize: 24 },
+    h3: { fontSize: 20 },
+  },
 }));
 jest.mock('@/constants/theme', () => ({
-  colors: {},
+  colors: {
+    text: {
+      inverse: '#ffffff',
+      primary: '#000000',
+      secondary: '#666666',
+    },
+    primary: '#007AFF',
+    secondary: '#5856D6',
+  },
 }));
 jest.mock('@/utils/logger', () => ({
   default: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
