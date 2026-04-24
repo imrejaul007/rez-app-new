@@ -14,16 +14,10 @@
  * considered in sync.
  */
 
+import type { ParseResult } from '../utils/qr/qrPayload';
 import * as path from 'path';
 
 const BACKEND_REPO = path.resolve(__dirname, '../../rezbackend/rez-backend-master');
-
-interface ParseResult {
-  ok: boolean;
-  intent?: string;
-  reason?: string;
-  issues?: string[];
-}
 
 interface TestVector {
   description: string;
