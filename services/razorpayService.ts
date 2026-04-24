@@ -97,7 +97,14 @@ class RazorpayService {
           receipt: string;
           status: string;
           keyId?: string;
-        }) || {} as any;
+        }) || ({} as Partial<{
+          razorpayOrderId: string;
+          amount: number;
+          currency: string;
+          receipt: string;
+          status: string;
+          keyId?: string;
+        }>);
 
         return {
           id: data.razorpayOrderId,

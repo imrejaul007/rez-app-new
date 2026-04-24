@@ -167,6 +167,30 @@ export interface Order {
 // Export unified Order types for new code
 export { UnifiedOrder, UnifiedOrderItem };
 
+/** Backend pagination shape (field names differ from frontend) */
+interface BackendPagination {
+  page?: number;
+  totalPages?: number;
+  current?: number;
+  pages?: number;
+  total?: number;
+  limit?: number;
+}
+
+/** Backend response shape before normalization */
+interface BackendOrdersResponse {
+  orders: Order[];
+  nextCursor?: string | null;
+  hasMore?: boolean;
+  counts?: OrderCounts;
+  pagination: BackendPagination;
+  summary?: {
+    totalOrders: number;
+    totalSpent: number;
+    averageOrderValue: number;
+  };
+}
+
 export interface CreateOrderRequest {
   fulfillmentType?: 'delivery' | 'pickup' | 'drive_thru' | 'dine_in';
   fulfillmentDetails?: {
@@ -321,7 +345,7 @@ class OrdersService {
         throw new Error(response.message || 'Order creation failed');
       }
 
-      return response as any;
+      return response;
     } catch (error: any) {
       return {
         success: false,
@@ -334,21 +358,25 @@ class OrdersService {
   // Get user orders with filtering
   async getOrders(query: OrdersQuery = {}): Promise<ApiResponse<OrdersResponse>> {
     try {
-      const response = await apiClient.get<OrdersResponse>('/orders', query as unknown as Record<string, string | number | boolean | null | undefined>);
+      const response = await apiClient.get<BackendOrdersResponse>('/orders', query as unknown as Record<string, string | number | boolean | null | undefined>);
 
       // Map backend pagination field names to the frontend interface.
       // Backend sends { page, totalPages } but the consumer app expects { current, pages }.
-      if (response.success && response.data?.pagination) {
-        const pag = response.data.pagination as any;
-        response.data.pagination = {
-          current: pag.current ?? pag.page ?? 1,
-          pages: pag.pages ?? pag.totalPages ?? 1,
-          total: pag.total ?? 0,
-          limit: pag.limit ?? 20,
+      if (response.success && response.data) {
+        const pag = response.data.pagination;
+        const mapped: OrdersResponse = {
+          ...response.data,
+          pagination: {
+            current: pag.current ?? pag.page ?? 1,
+            pages: pag.pages ?? pag.totalPages ?? 1,
+            total: pag.total ?? 0,
+            limit: pag.limit ?? 20,
+          },
         };
+        return { ...response, data: mapped };
       }
 
-      return response as any;
+      return response as unknown as ApiResponse<OrdersResponse>;
     } catch (error: any) {
       return {
         success: false,
@@ -362,7 +390,7 @@ class OrdersService {
   async getOrderCounts(): Promise<ApiResponse<OrderCounts>> {
     try {
       const response = await apiClient.get<OrderCounts>('/orders/counts');
-      return response as any;
+      return response;
     } catch (error: any) {
       return {
         success: false,
@@ -376,7 +404,7 @@ class OrdersService {
   async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
     try {
       const response = await apiClient.get<Order>(`/orders/${orderId}`);
-      return response as any;
+      return response;
     } catch (error: any) {
       return {
         success: false,
@@ -407,7 +435,7 @@ class OrdersService {
   ): Promise<ApiResponse<Order>> {
     try {
       const response = await apiClient.patch<Order>(`/orders/${orderId}/cancel`, { reason });
-      return response as any;
+      return response;
     } catch (error: any) {
       return {
         success: false,
@@ -434,7 +462,7 @@ class OrdersService {
       }
 
       const response = await apiClient.post<Order>(`/orders/${orderId}/rate`, { rating, review });
-      return response as any;
+      return response;
     } catch (error: any) {
       return {
         success: false,
@@ -480,7 +508,7 @@ class OrdersService {
         trackingInfo
       });
 
-      return response as any;
+      return response;
     } catch (error: any) {
       return {
         success: false,

@@ -128,7 +128,7 @@ class OrderApiService {
    */
   async createOrder(orderData: CreateOrderData): Promise<ApiResponse<Order>> {
     try {
-      return await apiClient.post<any>(this.baseUrl, orderData as any);
+      return await apiClient.post<Order>(this.baseUrl, orderData);
     } catch (error) {
       return {
         success: false,

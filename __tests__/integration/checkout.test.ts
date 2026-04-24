@@ -701,7 +701,11 @@ describe('Checkout Flow Integration Tests', () => {
         error: 'Invalid coupon code',
       });
 
-      await expect(orderApi.validateCoupon('INVALID', 2497)).rejects.toBeDefined();
+      // orderApi.validateCoupon returns a resolved promise with success:false,
+      // not a rejected promise — adjust expectation to match actual behavior
+      const result = await orderApi.validateCoupon('INVALID', 2497);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Invalid coupon code');
     });
   });
 

@@ -205,11 +205,16 @@ describe('Language Settings - Basic Tests', () => {
         expect(value).toBeFalsy();
       });
 
-      // Whitespace is truthy but should be handled gracefully by validation
+      // String(null) = "null", String(undefined) = "undefined", String('') = ''
+      // Only '' and '   ' trim to falsy; null/undefined as strings are truthy
       emptyValues.forEach(value => {
-        // Trim-based validation treats whitespace as empty
-        const trimmed = String(value).trim();
-        expect(trimmed).toBeFalsy();
+        if (typeof value === 'string' && value.trim() === '') {
+          // Empty or whitespace string trims to falsy
+          expect(String(value).trim()).toBeFalsy();
+        } else {
+          // null/undefined become truthy strings "null"/"undefined"
+          expect(String(value)).toBeTruthy();
+        }
       });
     });
 

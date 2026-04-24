@@ -18,9 +18,9 @@ import { ModeId, MODE_STORAGE_KEYS } from '@/types/mode.types';
 
 // Mock dependencies
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  setItem: jest.fn(() => Promise.resolve(undefined)),
+  removeItem: jest.fn(() => Promise.resolve(undefined)),
 }));
 
 jest.mock('@/hooks/useModePersistence', () => ({

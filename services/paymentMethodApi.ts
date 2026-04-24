@@ -87,35 +87,32 @@ class PaymentMethodApiService {
 
   // Get all user payment methods
   async getUserPaymentMethods(): Promise<ApiResponse<PaymentMethod[]>> {
-    return apiClient.get<any>(this.baseUrl);
+    return apiClient.get<PaymentMethod[]>(this.baseUrl);
   }
 
   // Get single payment method by ID
   async getPaymentMethodById(id: string): Promise<ApiResponse<PaymentMethod>> {
-    return apiClient.get<any>(`${this.baseUrl}/${id}`);
+    return apiClient.get<PaymentMethod>(`${this.baseUrl}/${id}`);
   }
 
   // Create new payment method
   async createPaymentMethod(data: PaymentMethodCreate): Promise<ApiResponse<PaymentMethod>> {
-    return apiClient.post<any>(this.baseUrl, data as any);
+    return apiClient.post<PaymentMethod>(this.baseUrl, data);
   }
 
   // Update payment method
   async updatePaymentMethod(id: string, data: PaymentMethodUpdate): Promise<ApiResponse<PaymentMethod>> {
-    return apiClient.put<any>(`${this.baseUrl}/${id}`, data as any);
+    return apiClient.put<PaymentMethod>(`${this.baseUrl}/${id}`, data);
   }
 
   // Delete payment method (soft delete)
   async deletePaymentMethod(id: string): Promise<ApiResponse<{ deletedId: string }>> {
-
-    const response = await apiClient.delete<any>(`${this.baseUrl}/${id}`);
-
-    return response as ApiResponse<{ deletedId: string }>;
+    return apiClient.delete<{ deletedId: string }>(`${this.baseUrl}/${id}`);
   }
 
   // Set default payment method
   async setDefaultPaymentMethod(id: string): Promise<ApiResponse<PaymentMethod>> {
-    return apiClient.patch<any>(`${this.baseUrl}/${id}/default`, {});
+    return apiClient.patch<PaymentMethod>(`${this.baseUrl}/${id}/default`, {});
   }
 }
 

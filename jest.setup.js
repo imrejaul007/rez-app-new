@@ -56,42 +56,45 @@ const mockApiClientGetDeduplicationStats = jest.fn(() => ({ size: 0, keys: [] })
 const mockApiClientResetDeduplicator = jest.fn();
 const mockApiClientCancelAllRequests = jest.fn();
 
-jest.mock('@/services/apiClient', () => ({
-  __esModule: true,
-  default: {
-    get: mockApiClientGet,
-    post: mockApiClientPost,
-    put: mockApiClientPut,
-    patch: mockApiClientPatch,
-    delete: mockApiClientDelete,
-    setAuthToken: mockApiClientSetAuthToken,
-    getAuthToken: mockApiClientGetAuthToken,
-    getBaseURL: mockApiClientGetBaseURL,
-    setBaseURL: mockApiClientSetBaseURL,
-    getRegion: mockApiClientGetRegion,
-    setRegion: mockApiClientSetRegion,
-    setRefreshTokenCallback: mockApiClientSetRefreshTokenCallback,
-    setLogoutCallback: mockApiClientSetLogoutCallback,
-    setMaintenanceCallback: mockApiClientSetMaintenanceCallback,
-    setAppUpdateCallback: mockApiClientSetAppUpdateCallback,
-    setSlowRequestCallback: mockApiClientSetSlowRequestCallback,
-    setCurrentAppVersion: mockApiClientSetCurrentAppVersion,
-    getDeduplicationStats: mockApiClientGetDeduplicationStats,
-    resetDeduplicator: mockApiClientResetDeduplicator,
-    cancelAllRequests: mockApiClientCancelAllRequests,
-    uploadFile: jest.fn(),
-    setTag: jest.fn(),
-  },
-  setRegionGetter: jest.fn(),
-  API_TIMEOUTS: {
-    DEFAULT: 8000,
-    UPLOAD: 30000,
-    LONG_RUNNING: 15000,
-    PAYMENT: 20000,
-    BILL_FETCH: 12000,
-    AUTH: 60000,
-  },
-}));
+jest.mock('@/services/apiClient', () => {
+  let _authToken: string | null = null;
+  return {
+    __esModule: true,
+    default: {
+      get: mockApiClientGet,
+      post: mockApiClientPost,
+      put: mockApiClientPut,
+      patch: mockApiClientPatch,
+      delete: mockApiClientDelete,
+      setAuthToken: mockApiClientSetAuthToken.mockImplementation((token: string | null) => { _authToken = token; }),
+      getAuthToken: () => _authToken,
+      getBaseURL: mockApiClientGetBaseURL,
+      setBaseURL: mockApiClientSetBaseURL,
+      getRegion: mockApiClientGetRegion,
+      setRegion: mockApiClientSetRegion,
+      setRefreshTokenCallback: mockApiClientSetRefreshTokenCallback,
+      setLogoutCallback: mockApiClientSetLogoutCallback,
+      setMaintenanceCallback: mockApiClientSetMaintenanceCallback,
+      setAppUpdateCallback: mockApiClientSetAppUpdateCallback,
+      setSlowRequestCallback: mockApiClientSetSlowRequestCallback,
+      setCurrentAppVersion: mockApiClientSetCurrentAppVersion,
+      getDeduplicationStats: mockApiClientGetDeduplicationStats,
+      resetDeduplicator: mockApiClientResetDeduplicator,
+      cancelAllRequests: mockApiClientCancelAllRequests,
+      uploadFile: jest.fn(),
+      setTag: jest.fn(),
+    },
+    setRegionGetter: jest.fn(),
+    API_TIMEOUTS: {
+      DEFAULT: 8000,
+      UPLOAD: 30000,
+      LONG_RUNNING: 15000,
+      PAYMENT: 20000,
+      BILL_FETCH: 12000,
+      AUTH: 60000,
+    },
+  };
+});
 
 // Expose mocks globally so individual test files can configure them
 global.__mockApiClient = {
@@ -100,7 +103,20 @@ global.__mockApiClient = {
   put: mockApiClientPut,
   patch: mockApiClientPatch,
   delete: mockApiClientDelete,
+  setAuthToken: mockApiClientSetAuthToken,
 };
+
+// Mock serviceBookingApi used by booking-flows.test.tsx
+jest.mock('@/services/serviceBookingApi', () => ({
+  __esModule: true,
+  default: {
+    createBooking: jest.fn(),
+    getBookingById: jest.fn(),
+    getAvailableSlots: jest.fn(),
+    cancelBooking: jest.fn(),
+    getBookings: jest.fn(),
+  },
+}));
 
 // Mock expo-constants before any module loads (prevents NativeModules.EXDevLauncher crash in Node env)
 jest.mock('expo-constants', () => ({
@@ -236,6 +252,13 @@ jest.mock('expo-router', () => ({
 // ============================================
 jest.mock('expo-linear-gradient', () => ({
   LinearGradient: jest.fn(({ children }) => children),
+}));
+
+// ============================================
+// Mock Expo Image
+// ============================================
+jest.mock('expo-image', () => ({
+  Image: 'Image',
 }));
 
 // ============================================
