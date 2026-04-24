@@ -171,7 +171,7 @@ function BusDetailsPage() {
         return;
       }
 
-      const productData = response.data as any;
+      const productData = response.data as unknown as Record<string, unknown>;
 
       // Check if this is a bus service
       const isBus =
@@ -186,7 +186,7 @@ function BusDetailsPage() {
 
       // Helper to read from specifications array
       const specs = productData.specifications || [];
-      const getSpec = (key: string) => specs.find((s: any) => s.key === key)?.value || '';
+      const getSpec = (key: string) => specs.find((s: Record<string, unknown>) => s.key === key)?.value || '';
 
       // Route: prefer specs, fallback to name parsing
       const specFrom = getSpec('routeFrom');
@@ -323,9 +323,15 @@ function BusDetailsPage() {
             return [];
           }
           const processedImages = productData.images
-            .map((img: any) => {
+            .map((img: unknown) => {
               if (typeof img === 'string') return img.trim();
-              if (img && typeof img === 'object') return img.url || img.uri || img.src || null;
+              if (img && typeof img === 'object')
+                return (
+                  (img as Record<string, unknown>).url ||
+                  (img as Record<string, unknown>).uri ||
+                  (img as Record<string, unknown>).src ||
+                  null
+                );
               return null;
             })
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
@@ -377,7 +383,9 @@ function BusDetailsPage() {
         cancellationPolicy: {
           freeCancellation:
             productData.specifications?.some(
-              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
+              (s: Record<string, unknown>) =>
+                (s.key as string)?.toLowerCase().includes('cancellation') &&
+                (s.value as string)?.toLowerCase().includes('free'),
             ) || true,
           cancellationDeadline: '24',
           refundPercentage: 80,
@@ -387,7 +395,7 @@ function BusDetailsPage() {
 
       if (!isMounted()) return;
       setBus(busDetails);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (!isMounted()) return;
       setError('Failed to load bus details. Please try again.');
     } finally {
@@ -404,17 +412,17 @@ function BusDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as any).requiresPayment) {
+    if ((data as unknown as Record<string, unknown>).requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as any).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as any);
+      } as unknown as Record<string, unknown>);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -434,9 +442,9 @@ function BusDetailsPage() {
       if (isInWishlist(bus.id)) {
         await removeFromWishlist(bus.id);
       } else {
-        await addToWishlist(bus.id as any);
+        await addToWishlist(bus.id as unknown as string);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // silently handle
     }
   };
@@ -530,7 +538,7 @@ function BusDetailsPage() {
 
         {/* Bus Info Card */}
         <View style={styles.infoCardWrapper}>
-          <BusInfoCard bus={bus as any} />
+          <BusInfoCard bus={bus as unknown as Record<string, unknown>} />
         </View>
 
         {/* Store/Provider Info */}
@@ -659,7 +667,7 @@ function BusDetailsPage() {
             summary={reviewSummary}
             isLoading={reviewsLoading}
             onRefresh={refreshReviews}
-            {...({} as any)}
+            {...({} as unknown as StyleProp<ViewStyle>)}
           />
         </View>
 
@@ -747,8 +755,8 @@ function BusDetailsPage() {
       >
         {bookingData && bus && (
           <BusBookingConfirmation
-            bus={bus as any}
-            bookingData={bookingData as any}
+            bus={bus as unknown as Record<string, unknown>}
+            bookingData={bookingData as unknown as Record<string, unknown>}
             onClose={() => {
               setShowConfirmation(false);
               // eslint-disable-next-line no-unused-expressions

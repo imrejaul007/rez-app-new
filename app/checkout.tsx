@@ -165,10 +165,10 @@ function AOVRewardNudge({
         // CA-CMC-010 FIX: Use exact totalPayable value (in paise) without double-rounding.
         // Converting to paise once avoids off-by-one errors at tier boundaries.
         const amountPaise = Math.round(totalPayable * 100);
-        const res = (await api.get(
-          `/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`,
-        )) as any;
-        const data = res.data?.data;
+        const res = await api.get(`/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`);
+        const data = (res.data as unknown as Record<string, unknown>)?.data as
+          | { nextTier?: { rewardType: string; rewardValue: number; label: string; amountToNextTierPaise: number } }
+          | undefined;
         if (!cancelled && data?.nextTier && data.amountToNextTierPaise > 0) {
           setNudge({ amountToNextTierPaise: data.amountToNextTierPaise, nextTier: data.nextTier });
         }
@@ -228,7 +228,10 @@ function CheckoutPage() {
   const currencySymbol = getCurrencySymbol();
   const authUser = useAuthUser();
   // normalizeUserTier handles both backend UPPERCASE (referralTier) and frontend lowercase (loyaltyTier)
-  const userLoyaltyTier = normalizeUserTier((authUser as any)?.loyaltyTier || (authUser as any)?.referralTier);
+  const userLoyaltyTier = normalizeUserTier(
+    ((authUser as unknown as Record<string, unknown>)?.loyaltyTier as string | undefined) ||
+      ((authUser as unknown as Record<string, unknown>)?.referralTier as string | undefined),
+  );
   const savingsInsights = useSavingsInsights();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -414,7 +417,9 @@ function CheckoutPage() {
           {state.fulfillment.selectedType === 'delivery' && (
             <DeliverySlotPicker
               selectedSlot={state.fulfillment.deliverySlot}
-              onSelectSlot={(slot: string) => actions.setFulfillmentDetails({ deliverySlot: slot } as any)}
+              onSelectSlot={(slot: string) =>
+                actions.setFulfillmentDetails({ deliverySlot: slot } as unknown as StyleProp<ViewStyle>)
+              }
             />
           )}
 

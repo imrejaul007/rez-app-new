@@ -12,6 +12,8 @@ import {
   Platform,
   StatusBar,
   KeyboardAvoidingView,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -101,7 +103,7 @@ function BuyCouponsPage() {
       return;
     }
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => setDebouncedSearch(searchQuery), 300) as any;
+    debounceTimer.current = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
     };
@@ -138,9 +140,9 @@ function BuyCouponsPage() {
         const response = await realVouchersApi.getVoucherBrands(params);
 
         if (response.success && response.data) {
-          const brands = (response.data as any)?.brands || response.data;
+          const brands = (response.data as unknown as Record<string, unknown>)?.brands || response.data;
           const brandsArray = Array.isArray(brands) ? brands : [];
-          const total = (response.data as any)?.total || brandsArray.length;
+          const total = (response.data as unknown as Record<string, unknown>)?.total || brandsArray.length;
 
           const mapped: VoucherBrandItem[] = brandsArray.map((b: any) => ({
             _id: b._id,
@@ -198,13 +200,13 @@ function BuyCouponsPage() {
         response = await couponService.searchCoupons({ q: debouncedSearch });
         if (response.success && response.data) {
           if (!isMounted()) return;
-          setCoupons((response.data as any)?.coupons || []);
+          setCoupons((response.data as unknown as Record<string, unknown>)?.coupons || []);
         }
       } else {
         response = await couponService.getAvailableCoupons();
         if (response.success && response.data) {
           if (!isMounted()) return;
-          setCoupons((response.data as any)?.coupons || []);
+          setCoupons((response.data as unknown as Record<string, unknown>)?.coupons || []);
         }
       }
     } catch (err: any) {
@@ -251,7 +253,7 @@ function BuyCouponsPage() {
 
   const handleGiftCardPress = useCallback(
     (brand: VoucherBrandItem) => {
-      router.push(`/vouchers/brand/${brand._id}` as any);
+      router.push(`/vouchers/brand/${brand._id}` as unknown as string);
     },
     [router],
   );
@@ -293,7 +295,7 @@ function BuyCouponsPage() {
   );
 
   const handleViewMyCoupons = useCallback(() => {
-    router.push('/account/coupons' as any);
+    router.push('/account/coupons' as unknown as string);
   }, [router]);
 
   // ─── Denomination Range Display ────────────────────────────
@@ -1127,7 +1129,7 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 6px rgba(139,115,85,0.07)' },
-    } as any) as any),
+    }) as StyleProp<ViewStyle> as unknown as Record<string, unknown>),
   },
   featuredBadge: {
     position: 'absolute',
@@ -1248,7 +1250,7 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 6px rgba(139,115,85,0.07)' },
-    } as any) as any),
+    }) as StyleProp<ViewStyle> as unknown as Record<string, unknown>),
   },
   couponAccent: {
     width: 5,
@@ -1453,7 +1455,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   skeletonCard: {
-    width: '48.5%' as any,
+    width: '48.5%',
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,

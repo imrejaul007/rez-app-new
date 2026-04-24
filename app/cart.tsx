@@ -1,6 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { View, StyleSheet, StatusBar, Platform, Pressable, FlatList } from 'react-native';
+import { View, StyleSheet, StatusBar, Platform, Pressable, FlatList, StyleProp, ViewStyle } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -53,7 +53,7 @@ const formatTimeSlot = (start: string, end?: string): string => {
 
 // BUG-062: Discriminated union that captures the extended fields stored on cart items
 // by CartContext (which comes through useCartStore). These fields are not declared on
-// the base CartItemType, which is why the original code used `as any`.
+// the base CartItemType, which is why the original code used `as unknown as ExtendedCartItem`.
 interface ExtendedCartItem extends CartItemType {
   itemType?: 'product' | 'service' | 'event';
   productId?: string;
@@ -331,7 +331,7 @@ function CartPage() {
               isPaidLock: item.isPaidLock,
             };
           })
-          .filter((item: any) => item !== null) as any;
+          .filter((item: unknown) => item !== null) as unknown as LockedProduct[];
         setLockedProducts(formattedLockedItems);
       }
     } catch (error: any) {
@@ -562,7 +562,7 @@ function CartPage() {
         return (
           <View style={styles.cardWrapper}>
             <LockedItem
-              item={item as any}
+              item={item as unknown as LockedProduct}
               onMoveToCart={handleMoveToCart}
               onUnlock={handleUnlockItem}
               showAnimation={true}
@@ -647,7 +647,7 @@ function CartPage() {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name={icon as any} size={64} color={colors.border.default} />
+        <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={64} color={colors.border.default} />
         <ThemedText style={styles.emptyTitle}>{title}</ThemedText>
         <ThemedText style={styles.emptySubtitle}>{subtitle}</ThemedText>
         <Pressable
@@ -692,17 +692,19 @@ function CartPage() {
           </View>
         ) : Platform.OS === 'web' ? (
           <FlatList
-            data={currentItems as any[]}
-            renderItem={renderCartItem as any}
-            keyExtractor={(item: any) => `${item.id}`}
-            contentContainerStyle={listContentContainerStyle as any}
+            data={currentItems}
+            renderItem={renderCartItem}
+            keyExtractor={(item) => `${item.id}`}
+            contentContainerStyle={listContentContainerStyle as unknown as StyleProp<ViewStyle>}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={(productItems[0] as any)?.store?.id || productItems[0]?.productId}
+                  storeId={
+                    (productItems[0] as unknown as Record<string, unknown>)?.store?.id || productItems[0]?.productId
+                  }
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />
@@ -712,23 +714,25 @@ function CartPage() {
         ) : (
           <FlashList
             {...({
-              data: currentItems as any[],
+              data: currentItems,
               renderItem: renderCartItem,
-              keyExtractor: (item: any) => `${item.id}`,
-              contentContainerStyle: listContentContainerStyle as any,
+              keyExtractor: (item) => `${item.id}`,
+              contentContainerStyle: listContentContainerStyle,
               showsVerticalScrollIndicator: false,
               keyboardShouldPersistTaps: 'handled',
               ListEmptyComponent: renderEmptyState,
               ListFooterComponent:
                 overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                   <CardOffersSection
-                    storeId={(productItems[0] as any)?.store?.id || productItems[0]?.productId}
+                    storeId={
+                      (productItems[0] as unknown as Record<string, unknown>)?.store?.id || productItems[0]?.productId
+                    }
                     orderValue={overallTotal}
                     onOfferApplied={handleCardOfferApplied}
                   />
                 ) : null,
               estimatedItemSize: 144,
-            } as any)}
+            } as unknown as StyleProp<ViewStyle>)}
           />
         )}
       </View>
