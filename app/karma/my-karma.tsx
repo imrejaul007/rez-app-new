@@ -24,6 +24,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import QRCode from 'react-native-qrcode-svg';
 import { KarmaHeader } from './_layout';
 import karmaService, { KarmaProfile, EarnRecord } from '@/services/karmaService';
 import { useIsAuthenticated } from '@/stores/selectors';
@@ -50,6 +51,90 @@ const CONVERSION_RATES: Record<string, number> = {
   L3: 75,
   L4: 100,
 };
+
+// =============================================================================
+// KARMA PASSPORT CARD
+// =============================================================================
+
+function qrPayload(profile: KarmaProfile): string {
+  return JSON.stringify({
+    u: profile.userId,
+    l: profile.level,
+    k: profile.activeKarma,
+    t: profile.trustScore,
+  });
+}
+
+const PASSPORT_BG: Record<string, readonly [string, string]> = {
+  L1: ['#1a3a52', '#2A5577'],
+  L2: ['#064E3B', '#059669'],
+  L3: ['#7C3AED', '#A78BFA'],
+  L4: ['#92400E', '#F59E0B'],
+};
+
+function PassportCard({ profile }: { profile: KarmaProfile }) {
+  const authState = useAuthStore.getState().state;
+  const userName = authState.user?.profile?.firstName ?? authState.user?.phoneNumber ?? 'Volunteer';
+  const levelCfg = LEVEL_CONFIG[profile.level];
+  const qrData = qrPayload(profile);
+  const conversionRate = CONVERSION_RATES[profile.level] ?? 25;
+  const bgGradient = PASSPORT_BG[profile.level] ?? PASSPORT_BG.L1;
+
+  return (
+    <View style={styles.passportCard}>
+      <LinearGradient colors={bgGradient as readonly [string, string]} style={styles.passportGradient}>
+        {/* Header row */}
+        <View style={styles.passportHeader}>
+          <View>
+            <Text style={styles.passportLabel}>KARMA PASSPORT</Text>
+            <Text style={styles.passportName}>{userName}</Text>
+            <View style={styles.passportLevelRow}>
+              <View style={[styles.passportLevelBadge, { backgroundColor: levelCfg.bg }]}>
+                <Text style={[styles.passportLevelText, { color: levelCfg.color }]}>{profile.level}</Text>
+              </View>
+              <Text style={[styles.passportLevelName, { color: levelCfg.color }]}>{levelCfg.name}</Text>
+            </View>
+          </View>
+          <View style={styles.passportQrWrap}>
+            <QRCode value={qrData} size={80} backgroundColor="transparent" color="#ffffff" />
+          </View>
+        </View>
+
+        {/* Divider */}
+        <View style={styles.passportDivider} />
+
+        {/* Stats row */}
+        <View style={styles.passportStats}>
+          <View style={styles.passportStat}>
+            <Text style={styles.passportStatValue}>{profile.activeKarma.toLocaleString()}</Text>
+            <Text style={styles.passportStatLabel}>Active Karma</Text>
+          </View>
+          <View style={styles.passportStatDivider} />
+          <View style={styles.passportStat}>
+            <Text style={styles.passportStatValue}>{conversionRate}%</Text>
+            <Text style={styles.passportStatLabel}>Conversion</Text>
+          </View>
+          <View style={styles.passportStatDivider} />
+          <View style={styles.passportStat}>
+            <Text style={styles.passportStatValue}>{profile.trustScore}%</Text>
+            <Text style={styles.passportStatLabel}>Trust</Text>
+          </View>
+          <View style={styles.passportStatDivider} />
+          <View style={styles.passportStat}>
+            <Text style={styles.passportStatValue}>{profile.eventsCompleted}</Text>
+            <Text style={styles.passportStatLabel}>Events</Text>
+          </View>
+        </View>
+
+        {/* Footer */}
+        <Text style={styles.passportFooter}>Doing Good. Build Karma. Unlock More.</Text>
+      </LinearGradient>
+    </View>
+  );
+}
+
+// =============================================================================
+// LEVEL PROGRESS BAR
 
 // =============================================================================
 // LEVEL PROGRESS BAR
@@ -297,12 +382,7 @@ function KarmaMyKarmaScreen() {
         showBack
         rightAction={
           <View style={{ flexDirection: 'row', gap: 8 }}>
-            <Pressable
-              style={styles.headerAction}
-              onPress={handleDownloadReport}
-              hitSlop={8}
-              disabled={downloading}
-            >
+            <Pressable style={styles.headerAction} onPress={handleDownloadReport} hitSlop={8} disabled={downloading}>
               {downloading ? (
                 <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
@@ -364,6 +444,9 @@ function KarmaMyKarmaScreen() {
             </Text>
           </View>
         </LinearGradient>
+
+        {/* Karma Passport Card */}
+        {profile && <PassportCard profile={profile} />}
 
         {/* Quick Stats */}
         <View style={styles.statsGrid}>
@@ -527,6 +610,48 @@ const styles = StyleSheet.create({
   },
   loginBtnText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.inverse },
   scrollView: { flex: 1 },
+
+  // Passport Card
+  passportCard: {
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    overflow: 'hidden',
+  },
+  passportGradient: { padding: Spacing.lg },
+  passportHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  passportLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.6)',
+    letterSpacing: 1.5,
+    marginBottom: 4,
+  },
+  passportName: {
+    fontSize: Typography.h3.fontSize,
+    fontWeight: '800',
+    color: colors.text.inverse,
+    marginBottom: Spacing.sm,
+  },
+  passportLevelRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  passportLevelBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  passportLevelText: { fontSize: 14, fontWeight: '800' },
+  passportLevelName: { fontSize: Typography.body.fontSize, fontWeight: '700' },
+  passportQrWrap: { padding: 4, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: BorderRadius.md },
+  passportDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.15)', marginVertical: Spacing.md },
+  passportStats: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  passportStat: { alignItems: 'center', flex: 1 },
+  passportStatValue: { fontSize: 18, fontWeight: '800', color: colors.text.inverse },
+  passportStatLabel: { fontSize: 10, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
+  passportStatDivider: { width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.15)' },
+  passportFooter: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.5)',
+    marginTop: Spacing.md,
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+
   headerAction: {
     width: 36,
     height: 36,
