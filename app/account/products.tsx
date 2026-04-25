@@ -1,6 +1,6 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, ScrollView } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
@@ -10,10 +10,12 @@ import { Ionicons } from '@expo/vector-icons';
 import userProductService, { UserProduct } from '../../services/userProductApi';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useTheme } from '@/contexts/ThemeContext';
 
 function ProductsScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const { isDark, themeColors } = useTheme();
   const [products, setProducts] = useState<UserProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -196,7 +198,7 @@ function ProductsScreen() {
       accessibilityLabel={`No products found. ${selectedFilter === 'all' ? "You haven't purchased any products yet" : `No ${selectedFilter.replace('_', ' ')} products found`}`}
       accessibilityRole="text"
     >
-      <Ionicons name="cube-outline" size={64} color={colors.border.default} />
+      <Ionicons name="cube-outline" size={64} color={colors.border} />
       <Text style={styles.emptyStateTitle}>No Products Found</Text>
       <Text style={styles.emptyStateText}>
         {selectedFilter === 'all'
@@ -239,7 +241,7 @@ function ProductsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDark && { backgroundColor: themeColors.background.secondary }]}>
       {/* Header */}
       <View style={styles.header}>
         <Pressable
