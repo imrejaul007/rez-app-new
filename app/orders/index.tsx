@@ -28,6 +28,7 @@ import { useGetCurrencySymbol } from '@/stores';
 import { Colors, Spacing, Gradients, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useTheme } from '@/contexts/ThemeContext';
 
 // ============================================================================
 // STATUS HELPERS
@@ -342,6 +343,7 @@ function OrdersListScreen() {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const isMounted = useIsMounted();
+  const { isDark, themeColors } = useTheme();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -520,7 +522,10 @@ function OrdersListScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, isDark && { backgroundColor: themeColors.background.secondary }]}
+      edges={['top']}
+    >
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Gradient Header */}
