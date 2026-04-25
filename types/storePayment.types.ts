@@ -595,3 +595,21 @@ export type OffersApiResponse = ApiResponse<OffersResponse>;
 export type PaymentInitApiResponse = ApiResponse<StorePaymentInitResponse>;
 export type PaymentConfirmApiResponse = ApiResponse<StorePaymentConfirmResponse>;
 export type PaymentHistoryApiResponse = ApiResponse<PaymentHistoryResponse>;
+
+/**
+ * Store detail API response - backend wraps store in data.store or returns data directly
+ */
+export interface StoreDetailResponse {
+  store?: StorePaymentInfo;
+  data?: StorePaymentInfo;
+}
+
+/**
+ * Offers API response with nested array access
+ * Backend may return data with storeOffers, bankOffers, rezOffers arrays
+ */
+export interface OffersDetailResponse {
+  storeOffers?: StorePaymentOffer[];
+  bankOffers?: StorePaymentOffer[];
+  rezOffers?: StorePaymentOffer[];
+}

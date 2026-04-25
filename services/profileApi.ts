@@ -28,6 +28,41 @@ export interface ProfileCompletionStatus {
 }
 
 /**
+ * Unified Profile Summary (cross-vertical LTV tracking)
+ */
+export interface UnifiedProfileSummary {
+  userId: string;
+  phone: string;
+  totalLifetimeSpend: number;
+  totalTransactions: number;
+  averageOrderValue: number;
+  lifetimeValue: number;
+  engagementScore: number;
+  lastActivity: string | null;
+  daysActive: number;
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  verticals: {
+    hotel: { totalSpend: number; transactionCount: number; averageOrderValue: number };
+    restaurant: { totalSpend: number; transactionCount: number; averageOrderValue: number };
+    fashion: { totalSpend: number; transactionCount: number; averageOrderValue: number };
+    pharmacy: { totalSpend: number; transactionCount: number; averageOrderValue: number };
+    retail: { totalSpend: number; transactionCount: number; averageOrderValue: number };
+    d2c: { totalSpend: number; transactionCount: number; averageOrderValue: number };
+  };
+  favoriteCategories: string[];
+  favoriteMerchants: string[];
+}
+
+/**
+ * Tier Info
+ */
+export interface TierInfo {
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  lifetimeValue: number;
+  nextTierAt: number | null;
+}
+
+/**
  * Profile API Service Class
  */
 class ProfileService {
@@ -123,6 +158,34 @@ class ProfileService {
       );
     } catch (error: any) {
       return createErrorResponse(error, 'Failed to submit verification. Please try again.') as any;
+    }
+  }
+
+  /**
+   * Get unified profile summary with LTV and cross-vertical stats
+   */
+  async getUnifiedProfile(): Promise<ApiResponse<UnifiedProfileSummary>> {
+    try {
+      return await withRetry(
+        () => apiClient.get<UnifiedProfileSummary>('/api/profile/summary'),
+        { maxRetries: 2 }
+      );
+    } catch (error: any) {
+      return createErrorResponse(error, 'Failed to load profile. Please try again.') as any;
+    }
+  }
+
+  /**
+   * Get tier info
+   */
+  async getTierInfo(): Promise<ApiResponse<TierInfo>> {
+    try {
+      return await withRetry(
+        () => apiClient.get<TierInfo>('/api/profile/tier'),
+        { maxRetries: 2 }
+      );
+    } catch (error: any) {
+      return createErrorResponse(error, 'Failed to load tier info. Please try again.') as any;
     }
   }
 }

@@ -66,6 +66,36 @@ export interface FinanceTransaction {
   createdAt: string;
 }
 
+// REZ Wallet Credit Score (BNPL)
+export interface REZWalletCreditScore {
+  compositeScore: number;
+  riskTier: 'LOW' | 'MEDIUM' | 'HIGH';
+  creditLimit: number;
+  creditUsed: number;
+  creditAvailable: number;
+  interestRate: number;
+  activeBNPLCount: number;
+  totalOutstanding: number;
+}
+
+export interface BNPLTransaction {
+  _id: string;
+  amount: number;
+  totalDue: number;
+  dueDate: string;
+  status: 'ACTIVE' | 'REPAID' | 'DEFAULTED' | 'CANCELLED';
+  merchantName: string;
+  vertical: string;
+}
+
+export interface BNPLEligibility {
+  eligible: boolean;
+  reason?: string;
+  approvedAmount?: number;
+  interestRate?: number;
+  dueDate?: string;
+}
+
 // ── Service ────────────────────────────────────────────────────────────────
 
 class FinanceApiService {
@@ -138,6 +168,32 @@ class FinanceApiService {
 
   async getPayTransactions(): Promise<ApiResponse<{ transactions: FinanceTransaction[] }>> {
     return apiClient.get<{ transactions: FinanceTransaction[] }>(`${this.base}/pay/transactions`);
+  }
+
+  // REZ WALLET BNPL
+  async getWalletCreditScore(): Promise<ApiResponse<REZWalletCreditScore>> {
+    return apiClient.get<REZWalletCreditScore>('/api/credit/score');
+  }
+
+  async getWalletBNPLs(): Promise<ApiResponse<{ data: BNPLTransaction[] }>> {
+    return apiClient.get<{ data: BNPLTransaction[] }>('/api/credit/bnpl');
+  }
+
+  async checkBNPLEligibility(amount: number): Promise<ApiResponse<BNPLEligibility>> {
+    return apiClient.post<BNPLEligibility>('/api/credit/check-eligibility', { amount });
+  }
+
+  async applyBNPL(params: {
+    merchantId: string;
+    merchantName?: string;
+    vertical: string;
+    amount: number;
+  }): Promise<ApiResponse<BNPLTransaction>> {
+    return apiClient.post<BNPLTransaction>('/api/credit/apply', params);
+  }
+
+  async repayBNPL(transactionId: string, amount: number): Promise<ApiResponse<BNPLTransaction>> {
+    return apiClient.post<BNPLTransaction>('/api/credit/repay', { transactionId, amount });
   }
 }
 

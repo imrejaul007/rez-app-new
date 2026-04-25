@@ -1,7 +1,7 @@
 import { create, SetState, GetState } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createSecureWalletStorage } from '@/utils/secureWalletStorage';
-import { WalletData } from '@/types/wallet';
+import { WalletData, CoinBalance } from '@/types/wallet';
 import { logger } from '@/utils/logger';
 
 // ---------------------------------------------------------------------------
@@ -149,7 +149,7 @@ export const useWalletStore = create<WalletStoreState>()(
         set((state: WalletStoreState): Partial<WalletStoreState> => {
           if (!state.walletData) return {};
           // NA-HIGH-04 FIX: floor balances at 0 to prevent negative display from race conditions
-          const updatedCoins = state.walletData.coins.map((c: { type?: string; amount: number }) =>
+          const updatedCoins: CoinBalance[] = state.walletData.coins.map((c: CoinBalance) =>
             c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount + delta) } : c
           );
           return {
@@ -160,7 +160,7 @@ export const useWalletStore = create<WalletStoreState>()(
               ...state.walletData,
               totalBalance: Math.max(0, state.walletData.totalBalance + delta),
               availableBalance: Math.max(0, state.walletData.availableBalance + delta),
-              coins: updatedCoins as any,
+              coins: updatedCoins,
             },
             pendingDeltaStack: [...state.pendingDeltaStack, delta],
           };
@@ -176,7 +176,7 @@ export const useWalletStore = create<WalletStoreState>()(
           if (stack.length === 0 || !state.walletData) return { pendingDeltaStack: [] };
           const delta = stack[stack.length - 1];
 
-          const updatedCoins = state.walletData.coins.map((c: { type?: string; amount: number }) =>
+          const updatedCoins: CoinBalance[] = state.walletData.coins.map((c: CoinBalance) =>
             c.type === 'rez' ? { ...c, amount: Math.max(0, c.amount - delta) } : c
           );
           return {
@@ -187,7 +187,7 @@ export const useWalletStore = create<WalletStoreState>()(
               ...state.walletData,
               totalBalance: Math.max(0, state.walletData.totalBalance - delta),
               availableBalance: Math.max(0, state.walletData.availableBalance - delta),
-              coins: updatedCoins as any,
+              coins: updatedCoins,
             },
             pendingDeltaStack: stack.slice(0, -1),
           };

@@ -5,6 +5,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { performanceMonitor, trackInteraction } from '@/utils/performanceMonitor';
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Types
@@ -91,11 +92,14 @@ export function usePerformanceMetrics(
       // Log final stats on unmount
       if (__DEV__ && renderCount.current > 0) {
         const avgRenderTime = getAverageRenderTime();
-        console.log(
-          `[Performance] ${componentName} stats:`,
-          `\n  Total renders: ${renderCount.current}`,
-          `\n  Avg render time: ${avgRenderTime.toFixed(2)}ms`,
-          `\n  Lifetime: ${(performance.now() - mountTime.current).toFixed(2)}ms`
+        logger.debug(
+          `[Performance] ${componentName} stats`,
+          {
+            totalRenders: renderCount.current,
+            avgRenderTime: avgRenderTime.toFixed(2),
+            lifetime: (performance.now() - mountTime.current).toFixed(2),
+          },
+          'PerformanceMetrics'
         );
       }
     };

@@ -27,6 +27,8 @@ import {
   StorePaymentOffer,
   ExternalWallet,
   StorePaymentInitResponse,
+  StoreDetailResponse,
+  OffersDetailResponse,
 } from '@/types/storePayment.types';
 
 // ==================== TYPES ====================
@@ -258,11 +260,14 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       }
 
       if (storeResponse?.success && storeResponse.data) {
-        const storeObj = (storeResponse.data as any).store || storeResponse.data;
-        setStore(storeObj);
-        setMaxCoinRedemptionPercent(
-          storeObj.paymentSettings?.maxCoinRedemptionPercent || 100
-        );
+        const storeData = storeResponse.data as unknown as StoreDetailResponse;
+        const storeObj = storeData.store || storeData.data || null;
+        if (storeObj) {
+          setStore(storeObj);
+          setMaxCoinRedemptionPercent(
+            storeObj.paymentSettings?.maxCoinRedemptionPercent || 100
+          );
+        }
       }
 
       setExternalWallets(walletsData);
@@ -275,17 +280,18 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
         });
 
         if (offersResponse.success && offersResponse.data) {
-          const allOffers = [
-            ...((offersResponse.data as any).storeOffers || []),
-            ...((offersResponse.data as any).bankOffers || []),
-            ...((offersResponse.data as any).rezOffers || []),
+          const offersData = offersResponse.data as unknown as OffersDetailResponse;
+          const allOffers: StorePaymentOffer[] = [
+            ...(offersData.storeOffers || []),
+            ...(offersData.bankOffers || []),
+            ...(offersData.rezOffers || []),
           ];
-          const selectedOffersList = allOffers.filter((o: any) =>
+          const selectedOffersList = allOffers.filter((o) =>
             currentOfferIds.includes(o.id)
           );
           setSelectedOffers(selectedOffersList);
 
-          const totalDisc = selectedOffersList.reduce((sum: number, offer: any) => {
+          const totalDisc = selectedOffersList.reduce((sum: number, offer: StorePaymentOffer) => {
             if (offer.valueType === 'PERCENTAGE') {
               const discount = (billAmount * offer.value) / 100;
               return sum + (offer.maxDiscount ? Math.min(discount, offer.maxDiscount) : discount);

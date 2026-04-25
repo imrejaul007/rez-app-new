@@ -1,21 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
-import financeApi, { CreditScore, PartnerOffer } from '@/services/financeApi';
+import financeApi, { CreditScore, PartnerOffer, REZWalletCreditScore, BNPLTransaction } from '@/services/financeApi';
 import { useToast } from '@/hooks/useToast';
 import { colors, borderRadius, spacing } from '@/constants/theme';
 
 export default function FinanceScreen() {
   const { showSuccess } = useToast();
   const [score, setScore] = useState<CreditScore | null>(null);
+  const [walletCredit, setWalletCredit] = useState<REZWalletCreditScore | null>(null);
+  const [bnpls, setBnpls] = useState<BNPLTransaction[]>([]);
   const [offers, setOffers] = useState<PartnerOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   async function load() {
     try {
-      const [scoreRes, offersRes] = await Promise.allSettled([financeApi.getScore(), financeApi.getOffers()]);
-      if (scoreRes.status === 'fulfilled' && scoreRes.value?.data) setScore(scoreRes.value.data as CreditScore);
-      if (offersRes.status === 'fulfilled') setOffers((offersRes.value?.data as any)?.offers ?? []);
+      const results = await Promise.allSettled([
+        financeApi.getScore(),
+        financeApi.getWalletCreditScore(),
+        financeApi.getWalletBNPLs(),
+        financeApi.getOffers(),
+      ]);
+
+      if (results[0].status === 'fulfilled' && results[0].value?.data) {
+        setScore(results[0].value.data as CreditScore);
+      }
+      if (results[1].status === 'fulfilled' && results[1].value?.data) {
+        setWalletCredit(results[1].value.data as REZWalletCreditScore);
+      }
+      if (results[2].status === 'fulfilled' && (results[2].value?.data as any)?.data) {
+        setBnpls((results[2].value?.data as any).data as BNPLTransaction[]);
+      }
+      if (results[3].status === 'fulfilled') {
+        setOffers((results[3].value?.data as any)?.offers ?? []);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -90,6 +108,66 @@ export default function FinanceScreen() {
             <View key={i} style={styles.tip}>
               <Text style={styles.tipDot}>•</Text>
               <Text style={styles.tipText}>{tip}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* BNPL Section */}
+      {walletCredit && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>BNPL Credit</Text>
+          <View style={styles.bnplHeader}>
+            <View>
+              <Text style={styles.bnplScoreLabel}>Credit Score</Text>
+              <Text style={styles.bnplScoreValue}>{walletCredit.compositeScore}</Text>
+            </View>
+            <View style={styles.riskBadge}>
+              <Text style={styles.riskBadgeText}>{walletCredit.riskTier}</Text>
+            </View>
+          </View>
+          <View style={styles.creditRow}>
+            <View style={styles.creditItem}>
+              <Text style={styles.creditLabel}>Credit Limit</Text>
+              <Text style={styles.creditValue}>₹{walletCredit.creditLimit.toLocaleString('en-IN')}</Text>
+            </View>
+            <View style={styles.creditItem}>
+              <Text style={styles.creditLabel}>Available</Text>
+              <Text style={[styles.creditValue, { color: colors.success }]}>
+                ₹{walletCredit.creditAvailable.toLocaleString('en-IN')}
+              </Text>
+            </View>
+            <View style={styles.creditItem}>
+              <Text style={styles.creditLabel}>Used</Text>
+              <Text style={[styles.creditValue, { color: colors.error }]}>
+                ₹{walletCredit.creditUsed.toLocaleString('en-IN')}
+              </Text>
+            </View>
+          </View>
+          {walletCredit.activeBNPLCount > 0 && (
+            <View style={styles.outstandingAlert}>
+              <Text style={styles.outstandingText}>
+                Outstanding: ₹{walletCredit.totalOutstanding.toLocaleString('en-IN')}
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
+
+      {/* Active BNPL Transactions */}
+      {bnpls.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Active BNPL</Text>
+          {bnpls.map((bnpl) => (
+            <View key={bnpl._id} style={styles.bnplCard}>
+              <View style={styles.bnplCardHeader}>
+                <Text style={styles.bnplMerchant}>{bnpl.merchantName}</Text>
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusText}>{bnpl.status}</Text>
+                </View>
+              </View>
+              <Text style={styles.bnplAmount}>₹{bnpl.totalDue.toLocaleString('en-IN')}</Text>
+              <Text style={styles.bnplDue}>Due: {new Date(bnpl.dueDate).toLocaleDateString('en-IN')}</Text>
             </View>
           ))}
         </View>
@@ -203,4 +281,34 @@ const styles = StyleSheet.create({
   badgeText: { color: colors.brand.sky, fontSize: 11, fontWeight: '600' },
   offerDetail: { color: colors.midGray, fontSize: 13, marginTop: 2 },
   offerCoins: { color: colors.primary[500], fontSize: 13, fontWeight: '600', marginTop: 4 },
+  // BNPL styles
+  bnplHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
+  bnplScoreLabel: { fontSize: 12, color: colors.text.tertiary },
+  bnplScoreValue: { fontSize: 32, fontWeight: 'bold', color: colors.text.primary },
+  riskBadge: { backgroundColor: colors.brand.purple, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  riskBadgeText: { color: colors.text.white, fontSize: 12, fontWeight: '700' },
+  creditRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm },
+  creditItem: { flex: 1, alignItems: 'center' },
+  creditLabel: { fontSize: 11, color: colors.text.tertiary },
+  creditValue: { fontSize: 16, fontWeight: '700', color: colors.text.primary, marginTop: 2 },
+  outstandingAlert: {
+    backgroundColor: colors.errorScale[50],
+    padding: spacing.sm,
+    borderRadius: 8,
+    marginTop: spacing.sm,
+  },
+  outstandingText: { color: colors.error, fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  bnplCard: {
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    borderRadius: 10,
+    padding: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  bnplCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  bnplMerchant: { fontSize: 14, fontWeight: '600', color: colors.text.primary },
+  statusBadge: { backgroundColor: colors.warningScale[50], paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
+  statusText: { color: colors.warning, fontSize: 11, fontWeight: '600' },
+  bnplAmount: { fontSize: 18, fontWeight: 'bold', color: colors.text.primary },
+  bnplDue: { fontSize: 12, color: colors.text.tertiary, marginTop: 2 },
 });

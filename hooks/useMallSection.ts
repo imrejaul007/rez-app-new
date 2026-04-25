@@ -14,6 +14,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { mallApi } from '../services/mallApi';
 import { colors } from '@/constants/theme';
+import { logger } from '@/utils/logger';
 import {
   MallBrand,
   MallCategory,
@@ -166,21 +167,19 @@ export function useMallSection(options: UseMallSectionOptions = {}): UseMallSect
 
         const batchData = await mallApi.getMallHomepageBatch();
 
-        if (__DEV__) {
-          console.log('[Mall] Batch response counts:', {
-            featuredStores: batchData.featuredStores?.length ?? 0,
-            newStores: batchData.newStores?.length ?? 0,
-            topRatedStores: batchData.topRatedStores?.length ?? 0,
-            premiumStores: batchData.premiumStores?.length ?? 0,
-            categories: batchData.categories?.length ?? 0,
-            heroBanners: batchData.heroBanners?.length ?? 0,
-            trendingStores: batchData.trendingStores?.length ?? 0,
-            rewardBoosters: batchData.rewardBoosters?.length ?? 0,
-            dealsOfDay: batchData.dealsOfDay?.length ?? 0,
-            collections: batchData.collections?.length ?? 0,
-            exclusiveOffers: batchData.exclusiveOffers?.length ?? 0,
-          });
-        }
+        logger.debug('[Mall] Batch response counts', {
+          featuredStores: batchData.featuredStores?.length ?? 0,
+          newStores: batchData.newStores?.length ?? 0,
+          topRatedStores: batchData.topRatedStores?.length ?? 0,
+          premiumStores: batchData.premiumStores?.length ?? 0,
+          categories: batchData.categories?.length ?? 0,
+          heroBanners: batchData.heroBanners?.length ?? 0,
+          trendingStores: batchData.trendingStores?.length ?? 0,
+          rewardBoosters: batchData.rewardBoosters?.length ?? 0,
+          dealsOfDay: batchData.dealsOfDay?.length ?? 0,
+          collections: batchData.collections?.length ?? 0,
+          exclusiveOffers: batchData.exclusiveOffers?.length ?? 0,
+        }, 'Mall');
 
         if (isMountedRef.current) {
           // Set banners

@@ -44,7 +44,7 @@ class SessionTrackingService {
       firstRewardSeen: false,
     };
 
-    console.debug('[SessionTracking] Session started:', sessionId);
+    logger.debug('[SessionTracking] Session started', { sessionId }, 'SessionTracking');
     return this.currentSession as SessionMetadata;
   }
 
@@ -70,11 +70,11 @@ class SessionTrackingService {
     // Persist to local storage for batch upload to analytics
     await this.persistSession(session);
 
-    console.debug('[SessionTracking] Session ended:', {
+    logger.debug('[SessionTracking] Session ended', {
       sessionId: session.sessionId,
       duration: session.duration,
       features: session.featuresTouched,
-    });
+    }, 'SessionTracking');
 
     this.currentSession = null;
     return session;
@@ -92,7 +92,7 @@ class SessionTrackingService {
     }
     this.currentSession.eventsCount = (this.currentSession.eventsCount || 0) + 1;
 
-    console.debug('[SessionTracking] Feature touched:', feature);
+    logger.debug('[SessionTracking] Feature touched', { feature }, 'SessionTracking');
   }
 
   /**
@@ -102,7 +102,7 @@ class SessionTrackingService {
   markPurchase(): void {
     if (this.currentSession) {
       this.currentSession.purchaseMade = true;
-      console.debug('[SessionTracking] Purchase recorded in session');
+      logger.debug('[SessionTracking] Purchase recorded in session', {}, 'SessionTracking');
     }
   }
 
@@ -113,7 +113,7 @@ class SessionTrackingService {
   markFirstRewardSeen(): void {
     if (this.currentSession) {
       this.currentSession.firstRewardSeen = true;
-      console.debug('[SessionTracking] First reward seen in session');
+      logger.debug('[SessionTracking] First reward seen in session', {}, 'SessionTracking');
     }
   }
 
