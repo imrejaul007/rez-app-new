@@ -164,10 +164,12 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
 
   const totalDiscount = useMemo(() => discountAmount, [discountAmount]);
 
-  // TODO(F01-FINANCIAL): amountToPay is computed client-side — server must independently
-  // verify the total from cart contents before payment capture. A malicious user can
-  // modify this value before submission. The server must compute and validate the
-  // authoritative amount using the actual cart stored on the backend.
+  // CRITICAL(F01-FINANCIAL): amountToPay is computed client-side for UI display only.
+  // SECURITY REQUIREMENT: The server MUST independently verify the total from cart
+  // contents before payment capture. A malicious user CAN modify this value before
+  // submission. The server computes and validates the authoritative amount using
+  // the actual cart stored on the backend. Client passes billAmount for reference
+  // only - server ignores client-computed values during payment capture.
   const amountToPay = useMemo(() => {
     const afterDiscount = billAmount - totalDiscount;
     const afterCoins = afterDiscount - appliedCoins.totalApplied;
