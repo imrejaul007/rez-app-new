@@ -36,7 +36,7 @@ export default function QRCheckinScreen() {
       apiClient
         .get(`/qr-checkin/store/${storeId}`)
         .then((r) => setStoreName((r as any).data?.name || ''))
-        .catch((err) => logger.error('QRCheckin: store lookup failed', { storeId, error: String(err) } as any))
+        .catch((err) => logger.error('QRCheckin: store lookup failed', new Error(String(err)), 'store lookup'))
         .finally(() => setLoadingStore(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
