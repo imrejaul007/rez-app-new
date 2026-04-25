@@ -346,6 +346,39 @@ class KarmaService {
     return { blob, filename };
   }
 
+  /**
+   * Get available micro-actions for the authenticated user
+   */
+  async getMicroActions(): Promise<ApiResponse<MicroActionsResult>> {
+    return apiClient.get<MicroActionsResult>('/karma/micro-actions');
+  }
+
+  /**
+   * Claim/complete a micro-action and earn karma
+   */
+  async claimMicroAction(actionKey: string): Promise<ApiResponse<ClaimActionResult>> {
+    return apiClient.post<ClaimActionResult>('/karma/micro-actions/claim', { actionKey });
+  }
+
+  /**
+   * Get leaderboard with specified scope and period
+   */
+  async getLeaderboard(
+    scope: 'global' | 'city' | 'cause',
+    period: 'all-time' | 'monthly' | 'weekly',
+    limit = 50,
+    offset = 0,
+  ): Promise<ApiResponse<LeaderboardResult>> {
+    return apiClient.get<LeaderboardResult>('/karma/leaderboard', { scope, period, limit, offset });
+  }
+
+  /**
+   * Get the authenticated user's rank in the specified leaderboard
+   */
+  async getMyRank(scope: 'global' | 'city' | 'cause', period: 'all-time' | 'monthly' | 'weekly'): Promise<ApiResponse<UserRankResult>> {
+    return apiClient.get<UserRankResult>('/karma/leaderboard/my-rank', { scope, period });
+  }
+
   private async _getToken(): Promise<string> {
     const { useAuthStore } = await import('@/stores/authStore');
     const token = useAuthStore.getState().state.token;
@@ -382,6 +415,76 @@ export interface EventListResponse {
   success: boolean;
   events: KarmaEvent[];
   total: number;
+}
+
+// =============================================================================
+// MICRO-ACTIONS TYPES
+// =============================================================================
+
+export interface MicroAction {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  karmaBonus: number;
+  icon: string;
+  category: 'daily' | 'social' | 'profile' | 'streak' | 'special';
+  isAvailable: boolean;
+  isLocked: boolean;
+  lockReason?: string;
+}
+
+export interface CompletedAction {
+  id: string;
+  actionKey: string;
+  completedAt: string;
+  karmaEarned: number;
+}
+
+export interface MicroActionsResult {
+  available: MicroAction[];
+  completed: CompletedAction[];
+  earnedToday: number;
+  totalAvailable: number;
+  totalCompleted: number;
+}
+
+export interface ClaimActionResult {
+  success: boolean;
+  karmaEarned: number;
+  totalEarnedToday: number;
+  newBadge?: KarmaBadge;
+}
+
+// =============================================================================
+// LEADERBOARD TYPES
+// =============================================================================
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  displayName: string;
+  avatar?: string;
+  karmaScore: number;
+  level: 'L1' | 'L2' | 'L3' | 'L4';
+  activeKarma: number;
+  eventsCompleted: number;
+  percentile: number;
+}
+
+export interface LeaderboardResult {
+  scope: 'global' | 'city' | 'cause';
+  period: 'all-time' | 'monthly' | 'weekly';
+  entries: LeaderboardEntry[];
+  userRank: number | null;
+  totalParticipants: number;
+  updatedAt: string;
+}
+
+export interface UserRankResult {
+  rank: number;
+  totalParticipants: number;
+  percentile: number;
 }
 
 const karmaService = new KarmaService();

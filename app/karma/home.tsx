@@ -340,6 +340,22 @@ function KarmaHomeScreen() {
       bg: '#FEF2F2',
       onPress: () => router.push('/karma/missions'),
     },
+    {
+      id: 'micro',
+      label: 'Actions',
+      icon: 'flash' as const,
+      color: '#F59E0B',
+      bg: '#FFFBEB',
+      onPress: () => router.push('/karma/micro-actions'),
+    },
+    {
+      id: 'leaderboard',
+      label: 'Rankings',
+      icon: 'trophy' as const,
+      color: '#8B5CF6',
+      bg: '#F5F3FF',
+      onPress: () => router.push('/karma/leaderboard'),
+    },
   ];
 
   if (loading) {
