@@ -66,10 +66,11 @@ export async function withRetry<T>(
       lastError = error;
       attempt++;
 
-      // Check if error is retryable
+      // Check if error is retryable - API errors have status in error.response.status
+      // AUDIT-FIX: was checking error.status which is always undefined for wrapped API errors
+      const status = error?.response?.status ?? error?.status;
       const isRetryable =
-        error?.status &&
-        retryableStatuses.includes(error.status);
+        status && retryableStatuses.includes(status);
 
       if (!isRetryable || attempt >= maxRetries) {
         throw error;
