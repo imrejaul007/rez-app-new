@@ -389,6 +389,10 @@ export default function NotificationsScreen() {
           keyExtractor={(item) => item.key}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={PRIMARY} colors={[PRIMARY]} />
           }
