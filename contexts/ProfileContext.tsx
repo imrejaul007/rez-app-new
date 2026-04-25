@@ -219,8 +219,8 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
       // The API endpoint /auth/change-email requires either:
       // 1. currentPassword (for password-authenticated users), OR
       // 2. otpCode (for passwordless/OTP users)
-      // TODO: Implement UI flow to collect and submit verification before email change
-      // For now, reject any email change that doesn't include verification.
+      // SECURITY: Email changes are blocked at this level. Users must use the dedicated
+      // Change Email screen which implements the verification flow.
       if (userData.email && userData.email !== user.email) {
         // Email is being changed — require identity verification (password or OTP)
         // Throw error: caller must implement a separate change-email flow that:

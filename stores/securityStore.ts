@@ -66,7 +66,7 @@ interface SecurityStoreState {
   authenticateWithBiometric: () => Promise<boolean>;
   enableTwoFactorAuth: (method: '2FA_SMS' | '2FA_EMAIL' | '2FA_APP') => Promise<boolean>;
   disableTwoFactorAuth: () => Promise<boolean>;
-  generateBackupCodes: () => string[];
+  _generateBackupCodes: () => string[];
   isProfileVisible: (visibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE') => boolean;
 }
 
@@ -296,35 +296,14 @@ export const useSecurityStore = create<SecurityStoreState>((set: StoreSet, get: 
     }
   },
 
-  generateBackupCodes: (): string[] => {
-    // CA-AUT-020 FIX: Use crypto.getRandomValues() instead of Math.random()
-    // Math.random() is NOT cryptographically secure — backup codes generated with it
-    // are predictable, enabling 2FA bypass. crypto.getRandomValues() provides
-    // CSPRNG-quality randomness suitable for security-sensitive token generation.
-    const codes: string[] = [];
-    // Generate 10 codes, each 8 characters from alphanumeric charset
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    for (let i = 0; i < 10; i++) {
-      const code = new Uint32Array(4);
-      // Use available crypto source (web: window.crypto, React Native: fallback)
-      // CA-AUT-020 FIX: crypto.getRandomValues() is available via react-native-get-random-values polyfill.
-      // The polyfill is imported at the top of this file. On web it's native.
-      if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
-        crypto.getRandomValues(code);
-      } else {
-        // Last-resort fallback: Math.random (not cryptographically secure, but prevents crash)
-        for (let j = 0; j < 4; j++) {
-          code[j] = Math.floor(Math.random() * 0xFFFFFFFF);
-        }
-      }
-      let codeStr = '';
-      for (let j = 0; j < 4; j++) {
-        codeStr += charset[code[j] % charset.length];
-        codeStr += charset[(code[j] >> 8) % charset.length];
-      }
-      codes.push(codeStr);
+  _generateBackupCodes: (): string[] => {
+    // DEPRECATED: This function is no longer used.
+    // Backup codes are now obtained from the backend via enableTwoFactorAuth response.
+    // This function exists only to prevent TypeScript errors in existing code.
+    if (__DEV__) {
+      console.warn('[SecurityStore] DEPRECATED: _generateBackupCodes called. Backup codes come from backend response.');
     }
-    return codes;
+    return [];
   },
 
   isProfileVisible: (visibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE'): boolean => {

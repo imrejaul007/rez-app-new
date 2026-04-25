@@ -762,18 +762,11 @@ class AuthService {
    * Validate and refresh token if needed
    * Call this before making authenticated requests
    *
-   * TODO (MED-3): This method is NOT implemented. It always returns false.
-   * Token refresh is handled automatically by AuthContext.tryRefreshToken()
-   * via the apiClient 401 interceptor. Do NOT call this method expecting it
-   * to actually validate or refresh the token — it will silently lie to callers.
+   * DEPRECATED: Token refresh is handled automatically by AuthContext.tryRefreshToken()
+   * via the apiClient 401 interceptor. This method no longer performs validation -
+   * it simply returns true as token validity is managed by the interceptor.
    *
    * @deprecated Use AuthContext.tryRefreshToken() (via apiClient 401 callback) instead.
-   */
-  /**
-   * @deprecated Token refresh is automatic via the apiClient 401 interceptor.
-   * L-3 FIX: Replaced hard throw with a DEV-only warning + safe return value so
-   * callers that haven't been updated yet don't crash in production. Remove call
-   * sites when possible.
    */
   async ensureValidToken(): Promise<boolean> {
     if (__DEV__) {

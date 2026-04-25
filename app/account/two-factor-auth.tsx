@@ -57,33 +57,23 @@ const TWO_FACTOR_OPTIONS: TwoFactorOption[] = [
 function TwoFactorAuthPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const {
-    securitySettings,
-    updateSecuritySettings,
-    enableTwoFactorAuth,
-    disableTwoFactorAuth,
-    generateBackupCodes,
-    isLoading,
-  } = useSecurity();
+  const { securitySettings, updateSecuritySettings, enableTwoFactorAuth, disableTwoFactorAuth, isLoading } =
+    useSecurity();
 
   const [selectedMethod, setSelectedMethod] = useState<TwoFactorMethod>('2FA_SMS');
   const [showBackupCodes, setShowBackupCodes] = useState(false);
-  const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
 
   const is2FAEnabled = securitySettings?.twoFactorAuth.enabled || false;
   const currentMethod = securitySettings?.twoFactorAuth.method || '2FA_SMS';
+  const backupCodes = securitySettings?.twoFactorAuth?.backupCodes || [];
 
   const handleEnable2FA = async () => {
     try {
       setIsVerifying(true);
 
-      // Generate backup codes
-      const codes = generateBackupCodes();
-      setBackupCodes(codes);
-
-      // Enable 2FA
+      // Enable 2FA - backup codes come from backend response via enableTwoFactorAuth
       const success = await enableTwoFactorAuth(selectedMethod);
 
       if (success) {

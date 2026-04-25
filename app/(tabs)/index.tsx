@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { Suspense, useCallback, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   View,
@@ -32,19 +32,14 @@ import {
   useAuthActions,
   useIsAuthenticated,
   useCartItemCount,
-  useCartActions,
   useRefreshCart,
   useRezBalance,
   useWalletData,
   useWalletLoading,
-  useRefreshWallet,
   useSavingsInsights,
   useActiveTab,
   useSetActiveTab,
-  usePriveEligibility,
   useIsPriveEligible,
-  useActiveHomeTab,
-  useSetActiveHomeTab,
   useRegisterScrollToTop,
 } from '@/stores';
 import { useProfile, useProfileMenu } from '@/contexts/ProfileContext';
@@ -58,10 +53,9 @@ import RewardCelebrationModal from '@/components/gamification/RewardCelebrationM
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
 import { StatusBar } from 'expo-status-bar';
-import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
+import { colors, spacing, borderRadius, typography } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 import StickySearchHeader from '@/components/homepage/StickySearchHeader';
-import HeroBanner from '@/components/homepage/HeroBanner';
 import SavingsDashboard from '@/components/homepage/SavingsDashboard';
 import SmartTipsCard from '@/components/homepage/SmartTipsCard';
 import type { TabId } from '@/components/homepage/HomeTabSection';
@@ -94,13 +88,7 @@ import HomepageSkeleton from '@/components/homepage/HomepageSkeleton';
 import { BRAND } from '@/constants/brand';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
-import {
-  isUserFirstDay,
-  getStreakDisplay,
-  getDaysSinceJoined,
-  trackSessionStart,
-  trackSessionEnd,
-} from '@/utils/retentionHooks';
+import { isUserFirstDay, trackSessionStart, trackSessionEnd } from '@/utils/retentionHooks';
 import sessionTrackingService from '@/services/sessionTrackingService';
 
 // ProfileMenuModal eagerly loaded — React.lazy + Suspense(null) causes modal to not appear on Android
@@ -129,7 +117,6 @@ const PriveSectionContainer = lazyWithRetry(() =>
 // Lazy-loaded components (below-the-fold / modals / secondary content)
 const HomeTabSection = lazyWithRetry(() => import('@/components/homepage/HomeTabSection'));
 const NearUTabContent = lazyWithRetry(() => import('@/components/homepage/NearUTabContent'));
-const RecommendedStoresSection = lazyWithRetry(() => import('@/components/homepage/RecommendedStoresSection'));
 const LocationPickerModal = lazyWithRetry(() => import('@/components/location/LocationPickerModal'));
 const QuickAccessFAB = lazyWithRetry(() => import('@/components/navigation/QuickAccessFAB'));
 const PushNotificationInitializer = lazyWithRetry(() => import('@/components/common/PushNotificationInitializer'));
@@ -256,16 +243,14 @@ function HomeScreen() {
   const { user: profileUser, isModalVisible, showModal, hideModal } = useProfile();
   const { handleMenuItemPress } = useProfileMenu();
   const cartItemCount = useCartItemCount();
-  const cartActions = useCartActions();
   const refreshCart = useRefreshCart();
   const authUser = useAuthUser();
   const isAuthenticated = useIsAuthenticated();
   const authActions = useAuthActions();
   const userPoints = useRezBalance();
-  const { featureLevel, statedIdentity } = useUserIdentityStore();
+  const { featureLevel } = useUserIdentityStore();
 
   const walletData = useWalletData();
-  const refreshWallet = useRefreshWallet();
   const isWalletLoading = useWalletLoading();
   const savingsInsights = useSavingsInsights();
   const totalSaved = savingsInsights?.totalSaved ?? 0;
@@ -326,10 +311,7 @@ function HomeScreen() {
   // Zustand selectors for home tab — granular subscriptions
   const activeTab = useActiveTab();
   const setActiveTab = useSetActiveTab();
-  const priveEligibility = usePriveEligibility();
   const isPriveEligible = useIsPriveEligible();
-  const activeHomeTab = useActiveHomeTab();
-  const setActiveHomeTab = useSetActiveHomeTab();
   const registerScrollToTop = useRegisterScrollToTop();
   const navTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -385,10 +367,12 @@ function HomeScreen() {
   const [serviceabilityChecked, setServiceabilityChecked] = React.useState(false);
 
   // CARLOS: retention — day-1 habit prompt & streak display
-  const [isFirstDay, setIsFirstDay] = React.useState(false);
+  // Note: isFirstDay and streakDisplay values are intentionally not used here
+  // The state setters are called to trigger any future components that might need them
+  const [, _setIsFirstDay] = React.useState(false);
   const [showDay1Challenge, setShowDay1Challenge] = React.useState(false);
   const [streakCount, setStreakCount] = React.useState(0);
-  const [streakDisplay, setStreakDisplay] = React.useState({ emoji: '', text: '' });
+  const [, _setStreakDisplay] = React.useState({ emoji: '', text: '' });
   const sessionStartTimeRef = useRef<number>(0);
   const appStateRef = useRef<AppStateStatus>('active');
   const personalizedFeedRef = useRef<PersonalizedFeedSectionHandle>(null);
@@ -439,7 +423,7 @@ function HomeScreen() {
   React.useEffect(() => {
     if (!authUser) return;
     const isDay1 = isUserFirstDay(authUser);
-    setIsFirstDay(isDay1);
+    _setIsFirstDay(isDay1);
     if (isDay1) {
       // Show day-1 challenge card (only once per session)
       import('@react-native-async-storage/async-storage')
@@ -454,7 +438,7 @@ function HomeScreen() {
         })
         .catch(() => {});
     }
-  }, [authUser]);
+  }, [authUser, _setIsFirstDay]);
 
   // CARLOS: retention — session start/end tracking for cohort analysis
   React.useEffect(() => {
@@ -507,9 +491,9 @@ function HomeScreen() {
         setStreakCount(count);
         if (count > 0) {
           const emoji = count >= 30 ? '🔥' : count >= 7 ? '⚡' : '✨';
-          setStreakDisplay({ emoji, text: `${count}d` });
+          _setStreakDisplay({ emoji, text: `${count}d` });
         } else {
-          setStreakDisplay({ emoji: '', text: '' });
+          _setStreakDisplay({ emoji: '', text: '' });
         }
       })
       .catch(() => {
@@ -653,7 +637,6 @@ function HomeScreen() {
 
   // Load user context once after interactions complete + authenticated
   React.useEffect(() => {
-    let mounted = true;
     if (interactionsComplete && isAuthenticated && !statsLoadedRef.current) {
       statsLoadedRef.current = true;
       _statsLoadedGlobal = true; // Module-level — survives remounts
@@ -664,9 +647,6 @@ function HomeScreen() {
       statsLoadedRef.current = false;
       _statsLoadedGlobal = false;
     }
-    return () => {
-      mounted = false;
-    };
   }, [isAuthenticated, interactionsComplete, loadUserContext]);
 
   // Refresh all dynamic data when screen comes into focus (throttled to prevent continuous refreshing)
@@ -730,7 +710,7 @@ function HomeScreen() {
         // Refresh recently viewed
         refreshRecentlyViewed();
       }
-    } catch (error: any) {
+    } catch {
       // silently handle
     } finally {
       if (!isMounted()) return;
@@ -794,7 +774,7 @@ function HomeScreen() {
         } as any);
         if (!isMounted()) return;
         setIsLocationModalVisible(false);
-      } catch (error: any) {
+      } catch {
         platformAlertSimple('Error', 'Failed to update location. Please try again.');
       }
     },
@@ -861,20 +841,6 @@ function HomeScreen() {
     const { default: AS } = await import('@react-native-async-storage/async-storage');
     AS.setItem('location_banner_dismissed', 'true').catch(() => {});
   }, []);
-
-  // Memoize gradient colors to avoid new array allocation on every scroll frame
-  const gradientColors = useMemo((): string[] => {
-    switch (activeTab) {
-      case 'prive':
-        return [colors.neutral[800], colors.neutral[800], colors.neutral[900], colors.neutral[900]];
-      case 'mall':
-        return [colors.tint.amber, colors.warningScale[50], colors.tint.amber, colors.background.primary];
-      case 'cash':
-        return [colors.tint.amber, colors.warningScale[50], colors.tint.amber, colors.background.primary];
-      default:
-        return [colors.primary[300], colors.primary[200], colors.linen, colors.background.primary];
-    }
-  }, [activeTab]);
 
   // Memoize tab-dependent styles to avoid creating new objects every render
   const tabStyles = useMemo(() => {
