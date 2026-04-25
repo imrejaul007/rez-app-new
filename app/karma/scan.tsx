@@ -15,6 +15,7 @@ import { KarmaHeader } from './_layout';
 import karmaService, { GPSCoords } from '@/services/karmaService';
 import { useAuthStore } from '@/stores/authStore';
 import { showAlert } from '@/utils/alert';
+import { showToast } from '@/components/common/ToastManager';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
@@ -102,12 +103,12 @@ function KarmaScanScreen() {
   // GPS check-in / check-out
   const handleGpsCheckIn = async () => {
     if (!activeEventId) {
-      Alert.alert('No Event', 'Please open this screen from an event page to use GPS check-in.');
+      showToast({ type: 'warning', message: 'Please open this screen from an event page to use GPS check-in.' });
       return;
     }
 
     if (!gpsCoords) {
-      Alert.alert('Location Unavailable', 'Could not get your current location. Please try again.');
+      showToast({ type: 'warning', message: 'Could not get your current location. Please try again.' });
       return;
     }
 
@@ -169,7 +170,7 @@ function KarmaScanScreen() {
             onPress={async () => {
               const { status } = await Location.requestForegroundPermissionsAsync();
               if (status === 'granted') handleGpsCheckIn();
-              else Alert.alert('Permission Denied', 'Location permission is needed for GPS check-in.');
+              else showToast({ type: 'warning', message: 'Location permission is needed for GPS check-in.' });
             }}
           >
             <Ionicons name="location-outline" size={18} color={KARMA_PURPLE} />

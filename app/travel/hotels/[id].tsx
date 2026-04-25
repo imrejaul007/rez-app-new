@@ -23,6 +23,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { showToast } from '@/components/common/ToastManager';
 import { colors } from '@/constants/theme';
 import {
   getHotelById,
@@ -223,7 +224,7 @@ export default function HotelDetailScreen() {
   const handleBookPress = useCallback(async () => {
     const token = await getOtaToken();
     if (!token) {
-      Alert.alert('Login required', 'Please log in with REZ to book this hotel.');
+      showToast({ type: 'warning', message: 'Please log in with REZ to book this hotel.' });
       return;
     }
     if (!id || !selectedRoom) return;
@@ -232,11 +233,11 @@ export default function HotelDetailScreen() {
 
   const handleConfirmGuest = useCallback(async () => {
     if (!guestName.trim()) {
-      Alert.alert('Required', 'Please enter guest name.');
+      showToast({ type: 'warning', message: 'Please enter guest name.' });
       return;
     }
     if (!/^\d{10}$/.test(guestPhone.trim())) {
-      Alert.alert('Required', 'Please enter a valid 10-digit phone number.');
+      showToast({ type: 'warning', message: 'Please enter a valid 10-digit phone number.' });
       return;
     }
 
@@ -276,7 +277,7 @@ export default function HotelDetailScreen() {
         },
       });
     } catch (e: any) {
-      Alert.alert('Booking failed', e.message ?? 'Please try again.');
+      showToast({ type: 'error', message: e.message ?? 'Booking failed. Please try again.' });
     } finally {
       setBooking(false);
     }

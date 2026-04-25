@@ -31,6 +31,7 @@ import { useIsAuthenticated } from '@/stores/selectors';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { showAlert } from '@/utils/alert';
+import { showToast } from '@/components/common/ToastManager';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
@@ -328,18 +329,18 @@ function KarmaMyKarmaScreen() {
         if (isAvailable) {
           await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Share Impact Report' });
         } else {
-          Alert.alert('Saved', `Report saved to ${uri}`);
+          showToast({ type: 'success', message: `Report saved to ${uri}` });
         }
         if (isMounted()) setDownloading(false);
       };
       reader.onerror = () => {
         if (isMounted()) setDownloading(false);
-        Alert.alert('Error', 'Failed to download report');
+        showToast({ type: 'error', message: 'Failed to download report' });
       };
       reader.readAsDataURL(blob);
     } catch (err) {
       if (isMounted()) setDownloading(false);
-      Alert.alert('Error', 'Could not download your Impact Report. Please try again.');
+      showToast({ type: 'error', message: 'Could not download your Impact Report. Please try again.' });
     }
   };
 

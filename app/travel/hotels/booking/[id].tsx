@@ -10,6 +10,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { showToast } from '@/components/common/ToastManager';
 import { getHotelBookingById, cancelBooking, OtaBooking } from '@/services/hotelOtaApi';
 
 const C = {
@@ -64,7 +65,7 @@ export default function HotelBookingDetailScreen() {
       const b = await getHotelBookingById(id);
       setBooking(b);
     } catch {
-      Alert.alert('Error', 'Failed to load booking details');
+      showToast({ type: 'error', message: 'Failed to load booking details' });
     } finally {
       setLoading(false);
     }
@@ -89,9 +90,9 @@ export default function HotelBookingDetailScreen() {
             try {
               await cancelBooking(booking.id, 'Cancelled by guest');
               setBooking((prev) => (prev ? { ...prev, status: 'cancelled' } : prev));
-              Alert.alert('Cancelled', 'Your booking has been cancelled. Coins will be refunded within 24 hours.');
+              showToast({ type: 'success', message: 'Booking cancelled. Coins will be refunded within 24 hours.' });
             } catch (e: any) {
-              Alert.alert('Error', e.message ?? 'Cancellation failed');
+              showToast({ type: 'error', message: e.message ?? 'Cancellation failed' });
             } finally {
               setCancelling(false);
             }

@@ -17,6 +17,7 @@ import serviceBookingApi, { ServiceBooking } from '@/services/serviceBookingApi'
 import serviceAppointmentApi from '@/services/serviceAppointmentApi';
 import CashbackStatusBadge from '@/components/travel/CashbackStatusBadge';
 import { getMyBookings, cancelBooking, OtaBooking } from '@/services/hotelOtaApi';
+import { showToast } from '@/components/common/ToastManager';
 import { useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -276,9 +277,7 @@ const MyBookingsPage = () => {
 
               if (updatedRecord) {
                 setBookings((prev) =>
-                  prev.map((b) =>
-                    b._id === bookingId ? { ...b, ...updatedRecord, status: 'cancelled' as any } : b,
-                  ),
+                  prev.map((b) => (b._id === bookingId ? { ...b, ...updatedRecord, status: 'cancelled' as any } : b)),
                 );
               }
               platformAlertSimple('Success', 'Booking cancelled successfully');
@@ -854,7 +853,7 @@ const MyBookingsPage = () => {
                                         prev.map((b) => (b.id === item.id ? { ...b, status: 'cancelled' } : b)),
                                       );
                                     } catch (e2: any) {
-                                      Alert.alert('Error', e2.message ?? 'Cancellation failed');
+                                      showToast({ type: 'error', message: e2.message ?? 'Cancellation failed' });
                                     }
                                   },
                                 },

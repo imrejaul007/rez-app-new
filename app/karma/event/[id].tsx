@@ -25,6 +25,7 @@ import { KarmaHeader } from '../_layout';
 import karmaService, { KarmaEvent, Booking } from '@/services/karmaService';
 import { useIsAuthenticated } from '@/stores/selectors';
 import { showAlert } from '@/utils/alert';
+import { showToast } from '@/components/common/ToastManager';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
@@ -105,12 +106,12 @@ function KarmaEventDetailScreen() {
             const res = await karmaService.leaveEvent(event._id);
             if (res.success) {
               setBooking(null);
-              showAlert('Left', "You've cancelled your registration.");
+              showToast({ type: 'info', message: "You've cancelled your registration." });
             } else {
-              showAlert('Error', res.error ?? 'Unable to leave event');
+              showToast({ type: 'error', message: res.error ?? 'Unable to leave event' });
             }
           } catch (e: any) {
-            showAlert('Error', e.message);
+            showToast({ type: 'error', message: e.message });
           } finally {
             setLeaving(false);
           }
@@ -196,11 +197,7 @@ function KarmaEventDetailScreen() {
             <CachedImage source={event.image} style={styles.heroImage} contentFit="cover" />
           ) : (
             <View style={[styles.heroPlaceholder, { backgroundColor: catCfg.bg }]}>
-              <Ionicons
-                name={catCfg.icon as any as keyof typeof Ionicons.glyphMap}
-                size={80}
-                color={catCfg.color}
-              />
+              <Ionicons name={catCfg.icon as any as keyof typeof Ionicons.glyphMap} size={80} color={catCfg.color} />
             </View>
           )}
           {/* Gradient overlay */}
@@ -208,11 +205,7 @@ function KarmaEventDetailScreen() {
           {/* Category + Status */}
           <View style={styles.heroBadges}>
             <View style={[styles.catBadge, { backgroundColor: catCfg.bg }]}>
-              <Ionicons
-                name={catCfg.icon as any as keyof typeof Ionicons.glyphMap}
-                size={12}
-                color={catCfg.color}
-              />
+              <Ionicons name={catCfg.icon as any as keyof typeof Ionicons.glyphMap} size={12} color={catCfg.color} />
               <Text style={[styles.catBadgeText, { color: catCfg.color }]}>
                 {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
               </Text>
