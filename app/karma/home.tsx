@@ -332,6 +332,14 @@ function KarmaHomeScreen() {
       bg: '#FFFBEB',
       onPress: () => router.push('/karma/wallet'),
     },
+    {
+      id: 'missions',
+      label: 'Missions',
+      icon: 'flag' as const,
+      color: '#EF4444',
+      bg: '#FEF2F2',
+      onPress: () => router.push('/karma/missions'),
+    },
   ];
 
   if (loading) {
