@@ -190,6 +190,40 @@ export interface TransactionResult {
 }
 
 // =============================================================================
+// COMMUNITIES TYPES
+// =============================================================================
+
+export interface Community {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: 'environment' | 'food' | 'health' | 'education' | 'community';
+  coverImage: string;
+  icon: string;
+  followerCount: number;
+  isFollowing: boolean;
+  stats: { eventsHosted: number; totalVolunteers: number; totalHours: number };
+  recentPosts: CommunityPost[];
+}
+
+export interface CommunityPost {
+  _id: string;
+  communityId: string;
+  authorId: string;
+  authorType: 'ngo' | 'volunteer';
+  content: string;
+  mediaUrls: string[];
+  karmaEarned: number;
+  likeCount: number;
+  commentCount: number;
+  tags: string[];
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// =============================================================================
 // API SERVICE
 // =============================================================================
 
@@ -384,6 +418,77 @@ class KarmaService {
     const token = useAuthStore.getState().state.token;
     if (!token) throw new Error('Not authenticated');
     return token;
+  }
+
+  // =============================================================================
+  // COMMUNITIES
+  // =============================================================================
+
+  /**
+   * Get all communities with optional category filter
+   */
+  async getCommunities(): Promise<ApiResponse<Community[]>> {
+    return apiClient.get<Community[]>('/karma/communities');
+  }
+
+  /**
+   * Get a single community by slug
+   */
+  async getCommunity(slug: string): Promise<ApiResponse<Community>> {
+    return apiClient.get<Community>(`/karma/communities/${slug}`);
+  }
+
+  /**
+   * Get community feed/posts with pagination
+   */
+  async getCommunityFeed(
+    slug: string,
+    page = 1,
+    limit = 20,
+  ): Promise<ApiResponse<{ posts: CommunityPost[]; page: number; limit: number }>> {
+    return apiClient.get<{ posts: CommunityPost[]; page: number; limit: number }>(
+      `/karma/communities/${slug}/feed`,
+      { page, limit },
+    );
+  }
+
+  /**
+   * Follow a community
+   */
+  async followCommunity(slug: string): Promise<ApiResponse<{ success: boolean }>> {
+    return apiClient.post<{ success: boolean }>(`/karma/communities/${slug}/follow`, {});
+  }
+
+  /**
+   * Unfollow a community
+   */
+  async unfollowCommunity(slug: string): Promise<ApiResponse<{ success: boolean }>> {
+    return apiClient.delete<{ success: boolean }>(`/karma/communities/${slug}/follow`);
+  }
+
+  /**
+   * Create a new post in a community
+   */
+  async createCommunityPost(
+    slug: string,
+    content: string,
+    mediaUrls?: string[],
+  ): Promise<ApiResponse<CommunityPost>> {
+    return apiClient.post<CommunityPost>(`/karma/communities/${slug}/posts`, { content, mediaUrls });
+  }
+
+  /**
+   * Get recommended communities for the user
+   */
+  async getRecommendedCommunities(): Promise<ApiResponse<Community[]>> {
+    return apiClient.get<Community[]>('/karma/communities/recommended');
+  }
+
+  /**
+   * Get communities the user is following
+   */
+  async getMyCommunities(): Promise<ApiResponse<Community[]>> {
+    return apiClient.get<Community[]>('/karma/communities/my');
   }
 
 }

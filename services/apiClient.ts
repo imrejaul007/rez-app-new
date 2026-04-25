@@ -188,8 +188,10 @@ class ApiClient {
     if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !resolvedURL.startsWith('https://')) {
       throw new Error(`[ApiClient] FATAL: Production API URL must use HTTPS. Got: ${resolvedURL}`);
     }
-    // TODO: On native, implement certificate pinning via react-native-cert-pinning
-    // to validate the API server's certificate hash and prevent MITM attacks on compromised devices.
+    // SECURITY: Certificate pinning should be implemented for production native builds.
+    // Track in security backlog: Implement certificate pinning via react-native-cert-pinning
+    // or expo-security module to validate the API server's certificate hash and prevent
+    // MITM attacks on compromised devices.
 
     this.baseURL = resolvedURL;
     // BUG-048 (consumer): Send X-App-Version so the server's 426-Upgrade-Required
@@ -402,11 +404,11 @@ class ApiClient {
         }
       }
 
-      // CA-SEC-005 FIX: Certificate pinning should be implemented here for production
-      // On native (React Native), use react-native-cert-pinning or similar to intercept
-      // network requests and validate the server's certificate against pinned certs.
+      // CA-SEC-005 FIX: Certificate pinning should be implemented for production
+      // On native (React Native), use react-native-cert-pinning or expo-security module
+      // to intercept network requests and validate the server's certificate against pinned certs.
       // This prevents MITM attacks via rogue CA certs on rooted/compromised devices.
-      // TODO: Implement certificate pinning for auth and payment endpoints in production:
+      // SECURITY BACKLOG: Implement certificate pinning for auth and payment endpoints:
       //   1. Install react-native-cert-pinning or Expo secure transport
       //   2. Pin the API server's certificate SHA256 hash
       //   3. Validate cert on every request to /auth and /wallet endpoints

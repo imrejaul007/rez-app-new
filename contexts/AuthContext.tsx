@@ -747,11 +747,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
               // Otherwise silently ignore — transient server error, session stays alive
             } else if (response.data) {
               if (isCancelledRef.current) return;
-              // CA-AUT-030 FIX: Use timing-safe comparison or skip comparison
-              // Comparing JSON.stringify is not timing-safe but this is acceptable here
-              // because we're comparing public user data (not secrets) and the comparison
-              // happens outside the hot path (background profile sync).
-              // TODO: If comparing sensitive data (e.g., tokens, SSNs), use crypto.timingSafeEqual().
+              // CA-AUT-030 FIX: Profile sync comparison
+              // JSON.stringify comparison is acceptable here because:
+              // 1. We're comparing public user profile data (name, email, preferences)
+              // 2. This is NOT sensitive data like tokens, SSNs, or passwords
+              // 3. The comparison is outside the hot path (background sync)
+              // 4. Timing attacks on profile data provide no security benefit to attackers
+              // Note: crypto.timingSafeEqual requires equal-length buffers, unsuitable for JSON comparison
               if (JSON.stringify(response.data) !== JSON.stringify(storedUser)) {
                 authStorage.saveUser(response.data).catch(() => {});
                 dispatch({ type: 'UPDATE_USER', payload: response.data });

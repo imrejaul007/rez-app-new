@@ -356,6 +356,14 @@ function KarmaHomeScreen() {
       bg: '#F5F3FF',
       onPress: () => router.push('/karma/leaderboard'),
     },
+    {
+      id: 'communities',
+      label: 'Communities',
+      icon: 'people' as const,
+      color: '#7C3AED',
+      bg: '#F5F3FF',
+      onPress: () => router.push('/karma/communities'),
+    },
   ];
 
   if (loading) {

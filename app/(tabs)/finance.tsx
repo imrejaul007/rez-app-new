@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import financeApi, { CreditScore, PartnerOffer } from '@/services/financeApi';
 import { useToast } from '@/hooks/useToast';
+import { colors, borderRadius, spacing } from '@/constants/theme';
 
 export default function FinanceScreen() {
   const { showSuccess } = useToast();
@@ -41,7 +42,7 @@ export default function FinanceScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#6C3EE8" />
+        <ActivityIndicator size="large" color={colors.brand.purple} />
       </View>
     );
   }
@@ -145,56 +146,61 @@ function getScoreBand(score: number): string {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5' },
+  container: { flex: 1, backgroundColor: colors.tint.coolGray },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scoreCard: {
-    margin: 16,
-    padding: 24,
-    borderRadius: 16,
-    backgroundColor: '#6C3EE8',
+    margin: spacing.base,
+    padding: spacing['2xl'],
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.brand.purple,
     alignItems: 'center',
   },
   scoreLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 14 },
-  scoreValue: { color: '#FFF', fontSize: 64, fontWeight: 'bold', marginVertical: 4 },
-  scoreSubLabel: { color: 'rgba(255,255,255,0.9)', fontSize: 16, marginBottom: 16 },
+  scoreValue: { color: colors.text.white, fontSize: 64, fontWeight: 'bold', marginVertical: 4 },
+  scoreSubLabel: { color: 'rgba(255,255,255,0.9)', fontSize: 16, marginBottom: spacing.base },
   scoreBtn: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: spacing.sm,
     borderRadius: 20,
   },
-  scoreBtnText: { color: '#FFF', fontWeight: '600' },
-  eligibilityRow: { flexDirection: 'row', marginHorizontal: 16, marginBottom: 8, gap: 8 },
+  scoreBtnText: { color: colors.text.white, fontWeight: '600' },
+  eligibilityRow: { flexDirection: 'row', marginHorizontal: spacing.base, marginBottom: spacing.sm, gap: spacing.sm },
   pill: {
     flex: 1,
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    padding: 12,
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.midnightNavy,
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
   },
-  pillValue: { fontSize: 18, fontWeight: 'bold', color: '#1A1A1A' },
-  pillLabel: { fontSize: 11, color: '#888', marginTop: 2 },
-  section: { margin: 16, backgroundColor: '#FFF', borderRadius: 12, padding: 16 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 12, color: '#1A1A1A' },
-  tip: { flexDirection: 'row', marginBottom: 8 },
-  tipDot: { color: '#6C3EE8', marginRight: 8, fontSize: 16 },
-  tipText: { flex: 1, color: '#444', fontSize: 14, lineHeight: 20 },
-  emptyText: { color: '#999', fontSize: 14 },
+  pillValue: { fontSize: 18, fontWeight: 'bold', color: colors.text.primary },
+  pillLabel: { fontSize: 11, color: colors.text.tertiary, marginTop: 2 },
+  section: {
+    margin: spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.md,
+    padding: spacing.base,
+  },
+  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: spacing.sm, color: colors.text.primary },
+  tip: { flexDirection: 'row', marginBottom: spacing.sm },
+  tipDot: { color: colors.brand.purple, marginRight: spacing.sm, fontSize: 16 },
+  tipText: { flex: 1, color: colors.slateGray, fontSize: 14, lineHeight: 20 },
+  emptyText: { color: colors.neutral[500], fontSize: 14 },
   offerCard: {
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: colors.border.light,
     borderRadius: 10,
-    padding: 12,
-    marginBottom: 8,
+    padding: spacing.sm,
+    marginBottom: spacing.sm,
   },
   offerHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  offerName: { flex: 1, fontSize: 15, fontWeight: '600', color: '#1A1A1A' },
-  badge: { backgroundColor: '#E8F4FF', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
-  badgeText: { color: '#0066CC', fontSize: 11, fontWeight: '600' },
-  offerDetail: { color: '#666', fontSize: 13, marginTop: 2 },
-  offerCoins: { color: '#F0A500', fontSize: 13, fontWeight: '600', marginTop: 4 },
+  offerName: { flex: 1, fontSize: 15, fontWeight: '600', color: colors.text.primary },
+  badge: { backgroundColor: colors.tint.blue, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
+  badgeText: { color: colors.brand.sky, fontSize: 11, fontWeight: '600' },
+  offerDetail: { color: colors.midGray, fontSize: 13, marginTop: 2 },
+  offerCoins: { color: colors.primary[500], fontSize: 13, fontWeight: '600', marginTop: 4 },
 });

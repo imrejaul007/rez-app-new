@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { Suspense } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl, Pressable, Platform } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import { platformAlertConfirm } from '@/utils/platformAlert';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,7 +33,7 @@ function PlayScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { state, actions } = usePlayPageData();
-  const { preloadVideos, isPreloaded } = useVideoPreload();
+  const { preloadVideos } = useVideoPreload();
   const isAuthenticated = useIsAuthenticated();
 
   // Separate state for articles
@@ -43,7 +43,7 @@ function PlayScreen() {
 
   // FAB animation
   const fabScale = useSharedValue(0);
-  const [showFAB, setShowFAB] = React.useState(true);
+  const [showFAB] = React.useState(true);
   const fabAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: fabScale.value }],
   }));
@@ -114,23 +114,6 @@ function PlayScreen() {
   const handleCategoryPress = React.useCallback(
     (category: CategoryTab) => {
       actions.setActiveCategory(category.type);
-    },
-    [actions],
-  );
-
-  const handleLikeVideo = React.useCallback(
-    async (videoId: string) => {
-      const success = await actions.likeVideo(videoId);
-      if (!success) {
-        platformAlertSimple('Error', 'Failed to like video. Please try again.');
-      }
-    },
-    [actions],
-  );
-
-  const handleShareVideo = React.useCallback(
-    async (video: UGCVideoItem) => {
-      await actions.shareVideo(video);
     },
     [actions],
   );
@@ -407,7 +390,7 @@ function PlayScreen() {
             accessibilityHint="Double tap to upload a video and share your content"
           >
             <LinearGradient
-              colors={[Colors.primary[500], '#00A85C', colors.nileBlue]}
+              colors={[Colors.primary[500], colors.success, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.fabGradient}

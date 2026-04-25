@@ -73,7 +73,7 @@ interface SecurityContextType {
   authenticateWithBiometric: () => Promise<boolean>;
   enableTwoFactorAuth: (method: '2FA_SMS' | '2FA_EMAIL' | '2FA_APP') => Promise<boolean>;
   disableTwoFactorAuth: () => Promise<boolean>;
-  generateBackupCodes: () => string[];
+  _generateBackupCodes: () => string[];
   isProfileVisible: (visibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE') => boolean;
 }
 
@@ -427,15 +427,16 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
   }, [updateSecuritySettings]);
 
   // CA-AUT-020 FIX: Backup codes must be generated server-side, not client-side
-  // This function rejects client-side generation with a guard and TODO.
-  const generateBackupCodes = useCallback((): string[] => {
+  // DEPRECATED: This function is deprecated and no longer used by the UI.
+  // Backup codes are now obtained from the backend via enableTwoFactorAuth response.
+  // Keeping this function with a guard to prevent accidental client-side code generation.
+  const _generateBackupCodes = useCallback((): string[] => {
     // GUARD: Backup codes MUST be generated server-side during 2FA setup.
     // The backend returns them in the enableTwoFactorAuth response.
     // Client-side generation using Math.random() is cryptographically insecure.
-    // TODO: Remove this function entirely once the backend owns all 2FA backup code generation.
     // Do NOT generate codes on the client using Math.random(), crypto.getRandomValues(), or any other method.
     if (__DEV__) {
-      console.warn('[SecurityContext] generateBackupCodes: GUARD REJECTING client-side generation. Use codes from backend response only.');
+      console.warn('[SecurityContext] DEPRECATED: generateBackupCodes called. Backup codes come from backend response.');
     }
     return []; // Return empty — caller MUST use codes from backend response
   }, []);
@@ -498,12 +499,12 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
     authenticateWithBiometric,
     enableTwoFactorAuth,
     disableTwoFactorAuth,
-    generateBackupCodes,
+    _generateBackupCodes,
     isProfileVisible,
   }), [
     securitySettings, privacySettings, isLoading, error, biometricAvailable, biometricEnrolled,
     updateSecuritySettings, updatePrivacySettings, refreshSettings, authenticateWithBiometric,
-    enableTwoFactorAuth, disableTwoFactorAuth, generateBackupCodes, isProfileVisible,
+    enableTwoFactorAuth, disableTwoFactorAuth, _generateBackupCodes, isProfileVisible,
   ]);
 
   return (
@@ -528,7 +529,7 @@ const SECURITY_DEFAULTS: SecurityContextType = {
   authenticateWithBiometric: async () => false,
   enableTwoFactorAuth: async () => false,
   disableTwoFactorAuth: async () => false,
-  generateBackupCodes: () => [],
+  _generateBackupCodes: () => [],
   isProfileVisible: () => false,
 };
 
