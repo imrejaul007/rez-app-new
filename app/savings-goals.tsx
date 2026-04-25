@@ -62,20 +62,20 @@ interface PastGoal {
 // ---------------------------------------------------------------------------
 async function fetchCurrentGoal(): Promise<SavingsGoal | null> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/goals/current')) as unknown;
-  return res.data?.data ?? null;
+  const res = (await apiService.get('/goals/current'));
+  return (res.data as any)?.data ?? null;
 }
 
 async function fetchGoalHistory(): Promise<PastGoal[]> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.get('/goals/history?limit=6')) as unknown;
-  return res.data?.data ?? [];
+  const res = (await apiService.get('/goals/history?limit=6'));
+  return (res.data as any)?.data ?? [];
 }
 
 async function saveGoal(targetAmount: number): Promise<SavingsGoal> {
   const { default: apiService } = await import('@/services/apiClient');
-  const res = (await apiService.post('/goals', { targetAmount })) as unknown;
-  return res.data?.data ?? res.data;
+  const res = (await apiService.post('/goals', { targetAmount }));
+  return (res.data as any)?.data ?? res.data;
 }
 
 // ---------------------------------------------------------------------------
@@ -461,7 +461,7 @@ function SavingsGoalsScreen() {
                   style={[
                     styles.linearFill,
                     {
-                      width: `${Math.min(100, goal.progressPct)}%` as unknown,
+                      width: `${Math.min(100, goal.progressPct)}%` as any,
                       backgroundColor: goal.isAchieved ? '#10b981' : '#1a3a52',
                     },
                   ]}
@@ -504,7 +504,7 @@ function SavingsGoalsScreen() {
                       style={[
                         styles.historyBarFill,
                         {
-                          width: `${item.progressPct}%` as unknown,
+                          width: `${item.progressPct}%` as any,
                           backgroundColor: item.isAchieved ? '#10b981' : '#1a3a52',
                         },
                       ]}

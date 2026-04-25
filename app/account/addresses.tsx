@@ -95,7 +95,7 @@ function SavedAddressesPage() {
       if (response.success && response.data) {
         const transformedAddresses: Address[] = response.data.map((addr: ApiAddress) => ({
           id: addr.id,
-          type: addr.type as unknown as AddressType,
+          type: addr.type as any as AddressType,
           title: addr.title,
           phone: addr.phone,
           addressLine1: addr.addressLine1,
@@ -146,7 +146,7 @@ function SavedAddressesPage() {
       if (!isMounted()) return;
 
       if (response.success && response.data) {
-        const ordersData = response.data as unknown;
+        const ordersData = response.data as any;
         const orderList = ordersData.orders ?? ordersData.data ?? (Array.isArray(ordersData) ? ordersData : []);
 
         const seen = new Set<string>();
@@ -217,7 +217,7 @@ function SavedAddressesPage() {
   const handleSaveHistoryAddress = useCallback(
     async (hist: HistoryAddress) => {
       const newAddress: AddressCreate = {
-        type: 'OTHER' as unknown,
+        type: 'OTHER' as any,
         title: hist.name || hist.addressLine1.split(' ').slice(0, 3).join(' '),
         phone: hist.phone,
         addressLine1: hist.addressLine1,
@@ -234,7 +234,7 @@ function SavedAddressesPage() {
         if (response.success && response.data) {
           const saved: Address = {
             id: response.data.id,
-            type: (response.data.type as unknown as AddressType) || 'OTHER',
+            type: (response.data.type as any as AddressType) || 'OTHER',
             title: response.data.title,
             phone: response.data.phone,
             addressLine1: response.data.addressLine1,
@@ -290,7 +290,7 @@ function SavedAddressesPage() {
         if (response.success && response.data) {
           const newAddress: Address = {
             id: response.data.id,
-            type: response.data.type as unknown as AddressType,
+            type: response.data.type as any as AddressType,
             title: response.data.title,
             phone: response.data.phone,
             addressLine1: response.data.addressLine1,
@@ -332,7 +332,7 @@ function SavedAddressesPage() {
                 addr.id === id
                   ? {
                       ...addr,
-                      type: response.data!.type as unknown as AddressType,
+                      type: response.data!.type as any as AddressType,
                       title: response.data!.title,
                       phone: response.data!.phone,
                       addressLine1: response.data!.addressLine1,
@@ -729,7 +729,7 @@ function SavedAddressesPage() {
           selectedAddress
             ? {
                 ...selectedAddress,
-                type: selectedAddress.type as unknown,
+                type: selectedAddress.type as any,
               }
             : null
         }

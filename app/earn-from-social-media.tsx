@@ -141,7 +141,7 @@ function EarnFromSocialMediaPage() {
     const firstItem = order.items?.[0];
     const storeObj = order.store && typeof order.store === 'object' ? order.store : null;
     const totalAmount = order.totals?.total || 0;
-    const fulfillmentType = (order as unknown as Record<string, unknown>)?.fulfillmentType as string | undefined;
+    const fulfillmentType = (order as any as Record<string, unknown>)?.fulfillmentType as string | undefined;
 
     // Map fulfillment type to ShareableOrder type and labels
     let type: ShareableOrder['type'] = 'delivery';
@@ -239,13 +239,13 @@ function EarnFromSocialMediaPage() {
             submissionsMap[post.order] = entry;
           }
           // Map by StorePayment ID from metadata
-          const spId = (post.metadata as unknown as Record<string, unknown>)?.storePaymentId;
-          if (spId) {
+          const spId = (post.metadata as any as Record<string, unknown>)?.storePaymentId;
+          if (spId && typeof spId === 'string') {
             submissionsMap[spId] = entry;
           }
           // Also map by orderNumber from metadata (fallback for older posts)
           const orderNum = post.metadata?.orderNumber;
-          if (orderNum && !submissionsMap[orderNum]) {
+          if (orderNum && typeof orderNum === 'string' && !submissionsMap[orderNum]) {
             submissionsMap[orderNum] = entry;
           }
         });
@@ -393,7 +393,7 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      const postId = response?.post?.id || (response as unknown as Record<string, unknown>)?.id || 'unknown';
+      const postId: string = String(response?.post?.id ?? (response as any as Record<string, unknown>)?.id ?? 'unknown');
       setOrderSubmissions((prev) => ({
         ...prev,
         [selectedOrder.orderId]: { status: 'pending', postId },
@@ -462,7 +462,7 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      const postId = response?.post?.id || (response as unknown as Record<string, unknown>)?.id || 'unknown';
+      const postId: string = String(response?.post?.id ?? (response as any as Record<string, unknown>)?.id ?? 'unknown');
       setOrderSubmissions((prev) => ({
         ...prev,
         [selectedOrder.orderId]: { status: 'pending', postId },
@@ -689,7 +689,7 @@ function EarnFromSocialMediaPage() {
                 <View style={styles.submissionLeft}>
                   <View style={styles.submissionPlatform}>
                     <Ionicons
-                      name={`logo-${post.platform}` as unknown as string}
+                      name={`logo-${post.platform}` as any as string}
                       size={18}
                       color={PLATFORM_CONFIG[post.platform as PlatformType]?.color || colors.text.tertiary}
                     />
@@ -712,7 +712,7 @@ function EarnFromSocialMediaPage() {
                     ]}
                   >
                     <Ionicons
-                      name={(statusIcons[post.status] || 'help-circle-outline') as unknown as string}
+                      name={(statusIcons[post.status] || 'help-circle-outline') as any as string}
                       size={12}
                       color={statusColors[post.status] || colors.text.tertiary}
                     />
@@ -747,7 +747,7 @@ function EarnFromSocialMediaPage() {
           <View key={index} style={styles.tipRow}>
             <View style={styles.tipIconCircle}>
               <Ionicons
-                name={tip.icon as unknown as keyof typeof Ionicons.glyphMap}
+                name={tip.icon as any as keyof typeof Ionicons.glyphMap}
                 size={16}
                 color={colors.nileBlue}
               />
@@ -790,7 +790,7 @@ function EarnFromSocialMediaPage() {
                 onPress={() => setSelectedPlatform(platform)}
               >
                 <Ionicons
-                  name={config.icon as unknown as keyof typeof Ionicons.glyphMap}
+                  name={config.icon as any as keyof typeof Ionicons.glyphMap}
                   size={28}
                   color={isSelected ? config.color : colors.text.tertiary}
                 />
@@ -842,7 +842,7 @@ function EarnFromSocialMediaPage() {
       {/* Continue Button */}
       <Pressable style={styles.continueButton} onPress={handlePlatformContinue}>
         <LinearGradient
-          colors={EarnSocialData.ui.gradients.primary as unknown as string[]}
+          colors={EarnSocialData.ui.gradients.primary as any as string[]}
           style={styles.continueButtonGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -864,7 +864,7 @@ function EarnFromSocialMediaPage() {
         {/* Platform Header */}
         <View style={styles.platformHeader}>
           <Ionicons
-            name={platformConfig.icon as unknown as keyof typeof Ionicons.glyphMap}
+            name={platformConfig.icon as any as keyof typeof Ionicons.glyphMap}
             size={24}
             color={platformConfig.color}
           />
@@ -910,8 +910,8 @@ function EarnFromSocialMediaPage() {
         {/* Submit Button */}
         <Pressable style={styles.uploadButton} onPress={handleSubmitUrl} disabled={submitting}>
           <LinearGradient
-            colors={EarnSocialData.ui.gradients.primary as unknown as string[]}
-            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
+            colors={EarnSocialData.ui.gradients.primary as any as string[]}
+            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as any as StyleProp<ViewStyle>]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
@@ -919,7 +919,7 @@ function EarnFromSocialMediaPage() {
               <ActivityIndicator color="white" size="small" />
             ) : (
               <ThemedText
-                style={[styles.uploadButtonText, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
+                style={[styles.uploadButtonText, { pointerEvents: 'none' } as any as StyleProp<ViewStyle>]}
               >
                 Submit
               </ThemedText>
@@ -940,7 +940,7 @@ function EarnFromSocialMediaPage() {
         {/* Platform Header */}
         <View style={styles.platformHeader}>
           <Ionicons
-            name={platformConfig.icon as unknown as keyof typeof Ionicons.glyphMap}
+            name={platformConfig.icon as any as keyof typeof Ionicons.glyphMap}
             size={24}
             color={platformConfig.color}
           />
@@ -1012,10 +1012,10 @@ function EarnFromSocialMediaPage() {
           <LinearGradient
             colors={
               selectedMedia.length > 0
-                ? (EarnSocialData.ui.gradients.primary as unknown as string[])
+                ? (EarnSocialData.ui.gradients.primary as any as string[])
                 : [colors.neutral[300], colors.neutral[400]]
             }
-            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
+            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as any as StyleProp<ViewStyle>]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
@@ -1023,7 +1023,7 @@ function EarnFromSocialMediaPage() {
               <ActivityIndicator color="white" size="small" />
             ) : (
               <ThemedText
-                style={[styles.uploadButtonText, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
+                style={[styles.uploadButtonText, { pointerEvents: 'none' } as any as StyleProp<ViewStyle>]}
               >
                 Submit
               </ThemedText>
@@ -1120,7 +1120,7 @@ function EarnFromSocialMediaPage() {
 
       {/* Header */}
       <LinearGradient
-        colors={EarnSocialData.ui.gradients.primary as unknown as string[]}
+        colors={EarnSocialData.ui.gradients.primary as any as string[]}
         style={styles.header}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

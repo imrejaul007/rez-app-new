@@ -244,7 +244,7 @@ function SharePage() {
             ].map((platform) => (
               <Pressable key={platform.id} style={styles.shareOption}>
                 <View style={[styles.shareOptionIcon, { backgroundColor: platform.color + '20' }]}>
-                  <Ionicons name={platform.icon as unknown} size={24} color={platform.color} />
+                  <Ionicons name={platform.icon as any} size={24} color={platform.color} />
                 </View>
                 <Text style={styles.shareOptionText}>{platform.name}</Text>
               </Pressable>

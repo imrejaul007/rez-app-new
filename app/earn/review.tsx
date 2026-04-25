@@ -124,7 +124,7 @@ function ReviewToEarnPage() {
       const filename = uri.split('/').pop() || `review_${Date.now()}.jpg`;
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : 'image/jpeg';
-      formData.append('file', { uri, name: filename, type } as unknown);
+      formData.append('file', { uri, name: filename, type } as any);
     }
 
     formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.reviewMedia);

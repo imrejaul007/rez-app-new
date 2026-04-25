@@ -435,7 +435,7 @@ function CreatorProfilePage() {
                             ? 'logo-twitter'
                             : link.platform === 'tiktok'
                               ? 'musical-notes'
-                              : ('link' as unknown)
+                              : ('link' as any)
                     }
                     size={18}
                     color={colors.text.tertiary}

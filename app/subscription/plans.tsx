@@ -63,7 +63,7 @@ function SubscriptionPlansPage() {
   };
   const getTierFeatures = (tier: string, fallback: string[]): string[] => {
     const config = state.availableTiers?.find((t: any) => t.tier === tier);
-    return (config?.features?.length ?? 0) > 0 ? (config as unknown)?.features : fallback;
+    return (config?.features?.length ?? 0) > 0 ? (config as any)?.features : fallback;
   };
 
   const [selectedBilling, setSelectedBilling] = useState<BillingCycle>('monthly');
@@ -315,13 +315,13 @@ function SubscriptionPlansPage() {
 
           {/* Plan Header */}
           <LinearGradient
-            colors={gradientColors as unknown}
+            colors={gradientColors as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.planHeader}
           >
             <View style={styles.planIconContainer}>
-              <Ionicons name={icon as unknown} size={28} color={colors.background.primary} />
+              <Ionicons name={icon as any} size={28} color={colors.background.primary} />
             </View>
             <ThemedText style={styles.planName}>{name}</ThemedText>
             {isCurrentTier && (

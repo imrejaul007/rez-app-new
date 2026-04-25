@@ -173,7 +173,7 @@ function FlightDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown;
+      const productData = response.data as any;
       const isFlight =
         productData.serviceCategory?.slug === 'flights' ||
         productData.category?.slug === 'flights' ||
@@ -342,17 +342,18 @@ function FlightDetailsPage() {
   const handleBookNow = () => setShowBookingFlow(true);
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown).requiresPayment) {
+    const dataAny = data as any as Record<string, unknown>;
+    if (dataAny.requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as string).totalAmount,
+          amount: dataAny.totalAmount as string,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown);
+      } as any);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -364,7 +365,7 @@ function FlightDetailsPage() {
     if (!flight) return;
     try {
       if (isInWishlist(flight.id)) await removeFromWishlist(flight.id);
-      else await addToWishlist(flight.id as unknown);
+      else await addToWishlist(flight.id as any);
     } catch (_err) {
       /* silently handle */
     }
@@ -416,7 +417,7 @@ function FlightDetailsPage() {
         <View style={s.hero}>
           {hasValidImage && !imageError ? (
             <CachedImage
-              source={imageUrl as unknown}
+              source={imageUrl as any}
               style={s.heroImg}
               contentFit="cover"
               onError={() => setImageError(true)}
@@ -614,7 +615,7 @@ function FlightDetailsPage() {
           {flight.store && (
             <Pressable
               style={s.airlineCard}
-              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as unknown as string)}
+              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as any as string)}
             >
               {flight.store.logo ? (
                 <CachedImage source={flight.store.logo} style={s.airlineLogo} contentFit="contain" />
@@ -877,7 +878,7 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
-    ...Platform.select({ web: { backdropFilter: 'blur(10px)' } as unknown, default: {} }),
+    ...Platform.select({ web: { backdropFilter: 'blur(10px)' } as any, default: {} }),
   },
   navRight: { flexDirection: 'row', gap: 10 },
   discBadge: {

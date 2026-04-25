@@ -200,7 +200,7 @@ export default memo(function Section4({
 
             {!errored ? (
               <CachedImage
-                source={resolvedSource as unknown}
+                source={resolvedSource as any}
                 style={styles.couponImage}
                 contentFit="cover"
                 cachePolicy="memory-disk"

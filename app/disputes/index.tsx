@@ -52,7 +52,7 @@ function DisputeListScreen() {
       try {
         const response = await disputeApi.getMyDisputes(pageNum, 20);
         if (response.success && response.data) {
-          const data = response.data as unknown;
+          const data = response.data as any;
           const items = data.disputes || [];
           const pagination = data.pagination;
 
@@ -162,7 +162,7 @@ function DisputeListScreen() {
           </View>
         }
         contentContainerStyle={
-          [disputes.length === 0 && { flex: 1, justifyContent: 'center' }, { paddingBottom: 120 }] as unknown
+          [disputes.length === 0 && { flex: 1, justifyContent: 'center' }, { paddingBottom: 120 }] as any
         }
       />
     </View>

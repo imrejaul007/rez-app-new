@@ -50,13 +50,13 @@ function MyEventCard({ booking, onPress }: { booking: BookingWithEvent; onPress:
         <Image source={{ uri: ev.image }} style={styles.eventImage} resizeMode="cover" />
       ) : (
         <View style={[styles.eventImagePlaceholder, { backgroundColor: category.bg }]}>
-          <Ionicons name={category.icon as unknown} size={36} color={category.color} />
+          <Ionicons name={category.icon as any} size={36} color={category.color} />
         </View>
       )}
       <View style={styles.eventBody}>
         <View style={styles.eventTop}>
           <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
-            <Ionicons name={status.icon as unknown} size={12} color={status.color} />
+            <Ionicons name={status.icon as any} size={12} color={status.color} />
             <Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text>
           </View>
           {booking.status === 'completed' && karmaEarned > 0 && (
@@ -117,7 +117,7 @@ function MyEventCard({ booking, onPress }: { booking: BookingWithEvent; onPress:
   );
 }
 
-function EmptyState({ tab }: { tab: Tab }) {
+function EmptyState({ tab, router }: { tab: Tab; router: ReturnType<typeof useRouter> }) {
   return (
     <View style={styles.emptyState}>
       <View style={styles.emptyIcon}>
@@ -128,7 +128,7 @@ function EmptyState({ tab }: { tab: Tab }) {
         {tab === 'upcoming' ? 'Join an event to start your impact journey' : 'Complete events to see your history here'}
       </Text>
       {tab === 'upcoming' && (
-        <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore')}>
+        <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore' as unknown as string)}>
           <Text style={styles.exploreBtnText}>Explore Events</Text>
         </Pressable>
       )}
@@ -213,7 +213,7 @@ function KarmaMyEventsScreen() {
           <ActivityIndicator size="large" color={KARMA_PURPLE} />
         </View>
       ) : bookings.length === 0 ? (
-        <EmptyState tab={activeTab} />
+        <EmptyState tab={activeTab} router={router} />
       ) : (
         <ScrollView
           style={styles.scrollView}

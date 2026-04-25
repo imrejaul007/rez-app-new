@@ -257,7 +257,7 @@ function NotificationHistoryScreen() {
       >
         <View style={styles.notificationIcon}>
           <Ionicons
-            name={getNotificationIcon(item.type) as unknown}
+            name={getNotificationIcon(item.type) as any}
             size={20}
             color={getNotificationColor(item.type)}
           />
@@ -332,7 +332,7 @@ function NotificationHistoryScreen() {
         data={notifications}
         renderItem={renderNotificationItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ ...styles.scrollContent, paddingBottom: 120 } as unknown}
+        contentContainerStyle={{ ...styles.scrollContent, paddingBottom: 120 } as any}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}

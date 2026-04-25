@@ -95,7 +95,7 @@ export default function TrialCoinsScreen() {
         packIndex: pack.index,
         amount: pack.price,
       });
-      const order = (orderResp as unknown).data || orderResp;
+      const order = (orderResp as any).data || orderResp;
 
       // Open Razorpay checkout
       try {
@@ -173,7 +173,7 @@ export default function TrialCoinsScreen() {
     return (
       <View style={styles.transactionItem}>
         <View style={[styles.transactionIcon, { backgroundColor: `${color}20` }]}>
-          <Ionicons name={icon as unknown} size={18} color={color} />
+          <Ionicons name={icon as any} size={18} color={color} />
         </View>
         <View style={styles.transactionInfo}>
           <Text style={styles.transactionDesc}>{item.description}</Text>

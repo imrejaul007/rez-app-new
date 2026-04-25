@@ -631,9 +631,9 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             text: 'My Events',
             onPress: () => {
               if (Platform.OS === 'ios') {
-                setTimeout(() => router.push('/my-events' as unknown as string), 50);
+                setTimeout(() => router.push('/my-events' as any as string), 50);
               } else {
-                router.push('/my-events' as unknown as string);
+                router.push('/my-events' as any as string);
               }
             },
           },
@@ -705,7 +705,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                 </Pressable>
                 <Pressable
                   style={styles.notFoundExploreButton}
-                  onPress={() => router.push('/events' as unknown as string)}
+                  onPress={() => router.push('/events' as any as string)}
                 >
                   <Ionicons name="compass-outline" size={20} color={Colors.brand.purpleLight} />
                   <Text style={styles.notFoundExploreText}>Explore Events</Text>
@@ -837,7 +837,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               <View style={styles.heroContent}>
                 <View style={[styles.categoryBadge, { backgroundColor: categoryTheme.badgeBackground }]}>
                   <Ionicons
-                    name={categoryTheme.icon as unknown}
+                    name={categoryTheme.icon as any}
                     size={14}
                     color={colors.background.primary}
                     style={{ marginRight: 6 }}
@@ -897,12 +897,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             />
-            <Ionicons name={categoryTheme.icon as unknown} size={80} color="rgba(255,255,255,0.3)" />
+            <Ionicons name={categoryTheme.icon as any} size={80} color="rgba(255,255,255,0.3)" />
             <LinearGradient colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.7)']} style={styles.heroOverlay}>
               <View style={styles.heroContent}>
                 <View style={[styles.categoryBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
                   <Ionicons
-                    name={categoryTheme.icon as unknown}
+                    name={categoryTheme.icon as any}
                     size={14}
                     color={colors.background.primary}
                     style={{ marginRight: 6 }}
@@ -1019,15 +1019,15 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         )}
 
         {/* Schedule Section */}
-        {realEventData && (realEventData as unknown).schedule && (realEventData as unknown).schedule.length > 0 && (
+        {realEventData && (realEventData as any).schedule && (realEventData as any).schedule.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Schedule</Text>
-            {(realEventData as unknown).schedule.map((item: any, index: number) => (
+            {(realEventData as any).schedule.map((item: any, index: number) => (
               <View
                 key={index}
                 style={[
                   styles.scheduleRow,
-                  index < (realEventData as unknown).schedule.length - 1 && styles.scheduleRowBorder,
+                  index < (realEventData as any).schedule.length - 1 && styles.scheduleRowBorder,
                 ]}
               >
                 <View style={styles.scheduleTimeCol}>
@@ -1044,11 +1044,11 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         )}
 
         {/* Sponsors Section */}
-        {realEventData && (realEventData as unknown).sponsors && (realEventData as unknown).sponsors.length > 0 && (
+        {realEventData && (realEventData as any).sponsors && (realEventData as any).sponsors.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Sponsors</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.sponsorsScroll}>
-              {(realEventData as unknown).sponsors.map((sponsor: any, index: number) => (
+              {(realEventData as any).sponsors.map((sponsor: any, index: number) => (
                 <View key={index} style={styles.sponsorCard}>
                   {sponsor.logo ? (
                     <CachedImage source={sponsor.logo} style={styles.sponsorLogo} />
@@ -1313,7 +1313,7 @@ function EventActionButton({
           <ActivityIndicator size="small" color={colors.background.primary} style={{ marginRight: 8 }} />
         ) : (
           <Ionicons
-            name={getButtonIcon() as unknown}
+            name={getButtonIcon() as any}
             size={20}
             color={colors.background.primary}
             style={{ marginRight: 8 }}

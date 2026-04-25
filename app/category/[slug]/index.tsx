@@ -97,7 +97,7 @@ function CategoryPage() {
 
       // Fetch trending products for this category from real API
       try {
-        const productsRes = await productsApi.getProductsByCategory(slug, { limit: 8, sortBy: 'trending' } as unknown);
+        const productsRes = await productsApi.getProductsByCategory(slug, { limit: 8, sortBy: 'trending' } as any);
         if (!isMounted()) return;
         const productList: any[] = productsRes?.data?.products ?? [];
         const mappedProducts: DummyProduct[] = productList.map((p) => {
@@ -157,7 +157,7 @@ function CategoryPage() {
     // Navigate to product page like home-delivery
 
     router.push(
-      `/product-page?cardId=${item.id}&cardType=category&category=${category?.id || slug}` as unknown as string,
+      `/product-page?cardId=${item.id}&cardType=category&category=${category?.id || slug}` as any as string,
     );
   };
 
@@ -283,7 +283,7 @@ function CategoryPage() {
             actions.updateSearch(carouselItem.action.target);
             break;
           case 'navigate':
-            router.push(carouselItem.action.target as unknown as string);
+            router.push(carouselItem.action.target as any as string);
             break;
         }
 
@@ -333,9 +333,9 @@ function CategoryPage() {
           onFilterPress={() => setShowFilters(!showFilters)}
           showFilterBadge={Object.keys(state.filters).length > 0}
           stats={{
-            productCount: (category as unknown).productCount || 2000,
-            storeCount: (category as unknown).storeCount || 50,
-            maxCashback: (category as unknown).maxCashback || 25,
+            productCount: (category as any).productCount || 2000,
+            storeCount: (category as any).storeCount || 50,
+            maxCashback: (category as any).maxCashback || 25,
           }}
         />
 
@@ -370,7 +370,7 @@ function CategoryPage() {
                     banner={banner}
                     onPress={() => {
                       if (banner.action?.type === 'navigate') {
-                        router.push(banner.action.target as unknown as string);
+                        router.push(banner.action.target as any as string);
                       }
                     }}
                   />
@@ -430,7 +430,7 @@ function CategoryPage() {
                   <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
                   {section.viewAllLink && (
                     <Pressable
-                      onPress={() => router.push(section.viewAllLink as unknown as string)}
+                      onPress={() => router.push(section.viewAllLink as any as string)}
                       accessibilityLabel={`View all ${section.title.toLowerCase()}`}
                       accessibilityRole="button"
                       accessibilityHint="Double tap to see all items in this section"

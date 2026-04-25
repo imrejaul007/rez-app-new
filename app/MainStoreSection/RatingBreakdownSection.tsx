@@ -38,7 +38,7 @@ const RatingCategoryRow = memo(function RatingCategoryRow({ category }: { catego
       {/* Icon and Label */}
       <View style={styles.categoryLabelContainer}>
         {category.icon && (
-          <Ionicons name={category.icon as unknown} size={14} color={Colors.gray[500]} style={styles.categoryIcon} />
+          <Ionicons name={category.icon as any} size={14} color={Colors.gray[500]} style={styles.categoryIcon} />
         )}
         <ThemedText style={styles.categoryLabel} numberOfLines={1}>
           {category.label}

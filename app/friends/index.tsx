@@ -65,7 +65,7 @@ export default function FriendsScreen() {
     try {
       setLoading(true);
       const response = await apiClient.get<any>('/referral/my-code');
-      const payload = (response as unknown)?.data?.data ?? (response as unknown)?.data ?? null;
+      const payload = (response as any)?.data?.data ?? (response as any)?.data ?? null;
 
       if (payload && isMounted()) {
         setData({
@@ -129,7 +129,7 @@ export default function FriendsScreen() {
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backBtn}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as unknown))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >

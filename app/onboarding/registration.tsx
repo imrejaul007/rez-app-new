@@ -152,7 +152,7 @@ function RegistrationScreen() {
       // Detect "phone already registered" reliably:
       // Primary check: HTTP 409 Conflict status code (set by backend on duplicate phone/email).
       // Fallback: message string match in case the error is rethrown without status code.
-      const httpStatus = (error as unknown)?.response?.status || (error as unknown)?.status;
+      const httpStatus = (error as any)?.response?.status || (error as any)?.status;
       const isConflict =
         httpStatus === 409 ||
         (errorMessage.toLowerCase().includes('already') &&

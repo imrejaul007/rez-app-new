@@ -34,7 +34,7 @@ function ConsumerKhataScreen() {
   const loadCredits = async () => {
     try {
       const resp = await apiClient.get('/consumer/khata');
-      setCredits((resp as unknown).data?.data || (resp as unknown).data?.credits || []);
+      setCredits((resp as any).data?.data || (resp as any).data?.credits || []);
     } catch (e: any) {
       if (__DEV__) logger.error('Khata load error: ' + (e?.message || String(e)));
     } finally {
@@ -52,7 +52,7 @@ function ConsumerKhataScreen() {
   const renderItem = ({ item }: { item: KhataEntry }) => (
     <TouchableOpacity
       style={[styles.card, { backgroundColor: colors.background.primary, borderColor: colors.border.default }]}
-      onPress={() => router.push(`/khata/${item.merchantId._id}` as unknown as string)}
+      onPress={() => router.push(`/khata/${item.merchantId._id}` as any as string)}
     >
       <View style={styles.cardRow}>
         <View style={[styles.avatar, { backgroundColor: colors.brand.purpleLight + '20' }]}>

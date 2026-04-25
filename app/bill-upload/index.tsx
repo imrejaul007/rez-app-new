@@ -129,7 +129,7 @@ function BillUploadPage() {
                   cursor: 'pointer',
                   border: 'none',
                   fontSize: 16,
-                } as unknown
+                } as any
               }
             />
           </View>
@@ -162,7 +162,7 @@ function BillUploadPage() {
               if (router.canGoBack()) {
                 router.back();
               } else {
-                router.replace('/(tabs)/' as unknown);
+                router.replace('/(tabs)/' as any);
               }
             }}
             iconColor={colors.darkGray}
@@ -174,7 +174,7 @@ function BillUploadPage() {
         </View>
 
         <Animated.ScrollView
-          ref={scrollViewRef as unknown}
+          ref={scrollViewRef as any}
           style={[styles.scrollView, { opacity: fadeAnim }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"

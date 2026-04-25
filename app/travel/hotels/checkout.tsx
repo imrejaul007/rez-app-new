@@ -189,7 +189,7 @@ function HotelCheckoutScreen() {
       }
     } catch (e: any) {
       // Razorpay throws {code, description} on cancellation
-      if ((e as unknown)?.code === 0) {
+      if ((e as any)?.code === 0) {
         Alert.alert('Payment Cancelled', 'You cancelled the payment. Your booking hold is still active.');
       } else {
         Alert.alert('Payment Failed', e.message ?? e.description ?? 'Please try again.');
@@ -201,7 +201,7 @@ function HotelCheckoutScreen() {
 
   const navigateToSuccess = (result: any) => {
     router.replace({
-      pathname: '/travel/hotels/booking-confirmed' as unknown,
+      pathname: '/travel/hotels/booking-confirmed' as any,
       params: {
         bookingId: result.bookingId,
         bookingRef: result.bookingRef,

@@ -76,7 +76,7 @@ function ClaimRow({ claim, onPress }: { claim: BonusClaim; onPress: () => void }
             {claim.rewardAmount} {claim.rewardType === 'branded' ? 'branded' : 'coins'}
           </Text>
           <View style={[styles.statusBadge, { backgroundColor: statusInfo.bg }]}>
-            <Ionicons name={statusInfo.icon as unknown} size={12} color={statusInfo.color} />
+            <Ionicons name={statusInfo.icon as any} size={12} color={statusInfo.color} />
             <Text style={[styles.statusText, { color: statusInfo.color }]}>{statusInfo.label}</Text>
           </View>
         </View>
@@ -180,7 +180,7 @@ function BonusZoneHistoryPage() {
     (claim: BonusClaim) => {
       const slug = typeof claim.campaignId === 'object' && claim.campaignId?.slug ? claim.campaignId.slug : null;
       if (slug) {
-        router.push({ pathname: '/bonus-zone/[slug]', params: { slug } } as unknown as string);
+        router.push({ pathname: '/bonus-zone/[slug]', params: { slug } } as any as string);
       }
     },
     [router],

@@ -449,7 +449,7 @@ function DetailedOrderTrackingPage() {
         >
           <View style={styles.statusHeader}>
             <View style={[styles.statusBadge, { backgroundColor: order.statusColor + '20' }]}>
-              <Ionicons name={order.statusIcon as unknown} size={20} color={order.statusColor} />
+              <Ionicons name={order.statusIcon as any} size={20} color={order.statusColor} />
               <ThemedText style={[styles.statusText, { color: order.statusColor }]}>{order.statusDisplay}</ThemedText>
             </View>
           </View>

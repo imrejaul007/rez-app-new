@@ -227,7 +227,7 @@ function SectionDetailPage() {
         cardType: 'product',
         cardData: JSON.stringify(product),
       },
-    } as unknown);
+    } as any);
   };
 
   const handleBack = () => {

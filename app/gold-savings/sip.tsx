@@ -197,14 +197,14 @@ function GoldSavingsSipPage() {
 
   const getGainLossPercentage = () => {
     if (!goldData?.holdings.invested) return 0;
-    return (((goldData as unknown)?.holdings.gainLoss / (goldData as unknown)?.holdings.invested) * 100).toFixed(1);
+    return (((goldData as any)?.holdings.gainLoss / (goldData as any)?.holdings.invested) * 100).toFixed(1);
   };
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => goBack('/gold-savings' as unknown)} style={styles.backButton}>
+          <Pressable onPress={() => goBack('/gold-savings' as any)} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Gold SIP</ThemedText>
@@ -223,7 +223,7 @@ function GoldSavingsSipPage() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <Pressable onPress={() => goBack('/gold-savings' as unknown)} style={styles.backButton}>
+        <Pressable onPress={() => goBack('/gold-savings' as any)} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Gold SIP</ThemedText>
@@ -256,19 +256,19 @@ function GoldSavingsSipPage() {
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Monthly Amount</ThemedText>
                 <ThemedText style={styles.detailValue}>
-                  ₹{(goldData as unknown)?.activeSip?.monthlyAmount.toLocaleString()}
+                  ₹{(goldData as any)?.activeSip?.monthlyAmount.toLocaleString()}
                 </ThemedText>
               </View>
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Deduction Date</ThemedText>
                 <ThemedText style={styles.detailValue}>
-                  {(goldData as unknown)?.activeSip?.deductionDate}th of every month
+                  {(goldData as any)?.activeSip?.deductionDate}th of every month
                 </ThemedText>
               </View>
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Next Debit</ThemedText>
                 <ThemedText style={styles.detailValue}>
-                  {new Date((goldData as unknown)?.activeSip?.startDate || '').toLocaleDateString()}
+                  {new Date((goldData as any)?.activeSip?.startDate || '').toLocaleDateString()}
                 </ThemedText>
               </View>
             </View>
@@ -375,11 +375,11 @@ function GoldSavingsSipPage() {
         </View>
 
         {/* SIP History */}
-        {goldData?.history && (goldData as unknown)?.history.length > 0 && (
+        {goldData?.history && (goldData as any)?.history.length > 0 && (
           <View style={styles.card}>
             <ThemedText style={styles.cardTitle}>SIP History</ThemedText>
             <View style={styles.historyList}>
-              {(goldData as unknown)?.history.map((entry: any, index: number) => (
+              {(goldData as any)?.history.map((entry: any, index: number) => (
                 <View key={index} style={styles.historyItem}>
                   <View style={styles.historyLeft}>
                     <ThemedText style={styles.historyDate}>
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   cardTitle: {
-    ...(Typography as unknown).h5,
+    ...(Typography as any).h5,
     color: colors.text.primary,
     fontWeight: '600',
   },
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   currencySymbol: {
-    ...(Typography as unknown).h5,
+    ...(Typography as any).h5,
     color: colors.nileBlue,
     fontWeight: '600',
     marginRight: Spacing.xs,
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   holdingValue: {
-    ...(Typography as unknown).h5,
+    ...(Typography as any).h5,
     color: colors.text.primary,
     fontWeight: '600',
   },

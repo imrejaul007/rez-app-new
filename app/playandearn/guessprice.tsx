@@ -168,8 +168,8 @@ const GuessPrice = () => {
       const response = await gameApi.startGuessPrice();
       if (response.success && response.data) {
         setSessionId(response.data.sessionId);
-        if ((response.data as unknown).products && (response.data as unknown).products.length > 0) {
-          const backendProducts = (response.data as unknown).products.map((p: any, idx: number) => ({
+        if ((response.data as any).products && (response.data as any).products.length > 0) {
+          const backendProducts = (response.data as any).products.map((p: any, idx: number) => ({
             id: idx + 1,
             name: p.name,
             image: p.image || '📦',
@@ -178,8 +178,8 @@ const GuessPrice = () => {
           }));
           setProducts(backendProducts);
           setGameState('playing');
-        } else if ((response.data as unknown).product) {
-          const backendProduct = (response.data as unknown).product;
+        } else if ((response.data as any).product) {
+          const backendProduct = (response.data as any).product;
           setProducts([
             {
               id: 1,
@@ -314,7 +314,7 @@ const GuessPrice = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="chevron-back" size={24} color={(COLORS as unknown).navy} />
+          <Ionicons name="chevron-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -331,7 +331,7 @@ const GuessPrice = () => {
             <Text style={styles.scoreText}>{score}</Text>
           </View>
         ) : (
-          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown as string)}>
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any as string)}>
             <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
@@ -391,7 +391,7 @@ const GuessPrice = () => {
               ].map((rule, idx) => (
                 <View key={idx} style={styles.ruleRow}>
                   <View style={[styles.ruleIconBg, { backgroundColor: `${rule.color}15` }]}>
-                    <Ionicons name={rule.icon as unknown} size={16} color={rule.color} />
+                    <Ionicons name={rule.icon as any} size={16} color={rule.color} />
                   </View>
                   <Text style={styles.ruleRange}>{rule.range}</Text>
                   <View style={[styles.ruleCoinsBadge, { backgroundColor: `${rule.color}15` }]}>
@@ -453,7 +453,7 @@ const GuessPrice = () => {
                 </LinearGradient>
               </Pressable>
               <Pressable
-                onPress={() => router.push('/playandearn' as unknown as string)}
+                onPress={() => router.push('/playandearn' as any as string)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
@@ -599,7 +599,7 @@ const GuessPrice = () => {
                 <Text
                   style={[
                     styles.resultTitle,
-                    { color: score >= 30 ? colors.background.primary : (COLORS as unknown).navy },
+                    { color: score >= 30 ? colors.background.primary : (COLORS as any).navy },
                   ]}
                 >
                   {score >= 40 ? 'Amazing!' : score >= 20 ? 'Good Job!' : 'Nice Try!'}
@@ -665,7 +665,7 @@ const GuessPrice = () => {
               </Pressable>
 
               <Pressable
-                onPress={() => router.push('/playandearn' as unknown as string)}
+                onPress={() => router.push('/playandearn' as any as string)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
   headerCenter: { flex: 1 },
   headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   headerIconText: { fontSize: 24 },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: (COLORS as unknown).navy },
+  headerTitle: { fontSize: 20, fontWeight: '700', color: (COLORS as any).navy },
   headerSubtitle: { fontSize: 13, color: COLORS.textMuted, marginTop: 2 },
   scoreBadge: {
     flexDirection: 'row',
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.goldBg,
   },
   coinIcon: { width: 20, height: 20 },
-  coinsText: { fontSize: 15, fontWeight: '700', color: (COLORS as unknown).goldDark },
+  coinsText: { fontSize: 15, fontWeight: '700', color: (COLORS as any).goldDark },
   miniCoin: { width: 18, height: 18 },
 
   scrollView: { flex: 1 },
@@ -779,7 +779,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   rulesHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  rulesTitle: { fontSize: 17, fontWeight: '700', color: (COLORS as unknown).navy },
+  rulesTitle: { fontSize: 17, fontWeight: '700', color: (COLORS as any).navy },
   ruleRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   ruleIconBg: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  ruleRange: { flex: 1, fontSize: 14, fontWeight: '500', color: (COLORS as unknown).navy },
+  ruleRange: { flex: 1, fontSize: 14, fontWeight: '500', color: (COLORS as any).navy },
   ruleCoinsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -859,7 +859,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   productImage: { fontSize: 64 },
-  productName: { fontSize: 22, fontWeight: '700', color: (COLORS as unknown).navy, marginBottom: 8 },
+  productName: { fontSize: 22, fontWeight: '700', color: (COLORS as any).navy, marginBottom: 8 },
   categoryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
   guessInput: {
     flex: 1,
     padding: 16,
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     fontSize: 24,
     fontWeight: '700',
   },
@@ -925,7 +925,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actualPriceLabel: { fontSize: 12, color: COLORS.textMuted, marginBottom: 4, fontWeight: '500' },
-  actualPriceValue: { fontSize: 24, fontWeight: '700', color: (COLORS as unknown).navy },
+  actualPriceValue: { fontSize: 24, fontWeight: '700', color: (COLORS as any).navy },
   percentOffText: { fontSize: 12, color: COLORS.textMuted, marginTop: 8 },
 
   // Confetti

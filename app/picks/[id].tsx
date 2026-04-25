@@ -469,7 +469,7 @@ const CreatorPickDetail = () => {
               {(pick.status === 'draft' || pick.status === 'rejected') && (
                 <Pressable
                   style={s.editPickBtn}
-                  onPress={() => router.push(`/submit-pick?editId=${id}` as unknown as string)}
+                  onPress={() => router.push(`/submit-pick?editId=${id}` as any as string)}
                 >
                   <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                   <Text style={s.editPickText}>Edit Pick</Text>
@@ -641,7 +641,7 @@ const CreatorPickDetail = () => {
               keyExtractor={(item) => item.id}
               estimatedItemSize={150}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: 10 } as unknown}
+              contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: 10 } as any}
             />
           </View>
         )}

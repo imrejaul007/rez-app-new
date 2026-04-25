@@ -224,7 +224,7 @@ export default memo(function Section6({ dynamicData, cardType }: Section6Props) 
                     storeId: storeId,
                     storeName: storeName || 'Store',
                   },
-                } as unknown as string);
+                } as any as string);
               }}
               accessibilityRole="button"
               accessibilityLabel={`View all outlets for ${storeName || 'store'}`}

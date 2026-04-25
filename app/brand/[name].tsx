@@ -165,7 +165,7 @@ const BrandPage: React.FC = () => {
   }, [fetchProducts]);
 
   const handleProductPress = (product: Product) => {
-    router.push(`/product-page?productId=${product.id}` as unknown as string);
+    router.push(`/product-page?productId=${product.id}` as any as string);
   };
 
   if (isLoading) {
@@ -183,7 +183,7 @@ const BrandPage: React.FC = () => {
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
-          <Pressable onPress={() => router.push('/search' as unknown as string)} style={styles.searchButton}>
+          <Pressable onPress={() => router.push('/search' as any as string)} style={styles.searchButton}>
             <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>

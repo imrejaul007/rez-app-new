@@ -58,7 +58,7 @@ const LoyaltyPage = () => {
 
   const safeNav = (path: string) => {
     try {
-      router.push(path as unknown as string);
+      router.push(path as any as string);
     } catch {
       platformAlertSimple('Error', 'Could not open screen. Please try again.');
     }

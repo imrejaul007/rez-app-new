@@ -131,7 +131,7 @@ function SpinHistoryPage() {
       return (
         <View style={styles.historyItem}>
           <View style={[styles.iconContainer, { backgroundColor: `${config.color}15` }]}>
-            <Ionicons name={config.icon as unknown} size={20} color={config.color} />
+            <Ionicons name={config.icon as any} size={20} color={config.color} />
           </View>
           <View style={styles.itemContent}>
             <Text style={styles.itemPrize}>{rewardText}</Text>
@@ -161,7 +161,7 @@ function SpinHistoryPage() {
         <Ionicons name="game-controller-outline" size={64} color={colors.border.default} />
         <Text style={styles.emptyTitle}>No Spins Yet</Text>
         <Text style={styles.emptyText}>Play the Spin & Win game to see your history here</Text>
-        <Pressable style={styles.playButton} onPress={() => router.push('/explore/spin-win' as unknown as string)}>
+        <Pressable style={styles.playButton} onPress={() => router.push('/explore/spin-win' as any as string)}>
           <Text style={styles.playButtonText}>Play Now</Text>
         </Pressable>
       </View>

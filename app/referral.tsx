@@ -533,7 +533,7 @@ const ReferralPageContent = () => {
         {/* View Dashboard Button */}
         <Pressable
           style={styles.dashboardButton}
-          onPress={() => router.push('/referral/dashboard' as unknown as string)}
+          onPress={() => router.push('/referral/dashboard' as any as string)}
           accessibilityLabel="View full dashboard"
           accessibilityHint="Opens the full referral dashboard with tier progression and leaderboard"
         >

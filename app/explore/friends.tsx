@@ -105,12 +105,12 @@ const FriendsActivityPage = () => {
 
   const navigateToStore = (storeId?: string) => {
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${storeId}` as any as string);
     }
   };
 
   const navigateToReferral = () => {
-    router.push('/referral' as unknown as string);
+    router.push('/referral' as any as string);
   };
 
   const renderActivityIcon = (type: string) => {

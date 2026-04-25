@@ -102,7 +102,7 @@ const MyVouchersPage = () => {
   const [loadingMore, setLoadingMore] = useState(false);
 
   const handleBackPress = useCallback(() => {
-    goBack('/account' as unknown);
+    goBack('/account' as any);
   }, [goBack]);
 
   const fetchVouchers = useCallback(
@@ -284,7 +284,7 @@ const MyVouchersPage = () => {
         platformAlertConfirm(
           'Cart is Empty',
           'Please add items to your cart before applying this voucher.',
-          () => router.push('/(tabs)' as unknown),
+          () => router.push('/(tabs)' as any),
           'Browse Products',
         );
         return;
@@ -298,7 +298,7 @@ const MyVouchersPage = () => {
           // Provide specific error message based on response
           const errorMessage =
             validationResult.message ||
-            (validationResult.data as unknown)?.message ||
+            (validationResult.data as any)?.message ||
             'This voucher cannot be applied. It may have expired or already been used.';
           platformAlertSimple('Voucher Not Valid', errorMessage);
           return;
@@ -320,7 +320,7 @@ const MyVouchersPage = () => {
           platformAlertConfirm(
             'Minimum Order Required',
             `This voucher requires a minimum order of ${currencySymbol}${minOrderValue}. Your cart total is ${currencySymbol}${cartTotal.toFixed(2)}.`,
-            () => router.push('/(tabs)' as unknown),
+            () => router.push('/(tabs)' as any),
             'Continue Shopping',
           );
           return;
@@ -345,7 +345,7 @@ const MyVouchersPage = () => {
             `\nVoucher code copied to clipboard!`,
           () =>
             router.push({
-              pathname: '/cart' as unknown,
+              pathname: '/cart' as any,
               params: { offerRedemptionCode: voucher.code },
             }),
           'Go to Checkout',
@@ -358,7 +358,7 @@ const MyVouchersPage = () => {
         platformAlertConfirm(
           'Voucher Code Copied!',
           `Voucher code "${voucher.code}" has been copied. Apply it at checkout.`,
-          () => router.push('/cart' as unknown as string),
+          () => router.push('/cart' as any as string),
           'Go to Cart',
         );
       }
@@ -428,7 +428,7 @@ const MyVouchersPage = () => {
         await realOffersApi.markRedemptionAsUsed(voucherId, {
           orderAmount: 0, // External usage - no order amount tracked
           usageType: 'external',
-        } as unknown);
+        } as any);
       } else {
         // For gift cards, use the voucher service API
         await vouchersService.useVoucher(voucherId, {
@@ -637,7 +637,7 @@ const MyVouchersPage = () => {
       </Text>
       <Pressable
         style={styles.buyButton}
-        onPress={() => router.push('/(tabs)' as unknown)}
+        onPress={() => router.push('/(tabs)' as any)}
         accessibilityLabel="Explore Stores"
         accessibilityRole="button"
         accessibilityHint="Browse stores to find vouchers"
@@ -684,7 +684,7 @@ const MyVouchersPage = () => {
         <View style={styles.headerContent}>
           <HeaderBackButton onPress={handleBackPress} iconColor={colors.background.primary} style={styles.backButton} />
           <Text style={styles.headerTitle}>My Vouchers</Text>
-          <Pressable style={styles.addButton} onPress={() => router.push('/online-voucher' as unknown as string)}>
+          <Pressable style={styles.addButton} onPress={() => router.push('/online-voucher' as any as string)}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -714,7 +714,7 @@ const MyVouchersPage = () => {
             router.push({
               pathname: '/cart',
               params: { voucherCode: code },
-            } as unknown as string);
+            } as any as string);
           }}
         />
       ) : (

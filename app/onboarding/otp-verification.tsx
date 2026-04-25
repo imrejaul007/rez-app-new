@@ -122,7 +122,7 @@ function OTPVerificationScreen() {
       if (needsPinSetup) {
         router.replace('/onboarding/set-pin');
       } else if (freshUser.isOnboarded) {
-        router.replace('/(tabs)/' as unknown);
+        router.replace('/(tabs)/' as any);
       } else {
         router.replace('/onboarding/notification-permission');
       }

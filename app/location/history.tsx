@@ -104,7 +104,7 @@ function LocationHistoryScreen() {
         <View style={styles.historyContent}>
           <View style={styles.historyHeader}>
             <View style={styles.sourceContainer}>
-              <Ionicons name={getSourceIcon(item.source) as unknown} size={16} color={getSourceColor(item.source)} />
+              <Ionicons name={getSourceIcon(item.source) as any} size={16} color={getSourceColor(item.source)} />
               <Text style={[styles.sourceText, { color: getSourceColor(item.source) }]}>
                 {item.source.toUpperCase()}
               </Text>

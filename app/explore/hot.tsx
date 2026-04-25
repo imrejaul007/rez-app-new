@@ -149,7 +149,7 @@ const ExploreHotPage = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as any as string);
   };
 
   const renderHotItem = useCallback(
@@ -295,7 +295,7 @@ const ExploreHotPage = () => {
             estimatedItemSize={220}
             numColumns={2}
             style={styles.itemsScroll}
-            contentContainerStyle={[styles.itemsContainer, { paddingBottom: 120 }] as unknown}
+            contentContainerStyle={[styles.itemsContainer, { paddingBottom: 120 }] as any}
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
             ListEmptyComponent={

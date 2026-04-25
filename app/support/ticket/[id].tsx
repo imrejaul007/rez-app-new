@@ -435,13 +435,13 @@ function TicketDetailPage() {
                 </Pressable>
                 <Pressable style={styles.resolutionButtonNo} onPress={handleReopenTicket} disabled={reopening}>
                   {reopening ? (
-                    <ActivityIndicator size="small" color={(Colors as unknown).text?.primary || colors.deepNavy} />
+                    <ActivityIndicator size="small" color={(Colors as any).text?.primary || colors.deepNavy} />
                   ) : (
                     <>
                       <Ionicons
                         name="thumbs-down"
                         size={20}
-                        color={(Colors as unknown).text?.primary || colors.deepNavy}
+                        color={(Colors as any).text?.primary || colors.deepNavy}
                       />
                       <ThemedText style={styles.resolutionButtonNoText}>No, reopen</ThemedText>
                     </>
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
   ticketSubject: {
     fontSize: 17,
     fontWeight: '600',
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     marginBottom: Spacing.sm,
   },
   ticketMeta: {
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 14,
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     lineHeight: 20,
   },
   messageTextUser: {
@@ -689,7 +689,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 15,
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     maxHeight: 100,
     paddingVertical: Spacing.sm,
   },
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
   },
   resolutionText: {
     fontSize: 15,
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     marginBottom: Spacing.md,
   },
   resolutionButtons: {
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
   resolutionButtonNoText: {
     fontSize: 14,
     fontWeight: '600',
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
   },
   ratingContainer: {
     backgroundColor: colors.background.primary,
@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     fontSize: 14,
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
     marginBottom: 12,
   },
   ratingSubmit: {

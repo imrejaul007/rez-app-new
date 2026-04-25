@@ -87,7 +87,7 @@ function MerchantSlugScreen() {
           <Ionicons name="storefront-outline" size={56} color="#9CA3AF" />
           <Text style={styles.errorTitle}>Merchant not found</Text>
           <Text style={styles.errorSub}>This merchant may have moved or no longer exists</Text>
-          <Pressable style={styles.backBtn} onPress={() => router.push('/near-u' as unknown as string)}>
+          <Pressable style={styles.backBtn} onPress={() => router.push('/near-u' as any as string)}>
             <Text style={styles.backBtnText}>Browse nearby merchants</Text>
           </Pressable>
         </View>
@@ -152,13 +152,13 @@ function MerchantSlugScreen() {
               router.push({
                 pathname: '/StoreListPage',
                 params: { merchantId: merchant._id },
-              } as unknown as string)
+              } as any as string)
             }
           >
             <Ionicons name="storefront" size={18} color="#fff" />
             <Text style={styles.ctaPrimaryText}>View Offers</Text>
           </Pressable>
-          <Pressable style={styles.ctaSecondary} onPress={() => router.push('/try' as unknown as string)}>
+          <Pressable style={styles.ctaSecondary} onPress={() => router.push('/try' as any as string)}>
             <Ionicons name="flask" size={18} color="#1a3a52" />
             <Text style={styles.ctaSecondaryText}>Try Free</Text>
           </Pressable>
@@ -171,7 +171,7 @@ function MerchantSlugScreen() {
 }
 
 const styles = StyleSheet.create<{ [key: string]: any }>({
-  safe: { flex: 1, backgroundColor: (colors.background as unknown)?.primary || '#fff' },
+  safe: { flex: 1, backgroundColor: (colors.background as any)?.primary || '#fff' },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
 
   header: {

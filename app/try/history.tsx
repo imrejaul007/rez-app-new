@@ -126,7 +126,7 @@ export default function TrialHistoryScreen() {
           },
         ]}
       >
-        <Ionicons name={getStatusIcon(item.status) as unknown} size={14} color={getStatusColor(item.status)} />
+        <Ionicons name={getStatusIcon(item.status) as any} size={14} color={getStatusColor(item.status)} />
         <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
           {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
         </Text>

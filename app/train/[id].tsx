@@ -165,7 +165,7 @@ function TrainDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown;
+      const productData = response.data as any;
 
       // Check if this is a train service
       const isTrain =
@@ -404,17 +404,18 @@ function TrainDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown).requiresPayment) {
+    const dataAny = data as any as Record<string, unknown>;
+    if (dataAny.requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as string).totalAmount,
+          amount: dataAny.totalAmount as string,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown);
+      } as any);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -434,7 +435,7 @@ function TrainDetailsPage() {
       if (isInWishlist(train.id)) {
         await removeFromWishlist(train.id);
       } else {
-        await addToWishlist(train.id as unknown);
+        await addToWishlist(train.id as any);
       }
     } catch (error: any) {
       // silently handle
@@ -481,7 +482,7 @@ function TrainDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl as unknown}
+                  source={imageUrl as any}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => setImageError(true)}
@@ -584,7 +585,7 @@ function TrainDetailsPage() {
               </View>
               <Pressable
                 style={styles.viewStoreButton}
-                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as unknown as string)}
+                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as any as string)}
               >
                 <Text style={styles.viewStoreButtonText}>View</Text>
                 <Ionicons name="chevron-forward" size={16} color={Colors.gold} />
@@ -726,14 +727,14 @@ function TrainDetailsPage() {
           </View>
           <ProductReviewsSection
             productId={train.id}
-            reviews={reviews as unknown}
-            summary={reviewSummary as unknown}
+            reviews={reviews as any}
+            summary={reviewSummary as any}
             isLoading={reviewsLoading}
-            onRefresh={refreshReviews as unknown}
+            onRefresh={refreshReviews as any}
             productName={train.name}
             isRefreshing={false}
             hasMore={false}
-            sortBy={'newest' as unknown}
+            sortBy={'newest' as any}
             filterRating={null}
             onSortChange={() => {}}
             onFilterChange={() => {}}

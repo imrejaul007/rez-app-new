@@ -52,7 +52,7 @@ function HotspotDetailPage() {
       try {
         const response = await apiClient.get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 });
         if (response.success && response.data) {
-          const data = response.data as unknown;
+          const data = response.data as any;
           setOffers(Array.isArray(data.offers) ? data.offers : Array.isArray(data) ? data : []);
         } else {
           if (!isMounted()) return;
@@ -101,7 +101,7 @@ function HotspotDetailPage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[colors.nileBlue, (colors as unknown).nileBlueLight || '#243f55']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, (colors as any).nileBlueLight || '#243f55']} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
@@ -154,7 +154,7 @@ function HotspotDetailPage() {
               apiClient
                 .get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 })
                 .then((r: any) => {
-                  const data = r.data as unknown;
+                  const data = r.data as any;
                   setOffers(Array.isArray(data?.offers) ? data.offers : []);
                 })
                 .catch(() => setError('Failed to load offers.'))

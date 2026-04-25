@@ -474,7 +474,7 @@ function SocialMediaPage() {
                       accessibilityHint={`Choose ${platform.name} as your social media platform`}
                     >
                       <Ionicons
-                        name={platform.icon as unknown}
+                        name={platform.icon as any}
                         size={24}
                         color={selectedPlatform === platform.id ? platform.color : colors.neutral[500]}
                       />

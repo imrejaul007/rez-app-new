@@ -303,9 +303,9 @@ function PaymentScreen() {
             paymentFlow.membership
               ? {
                   merchantName: storeName || '',
-                  currentVisits: (paymentFlow.membership as unknown)?.visitsCompleted ?? 0,
-                  requiredVisits: (paymentFlow.membership as unknown)?.totalVisitsRequired ?? 5,
-                  currentTier: (paymentFlow.membership as unknown)?.tier ?? 'Bronze',
+                  currentVisits: (paymentFlow.membership as any)?.visitsCompleted ?? 0,
+                  requiredVisits: (paymentFlow.membership as any)?.totalVisitsRequired ?? 5,
+                  currentTier: (paymentFlow.membership as any)?.tier ?? 'Bronze',
                   nextTier: 'Silver',
                 }
               : null

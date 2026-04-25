@@ -162,7 +162,7 @@ function ScheduledDropsPage() {
           if (result.success && result.data) {
             platformAlertSimple(
               'Check-in Complete',
-              `You earned ${(result.data as unknown).coinsEarned} ${BRAND.CURRENCY_CODE}!`,
+              `You earned ${(result.data as any).coinsEarned} ${BRAND.CURRENCY_CODE}!`,
             );
             fetchDrops(true);
           } else {
@@ -183,7 +183,7 @@ function ScheduledDropsPage() {
           if (result.success && result.data) {
             platformAlertSimple(
               'Claimed!',
-              (result.data as unknown).message || `You got ${(result.data as unknown).coins} ${BRAND.CURRENCY_CODE}!`,
+              (result.data as any).message || `You got ${(result.data as any).coins} ${BRAND.CURRENCY_CODE}!`,
             );
             fetchDrops(true);
           } else {
@@ -300,7 +300,7 @@ function ScheduledDropsPage() {
                   disabled={!drop.claimable || claimingId === drop.id}
                 >
                   <View style={[styles.dropIcon, { backgroundColor: getTypeColor(drop.type) + '20' }]}>
-                    <Ionicons name={drop.icon as unknown} size={24} color={getTypeColor(drop.type)} />
+                    <Ionicons name={drop.icon as any} size={24} color={getTypeColor(drop.type)} />
                   </View>
                   <View style={styles.dropInfo}>
                     <View style={styles.dropHeader}>

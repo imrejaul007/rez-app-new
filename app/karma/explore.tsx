@@ -69,7 +69,7 @@ function ExploreEventCard({ event, onPress }: EventCardProps) {
           <CachedImage source={event.image} style={styles.eventImage} contentFit="cover" />
         ) : (
           <View style={[styles.eventImagePlaceholder, { backgroundColor: cat.bg }]}>
-            <Ionicons name={cat.icon as unknown as keyof typeof Ionicons.glyphMap} size={40} color={cat.color} />
+            <Ionicons name={cat.icon as any as keyof typeof Ionicons.glyphMap} size={40} color={cat.color} />
           </View>
         )}
         {/* Status badge */}
@@ -90,7 +90,7 @@ function ExploreEventCard({ event, onPress }: EventCardProps) {
         {/* Category + Difficulty */}
         <View style={styles.eventTopRow}>
           <View style={[styles.catChip, { backgroundColor: cat.bg }]}>
-            <Ionicons name={cat.icon as unknown as keyof typeof Ionicons.glyphMap} size={11} color={cat.color} />
+            <Ionicons name={cat.icon as any as keyof typeof Ionicons.glyphMap} size={11} color={cat.color} />
             <Text style={[styles.catChipText, { color: cat.color }]}>{cat.label}</Text>
           </View>
           <View

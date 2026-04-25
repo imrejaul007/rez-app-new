@@ -150,8 +150,8 @@ function ChallengeDetailPage() {
         apiClient.get('/gamification/challenges/my-progress?includeCompleted=true'),
       ]);
 
-      const allChallenges = challengeRes.success ? (challengeRes.data as unknown) || [] : [];
-      const allProgress = progressRes.success ? (progressRes.data as unknown)?.challenges || [] : [];
+      const allChallenges = challengeRes.success ? (challengeRes.data as any) || [] : [];
+      const allProgress = progressRes.success ? (progressRes.data as any)?.challenges || [] : [];
 
       logger.debug('📊 [Challenge Detail] All challenges:', allChallenges.length);
       logger.debug('📊 [Challenge Detail] User progress:', allProgress.length);
@@ -242,7 +242,7 @@ function ChallengeDetailPage() {
 
     const route = actionRoutes[action];
     if (route) {
-      router.push(route as unknown as string);
+      router.push(route as any as string);
     } else {
       showAlert('Info', 'Complete this challenge by using the app!', undefined, 'info');
     }
@@ -440,7 +440,7 @@ function ChallengeDetailPage() {
           style={styles.heroSection}
         >
           <View style={styles.iconContainer}>
-            <Ionicons name={challenge.icon as unknown} size={60} color={colors.text.inverse} />
+            <Ionicons name={challenge.icon as any} size={60} color={colors.text.inverse} />
           </View>
           <Text style={styles.heroTitle}>{challenge.title}</Text>
           <Text style={styles.heroDescription}>{challenge.description}</Text>

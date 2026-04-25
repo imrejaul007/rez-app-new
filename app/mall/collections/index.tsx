@@ -55,7 +55,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onPress }) 
       <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.cardOverlay} />
       <View style={styles.cardContent}>
         <View style={styles.typeBadge}>
-          <Ionicons name={getTypeIcon(collection.type) as unknown} size={12} color={colors.text.inverse} />
+          <Ionicons name={getTypeIcon(collection.type) as any} size={12} color={colors.text.inverse} />
           <Text style={styles.typeBadgeText}>
             {(collection.type || 'curated').charAt(0).toUpperCase() + (collection.type || 'curated').slice(1)}
           </Text>
@@ -115,7 +115,7 @@ function AllCollectionsPage() {
   const handleCollectionPress = useCallback(
     (collection: MallCollection) => {
       const slug = collection.slug || collection._id || collection.id;
-      if (slug) router.push(`/mall/collection/${slug}` as unknown as string);
+      if (slug) router.push(`/mall/collection/${slug}` as any as string);
     },
     [router],
   );

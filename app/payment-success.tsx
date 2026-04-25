@@ -145,16 +145,16 @@ function PaymentSuccessPage() {
           if (response.success && response.data) {
             const orderData = response.data;
             // Extract store name from various possible locations in the response
-            const orderDataAny = orderData as unknown as Record<string, unknown>;
-            const firstItem = (orderDataAny.items as unknown[])?.[0] as unknown as Record<string, unknown> | undefined;
-            const firstItemStore = firstItem?.['store'] as unknown;
+            const orderDataAny = orderData as any as Record<string, unknown>;
+            const firstItem = (orderDataAny.items as any[])?.[0] as any as Record<string, unknown> | undefined;
+            const firstItemStore = firstItem?.['store'] as any;
             const extractedStoreName =
               (typeof orderDataAny.store === 'object' && orderDataAny.store !== null
                 ? (orderDataAny.store as { name?: string }).name
                 : null) ||
               (orderDataAny.storeName as string | undefined) ||
               (firstItemStore != null ? (firstItemStore as { name?: string }).name : null) ||
-              (((orderDataAny.items as unknown[]) || [])[0] as unknown as { storeName?: string })?.storeName ||
+              (((orderDataAny.items as any[]) || [])[0] as any as { storeName?: string })?.storeName ||
               (typeof orderDataAny.store === 'string' ? orderDataAny.store : null) ||
               `Order ${((orderDataAny.orderNumber as string | undefined) || '').slice(-4)}`;
 
@@ -184,7 +184,7 @@ function PaymentSuccessPage() {
                 subtotal: orderData.totals?.subtotal || orderData.summary?.subtotal || 0,
                 delivery:
                   orderData.totals?.delivery ||
-                  ((orderDataAny.totals as unknown as Record<string, unknown> | undefined)?.shipping as
+                  ((orderDataAny.totals as any as Record<string, unknown> | undefined)?.shipping as
                     | number
                     | undefined) ||
                   orderData.delivery?.deliveryFee ||
@@ -201,7 +201,7 @@ function PaymentSuccessPage() {
               payment: {
                 method: orderData.payment?.method || paymentMethod || 'unknown',
                 status: orderData.payment?.status || 'completed',
-                coinsUsed: (orderDataAny.payment as unknown as Record<string, unknown> | undefined)?.coinsUsed || {
+                coinsUsed: (orderDataAny.payment as any as Record<string, unknown> | undefined)?.coinsUsed || {
                   rezCoins: 0,
                   promoCoins: 0,
                   storePromoCoins: 0,
@@ -210,20 +210,20 @@ function PaymentSuccessPage() {
               },
               delivery: orderData.delivery || undefined,
               fulfillmentType:
-                (orderDataAny.fulfillmentType as unknown as
+                (orderDataAny.fulfillmentType as any as
                   | 'delivery'
                   | 'pickup'
                   | 'drive_thru'
                   | 'dine_in'
                   | undefined) ||
-                ((orderDataAny.fulfillment as unknown as Record<string, unknown> | undefined)?.type as
+                ((orderDataAny.fulfillment as any as Record<string, unknown> | undefined)?.type as
                   | string
                   | undefined) ||
                 undefined,
               fulfillmentDetails:
-                (orderDataAny.fulfillmentDetails as unknown as OrderDetails['fulfillmentDetails']) ||
+                (orderDataAny.fulfillmentDetails as any as OrderDetails['fulfillmentDetails']) ||
                 ((orderDataAny.fulfillment as Record<string, unknown> | undefined)
-                  ?.details as unknown as OrderDetails['fulfillmentDetails']) ||
+                  ?.details as any as OrderDetails['fulfillmentDetails']) ||
                 undefined,
               createdAt: orderData.createdAt || new Date().toISOString(),
             });
@@ -297,7 +297,7 @@ function PaymentSuccessPage() {
           // estimate to determine if coins are pending, and show a pending message
           // instead of a false "0 coins earned" celebration.
           const totalCoinsEarned: number = fetchedOrders.reduce(
-            (s, o) => s + ((o as unknown as { rewards?: { coinsEarned?: number } }).rewards?.coinsEarned ?? 0),
+            (s, o) => s + ((o as any as { rewards?: { coinsEarned?: number } }).rewards?.coinsEarned ?? 0),
             0,
           );
           // Phase 1.6: surface coin total for PostPaymentSummary section.
@@ -353,7 +353,7 @@ function PaymentSuccessPage() {
   // Handle hardware back button - redirect to home
   useEffect(() => {
     const backAction = () => {
-      router.replace('/(tabs)/' as unknown);
+      router.replace('/(tabs)/' as any);
       return true;
     };
 
@@ -382,7 +382,7 @@ function PaymentSuccessPage() {
   };
 
   const handleGoHome = () => {
-    router.replace('/(tabs)/' as unknown);
+    router.replace('/(tabs)/' as any);
   };
 
   const getPaymentMethodIcon = (method: string) => {

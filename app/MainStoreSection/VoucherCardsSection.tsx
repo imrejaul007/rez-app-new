@@ -182,7 +182,7 @@ export default memo(function VoucherCardsSection({
       {/* Voucher Cards Carousel */}
       <FlashList
         data={vouchers}
-        renderItem={renderVoucherCard as unknown}
+        renderItem={renderVoucherCard as any}
         keyExtractor={keyExtractor}
         horizontal
         showsHorizontalScrollIndicator={false}

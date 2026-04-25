@@ -164,7 +164,7 @@ function ShopPage() {
               setFilterTitle(vibe.name);
               setFilterSubtitle(vibe.description || '');
               setFilterIcon(vibe.icon || '');
-              setFilterColor((vibe.color || COLORS.primaryGreen) as unknown);
+              setFilterColor((vibe.color || COLORS.primaryGreen) as any);
               return;
             }
           }
@@ -175,7 +175,7 @@ function ShopPage() {
             setFilterTitle(vibe.name);
             setFilterSubtitle(vibe.description || '');
             setFilterIcon(vibe.icon || '');
-            setFilterColor((vibe.color || COLORS.primaryGreen) as unknown);
+            setFilterColor((vibe.color || COLORS.primaryGreen) as any);
           }
         } else if (occasionId && categorySlug) {
           // Try API first
@@ -186,7 +186,7 @@ function ShopPage() {
               setFilterTitle(occasion.name);
               setFilterSubtitle(`Up to ${occasion.discount}% off`);
               setFilterIcon(occasion.icon || '');
-              setFilterColor((occasion.color || COLORS.primaryGreen) as unknown);
+              setFilterColor((occasion.color || COLORS.primaryGreen) as any);
               return;
             }
           }
@@ -197,7 +197,7 @@ function ShopPage() {
             setFilterTitle(occasion.name);
             setFilterSubtitle(`Up to ${occasion.discount}% off`);
             setFilterIcon(occasion.icon || '');
-            setFilterColor((occasion.color || COLORS.primaryGreen) as unknown);
+            setFilterColor((occasion.color || COLORS.primaryGreen) as any);
           }
         } else if (categorySlug) {
           if (!isMounted()) return;
@@ -271,7 +271,7 @@ function ShopPage() {
 
           if (isRefresh) {
             if (!isMounted()) return;
-            setProducts(newProducts as unknown);
+            setProducts(newProducts as any);
           } else {
             if (!isMounted()) return;
             setProducts((prev: any) => [...prev, ...newProducts]);
@@ -324,7 +324,7 @@ function ShopPage() {
   const handleProductPress = useCallback(
     (product: Product) => {
       const productId = product._id || product.id;
-      router.push(`/product-page?cardId=${productId}&cardType=product` as unknown as string);
+      router.push(`/product-page?cardId=${productId}&cardType=product` as any as string);
     },
     [router],
   );
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   filterTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
     lineHeight: 18,
   },
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
   },
   originalPrice: {
     ...Typography.bodySmall,
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },

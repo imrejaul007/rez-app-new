@@ -91,7 +91,7 @@ function OrderDetailsScreen() {
       if (response.success && response.data) {
         const mappedOrder = mapBackendOrderToFrontend(response.data);
         if (!isMounted()) return;
-        setOrder(mappedOrder as unknown as Order);
+        setOrder(mappedOrder as any as Order);
         setError(null);
       } else {
         if (!isMounted()) return;
@@ -214,8 +214,8 @@ function OrderDetailsScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 {order &&
                   'fulfillmentType' in order &&
-                  (order as unknown as { fulfillmentType?: string }).fulfillmentType &&
-                  (order as unknown as { fulfillmentType?: string }).fulfillmentType !== 'delivery' && (
+                  (order as any as { fulfillmentType?: string }).fulfillmentType &&
+                  (order as any as { fulfillmentType?: string }).fulfillmentType !== 'delivery' && (
                     <View
                       style={{
                         flexDirection: 'row',
@@ -228,11 +228,11 @@ function OrderDetailsScreen() {
                       }}
                     >
                       <Text style={{ fontSize: 11, fontWeight: '600', color: colors.nileBlue }}>
-                        {(order as unknown as { fulfillmentType?: string }).fulfillmentType === 'pickup'
+                        {(order as any as { fulfillmentType?: string }).fulfillmentType === 'pickup'
                           ? '🛍 Pickup'
-                          : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'drive_thru'
+                          : (order as any as { fulfillmentType?: string }).fulfillmentType === 'drive_thru'
                             ? '🚗 Drive-Thru'
-                            : (order as unknown as { fulfillmentType?: string }).fulfillmentType === 'dine_in'
+                            : (order as any as { fulfillmentType?: string }).fulfillmentType === 'dine_in'
                               ? '🍽 Dine-In'
                               : ''}
                       </Text>
@@ -301,9 +301,9 @@ function OrderDetailsScreen() {
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>
-                  {(order as unknown).fulfillmentType === 'pickup' ||
-                  (order as unknown).fulfillmentType === 'drive_thru' ||
-                  (order as unknown).fulfillmentType === 'dine_in'
+                  {(order as any).fulfillmentType === 'pickup' ||
+                  (order as any).fulfillmentType === 'drive_thru' ||
+                  (order as any).fulfillmentType === 'dine_in'
                     ? 'Service Fee'
                     : 'Delivery'}
                 </Text>
@@ -367,7 +367,7 @@ function OrderDetailsScreen() {
                   <Text style={[styles.summaryLabel, { color: colors.nileBlue }]}>Lock Fee Already Paid</Text>
                   <Text style={[styles.summaryValue, { color: colors.nileBlue }]}>
                     -{currencySymbol}
-                    {(order.totals as unknown).lockFeeDiscount.toFixed(2)}
+                    {(order.totals as any).lockFeeDiscount.toFixed(2)}
                   </Text>
                 </View>
               )}
@@ -383,7 +383,7 @@ function OrderDetailsScreen() {
               )}
               {/* Coins Used at Checkout */}
               {(() => {
-                const coinsUsed = (order.payment as unknown)?.coinsUsed;
+                const coinsUsed = (order.payment as any)?.coinsUsed;
                 const totalCoins =
                   coinsUsed?.totalCoinsValue ||
                   (coinsUsed?.rezCoins || 0) + (coinsUsed?.promoCoins || 0) + (coinsUsed?.storePromoCoins || 0);
@@ -492,37 +492,37 @@ function OrderDetailsScreen() {
           )}
 
           {/* Fulfillment Details */}
-          {(order as unknown).fulfillmentType &&
-            (order as unknown).fulfillmentType !== 'delivery' &&
-            (order as unknown).fulfillmentDetails && (
+          {(order as any).fulfillmentType &&
+            (order as any).fulfillmentType !== 'delivery' &&
+            (order as any).fulfillmentDetails && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>
-                  {(order as unknown).fulfillmentType === 'pickup'
+                  {(order as any).fulfillmentType === 'pickup'
                     ? 'Pickup Details'
-                    : (order as unknown).fulfillmentType === 'drive_thru'
+                    : (order as any).fulfillmentType === 'drive_thru'
                       ? 'Drive-Thru Details'
-                      : (order as unknown).fulfillmentType === 'dine_in'
+                      : (order as any).fulfillmentType === 'dine_in'
                         ? 'Dine-In Details'
                         : 'Fulfillment Details'}
                 </Text>
                 <View style={styles.trackingCard}>
-                  {(order as unknown).fulfillmentDetails.tableNumber && (
+                  {(order as any).fulfillmentDetails.tableNumber && (
                     <View style={styles.trackingRow}>
                       <Text style={styles.trackingLabel}>Table Number</Text>
-                      <Text style={styles.trackingValue}>{(order as unknown).fulfillmentDetails.tableNumber}</Text>
+                      <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.tableNumber}</Text>
                     </View>
                   )}
-                  {(order as unknown).fulfillmentDetails.vehicleInfo && (
+                  {(order as any).fulfillmentDetails.vehicleInfo && (
                     <View style={styles.trackingRow}>
                       <Text style={styles.trackingLabel}>Vehicle</Text>
-                      <Text style={styles.trackingValue}>{(order as unknown).fulfillmentDetails.vehicleInfo}</Text>
+                      <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.vehicleInfo}</Text>
                     </View>
                   )}
-                  {(order as unknown).fulfillmentDetails.pickupInstructions && (
+                  {(order as any).fulfillmentDetails.pickupInstructions && (
                     <View style={styles.trackingRow}>
                       <Text style={styles.trackingLabel}>Instructions</Text>
                       <Text style={styles.trackingValue}>
-                        {(order as unknown).fulfillmentDetails.pickupInstructions}
+                        {(order as any).fulfillmentDetails.pickupInstructions}
                       </Text>
                     </View>
                   )}
@@ -596,7 +596,7 @@ function OrderDetailsScreen() {
                 style={[styles.actionButton, { backgroundColor: colors.warningScale[400] }]}
                 onPress={() =>
                   router.push({
-                    pathname: '/support/create-ticket' as unknown,
+                    pathname: '/support/create-ticket' as any,
                     params: {
                       category: 'order',
                       subject: `Issue with Order #${order.orderNumber}`,

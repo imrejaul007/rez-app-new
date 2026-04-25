@@ -64,13 +64,13 @@ function GamificationDashboard() {
       ]);
 
       if (!isMounted()) return;
-      setChallenges((challengesRes.data as unknown)?.data || []);
+      setChallenges((challengesRes.data as any)?.data || []);
       if (!isMounted()) return;
-      setAchievements((achievementsRes.data as unknown)?.data || []);
+      setAchievements((achievementsRes.data as any)?.data || []);
       if (!isMounted()) return;
-      setStreaks((streaksRes.data as unknown)?.data || {});
+      setStreaks((streaksRes.data as any)?.data || {});
       if (!isMounted()) return;
-      setStats((statsRes.data as unknown)?.data || {});
+      setStats((statsRes.data as any)?.data || {});
 
       // Refresh wallet balance via context
       await refreshWallet();
@@ -94,7 +94,7 @@ function GamificationDashboard() {
       const response = await apiClient.post(`/gamification/challenges/${challengeId}/claim`);
 
       // apiClient wraps responses: check response.success or nested response.data.success
-      const responseData = (response as unknown).success ? response : (response.data as unknown);
+      const responseData = (response as any).success ? response : (response.data as any);
       if (responseData?.success) {
         const coinsEarned = responseData?.data?.rewards?.coins ?? responseData?.data?.coins ?? 0;
 
@@ -152,7 +152,7 @@ function GamificationDashboard() {
               <Text style={styles.title}>Gamification Hub</Text>
               <Text style={styles.subtitle}>Complete challenges, earn rewards!</Text>
             </View>
-            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as unknown as string)}>
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any as string)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}
@@ -202,7 +202,7 @@ function GamificationDashboard() {
 
           {/* Streak Shield — shown when the order streak is at zero */}
           {(() => {
-            const orderStreak = (streaks as unknown)?.order?.current ?? null;
+            const orderStreak = (streaks as any)?.order?.current ?? null;
             const streakIsBroken = orderStreak === 0;
             if (!streakIsBroken) return null;
             if (shieldUsedFeedback) {
@@ -278,7 +278,7 @@ function GamificationDashboard() {
               <AchievementCard key={achievement._id} achievement={achievement} />
             ))}
 
-            <Pressable style={styles.viewAllButton} onPress={() => router.push('/badges' as unknown as string)}>
+            <Pressable style={styles.viewAllButton} onPress={() => router.push('/badges' as any as string)}>
               <Text style={styles.viewAllText}>View All Achievements</Text>
             </Pressable>
           </View>
@@ -288,7 +288,7 @@ function GamificationDashboard() {
           <View style={styles.content}>
             <Pressable
               style={styles.leaderboardCard}
-              onPress={() => router.push('/playandearn/leaderboard' as unknown as string)}
+              onPress={() => router.push('/playandearn/leaderboard' as any as string)}
             >
               <Ionicons name="trophy" size={24} color={colors.brand.goldBright} />
               <Text style={styles.leaderboardTitle}>View Leaderboards</Text>
@@ -304,7 +304,7 @@ function GamificationDashboard() {
             <Ionicons name="game-controller" size={24} color={colors.brand.purpleLight} />
           </View>
           <View style={styles.gameRow}>
-            <Pressable style={styles.gameCard} onPress={() => router.push('/games/spin-wheel' as unknown as string)}>
+            <Pressable style={styles.gameCard} onPress={() => router.push('/games/spin-wheel' as any as string)}>
               <LinearGradient
                 colors={['#FF6B6B', '#EE5A6F']}
                 style={styles.gameGradient}
@@ -318,7 +318,7 @@ function GamificationDashboard() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable style={styles.gameCard} onPress={() => router.push('/scratch-card' as unknown as string)}>
+            <Pressable style={styles.gameCard} onPress={() => router.push('/scratch-card' as any as string)}>
               <LinearGradient
                 colors={['#4ECDC4', '#44A08D']}
                 style={styles.gameGradient}
@@ -332,7 +332,7 @@ function GamificationDashboard() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable style={styles.gameCard} onPress={() => router.push('/games/quiz' as unknown as string)}>
+            <Pressable style={styles.gameCard} onPress={() => router.push('/games/quiz' as any as string)}>
               <LinearGradient
                 colors={['#A8E6CF', '#88D4AB']}
                 style={styles.gameGradient}

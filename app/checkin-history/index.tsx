@@ -246,7 +246,7 @@ function CheckInHistoryScreen() {
   const handleRowPress = (tx: CheckInTransaction) => {
     const storeId = tx.metadata?.storeId;
     if (storeId) {
-      router.push(`/store-detail?storeId=${storeId}` as unknown as string);
+      router.push(`/store-detail?storeId=${storeId}` as any as string);
     }
   };
 

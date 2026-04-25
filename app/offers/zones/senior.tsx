@@ -85,7 +85,7 @@ function SeniorCitizenZonePage() {
   };
 
   const userAge = user?.profile?.dateOfBirth ? calculateAge(user.profile.dateOfBirth) : 0;
-  const isVerified = (user as unknown)?.verifications?.senior?.verified === true;
+  const isVerified = (user as any)?.verifications?.senior?.verified === true;
   const isEligible = userAge >= 60 || isVerified || zoneInfo?.userEligible === true;
 
   useEffect(() => {
@@ -160,14 +160,14 @@ function SeniorCitizenZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown as string);
+    router.push(`/offers/${offer._id}` as any as string);
   };
 
   const handleVerify = () => {
     router.push({
       pathname: '/profile/verification',
       params: { zone: 'senior' },
-    } as unknown as string);
+    } as any as string);
   };
 
   const renderSkeletonCard = () => (
@@ -254,7 +254,7 @@ function SeniorCitizenZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}

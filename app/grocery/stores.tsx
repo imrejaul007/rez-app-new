@@ -140,20 +140,20 @@ const GroceryStoresPage: React.FC = () => {
       <Pressable
         key={storeId}
         style={styles.featuredCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as any as string)}
       >
-        <CachedImage source={store.banner || store.logo || ('' as unknown)} style={styles.featuredImage} />
+        <CachedImage source={store.banner || store.logo || ('' as any)} style={styles.featuredImage} />
         <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.featuredOverlay}>
-          {((store as unknown).offers?.cashback || store.maxCashback) &&
-            ((store as unknown).offers?.cashback || store.maxCashback) > 0 && (
+          {((store as any).offers?.cashback || store.maxCashback) &&
+            ((store as any).offers?.cashback || store.maxCashback) > 0 && (
               <View style={styles.cashbackBadge}>
                 <Text style={styles.cashbackText}>
-                  {(store as unknown).offers?.cashback || store.maxCashback}% Cashback
+                  {(store as any).offers?.cashback || store.maxCashback}% Cashback
                 </Text>
               </View>
             )}
           <View style={styles.featuredContent}>
-            {store.logo && <CachedImage source={store.logo as unknown} style={styles.storeLogo} />}
+            {store.logo && <CachedImage source={store.logo as any} style={styles.storeLogo} />}
             <View style={styles.featuredInfo}>
               <Text style={styles.featuredName} numberOfLines={1}>
                 {store.name}
@@ -195,13 +195,13 @@ const GroceryStoresPage: React.FC = () => {
       <Pressable
         key={storeId}
         style={styles.storeCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as any as string)}
       >
-        <CachedImage source={store.logo || store.banner || ('' as unknown)} style={styles.storeImage} />
-        {((store as unknown).offers?.cashback || store.maxCashback) &&
-          ((store as unknown).offers?.cashback || store.maxCashback) > 0 && (
+        <CachedImage source={store.logo || store.banner || ('' as any)} style={styles.storeImage} />
+        {((store as any).offers?.cashback || store.maxCashback) &&
+          ((store as any).offers?.cashback || store.maxCashback) > 0 && (
             <View style={styles.storeCashbackBadge}>
-              <Text style={styles.storeCashbackText}>{(store as unknown).offers?.cashback || store.maxCashback}%</Text>
+              <Text style={styles.storeCashbackText}>{(store as any).offers?.cashback || store.maxCashback}%</Text>
             </View>
           )}
         <View style={styles.storeInfo}>
@@ -302,7 +302,7 @@ const GroceryStoresPage: React.FC = () => {
               onPress={() => setSelectedFilter(filter.key)}
             >
               <Ionicons
-                name={filter.icon as unknown}
+                name={filter.icon as any}
                 size={16}
                 color={selectedFilter === filter.key ? colors.background.primary : colors.neutral[500]}
               />

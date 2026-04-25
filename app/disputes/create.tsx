@@ -64,7 +64,7 @@ function CreateDisputeScreen() {
           // eslint-disable-next-line no-unused-expressions
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         } else {
-          platformAlert('Error', (response as unknown).message || 'Failed to add evidence');
+          platformAlert('Error', (response as any).message || 'Failed to add evidence');
         }
       } catch (err: any) {
         platformAlert('Error', err.message || 'Failed to add evidence');
@@ -95,7 +95,7 @@ function CreateDisputeScreen() {
       const response = await disputeApi.createDispute({
         targetType: params.targetType as 'order',
         targetId: params.targetId,
-        reason: reason as unknown,
+        reason: reason as any,
         description: description.trim(),
         evidence: description.trim()
           ? {
@@ -109,7 +109,7 @@ function CreateDisputeScreen() {
         platformAlert('Success', "Your dispute has been submitted. We'll review it within 72 hours.");
         router.replace('/disputes');
       } else {
-        platformAlert('Error', (response as unknown).message || 'Failed to submit dispute');
+        platformAlert('Error', (response as any).message || 'Failed to submit dispute');
       }
     } catch (err: any) {
       platformAlert('Error', err.message || 'Failed to submit dispute');
@@ -148,7 +148,7 @@ function CreateDisputeScreen() {
                   onPress={() => setReason(r.key)}
                 >
                   <Ionicons
-                    name={r.icon as unknown}
+                    name={r.icon as any}
                     size={18}
                     color={reason === r.key ? colors.text.inverse : colors.neutral[500]}
                   />

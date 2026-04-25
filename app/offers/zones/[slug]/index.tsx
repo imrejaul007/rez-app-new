@@ -339,13 +339,13 @@ function ExclusiveZonePage() {
   const handleOfferPress = (offer: ZoneOffer) => {
     const offerId = offer._id || offer.id;
     if (offerId) {
-      router.push(`/offers/${offerId}` as unknown as string);
+      router.push(`/offers/${offerId}` as any as string);
     }
   };
 
   const handleVerify = () => {
     if (slug) {
-      router.push(`/offers/zones/${slug}/verify` as unknown as string);
+      router.push(`/offers/zones/${slug}/verify` as any as string);
     }
   };
 
@@ -483,7 +483,7 @@ function ExclusiveZonePage() {
       {/* ---- Scrollable content ---- */}
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Zone Banner */}

@@ -387,7 +387,7 @@ function CreatorApplyPage() {
                     onPress={() => setSelectedCategory(cat.id)}
                   >
                     <Ionicons
-                      name={cat.icon as unknown}
+                      name={cat.icon as any}
                       size={28}
                       color={selectedCategory === cat.id ? Colors.brand.purple : colors.text.tertiary}
                     />
@@ -479,7 +479,7 @@ function CreatorApplyPage() {
               {socialPlatforms.map((platform) => (
                 <View key={platform.id} style={styles.socialInputGroup}>
                   <View style={styles.socialInputLabel}>
-                    <Ionicons name={platform.icon as unknown} size={20} color={colors.text.tertiary} />
+                    <Ionicons name={platform.icon as any} size={20} color={colors.text.tertiary} />
                     <Text style={styles.socialPlatformName}>{platform.name}</Text>
                   </View>
                   <TextInput

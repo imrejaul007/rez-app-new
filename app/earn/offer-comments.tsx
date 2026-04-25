@@ -44,7 +44,7 @@ function OfferCommentsPage() {
     try {
       const result = await offerCommentApi.getCommentableOffers(1, 50);
       if (result.success && result.data) {
-        setOffers((result.data as unknown).offers);
+        setOffers((result.data as any).offers);
       }
     } catch (error: any) {
       // silently handle
@@ -59,7 +59,7 @@ function OfferCommentsPage() {
     try {
       const result = await offerCommentApi.getMyComments(1, 50);
       if (result.success && result.data) {
-        setMyComments((result.data as unknown).comments);
+        setMyComments((result.data as any).comments);
       }
     } catch (error: any) {
       // silently handle

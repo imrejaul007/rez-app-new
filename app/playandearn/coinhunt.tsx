@@ -89,7 +89,7 @@ const AnimatedCoin: React.FC<{ coin: Coin; onCatch: () => void }> = ({ coin, onC
   }, []);
 
   const bgColors: [string, string] =
-    coin.value >= 20 ? [(COLORS as unknown).goldDark, COLORS.amber] : [COLORS.gold, COLORS.primary];
+    coin.value >= 20 ? [(COLORS as any).goldDark, COLORS.amber] : [COLORS.gold, COLORS.primary];
 
   return (
     <Pressable onPress={onCatch} style={[styles.coinButton, { left: `${coin.x}%`, top: `${coin.y}%` }]}>
@@ -128,7 +128,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as unknown);
+  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as any);
 
   return (
     <Animated.View
@@ -136,7 +136,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
         [
           styles.confetti,
           { backgroundColor: color, transform: [{ translateY }, { translateX }, { rotate: spin }], opacity },
-        ] as unknown
+        ] as any
       }
     />
   );
@@ -293,7 +293,7 @@ const CoinHunt = () => {
     return { text: 'Keep Hunting!', icon: 'refresh' as const, color: COLORS.textMuted };
   };
 
-  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%'] as unknown);
+  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%'] as any);
 
   return (
     <View style={styles.container}>
@@ -305,7 +305,7 @@ const CoinHunt = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="chevron-back" size={24} color={(COLORS as unknown).navy} />
+          <Ionicons name="chevron-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -322,7 +322,7 @@ const CoinHunt = () => {
             <Text style={[styles.timerText, timeLeft <= 10 ? styles.timerTextWarning : null]}>{timeLeft}s</Text>
           </View>
         ) : (
-          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown as string)}>
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any as string)}>
             <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
@@ -428,7 +428,7 @@ const CoinHunt = () => {
                       <Text style={styles.stepDesc}>{step.desc}</Text>
                     </View>
                     <View style={[styles.stepIconBg, { backgroundColor: `${step.color}10` }]}>
-                      <Ionicons name={step.icon as unknown} size={18} color={step.color} />
+                      <Ionicons name={step.icon as any} size={18} color={step.color} />
                     </View>
                   </View>
                 ))}
@@ -558,7 +558,7 @@ const CoinHunt = () => {
                 </View>
 
                 <Text
-                  style={[styles.resultTitle, { color: score >= 100 ? colors.text.inverse : (COLORS as unknown).navy }]}
+                  style={[styles.resultTitle, { color: score >= 100 ? colors.text.inverse : (COLORS as any).navy }]}
                 >
                   {getPerformanceRating().text}
                 </Text>
@@ -643,7 +643,7 @@ const CoinHunt = () => {
               </Pressable>
 
               <Pressable
-                onPress={() => router.push('/playandearn' as unknown as string)}
+                onPress={() => router.push('/playandearn' as any as string)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
   headerCenter: { flex: 1 },
   headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   headerIconText: { ...Typography.h2, fontSize: 24 },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: (COLORS as unknown).navy },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy },
   headerSubtitle: { ...Typography.bodySmall, fontSize: 13, color: COLORS.textMuted, marginTop: 2 },
   timerBadge: {
     flexDirection: 'row',
@@ -709,7 +709,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.goldBg,
   },
   coinIcon: { width: 20, height: 20 },
-  coinsText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: (COLORS as unknown).goldDark },
+  coinsText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: (COLORS as any).goldDark },
 
   scrollView: { flex: 1 },
   content: { padding: Spacing.base },
@@ -783,13 +783,13 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   howToPlayHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.base },
-  howToPlayTitle: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: (COLORS as unknown).navy },
+  howToPlayTitle: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: (COLORS as any).navy },
   stepsContainer: { gap: 14 },
   stepRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   stepBadge: { width: 32, height: 32, borderRadius: BorderRadius.lg, justifyContent: 'center', alignItems: 'center' },
   stepBadgeText: { ...Typography.body, fontWeight: '700' },
   stepTextContainer: { flex: 1 },
-  stepTitle: { ...Typography.body, fontWeight: '600', color: (COLORS as unknown).navy, marginBottom: 2 },
+  stepTitle: { ...Typography.body, fontWeight: '600', color: (COLORS as any).navy, marginBottom: 2 },
   stepDesc: { ...Typography.bodySmall, color: COLORS.textMuted },
   stepIconBg: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
 
@@ -827,7 +827,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
     letterSpacing: 0.5,
   },
-  gameStatValue: { ...Typography.h3, fontWeight: '700', color: (COLORS as unknown).navy },
+  gameStatValue: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy },
   gameStatDivider: { width: 1, height: 32, backgroundColor: COLORS.border },
   scoreRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   miniCoin: { width: 18, height: 18 },
@@ -954,7 +954,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  statValue: { ...Typography.h3, fontWeight: '700', color: (COLORS as unknown).navy, marginBottom: Spacing.xs },
+  statValue: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy, marginBottom: Spacing.xs },
   statLabel: {
     ...Typography.caption,
     fontWeight: '600',

@@ -24,7 +24,7 @@ const ExperienceDetailPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { type } = useLocalSearchParams<any>();
-  const { currentLocation } = useLocation() as unknown;
+  const { currentLocation } = useLocation() as any;
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -152,7 +152,7 @@ const ExperienceDetailPage: React.FC = () => {
   const handleStorePress = (store: any) => {
     const storeId = store._id || store.id;
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${storeId}` as any as string);
     }
   };
 
@@ -208,7 +208,7 @@ const ExperienceDetailPage: React.FC = () => {
       >
         {/* Dynamic Gradient Hero */}
         <LinearGradient
-          colors={displayGradient as unknown}
+          colors={displayGradient as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroSection}

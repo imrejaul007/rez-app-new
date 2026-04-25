@@ -225,7 +225,7 @@ const Achievements = () => {
         <View style={styles.ctaSection}>
           <Text style={styles.ctaTitle}>Quick Actions to Unlock More</Text>
 
-          <Pressable style={styles.ctaCard} onPress={() => router.push('/mall' as unknown as string)}>
+          <Pressable style={styles.ctaCard} onPress={() => router.push('/mall' as any as string)}>
             <LinearGradient colors={['#1a3a5220', '#FFC85720']} style={styles.ctaGradient}>
               <View style={[styles.ctaIconContainer, { backgroundColor: '#1a3a5230' }]}>
                 <Ionicons name="bag" size={20} color={colors.brand.purpleMedium} />
@@ -238,7 +238,7 @@ const Achievements = () => {
             </LinearGradient>
           </Pressable>
 
-          <Pressable style={styles.ctaCard} onPress={() => router.push('/referral' as unknown as string)}>
+          <Pressable style={styles.ctaCard} onPress={() => router.push('/referral' as any as string)}>
             <LinearGradient colors={['#3B82F620', '#06B6D420']} style={styles.ctaGradient}>
               <View style={[styles.ctaIconContainer, { backgroundColor: '#3B82F630' }]}>
                 <Ionicons name="people" size={20} color={colors.infoScale[400]} />
@@ -251,7 +251,7 @@ const Achievements = () => {
             </LinearGradient>
           </Pressable>
 
-          <Pressable style={styles.ctaCard} onPress={() => router.push('/games' as unknown as string)}>
+          <Pressable style={styles.ctaCard} onPress={() => router.push('/games' as any as string)}>
             <LinearGradient colors={['#ffcd5720', '#ffcd5720']} style={styles.ctaGradient}>
               <View style={[styles.ctaIconContainer, { backgroundColor: Colors.gold + '30' }]}>
                 <Ionicons name="game-controller" size={20} color={Colors.gold} />

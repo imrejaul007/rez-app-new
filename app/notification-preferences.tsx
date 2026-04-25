@@ -138,7 +138,7 @@ function NotificationPreferencesScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
       >
         <Text style={styles.sectionDesc}>Choose which notifications you receive from REZ.</Text>
 

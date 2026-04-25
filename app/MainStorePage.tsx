@@ -399,7 +399,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                           <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
                             <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
-                            {(c as unknown).coinMultiplier > 1 && (
+                            {(c as any).coinMultiplier > 1 && (
                               <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
                                 {c.coinMultiplier}x coins on every purchase
                               </Text>

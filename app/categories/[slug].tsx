@@ -14,5 +14,5 @@ const SLUG_MAP: Record<string, string> = {
 export default function CategoryRedirect() {
   const { slug } = useLocalSearchParams<any>();
   const target = SLUG_MAP[slug ?? ''] ?? '/(tabs)/categories';
-  return <Redirect href={target as unknown} />;
+  return <Redirect href={target as any} />;
 }

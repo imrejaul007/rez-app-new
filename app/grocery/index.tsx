@@ -126,16 +126,16 @@ const GroceryPage: React.FC = () => {
 
       // Process categories
       if (categoriesRes.success && categoriesRes.data) {
-        const groceryCategory = (categoriesRes.data as unknown as ApiCategory[]).find(
-          (cat) => cat.slug === 'grocery' || (cat.name as unknown as string)?.toLowerCase().includes('grocery'),
+        const groceryCategory = (categoriesRes.data as any as ApiCategory[]).find(
+          (cat) => cat.slug === 'grocery' || (cat.name as any as string)?.toLowerCase().includes('grocery'),
         );
 
         if (
           groceryCategory &&
-          (((groceryCategory as unknown as Record<string, unknown>).subcategories as unknown[]) || []).length > 0
+          (((groceryCategory as any as Record<string, unknown>).subcategories as any[]) || []).length > 0
         ) {
           const mappedCategories: GroceryCategory[] = (
-            ((groceryCategory as unknown as Record<string, unknown>).subcategories as unknown[]) || []
+            ((groceryCategory as any as Record<string, unknown>).subcategories as any[]) || []
           ).map((sub: unknown) => {
             const sub2 = sub as Record<string, unknown>;
             const config = categoryConfig[sub2.slug as string] || { icon: '🛒', color: colors.success };
@@ -154,17 +154,17 @@ const GroceryPage: React.FC = () => {
 
       // Process stores
       if (storesRes.success && storesRes.data?.stores) {
-        const stores = storesRes.data.stores as unknown as GroceryStore[];
+        const stores = storesRes.data.stores as any as GroceryStore[];
 
         // Map stores to display format
         const mappedStores: GroceryStore[] = stores.map((store) => ({
           id: (store.id || store._id) as string,
           name: store.name as string,
           rating:
-            ((store.ratings as unknown as Record<string, unknown> | undefined)?.average as unknown as
+            ((store.ratings as any as Record<string, unknown> | undefined)?.average as any as
               | number
               | undefined) ||
-            ((store.rating as unknown as Record<string, unknown> | undefined)?.average as unknown as
+            ((store.rating as any as Record<string, unknown> | undefined)?.average as any as
               | number
               | undefined) ||
             4.5,
@@ -197,8 +197,8 @@ const GroceryPage: React.FC = () => {
             id: (store.id || store._id) as string,
             name: store.name as string,
             rating:
-              ((store.ratings as Record<string, unknown> | undefined)?.average as unknown as number | undefined) ||
-              ((store.rating as Record<string, unknown> | undefined)?.average as unknown as number | undefined) ||
+              ((store.ratings as Record<string, unknown> | undefined)?.average as any as number | undefined) ||
+              ((store.rating as Record<string, unknown> | undefined)?.average as any as number | undefined) ||
               4.5,
             deliveryTime: ((store.operationalInfo as Record<string, unknown> | undefined)?.deliveryTime as
               | string

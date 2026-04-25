@@ -93,7 +93,7 @@ function FeedbackPage() {
       const filename = uri.split('/').pop() || `feedback_${Date.now()}.jpg`;
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : 'image/jpeg';
-      formData.append('file', { uri, name: filename, type } as unknown);
+      formData.append('file', { uri, name: filename, type } as any);
     }
 
     formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.images);
@@ -251,7 +251,7 @@ function FeedbackPage() {
                   onPress={() => setSelectedCategory(category.id)}
                 >
                   <Ionicons
-                    name={category.icon as unknown}
+                    name={category.icon as any}
                     size={24}
                     color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
                   />

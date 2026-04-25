@@ -189,7 +189,7 @@ function TicketsPage() {
       return (
         <Pressable
           style={styles.ticketCard}
-          onPress={() => router.push(`/support/ticket/${ticket._id}` as unknown as string)}
+          onPress={() => router.push(`/support/ticket/${ticket._id}` as any as string)}
         >
           <View style={styles.ticketHeader}>
             <View style={styles.ticketTitleRow}>
@@ -264,7 +264,7 @@ function TicketsPage() {
         </ThemedText>
         <Pressable
           style={styles.emptyButton}
-          onPress={() => router.push('/support/create-ticket' as unknown as string)}
+          onPress={() => router.push('/support/create-ticket' as any as string)}
         >
           <Ionicons name="add-circle-outline" size={20} color={colors.background.primary} />
           <ThemedText style={styles.emptyButtonText}>Create Ticket</ThemedText>
@@ -292,7 +292,7 @@ function TicketsPage() {
             <ThemedText style={styles.headerTitle}>My Tickets</ThemedText>
             <Pressable
               style={styles.addButton}
-              onPress={() => router.push('/support/create-ticket' as unknown as string)}
+              onPress={() => router.push('/support/create-ticket' as any as string)}
             >
               <Ionicons name="add" size={24} color={colors.background.primary} />
             </Pressable>
@@ -302,7 +302,7 @@ function TicketsPage() {
         {/* Filter Chips */}
         <View style={styles.filtersContainer}>
           <FlashList
-            data={STATUS_FILTERS as unknown as (typeof STATUS_FILTERS)[number][]}
+            data={STATUS_FILTERS as any as (typeof STATUS_FILTERS)[number][]}
             renderItem={renderFilterChipItem}
             keyExtractor={(item) => item.key}
             horizontal
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   ticketSubject: {
     fontSize: 15,
     fontWeight: '600',
-    color: (Colors as unknown).text?.primary || colors.deepNavy,
+    color: (Colors as any).text?.primary || colors.deepNavy,
   },
   lastMessage: {
     fontSize: 13,

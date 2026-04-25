@@ -130,7 +130,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress,
       >
         <View style={styles.transactionIcon}>
           <Ionicons
-            name={getTransactionIcon(transaction.category, transaction.type) as unknown}
+            name={getTransactionIcon(transaction.category, transaction.type) as any}
             size={24}
             color={getTransactionColor(transaction.type)}
           />

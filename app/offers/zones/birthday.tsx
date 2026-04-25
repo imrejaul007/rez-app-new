@@ -149,11 +149,11 @@ function BirthdayZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown as string);
+    router.push(`/offers/${offer._id}` as any as string);
   };
 
   const handleUpdateProfile = () => {
-    router.push('/profile/edit' as unknown as string);
+    router.push('/profile/edit' as any as string);
   };
 
   const renderSkeletonCard = () => (
@@ -240,7 +240,7 @@ function BirthdayZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}

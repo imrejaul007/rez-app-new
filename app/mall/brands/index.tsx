@@ -129,8 +129,8 @@ function transformStoreToMallBrand(store: any): MallBrand {
       average: store.ratings?.average || 0,
       count: store.ratings?.count || 0,
       successRate: store.ratings?.successRate || Math.min(Math.round(((store.ratings?.average || 0) / 5) * 100), 100),
-      distribution: (store.ratings as unknown)?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
-    } as unknown,
+      distribution: (store.ratings as any)?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+    } as any,
     isFeatured: store.isFeatured || false,
     isActive: store.isActive !== false,
     isNewArrival,
@@ -251,7 +251,7 @@ function BrandsListingPage() {
 
   const handleBrandPress = useCallback(
     (brand: MallBrand) => {
-      router.push(`/MainStorePage?storeId=${brand.id || brand._id}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${brand.id || brand._id}` as any as string);
     },
     [router],
   );
@@ -324,11 +324,11 @@ function BrandsListingPage() {
           <View style={styles.headerContent}>
             {isLuxuryTheme ? (
               <LinearGradient colors={[colors.brand.goldBright, Colors.warning]} style={styles.luxuryIconWrapper}>
-                <Ionicons name={filterConfig.icon as unknown} size={28} color="#0F172A" />
+                <Ionicons name={filterConfig.icon as any} size={28} color="#0F172A" />
               </LinearGradient>
             ) : (
               <View style={styles.headerIconWrapper}>
-                <Ionicons name={filterConfig.icon as unknown} size={28} color={colors.text.inverse} />
+                <Ionicons name={filterConfig.icon as any} size={28} color={colors.text.inverse} />
               </View>
             )}
             <Text style={styles.headerTitle}>{filterConfig.title}</Text>
@@ -453,7 +453,7 @@ function BrandsListingPage() {
               </Pressable>
               <View style={styles.headerContent}>
                 <View style={styles.headerIconWrapper}>
-                  <Ionicons name={filterConfig.icon as unknown} size={28} color={colors.text.inverse} />
+                  <Ionicons name={filterConfig.icon as any} size={28} color={colors.text.inverse} />
                 </View>
                 <Text style={styles.headerTitle}>{filterConfig.title}</Text>
               </View>

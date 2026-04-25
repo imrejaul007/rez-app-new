@@ -71,10 +71,10 @@ const FitnessPage: React.FC = () => {
       ]);
 
       // Extract data from responses
-      const gymsData = gymsRes.status === 'fulfilled' ? (gymsRes.value.data as unknown)?.stores || [] : [];
-      const studiosData = studiosRes.status === 'fulfilled' ? (studiosRes.value.data as unknown)?.stores || [] : [];
-      const trainersData = trainersRes.status === 'fulfilled' ? (trainersRes.value.data as unknown)?.stores || [] : [];
-      const storesData = storesRes.status === 'fulfilled' ? (storesRes.value.data as unknown)?.stores || [] : [];
+      const gymsData = gymsRes.status === 'fulfilled' ? (gymsRes.value.data as any)?.stores || [] : [];
+      const studiosData = studiosRes.status === 'fulfilled' ? (studiosRes.value.data as any)?.stores || [] : [];
+      const trainersData = trainersRes.status === 'fulfilled' ? (trainersRes.value.data as any)?.stores || [] : [];
+      const storesData = storesRes.status === 'fulfilled' ? (storesRes.value.data as any)?.stores || [] : [];
 
       // Build categories with real counts
       const builtCategories: Category[] = [
@@ -82,28 +82,28 @@ const FitnessPage: React.FC = () => {
           _id: 'gyms',
           name: 'Gyms',
           slug: 'gyms',
-          storeCount: gymsRes.status === 'fulfilled' ? (gymsRes.value.data as unknown)?.total || gymsData.length : 0,
+          storeCount: gymsRes.status === 'fulfilled' ? (gymsRes.value.data as any)?.total || gymsData.length : 0,
         },
         {
           _id: 'studios',
           name: 'Fitness Studios',
           slug: 'studios',
           storeCount:
-            studiosRes.status === 'fulfilled' ? (studiosRes.value.data as unknown)?.total || studiosData.length : 0,
+            studiosRes.status === 'fulfilled' ? (studiosRes.value.data as any)?.total || studiosData.length : 0,
         },
         {
           _id: 'trainers',
           name: 'Personal Trainers',
           slug: 'trainers',
           storeCount:
-            trainersRes.status === 'fulfilled' ? (trainersRes.value.data as unknown)?.total || trainersData.length : 0,
+            trainersRes.status === 'fulfilled' ? (trainersRes.value.data as any)?.total || trainersData.length : 0,
         },
         {
           _id: 'store',
           name: 'Sports Store',
           slug: 'store',
           storeCount:
-            storesRes.status === 'fulfilled' ? (storesRes.value.data as unknown)?.total || storesData.length : 0,
+            storesRes.status === 'fulfilled' ? (storesRes.value.data as any)?.total || storesData.length : 0,
         },
         { _id: 'challenges', name: 'Challenges', slug: 'challenges', storeCount: 50 },
         { _id: 'nutrition', name: 'Nutrition', slug: 'nutrition', storeCount: 100 },
@@ -155,14 +155,14 @@ const FitnessPage: React.FC = () => {
 
   const handleCategoryPress = (categorySlug: string) => {
     if (categorySlug === 'challenges') {
-      router.push('/challenges' as unknown as string);
+      router.push('/challenges' as any as string);
     } else {
-      router.push(`/fitness/${categorySlug}` as unknown as string);
+      router.push(`/fitness/${categorySlug}` as any as string);
     }
   };
 
   const handleGymPress = (gym: FeaturedGym) => {
-    router.push(`/MainStorePage?storeId=${gym._id}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${gym._id}` as any as string);
   };
 
   const getCategoryIcon = (slug: string) => categoryConfig[slug]?.icon || '🏋️';
@@ -321,7 +321,7 @@ const FitnessPage: React.FC = () => {
             <Text style={styles.promoSubtitle}>Join now & win up to 10,000 coins</Text>
             <Pressable
               style={styles.promoButton}
-              onPress={() => router.push('/challenges' as unknown as string)}
+              onPress={() => router.push('/challenges' as any as string)}
               accessibilityRole="button"
               accessibilityLabel="Join the New Year Fitness Challenge and win up to 10,000 coins"
             >

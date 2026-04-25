@@ -162,7 +162,7 @@ const StoreDetailPage: React.FC = () => {
     try {
       const response = await apiClient.get(`/stores/${id}`);
       const storeData =
-        (response.data as unknown as { store?: Store; _id?: string }).store || (response.data as unknown as Store);
+        (response.data as any as { store?: Store; _id?: string }).store || (response.data as any as Store);
 
       // Validate store data exists
       if (!storeData || !storeData._id) {
@@ -347,7 +347,7 @@ const StoreDetailPage: React.FC = () => {
     if (isFitnessStore) {
       router.push({
         pathname: '/fitness/book/[storeId]',
-        params: { ...baseParams, storeId: (store as unknown as string).id } as unknown,
+        params: { ...baseParams, storeId: (store as any).id } as any,
       });
     } else {
       router.push({
@@ -362,7 +362,7 @@ const StoreDetailPage: React.FC = () => {
 
   // Get deal value display
   const getDealValue = (deal: ActiveRedemption) => {
-    const d = deal as unknown;
+    const d = deal as any;
     if (d.cashback) return { type: 'Cashback', value: d.cashback, color: COLORS.green500 };
     if (d.coins) return { type: 'Coins', value: d.coins, color: COLORS.amber500 };
     if (d.discount) return { type: 'Discount', value: d.discount, color: COLORS.purple500 };

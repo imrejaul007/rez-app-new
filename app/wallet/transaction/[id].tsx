@@ -87,7 +87,7 @@ function TransactionDetailPage() {
             <View style={{ width: 40 }} />
           </View>
         </LinearGradient>
-        <View style={(styles as unknown).emptyState}>
+        <View style={(styles as any).emptyState}>
           <ThemedText style={styles.errorText}>Transaction not found</ThemedText>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -201,7 +201,7 @@ function TransactionDetailPage() {
         {/* Amount Card */}
         <View style={styles.amountCard}>
           <View style={[styles.iconCircle, { backgroundColor: cat.color + '20' }]}>
-            <Ionicons name={cat.icon as unknown} size={32} color={cat.color} />
+            <Ionicons name={cat.icon as any} size={32} color={cat.color} />
           </View>
           <ThemedText style={[styles.amount, { color: amountColor }]}>
             {sign}

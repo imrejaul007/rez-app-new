@@ -158,7 +158,7 @@ function SubmitPickPage() {
           uri,
           name: fileName || `pick_${type}.${type === 'image' ? 'jpg' : 'mp4'}`,
           type: mimeType || (type === 'image' ? 'image/jpeg' : 'video/mp4'),
-        } as unknown);
+        } as any);
       }
 
       const preset = CLOUDINARY_CONFIG.uploadPresets.ugcVideos;

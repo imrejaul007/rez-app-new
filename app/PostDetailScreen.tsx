@@ -100,7 +100,7 @@ function PostDetailScreen() {
         // Refresh engagement data on focus
         const refreshEngagement = async () => {
           try {
-            const updatedPost = await (realVideosApi as unknown).getPostById(post._id);
+            const updatedPost = await (realVideosApi as any).getPostById(post._id);
             if (!isMounted()) return;
             if (updatedPost) {
               const likes =
@@ -195,7 +195,7 @@ function PostDetailScreen() {
           image: product.image || product.images?.[0] || '',
           cashback: product.cashbackPercent ? `${product.cashbackPercent}%` : '0%',
           category: 'products',
-        } as unknown);
+        } as any);
       } catch (error: any) {
         // silently handle
       }
@@ -323,7 +323,7 @@ function PostDetailScreen() {
       >
         {/* Creator Info */}
         <View style={styles.creatorSection}>
-          {creatorInfo.avatar && <CachedImage source={creatorInfo.avatar as unknown} style={styles.creatorAvatar} />}
+          {creatorInfo.avatar && <CachedImage source={creatorInfo.avatar as any} style={styles.creatorAvatar} />}
           <View style={styles.creatorInfo}>
             <Text style={styles.creatorName}>{creatorInfo.name || 'User'}</Text>
             {post.contentType === 'merchant' && (
@@ -351,7 +351,7 @@ function PostDetailScreen() {
           {/* Main image */}
           {imageUrl && !imageError && (
             <CachedImage
-              source={imageUrl as unknown}
+              source={imageUrl as any}
               style={[styles.postImage, !imageLoaded ? styles.hiddenImage : null]}
               contentFit="cover"
               onLoad={() => {

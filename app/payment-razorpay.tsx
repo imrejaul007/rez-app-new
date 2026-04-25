@@ -305,7 +305,7 @@ function PaymentPage() {
       // CA-PAY-011 FIX: Only return true if backend explicitly confirms payment is valid
       if (response.success && response.data) {
         // Additional safety: ensure response contains order/payment confirmation
-        if (!(response.data as unknown).orderId && !(response.data as unknown).paymentId) {
+        if (!(response.data as any).orderId && !(response.data as any).paymentId) {
           logger.warn('[Razorpay] Verification response missing orderId or paymentId');
           return false;
         }
@@ -416,7 +416,7 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           router.replace(
-            `/deal-success?razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}&redemptionId=${bookingId}` as unknown,
+            `/deal-success?razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}&redemptionId=${bookingId}` as any,
           );
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -430,7 +430,7 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           router.replace(
-            `/flash-sale-success?purchaseId=${bookingId}&razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}` as unknown,
+            `/flash-sale-success?purchaseId=${bookingId}&razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}` as any,
           );
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -450,7 +450,7 @@ function PaymentPage() {
             paymentType,
             ...(paymentType === 'balance' ? { lockId: bookingId } : { dealId }),
           }).toString();
-          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as unknown as string);
+          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as any as string);
         }, 500);
         navTimeoutsRef.current.add(t);
         return;
@@ -463,7 +463,7 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           router.replace({
-            pathname: '/subscription/payment-confirmation' as unknown,
+            pathname: '/subscription/payment-confirmation' as any,
             params: {
               status: 'success',
               tier: subscriptionTier,
@@ -491,9 +491,9 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           if (isTravelPayment) {
-            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as unknown as string);
+            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as any as string);
           } else {
-            router.replace(`/order-confirmation?orderId=${orderId}` as unknown as string);
+            router.replace(`/order-confirmation?orderId=${orderId}` as any as string);
           }
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -508,7 +508,7 @@ function PaymentPage() {
       platformAlertConfirm(
         'Verification Failed',
         'Payment was received but verification failed. Please contact support.',
-        () => router.push('/support' as unknown as string),
+        () => router.push('/support' as any as string),
         'Contact Support',
       );
     }

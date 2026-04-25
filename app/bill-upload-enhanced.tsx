@@ -142,7 +142,7 @@ function EnhancedBillUploadPage() {
     try {
       const ImagePicker = await getImagePicker();
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images' as unknown,
+        mediaTypes: 'images' as any,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
@@ -252,7 +252,7 @@ function EnhancedBillUploadPage() {
 
     return (
       <View style={styles.cameraContainer}>
-        <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType as unknown}>
+        <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType as any}>
           <View style={styles.cameraOverlay}>
             <Pressable style={styles.cameraCloseButton} onPress={() => setShowCamera(false)}>
               <Ionicons name="close" size={32} color={colors.text.inverse} />

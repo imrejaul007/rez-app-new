@@ -196,7 +196,7 @@ function SupportChatPage() {
           uri: asset.uri,
           name: `image_${Date.now()}.jpg`,
           type: 'image/jpeg',
-        } as unknown,
+        } as any,
         'image',
       );
       if (attachment) {
@@ -221,7 +221,7 @@ function SupportChatPage() {
           uri: file.uri,
           name: file.name,
           type: file.mimeType || 'application/octet-stream',
-        } as unknown,
+        } as any,
         'file',
       );
       if (attachment) {
@@ -552,7 +552,7 @@ function SupportChatPage() {
               colors={
                 (inputText.trim() || attachments.length > 0
                   ? [Colors.primary[500], Colors.primary[700]]
-                  : [Colors.gray[200], Colors.gray[300]]) as unknown
+                  : [Colors.gray[200], Colors.gray[300]]) as any
               }
               style={styles.sendButtonGradient}
             >

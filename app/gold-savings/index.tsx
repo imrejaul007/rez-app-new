@@ -384,7 +384,7 @@ function GoldSavingsPage() {
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Digital Gold</Text>
-        <Pressable onPress={() => router.push('/gold-savings/history' as unknown as string)}>
+        <Pressable onPress={() => router.push('/gold-savings/history' as any as string)}>
           <Ionicons name="time-outline" size={24} color={colors.text.primary} />
         </Pressable>
       </View>
@@ -568,7 +568,7 @@ function GoldSavingsPage() {
             {transactions.length > 5 && (
               <Pressable
                 style={styles.viewAllButton}
-                onPress={() => router.push('/gold-savings/history' as unknown as string)}
+                onPress={() => router.push('/gold-savings/history' as any as string)}
               >
                 <Text style={styles.viewAllText}>View All Transactions</Text>
                 <Ionicons name="chevron-forward" size={16} color={GOLD_COLOR} />
@@ -589,7 +589,7 @@ function GoldSavingsPage() {
             ].map((benefit, index) => (
               <View key={index} style={styles.benefitCard}>
                 <View style={styles.benefitIcon}>
-                  <Ionicons name={benefit.icon as unknown} size={24} color={GOLD_COLOR} />
+                  <Ionicons name={benefit.icon as any} size={24} color={GOLD_COLOR} />
                 </View>
                 <View style={styles.benefitText}>
                   <Text style={styles.benefitTitle}>{benefit.title}</Text>
@@ -611,7 +611,7 @@ function GoldSavingsPage() {
                 <Text style={styles.sipTitle}>Start Gold SIP</Text>
                 <Text style={styles.sipDesc}>Auto-invest daily, weekly, or monthly</Text>
               </View>
-              <Pressable style={styles.sipButton} onPress={() => router.push('/gold-savings/sip' as unknown as string)}>
+              <Pressable style={styles.sipButton} onPress={() => router.push('/gold-savings/sip' as any as string)}>
                 <Text style={styles.sipButtonText}>Setup</Text>
               </Pressable>
             </View>

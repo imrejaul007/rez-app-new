@@ -47,7 +47,7 @@ function MenuSection({ items = [], onItemPress }: MenuSectionProps) {
         onItemPress(item);
       } else {
         // Navigate to product page
-        router.push(`/product-page?productId=${item.id}` as unknown as string);
+        router.push(`/product-page?productId=${item.id}` as any as string);
       }
     },
     [onItemPress, router],

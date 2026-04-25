@@ -93,7 +93,7 @@ function ChangePasswordPage() {
         newPassword: formData.newPassword,
       });
 
-      const data = response.data as unknown;
+      const data = response.data as any;
       if (data?.success) {
         platformAlertConfirm(
           'Password Changed',

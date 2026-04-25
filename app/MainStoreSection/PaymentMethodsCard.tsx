@@ -71,9 +71,9 @@ function PaymentMethodsCard({
             <View key={method.id} style={styles.methodItem}>
               <View style={[styles.iconCircle, { backgroundColor: `${method.color}15` }]}>
                 {method.iconType === 'material' ? (
-                  <MaterialCommunityIcons name={method.icon as unknown} size={22} color={method.color} />
+                  <MaterialCommunityIcons name={method.icon as any} size={22} color={method.color} />
                 ) : (
-                  <Ionicons name={method.icon as unknown} size={22} color={method.color} />
+                  <Ionicons name={method.icon as any} size={22} color={method.color} />
                 )}
               </View>
               <View style={styles.methodInfo}>

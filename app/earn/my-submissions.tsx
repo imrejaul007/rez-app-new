@@ -72,14 +72,14 @@ const TYPE_CONFIG = {
   reel: {
     icon: 'videocam' as const,
     label: 'Reel',
-    color: (COLORS as unknown).purple,
+    color: (COLORS as any).purple,
     bg: COLORS.purpleLight,
     gradient: ['#AF52DE', '#FF2D55'] as [string, string],
   },
   comment: {
     icon: 'chatbubble-ellipses' as const,
     label: 'Comment',
-    color: (COLORS as unknown).teal,
+    color: (COLORS as any).teal,
     bg: COLORS.tealLight,
     gradient: ['#5AC8FA', '#34AADC'] as [string, string],
   },
@@ -130,7 +130,7 @@ function MySubmissionsPage() {
             status: p.moderationStatus === 'approved' ? 'credited' : p.moderationStatus,
             coinsAwarded: p.coinsAwarded || 0,
             createdAt: p.createdAt,
-            thumbnail: (p as unknown).imageUrl || (p as unknown).thumbnailUrl,
+            thumbnail: (p as any).imageUrl || (p as any).thumbnailUrl,
           });
         }
       }
@@ -147,7 +147,7 @@ function MySubmissionsPage() {
             status: r.moderationStatus === 'approved' ? 'credited' : r.moderationStatus,
             coinsAwarded: 0,
             createdAt: r.createdAt,
-            thumbnail: (r as unknown).thumbnailUrl || (r as unknown).coverImage,
+            thumbnail: (r as any).thumbnailUrl || (r as any).coverImage,
           });
         }
       }
@@ -337,7 +337,7 @@ function MySubmissionsPage() {
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
-      <LinearGradient colors={[(COLORS as unknown).navy, COLORS.navyLight]} style={styles.header}>
+      <LinearGradient colors={[(COLORS as any).navy, COLORS.navyLight]} style={styles.header}>
         {/* Nav bar */}
         <View style={styles.navBar}>
           <Pressable
@@ -443,7 +443,7 @@ function MySubmissionsPage() {
                   ? 'Upload photos, create reels, vote in polls, or comment on offers to earn coins!'
                   : 'Nothing here yet. Start contributing to earn rewards!'}
               </Text>
-              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as unknown as string)}>
+              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as any as string)}>
                 <Ionicons name="add-circle" size={18} color={COLORS.white} />
                 <Text style={styles.emptyCtaText}>Start Earning</Text>
               </Pressable>
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   filterTabActive: {
-    backgroundColor: (COLORS as unknown).navy,
+    backgroundColor: (COLORS as any).navy,
   },
   filterTabText: {
     ...Typography.bodySmall,
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     lineHeight: 19,
     marginBottom: 2,
   },
@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: (COLORS as unknown).navy,
+    backgroundColor: (COLORS as any).navy,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,

@@ -87,7 +87,7 @@ const EarnLikeThem = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as any as string);
   };
 
   const formatNumber = (num: number): string => {
@@ -131,7 +131,7 @@ const EarnLikeThem = () => {
                   </LinearGradient>
                 </View>
                 <View style={[styles.stepIconContainer, { backgroundColor: step.bgColor }]}>
-                  <Ionicons name={step.icon as unknown} size={22} color={step.color} />
+                  <Ionicons name={step.icon as any} size={22} color={step.color} />
                 </View>
                 <View style={styles.stepContent}>
                   <Text style={styles.stepTitle}>{step.title}</Text>

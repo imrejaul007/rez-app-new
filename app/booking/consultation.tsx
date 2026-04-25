@@ -179,7 +179,7 @@ function ConsultationBookingScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ThemedText style={(styles as unknown).backButtonText}>Go Back</ThemedText>
+          <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
     );
@@ -257,13 +257,13 @@ function ConsultationBookingScreen() {
         customerEmail: email.trim() || patientName.trim().toLowerCase().replace(/\s+/g, '') + '@temp.com', // Email is required by API
       };
 
-      const response = await consultationApi.createConsultation(consultationData as unknown);
+      const response = await consultationApi.createConsultation(consultationData as any);
 
       if (response.success && response.data) {
         platformAlertConfirm(
           'Consultation Confirmed!',
           `Your ${consultationType?.name} consultation has been successfully booked!\n\n` +
-            `Confirmation Code: ${(response.data as unknown).confirmationCode || 'Pending'}\n` +
+            `Confirmation Code: ${(response.data as any).confirmationCode || 'Pending'}\n` +
             `Date: ${formatDate(selectedDate)}\n` +
             `Time: ${selectedTime}\n` +
             `Patient: ${patientName}\n\n` +
@@ -274,7 +274,7 @@ function ConsultationBookingScreen() {
       } else {
         platformAlertSimple(
           'Booking Failed',
-          (response as unknown).error || 'Unable to book consultation. Please try again.',
+          (response as any).error || 'Unable to book consultation. Please try again.',
         );
       }
     } catch (err: any) {

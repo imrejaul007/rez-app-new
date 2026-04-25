@@ -43,7 +43,7 @@ function StoreActionButtons({ storeId, onScanPay, onUploadBill, onViewOffers }: 
     if (onUploadBill) {
       onUploadBill();
     } else {
-      router.push(storeId ? (`/bill-upload?storeId=${storeId}` as unknown as string) : '/bill-upload');
+      router.push(storeId ? (`/bill-upload?storeId=${storeId}` as any as string) : '/bill-upload');
     }
   };
 
@@ -52,7 +52,7 @@ function StoreActionButtons({ storeId, onScanPay, onUploadBill, onViewOffers }: 
     if (onViewOffers) {
       onViewOffers();
     } else if (storeId) {
-      router.push(`/store/${storeId}` as unknown as string);
+      router.push(`/store/${storeId}` as any as string);
     }
   };
 

@@ -171,15 +171,15 @@ function OrderConfirmationPage() {
   const handleTrackOrder = () => {
     if (order) {
       const oid = order._id || order.id;
-      const ft = (order as unknown as OrderWithExtras).fulfillmentType;
+      const ft = (order as any as OrderWithExtras).fulfillmentType;
       if (ft === 'pickup') {
-        router.push(`/pickup-tracking?orderId=${oid}` as unknown as string);
+        router.push(`/pickup-tracking?orderId=${oid}` as any as string);
       } else if (ft === 'drive_thru') {
-        router.push(`/drivethru-tracking?orderId=${oid}` as unknown as string);
+        router.push(`/drivethru-tracking?orderId=${oid}` as any as string);
       } else if (ft === 'dine_in') {
-        router.push(`/dinein-tracking?orderId=${oid}` as unknown as string);
+        router.push(`/dinein-tracking?orderId=${oid}` as any as string);
       } else {
-        router.push(`/tracking?orderId=${oid}` as unknown as string);
+        router.push(`/tracking?orderId=${oid}` as any as string);
       }
     }
   };
@@ -192,12 +192,12 @@ function OrderConfirmationPage() {
   // Review eligibility depends on fulfillment type:
   // - dine_in/pickup/drive_thru: immediate (user is at or near the store)
   // - delivery: after status = 'delivered' (need to receive product first)
-  const storeData = order?.store as unknown as StoreDataFields;
-  const fulfillmentType = (order as unknown as OrderWithExtras)?.fulfillmentType || 'delivery';
+  const storeData = order?.store as any as StoreDataFields;
+  const fulfillmentType = (order as any as OrderWithExtras)?.fulfillmentType || 'delivery';
   const isImmediateExperience = ['dine_in', 'pickup', 'drive_thru'].includes(fulfillmentType);
   const isOrderCompleted = order?.status === 'delivered';
   const rewards = usePostOrderRewards({
-    orderId: order?._id || (order as unknown as OrderWithExtras)?.id,
+    orderId: order?._id || (order as any as OrderWithExtras)?.id,
     storeId: typeof storeData === 'string' ? storeData : storeData?._id || '',
     storeName: typeof storeData === 'string' ? storeData : storeData?.name || 'Store',
     cashbackEarned: order?.totals?.cashback || 0,
@@ -306,7 +306,7 @@ function OrderConfirmationPage() {
             currencySymbol={currencySymbol}
             totalSavedAllTime={savingsInsights?.totalSaved}
             delay={800}
-            onViewWallet={() => router.push('/wallet-screen' as unknown as string)}
+            onViewWallet={() => router.push('/wallet-screen' as any as string)}
           />
         )}
 
@@ -344,8 +344,8 @@ function OrderConfirmationPage() {
         {/* Fulfillment / Delivery Information */}
         <Animated.View style={[styles.card, contentAnimStyle]}>
           {/* Fulfillment type badge */}
-          {(order as unknown as OrderWithExtras).fulfillmentType &&
-            (order as unknown as OrderWithExtras).fulfillmentType !== 'delivery' && (
+          {(order as any as OrderWithExtras).fulfillmentType &&
+            (order as any as OrderWithExtras).fulfillmentType !== 'delivery' && (
               <View style={{ flexDirection: 'row', marginBottom: 12 }}>
                 <View
                   style={{
@@ -360,11 +360,11 @@ function OrderConfirmationPage() {
                 >
                   <Ionicons
                     name={
-                      (order as unknown as OrderWithExtras).fulfillmentType === 'pickup'
+                      (order as any as OrderWithExtras).fulfillmentType === 'pickup'
                         ? 'bag-handle-outline'
-                        : (order as unknown as OrderWithExtras).fulfillmentType === 'drive_thru'
+                        : (order as any as OrderWithExtras).fulfillmentType === 'drive_thru'
                           ? 'car-outline'
-                          : (order as unknown as OrderWithExtras).fulfillmentType === 'dine_in'
+                          : (order as any as OrderWithExtras).fulfillmentType === 'dine_in'
                             ? 'restaurant-outline'
                             : 'bicycle-outline'
                     }
@@ -372,11 +372,11 @@ function OrderConfirmationPage() {
                     color={colors.nileBlue}
                   />
                   <ThemedText style={{ ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue }}>
-                    {(order as unknown as OrderWithExtras).fulfillmentType === 'pickup'
+                    {(order as any as OrderWithExtras).fulfillmentType === 'pickup'
                       ? 'Store Pickup'
-                      : (order as unknown as OrderWithExtras).fulfillmentType === 'drive_thru'
+                      : (order as any as OrderWithExtras).fulfillmentType === 'drive_thru'
                         ? 'Drive-Thru'
-                        : (order as unknown as OrderWithExtras).fulfillmentType === 'dine_in'
+                        : (order as any as OrderWithExtras).fulfillmentType === 'dine_in'
                           ? 'Dine-In'
                           : 'Delivery'}
                   </ThemedText>
@@ -385,25 +385,25 @@ function OrderConfirmationPage() {
             )}
 
           <ThemedText style={styles.cardTitle}>
-            {(order as unknown as OrderWithExtras).fulfillmentType === 'pickup'
+            {(order as any as OrderWithExtras).fulfillmentType === 'pickup'
               ? 'Pickup Information'
-              : (order as unknown as OrderWithExtras).fulfillmentType === 'drive_thru'
+              : (order as any as OrderWithExtras).fulfillmentType === 'drive_thru'
                 ? 'Drive-Thru Information'
-                : (order as unknown as OrderWithExtras).fulfillmentType === 'dine_in'
+                : (order as any as OrderWithExtras).fulfillmentType === 'dine_in'
                   ? 'Dine-In Information'
                   : 'Delivery Information'}
           </ThemedText>
 
           {/* Dine-in: show table number */}
-          {(order as unknown as OrderWithExtras).fulfillmentType === 'dine_in' &&
-            (order as unknown as OrderWithExtras).fulfillmentDetails?.tableNumber && (
+          {(order as any as OrderWithExtras).fulfillmentType === 'dine_in' &&
+            (order as any as OrderWithExtras).fulfillmentDetails?.tableNumber && (
               <View style={styles.deliveryInfo}>
                 <View style={styles.deliveryIconContainer}>
                   <Ionicons name="restaurant" size={24} color={colors.nileBlue} />
                 </View>
                 <View style={styles.deliveryDetails}>
                   <ThemedText style={styles.deliveryAddress}>
-                    Table {(order as unknown as OrderWithExtras).fulfillmentDetails?.tableNumber}
+                    Table {(order as any as OrderWithExtras).fulfillmentDetails?.tableNumber}
                   </ThemedText>
                   <ThemedText style={styles.deliveryAddressText}>Order from your table</ThemedText>
                 </View>
@@ -411,19 +411,19 @@ function OrderConfirmationPage() {
             )}
 
           {/* Pickup / Drive-Thru: show store address */}
-          {((order as unknown as OrderWithExtras).fulfillmentType === 'pickup' ||
-            (order as unknown as OrderWithExtras).fulfillmentType === 'drive_thru') && (
+          {((order as any as OrderWithExtras).fulfillmentType === 'pickup' ||
+            (order as any as OrderWithExtras).fulfillmentType === 'drive_thru') && (
             <View style={styles.deliveryInfo}>
               <View style={styles.deliveryIconContainer}>
                 <Ionicons name="storefront-outline" size={24} color={colors.nileBlue} />
               </View>
               <View style={styles.deliveryDetails}>
                 <ThemedText style={styles.deliveryAddress}>
-                  {(order as unknown as OrderWithExtras).fulfillmentDetails?.storeAddress || 'Store Address'}
+                  {(order as any as OrderWithExtras).fulfillmentDetails?.storeAddress || 'Store Address'}
                 </ThemedText>
-                {(order as unknown as OrderWithExtras).fulfillmentDetails?.vehicleInfo && (
+                {(order as any as OrderWithExtras).fulfillmentDetails?.vehicleInfo && (
                   <ThemedText style={styles.deliveryAddressText}>
-                    Vehicle: {(order as unknown as OrderWithExtras).fulfillmentDetails?.vehicleInfo}
+                    Vehicle: {(order as any as OrderWithExtras).fulfillmentDetails?.vehicleInfo}
                   </ThemedText>
                 )}
               </View>
@@ -431,8 +431,8 @@ function OrderConfirmationPage() {
           )}
 
           {/* Delivery: show delivery address (existing) */}
-          {(!(order as unknown as OrderWithExtras).fulfillmentType ||
-            (order as unknown as OrderWithExtras).fulfillmentType === 'delivery') && (
+          {(!(order as any as OrderWithExtras).fulfillmentType ||
+            (order as any as OrderWithExtras).fulfillmentType === 'delivery') && (
             <View style={styles.deliveryInfo}>
               <View style={styles.deliveryIconContainer}>
                 <Ionicons name="location" size={24} color={Colors.brand.purpleLight} />
@@ -454,11 +454,11 @@ function OrderConfirmationPage() {
           <View style={styles.estimatedDelivery}>
             <Ionicons name="time-outline" size={20} color={Colors.gold} />
             <ThemedText style={styles.estimatedDeliveryText}>
-              {(order as unknown as OrderWithExtras).fulfillmentType === 'pickup'
+              {(order as any as OrderWithExtras).fulfillmentType === 'pickup'
                 ? 'Estimated Ready Time'
-                : (order as unknown as OrderWithExtras).fulfillmentType === 'drive_thru'
+                : (order as any as OrderWithExtras).fulfillmentType === 'drive_thru'
                   ? 'Estimated Wait'
-                  : (order as unknown as OrderWithExtras).fulfillmentType === 'dine_in'
+                  : (order as any as OrderWithExtras).fulfillmentType === 'dine_in'
                     ? 'Preparing your order'
                     : `Estimated Delivery: ${getEstimatedDelivery()}`}
             </ThemedText>
@@ -527,22 +527,22 @@ function OrderConfirmationPage() {
               </View>
             )}
 
-            {(order.payment as unknown as OrderPaymentExtended)?.coinsUsed &&
+            {(order.payment as any as OrderPaymentExtended)?.coinsUsed &&
               // FM-05 FIX: 'wasilCoins' is the old name for REZ coins — never populated by backend.
               // Replaced with 'rezCoins' (the correct canonical field name).
-              (((order.payment as unknown as OrderPaymentExtended).coinsUsed?.rezCoins || 0) > 0 ||
-                ((order.payment as unknown as OrderPaymentExtended).coinsUsed?.promoCoins || 0) > 0 ||
-                ((order.payment as unknown as OrderPaymentExtended).coinsUsed?.storePromoCoins || 0) > 0) && (
+              (((order.payment as any as OrderPaymentExtended).coinsUsed?.rezCoins || 0) > 0 ||
+                ((order.payment as any as OrderPaymentExtended).coinsUsed?.promoCoins || 0) > 0 ||
+                ((order.payment as any as OrderPaymentExtended).coinsUsed?.storePromoCoins || 0) > 0) && (
                 <View style={styles.summaryRow}>
                   <ThemedText style={[styles.summaryLabel, { color: Colors.brand.purpleLight }]}>
                     💎 Coins Used
-                    {((order?.payment as unknown as OrderPaymentExtended)?.coinsUsed?.storePromoCoins ?? 0) > 0
+                    {((order?.payment as any as OrderPaymentExtended)?.coinsUsed?.storePromoCoins ?? 0) > 0
                       ? ' (includes Store Promo)'
                       : ''}
                   </ThemedText>
                   <ThemedText style={[styles.summaryValue, { color: Colors.brand.purpleLight }]}>
                     -{currencySymbol}
-                    {(order.payment as unknown as OrderPaymentExtended).coinsUsed?.totalCoinsValue || 0}
+                    {(order.payment as any as OrderPaymentExtended).coinsUsed?.totalCoinsValue || 0}
                   </ThemedText>
                 </View>
               )}

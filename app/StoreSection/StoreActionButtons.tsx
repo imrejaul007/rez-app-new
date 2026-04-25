@@ -177,14 +177,14 @@ function StoreActionButtons({
     switch (buttonGroup) {
       case 'buy-lock':
         // Only show Buy, Lock, Booking buttons
-        return defaultButtonConfigs as unknown[];
+        return defaultButtonConfigs as any[];
       case 'store-actions':
         // Only show Call, Product, Location buttons
-        return storeActionButtonConfigs as unknown[];
+        return storeActionButtonConfigs as any[];
       case 'all':
       default:
         // Show all buttons - store actions first, then buy/lock
-        return [...storeActionButtonConfigs, ...defaultButtonConfigs] as unknown[];
+        return [...storeActionButtonConfigs, ...defaultButtonConfigs] as any[];
     }
   }, [storeActionButtonConfigs, defaultButtonConfigs, buttonGroup]);
 
@@ -284,8 +284,8 @@ function StoreActionButtons({
   // Render individual button with animation
   const renderButton = useCallback(
     (config: (typeof buttonConfigs)[0]) => {
-      const isCurrentlyLoading = (buttonState.loadingStates as unknown as Record<string, boolean>)[config.id];
-      const hasError = (buttonState.errorStates as unknown as Record<string, string | null>)[config.id] !== null;
+      const isCurrentlyLoading = (buttonState.loadingStates as any as Record<string, boolean>)[config.id];
+      const hasError = (buttonState.errorStates as any as Record<string, string | null>)[config.id] !== null;
       const isAnyLoading = stateManager.hasAnyLoading();
       const shouldDisable = !config.isEnabled || isAnyLoading;
       const scaleAnim = getAnimRef(config.id);
@@ -294,7 +294,7 @@ function StoreActionButtons({
       return (
         <Animated.View
           key={config.id}
-          style={[scaleStyle, { width: layout.buttonWidth } as unknown as StyleProp<ViewStyle>]}
+          style={[scaleStyle, { width: layout.buttonWidth } as any as StyleProp<ViewStyle>]}
         >
           <Pressable
             style={[styles.buttonContainer, shouldDisable && styles.buttonDisabled, buttonStyle]}
@@ -329,7 +329,7 @@ function StoreActionButtons({
                     name={
                       config.id === 'lock' && !config.isEnabled
                         ? 'lock-closed'
-                        : (config.iconName as unknown as keyof typeof Ionicons.glyphMap)
+                        : (config.iconName as any as keyof typeof Ionicons.glyphMap)
                     }
                     size={IconSize.md}
                     color={config.textColor || colors.text.white}

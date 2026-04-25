@@ -143,14 +143,14 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as unknown as string)._id || (store as unknown).id,
-            storeName: store.name,
-            storeLogo: store.logo || '',
+            storeId: ((store as any)._id || (store as any).id || store) as string,
+            storeName: (store as any).name || '',
+            storeLogo: (store as any).logo || '',
             ...(tableNumber ? { tableNumber } : {}),
           },
-        } as unknown);
+        } as any);
       } else {
-        router.push('/pay-in-store' as unknown as string);
+        router.push('/pay-in-store' as any as string);
       }
       return;
     }
@@ -191,13 +191,13 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as unknown as string)._id || (store as unknown).id,
-            storeName: store.name,
-            storeLogo: store.logo || '',
+            storeId: ((store as any)._id || (store as any).id || store) as string,
+            storeName: (store as any).name || '',
+            storeLogo: (store as any).logo || '',
           },
-        } as unknown);
+        } as any);
       } else {
-        router.push('/pay-in-store' as unknown as string);
+        router.push('/pay-in-store' as any as string);
       }
       return;
     }
@@ -236,7 +236,7 @@ function RootLayout() {
     // 2. Store check-in deep links: rezapp://checkin?storeId=XYZ
     if (path === 'checkin' && params.storeId) {
       try {
-        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}` as unknown);
+        router.push(`/qr-checkin?storeId=${encodeURIComponent(params.storeId)}` as any);
       } catch {
         // If router isn't ready, navigate to tab root
       }
@@ -246,7 +246,7 @@ function RootLayout() {
     // 3. Generic route deep links (notification-tapped links, etc.)
     if (path && path !== '') {
       try {
-        router.push(`/${path}` as unknown as string);
+        router.push(`/${path}` as any as string);
       } catch {
         // Ignore navigation errors if route doesn't exist
       }
@@ -302,7 +302,7 @@ function RootLayout() {
 
           if (data?.route && typeof data.route === 'string') {
             try {
-              router.push(data.route as unknown as string);
+              router.push(data.route as any as string);
             } catch {
               // Ignore if route is invalid
             }
@@ -380,7 +380,7 @@ function RootLayout() {
       }
 
       // Check version (requires expo-constants)
-      const currentVersion = (Constants as unknown).expoConfig?.version || '1.0.0';
+      const currentVersion = (Constants as any).expoConfig?.version || '1.0.0';
       if (data?.forceUpdate && compareVersions(currentVersion, data.minVersion) < 0) {
         router.replace('/update-required');
       }

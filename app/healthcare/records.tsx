@@ -772,7 +772,7 @@ const HealthRecordsPage: React.FC = () => {
           renderItem={renderRecordItem}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-          contentContainerStyle={[styles.recordsList, { paddingBottom: 120 }] as unknown}
+          contentContainerStyle={[styles.recordsList, { paddingBottom: 120 }] as any}
           estimatedItemSize={80}
         />
       )}

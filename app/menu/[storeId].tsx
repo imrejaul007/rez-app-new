@@ -216,7 +216,7 @@ function MenuPage() {
               router.replace({
                 pathname: '/dinein-tracking',
                 params: { orderId: response.data._id },
-              } as unknown as string);
+              } as any as string);
             } else {
               // eslint-disable-next-line no-unused-expressions
               router.canGoBack() ? router.back() : router.replace('/(tabs)');

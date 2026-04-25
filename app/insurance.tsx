@@ -157,7 +157,7 @@ function InsurancePage() {
   const handlePlanPress = useCallback(
     (plan: InsurancePlan) => {
       // No detail page exists — stay on insurance listing page
-      router.push('/insurance' as unknown as string);
+      router.push('/insurance' as any as string);
     },
     [router],
   );
@@ -206,7 +206,7 @@ function InsurancePage() {
                     onPress={() => handleTypePress(t.type)}
                   >
                     <View style={[styles.typeIcon, { backgroundColor: meta.color + '20' }]}>
-                      <Ionicons name={meta.icon as unknown} size={24} color={meta.color} />
+                      <Ionicons name={meta.icon as any} size={24} color={meta.color} />
                     </View>
                     <Text style={styles.typeName}>{meta.label}</Text>
                     <Text style={styles.typeCashback}>Up to {t.maxCashback}% cashback</Text>
@@ -327,7 +327,7 @@ function InsurancePage() {
                 <CachedImage source={{ uri: item.providerLogo }} style={styles.providerLogoSmall} />
               ) : (
                 <View style={[styles.providerIconFallback, { backgroundColor: meta.color + '20' }]}>
-                  <Ionicons name={meta.icon as unknown} size={20} color={meta.color} />
+                  <Ionicons name={meta.icon as any} size={20} color={meta.color} />
                 </View>
               )}
               <View style={{ flex: 1 }}>
@@ -346,7 +346,7 @@ function InsurancePage() {
 
           {item.claimSettlementRatio > 0 && (
             <View style={styles.claimRatioRow}>
-              <Ionicons name={'checkmark-shield' as unknown} size={14} color={colors.successScale[400]} />
+              <Ionicons name={'checkmark-shield' as any} size={14} color={colors.successScale[400]} />
               <Text style={styles.claimRatioText}>{item.claimSettlementRatio.toFixed(1)}% claim settlement ratio</Text>
             </View>
           )}
@@ -414,7 +414,7 @@ function InsurancePage() {
             { icon: 'headset-outline', title: '24/7 Support', desc: 'Always available' },
           ].map((item, index) => (
             <View key={index} style={styles.whyCard}>
-              <Ionicons name={item.icon as unknown} size={28} color={Colors.gold} />
+              <Ionicons name={item.icon as any} size={28} color={Colors.gold} />
               <Text style={styles.whyTitle}>{item.title}</Text>
               <Text style={styles.whyDesc}>{item.desc}</Text>
             </View>

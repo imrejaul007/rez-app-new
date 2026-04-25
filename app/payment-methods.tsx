@@ -34,7 +34,7 @@ function PaymentMethodsPage() {
   const [cardNumber, setCardNumber] = useState('');
 
   // Get store ID from cart items
-  const storeId = (cartState.items[0] as unknown)?.store?.id || state.store?.id;
+  const storeId = (cartState.items[0] as any)?.store?.id || state.store?.id;
   const orderValue = state.billSummary?.totalPayable || 0;
 
   // Auto-apply card offer when card number is entered

@@ -249,7 +249,7 @@ function BonusZonePage() {
             {/* Claim History Link */}
             <Pressable
               style={styles.historyLink}
-              onPress={() => router.push('/bonus-zone-history' as unknown as string)}
+              onPress={() => router.push('/bonus-zone-history' as any as string)}
             >
               <Ionicons name="receipt-outline" size={18} color={colors.text.tertiary} />
               <Text style={styles.historyLinkText}>View Claim History</Text>

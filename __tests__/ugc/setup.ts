@@ -311,12 +311,12 @@ export const createMockRouter = () => ({
 export const resetAllMocks = () => {
   jest.clearAllMocks();
 
-  // Reset mock implementations
-  mockApiClient.get.mockReset?.();
-  mockApiClient.post.mockReset?.();
-  mockApiClient.patch.mockReset?.();
-  mockApiClient.delete.mockReset?.();
-  mockApiClient.uploadFile.mockReset?.();
+  // Reset mock implementations - cast to any to access mockReset
+  (mockApiClient as any).get?.mockReset?.();
+  (mockApiClient as any).post?.mockReset?.();
+  (mockApiClient as any).patch?.mockReset?.();
+  (mockApiClient as any).delete?.mockReset?.();
+  (mockApiClient as any).uploadFile?.mockReset?.();
 
   mockVideosApi.getVideos.mockReset();
   mockVideosApi.getVideoById.mockReset();

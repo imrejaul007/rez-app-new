@@ -166,7 +166,7 @@ function NextActionsScreen() {
             <Pressable
               key={action.id || index}
               style={styles.actionCard}
-              onPress={() => router.push(action.deepLink as unknown as string)}
+              onPress={() => router.push(action.deepLink as any as string)}
             >
               <View style={styles.actionHeader}>
                 <Text style={styles.actionTitle}>{action.title}</Text>

@@ -116,7 +116,7 @@ function BirthdayRewardsPage() {
   }, [isAuthenticated, loadBirthdayData]);
 
   const handleClaimGift = (deal: BirthdayDeal) => {
-    router.push(`/offers/${deal.id}` as unknown as string);
+    router.push(`/offers/${deal.id}` as any as string);
   };
 
   const renderGiftCard = (deal: BirthdayDeal) => (
@@ -194,7 +194,7 @@ function BirthdayRewardsPage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {loading && (

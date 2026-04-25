@@ -222,7 +222,7 @@ const SkeletonBlock = React.memo(
     return (
       <Animated.View
         style={[
-          { width: w as unknown, height: h, borderRadius: BorderRadius.lg, backgroundColor: '#E8E2DB' },
+          { width: w as any, height: h, borderRadius: BorderRadius.lg, backgroundColor: '#E8E2DB' },
           shimmerStyle,
           style,
         ]}
@@ -331,13 +331,13 @@ function ExtraCoinsPage() {
             ? {
                 ...prev,
                 hasCheckedInToday: true,
-                currentStreak: (result.data as unknown).streak || prev.currentStreak + 1,
+                currentStreak: (result.data as any).streak || prev.currentStreak + 1,
               }
             : prev,
         );
-        if ((result.data as unknown).coinsEarned) {
+        if ((result.data as any).coinsEarned) {
           setCoinBalance(
-            (prev) => prev + (result.data as unknown).coinsEarned + ((result.data as unknown).bonusEarned || 0),
+            (prev) => prev + (result.data as any).coinsEarned + ((result.data as any).bonusEarned || 0),
           );
         }
       }
@@ -353,13 +353,13 @@ function ExtraCoinsPage() {
   const handleCoinDropPress = useCallback(
     (drop: CoinDrop) => {
       const storeId = getStoreId(drop.storeId);
-      if (storeId) router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+      if (storeId) router.push(`/MainStorePage?storeId=${storeId}` as any as string);
     },
     [router],
   );
 
   const handleCampaignPress = useCallback(() => {
-    router.push('/offers/double-cashback' as unknown as string);
+    router.push('/offers/double-cashback' as any as string);
   }, [router]);
 
   const headerTop = Platform.OS === 'web' ? 0 : insets.top;
@@ -675,7 +675,7 @@ function ExtraCoinsPage() {
                   <Ionicons name="gift" size={16} color={colors.deepPink} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Bonus Zone</Text>
-                <Pressable onPress={() => router.push('/bonus-zone' as unknown as string)} style={styles.seeAllBtn}>
+                <Pressable onPress={() => router.push('/bonus-zone' as any as string)} style={styles.seeAllBtn}>
                   <Text style={styles.seeAllText}>View All</Text>
                   <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                 </Pressable>
@@ -701,7 +701,7 @@ function ExtraCoinsPage() {
                 <Pressable
                   key={method.id}
                   style={styles.earnCard}
-                  onPress={() => router.push(method.route as unknown as string)}
+                  onPress={() => router.push(method.route as any as string)}
                 >
                   <LinearGradient
                     colors={method.gradient}
@@ -772,7 +772,7 @@ function ExtraCoinsPage() {
           </View>
 
           {/* ─── Bottom CTA ───────────────────────────────── */}
-          <Pressable style={styles.bottomCta} onPress={() => router.push('/cash-store' as unknown as string)}>
+          <Pressable style={styles.bottomCta} onPress={() => router.push('/cash-store' as any as string)}>
             <LinearGradient
               colors={[colors.nileBlue, '#0F172A']}
               start={{ x: 0, y: 0 }}

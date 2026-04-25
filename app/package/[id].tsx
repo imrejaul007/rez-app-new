@@ -162,7 +162,7 @@ function PackageDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown;
+      const productData = response.data as any;
 
       // Check if this is a package service
       const isPackage =
@@ -350,17 +350,18 @@ function PackageDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown).requiresPayment) {
+    const dataAny = data as any as Record<string, unknown>;
+    if (dataAny.requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as string).totalAmount,
+          amount: dataAny.totalAmount as string,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown);
+      } as any);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -380,7 +381,7 @@ function PackageDetailsPage() {
       if (isInWishlist(packageData.id)) {
         await removeFromWishlist(packageData.id);
       } else {
-        await addToWishlist(packageData.id as unknown);
+        await addToWishlist(packageData.id as any);
       }
     } catch (error: any) {
       // silently handle
@@ -427,7 +428,7 @@ function PackageDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl as unknown}
+                  source={imageUrl as any}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => setImageError(true)}

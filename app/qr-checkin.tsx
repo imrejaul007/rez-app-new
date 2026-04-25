@@ -35,8 +35,8 @@ export default function QRCheckinScreen() {
       setLoadingStore(true);
       apiClient
         .get(`/qr-checkin/store/${storeId}`)
-        .then((r) => setStoreName((r as unknown).data?.name || ''))
-        .catch((err) => logger.error('QRCheckin: store lookup failed', { storeId, error: String(err) } as unknown))
+        .then((r) => setStoreName((r as any).data?.name || ''))
+        .catch((err) => logger.error('QRCheckin: store lookup failed', { storeId, error: String(err) } as any))
         .finally(() => setLoadingStore(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,7 +51,7 @@ export default function QRCheckinScreen() {
     setLoading(true);
     try {
       const res = await apiClient.post('/qr-checkin', { storeId, amount: amt, paymentMethod: 'cash' });
-      setResult((res as unknown).data?.data);
+      setResult((res as any).data?.data);
       setRatingTrigger((t) => t + 1);
       // Refresh streak after successful check-in (non-blocking)
       import('@/services/gamificationApi')

@@ -285,7 +285,7 @@ function OnlineVoucherPage() {
             style={styles.heroCard}
             onPress={() => {
               if (item.brandId) {
-                handlers.handleBrandSelect({ id: item.brandId } as unknown as Brand);
+                handlers.handleBrandSelect({ id: item.brandId } as any as Brand);
               }
             }}
           >
@@ -363,14 +363,14 @@ function OnlineVoucherPage() {
                             </LinearGradient>
                           </View>
 
-                          <ThemedText style={styles.heroTitle}>{(item as unknown).title || ''}</ThemedText>
+                          <ThemedText style={styles.heroTitle}>{(item as any).title || ''}</ThemedText>
 
                           {/* Location Badge */}
-                          {(item as unknown).store && (
+                          {(item as any).store && (
                             <View style={styles.heroLocationBadge}>
                               <View style={styles.heroLocationDot} />
                               <ThemedText style={styles.heroLocationText}>
-                                {((item as unknown).store as { name: string }).name}
+                                {((item as any).store as { name: string }).name}
                               </ThemedText>
                             </View>
                           )}
@@ -401,7 +401,7 @@ function OnlineVoucherPage() {
                             >
                               <View style={styles.heroIconTopShine} />
                               <ThemedText style={styles.heroEmoji}>
-                                {item.image || (item as unknown).logo || '🎁'}
+                                {item.image || (item as any).logo || '🎁'}
                               </ThemedText>
                             </LinearGradient>
                           </View>

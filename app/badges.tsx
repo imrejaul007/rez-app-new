@@ -381,7 +381,7 @@ const BadgesScreen: React.FC = () => {
             style={styles.backButton}
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
-            <Ionicons name="arrow-back" size={20} color={(COLORS as unknown).navy} />
+            <Ionicons name="arrow-back" size={20} color={(COLORS as any).navy} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Achievements</Text>
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     ...Typography.h4,
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptyText: {
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     ...Typography.h3,
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
   },
   statLabel: {
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 13,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.xs,
   },
   achievementDesc: {
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
   ctasTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.base,
   },
   ctaCard: {
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
   ctaTitle: {
     ...Typography.label,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: 2,
   },
   ctaSubtitle: {

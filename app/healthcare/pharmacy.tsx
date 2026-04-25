@@ -136,18 +136,18 @@ function PharmacyPage() {
 
       // Fetch pharmacies
       const pharmacyResponse = await apiClient.get('/stores?category=healthcare&type=pharmacy');
-      if (pharmacyResponse.success && (pharmacyResponse.data as unknown)?.stores) {
+      if (pharmacyResponse.success && (pharmacyResponse.data as any)?.stores) {
         if (!isMounted()) return;
-        setPharmacies((pharmacyResponse.data as unknown).stores);
+        setPharmacies((pharmacyResponse.data as any).stores);
       }
 
       // Fetch medicines/products
       const medicineResponse = await apiClient.get('/products?category=healthcare&type=medicine');
-      if (medicineResponse.success && (medicineResponse.data as unknown)?.products) {
+      if (medicineResponse.success && (medicineResponse.data as any)?.products) {
         if (!isMounted()) return;
-        setMedicines((medicineResponse.data as unknown).products);
+        setMedicines((medicineResponse.data as any).products);
         if (!isMounted()) return;
-        setFilteredMedicines((medicineResponse.data as unknown).products);
+        setFilteredMedicines((medicineResponse.data as any).products);
       }
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load pharmacy data. Please try again.');
@@ -287,7 +287,7 @@ function PharmacyPage() {
         const filename = prescriptionImage.split('/').pop() || `prescription_${Date.now()}.jpg`;
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : 'image/jpeg';
-        formData.append('file', { uri: prescriptionImage, name: filename, type } as unknown);
+        formData.append('file', { uri: prescriptionImage, name: filename, type } as any);
       }
 
       formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.images);
@@ -357,7 +357,7 @@ function PharmacyPage() {
         ),
         fulfillmentType: 'delivery',
       },
-    } as unknown);
+    } as any);
   };
 
   // Render category chip
@@ -372,7 +372,7 @@ function PharmacyPage() {
         accessibilityLabel={`${category.name} category`}
         accessibilityState={{ selected: isSelected }}
       >
-        <Ionicons name={category.icon as unknown} size={16} color={isSelected ? colors.text.inverse : category.color} />
+        <Ionicons name={category.icon as any} size={16} color={isSelected ? colors.text.inverse : category.color} />
         <Text style={[styles.categoryChipText, isSelected ? styles.categoryChipTextSelected : null]}>
           {category.name}
         </Text>

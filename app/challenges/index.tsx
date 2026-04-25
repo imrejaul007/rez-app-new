@@ -97,7 +97,7 @@ function ChallengesPage() {
       router.replace({
         pathname: '/sign-in',
         params: { returnTo: '/challenges' },
-      } as unknown as string);
+      } as any as string);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user]);
@@ -123,14 +123,14 @@ function ChallengesPage() {
       // Get all available challenges
       // apiClient returns { success, data, message } where data is the array
       const availableChallenges =
-        allChallengesRes.status === 'fulfilled' ? (allChallengesRes.value.data as unknown) || [] : [];
+        allChallengesRes.status === 'fulfilled' ? (allChallengesRes.value.data as any) || [] : [];
       logger.debug(`✅ [Challenges] Available challenges: ${availableChallenges.length}`);
       logger.debug('📋 [Challenges] Challenges:', availableChallenges);
 
       // Get user's progress
       // progressRes.data is { challenges: [], stats: {} }
       const userProgress =
-        progressRes.status === 'fulfilled' ? (progressRes.value.data as unknown)?.challenges || [] : [];
+        progressRes.status === 'fulfilled' ? (progressRes.value.data as any)?.challenges || [] : [];
       logger.debug(`📊 [Challenges] User progress: ${userProgress.length}`);
 
       // Merge available challenges with user progress
@@ -177,7 +177,7 @@ function ChallengesPage() {
       setCompletedChallenges(completed);
 
       // Map API stats to our interface and calculate completion rate
-      const apiStats = statsRes.status === 'fulfilled' ? (statsRes.value.data as unknown) || {} : {};
+      const apiStats = statsRes.status === 'fulfilled' ? (statsRes.value.data as any) || {} : {};
       const totalChallenges = (apiStats.challengesCompleted || 0) + (apiStats.challengesActive || 0);
       const completionRate = totalChallenges > 0 ? ((apiStats.challengesCompleted || 0) / totalChallenges) * 100 : 0;
 
@@ -240,11 +240,11 @@ function ChallengesPage() {
       const response = await apiClient.post(`/gamification/challenges/${challengeId}/claim`);
       logger.debug('🎁 [Claim Reward] Raw response:', response);
       logger.debug('🎁 [Claim Reward] Response.data:', response.data);
-      logger.debug('🎁 [Claim Reward] Response.data.success:', (response.data as unknown).success);
-      logger.debug('🎁 [Claim Reward] Response.success:', (response as unknown).success);
+      logger.debug('🎁 [Claim Reward] Response.data.success:', (response.data as any).success);
+      logger.debug('🎁 [Claim Reward] Response.success:', (response as any).success);
 
       // Handle both wrapped and unwrapped responses
-      const responseData: any = (response as unknown).success ? response : response.data;
+      const responseData: any = (response as any).success ? response : response.data;
       const isSuccess = responseData.success === true;
 
       logger.debug('🎁 [Claim Reward] Is success:', isSuccess);
@@ -290,7 +290,7 @@ function ChallengesPage() {
             await refreshWallet();
           } else {
             logger.error('⚠️ [Claim Reward] Sync failed but claim succeeded');
-            logger.error('⚠️ [Claim Reward] Sync error:', syncResult.error as unknown);
+            logger.error('⚠️ [Claim Reward] Sync error:', syncResult.error as any);
 
             showAlert(
               'Reward Claimed! 🎉',
@@ -386,11 +386,11 @@ function ChallengesPage() {
           style={styles.challengeCard}
           onPress={() => {
             // Navigate to challenge detail page
-            router.push(`/challenges/${challenge._id}` as unknown as string);
+            router.push(`/challenges/${challenge._id}` as any as string);
           }}
         >
           <LinearGradient
-            colors={(isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors) as unknown}
+            colors={(isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors) as any}
             style={styles.challengeGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -404,7 +404,7 @@ function ChallengesPage() {
                 <View style={styles.challengeTitleRow}>
                   <Text style={styles.challengeTitle}>{challenge.challenge.title}</Text>
                   <View style={[styles.typeBadge, isClaimed ? styles.typeBadgeClaimed : null]}>
-                    <Ionicons name={getTypeIcon(challenge.challenge.type) as unknown} size={12} color="white" />
+                    <Ionicons name={getTypeIcon(challenge.challenge.type) as any} size={12} color="white" />
                     <Text style={styles.typeBadgeText}>{challenge.challenge.type}</Text>
                   </View>
                 </View>
@@ -519,7 +519,7 @@ function ChallengesPage() {
               <Text style={styles.headerSubtitle}>Complete tasks, earn rewards!</Text>
             </View>
 
-            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as unknown as string)}>
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any as string)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}
@@ -569,7 +569,7 @@ function ChallengesPage() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Ionicons
-                    name={tab === 'completed' ? 'checkmark-circle' : (getTypeIcon(tab) as unknown)}
+                    name={tab === 'completed' ? 'checkmark-circle' : (getTypeIcon(tab) as any)}
                     size={18}
                     color={activeTab === tab ? colors.text.inverse : colors.text.tertiary}
                   />

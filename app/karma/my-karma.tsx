@@ -15,15 +15,19 @@ import {
   RefreshControl,
   Platform,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { KarmaHeader } from './_layout';
 import karmaService, { KarmaProfile, EarnRecord } from '@/services/karmaService';
 import { useIsAuthenticated } from '@/stores/selectors';
+import { useAuthStore } from '@/stores/authStore';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { showAlert } from '@/utils/alert';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
@@ -184,6 +188,7 @@ function KarmaMyKarmaScreen() {
   const [history, setHistory] = useState<EarnRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const fetchData = useCallback(
     async (isRefresh = false) => {
@@ -222,6 +227,37 @@ function KarmaMyKarmaScreen() {
     fetchData(true);
   };
 
+  const handleDownloadReport = async () => {
+    if (downloading || !profile) return;
+    setDownloading(true);
+    try {
+      const authState = useAuthStore.getState().state;
+      const userName = authState.user?.profile?.firstName ?? authState.user?.phoneNumber ?? 'Volunteer';
+      const { blob, filename } = await karmaService.downloadImpactReport(userName);
+      const uri = `${FileSystem.cacheDirectory}${filename}`;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64data = (reader.result as string).split(',')[1];
+        await FileSystem.writeAsStringAsync(uri, base64data, { encoding: FileSystem.EncodingType.Base64 });
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Share Impact Report' });
+        } else {
+          Alert.alert('Saved', `Report saved to ${uri}`);
+        }
+        if (isMounted()) setDownloading(false);
+      };
+      reader.onerror = () => {
+        if (isMounted()) setDownloading(false);
+        Alert.alert('Error', 'Failed to download report');
+      };
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      if (isMounted()) setDownloading(false);
+      Alert.alert('Error', 'Could not download your Impact Report. Please try again.');
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <View style={styles.container}>
@@ -230,7 +266,7 @@ function KarmaMyKarmaScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Sign in to track your karma journey</Text>
-          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as unknown as string)}>
+          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any as string)}>
             <Text style={styles.loginBtnText}>Sign In</Text>
           </Pressable>
         </View>
@@ -260,9 +296,23 @@ function KarmaMyKarmaScreen() {
         title="My Karma"
         showBack
         rightAction={
-          <Pressable style={styles.headerAction} onPress={() => router.push('/karma/wallet')} hitSlop={8}>
-            <Ionicons name="wallet" size={20} color={colors.text.inverse} />
-          </Pressable>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <Pressable
+              style={styles.headerAction}
+              onPress={handleDownloadReport}
+              hitSlop={8}
+              disabled={downloading}
+            >
+              {downloading ? (
+                <ActivityIndicator size="small" color={colors.text.inverse} />
+              ) : (
+                <Ionicons name="document-text" size={20} color={colors.text.inverse} />
+              )}
+            </Pressable>
+            <Pressable style={styles.headerAction} onPress={() => router.push('/karma/wallet')} hitSlop={8}>
+              <Ionicons name="wallet" size={20} color={colors.text.inverse} />
+            </Pressable>
+          </View>
         }
       />
 
@@ -336,6 +386,31 @@ function KarmaMyKarmaScreen() {
             <Ionicons name="wallet" size={20} color="#22C55E" />
             <Text style={styles.statValue}>Wallet</Text>
             <Text style={styles.statLabel}>View</Text>
+          </Pressable>
+        </View>
+
+        {/* Download Impact Report CTA */}
+        <View style={styles.reportCta}>
+          <View style={styles.reportCtaLeft}>
+            <Ionicons name="document-text-outline" size={24} color={KARMA_PURPLE} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.reportCtaTitle}>Download Impact Report</Text>
+              <Text style={styles.reportCtaSub}>Share your volunteer story</Text>
+            </View>
+          </View>
+          <Pressable
+            style={[styles.reportCtaBtn, downloading && styles.reportCtaBtnDisabled]}
+            onPress={handleDownloadReport}
+            disabled={downloading}
+          >
+            {downloading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="download" size={16} color="#fff" />
+                <Text style={styles.reportCtaBtnText}>Download</Text>
+              </>
+            )}
           </Pressable>
         </View>
 
@@ -497,6 +572,33 @@ const styles = StyleSheet.create({
   },
   statValue: { fontSize: Typography.body.fontSize, fontWeight: '800', color: colors.deepNavy, marginTop: 4 },
   statLabel: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2, textAlign: 'center' },
+
+  // Impact Report CTA
+  reportCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.text.inverse,
+    marginHorizontal: Spacing.base,
+    padding: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    marginBottom: Spacing.lg,
+  },
+  reportCtaLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: Spacing.md },
+  reportCtaTitle: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.deepNavy },
+  reportCtaSub: { fontSize: Typography.caption.fontSize, color: Colors.textSecondary, marginTop: 2 },
+  reportCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: KARMA_PURPLE,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: BorderRadius.md,
+    gap: 4,
+  },
+  reportCtaBtnDisabled: { opacity: 0.6 },
+  reportCtaBtnText: { fontSize: Typography.caption.fontSize, fontWeight: '700', color: '#fff' },
 
   // Trust
   trustSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },

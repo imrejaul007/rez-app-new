@@ -452,7 +452,7 @@ export default function HotelSearchScreen() {
                 hotel={hotel}
                 onPress={() =>
                   router.push({
-                    pathname: '/travel/hotels/[id]' as unknown,
+                    pathname: '/travel/hotels/[id]' as any,
                     params: { id: hotel.id, checkin, checkout, guests: String(guests) },
                   })
                 }

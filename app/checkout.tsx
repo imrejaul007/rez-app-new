@@ -167,7 +167,7 @@ function AOVRewardNudge({
         // Converting to paise once avoids off-by-one errors at tier boundaries.
         const amountPaise = Math.round(totalPayable * 100);
         const res = await api.get(`/merchant/aov-rewards/active?storeId=${storeId}&amountPaise=${amountPaise}`);
-        const data = (res.data as unknown as Record<string, unknown>)?.data as
+        const data = (res.data as any as Record<string, unknown>)?.data as
           | { nextTier?: { rewardType: string; rewardValue: number; label: string; amountToNextTierPaise: number } }
           | undefined;
         const tierAmount = (data as { amountToNextTierPaise?: number; nextTier?: object })?.amountToNextTierPaise;
@@ -231,8 +231,8 @@ function CheckoutPage() {
   const authUser = useAuthUser();
   // normalizeUserTier handles both backend UPPERCASE (referralTier) and frontend lowercase (loyaltyTier)
   const userLoyaltyTier = normalizeUserTier(
-    ((authUser as unknown as Record<string, unknown>)?.loyaltyTier as string | undefined) ||
-      ((authUser as unknown as Record<string, unknown>)?.referralTier as string | undefined),
+    ((authUser as any as Record<string, unknown>)?.loyaltyTier as string | undefined) ||
+      ((authUser as any as Record<string, unknown>)?.referralTier as string | undefined),
   );
   const savingsInsights = useSavingsInsights();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -420,7 +420,7 @@ function CheckoutPage() {
             <DeliverySlotPicker
               selectedSlot={state.fulfillment.deliverySlot}
               onSelectSlot={(slot: string) =>
-                actions.setFulfillmentDetails({ deliverySlot: slot } as unknown as StyleProp<ViewStyle>)
+                actions.setFulfillmentDetails({ deliverySlot: slot } as any)
               }
             />
           )}

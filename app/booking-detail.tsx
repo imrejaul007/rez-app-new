@@ -93,7 +93,7 @@ function BookingDetailPage() {
         <View style={styles.centered}>
           <Text style={styles.errorText}>Booking not found. Please try again.</Text>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as unknown as string))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as any as string))}
             style={styles.retryBtn}
           >
             <Text style={styles.retryBtnText}>Go Back</Text>
@@ -299,7 +299,7 @@ function BookingDetailPage() {
         <View style={styles.headerStatusRow}>
           {isTravel && (
             <View style={styles.headerCategoryBadge}>
-              <Ionicons name={categoryIcon as unknown} size={18} color={colors.text.inverse} />
+              <Ionicons name={categoryIcon as any} size={18} color={colors.text.inverse} />
               <Text style={styles.headerCategoryText}>{booking.serviceCategory?.name || 'Travel'}</Text>
             </View>
           )}
@@ -351,7 +351,7 @@ function BookingDetailPage() {
               </View>
               <View style={styles.routeLine}>
                 <View style={styles.routeDash} />
-                <Ionicons name={categoryIcon as unknown} size={18} color={colors.nileBlue} />
+                <Ionicons name={categoryIcon as any} size={18} color={colors.nileBlue} />
                 <View style={styles.routeDash} />
               </View>
               <View style={styles.routePoint}>
@@ -642,7 +642,7 @@ function BookingDetailPage() {
 function DetailRow({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
     <View style={styles.detailRow}>
-      <Ionicons name={icon as unknown} size={18} color="#94A3B8" />
+      <Ionicons name={icon as any} size={18} color="#94A3B8" />
       <Text style={styles.detailLabel}>{label}</Text>
       <Text style={styles.detailValue}>{value}</Text>
     </View>

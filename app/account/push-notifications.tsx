@@ -188,7 +188,7 @@ function PushNotificationsScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
       >
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

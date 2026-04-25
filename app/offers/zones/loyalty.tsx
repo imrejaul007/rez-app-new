@@ -254,7 +254,7 @@ function LoyaltyRewardsPage() {
 
   const handleMilestonePress = (milestone: LoyaltyMilestone) => {
     // Navigate to mission detail which shows milestone/mission progress
-    router.push(`/mission-detail?milestoneId=${milestone._id}` as unknown as string);
+    router.push(`/mission-detail?milestoneId=${milestone._id}` as any as string);
   };
 
   const renderMilestoneCard = (milestone: LoyaltyMilestone) => {
@@ -398,7 +398,7 @@ function LoyaltyRewardsPage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.nileBlue]} />}
       >
@@ -550,7 +550,7 @@ function LoyaltyRewardsPage() {
 
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown as string)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as any as string)}>
           <LinearGradient
             colors={Gradients.primary}
             start={{ x: 0, y: 0 }}

@@ -158,7 +158,7 @@ function ReviewEarnPage() {
             <View style={styles.tipsGrid}>
               {reviewTips.map((tip, idx) => (
                 <View key={idx} style={styles.tipItem}>
-                  <Ionicons name={tip.icon as unknown} size={16} color={Colors.warning} />
+                  <Ionicons name={tip.icon as any} size={16} color={Colors.warning} />
                   <Text style={styles.tipText}>{tip.tip}</Text>
                 </View>
               ))}

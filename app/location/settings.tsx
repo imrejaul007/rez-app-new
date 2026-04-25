@@ -104,7 +104,7 @@ function LocationSettingsScreen() {
     <View style={styles.settingItem}>
       <View style={styles.settingContent}>
         <View style={styles.settingIcon}>
-          <Ionicons name={icon as unknown} size={24} color={disabled ? '#C7C7CC' : colors.brand.ios} />
+          <Ionicons name={icon as any} size={24} color={disabled ? '#C7C7CC' : colors.brand.ios} />
         </View>
         <View style={styles.settingText}>
           <Text style={[styles.settingTitle, disabled ? styles.disabledText : null]}>{title}</Text>

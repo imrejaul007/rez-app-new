@@ -118,7 +118,7 @@ function AIRecommendedPage() {
       }>('/offers/recommendations', { page: pageNum, limit: PAGE_LIMIT });
 
       if (response.success && response.data) {
-        const rawOffers = Array.isArray(response.data) ? response.data : (response.data as unknown).data || [];
+        const rawOffers = Array.isArray(response.data) ? response.data : (response.data as any).data || [];
         const mapped = rawOffers.map(mapOffer);
         if (!isMounted()) return;
         setOffers((prev) => (append ? [...prev, ...mapped] : mapped));
@@ -129,7 +129,7 @@ function AIRecommendedPage() {
           setHasMore(rawOffers.length >= PAGE_LIMIT);
         } else {
           if (!isMounted()) return;
-          setHasMore((response.data as unknown).hasNextPage ?? rawOffers.length >= PAGE_LIMIT);
+          setHasMore((response.data as any).hasNextPage ?? rawOffers.length >= PAGE_LIMIT);
         }
       } else {
         if (!isMounted()) return;
@@ -195,13 +195,13 @@ function AIRecommendedPage() {
       const discountColor = getDiscountColor(item.discountValue);
 
       return (
-        <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as unknown as string)}>
+        <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any as string)}>
           <View style={styles.offerHeader}>
             {item.storeLogo ? (
-              <CachedImage source={{ uri: item.storeLogo }} style={styles.offerImage as unknown} />
+              <CachedImage source={{ uri: item.storeLogo }} style={styles.offerImage as any} />
             ) : (
               <View style={styles.offerImage}>
-                <Ionicons name={iconName as unknown} size={24} color={Colors.primary[600]} />
+                <Ionicons name={iconName as any} size={24} color={Colors.primary[600]} />
               </View>
             )}
             <View style={[styles.matchBadge, { backgroundColor: discountColor + '20' }]}>

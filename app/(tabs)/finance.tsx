@@ -14,7 +14,7 @@ export default function FinanceScreen() {
     try {
       const [scoreRes, offersRes] = await Promise.allSettled([financeApi.getScore(), financeApi.getOffers()]);
       if (scoreRes.status === 'fulfilled' && scoreRes.value?.data) setScore(scoreRes.value.data as CreditScore);
-      if (offersRes.status === 'fulfilled') setOffers((offersRes.value?.data as unknown)?.offers ?? []);
+      if (offersRes.status === 'fulfilled') setOffers((offersRes.value?.data as any)?.offers ?? []);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -28,7 +28,7 @@ export default function FinanceScreen() {
   async function handleScoreCheck() {
     try {
       const res = await financeApi.checkScoreAndEarnCoins();
-      const data = res.data as unknown;
+      const data = res.data as any;
       if (data?.coinsAwarded > 0) {
         showSuccess(`+${data.coinsAwarded} coins earned!`);
       }

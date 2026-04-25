@@ -118,19 +118,19 @@ const TravelCategoryPage: React.FC = () => {
     if (serviceId) {
       // Route to dedicated pages based on category
       if (category === 'flights') {
-        router.push(`/flight/${serviceId}` as unknown as string);
+        router.push(`/flight/${serviceId}` as any as string);
       } else if (category === 'hotels') {
-        router.push(`/hotel/${serviceId}` as unknown as string);
+        router.push(`/hotel/${serviceId}` as any as string);
       } else if (category === 'trains') {
-        router.push(`/train/${serviceId}` as unknown as string);
+        router.push(`/train/${serviceId}` as any as string);
       } else if (category === 'cab') {
-        router.push(`/cab/${serviceId}` as unknown as string);
+        router.push(`/cab/${serviceId}` as any as string);
       } else if (category === 'bus') {
-        router.push(`/bus/${serviceId}` as unknown as string);
+        router.push(`/bus/${serviceId}` as any as string);
       } else if (category === 'packages') {
-        router.push(`/package/${serviceId}` as unknown as string);
+        router.push(`/package/${serviceId}` as any as string);
       } else {
-        router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown as string);
+        router.push(`/product-page?cardId=${serviceId}&cardType=product` as any as string);
       }
     }
   };
@@ -140,21 +140,21 @@ const TravelCategoryPage: React.FC = () => {
     if (serviceId) {
       // Route to dedicated booking pages
       if (category === 'flights') {
-        router.push(`/flight/${serviceId}` as unknown as string);
+        router.push(`/flight/${serviceId}` as any as string);
       } else if (category === 'hotels') {
-        router.push(`/hotel/${serviceId}` as unknown as string);
+        router.push(`/hotel/${serviceId}` as any as string);
       } else if (category === 'trains') {
-        router.push(`/train/${serviceId}` as unknown as string);
+        router.push(`/train/${serviceId}` as any as string);
       } else if (category === 'cab') {
-        router.push(`/cab/${serviceId}` as unknown as string);
+        router.push(`/cab/${serviceId}` as any as string);
       } else if (category === 'bus') {
-        router.push(`/bus/${serviceId}` as unknown as string);
+        router.push(`/bus/${serviceId}` as any as string);
       } else if (category === 'packages') {
-        router.push(`/package/${serviceId}` as unknown as string);
+        router.push(`/package/${serviceId}` as any as string);
       } else {
         const storeId = service.store?._id;
         if (storeId) {
-          router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown as string);
+          router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as any as string);
         }
       }
     }
@@ -174,7 +174,7 @@ const TravelCategoryPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={gradientColors as unknown}
+        colors={gradientColors as any}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.header}

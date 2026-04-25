@@ -152,7 +152,7 @@ const TagFilterPage = () => {
   }, 0);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as any as string);
   };
 
   return (

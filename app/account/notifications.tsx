@@ -300,7 +300,7 @@ function NotificationsScreen() {
   const renderSection = (title: string, icon: string, children: React.ReactNode) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name={icon as unknown} size={24} color={Colors.info} />
+        <Ionicons name={icon as any} size={24} color={Colors.info} />
         <Text style={styles.sectionTitle}>{title}</Text>
       </View>
       {children}
@@ -411,7 +411,7 @@ function NotificationsScreen() {
         {/* Marketing Messages */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/marketing-inbox' as unknown as string)}
+          onPress={() => router.push('/account/marketing-inbox' as any as string)}
           accessibilityLabel="Marketing messages"
           accessibilityRole="button"
           accessibilityHint="Navigate to view promotional and merchant broadcast messages"

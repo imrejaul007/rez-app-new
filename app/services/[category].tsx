@@ -150,7 +150,7 @@ function ServiceCategoryPage() {
           const { services: newServices, category: categoryData, pagination } = response.data;
 
           if (!isMounted()) return;
-          setCategory(categoryData as unknown);
+          setCategory(categoryData as any);
 
           // Safely handle services array
           const servicesArray = Array.isArray(newServices) ? newServices : [];

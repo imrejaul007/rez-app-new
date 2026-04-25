@@ -125,7 +125,7 @@ export default function ExplorerScoreScreen() {
               <Text style={styles.scoreSubtext}>points</Text>
             </View>
             <View style={styles.tierBadge}>
-              <Ionicons name={tierInfo.icon as unknown} size={32} color="#fff" />
+              <Ionicons name={tierInfo.icon as any} size={32} color="#fff" />
             </View>
           </View>
 
@@ -176,7 +176,7 @@ export default function ExplorerScoreScreen() {
             const nextTierInfo = TIER_INFO[nextTierKey];
             return (
               <View style={styles.nextTierCard}>
-                <Ionicons name={nextTierInfo.icon as unknown} size={24} color={nextTierInfo.color} />
+                <Ionicons name={nextTierInfo.icon as any} size={24} color={nextTierInfo.color} />
                 <View style={styles.nextTierInfo}>
                   <Text style={styles.nextTierLabel}>Next Tier</Text>
                   <Text style={styles.nextTierName}>{nextTierInfo.name}</Text>

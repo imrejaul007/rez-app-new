@@ -99,7 +99,7 @@ function PaymentConfirmationPage() {
       <ThemedView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.error} />
 
-        <LinearGradient colors={[Colors.error, Colors.errorScale[700]] as unknown} style={styles.header}>
+        <LinearGradient colors={[Colors.error, Colors.errorScale[700]] as any} style={styles.header}>
           <View style={styles.headerContainer}>
             <Pressable
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -179,7 +179,7 @@ function PaymentConfirmationPage() {
     <ThemedView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={tierColor} />
 
-      <LinearGradient colors={tierGradient as unknown} style={styles.header}>
+      <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContainer}>
           <View style={styles.backButton} />
           <ThemedText style={styles.headerTitle}>Payment Successful</ThemedText>
@@ -216,7 +216,7 @@ function PaymentConfirmationPage() {
         {/* Subscription Details Card */}
         <View style={styles.detailsCard}>
           <View style={styles.tierBadge}>
-            <LinearGradient colors={tierGradient as unknown} style={styles.tierBadgeGradient}>
+            <LinearGradient colors={tierGradient as any} style={styles.tierBadgeGradient}>
               <Ionicons name={tier === 'vip' ? 'diamond' : 'star'} size={24} color={colors.text.inverse} />
               <ThemedText style={styles.tierBadgeText}>{TIER_NAMES[tier]} Member</ThemedText>
             </LinearGradient>
@@ -266,7 +266,7 @@ function PaymentConfirmationPage() {
             {getBenefits().map((benefit, index) => (
               <Animated.View key={index} style={[styles.benefitRow, benefitSlideStyle]}>
                 <View style={styles.benefitIcon}>
-                  <Ionicons name={benefit.icon as unknown} size={20} color={Colors.brand.purpleLight} />
+                  <Ionicons name={benefit.icon as any} size={20} color={Colors.brand.purpleLight} />
                 </View>
                 <ThemedText style={styles.benefitText}>{benefit.text}</ThemedText>
                 <Ionicons name="checkmark-circle" size={20} color={Colors.success} />

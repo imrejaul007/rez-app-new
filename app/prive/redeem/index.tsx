@@ -81,7 +81,7 @@ const SkeletonBlock = ({ width, height, style }: { width: number | string; heigh
     <Animated.View
       style={[
         {
-          width: width as unknown,
+          width: width as any,
           height,
           borderRadius: 8,
           backgroundColor: PRIVE_COLORS.transparent.white08,
@@ -326,7 +326,7 @@ function RedeemScreen() {
               <Text style={styles.zeroBalanceText}>
                 Earn coins through purchases, daily check-ins, referrals, and games.
               </Text>
-              <Pressable style={styles.earnButton} onPress={() => router.push('/prive' as unknown as string)}>
+              <Pressable style={styles.earnButton} onPress={() => router.push('/prive' as any as string)}>
                 <Text style={styles.earnButtonText}>Explore Ways to Earn</Text>
               </Pressable>
             </View>
@@ -352,14 +352,14 @@ function RedeemScreen() {
                 const scale = unlockAnim ? interpolate(unlockAnim.value, [0, 0.5, 1], [1, 1.05, 1]) : 1;
 
                 return (
-                  <Animated.View key={option.id} style={{ transform: [{ scale: scale as unknown }] }}>
+                  <Animated.View key={option.id} style={{ transform: [{ scale: scale as any }] }}>
                     <Pressable
                       style={[styles.optionCard, !hasEnoughCoins ? styles.optionCardDisabled : null]}
                       onPress={() => {
                         // Bug #4 fix: guard against double-tap opening duplicate screens
                         if (hasEnoughCoins && !isNavigating) {
                           setIsNavigating(true);
-                          router.push(option.route as unknown as string);
+                          router.push(option.route as any as string);
                         }
                       }}
                     >

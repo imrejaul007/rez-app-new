@@ -64,7 +64,7 @@ const HomeServicesPage: React.FC = () => {
   const handleServicePress = (service: HomeService) => {
     const serviceId = service._id || service.id;
     if (serviceId) {
-      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown as string);
+      router.push(`/product-page?cardId=${serviceId}&cardType=product` as any as string);
     }
   };
 
@@ -127,7 +127,7 @@ const HomeServicesPage: React.FC = () => {
                 <Pressable
                   key={cat.id}
                   style={styles.categoryCard}
-                  onPress={() => router.push(`/home-services/${cat.id}` as unknown as string)}
+                  onPress={() => router.push(`/home-services/${cat.id}` as any as string)}
                 >
                   <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                     {isIconUrl ? (

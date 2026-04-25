@@ -154,7 +154,7 @@ function ImageDetailScreen() {
           image: product.image || product.images?.[0] || '',
           cashback: product.cashbackPercent ? `${product.cashbackPercent}%` : '0%',
           category: 'products',
-        } as unknown);
+        } as any);
       } catch (error: any) {
         // silently handle
       }

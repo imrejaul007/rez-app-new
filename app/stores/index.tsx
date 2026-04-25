@@ -212,7 +212,7 @@ const StoresPage: React.FC = () => {
 
   // Handle store press
   const handleStorePress = (store: DisplayStore) => {
-    router.push(`/MainStorePage?storeId=${store.id}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${store.id}` as any as string);
   };
 
   // Loading state
@@ -267,7 +267,7 @@ const StoresPage: React.FC = () => {
               style={[styles.filterChip, selectedFilter === filter.id && { backgroundColor: config.color }]}
             >
               <Ionicons
-                name={filter.icon as unknown}
+                name={filter.icon as any}
                 size={14}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />

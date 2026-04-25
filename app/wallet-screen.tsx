@@ -468,7 +468,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
       icon: entry.icon,
       title: entry.title,
       subtitle: entry.subtitle,
-      onPress: () => router.push(entry.route as unknown as string),
+      onPress: () => router.push(entry.route as any as string),
       badge: 'VERIFIED',
     };
   }, [segment, router]);
@@ -562,8 +562,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     // Orange/warning if 1 < daysLeft ≤ 7
     return {
       backgroundColor: colors.warningScale?.[50] ?? '#FFF9E6',
-      borderColor: (colors.warningScale as unknown as Record<string, string>)?.[300] ?? '#FCD34D',
-      iconColor: (colors.warningScale as unknown as Record<string, string>)?.[600] ?? '#D97706',
+      borderColor: (colors.warningScale as any as Record<string, string>)?.[300] ?? '#FCD34D',
+      iconColor: (colors.warningScale as any as Record<string, string>)?.[600] ?? '#D97706',
     };
   }, [minDaysLeft]);
 
@@ -614,7 +614,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             </Text>
             <Pressable
               style={[styles.retryButton, { backgroundColor: Colors.brand.purple }]}
-              onPress={() => router.push('/onboarding/profile' as unknown as string)}
+              onPress={() => router.push('/onboarding/profile' as any as string)}
               accessibilityLabel="Complete your profile"
               accessibilityRole="button"
             >
@@ -1292,7 +1292,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
                 {/* Micro Pack CTA */}
                 <Pressable
-                  onPress={() => router.push('/value-packs?persona=student' as unknown as string)}
+                  onPress={() => router.push('/value-packs?persona=student' as any as string)}
                   style={{
                     backgroundColor: colors.background.primary,
                     borderRadius: 12,
@@ -1440,7 +1440,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
                 {/* Value Pack CTA */}
                 <Pressable
-                  onPress={() => router.push('/value-packs?persona=corporate' as unknown as string)}
+                  onPress={() => router.push('/value-packs?persona=corporate' as any as string)}
                   style={{
                     backgroundColor: colors.lightMustard,
                     borderRadius: 12,

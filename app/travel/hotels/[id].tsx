@@ -259,7 +259,7 @@ export default function HotelDetailScreen() {
       });
 
       router.push({
-        pathname: '/travel/hotels/checkout' as unknown,
+        pathname: '/travel/hotels/checkout' as any,
         params: {
           holdId: hold.holdId,
           bookingRef: hold.bookingRef,

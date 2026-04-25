@@ -41,7 +41,7 @@ function OrderTrackingScreen() {
     isReconnecting,
     reconnectAttempts,
     refresh,
-  } = useOrderTracking(orderId || null) as unknown;
+  } = useOrderTracking(orderId || null) as any;
 
   // Show notification when status changes
   useEffect(() => {

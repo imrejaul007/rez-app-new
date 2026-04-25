@@ -77,7 +77,7 @@ function LeaderboardPage() {
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setLeaderboardData(response.data as unknown);
+        setLeaderboardData(response.data as any);
       }
     } catch (error: any) {
       // silently handle
@@ -153,7 +153,7 @@ function LeaderboardPage() {
 
     return (
       <View style={[styles.medalContainer, { backgroundColor: `${medal.color}20` }]}>
-        <Ionicons name={medal.icon as unknown} size={24} color={medal.color} />
+        <Ionicons name={medal.icon as any} size={24} color={medal.color} />
       </View>
     );
   }, []);

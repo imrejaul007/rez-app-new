@@ -98,7 +98,7 @@ function BankOffersListScreen() {
   const handleOfferPress = (offer: BankOffer) => {
     const offerId = offer._id || offer.id;
     if (offerId) {
-      router.push(`/bank-offers/${offerId}` as unknown as string);
+      router.push(`/bank-offers/${offerId}` as any as string);
     }
   };
 

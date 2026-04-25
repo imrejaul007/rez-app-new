@@ -153,7 +153,7 @@ const ExploreMapPage = () => {
   }, [fetchNearbyStores]);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as any as string);
   };
 
   // Better marker positions that don't overlap
@@ -198,7 +198,7 @@ const ExploreMapPage = () => {
             onPress={() => setSelectedCategory(cat.id)}
           >
             <Ionicons
-              name={cat.icon as unknown}
+              name={cat.icon as any}
               size={16}
               color={selectedCategory === cat.id ? colors.background.primary : colors.neutral[500]}
             />
@@ -226,7 +226,7 @@ const ExploreMapPage = () => {
             showsMyLocationButton
           >
             {stores.slice(0, 20).map((store) => {
-              const coords = (store as unknown).location?.coordinates;
+              const coords = (store as any).location?.coordinates;
               if (!coords || coords.length < 2) return null;
               const [lng, lat] = coords;
               return (
@@ -399,7 +399,7 @@ const ExploreMapPage = () => {
           stores
             .filter((store) => {
               if (selectedCategory === 'all') return true;
-              const cat = (store as unknown).category?.toLowerCase() || '';
+              const cat = (store as any).category?.toLowerCase() || '';
               return cat.includes(selectedCategory);
             })
             .map((store, index) => {

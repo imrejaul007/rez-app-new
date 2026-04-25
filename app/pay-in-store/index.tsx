@@ -53,7 +53,7 @@ function PayInStoreScreen() {
     hasMore,
     loadMore,
     isLoadingMore,
-  } = usePaymentStoreSearch() as unknown;
+  } = usePaymentStoreSearch() as any;
 
   // Handle QR code or storeId from params
   useEffect(() => {

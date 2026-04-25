@@ -215,7 +215,7 @@ function CheckoutScreen() {
       financeApi
         .checkBnpl(cartTotal, 'checkout_' + Date.now())
         .then((res) => {
-          if ((res.data as unknown)?.eligible) setBnplOffer(res.data as unknown);
+          if ((res.data as any)?.eligible) setBnplOffer(res.data as any);
         })
         .catch(() => {});
     }

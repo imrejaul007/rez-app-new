@@ -246,7 +246,7 @@ const NearbyEarnPage = () => {
       <Pressable
         key={store._id}
         style={styles.storeCard}
-        onPress={() => router.push(`/store/${store._id}` as unknown as string)}
+        onPress={() => router.push(`/store/${store._id}` as any as string)}
       >
         {/* Store Logo / Placeholder */}
         <View style={styles.storeCardLeft}>
@@ -349,8 +349,8 @@ const NearbyEarnPage = () => {
             return (
               <Pressable
                 key={store._id}
-                style={[styles.mapMarker, { left: `${pos.left}%` as unknown, top: `${pos.top}%` as unknown }]}
-                onPress={() => router.push(`/store/${store._id}` as unknown as string)}
+                style={[styles.mapMarker, { left: `${pos.left}%` as any, top: `${pos.top}%` as any }]}
+                onPress={() => router.push(`/store/${store._id}` as any as string)}
               >
                 {/* Pulse */}
                 <View style={[styles.markerPulse, { backgroundColor: color.shadow }]} />
@@ -427,7 +427,7 @@ const NearbyEarnPage = () => {
             <Pressable
               key={store._id}
               style={styles.mapStoreItem}
-              onPress={() => router.push(`/store/${store._id}` as unknown as string)}
+              onPress={() => router.push(`/store/${store._id}` as any as string)}
             >
               <View style={[styles.mapStoreIcon, { backgroundColor: color.bg }]}>
                 <Text style={styles.mapStoreIconText}>{store.name?.charAt(0)?.toUpperCase() || 'S'}</Text>

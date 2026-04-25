@@ -270,7 +270,7 @@ function CampaignDetailPage() {
     if (!campaign) return;
 
     if (campaign.userState === 'claimed' || campaign.userState === 'limit_reached') {
-      router.push('/bonus-zone-history' as unknown as string);
+      router.push('/bonus-zone-history' as any as string);
       return;
     }
 
@@ -278,7 +278,7 @@ function CampaignDetailPage() {
       const { screen, params } = campaign.deepLink;
       if (screen) {
         router.push({
-          pathname: screen as unknown,
+          pathname: screen as any,
           params: {
             ...params,
             bonusCampaignSlug: campaign.slug,
@@ -452,7 +452,7 @@ function CampaignDetailPage() {
           {/* ===== USER STATE BADGE ===== */}
           {stateBadge && (
             <View style={[styles.stateBadgeCard, { backgroundColor: stateBadge.bg }]}>
-              <Ionicons name={stateBadge.icon as unknown} size={20} color={stateBadge.color} />
+              <Ionicons name={stateBadge.icon as any} size={20} color={stateBadge.color} />
               <Text style={[styles.stateBadgeLabel, { color: stateBadge.color }]}>{stateBadge.label}</Text>
             </View>
           )}

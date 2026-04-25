@@ -179,7 +179,7 @@ function AnalyticsScreen() {
             {Object.entries(data.pillarMomentum).map(([pillarId, info]: [string, any]) => {
               const pillarConfig = Object.values(PILLAR_CONFIG).find(
                 (p: any) => p.id === pillarId || p.label?.toLowerCase().includes(pillarId.toLowerCase()),
-              ) as unknown;
+              ) as any;
               const color = pillarConfig?.color || PRIVE_COLORS.text.secondary;
               return (
                 <View key={pillarId} style={styles.pillarRow}>

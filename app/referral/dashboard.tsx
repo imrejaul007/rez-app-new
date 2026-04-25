@@ -132,12 +132,12 @@ function ReferralDashboard() {
   };
 
   const handleShare = () => {
-    router.push('/referral/share' as unknown as string);
+    router.push('/referral/share' as any as string);
   };
 
   const handleViewLeaderboard = () => {
     // Link to main leaderboard page with referral type
-    router.push('/leaderboard' as unknown as string);
+    router.push('/leaderboard' as any as string);
   };
 
   const renderLeaderboardItem = useCallback(
@@ -191,7 +191,7 @@ function ReferralDashboard() {
       </View>
 
       {/* Header with Tier Badge */}
-      <LinearGradient colors={tierGradient as unknown} style={styles.header}>
+      <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.tierBadge}>
             <Ionicons name="ribbon" size={32} color={colors.background.primary} />
@@ -232,7 +232,7 @@ function ReferralDashboard() {
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBarBackground}>
               <LinearGradient
-                colors={TIER_GRADIENTS[progress.nextTier] as unknown}
+                colors={TIER_GRADIENTS[progress.nextTier] as any}
                 style={[styles.progressBarFill, { width: `${progress.progress}%` }]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}

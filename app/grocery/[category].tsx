@@ -324,7 +324,7 @@ const GroceryCategoryPage: React.FC = () => {
   const handleAddToCart = async (product: Product) => {
     try {
       const productId = product.id || product._id || '';
-      await cartApi.addToCart({ productId, quantity: 1 } as unknown);
+      await cartApi.addToCart({ productId, quantity: 1 } as any);
       // Could show a toast here
     } catch (err: any) {
       // silently handle
@@ -473,7 +473,7 @@ const GroceryCategoryPage: React.FC = () => {
                 <GroceryProductCard
                   key={product.id || product._id}
                   product={product}
-                  onAddToCart={handleAddToCart as unknown}
+                  onAddToCart={handleAddToCart as any}
                   showStore
                 />
               ))}
@@ -513,7 +513,7 @@ function getFallbackProducts(category: string): Product[] {
     store: { id: 'store-1', name: 'Local Store' },
     inStock: true,
     tags: config?.tags || [category],
-  })) as unknown;
+  })) as any;
 }
 
 const styles = StyleSheet.create({
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: (COLORS as unknown).navy,
+    color: (COLORS as any).navy,
     marginBottom: Spacing.sm,
   },
   emptyText: {

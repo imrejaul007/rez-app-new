@@ -331,7 +331,7 @@ function CartPage() {
               isPaidLock: item.isPaidLock,
             };
           })
-          .filter((item: unknown) => item !== null) as unknown as LockedProduct[];
+          .filter((item: unknown) => item !== null) as any as LockedProduct[];
         setLockedProducts(formattedLockedItems);
       }
     } catch (error: any) {
@@ -562,7 +562,7 @@ function CartPage() {
         return (
           <View style={styles.cardWrapper}>
             <LockedItem
-              item={item as unknown as LockedProduct}
+              item={item as any}
               onMoveToCart={handleMoveToCart}
               onUnlock={handleUnlockItem}
               showAnimation={true}
@@ -647,7 +647,7 @@ function CartPage() {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name={icon as unknown as keyof typeof Ionicons.glyphMap} size={64} color={colors.border.default} />
+        <Ionicons name={icon as any as keyof typeof Ionicons.glyphMap} size={64} color={colors.border.default} />
         <ThemedText style={styles.emptyTitle}>{title}</ThemedText>
         <ThemedText style={styles.emptySubtitle}>{subtitle}</ThemedText>
         <Pressable
@@ -695,7 +695,7 @@ function CartPage() {
             data={currentItems}
             renderItem={renderCartItem}
             keyExtractor={(item) => `${item.id}`}
-            contentContainerStyle={listContentContainerStyle as unknown as StyleProp<ViewStyle>}
+            contentContainerStyle={listContentContainerStyle as any as StyleProp<ViewStyle>}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
@@ -703,7 +703,7 @@ function CartPage() {
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
                   storeId={
-                    (productItems[0] as unknown as Record<string, unknown>)?.store?.id || productItems[0]?.productId
+                    (productItems[0] as any)?.store?.id || productItems[0]?.productId
                   }
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
@@ -713,26 +713,25 @@ function CartPage() {
           />
         ) : (
           <FlashList
-            {...({
-              data: currentItems,
-              renderItem: renderCartItem,
-              keyExtractor: (item) => `${item.id}`,
-              contentContainerStyle: listContentContainerStyle,
-              showsVerticalScrollIndicator: false,
-              keyboardShouldPersistTaps: 'handled',
-              ListEmptyComponent: renderEmptyState,
-              ListFooterComponent:
-                overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
-                  <CardOffersSection
-                    storeId={
-                      (productItems[0] as unknown as Record<string, unknown>)?.store?.id || productItems[0]?.productId
-                    }
-                    orderValue={overallTotal}
-                    onOfferApplied={handleCardOfferApplied}
-                  />
-                ) : null,
-              estimatedItemSize: 144,
-            } as unknown as StyleProp<ViewStyle>)}
+            data={currentItems as any[]}
+            renderItem={renderCartItem}
+            keyExtractor={(item: any) => `${item.id}`}
+            contentContainerStyle={listContentContainerStyle as any}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+                <CardOffersSection
+                  storeId={
+                    (productItems[0] as any)?.store?.id || productItems[0]?.productId
+                  }
+                  orderValue={overallTotal}
+                  onOfferApplied={handleCardOfferApplied}
+                />
+              ) : null
+            }
+            estimatedItemSize={144}
           />
         )}
       </View>

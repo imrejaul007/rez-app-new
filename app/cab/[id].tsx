@@ -172,7 +172,7 @@ function CabDetailsPage() {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const productData = response.data as unknown;
+      const productData = response.data as any;
 
       // Check if this is a cab service
       const isCab =
@@ -402,18 +402,18 @@ function CabDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown as Record<string, unknown>).requiresPayment) {
+    const dataAny = data as any as Record<string, unknown>;
+    if (dataAny.requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          amount: (data as unknown as string).totalAmount,
+          amount: dataAny.totalAmount as string,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown as Record<string, unknown>);
+      } as any);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -433,7 +433,17 @@ function CabDetailsPage() {
       if (isInWishlist(cab.id)) {
         await removeFromWishlist(cab.id);
       } else {
-        await addToWishlist({ productId: cab.id, name: cab.name, price: cab.price, image: cab.images[0] });
+        await addToWishlist({
+          productId: cab.id,
+          productName: cab.name,
+          price: cab.price,
+          productImage: cab.images[0] || '',
+          rating: cab.rating || 0,
+          reviewCount: cab.reviewCount || 0,
+          brand: '',
+          category: '',
+          availability: 'IN_STOCK' as const,
+        });
       }
     } catch (error: unknown) {
       // silently handle
@@ -660,8 +670,18 @@ function CabDetailsPage() {
             reviews={reviews}
             summary={reviewSummary}
             isLoading={reviewsLoading}
+            isRefreshing={false}
+            hasMore={false}
+            sortBy="newest"
+            filterRating={null}
             onRefresh={refreshReviews}
-            {...({} as unknown as StyleProp<ViewStyle>)}
+            onLoadMore={() => {}}
+            onSortChange={() => {}}
+            onFilterChange={() => {}}
+            onSubmitReview={async () => {}}
+            onUpdateReview={async () => {}}
+            onDeleteReview={async () => {}}
+            onMarkHelpful={async () => {}}
           />
         </View>
 

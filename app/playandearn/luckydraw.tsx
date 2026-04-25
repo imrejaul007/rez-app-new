@@ -95,7 +95,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as unknown);
+  const spin = interpolate(rotate.value, [0, 1], ['0deg', '360deg'] as any);
 
   return (
     <Animated.View
@@ -103,7 +103,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
         [
           styles.confetti,
           { backgroundColor: color, transform: [{ translateY }, { translateX }, { rotate: spin }], opacity },
-        ] as unknown
+        ] as any
       }
     />
   );
@@ -145,7 +145,7 @@ const LuckyDraw = () => {
       value: 50,
       icon: '🎁',
       chance: 35,
-      color: [(COLORS as unknown).orange, COLORS.orangeDark],
+      color: [(COLORS as any).orange, COLORS.orangeDark],
     },
   ];
 
@@ -235,7 +235,7 @@ const LuckyDraw = () => {
     setGameState('start');
   };
 
-  const spinRotation = interpolate(spinValue.value, [0, 1], ['0deg', '1800deg'] as unknown);
+  const spinRotation = interpolate(spinValue.value, [0, 1], ['0deg', '1800deg'] as any);
 
   return (
     <View style={styles.container}>
@@ -247,7 +247,7 @@ const LuckyDraw = () => {
           style={styles.backButton}
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
-          <Ionicons name="chevron-back" size={24} color={(COLORS as unknown).navy} />
+          <Ionicons name="chevron-back" size={24} color={(COLORS as any).navy} />
         </Pressable>
 
         <View style={styles.headerCenter}>
@@ -258,7 +258,7 @@ const LuckyDraw = () => {
           <Text style={styles.headerSubtitle}>Spin once daily, win big!</Text>
         </View>
 
-        <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown as string)}>
+        <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any as string)}>
           <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
           <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
         </Pressable>
@@ -272,7 +272,7 @@ const LuckyDraw = () => {
         <View style={styles.content}>
           {/* Hero */}
           <LinearGradient
-            colors={[COLORS.amber, (COLORS as unknown).orange]}
+            colors={[COLORS.amber, (COLORS as any).orange]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.heroCard}
@@ -305,7 +305,7 @@ const LuckyDraw = () => {
           {gameState !== 'result' && gameState !== 'error' && (
             <View style={styles.wheelContainer}>
               <View style={styles.wheelShadow}>
-                <Animated.View style={[styles.wheel, spinning && { transform: [{ rotate: spinRotation }] }] as unknown}>
+                <Animated.View style={[styles.wheel, spinning && { transform: [{ rotate: spinRotation }] }] as any}>
                   <LinearGradient colors={[COLORS.surface, COLORS.surfaceSecondary]} style={styles.wheelGradient}>
                     <Text style={styles.wheelIcon}>🎰</Text>
                     {!spinning && <Text style={styles.wheelText}>Tap to Spin!</Text>}
@@ -355,7 +355,7 @@ const LuckyDraw = () => {
               </View>
 
               <Pressable
-                onPress={() => router.push('/playandearn' as unknown as string)}
+                onPress={() => router.push('/playandearn' as any as string)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
@@ -373,13 +373,13 @@ const LuckyDraw = () => {
               <Text style={styles.errorTitle}>Spin Failed</Text>
               <Text style={styles.errorText}>{error}</Text>
               <Pressable onPress={retryGame}>
-                <LinearGradient colors={[COLORS.amber, (COLORS as unknown).orange]} style={styles.retryButton}>
+                <LinearGradient colors={[COLORS.amber, (COLORS as any).orange]} style={styles.retryButton}>
                   <Ionicons name="refresh" size={18} color={colors.text.inverse} />
                   <Text style={styles.retryButtonText}>Try Again</Text>
                 </LinearGradient>
               </Pressable>
               <Pressable
-                onPress={() => router.push('/playandearn' as unknown as string)}
+                onPress={() => router.push('/playandearn' as any as string)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
@@ -423,7 +423,7 @@ const LuckyDraw = () => {
                   colors={
                     todayPlays >= maxPlays
                       ? [colors.text.tertiary, colors.neutral[500]]
-                      : [COLORS.amber, (COLORS as unknown).orange]
+                      : [COLORS.amber, (COLORS as any).orange]
                   }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   headerCenter: { flex: 1 },
   headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   headerIconText: { ...Typography.h2, fontSize: 24 },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: (COLORS as unknown).navy },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: (COLORS as any).navy },
   headerSubtitle: { ...Typography.bodySmall, fontSize: 13, color: COLORS.textMuted, marginTop: 2 },
   coinsBadge: {
     flexDirection: 'row',
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.goldBg,
   },
   coinIcon: { width: 20, height: 20 },
-  coinsText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: (COLORS as unknown).goldDark },
+  coinsText: { ...Typography.body, fontSize: 15, fontWeight: '700', color: (COLORS as any).goldDark },
 
   scrollView: { flex: 1 },
   content: { padding: Spacing.base },
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     borderRadius: (width - 80) / 2,
   },
   wheelIcon: { fontSize: 64 },
-  wheelText: { ...Typography.h4, fontWeight: '700', color: (COLORS as unknown).navy, marginTop: Spacing.sm },
+  wheelText: { ...Typography.h4, fontWeight: '700', color: (COLORS as any).navy, marginTop: Spacing.sm },
   wheelTouchable: {
     position: 'absolute',
     top: 0,
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   prizeTableHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.base },
-  prizeTableTitle: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: (COLORS as unknown).navy },
+  prizeTableTitle: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: (COLORS as any).navy },
   prizeRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
   prizeIconBg: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
   prizeIcon: { fontSize: 24 },
   prizeInfo: { flex: 1 },
-  prizeName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: (COLORS as unknown).navy, marginBottom: 2 },
+  prizeName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: (COLORS as any).navy, marginBottom: 2 },
   prizeChanceBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: Spacing.sm,

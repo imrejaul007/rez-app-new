@@ -40,7 +40,7 @@ function CharityScreen() {
       try {
         const [catalogRes, configRes] = await Promise.all([priveApi.getCatalog(), priveApi.getRedeemConfig()]);
         if (catalogRes.success && catalogRes.data) {
-          if (catalogRes.data.charities) setCharities(catalogRes.data.charities as unknown as Charity[]);
+          if (catalogRes.data.charities) setCharities(catalogRes.data.charities as any as Charity[]);
           if (catalogRes.data.donationAmounts) setDonationAmounts(catalogRes.data.donationAmounts);
         }
         if (configRes.success && configRes.data?.conversionRates?.charity) {

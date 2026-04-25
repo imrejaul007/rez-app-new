@@ -221,7 +221,7 @@ function SavingsShareScreen() {
                   {capturing ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Ionicons name={target.icon as unknown} size={24} color="#fff" />
+                    <Ionicons name={target.icon as any} size={24} color="#fff" />
                   )}
                 </View>
                 <Text style={styles.shareTargetLabel}>{target.label}</Text>

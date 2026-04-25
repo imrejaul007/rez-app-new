@@ -39,7 +39,7 @@ function GiftCardsScreen() {
         const [catalogRes, configRes] = await Promise.all([priveApi.getCatalog(), priveApi.getRedeemConfig()]);
         if (catalogRes.success && catalogRes.data?.giftCards) {
           if (!isMounted()) return;
-          setGiftCards(catalogRes.data.giftCards as unknown as GiftCardOption[]);
+          setGiftCards(catalogRes.data.giftCards as any as GiftCardOption[]);
         }
         if (configRes.success && configRes.data?.conversionRates?.gift_card) {
           if (!isMounted()) return;
@@ -290,7 +290,7 @@ function GiftCardsScreen() {
                 style={styles.viewVouchersButton}
                 onPress={() => {
                   setShowVoucherModal(false);
-                  router.push('/prive/vouchers' as unknown as string);
+                  router.push('/prive/vouchers' as any as string);
                 }}
               >
                 <Text style={styles.viewVouchersText}>View All Vouchers</Text>

@@ -47,7 +47,7 @@ const SkeletonBlock: React.FC<{ width: number | string; height: number; borderRa
   return (
     <Animated.View
       style={[
-        { width: width as unknown, height, borderRadius, backgroundColor: PRIVE_COLORS.border.primary, opacity },
+        { width: width as any, height, borderRadius, backgroundColor: PRIVE_COLORS.border.primary, opacity },
         style,
       ]}
     />
@@ -286,7 +286,7 @@ function PriveReviewEarnPage() {
         renderItem={renderItem}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }] as unknown}
+        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 80 }] as any}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

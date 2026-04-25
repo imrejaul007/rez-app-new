@@ -180,7 +180,7 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
             onPress={action.onPress}
           >
             <Ionicons
-              name={action.icon as unknown}
+              name={action.icon as any}
               size={14}
               color={
                 action.variant === 'primary'
@@ -213,14 +213,14 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
           <Text style={styles.orderDate}>{formatDate(item.createdAt)}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          {(item as unknown).fulfillmentType && (item as unknown).fulfillmentType !== 'delivery' && (
+          {(item as any).fulfillmentType && (item as any).fulfillmentType !== 'delivery' && (
             <View style={styles.fulfillmentBadge}>
               <Text style={styles.fulfillmentText}>
-                {(item as unknown).fulfillmentType === 'pickup'
+                {(item as any).fulfillmentType === 'pickup'
                   ? '🛍 Pickup'
-                  : (item as unknown).fulfillmentType === 'drive_thru'
+                  : (item as any).fulfillmentType === 'drive_thru'
                     ? '🚗 Drive-Thru'
-                    : (item as unknown).fulfillmentType === 'dine_in'
+                    : (item as any).fulfillmentType === 'dine_in'
                       ? '🍽 Dine-In'
                       : ''}
               </Text>
@@ -421,13 +421,13 @@ function OrdersListScreen() {
 
         if (refresh || pageNum === 1) {
           if (!isMounted()) return;
-          setOrders(mappedOrders as unknown as Order[]);
+          setOrders(mappedOrders as any as Order[]);
         } else {
           // Deduplicate on append
           if (!isMounted()) return;
           setOrders((prev) => {
             const ids = new Set(prev.map((o) => o.id));
-            return [...prev, ...mappedOrders.filter((o) => !ids.has(o.id))] as unknown as Order[];
+            return [...prev, ...mappedOrders.filter((o) => !ids.has(o.id))] as any as Order[];
           });
         }
 
@@ -524,7 +524,7 @@ function OrdersListScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Gradient Header */}
-      <LinearGradient colors={Gradients.nileBlue as unknown} style={styles.gradientHeader}>
+      <LinearGradient colors={Gradients.nileBlue as any} style={styles.gradientHeader}>
         <View style={styles.headerContent}>
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
@@ -596,9 +596,9 @@ function OrdersListScreen() {
       ) : Platform.OS === 'web' ? (
         <FlatList
           data={orders}
-          renderItem={renderOrderItem as unknown}
+          renderItem={renderOrderItem as any}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as unknown}
+          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as any}
           ListHeaderComponent={renderListHeader}
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={renderFooter}
@@ -618,7 +618,7 @@ function OrdersListScreen() {
           data={orders}
           renderItem={renderOrderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as unknown}
+          contentContainerStyle={(orders.length === 0 ? styles.emptyListContent : styles.listContent) as any}
           ListHeaderComponent={renderListHeader}
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={renderFooter}

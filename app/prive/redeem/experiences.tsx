@@ -36,7 +36,7 @@ function ExperiencesScreen() {
       try {
         const res = await priveApi.getCatalog();
         if (res.success && res.data?.experiences) {
-          setExperiences(res.data.experiences as unknown as Experience[]);
+          setExperiences(res.data.experiences as any as Experience[]);
         }
       } catch {
         // fallback
@@ -264,7 +264,7 @@ function ExperiencesScreen() {
                 style={styles.viewVouchersButton}
                 onPress={() => {
                   setShowVoucherModal(false);
-                  router.push('/prive/vouchers' as unknown as string);
+                  router.push('/prive/vouchers' as any as string);
                 }}
               >
                 <Text style={styles.viewVouchersText}>View All Vouchers</Text>

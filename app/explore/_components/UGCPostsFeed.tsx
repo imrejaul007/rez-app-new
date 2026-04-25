@@ -75,8 +75,8 @@ const UGCPostsFeed = () => {
       setIsLoading(true);
       setError(null);
       const response = await reelApi.getTrendingReels({ limit: 5 });
-      if (response.success && (response.data as unknown) && (response.data as unknown).length > 0) {
-        const transformed = (response.data as unknown).map((video: any, index: number) => ({
+      if (response.success && (response.data as any) && (response.data as any).length > 0) {
+        const transformed = (response.data as any).map((video: any, index: number) => ({
           id: video.id || video._id,
           // Use real storeId from backend
           storeId: video.storeId || video.store?.id || video.store?._id || null,
@@ -128,7 +128,7 @@ const UGCPostsFeed = () => {
   }, []);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown as string);
+    router.push(path as any as string);
   };
 
   // Handle like/helpful button
@@ -158,15 +158,15 @@ const UGCPostsFeed = () => {
       const response = await reelApi.toggleLike(postId);
 
       // Update with actual server response if available
-      if (response.success && (response.data as unknown)) {
+      if (response.success && (response.data as any)) {
         if (!isMounted()) return;
         setUgcPosts((prev) =>
           prev.map((post) => {
             if (post.id === postId) {
               return {
                 ...post,
-                isLiked: (response.data as unknown).liked ?? (response.data as unknown).liked ?? !wasLiked,
-                helpful: (response.data as unknown).likesCount ?? (response.data as unknown).totalLikes ?? post.helpful,
+                isLiked: (response.data as any).liked ?? (response.data as any).liked ?? !wasLiked,
+                helpful: (response.data as any).likesCount ?? (response.data as any).totalLikes ?? post.helpful,
               };
             }
             return post;

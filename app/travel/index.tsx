@@ -277,18 +277,18 @@ const TravelPage: React.FC = () => {
   const navigateToCategory = (slug: string) => {
     // Hotels → Hotel OTA integration screen
     if (slug === 'hotels') {
-      router.push('/travel/hotels' as unknown as string);
+      router.push('/travel/hotels' as any as string);
       return;
     }
-    router.push(`/travel/${slug}` as unknown as string);
+    router.push(`/travel/${slug}` as any as string);
   };
 
   const navigateToDeal = (deal: DisplayDeal) => {
-    router.push(getCategoryDetailRoute(deal.categorySlug, deal.id) as unknown);
+    router.push(getCategoryDetailRoute(deal.categorySlug, deal.id) as any);
   };
 
   const navigateToPopular = (svc: PopularService) => {
-    router.push(getCategoryDetailRoute(svc.categorySlug, svc.id) as unknown);
+    router.push(getCategoryDetailRoute(svc.categorySlug, svc.id) as any);
   };
 
   // ─── Error State ─────────────────────────────────────────────────────────
@@ -341,13 +341,13 @@ const TravelPage: React.FC = () => {
             <Text style={s.headerTitle}>Travel & Booking</Text>
             <Text style={s.headerSub}>Book trips, earn rewards</Text>
           </View>
-          <Pressable onPress={() => router.push('/travel/search' as unknown as string)} style={s.headerBtn}>
+          <Pressable onPress={() => router.push('/travel/search' as any as string)} style={s.headerBtn}>
             <Ionicons name="options-outline" size={22} color={C.white} />
           </Pressable>
         </View>
 
         {/* Search bar */}
-        <Pressable style={s.searchBar} onPress={() => router.push('/travel/search' as unknown as string)}>
+        <Pressable style={s.searchBar} onPress={() => router.push('/travel/search' as any as string)}>
           <Ionicons name="search" size={18} color={C.slate400} />
           <Text style={s.searchPlaceholder}>Search flights, hotels, trains...</Text>
         </Pressable>
@@ -399,7 +399,7 @@ const TravelPage: React.FC = () => {
                     onPress={() => navigateToCategory(slug)}
                   >
                     <LinearGradient colors={cfg.gradient as [string, string]} style={s.catIconWrap}>
-                      <Ionicons name={cfg.icon as unknown} size={24} color={C.white} />
+                      <Ionicons name={cfg.icon as any} size={24} color={C.white} />
                     </LinearGradient>
                     <Text style={s.catName}>{cat.title}</Text>
                     <Text style={s.catCount}>{countNum > 0 ? `${countNum}+ options` : 'Explore'}</Text>
@@ -418,7 +418,7 @@ const TravelPage: React.FC = () => {
               <Text style={s.sectionTitle}>Hot Deals</Text>
             </View>
             {featuredDeals.length > 0 && (
-              <Pressable onPress={() => router.push('/travel/deals' as unknown as string)}>
+              <Pressable onPress={() => router.push('/travel/deals' as any as string)}>
                 <Text style={s.viewAll}>View All</Text>
               </Pressable>
             )}
@@ -446,7 +446,7 @@ const TravelPage: React.FC = () => {
                   {/* Category tag */}
                   <View style={s.dealCatTag}>
                     <Ionicons
-                      name={(CATEGORY_CONFIG[deal.categorySlug]?.icon || 'globe') as unknown}
+                      name={(CATEGORY_CONFIG[deal.categorySlug]?.icon || 'globe') as any}
                       size={10}
                       color={C.white}
                     />
@@ -516,7 +516,7 @@ const TravelPage: React.FC = () => {
                       </Text>
                       <View style={s.popMeta}>
                         <View style={[s.popCatChip, { backgroundColor: cfg.bg }]}>
-                          <Ionicons name={cfg.icon as unknown} size={10} color={cfg.gradient[0]} />
+                          <Ionicons name={cfg.icon as any} size={10} color={cfg.gradient[0]} />
                           <Text style={[s.popCatText, { color: cfg.gradient[0] }]}>{svc.categoryName}</Text>
                         </View>
                         {svc.rating > 0 && (
@@ -581,25 +581,25 @@ const TravelPage: React.FC = () => {
         {/* ── Quick Links ─────────────────────────────────────────────────── */}
         <View style={s.quickLinksWrap}>
           <View style={s.quickLinks}>
-            <Pressable style={s.quickLink} onPress={() => router.push('/travel/search' as unknown as string)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/travel/search' as any as string)}>
               <View style={[s.qlIcon, { backgroundColor: C.cyan50 }]}>
                 <Ionicons name="search" size={18} color={C.cyan600} />
               </View>
               <Text style={s.qlText}>Search</Text>
             </Pressable>
-            <Pressable style={s.quickLink} onPress={() => router.push('/travel/deals' as unknown as string)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/travel/deals' as any as string)}>
               <View style={[s.qlIcon, { backgroundColor: colors.errorScale[50] }]}>
                 <Ionicons name="flame" size={18} color={C.rose500} />
               </View>
               <Text style={s.qlText}>Hot Deals</Text>
             </Pressable>
-            <Pressable style={s.quickLink} onPress={() => router.push('/my-bookings' as unknown as string)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/my-bookings' as any as string)}>
               <View style={[s.qlIcon, { backgroundColor: C.green50 }]}>
                 <Ionicons name="receipt-outline" size={18} color={C.green600} />
               </View>
               <Text style={s.qlText}>My Bookings</Text>
             </Pressable>
-            <Pressable style={s.quickLink} onPress={() => router.push('/wallet' as unknown as string)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/wallet' as any as string)}>
               <View style={[s.qlIcon, { backgroundColor: C.violet50 }]}>
                 <Ionicons name="wallet" size={18} color={C.violet600} />
               </View>

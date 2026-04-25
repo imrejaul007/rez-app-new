@@ -419,7 +419,7 @@ function StorePage() {
       if (activeRequestIdRef.current !== productId) return;
 
       if (response.success && response.data) {
-        const productData = response.data as unknown as ProductsApiProductResponse;
+        const productData = response.data as any as ProductsApiProductResponse;
 
         // Update cardData with real backend data using the correct structure
         const productType = productData.productType || 'product';
@@ -597,7 +597,7 @@ function StorePage() {
 
       if (lockedResponse.success && lockedResponse.data) {
         const lockedItem = lockedResponse.data.lockedItems.find(
-          (item: any) => item.product?._id === productId || (item.product as unknown)?.id === productId,
+          (item: any) => item.product?._id === productId || (item.product as any)?.id === productId,
         );
         if (!isMounted()) return;
         setIsLocked(!!lockedItem);
@@ -716,7 +716,7 @@ function StorePage() {
     try {
       // Auth guard — redirect to sign-in if not logged in
       if (!isAuthenticated) {
-        router.push('/sign-in' as unknown as string);
+        router.push('/sign-in' as any as string);
         return;
       }
 
@@ -733,7 +733,7 @@ function StorePage() {
         productId: productId!,
         quantity: quantity,
         storeId: storeId || undefined,
-        variant: cardData.selectedVariant as unknown,
+        variant: cardData.selectedVariant as any,
       });
 
       if (cartResponse.success) {
@@ -800,7 +800,7 @@ function StorePage() {
   const handleVisitStore = useCallback(() => {
     const storeId = cardData?.store?._id || cardData?.store?.id || cardData?.storeId;
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${storeId}` as any as string);
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, router]);
 
@@ -809,7 +809,7 @@ function StorePage() {
       router.push({
         pathname: '/product-page',
         params: { cardId: prodId, cardType: 'product' },
-      } as unknown as string);
+      } as any as string);
     },
     [router],
   );
@@ -853,7 +853,7 @@ function StorePage() {
     const storeName = cardData?.store?.name || 'Store';
     if (storeId) {
       router.push(
-        `/CardOffersPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&orderValue=${productPrice}` as unknown,
+        `/CardOffersPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&orderValue=${productPrice}` as any,
       );
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, cardData?.store?.name, productPrice, router]);
@@ -971,7 +971,7 @@ function StorePage() {
       {/* Sticky Header - Outside ScrollView */}
       <View style={styles.stickyHeader}>
         <StoreHeader
-          dynamicData={(isDynamic ? cardData : null) as unknown}
+          dynamicData={(isDynamic ? cardData : null) as any}
           cardType={params.cardType as string}
           isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
           showImage={false}
@@ -989,7 +989,7 @@ function StorePage() {
               paddingBottom: 100, // Space for sticky bottom bar
               paddingTop: Platform.OS === 'ios' ? 120 : 75, // Space for sticky header
             },
-          ] as unknown
+          ] as any
         }
       >
         <View
@@ -1000,7 +1000,7 @@ function StorePage() {
         >
           {/* 1. Product Image Section */}
           <StoreHeader
-            dynamicData={(isDynamic ? cardData : null) as unknown}
+            dynamicData={(isDynamic ? cardData : null) as any}
             cardType={params.cardType as string}
             isInStore={cardData?.availabilityStatus === 'in_stock' || cardData?.isAvailable}
             showImage={true}
@@ -1285,7 +1285,7 @@ function StorePage() {
           productName={cardData.title || cardData.name || ''}
           productPrice={cardData.price || cardData.pricing?.selling || 0}
           quantity={quantity}
-          variant={cardData.selectedVariant as unknown}
+          variant={cardData.selectedVariant as any}
           onLockSuccess={handleLockSuccess}
         />
       )}

@@ -118,7 +118,7 @@ function HotspotsPage() {
           lng: String(hotspot.coordinates?.lng || ''),
           city: hotspot.city || '',
         },
-      } as unknown);
+      } as any);
     },
     [router],
   );
@@ -135,7 +135,7 @@ function HotspotsPage() {
   }, []);
 
   const locationText = currentLocation?.coordinates
-    ? (currentLocation as unknown).city || 'Your Location'
+    ? (currentLocation as any).city || 'Your Location'
     : 'Location unavailable';
 
   const renderHotspot = useCallback(

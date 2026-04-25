@@ -220,7 +220,7 @@ function StoreSearchScreen() {
         {/* Main Content */}
         <AnimatedScrollView
           style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as unknown}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }] as any}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}

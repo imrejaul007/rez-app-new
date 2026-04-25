@@ -67,7 +67,7 @@ function PaymentMethodsSection({ methods = DEFAULT_METHODS }: PaymentMethodsSect
         {methods.map((method) => (
           <View key={method.id} style={styles.methodCard}>
             <View style={[styles.iconContainer, { backgroundColor: method.iconBgColor }]}>
-              <Ionicons name={method.icon as unknown} size={24} color={method.iconColor} />
+              <Ionicons name={method.icon as any} size={24} color={method.iconColor} />
             </View>
             <View style={styles.methodInfo}>
               <ThemedText style={styles.methodName}>{method.name}</ThemedText>

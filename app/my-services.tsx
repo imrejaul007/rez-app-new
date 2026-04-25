@@ -38,7 +38,7 @@ const MyServicesPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleBackPress = useCallback(() => {
-    router.push('/profile' as unknown as string);
+    router.push('/profile' as any as string);
   }, [router]);
 
   const mapSubmissionStatus = (status: string): 'active' | 'completed' | 'pending' | 'cancelled' => {
@@ -154,11 +154,11 @@ const MyServicesPage = () => {
       <Pressable
         style={styles.projectCard}
         onPress={() => {
-          router.push(`/earn/my-submissions?projectId=${(item as unknown as string)._id || item.id}` as unknown);
+          router.push(`/earn/my-submissions?projectId=${(item as any)._id || (item as any).id || ''}` as any);
         }}
       >
         <View style={[styles.iconContainer, { backgroundColor: Colors.success + '20' }]}>
-          <Ionicons name={getTypeIcon(item.type) as unknown} size={28} color={Colors.success} />
+          <Ionicons name={getTypeIcon(item.type) as any} size={28} color={Colors.success} />
         </View>
 
         <View style={styles.projectInfo}>
@@ -200,7 +200,7 @@ const MyServicesPage = () => {
       </View>
       <Text style={styles.emptyTitle}>No Services Yet</Text>
       <Text style={styles.emptyText}>Start creating content and earning rewards{'\n'}by taking on projects.</Text>
-      <Pressable style={styles.createButton} onPress={() => router.push('/(tabs)/earn' as unknown)}>
+      <Pressable style={styles.createButton} onPress={() => router.push('/(tabs)/earn' as any)}>
         <Ionicons name="add" size={20} color={colors.text.inverse} />
         <Text style={styles.createButtonText}>Explore Projects</Text>
       </Pressable>
@@ -222,7 +222,7 @@ const MyServicesPage = () => {
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>My Services</Text>
-          <Pressable style={styles.addButton} onPress={() => router.push('/(tabs)/earn' as unknown)}>
+          <Pressable style={styles.addButton} onPress={() => router.push('/(tabs)/earn' as any)}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>

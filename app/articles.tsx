@@ -50,12 +50,12 @@ function ArticlesPage() {
           limit: 50,
           sortBy: 'newest',
           isPublished: true,
-          category: selectedCategory === 'all' ? undefined : (selectedCategory as unknown),
+          category: selectedCategory === 'all' ? undefined : (selectedCategory as any),
         });
 
-        if (response.success && response.data && (response.data as unknown).articles) {
+        if (response.success && response.data && (response.data as any).articles) {
           if (!isMounted()) return;
-          setArticles((response.data as unknown).articles);
+          setArticles((response.data as any).articles);
         } else {
           throw new Error(response.message || 'Failed to fetch articles');
         }
@@ -205,7 +205,7 @@ function ArticlesPage() {
             onPress={() => setSelectedCategory(category.id)}
           >
             <Ionicons
-              name={category.icon as unknown}
+              name={category.icon as any}
               size={18}
               color={selectedCategory === category.id ? colors.text.inverse : Colors.brand.purpleLight}
             />

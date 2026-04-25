@@ -173,7 +173,7 @@ function BusDetailsPage() {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const productData = response.data as unknown;
+      const productData = response.data as any;
 
       // Check if this is a bus service
       const isBus =
@@ -414,18 +414,18 @@ function BusDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown as Record<string, unknown>).requiresPayment) {
+    const dataAny = data as any as Record<string, unknown>;
+    if (dataAny.requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          amount: (data as unknown as string).totalAmount,
+          amount: dataAny.totalAmount as string,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown as Record<string, unknown>);
+      } as any);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -445,7 +445,17 @@ function BusDetailsPage() {
       if (isInWishlist(bus.id)) {
         await removeFromWishlist(bus.id);
       } else {
-        await addToWishlist({ productId: bus.id, name: bus.name, price: bus.price, image: bus.images[0] });
+        await addToWishlist({
+          productId: bus.id,
+          productName: bus.name,
+          price: bus.price,
+          productImage: bus.images[0] || '',
+          rating: bus.rating || 0,
+          reviewCount: bus.reviewCount || 0,
+          brand: '',
+          category: '',
+          availability: 'IN_STOCK' as const,
+        });
       }
     } catch (error: unknown) {
       // silently handle
@@ -541,7 +551,7 @@ function BusDetailsPage() {
 
         {/* Bus Info Card */}
         <View style={styles.infoCardWrapper}>
-          <BusInfoCard bus={bus as unknown as Record<string, unknown>} />
+          <BusInfoCard bus={bus as any} />
         </View>
 
         {/* Store/Provider Info */}
@@ -669,8 +679,18 @@ function BusDetailsPage() {
             reviews={reviews}
             summary={reviewSummary}
             isLoading={reviewsLoading}
+            isRefreshing={false}
+            hasMore={false}
+            sortBy="newest"
+            filterRating={null}
             onRefresh={refreshReviews}
-            {...({} as unknown as StyleProp<ViewStyle>)}
+            onLoadMore={() => {}}
+            onSortChange={() => {}}
+            onFilterChange={() => {}}
+            onSubmitReview={async () => {}}
+            onUpdateReview={async () => {}}
+            onDeleteReview={async () => {}}
+            onMarkHelpful={async () => {}}
           />
         </View>
 
@@ -758,8 +778,8 @@ function BusDetailsPage() {
       >
         {bookingData && bus && (
           <BusBookingConfirmation
-            bus={bus as unknown as Record<string, unknown>}
-            bookingData={bookingData as unknown as Record<string, unknown>}
+            bus={bus as any}
+            bookingData={bookingData as any}
             onClose={() => {
               setShowConfirmation(false);
               // eslint-disable-next-line no-unused-expressions

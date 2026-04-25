@@ -56,7 +56,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
     <Pressable style={styles.offerCard} onPress={() => onPress(offer)}>
       <View style={styles.offerImageContainer}>
         {offer.image ? (
-          <CachedImage source={offer.image as unknown} style={styles.offerImage} contentFit="cover" />
+          <CachedImage source={offer.image as any} style={styles.offerImage} contentFit="cover" />
         ) : (
           <View style={[styles.offerImage, { backgroundColor: colors.background.secondary }]} />
         )}
@@ -76,7 +76,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
         <View style={styles.brandRow}>
           {(offer.brand?.logo || offer.store?.logo) && (
             <CachedImage
-              source={offer.brand?.logo || offer.store?.logo || ('' as unknown)}
+              source={offer.brand?.logo || offer.store?.logo || ('' as any)}
               style={styles.brandLogo}
               contentFit="contain"
             />
@@ -195,9 +195,9 @@ function AllOffersPage() {
   const handleOfferPress = useCallback(
     (offer: MallOffer) => {
       if (offer.store) {
-        router.push(`/MainStorePage?storeId=${offer.store._id}` as unknown as string);
+        router.push(`/MainStorePage?storeId=${offer.store._id}` as any as string);
       } else if (offer.brand) {
-        router.push(`/mall/brand/${offer.brand.id || offer.brand._id}` as unknown as string);
+        router.push(`/mall/brand/${offer.brand.id || offer.brand._id}` as any as string);
       } else {
         // No specific target - stay on offers page (already here)
       }

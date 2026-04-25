@@ -129,16 +129,16 @@ function SmartSpendScreen() {
       // Track click analytics
       priveApi.trackSmartSpendClick(item._id).catch(() => {});
 
-      if (item.itemType === 'store' && (item.store?._id || (item.store as unknown)?.id)) {
+      if (item.itemType === 'store' && (item.store?._id || (item.store as any)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.store!._id || (item.store as unknown as string).id}&source=smart_spend&ssId=${item._id}` as unknown,
+          `/MainStorePage?storeId=${item.store!._id || (item.store as any).id}&source=smart_spend&ssId=${item._id}` as any,
         );
-      } else if (item.itemType === 'product' && (item.product?.store?._id || (item.product?.store as unknown)?.id)) {
+      } else if (item.itemType === 'product' && (item.product?.store?._id || (item.product?.store as any)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as unknown as string).id}&source=smart_spend&ssId=${item._id}` as unknown,
+          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as any).id}&source=smart_spend&ssId=${item._id}` as any,
         );
       } else if (item.itemType === 'product' && item.product?._id) {
-        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as unknown as string);
+        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as any);
       }
     },
     [router],

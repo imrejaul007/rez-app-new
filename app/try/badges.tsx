@@ -99,7 +99,7 @@ export default function BadgesScreen() {
       <View style={styles.badgeCard}>
         {/* Badge Ring */}
         <View style={[styles.badgeRing, { borderColor: badgeColor }]}>
-          <Ionicons name={getIconName(item.category) as unknown} size={32} color={badgeColor} />
+          <Ionicons name={getIconName(item.category) as any} size={32} color={badgeColor} />
         </View>
 
         {/* Content */}
@@ -116,7 +116,7 @@ export default function BadgesScreen() {
   const renderUndiscoveredCard = ({ item }: { item: UndiscoveredCategory }) => (
     <View style={styles.undiscoveredCard}>
       <View style={styles.undiscoveredBadgeRing}>
-        <Ionicons name={getIconName(item.category) as unknown} size={28} color={colors.text.tertiary} />
+        <Ionicons name={getIconName(item.category) as any} size={28} color={colors.text.tertiary} />
       </View>
       <View style={styles.undiscoveredContent}>
         <Text style={styles.undiscoveredName}>{capitalizeCategory(item.category)}</Text>

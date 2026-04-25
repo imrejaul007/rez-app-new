@@ -428,7 +428,7 @@ function MemoryPage() {
         </Pressable>
         <Pressable
           style={styles.backToGamesBtn}
-          onPress={() => router.push('/games' as unknown as string)}
+          onPress={() => router.push('/games' as any as string)}
           accessibilityRole="button"
           accessibilityLabel="Browse more games"
         >
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '22%',
     aspectRatio: 0.75,
-  } as unknown,
+  } as any,
   card: {
     position: 'absolute',
     width: '100%',

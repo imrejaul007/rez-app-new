@@ -264,7 +264,6 @@ export default memo(function ProductDisplay({
               style={[styles.image, { width: imageCardWidth, height: imageHeight }]}
               contentFit="cover"
               onError={() => handleImageError(item.id)}
-              {...({ defaultSource: require('@/assets/images/icon.png') } as unknown as StyleProp<ViewStyle>)}
             />
             {/* Gradient Overlay for Depth */}
             <LinearGradient
@@ -289,7 +288,7 @@ export default memo(function ProductDisplay({
         ref={flatRef}
         data={images}
         keyExtractor={(i) => i.id}
-        renderItem={renderImage as unknown as (info: ListRenderItemInfo<ProductImage>) => React.ReactElement}
+        renderItem={renderImage as any}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}

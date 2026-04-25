@@ -77,7 +77,7 @@ function AISearchPage() {
     try {
       const response = await apiClient.get('/search/ai-search', { q });
       if (response.success && response.data) {
-        const data = response.data as unknown;
+        const data = response.data as any;
         setResults(data.results || []);
         setParsedInfo({ keywords: data.parsedKeywords, filters: data.filters });
       } else {
@@ -105,7 +105,7 @@ function AISearchPage() {
         router.push(`/MainStorePage?storeId=${item.storeId}`);
       } else if (item.type === 'product' && item.id) {
         router.push({
-          pathname: '/product-page' as unknown,
+          pathname: '/product-page' as any,
           params: { cardId: item.id, cardType: 'product' },
         });
       }

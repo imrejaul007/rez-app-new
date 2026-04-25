@@ -224,7 +224,7 @@ function TrendingOffersPage() {
             controlsColor: colors.background.primary,
           });
         } else if (brand.storeId) {
-          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown as string);
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as any as string);
         }
       } catch (err: any) {
         if (brand.externalUrl) {
@@ -278,7 +278,7 @@ function TrendingOffersPage() {
             controlsColor: colors.background.primary,
           });
         } else if (offer.storeId) {
-          router.push(`/MainStorePage?storeId=${offer.storeId}` as unknown as string);
+          router.push(`/MainStorePage?storeId=${offer.storeId}` as any as string);
         }
       } catch (err: any) {
         if (offer.externalUrl) {
@@ -658,7 +658,7 @@ const OfferCard = React.memo(
           {/* Badge */}
           {badgeInfo && (
             <View style={[styles.offerBadge, { backgroundColor: badgeInfo.bg }]}>
-              <Ionicons name={badgeInfo.icon as unknown} size={8} color={badgeInfo.text} />
+              <Ionicons name={badgeInfo.icon as any} size={8} color={badgeInfo.text} />
               <Text style={[styles.offerBadgeText, { color: badgeInfo.text }]}>{badgeInfo.label}</Text>
             </View>
           )}

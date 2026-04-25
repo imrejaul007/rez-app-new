@@ -177,15 +177,15 @@ export default memo(function ProductScreen({
         id: dynamicData.store?._id || dynamicData.store?.id || dynamicData.storeId || '',
         name: dynamicData.store?.name || dynamicData.merchant || 'Store',
         title: dynamicData.store?.name || dynamicData.merchant || 'Store',
-        description: (dynamicData.store as unknown)?.description || '',
+        description: (dynamicData.store as any)?.description || '',
         logo: dynamicData.store?.logo || '',
-        banner: (dynamicData.store as unknown)?.banner || '',
+        banner: (dynamicData.store as any)?.banner || '',
         rating: dynamicData.store?.ratings?.average || 0,
         ratingCount: dynamicData.store?.ratings?.count || 0,
         category: dynamicData.category || '',
         location: dynamicData.store?.location || null,
         deliveryTime: dynamicData.store?.operationalInfo?.deliveryTime || '30-45 mins',
-        minimumOrder: (dynamicData.store?.operationalInfo as unknown)?.minimumOrder || 0,
+        minimumOrder: (dynamicData.store?.operationalInfo as any)?.minimumOrder || 0,
       };
 
       // Navigate to MainStorePage with store data as query params
@@ -195,7 +195,7 @@ export default memo(function ProductScreen({
           storeId: storeData.id,
           storeData: JSON.stringify(storeData),
         },
-      } as unknown);
+      } as any);
     }
   };
 
@@ -206,7 +206,7 @@ export default memo(function ProductScreen({
     animateTo(half);
     const storeId = dynamicData?.store?._id || dynamicData?.store?.id || dynamicData?.storeId;
     if (storeId) {
-      router.push(`/booking?storeId=${storeId}` as unknown as string);
+      router.push(`/booking?storeId=${storeId}` as any as string);
     }
   };
 
@@ -399,7 +399,7 @@ export default memo(function ProductScreen({
           (() => {
             // Get original price from unified price object or raw pricing
             const originalPrice =
-              (dynamicData?.price as unknown)?.original ||
+              (dynamicData?.price as any)?.original ||
               (typeof dynamicData?.originalPrice === 'number' ? dynamicData.originalPrice : null) ||
               dynamicData?.pricing?.original ||
               dynamicData?.pricing?.compare ||

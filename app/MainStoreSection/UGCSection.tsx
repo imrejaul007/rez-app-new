@@ -728,7 +728,7 @@ function UGCSection({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as unknown}
+          contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as any}
           scrollEnabled={false}
         >
           {Array.from({ length: 3 }).map((_, index) => (
@@ -818,13 +818,13 @@ function UGCSection({
       </View>
 
       <FlashList
-        data={images as unknown[]}
+        data={images as any[]}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         estimatedItemSize={250}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as unknown}
+        contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }] as any}
         ItemSeparatorComponent={() => <View style={{ width: cardSpacing }} />}
         snapToInterval={cardWidth + cardSpacing}
         decelerationRate="fast"

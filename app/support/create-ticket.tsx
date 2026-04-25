@@ -98,8 +98,8 @@ function CreateTicketPage() {
     try {
       const response = await supportService.createTicket({
         subject: subject.trim(),
-        category: selectedCategory as unknown,
-        priority: selectedPriority as unknown,
+        category: selectedCategory as any,
+        priority: selectedPriority as any,
         message: message.trim(),
         idempotencyKey,
         ...(params.relatedOrderId
@@ -111,7 +111,7 @@ function CreateTicketPage() {
 
       if (response.success && response.data?.ticket) {
         platformAlertSimple('Success', 'Your support ticket has been created.');
-        router.replace(`/support/ticket/${response.data.ticket._id}` as unknown as string);
+        router.replace(`/support/ticket/${response.data.ticket._id}` as any as string);
       } else {
         platformAlertSimple('Error', 'Failed to create ticket. Please try again.');
       }
@@ -187,7 +187,7 @@ function CreateTicketPage() {
                   }}
                 >
                   <Ionicons
-                    name={cat.icon as unknown}
+                    name={cat.icon as any}
                     size={22}
                     color={selectedCategory === cat.id ? Colors.secondary[600] : Colors.gray[500]}
                   />
@@ -237,7 +237,7 @@ function CreateTicketPage() {
                   onPress={() => setSelectedPriority(pri.id)}
                 >
                   <Ionicons
-                    name={pri.icon as unknown}
+                    name={pri.icon as any}
                     size={18}
                     color={selectedPriority === pri.id ? pri.color : Colors.gray[400]}
                   />
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: (Colors.text as unknown)?.primary || Colors.text,
+    color: (Colors.text as any)?.primary || Colors.text,
     ...Shadows.subtle,
   },
   textArea: {
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: (Colors.text as unknown)?.primary || Colors.text,
+    color: (Colors.text as any)?.primary || Colors.text,
     minHeight: 140,
     ...Shadows.subtle,
   },

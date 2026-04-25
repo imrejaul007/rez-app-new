@@ -78,7 +78,7 @@ const AnimatedProgressBar = ({ score, color }: { score: number; color: string })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [score]);
 
-  const width = (interpolate as unknown)(widthAnim.value, [0, 100], ['0%', '100%'], 'clamp');
+  const width = (interpolate as any)(widthAnim.value, [0, 100], ['0%', '100%'], 'clamp');
 
   return (
     <View style={styles.pillarProgressTrack}>

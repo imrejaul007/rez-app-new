@@ -61,7 +61,7 @@ function UploadPage() {
   const handlePickMedia = async () => {
     const ImagePicker = await getImagePicker();
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: contentType === 'reel' ? ('videos' as unknown) : ('mixed' as unknown),
+      mediaTypes: contentType === 'reel' ? ('videos' as any) : ('mixed' as any),
       allowsMultipleSelection: contentType === 'post',
       quality: 0.8,
       videoMaxDuration: 60,
@@ -209,7 +209,7 @@ function UploadPage() {
         });
 
         if (result.success) {
-          const coins = (result.data as unknown)?.coinReward?.coinsAwarded;
+          const coins = (result.data as any)?.coinReward?.coinsAwarded;
           const msg = coins
             ? `Your reel has been submitted for review. You'll earn ${coins} coins once approved!`
             : 'Your reel has been submitted for review.';
@@ -237,7 +237,7 @@ function UploadPage() {
       for (let i = 0; i < media.length; i++) {
         setUploadProgress(Math.round((i / media.length) * 80));
         const formData = new FormData();
-        formData.append('file', { uri: media[i], type: 'image/jpeg', name: `${contentType}_${i}.jpg` } as unknown);
+        formData.append('file', { uri: media[i], type: 'image/jpeg', name: `${contentType}_${i}.jpg` } as any);
         formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.images);
         formData.append('folder', `images/social/${contentType}s/`);
 
@@ -272,7 +272,7 @@ function UploadPage() {
       setUploadProgress(100);
 
       if (result.success) {
-        const coins = (result.data as unknown)?.coinReward?.coinsAwarded;
+        const coins = (result.data as any)?.coinReward?.coinsAwarded;
         const msg = coins
           ? `Your ${contentType} has been submitted for review. You'll earn ${coins} coins once approved!`
           : `Your ${contentType} has been submitted for review.`;

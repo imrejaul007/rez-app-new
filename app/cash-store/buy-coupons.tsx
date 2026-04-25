@@ -115,7 +115,7 @@ function BuyCouponsPage() {
       try {
         const response = await realVouchersApi.getVoucherCategories();
         if (response.success && response.data) {
-          setGiftCardCategories(response.data as unknown as string[]);
+          setGiftCardCategories(response.data as any as string[]);
         }
       } catch (err: any) {
         // silently handle
@@ -140,7 +140,7 @@ function BuyCouponsPage() {
         const response = await realVouchersApi.getVoucherBrands(params);
 
         if (response.success && response.data) {
-          const data = response.data as Record<string, unknown>;
+          const data = response.data as any as Record<string, unknown>;
           const brands = data?.brands || response.data;
           const brandsArray = Array.isArray(brands) ? brands : [];
           const total = Number(data?.total) || brandsArray.length;
@@ -201,13 +201,13 @@ function BuyCouponsPage() {
         response = await couponService.searchCoupons({ q: debouncedSearch });
         if (response.success && response.data) {
           if (!isMounted()) return;
-          setCoupons((response.data as unknown as Record<string, unknown>)?.coupons || []);
+          setCoupons(((response.data as any as Record<string, unknown>)?.coupons || []) as any);
         }
       } else {
         response = await couponService.getAvailableCoupons();
         if (response.success && response.data) {
           if (!isMounted()) return;
-          setCoupons((response.data as unknown as Record<string, unknown>)?.coupons || []);
+          setCoupons(((response.data as any as Record<string, unknown>)?.coupons || []) as any);
         }
       }
     } catch (err: any) {
@@ -254,7 +254,7 @@ function BuyCouponsPage() {
 
   const handleGiftCardPress = useCallback(
     (brand: VoucherBrandItem) => {
-      router.push(`/vouchers/brand/${brand._id}` as unknown as string);
+      router.push(`/vouchers/brand/${brand._id}` as any as string);
     },
     [router],
   );
@@ -296,7 +296,7 @@ function BuyCouponsPage() {
   );
 
   const handleViewMyCoupons = useCallback(() => {
-    router.push('/account/coupons' as unknown as string);
+    router.push('/account/coupons' as any as string);
   }, [router]);
 
   // ─── Denomination Range Display ────────────────────────────
@@ -1130,7 +1130,7 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 6px rgba(139,115,85,0.07)' },
-    }) as StyleProp<ViewStyle> as unknown as Record<string, unknown>),
+    }) as StyleProp<ViewStyle> as any as Record<string, unknown>),
   },
   featuredBadge: {
     position: 'absolute',
@@ -1251,7 +1251,7 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 6px rgba(139,115,85,0.07)' },
-    }) as StyleProp<ViewStyle> as unknown as Record<string, unknown>),
+    }) as StyleProp<ViewStyle> as any as Record<string, unknown>),
   },
   couponAccent: {
     width: 5,

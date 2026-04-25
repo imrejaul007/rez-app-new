@@ -160,11 +160,11 @@ const FitnessCategoryPage: React.FC = () => {
           page: 1,
           limit: 50,
           sortBy: 'rating',
-        } as unknown,
+        } as any,
       });
 
-      let storesData = (response.data as unknown)?.stores || [];
-      const total = (response.data as unknown)?.total || storesData.length;
+      let storesData = (response.data as any)?.stores || [];
+      const total = (response.data as any)?.total || storesData.length;
 
       // Add distance calculation if user location is available
       if (userLocation) {
@@ -256,7 +256,7 @@ const FitnessCategoryPage: React.FC = () => {
   };
 
   const handleItemPress = (item: StoreItem) => {
-    router.push(`/MainStorePage?storeId=${item._id}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${item._id}` as any as string);
   };
 
   const handleBookPress = (item: StoreItem) => {
@@ -267,7 +267,7 @@ const FitnessCategoryPage: React.FC = () => {
         storeName: item.name,
         cashback: item.offers?.cashback?.toString() || '15',
       },
-    } as unknown);
+    } as any);
   };
 
   // Search functions
@@ -294,11 +294,11 @@ const FitnessCategoryPage: React.FC = () => {
     setIsSearching(true);
     try {
       const response = await apiClient.get('/stores/search', {
-        params: { q: query, limit: 20 } as unknown,
+        params: { q: query, limit: 20 } as any,
       });
 
       // Filter results to only show fitness-related stores
-      const results = ((response.data as unknown)?.stores || []).filter((store: StoreItem) =>
+      const results = ((response.data as any)?.stores || []).filter((store: StoreItem) =>
         store.tags?.some((tag) =>
           ['gym', 'fitness', 'yoga', 'studio', 'trainer', 'sports', 'pilates', 'crossfit'].includes(tag.toLowerCase()),
         ),
@@ -317,7 +317,7 @@ const FitnessCategoryPage: React.FC = () => {
 
   const handleSearchResultPress = (item: StoreItem) => {
     handleSearchClose();
-    router.push(`/MainStorePage?storeId=${item._id}` as unknown as string);
+    router.push(`/MainStorePage?storeId=${item._id}` as any as string);
   };
 
   const getItemTypeLabel = (item: StoreItem): string => {
@@ -405,7 +405,7 @@ const FitnessCategoryPage: React.FC = () => {
               accessibilityState={{ selected: selectedFilter === filter.id }}
             >
               <Ionicons
-                name={filter.icon as unknown}
+                name={filter.icon as any}
                 size={16}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
@@ -450,7 +450,7 @@ const FitnessCategoryPage: React.FC = () => {
                 accessibilityRole="button"
                 accessibilityLabel={`${item.name}, ${item.location?.city || 'Bangalore'}, rating ${item.ratings?.average?.toFixed(1) || '4.5'}, ${item.offers?.cashback || 15}% cashback`}
               >
-                <CachedImage source={(item.banner?.[0] || item.logo || '') as unknown} style={styles.itemImage} />
+                <CachedImage source={(item.banner?.[0] || item.logo || '') as any} style={styles.itemImage} />
                 <View style={styles.cashbackBadge}>
                   <Text style={styles.cashbackText}>{item.offers?.cashback || 15}%</Text>
                 </View>
@@ -569,7 +569,7 @@ const FitnessCategoryPage: React.FC = () => {
                   accessibilityRole="button"
                   accessibilityLabel={`${item.name}, ${item.location?.city || 'Bangalore'}, rating ${item.ratings?.average?.toFixed(1) || '4.5'}`}
                 >
-                  <CachedImage source={item.logo || (item.banner?.[0] as unknown)} style={styles.searchResultImage} />
+                  <CachedImage source={item.logo || (item.banner?.[0] as any)} style={styles.searchResultImage} />
                   <View style={styles.searchResultInfo}>
                     <Text style={styles.searchResultName}>{item.name}</Text>
                     <View style={styles.searchResultMeta}>

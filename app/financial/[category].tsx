@@ -76,7 +76,7 @@ const FinancialCategoryPage: React.FC = () => {
             color: response.data.category.metadata?.color || fallbackData.gradientColors[0],
             cashbackPercentage: response.data.category.cashbackPercentage,
             maxCashback: response.data.category.maxCashback,
-            serviceCount: (response.data.category as unknown).serviceCount || 0,
+            serviceCount: (response.data.category as any).serviceCount || 0,
             metadata: response.data.category.metadata,
           });
         }
@@ -135,7 +135,7 @@ const FinancialCategoryPage: React.FC = () => {
         category: categorySlug,
         source: 'category_page',
       });
-      router.push(`/financial/service/${serviceId}` as unknown as string);
+      router.push(`/financial/service/${serviceId}` as any as string);
     }
   };
 

@@ -29,7 +29,7 @@ function ProductsScreen() {
     try {
       setLoading(true);
       setError(null);
-      const filters = selectedFilter !== 'all' ? { status: selectedFilter as unknown } : undefined;
+      const filters = selectedFilter !== 'all' ? { status: selectedFilter as any } : undefined;
       const response = await userProductService.getUserProducts(filters);
 
       if (response.success && response.data) {

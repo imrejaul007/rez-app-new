@@ -32,17 +32,17 @@ function GoingOutPage() {
   const { state, actions, handlers } = useGoingOutPage();
 
   const handleBack = () => {
-    goBack('/' as unknown); // Fallback to home page
+    goBack('/' as any); // Fallback to home page
   };
 
   const handleProductPress = (product: GoingOutProduct) => {
     router.push(
-      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as unknown as string,
+      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as any as string,
     );
   };
 
   const handleViewAllSection = (sectionId: string) => {
-    router.push(`/going-out/section/${sectionId}` as unknown as string);
+    router.push(`/going-out/section/${sectionId}` as any as string);
   };
 
   const handleHideSearch = () => {

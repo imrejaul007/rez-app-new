@@ -236,7 +236,7 @@ function TierProgressScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <LinearGradient
-        colors={[(theme as unknown).primary, (theme as unknown).secondary || (theme as unknown).primary]}
+        colors={[(theme as any).primary, (theme as any).secondary || (theme as any).primary]}
         style={styles.header}
       >
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -251,7 +251,7 @@ function TierProgressScreen() {
 
       {loading ? (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color={(theme as unknown).primary} />
+          <ActivityIndicator size="large" color={(theme as any).primary} />
         </View>
       ) : !data ? (
         <View style={styles.loader}>

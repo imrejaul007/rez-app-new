@@ -252,8 +252,8 @@ const StoreListPage: React.FC = () => {
         description: store.description || '',
         deliveryCategories: store.deliveryCategories || {},
         hasRezPay:
-          (store as unknown).paymentSettings?.acceptRezCoins || store.operationalInfo?.acceptsWalletPayment || false,
-        cashbackPercent: (store as unknown).rewardRules?.baseCashbackPercent || 0,
+          (store as any).paymentSettings?.acceptRezCoins || store.operationalInfo?.acceptsWalletPayment || false,
+        cashbackPercent: (store as any).rewardRules?.baseCashbackPercent || 0,
         // CA-DSC-015 FIX: Use Set to eliminate duplicate products from filter results
         products: Array.from(
           new Map(
@@ -412,7 +412,7 @@ const StoreListPage: React.FC = () => {
           cardType: 'product',
           storeId: store.storeId,
         },
-      } as unknown as string);
+      } as any as string);
     },
     [router],
   );

@@ -289,7 +289,7 @@ function CouponsPage() {
   const handleCopyCode = async (code: string) => {
     try {
       if (Platform.OS === 'web') {
-        await (navigator as unknown).clipboard?.writeText(code);
+        await (navigator as any).clipboard?.writeText(code);
       } else {
         const Clipboard = require('expo-clipboard');
         await Clipboard.setStringAsync(code);
@@ -307,9 +307,9 @@ function CouponsPage() {
     const categories = coupon.applicableTo?.categories || [];
     setShowDetailsModal(false);
     if (stores.length === 1 && typeof stores[0] === 'object') {
-      router.push(`/MainStorePage?storeId=${(stores[0] as unknown as string)._id}` as unknown);
+      router.push(`/MainStorePage?storeId=${(stores[0] as any)._id || (stores[0] as any).id}` as any);
     } else if (categories.length === 1 && typeof categories[0] === 'object') {
-      router.push(`/explore/category/${(categories[0] as unknown as string)._id}` as unknown);
+      router.push(`/explore/category/${(categories[0] as any)._id || (categories[0] as any).id}` as any);
     } else {
       router.push('/explore');
     }
@@ -482,7 +482,7 @@ function CouponsPage() {
                     key={store._id}
                     onPress={(e) => {
                       e.stopPropagation();
-                      router.push(`/MainStorePage?storeId=${store._id}` as unknown as string);
+                      router.push(`/MainStorePage?storeId=${store._id}` as any as string);
                     }}
                   >
                     <ThemedText style={s.storeLink} numberOfLines={1}>
@@ -609,7 +609,7 @@ function CouponsPage() {
                     key={store._id}
                     onPress={(e) => {
                       e.stopPropagation();
-                      router.push(`/MainStorePage?storeId=${store._id}` as unknown as string);
+                      router.push(`/MainStorePage?storeId=${store._id}` as any as string);
                     }}
                   >
                     <ThemedText style={s.storeLink} numberOfLines={1}>
@@ -759,7 +759,7 @@ function CouponsPage() {
                             onPress={() => {
                               if (storeId) {
                                 setShowDetailsModal(false);
-                                router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
+                                router.push(`/MainStorePage?storeId=${storeId}` as any as string);
                               }
                             }}
                           >
@@ -948,7 +948,7 @@ function CouponsPage() {
   const flatListData = loading ? [] : activeTab === 'available' ? filteredCoupons : myCoupons;
 
   const flatListKeyExtractor = useCallback((item: Coupon | UserCoupon) => {
-    return (item as unknown)._id || (item as unknown).couponId || '';
+    return (item as any)._id || (item as any).couponId || '';
   }, []);
 
   const flatListRenderItem = useCallback(
@@ -1220,7 +1220,7 @@ const s = StyleSheet.create({
       ios: Shadows.subtle,
       android: { elevation: 1 },
       web: { boxShadow: '0 1px 3px rgba(0,0,0,0.06)' },
-    } as unknown) as unknown),
+    } as any) as any),
   },
   searchInput: {
     flex: 1,
@@ -1228,7 +1228,7 @@ const s = StyleSheet.create({
     color: C.textPrimary,
     paddingVertical: 10,
     marginLeft: Spacing.sm,
-    ...(Platform.OS === 'web' ? ({ outlineStyle: 'none' } as unknown) : {}),
+    ...(Platform.OS === 'web' ? ({ outlineStyle: 'none' } as any) : {}),
   },
   searchClear: { padding: Spacing.xs, marginRight: Spacing.xs },
   searchBtn: {
@@ -1278,7 +1278,7 @@ const s = StyleSheet.create({
       ios: Shadows.md,
       android: { elevation: 3 },
       web: { boxShadow: '0 2px 8px rgba(0,0,0,0.1)' },
-    } as unknown) as unknown),
+    } as any) as any),
   },
   featGradient: { padding: 14, alignItems: 'center' },
   featDiscount: { fontSize: Typography.h1.fontSize, fontWeight: '900', color: colors.text.inverse },
@@ -1307,7 +1307,7 @@ const s = StyleSheet.create({
       ios: { ...Shadows.sm, shadowOpacity: 0.08, shadowRadius: 6 },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
-    } as unknown) as unknown),
+    } as any) as any),
   },
   cardDim: { opacity: 0.55 },
   cardBanner: {

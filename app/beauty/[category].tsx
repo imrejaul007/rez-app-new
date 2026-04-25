@@ -257,9 +257,9 @@ const BeautyCategoryPage: React.FC = () => {
   // Handle item press - navigate to store or product page
   const handleItemPress = (item: DisplayItem) => {
     if (config.type === 'store') {
-      router.push(`/MainStorePage?storeId=${item.id}` as unknown as string);
+      router.push(`/MainStorePage?storeId=${item.id}` as any as string);
     } else {
-      router.push(`/product-page?productId=${item.id}` as unknown as string);
+      router.push(`/product-page?productId=${item.id}` as any as string);
     }
   };
 
@@ -267,16 +267,16 @@ const BeautyCategoryPage: React.FC = () => {
   const handleBookPress = (item: DisplayItem) => {
     if (config.type === 'store') {
       // Navigate to store page with booking intent
-      router.push(`/MainStorePage?storeId=${item.id}&action=book` as unknown as string);
+      router.push(`/MainStorePage?storeId=${item.id}&action=book` as any as string);
     } else {
       // Navigate to product page with add to cart intent
-      router.push(`/product-page?productId=${item.id}&action=buy` as unknown as string);
+      router.push(`/product-page?productId=${item.id}&action=buy` as any as string);
     }
   };
 
   // Handle search
   const handleSearch = () => {
-    router.push(`/search?category=beauty&subcategory=${category}` as unknown as string);
+    router.push(`/search?category=beauty&subcategory=${category}` as any as string);
   };
 
   // Loading state
@@ -340,7 +340,7 @@ const BeautyCategoryPage: React.FC = () => {
             >
               {filter.icon && (
                 <Ionicons
-                  name={filter.icon as unknown}
+                  name={filter.icon as any}
                   size={14}
                   color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
                 />
@@ -381,7 +381,7 @@ const BeautyCategoryPage: React.FC = () => {
             </Text>
             <Pressable
               style={[styles.exploreButton, { backgroundColor: config.gradientColors[0] }]}
-              onPress={() => router.push('/beauty' as unknown as string)}
+              onPress={() => router.push('/beauty' as any as string)}
             >
               <Text style={styles.exploreButtonText}>Explore Other Categories</Text>
             </Pressable>

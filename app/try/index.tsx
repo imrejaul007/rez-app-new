@@ -312,8 +312,8 @@ export default function TryHomeScreen() {
         if (scoreData.status === 'fulfilled') {
           setExplorerScore({
             score: scoreData.value.score,
-            tier: (scoreData.value as unknown).currentTier ?? scoreData.value.tier,
-            streak: (scoreData.value as unknown).dayStreak ?? scoreData.value.stats?.currentStreak,
+            tier: (scoreData.value as any).currentTier ?? scoreData.value.tier,
+            streak: (scoreData.value as any).dayStreak ?? scoreData.value.stats?.currentStreak,
           });
         }
       } finally {
@@ -417,7 +417,7 @@ export default function TryHomeScreen() {
                   style={[
                     styles.progressBarFill,
                     {
-                      width: `${Math.min(100, (missionProgress.current / missionProgress.total) * 100)}%` as unknown,
+                      width: `${Math.min(100, (missionProgress.current / missionProgress.total) * 100)}%` as any,
                     },
                   ]}
                 />
@@ -594,7 +594,7 @@ export default function TryHomeScreen() {
             <Pressable
               key={item.route}
               style={styles.quickNavChip}
-              onPress={() => router.push(item.route as unknown as string)}
+              onPress={() => router.push(item.route as any as string)}
             >
               <Text style={styles.quickNavText}>{item.label}</Text>
             </Pressable>

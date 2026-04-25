@@ -130,7 +130,7 @@ function SignInScreen() {
         setTimeout(() => {
           try {
             if (u.isOnboarded) {
-              router.replace('/(tabs)/' as unknown);
+              router.replace('/(tabs)/' as any);
             } else {
               router.replace('/onboarding/notification-permission');
             }
@@ -288,7 +288,7 @@ function SignInScreen() {
         const response = await apiClient.get<{ hasPin: boolean }>(
           `/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`,
         );
-        const hasPinSet = (response as unknown).hasPin ?? response.data?.hasPin ?? false;
+        const hasPinSet = (response as any).hasPin ?? response.data?.hasPin ?? false;
         if (hasPinSet) {
           if (!isMounted()) return;
           setStep('pin');
@@ -324,13 +324,13 @@ function SignInScreen() {
 
       if (response.success) {
         // Normalise user: backend returns _id, frontend expects id
-        const rawUser = (response.data as unknown).user;
+        const rawUser = (response.data as any).user;
         const userId = rawUser._id || rawUser.id;
         if (!userId) {
           throw new Error('Invalid user response: missing userId (_id or id)');
         }
         const user = { ...rawUser, id: userId };
-        await actions.loginWithTokens((response.data as unknown).tokens, user);
+        await actions.loginWithTokens((response.data as any).tokens, user);
         try {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch {}
@@ -339,7 +339,7 @@ function SignInScreen() {
         if (needsPinSetup) {
           router.replace('/onboarding/set-pin');
         } else if (user.isOnboarded) {
-          router.replace('/(tabs)/' as unknown);
+          router.replace('/(tabs)/' as any);
         } else {
           router.replace('/onboarding/notification-permission');
         }
@@ -349,7 +349,7 @@ function SignInScreen() {
         setErrors((prev) => ({ ...prev, pin: msg }));
         // Show alert for lockout or low remaining attempts
         const isLocked = msg.toLowerCase().includes('too many') || msg.toLowerCase().includes('locked');
-        const attemptsLeft = (response.data as unknown)?.attemptsLeft ?? (response as unknown).attemptsLeft;
+        const attemptsLeft = (response.data as any)?.attemptsLeft ?? (response as any).attemptsLeft;
         if (isLocked) {
           platformAlertSimple('Account Locked', msg);
         } else if (attemptsLeft !== undefined && attemptsLeft <= 2) {
@@ -418,7 +418,7 @@ function SignInScreen() {
       if (needsPinSetup) {
         router.replace('/onboarding/set-pin');
       } else if (user?.isOnboarded) {
-        router.replace('/(tabs)/' as unknown);
+        router.replace('/(tabs)/' as any);
       } else {
         router.replace('/onboarding/notification-permission');
       }

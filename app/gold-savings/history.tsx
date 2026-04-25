@@ -14,7 +14,7 @@ function GoldSavingsHistoryPage() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <Pressable onPress={() => goBack('/gold-savings' as unknown)} style={styles.backButton}>
+        <Pressable onPress={() => goBack('/gold-savings' as any)} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Gold Transaction History</ThemedText>

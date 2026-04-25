@@ -352,7 +352,7 @@ function DentalCarePage() {
       >
         <View style={[styles.serviceIcon, isSelected ? styles.serviceIconSelected : null]}>
           <Ionicons
-            name={service.icon as unknown}
+            name={service.icon as any}
             size={24}
             color={isSelected ? colors.text.inverse : colors.brand.cyan}
           />

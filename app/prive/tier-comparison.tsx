@@ -153,7 +153,7 @@ function TierComparisonScreen() {
         ))}
 
         {/* CTA */}
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/prive/next-actions' as unknown as string)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/prive/next-actions' as any as string)}>
           <Text style={styles.ctaText}>See How to Level Up</Text>
         </Pressable>
 

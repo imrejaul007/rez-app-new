@@ -460,21 +460,21 @@ const MissionDetailScreen: React.FC = () => {
                 <Ionicons name="checkmark-circle" size={20} color={colors.primary[500]} />
                 <Text style={styles.requirementText}>
                   {challenge.requirements.action === 'visit_stores' &&
-                    `Visit ${(challenge.requirements as unknown).count} stores`}
+                    `Visit ${(challenge.requirements as any).count} stores`}
                   {challenge.requirements.action === 'upload_bills' &&
-                    `Upload ${(challenge.requirements as unknown).count} bills`}
+                    `Upload ${(challenge.requirements as any).count} bills`}
                   {challenge.requirements.action === 'order_count' &&
-                    `Place ${(challenge.requirements as unknown).count} orders`}
+                    `Place ${(challenge.requirements as any).count} orders`}
                   {challenge.requirements.action === 'refer_friends' &&
-                    `Refer ${(challenge.requirements as unknown).count} friends`}
+                    `Refer ${(challenge.requirements as any).count} friends`}
                   {challenge.requirements.action === 'review_count' &&
-                    `Write ${(challenge.requirements as unknown).count} reviews`}
+                    `Write ${(challenge.requirements as any).count} reviews`}
                   {challenge.requirements.action === 'spend_amount' &&
-                    `Spend ${currencySymbol}${(challenge.requirements as unknown).count}`}
+                    `Spend ${currencySymbol}${(challenge.requirements as any).count}`}
                   {challenge.requirements.action === 'login_streak' &&
-                    `Maintain ${(challenge.requirements as unknown).count} day login streak`}
+                    `Maintain ${(challenge.requirements as any).count} day login streak`}
                   {challenge.requirements.action === 'share_deals' &&
-                    `Share ${(challenge.requirements as unknown).count} deals`}
+                    `Share ${(challenge.requirements as any).count} deals`}
                 </Text>
               </View>
               {challenge.requirements.minAmount && (
@@ -530,7 +530,7 @@ const MissionDetailScreen: React.FC = () => {
   );
 };
 
-const styles = (StyleSheet.create as unknown)({
+const styles = (StyleSheet.create as any)({
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -579,7 +579,7 @@ const styles = (StyleSheet.create as unknown)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as unknown,
+      ios: shadows.md as any,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -651,7 +651,7 @@ const styles = (StyleSheet.create as unknown)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as unknown,
+      ios: shadows.md as any,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -730,7 +730,7 @@ const styles = (StyleSheet.create as unknown)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as unknown,
+      ios: shadows.md as any,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -799,7 +799,7 @@ const styles = (StyleSheet.create as unknown)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as unknown,
+      ios: shadows.md as any,
       android: { elevation: 4 },
     }) || {}),
   },
@@ -820,7 +820,7 @@ const styles = (StyleSheet.create as unknown)({
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.select({
-      ios: shadows.md as unknown,
+      ios: shadows.md as any,
       android: { elevation: 4 },
     }) || {}),
   },

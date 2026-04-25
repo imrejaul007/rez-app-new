@@ -165,7 +165,7 @@ function HotelDetailsPage() {
         return;
       }
 
-      const productData = response.data as unknown;
+      const productData = response.data as any;
 
       // Check if this is a hotel service
       const isHotel =
@@ -344,17 +344,18 @@ function HotelDetailsPage() {
   };
 
   const handleBookingComplete = (data: BookingData) => {
-    if ((data as unknown).requiresPayment) {
+    const dataAny = data as any as Record<string, unknown>;
+    if (dataAny.requiresPayment) {
       setShowBookingFlow(false);
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown as string).totalAmount,
+          amount: dataAny.totalAmount as string,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
         },
-      } as unknown);
+      } as any);
     } else {
       setBookingData(data);
       setShowBookingFlow(false);
@@ -374,7 +375,7 @@ function HotelDetailsPage() {
       if (isInWishlist(hotel.id)) {
         await removeFromWishlist(hotel.id);
       } else {
-        await addToWishlist(hotel.id as unknown);
+        await addToWishlist(hotel.id as any);
       }
     } catch (error: any) {
       // silently handle
@@ -421,7 +422,7 @@ function HotelDetailsPage() {
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
-                  source={imageUrl as unknown}
+                  source={imageUrl as any}
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => {
@@ -526,7 +527,7 @@ function HotelDetailsPage() {
               </View>
               <Pressable
                 style={styles.viewStoreButton}
-                onPress={() => router.push(`/MainStorePage?storeId=${hotel.store.id}` as unknown as string)}
+                onPress={() => router.push(`/MainStorePage?storeId=${hotel.store.id}` as any as string)}
               >
                 <Text style={styles.viewStoreButtonText}>View</Text>
                 <Ionicons name="chevron-forward" size={16} color={colors.brand.pink} />

@@ -222,7 +222,7 @@ function PrivacyPage() {
             >
               <View style={styles.sectionTitleContainer}>
                 <View style={styles.iconContainer}>
-                  <Ionicons name={section.icon as unknown} size={24} color={Colors.primary[600]} />
+                  <Ionicons name={section.icon as any} size={24} color={Colors.primary[600]} />
                 </View>
                 <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
               </View>

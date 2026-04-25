@@ -322,6 +322,37 @@ class KarmaService {
     return apiClient.get<{ success: boolean; badges: KarmaBadge[] }>('/karma/badges');
   }
 
+  /**
+   * Download the user's Impact Report as a PDF.
+   * Returns the raw PDF binary.
+   */
+  async downloadImpactReport(userName: string): Promise<{ blob: Blob; filename: string }> {
+    const token = await this._getToken();
+    const params = new URLSearchParams({ name: userName });
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/karma/report?${params}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to download report: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const contentDisposition = response.headers.get('content-disposition') ?? '';
+    const match = contentDisposition.match(/filename="(.+)"/);
+    const filename = match ? match[1] : `ImpactReport_${userName.replace(/\s+/g, '_')}.pdf`;
+    return { blob, filename };
+  }
+
+  private async _getToken(): Promise<string> {
+    const { useAuthStore } = await import('@/stores/authStore');
+    const token = useAuthStore.getState().state.token;
+    if (!token) throw new Error('Not authenticated');
+    return token;
+  }
+
 }
 
 export interface BookingWithEvent extends Booking {

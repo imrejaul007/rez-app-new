@@ -85,7 +85,7 @@ function SurveyCompletePage() {
               styles.coinsContainer,
               {
                 transform: [{ scale: coinScaleAnim }, { rotate: coinRotation }],
-              } as unknown,
+              } as any,
             ]}
           >
             <LinearGradient colors={[colors.brand.goldBright, '#FFA500']} style={styles.coinsGradient}>

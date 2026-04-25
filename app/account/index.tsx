@@ -147,7 +147,7 @@ function AccountPage() {
           break;
         default:
           if (category.route) {
-            router.push(category.route as unknown as string);
+            router.push(category.route as any as string);
           }
           break;
       }
@@ -209,7 +209,7 @@ function AccountPage() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }] as any}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -281,9 +281,9 @@ function AccountPage() {
                     onPress={() => {
                       if (isVerified) {
                         const route = SEGMENT_ROUTES[segment];
-                        if (route) router.push(route as unknown as string);
+                        if (route) router.push(route as any as string);
                       } else {
-                        router.push('/onboarding/identity-select' as unknown as string);
+                        router.push('/onboarding/identity-select' as any as string);
                       }
                     }}
                     style={{
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
       },
       android: { elevation: 2 },
-      web: { boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } as unknown,
+      web: { boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } as any,
     }),
   },
 

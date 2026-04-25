@@ -79,7 +79,7 @@ function ProfilePage() {
           router.push('/my-earnings');
           break;
         default:
-          if (item.route) router.push(item.route as unknown as string);
+          if (item.route) router.push(item.route as any as string);
           break;
       }
     },
@@ -141,7 +141,7 @@ function ProfilePage() {
           router.push('/bill-simulator');
           break;
         default:
-          if (item.route) router.push(item.route as unknown as string);
+          if (item.route) router.push(item.route as any as string);
           break;
       }
     },
@@ -591,7 +591,7 @@ function ProfilePage() {
                     <View
                       style={[
                         styles.rezProgressFill,
-                        { width: `${progressPct}%` as unknown as DimensionValue, backgroundColor: tier.color },
+                        { width: `${progressPct}%` as any as DimensionValue, backgroundColor: tier.color },
                       ]}
                     />
                   </View>

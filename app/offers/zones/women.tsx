@@ -149,7 +149,7 @@ function WomenZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown as string);
+    router.push(`/offers/${offer._id}` as any as string);
   };
 
   const renderSkeletonCard = () => (
@@ -238,7 +238,7 @@ function WomenZonePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as unknown}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }] as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Banner */}
@@ -338,7 +338,7 @@ function WomenZonePage() {
 
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown as string)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as any as string)}>
           <LinearGradient
             colors={[colors.brand.pink, colors.brand.purpleSoft]}
             start={{ x: 0, y: 0 }}

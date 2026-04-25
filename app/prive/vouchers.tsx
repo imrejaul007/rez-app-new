@@ -254,7 +254,7 @@ function VouchersScreen() {
                 {filter === 'all' && (
                   <Pressable
                     style={styles.redeemCta}
-                    onPress={() => router.push('/prive/earnings' as unknown as string)}
+                    onPress={() => router.push('/prive/earnings' as any as string)}
                   >
                     <Text style={styles.redeemCtaText}>Start Earning</Text>
                   </Pressable>

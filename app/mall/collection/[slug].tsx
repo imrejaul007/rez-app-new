@@ -103,7 +103,7 @@ function CollectionBrandsPage() {
 
   const handleBrandPress = useCallback(
     (brand: MallBrand) => {
-      router.push(`/mall/brand/${brand.id || brand._id}` as unknown as string);
+      router.push(`/mall/brand/${brand.id || brand._id}` as any as string);
     },
     [router],
   );
@@ -179,7 +179,7 @@ function CollectionBrandsPage() {
         message="Check back later for new additions"
         icon="sparkles-outline"
         actionLabel="Browse All Brands"
-        onAction={() => router.push('/mall/brands' as unknown as string)}
+        onAction={() => router.push('/mall/brands' as any as string)}
       />
     );
   }, [isLoading, router]);

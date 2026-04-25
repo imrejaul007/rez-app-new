@@ -90,7 +90,7 @@ function TravelSearchPage() {
   };
 
   const renderResultCard = ({ item }: { item: TravelService }) => (
-    <Pressable style={styles.resultCard} onPress={() => router.push(getCategoryDetailRoute(item._id) as unknown)}>
+    <Pressable style={styles.resultCard} onPress={() => router.push(getCategoryDetailRoute(item._id) as any)}>
       <View style={styles.resultCardContent}>
         <View style={{ flex: 1 }}>
           <Text style={styles.resultName} numberOfLines={2}>
@@ -154,7 +154,7 @@ function TravelSearchPage() {
               onPress={() => setSelectedCategory(cat.slug)}
             >
               <Ionicons
-                name={cat.icon as unknown}
+                name={cat.icon as any}
                 size={16}
                 color={selectedCategory === cat.slug ? colors.nileBlue : '#94A3B8'}
               />

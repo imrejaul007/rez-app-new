@@ -290,12 +290,12 @@ function BookingsPage() {
             .getUserTableBookings({ page: tPage, limit: PAGE_SIZE })
             .then((res) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const data = res.data as unknown;
-              const bookings = Array.isArray(data) ? data : (data as Record<string, unknown>)?.bookings || [];
-              const hasNext = (data as Record<string, unknown>)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
-              return { type: 'table' as const, bookings, hasMore: hasNext };
+              const data = res.data as any;
+              const bookings = Array.isArray(data) ? data : (data as any)?.bookings || [];
+              const hasNext = (data as any)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
+              return { type: 'table' as const, bookings: bookings as any[], hasMore: hasNext };
             })
-            .catch(() => ({ type: 'table' as const, bookings: [], hasMore: false })),
+            .catch(() => ({ type: 'table' as const, bookings: [] as any[], hasMore: false })),
         );
       }
 
@@ -317,15 +317,15 @@ function BookingsPage() {
           serviceBookingService
             .getUserBookings({ page: sPage, limit: PAGE_SIZE })
             .then((res) => {
-              const bookings = res.data || [];
-              const totalPages = (res as unknown as Record<string, unknown>).meta?.pagination?.pages || 1;
+              const bookings = (res.data as any) || [];
+              const totalPages = (res as any)?.meta?.pagination?.pages || 1;
               return {
                 type: 'service' as const,
-                bookings,
+                bookings: bookings as any[],
                 hasMore: sPage < totalPages && bookings.length >= PAGE_SIZE,
               };
             })
-            .catch(() => ({ type: 'service' as const, bookings: [], hasMore: false })),
+            .catch(() => ({ type: 'service' as const, bookings: [] as any[], hasMore: false })),
         );
       }
 
@@ -587,7 +587,7 @@ function BookingsPage() {
             dineIn: 'true',
             table: booking.raw?.bookingNumber || '',
           },
-        } as unknown as string);
+        } as any as string);
       };
       const handlePayPress = () => {
         const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
@@ -598,7 +598,7 @@ function BookingsPage() {
             storeName: store?.name || booking.title || '',
             storeLogo: store?.logo || '',
           },
-        } as unknown as string);
+        } as any as string);
       };
 
       return (
@@ -618,7 +618,7 @@ function BookingsPage() {
             <View style={{ flex: 1 }} />
             <View style={[styles.statusBadge, { backgroundColor: statusConf.bg }]}>
               <Ionicons
-                name={statusConf.icon as unknown as keyof typeof Ionicons.glyphMap}
+                name={statusConf.icon as any as keyof typeof Ionicons.glyphMap}
                 size={12}
                 color={statusConf.color}
               />
@@ -793,7 +793,7 @@ function BookingsPage() {
           <Text style={styles.emptySubtitle}>Please login to view your bookings</Text>
           <Pressable
             style={[styles.ctaButton, { backgroundColor: tintColor || C.primary }]}
-            onPress={() => router.push('/sign-in' as unknown as string)}
+            onPress={() => router.push('/sign-in' as any as string)}
           >
             <Text style={styles.ctaButtonText}>Login</Text>
           </Pressable>
@@ -828,7 +828,7 @@ function BookingsPage() {
         ) : (
           <Pressable
             style={[styles.ctaButton, { backgroundColor: C.primary }]}
-            onPress={() => router.push('/' as unknown as string)}
+            onPress={() => router.push('/' as any as string)}
           >
             <Text style={styles.ctaButtonText}>Explore Now</Text>
           </Pressable>
@@ -944,13 +944,11 @@ function BookingsPage() {
                 {},
                 styles.listContent,
                 filteredBookings.length === 0 ? { flex: 1 } : {},
-              ) as unknown as StyleProp<ViewStyle>
+              ) as any
             }
             ListEmptyComponent={renderEmpty}
             estimatedItemSize={120}
-            {...({
-              removeClippedSubviews: true,
-            } as unknown as StyleProp<ViewStyle>)}
+            removeClippedSubviews={true}
             ListFooterComponent={
               hasMoreData && filteredBookings.length > 0 ? (
                 <View style={styles.loadMoreFooter}>

@@ -75,7 +75,7 @@ function UserLoyaltyCard({
           {/* Right Side - Icon */}
           <View style={styles.rightContent}>
             <View style={styles.iconCircle}>
-              <Ionicons name={(rewardIcon as unknown) || 'cafe'} size={28} color={colors.nileBlue} />
+              <Ionicons name={(rewardIcon as any) || 'cafe'} size={28} color={colors.nileBlue} />
             </View>
           </View>
         </View>
