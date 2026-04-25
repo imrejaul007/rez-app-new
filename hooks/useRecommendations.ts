@@ -10,6 +10,30 @@ import recommendationService, {
 import productsApi from '@/services/productsApi';
 import { ProductItem } from '@/types/homepage.types';
 
+// API Response types
+interface SimilarProductsResponse {
+  similarProducts: ProductRecommendation[];
+}
+
+interface BundleResponse {
+  bundles: BundleItem[];
+}
+
+interface PersonalizedRecommendationsResponse {
+  recommendations: ProductRecommendation[];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ProductLike = Record<string, any>;
+
+interface FeaturedProductsResponse extends Array<ProductLike> {}
+
+interface AllProductsResponse {
+  products?: ProductLike[];
+}
+
+interface AllProductsData extends Array<ProductLike> {}
+
 export interface UseRecommendationsOptions {
   productId: string;
   autoFetch?: boolean;
@@ -50,9 +74,9 @@ export function useRecommendations({
       setLoading(true);
       setError(null);
 
-      const response: any = await recommendationService.getSimilarProducts(productId, 6);
+      const response = await recommendationService.getSimilarProducts(productId, 6);
       if (response.success && response.data) {
-        setSimilar(response.data.similarProducts);
+        setSimilar((response.data as SimilarProductsResponse).similarProducts);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch similar products');
@@ -69,9 +93,9 @@ export function useRecommendations({
       setLoading(true);
       setError(null);
 
-      const response: any = await recommendationService.getFrequentlyBoughtTogether(productId, 4);
+      const response = await recommendationService.getFrequentlyBoughtTogether(productId, 4);
       if (response.success && response.data) {
-        setFrequentlyBought(response.data.bundles);
+        setFrequentlyBought((response.data as BundleResponse).bundles);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch frequently bought together');
@@ -88,9 +112,9 @@ export function useRecommendations({
       setLoading(true);
       setError(null);
 
-      const response: any = await recommendationService.getBundleDeals(productId, 3);
+      const response = await recommendationService.getBundleDeals(productId, 3);
       if (response.success && response.data) {
-        setBundles(response.data.bundles);
+        setBundles((response.data as BundleResponse).bundles);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch bundle deals');
@@ -188,9 +212,9 @@ export function usePersonalizedRecommendations({
 
       // Try personalized recommendations first
       try {
-        const response: any = await recommendationService.getPersonalizedRecommendations(limit, excludeProducts);
-        if (response.success && response.data?.recommendations?.length > 0) {
-          setRecommendations(response.data.recommendations);
+        const response = await recommendationService.getPersonalizedRecommendations(limit, excludeProducts);
+        if (response.success && response.data && (response.data as PersonalizedRecommendationsResponse).recommendations?.length > 0) {
+          setRecommendations((response.data as PersonalizedRecommendationsResponse).recommendations);
           gotProducts = true;
         }
       } catch (personalizedErr) {
@@ -202,9 +226,9 @@ export function usePersonalizedRecommendations({
         try {
           const featuredResponse = await productsApi.getFeaturedProducts(limit);
 
-          if (featuredResponse.success && featuredResponse.data && featuredResponse.data.length > 0) {
+          if (featuredResponse.success && featuredResponse.data && (featuredResponse.data as FeaturedProductsResponse).length > 0) {
             // Convert featured products to recommendation format
-            const featuredAsRecommendations = featuredResponse.data.map((product: any) => ({
+            const featuredAsRecommendations = (featuredResponse.data as FeaturedProductsResponse).map((product) => ({
               id: product.id || product._id,
               product: product,
               score: 0.8,
@@ -213,8 +237,7 @@ export function usePersonalizedRecommendations({
               name: product.name || product.title,
               image: product.image || product.images?.[0]?.url || product.images?.[0],
               price: product.price,
-              ...product
-            }));
+            } as unknown as ProductRecommendation));
             setRecommendations(featuredAsRecommendations);
             gotProducts = true;
           }
@@ -230,11 +253,11 @@ export function usePersonalizedRecommendations({
 
           if (allProductsResponse.success && allProductsResponse.data) {
             const products = Array.isArray(allProductsResponse.data)
-              ? allProductsResponse.data
-              : (allProductsResponse.data as any).products || [];
+              ? allProductsResponse.data as AllProductsData
+              : (allProductsResponse.data as AllProductsResponse).products || [];
 
             if (products.length > 0) {
-              const productsAsRecommendations = products.slice(0, limit).map((product: any) => ({
+              const productsAsRecommendations = products.slice(0, limit).map((product: ProductLike) => ({
                 id: product.id || product._id,
                 product: product,
                 score: 0.7,
@@ -243,8 +266,7 @@ export function usePersonalizedRecommendations({
                 name: product.name || product.title,
                 image: product.image || product.images?.[0]?.url || product.images?.[0],
                 price: product.price,
-                ...product
-              }));
+              } as unknown as ProductRecommendation));
               setRecommendations(productsAsRecommendations);
             }
           }

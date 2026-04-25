@@ -10,7 +10,7 @@ import FormInput from '@/components/onboarding/FormInput';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthStore } from '@/stores/authStore';
 import CountryCodePicker, { COUNTRY_CODES, CountryCode } from '@/components/common/CountryCodePicker';
-import { platformAlertSimple } from '@/utils/platformAlert';
+import { showToast } from '@/components/common/ToastManager';
 import ReferralHandler from '@/utils/referralHandler';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -165,7 +165,10 @@ function RegistrationScreen() {
         if (!isMounted()) return;
         setErrors((prev) => ({ ...prev, phoneNumber: errorMessage }));
       } else {
-        platformAlertSimple('Error', errorMessage);
+        showToast({
+          type: 'error',
+          message: errorMessage,
+        });
       }
       actions.clearError();
     } finally {

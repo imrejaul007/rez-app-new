@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
-  Alert,
   Platform,
   StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
+import { showToast } from '@/components/common/ToastManager';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -45,7 +45,10 @@ export default function QRCheckinScreen() {
   const handleSubmit = async () => {
     const amt = parseFloat(amount);
     if (!storeId || isNaN(amt) || amt <= 0) {
-      Alert.alert('Enter a valid amount');
+      showToast({
+        type: 'warning',
+        message: 'Please enter a valid amount.',
+      });
       return;
     }
     setLoading(true);
@@ -64,7 +67,10 @@ export default function QRCheckinScreen() {
         .catch((err) => logger.error('QRCheckin: streak status fetch failed', new Error(String(err)), 'streak status'));
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Check-in failed. Try again.';
-      Alert.alert('Error', msg);
+      showToast({
+        type: 'error',
+        message: msg,
+      });
     } finally {
       setLoading(false);
     }

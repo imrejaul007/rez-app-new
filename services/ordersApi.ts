@@ -9,6 +9,10 @@ import {
   toOrder,
   canCancelOrder
 } from '@/types/unified';
+// Week-4: Response guards — validate backend responses at runtime using the
+// no-zod guards from @rez/shared-types. Guards narrow the response shape so
+// downstream code always receives well-typed data.
+import { isOrderResponse, isArrayOf } from '@rez/shared-types';
 
 // Keep the old OrderItem interface for backwards compatibility during migration
 export interface OrderItem {
@@ -363,9 +367,13 @@ class OrdersService {
       // Map backend pagination field names to the frontend interface.
       // Backend sends { page, totalPages } but the consumer app expects { current, pages }.
       if (response.success && response.data) {
+        // Week-4: Guard each order in the list. Malformed orders are excluded so
+        // the UI renders cleanly rather than crashing on undefined fields.
+        const validOrders = (response.data.orders ?? []).filter(isOrderResponse);
         const pag = response.data.pagination;
         const mapped: OrdersResponse = {
           ...response.data,
+          orders: validOrders as any,
           pagination: {
             current: pag.current ?? pag.page ?? 1,
             pages: pag.pages ?? pag.totalPages ?? 1,
@@ -404,6 +412,11 @@ class OrdersService {
   async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
     try {
       const response = await apiClient.get<Order>(`/orders/${orderId}`);
+      // Week-4: Guard the single-order response. A malformed response crashes the
+      // order detail screen at runtime — better to surface an error.
+      if (response.success && response.data && !isOrderResponse(response.data)) {
+        throw new Error('Malformed order response from backend');
+      }
       return response;
     } catch (error: any) {
       return {
@@ -435,6 +448,10 @@ class OrdersService {
   ): Promise<ApiResponse<Order>> {
     try {
       const response = await apiClient.patch<Order>(`/orders/${orderId}/cancel`, { reason });
+      // Week-4: Guard the returned order object.
+      if (response.success && response.data && !isOrderResponse(response.data)) {
+        throw new Error('Malformed order response from backend');
+      }
       return response;
     } catch (error: any) {
       return {
@@ -462,6 +479,10 @@ class OrdersService {
       }
 
       const response = await apiClient.post<Order>(`/orders/${orderId}/rate`, { rating, review });
+      // Week-4: Guard the returned order object.
+      if (response.success && response.data && !isOrderResponse(response.data)) {
+        throw new Error('Malformed order response from backend');
+      }
       return response;
     } catch (error: any) {
       return {

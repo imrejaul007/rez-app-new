@@ -27,6 +27,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import UnifiedQrScanner from '@/components/qr/UnifiedQrScanner';
 import type { QrPayload } from '@/utils/qr/qrPayload';
+import { logger } from '@/utils/logger';
 
 export default function ScanScreen() {
   const router = useRouter();
@@ -35,10 +36,7 @@ export default function ScanScreen() {
     // Analytics hook — leave narrow for now. The scanner's own router
     // call handles navigation; this is here so future observability
     // (PostHog / Mixpanel / etc.) has a single funnel event.
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log('[scan] routed to intent', payload.intent);
-    }
+    logger.debug('[scan] routed to intent', { intent: payload.intent }, 'Scan');
   }, []);
 
   const handleError = useCallback((_msg: string) => {

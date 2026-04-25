@@ -20,7 +20,7 @@ import {
   DEFAULT_RETRY_CONFIG,
   isRetryableError,
   withTimeout,
-} from './requestRetry';
+} from './retry';
 import NetInfo from '@react-native-community/netinfo';
 import { logger } from '@/utils/logger';
 
@@ -172,8 +172,9 @@ class RequestCache {
 
 const requestCache = new RequestCache();
 
-// Clear expired cache entries every minute (run in all environments)
 let _cacheCleanupInterval: ReturnType<typeof setInterval> | null = null;
+
+// Clear expired cache entries every minute (run in all environments)
 if (!_cacheCleanupInterval) {
   _cacheCleanupInterval = setInterval(() => requestCache.clearExpired(), 60000);
 }
@@ -185,6 +186,24 @@ if (!_cacheCleanupInterval) {
 let isOnline = true;
 let networkState: any = null;
 let networkUnsubscribe: (() => void) | null = null;
+
+/**
+ * Cleanup function to be called when the module/app is destroyed
+ * Cleans up NetInfo listener and cache cleanup interval
+ */
+export function cleanupEnhancedApiClient(): void {
+  // Clean up NetInfo listener
+  if (networkUnsubscribe) {
+    networkUnsubscribe();
+    networkUnsubscribe = null;
+  }
+
+  // Clean up cache cleanup interval
+  if (_cacheCleanupInterval) {
+    clearInterval(_cacheCleanupInterval);
+    _cacheCleanupInterval = null;
+  }
+}
 
 // Initialize network state listener
 NetInfo.fetch().then(state => {

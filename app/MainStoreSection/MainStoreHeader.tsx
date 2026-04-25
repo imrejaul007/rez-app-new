@@ -11,6 +11,7 @@ import ReZCoin from '@/components/homepage/ReZCoin';
 import { Colors, Spacing, Shadows, BorderRadius } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
+import { logger } from '@/utils/logger';
 
 export interface MainStoreHeaderProps {
   storeName?: string;
@@ -65,8 +66,11 @@ function MainStoreHeader({
         title: storeName,
       });
     } catch (error: unknown) {
-      if (__DEV__)
-        console.warn('[MainStoreHeader] Share failed:', error instanceof Error ? error.message : String(error));
+      logger.warn(
+        '[MainStoreHeader] Share failed',
+        { error: error instanceof Error ? error.message : String(error) },
+        'MainStoreHeader',
+      );
     }
   };
 

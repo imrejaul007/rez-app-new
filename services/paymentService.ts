@@ -4,6 +4,9 @@
 import apiClient, { ApiResponse } from './apiClient';
 import { normalizePaymentStatus } from '../utils/statusCompat';
 import { logger } from '@/utils/logger';
+// Week-4: Response guards — validate backend payment responses at runtime.
+// Uses no-zod guards from @rez/shared-types to keep the RN bundle small.
+import { isPaymentResponse } from '@rez/shared-types';
 
 // CA-PAY-023 FIX: Normalize payment method types before API submission
 // Transform 'rezcoins' → 'wallet' as required by backend
@@ -172,6 +175,11 @@ class PaymentService {
       };
       const response = await apiClient.post<PaymentResponse>('/wallet/initiate-payment', normalizedRequest);
 
+      // Week-4: Guard the payment response. A corrupted response would cause the
+      // payment confirmation screen to show incorrect data.
+      if (response.success && response.data && !isPaymentResponse(response.data)) {
+        throw new Error('Malformed payment response from backend');
+      }
       if (response.success && response.data) {
         return response;
       }

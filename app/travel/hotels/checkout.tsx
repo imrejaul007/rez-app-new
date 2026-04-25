@@ -7,7 +7,8 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Platform } from 'react-native';
+import { showToast } from '@/components/common/ToastManager';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -127,7 +128,10 @@ function HotelCheckoutScreen() {
           // CA-TRV-065: Validate Razorpay key is configured
           const razorpayKey = process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID;
           if (!razorpayKey) {
-            Alert.alert('Configuration Error', 'Payment gateway is not configured. Please contact support.');
+            showToast({
+              type: 'error',
+              message: 'Payment gateway is not configured. Please contact support.',
+            });
             setPaying(false);
             return;
           }
@@ -172,10 +176,11 @@ function HotelCheckoutScreen() {
           });
           navigateToSuccess(result);
         } else {
-          Alert.alert(
-            'Payment',
-            'Online payment requires the full REZ app build. Please use the latest version from the App Store.',
-          );
+          showToast({
+            type: 'info',
+            message:
+              'Online payment requires the full REZ app build. Please use the latest version from the App Store.',
+          });
           setPaying(false);
         }
       } else {
@@ -190,9 +195,15 @@ function HotelCheckoutScreen() {
     } catch (e: any) {
       // Razorpay throws {code, description} on cancellation
       if ((e as any)?.code === 0) {
-        Alert.alert('Payment Cancelled', 'You cancelled the payment. Your booking hold is still active.');
+        showToast({
+          type: 'info',
+          message: 'You cancelled the payment. Your booking hold is still active.',
+        });
       } else {
-        Alert.alert('Payment Failed', e.message ?? e.description ?? 'Please try again.');
+        showToast({
+          type: 'error',
+          message: e.message ?? e.description ?? 'Please try again.',
+        });
       }
     } finally {
       setPaying(false);

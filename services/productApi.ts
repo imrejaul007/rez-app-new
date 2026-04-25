@@ -1,6 +1,9 @@
 import apiClient, { ApiResponse } from './apiClient';
 import { withRetry, createErrorResponse } from '@/utils/apiUtils';
 
+// Type alias for error responses (avoid 'as any' by using proper unknown type)
+type ErrorApiResponse<T> = ApiResponse<T> & { __errorBrand: void };
+
 // Product interface for homepage sections
 export interface HomepageProduct {
   id: string;
@@ -66,8 +69,8 @@ class ProductApiService {
         () => apiClient.get<HomepageProduct[]>(url),
         { maxRetries: 3 }
       );
-    } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load popular products. Please try again.') as any;
+    } catch (error: unknown) {
+      return createErrorResponse(error, 'Failed to load popular products. Please try again.') as ErrorApiResponse<HomepageProduct[]>;
     }
   }
 
@@ -90,8 +93,8 @@ class ProductApiService {
         () => apiClient.get<HomepageProduct[]>(`${this.baseUrl}/nearby?${query.toString()}`),
         { maxRetries: 3 }
       );
-    } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load nearby products. Please try again.') as any;
+    } catch (error: unknown) {
+      return createErrorResponse(error, 'Failed to load nearby products. Please try again.') as ErrorApiResponse<HomepageProduct[]>;
     }
   }
 
@@ -111,8 +114,8 @@ class ProductApiService {
         () => apiClient.get<HomepageProduct[]>(url),
         { maxRetries: 3 }
       );
-    } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load hot deals. Please try again.') as any;
+    } catch (error: unknown) {
+      return createErrorResponse(error, 'Failed to load hot deals. Please try again.') as ErrorApiResponse<HomepageProduct[]>;
     }
   }
 
@@ -134,8 +137,8 @@ class ProductApiService {
         () => apiClient.get<HomepageProduct[]>(url),
         { maxRetries: 3 }
       );
-    } catch (error: any) {
-      return createErrorResponse(error, 'Failed to load category products. Please try again.') as any;
+    } catch (error: unknown) {
+      return createErrorResponse(error, 'Failed to load category products. Please try again.') as ErrorApiResponse<HomepageProduct[]>;
     }
   }
 }

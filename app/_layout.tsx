@@ -53,10 +53,10 @@ initSentry();
   if (missing.length > 0) {
     const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;
     // Never throw on missing env — crashes the app before anything renders
-    console.error(`[Config] WARNING: ${msg}`);
+    logger.error('[Config] Missing required env vars', undefined, msg);
   }
   if (missingRecommended.length > 0 && __DEV__) {
-    console.warn(
+    logger.warn(
       `[Config] Recommended env vars not set: ${missingRecommended.map(([k, v]) => `${k} (${v})`).join(', ')}`,
     );
   }

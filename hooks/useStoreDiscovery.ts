@@ -48,6 +48,23 @@ interface UseStoreDiscoveryReturn extends UseStoreDiscoveryState {
   refreshAll: () => Promise<void>;
 }
 
+// Raw API response types (before transformation)
+interface NearbyStoresResponse extends Array<unknown> {
+  length: number;
+}
+
+interface TrendingStoresResponse {
+  stores: unknown[];
+}
+
+interface StoreListResponse {
+  stores: unknown[];
+}
+
+interface FeaturedStoresResponse extends Array<unknown> {
+  length: number;
+}
+
 /**
  * Calculate distance between two coordinates using Haversine formula
  */
@@ -210,10 +227,10 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
             limit * 2 // Get more to sort by rating
           );
 
-          if (nearbyResponse.success && (nearbyResponse.data as any)?.length > 0) {
+          if (nearbyResponse.success && (nearbyResponse.data as NearbyStoresResponse)?.length > 0) {
             // Transform and sort by rating (descending), then by distance (ascending)
-            const stores = (nearbyResponse.data as any)
-              .map((store: any) => transformStore(store, userCoordinates))
+            const stores = (nearbyResponse.data as NearbyStoresResponse)
+              .map((store: unknown) => transformStore(store, userCoordinates))
               .sort((a: DiscoveryStore, b: DiscoveryStore) => {
                 // First sort by rating (higher is better)
                 const ratingDiff = (b.rating?.value || 0) - (a.rating?.value || 0);
@@ -267,9 +284,9 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         }),
       });
 
-      if (highRatedResponse.success && (highRatedResponse.data as any)?.stores?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${((highRatedResponse.data as any) as any).stores.length} high-rated stores`);
-        return ((highRatedResponse.data as any) as any).stores.map((store: any) =>
+      if (highRatedResponse.success && (highRatedResponse.data as StoreListResponse)?.stores?.length > 0) {
+        devLog.log(`✅ [StoreDiscovery] Got ${(highRatedResponse.data as StoreListResponse).stores.length} high-rated stores`);
+        return (highRatedResponse.data as StoreListResponse).stores.map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
       }
@@ -278,9 +295,9 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
       devLog.log('📊 [StoreDiscovery] Trying featured stores fallback...');
       const featuredResponse = await storesService.getFeaturedStores(limit);
 
-      if (featuredResponse.success && (featuredResponse.data as any)?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${((featuredResponse.data as any) as any).length} featured stores`);
-        return ((featuredResponse.data as any) as any).map((store: any) =>
+      if (featuredResponse.success && (featuredResponse.data as FeaturedStoresResponse)?.length > 0) {
+        devLog.log(`✅ [StoreDiscovery] Got ${(featuredResponse.data as FeaturedStoresResponse).length} featured stores`);
+        return (featuredResponse.data as FeaturedStoresResponse).map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
       }
@@ -301,8 +318,8 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         devLog.log('⚠️ [StoreDiscovery] No user location available for nearby stores');
         // Fall back to featured stores if no location
         const featuredResponse = await storesService.getFeaturedStores(limit);
-        if (featuredResponse.success && (featuredResponse.data as any)?.length > 0) {
-          return ((featuredResponse.data as any) as any).map((store: any) =>
+        if (featuredResponse.success && (featuredResponse.data as FeaturedStoresResponse)?.length > 0) {
+          return (featuredResponse.data as FeaturedStoresResponse).map((store: unknown) =>
             transformStore(store, undefined)
           );
         }
@@ -317,9 +334,9 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         limit
       );
 
-      if (nearbyResponse.success && (nearbyResponse.data as any)?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${((nearbyResponse.data as any) as any).length} nearby stores`);
-        return ((nearbyResponse.data as any) as any).map((store: any) =>
+      if (nearbyResponse.success && (nearbyResponse.data as NearbyStoresResponse)?.length > 0) {
+        devLog.log(`✅ [StoreDiscovery] Got ${(nearbyResponse.data as NearbyStoresResponse).length} nearby stores`);
+        return (nearbyResponse.data as NearbyStoresResponse).map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
       }
@@ -327,8 +344,8 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
       // Fallback to featured if no nearby stores
       devLog.log('📊 [StoreDiscovery] No nearby stores, falling back to featured...');
       const featuredResponse = await storesService.getFeaturedStores(limit);
-      if (featuredResponse.success && (featuredResponse.data as any)?.length > 0) {
-        return ((featuredResponse.data as any) as any).map((store: any) =>
+      if (featuredResponse.success && (featuredResponse.data as FeaturedStoresResponse)?.length > 0) {
+        return (featuredResponse.data as FeaturedStoresResponse).map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
       }
@@ -382,14 +399,19 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
   }, [refreshTopStores, refreshPopularStores]);
 
   // Initial data fetch - also refetch when region changes
+  // Consolidated into single effect to prevent race conditions
   useEffect(() => {
-    refreshTopStores();
-  }, [refreshTopStores, currentRegion]);
-
-  // Fetch popular stores when location becomes available or region changes
-  useEffect(() => {
-    refreshPopularStores();
-  }, [refreshPopularStores, currentRegion]);
+    let mounted = true;
+    const fetchData = async () => {
+      if (mounted) {
+        await Promise.all([refreshTopStores(), refreshPopularStores()]);
+      }
+    };
+    fetchData();
+    return () => {
+      mounted = false;
+    };
+  }, [currentRegion, refreshTopStores, refreshPopularStores]);
 
   return {
     ...state,

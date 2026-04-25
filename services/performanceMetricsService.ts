@@ -100,7 +100,7 @@ class PerformanceMetricsService {
   private cacheMetrics: CacheMetric[] = [];
   private memoryMetrics: MemoryMetric[] = [];
   private isEnabled = __DEV__;
-  private memoryMonitoringInterval: ReturnType<typeof setTimeout> | null = null;
+  private memoryMonitoringInterval: ReturnType<typeof setInterval> | null = null;
   private saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {

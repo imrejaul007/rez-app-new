@@ -9,6 +9,9 @@
       ],
       "@rez/ui": [
         "../../packages/rez-ui/src"
+      ],
+      "@rez/shared-types": [
+        "../../packages/shared-types/src"
       ]
     }
   },

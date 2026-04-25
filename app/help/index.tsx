@@ -14,8 +14,8 @@ import {
   TextInput,
   ActivityIndicator,
   Linking,
-  Alert,
 } from 'react-native';
+import { showToast } from '@/components/common/ToastManager';
 import supportApi from '@/services/supportApi';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -203,7 +203,10 @@ function HelpPage() {
 
   const handleTicketSubmit = async () => {
     if (!ticketSubject.trim() || !ticketMessage.trim()) {
-      Alert.alert('Missing Information', 'Please enter both a subject and a message.');
+      showToast({
+        type: 'warning',
+        message: 'Please enter both a subject and a message.',
+      });
       return;
     }
     setTicketSubmitting(true);
@@ -218,10 +221,16 @@ function HelpPage() {
         setTicketSubject('');
         setTicketMessage('');
       } else {
-        Alert.alert('Error', 'Failed to submit your request. Please try again.');
+        showToast({
+          type: 'error',
+          message: 'Failed to submit your request. Please try again.',
+        });
       }
     } catch {
-      Alert.alert('Error', 'Something went wrong. Please try again later.');
+      showToast({
+        type: 'error',
+        message: 'Something went wrong. Please try again later.',
+      });
     } finally {
       setTicketSubmitting(false);
     }
@@ -229,7 +238,10 @@ function HelpPage() {
 
   const handleEmailPress = () => {
     Linking.openURL('mailto:support@rez.money').catch(() => {
-      Alert.alert('Error', 'Unable to open email client.');
+      showToast({
+        type: 'error',
+        message: 'Unable to open email client.',
+      });
     });
   };
 

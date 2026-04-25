@@ -31,6 +31,42 @@ import {
   transformToPaymentStore,
 } from '@/hooks/queries/usePaymentStoreData';
 
+// Return type for the hook (avoids 'as any' on return statement)
+export interface PaymentStoreSearchReturn {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  searchResults: PaymentStoreInfo[];
+  isSearching: boolean;
+  searchError: PaymentSearchError | null;
+  nearbyStores: PaymentStoreInfo[];
+  recentStores: PaymentStoreInfo[];
+  popularStores: PaymentStoreInfo[];
+  isLoadingNearby: boolean;
+  isLoadingRecent: boolean;
+  isLoadingPopular: boolean;
+  isInitialLoading: boolean;
+  selectedCategory: string | null;
+  setSelectedCategory: (category: string | null) => void;
+  categories: typeof PAYMENT_CATEGORIES;
+  filters: StoreFilters;
+  setFilters: (filters: StoreFilters) => void;
+  handleFilterChange: (filter: 'nearMe' | 'offersAvailable' | 'cashback', value: boolean) => void;
+  activeTab: StoreTab;
+  setActiveTab: (tab: StoreTab) => void;
+  handleTabChange: (tab: StoreTab) => void;
+  getFilteredStores: (stores: PaymentStoreInfo[]) => PaymentStoreInfo[];
+  hasMore: boolean;
+  loadMore: () => Promise<void>;
+  isLoadingMore: boolean;
+  refresh: () => Promise<void>;
+  clearSearch: () => void;
+  retry: () => void;
+  userLocation: UserLocation | null;
+  isLoadingLocation: boolean;
+  locationError: string | null;
+  requestLocation: () => Promise<void>;
+}
+
 /**
  * Debounce helper
  */
@@ -219,8 +255,8 @@ export const usePaymentStoreSearch = (): UsePaymentStoreSearchReturn => {
       }
 
       if (response.success && response.data.stores) {
-        const transformedStores = response.data.stores.map((store: any) =>
-          transformToPaymentStore(store, store.distance)
+        const transformedStores = response.data.stores.map((store: unknown) =>
+          transformToPaymentStore(store, (store as { distance?: number }).distance)
         );
 
         if (page === 1) {
@@ -371,7 +407,7 @@ export const usePaymentStoreSearch = (): UsePaymentStoreSearchReturn => {
 
   // -------- return (exact same shape as before) --------
 
-  return ({
+  const result: PaymentStoreSearchReturn = {
     // Search
     searchQuery,
     setSearchQuery,
@@ -423,7 +459,9 @@ export const usePaymentStoreSearch = (): UsePaymentStoreSearchReturn => {
     isLoadingLocation: isLoadingLocation || isLoadingLocationContext,
     locationError,
     requestLocation,
-  }) as any;
+  };
+
+  return result;
 };
 
 export default usePaymentStoreSearch;

@@ -15,6 +15,7 @@ import NetInfo from '@react-native-community/netinfo';
 import storePaymentApi from '@/services/storePaymentApi';
 import externalWalletApi from '@/services/externalWalletApi';
 import apiClient from '@/services/apiClient';
+import { logger } from '@/utils/logger';
 import { useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
 import {
   StorePaymentInfo,
@@ -214,13 +215,8 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       setIsLoading(true);
       setError(null);
 
-      const [
-        coinsData,
-        paymentMethodsData,
-        membershipData,
-        storeResponse,
-        walletsData,
-      ] = await Promise.all([
+      // Use Promise.allSettled to handle partial failures gracefully
+      const results = await Promise.allSettled([
         storePaymentApi.getCoinsForStore(storeId),
         storePaymentApi.getEnhancedPaymentMethods(storeId, billAmount),
         storePaymentApi.getStoreMembership(storeId),
@@ -228,14 +224,38 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
         externalWalletApi.getLinkedWallets(),
       ]);
 
-      setAppliedCoins(coinsData);
-      setPaymentMethods(paymentMethodsData);
+      const coinsResult = results[0];
+      const paymentMethodsResult = results[1];
+      const membershipResult = results[2];
+      const storeResponseResult = results[3];
+      const walletsResult = results[4];
+
+      const coinsData = coinsResult.status === 'fulfilled' ? coinsResult.value : null;
+      const paymentMethodsData = paymentMethodsResult.status === 'fulfilled' ? paymentMethodsResult.value : [];
+      const membershipData = membershipResult.status === 'fulfilled' ? membershipResult.value : null;
+      const storeResponse = storeResponseResult.status === 'fulfilled' ? storeResponseResult.value : null;
+      const walletsData = walletsResult.status === 'fulfilled' ? walletsResult.value : [];
+
+      // Log any failures for debugging
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const labels = ['coins', 'paymentMethods', 'membership', 'store', 'wallets'];
+          logger.warn(`loadPaymentData partial failure: ${labels[index]}`, result.reason);
+        }
+      });
+
+      if (coinsData) {
+        setAppliedCoins(coinsData);
+      }
       if (paymentMethodsData.length > 0) {
+        setPaymentMethods(paymentMethodsData);
         setSelectedPaymentMethod(paymentMethodsData[0]);
       }
-      setMembership(membershipData);
+      if (membershipData) {
+        setMembership(membershipData);
+      }
 
-      if (storeResponse.success && storeResponse.data) {
+      if (storeResponse?.success && storeResponse.data) {
         const storeObj = (storeResponse.data as any).store || storeResponse.data;
         setStore(storeObj);
         setMaxCoinRedemptionPercent(
@@ -294,7 +314,7 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       });
       setIsAutoOptimized(true);
     } catch (err: any) {
-      // silently handle
+      logger.error('autoOptimize failed', err, `storeId: ${storeId}, billAmount: ${billAmount}`);
     }
   }, [storeId, billAmount]);
 

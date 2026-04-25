@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, useRootNavigationState } from 'expo-router';
-import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import { platformAlertConfirm } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore, type AuthStoreState } from '@/stores/authStore';
@@ -29,6 +29,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import * as Haptics from 'expo-haptics';
 import apiClient from '@/services/apiClient';
 import { logger } from '@/utils/logger';
+import { showToast } from '@/components/common/ToastManager';
 
 // Rez Design System Colors
 
@@ -235,10 +236,10 @@ function SignInScreen() {
         }));
         // BUG-094 FIX: Gate behind __DEV__ to prevent leaking error details in production
         if (__DEV__) logger.error('[SIGN-IN] OTP send failed: ' + errorMessage);
-        platformAlertSimple(
-          'OTP Failed',
-          `Could not send OTP: ${errorMessage}\n\nPlease check your internet connection and try again.`,
-        );
+        showToast({
+          type: 'error',
+          message: `Could not send OTP: ${errorMessage}\n\nPlease check your internet connection and try again.`,
+        });
       }
       actions.clearError();
       throw error;
@@ -264,10 +265,10 @@ function SignInScreen() {
         ...prev,
         phoneNumber: 'Too many OTP requests. Please wait a minute before trying again.',
       }));
-      platformAlertSimple(
-        'Rate Limited',
-        'You have sent too many OTP requests. Please wait 1 minute before trying again.',
-      );
+      showToast({
+        type: 'warning',
+        message: 'You have sent too many OTP requests. Please wait 1 minute before trying again.',
+      });
       return;
     }
 
@@ -351,9 +352,15 @@ function SignInScreen() {
         const isLocked = msg.toLowerCase().includes('too many') || msg.toLowerCase().includes('locked');
         const attemptsLeft = (response.data as any)?.attemptsLeft ?? (response as any).attemptsLeft;
         if (isLocked) {
-          platformAlertSimple('Account Locked', msg);
+          showToast({
+            type: 'error',
+            message: msg,
+          });
         } else if (attemptsLeft !== undefined && attemptsLeft <= 2) {
-          platformAlertSimple('PIN Error', `${msg} (${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left)`);
+          showToast({
+            type: 'error',
+            message: `${msg} (${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left)`,
+          });
         }
       }
     } catch (err: any) {
@@ -368,7 +375,10 @@ function SignInScreen() {
       if (isLockout) {
         const lockMsg = serverMsg || 'Too many incorrect attempts. Account locked for 15 minutes.';
         setErrors((prev) => ({ ...prev, pin: lockMsg }));
-        platformAlertSimple('Account Locked', lockMsg);
+        showToast({
+          type: 'error',
+          message: lockMsg,
+        });
       } else {
         setErrors((prev) => ({ ...prev, pin: 'Connection error. Please try again.' }));
       }
@@ -449,13 +459,19 @@ function SignInScreen() {
       setOtpTimer(60);
       if (!isMounted()) return;
       setCanResendOTP(false);
-      platformAlertSimple('OTP Resent', 'New verification code sent to your phone');
+      showToast({
+        type: 'success',
+        message: 'New verification code sent to your phone',
+      });
     } catch (error: any) {
       const errorMessage =
         error?.message || useAuthStore.getState()?.state?.error || 'Failed to resend OTP. Please try again.';
       if (!isMounted()) return;
       setErrors((prev) => ({ ...prev, otp: errorMessage }));
-      platformAlertSimple('Error', errorMessage);
+      showToast({
+        type: 'error',
+        message: errorMessage,
+      });
       actions.clearError();
     }
   };

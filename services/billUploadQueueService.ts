@@ -132,7 +132,7 @@ class BillUploadQueueService extends EventEmitter {
   private isSyncing = false;
   private isInitialized = false;
   private networkUnsubscribe?: () => void;
-  private syncInterval?: ReturnType<typeof setTimeout>;
+  private syncInterval: ReturnType<typeof setInterval> | null = null;
 
   /**
    * Initialize the queue service
@@ -549,6 +549,30 @@ class BillUploadQueueService extends EventEmitter {
   }
 
   /**
+   * Start periodic sync check (every 5 minutes)
+   * Call this when service should begin automatic syncing
+   */
+  startSync(): void {
+    this.stopSync();
+
+    this.syncInterval = setInterval(() => {
+      if (!this.isSyncing && this.queue.some(b => b.status === 'pending')) {
+        this.checkAndSync();
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+  }
+
+  /**
+   * Stop periodic sync
+   */
+  stopSync(): void {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = null;
+    }
+  }
+
+  /**
    * Destroy the service and cleanup
    */
   async destroy(): Promise<void> {
@@ -559,11 +583,8 @@ class BillUploadQueueService extends EventEmitter {
       this.networkUnsubscribe = undefined;
     }
 
-    // Clear sync interval
-    if (this.syncInterval) {
-      clearInterval(this.syncInterval);
-      this.syncInterval = undefined;
-    }
+    // Stop periodic sync
+    this.stopSync();
 
     // Remove all listeners
     this.removeAllListeners();
@@ -784,7 +805,7 @@ class BillUploadQueueService extends EventEmitter {
     // Clear existing interval before creating new one
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
-      this.syncInterval = undefined;
+      this.syncInterval = null;
     }
 
     this.syncInterval = setInterval(() => {
