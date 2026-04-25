@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
   Text,
   RefreshControl,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -139,7 +141,7 @@ function EarnFromSocialMediaPage() {
     const firstItem = order.items?.[0];
     const storeObj = order.store && typeof order.store === 'object' ? order.store : null;
     const totalAmount = order.totals?.total || 0;
-    const fulfillmentType = (order as any)?.fulfillmentType as string | undefined;
+    const fulfillmentType = (order as unknown as Record<string, unknown>)?.fulfillmentType as string | undefined;
 
     // Map fulfillment type to ShareableOrder type and labels
     let type: ShareableOrder['type'] = 'delivery';
@@ -237,7 +239,7 @@ function EarnFromSocialMediaPage() {
             submissionsMap[post.order] = entry;
           }
           // Map by StorePayment ID from metadata
-          const spId = (post.metadata as any)?.storePaymentId;
+          const spId = (post.metadata as unknown as Record<string, unknown>)?.storePaymentId;
           if (spId) {
             submissionsMap[spId] = entry;
           }
@@ -391,7 +393,7 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      const postId = response?.post?.id || (response as any)?.id || 'unknown';
+      const postId = response?.post?.id || (response as unknown as Record<string, unknown>)?.id || 'unknown';
       setOrderSubmissions((prev) => ({
         ...prev,
         [selectedOrder.orderId]: { status: 'pending', postId },
@@ -460,7 +462,7 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      const postId = response?.post?.id || (response as any)?.id || 'unknown';
+      const postId = response?.post?.id || (response as unknown as Record<string, unknown>)?.id || 'unknown';
       setOrderSubmissions((prev) => ({
         ...prev,
         [selectedOrder.orderId]: { status: 'pending', postId },
@@ -687,7 +689,7 @@ function EarnFromSocialMediaPage() {
                 <View style={styles.submissionLeft}>
                   <View style={styles.submissionPlatform}>
                     <Ionicons
-                      name={`logo-${post.platform}` as any}
+                      name={`logo-${post.platform}` as unknown as string}
                       size={18}
                       color={PLATFORM_CONFIG[post.platform as PlatformType]?.color || colors.text.tertiary}
                     />
@@ -710,7 +712,7 @@ function EarnFromSocialMediaPage() {
                     ]}
                   >
                     <Ionicons
-                      name={(statusIcons[post.status] || 'help-circle-outline') as any}
+                      name={(statusIcons[post.status] || 'help-circle-outline') as unknown as string}
                       size={12}
                       color={statusColors[post.status] || colors.text.tertiary}
                     />
@@ -744,7 +746,11 @@ function EarnFromSocialMediaPage() {
         ].map((tip, index) => (
           <View key={index} style={styles.tipRow}>
             <View style={styles.tipIconCircle}>
-              <Ionicons name={tip.icon as any} size={16} color={colors.nileBlue} />
+              <Ionicons
+                name={tip.icon as unknown as keyof typeof Ionicons.glyphMap}
+                size={16}
+                color={colors.nileBlue}
+              />
             </View>
             <ThemedText style={styles.tipText}>{tip.text}</ThemedText>
           </View>
@@ -784,7 +790,7 @@ function EarnFromSocialMediaPage() {
                 onPress={() => setSelectedPlatform(platform)}
               >
                 <Ionicons
-                  name={config.icon as any}
+                  name={config.icon as unknown as keyof typeof Ionicons.glyphMap}
                   size={28}
                   color={isSelected ? config.color : colors.text.tertiary}
                 />
@@ -836,7 +842,7 @@ function EarnFromSocialMediaPage() {
       {/* Continue Button */}
       <Pressable style={styles.continueButton} onPress={handlePlatformContinue}>
         <LinearGradient
-          colors={EarnSocialData.ui.gradients.primary as any}
+          colors={EarnSocialData.ui.gradients.primary as unknown as string[]}
           style={styles.continueButtonGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -857,7 +863,11 @@ function EarnFromSocialMediaPage() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Platform Header */}
         <View style={styles.platformHeader}>
-          <Ionicons name={platformConfig.icon as any} size={24} color={platformConfig.color} />
+          <Ionicons
+            name={platformConfig.icon as unknown as keyof typeof Ionicons.glyphMap}
+            size={24}
+            color={platformConfig.color}
+          />
           <ThemedText style={styles.platformHeaderText}>{platformConfig.label} Post</ThemedText>
         </View>
 
@@ -900,15 +910,19 @@ function EarnFromSocialMediaPage() {
         {/* Submit Button */}
         <Pressable style={styles.uploadButton} onPress={handleSubmitUrl} disabled={submitting}>
           <LinearGradient
-            colors={EarnSocialData.ui.gradients.primary as any}
-            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as any]}
+            colors={EarnSocialData.ui.gradients.primary as unknown as string[]}
+            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
             {submitting ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
-              <ThemedText style={[styles.uploadButtonText, { pointerEvents: 'none' } as any]}>Submit</ThemedText>
+              <ThemedText
+                style={[styles.uploadButtonText, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
+              >
+                Submit
+              </ThemedText>
             )}
           </LinearGradient>
         </Pressable>
@@ -925,7 +939,11 @@ function EarnFromSocialMediaPage() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Platform Header */}
         <View style={styles.platformHeader}>
-          <Ionicons name={platformConfig.icon as any} size={24} color={platformConfig.color} />
+          <Ionicons
+            name={platformConfig.icon as unknown as keyof typeof Ionicons.glyphMap}
+            size={24}
+            color={platformConfig.color}
+          />
           <ThemedText style={styles.platformHeaderText}>{platformConfig.label} Proof</ThemedText>
         </View>
 
@@ -997,14 +1015,18 @@ function EarnFromSocialMediaPage() {
                 ? (EarnSocialData.ui.gradients.primary as any)
                 : [colors.neutral[300], colors.neutral[400]]
             }
-            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as any]}
+            style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
             {submitting ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
-              <ThemedText style={[styles.uploadButtonText, { pointerEvents: 'none' } as any]}>Submit</ThemedText>
+              <ThemedText
+                style={[styles.uploadButtonText, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
+              >
+                Submit
+              </ThemedText>
             )}
           </LinearGradient>
         </Pressable>
