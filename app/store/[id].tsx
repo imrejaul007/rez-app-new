@@ -347,7 +347,7 @@ const StoreDetailPage: React.FC = () => {
     if (isFitnessStore) {
       router.push({
         pathname: '/fitness/book/[storeId]',
-        params: { ...baseParams, storeId: (store as unknown).id } as unknown,
+        params: { ...baseParams, storeId: (store as unknown as string).id } as unknown,
       });
     } else {
       router.push({

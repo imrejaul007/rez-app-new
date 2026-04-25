@@ -1012,7 +1012,7 @@ function EarnFromSocialMediaPage() {
           <LinearGradient
             colors={
               selectedMedia.length > 0
-                ? (EarnSocialData.ui.gradients.primary as any)
+                ? (EarnSocialData.ui.gradients.primary as unknown as string[])
                 : [colors.neutral[300], colors.neutral[400]]
             }
             style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as unknown as StyleProp<ViewStyle>]}
@@ -1120,7 +1120,7 @@ function EarnFromSocialMediaPage() {
 
       {/* Header */}
       <LinearGradient
-        colors={EarnSocialData.ui.gradients.primary as any}
+        colors={EarnSocialData.ui.gradients.primary as unknown as string[]}
         style={styles.header}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

@@ -384,7 +384,7 @@ const MyBookingsPage = () => {
       return (
         <Pressable
           style={styles.bookingCard}
-          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown)}
+          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown as string)}
         >
           {/* Header with category icon */}
           <View style={styles.cardHeader}>
@@ -508,7 +508,7 @@ const MyBookingsPage = () => {
       return (
         <Pressable
           style={styles.bookingCard}
-          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown)}
+          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as unknown as string)}
         >
           {/* Header */}
           <View style={styles.cardHeader}>
@@ -563,7 +563,7 @@ const MyBookingsPage = () => {
                   style={styles.rescheduleButton}
                   onPress={(e) => {
                     e.stopPropagation();
-                    router.push(`/booking/reschedule/${item._id}` as unknown);
+                    router.push(`/booking/reschedule/${item._id}` as unknown as string);
                   }}
                 >
                   <Ionicons name="calendar-outline" size={14} color={colors.nileBlue} />
@@ -707,7 +707,7 @@ const MyBookingsPage = () => {
               <Ionicons name="bed-outline" size={80} color={colors.border.default} />
               <Text style={styles.emptyTitle}>No Hotel Bookings</Text>
               <Text style={styles.emptyText}>Book a hotel to see your stays here</Text>
-              <Pressable style={styles.browseButton} onPress={() => router.push('/travel/hotels' as unknown)}>
+              <Pressable style={styles.browseButton} onPress={() => router.push('/travel/hotels' as unknown as string)}>
                 <Ionicons name="bed-outline" size={20} color={colors.text.inverse} />
                 <Text style={styles.browseButtonText}>Browse Hotels</Text>
               </Pressable>
@@ -745,7 +745,7 @@ const MyBookingsPage = () => {
                       shadowOffset: { width: 0, height: 2 },
                       elevation: 2,
                     }}
-                    onPress={() => router.push(`/travel/hotels/booking/${item.id}` as unknown)}
+                    onPress={() => router.push(`/travel/hotels/booking/${item.id}` as unknown as string)}
                   >
                     <View
                       style={{

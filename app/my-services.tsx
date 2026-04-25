@@ -38,7 +38,7 @@ const MyServicesPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleBackPress = useCallback(() => {
-    router.push('/profile' as unknown);
+    router.push('/profile' as unknown as string);
   }, [router]);
 
   const mapSubmissionStatus = (status: string): 'active' | 'completed' | 'pending' | 'cancelled' => {
@@ -154,7 +154,7 @@ const MyServicesPage = () => {
       <Pressable
         style={styles.projectCard}
         onPress={() => {
-          router.push(`/earn/my-submissions?projectId=${(item as unknown)._id || item.id}` as unknown);
+          router.push(`/earn/my-submissions?projectId=${(item as unknown as string)._id || item.id}` as unknown);
         }}
       >
         <View style={[styles.iconContainer, { backgroundColor: Colors.success + '20' }]}>

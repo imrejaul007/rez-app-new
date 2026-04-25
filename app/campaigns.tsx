@@ -101,7 +101,7 @@ const AllCampaignsPage: React.FC = () => {
   };
 
   const handleCampaignPress = (campaign: Campaign) => {
-    router.push(`/deals/${campaign.campaignId || campaign._id}` as unknown);
+    router.push(`/deals/${campaign.campaignId || campaign._id}` as unknown as string);
   };
 
   const formatDate = (dateString: string) => {

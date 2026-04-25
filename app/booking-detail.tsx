@@ -93,7 +93,7 @@ function BookingDetailPage() {
         <View style={styles.centered}>
           <Text style={styles.errorText}>Booking not found. Please try again.</Text>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as unknown))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as unknown as string))}
             style={styles.retryBtn}
           >
             <Text style={styles.retryBtnText}>Go Back</Text>

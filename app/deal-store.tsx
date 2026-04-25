@@ -68,16 +68,16 @@ const DealStorePage: React.FC = () => {
   const handleDealPress = (deal: CampaignDeal | undefined, categoryId: string, dealIndex: number) => {
     // Safety check: ensure deal exists
     if (!deal) {
-      router.push(`/deals/${categoryId}` as unknown);
+      router.push(`/deals/${categoryId}` as unknown as string);
       return;
     }
 
     // Navigate to deal detail page
-    router.push(`/deals/${categoryId}/${dealIndex}` as unknown);
+    router.push(`/deals/${categoryId}/${dealIndex}` as unknown as string);
   };
 
   const handleCategoryPress = (categoryId: string) => {
-    router.push(`/deals/${categoryId}` as unknown);
+    router.push(`/deals/${categoryId}` as unknown as string);
   };
 
   const renderDealValue = (deal: CampaignDeal | undefined) => {
@@ -224,7 +224,7 @@ const DealStorePage: React.FC = () => {
           filteredDealCategories.map((category) => (
             <View key={category.id} style={styles.categorySection}>
               {/* Category Header */}
-              <Pressable onPress={() => router.push(`/deals/${category.id}` as unknown)}>
+              <Pressable onPress={() => router.push(`/deals/${category.id}` as unknown as string)}>
                 <LinearGradient
                   colors={category.gradientColors as unknown}
                   start={{ x: 0, y: 0 }}
@@ -260,7 +260,7 @@ const DealStorePage: React.FC = () => {
                           style={styles.dealCard}
                           onPress={() => {
                             // Navigate to deal detail page using the current index
-                            router.push(`/deals/${category.id}/${idx}` as unknown);
+                            router.push(`/deals/${category.id}/${idx}` as unknown as string);
                           }}
                         >
                           <View style={styles.dealImageContainer}>
@@ -293,7 +293,7 @@ const DealStorePage: React.FC = () => {
             <Ionicons name="search-outline" size={64} color={colors.text.tertiary} />
             <Text style={styles.emptyText}>No deals found</Text>
             {filteredDealName && <Text style={styles.emptySubtext}>No deals found for "{filteredDealName}"</Text>}
-            <Pressable style={styles.clearFilterButton} onPress={() => router.push('/deal-store' as unknown)}>
+            <Pressable style={styles.clearFilterButton} onPress={() => router.push('/deal-store' as unknown as string)}>
               <Text style={styles.clearFilterText}>Clear Filter</Text>
             </Pressable>
           </View>

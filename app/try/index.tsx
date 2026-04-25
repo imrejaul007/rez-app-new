@@ -591,7 +591,11 @@ export default function TryHomeScreen() {
             { label: '📅 My Bookings', route: '/try/history' },
             { label: '🎯 Campaigns', route: '/try/campaigns' },
           ].map((item) => (
-            <Pressable key={item.route} style={styles.quickNavChip} onPress={() => router.push(item.route as unknown)}>
+            <Pressable
+              key={item.route}
+              style={styles.quickNavChip}
+              onPress={() => router.push(item.route as unknown as string)}
+            >
               <Text style={styles.quickNavText}>{item.label}</Text>
             </Pressable>
           ))}

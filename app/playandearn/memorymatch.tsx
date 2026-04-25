@@ -387,7 +387,7 @@ const MemoryMatch = () => {
             <Text style={[styles.timerText, timeLeft <= 10 ? styles.timerTextWarning : null]}>{timeLeft}s</Text>
           </View>
         ) : (
-          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown)}>
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as unknown as string)}>
             <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
@@ -781,7 +781,10 @@ const MemoryMatch = () => {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable onPress={() => router.push('/playandearn' as unknown)} style={styles.secondaryAction}>
+              <Pressable
+                onPress={() => router.push('/playandearn' as unknown as string)}
+                style={styles.secondaryAction}
+              >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
                 <Text style={styles.secondaryActionText}>Back to Games</Text>
               </Pressable>

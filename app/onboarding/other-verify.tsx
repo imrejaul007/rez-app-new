@@ -67,7 +67,7 @@ function OtherVerifyPage() {
             subtitle={cat.subtitle}
             accentColor={cat.accentColor}
             backgroundColor={cat.backgroundColor}
-            onPress={() => router.push(cat.next as unknown)}
+            onPress={() => router.push(cat.next as unknown as string)}
           />
         ))}
       </ScrollView>

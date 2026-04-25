@@ -33,7 +33,7 @@ function CashStorePage() {
             <Text style={styles.headerSubtitle}>Gift Cards, Coupons & More</Text>
           </View>
         </View>
-        <Pressable style={styles.trackButton} onPress={() => router.push('/account/cashback' as unknown)}>
+        <Pressable style={styles.trackButton} onPress={() => router.push('/account/cashback' as unknown as string)}>
           <Ionicons name="time" size={20} color={colors.nileBlue} />
         </Pressable>
       </View>

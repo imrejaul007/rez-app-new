@@ -228,11 +228,11 @@ function StudentZonePage() {
     router.push({
       pathname: '/profile/verification',
       params: { zone: 'student' },
-    } as unknown);
+    } as unknown as string);
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown);
+    router.push(`/offers/${offer._id}` as unknown as string);
   };
 
   const renderSkeletonCard = () => (

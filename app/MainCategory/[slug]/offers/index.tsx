@@ -145,7 +145,7 @@ function OffersIndexPage() {
   const renderBankOffer = (offer: any) => (
     <Pressable
       style={styles.bankCard}
-      onPress={() => router.push(`/MainCategory/' + slug + '/offers/${offer._id}` as unknown)}
+      onPress={() => router.push(`/MainCategory/' + slug + '/offers/${offer._id}` as unknown as string)}
     >
       <LinearGradient colors={getBankGradient(offer.bankName || '') as unknown} style={styles.bankGradient}>
         <View style={styles.bankContent}>
@@ -192,7 +192,7 @@ function OffersIndexPage() {
     return (
       <Pressable
         style={styles.dealCard}
-        onPress={() => router.push(`/MainCategory/' + slug + '/offers/${deal._id}` as unknown)}
+        onPress={() => router.push(`/MainCategory/' + slug + '/offers/${deal._id}` as unknown as string)}
       >
         <Text style={styles.dealIcon}>{icon}</Text>
         <Text style={styles.dealTitle} numberOfLines={1}>

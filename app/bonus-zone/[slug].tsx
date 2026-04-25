@@ -270,7 +270,7 @@ function CampaignDetailPage() {
     if (!campaign) return;
 
     if (campaign.userState === 'claimed' || campaign.userState === 'limit_reached') {
-      router.push('/bonus-zone-history' as unknown);
+      router.push('/bonus-zone-history' as unknown as string);
       return;
     }
 

@@ -73,7 +73,10 @@ function NotificationsScreen() {
 
   const renderNotificationItem = useCallback(
     ({ item }: { item: NotificationItem }) => (
-      <Pressable style={styles.notifCard} onPress={() => item.deepLink && router.push(item.deepLink as unknown)}>
+      <Pressable
+        style={styles.notifCard}
+        onPress={() => item.deepLink && router.push(item.deepLink as unknown as string)}
+      >
         <Text style={styles.notifIcon}>{getUrgencyIcon(item.type)}</Text>
         <View style={{ flex: 1 }}>
           <Text style={styles.notifTitle}>{item.title}</Text>

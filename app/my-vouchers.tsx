@@ -358,7 +358,7 @@ const MyVouchersPage = () => {
         platformAlertConfirm(
           'Voucher Code Copied!',
           `Voucher code "${voucher.code}" has been copied. Apply it at checkout.`,
-          () => router.push('/cart' as unknown),
+          () => router.push('/cart' as unknown as string),
           'Go to Cart',
         );
       }
@@ -684,7 +684,7 @@ const MyVouchersPage = () => {
         <View style={styles.headerContent}>
           <HeaderBackButton onPress={handleBackPress} iconColor={colors.background.primary} style={styles.backButton} />
           <Text style={styles.headerTitle}>My Vouchers</Text>
-          <Pressable style={styles.addButton} onPress={() => router.push('/online-voucher' as unknown)}>
+          <Pressable style={styles.addButton} onPress={() => router.push('/online-voucher' as unknown as string)}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -714,7 +714,7 @@ const MyVouchersPage = () => {
             router.push({
               pathname: '/cart',
               params: { voucherCode: code },
-            } as unknown);
+            } as unknown as string);
           }}
         />
       ) : (

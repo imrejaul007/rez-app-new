@@ -860,7 +860,7 @@ function UGCDetailScreen() {
             onPress={() => {
               const creatorId = video?.creator?._id || (video?.creator as unknown)?.id;
               if (creatorId) {
-                router.push(`/creator/${creatorId}` as unknown);
+                router.push(`/creator/${creatorId}` as unknown as string);
               }
             }}
           >

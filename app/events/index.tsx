@@ -202,18 +202,18 @@ const EventsPage: React.FC = () => {
   }, [fetchEvents]);
 
   const handleCategoryPress = (slug: string) => {
-    router.push(`/events/${slug}` as unknown);
+    router.push(`/events/${slug}` as unknown as string);
   };
 
   const handleEventPress = (eventId: string) => {
-    router.push({ pathname: '/EventPage', params: { id: eventId } } as unknown);
+    router.push({ pathname: '/EventPage', params: { id: eventId } } as unknown as string);
   };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
       router.push(`/events-list?search=${encodeURIComponent(searchQuery.trim())}` as unknown);
     } else {
-      router.push('/events-list' as unknown);
+      router.push('/events-list' as unknown as string);
     }
   };
 
@@ -328,7 +328,7 @@ const EventsPage: React.FC = () => {
           <View style={styles.headerActions}>
             <Pressable
               style={styles.myEventsBtn}
-              onPress={() => router.push('/my-events' as unknown)}
+              onPress={() => router.push('/my-events' as unknown as string)}
               accessibilityLabel="My Events"
             >
               <Ionicons name="ticket-outline" size={16} color={colors.text.inverse} />
@@ -339,7 +339,7 @@ const EventsPage: React.FC = () => {
 
         {/* Search Bar */}
         <View style={styles.searchBarContainer}>
-          <Pressable style={styles.searchBar} onPress={() => router.push('/events-list' as unknown)}>
+          <Pressable style={styles.searchBar} onPress={() => router.push('/events-list' as unknown as string)}>
             <Ionicons name="search" size={18} color={colors.text.tertiary} />
             <TextInput
               style={styles.searchInput}
@@ -370,7 +370,7 @@ const EventsPage: React.FC = () => {
         <View style={styles.categoriesSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Browse Categories</Text>
-            <Pressable onPress={() => router.push('/events-list' as unknown)}>
+            <Pressable onPress={() => router.push('/events-list' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -422,7 +422,7 @@ const EventsPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Events</Text>
-            <Pressable onPress={() => router.push('/events-list' as unknown)}>
+            <Pressable onPress={() => router.push('/events-list' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -491,7 +491,7 @@ const EventsPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Events</Text>
-            <Pressable onPress={() => router.push('/events-list' as unknown)}>
+            <Pressable onPress={() => router.push('/events-list' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>

@@ -334,7 +334,11 @@ const CategoriesPage: React.FC = () => {
               <Text style={styles.sectionTitle}>{section.section}</Text>
               <View style={styles.categoriesGrid}>
                 {section.items.map((cat) => (
-                  <Pressable key={cat.id} style={styles.categoryCard} onPress={() => router.push(cat.route as unknown)}>
+                  <Pressable
+                    key={cat.id}
+                    style={styles.categoryCard}
+                    onPress={() => router.push(cat.route as unknown as string)}
+                  >
                     <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                       <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                     </View>

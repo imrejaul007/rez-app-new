@@ -259,7 +259,7 @@ function SubcategoryPage() {
    */
   const handleStorePress = useCallback(
     (store: StoreItem) => {
-      router.push(`/MainStorePage?storeId=${store.id}` as unknown);
+      router.push(`/MainStorePage?storeId=${store.id}` as unknown as string);
     },
     [router],
   );
@@ -269,7 +269,7 @@ function SubcategoryPage() {
    */
   const handleProductPress = useCallback(
     (product: ProductItem) => {
-      router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown);
+      router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown as string);
     },
     [router],
   );
@@ -393,7 +393,7 @@ function SubcategoryPage() {
               </ThemedText>
             </View>
             <Pressable
-              onPress={() => router.push(`/search?category=${subSlug}` as unknown)}
+              onPress={() => router.push(`/search?category=${subSlug}` as unknown as string)}
               style={styles.searchButton}
             >
               <Ionicons name="search" size={22} color={colors.text.inverse} />

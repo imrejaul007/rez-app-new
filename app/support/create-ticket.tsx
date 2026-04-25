@@ -111,7 +111,7 @@ function CreateTicketPage() {
 
       if (response.success && response.data?.ticket) {
         platformAlertSimple('Success', 'Your support ticket has been created.');
-        router.replace(`/support/ticket/${response.data.ticket._id}` as unknown);
+        router.replace(`/support/ticket/${response.data.ticket._id}` as unknown as string);
       } else {
         platformAlertSimple('Error', 'Failed to create ticket. Please try again.');
       }

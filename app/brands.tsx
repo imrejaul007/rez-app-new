@@ -148,7 +148,7 @@ function BrandsPage() {
       router.push({
         pathname: '/brand/[name]',
         params: { name: brand.id },
-      } as unknown);
+      } as unknown as string);
     },
     [router],
   );

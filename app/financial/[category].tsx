@@ -135,7 +135,7 @@ const FinancialCategoryPage: React.FC = () => {
         category: categorySlug,
         source: 'category_page',
       });
-      router.push(`/financial/service/${serviceId}` as unknown);
+      router.push(`/financial/service/${serviceId}` as unknown as string);
     }
   };
 

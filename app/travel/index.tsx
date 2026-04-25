@@ -277,10 +277,10 @@ const TravelPage: React.FC = () => {
   const navigateToCategory = (slug: string) => {
     // Hotels → Hotel OTA integration screen
     if (slug === 'hotels') {
-      router.push('/travel/hotels' as unknown);
+      router.push('/travel/hotels' as unknown as string);
       return;
     }
-    router.push(`/travel/${slug}` as unknown);
+    router.push(`/travel/${slug}` as unknown as string);
   };
 
   const navigateToDeal = (deal: DisplayDeal) => {
@@ -341,13 +341,13 @@ const TravelPage: React.FC = () => {
             <Text style={s.headerTitle}>Travel & Booking</Text>
             <Text style={s.headerSub}>Book trips, earn rewards</Text>
           </View>
-          <Pressable onPress={() => router.push('/travel/search' as unknown)} style={s.headerBtn}>
+          <Pressable onPress={() => router.push('/travel/search' as unknown as string)} style={s.headerBtn}>
             <Ionicons name="options-outline" size={22} color={C.white} />
           </Pressable>
         </View>
 
         {/* Search bar */}
-        <Pressable style={s.searchBar} onPress={() => router.push('/travel/search' as unknown)}>
+        <Pressable style={s.searchBar} onPress={() => router.push('/travel/search' as unknown as string)}>
           <Ionicons name="search" size={18} color={C.slate400} />
           <Text style={s.searchPlaceholder}>Search flights, hotels, trains...</Text>
         </Pressable>
@@ -418,7 +418,7 @@ const TravelPage: React.FC = () => {
               <Text style={s.sectionTitle}>Hot Deals</Text>
             </View>
             {featuredDeals.length > 0 && (
-              <Pressable onPress={() => router.push('/travel/deals' as unknown)}>
+              <Pressable onPress={() => router.push('/travel/deals' as unknown as string)}>
                 <Text style={s.viewAll}>View All</Text>
               </Pressable>
             )}
@@ -581,25 +581,25 @@ const TravelPage: React.FC = () => {
         {/* ── Quick Links ─────────────────────────────────────────────────── */}
         <View style={s.quickLinksWrap}>
           <View style={s.quickLinks}>
-            <Pressable style={s.quickLink} onPress={() => router.push('/travel/search' as unknown)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/travel/search' as unknown as string)}>
               <View style={[s.qlIcon, { backgroundColor: C.cyan50 }]}>
                 <Ionicons name="search" size={18} color={C.cyan600} />
               </View>
               <Text style={s.qlText}>Search</Text>
             </Pressable>
-            <Pressable style={s.quickLink} onPress={() => router.push('/travel/deals' as unknown)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/travel/deals' as unknown as string)}>
               <View style={[s.qlIcon, { backgroundColor: colors.errorScale[50] }]}>
                 <Ionicons name="flame" size={18} color={C.rose500} />
               </View>
               <Text style={s.qlText}>Hot Deals</Text>
             </Pressable>
-            <Pressable style={s.quickLink} onPress={() => router.push('/my-bookings' as unknown)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/my-bookings' as unknown as string)}>
               <View style={[s.qlIcon, { backgroundColor: C.green50 }]}>
                 <Ionicons name="receipt-outline" size={18} color={C.green600} />
               </View>
               <Text style={s.qlText}>My Bookings</Text>
             </Pressable>
-            <Pressable style={s.quickLink} onPress={() => router.push('/wallet' as unknown)}>
+            <Pressable style={s.quickLink} onPress={() => router.push('/wallet' as unknown as string)}>
               <View style={[s.qlIcon, { backgroundColor: C.violet50 }]}>
                 <Ionicons name="wallet" size={18} color={C.violet600} />
               </View>

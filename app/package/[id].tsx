@@ -355,7 +355,7 @@ function PackageDetailsPage() {
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',

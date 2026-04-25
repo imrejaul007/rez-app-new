@@ -149,7 +149,7 @@ function WomenZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as unknown);
+    router.push(`/offers/${offer._id}` as unknown as string);
   };
 
   const renderSkeletonCard = () => (
@@ -338,7 +338,7 @@ function WomenZonePage() {
 
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as unknown as string)}>
           <LinearGradient
             colors={[colors.brand.pink, colors.brand.purpleSoft]}
             start={{ x: 0, y: 0 }}

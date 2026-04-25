@@ -289,11 +289,11 @@ function ExpiryTrackerPage() {
         <View style={styles.suggestionsSection}>
           <ThemedText style={styles.sectionTitle}>Quick Spend Suggestions</ThemedText>
           <View style={styles.suggestionsGrid}>
-            <Pressable style={styles.suggestionCard} onPress={() => router.push('/search' as unknown)}>
+            <Pressable style={styles.suggestionCard} onPress={() => router.push('/search' as unknown as string)}>
               <Ionicons name="location" size={24} color={Colors.primary[600]} />
               <ThemedText style={styles.suggestionText}>Nearby Stores</ThemedText>
             </Pressable>
-            <Pressable style={styles.suggestionCard} onPress={() => router.push('/bonus-zone' as unknown)}>
+            <Pressable style={styles.suggestionCard} onPress={() => router.push('/bonus-zone' as unknown as string)}>
               <Ionicons name="pricetag" size={24} color={Colors.gold} />
               <ThemedText style={styles.suggestionText}>Online Deals</ThemedText>
             </Pressable>

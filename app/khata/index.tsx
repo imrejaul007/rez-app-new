@@ -52,7 +52,7 @@ function ConsumerKhataScreen() {
   const renderItem = ({ item }: { item: KhataEntry }) => (
     <TouchableOpacity
       style={[styles.card, { backgroundColor: colors.background.primary, borderColor: colors.border.default }]}
-      onPress={() => router.push(`/khata/${item.merchantId._id}` as unknown)}
+      onPress={() => router.push(`/khata/${item.merchantId._id}` as unknown as string)}
     >
       <View style={styles.cardRow}>
         <View style={[styles.avatar, { backgroundColor: colors.brand.purpleLight + '20' }]}>

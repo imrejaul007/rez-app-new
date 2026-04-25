@@ -140,7 +140,7 @@ const GroceryStoresPage: React.FC = () => {
       <Pressable
         key={storeId}
         style={styles.featuredCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown)}
+        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown as string)}
       >
         <CachedImage source={store.banner || store.logo || ('' as unknown)} style={styles.featuredImage} />
         <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.featuredOverlay}>
@@ -195,7 +195,7 @@ const GroceryStoresPage: React.FC = () => {
       <Pressable
         key={storeId}
         style={styles.storeCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown)}
+        onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as unknown as string)}
       >
         <CachedImage source={store.logo || store.banner || ('' as unknown)} style={styles.storeImage} />
         {((store as unknown).offers?.cashback || store.maxCashback) &&

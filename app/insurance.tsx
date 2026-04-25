@@ -157,7 +157,7 @@ function InsurancePage() {
   const handlePlanPress = useCallback(
     (plan: InsurancePlan) => {
       // No detail page exists — stay on insurance listing page
-      router.push('/insurance' as unknown);
+      router.push('/insurance' as unknown as string);
     },
     [router],
   );

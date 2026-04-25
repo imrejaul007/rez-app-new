@@ -768,7 +768,7 @@ function HomeScreen() {
   }, [router]);
 
   const handleNotificationPress = useCallback(() => {
-    router.push('/account/notification-history' as unknown);
+    router.push('/account/notification-history' as unknown as string);
   }, [router]);
 
   const handleProfilePress = useCallback(() => {
@@ -841,7 +841,7 @@ function HomeScreen() {
       switch (action) {
         case 'booking':
           sessionTrackingService.trackFeatureTouch('booking');
-          router.push('/booking' as unknown);
+          router.push('/booking' as unknown as string);
           break;
         case 'earn':
           sessionTrackingService.trackFeatureTouch('earn');
@@ -1147,7 +1147,7 @@ function HomeScreen() {
                   savingsStreak={savingsSummaryData?.savingsStreak ?? 0}
                   missedSavingsCount={savingsSummaryData?.missedSavingsCount ?? 0}
                   topCategory={savingsSummaryData?.topCategory}
-                  onMissedPress={() => router.push('/savings?tab=missed' as unknown)}
+                  onMissedPress={() => router.push('/savings?tab=missed' as unknown as string)}
                 />
               </FeatureErrorBoundary>
             </View>
@@ -1237,7 +1237,7 @@ function HomeScreen() {
               borderWidth: 1,
               borderColor: '#DDD6FE',
             }}
-            onPress={() => router.push('/explore' as unknown)}
+            onPress={() => router.push('/explore' as unknown as string)}
             accessibilityRole="button"
             accessibilityLabel="Explore REZ network stores"
             accessibilityHint="Tap to discover stores where your REZ coins work"
@@ -1277,7 +1277,7 @@ function HomeScreen() {
         {activeTab !== 'prive' && activeTab !== 'mall' && (
           <Pressable
             style={viewStyles.tryBanner}
-            onPress={() => router.push('/try' as unknown)}
+            onPress={() => router.push('/try' as unknown as string)}
             accessibilityLabel="Try before you buy"
             accessibilityRole="button"
             accessibilityHint="Tap to explore products you can try risk-free and earn coins"
@@ -1316,7 +1316,7 @@ function HomeScreen() {
               borderColor: '#fcd34d',
               gap: 12,
             }}
-            onPress={() => router.push('/savings?tab=missed' as unknown)}
+            onPress={() => router.push('/savings?tab=missed' as unknown as string)}
             accessibilityRole="button"
             accessibilityLabel={`You could have saved more this month: ${savingsSummaryData?.missedSavingsCount} missed savings`}
             accessibilityHint="Tap to view missed savings opportunities"

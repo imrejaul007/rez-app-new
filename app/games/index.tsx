@@ -98,7 +98,7 @@ function GamesPage() {
   return (
     <FeatureErrorBoundary
       featureName="Games Hub"
-      onSecondaryAction={() => router.push('/' as unknown)}
+      onSecondaryAction={() => router.push('/' as unknown as string)}
       secondaryActionLabel="Back to Home"
       secondaryActionIcon="home"
       onReset={() => loadData()}
@@ -136,7 +136,7 @@ function GamesPage() {
             </View>
             <Pressable
               style={styles.coinsBadge}
-              onPress={() => router.push('/wallet' as unknown)}
+              onPress={() => router.push('/wallet' as unknown as string)}
               accessibilityRole="button"
               accessibilityLabel={`Your coins balance: ${userCoins.toLocaleString()}. Tap to view wallet`}
             >
@@ -190,7 +190,7 @@ function GamesPage() {
                 return (
                   <Pressable
                     key={game.id}
-                    onPress={() => router.push(game.path as unknown)}
+                    onPress={() => router.push(game.path as unknown as string)}
                     accessibilityRole="button"
                     accessibilityLabel={
                       isExhausted

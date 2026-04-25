@@ -307,9 +307,9 @@ function CouponsPage() {
     const categories = coupon.applicableTo?.categories || [];
     setShowDetailsModal(false);
     if (stores.length === 1 && typeof stores[0] === 'object') {
-      router.push(`/MainStorePage?storeId=${(stores[0] as unknown)._id}` as unknown);
+      router.push(`/MainStorePage?storeId=${(stores[0] as unknown as string)._id}` as unknown);
     } else if (categories.length === 1 && typeof categories[0] === 'object') {
-      router.push(`/explore/category/${(categories[0] as unknown)._id}` as unknown);
+      router.push(`/explore/category/${(categories[0] as unknown as string)._id}` as unknown);
     } else {
       router.push('/explore');
     }
@@ -482,7 +482,7 @@ function CouponsPage() {
                     key={store._id}
                     onPress={(e) => {
                       e.stopPropagation();
-                      router.push(`/MainStorePage?storeId=${store._id}` as unknown);
+                      router.push(`/MainStorePage?storeId=${store._id}` as unknown as string);
                     }}
                   >
                     <ThemedText style={s.storeLink} numberOfLines={1}>
@@ -609,7 +609,7 @@ function CouponsPage() {
                     key={store._id}
                     onPress={(e) => {
                       e.stopPropagation();
-                      router.push(`/MainStorePage?storeId=${store._id}` as unknown);
+                      router.push(`/MainStorePage?storeId=${store._id}` as unknown as string);
                     }}
                   >
                     <ThemedText style={s.storeLink} numberOfLines={1}>
@@ -759,7 +759,7 @@ function CouponsPage() {
                             onPress={() => {
                               if (storeId) {
                                 setShowDetailsModal(false);
-                                router.push(`/MainStorePage?storeId=${storeId}` as unknown);
+                                router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
                               }
                             }}
                           >

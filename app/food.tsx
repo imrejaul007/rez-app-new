@@ -460,7 +460,7 @@ const FoodPage: React.FC = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Offers For You</Text>
             {offers.length > 3 && (
-              <Pressable onPress={() => router.push('/offers' as unknown)}>
+              <Pressable onPress={() => router.push('/offers' as unknown as string)}>
                 <Text style={styles.viewAllText}>View All</Text>
               </Pressable>
             )}
@@ -507,7 +507,7 @@ const FoodPage: React.FC = () => {
                 <Pressable
                   key={cat._id}
                   style={styles.categoryCard}
-                  onPress={() => router.push(`/explore/category/${cat._id}` as unknown)}
+                  onPress={() => router.push(`/explore/category/${cat._id}` as unknown as string)}
                 >
                   {cat.image ? (
                     <CachedImage
@@ -548,7 +548,7 @@ const FoodPage: React.FC = () => {
                 <Pressable
                   key={cuisine.tag}
                   style={styles.cuisineCard}
-                  onPress={() => router.push(`/explore/filter/${cuisine.tag}` as unknown)}
+                  onPress={() => router.push(`/explore/filter/${cuisine.tag}` as unknown as string)}
                 >
                   <Text style={styles.cuisineEmoji}>{getCuisineEmoji(cuisine.tag)}</Text>
                   <Text style={styles.cuisineName}>{cuisine.tag}</Text>
@@ -587,7 +587,7 @@ const FoodPage: React.FC = () => {
                   <Pressable
                     key={store._id}
                     style={styles.restaurantCard}
-                    onPress={() => router.push(`/store/${store.slug || store._id}` as unknown)}
+                    onPress={() => router.push(`/store/${store.slug || store._id}` as unknown as string)}
                   >
                     {imageUri ? (
                       <CachedImage
@@ -661,7 +661,7 @@ const FoodPage: React.FC = () => {
             <Text style={styles.promoSubtitle}>Discover new places near you and earn cashback on every order</Text>
             <Pressable
               style={styles.promoButton}
-              onPress={() => router.push(`/explore/category/${FOOD_CATEGORY_SLUG}` as unknown)}
+              onPress={() => router.push(`/explore/category/${FOOD_CATEGORY_SLUG}` as unknown as string)}
             >
               <Text style={styles.promoButtonText}>Browse Now</Text>
             </Pressable>

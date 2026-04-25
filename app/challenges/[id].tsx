@@ -242,7 +242,7 @@ function ChallengeDetailPage() {
 
     const route = actionRoutes[action];
     if (route) {
-      router.push(route as unknown);
+      router.push(route as unknown as string);
     } else {
       showAlert('Info', 'Complete this challenge by using the app!', undefined, 'info');
     }

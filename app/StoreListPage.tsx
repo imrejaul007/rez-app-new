@@ -412,7 +412,7 @@ const StoreListPage: React.FC = () => {
           cardType: 'product',
           storeId: store.storeId,
         },
-      } as unknown);
+      } as unknown as string);
     },
     [router],
   );

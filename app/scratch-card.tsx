@@ -267,7 +267,7 @@ function ScratchCardPage() {
     return (
       <FeatureErrorBoundary
         featureName="Scratch Card"
-        onSecondaryAction={() => router.push('/games' as unknown)}
+        onSecondaryAction={() => router.push('/games' as unknown as string)}
         secondaryActionLabel="Back to Games"
         secondaryActionIcon="game-controller"
       >
@@ -319,7 +319,7 @@ function ScratchCardPage() {
     return (
       <FeatureErrorBoundary
         featureName="Scratch Card"
-        onSecondaryAction={() => router.push('/games' as unknown)}
+        onSecondaryAction={() => router.push('/games' as unknown as string)}
         secondaryActionLabel="Back to Games"
         secondaryActionIcon="game-controller"
       >
@@ -351,7 +351,7 @@ function ScratchCardPage() {
   return (
     <FeatureErrorBoundary
       featureName="Scratch Card"
-      onSecondaryAction={() => router.push('/games' as unknown)}
+      onSecondaryAction={() => router.push('/games' as unknown as string)}
       secondaryActionLabel="Back to Games"
       secondaryActionIcon="game-controller"
       onReset={() => checkEligibility()}

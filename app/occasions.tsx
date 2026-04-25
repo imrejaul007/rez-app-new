@@ -147,7 +147,7 @@ function OccasionsPage() {
       router.push({
         pathname: '/shop',
         params: { occasion: occasion.id, category: categorySlug },
-      } as unknown);
+      } as unknown as string);
     },
     [router, categorySlug],
   );

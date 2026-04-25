@@ -339,7 +339,7 @@ function DoubleCashbackPage() {
           </View>
 
           {/* Browse Stores CTA */}
-          <Pressable onPress={() => router.push('/explore' as unknown)}>
+          <Pressable onPress={() => router.push('/explore' as unknown as string)}>
             <LinearGradient colors={heroGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaBanner}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ctaTitle}>Start Shopping Now</Text>

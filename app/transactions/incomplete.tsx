@@ -132,15 +132,15 @@ const IncompleteTransactionsPage = () => {
         case 'payment_pending':
         case 'payment_failed':
           // Navigate to checkout to retry payment
-          router.push(`/checkout?orderId=${order._id}` as unknown);
+          router.push(`/checkout?orderId=${order._id}` as unknown as string);
           break;
         case 'cancelled':
           // Navigate to order details where user can reorder
-          router.push(`/orders/${order._id}` as unknown);
+          router.push(`/orders/${order._id}` as unknown as string);
           break;
         default:
           // View order details
-          router.push(`/orders/${order._id}` as unknown);
+          router.push(`/orders/${order._id}` as unknown as string);
           break;
       }
     },

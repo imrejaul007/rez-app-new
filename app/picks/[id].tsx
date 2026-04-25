@@ -467,7 +467,10 @@ const CreatorPickDetail = () => {
             {/* Action buttons */}
             <View style={s.ownPickActions}>
               {(pick.status === 'draft' || pick.status === 'rejected') && (
-                <Pressable style={s.editPickBtn} onPress={() => router.push(`/submit-pick?editId=${id}` as unknown)}>
+                <Pressable
+                  style={s.editPickBtn}
+                  onPress={() => router.push(`/submit-pick?editId=${id}` as unknown as string)}
+                >
                   <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                   <Text style={s.editPickText}>Edit Pick</Text>
                 </Pressable>

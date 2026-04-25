@@ -156,7 +156,9 @@ function CategoryPage() {
   const handleItemPress = (item: CategoryItem) => {
     // Navigate to product page like home-delivery
 
-    router.push(`/product-page?cardId=${item.id}&cardType=category&category=${category?.id || slug}` as unknown);
+    router.push(
+      `/product-page?cardId=${item.id}&cardType=category&category=${category?.id || slug}` as unknown as string,
+    );
   };
 
   const handleAddToCart = async (item: CategoryItem) => {
@@ -281,7 +283,7 @@ function CategoryPage() {
             actions.updateSearch(carouselItem.action.target);
             break;
           case 'navigate':
-            router.push(carouselItem.action.target as unknown);
+            router.push(carouselItem.action.target as unknown as string);
             break;
         }
 
@@ -368,7 +370,7 @@ function CategoryPage() {
                     banner={banner}
                     onPress={() => {
                       if (banner.action?.type === 'navigate') {
-                        router.push(banner.action.target as unknown);
+                        router.push(banner.action.target as unknown as string);
                       }
                     }}
                   />
@@ -428,7 +430,7 @@ function CategoryPage() {
                   <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
                   {section.viewAllLink && (
                     <Pressable
-                      onPress={() => router.push(section.viewAllLink as unknown)}
+                      onPress={() => router.push(section.viewAllLink as unknown as string)}
                       accessibilityLabel={`View all ${section.title.toLowerCase()}`}
                       accessibilityRole="button"
                       accessibilityHint="Double tap to see all items in this section"

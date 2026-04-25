@@ -88,7 +88,7 @@ function AllCategoriesPage() {
   const handleCategoryPress = useCallback(
     (category: MallCategory) => {
       const slug = category.slug || category._id || category.id;
-      if (slug) router.push(`/mall/category/${slug}` as unknown);
+      if (slug) router.push(`/mall/category/${slug}` as unknown as string);
     },
     [router],
   );

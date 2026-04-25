@@ -257,9 +257,9 @@ const BeautyCategoryPage: React.FC = () => {
   // Handle item press - navigate to store or product page
   const handleItemPress = (item: DisplayItem) => {
     if (config.type === 'store') {
-      router.push(`/MainStorePage?storeId=${item.id}` as unknown);
+      router.push(`/MainStorePage?storeId=${item.id}` as unknown as string);
     } else {
-      router.push(`/product-page?productId=${item.id}` as unknown);
+      router.push(`/product-page?productId=${item.id}` as unknown as string);
     }
   };
 
@@ -267,16 +267,16 @@ const BeautyCategoryPage: React.FC = () => {
   const handleBookPress = (item: DisplayItem) => {
     if (config.type === 'store') {
       // Navigate to store page with booking intent
-      router.push(`/MainStorePage?storeId=${item.id}&action=book` as unknown);
+      router.push(`/MainStorePage?storeId=${item.id}&action=book` as unknown as string);
     } else {
       // Navigate to product page with add to cart intent
-      router.push(`/product-page?productId=${item.id}&action=buy` as unknown);
+      router.push(`/product-page?productId=${item.id}&action=buy` as unknown as string);
     }
   };
 
   // Handle search
   const handleSearch = () => {
-    router.push(`/search?category=beauty&subcategory=${category}` as unknown);
+    router.push(`/search?category=beauty&subcategory=${category}` as unknown as string);
   };
 
   // Loading state
@@ -381,7 +381,7 @@ const BeautyCategoryPage: React.FC = () => {
             </Text>
             <Pressable
               style={[styles.exploreButton, { backgroundColor: config.gradientColors[0] }]}
-              onPress={() => router.push('/beauty' as unknown)}
+              onPress={() => router.push('/beauty' as unknown as string)}
             >
               <Text style={styles.exploreButtonText}>Explore Other Categories</Text>
             </Pressable>

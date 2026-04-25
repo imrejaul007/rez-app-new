@@ -559,7 +559,7 @@ function TriviaPage() {
           </Pressable>
           <Pressable
             style={styles.backToGamesBtn}
-            onPress={() => router.push('/games' as unknown)}
+            onPress={() => router.push('/games' as unknown as string)}
             accessibilityRole="button"
             accessibilityLabel="Browse more games"
           >

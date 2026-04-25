@@ -154,7 +154,7 @@ const FinancialPage: React.FC = () => {
     trackEvent('financial_category_clicked', {
       category_id: categoryId,
     });
-    router.push(`/financial/${categoryId}` as unknown);
+    router.push(`/financial/${categoryId}` as unknown as string);
   };
 
   const handleServicePress = (serviceId: string) => {
@@ -162,7 +162,7 @@ const FinancialPage: React.FC = () => {
       service_id: serviceId,
       source: 'quick_pay',
     });
-    router.push(`/financial/service/${serviceId}` as unknown);
+    router.push(`/financial/service/${serviceId}` as unknown as string);
   };
 
   if (isLoading) {
@@ -192,7 +192,7 @@ const FinancialPage: React.FC = () => {
             <Text style={styles.headerTitle}>Financial Services</Text>
             <Text style={styles.headerSubtitle}>Pay bills, earn rewards</Text>
           </View>
-          <Pressable style={styles.searchButton} onPress={() => router.push('/search' as unknown)}>
+          <Pressable style={styles.searchButton} onPress={() => router.push('/search' as unknown as string)}>
             <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -247,7 +247,7 @@ const FinancialPage: React.FC = () => {
         <View style={[styles.section, { paddingBottom: 0 }]}>
           <Pressable
             style={styles.transactionHistoryLink}
-            onPress={() => router.push('/transaction-history' as unknown)}
+            onPress={() => router.push('/transaction-history' as unknown as string)}
           >
             <View style={[styles.categoryIcon, { backgroundColor: `${Colors.info}20` }]}>
               <Ionicons name="receipt-outline" size={24} color={Colors.info} />
@@ -262,7 +262,10 @@ const FinancialPage: React.FC = () => {
 
         {/* Bill Simulator Entry */}
         <View style={[styles.section, { paddingBottom: 0 }]}>
-          <Pressable style={styles.transactionHistoryLink} onPress={() => router.push('/bill-simulator' as unknown)}>
+          <Pressable
+            style={styles.transactionHistoryLink}
+            onPress={() => router.push('/bill-simulator' as unknown as string)}
+          >
             <View style={[styles.categoryIcon, { backgroundColor: '#FFF9E620' }]}>
               <Ionicons name="calculator-outline" size={24} color="#B8860B" />
             </View>
@@ -277,7 +280,7 @@ const FinancialPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Pay</Text>
-            <Pressable onPress={() => router.push('/bill-payment' as unknown)}>
+            <Pressable onPress={() => router.push('/bill-payment' as unknown as string)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -308,7 +311,7 @@ const FinancialPage: React.FC = () => {
             <Text style={styles.promoEmoji}>🪙</Text>
             <Text style={styles.promoTitle}>Digital Gold</Text>
             <Text style={styles.promoSubtitle}>Start with just {currencySymbol}10 • 24K purity guaranteed</Text>
-            <Pressable style={styles.promoButton} onPress={() => router.push('/gold-savings' as unknown)}>
+            <Pressable style={styles.promoButton} onPress={() => router.push('/gold-savings' as unknown as string)}>
               <Text style={styles.promoButtonText}>Buy Gold</Text>
             </Pressable>
           </LinearGradient>

@@ -153,7 +153,7 @@ const ExploreMapPage = () => {
   }, [fetchNearbyStores]);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown);
+    router.push(path as unknown as string);
   };
 
   // Better marker positions that don't overlap

@@ -347,7 +347,7 @@ function FlightDetailsPage() {
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
@@ -614,7 +614,7 @@ function FlightDetailsPage() {
           {flight.store && (
             <Pressable
               style={s.airlineCard}
-              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as unknown)}
+              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as unknown as string)}
             >
               {flight.store.logo ? (
                 <CachedImage source={flight.store.logo} style={s.airlineLogo} contentFit="contain" />

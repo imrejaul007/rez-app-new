@@ -194,7 +194,7 @@ const GroceryComparePage: React.FC = () => {
             <Pressable
               key={store.storeId}
               style={[styles.storeRow, index === 0 && styles.bestDealRow]}
-              onPress={() => router.push(`/MainStorePage?storeId=${store.storeId}` as unknown)}
+              onPress={() => router.push(`/MainStorePage?storeId=${store.storeId}` as unknown as string)}
             >
               {index === 0 && (
                 <View style={styles.bestDealBadge}>

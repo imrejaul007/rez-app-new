@@ -158,7 +158,9 @@ function LowestPricePage() {
       return (
         <Pressable
           style={styles.productCard}
-          onPress={() => router.push(`/product-page?cardId=${bestSeller.productId}&cardType=product` as unknown)}
+          onPress={() =>
+            router.push(`/product-page?cardId=${bestSeller.productId}&cardType=product` as unknown as string)
+          }
         >
           {maxSaving > 0 && (
             <View style={styles.guaranteeBadge}>
@@ -225,7 +227,7 @@ function LowestPricePage() {
             )}
             <Pressable
               style={styles.shopButton}
-              onPress={() => router.push(`/MainStorePage?storeId=${bestSeller.storeId}` as unknown)}
+              onPress={() => router.push(`/MainStorePage?storeId=${bestSeller.storeId}` as unknown as string)}
             >
               <LinearGradient colors={[colors.brand.sky, colors.brand.skyDark]} style={styles.shopButtonGradient}>
                 <ThemedText style={styles.shopButtonText}>Shop Now</ThemedText>

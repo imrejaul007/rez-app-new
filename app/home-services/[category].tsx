@@ -116,7 +116,7 @@ const HomeServicesCategoryPage: React.FC = () => {
   const handleServicePress = (service: HomeService) => {
     const serviceId = service._id || service.id;
     if (serviceId) {
-      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown);
+      router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown as string);
     }
   };
 
@@ -124,7 +124,7 @@ const HomeServicesCategoryPage: React.FC = () => {
     const serviceId = service._id || service.id;
     const storeId = service.store?._id;
     if (serviceId && storeId) {
-      router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown);
+      router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown as string);
     }
   };
 

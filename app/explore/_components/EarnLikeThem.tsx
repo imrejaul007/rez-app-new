@@ -87,7 +87,7 @@ const EarnLikeThem = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown);
+    router.push(path as unknown as string);
   };
 
   const formatNumber = (num: number): string => {

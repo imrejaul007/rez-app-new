@@ -323,7 +323,7 @@ function OrderHistoryPage() {
   const handleOrderPress = useCallback(
     (order: any) => {
       const orderId = order.id || order._id;
-      router.push(`/tracking/${orderId}` as unknown);
+      router.push(`/tracking/${orderId}` as unknown as string);
     },
     [router],
   );
@@ -331,14 +331,14 @@ function OrderHistoryPage() {
   const handleReorder = useCallback(
     (orderId: string) => {
       // Navigate to tracking page with reorder intent — the tracking page has reorder functionality
-      router.push(`/tracking/${orderId}` as unknown);
+      router.push(`/tracking/${orderId}` as unknown as string);
     },
     [router],
   );
 
   const handleTrack = useCallback(
     (orderId: string) => {
-      router.push(`/tracking/${orderId}` as unknown);
+      router.push(`/tracking/${orderId}` as unknown as string);
     },
     [router],
   );

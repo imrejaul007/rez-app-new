@@ -263,7 +263,7 @@ function FlashSaleDetailPage() {
 
   const handleStorePress = () => {
     if (flashSale?.stores?.[0]?._id) {
-      router.push(`/MainStorePage?storeId=${flashSale.stores[0]._id}` as unknown);
+      router.push(`/MainStorePage?storeId=${flashSale.stores[0]._id}` as unknown as string);
     }
   };
 

@@ -252,7 +252,10 @@ function VouchersScreen() {
                         : 'No expired vouchers to display'}
                 </Text>
                 {filter === 'all' && (
-                  <Pressable style={styles.redeemCta} onPress={() => router.push('/prive/earnings' as unknown)}>
+                  <Pressable
+                    style={styles.redeemCta}
+                    onPress={() => router.push('/prive/earnings' as unknown as string)}
+                  >
                     <Text style={styles.redeemCtaText}>Start Earning</Text>
                   </Pressable>
                 )}

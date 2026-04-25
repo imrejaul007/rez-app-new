@@ -152,7 +152,7 @@ const ExperienceDetailPage: React.FC = () => {
   const handleStorePress = (store: any) => {
     const storeId = store._id || store.id;
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as unknown);
+      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
     }
   };
 

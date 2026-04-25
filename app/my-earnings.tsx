@@ -194,7 +194,7 @@ const MyEarningsPage = () => {
       source: 'my_earnings',
       available_balance: data?.availableBalance,
     });
-    router.push('/wallet-screen' as unknown);
+    router.push('/wallet-screen' as unknown as string);
   };
 
   const handleExportReport = async () => {
@@ -354,7 +354,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             >
               <Ionicons name="download-outline" size={22} color={colors.text.inverse} />
             </Pressable>
-            <Pressable style={styles.headerIconButton} onPress={() => router.push('/earnings-history' as unknown)}>
+            <Pressable
+              style={styles.headerIconButton}
+              onPress={() => router.push('/earnings-history' as unknown as string)}
+            >
               <Ionicons name="time-outline" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>
@@ -443,7 +446,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <Text style={styles.zeroStateDescription}>
               Complete projects, refer friends, share on social media, play games, and shop to earn coins.
             </Text>
-            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as unknown)}>
+            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as unknown as string)}>
               <Text style={styles.zeroStateCtaText}>Explore Earning Opportunities</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.brand.pink} />
             </Pressable>
@@ -501,7 +504,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Recent Earnings</Text>
-                <Pressable onPress={() => router.push('/earnings-history' as unknown)}>
+                <Pressable onPress={() => router.push('/earnings-history' as unknown as string)}>
                   <Text style={styles.viewAllText}>View All</Text>
                 </Pressable>
               </View>

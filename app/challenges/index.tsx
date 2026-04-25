@@ -97,7 +97,7 @@ function ChallengesPage() {
       router.replace({
         pathname: '/sign-in',
         params: { returnTo: '/challenges' },
-      } as unknown);
+      } as unknown as string);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user]);
@@ -386,7 +386,7 @@ function ChallengesPage() {
           style={styles.challengeCard}
           onPress={() => {
             // Navigate to challenge detail page
-            router.push(`/challenges/${challenge._id}` as unknown);
+            router.push(`/challenges/${challenge._id}` as unknown as string);
           }}
         >
           <LinearGradient
@@ -519,7 +519,7 @@ function ChallengesPage() {
               <Text style={styles.headerSubtitle}>Complete tasks, earn rewards!</Text>
             </View>
 
-            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as unknown)}>
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as unknown as string)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}

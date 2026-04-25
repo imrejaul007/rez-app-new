@@ -353,13 +353,13 @@ function ExtraCoinsPage() {
   const handleCoinDropPress = useCallback(
     (drop: CoinDrop) => {
       const storeId = getStoreId(drop.storeId);
-      if (storeId) router.push(`/MainStorePage?storeId=${storeId}` as unknown);
+      if (storeId) router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
     },
     [router],
   );
 
   const handleCampaignPress = useCallback(() => {
-    router.push('/offers/double-cashback' as unknown);
+    router.push('/offers/double-cashback' as unknown as string);
   }, [router]);
 
   const headerTop = Platform.OS === 'web' ? 0 : insets.top;
@@ -675,7 +675,7 @@ function ExtraCoinsPage() {
                   <Ionicons name="gift" size={16} color={colors.deepPink} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Bonus Zone</Text>
-                <Pressable onPress={() => router.push('/bonus-zone' as unknown)} style={styles.seeAllBtn}>
+                <Pressable onPress={() => router.push('/bonus-zone' as unknown as string)} style={styles.seeAllBtn}>
                   <Text style={styles.seeAllText}>View All</Text>
                   <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                 </Pressable>
@@ -698,7 +698,11 @@ function ExtraCoinsPage() {
             </View>
             <View style={styles.earnGrid}>
               {EARN_METHODS.map((method) => (
-                <Pressable key={method.id} style={styles.earnCard} onPress={() => router.push(method.route as unknown)}>
+                <Pressable
+                  key={method.id}
+                  style={styles.earnCard}
+                  onPress={() => router.push(method.route as unknown as string)}
+                >
                   <LinearGradient
                     colors={method.gradient}
                     start={{ x: 0, y: 0 }}
@@ -768,7 +772,7 @@ function ExtraCoinsPage() {
           </View>
 
           {/* ─── Bottom CTA ───────────────────────────────── */}
-          <Pressable style={styles.bottomCta} onPress={() => router.push('/cash-store' as unknown)}>
+          <Pressable style={styles.bottomCta} onPress={() => router.push('/cash-store' as unknown as string)}>
             <LinearGradient
               colors={[colors.nileBlue, '#0F172A']}
               start={{ x: 0, y: 0 }}

@@ -147,7 +147,7 @@ function AccountPage() {
           break;
         default:
           if (category.route) {
-            router.push(category.route as unknown);
+            router.push(category.route as unknown as string);
           }
           break;
       }
@@ -281,9 +281,9 @@ function AccountPage() {
                     onPress={() => {
                       if (isVerified) {
                         const route = SEGMENT_ROUTES[segment];
-                        if (route) router.push(route as unknown);
+                        if (route) router.push(route as unknown as string);
                       } else {
-                        router.push('/onboarding/identity-select' as unknown);
+                        router.push('/onboarding/identity-select' as unknown as string);
                       }
                     }}
                     style={{

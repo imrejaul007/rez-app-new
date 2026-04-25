@@ -107,7 +107,7 @@ function RescheduleBookingScreen() {
       if (response.success) {
         platformAlertSimple('Success!', 'Your appointment has been rescheduled. The merchant will be notified.');
         if (isMounted()) {
-          setTimeout(() => router.replace('/my-bookings' as unknown), 1500);
+          setTimeout(() => router.replace('/my-bookings' as unknown as string), 1500);
         }
       } else {
         platformAlertSimple('Error', response.error || 'Could not reschedule booking');

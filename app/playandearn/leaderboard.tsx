@@ -731,7 +731,7 @@ const Leaderboard = () => {
             <Text style={styles.sectionSubtitle}>Shop more to increase your rank</Text>
 
             <Pressable
-              onPress={() => router.push('/mall' as unknown)}
+              onPress={() => router.push('/mall' as unknown as string)}
               accessibilityLabel="Browse mall"
               accessibilityRole="button"
             >
@@ -748,7 +748,7 @@ const Leaderboard = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push('/offers' as unknown)}
+              onPress={() => router.push('/offers' as unknown as string)}
               accessibilityLabel="View offers"
               accessibilityRole="button"
             >
@@ -765,7 +765,7 @@ const Leaderboard = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push('/referral' as unknown)}
+              onPress={() => router.push('/referral' as unknown as string)}
               accessibilityLabel="Refer friends"
               accessibilityRole="button"
             >

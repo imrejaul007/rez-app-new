@@ -143,14 +143,14 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as unknown)._id || (store as unknown).id,
+            storeId: (store as unknown as string)._id || (store as unknown).id,
             storeName: store.name,
             storeLogo: store.logo || '',
             ...(tableNumber ? { tableNumber } : {}),
           },
         } as unknown);
       } else {
-        router.push('/pay-in-store' as unknown);
+        router.push('/pay-in-store' as unknown as string);
       }
       return;
     }
@@ -191,13 +191,13 @@ function RootLayout() {
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: (store as unknown)._id || (store as unknown).id,
+            storeId: (store as unknown as string)._id || (store as unknown).id,
             storeName: store.name,
             storeLogo: store.logo || '',
           },
         } as unknown);
       } else {
-        router.push('/pay-in-store' as unknown);
+        router.push('/pay-in-store' as unknown as string);
       }
       return;
     }
@@ -246,7 +246,7 @@ function RootLayout() {
     // 3. Generic route deep links (notification-tapped links, etc.)
     if (path && path !== '') {
       try {
-        router.push(`/${path}` as unknown);
+        router.push(`/${path}` as unknown as string);
       } catch {
         // Ignore navigation errors if route doesn't exist
       }
@@ -302,7 +302,7 @@ function RootLayout() {
 
           if (data?.route && typeof data.route === 'string') {
             try {
-              router.push(data.route as unknown);
+              router.push(data.route as unknown as string);
             } catch {
               // Ignore if route is invalid
             }

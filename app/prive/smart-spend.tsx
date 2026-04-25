@@ -131,14 +131,14 @@ function SmartSpendScreen() {
 
       if (item.itemType === 'store' && (item.store?._id || (item.store as unknown)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.store!._id || (item.store as unknown).id}&source=smart_spend&ssId=${item._id}` as unknown,
+          `/MainStorePage?storeId=${item.store!._id || (item.store as unknown as string).id}&source=smart_spend&ssId=${item._id}` as unknown,
         );
       } else if (item.itemType === 'product' && (item.product?.store?._id || (item.product?.store as unknown)?.id)) {
         router.push(
-          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as unknown).id}&source=smart_spend&ssId=${item._id}` as unknown,
+          `/MainStorePage?storeId=${item.product!.store._id || (item.product!.store as unknown as string).id}&source=smart_spend&ssId=${item._id}` as unknown,
         );
       } else if (item.itemType === 'product' && item.product?._id) {
-        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as unknown);
+        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as unknown as string);
       }
     },
     [router],

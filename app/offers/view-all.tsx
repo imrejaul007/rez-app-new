@@ -240,7 +240,7 @@ function ViewAllOffersScreen() {
 
   const handleOfferPress = useCallback(
     (offer: Offer) => {
-      router.push(`/offers/${offer._id}` as unknown);
+      router.push(`/offers/${offer._id}` as unknown as string);
     },
     [router],
   );

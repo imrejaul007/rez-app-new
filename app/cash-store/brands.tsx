@@ -241,7 +241,7 @@ function CashStoreBrandsPage() {
             controlsColor: colors.background.primary,
           });
         } else if (brand.storeId) {
-          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown);
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown as string);
         }
       } catch (error: any) {
         if (brand.externalUrl) {

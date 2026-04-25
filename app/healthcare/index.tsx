@@ -197,7 +197,7 @@ const HealthcarePage: React.FC = () => {
   };
 
   const navigateToCategory = (route: string) => {
-    router.push(route as unknown);
+    router.push(route as unknown as string);
   };
 
   return (
@@ -224,7 +224,7 @@ const HealthcarePage: React.FC = () => {
           </View>
           <Pressable
             style={styles.searchButton}
-            onPress={() => router.push('/healthcare/records' as unknown)}
+            onPress={() => router.push('/healthcare/records' as unknown as string)}
             accessibilityRole="button"
             accessibilityLabel="View health records"
           >
@@ -304,7 +304,7 @@ const HealthcarePage: React.FC = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Popular Services</Text>
             <Pressable
-              onPress={() => router.push('/healthcare/doctors' as unknown)}
+              onPress={() => router.push('/healthcare/doctors' as unknown as string)}
               accessibilityRole="button"
               accessibilityLabel="View all healthcare services"
             >
@@ -346,7 +346,7 @@ const HealthcarePage: React.FC = () => {
                       } else if (serviceType.includes('record')) {
                         route = '/healthcare/records';
                       }
-                      router.push(route as unknown);
+                      router.push(route as unknown as string);
                     }}
                   >
                     <CachedImage source={service.images?.[0] || ''} style={styles.serviceImage} />
@@ -392,7 +392,7 @@ const HealthcarePage: React.FC = () => {
         {/* Health Records Banner */}
         <Pressable
           style={styles.recordsBanner}
-          onPress={() => router.push('/healthcare/records' as unknown)}
+          onPress={() => router.push('/healthcare/records' as unknown as string)}
           accessibilityRole="button"
           accessibilityLabel="Manage your health records — prescriptions, reports and medical documents"
         >
@@ -418,7 +418,7 @@ const HealthcarePage: React.FC = () => {
         {/* Emergency Services Banner */}
         <Pressable
           style={styles.emergencyBanner}
-          onPress={() => router.push('/healthcare/emergency' as unknown)}
+          onPress={() => router.push('/healthcare/emergency' as unknown as string)}
           accessibilityRole="button"
           accessibilityLabel="Emergency services — ambulance, hospitals, 24x7 emergency contacts"
         >

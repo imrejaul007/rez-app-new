@@ -196,11 +196,11 @@ function HeroesZonePage() {
     router.push({
       pathname: '/profile/verification',
       params: { zone },
-    } as unknown);
+    } as unknown as string);
   };
 
   const handleDealPress = (offer: ProfileOffer) => {
-    router.push(`/offers/${offer._id}` as unknown);
+    router.push(`/offers/${offer._id}` as unknown as string);
   };
 
   const isProfileVerified = (profile: SpecialProfile): boolean => {
@@ -459,7 +459,7 @@ function HeroesZonePage() {
             router.push({
               pathname: '/profile/verification',
               params: { zone: profile?.slug || 'defence' },
-            } as unknown);
+            } as unknown as string);
           }}
         >
           <LinearGradient

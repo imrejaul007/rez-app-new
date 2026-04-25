@@ -326,7 +326,7 @@ function RedeemScreen() {
               <Text style={styles.zeroBalanceText}>
                 Earn coins through purchases, daily check-ins, referrals, and games.
               </Text>
-              <Pressable style={styles.earnButton} onPress={() => router.push('/prive' as unknown)}>
+              <Pressable style={styles.earnButton} onPress={() => router.push('/prive' as unknown as string)}>
                 <Text style={styles.earnButtonText}>Explore Ways to Earn</Text>
               </Pressable>
             </View>
@@ -359,7 +359,7 @@ function RedeemScreen() {
                         // Bug #4 fix: guard against double-tap opening duplicate screens
                         if (hasEnoughCoins && !isNavigating) {
                           setIsNavigating(true);
-                          router.push(option.route as unknown);
+                          router.push(option.route as unknown as string);
                         }
                       }}
                     >

@@ -408,7 +408,7 @@ function CabDetailsPage() {
         pathname: '/payment-razorpay',
         params: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          amount: (data as unknown).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',

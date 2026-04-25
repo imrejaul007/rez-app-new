@@ -121,14 +121,14 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
     router.push({
       pathname: '/product-page',
       params: { cardId: productId, cardType: 'product' },
-    } as unknown);
+    } as unknown as string);
   };
 
   const handleViewAll = () => {
     router.push({
       pathname: '/StoreProductsPage',
       params: { storeId, storeName: storeName || 'Store' },
-    } as unknown);
+    } as unknown as string);
   };
 
   const formatPrice = (price: number) => price.toLocaleString('en-IN');

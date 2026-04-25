@@ -206,7 +206,7 @@ export default memo(function ProductScreen({
     animateTo(half);
     const storeId = dynamicData?.store?._id || dynamicData?.store?.id || dynamicData?.storeId;
     if (storeId) {
-      router.push(`/booking?storeId=${storeId}` as unknown);
+      router.push(`/booking?storeId=${storeId}` as unknown as string);
     }
   };
 

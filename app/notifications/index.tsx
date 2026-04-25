@@ -229,7 +229,7 @@ export default function NotificationsScreen() {
         markOneMutation.mutate(item._id);
       }
       if (item.data?.route) {
-        router.push(item.data.route as unknown);
+        router.push(item.data.route as unknown as string);
       }
     },
     [markOneMutation, router],

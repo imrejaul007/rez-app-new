@@ -263,7 +263,7 @@ function ReelsPage() {
   const handleShop = useCallback(
     (reel: UgcReel) => {
       if (reel.store) {
-        router.push(`/store/${reel.store.id}` as unknown);
+        router.push(`/store/${reel.store.id}` as unknown as string);
       }
     },
     [router],
@@ -313,7 +313,7 @@ function ReelsPage() {
             {item.creator && (
               <Pressable
                 style={styles.avatarButton}
-                onPress={() => router.push(`/creator/${item.creator!.id}` as unknown)}
+                onPress={() => router.push(`/creator/${item.creator!.id}` as unknown as string)}
               >
                 <LinearGradient colors={['#FF6B6B', '#FFD93D', '#6BCB77']} style={styles.avatarRing}>
                   {item.creator.avatar ? (
@@ -345,7 +345,7 @@ function ReelsPage() {
             {/* Comments */}
             <Pressable
               style={styles.actionButton}
-              onPress={() => router.push(`/social/comments/${item.id}` as unknown)}
+              onPress={() => router.push(`/social/comments/${item.id}` as unknown as string)}
             >
               <Ionicons name="chatbubble-ellipses-outline" size={28} color={colors.text.inverse} />
               <Text style={styles.actionCount}>{formatNumber(item.comments)}</Text>
@@ -380,7 +380,7 @@ function ReelsPage() {
             {item.creator && (
               <Pressable
                 style={styles.creatorRow}
-                onPress={() => router.push(`/creator/${item.creator!.id}` as unknown)}
+                onPress={() => router.push(`/creator/${item.creator!.id}` as unknown as string)}
               >
                 <Text style={styles.creatorName}>@{item.creator.name}</Text>
                 {item.views > 100 && (
@@ -446,7 +446,7 @@ function ReelsPage() {
         </LinearGradient>
         <Text style={styles.emptyTitle}>No Reels Yet</Text>
         <Text style={styles.emptySubtext}>Be the first to create a reel and earn coins!</Text>
-        <Pressable style={styles.createReelButton} onPress={() => router.push('/social/upload' as unknown)}>
+        <Pressable style={styles.createReelButton} onPress={() => router.push('/social/upload' as unknown as string)}>
           <LinearGradient
             colors={['#FF6B6B', '#FF8E53']}
             start={{ x: 0, y: 0 }}
@@ -487,7 +487,7 @@ function ReelsPage() {
           </Pressable>
         </View>
 
-        <Pressable style={styles.headerButton} onPress={() => router.push('/social/upload' as unknown)}>
+        <Pressable style={styles.headerButton} onPress={() => router.push('/social/upload' as unknown as string)}>
           <Ionicons name="camera-outline" size={22} color={colors.text.inverse} />
         </Pressable>
       </View>

@@ -112,7 +112,7 @@ const CampaignDetailPage: React.FC = () => {
   };
 
   const handleDealPress = (deal: CampaignDeal, dealIndex: number) => {
-    router.push(`/deals/${campaignId}/${dealIndex}` as unknown);
+    router.push(`/deals/${campaignId}/${dealIndex}` as unknown as string);
   };
 
   const renderDealValue = (deal: CampaignDeal) => {

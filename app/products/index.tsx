@@ -234,12 +234,12 @@ const ProductsPage: React.FC = () => {
 
   // Handle product press
   const handleProductPress = (product: DisplayProduct) => {
-    router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown);
+    router.push(`/product-page?cardId=${product.id}&cardType=product` as unknown as string);
   };
 
   // Handle add to cart
   const handleAddToCart = (product: DisplayProduct) => {
-    router.push(`/product-page?cardId=${product.id}&cardType=product&action=buy` as unknown);
+    router.push(`/product-page?cardId=${product.id}&cardType=product&action=buy` as unknown as string);
   };
 
   // Loading state
@@ -268,7 +268,7 @@ const ProductsPage: React.FC = () => {
             </Text>
             <Text style={styles.headerSubtitle}>{filteredProducts.length} products available</Text>
           </View>
-          <Pressable onPress={() => router.push('/cart' as unknown)} style={styles.cartButton}>
+          <Pressable onPress={() => router.push('/cart' as unknown as string)} style={styles.cartButton}>
             <Ionicons name="cart-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>

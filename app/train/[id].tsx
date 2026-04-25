@@ -409,7 +409,7 @@ function TrainDetailsPage() {
       router.push({
         pathname: '/payment-razorpay',
         params: {
-          amount: (data as unknown).totalAmount,
+          amount: (data as unknown as string).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
@@ -584,7 +584,7 @@ function TrainDetailsPage() {
               </View>
               <Pressable
                 style={styles.viewStoreButton}
-                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as unknown)}
+                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as unknown as string)}
               >
                 <Text style={styles.viewStoreButtonText}>View</Text>
                 <Ionicons name="chevron-forward" size={16} color={Colors.gold} />

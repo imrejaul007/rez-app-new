@@ -499,7 +499,7 @@ function OrderTrackingScreen() {
         <View style={styles.actionButtons}>
           <Pressable
             style={styles.secondaryButton}
-            onPress={() => router.push(`/orders/${order.id}` as unknown)}
+            onPress={() => router.push(`/orders/${order.id}` as unknown as string)}
             accessibilityLabel={`View details for order ${order.orderNumber}`}
             accessibilityRole="button"
             accessibilityHint="Double tap to view full order details"
@@ -514,13 +514,13 @@ function OrderTrackingScreen() {
               onPress={() => {
                 const ft = order.fulfillmentType;
                 if (ft === 'pickup') {
-                  router.push(`/pickup-tracking?orderId=${order.id}` as unknown);
+                  router.push(`/pickup-tracking?orderId=${order.id}` as unknown as string);
                 } else if (ft === 'drive_thru') {
-                  router.push(`/drivethru-tracking?orderId=${order.id}` as unknown);
+                  router.push(`/drivethru-tracking?orderId=${order.id}` as unknown as string);
                 } else if (ft === 'dine_in') {
-                  router.push(`/dinein-tracking?orderId=${order.id}` as unknown);
+                  router.push(`/dinein-tracking?orderId=${order.id}` as unknown as string);
                 } else {
-                  router.push(`/orders/${order.id}/tracking` as unknown);
+                  router.push(`/orders/${order.id}/tracking` as unknown as string);
                 }
               }}
               accessibilityLabel={`Track order ${order.orderNumber}`}
@@ -535,7 +535,7 @@ function OrderTrackingScreen() {
           {order.status === 'DELIVERED' && (
             <Pressable
               style={styles.shareButton}
-              onPress={() => router.push(`/social-media?orderId=${order.id}` as unknown)}
+              onPress={() => router.push(`/social-media?orderId=${order.id}` as unknown as string)}
               accessibilityLabel={`Share order ${order.orderNumber} on social media and earn 5 percent cashback`}
               accessibilityRole="button"
               accessibilityHint="Double tap to share and earn rewards"

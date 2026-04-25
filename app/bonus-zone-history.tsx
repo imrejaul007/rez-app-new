@@ -180,7 +180,7 @@ function BonusZoneHistoryPage() {
     (claim: BonusClaim) => {
       const slug = typeof claim.campaignId === 'object' && claim.campaignId?.slug ? claim.campaignId.slug : null;
       if (slug) {
-        router.push({ pathname: '/bonus-zone/[slug]', params: { slug } } as unknown);
+        router.push({ pathname: '/bonus-zone/[slug]', params: { slug } } as unknown as string);
       }
     },
     [router],

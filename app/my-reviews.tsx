@@ -256,7 +256,7 @@ function MyReviewsPage() {
             style={styles.actionButton}
             onPress={() => {
               const storeId = typeof review.store === 'object' ? review.store._id : review.store;
-              router.push(`/MainStorePage?storeId=${storeId}` as unknown);
+              router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
             }}
             accessibilityLabel="View store"
             accessibilityRole="button"

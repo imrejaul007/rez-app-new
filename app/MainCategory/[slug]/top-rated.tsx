@@ -57,7 +57,7 @@ function StoreCard({
   return (
     <Pressable
       style={styles.storeCard}
-      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown)}
+      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown as string)}
     >
       <View style={styles.storeImageContainer}>
         {imageUri && !imageError ? (
@@ -243,7 +243,7 @@ function SharedCategoryPage() {
 
   const handleVisitNow = useCallback(
     (store: any) => {
-      router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown);
+      router.push(`/MainStorePage?storeId=${store._id || store.id}` as unknown as string);
     },
     [router],
   );

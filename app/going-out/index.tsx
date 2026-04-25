@@ -36,11 +36,13 @@ function GoingOutPage() {
   };
 
   const handleProductPress = (product: GoingOutProduct) => {
-    router.push(`/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as unknown);
+    router.push(
+      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as unknown as string,
+    );
   };
 
   const handleViewAllSection = (sectionId: string) => {
-    router.push(`/going-out/section/${sectionId}` as unknown);
+    router.push(`/going-out/section/${sectionId}` as unknown as string);
   };
 
   const handleHideSearch = () => {

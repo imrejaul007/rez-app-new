@@ -149,7 +149,7 @@ const ExploreHotPage = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navigateTo = (path: string) => {
-    router.push(path as unknown);
+    router.push(path as unknown as string);
   };
 
   const renderHotItem = useCallback(

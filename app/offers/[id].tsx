@@ -273,7 +273,7 @@ function OfferDetailPage() {
           router.push({
             pathname: '/profile/verification',
             params: { zone: requiredZone },
-          } as unknown),
+          } as unknown as string),
         'Verify Now',
       );
       return;
@@ -377,7 +377,7 @@ function OfferDetailPage() {
 
   const handleStorePress = () => {
     if (offer?.store?.id) {
-      router.push(`/MainStorePage?storeId=${offer.store.id}` as unknown);
+      router.push(`/MainStorePage?storeId=${offer.store.id}` as unknown as string);
     }
   };
 
@@ -639,7 +639,7 @@ function OfferDetailPage() {
                     router.push({
                       pathname: '/profile/verification',
                       params: { zone: requiredZone },
-                    } as unknown)
+                    } as unknown as string)
                   }
                 >
                   <ThemedText style={styles.verifyNowButtonText}>Verify</ThemedText>
@@ -835,7 +835,7 @@ function OfferDetailPage() {
                 router.push({
                   pathname: '/profile/verification',
                   params: { zone: requiredZone },
-                } as unknown);
+                } as unknown as string);
               }
             }}
             accessibilityLabel={verificationStatus?.status === 'pending' ? 'Verification pending' : 'Verify to unlock'}

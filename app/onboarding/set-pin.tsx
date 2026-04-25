@@ -70,7 +70,7 @@ function SetPinScreen() {
       if (response.success) {
         if (!isMounted()) return;
         platformAlertSimple('PIN Set', 'Your 4-digit PIN has been set. Use it next time you sign in.');
-        router.replace(nextRoute as unknown);
+        router.replace(nextRoute as unknown as string);
       } else {
         if (!isMounted()) return;
         setErrors((prev) => ({ ...prev, pin: response.message || 'Failed to set PIN. Try again.' }));
@@ -84,7 +84,7 @@ function SetPinScreen() {
   };
 
   const handleSkip = () => {
-    router.replace(nextRoute as unknown);
+    router.replace(nextRoute as unknown as string);
   };
 
   return (

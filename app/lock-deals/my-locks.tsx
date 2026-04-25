@@ -398,7 +398,7 @@ const MyLocksPage: React.FC = () => {
                     : 'No cancelled or expired deals'}
               </Text>
               {activeTab === 'active' && (
-                <Pressable style={styles.browseCta} onPress={() => router.push('/lock-deals' as unknown)}>
+                <Pressable style={styles.browseCta} onPress={() => router.push('/lock-deals' as unknown as string)}>
                   <Text style={styles.browseCtaText}>Browse Lock Deals</Text>
                 </Pressable>
               )}

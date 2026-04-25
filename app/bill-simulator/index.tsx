@@ -165,7 +165,7 @@ export default function BillSimulatorScreen() {
 
   const handleStorePress = useCallback(
     (_storeId: string) => {
-      router.push('/smart-spend' as unknown);
+      router.push('/smart-spend' as unknown as string);
     },
     [router],
   );

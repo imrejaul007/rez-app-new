@@ -77,37 +77,37 @@ function SupportHubPage() {
       router.back();
     } else {
       // If no previous screen (e.g., page was refreshed), navigate to account page
-      router.push('/account' as unknown);
+      router.push('/account' as unknown as string);
     }
   };
 
   const handleCreateTicket = () => {
-    router.push('/support/create-ticket' as unknown);
+    router.push('/support/create-ticket' as unknown as string);
   };
 
   const handleViewAllTickets = () => {
-    router.push('/support/tickets' as unknown);
+    router.push('/support/tickets' as unknown as string);
   };
 
   const handleViewAllFAQs = () => {
-    router.push('/support/faq' as unknown);
+    router.push('/support/faq' as unknown as string);
   };
 
   const handleViewTicket = (ticket: SupportTicket) => {
-    router.push(`/support/ticket/${ticket._id}` as unknown);
+    router.push(`/support/ticket/${ticket._id}` as unknown as string);
   };
 
   const handleViewFAQ = (faq: FAQ) => {
-    router.push(`/support/faq?id=${faq._id}` as unknown);
+    router.push(`/support/faq?id=${faq._id}` as unknown as string);
   };
 
   const handleQuickAction = (type: string) => {
     switch (type) {
       case 'order-issue':
-        router.push('/support/create-ticket?category=order&subject=Order Issue' as unknown);
+        router.push('/support/create-ticket?category=order&subject=Order Issue' as unknown as string);
         break;
       case 'track-order':
-        router.push('/tracking' as unknown);
+        router.push('/tracking' as unknown as string);
         break;
       case 'payment-help':
         handleCreateTicket();

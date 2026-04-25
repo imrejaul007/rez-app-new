@@ -118,19 +118,19 @@ const TravelCategoryPage: React.FC = () => {
     if (serviceId) {
       // Route to dedicated pages based on category
       if (category === 'flights') {
-        router.push(`/flight/${serviceId}` as unknown);
+        router.push(`/flight/${serviceId}` as unknown as string);
       } else if (category === 'hotels') {
-        router.push(`/hotel/${serviceId}` as unknown);
+        router.push(`/hotel/${serviceId}` as unknown as string);
       } else if (category === 'trains') {
-        router.push(`/train/${serviceId}` as unknown);
+        router.push(`/train/${serviceId}` as unknown as string);
       } else if (category === 'cab') {
-        router.push(`/cab/${serviceId}` as unknown);
+        router.push(`/cab/${serviceId}` as unknown as string);
       } else if (category === 'bus') {
-        router.push(`/bus/${serviceId}` as unknown);
+        router.push(`/bus/${serviceId}` as unknown as string);
       } else if (category === 'packages') {
-        router.push(`/package/${serviceId}` as unknown);
+        router.push(`/package/${serviceId}` as unknown as string);
       } else {
-        router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown);
+        router.push(`/product-page?cardId=${serviceId}&cardType=product` as unknown as string);
       }
     }
   };
@@ -140,21 +140,21 @@ const TravelCategoryPage: React.FC = () => {
     if (serviceId) {
       // Route to dedicated booking pages
       if (category === 'flights') {
-        router.push(`/flight/${serviceId}` as unknown);
+        router.push(`/flight/${serviceId}` as unknown as string);
       } else if (category === 'hotels') {
-        router.push(`/hotel/${serviceId}` as unknown);
+        router.push(`/hotel/${serviceId}` as unknown as string);
       } else if (category === 'trains') {
-        router.push(`/train/${serviceId}` as unknown);
+        router.push(`/train/${serviceId}` as unknown as string);
       } else if (category === 'cab') {
-        router.push(`/cab/${serviceId}` as unknown);
+        router.push(`/cab/${serviceId}` as unknown as string);
       } else if (category === 'bus') {
-        router.push(`/bus/${serviceId}` as unknown);
+        router.push(`/bus/${serviceId}` as unknown as string);
       } else if (category === 'packages') {
-        router.push(`/package/${serviceId}` as unknown);
+        router.push(`/package/${serviceId}` as unknown as string);
       } else {
         const storeId = service.store?._id;
         if (storeId) {
-          router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown);
+          router.push(`/booking?storeId=${storeId}&productId=${serviceId}&bookingType=service` as unknown as string);
         }
       }
     }

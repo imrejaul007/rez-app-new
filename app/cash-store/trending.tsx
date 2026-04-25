@@ -224,7 +224,7 @@ function TrendingOffersPage() {
             controlsColor: colors.background.primary,
           });
         } else if (brand.storeId) {
-          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown);
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as unknown as string);
         }
       } catch (err: any) {
         if (brand.externalUrl) {
@@ -278,7 +278,7 @@ function TrendingOffersPage() {
             controlsColor: colors.background.primary,
           });
         } else if (offer.storeId) {
-          router.push(`/MainStorePage?storeId=${offer.storeId}` as unknown);
+          router.push(`/MainStorePage?storeId=${offer.storeId}` as unknown as string);
         }
       } catch (err: any) {
         if (offer.externalUrl) {

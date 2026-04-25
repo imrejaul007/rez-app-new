@@ -290,7 +290,7 @@ function AccountProfilePage() {
   };
 
   const handleNavigateToSetting = (route: string) => {
-    router.push(route as unknown);
+    router.push(route as unknown as string);
   };
 
   if (loading) {
@@ -562,7 +562,7 @@ function AccountProfilePage() {
           <View style={styles.settingsCard}>
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/profile-visibility' as unknown)}
+              onPress={() => router.push('/account/profile-visibility' as unknown as string)}
               accessibilityLabel={`Profile visibility. Current setting: ${privacySettings?.profileVisibility || 'FRIENDS'}`}
               accessibilityRole="button"
               accessibilityHint="Double tap to change who can see your profile"
@@ -581,7 +581,7 @@ function AccountProfilePage() {
 
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/two-factor-auth' as unknown)}
+              onPress={() => router.push('/account/two-factor-auth' as unknown as string)}
               accessibilityLabel={`Two-factor authentication. Status: ${securitySettings?.twoFactorAuth.enabled ? 'Enabled' : 'Disabled'}`}
               accessibilityRole="button"
               accessibilityHint="Double tap to manage two-factor authentication settings"
@@ -739,7 +739,7 @@ function AccountProfilePage() {
           <View style={styles.settingsCard}>
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/profile/edit' as unknown)}
+              onPress={() => router.push('/profile/edit' as unknown as string)}
               accessibilityLabel="Edit profile information"
               accessibilityRole="button"
               accessibilityHint="Navigate to edit profile screen"
@@ -758,7 +758,7 @@ function AccountProfilePage() {
 
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/change-password' as unknown)}
+              onPress={() => router.push('/account/change-password' as unknown as string)}
               accessibilityLabel="Change password"
               accessibilityRole="button"
               accessibilityHint="Navigate to change password screen"
@@ -777,7 +777,7 @@ function AccountProfilePage() {
 
             <Pressable
               style={styles.settingItem}
-              onPress={() => router.push('/account/delete-account' as unknown)}
+              onPress={() => router.push('/account/delete-account' as unknown as string)}
               accessibilityLabel="Delete account permanently"
               accessibilityRole="button"
               accessibilityHint="Navigate to account deletion screen. Warning: This action is permanent"

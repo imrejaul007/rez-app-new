@@ -324,7 +324,7 @@ function ShopPage() {
   const handleProductPress = useCallback(
     (product: Product) => {
       const productId = product._id || product.id;
-      router.push(`/product-page?cardId=${productId}&cardType=product` as unknown);
+      router.push(`/product-page?cardId=${productId}&cardType=product` as unknown as string);
     },
     [router],
   );

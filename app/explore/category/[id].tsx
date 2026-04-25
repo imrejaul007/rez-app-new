@@ -200,7 +200,7 @@ const CategoryDetailPage = () => {
   const categoryEmoji = getEmojiForCategory(categoryInfo?.icon, categoryInfo?.name);
 
   const navigateTo = (path: string) => {
-    router.push(path as unknown);
+    router.push(path as unknown as string);
   };
 
   return (

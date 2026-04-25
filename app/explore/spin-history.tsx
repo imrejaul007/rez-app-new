@@ -161,7 +161,7 @@ function SpinHistoryPage() {
         <Ionicons name="game-controller-outline" size={64} color={colors.border.default} />
         <Text style={styles.emptyTitle}>No Spins Yet</Text>
         <Text style={styles.emptyText}>Play the Spin & Win game to see your history here</Text>
-        <Pressable style={styles.playButton} onPress={() => router.push('/explore/spin-win' as unknown)}>
+        <Pressable style={styles.playButton} onPress={() => router.push('/explore/spin-win' as unknown as string)}>
           <Text style={styles.playButtonText}>Play Now</Text>
         </Pressable>
       </View>

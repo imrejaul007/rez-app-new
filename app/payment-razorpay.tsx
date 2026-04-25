@@ -450,7 +450,7 @@ function PaymentPage() {
             paymentType,
             ...(paymentType === 'balance' ? { lockId: bookingId } : { dealId }),
           }).toString();
-          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as unknown);
+          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as unknown as string);
         }, 500);
         navTimeoutsRef.current.add(t);
         return;
@@ -491,9 +491,9 @@ function PaymentPage() {
         const t = setTimeout(() => {
           navTimeoutsRef.current.delete(t);
           if (isTravelPayment) {
-            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as unknown);
+            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as unknown as string);
           } else {
-            router.replace(`/order-confirmation?orderId=${orderId}` as unknown);
+            router.replace(`/order-confirmation?orderId=${orderId}` as unknown as string);
           }
         }, 500);
         navTimeoutsRef.current.add(t);
@@ -508,7 +508,7 @@ function PaymentPage() {
       platformAlertConfirm(
         'Verification Failed',
         'Payment was received but verification failed. Please contact support.',
-        () => router.push('/support' as unknown),
+        () => router.push('/support' as unknown as string),
         'Contact Support',
       );
     }

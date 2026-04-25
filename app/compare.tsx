@@ -145,7 +145,7 @@ function ComparePage() {
     async (productId: string) => {
       if (!isAuthenticated) {
         platformAlertSimple('Login Required', 'Please login to compare products');
-        router.push('/sign-in' as unknown);
+        router.push('/sign-in' as unknown as string);
         return;
       }
 
@@ -270,7 +270,7 @@ function ComparePage() {
   );
 
   const handleBuy = (item: CompareItem) => {
-    router.push(`/product-page?productId=${item.productId}` as unknown);
+    router.push(`/product-page?productId=${item.productId}` as unknown as string);
   };
 
   // Loading state

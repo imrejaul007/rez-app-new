@@ -250,7 +250,7 @@ function OffersDetailPage() {
                   style={styles.storeCard}
                   onPress={() => {
                     if (storeId) {
-                      router.push(`/MainStorePage?storeId=${storeId}` as unknown);
+                      router.push(`/MainStorePage?storeId=${storeId}` as unknown as string);
                     }
                   }}
                   disabled={!storeId}
@@ -270,7 +270,9 @@ function OffersDetailPage() {
         {applicableStores.length === 0 && offer.store?.name && (
           <Pressable
             style={styles.singleStoreCard}
-            onPress={() => router.push(`/MainStorePage?storeId=${offer.store?.id || offer.store?._id}` as unknown)}
+            onPress={() =>
+              router.push(`/MainStorePage?storeId=${offer.store?.id || offer.store?._id}` as unknown as string)
+            }
           >
             <Ionicons name="laptop-outline" size={24} color={theme.primaryColor} />
             <View style={{ flex: 1 }}>

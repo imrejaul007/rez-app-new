@@ -256,7 +256,7 @@ const FitnessCategoryPage: React.FC = () => {
   };
 
   const handleItemPress = (item: StoreItem) => {
-    router.push(`/MainStorePage?storeId=${item._id}` as unknown);
+    router.push(`/MainStorePage?storeId=${item._id}` as unknown as string);
   };
 
   const handleBookPress = (item: StoreItem) => {
@@ -317,7 +317,7 @@ const FitnessCategoryPage: React.FC = () => {
 
   const handleSearchResultPress = (item: StoreItem) => {
     handleSearchClose();
-    router.push(`/MainStorePage?storeId=${item._id}` as unknown);
+    router.push(`/MainStorePage?storeId=${item._id}` as unknown as string);
   };
 
   const getItemTypeLabel = (item: StoreItem): string => {
