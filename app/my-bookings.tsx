@@ -58,6 +58,11 @@ const MyBookingsPage = () => {
   const [hotelBookings, setHotelBookings] = useState<OtaBooking[]>([]);
   const [hotelLoading, setHotelLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Pagination state for bookings
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [allBookings, setAllBookings] = useState<ServiceBooking[]>([]);
   // SS-D002 FIX: Track which booking IDs currently have a cancel in-flight so
   // the button is disabled (preventing double-tap race) and the UI shows a
   // local "cancelling" state before the API responds.
@@ -67,123 +72,144 @@ const MyBookingsPage = () => {
   // Skip the first render in the activeTab useEffect — useFocusEffect handles initial mount fetch
   const isFirstTabRender = useRef(true);
 
-  const fetchBookings = useCallback(async () => {
-    try {
-      setLoading(true);
-      setErrorMessage(null);
+  const fetchBookings = useCallback(
+    async (opts: { reset?: boolean } = {}) => {
+      const { reset = false } = opts;
+      try {
+        if (reset) {
+          setLoading(true);
+          setPage(1);
+          setHasMore(true);
+          setAllBookings([]);
+        }
+        setErrorMessage(null);
 
-      if (!isAuthenticated) {
-        setErrorMessage('Please login to view your bookings');
-        setLoading(false);
-        return;
-      }
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Fetch both ServiceBooking (cart/checkout flow) and ServiceAppointment (direct booking flow) in parallel
-      const [response, appointmentsResponse] = await Promise.all([
-        serviceBookingApi.getUserBookings({ page: 1, limit: 50 }).catch(() => null),
-        serviceAppointmentApi.getUserServiceAppointments(1, 50).catch(() => null),
-      ]);
-
-      // BUG 1 FIX: Normalize appointments independently so they always appear,
-      // even when the ServiceBooking API fails or returns no data.
-      const rawAppointments: any[] =
-        appointmentsResponse?.data?.appointments ??
-        (Array.isArray(appointmentsResponse?.data as any) ? (appointmentsResponse?.data as any) : []);
-
-      const normalizedAppointments: ServiceBooking[] = rawAppointments.map(
-        (appt: any) =>
-          ({
-            _id: appt._id || appt.appointmentId || appt.id,
-            bookingNumber: appt.appointmentNumber || appt.id,
-            user: appt.userId || '',
-            service: {
-              _id: appt.serviceId || '',
-              name: appt.serviceType || 'Appointment',
-              images: [],
-              pricing: { original: 0, selling: 0 },
-            },
-            serviceCategory: { _id: '', name: 'Appointment', slug: 'appointments', icon: 'calendar' },
-            store: appt.store || { name: '' },
-            merchantId: '',
-            customerName: appt.customerName || '',
-            customerPhone: appt.customerPhone || '',
-            bookingDate: appt.appointmentDate || appt.date,
-            timeSlot: { start: appt.appointmentTime || appt.time || '09:00', end: '' },
-            duration: appt.duration || 60,
-            serviceType: 'store' as const,
-            pricing: { basePrice: 0, total: 0, currency: 'INR' },
-            paymentStatus: 'pending' as const,
-            status: appt.status === 'no-show' ? 'no_show' : appt.status,
-            cashbackStatus: 'pending' as const,
-            verificationDays: 0,
-            isRescheduled: false,
-            rescheduleCount: 0,
-            maxReschedules: 2,
-            requiresPaymentUpfront: false,
-            createdAt: appt.createdAt || new Date().toISOString(),
-            updatedAt: appt.updatedAt || new Date().toISOString(),
-            _isServiceAppointment: true,
-          }) as any,
-      );
-
-      const serviceBookings: ServiceBooking[] = response?.success && Array.isArray(response.data) ? response.data : [];
-
-      if (serviceBookings.length > 0 || normalizedAppointments.length > 0) {
-        let filteredBookings = [...serviceBookings, ...normalizedAppointments];
-
-        if (activeTab === 'courses') {
-          // ED-02: Filter education-related bookings
-          filteredBookings = filteredBookings.filter((booking) => {
-            const sType = (booking as any).serviceType?.toLowerCase() || '';
-            const catSlug = booking.serviceCategory?.slug?.toLowerCase() || '';
-            return EDUCATION_KEYWORDS.some((kw) => sType.includes(kw) || catSlug.includes(kw));
-          });
-          filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
-        } else if (activeTab === 'upcoming') {
-          // SS-008 FIX: Removed isMounted() guard inside .filter() — it returns undefined (falsy),
-          // incorrectly excluding all bookings when the check fires.
-          filteredBookings = filteredBookings.filter((booking) => {
-            const bookingDate = new Date(booking.bookingDate);
-            bookingDate.setHours(0, 0, 0, 0);
-            const isFuture = bookingDate >= today;
-            const isActive =
-              booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
-            return isFuture && isActive;
-          });
-          filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
-        } else {
-          // SS-008 FIX: Same — removed erroneous isMounted() early-return inside filter
-          filteredBookings = filteredBookings.filter((booking) => {
-            const bookingDate = new Date(booking.bookingDate);
-            bookingDate.setHours(0, 0, 0, 0);
-            const isPast = bookingDate < today;
-            const isCompleted =
-              booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';
-            return isPast || isCompleted;
-          });
-          filteredBookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
+        if (!isAuthenticated) {
+          setErrorMessage('Please login to view your bookings');
+          setLoading(false);
+          return;
         }
 
-        if (!isMounted()) return;
-        setBookings(filteredBookings);
-      } else {
-        // No bookings or appointments found
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Fetch both ServiceBooking (cart/checkout flow) and ServiceAppointment (direct booking flow) in parallel
+        const [response, appointmentsResponse] = await Promise.all([
+          serviceBookingApi.getUserBookings({ page: reset ? 1 : page, limit: 50 }).catch(() => null),
+          serviceAppointmentApi.getUserServiceAppointments(reset ? 1 : page, 50).catch(() => null),
+        ]);
+
+        // BUG 1 FIX: Normalize appointments independently so they always appear,
+        // even when the ServiceBooking API fails or returns no data.
+        const rawAppointments: any[] =
+          appointmentsResponse?.data?.appointments ??
+          (Array.isArray(appointmentsResponse?.data as any) ? (appointmentsResponse?.data as any) : []);
+
+        const normalizedAppointments: ServiceBooking[] = rawAppointments.map(
+          (appt: any) =>
+            ({
+              _id: appt._id || appt.appointmentId || appt.id,
+              bookingNumber: appt.appointmentNumber || appt.id,
+              user: appt.userId || '',
+              service: {
+                _id: appt.serviceId || '',
+                name: appt.serviceType || 'Appointment',
+                images: [],
+                pricing: { original: 0, selling: 0 },
+              },
+              serviceCategory: { _id: '', name: 'Appointment', slug: 'appointments', icon: 'calendar' },
+              store: appt.store || { name: '' },
+              merchantId: '',
+              customerName: appt.customerName || '',
+              customerPhone: appt.customerPhone || '',
+              bookingDate: appt.appointmentDate || appt.date,
+              timeSlot: { start: appt.appointmentTime || appt.time || '09:00', end: '' },
+              duration: appt.duration || 60,
+              serviceType: 'store' as const,
+              pricing: { basePrice: 0, total: 0, currency: 'INR' },
+              paymentStatus: 'pending' as const,
+              status: appt.status === 'no-show' ? 'no_show' : appt.status,
+              cashbackStatus: 'pending' as const,
+              verificationDays: 0,
+              isRescheduled: false,
+              rescheduleCount: 0,
+              maxReschedules: 2,
+              requiresPaymentUpfront: false,
+              createdAt: appt.createdAt || new Date().toISOString(),
+              updatedAt: appt.updatedAt || new Date().toISOString(),
+              _isServiceAppointment: true,
+            }) as any,
+        );
+
+        const serviceBookings: ServiceBooking[] =
+          response?.success && Array.isArray(response.data) ? response.data : [];
+
+        if (serviceBookings.length > 0 || normalizedAppointments.length > 0) {
+          let filteredBookings = [...serviceBookings, ...normalizedAppointments];
+
+          if (activeTab === 'courses') {
+            // ED-02: Filter education-related bookings
+            filteredBookings = filteredBookings.filter((booking) => {
+              const sType = (booking as any).serviceType?.toLowerCase() || '';
+              const catSlug = booking.serviceCategory?.slug?.toLowerCase() || '';
+              return EDUCATION_KEYWORDS.some((kw) => sType.includes(kw) || catSlug.includes(kw));
+            });
+            filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
+          } else if (activeTab === 'upcoming') {
+            // SS-008 FIX: Removed isMounted() guard inside .filter() — it returns undefined (falsy),
+            // incorrectly excluding all bookings when the check fires.
+            filteredBookings = filteredBookings.filter((booking) => {
+              const bookingDate = new Date(booking.bookingDate);
+              bookingDate.setHours(0, 0, 0, 0);
+              const isFuture = bookingDate >= today;
+              const isActive =
+                booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
+              return isFuture && isActive;
+            });
+            filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
+          } else {
+            // SS-008 FIX: Same — removed erroneous isMounted() early-return inside filter
+            filteredBookings = filteredBookings.filter((booking) => {
+              const bookingDate = new Date(booking.bookingDate);
+              bookingDate.setHours(0, 0, 0, 0);
+              const isPast = bookingDate < today;
+              const isCompleted =
+                booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';
+              return isPast || isCompleted;
+            });
+            filteredBookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
+          }
+
+          if (!isMounted()) return;
+          // Pagination: append data if loading more, replace if resetting
+          const newAllBookings = reset ? filteredBookings : [...allBookings, ...filteredBookings];
+          setAllBookings(newAllBookings);
+          setBookings(newAllBookings);
+          setHasMore(filteredBookings.length >= 50);
+        } else {
+          // No bookings or appointments found
+          if (!isMounted()) return;
+          if (reset) {
+            setBookings([]);
+            setAllBookings([]);
+          }
+          setHasMore(false);
+        }
+      } catch (error: any) {
         if (!isMounted()) return;
         setBookings([]);
+        setAllBookings([]);
+        setHasMore(false);
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        setRefreshing(false);
+        setLoadingMore(false);
       }
-    } catch (error: any) {
-      if (!isMounted()) return;
-      setBookings([]);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      setRefreshing(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, activeTab]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [isAuthenticated, activeTab, page],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -202,8 +228,16 @@ const MyBookingsPage = () => {
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchBookings();
+    setPage(1);
+    setAllBookings([]);
+    fetchBookings({ reset: true });
   }, [fetchBookings]);
+
+  const handleLoadMore = useCallback(() => {
+    if (loadingMore || !hasMore || activeTab === 'hotels' || activeTab === 'courses') return;
+    setLoadingMore(true);
+    setPage((prev) => prev + 1);
+  }, [loadingMore, hasMore, activeTab]);
 
   // SS-D002 FIX: Keep fetchBookings accessible inside handleCancelBooking
   // without making it a dependency (avoids stale-closure re-creation loop).
@@ -887,6 +921,15 @@ const MyBookingsPage = () => {
               />
             }
             ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={
+              loadingMore ? (
+                <View style={styles.loadingMore}>
+                  <ActivityIndicator size="small" color={colors.nileBlue} />
+                </View>
+              ) : null
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.3}
             showsVerticalScrollIndicator={false}
             estimatedItemSize={120}
           />
@@ -1184,6 +1227,10 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     color: Colors.error,
+  },
+  loadingMore: {
+    paddingVertical: 16,
+    alignItems: 'center',
   },
 });
 

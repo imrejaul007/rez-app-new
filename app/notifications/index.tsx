@@ -200,12 +200,23 @@ export default function NotificationsScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [allNotifications, setAllNotifications] = useState<NotificationItem[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   // Sprint 12: dark mode
   const { isDark, sprintColors: themeColors } = useTheme();
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['user-notifications'],
-    queryFn: fetchNotifications,
+    queryKey: ['user-notifications', page],
+    queryFn: async () => {
+      const res = await apiClient.get<any>(`/user/notifications?page=${page}&limit=30`);
+      const payload = (res as any)?.data ?? res;
+      return {
+        notifications: payload?.notifications ?? [],
+        unreadCount: payload?.unreadCount ?? 0,
+      };
+    },
     staleTime: 30_000,
   });
 
@@ -241,9 +252,28 @@ export default function NotificationsScreen() {
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
+    setPage(1);
+    setAllNotifications([]);
     await refetch();
     setRefreshing(false);
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    if (loadingMore || !hasMore || !data?.notifications?.length) return;
+    setPage((prev) => prev + 1);
+  }, [loadingMore, hasMore, data]);
+
+  // Merge new notifications with existing
+  useMemo(() => {
+    if (data?.notifications) {
+      if (page === 1) {
+        setAllNotifications(data.notifications);
+      } else {
+        setAllNotifications((prev) => [...prev, ...data.notifications]);
+      }
+      setHasMore(data.notifications.length >= 30);
+    }
+  }, [data, page]);
 
   const grouped = useMemo(() => {
     if (!data?.notifications) return [];
@@ -361,6 +391,15 @@ export default function NotificationsScreen() {
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={PRIMARY} colors={[PRIMARY]} />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            loadingMore ? (
+              <View style={styles.footer}>
+                <ActivityIndicator size="small" color={PRIMARY} />
+              </View>
+            ) : null
           }
         />
       )}
@@ -541,5 +580,9 @@ const styles = StyleSheet.create({
     backgroundColor: UNREAD_DOT,
     alignSelf: 'center',
     flexShrink: 0,
+  },
+  footer: {
+    paddingVertical: 16,
+    alignItems: 'center' as const,
   },
 });

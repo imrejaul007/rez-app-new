@@ -216,10 +216,13 @@ function KarmaExploreScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const fetchEvents = useCallback(
-    async (isRefresh = false) => {
-      if (!isRefresh) setLoading(true);
+    async (opts: { reset?: boolean } = {}) => {
+      const { reset = false } = opts;
+      if (!reset) setLoading(true);
 
       const filters: EventFilters = {
         status: selectedStatus,
@@ -229,7 +232,7 @@ function KarmaExploreScreen() {
       }
 
       try {
-        const res = await karmaService.getNearbyEvents(filters);
+        const res = await karmaService.getNearbyEvents(filters as any);
         if (!isMounted()) return;
 
         let data = (res.data?.events ?? []) as KarmaEvent[];
@@ -242,7 +245,11 @@ function KarmaExploreScreen() {
               e.location.city?.toLowerCase().includes(q),
           );
         }
-        setEvents(data);
+        if (reset) {
+          setEvents(data);
+        } else {
+          setEvents((prev) => [...prev, ...data]);
+        }
         setHasMore(data.length >= 10);
       } catch {
         // non-fatal
@@ -250,9 +257,10 @@ function KarmaExploreScreen() {
         if (!isMounted()) return;
         setLoading(false);
         setRefreshing(false);
+        setLoadingMore(false);
       }
     },
-    [selectedCategory, selectedStatus, searchQuery, isMounted],
+    [selectedCategory, selectedStatus, searchQuery, isMounted, page],
   );
 
   useFocusEffect(
@@ -263,12 +271,20 @@ function KarmaExploreScreen() {
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchEvents(true);
+    setPage(1);
+    fetchEvents({ reset: true });
+  };
+
+  const loadMore = () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    setPage((prev) => prev + 1);
   };
 
   const handleCategoryChange = (catId: string) => {
     setSelectedCategory(catId);
     setLoading(true);
+    setPage(1);
     setEvents([]);
   };
 
@@ -374,8 +390,10 @@ function KarmaExploreScreen() {
               tintColor={KARMA_PURPLE}
             />
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
           ListFooterComponent={
-            hasMore ? (
+            loadingMore ? (
               <View style={{ alignItems: 'center', paddingVertical: Spacing.lg }}>
                 <ActivityIndicator size="small" color={KARMA_PURPLE} />
               </View>
