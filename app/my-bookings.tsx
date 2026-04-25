@@ -21,6 +21,7 @@ import { showToast } from '@/components/common/ToastManager';
 import { useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const TRAVEL_SLUGS = ['flights', 'hotels', 'trains', 'bus', 'cab', 'packages'];
 const EDUCATION_KEYWORDS = ['class', 'course', 'tutorial', 'workshop', 'enrollment', 'lesson', 'training'];
@@ -43,6 +44,7 @@ const MyBookingsPage = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
+  const { isDark, themeColors } = useTheme();
 
   // Screen fade-in animation
   const fadeAnim = useSharedValue(0);
@@ -677,7 +679,10 @@ const MyBookingsPage = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, isDark && { backgroundColor: themeColors.background.secondary }]}
+      edges={['top']}
+    >
       <Animated.View style={[{ flex: 1 }, fadeAnimStyle]} pointerEvents="box-none">
         {/* Header */}
         <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
