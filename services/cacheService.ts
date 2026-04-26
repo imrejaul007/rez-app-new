@@ -847,15 +847,24 @@ class CacheService {
   }
 
   /**
-   * Batch get multiple entries
+   * Batch get multiple entries (parallel fetch)
+   * CA-API-003 FIX: Use Promise.all for parallel fetching instead of sequential awaits
    */
   async getMany<T>(keys: string[]): Promise<Record<string, T | null>> {
     await this.ensureInitialized();
 
-    const results: Record<string, T | null> = {};
+    // Use Promise.all for parallel fetching
+    const entries = await Promise.all(
+      keys.map(async (key) => ({
+        key,
+        value: await this.get<T>(key),
+      }))
+    );
 
-    for (const key of keys) {
-      results[key] = await this.get<T>(key);
+    // Convert to record
+    const results: Record<string, T | null> = {};
+    for (const { key, value } of entries) {
+      results[key] = value;
     }
 
     return results;
