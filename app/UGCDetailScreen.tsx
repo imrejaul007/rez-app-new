@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { logger } from '@/utils/logger';
 // UGCDetailScreen.tsx - Modern TikTok/Reels Style Video Player
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
@@ -459,7 +460,9 @@ function UGCDetailScreen() {
             mainVideo.currentTime = 0;
             mainVideo.play().catch(() => {
               mainVideo.muted = true;
-              mainVideo.play().catch(() => {});
+              mainVideo.play().catch((err) => {
+                logger.debug('Video play failed', { error: err?.message }, 'UGCDetail');
+              });
             });
           }
         } else {
@@ -575,8 +578,7 @@ function UGCDetailScreen() {
         }
       } else {
         // Follow - use wishlistApi (backend supports this)
-        const creatorName =
-          (video?.creator as any)?.name || (video?.creator as any)?.username || 'this creator';
+        const creatorName = (video?.creator as any)?.name || (video?.creator as any)?.username || 'this creator';
         const response = await wishlistApi.addToWishlist({
           itemType: 'store',
           itemId: storeIdToFollow,
@@ -646,10 +648,7 @@ function UGCDetailScreen() {
       return `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim() || 'User';
     }
     return (
-      (video?.creator as any)?.name ||
-      (video?.creator as any)?.username ||
-      (video?.stores as any)?.[0]?.name ||
-      'User'
+      (video?.creator as any)?.name || (video?.creator as any)?.username || (video?.stores as any)?.[0]?.name || 'User'
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [video?.creator, (video?.stores as any)?.[0]?.name]);

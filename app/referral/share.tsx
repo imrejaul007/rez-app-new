@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { logger } from '@/utils/logger';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -237,7 +238,9 @@ function ReferralSharePage() {
             RNShare.share({
               message: `Join me on ${BRAND.APP_NAME} and get ${currencySymbol}30 off! Use code: ${referralCode}\n${referralLink}`,
               title: `Join ${BRAND.APP_NAME}`,
-            }).catch(() => {})
+            }).catch((err) => {
+              logger.debug('Share not available', { error: err?.message }, 'ReferralShare');
+            })
           }
           accessibilityLabel="Share with more apps"
           accessibilityRole="button"

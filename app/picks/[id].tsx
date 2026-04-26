@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import logger from '@/utils/logger';
 // Creator Pick Detail Page
 // Production-ready page showing a creator's product recommendation
 
@@ -29,7 +30,6 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import logger from '@/utils/logger';
 
 const { width } = Dimensions.get('window');
 const NUQTA_COIN = BRAND.COIN_IMAGE;
@@ -192,7 +192,9 @@ const CreatorPickDetail = () => {
     Share.share({
       message: `Check out "${pick.title}" picked by ${pick.creator?.name || 'a creator'}! Earn ${estimatedCoins} ${BRAND.APP_NAME} ${coinWord} when you buy.`,
       title: pick.title,
-    }).catch(() => {});
+    }).catch((err) => {
+      logger.debug('Share not available', { error: err?.message }, 'Picks');
+    });
   };
 
   const handleBuy = () => {

@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import logger from '@/utils/logger';
 // Flash Sale Success Page
 // Shows voucher code after successful Razorpay payment
 
@@ -21,7 +22,6 @@ import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/ThemedText';
 import realOffersApi from '@/services/realOffersApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
-import logger from '@/utils/logger';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -92,7 +92,9 @@ function FlashSaleSuccessPage() {
         fadeAnim.value = withTiming(1, { duration: 300 });
 
         // NA-MED-17 FIX: Add haptic feedback on successful payment (mirrors payment-success.tsx)
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch((err: any) => {
+          logger.debug('Haptic feedback unavailable', { error: err?.message }, 'FlashSaleSuccess');
+        });
       } else {
         // Retry on transient failures (network hiccup, backend still processing)
         if (attempt < MAX_RETRIES) {
@@ -284,10 +286,7 @@ function FlashSaleSuccessPage() {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable
-                style={styles.secondaryButton}
-                onPress={() => router.push('/my-vouchers' as any as string)}
-              >
+              <Pressable style={styles.secondaryButton} onPress={() => router.push('/my-vouchers' as any as string)}>
                 <ThemedText style={styles.secondaryButtonText}>View My Vouchers</ThemedText>
               </Pressable>
             </View>

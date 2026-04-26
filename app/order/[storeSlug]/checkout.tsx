@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { logger } from '@/utils/logger';
 /**
  * Web QR Ordering — Checkout
  *
@@ -217,7 +218,9 @@ function CheckoutScreen() {
         .then((res) => {
           if ((res.data as any)?.eligible) setBnplOffer(res.data as any);
         })
-        .catch(() => {});
+        .catch((err) => {
+          logger.error('BNPL offer check failed', err, 'Checkout');
+        });
     }
   }, [cartTotal]);
 
@@ -349,7 +352,13 @@ function CheckoutScreen() {
             sessionToken,
           });
           // Credit REZ Coins for this order (best-effort — non-blocking).
-          creditWebOrderCoins({ orderNumber: orderData.orderNumber, sessionToken }).catch(() => {});
+          creditWebOrderCoins({ orderNumber: orderData.orderNumber, sessionToken }).catch((err) => {
+            logger.warn(
+              'Coin credit failed (non-blocking)',
+              { orderNumber: orderData.orderNumber, error: err?.message },
+              'Checkout',
+            );
+          });
           router.replace({
             pathname: '/order/[storeSlug]/confirmation',
             params: { storeSlug: store.slug, orderNumber: orderData.orderNumber },

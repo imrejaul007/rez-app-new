@@ -1,4 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { logger } from '@/utils/logger';
 /**
  * Deal Success Page - Handles Razorpay payment verification after checkout
  * Route: /deal-success?razorpay_order_id=xxx&razorpay_payment_id=xxx&razorpay_signature=xxx&redemptionId=xxx
@@ -121,7 +122,9 @@ function DealSuccessPage() {
         fadeAnim.value = withTiming(1, { duration: 300 });
 
         // NA-MED-17 FIX: Add haptic feedback on successful payment (mirrors payment-success.tsx)
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch((err: any) => {
+          logger.debug('Haptic feedback unavailable', { error: err?.message }, 'DealSuccess');
+        });
       } else if (retryCount < maxRetries) {
         // Payment might still be processing, retry
         await new Promise((resolve) => setTimeout(resolve, baseDelay * Math.pow(2, retryCount)));

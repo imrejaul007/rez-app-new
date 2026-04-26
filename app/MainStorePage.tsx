@@ -1,4 +1,5 @@
 import { colors } from '@/constants/theme';
+import logger from '@/utils/logger';
 // MainStorePage.tsx - Orchestrator component for store page
 // All data fetching & state management lives in useMainStorePageData hook.
 // All section rendering is delegated to extracted components.
@@ -52,7 +53,6 @@ import StoreModals, { buildAboutModalData } from '@/components/store/StoreModals
 // Custom hook for all data/state/handlers
 import { useMainStorePageData, DynamicStoreData, LocationData } from '@/hooks/useMainStorePageData';
 import apiClient from '@/services/apiClient';
-import { logger } from '@/utils/logger';
 
 function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const router = useRouter();
@@ -109,7 +109,9 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const handleCallStore = useCallback(() => {
     const phone = (d.storeData as DynamicStoreData)?.contact?.phone || (d.storeData as DynamicStoreData)?.phone;
     if (phone) {
-      Linking.openURL(`tel:${phone}`).catch(() => {});
+      Linking.openURL(`tel:${phone}`).catch((err) => {
+        logger.debug('Phone call failed', { error: err?.message }, 'MainStore');
+      });
     }
   }, [d.storeData]);
 
@@ -171,7 +173,9 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
         if (payload?.upcomingDrop) setUpcomingDrop(payload.upcomingDrop);
         if (Array.isArray(payload?.activeCampaigns)) setActiveCampaigns(payload.activeCampaigns);
       })
-      .catch(() => {});
+      .catch((err) => {
+        logger.debug('Active campaigns fetch failed', { error: err?.message }, 'MainStore');
+      });
     return () => {
       cancelled = true;
       abortController.abort();

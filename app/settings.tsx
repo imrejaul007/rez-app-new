@@ -3,6 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // General application preferences and configurations
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { logger } from '@/utils/logger';
 import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, SafeAreaView, Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -75,7 +76,9 @@ function SettingsPage() {
   // Persist settings whenever they change (after initial load)
   useEffect(() => {
     if (!settingsLoaded) return;
-    AsyncStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
+    AsyncStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings)).catch((err) => {
+      logger.error('Failed to persist settings', err, 'Settings');
+    });
   }, [settings, settingsLoaded]);
 
   const handleBackPress = () => {
