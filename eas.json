@@ -178,12 +178,14 @@
     "production": {
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",
-        "track": "internal"
+        "track": "internal",
+        "packageName": "money.rez.app"
       },
       "ios": {
-        "appleId": "developer@rez.money",
+        "appleId": "work@rez.money",
         "ascAppId": "REQUIRED_BEFORE_LAUNCH",
-        "appleTeamId": "REQUIRED_BEFORE_LAUNCH"
+        "appleTeamId": "REQUIRED_BEFORE_LAUNCH",
+        "bundleIdentifier": "money.rez.app"
       }
     }
   }
