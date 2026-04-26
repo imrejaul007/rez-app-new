@@ -2,8 +2,10 @@
 // Consumer app chat - unified access to all ReZ services
 
 import { io, Socket } from 'socket.io-client';
-import { PLATFORM_CONFIGS, type ReZPlatform } from '@rez/chat-integration';
-import { logger } from '@rez/chat-integration/socket/logger';
+import { logger } from '@/utils/logger';
+
+// Platform types for consumer app
+export type ReZPlatform = 'consumer' | 'hotel' | 'store';
 
 const CONSUMER_NAMESPACE = '/ai/consumer';
 
