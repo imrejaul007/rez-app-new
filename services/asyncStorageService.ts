@@ -50,7 +50,7 @@ class AsyncStorageService {
       await AsyncStorage.setItem(key, jsonValue);
 
     } catch (error) {
-      logger.error('💾 [STORAGE] Failed to save data:', key, error);
+      logger.error('💾 [STORAGE] Failed to save data', error);
       throw new Error(`Failed to save data to ${key}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -72,7 +72,7 @@ class AsyncStorageService {
 
       return data;
     } catch (error) {
-      logger.error('💾 [STORAGE] Failed to get data:', key, error);
+      logger.error('💾 [STORAGE] Failed to get data', error);
       return null;
     }
   }
@@ -89,7 +89,7 @@ class AsyncStorageService {
       await AsyncStorage.removeItem(key);
 
     } catch (error) {
-      logger.error('💾 [STORAGE] Failed to remove data:', key, error);
+      logger.error('💾 [STORAGE] Failed to remove data', error);
       throw new Error(`Failed to remove data from ${key}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -178,7 +178,7 @@ class AsyncStorageService {
       const value = await AsyncStorage.getItem(key);
       return value !== null;
     } catch (error) {
-      logger.error('💾 [STORAGE] Failed to check if key exists:', key, error);
+      logger.error('💾 [STORAGE] Failed to check if key exists', error);
       return false;
     }
   }

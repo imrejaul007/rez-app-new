@@ -10,9 +10,6 @@ import {
   validateUser,
   isUserVerified
 } from '@/types/unified';
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
 
 // Keep the old User interface for backwards compatibility during migration
 export interface User {

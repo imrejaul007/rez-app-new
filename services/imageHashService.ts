@@ -185,7 +185,7 @@ class ImageHashService {
           }
 
           if (additionalChecksPassed) {
-            logger.debug('[ImageHash] Likely duplicate found:', record.uploadId, 'Similarity:', similarity);
+            logger.debug('[ImageHash] Likely duplicate found', { uploadId: record.uploadId, similarity });
             return {
               isDuplicate: true,
               matchedRecord: record,

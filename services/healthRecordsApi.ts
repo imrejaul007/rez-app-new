@@ -205,7 +205,7 @@ const healthRecordsApi = {
    */
   shareRecord: async (id: string, data: ShareRecordRequest): Promise<ApiResponse<HealthRecord>> => {
     try {
-      logger.debug('[healthRecordsApi] Sharing health record:', id, 'with user:', data.shareWithUserId);
+      logger.debug('[healthRecordsApi] Sharing health record', { id, shareWithUserId: data.shareWithUserId });
       const response = await apiClient.post<any>(`/health-records/${id}/share`, data as any as any);
       logger.debug('[healthRecordsApi] Health record shared successfully');
       return response as any;
@@ -223,7 +223,7 @@ const healthRecordsApi = {
    */
   revokeShare: async (recordId: string, shareId: string): Promise<ApiResponse<HealthRecord>> => {
     try {
-      logger.debug('[healthRecordsApi] Revoking share:', shareId, 'for record:', recordId);
+      logger.debug('[healthRecordsApi] Revoking share', { shareId, recordId });
       const response = await apiClient.delete<any>(`/health-records/${recordId}/share/${shareId}`);
       logger.debug('[healthRecordsApi] Share access revoked successfully');
       return response as any;
@@ -241,7 +241,7 @@ const healthRecordsApi = {
    */
   archiveRecord: async (id: string, archive: boolean = true): Promise<ApiResponse<HealthRecord>> => {
     try {
-      logger.debug('[healthRecordsApi] Archiving health record:', id, 'archive:', archive);
+      logger.debug('[healthRecordsApi] Archiving health record', { id, archive });
       const response = await apiClient.post<any>(`/health-records/${id}/archive`, { archive });
       logger.debug('[healthRecordsApi] Health record archive status updated');
       return response as any;

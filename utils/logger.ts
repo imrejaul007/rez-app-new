@@ -224,21 +224,26 @@ class Logger {
    * Error level logging
    * Use for errors that need immediate attention
    */
-  error(message: string, error?: Error, context?: string): void {
+  error(message: string, error?: unknown, context?: string): void {
     if (!this.shouldLog(LogLevel.ERROR)) return;
+
+    // Normalize error to Error type for monitoring
+    const normalizedError = error instanceof Error
+      ? error
+      : error ? new Error(String(error)) : undefined;
 
     this.addLog(LogLevel.ERROR, message, error, context);
 
     // Send errors to monitoring
-    if (error) {
-      MonitoringHelpers.trackError(error, {
+    if (normalizedError) {
+      MonitoringHelpers.trackError(normalizedError, {
         message,
         context,
       });
     }
 
     // Use shared redacting logger
-    this.redactingLogger.error(message, { error: error?.message, context } as LogContext);
+    this.redactingLogger.error(message, { error: String(error), context } as LogContext);
   }
 
   /**
@@ -345,7 +350,7 @@ export const log = {
   debug: (message: string, data?: any, context?: string) => logger.debug(message, data, context),
   info: (message: string, data?: any, context?: string) => logger.info(message, data, context),
   warn: (message: string, data?: any, context?: string) => logger.warn(message, data, context),
-  error: (message: string, error?: Error, context?: string) => logger.error(message, error, context),
+  error: (message: string, error?: unknown, context?: string) => logger.error(message, error, context),
   request: (method: string, url: string, data?: any) => logger.logRequest(method, url, data),
   response: (method: string, url: string, status: number, data?: any) => logger.logResponse(method, url, status, data),
   navigation: (from: string, to: string) => logger.logNavigation(from, to),
