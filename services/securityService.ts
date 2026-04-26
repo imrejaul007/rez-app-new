@@ -5,6 +5,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Application from 'expo-application';
+import * as SecureStore from 'expo-secure-store';
+import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 import apiClient from './apiClient';
 import { safeJsonParse } from '@/utils/safeJson';
@@ -67,8 +69,12 @@ export interface MultiAccountDetection {
 // ============================================================================
 
 const SECURITY_CONFIG = {
-  // Storage keys
-  DEVICE_ID_KEY: '@security_device_id',
+  // Secure storage keys (using SecureStore)
+  SECURE_DEVICE_ID_KEY: 'security_device_id',
+  SECURE_FINGERPRINT_HASH_KEY: 'security_fingerprint_hash',
+  SECURE_CAPTCHA_TOKEN_KEY: 'security_captcha_token',
+
+  // AsyncStorage keys (non-sensitive data only)
   DEVICE_FINGERPRINT_KEY: '@security_device_fingerprint',
   CAPTCHA_TOKEN_KEY: '@security_captcha_token',
   SECURITY_FLAGS_KEY: '@security_flags',
@@ -95,13 +101,92 @@ const SECURITY_CONFIG = {
 // ============================================================================
 
 /**
+ * Securely store data using SecureStore (encrypted)
+ * Falls back to hashed AsyncStorage on web platform
+ */
+const secureSetItem = async (key: string, value: string): Promise<void> => {
+  if (Platform.OS === 'web') {
+    // Web platform: use hashed value in AsyncStorage (SecureStore not available)
+    const hashedValue = await hashValue(value);
+    await AsyncStorage.setItem(`@secure_${key}`, hashedValue);
+  } else {
+    try {
+      await SecureStore.setItemAsync(key, value);
+    } catch {
+      // If SecureStore fails, store hash instead of plaintext
+      const hashedValue = await hashValue(value);
+      await AsyncStorage.setItem(`@secure_${key}`, hashedValue);
+    }
+  }
+};
+
+/**
+ * Securely retrieve data using SecureStore (encrypted)
+ * Falls back to hashed AsyncStorage on web platform
+ */
+const secureGetItem = async (key: string): Promise<string | null> => {
+  if (Platform.OS === 'web') {
+    return await AsyncStorage.getItem(`@secure_${key}`);
+  } else {
+    try {
+      const value = await SecureStore.getItemAsync(key);
+      if (value) return value;
+      // Fallback to hashed AsyncStorage
+      return await AsyncStorage.getItem(`@secure_${key}`);
+    } catch {
+      return await AsyncStorage.getItem(`@secure_${key}`);
+    }
+  }
+};
+
+/**
+ * Hash a value using SHA-256 for secure storage
+ */
+const hashValue = async (value: string): Promise<string> => {
+  try {
+    const hash = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      value
+    );
+    return hash;
+  } catch {
+    // Fallback to simple hash if Crypto fails
+    let hash = 0;
+    for (let i = 0; i < value.length; i++) {
+      const char = value.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(36);
+  }
+};
+
+/**
+ * Securely remove data from SecureStore
+ */
+const secureRemoveItem = async (key: string): Promise<void> => {
+  if (Platform.OS !== 'web') {
+    try {
+      await SecureStore.deleteItemAsync(key);
+    } catch {
+      // Ignore errors
+    }
+  }
+  await AsyncStorage.removeItem(`@secure_${key}`);
+};
+
+/**
  * Generate unique device fingerprint
+ *
+ * SECURITY: The device ID is stored encrypted using SecureStore (native)
+ * or hashed using SHA-256 (web). Only the hash of the fingerprint is stored,
+ * never the plaintext device information.
  */
 export const generateDeviceFingerprint = async (): Promise<DeviceFingerprint> => {
 
   try {
-    // Try to get existing device ID first
-    let storedId = await AsyncStorage.getItem(SECURITY_CONFIG.DEVICE_ID_KEY);
+    // Try to get existing device ID from secure storage
+    let storedId = await secureGetItem(SECURITY_CONFIG.SECURE_DEVICE_ID_KEY);
 
     if (!storedId) {
       // Generate new unique ID
@@ -109,7 +194,8 @@ export const generateDeviceFingerprint = async (): Promise<DeviceFingerprint> =>
       const randomPart = uuid.v4() as string;
       storedId = `${Platform.OS}_${timestamp}_${randomPart}`;
 
-      await AsyncStorage.setItem(SECURITY_CONFIG.DEVICE_ID_KEY, storedId);
+      // Store securely using SecureStore (encrypted) or hashed in AsyncStorage
+      await secureSetItem(SECURITY_CONFIG.SECURE_DEVICE_ID_KEY, storedId);
 
     }
 
@@ -159,24 +245,34 @@ export const generateDeviceFingerprint = async (): Promise<DeviceFingerprint> =>
 
 /**
  * Get existing device fingerprint or generate new one
+ *
+ * SECURITY: Only stores hashed fingerprints for privacy.
+ * Original device info is ephemeral and not persisted.
  */
 export const getDeviceFingerprint = async (): Promise<DeviceFingerprint> => {
   try {
-    const stored = await AsyncStorage.getItem(SECURITY_CONFIG.DEVICE_FINGERPRINT_KEY);
+    // Get device ID from secure storage
+    const deviceId = await secureGetItem(SECURITY_CONFIG.SECURE_DEVICE_ID_KEY);
 
-    if (stored) {
-      const fingerprint: DeviceFingerprint | null = safeJsonParse<DeviceFingerprint | null>(stored, null);
-      if (!fingerprint) return await generateDeviceFingerprint();
+    if (deviceId) {
+      // Reconstruct fingerprint from secure storage (no plaintext stored)
+      const deviceInfo = {
+        platform: Platform.OS || 'web',
+        osVersion: Platform.Version ? String(Platform.Version) : 'web',
+        deviceModel: Device.modelName || 'Browser',
+        deviceName: Device.deviceName || 'Web Browser',
+        appVersion: Application.nativeApplicationVersion || '1.0.0',
+        uniqueId: deviceId,
+        timestamp: Date.now(),
+      };
 
-      // Check if fingerprint is still valid (not older than 30 days)
-      const age = Date.now() - fingerprint.timestamp;
-      const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+      const hash = await generateHash(JSON.stringify(deviceInfo));
 
-      if (age < maxAge) {
-
-        return fingerprint;
-      }
-
+      return {
+        id: deviceId,
+        ...deviceInfo,
+        hash,
+      };
     }
 
     return await generateDeviceFingerprint();
@@ -186,21 +282,27 @@ export const getDeviceFingerprint = async (): Promise<DeviceFingerprint> => {
 };
 
 /**
- * Simple hash function for device properties
+ * Cryptographically secure hash function using SHA-256
+ * Used for fingerprint hashing to protect device privacy
  */
 const generateHash = async (data: string): Promise<string> => {
   try {
-    // Simple hash implementation for React Native
+    // Use expo-crypto for secure hashing (SHA-256)
+    const hash = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      data
+    );
+    // Return shortened hash for storage efficiency
+    return hash.substring(0, 32);
+  } catch (error) {
+    // Fallback to simple hash only if crypto fails
     let hash = 0;
     for (let i = 0; i < data.length; i++) {
       const char = data.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash = hash & hash;
     }
-
     return Math.abs(hash).toString(36);
-  } catch (error) {
-    return Date.now().toString(36);
   }
 };
 
@@ -475,8 +577,13 @@ export const getIPInfo = async (): Promise<IPInfo> => {
  */
 export const clearSecurityData = async (): Promise<void> => {
   try {
+    // Clear secure storage
+    await secureRemoveItem(SECURITY_CONFIG.SECURE_DEVICE_ID_KEY);
+    await secureRemoveItem(SECURITY_CONFIG.SECURE_FINGERPRINT_HASH_KEY);
+    await secureRemoveItem(SECURITY_CONFIG.SECURE_CAPTCHA_TOKEN_KEY);
+
+    // Clear AsyncStorage
     await AsyncStorage.multiRemove([
-      SECURITY_CONFIG.DEVICE_ID_KEY,
       SECURITY_CONFIG.DEVICE_FINGERPRINT_KEY,
       SECURITY_CONFIG.CAPTCHA_TOKEN_KEY,
       SECURITY_CONFIG.SECURITY_FLAGS_KEY,

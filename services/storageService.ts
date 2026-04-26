@@ -1,23 +1,56 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
+import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 import { FILE_SIZE_LIMITS } from '@/utils/fileUploadConstants';
 
-// Sensitive keys that should be stored in SecureStore (not on web)
-const SECURE_KEYS = ['auth_token', 'refresh_token', 'device_fingerprint', 'user_id', 'access_token'];
+// Sensitive keys that MUST be stored in SecureStore (not on web)
+// These are critical security keys that should NEVER use fallback storage
+const CRITICAL_SECURE_KEYS = ['auth_token', 'refresh_token', 'access_token', 'user_id'];
+
+// Sensitive keys that should use encryption when SecureStore is unavailable
+const SENSITIVE_KEYS = ['device_fingerprint', 'security_token', 'session_id'];
 
 // ---------------------------------------------------------------------------
-// XOR + base64 obfuscation for SecureStore fallback
-// Prevents auth tokens from being stored in plain AsyncStorage on devices
-// where SecureStore is unavailable (rooted / no-keychain).
-// NOT cryptographic — mirrors the pattern in secureWalletStorage.ts
+// SECURITY WARNING - XOR OBFUSCATION IS NOT ENCRYPTION
 // ---------------------------------------------------------------------------
+// The functions below provide OBUSCATION only, NOT encryption.
+// XOR obfuscation is TRIVIALLY reversible and provides NO real security.
+//
+// WHOEVER HAS ACCESS TO THIS CODE CAN DECRYPT YOUR DATA IN MILLISECONDS.
+//
+// USE CASES (where obfuscation might be acceptable):
+// - Preventing casual inspection of local data
+// - Hiding non-sensitive user preferences
+// - Making automated analysis slightly more difficult
+//
+// NEVER USE FOR (sensitive data that requires real encryption):
+// - Authentication tokens, passwords, API keys
+// - Personal identifiable information (PII)
+// - Financial data, payment information
+// - Health records, private messages
+// - Any data that could harm users if exposed
+//
+// For proper encryption, use:
+// - expo-secure-store (preferred for tokens/credentials)
+// - react-native-aes-crypto (for AES-256 encryption)
+// - react-native-keychain (for key storage)
+// ---------------------------------------------------------------------------
+
 const OBFUSCATION_KEY_BASE =
   'REZ_STORAGE_V1_' +
   (typeof process !== 'undefined' && (process as any).env?.EXPO_PUBLIC_APP_SECRET
     ? (process as any).env.EXPO_PUBLIC_APP_SECRET
     : 'FALLBACK_DEV_SECRET');
 
+/**
+ * XOR obfuscation - NOT SECURE, NOT ENCRYPTION
+ *
+ * WARNING: This function provides ZERO cryptographic security.
+ * The key is hardcoded in the source code. Anyone can reverse this.
+ *
+ * @deprecated Only use for non-sensitive data
+ */
 function xorObfuscate(plaintext: string): string {
   const keyBytes = new TextEncoder().encode(OBFUSCATION_KEY_BASE);
   const textBytes = new TextEncoder().encode(plaintext);
@@ -31,6 +64,13 @@ function xorObfuscate(plaintext: string): string {
     .replace(/=/g, '');
 }
 
+/**
+ * XOR deobfuscation - NOT SECURE
+ *
+ * WARNING: This function provides ZERO cryptographic security.
+ *
+ * @deprecated Only use for non-sensitive data
+ */
 function xorDeobfuscate(obfuscated: string): string {
   if (!obfuscated.startsWith('OBFUSCATED:')) return obfuscated;
   try {
@@ -49,11 +89,78 @@ function xorDeobfuscate(obfuscated: string): string {
   }
 }
 
+/**
+ * Generate a secure hash for integrity verification
+ * Uses SHA-256 via expo-crypto
+ */
+const generateSecureHash = async (data: string): Promise<string> => {
+  try {
+    const hash = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      data
+    );
+    return hash;
+  } catch {
+    // Fallback should not happen in normal circumstances
+    return '';
+  }
+};
+
+/**
+ * Secure fallback handler for when SecureStore is unavailable
+ *
+ * SECURITY DECISION: For CRITICAL_SECURE_KEYS, we REFUSE to store
+ * if SecureStore is unavailable. This is intentional - we would rather
+ * lose the data than expose it with XOR obfuscation.
+ *
+ * For SENSITIVE_KEYS, we use hashed storage (hash, not encrypt).
+ * For non-sensitive keys, we use XOR obfuscation (clearly marked as insecure).
+ */
+const handleSecureFallback = async (
+  key: string,
+  value: string,
+  operation: 'get' | 'set'
+): Promise<string | null> => {
+  // CRITICAL_SECURE_KEYS: Never fallback to insecure storage
+  if (CRITICAL_SECURE_KEYS.includes(key)) {
+    if (operation === 'get') return null;
+    // For set operations on critical keys, throw error instead of insecure storage
+    throw new Error(
+      `SECURITY: Cannot store critical key '${key}' securely. ` +
+      `SecureStore unavailable. Refusing to use insecure fallback.`
+    );
+  }
+
+  // SENSITIVE_KEYS: Store only the hash (for verification, not recovery)
+  if (SENSITIVE_KEYS.includes(key)) {
+    if (operation === 'get') {
+      const hashed = await AsyncStorage.getItem(`@hashed_${key}`);
+      return hashed;
+    }
+    // Store hash for verification purposes
+    const hash = await generateSecureHash(value);
+    await AsyncStorage.setItem(`@hashed_${key}`, hash);
+    return null;
+  }
+
+  // Other keys: Use XOR obfuscation (clearly insecure, only for non-sensitive data)
+  if (operation === 'get') {
+    const obfuscated = await AsyncStorage.getItem(key);
+    return obfuscated ? xorDeobfuscate(obfuscated) : null;
+  }
+  const obfuscated = xorObfuscate(value);
+  await AsyncStorage.setItem(key, obfuscated);
+  return null;
+};
+
 // Types
 export interface StorageOptions {
-  // WARNING: This is Base64 encoding, NOT encryption.
-  // For sensitive data, use SecureStore (already applied automatically for SECURE_KEYS).
-  // Rename kept as `encode` to avoid implying cryptographic protection.
+  // SECURITY: These options only provide encoding/obfuscation, NOT encryption.
+  // For sensitive data, use SecureStore (already applied automatically for SENSITIVE_KEYS).
+  //
+  // WARNING: Base64 encoding is NOT encryption. It only prevents casual inspection.
+  // The `encode` option is kept for legacy compatibility but should NOT be used
+  // for any data that requires actual protection.
   encode?: boolean;
   compress?: boolean;
   expiration?: number; // TTL in milliseconds
@@ -130,8 +237,8 @@ class StorageService {
         serializedData = `COMPRESSED:${serializedData}`;
       }
 
-      // WARNING: This is Base64 encoding, NOT encryption. Do NOT use for sensitive data.
-      // For sensitive values use SecureStore (applied automatically via SECURE_KEYS above).
+      // SECURITY NOTE: Base64 encoding is NOT encryption. Do NOT use for sensitive data.
+      // For sensitive values use SecureStore (applied automatically for SENSITIVE_KEYS).
       if (options.encode) {
         try {
           serializedData = `ENCODED:${btoa(serializedData)}`;
@@ -140,20 +247,24 @@ class StorageService {
         }
       }
 
-      // Use SecureStore for sensitive keys on native platforms
-      if (SECURE_KEYS.includes(key) && Platform.OS !== 'web') {
+      // Use SecureStore for critical/sensitive keys on native platforms
+      const isSensitiveKey = CRITICAL_SECURE_KEYS.includes(key) || SENSITIVE_KEYS.includes(key);
+      if (isSensitiveKey && Platform.OS !== 'web') {
         try {
           await SecureStore.setItemAsync(key, serializedData);
         } catch (error) {
-          // SecureStore unavailable — use XOR obfuscation instead of plain AsyncStorage
-          const obfuscated = xorObfuscate(serializedData);
-          await AsyncStorage.setItem(key, obfuscated);
+          // SecureStore unavailable — use secure fallback handler
+          await handleSecureFallback(key, serializedData, 'set');
         }
       } else {
         // Use AsyncStorage for non-sensitive keys or web platform
         await AsyncStorage.setItem(key, serializedData);
       }
     } catch (error) {
+      // Re-throw security errors with clear messages
+      if (error instanceof Error && error.message.startsWith('SECURITY:')) {
+        throw error;
+      }
       throw new Error(`Failed to set item: ${key}`);
     }
   }
@@ -167,13 +278,13 @@ class StorageService {
       let serializedData: string | null = null;
 
       // Try SecureStore first for sensitive keys on native platforms
-      if (SECURE_KEYS.includes(key) && Platform.OS !== 'web') {
+      const isSensitiveKey = CRITICAL_SECURE_KEYS.includes(key) || SENSITIVE_KEYS.includes(key);
+      if (isSensitiveKey && Platform.OS !== 'web') {
         try {
           serializedData = await SecureStore.getItemAsync(key);
         } catch (error) {
-          // SecureStore unavailable — read obfuscated value from AsyncStorage
-          const asyncRaw = await AsyncStorage.getItem(key);
-          serializedData = asyncRaw ? xorDeobfuscate(asyncRaw) : null;
+          // SecureStore unavailable — use secure fallback handler
+          serializedData = await handleSecureFallback(key, '', 'get');
         }
       } else {
         // Use AsyncStorage for non-sensitive keys or web platform
@@ -185,7 +296,7 @@ class StorageService {
       }
 
       // Handle encoded data (legacy 'ENCRYPTED:' prefix renamed to 'ENCODED:')
-      // NOTE: base64 is NOT encryption — see setItem comment above.
+      // SECURITY NOTE: base64 is NOT encryption — see setItem comment above.
       if (serializedData.startsWith('ENCODED:') || serializedData.startsWith('ENCRYPTED:')) {
         const prefixLength = serializedData.startsWith('ENCODED:') ? 8 : 10;
         try {
@@ -219,13 +330,18 @@ class StorageService {
   async removeItem(key: string): Promise<void> {
     try {
       // Remove from SecureStore if it's a sensitive key on native platform
-      if (SECURE_KEYS.includes(key) && Platform.OS !== 'web') {
+      const isSensitiveKey = CRITICAL_SECURE_KEYS.includes(key) || SENSITIVE_KEYS.includes(key);
+      if (isSensitiveKey && Platform.OS !== 'web') {
         try {
           await SecureStore.deleteItemAsync(key);
         } catch (error) {
           // Ignore SecureStore errors, fall through to AsyncStorage
         }
       }
+
+      // Remove hashed fallback if present
+      await AsyncStorage.removeItem(`@hashed_${key}`);
+
       // Always remove from AsyncStorage as fallback
       await AsyncStorage.removeItem(key);
     } catch (error) {
