@@ -20,11 +20,38 @@ import { useLocation } from '@/contexts/LocationContext';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+
+// API Response Types
+interface StoresApiResponse {
+  success: boolean;
+  data?: {
+    stores: StoreData[];
+  };
+}
+
+interface StoreData {
+  _id?: string;
+  id?: string;
+  name?: string;
+  category?: { name?: string } | string;
+  rating?: number;
+  cashback?: number;
+  [key: string]: unknown;
+}
+
+interface LocationCoordinates {
+  coordinates?: {
+    latitude?: number;
+    longitude?: number;
+  };
+}
+
 const ExperienceDetailPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const { type } = useLocalSearchParams<any>();
-  const { currentLocation } = useLocation() as any;
+  const { type } = useLocalSearchParams<{ type?: string }>();
+  const locationContext = useLocation() as { currentLocation?: LocationCoordinates } | null;
+  const currentLocation = locationContext?.currentLocation;
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,7 +59,7 @@ const ExperienceDetailPage: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
 
   const [experience, setExperience] = useState<StoreExperience | null>(null);
-  const [stores, setStores] = useState<any[]>([]);
+  const [stores, setStores] = useState<StoreData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>(['all']);
 
@@ -85,7 +112,13 @@ const ExperienceDetailPage: React.FC = () => {
 
           // Extract unique categories (only on initial load or if not filtering)
           if (!searchQuery) {
-            const uniqueCategories = Array.from(new Set(fetchedStores.map((s: any) => s.category?.name || 'Other')));
+            const uniqueCategories = Array.from(
+              new Set(
+                fetchedStores.map((s: StoreData) =>
+                  typeof s.category === 'string' ? s.category : s.category?.name || 'Other',
+                ),
+              ),
+            );
             if (!isMounted()) return;
             setCategories(['all', ...uniqueCategories]);
           }
@@ -121,16 +154,16 @@ const ExperienceDetailPage: React.FC = () => {
     experience?.benefits && experience.benefits.length > 0 ? experience.benefits : currentTheme.benefits || [];
 
   const { avgRating, avgCashback } = useMemo(() => {
-    const withRating = stores.filter((s: any) => s.rating && s.rating > 0);
+    const withRating = stores.filter((s) => s.rating && s.rating > 0);
     const rating =
       withRating.length > 0
-        ? (withRating.reduce((sum: number, s: any) => sum + s.rating, 0) / withRating.length).toFixed(1)
+        ? (withRating.reduce((sum: number, s) => sum + (s.rating || 0), 0) / withRating.length).toFixed(1)
         : null;
 
-    const withCashback = stores.filter((s: any) => s.cashback && s.cashback > 0);
+    const withCashback = stores.filter((s) => s.cashback && s.cashback > 0);
     const cashback =
       withCashback.length > 0
-        ? Math.round(withCashback.reduce((sum: number, s: any) => sum + s.cashback, 0) / withCashback.length)
+        ? Math.round(withCashback.reduce((sum: number, s) => sum + (s.cashback || 0), 0) / withCashback.length)
         : null;
 
     return { avgRating: rating, avgCashback: cashback };
@@ -139,9 +172,9 @@ const ExperienceDetailPage: React.FC = () => {
   // Filter Logic
   const filteredStores = useMemo(
     () =>
-      stores.filter((store: any) => {
-        const matchesCategory =
-          selectedFilter === 'all' || (store.category?.name || store.category || 'Other') === selectedFilter;
+      stores.filter((store: StoreData) => {
+        const categoryName = typeof store.category === 'string' ? store.category : store.category?.name;
+        const matchesCategory = selectedFilter === 'all' || categoryName === selectedFilter;
         // HIGH-14 FIX: Use optional chaining to handle null store.name
         const matchesSearch = (store.name || '').toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
@@ -149,10 +182,10 @@ const ExperienceDetailPage: React.FC = () => {
     [stores, selectedFilter, searchQuery],
   );
 
-  const handleStorePress = (store: any) => {
+  const handleStorePress = (store: StoreData) => {
     const storeId = store._id || store.id;
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as any as string);
+      router.push({ pathname: '/MainStorePage', params: { storeId } });
     }
   };
 
@@ -208,7 +241,7 @@ const ExperienceDetailPage: React.FC = () => {
       >
         {/* Dynamic Gradient Hero */}
         <LinearGradient
-          colors={displayGradient as any}
+          colors={displayGradient as [string, string, ...string[]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroSection}
@@ -300,8 +333,8 @@ const ExperienceDetailPage: React.FC = () => {
                 <Text style={styles.emptyText}>No stores found matching your criteria</Text>
               </View>
             ) : (
-              filteredStores.map((store: any, index: number) => (
-                <PremiumStoreCard key={store.id || index} store={store} onPress={handleStorePress} />
+              filteredStores.map((store: StoreData, index: number) => (
+                <PremiumStoreCard key={store._id || store.id || index} store={store} onPress={handleStorePress} />
               ))
             )}
           </View>

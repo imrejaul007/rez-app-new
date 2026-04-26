@@ -15,7 +15,14 @@ const generateId = (): string => {
   if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
     return globalThis.crypto.randomUUID();
   }
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  // CRITICAL FIX: Fallback uses crypto.getRandomValues for secure random bytes
+  if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.getRandomValues === 'function') {
+    const bytes = new Uint8Array(8);
+    globalThis.crypto.getRandomValues(bytes);
+    return `${Date.now()}-${Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')}`;
+  }
+  // Last resort: throw error - no insecure Math.random fallback
+  throw new Error('Secure random source (crypto.randomUUID or crypto.getRandomValues) is required');
 };
 
 const DEFAULT_CONFIG: AnalyticsConfig = {

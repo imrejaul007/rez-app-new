@@ -15,7 +15,8 @@ import {
   Dimensions,
   ScrollView} from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-import { colors, spacing, typography, borderRadius, zIndex, timing } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { spacing, typography, borderRadius, zIndex, timing, colors as themeColors } from '@/constants/theme';
 
 type SnapPoint = '25%' | '50%' | '75%' | '90%';
 
@@ -72,6 +73,7 @@ function BottomSheet({
   snapPoints = ['50%'],
   scrollable = true,
 }: BottomSheetProps) {
+  const { colors, shadows } = useTheme();
   const slideAnim = useSharedValue(0);
   const backdropAnim = useSharedValue(0);
   const backdropStyle = useAnimatedStyle(() => ({ opacity: backdropAnim.value }));
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     zIndex: zIndex.modalBackdrop,
   },
   sheet: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderTopLeftRadius: borderRadius['2xl'],
     borderTopRightRadius: borderRadius['2xl'],
     zIndex: zIndex.modal,
@@ -197,18 +199,18 @@ const styles = StyleSheet.create({
   handle: {
     width: 40,
     height: 4,
-    backgroundColor: colors.neutral[300],
+    backgroundColor: themeColors.neutral[300],
     borderRadius: borderRadius.sm,
   },
   header: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    borderBottomColor: themeColors.border.light,
   },
   title: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: themeColors.text.primary,
   },
   content: {
     flex: 1,

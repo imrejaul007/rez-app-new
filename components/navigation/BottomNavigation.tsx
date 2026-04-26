@@ -18,8 +18,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import logger from '@/utils/logger';
 import { useHomeTab } from '@/contexts/HomeTabContext';
-import { useTheme } from '@/hooks/useTheme';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useAuthStore } from '@/stores/authStore';
 import { getActiveWebOrderCount } from '@/services/webOrderApi';
@@ -137,7 +137,7 @@ const curvedBgStyles = StyleSheet.create({
   priveContainer: {
     ...Platform.select({
       ios: {
-        shadowColor: colors.brand.goldAccent,
+        shadowColor: themeColors.brand.goldAccent,
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
@@ -155,7 +155,7 @@ const curvedBgStyles = StyleSheet.create({
 const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isDark } = useTheme();
+  const { isDark, colors } = useTheme();
   const { segment, statedIdentity } = useUserIdentityStore();
   const insets = useSafeAreaInsets();
   const [imageError, setImageError] = useState(false);
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: colors.background.primary,
+    borderColor: themeColors.background.primary,
     // Shadow for depth
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -768,13 +768,13 @@ const styles = StyleSheet.create({
 
   // Privé theme - gold border for floating button
   floatingButtonCirclePrive: {
-    borderColor: colors.brand.goldAccent,
-    backgroundColor: colors.neutral[800],
+    borderColor: themeColors.brand.goldAccent,
+    backgroundColor: themeColors.neutral[800],
   },
 
   // Privé theme - gold label
   floatingButtonLabelPrive: {
-    color: colors.brand.goldAccent,
+    color: themeColors.brand.goldAccent,
   },
 
   // Tab bar container
@@ -854,7 +854,7 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     marginTop: 2,
-    backgroundColor: '#FFC857',
+    backgroundColor: themeColors.brand.goldWarm,
   },
 
   // Orange badge dot for unverified users on You tab

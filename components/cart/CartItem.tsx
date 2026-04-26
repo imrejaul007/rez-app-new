@@ -15,8 +15,9 @@ import StockBadge from '@/components/common/StockBadge';
 import QuantitySelector from '@/components/cart/QuantitySelector';
 import { useToast } from '@/hooks/useToast';
 import { useCartActions, useGetCurrencySymbol, useGetLocale } from '@/stores/selectors';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { colors as themeColors } from '@/constants/theme';
 
 function CartItem({
   item,
@@ -25,6 +26,7 @@ function CartItem({
   showAnimation = true,
   hideQuantityControls = false,
 }: CartItemProps) {
+  const { colors } = useTheme();
   const { width } = Dimensions.get('window');
   const isSmallScreen = width < 360;
   const scaleAnim = useSharedValue(1);
@@ -157,7 +159,7 @@ function CartItem({
               accessibilityLabel="No product image available"
               accessible={true}
             >
-              <Ionicons name="image-outline" size={32} color={colors.neutral[400]} />
+              <Ionicons name="image-outline" size={32} color={colors?.neutral[400] || themeColors.neutral[400]} />
             </View>
           )}
         </View>
@@ -354,34 +356,34 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    backgroundColor: themeColors.background.primary,
     borderRadius: 18,
     padding: 14,
     flexDirection: 'row',
-    shadowColor: colors.nileBlue, // Nile Blue shadow
+    shadowColor: themeColors.nileBlue, // Nile Blue shadow
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
     elevation: 4,
     minHeight: 110,
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.15)', // Mustard tint border
+    borderColor: themeColors.lightMustard,
   },
   imageContainer: {
     width: 80,
     height: 80,
     borderRadius: 14,
     overflow: 'hidden',
-    backgroundColor: colors.neutral[50],
+    backgroundColor: themeColors.neutral[50],
     borderWidth: 1,
-    borderColor: colors.neutral[200],
+    borderColor: themeColors.neutral[200],
   },
   productImage: {
     width: '100%',
     height: '100%',
   },
   placeholderImage: {
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -398,7 +400,7 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontWeight: '700',
-    color: colors.neutral[900],
+    color: themeColors.neutral[900],
     marginBottom: 6,
     lineHeight: 20,
   },
@@ -414,12 +416,12 @@ const styles = StyleSheet.create({
   },
   eventDetailText: {
     fontSize: 11,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
     fontWeight: '400',
   },
   productPrice: {
     fontWeight: '800',
-    color: colors.nileBlue, // Nile Blue for better readability
+    color: themeColors.nileBlue, // Nile Blue for better readability
     marginTop: 4,
     fontSize: 17,
   },
@@ -433,7 +435,7 @@ const styles = StyleSheet.create({
   },
   originalPriceStrike: {
     fontWeight: '600',
-    color: colors.neutral[400],
+    color: themeColors.neutral[400],
     textDecorationLine: 'line-through',
   },
   lockFeeBadge: {
@@ -445,7 +447,7 @@ const styles = StyleSheet.create({
   lockFeeText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -467,28 +469,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
-    backgroundColor: colors.tint.amberLight,
+    backgroundColor: themeColors.tint.amberLight,
     alignSelf: 'flex-start',
     marginTop: 8,
   },
   quantityWarningText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.warningScale[700],
+    color: themeColors.warningScale[700],
   },
   cashbackBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(255, 205, 87, 0.1)',
+    backgroundColor: themeColors.lightMustard,
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.15)',
+    borderColor: themeColors.lightMustard,
   },
   cashbackText: {
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '600',
     fontSize: 11,
   },
@@ -498,9 +500,9 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(239,68,68,0.1)',
+    backgroundColor: themeColors.errorScale[100],
     borderWidth: 1,
-    borderColor: 'rgba(239,68,68,0.2)',
+    borderColor: themeColors.errorScale[100],
     marginLeft: 8,
   },
 });

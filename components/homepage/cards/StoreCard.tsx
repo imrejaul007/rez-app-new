@@ -16,10 +16,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { StoreCardProps } from '@/types/homepage.types';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 import QuickActions from '@/components/store/QuickActions';
 import FastImage from '@/components/common/FastImage';
 import { useGetCurrencySymbol } from '@/stores/selectors';
-import { colors } from '@/constants/theme';
 
 // Custom comparison function for React.memo
 const arePropsEqual = (prevProps: any, nextProps: any) => {
@@ -51,12 +52,13 @@ function StoreCard({
     email?: string;
   };
 }) {
+  const { colors: themeColors, isDark } = useTheme();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const cardBackground = useThemeColor({ light: colors.background.primary, dark: colors.neutral[800] }, 'background');
+  const cardBackground = useThemeColor({ light: themeColors.background.primary, dark: themeColors.neutral[800] }, 'background');
   const textColor = useThemeColor({}, 'text');
-  const textSecondary = useThemeColor({ light: colors.neutral[500], dark: colors.neutral[400] }, 'text');
-  const borderColor = useThemeColor({ light: colors.neutral[200], dark: colors.neutral[700] }, 'border');
+  const textSecondary = useThemeColor({ light: themeColors.neutral[500], dark: themeColors.neutral[400] }, 'text');
+  const borderColor = useThemeColor({ light: themeColors.neutral[200], dark: themeColors.neutral[700] }, 'border');
   const primaryColor = useThemeColor({}, 'tint');
   
   // State for banner slider
@@ -269,11 +271,11 @@ function StoreCard({
   const renderRating = useMemo(() => {
     return (
       <View style={styles.ratingContainer}>
-        <Ionicons name="star" size={16} color={colors.lightMustard} />
-        <ThemedText style={[styles.ratingText, { color: colors.nileBlue }]}>
+        <Ionicons name="star" size={16} color={themeColors.lightMustard} />
+        <ThemedText style={[styles.ratingText, { color: themeColors.nileBlue }]}>
           {formattedRating}
         </ThemedText>
-        <ThemedText style={[styles.ratingCount, { color: colors.midGray }]}>
+        <ThemedText style={[styles.ratingCount, { color: themeColors.midGray }]}>
           ({store.rating.count})
         </ThemedText>
       </View>
@@ -295,7 +297,7 @@ function StoreCard({
       badges.push(
         <LinearGradient
           key="trending"
-          colors={[colors.lightMustard, colors.nileBlue]}
+          colors={[themeColors.lightMustard, themeColors.nileBlue]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={[styles.badge, styles.trendingBadge]}
@@ -421,7 +423,7 @@ function StoreCard({
             </>
           ) : (
             <View style={[styles.image, styles.placeholderImage]}>
-              <Ionicons name="storefront-outline" size={48} color={colors.neutral[400]} />
+              <Ionicons name="storefront-outline" size={48} color={themeColors.neutral[400]} />
             </View>
           )}
           {renderBadges}
@@ -444,7 +446,7 @@ function StoreCard({
           <View style={styles.locationInfo}>
             {store.location && (
               <View style={styles.locationContainer}>
-                <Ionicons name="location-outline" size={14} color={colors.midGray} />
+                <Ionicons name="location-outline" size={14} color={themeColors.midGray} />
                 <ThemedText style={styles.locationText}>
                   {store.location.distance || store.location.city}
                 </ThemedText>
@@ -453,7 +455,7 @@ function StoreCard({
 
             {store.deliveryTime && (
               <View style={styles.deliveryContainer}>
-                <Ionicons name="time-outline" size={14} color={colors.midGray} />
+                <Ionicons name="time-outline" size={14} color={themeColors.midGray} />
                 <ThemedText style={styles.deliveryText}>
                   {store.deliveryTime}
                 </ThemedText>
@@ -512,7 +514,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   card: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
@@ -520,7 +522,7 @@ const styles = StyleSheet.create({
     minHeight: 320, // Fixed minimum height to ensure consistency
     ...Platform.select({
       ios: {
-        shadowColor: colors.nileBlue,
+        shadowColor: themeColors.nileBlue,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.08,
         shadowRadius: 24,
@@ -537,7 +539,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     height: 140,
     width: '100%',
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
     overflow: 'hidden',
   },
   image: {
@@ -547,7 +549,7 @@ const styles = StyleSheet.create({
   placeholderImage: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
   },
   paginationContainer: {
     position: 'absolute',
@@ -567,7 +569,7 @@ const styles = StyleSheet.create({
   },
   paginationDotActive: {
     width: 16,
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
   },
   badgesContainer: {
     position: 'absolute',
@@ -582,10 +584,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   newBadge: {
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
   },
   newBadgeText: {
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -593,7 +595,7 @@ const styles = StyleSheet.create({
     // Gradient background applied via LinearGradient
   },
   trendingBadgeText: {
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -609,7 +611,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     flex: 1,
     marginRight: 8,
   },
@@ -621,15 +623,15 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
   },
   ratingCount: {
     fontSize: 12,
-    color: colors.midGray,
+    color: themeColors.midGray,
   },
   description: {
     fontSize: 14,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
     marginBottom: 12,
     lineHeight: 18,
     minHeight: 36, // Fixed height for 2 lines (18 * 2)
@@ -648,7 +650,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 13,
-    color: colors.midGray,
+    color: themeColors.midGray,
   },
   deliveryContainer: {
     flexDirection: 'row',
@@ -657,7 +659,7 @@ const styles = StyleSheet.create({
   },
   deliveryText: {
     fontSize: 13,
-    color: colors.midGray,
+    color: themeColors.midGray,
   },
   footer: {
     flexDirection: 'row',
@@ -665,25 +667,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cashbackContainer: {
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
   },
   cashbackText: {
     fontSize: 12,
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '600',
   },
   minOrderText: {
     fontSize: 12,
-    color: colors.neutral[400],
+    color: themeColors.neutral[400],
   },
   quickActionsContainer: {
     marginTop: 16,
     marginHorizontal: -16, // Compensate for card padding
     borderTopWidth: 1,
-    borderTopColor: colors.neutral[200],
+    borderTopColor: themeColors.neutral[200],
     paddingTop: 12,
   },
 });

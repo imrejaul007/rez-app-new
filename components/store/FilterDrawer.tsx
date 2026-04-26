@@ -19,7 +19,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useGetCurrencySymbol } from '@/stores/selectors';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 
 export interface ProductFilters {
   categories: string[];
@@ -39,9 +40,9 @@ interface FilterDrawerProps {
 }
 
 const STOCK_STATUS_OPTIONS = [
-  { value: 'in_stock', label: 'In Stock', icon: 'checkmark-circle', color: colors.success },
-  { value: 'out_of_stock', label: 'Out of Stock', icon: 'close-circle', color: colors.error },
-  { value: 'low_stock', label: 'Low Stock', icon: 'alert-circle', color: colors.warning },
+  { value: 'in_stock', label: 'In Stock', icon: 'checkmark-circle', color: themeColors.success },
+  { value: 'out_of_stock', label: 'Out of Stock', icon: 'close-circle', color: themeColors.error },
+  { value: 'low_stock', label: 'Low Stock', icon: 'alert-circle', color: themeColors.warning },
 ] as const;
 
 const RATING_OPTIONS = [
@@ -60,6 +61,7 @@ function FilterDrawer({
   categories,
   priceRange,
 }: FilterDrawerProps) {
+  const { colors } = useTheme();
   const { height } = useWindowDimensions();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -531,7 +533,7 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
   },
   drawer: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     height: '100%',
@@ -555,7 +557,7 @@ const styles = StyleSheet.create({
   handle: {
     width: 40,
     height: 4,
-    backgroundColor: colors.neutral[300],
+    backgroundColor: themeColors.neutral[300],
     borderRadius: 2,
   },
   header: {
@@ -566,7 +568,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
+    borderBottomColor: themeColors.gray[100],
   },
   headerLeft: {
     flexDirection: 'row',
@@ -576,10 +578,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
   },
   filterBadge: {
-    backgroundColor: colors.brand.purple,
+    backgroundColor: themeColors.brand.purple,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
@@ -590,13 +592,13 @@ const styles = StyleSheet.create({
   filterBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.text.white,
+    color: themeColors.text.white,
   },
   closeButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.gray[100],
+    backgroundColor: themeColors.gray[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -623,10 +625,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
   },
   sectionBadge: {
-    backgroundColor: colors.tint.purple,
+    backgroundColor: themeColors.tint.purple,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
@@ -637,7 +639,7 @@ const styles = StyleSheet.create({
   sectionBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.brand.purple,
+    color: themeColors.brand.purple,
   },
   sectionContent: {
     paddingTop: 8,
@@ -653,19 +655,19 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: colors.neutral[300],
+    borderColor: themeColors.neutral[300],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   checkboxActive: {
-    backgroundColor: colors.brand.purple,
-    borderColor: colors.brand.purple,
+    backgroundColor: themeColors.brand.purple,
+    borderColor: themeColors.brand.purple,
   },
   checkboxLabel: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.neutral[700],
+    color: themeColors.neutral[700],
   },
   priceInputContainer: {
     flexDirection: 'row',
@@ -679,15 +681,15 @@ const styles = StyleSheet.create({
   priceInputLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
     marginBottom: 8,
   },
   priceInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.neutral[50],
+    backgroundColor: themeColors.neutral[50],
     borderWidth: 1.5,
-    borderColor: colors.gray[200],
+    borderColor: themeColors.gray[200],
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 14,
@@ -695,14 +697,14 @@ const styles = StyleSheet.create({
   currencySymbolText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.brand.purple,
+    color: themeColors.brand.purple,
     marginRight: 4,
   },
   priceInputField: {
     flex: 1,
     fontSize: 16,
     fontWeight: '600',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
     padding: 0,
   },
   priceInputSeparator: {
@@ -713,10 +715,10 @@ const styles = StyleSheet.create({
   priceInputLine: {
     width: 12,
     height: 2,
-    backgroundColor: colors.neutral[300],
+    backgroundColor: themeColors.neutral[300],
   },
   priceRangeDisplay: {
-    backgroundColor: colors.tint.purple,
+    backgroundColor: themeColors.tint.purple,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -725,7 +727,7 @@ const styles = StyleSheet.create({
   priceRangeText: {
     fontSize: 15,
     fontWeight: '700',
-    color: colors.brand.purple,
+    color: themeColors.brand.purple,
   },
   stockStatusItem: {
     flexDirection: 'row',
@@ -739,22 +741,22 @@ const styles = StyleSheet.create({
   stockStatusLabel: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.neutral[700],
+    color: themeColors.neutral[700],
   },
   ratingOption: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: colors.neutral[50],
+    backgroundColor: themeColors.neutral[50],
     borderWidth: 2,
-    borderColor: colors.gray[200],
+    borderColor: themeColors.gray[200],
     borderRadius: 12,
     marginBottom: 10,
   },
   ratingOptionActive: {
-    backgroundColor: colors.brand.purple,
-    borderColor: colors.brand.purple,
+    backgroundColor: themeColors.brand.purple,
+    borderColor: themeColors.brand.purple,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -764,11 +766,11 @@ const styles = StyleSheet.create({
   ratingOptionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.neutral[700],
+    color: themeColors.neutral[700],
     flex: 1,
   },
   ratingOptionTextActive: {
-    color: colors.text.white,
+    color: themeColors.text.white,
   },
   ratingCheckmark: {
     marginLeft: 8,
@@ -778,8 +780,8 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: colors.gray[100],
-    backgroundColor: colors.background.primary,
+    borderTopColor: themeColors.gray[100],
+    backgroundColor: themeColors.background.primary,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -798,27 +800,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
     paddingVertical: 14,
-    backgroundColor: colors.neutral[50],
+    backgroundColor: themeColors.neutral[50],
     borderWidth: 1.5,
-    borderColor: colors.gray[200],
+    borderColor: themeColors.gray[200],
     borderRadius: 12,
     gap: 6,
   },
   resetButtonText: {
     fontSize: 15,
     fontWeight: '700',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   applyButton: {
     flex: 2,
     paddingVertical: 14,
-    backgroundColor: colors.brand.purple,
+    backgroundColor: themeColors.brand.purple,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     ...Platform.select({
       ios: {
-        shadowColor: colors.brand.purple,
+        shadowColor: themeColors.brand.purple,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -831,7 +833,7 @@ const styles = StyleSheet.create({
   applyButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.white,
+    color: themeColors.text.white,
   },
 });
 

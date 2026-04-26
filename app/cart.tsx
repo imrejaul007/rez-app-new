@@ -79,6 +79,46 @@ interface DisplayServiceItem extends ExtendedCartItem {
   bookingTimeFormatted?: string;
 }
 
+// API Response types
+interface LockedItemsResponse {
+  success: boolean;
+  data?: {
+    lockedItems: LockedItemData[];
+  };
+  message?: string;
+  error?: string;
+}
+
+interface LockedItemData {
+  _id?: string;
+  product?: {
+    _id?: string;
+    name?: string;
+    images?: ({ url?: string } | string)[];
+  };
+  lockedAt?: string;
+  expiresAt?: string;
+  quantity?: number;
+  lockedPrice?: number;
+  originalPrice?: number;
+  variant?: unknown;
+  store?: { name?: string };
+  notes?: string;
+  lockedFee?: number;
+  lockedFeePercentage?: number;
+  paymentMethod?: string;
+  lockPaymentStatus?: string;
+  isPaidLock?: boolean;
+}
+
+interface CardOffer {
+  id: string;
+  code?: string;
+  discount?: number;
+  type?: string;
+  [key: string]: unknown;
+}
+
 /** Type guard: narrows a CartItemType to ExtendedCartItem */
 function asExtendedCartItem(item: CartItemType): ExtendedCartItem {
   return item as ExtendedCartItem;
@@ -87,7 +127,7 @@ function asExtendedCartItem(item: CartItemType): ExtendedCartItem {
 function CartPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
-  const params = useLocalSearchParams<any>();
+  const params = useLocalSearchParams<{ offerRedemptionCode?: string }>();
   const insets = useSafeAreaInsets();
   const cartState = useCartStore((s: CartStoreState) => s.state);
   const cartActions = useCartStore((s: CartStoreState) => s.actions);
@@ -267,11 +307,11 @@ function CartPage() {
   // Function to load locked items
   const loadLockedItems = useCallback(async () => {
     try {
-      const response = await cartApi.getLockedItems();
+      const response = (await cartApi.getLockedItems()) as LockedItemsResponse;
       if (response.success && response.data?.lockedItems) {
         const formattedLockedItems = response.data.lockedItems
-          .map((item: any) => {
-            const productId = item.product?._id || item.product;
+          .map((item: LockedItemData) => {
+            const productId = item.product?._id;
 
             // CA-CMC-004 FIX: Validate dates before converting. If invalid, reject the item.
             let lockedAt: Date;
@@ -324,17 +364,17 @@ function CartPage() {
               status,
               notes: item.notes,
               // Paid lock fields
-              lockFee: item.lockFee,
-              lockFeePercentage: item.lockFeePercentage,
+              lockFee: item.lockedFee,
+              lockFeePercentage: item.lockedFeePercentage,
               paymentMethod: item.paymentMethod,
               lockPaymentStatus: item.lockPaymentStatus,
               isPaidLock: item.isPaidLock,
             };
           })
-          .filter((item: unknown) => item !== null) as any as LockedProduct[];
+          .filter((item: unknown) => item !== null) as LockedProduct[];
         setLockedProducts(formattedLockedItems);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // silently handle
     }
   }, []);
@@ -443,7 +483,7 @@ function CartPage() {
 
   // ROHAN: Move onOfferApplied callback outside of JSX to prevent re-rendering CardOffersSection on every parent render
   const handleCardOfferApplied = useCallback(
-    (offer: any) => {
+    (offer: CardOffer) => {
       cartActions.setCardOffer(offer);
     },
     [cartActions],
@@ -562,7 +602,7 @@ function CartPage() {
         return (
           <View style={styles.cardWrapper}>
             <LockedItem
-              item={item as any}
+              item={item as LockedProduct}
               onMoveToCart={handleMoveToCart}
               onUnlock={handleUnlockItem}
               showAnimation={true}
@@ -647,7 +687,7 @@ function CartPage() {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name={icon as any as keyof typeof Ionicons.glyphMap} size={64} color={colors.border.default} />
+        <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={64} color={colors.border.default} />
         <ThemedText style={styles.emptyTitle}>{title}</ThemedText>
         <ThemedText style={styles.emptySubtitle}>{subtitle}</ThemedText>
         <Pressable
@@ -695,16 +735,14 @@ function CartPage() {
             data={currentItems}
             renderItem={renderCartItem}
             keyExtractor={(item) => `${item.id}`}
-            contentContainerStyle={listContentContainerStyle as any as StyleProp<ViewStyle>}
+            contentContainerStyle={listContentContainerStyle as StyleProp<ViewStyle>}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={
-                    (productItems[0] as any)?.store?.id || productItems[0]?.productId
-                  }
+                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />
@@ -713,19 +751,17 @@ function CartPage() {
           />
         ) : (
           <FlashList
-            data={currentItems as any[]}
+            data={currentItems}
             renderItem={renderCartItem}
-            keyExtractor={(item: any) => `${item.id}`}
-            contentContainerStyle={listContentContainerStyle as any}
+            keyExtractor={(item) => `${item.id}`}
+            contentContainerStyle={listContentContainerStyle}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={
-                    (productItems[0] as any)?.store?.id || productItems[0]?.productId
-                  }
+                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />

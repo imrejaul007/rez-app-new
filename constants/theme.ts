@@ -823,6 +823,7 @@ export const darkColors = {
   brand: {
     purple: '#8B5CF6',
     purpleLight: '#A78BFA',
+    goldAccent: '#C9A962',
   },
 
   // Brand Shortcuts
@@ -901,6 +902,12 @@ export const darkColors = {
     800: '#D0D0D0',
     900: '#E1E3E6',
   },
+
+  // Shorthand grays (legacy compat)
+  black: '#000000',
+  darkGray: '#9A9A9A',
+  midGray: '#7A7A7A',
+  midGrayAlt: '#0A0A0A',
 } as const;
 
 // Dark mode gradients

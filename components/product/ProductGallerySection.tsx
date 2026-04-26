@@ -21,8 +21,9 @@ import GalleryGridSkeleton from '@/components/skeletons/GalleryGridSkeleton';
 import analyticsService from '@/services/analyticsService';
 import GalleryImagePreloader from '@/components/store/GalleryImagePreloader';
 import { FeatureErrorBoundary as GalleryErrorBoundary } from '@/components/common/FeatureErrorBoundary';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { colors as themeColors } from '@/constants/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_SIZE = (SCREEN_WIDTH - 48) / 3; // 3 columns with padding
@@ -34,6 +35,7 @@ interface ProductGallerySectionProps {
 }
 
 function ProductGallerySection({ productId, variantId }: ProductGallerySectionProps) {
+  const { colors } = useTheme();
   const [allGalleryItems, setAllGalleryItems] = useState<ProductGalleryItem[]>([]);
   const [galleryItems, setGalleryItems] = useState<ProductGalleryItem[]>([]);
   const [categories, setCategories] = useState<ProductGalleryCategory[]>([]);
@@ -530,7 +532,7 @@ export default React.memo(ProductGallerySection);
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     marginVertical: 8,
     paddingVertical: 16,
   },
@@ -554,7 +556,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
   },
   countBadge: {
     backgroundColor: 'rgba(0, 192, 106, 0.1)',
@@ -565,7 +567,7 @@ const styles = StyleSheet.create({
   countText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.lightMustard,
+    color: themeColors.lightMustard,
   },
   viewAllButton: {
     flexDirection: 'row',
@@ -575,7 +577,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.lightMustard,
+    color: themeColors.lightMustard,
   },
   clearButton: {
     flexDirection: 'row',
@@ -587,17 +589,17 @@ const styles = StyleSheet.create({
   clearButtonText: {
     fontSize: 12,
     fontWeight: '500',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   clearButtonLarge: {
     marginTop: 12,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     borderRadius: 8,
   },
   clearButtonLargeText: {
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -614,19 +616,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
     gap: 6,
   },
   categoryChipActive: {
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
   },
   categoryChipText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   categoryChipTextActive: {
-    color: colors.background.primary,
+    color: themeColors.background.primary,
   },
   categoryCount: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -637,7 +639,7 @@ const styles = StyleSheet.create({
   categoryCountText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   tagFilter: {
     marginBottom: 12,
@@ -650,28 +652,28 @@ const styles = StyleSheet.create({
   tagFilterLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
     marginRight: 4,
   },
   tagChip: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
     borderWidth: 1,
-    borderColor: colors.neutral[200],
+    borderColor: themeColors.neutral[200],
   },
   tagChipActive: {
     backgroundColor: 'rgba(0, 192, 106, 0.1)',
-    borderColor: colors.lightMustard,
+    borderColor: themeColors.lightMustard,
   },
   tagChipText: {
     fontSize: 12,
     fontWeight: '500',
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   tagChipTextActive: {
-    color: colors.lightMustard,
+    color: themeColors.lightMustard,
     fontWeight: '600',
   },
   categoriesScrollView: {
@@ -686,7 +688,7 @@ const styles = StyleSheet.create({
     height: CATEGORY_CARD_HEIGHT,
     borderRadius: 16,
     overflow: 'hidden',
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
     marginRight: 12,
   },
   categoryCardImage: {
@@ -706,7 +708,7 @@ const styles = StyleSheet.create({
   categoryCardTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     textTransform: 'capitalize',
   },
   categoryCardMeta: {
@@ -717,7 +719,7 @@ const styles = StyleSheet.create({
   categoryCardCount: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.background.primary,
+    color: themeColors.background.primary,
   },
   categoryCoverBadge: {
     position: 'absolute',
@@ -734,7 +736,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 14,
-    color: colors.error,
+    color: themeColors.error,
     textAlign: 'center',
     marginTop: 8,
   },
@@ -744,12 +746,12 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     borderRadius: 8,
     marginTop: 8,
   },
   retryButtonText: {
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -762,7 +764,7 @@ const styles = StyleSheet.create({
     margin: 2,
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: colors.neutral[100],
+    backgroundColor: themeColors.neutral[100],
   },
   galleryImage: {
     width: '100%',
@@ -794,7 +796,7 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.background.primary,
+    color: themeColors.background.primary,
   },
   emptyContainer: {
     padding: 40,
@@ -804,12 +806,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
     marginTop: 8,
   },
   emptySubtext: {
     fontSize: 14,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
     textAlign: 'center',
   },
   moreButton: {
@@ -828,6 +830,6 @@ const styles = StyleSheet.create({
   moreButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.background.primary,
+    color: themeColors.background.primary,
   },
 });

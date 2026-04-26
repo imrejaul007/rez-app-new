@@ -14,7 +14,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { CheckoutDeliveryAddress } from '@/types/checkout.types';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 
 interface AddressSelectionModalProps {
   visible: boolean;
@@ -35,6 +36,7 @@ function AddressSelectionModal({
   onAddNew,
   loading = false,
 }: AddressSelectionModalProps) {
+  const { colors } = useTheme();
   const getAddressTypeIcon = (type?: string) => {
     switch (type) {
       case 'HOME':
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '80%',
@@ -247,12 +249,12 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.neutral[100],
+    borderBottomColor: themeColors.neutral[100],
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
   },
   closeButton: {
     padding: 4,
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   emptyContainer: {
     flex: 1,
@@ -278,20 +280,20 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
     marginTop: 16,
     marginBottom: 8,
   },
   emptyDescription: {
     fontSize: 14,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
     textAlign: 'center',
     marginBottom: 24,
   },
   addNewButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     paddingHorizontal: 24,
     paddingVertical: 14,
     borderRadius: 12,
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
   addNewButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.background.primary,
+    color: themeColors.background.primary,
   },
   addressList: {
     flex: 1,
@@ -310,15 +312,15 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   addressItem: {
-    backgroundColor: colors.neutral[50],
+    backgroundColor: themeColors.neutral[50],
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   addressItemSelected: {
-    borderColor: colors.lightMustard,
-    backgroundColor: colors.successScale[50],
+    borderColor: themeColors.lightMustard,
+    backgroundColor: themeColors.successScale[50],
   },
   addressItemContent: {
     flexDirection: 'row',
@@ -347,10 +349,10 @@ const styles = StyleSheet.create({
   addressTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.neutral[800],
+    color: themeColors.neutral[800],
   },
   defaultBadge: {
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
@@ -358,7 +360,7 @@ const styles = StyleSheet.create({
   defaultBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: colors.background.primary,
+    color: themeColors.background.primary,
   },
   phoneRow: {
     flexDirection: 'row',
@@ -368,17 +370,17 @@ const styles = StyleSheet.create({
   },
   phoneText: {
     fontSize: 13,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   addressLine: {
     fontSize: 14,
-    color: colors.neutral[600],
+    color: themeColors.neutral[600],
     marginBottom: 2,
     lineHeight: 20,
   },
   addressCity: {
     fontSize: 13,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   instructionsRow: {
     flexDirection: 'row',
@@ -388,7 +390,7 @@ const styles = StyleSheet.create({
   },
   instructionsText: {
     fontSize: 12,
-    color: colors.neutral[400],
+    color: themeColors.neutral[400],
     fontStyle: 'italic',
     flex: 1,
   },
@@ -402,40 +404,40 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: colors.neutral[300],
+    borderColor: themeColors.neutral[300],
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioOuterSelected: {
-    borderColor: colors.lightMustard,
+    borderColor: themeColors.lightMustard,
   },
   radioInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
   },
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: colors.neutral[100],
+    borderTopColor: themeColors.neutral[100],
     paddingBottom: Platform.OS === 'ios' ? 34 : 16,
   },
   addNewOutlineButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: colors.lightMustard,
+    borderColor: themeColors.lightMustard,
     gap: 8,
   },
   addNewOutlineButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.lightMustard,
+    color: themeColors.lightMustard,
   },
 });
 

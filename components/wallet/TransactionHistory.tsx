@@ -21,7 +21,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 import walletApi, { TransactionResponse } from '@/services/walletApi';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useRouter } from 'expo-router';
@@ -205,6 +206,7 @@ function TransactionHistory({
   onRefresh,
   maxHeight,
 }: TransactionHistoryProps) {
+  const { colors } = useTheme();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
@@ -455,7 +457,7 @@ function _Tabs({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: themeColors.background.secondary,
     borderRadius: 0,
     marginHorizontal: 0,
     marginTop: 0,
@@ -468,17 +470,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 12,
-    backgroundColor: '#fff',
+    backgroundColor: themeColors.background.primary,
   },
   headerTitle: {
     fontSize: 17,
     fontWeight: '800',
-    color: '#0F2333',
+    color: themeColors.text.primary,
     letterSpacing: -0.3,
   },
   viewAllLink: {
     fontSize: 13,
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '700',
   },
   // Tabs
@@ -487,16 +489,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     gap: 8,
-    backgroundColor: '#fff',
+    backgroundColor: themeColors.background.primary,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: themeColors.border.light,
   },
   tab: {
     borderRadius: 20,
     overflow: 'hidden',
-    backgroundColor: '#F1F5F9',
+    backgroundColor: themeColors.neutral[100],
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: themeColors.border.light,
   },
   tabActive: {
     borderColor: 'transparent',
@@ -510,12 +512,12 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#64748B',
+    color: themeColors.text.secondary,
     paddingHorizontal: 20,
     paddingVertical: 8,
   },
   tabTextActive: {
-    color: '#fff',
+    color: themeColors.text.inverse,
     paddingHorizontal: 0,
     paddingVertical: 0,
   },
@@ -524,11 +526,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 14,
     paddingBottom: 6,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: themeColors.background.secondary,
   },
   sectionHeaderPill: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E2E8F0',
+    backgroundColor: themeColors.neutral[200],
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 20,
@@ -536,7 +538,7 @@ const styles = StyleSheet.create({
   sectionHeaderText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#475569',
+    color: themeColors.text.secondary,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
@@ -546,15 +548,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
+    backgroundColor: themeColors.background.primary,
     gap: 16,
   },
   txnCardBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: themeColors.neutral[100],
   },
   txnCardPressed: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: themeColors.background.secondary,
   },
   txnIconWrap: {
     width: 44,
@@ -575,17 +577,17 @@ const styles = StyleSheet.create({
   txnLabel: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#0F2333',
+    color: themeColors.text.primary,
     letterSpacing: -0.1,
   },
   txnSubtitle: {
     fontSize: 12,
-    color: '#64748B',
+    color: themeColors.text.secondary,
     fontWeight: '500',
   },
   txnDate: {
     fontSize: 11,
-    color: '#94A3B8',
+    color: themeColors.text.tertiary,
     fontWeight: '400',
     marginTop: 1,
   },
@@ -628,7 +630,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(26,58,82,0.08)',
+    backgroundColor: themeColors.tint.slate,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 4,
@@ -636,13 +638,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#0F2333',
+    color: themeColors.text.primary,
     textAlign: 'center',
     letterSpacing: -0.3,
   },
   emptySubtitle: {
     fontSize: 13,
-    color: '#64748B',
+    color: themeColors.text.secondary,
     textAlign: 'center',
     lineHeight: 19,
     fontWeight: '500',
@@ -651,16 +653,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingHorizontal: 28,
     paddingVertical: 12,
-    backgroundColor: '#1a3a52',
+    backgroundColor: themeColors.nileBlue,
     borderRadius: 50,
-    shadowColor: '#1a3a52',
+    shadowColor: themeColors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
   },
   exploreBtnText: {
-    color: '#fff',
+    color: themeColors.text.inverse,
     fontWeight: '800',
     fontSize: 14,
     letterSpacing: 0.2,
@@ -670,13 +672,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 13,
-    color: '#64748B',
+    color: themeColors.text.secondary,
     marginTop: 8,
     fontWeight: '500',
   },
   errorText: {
     fontSize: 13,
-    color: '#EF4444',
+    color: themeColors.error,
     textAlign: 'center',
     marginTop: 4,
     fontWeight: '500',
@@ -685,11 +687,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingHorizontal: 28,
     paddingVertical: 11,
-    backgroundColor: '#1a3a52',
+    backgroundColor: themeColors.nileBlue,
     borderRadius: 50,
   },
   retryBtnText: {
-    color: 'white',
+    color: themeColors.text.inverse,
     fontWeight: '700',
     fontSize: 14,
   },

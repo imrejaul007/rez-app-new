@@ -20,7 +20,8 @@ import { useToast } from '@/hooks/useToast';
 import { getProductId } from '@/types/product-unified.types';
 import { formatPrice as formatPriceUtil } from '@/utils/priceFormatter';
 import CachedImage from '@/components/ui/CachedImage';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 function ProductCard({
@@ -30,6 +31,7 @@ function ProductCard({
   width = 180,
   showAddToCart = true
 }: ProductCardProps) {
+  const { colors } = useTheme();
   const cartState = useCartState();
   const cartActions = useCartActions();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -529,14 +531,14 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   card: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderRadius: 12,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 205, 87, 0.08)',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nileBlue,
+        shadowColor: themeColors.nileBlue,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.08,
         shadowRadius: 24,
@@ -596,18 +598,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   newBadge: {
-    backgroundColor: colors.nileBlue,
+    backgroundColor: themeColors.nileBlue,
   },
   newBadgeText: {
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontSize: 10,
     fontWeight: '700',
   },
   discountBadge: {
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
   },
   discountBadgeText: {
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontSize: 10,
     fontWeight: '700',
   },
@@ -627,7 +629,7 @@ const styles = StyleSheet.create({
   },
   brand: {
     fontSize: 10,
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '600',
     textTransform: 'uppercase',
     lineHeight: 12,
@@ -635,7 +637,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     lineHeight: 18,
     minHeight: 36,
     maxHeight: 36,
@@ -648,11 +650,11 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
   },
   ratingCount: {
     fontSize: 10,
-    color: colors.neutral[500],
+    color: themeColors.neutral[500],
   },
   priceContainer: {
     flexDirection: 'row',
@@ -662,16 +664,16 @@ const styles = StyleSheet.create({
   currentPrice: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
   },
   originalPrice: {
     fontSize: 12,
-    color: colors.neutral[400],
+    color: themeColors.neutral[400],
     textDecorationLine: 'line-through',
   },
   savings: {
     fontSize: 11,
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '500',
   },
   cashbackContainer: {
@@ -687,16 +689,16 @@ const styles = StyleSheet.create({
   },
   cashbackText: {
     fontSize: 11,
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '600',
   },
   cashbackAmount: {
     fontSize: 10,
-    color: colors.nileBlue,
+    color: themeColors.nileBlue,
     fontWeight: '600',
   },
   lowStockContainer: {
-    backgroundColor: colors.tint.amberLight,
+    backgroundColor: themeColors.tint.amberLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -705,11 +707,11 @@ const styles = StyleSheet.create({
   },
   lowStockText: {
     fontSize: 11,
-    color: colors.brand.amberDark,
+    color: themeColors.brand.amberDark,
     fontWeight: '600',
   },
   outOfStockContainer: {
-    backgroundColor: colors.errorScale[100],
+    backgroundColor: themeColors.errorScale[100],
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -718,7 +720,7 @@ const styles = StyleSheet.create({
   },
   outOfStockText: {
     fontSize: 11,
-    color: colors.error,
+    color: themeColors.error,
     fontWeight: '600',
   },
   addToCartButton: {
@@ -726,21 +728,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
   },
   addToCartText: {
     fontSize: 13,
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontWeight: '600',
   },
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.lightMustard,
+    backgroundColor: themeColors.lightMustard,
     borderRadius: 8,
     paddingVertical: 6,
     paddingHorizontal: 4,
@@ -761,7 +763,7 @@ const styles = StyleSheet.create({
   },
   quantityText: {
     fontSize: 14,
-    color: colors.background.primary,
+    color: themeColors.background.primary,
     fontWeight: '600',
   },
   quantityButtonDisabled: {
@@ -769,23 +771,23 @@ const styles = StyleSheet.create({
   },
   addToCartButtonDisabled: {
     opacity: 0.5,
-    backgroundColor: colors.brand.nileBlueLight,
+    backgroundColor: themeColors.brand.nileBlueLight,
   },
   notifyMeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: colors.lightMustard,
+    borderColor: themeColors.lightMustard,
   },
   notifyMeText: {
     fontSize: 13,
-    color: colors.lightMustard,
+    color: themeColors.lightMustard,
     fontWeight: '600',
   },
   notifyMeButtonDisabled: {

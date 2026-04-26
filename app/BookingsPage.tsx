@@ -71,6 +71,18 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: string }>
   no_show: { color: colors.neutral[500], bg: colors.neutral[50], icon: 'eye-off-outline' },
 };
 
+// ─── API Response Types ────────────────────────────────────────
+interface ApiResponse<T> {
+  data?: T;
+  pagination?: { hasNext?: boolean; page?: number; total?: number };
+  bookings?: T[];
+  [key: string]: unknown;
+}
+
+interface MetaResponse {
+  pagination?: { pages?: number; total?: number; page?: number };
+}
+
 // ─── Types ────────────────────────────────────────────────────
 type BookingType = 'all' | 'table' | 'event' | 'service';
 type StatusFilter = 'all' | 'upcoming' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
@@ -82,8 +94,8 @@ interface RawBookingStoreObject {
   _id?: string;
   name?: string;
   logo?: string;
-  location?: any;
-  contact?: any;
+  location?: { address?: string; city?: string; state?: string };
+  contact?: { phone?: string };
   [key: string]: unknown;
 }
 
@@ -145,8 +157,50 @@ const isUpcoming = (d: Date) => d >= new Date(new Date().setHours(0, 0, 0, 0));
 
 // ─── BUG-041 FIX: Normalize functions moved to module level to avoid
 //     recreation on every render. currencySymbol passed as parameter.
-const normalizeTableBooking = (b: any): UnifiedBooking => {
-  const store = b.storeId && typeof b.storeId === 'object' ? b.storeId : null;
+interface TableBookingData {
+  _id: string;
+  storeId?: RawBookingStoreObject | string;
+  bookingNumber?: string;
+  specialRequests?: string;
+  cancellationReason?: string;
+  bookingDate: string;
+  bookingTime?: string;
+  partySize?: number;
+  customerName?: string;
+  customerPhone?: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
+interface EventBookingData {
+  _id: string;
+  event?: { date?: string; title?: string; location?: string; image?: string; time?: string };
+  bookingDate?: string;
+  attendeeInfo?: { name?: string; email?: string };
+  amount?: number;
+  currency?: string;
+  status?: string;
+  bookingReference?: string;
+  [key: string]: unknown;
+}
+
+interface ServiceBookingData {
+  _id: string;
+  bookingDate: string;
+  service?: { name?: string; images?: { url?: string }[] };
+  store?: { name?: string; logo?: string };
+  timeSlot?: { start?: string; end?: string };
+  customerName?: string;
+  pricing?: { total?: number; currency?: string };
+  serviceType?: string;
+  duration?: number;
+  status?: string;
+  bookingNumber?: string;
+  [key: string]: unknown;
+}
+
+const normalizeTableBooking = (b: TableBookingData): UnifiedBooking => {
+  const store = b.storeId && typeof b.storeId === 'object' ? (b.storeId as RawBookingStoreObject) : null;
   const bookingDate = new Date(b.bookingDate);
   return {
     id: `table-${b._id}`,
@@ -156,12 +210,12 @@ const normalizeTableBooking = (b: any): UnifiedBooking => {
     image: store?.logo,
     date: bookingDate,
     dateLabel: formatDateFull(bookingDate),
-    timeLabel: formatTime12(b.bookingTime),
-    status: b.status,
+    timeLabel: formatTime12(b.bookingTime || '00:00'),
+    status: b.status || 'pending',
     referenceNumber: b.bookingNumber || b._id,
     details: [
       { label: 'Party Size', value: `${b.partySize} ${b.partySize === 1 ? 'person' : 'people'}` },
-      { label: 'Customer', value: b.customerName },
+      { label: 'Customer', value: b.customerName || '' },
       ...(b.customerPhone ? [{ label: 'Phone', value: b.customerPhone }] : []),
       ...(b.specialRequests ? [{ label: 'Requests', value: b.specialRequests }] : []),
     ],
@@ -170,8 +224,8 @@ const normalizeTableBooking = (b: any): UnifiedBooking => {
   };
 };
 
-const normalizeEventBooking = (b: any, currencySymbol: string): UnifiedBooking => {
-  const eventDate = b.event?.date ? new Date(b.event.date) : new Date(b.bookingDate);
+const normalizeEventBooking = (b: EventBookingData, currencySymbol: string): UnifiedBooking => {
+  const eventDate = b.event?.date ? new Date(b.event.date) : new Date(b.bookingDate || Date.now());
   return {
     id: `event-${b._id}`,
     type: 'event',
@@ -181,11 +235,11 @@ const normalizeEventBooking = (b: any, currencySymbol: string): UnifiedBooking =
     date: eventDate,
     dateLabel: formatDateFull(eventDate),
     timeLabel: b.event?.time || '',
-    status: b.status,
+    status: b.status || 'pending',
     referenceNumber: b.bookingReference || b._id,
     details: [
       { label: 'Attendee', value: b.attendeeInfo?.name || '-' },
-      ...(b.amount > 0
+      ...(b.amount && b.amount > 0
         ? [{ label: 'Amount', value: `${b.currency || currencySymbol} ${b.amount?.toLocaleString()}` }]
         : []),
       ...(b.attendeeInfo?.email ? [{ label: 'Email', value: b.attendeeInfo.email }] : []),
@@ -195,18 +249,20 @@ const normalizeEventBooking = (b: any, currencySymbol: string): UnifiedBooking =
   };
 };
 
-const normalizeServiceBooking = (b: any, currencySymbol: string): UnifiedBooking => {
+const normalizeServiceBooking = (b: ServiceBookingData, currencySymbol: string): UnifiedBooking => {
   const bookingDate = new Date(b.bookingDate);
   return {
     id: `service-${b._id}`,
     type: 'service',
     title: b.service?.name || 'Service',
     subtitle: b.store?.name || 'Provider',
-    image: b.service?.images?.[0] || b.store?.logo,
+    image: b.service?.images?.[0]?.url || b.store?.logo,
     date: bookingDate,
     dateLabel: formatDateFull(bookingDate),
-    timeLabel: b.timeSlot ? `${formatTime12(b.timeSlot.start)} - ${formatTime12(b.timeSlot.end)}` : '',
-    status: b.status,
+    timeLabel: b.timeSlot
+      ? `${formatTime12(b.timeSlot.start || '00:00')} - ${formatTime12(b.timeSlot.end || '00:00')}`
+      : '',
+    status: b.status || 'pending',
     referenceNumber: b.bookingNumber || b._id,
     details: [
       { label: 'Customer', value: b.customerName || '-' },
@@ -282,20 +338,21 @@ function BookingsPage() {
   // ─── Fetch one page from each API ─────────────────────
   const fetchPage = useCallback(
     async (tPage: number, eOffset: number, sPage: number, tHasMore: boolean, eHasMore: boolean, sHasMore: boolean) => {
-      const promises: Promise<{ type: 'table' | 'event' | 'service'; bookings: any[]; hasMore: boolean }>[] = [];
+      const promises: Promise<{ type: 'table' | 'event' | 'service'; bookings: RawBookingData[]; hasMore: boolean }>[] =
+        [];
 
       if (tHasMore) {
         promises.push(
           tableBookingApi
             .getUserTableBookings({ page: tPage, limit: PAGE_SIZE })
             .then((res) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const data = res.data as any;
-              const bookings = Array.isArray(data) ? data : (data as any)?.bookings || [];
-              const hasNext = (data as any)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
-              return { type: 'table' as const, bookings: bookings as any[], hasMore: hasNext };
+              const data = res.data as ApiResponse<TableBookingData[]> | TableBookingData[];
+              const bookings = Array.isArray(data) ? data : (data as ApiResponse<TableBookingData[]>)?.data || [];
+              const hasNext =
+                (data as ApiResponse<TableBookingData[]>).pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
+              return { type: 'table' as const, bookings, hasMore: hasNext };
             })
-            .catch(() => ({ type: 'table' as const, bookings: [] as any[], hasMore: false })),
+            .catch(() => ({ type: 'table' as const, bookings: [] as TableBookingData[], hasMore: false })),
         );
       }
 
@@ -305,10 +362,10 @@ function BookingsPage() {
             .getUserBookings(undefined, PAGE_SIZE, eOffset)
             .then((res) => ({
               type: 'event' as const,
-              bookings: res.bookings || [],
+              bookings: (res.bookings || []) as RawBookingData[],
               hasMore: res.hasMore ?? (res.bookings || []).length >= PAGE_SIZE,
             }))
-            .catch(() => ({ type: 'event' as const, bookings: [], hasMore: false })),
+            .catch(() => ({ type: 'event' as const, bookings: [] as RawBookingData[], hasMore: false })),
         );
       }
 
@@ -317,15 +374,19 @@ function BookingsPage() {
           serviceBookingService
             .getUserBookings({ page: sPage, limit: PAGE_SIZE })
             .then((res) => {
-              const bookings = (res.data as any) || [];
-              const totalPages = (res as any)?.meta?.pagination?.pages || 1;
+              const response = res.data as ApiResponse<ServiceBookingData[]> | ServiceBookingData[];
+              const bookings = Array.isArray(response)
+                ? response
+                : (response as ApiResponse<ServiceBookingData[]>)?.data || [];
+              const meta = (res as unknown as MetaResponse)?.meta;
+              const totalPages = meta?.pagination?.pages || 1;
               return {
                 type: 'service' as const,
-                bookings: bookings as any[],
+                bookings,
                 hasMore: sPage < totalPages && bookings.length >= PAGE_SIZE,
               };
             })
-            .catch(() => ({ type: 'service' as const, bookings: [] as any[], hasMore: false })),
+            .catch(() => ({ type: 'service' as const, bookings: [] as ServiceBookingData[], hasMore: false })),
         );
       }
 
@@ -360,13 +421,13 @@ function BookingsPage() {
 
         results.forEach((r) => {
           if (r.type === 'table') {
-            r.bookings.forEach((b: any) => unified.push(normalizeTableBooking(b)));
+            r.bookings.forEach((b) => unified.push(normalizeTableBooking(b as TableBookingData)));
             tHasMore = r.hasMore;
           } else if (r.type === 'event') {
-            r.bookings.forEach((b: any) => unified.push(normalizeEventBooking(b, currencySymbol)));
+            r.bookings.forEach((b) => unified.push(normalizeEventBooking(b as EventBookingData, currencySymbol)));
             eHasMore = r.hasMore;
           } else {
-            r.bookings.forEach((b: any) => unified.push(normalizeServiceBooking(b, currencySymbol)));
+            r.bookings.forEach((b) => unified.push(normalizeServiceBooking(b as ServiceBookingData, currencySymbol)));
             sHasMore = r.hasMore;
           }
         });
@@ -419,15 +480,15 @@ function BookingsPage() {
 
       results.forEach((r) => {
         if (r.type === 'table') {
-          r.bookings.forEach((b: any) => newItems.push(normalizeTableBooking(b)));
+          r.bookings.forEach((b) => newItems.push(normalizeTableBooking(b as TableBookingData)));
           tHasMore = r.hasMore;
           tNextPage = tablePage.page + 1;
         } else if (r.type === 'event') {
-          r.bookings.forEach((b: any) => newItems.push(normalizeEventBooking(b, currencySymbol)));
+          r.bookings.forEach((b) => newItems.push(normalizeEventBooking(b as EventBookingData, currencySymbol)));
           eHasMore = r.hasMore;
           eNextOffset = eventPage.offset + PAGE_SIZE;
         } else {
-          r.bookings.forEach((b: any) => newItems.push(normalizeServiceBooking(b, currencySymbol)));
+          r.bookings.forEach((b) => newItems.push(normalizeServiceBooking(b as ServiceBookingData, currencySymbol)));
           sHasMore = r.hasMore;
           sNextPage = servicePage.page + 1;
         }
@@ -587,7 +648,7 @@ function BookingsPage() {
             dineIn: 'true',
             table: booking.raw?.bookingNumber || '',
           },
-        } as any as string);
+        });
       };
       const handlePayPress = () => {
         const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
@@ -598,7 +659,7 @@ function BookingsPage() {
             storeName: store?.name || booking.title || '',
             storeLogo: store?.logo || '',
           },
-        } as any as string);
+        });
       };
 
       return (
@@ -617,11 +678,7 @@ function BookingsPage() {
             )}
             <View style={{ flex: 1 }} />
             <View style={[styles.statusBadge, { backgroundColor: statusConf.bg }]}>
-              <Ionicons
-                name={statusConf.icon as any as keyof typeof Ionicons.glyphMap}
-                size={12}
-                color={statusConf.color}
-              />
+              <Ionicons name={statusConf.icon as keyof typeof Ionicons.glyphMap} size={12} color={statusConf.color} />
               <Text style={[styles.statusBadgeText, { color: statusConf.color }]}>
                 {booking.status.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
               </Text>
@@ -793,7 +850,7 @@ function BookingsPage() {
           <Text style={styles.emptySubtitle}>Please login to view your bookings</Text>
           <Pressable
             style={[styles.ctaButton, { backgroundColor: tintColor || C.primary }]}
-            onPress={() => router.push('/sign-in' as any as string)}
+            onPress={() => router.push('/sign-in')}
           >
             <Text style={styles.ctaButtonText}>Login</Text>
           </Pressable>
@@ -826,10 +883,7 @@ function BookingsPage() {
             <Text style={styles.ctaButtonOutlineText}>Clear Filters</Text>
           </Pressable>
         ) : (
-          <Pressable
-            style={[styles.ctaButton, { backgroundColor: C.primary }]}
-            onPress={() => router.push('/' as any as string)}
-          >
+          <Pressable style={[styles.ctaButton, { backgroundColor: C.primary }]} onPress={() => router.push('/')}>
             <Text style={styles.ctaButtonText}>Explore Now</Text>
           </Pressable>
         )}
@@ -937,15 +991,13 @@ function BookingsPage() {
         ) : (
           <FlashList
             data={filteredBookings}
-            keyExtractor={(item: any, idx: number) => item.id || item._id || String(idx)}
+            keyExtractor={(item: UnifiedBooking, idx: number) => item.id || String(idx)}
             renderItem={renderBookingCard}
-            contentContainerStyle={
-              Object.assign(
-                {},
-                styles.listContent,
-                filteredBookings.length === 0 ? { flex: 1 } : {},
-              ) as any
-            }
+            contentContainerStyle={Object.assign(
+              {},
+              styles.listContent,
+              filteredBookings.length === 0 ? { flex: 1 } : {},
+            )}
             ListEmptyComponent={renderEmpty}
             estimatedItemSize={120}
             removeClippedSubviews={true}

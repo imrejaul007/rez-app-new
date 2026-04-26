@@ -7,7 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { BRAND } from '@/constants/brand';
 import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
-import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
+import { colors as themeColors } from '@/constants/theme';
 
 interface PaymentBottomSheetProps {
   totalPayable: number;
@@ -34,6 +35,7 @@ function PaymentBottomSheet({
   onToggleExpanded,
   onPaymentSelect,
 }: PaymentBottomSheetProps) {
+  const { colors } = useTheme();
   const finalAmount = Math.max(0, totalPayable - redemptionBenefit).toFixed(0);
 
   return (
@@ -143,7 +145,7 @@ function PaymentBottomSheet({
 
 const styles = StyleSheet.create({
   paymentBottomSheet: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     shadowColor: '#000',
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
   },
@@ -169,12 +171,12 @@ const styles = StyleSheet.create({
   payNowAmount: {
     ...Typography.h2,
     fontWeight: '800',
-    color: colors.text.primary,
+    color: themeColors.text.primary,
     letterSpacing: -0.5,
   },
   payNowLabel: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary,
+    color: themeColors.text.tertiary,
     marginTop: 2,
   },
   payNowRight: {},
@@ -186,8 +188,8 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     gap: 6,
     minHeight: 52,
-    backgroundColor: colors.nileBlue,
-    shadowColor: colors.nileBlue,
+    backgroundColor: themeColors.nileBlue,
+    shadowColor: themeColors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -196,10 +198,10 @@ const styles = StyleSheet.create({
   payNowButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: colors.text.inverse,
+    color: themeColors.text.inverse,
   },
   paymentOptionsContainer: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: themeColors.background.secondary,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.lg,
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
   paymentDragIndicator: {
     width: 40,
     height: 4,
-    backgroundColor: colors.neutral[300],
+    backgroundColor: themeColors.neutral[300],
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: Spacing.base,
@@ -215,7 +217,7 @@ const styles = StyleSheet.create({
   paymentOptionsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: themeColors.text.primary,
     marginBottom: Spacing.base,
   },
   quickPayOptions: {
@@ -226,7 +228,7 @@ const styles = StyleSheet.create({
   },
   quickPayCard: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     alignItems: 'center',
@@ -246,12 +248,12 @@ const styles = StyleSheet.create({
   quickPayLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: themeColors.text.primary,
     marginBottom: 2,
   },
   quickPayBalance: {
     fontSize: 11,
-    color: colors.text.tertiary,
+    color: themeColors.text.tertiary,
   },
   coinIconMedium: {
     width: 24,
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.background.primary,
+    backgroundColor: themeColors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -276,11 +278,11 @@ const styles = StyleSheet.create({
   otherPaymentTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: themeColors.text.primary,
   },
   otherPaymentSubtitle: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary,
+    color: themeColors.text.tertiary,
     marginTop: 2,
   },
   securityBadge: {
@@ -292,7 +294,7 @@ const styles = StyleSheet.create({
   },
   securityText: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary,
+    color: themeColors.text.tertiary,
     fontWeight: '500',
   },
 });

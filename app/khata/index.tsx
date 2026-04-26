@@ -25,6 +25,14 @@ interface KhataEntry {
   updatedAt: string;
 }
 
+interface KhataApiResponse {
+  data?: {
+    data?: KhataEntry[];
+    credits?: KhataEntry[];
+  };
+  [key: string]: unknown;
+}
+
 function ConsumerKhataScreen() {
   const router = useRouter();
   const [credits, setCredits] = useState<KhataEntry[]>([]);
@@ -33,10 +41,10 @@ function ConsumerKhataScreen() {
 
   const loadCredits = async () => {
     try {
-      const resp = await apiClient.get('/consumer/khata');
-      setCredits((resp as any).data?.data || (resp as any).data?.credits || []);
-    } catch (e: any) {
-      if (__DEV__) logger.error('Khata load error: ' + (e?.message || String(e)));
+      const resp = (await apiClient.get('/consumer/khata')) as KhataApiResponse;
+      setCredits(resp.data?.data || resp.data?.credits || []);
+    } catch (e: unknown) {
+      if (__DEV__) logger.error('Khata load error: ' + (e instanceof Error ? e.message : String(e)));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -52,7 +60,7 @@ function ConsumerKhataScreen() {
   const renderItem = ({ item }: { item: KhataEntry }) => (
     <TouchableOpacity
       style={[styles.card, { backgroundColor: colors.background.primary, borderColor: colors.border.default }]}
-      onPress={() => router.push(`/khata/${item.merchantId._id}` as any as string)}
+      onPress={() => router.push({ pathname: '/khata/[merchantId]', params: { merchantId: item.merchantId._id } })}
     >
       <View style={styles.cardRow}>
         <View style={[styles.avatar, { backgroundColor: colors.brand.purpleLight + '20' }]}>
