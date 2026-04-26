@@ -13,12 +13,7 @@ import {
   RetryConfig,
   DEFAULT_RETRY_CONFIG,
 } from '@/types/upload.types';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Form data interface
 export interface BillUploadFormData {
@@ -109,7 +104,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
   const saveUploadState = useCallback(async () => {
     // Add platform check to prevent SSR/build errors
     if (typeof window === 'undefined') {
-      devLog.log('[useBillUpload] Skipping saveUploadState in Node.js environment');
+      logger.debug('[useBillUpload] Skipping saveUploadState in Node.js environment');
       return;
     }
 
@@ -122,7 +117,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
       };
       await AsyncStorage.setItem(UPLOAD_STATE_KEY, JSON.stringify(state));
     } catch (err: any) {
-      devLog.error('Failed to save upload state:', err);
+      logger.error('Failed to save upload state:', err);
     }
   }, [uploadState, currentAttempt, error]);
 
@@ -132,16 +127,16 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
   const saveFormData = useCallback(async (data: BillUploadFormData) => {
     // Add platform check to prevent SSR/build errors
     if (typeof window === 'undefined') {
-      devLog.log('[useBillUpload] Skipping saveFormData in Node.js environment');
+      logger.debug('[useBillUpload] Skipping saveFormData in Node.js environment');
       return;
     }
 
     try {
       await AsyncStorage.setItem(FORM_DATA_KEY, JSON.stringify(data));
       setFormData(data);
-      devLog.log('📝 [BILL UPLOAD] Form data saved to storage');
+      logger.debug('📝 [BILL UPLOAD] Form data saved to storage');
     } catch (err: any) {
-      devLog.error('Failed to save form data:', err);
+      logger.error('Failed to save form data:', err);
     }
   }, []);
 
@@ -151,7 +146,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
   const loadFormData = useCallback(async (): Promise<BillUploadFormData | null> => {
     // Add platform check to prevent SSR/build errors
     if (typeof window === 'undefined') {
-      devLog.log('[useBillUpload] Skipping loadFormData in Node.js environment');
+      logger.debug('[useBillUpload] Skipping loadFormData in Node.js environment');
       return null;
     }
 
@@ -164,11 +159,11 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
           parsed.billDate = new Date(parsed.billDate);
         }
         setFormData(parsed);
-        devLog.log('📂 [BILL UPLOAD] Form data loaded from storage');
+        logger.debug('📂 [BILL UPLOAD] Form data loaded from storage');
         return parsed;
       }
     } catch (err: any) {
-      devLog.error('Failed to load form data:', err);
+      logger.error('Failed to load form data:', err);
     }
     return null;
   }, []);
@@ -179,7 +174,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
   const clearFormData = useCallback(async () => {
     // Add platform check to prevent SSR/build errors
     if (typeof window === 'undefined') {
-      devLog.log('[useBillUpload] Skipping clearFormData in Node.js environment');
+      logger.debug('[useBillUpload] Skipping clearFormData in Node.js environment');
       return;
     }
 
@@ -187,9 +182,9 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
       await AsyncStorage.removeItem(FORM_DATA_KEY);
       await AsyncStorage.removeItem(UPLOAD_STATE_KEY);
       setFormData(null);
-      devLog.log('🗑️ [BILL UPLOAD] Form data cleared');
+      logger.debug('🗑️ [BILL UPLOAD] Form data cleared');
     } catch (err: any) {
-      devLog.error('Failed to clear form data:', err);
+      logger.error('Failed to clear form data:', err);
     }
   }, []);
 
@@ -202,7 +197,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
     // Log milestone progress
     const percent = uploadProgress.percentage;
     if (percent % 25 === 0 && percent > 0) {
-      devLog.log(`📊 [BILL UPLOAD] ${percent}% complete - ${formatSpeed(uploadProgress.speed)}`);
+      logger.debug(`📊 [BILL UPLOAD] ${percent}% complete - ${formatSpeed(uploadProgress.speed)}`);
     }
   }, []);
 
@@ -212,7 +207,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
   const startUpload = useCallback(
     async (data: BillUploadData): Promise<boolean> => {
       try {
-        devLog.log('🚀 [BILL UPLOAD] Starting upload...');
+        logger.debug('🚀 [BILL UPLOAD] Starting upload...');
 
         // Store data for potential retry
         lastUploadDataRef.current = data;
@@ -236,7 +231,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
         );
 
         if (result.success) {
-          devLog.log('✅ [BILL UPLOAD] Upload completed successfully');
+          logger.debug('✅ [BILL UPLOAD] Upload completed successfully');
           setUploadState('completed');
           setIsUploading(false);
 
@@ -245,7 +240,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
 
           return true;
         } else {
-          devLog.error('❌ [BILL UPLOAD] Upload failed:', result.error?.message);
+          logger.error('❌ [BILL UPLOAD] Upload failed:', result.error?.message);
           setUploadState('failed');
           setError(result.error || null);
           setIsUploading(false);
@@ -257,7 +252,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
           return false;
         }
       } catch (err: any) {
-        devLog.error('❌ [BILL UPLOAD] Exception during upload:', err);
+        logger.error('❌ [BILL UPLOAD] Exception during upload:', err);
         const uploadError: UploadError = {
           code: 'UNKNOWN_ERROR',
           message: err instanceof Error ? err.message : 'Unknown error occurred',
@@ -281,16 +276,16 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
    */
   const retryUpload = useCallback(async (): Promise<boolean> => {
     if (!lastUploadDataRef.current) {
-      devLog.error('❌ [BILL UPLOAD] No upload data available for retry');
+      logger.error('❌ [BILL UPLOAD] No upload data available for retry');
       return false;
     }
 
     if (!canRetry) {
-      devLog.error('❌ [BILL UPLOAD] Cannot retry - max attempts reached or error is not retryable');
+      logger.error('❌ [BILL UPLOAD] Cannot retry - max attempts reached or error is not retryable');
       return false;
     }
 
-    devLog.log(`🔄 [BILL UPLOAD] Retrying upload (attempt ${currentAttempt + 1}/${maxAttempts})...`);
+    logger.debug(`🔄 [BILL UPLOAD] Retrying upload (attempt ${currentAttempt + 1}/${maxAttempts})...`);
 
     // Increment attempt counter
     setCurrentAttempt((prev) => prev + 1);
@@ -305,11 +300,11 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
    */
   const cancelUpload = useCallback(() => {
     if (!isUploading || !uploadIdRef.current) {
-      devLog.warn('⚠️ [BILL UPLOAD] No active upload to cancel');
+      logger.warn('⚠️ [BILL UPLOAD] No active upload to cancel');
       return;
     }
 
-    devLog.log('🛑 [BILL UPLOAD] Cancelling upload...');
+    logger.debug('🛑 [BILL UPLOAD] Cancelling upload...');
 
     // Cancel the upload
     billUploadService.cancelUpload(uploadIdRef.current);
@@ -333,7 +328,7 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
    * Reset all state
    */
   const reset = useCallback(() => {
-    devLog.log('🔄 [BILL UPLOAD] Resetting state...');
+    logger.debug('🔄 [BILL UPLOAD] Resetting state...');
     setIsUploading(false);
     setUploadState('idle');
     setProgress(null);

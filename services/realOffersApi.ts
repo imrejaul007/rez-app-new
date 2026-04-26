@@ -1,11 +1,6 @@
 import apiClient, { ApiResponse } from './apiClient';
 import { colors } from '@/constants/theme';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Types for the new offers API
 export interface Offer {
@@ -232,7 +227,7 @@ class RealOffersApi {
       const response = await apiClient.get<OffersPageData>('/offers/page-data', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching offers page data:', error);
+      logger.error('[OFFERS API] Error fetching offers page data:', error);
       throw error;
     }
   }
@@ -259,7 +254,7 @@ class RealOffersApi {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching offers:', error);
+      logger.error('[OFFERS API] Error fetching offers:', error);
       throw error;
     }
   }
@@ -272,7 +267,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/mega', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching mega offers:', error);
+      logger.error('[OFFERS API] Error fetching mega offers:', error);
       throw error;
     }
   }
@@ -285,7 +280,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/students', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching student offers:', error);
+      logger.error('[OFFERS API] Error fetching student offers:', error);
       throw error;
     }
   }
@@ -298,7 +293,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/new-arrivals', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching new arrival offers:', error);
+      logger.error('[OFFERS API] Error fetching new arrival offers:', error);
       throw error;
     }
   }
@@ -311,7 +306,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/trending', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching trending offers:', error);
+      logger.error('[OFFERS API] Error fetching trending offers:', error);
       throw error;
     }
   }
@@ -329,7 +324,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/nearby', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching nearby offers:', error);
+      logger.error('[OFFERS API] Error fetching nearby offers:', error);
       throw error;
     }
   }
@@ -342,7 +337,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer>(`/offers/${id}`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching offer ${id}:`, error);
+      logger.error(`[OFFERS API] Error fetching offer ${id}:`, error);
       throw error;
     }
   }
@@ -362,7 +357,7 @@ class RealOffersApi {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers/search', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error searching offers:', error);
+      logger.error('[OFFERS API] Error searching offers:', error);
       throw error;
     }
   }
@@ -375,7 +370,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ isLiked: boolean; likesCount: number }>(`/offers/${id}/like`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error toggling like for offer ${id}:`, error);
+      logger.error(`[OFFERS API] Error toggling like for offer ${id}:`, error);
       throw error;
     }
   }
@@ -391,7 +386,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/share`, params);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error sharing offer ${id}:`, error);
+      logger.error(`[OFFERS API] Error sharing offer ${id}:`, error);
       throw error;
     }
   }
@@ -404,7 +399,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/view`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error tracking view for offer ${id}:`, error);
+      logger.error(`[OFFERS API] Error tracking view for offer ${id}:`, error);
       throw error;
     }
   }
@@ -417,7 +412,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/click`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error tracking click for offer ${id}:`, error);
+      logger.error(`[OFFERS API] Error tracking click for offer ${id}:`, error);
       throw error;
     }
   }
@@ -430,7 +425,7 @@ class RealOffersApi {
       const response = await apiClient.get<OfferCategory[]>('/offer-categories');
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching offer categories:', error);
+      logger.error('[OFFERS API] Error fetching offer categories:', error);
       throw error;
     }
   }
@@ -443,7 +438,7 @@ class RealOffersApi {
       const response = await apiClient.get<OfferCategory>(`/offer-categories/${slug}`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching category ${slug}:`, error);
+      logger.error(`[OFFERS API] Error fetching category ${slug}:`, error);
       throw error;
     }
   }
@@ -463,7 +458,7 @@ class RealOffersApi {
       const response = await apiClient.get<PaginatedResponse<Offer>>(`/offer-categories/${slug}/offers`, params);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching offers for category ${slug}:`, error);
+      logger.error(`[OFFERS API] Error fetching offers for category ${slug}:`, error);
       throw error;
     }
   }
@@ -479,7 +474,7 @@ class RealOffersApi {
       const response = await apiClient.get<HeroBanner[]>('/hero-banners', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching hero banners:', error);
+      logger.error('[OFFERS API] Error fetching hero banners:', error);
       throw error;
     }
   }
@@ -499,7 +494,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ success: boolean }>(`/hero-banners/${id}/view`, params);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error tracking hero banner view ${id}:`, error);
+      logger.error(`[OFFERS API] Error tracking hero banner view ${id}:`, error);
       throw error;
     }
   }
@@ -519,7 +514,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ success: boolean }>(`/hero-banners/${id}/click`, params);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error tracking hero banner click ${id}:`, error);
+      logger.error(`[OFFERS API] Error tracking hero banner click ${id}:`, error);
       throw error;
     }
   }
@@ -535,7 +530,7 @@ class RealOffersApi {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers/user/favorites', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching user favorite offers:', error);
+      logger.error('[OFFERS API] Error fetching user favorite offers:', error);
       throw error;
     }
   }
@@ -548,7 +543,7 @@ class RealOffersApi {
       const response = await apiClient.post<{ success: boolean }>(`/offers/${id}/favorite`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error adding offer ${id} to favorites:`, error);
+      logger.error(`[OFFERS API] Error adding offer ${id} to favorites:`, error);
       throw error;
     }
   }
@@ -561,7 +556,7 @@ class RealOffersApi {
       const response = await apiClient.delete<{ success: boolean }>(`/offers/${id}/favorite`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error removing offer ${id} from favorites:`, error);
+      logger.error(`[OFFERS API] Error removing offer ${id} from favorites:`, error);
       throw error;
     }
   }
@@ -588,7 +583,7 @@ class RealOffersApi {
       }>(`/offers/${id}/redeem`, { redemptionType });
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error redeeming offer ${id}:`, error);
+      logger.error(`[OFFERS API] Error redeeming offer ${id}:`, error);
       throw error;
     }
   }
@@ -605,7 +600,7 @@ class RealOffersApi {
       const response = await apiClient.get<PaginatedResponse<Offer>>('/offers/user/redemptions', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching user redemptions:', error);
+      logger.error('[OFFERS API] Error fetching user redemptions:', error);
       throw error;
     }
   }
@@ -661,7 +656,7 @@ class RealOffersApi {
       }>('/offers/redemptions/validate', { code });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error validating redemption code:', error);
+      logger.error('[OFFERS API] Error validating redemption code:', error);
       throw error;
     }
   }
@@ -712,7 +707,7 @@ class RealOffersApi {
       }>(`/offers/redemptions/${redemptionId}/use`, { orderAmount: params.orderAmount, orderId: params.orderId, storeId: params.storeId });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error marking redemption as used:', error);
+      logger.error('[OFFERS API] Error marking redemption as used:', error);
       throw error;
     }
   }
@@ -725,7 +720,7 @@ class RealOffersApi {
       const response = await apiClient.get<Record<string, unknown>>(`/offers/redemptions/${redemptionId}`);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching redemption:', error);
+      logger.error('[OFFERS API] Error fetching redemption:', error);
       throw error;
     }
   }
@@ -800,7 +795,7 @@ class RealOffersApi {
         message: 'Store deals retrieved successfully (fallback)',
       };
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching store offers for ${storeId}:`, error);
+      logger.error(`[OFFERS API] Error fetching store offers for ${storeId}:`, error);
       throw error;
     }
   }
@@ -1320,7 +1315,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/offers/hotspots', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching hotspots:', error);
+      logger.error('[OFFERS API] Error fetching hotspots:', error);
       throw error;
     }
   }
@@ -1333,7 +1328,7 @@ class RealOffersApi {
       const response = await apiClient.get<{ hotspot: any; offers: Offer[] }>(`/offers/hotspots/${slug}/offers`, { limit });
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching hotspot ${slug} offers:`, error);
+      logger.error(`[OFFERS API] Error fetching hotspot ${slug} offers:`, error);
       throw error;
     }
   }
@@ -1349,7 +1344,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/bogo', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching BOGO offers:', error);
+      logger.error('[OFFERS API] Error fetching BOGO offers:', error);
       throw error;
     }
   }
@@ -1365,7 +1360,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/sales-clearance', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching sale offers:', error);
+      logger.error('[OFFERS API] Error fetching sale offers:', error);
       throw error;
     }
   }
@@ -1378,7 +1373,7 @@ class RealOffersApi {
       const response = await apiClient.get<Offer[]>('/offers/free-delivery', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching free delivery offers:', error);
+      logger.error('[OFFERS API] Error fetching free delivery offers:', error);
       throw error;
     }
   }
@@ -1394,7 +1389,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/offers/bank-offers', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching bank offers:', error);
+      logger.error('[OFFERS API] Error fetching bank offers:', error);
       throw error;
     }
   }
@@ -1427,7 +1422,7 @@ class RealOffersApi {
       }>('/offers/homepage-deals-section', {}, { headers });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching homepage deals section:', error);
+      logger.error('[OFFERS API] Error fetching homepage deals section:', error);
       throw error;
     }
   }
@@ -1440,7 +1435,7 @@ class RealOffersApi {
       const response = await apiClient.get<Record<string, unknown>[]>('/offers/exclusive-zones');
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching exclusive zones:', error);
+      logger.error('[OFFERS API] Error fetching exclusive zones:', error);
       throw error;
     }
   }
@@ -1453,7 +1448,7 @@ class RealOffersApi {
       const response = await apiClient.get<{ zone: Record<string, unknown>; offers: Offer[] }>(`/offers/exclusive-zones/${slug}/offers`, { limit });
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching exclusive zone ${slug} offers:`, error);
+      logger.error(`[OFFERS API] Error fetching exclusive zone ${slug} offers:`, error);
       throw error;
     }
   }
@@ -1466,7 +1461,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/offers/special-profiles');
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching special profiles:', error);
+      logger.error('[OFFERS API] Error fetching special profiles:', error);
       throw error;
     }
   }
@@ -1479,7 +1474,7 @@ class RealOffersApi {
       const response = await apiClient.get<{ profile: any; offers: Offer[] }>(`/offers/special-profiles/${slug}/offers`, { limit });
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error fetching special profile ${slug} offers:`, error);
+      logger.error(`[OFFERS API] Error fetching special profile ${slug} offers:`, error);
       throw error;
     }
   }
@@ -1492,7 +1487,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/offers/friends-redeemed', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching friends redeemed:', error);
+      logger.error('[OFFERS API] Error fetching friends redeemed:', error);
       throw error;
     }
   }
@@ -1505,7 +1500,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/cashback/double-campaigns', { limit });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching double cashback campaigns:', error);
+      logger.error('[OFFERS API] Error fetching double cashback campaigns:', error);
       throw error;
     }
   }
@@ -1521,7 +1516,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/cashback/coin-drops', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching coin drops:', error);
+      logger.error('[OFFERS API] Error fetching coin drops:', error);
       throw error;
     }
   }
@@ -1537,7 +1532,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/cashback/upload-bill-stores', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching upload bill stores:', error);
+      logger.error('[OFFERS API] Error fetching upload bill stores:', error);
       throw error;
     }
   }
@@ -1553,7 +1548,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/cashback/super-cashback-stores', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching super cashback stores:', error);
+      logger.error('[OFFERS API] Error fetching super cashback stores:', error);
       throw error;
     }
   }
@@ -1566,7 +1561,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/loyalty/milestones');
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching loyalty milestones:', error);
+      logger.error('[OFFERS API] Error fetching loyalty milestones:', error);
       throw error;
     }
   }
@@ -1579,7 +1574,7 @@ class RealOffersApi {
       const response = await apiClient.get<any[]>('/loyalty/progress');
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching loyalty progress:', error);
+      logger.error('[OFFERS API] Error fetching loyalty progress:', error);
       throw error;
     }
   }
@@ -1596,7 +1591,7 @@ class RealOffersApi {
     filterValue: string;
   }[]>> {
     try {
-      devLog.log('📊 [OFFERS API] Fetching discount buckets');
+      logger.debug('📊 [OFFERS API] Fetching discount buckets');
       const response = await apiClient.get<any[]>('/offers/discount-buckets');
 
       if (response.success && response.data) {
@@ -1608,7 +1603,7 @@ class RealOffersApi {
           iconColor: bucket.iconColor || this.getDefaultBucketColor(bucket.filterValue).icon,
         }));
 
-        devLog.log(`✅ [OFFERS API] Got ${bucketsWithColors.length} discount buckets`);
+        logger.debug(`✅ [OFFERS API] Got ${bucketsWithColors.length} discount buckets`);
         return {
           ...response,
           data: bucketsWithColors,
@@ -1617,7 +1612,7 @@ class RealOffersApi {
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching discount buckets:', error);
+      logger.error('[OFFERS API] Error fetching discount buckets:', error);
       throw error;
     }
   }
@@ -1644,13 +1639,13 @@ class RealOffersApi {
    */
   async getFlashSales(limit?: number): Promise<ApiResponse<any[]>> {
     try {
-      devLog.log('⚡ [OFFERS API] Fetching flash sales (lightning deals)');
+      logger.debug('⚡ [OFFERS API] Fetching flash sales (lightning deals)');
       const response = await apiClient.get<any[]>('/flash-sales/active', { limit });
 
       if (response.success && response.data) {
         const flashSales = Array.isArray(response.data) ? response.data : [];
 
-        devLog.log(`✅ [OFFERS API] Got ${flashSales.length} flash sales`);
+        logger.debug(`✅ [OFFERS API] Got ${flashSales.length} flash sales`);
         return {
           ...response,
           data: flashSales,
@@ -1659,7 +1654,7 @@ class RealOffersApi {
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching flash sales:', error);
+      logger.error('[OFFERS API] Error fetching flash sales:', error);
       throw error;
     }
   }
@@ -1670,17 +1665,17 @@ class RealOffersApi {
    */
   async getFlashSaleById(flashSaleId: string): Promise<ApiResponse<Record<string, unknown>>> {
     try {
-      devLog.log('⚡ [OFFERS API] Fetching flash sale by ID:', flashSaleId);
+      logger.debug('⚡ [OFFERS API] Fetching flash sale by ID:', flashSaleId);
       const response = await apiClient.get<Record<string, unknown>>(`/flash-sales/${flashSaleId}`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [OFFERS API] Got flash sale:', response.data.title);
+        logger.debug('✅ [OFFERS API] Got flash sale:', response.data.title);
         return response;
       }
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching flash sale by ID:', error);
+      logger.error('[OFFERS API] Error fetching flash sale by ID:', error);
       throw error;
     }
   }
@@ -1691,13 +1686,13 @@ class RealOffersApi {
    */
   async getNewArrivals(limit: number = 10): Promise<ApiResponse<any[]>> {
     try {
-      devLog.log('🆕 [OFFERS API] Fetching new arrivals');
+      logger.debug('🆕 [OFFERS API] Fetching new arrivals');
       const response = await apiClient.get<any[]>('/offers/new-arrivals', { limit });
 
       if (response.success && response.data) {
         const offers = Array.isArray(response.data) ? response.data : [];
 
-        devLog.log(`✅ [OFFERS API] Got ${offers.length} new arrivals`);
+        logger.debug(`✅ [OFFERS API] Got ${offers.length} new arrivals`);
         return {
           ...response,
           data: offers,
@@ -1706,7 +1701,7 @@ class RealOffersApi {
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching new arrivals:', error);
+      logger.error('[OFFERS API] Error fetching new arrivals:', error);
       throw error;
     }
   }
@@ -1717,13 +1712,13 @@ class RealOffersApi {
    */
   async getRecommendedOffers(limit: number = 10): Promise<ApiResponse<any[]>> {
     try {
-      devLog.log('🤖 [OFFERS API] Fetching AI recommended offers');
+      logger.debug('🤖 [OFFERS API] Fetching AI recommended offers');
       const response = await apiClient.get<any[]>('/offers/user/recommendations', { limit });
 
       if (response.success && response.data) {
         const offers = Array.isArray(response.data) ? response.data : [];
 
-        devLog.log(`✅ [OFFERS API] Got ${offers.length} recommended offers`);
+        logger.debug(`✅ [OFFERS API] Got ${offers.length} recommended offers`);
         return {
           ...response,
           data: offers,
@@ -1732,7 +1727,7 @@ class RealOffersApi {
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching recommended offers:', error);
+      logger.error('[OFFERS API] Error fetching recommended offers:', error);
       throw error;
     }
   }
@@ -1743,13 +1738,13 @@ class RealOffersApi {
    */
   async getExpiringSoonOffers(limit: number = 10): Promise<ApiResponse<any[]>> {
     try {
-      devLog.log('⏰ [OFFERS API] Fetching expiring soon offers');
+      logger.debug('⏰ [OFFERS API] Fetching expiring soon offers');
       const response = await apiClient.get<any[]>('/flash-sales/expiring-soon', { limit, minutes: 1440 });
 
       if (response.success && response.data) {
         const offers = Array.isArray(response.data) ? response.data : [];
 
-        devLog.log(`✅ [OFFERS API] Got ${offers.length} expiring soon offers`);
+        logger.debug(`✅ [OFFERS API] Got ${offers.length} expiring soon offers`);
         return {
           ...response,
           data: offers,
@@ -1758,7 +1753,7 @@ class RealOffersApi {
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching expiring offers:', error);
+      logger.error('[OFFERS API] Error fetching expiring offers:', error);
       throw error;
     }
   }
@@ -1769,13 +1764,13 @@ class RealOffersApi {
    */
   async getTodaysOffers(limit: number = 10): Promise<ApiResponse<any[]>> {
     try {
-      devLog.log('📅 [OFFERS API] Fetching today\'s offers');
+      logger.debug('📅 [OFFERS API] Fetching today\'s offers');
       const response = await apiClient.get<any[]>('/offers/flash-sales', { limit });
 
       if (response.success && response.data) {
         const offers = Array.isArray(response.data) ? response.data : [];
 
-        devLog.log(`✅ [OFFERS API] Got ${offers.length} today's offers`);
+        logger.debug(`✅ [OFFERS API] Got ${offers.length} today's offers`);
         return {
           ...response,
           data: offers,
@@ -1784,7 +1779,7 @@ class RealOffersApi {
 
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching today\'s offers:', error);
+      logger.error('[OFFERS API] Error fetching today\'s offers:', error);
       throw error;
     }
   }
@@ -1814,7 +1809,7 @@ class RealOffersApi {
     };
   }>> {
     try {
-      devLog.log('💳 [OFFERS API] Initiating flash sale purchase:', flashSaleId);
+      logger.debug('💳 [OFFERS API] Initiating flash sale purchase:', flashSaleId);
       const response = await apiClient.post<{
         purchaseId: string;
         razorpayOrderId: string;
@@ -1834,11 +1829,11 @@ class RealOffersApi {
       });
 
       if (response.success) {
-        devLog.log('✅ [OFFERS API] Flash sale purchase initiated:', response.data?.purchaseId);
+        logger.debug('✅ [OFFERS API] Flash sale purchase initiated:', response.data?.purchaseId);
       }
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error initiating flash sale purchase:', error);
+      logger.error('[OFFERS API] Error initiating flash sale purchase:', error);
       throw error;
     }
   }
@@ -1858,7 +1853,7 @@ class RealOffersApi {
     amount: number;
   }>> {
     try {
-      devLog.log('✔️ [OFFERS API] Verifying flash sale payment:', data.purchaseId);
+      logger.debug('✔️ [OFFERS API] Verifying flash sale payment:', data.purchaseId);
       const response = await apiClient.post<{
         voucherCode: string;
         promoCode?: string;
@@ -1867,11 +1862,11 @@ class RealOffersApi {
       }>('/flash-sales/purchase/verify', data);
 
       if (response.success) {
-        devLog.log('✅ [OFFERS API] Flash sale payment verified, voucher:', response.data?.voucherCode);
+        logger.debug('✅ [OFFERS API] Flash sale payment verified, voucher:', response.data?.voucherCode);
       }
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error verifying flash sale payment:', error);
+      logger.error('[OFFERS API] Error verifying flash sale payment:', error);
       throw error;
     }
   }
@@ -1881,11 +1876,11 @@ class RealOffersApi {
    */
   async failFlashSalePurchase(purchaseId: string, reason: string): Promise<ApiResponse<void>> {
     try {
-      devLog.log('❌ [OFFERS API] Marking flash sale purchase as failed:', purchaseId);
+      logger.debug('❌ [OFFERS API] Marking flash sale purchase as failed:', purchaseId);
       const response = await apiClient.post<void>('/flash-sales/purchase/fail', { purchaseId, reason });
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error failing flash sale purchase:', error);
+      logger.error('[OFFERS API] Error failing flash sale purchase:', error);
       throw error;
     }
   }
@@ -1910,7 +1905,7 @@ class RealOffersApi {
     purchasedAt: string;
   }>>> {
     try {
-      devLog.log('📋 [OFFERS API] Fetching user flash sale purchases');
+      logger.debug('📋 [OFFERS API] Fetching user flash sale purchases');
       const response = await apiClient.get<Array<{
         _id: string;
         flashSale: {
@@ -1930,12 +1925,12 @@ class RealOffersApi {
 
       if (response.success) {
         const purchases = Array.isArray(response.data) ? response.data : [];
-        devLog.log(`✅ [OFFERS API] Got ${purchases.length} flash sale purchases`);
+        logger.debug(`✅ [OFFERS API] Got ${purchases.length} flash sale purchases`);
         return { ...response, data: purchases };
       }
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching flash sale purchases:', error);
+      logger.error('[OFFERS API] Error fetching flash sale purchases:', error);
       throw error;
     }
   }
@@ -1945,11 +1940,11 @@ class RealOffersApi {
    */
   async getFlashSalePurchaseById(purchaseId: string): Promise<ApiResponse<Record<string, unknown>>> {
     try {
-      devLog.log('🔍 [OFFERS API] Fetching flash sale purchase:', purchaseId);
+      logger.debug('🔍 [OFFERS API] Fetching flash sale purchase:', purchaseId);
       const response = await apiClient.get<Record<string, unknown>>(`/flash-sales/purchases/${purchaseId}`);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching flash sale purchase:', error);
+      logger.error('[OFFERS API] Error fetching flash sale purchase:', error);
       throw error;
     }
   }
@@ -1980,7 +1975,7 @@ class RealOffersApi {
       const response = await apiClient.get<ZoneEligibility>(`/zones/${slug}/eligibility`);
       return response as any;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error checking zone eligibility for ${slug}:`, error);
+      logger.error(`[OFFERS API] Error checking zone eligibility for ${slug}:`, error);
       throw error;
     }
   }
@@ -2004,7 +1999,7 @@ class RealOffersApi {
       const response = await apiClient.post<ZoneVerificationResult>(`/zones/${slug}/verify`, data);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error submitting zone verification for ${slug}:`, error);
+      logger.error(`[OFFERS API] Error submitting zone verification for ${slug}:`, error);
       throw error;
     }
   }
@@ -2024,7 +2019,7 @@ class RealOffersApi {
       const response = await apiClient.get<ZoneVerificationStatus>(`/zones/${slug}/status`);
       return response;
     } catch (error) {
-      devLog.error(`[OFFERS API] Error getting zone verification status for ${slug}:`, error);
+      logger.error(`[OFFERS API] Error getting zone verification status for ${slug}:`, error);
       throw error;
     }
   }
@@ -2037,7 +2032,7 @@ class RealOffersApi {
       const response = await apiClient.get<ZoneVerificationResult[]>('/zones/my-verifications');
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error getting user verifications:', error);
+      logger.error('[OFFERS API] Error getting user verifications:', error);
       throw error;
     }
   }
@@ -2050,11 +2045,11 @@ class RealOffersApi {
     tab?: 'offers' | 'cashback' | 'exclusive' | 'all';
   }): Promise<ApiResponse<Record<string, unknown>>> {
     try {
-      devLog.log('[OFFERS API] Fetching aggregated page data');
+      logger.debug('[OFFERS API] Fetching aggregated page data');
       const response = await apiClient.get<Record<string, unknown>>('/offers/page-data-v2', params);
       return response;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching aggregated page data:', error);
+      logger.error('[OFFERS API] Error fetching aggregated page data:', error);
       throw error;
     }
   }
@@ -2076,7 +2071,7 @@ class RealOffersApi {
       };
     }
     try {
-      devLog.log(`[OFFERS API] Fetching promotions for store: ${storeId}`);
+      logger.debug(`[OFFERS API] Fetching promotions for store: ${storeId}`);
       const response = await apiClient.get<Record<string, unknown>>(`/offers/store/${storeId}`);
       return response as unknown as ApiResponse<{
         promotions: Record<string, unknown>[];
@@ -2084,7 +2079,7 @@ class RealOffersApi {
         activeCount: number;
       }>;
     } catch (error) {
-      devLog.error('[OFFERS API] Error fetching store promotions:', error);
+      logger.error('[OFFERS API] Error fetching store promotions:', error);
       throw error;
     }
   }

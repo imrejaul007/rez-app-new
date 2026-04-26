@@ -1,10 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 /**
  * AsyncStorage Service
@@ -47,7 +42,7 @@ class AsyncStorageService {
    */
   async save<T>(key: string, data: T): Promise<void> {
     if (!isClient) {
-      devLog.warn('💾 [STORAGE] Skipping save during SSR:', key);
+      logger.warn('💾 [STORAGE] Skipping save during SSR:', key);
       return;
     }
     try {
@@ -55,7 +50,7 @@ class AsyncStorageService {
       await AsyncStorage.setItem(key, jsonValue);
 
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to save data:', key, error);
+      logger.error('💾 [STORAGE] Failed to save data:', key, error);
       throw new Error(`Failed to save data to ${key}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -77,7 +72,7 @@ class AsyncStorageService {
 
       return data;
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to get data:', key, error);
+      logger.error('💾 [STORAGE] Failed to get data:', key, error);
       return null;
     }
   }
@@ -87,14 +82,14 @@ class AsyncStorageService {
    */
   async remove(key: string): Promise<void> {
     if (!isClient) {
-      devLog.warn('💾 [STORAGE] Skipping remove during SSR:', key);
+      logger.warn('💾 [STORAGE] Skipping remove during SSR:', key);
       return;
     }
     try {
       await AsyncStorage.removeItem(key);
 
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to remove data:', key, error);
+      logger.error('💾 [STORAGE] Failed to remove data:', key, error);
       throw new Error(`Failed to remove data from ${key}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -104,14 +99,14 @@ class AsyncStorageService {
    */
   async clear(): Promise<void> {
     if (!isClient) {
-      devLog.warn('💾 [STORAGE] Skipping clear during SSR');
+      logger.warn('💾 [STORAGE] Skipping clear during SSR');
       return;
     }
     try {
       await AsyncStorage.clear();
 
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to clear storage:', error);
+      logger.error('💾 [STORAGE] Failed to clear storage:', error);
       throw new Error(`Failed to clear storage: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -125,7 +120,7 @@ class AsyncStorageService {
       // Ensure we return a mutable array (AsyncStorage types may be readonly)
       return [...keys];
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to get all keys:', error);
+      logger.error('💾 [STORAGE] Failed to get all keys:', error);
       return [];
     }
   }
@@ -152,7 +147,7 @@ class AsyncStorageService {
 
       return data;
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to get multiple items:', error);
+      logger.error('💾 [STORAGE] Failed to get multiple items:', error);
       return {};
     }
   }
@@ -168,9 +163,9 @@ class AsyncStorageService {
       ]) as Array<[string, string]>;
 
       await AsyncStorage.multiSet(stringifiedItems);
-      devLog.log('💾 [STORAGE] Saved multiple items:', items.map(([key]) => key));
+      logger.debug('💾 [STORAGE] Saved multiple items:', items.map(([key]) => key));
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to save multiple items:', error);
+      logger.error('💾 [STORAGE] Failed to save multiple items:', error);
       throw new Error(`Failed to save multiple items: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -183,7 +178,7 @@ class AsyncStorageService {
       const value = await AsyncStorage.getItem(key);
       return value !== null;
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to check if key exists:', key, error);
+      logger.error('💾 [STORAGE] Failed to check if key exists:', key, error);
       return false;
     }
   }
@@ -347,7 +342,7 @@ class AsyncStorageService {
       const updated = [item, ...filtered].slice(0, this.MAX_RECENTLY_VIEWED_UNIFIED);
       await this.saveRecentlyViewedUnified(updated);
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to add recently viewed store:', error);
+      logger.error('💾 [STORAGE] Failed to add recently viewed store:', error);
     }
   }
 
@@ -360,7 +355,7 @@ class AsyncStorageService {
 
       const productId = product._id || product.id || '';
       if (!productId) {
-        devLog.warn('💾 [STORAGE] Cannot add product without ID to recently viewed');
+        logger.warn('💾 [STORAGE] Cannot add product without ID to recently viewed');
         return;
       }
 
@@ -403,7 +398,7 @@ class AsyncStorageService {
       const updated = [item, ...filtered].slice(0, this.MAX_RECENTLY_VIEWED_UNIFIED);
       await this.saveRecentlyViewedUnified(updated);
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to add recently viewed product:', error);
+      logger.error('💾 [STORAGE] Failed to add recently viewed product:', error);
     }
   }
 
@@ -534,7 +529,7 @@ class AsyncStorageService {
       const limited = current.slice(0, MAX_FAVORITE_STORES);
       await this.save(STORAGE_KEYS.FAVORITE_STORES, limited);
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to track store visit:', error);
+      logger.error('💾 [STORAGE] Failed to track store visit:', error);
     }
   }
 
@@ -557,7 +552,7 @@ class AsyncStorageService {
 
       return false;
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to toggle favorite store:', error);
+      logger.error('💾 [STORAGE] Failed to toggle favorite store:', error);
       return false;
     }
   }
@@ -571,7 +566,7 @@ class AsyncStorageService {
       const store = stores.find(s => s.id === storeId);
       return store?.isFavorited || false;
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to check favorite store:', error);
+      logger.error('💾 [STORAGE] Failed to check favorite store:', error);
       return false;
     }
   }
@@ -662,7 +657,7 @@ class AsyncStorageService {
       ]);
 
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to clear user data:', error);
+      logger.error('💾 [STORAGE] Failed to clear user data:', error);
     }
   }
 
@@ -691,7 +686,7 @@ class AsyncStorageService {
           : `${sizeInMB} MB`
       };
     } catch (error) {
-      devLog.error('💾 [STORAGE] Failed to get storage size:', error);
+      logger.error('💾 [STORAGE] Failed to get storage size:', error);
       return { totalKeys: 0, estimatedSize: '0 KB' };
     }
   }

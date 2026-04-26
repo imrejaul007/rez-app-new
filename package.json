@@ -157,7 +157,31 @@
     "protobufjs": ">=7.5.5",
     "minimatch": ">=3.1.4",
     "picomatch": ">=2.3.1",
-    "node-forge": ">=1.3.4"
+    "node-forge": ">=1.3.4",
+    "tar": ">=7.4.0",
+    "semver": ">=7.5.2",
+    "braces": ">=3.0.3",
+    "follow-redirects": ">=1.15.4",
+    "tough-cookie": ">=4.1.3",
+    "ws": ">=7.5.10",
+    "path-to-regexp": ">=0.1.10",
+    "cookie": ">=0.7.0",
+    "elliptic": ">=6.6.1",
+    "@expo/cli": {
+      "tar": ">=7.4.0",
+      "cacache": ">=18.0.4"
+    },
+    "@expo/config-plugins": {
+      "tar": ">=7.4.0"
+    },
+    "@expo/prebuild-config": {
+      "tar": ">=7.4.0"
+    },
+    "expo": {
+      "tar": ">=7.4.0"
+    },
+    "@tootallnate/once": ">=3.0.1",
+    "@tootallnate/once@*": ">=3.0.1"
   },
   "lint-staged": {
     "app/**/*.ts": [

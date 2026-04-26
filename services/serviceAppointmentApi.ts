@@ -2,12 +2,7 @@
 // Handles service appointment booking operations (salon, spa, etc.)
 
 import apiClient, { ApiResponse } from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // TypeScript Interfaces
 export interface ServiceAppointmentRequest {
@@ -102,25 +97,25 @@ class ServiceAppointmentApi {
    * POST /api/service-appointments
    */
   async createServiceAppointment(data: ServiceAppointmentRequest): Promise<ApiResponse<ServiceAppointment>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - CREATE        │');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('📅 Appointment Data:', JSON.stringify(data, null, 2));
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - CREATE        │');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('📅 Appointment Data:', JSON.stringify(data, null, 2));
 
     try {
       const response = await apiClient.post<ServiceAppointment>('/service-appointments', data as any);
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] Appointment created successfully');
-        devLog.log('📝 Appointment ID:', response.data?.appointmentId);
-        devLog.log('🎫 Confirmation Code:', response.data?.confirmationCode);
+        logger.debug('✅ [SERVICE APPOINTMENT API] Appointment created successfully');
+        logger.debug('📝 Appointment ID:', response.data?.appointmentId);
+        logger.debug('🎫 Confirmation Code:', response.data?.confirmationCode);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to create appointment:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to create appointment:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Create appointment error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Create appointment error:', error);
       throw error;
     }
   }
@@ -134,12 +129,12 @@ class ServiceAppointmentApi {
     limit: number = 20,
     status?: ServiceAppointment['status']
   ): Promise<ApiResponse<ServiceAppointmentsResponse>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - GET USER APPTS│');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('📄 Page:', page);
-    devLog.log('📊 Limit:', limit);
-    devLog.log('📌 Status Filter:', status || 'all');
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - GET USER APPTS│');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('📄 Page:', page);
+    logger.debug('📊 Limit:', limit);
+    logger.debug('📌 Status Filter:', status || 'all');
 
     try {
       const params: Record<string, any> = { page, limit };
@@ -150,16 +145,16 @@ class ServiceAppointmentApi {
       const response = await apiClient.get<ServiceAppointmentsResponse>('/service-appointments/user', params);
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] User appointments fetched successfully');
-        devLog.log('📊 Total appointments:', response.data?.pagination.total);
-        devLog.log('📄 Current page:', response.data?.pagination.current);
+        logger.debug('✅ [SERVICE APPOINTMENT API] User appointments fetched successfully');
+        logger.debug('📊 Total appointments:', response.data?.pagination.total);
+        logger.debug('📄 Current page:', response.data?.pagination.current);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch user appointments:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to fetch user appointments:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Get user appointments error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Get user appointments error:', error);
       throw error;
     }
   }
@@ -169,26 +164,26 @@ class ServiceAppointmentApi {
    * GET /api/service-appointments/:appointmentId
    */
   async getServiceAppointment(appointmentId: string): Promise<ApiResponse<ServiceAppointment>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - GET APPT      │');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('🎫 Appointment ID:', appointmentId);
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - GET APPT      │');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('🎫 Appointment ID:', appointmentId);
 
     try {
       const response = await apiClient.get<ServiceAppointment>(`/service-appointments/${appointmentId}`);
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] Appointment details fetched successfully');
-        devLog.log('📝 Status:', response.data?.status);
-        devLog.log('🏪 Store:', response.data?.store.name);
-        devLog.log('💇 Service:', response.data?.service.name);
+        logger.debug('✅ [SERVICE APPOINTMENT API] Appointment details fetched successfully');
+        logger.debug('📝 Status:', response.data?.status);
+        logger.debug('🏪 Store:', response.data?.store.name);
+        logger.debug('💇 Service:', response.data?.service.name);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch appointment:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to fetch appointment:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Get appointment error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Get appointment error:', error);
       throw error;
     }
   }
@@ -201,11 +196,11 @@ class ServiceAppointmentApi {
     appointmentId: string,
     reason?: string
   ): Promise<ApiResponse<{ message: string; appointment: ServiceAppointment }>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - CANCEL        │');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('🎫 Appointment ID:', appointmentId);
-    devLog.log('📝 Reason:', reason || 'Not provided');
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - CANCEL        │');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('🎫 Appointment ID:', appointmentId);
+    logger.debug('📝 Reason:', reason || 'Not provided');
 
     try {
       const response = await apiClient.put<{ message: string; appointment: ServiceAppointment }>(
@@ -214,15 +209,15 @@ class ServiceAppointmentApi {
       );
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] Appointment cancelled successfully');
-        devLog.log('📝 New Status:', response.data?.appointment.status);
+        logger.debug('✅ [SERVICE APPOINTMENT API] Appointment cancelled successfully');
+        logger.debug('📝 New Status:', response.data?.appointment.status);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to cancel appointment:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to cancel appointment:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Cancel appointment error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Cancel appointment error:', error);
       throw error;
     }
   }
@@ -237,13 +232,13 @@ class ServiceAppointmentApi {
     time?: string,
     serviceId?: string
   ): Promise<ApiResponse<ServiceAvailability>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - CHECK AVAIL   │');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('🏪 Store ID:', storeId);
-    devLog.log('📅 Date:', date);
-    devLog.log('⏰ Time:', time || 'all');
-    devLog.log('💇 Service ID:', serviceId || 'any');
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - CHECK AVAIL   │');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('🏪 Store ID:', storeId);
+    logger.debug('📅 Date:', date);
+    logger.debug('⏰ Time:', time || 'all');
+    logger.debug('💇 Service ID:', serviceId || 'any');
 
     try {
       const params: Record<string, any> = { date };
@@ -260,16 +255,16 @@ class ServiceAppointmentApi {
       );
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] Availability checked successfully');
-        devLog.log('📊 Total slots:', response.data?.slots.length);
-        devLog.log('🚫 Fully booked:', response.data?.fullyBooked);
+        logger.debug('✅ [SERVICE APPOINTMENT API] Availability checked successfully');
+        logger.debug('📊 Total slots:', response.data?.slots.length);
+        logger.debug('🚫 Fully booked:', response.data?.fullyBooked);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to check availability:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to check availability:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Check availability error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Check availability error:', error);
       throw error;
     }
   }
@@ -283,12 +278,12 @@ class ServiceAppointmentApi {
     date: string,
     serviceId?: string
   ): Promise<ApiResponse<TimeSlot[]>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - GET SLOTS     │');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('🏪 Store ID:', storeId);
-    devLog.log('📅 Date:', date);
-    devLog.log('💇 Service ID:', serviceId || 'any');
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - GET SLOTS     │');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('🏪 Store ID:', storeId);
+    logger.debug('📅 Date:', date);
+    logger.debug('💇 Service ID:', serviceId || 'any');
 
     try {
       const params: Record<string, any> = { date };
@@ -302,15 +297,15 @@ class ServiceAppointmentApi {
       );
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] Available slots fetched successfully');
-        devLog.log('📊 Available slots:', response.data?.filter(s => s.available).length);
+        logger.debug('✅ [SERVICE APPOINTMENT API] Available slots fetched successfully');
+        logger.debug('📊 Available slots:', response.data?.filter(s => s.available).length);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch slots:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to fetch slots:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Get slots error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Get slots error:', error);
       throw error;
     }
   }
@@ -327,10 +322,10 @@ class ServiceAppointmentApi {
     duration: number;
     category?: string;
   }>>> {
-    devLog.log('\n┌─────────────────────────────────────────┐');
-    devLog.log('│ SERVICE APPOINTMENT API - GET SERVICES  │');
-    devLog.log('└─────────────────────────────────────────┘');
-    devLog.log('🏪 Store ID:', storeId);
+    logger.debug('\n┌─────────────────────────────────────────┐');
+    logger.debug('│ SERVICE APPOINTMENT API - GET SERVICES  │');
+    logger.debug('└─────────────────────────────────────────┘');
+    logger.debug('🏪 Store ID:', storeId);
 
     try {
       const response = await apiClient.get<Array<{
@@ -343,15 +338,15 @@ class ServiceAppointmentApi {
       }>>(`/service-appointments/services/${storeId}`);
 
       if (response.success) {
-        devLog.log('✅ [SERVICE APPOINTMENT API] Services fetched successfully');
-        devLog.log('📊 Total services:', response.data?.length);
+        logger.debug('✅ [SERVICE APPOINTMENT API] Services fetched successfully');
+        logger.debug('📊 Total services:', response.data?.length);
       } else {
-        devLog.error('❌ [SERVICE APPOINTMENT API] Failed to fetch services:', response.error);
+        logger.error('❌ [SERVICE APPOINTMENT API] Failed to fetch services:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [SERVICE APPOINTMENT API] Get services error:', error);
+      logger.error('❌ [SERVICE APPOINTMENT API] Get services error:', error);
       throw error;
     }
   }

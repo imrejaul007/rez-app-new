@@ -5,6 +5,7 @@ import apiClient, { ApiResponse } from './apiClient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Platform } from 'react-native';
 import razorpayService from './razorpayService';
+import { logger } from '@/utils/logger';
 import type {
   VerificationStatus,
   VerificationType,
@@ -38,12 +39,6 @@ import type {
   VerificationLevel,
 } from '@/types/paymentVerification.types';
 
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
-
 class PaymentVerificationService {
   private baseUrl = '/payment-verification';
 
@@ -70,7 +65,7 @@ class PaymentVerificationService {
       return this.initiateGatewayCardVerification(request);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Card verification failed:', error);
+      logger.error('❌ [VERIFICATION] Card verification failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to initiate card verification',
@@ -97,7 +92,7 @@ class PaymentVerificationService {
           },
         };
       } catch (error) {
-        devLog.warn('⚠️ [VERIFICATION] Razorpay verification fallback failed');
+        logger.warn('⚠️ [VERIFICATION] Razorpay verification fallback failed');
       }
     }
 
@@ -128,7 +123,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] 3DS completion failed:', error);
+      logger.error('❌ [VERIFICATION] 3DS completion failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to complete 3DS authentication',
@@ -182,7 +177,7 @@ class PaymentVerificationService {
       };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Bank verification failed:', error);
+      logger.error('❌ [VERIFICATION] Bank verification failed:', error);
       if (__DEV__) {
         return this.mockBankVerification(request);
       }
@@ -210,7 +205,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Micro-deposit verification failed:', error);
+      logger.error('❌ [VERIFICATION] Micro-deposit verification failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to verify micro-deposits',
@@ -268,7 +263,7 @@ class PaymentVerificationService {
       };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] UPI verification failed:', error);
+      logger.error('❌ [VERIFICATION] UPI verification failed:', error);
       if (__DEV__) {
         return this.mockUPIVerification(request);
       }
@@ -337,7 +332,7 @@ class PaymentVerificationService {
       };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] KYC upload failed:', error);
+      logger.error('❌ [VERIFICATION] KYC upload failed:', error);
       if (__DEV__) {
         return this.mockKYCVerification(request);
       }
@@ -394,7 +389,7 @@ class PaymentVerificationService {
       };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] OTP send failed:', error);
+      logger.error('❌ [VERIFICATION] OTP send failed:', error);
       if (__DEV__) {
         return this.mockSendOTP(request);
       }
@@ -416,7 +411,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] OTP validation failed:', error);
+      logger.error('❌ [VERIFICATION] OTP validation failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to validate OTP',
@@ -460,7 +455,7 @@ class PaymentVerificationService {
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
       return hasHardware && isEnrolled;
     } catch (error) {
-      devLog.error('❌ [VERIFICATION] Biometric check failed:', error);
+      logger.error('❌ [VERIFICATION] Biometric check failed:', error);
       return false;
     }
   }
@@ -484,7 +479,7 @@ class PaymentVerificationService {
         }
       });
     } catch (error) {
-      devLog.error('❌ [VERIFICATION] Failed to get biometric types:', error);
+      logger.error('❌ [VERIFICATION] Failed to get biometric types:', error);
       return [];
     }
   }
@@ -515,7 +510,7 @@ class PaymentVerificationService {
           },
         };
       } else {
-        devLog.warn('⚠️ [VERIFICATION] Biometric authentication failed');
+        logger.warn('⚠️ [VERIFICATION] Biometric authentication failed');
         return {
           success: false,
           error: String(result.error) || 'Biometric authentication failed',
@@ -523,7 +518,7 @@ class PaymentVerificationService {
       }
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Biometric error:', error);
+      logger.error('❌ [VERIFICATION] Biometric error:', error);
       return {
         success: false,
         error: err.message || 'Failed to authenticate with biometric',
@@ -559,7 +554,7 @@ class PaymentVerificationService {
       };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Status check failed:', error);
+      logger.error('❌ [VERIFICATION] Status check failed:', error);
       if (__DEV__) {
         return this.mockVerificationStatus(paymentMethodId);
       }
@@ -587,7 +582,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] History fetch failed:', error);
+      logger.error('❌ [VERIFICATION] History fetch failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to fetch verification history',
@@ -608,7 +603,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Requirements fetch failed:', error);
+      logger.error('❌ [VERIFICATION] Requirements fetch failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to fetch verification requirements',
@@ -629,7 +624,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Re-verification request failed:', error);
+      logger.error('❌ [VERIFICATION] Re-verification request failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to request re-verification',
@@ -679,7 +674,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Fraud signals fetch failed:', error);
+      logger.error('❌ [VERIFICATION] Fraud signals fetch failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to fetch fraud signals',
@@ -704,7 +699,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Risk decision failed:', error);
+      logger.error('❌ [VERIFICATION] Risk decision failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to get risk-based decision',
@@ -727,7 +722,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Device binding failed:', error);
+      logger.error('❌ [VERIFICATION] Device binding failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to bind device',
@@ -746,7 +741,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Failed to get devices:', error);
+      logger.error('❌ [VERIFICATION] Failed to get devices:', error);
       return {
         success: false,
         error: err.message || 'Failed to get bound devices',
@@ -771,7 +766,7 @@ class PaymentVerificationService {
       return response;
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      devLog.error('❌ [VERIFICATION] Session creation failed:', error);
+      logger.error('❌ [VERIFICATION] Session creation failed:', error);
       return {
         success: false,
         error: err.message || 'Failed to create verification session',

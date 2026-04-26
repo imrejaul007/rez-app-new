@@ -1,11 +1,7 @@
 // Gamification Performance Monitor
 // Tracks and reports performance metrics for gamification features
 
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 /**
  * Cross-platform high-resolution time function
@@ -79,7 +75,7 @@ class GamificationPerformanceMonitor {
       this.metrics.set(name, []);
     }
 
-    devLog.log(`⏱️ [PERF] Started timer: ${name}`);
+    logger.debug(`⏱️ [PERF] Started timer: ${name}`);
   }
 
   /**
@@ -89,7 +85,7 @@ class GamificationPerformanceMonitor {
     const startTime = this.activeTimers.get(name);
 
     if (!startTime) {
-      devLog.warn(`⚠️ [PERF] No active timer found for: ${name}`);
+      logger.warn(`⚠️ [PERF] No active timer found for: ${name}`);
       return null;
     }
 
@@ -125,7 +121,7 @@ class GamificationPerformanceMonitor {
       }
     }
 
-    devLog.log(`✅ [PERF] Completed: ${name} in ${duration.toFixed(2)}ms`);
+    logger.debug(`✅ [PERF] Completed: ${name} in ${duration.toFixed(2)}ms`);
     return duration;
   }
 
@@ -294,30 +290,30 @@ class GamificationPerformanceMonitor {
   printReport(): void {
     const report = this.generateReport();
 
-    devLog.log('\n📊 [PERF] Performance Report');
-    devLog.log('═'.repeat(60));
+    logger.debug('\n📊 [PERF] Performance Report');
+    logger.debug('═'.repeat(60));
 
-    devLog.log('\n📈 Summary:');
-    devLog.log(`  Total Metrics: ${report.summary.totalMetrics}`);
-    devLog.log(`  Total Operations: ${report.summary.totalOperations}`);
-    devLog.log(`  Avg Operation Time: ${report.summary.averageOperationTime.toFixed(2)}ms`);
+    logger.debug('\n📈 Summary:');
+    logger.debug(`  Total Metrics: ${report.summary.totalMetrics}`);
+    logger.debug(`  Total Operations: ${report.summary.totalOperations}`);
+    logger.debug(`  Avg Operation Time: ${report.summary.averageOperationTime.toFixed(2)}ms`);
 
-    devLog.log('\n💾 Cache Performance:');
-    devLog.log(`  Total Requests: ${report.cache.totalRequests}`);
-    devLog.log(`  Cache Hits: ${report.cache.hits}`);
-    devLog.log(`  Cache Misses: ${report.cache.misses}`);
-    devLog.log(`  Hit Rate: ${report.cache.hitRate.toFixed(2)}%`);
+    logger.debug('\n💾 Cache Performance:');
+    logger.debug(`  Total Requests: ${report.cache.totalRequests}`);
+    logger.debug(`  Cache Hits: ${report.cache.hits}`);
+    logger.debug(`  Cache Misses: ${report.cache.misses}`);
+    logger.debug(`  Hit Rate: ${report.cache.hitRate.toFixed(2)}%`);
 
-    devLog.log('\n⏱️ Operation Metrics:');
+    logger.debug('\n⏱️ Operation Metrics:');
     Object.entries(report.metrics).forEach(([name, stats]) => {
-      devLog.log(`\n  ${name}:`);
-      devLog.log(`    Operations: ${stats.totalOperations}`);
-      devLog.log(`    Avg Duration: ${stats.averageDuration.toFixed(2)}ms`);
-      devLog.log(`    Min Duration: ${stats.minDuration.toFixed(2)}ms`);
-      devLog.log(`    Max Duration: ${stats.maxDuration.toFixed(2)}ms`);
+      logger.debug(`\n  ${name}:`);
+      logger.debug(`    Operations: ${stats.totalOperations}`);
+      logger.debug(`    Avg Duration: ${stats.averageDuration.toFixed(2)}ms`);
+      logger.debug(`    Min Duration: ${stats.minDuration.toFixed(2)}ms`);
+      logger.debug(`    Max Duration: ${stats.maxDuration.toFixed(2)}ms`);
     });
 
-    devLog.log('\n' + '═'.repeat(60));
+    logger.debug('\n' + '═'.repeat(60));
   }
 
   /**
@@ -327,7 +323,7 @@ class GamificationPerformanceMonitor {
     this.metrics.clear();
     this.activeTimers.clear();
     this.resetCacheMetrics();
-    devLog.log('🧹 [PERF] All metrics cleared');
+    logger.debug('🧹 [PERF] All metrics cleared');
   }
 
   /**
@@ -443,5 +439,5 @@ performanceMonitor.printReport();
 
 // Get recommendations
 const recommendations = performanceMonitor.getRecommendations();
-devLog.log(recommendations);
+logger.debug(recommendations);
 */

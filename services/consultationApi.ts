@@ -1,10 +1,5 @@
 import apiClient from '@/services/apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // TypeScript Interfaces
 interface CreateConsultationRequest {
@@ -57,24 +52,24 @@ const consultationApi = {
    */
   createConsultation: async (data: CreateConsultationRequest): Promise<ApiResponse<Consultation>> => {
     try {
-      devLog.log('[consultationApi] Creating consultation with data:', data);
-      devLog.log('[consultationApi] Store ID:', data.storeId);
-      devLog.log('[consultationApi] Consultation Type:', data.consultationType);
-      devLog.log('[consultationApi] Date:', data.consultationDate);
-      devLog.log('[consultationApi] Time:', data.consultationTime);
-      devLog.log('[consultationApi] Patient:', data.patientName);
+      logger.debug('[consultationApi] Creating consultation with data:', data);
+      logger.debug('[consultationApi] Store ID:', data.storeId);
+      logger.debug('[consultationApi] Consultation Type:', data.consultationType);
+      logger.debug('[consultationApi] Date:', data.consultationDate);
+      logger.debug('[consultationApi] Time:', data.consultationTime);
+      logger.debug('[consultationApi] Patient:', data.patientName);
 
       const response = await apiClient.post<any>('/consultations', data as any);
 
-      devLog.log('[consultationApi] Consultation created successfully:', response);
+      logger.debug('[consultationApi] Consultation created successfully:', response);
       if (response.success && response.data) {
-        devLog.log('[consultationApi] Consultation Number:', response.data.consultationNumber);
-        devLog.log('[consultationApi] Status:', response.data.status);
+        logger.debug('[consultationApi] Consultation Number:', response.data.consultationNumber);
+        logger.debug('[consultationApi] Status:', response.data.status);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('[consultationApi] Error creating consultation:', error);
+      logger.error('[consultationApi] Error creating consultation:', error);
       throw error;
     }
   },
@@ -85,19 +80,19 @@ const consultationApi = {
    */
   getUserConsultations: async (): Promise<ApiResponse<Consultation[]>> => {
     try {
-      devLog.log('[consultationApi] Fetching user consultations');
+      logger.debug('[consultationApi] Fetching user consultations');
 
       const response = await apiClient.get<any>('/consultations/user');
 
-      devLog.log('[consultationApi] User consultations fetched successfully');
+      logger.debug('[consultationApi] User consultations fetched successfully');
       if (response.success && response.data) {
-        devLog.log('[consultationApi] Total consultations:', response.data.length);
-        devLog.log('[consultationApi] Consultations:', response.data);
+        logger.debug('[consultationApi] Total consultations:', response.data.length);
+        logger.debug('[consultationApi] Consultations:', response.data);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('[consultationApi] Error fetching user consultations:', error);
+      logger.error('[consultationApi] Error fetching user consultations:', error);
       throw error;
     }
   },
@@ -109,21 +104,21 @@ const consultationApi = {
    */
   getConsultation: async (consultationId: string): Promise<ApiResponse<Consultation>> => {
     try {
-      devLog.log('[consultationApi] Fetching consultation with ID:', consultationId);
+      logger.debug('[consultationApi] Fetching consultation with ID:', consultationId);
 
       const response = await apiClient.get<any>(`/consultations/${consultationId}`);
 
-      devLog.log('[consultationApi] Consultation fetched successfully');
+      logger.debug('[consultationApi] Consultation fetched successfully');
       if (response.success && response.data) {
-        devLog.log('[consultationApi] Consultation Number:', response.data.consultationNumber);
-        devLog.log('[consultationApi] Status:', response.data.status);
-        devLog.log('[consultationApi] Patient:', response.data.patientName);
-        devLog.log('[consultationApi] Doctor:', response.data.doctorName || 'Not assigned');
+        logger.debug('[consultationApi] Consultation Number:', response.data.consultationNumber);
+        logger.debug('[consultationApi] Status:', response.data.status);
+        logger.debug('[consultationApi] Patient:', response.data.patientName);
+        logger.debug('[consultationApi] Doctor:', response.data.doctorName || 'Not assigned');
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('[consultationApi] Error fetching consultation:', error);
+      logger.error('[consultationApi] Error fetching consultation:', error);
       throw error;
     }
   },
@@ -135,19 +130,19 @@ const consultationApi = {
    */
   cancelConsultation: async (consultationId: string): Promise<ApiResponse<Consultation>> => {
     try {
-      devLog.log('[consultationApi] Cancelling consultation with ID:', consultationId);
+      logger.debug('[consultationApi] Cancelling consultation with ID:', consultationId);
 
       const response = await apiClient.put<any>(`/consultations/${consultationId}/cancel`, {});
 
-      devLog.log('[consultationApi] Consultation cancelled successfully');
+      logger.debug('[consultationApi] Consultation cancelled successfully');
       if (response.success && response.data) {
-        devLog.log('[consultationApi] Updated Status:', response.data.status);
-        devLog.log('[consultationApi] Consultation Number:', response.data.consultationNumber);
+        logger.debug('[consultationApi] Updated Status:', response.data.status);
+        logger.debug('[consultationApi] Consultation Number:', response.data.consultationNumber);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('[consultationApi] Error cancelling consultation:', error);
+      logger.error('[consultationApi] Error cancelling consultation:', error);
       throw error;
     }
   },
@@ -160,20 +155,20 @@ const consultationApi = {
    */
   checkAvailability: async (storeId: string, date: string): Promise<ApiResponse<any>> => {
     try {
-      devLog.log('[consultationApi] Checking availability');
-      devLog.log('[consultationApi] Store ID:', storeId);
-      devLog.log('[consultationApi] Date:', date);
+      logger.debug('[consultationApi] Checking availability');
+      logger.debug('[consultationApi] Store ID:', storeId);
+      logger.debug('[consultationApi] Date:', date);
 
       const response = await apiClient.get<any>(`/consultations/availability/${storeId}?date=${date}`);
 
-      devLog.log('[consultationApi] Availability data fetched successfully');
+      logger.debug('[consultationApi] Availability data fetched successfully');
       if (response.success && response.data) {
-        devLog.log('[consultationApi] Availability:', response.data);
+        logger.debug('[consultationApi] Availability:', response.data);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('[consultationApi] Error checking availability:', error);
+      logger.error('[consultationApi] Error checking availability:', error);
       throw error;
     }
   },

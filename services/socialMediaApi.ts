@@ -7,12 +7,7 @@ import apiClient from './apiClient';
 import fraudDetectionService from './fraudDetectionService';
 import instagramVerificationService from './instagramVerificationService';
 import securityService from './securityService';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -269,7 +264,7 @@ const retryWithBackoff = async <T>(
  * Security/fraud checks are non-blocking (backend validates)
  */
 export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostResponse> => {
-  devLog.log('🚀 [SOCIAL MEDIA API] Submitting post...');
+  logger.debug('🚀 [SOCIAL MEDIA API] Submitting post...');
 
   try {
     // ===== STEP 1: BASIC VALIDATION =====
@@ -289,20 +284,20 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
     let fraudCheckResult: any = null;
 
     try {
-      devLog.log('🔒 [SOCIAL MEDIA API] Running security check...');
+      logger.debug('🔒 [SOCIAL MEDIA API] Running security check...');
       securityCheckResult = await securityService.performSecurityCheck();
 
       if (securityCheckResult.isBlacklisted) {
-        devLog.error('🚫 Device is blacklisted');
+        logger.error('🚫 Device is blacklisted');
         throw new Error('Your device has been blocked. Please contact support.');
       }
 
       if (securityCheckResult.isSuspicious) {
-        devLog.warn('⚠️ Device flagged as suspicious. Trust score:', securityCheckResult.trustScore);
+        logger.warn('⚠️ Device flagged as suspicious. Trust score:', securityCheckResult.trustScore);
       }
-      devLog.log('✅ Security check completed');
+      logger.debug('✅ Security check completed');
     } catch (securityError: any) {
-      devLog.warn('⚠️ [SOCIAL MEDIA API] Security check failed (continuing):', securityError.message);
+      logger.warn('⚠️ [SOCIAL MEDIA API] Security check failed (continuing):', securityError.message);
       // Continue - backend will validate
     }
 
@@ -312,31 +307,31 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
     // user-visible error. Server-authoritative validation still runs on the backend;
     // this is defense-in-depth.
     try {
-      devLog.log('🔍 [SOCIAL MEDIA API] Running fraud detection...');
+      logger.debug('🔍 [SOCIAL MEDIA API] Running fraud detection...');
       fraudCheckResult = await fraudDetectionService.performFraudCheck(data.postUrl, {
         skipAccountVerification: true, // Skip account verification - it requires API endpoint
       });
 
       if (fraudCheckResult && !fraudCheckResult.allowed) {
-        devLog.warn('🚫 Fraud check blocked submission:', fraudCheckResult.blockedReasons);
+        logger.warn('🚫 Fraud check blocked submission:', fraudCheckResult.blockedReasons);
         const reason = fraudCheckResult.blockedReasons?.[0] || '';
         const userMsg = reason === 'FRAUD_CHECK_UNAVAILABLE'
           ? 'Verification unavailable — please try again.'
           : (fraudCheckResult.warnings?.[0] || reason || 'Submission blocked by fraud check.');
         throw new Error(userMsg);
       }
-      devLog.log('✅ Fraud check completed');
+      logger.debug('✅ Fraud check completed');
     } catch (fraudError: any) {
       // Re-throw if we raised it above — blocking decisions propagate to the UI.
       if (fraudError && fraudError.message) {
         throw fraudError;
       }
-      devLog.warn('⚠️ [SOCIAL MEDIA API] Fraud check failed:', fraudError);
+      logger.warn('⚠️ [SOCIAL MEDIA API] Fraud check failed:', fraudError);
       throw new Error('Verification unavailable — please try again.');
     }
 
     // ===== STEP 4: SUBMIT TO BACKEND =====
-    devLog.log('📤 [SOCIAL MEDIA API] Submitting to backend...');
+    logger.debug('📤 [SOCIAL MEDIA API] Submitting to backend...');
 
     // Sanitize inputs
     const sanitizedData: any = {
@@ -358,7 +353,7 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
       };
     }
 
-    devLog.log('📤 [SOCIAL MEDIA API] Request data:', JSON.stringify(sanitizedData, null, 2));
+    logger.debug('📤 [SOCIAL MEDIA API] Request data:', JSON.stringify(sanitizedData, null, 2));
 
     // Submit with retry mechanism
     const response = await retryWithBackoff(
@@ -367,8 +362,8 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
       1000 // initial delay in ms
     );
 
-    devLog.log('✅ [SOCIAL MEDIA API] Post submitted successfully');
-    devLog.log('📦 [SOCIAL MEDIA API] Response:', JSON.stringify(response, null, 2));
+    logger.debug('✅ [SOCIAL MEDIA API] Post submitted successfully');
+    logger.debug('📦 [SOCIAL MEDIA API] Response:', JSON.stringify(response, null, 2));
 
     // Validate response structure
     if (!response || !response.success) {
@@ -379,7 +374,7 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
     try {
       await fraudDetectionService.recordSubmission(data.postUrl);
     } catch (recordError) {
-      devLog.warn('⚠️ Failed to record submission in fraud system');
+      logger.warn('⚠️ Failed to record submission in fraud system');
     }
 
     // Return the data with safe fallbacks
@@ -387,8 +382,8 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
     return responseData as SubmitPostResponse;
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('\n❌❌❌ [SOCIAL MEDIA API] SUBMISSION FAILED ❌❌❌');
-    devLog.error('Error:', errorMsg);
+    logger.error('\n❌❌❌ [SOCIAL MEDIA API] SUBMISSION FAILED ❌❌❌');
+    logger.error('Error:', errorMsg);
 
     // Re-throw with formatted error
     const formattedError = new Error(errorMsg);
@@ -402,7 +397,7 @@ export const submitPost = async (data: SubmitPostRequest): Promise<SubmitPostRes
  * Includes retry mechanism and default fallback values
  */
 export const getUserEarnings = async (): Promise<EarningsData> => {
-  devLog.log('📊 [SOCIAL MEDIA API] Fetching user earnings...');
+  logger.debug('📊 [SOCIAL MEDIA API] Fetching user earnings...');
   try {
     const response = await retryWithBackoff(
       async () => await apiClient.get<any>('/social-media/earnings'),
@@ -414,7 +409,7 @@ export const getUserEarnings = async (): Promise<EarningsData> => {
     const earningsData: EarningsData = (response.success && response.data ? response.data : response.data) as EarningsData;
 
     if (!earningsData) {
-      devLog.warn('⚠️ [SOCIAL MEDIA API] No earnings data in response, returning defaults');
+      logger.warn('⚠️ [SOCIAL MEDIA API] No earnings data in response, returning defaults');
       return {
         totalEarned: 0,
         pendingAmount: 0,
@@ -432,10 +427,10 @@ export const getUserEarnings = async (): Promise<EarningsData> => {
     return earningsData;
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('❌ [SOCIAL MEDIA API] Failed to fetch earnings:', errorMsg);
+    logger.error('❌ [SOCIAL MEDIA API] Failed to fetch earnings:', errorMsg);
 
     // Return default values instead of throwing to prevent UI breaks
-    devLog.warn('⚠️ Returning default earnings values');
+    logger.warn('⚠️ Returning default earnings values');
     return {
       totalEarned: 0,
       pendingAmount: 0,
@@ -456,7 +451,7 @@ export const getUserEarnings = async (): Promise<EarningsData> => {
  * Includes pagination, filtering, and retry mechanism
  */
 export const getUserPosts = async (params: GetPostsParams = {}): Promise<GetPostsResponse> => {
-  devLog.log('📝 [SOCIAL MEDIA API] Fetching user posts...', params);
+  logger.debug('📝 [SOCIAL MEDIA API] Fetching user posts...', params);
   try {
     // Validate pagination params
     const validatedParams = {
@@ -475,7 +470,7 @@ export const getUserPosts = async (params: GetPostsParams = {}): Promise<GetPost
     const postsData: GetPostsResponse = (response.success && response.data ? response.data : response.data) as GetPostsResponse;
 
     if (!postsData || !postsData.posts) {
-      devLog.warn('⚠️ [SOCIAL MEDIA API] No posts data in response, returning empty array');
+      logger.warn('⚠️ [SOCIAL MEDIA API] No posts data in response, returning empty array');
       return {
         posts: [],
         pagination: {
@@ -492,10 +487,10 @@ export const getUserPosts = async (params: GetPostsParams = {}): Promise<GetPost
     return postsData;
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('❌ [SOCIAL MEDIA API] Failed to fetch posts:', errorMsg);
+    logger.error('❌ [SOCIAL MEDIA API] Failed to fetch posts:', errorMsg);
 
     // Return empty array instead of throwing to prevent UI breaks
-    devLog.warn('⚠️ Returning empty posts array');
+    logger.warn('⚠️ Returning empty posts array');
     return {
       posts: [],
       pagination: {
@@ -515,7 +510,7 @@ export const getUserPosts = async (params: GetPostsParams = {}): Promise<GetPost
  * Includes validation and retry mechanism
  */
 export const getPostById = async (postId: string): Promise<SocialPost> => {
-  devLog.log('🔍 [SOCIAL MEDIA API] Fetching post by ID:', postId);
+  logger.debug('🔍 [SOCIAL MEDIA API] Fetching post by ID:', postId);
   try {
     if (!postId || typeof postId !== 'string' || postId.trim().length === 0) {
       throw new Error('Invalid post ID');
@@ -530,7 +525,7 @@ export const getPostById = async (postId: string): Promise<SocialPost> => {
     return response.data as SocialPost;
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('❌ [SOCIAL MEDIA API] Failed to fetch post:', errorMsg);
+    logger.error('❌ [SOCIAL MEDIA API] Failed to fetch post:', errorMsg);
     throw new Error(errorMsg);
   }
 };
@@ -540,17 +535,17 @@ export const getPostById = async (postId: string): Promise<SocialPost> => {
  * Only pending posts can be deleted
  */
 export const deletePost = async (postId: string): Promise<void> => {
-  devLog.log('🗑️ [SOCIAL MEDIA API] Deleting post:', postId);
+  logger.debug('🗑️ [SOCIAL MEDIA API] Deleting post:', postId);
   try {
     if (!postId || typeof postId !== 'string' || postId.trim().length === 0) {
       throw new Error('Invalid post ID');
     }
 
     await apiClient.delete<any>(`/social-media/posts/${postId}`);
-    devLog.log('✅ Post deleted successfully');
+    logger.debug('✅ Post deleted successfully');
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('❌ [SOCIAL MEDIA API] Failed to delete post:', errorMsg);
+    logger.error('❌ [SOCIAL MEDIA API] Failed to delete post:', errorMsg);
     throw new Error(errorMsg);
   }
 };
@@ -560,7 +555,7 @@ export const deletePost = async (postId: string): Promise<void> => {
  * Includes retry mechanism and fallback values
  */
 export const getPlatformStats = async (): Promise<{ stats: PlatformStats[] }> => {
-  devLog.log('📈 [SOCIAL MEDIA API] Fetching platform stats...');
+  logger.debug('📈 [SOCIAL MEDIA API] Fetching platform stats...');
   try {
     const response = await retryWithBackoff(
       async () => await apiClient.get<any>('/social-media/stats'),
@@ -571,10 +566,10 @@ export const getPlatformStats = async (): Promise<{ stats: PlatformStats[] }> =>
     return response.data as { stats: PlatformStats[] };
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('❌ [SOCIAL MEDIA API] Failed to fetch platform stats:', errorMsg);
+    logger.error('❌ [SOCIAL MEDIA API] Failed to fetch platform stats:', errorMsg);
 
     // Return empty stats instead of throwing
-    devLog.warn('⚠️ Returning empty stats array');
+    logger.warn('⚠️ Returning empty stats array');
     return { stats: [] };
   }
 };
@@ -584,7 +579,7 @@ export const getPlatformStats = async (): Promise<{ stats: PlatformStats[] }> =>
  * Builds FormData and uploads to backend
  */
 export const submitPostWithMedia = async (data: SubmitPostWithMediaRequest): Promise<SubmitPostResponse> => {
-  devLog.log('🚀 [SOCIAL MEDIA API] Submitting post with media...');
+  logger.debug('🚀 [SOCIAL MEDIA API] Submitting post with media...');
 
   try {
     const validPlatforms = ['instagram', 'facebook', 'twitter', 'tiktok'];
@@ -629,10 +624,10 @@ export const submitPostWithMedia = async (data: SubmitPostWithMediaRequest): Pro
       }));
     } catch (securityError: any) {
       if (securityError.message.includes('blocked')) throw securityError;
-      devLog.warn('⚠️ [SOCIAL MEDIA API] Security check failed (continuing):', securityError.message);
+      logger.warn('⚠️ [SOCIAL MEDIA API] Security check failed (continuing):', securityError.message);
     }
 
-    devLog.log('📤 [SOCIAL MEDIA API] Uploading media files...');
+    logger.debug('📤 [SOCIAL MEDIA API] Uploading media files...');
 
     const response = await retryWithBackoff(
       async () => await apiClient.uploadFile('/social-media/submit-media', formData),
@@ -640,7 +635,7 @@ export const submitPostWithMedia = async (data: SubmitPostWithMediaRequest): Pro
       2000
     );
 
-    devLog.log('✅ [SOCIAL MEDIA API] Post with media submitted successfully');
+    logger.debug('✅ [SOCIAL MEDIA API] Post with media submitted successfully');
 
     if (!response || !response.success) {
       throw new Error(response?.message || response?.error || 'Submission failed');
@@ -650,7 +645,7 @@ export const submitPostWithMedia = async (data: SubmitPostWithMediaRequest): Pro
     return responseData as SubmitPostResponse;
   } catch (error: any) {
     const errorMsg = formatErrorMessage(error);
-    devLog.error('❌ [SOCIAL MEDIA API] MEDIA SUBMISSION FAILED:', errorMsg);
+    logger.error('❌ [SOCIAL MEDIA API] MEDIA SUBMISSION FAILED:', errorMsg);
     const formattedError = new Error(errorMsg);
     (formattedError as any).response = error.response;
     throw formattedError;

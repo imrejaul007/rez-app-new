@@ -12,12 +12,7 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 import type { Article } from '../types/article.types';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Types & Interfaces
@@ -162,10 +157,10 @@ class ArticlesService {
    */
   async getArticles(params?: ArticlesQuery): Promise<ApiResponse<ArticlesResponse>> {
     try {
-      devLog.log('📰 [Articles API] Getting articles with params:', params);
+      logger.debug('📰 [Articles API] Getting articles with params:', params);
       return await apiClient.get<any>('/articles', params as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error getting articles:', error);
+      logger.error('❌ [Articles API] Error getting articles:', error);
       throw error;
     }
   }
@@ -183,10 +178,10 @@ class ArticlesService {
    */
   async getArticleById(articleId: string): Promise<ApiResponse<Article>> {
     try {
-      devLog.log(`📰 [Articles API] Getting article by ID: ${articleId}`);
+      logger.debug(`📰 [Articles API] Getting article by ID: ${articleId}`);
       return await apiClient.get<any>(`/articles/${articleId}`);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error getting article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error getting article ${articleId}:`, error);
       throw error;
     }
   }
@@ -212,10 +207,10 @@ class ArticlesService {
     params?: Omit<ArticlesQuery, 'category'>
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
-      devLog.log(`📰 [Articles API] Getting articles by category: ${category}`);
+      logger.debug(`📰 [Articles API] Getting articles by category: ${category}`);
       return await apiClient.get<any>(`/articles/category/${category}`, params as any);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error getting articles by category ${category}:`, error);
+      logger.error(`❌ [Articles API] Error getting articles by category ${category}:`, error);
       throw error;
     }
   }
@@ -240,10 +235,10 @@ class ArticlesService {
     params?: Omit<ArticlesQuery, 'author'>
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
-      devLog.log(`📰 [Articles API] Getting articles by author: ${authorId}`);
+      logger.debug(`📰 [Articles API] Getting articles by author: ${authorId}`);
       return await apiClient.get<any>(`/articles/author/${authorId}`, params as any);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error getting articles by author ${authorId}:`, error);
+      logger.error(`❌ [Articles API] Error getting articles by author ${authorId}:`, error);
       throw error;
     }
   }
@@ -265,10 +260,10 @@ class ArticlesService {
     timeframe: '1d' | '7d' | '30d' = '7d'
   ): Promise<ApiResponse<Article[]>> {
     try {
-      devLog.log(`📰 [Articles API] Getting trending articles (limit: ${limit}, timeframe: ${timeframe})`);
+      logger.debug(`📰 [Articles API] Getting trending articles (limit: ${limit}, timeframe: ${timeframe})`);
       return await apiClient.get<any>('/articles/trending', { limit, timeframe } as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error getting trending articles:', error);
+      logger.error('❌ [Articles API] Error getting trending articles:', error);
       throw error;
     }
   }
@@ -286,10 +281,10 @@ class ArticlesService {
    */
   async getFeaturedArticles(limit: number = 10): Promise<ApiResponse<Article[]>> {
     try {
-      devLog.log(`📰 [Articles API] Getting featured articles (limit: ${limit})`);
+      logger.debug(`📰 [Articles API] Getting featured articles (limit: ${limit})`);
       return await apiClient.get<any>('/articles/featured', { limit } as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error getting featured articles:', error);
+      logger.error('❌ [Articles API] Error getting featured articles:', error);
       throw error;
     }
   }
@@ -315,13 +310,13 @@ class ArticlesService {
     filters?: Omit<ArticlesQuery, 'search'>
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
-      devLog.log(`📰 [Articles API] Searching articles with query: "${query}"`);
+      logger.debug(`📰 [Articles API] Searching articles with query: "${query}"`);
       return await apiClient.get<any>('/articles/search', {
         search: query,
         ...filters
       } as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error searching articles:', error);
+      logger.error('❌ [Articles API] Error searching articles:', error);
       throw error;
     }
   }
@@ -345,7 +340,7 @@ class ArticlesService {
    */
   async createArticle(articleData: ArticleInput): Promise<ApiResponse<Article>> {
     try {
-      devLog.log('📰 [Articles API] Creating new article:', articleData.title);
+      logger.debug('📰 [Articles API] Creating new article:', articleData.title);
 
       // If cover image is a file, use multipart form data
       if (articleData.coverImage instanceof File) {
@@ -368,7 +363,7 @@ class ArticlesService {
       // Otherwise, use regular JSON post
       return await apiClient.post<any>('/articles', articleData as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error creating article:', error);
+      logger.error('❌ [Articles API] Error creating article:', error);
       throw error;
     }
   }
@@ -393,7 +388,7 @@ class ArticlesService {
     articleData: Partial<ArticleInput>
   ): Promise<ApiResponse<Article>> {
     try {
-      devLog.log(`📰 [Articles API] Updating article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Updating article: ${articleId}`);
 
       // If cover image is a file, use multipart form data
       if (articleData.coverImage instanceof File) {
@@ -416,7 +411,7 @@ class ArticlesService {
       // Otherwise, use PATCH
       return await apiClient.patch<any>(`/articles/${articleId}`, articleData as any);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error updating article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error updating article ${articleId}:`, error);
       throw error;
     }
   }
@@ -434,10 +429,10 @@ class ArticlesService {
    */
   async deleteArticle(articleId: string): Promise<ApiResponse<{ message: string }>> {
     try {
-      devLog.log(`📰 [Articles API] Deleting article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Deleting article: ${articleId}`);
       return await apiClient.delete<any>(`/articles/${articleId}`);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error deleting article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error deleting article ${articleId}:`, error);
       throw error;
     }
   }
@@ -451,18 +446,18 @@ class ArticlesService {
    * @example
    * ```typescript
    * const response = await articlesApi.toggleArticleLike('article-123');
-   * devLog.log(response.data.liked); // true or false
-   * devLog.log(response.data.likeCount); // total likes
+   * logger.debug(response.data.liked); // true or false
+   * logger.debug(response.data.likeCount); // total likes
    * ```
    */
   async toggleArticleLike(
     articleId: string
   ): Promise<ApiResponse<{ liked: boolean; likeCount: number }>> {
     try {
-      devLog.log(`📰 [Articles API] Toggling like for article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Toggling like for article: ${articleId}`);
       return await apiClient.post<any>(`/articles/${articleId}/like`);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error toggling like for article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error toggling like for article ${articleId}:`, error);
       throw error;
     }
   }
@@ -476,17 +471,17 @@ class ArticlesService {
    * @example
    * ```typescript
    * const response = await articlesApi.toggleArticleBookmark('article-123');
-   * devLog.log(response.data.bookmarked); // true or false
+   * logger.debug(response.data.bookmarked); // true or false
    * ```
    */
   async toggleArticleBookmark(
     articleId: string
   ): Promise<ApiResponse<{ bookmarked: boolean }>> {
     try {
-      devLog.log(`📰 [Articles API] Toggling bookmark for article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Toggling bookmark for article: ${articleId}`);
       return await apiClient.post<any>(`/articles/${articleId}/bookmark`);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error toggling bookmark for article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error toggling bookmark for article ${articleId}:`, error);
       throw error;
     }
   }
@@ -508,10 +503,10 @@ class ArticlesService {
     limit: number = 20
   ): Promise<ApiResponse<ArticlesResponse>> {
     try {
-      devLog.log('📰 [Articles API] Getting bookmarked articles');
+      logger.debug('📰 [Articles API] Getting bookmarked articles');
       return await apiClient.get<any>('/articles/bookmarks', { page, limit } as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error getting bookmarked articles:', error);
+      logger.error('❌ [Articles API] Error getting bookmarked articles:', error);
       throw error;
     }
   }
@@ -526,7 +521,7 @@ class ArticlesService {
    * @example
    * ```typescript
    * const response = await articlesApi.shareArticle('article-123', 'facebook');
-   * devLog.log(response.data.shareCount);
+   * logger.debug(response.data.shareCount);
    * ```
    */
   async shareArticle(
@@ -534,10 +529,10 @@ class ArticlesService {
     platform?: 'facebook' | 'twitter' | 'whatsapp' | 'copy_link'
   ): Promise<ApiResponse<{ shareCount: number; shareUrl: string }>> {
     try {
-      devLog.log(`📰 [Articles API] Sharing article: ${articleId} on ${platform || 'unknown'}`);
+      logger.debug(`📰 [Articles API] Sharing article: ${articleId} on ${platform || 'unknown'}`);
       return await apiClient.post<any>(`/articles/${articleId}/share`, { platform });
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error sharing article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error sharing article ${articleId}:`, error);
       throw error;
     }
   }
@@ -559,10 +554,10 @@ class ArticlesService {
     readTime?: number
   ): Promise<ApiResponse<void>> {
     try {
-      devLog.log(`📰 [Articles API] Recording view for article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Recording view for article: ${articleId}`);
       return await apiClient.post<any>(`/articles/${articleId}/view`, { readTime });
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error recording view for article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error recording view for article ${articleId}:`, error);
       throw error;
     }
   }
@@ -582,10 +577,10 @@ class ArticlesService {
     articleId: string
   ): Promise<ApiResponse<ArticleEngagement>> {
     try {
-      devLog.log(`📰 [Articles API] Getting engagement for article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Getting engagement for article: ${articleId}`);
       return await apiClient.get<any>(`/articles/${articleId}/engagement`);
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error getting engagement for article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error getting engagement for article ${articleId}:`, error);
       throw error;
     }
   }
@@ -619,14 +614,14 @@ class ArticlesService {
     };
   }>> {
     try {
-      devLog.log(`📰 [Articles API] Getting comments for article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Getting comments for article: ${articleId}`);
       return await apiClient.get<any>(`/articles/${articleId}/comments`, {
         page,
         limit,
         sort
       });
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error getting comments for article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error getting comments for article ${articleId}:`, error);
       throw error;
     }
   }
@@ -650,13 +645,13 @@ class ArticlesService {
     parentId?: string
   ): Promise<ApiResponse<ArticleComment>> {
     try {
-      devLog.log(`📰 [Articles API] Adding comment to article: ${articleId}`);
+      logger.debug(`📰 [Articles API] Adding comment to article: ${articleId}`);
       return await apiClient.post<any>(`/articles/${articleId}/comments`, {
         content,
         parentId
       });
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error adding comment to article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error adding comment to article ${articleId}:`, error);
       throw error;
     }
   }
@@ -678,10 +673,10 @@ class ArticlesService {
     limit: number = 5
   ): Promise<ApiResponse<Article[]>> {
     try {
-      devLog.log(`📰 [Articles API] Getting related articles for: ${articleId}`);
+      logger.debug(`📰 [Articles API] Getting related articles for: ${articleId}`);
       return await apiClient.get<any>(`/articles/${articleId}/related`, { limit });
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error getting related articles for ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error getting related articles for ${articleId}:`, error);
       throw error;
     }
   }
@@ -701,10 +696,10 @@ class ArticlesService {
     limit: number = 10
   ): Promise<ApiResponse<Article[]>> {
     try {
-      devLog.log('📰 [Articles API] Getting recommended articles');
+      logger.debug('📰 [Articles API] Getting recommended articles');
       return await apiClient.get<any>('/articles/recommendations', { limit } as any);
     } catch (error) {
-      devLog.error('❌ [Articles API] Error getting recommended articles:', error);
+      logger.error('❌ [Articles API] Error getting recommended articles:', error);
       throw error;
     }
   }
@@ -728,10 +723,10 @@ class ArticlesService {
     articleCount: number;
   }>>> {
     try {
-      devLog.log('📰 [Articles API] Getting article categories');
+      logger.debug('📰 [Articles API] Getting article categories');
       return await apiClient.get<any>('/articles/categories');
     } catch (error) {
-      devLog.error('❌ [Articles API] Error getting article categories:', error);
+      logger.error('❌ [Articles API] Error getting article categories:', error);
       throw error;
     }
   }
@@ -759,13 +754,13 @@ class ArticlesService {
     details?: string
   ): Promise<ApiResponse<{ message: string }>> {
     try {
-      devLog.log(`📰 [Articles API] Reporting article: ${articleId} for ${reason}`);
+      logger.debug(`📰 [Articles API] Reporting article: ${articleId} for ${reason}`);
       return await apiClient.post<any>(`/articles/${articleId}/report`, {
         reason,
         details
       });
     } catch (error) {
-      devLog.error(`❌ [Articles API] Error reporting article ${articleId}:`, error);
+      logger.error(`❌ [Articles API] Error reporting article ${articleId}:`, error);
       throw error;
     }
   }

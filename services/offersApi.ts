@@ -33,12 +33,7 @@ import { Offer, OfferCategory } from '@/types/offers.types';
 import { offersPageData } from '@/data/offersData';
 import { withRetry, createErrorResponse, logApiRequest, logApiResponse, StandardApiResponse } from '@/utils/apiUtils';
 import mainApiClient from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // API Configuration
 const API_CONFIG: ApiConfig = {
@@ -130,32 +125,32 @@ const userCache = new SimpleCache<ApiResponse<any>>(API_CONFIG.cache.userCache.m
  */
 function validateOffer(offer: any): boolean {
   if (!offer || typeof offer !== 'object') {
-    devLog.warn('[OFFERS API] Invalid offer data: not an object');
+    logger.warn('[OFFERS API] Invalid offer data: not an object');
     return false;
   }
 
   if (!offer.id || typeof offer.id !== 'string') {
-    devLog.warn('[OFFERS API] Offer missing valid id field');
+    logger.warn('[OFFERS API] Offer missing valid id field');
     return false;
   }
 
   if (!offer.title || typeof offer.title !== 'string') {
-    devLog.warn('[OFFERS API] Offer missing valid title field');
+    logger.warn('[OFFERS API] Offer missing valid title field');
     return false;
   }
 
   if (typeof offer.cashbackPercentage !== 'number' || offer.cashbackPercentage < 0) {
-    devLog.warn('[OFFERS API] Offer has invalid cashback percentage');
+    logger.warn('[OFFERS API] Offer has invalid cashback percentage');
     return false;
   }
 
   if (!offer.category || typeof offer.category !== 'string') {
-    devLog.warn('[OFFERS API] Offer missing category');
+    logger.warn('[OFFERS API] Offer missing category');
     return false;
   }
 
   if (!offer.store || typeof offer.store !== 'object' || !offer.store.name) {
-    devLog.warn('[OFFERS API] Offer missing valid store information');
+    logger.warn('[OFFERS API] Offer missing valid store information');
     return false;
   }
 
@@ -168,7 +163,7 @@ function validateOffer(offer: any): boolean {
  */
 function validateOfferArray(offers: any[]): Offer[] {
   if (!Array.isArray(offers)) {
-    devLog.warn('[OFFERS API] Expected array of offers, got:', typeof offers);
+    logger.warn('[OFFERS API] Expected array of offers, got:', typeof offers);
     return [];
   }
 
@@ -184,7 +179,7 @@ function validateOfferArray(offers: any[]): Offer[] {
   }
 
   if (invalidCount > 0) {
-    devLog.warn(`[OFFERS API] Filtered out ${invalidCount} invalid offers from response`);
+    logger.warn(`[OFFERS API] Filtered out ${invalidCount} invalid offers from response`);
   }
 
   return validOffers;
@@ -199,7 +194,7 @@ function validateCategory(category: any): boolean {
   }
 
   if (!category.id || !category.name) {
-    devLog.warn('[OFFERS API] Category missing required fields');
+    logger.warn('[OFFERS API] Category missing required fields');
     return false;
   }
 
@@ -497,7 +492,7 @@ class MockOffersApi implements OffersApiEndpoints {
       const cacheKey = `offers_${JSON.stringify(params)}`;
       const cached = offersCache.get(cacheKey);
       if (cached) {
-        devLog.log('[OFFERS API] Returning cached offers');
+        logger.debug('[OFFERS API] Returning cached offers');
         logApiResponse('GET', '/api/offers', cached, Date.now() - startTime);
         return cached;
       }
@@ -595,7 +590,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching offers:', error);
+      logger.error('[OFFERS API] Error fetching offers:', error);
       return createErrorResponse(error, 'Failed to load offers. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -656,7 +651,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching offer details:', error);
+      logger.error('[OFFERS API] Error fetching offer details:', error);
       return createErrorResponse(error, 'Failed to load offer details. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -724,7 +719,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error searching offers:', error);
+      logger.error('[OFFERS API] Error searching offers:', error);
       return createErrorResponse(error, 'Failed to search offers. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -740,7 +735,7 @@ class MockOffersApi implements OffersApiEndpoints {
       // Check cache first
       const cached = categoriesCache.get('categories');
       if (cached) {
-        devLog.log('[OFFERS API] Returning cached categories');
+        logger.debug('[OFFERS API] Returning cached categories');
         logApiResponse('GET', '/api/categories', cached, Date.now() - startTime);
         return cached;
       }
@@ -751,7 +746,7 @@ class MockOffersApi implements OffersApiEndpoints {
       const validCategories = categories.filter(validateCategory);
 
       if (validCategories.length < categories.length) {
-        devLog.warn(`[OFFERS API] Filtered out ${categories.length - validCategories.length} invalid categories`);
+        logger.warn(`[OFFERS API] Filtered out ${categories.length - validCategories.length} invalid categories`);
       }
 
       const response: ApiResponse<OfferCategory[]> = {
@@ -767,7 +762,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching categories:', error);
+      logger.error('[OFFERS API] Error fetching categories:', error);
       return createErrorResponse(error, 'Failed to load categories. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -782,7 +777,7 @@ class MockOffersApi implements OffersApiEndpoints {
       const categoryParams = { ...params, category: categoryId };
       return this.getOffers(categoryParams);
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching offers by category:', error);
+      logger.error('[OFFERS API] Error fetching offers by category:', error);
       return createErrorResponse(error, 'Failed to load offers for this category. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -820,7 +815,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching user favorites:', error);
+      logger.error('[OFFERS API] Error fetching user favorites:', error);
       return createErrorResponse(error, 'Failed to load favorites. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -850,7 +845,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error adding to favorites:', error);
+      logger.error('[OFFERS API] Error adding to favorites:', error);
       return createErrorResponse(error, 'Failed to add offer to favorites. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -880,7 +875,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error removing from favorites:', error);
+      logger.error('[OFFERS API] Error removing from favorites:', error);
       return createErrorResponse(error, 'Failed to remove offer from favorites. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -891,7 +886,7 @@ class MockOffersApi implements OffersApiEndpoints {
       const offerIdValidation = validateOfferId(params.offerId);
       if (!offerIdValidation.valid) {
         // For analytics, don't fail but log warning
-        devLog.warn('[OFFERS API] Invalid offer ID for tracking:', params.offerId);
+        logger.warn('[OFFERS API] Invalid offer ID for tracking:', params.offerId);
       }
 
       logApiRequest('POST', '/api/analytics/offer-view', { offerId: params.offerId });
@@ -904,7 +899,7 @@ class MockOffersApi implements OffersApiEndpoints {
       };
     } catch (error: any) {
       // For analytics, don't fail the operation
-      devLog.warn('[OFFERS API] Error tracking offer view:', error);
+      logger.warn('[OFFERS API] Error tracking offer view:', error);
       return {
         success: true,
         data: { success: false },
@@ -949,7 +944,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error redeeming offer:', error);
+      logger.error('[OFFERS API] Error redeeming offer:', error);
       return createErrorResponse(error, 'Failed to redeem offer. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -987,7 +982,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching recommended offers:', error);
+      logger.error('[OFFERS API] Error fetching recommended offers:', error);
       return createErrorResponse(error, 'Failed to load recommendations. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -1017,7 +1012,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching trending offers:', error);
+      logger.error('[OFFERS API] Error fetching trending offers:', error);
       return createErrorResponse(error, 'Failed to load trending offers. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -1061,7 +1056,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching store promotions:', error);
+      logger.error('[OFFERS API] Error fetching store promotions:', error);
       return createErrorResponse(error, 'Failed to load store promotions. Please try again.') as StandardApiResponse<any>;
     }
   }
@@ -1123,7 +1118,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       return response;
     } catch (error: any) {
-      devLog.error('[OFFERS API] Error fetching expiring deals:', error);
+      logger.error('[OFFERS API] Error fetching expiring deals:', error);
       return createErrorResponse(error, 'Failed to load expiring deals. Please try again.') as StandardApiResponse<any>;
     }
   }

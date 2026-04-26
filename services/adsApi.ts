@@ -4,12 +4,7 @@
  */
 
 import apiClient from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 export interface AdUnit {
   _id: string;
@@ -29,18 +24,18 @@ class AdsService {
    */
   async fetchAd(placement: string): Promise<AdUnit | null> {
     try {
-      devLog.log(`[ADS API] Fetching ad for placement: ${placement}`);
+      logger.debug(`[ADS API] Fetching ad for placement: ${placement}`);
 
       const response = await apiClient.get<AdUnit>('/ads/serve', { placement });
 
       if (response.success && response.data) {
-        devLog.log(`[ADS API] Got ad: ${response.data._id}`);
+        logger.debug(`[ADS API] Got ad: ${response.data._id}`);
         return response.data;
       }
 
       return null;
     } catch (error: any) {
-      devLog.warn('[ADS API] fetchAd failed:', error?.message);
+      logger.warn('[ADS API] fetchAd failed:', error?.message);
       return null;
     }
   }
@@ -50,10 +45,10 @@ class AdsService {
    */
   async trackImpression(adId: string): Promise<void> {
     try {
-      devLog.log(`[ADS API] Tracking impression for ad: ${adId}`);
+      logger.debug(`[ADS API] Tracking impression for ad: ${adId}`);
       await apiClient.post('/ads/impression', { adId });
     } catch (error: any) {
-      devLog.warn('[ADS API] trackImpression failed (non-critical):', error?.message);
+      logger.warn('[ADS API] trackImpression failed (non-critical):', error?.message);
     }
   }
 
@@ -62,10 +57,10 @@ class AdsService {
    */
   async trackClick(adId: string): Promise<void> {
     try {
-      devLog.log(`[ADS API] Tracking click for ad: ${adId}`);
+      logger.debug(`[ADS API] Tracking click for ad: ${adId}`);
       await apiClient.post('/ads/click', { adId });
     } catch (error: any) {
-      devLog.warn('[ADS API] trackClick failed (non-critical):', error?.message);
+      logger.warn('[ADS API] trackClick failed (non-critical):', error?.message);
     }
   }
 }

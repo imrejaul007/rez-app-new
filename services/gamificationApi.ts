@@ -3,12 +3,7 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 import { colors } from '@/constants/theme';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================
 // TYPES
@@ -257,7 +252,7 @@ class GamificationApiService {
       }
       return { success: false, error: 'Failed to load config' };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching checkin config:', error);
+      logger.error('[GAMIFICATION API] Error fetching checkin config:', error);
       // NA-HIGH-08 FIX: Return empty rewards instead of hardcoded fallback.
       // Hardcoded values become stale when server updates its config.
       // UI will show "Rewards unavailable" when dayRewards is empty.
@@ -308,7 +303,7 @@ class GamificationApiService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching streak:', error);
+      logger.error('[GAMIFICATION API] Error fetching streak:', error);
       return { success: false, error: error.message };
     }
   }
@@ -340,7 +335,7 @@ class GamificationApiService {
         error: response.error || 'Check-in failed',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error performing check-in:', error);
+      logger.error('[GAMIFICATION API] Error performing check-in:', error);
       return { success: false, error: error.message };
     }
   }
@@ -411,7 +406,7 @@ class GamificationApiService {
         error: streakResponse.error || 'Unable to load check-in calendar',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching calendar:', error);
+      logger.error('[GAMIFICATION API] Error fetching calendar:', error);
       return { success: false, error: error.message };
     }
   }
@@ -452,7 +447,7 @@ class GamificationApiService {
         error: response.error || 'Unable to load spin wheel data',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching spin wheel data:', error);
+      logger.error('[GAMIFICATION API] Error fetching spin wheel data:', error);
       return { success: false, error: error.message };
     }
   }
@@ -481,7 +476,7 @@ class GamificationApiService {
 
       return { success: false, error: response.error || 'Unable to check eligibility' };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching spin eligibility:', error);
+      logger.error('[GAMIFICATION API] Error fetching spin eligibility:', error);
       return { success: false, error: error.message };
     }
   }
@@ -521,7 +516,7 @@ class GamificationApiService {
         error: response.error || 'Spin failed',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error executing spin:', error);
+      logger.error('[GAMIFICATION API] Error executing spin:', error);
       return { success: false, error: error.message };
     }
   }
@@ -561,7 +556,7 @@ class GamificationApiService {
 
       return { success: false, error: response.error || 'Unable to fetch spin history' };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching spin history:', error);
+      logger.error('[GAMIFICATION API] Error fetching spin history:', error);
       return { success: false, error: error.message };
     }
   }
@@ -650,7 +645,7 @@ class GamificationApiService {
         data: { entries: [] },
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching leaderboard:', error);
+      logger.error('[GAMIFICATION API] Error fetching leaderboard:', error);
       return { success: false, error: error.message };
     }
   }
@@ -672,7 +667,7 @@ class GamificationApiService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching stats:', error);
+      logger.error('[GAMIFICATION API] Error fetching stats:', error);
       return { success: false, error: error.message };
     }
   }
@@ -696,7 +691,7 @@ class GamificationApiService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching coin balance:', error);
+      logger.error('[GAMIFICATION API] Error fetching coin balance:', error);
       return { success: false, error: error.message };
     }
   }
@@ -730,7 +725,7 @@ class GamificationApiService {
         error: response.error || 'Unable to load affiliate stats',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching affiliate stats:', error);
+      logger.error('[GAMIFICATION API] Error fetching affiliate stats:', error);
       return { success: false, error: error.message };
     }
   }
@@ -764,7 +759,7 @@ class GamificationApiService {
         data: [],
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching promotional posters:', error);
+      logger.error('[GAMIFICATION API] Error fetching promotional posters:', error);
       return { success: false, error: error.message };
     }
   }
@@ -797,7 +792,7 @@ class GamificationApiService {
 
       return { success: true, data: [] };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching submissions:', error);
+      logger.error('[GAMIFICATION API] Error fetching submissions:', error);
       return { success: true, data: [] };
     }
   }
@@ -838,7 +833,7 @@ class GamificationApiService {
         error: response.error || 'Failed to submit post',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error submitting post:', error);
+      logger.error('[GAMIFICATION API] Error submitting post:', error);
       return { success: false, error: error.message };
     }
   }
@@ -868,7 +863,7 @@ class GamificationApiService {
         error: response.error || 'Unable to load streak bonuses',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching streak bonuses:', error);
+      logger.error('[GAMIFICATION API] Error fetching streak bonuses:', error);
       return { success: false, error: error.message };
     }
   }
@@ -897,7 +892,7 @@ class GamificationApiService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching reviewable items:', error);
+      logger.error('[GAMIFICATION API] Error fetching reviewable items:', error);
       return { success: false, error: error.message };
     }
   }
@@ -946,7 +941,7 @@ class GamificationApiService {
         },
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching bonus opportunities:', error);
+      logger.error('[GAMIFICATION API] Error fetching bonus opportunities:', error);
       return { success: false, error: error.message };
     }
   }
@@ -964,7 +959,7 @@ class GamificationApiService {
 
       return response as any;
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error fetching play and earn data:', error);
+      logger.error('[GAMIFICATION API] Error fetching play and earn data:', error);
       return { success: false, error: error.message };
     }
   }
@@ -1005,7 +1000,7 @@ class GamificationApiService {
         error: response.error || 'Failed to claim surprise drop',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error claiming surprise drop:', error);
+      logger.error('[GAMIFICATION API] Error claiming surprise drop:', error);
       return { success: false, error: error.message };
     }
   }
@@ -1072,7 +1067,7 @@ class GamificationApiService {
         error: response.error || 'Spin failed',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error in spinWheel:', error);
+      logger.error('[GAMIFICATION API] Error in spinWheel:', error);
       return { success: false, error: error.message };
     }
   }
@@ -1118,7 +1113,7 @@ class GamificationApiService {
         error: response.error || 'Failed to start quiz',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error starting quiz:', error);
+      logger.error('[GAMIFICATION API] Error starting quiz:', error);
       return { success: false, error: error.message };
     }
   }
@@ -1164,7 +1159,7 @@ class GamificationApiService {
         error: response.error || 'Failed to submit answer',
       };
     } catch (error: any) {
-      devLog.error('[GAMIFICATION API] Error submitting quiz answer:', error);
+      logger.error('[GAMIFICATION API] Error submitting quiz answer:', error);
       return { success: false, error: error.message };
     }
   }

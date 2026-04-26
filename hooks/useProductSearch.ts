@@ -8,12 +8,7 @@ import {
   ProductSearchHookResult,
   ProductSearchParams,
 } from '@/types/product-selector.types';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 interface UseProductSearchOptions {
   maxProducts?: number;
@@ -86,7 +81,7 @@ export function useProductSearch(
         setLoading(true);
         setError(null);
 
-        devLog.log('🔍 [useProductSearch] Fetching products:', {
+        logger.debug('🔍 [useProductSearch] Fetching products:', {
           query: searchQuery,
           page: pageNum,
           append,
@@ -163,7 +158,7 @@ export function useProductSearch(
             })
           );
 
-          devLog.log('✅ [useProductSearch] Fetched products:', {
+          logger.debug('✅ [useProductSearch] Fetched products:', {
             count: transformedProducts.length,
             append,
             total: pagination?.total || transformedProducts.length,
@@ -182,11 +177,11 @@ export function useProductSearch(
       } catch (err: any) {
         // Ignore abort errors
         if (err.name === 'AbortError') {
-          devLog.log('⚠️ [useProductSearch] Request aborted');
+          logger.debug('⚠️ [useProductSearch] Request aborted');
           return;
         }
 
-        devLog.error('❌ [useProductSearch] Error fetching products:', err);
+        logger.error('❌ [useProductSearch] Error fetching products:', err);
         setError(err.message || 'Failed to load products');
         if (!append) setProducts([]);
         setHasMore(false);
@@ -201,7 +196,7 @@ export function useProductSearch(
   // Search products with debounce - Fixed stale closure
   const searchProducts = useCallback(
     (searchQuery: string) => {
-      devLog.log('🔎 [useProductSearch] Search triggered:', searchQuery);
+      logger.debug('🔎 [useProductSearch] Search triggered:', searchQuery);
 
       setQuery(searchQuery);
       setPage(1);
@@ -228,17 +223,17 @@ export function useProductSearch(
   // Load more products (pagination)
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) {
-      devLog.log('⏭️ [useProductSearch] Skip load more:', { loading, hasMore });
+      logger.debug('⏭️ [useProductSearch] Skip load more:', { loading, hasMore });
       return;
     }
 
-    devLog.log('📄 [useProductSearch] Loading more products, page:', page + 1);
+    logger.debug('📄 [useProductSearch] Loading more products, page:', page + 1);
     await fetchProducts(query, page + 1, true);
   }, [loading, hasMore, query, page, fetchProducts]);
 
   // Clear search
   const clearSearch = useCallback(() => {
-    devLog.log('🗑️ [useProductSearch] Clearing search');
+    logger.debug('🗑️ [useProductSearch] Clearing search');
     setQuery('');
     setProducts([]);
     setPage(1);
@@ -258,7 +253,7 @@ export function useProductSearch(
 
   // Refresh products
   const refresh = useCallback(async () => {
-    devLog.log('🔄 [useProductSearch] Refreshing products');
+    logger.debug('🔄 [useProductSearch] Refreshing products');
     await fetchProducts(query, 1, false);
   }, [query, fetchProducts]);
 
@@ -266,16 +261,16 @@ export function useProductSearch(
   const selectProduct = useCallback(
     (product: ProductSelectorProduct): boolean => {
       if (selectedProducts.length >= maxProducts) {
-        devLog.warn('⚠️ [useProductSearch] Max products reached:', maxProducts);
+        logger.warn('⚠️ [useProductSearch] Max products reached:', maxProducts);
         return false;
       }
 
       if (isSelected(product._id)) {
-        devLog.warn('⚠️ [useProductSearch] Product already selected:', product._id);
+        logger.warn('⚠️ [useProductSearch] Product already selected:', product._id);
         return false;
       }
 
-      devLog.log('✅ [useProductSearch] Product selected:', product._id);
+      logger.debug('✅ [useProductSearch] Product selected:', product._id);
       setSelectedProducts((prev) => [...prev, product]);
       return true;
     },
@@ -284,7 +279,7 @@ export function useProductSearch(
 
   // Deselect product
   const deselectProduct = useCallback((productId: string) => {
-    devLog.log('➖ [useProductSearch] Product deselected:', productId);
+    logger.debug('➖ [useProductSearch] Product deselected:', productId);
     setSelectedProducts((prev) => prev.filter((p) => p._id !== productId));
   }, []);
 
@@ -302,7 +297,7 @@ export function useProductSearch(
 
   // Clear selection
   const clearSelection = useCallback(() => {
-    devLog.log('🗑️ [useProductSearch] Clearing selection');
+    logger.debug('🗑️ [useProductSearch] Clearing selection');
     setSelectedProducts([]);
   }, []);
 

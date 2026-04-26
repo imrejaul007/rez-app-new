@@ -1,10 +1,5 @@
 import apiClient from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 /**
  * Questions API Service
@@ -99,16 +94,16 @@ const questionsApi = {
     params: GetQuestionsParams = {}
   ): Promise<QuestionsResponse> => {
     try {
-      devLog.log(`📋 [QuestionsAPI] Getting questions for product: ${productId}`);
+      logger.debug(`📋 [QuestionsAPI] Getting questions for product: ${productId}`);
 
       const { page = 1, limit = 10, sortBy = 'recent' } = params;
 
       const response = await apiClient.get<any>(`/products/${productId}/questions`, { page, limit, sortBy });
 
-      devLog.log('✅ [QuestionsAPI] Questions retrieved:', response.data);
+      logger.debug('✅ [QuestionsAPI] Questions retrieved:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error getting questions:', error);
+      logger.error('❌ [QuestionsAPI] Error getting questions:', error);
       return {
         success: false,
         data: {
@@ -125,16 +120,16 @@ const questionsApi = {
    */
   askQuestion: async (params: AskQuestionParams): Promise<any> => {
     try {
-      devLog.log('❓ [QuestionsAPI] Asking question:', params);
+      logger.debug('❓ [QuestionsAPI] Asking question:', params);
 
       const response = await apiClient.post<any>(`/products/${params.productId}/questions`, {
         question: params.question,
       });
 
-      devLog.log('✅ [QuestionsAPI] Question posted:', response.data);
+      logger.debug('✅ [QuestionsAPI] Question posted:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error asking question:', error);
+      logger.error('❌ [QuestionsAPI] Error asking question:', error);
       throw error;
     }
   },
@@ -144,16 +139,16 @@ const questionsApi = {
    */
   answerQuestion: async (params: AnswerQuestionParams): Promise<any> => {
     try {
-      devLog.log('💬 [QuestionsAPI] Answering question:', params);
+      logger.debug('💬 [QuestionsAPI] Answering question:', params);
 
       const response = await apiClient.post<any>(`/questions/${params.questionId}/answers`, {
         answer: params.answer,
       });
 
-      devLog.log('✅ [QuestionsAPI] Answer posted:', response.data);
+      logger.debug('✅ [QuestionsAPI] Answer posted:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error answering question:', error);
+      logger.error('❌ [QuestionsAPI] Error answering question:', error);
       throw error;
     }
   },
@@ -163,16 +158,16 @@ const questionsApi = {
    */
   markAnswerHelpful: async (questionId: string, answerId: string): Promise<MarkHelpfulResponse> => {
     try {
-      devLog.log(`👍 [QuestionsAPI] Marking answer as helpful: ${answerId}`);
+      logger.debug(`👍 [QuestionsAPI] Marking answer as helpful: ${answerId}`);
 
       const response = await apiClient.post<any>(
         `/questions/${questionId}/answers/${answerId}/helpful`
       );
 
-      devLog.log('✅ [QuestionsAPI] Vote recorded:', response.data);
+      logger.debug('✅ [QuestionsAPI] Vote recorded:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error marking helpful:', error);
+      logger.error('❌ [QuestionsAPI] Error marking helpful:', error);
       throw error;
     }
   },
@@ -182,16 +177,16 @@ const questionsApi = {
    */
   getUserQuestions: async (params: GetQuestionsParams = {}): Promise<QuestionsResponse> => {
     try {
-      devLog.log('📋 [QuestionsAPI] Getting user questions');
+      logger.debug('📋 [QuestionsAPI] Getting user questions');
 
       const { page = 1, limit = 10 } = params;
 
       const response = await apiClient.get<any>('/users/me/questions', { page, limit });
 
-      devLog.log('✅ [QuestionsAPI] User questions retrieved:', response.data);
+      logger.debug('✅ [QuestionsAPI] User questions retrieved:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error getting user questions:', error);
+      logger.error('❌ [QuestionsAPI] Error getting user questions:', error);
       return {
         success: false,
         data: {
@@ -208,14 +203,14 @@ const questionsApi = {
    */
   deleteQuestion: async (questionId: string): Promise<any> => {
     try {
-      devLog.log(`🗑️ [QuestionsAPI] Deleting question: ${questionId}`);
+      logger.debug(`🗑️ [QuestionsAPI] Deleting question: ${questionId}`);
 
       const response = await apiClient.delete<any>(`/questions/${questionId}`);
 
-      devLog.log('✅ [QuestionsAPI] Question deleted:', response.data);
+      logger.debug('✅ [QuestionsAPI] Question deleted:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error deleting question:', error);
+      logger.error('❌ [QuestionsAPI] Error deleting question:', error);
       throw error;
     }
   },
@@ -225,16 +220,16 @@ const questionsApi = {
    */
   reportQuestion: async (questionId: string, reason: string): Promise<any> => {
     try {
-      devLog.log(`🚩 [QuestionsAPI] Reporting question: ${questionId}`);
+      logger.debug(`🚩 [QuestionsAPI] Reporting question: ${questionId}`);
 
       const response = await apiClient.post<any>(`/questions/${questionId}/report`, {
         reason,
       });
 
-      devLog.log('✅ [QuestionsAPI] Question reported:', response.data);
+      logger.debug('✅ [QuestionsAPI] Question reported:', response.data);
       return response.data;
     } catch (error: any) {
-      devLog.error('❌ [QuestionsAPI] Error reporting question:', error);
+      logger.error('❌ [QuestionsAPI] Error reporting question:', error);
       throw error;
     }
   },

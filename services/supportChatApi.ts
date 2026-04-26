@@ -31,12 +31,7 @@ import type {
   ConversationTransfer,
   IssueCategory,
 } from '@/types/supportChat.types';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Map frontend IssueCategory values to backend-accepted category values
 const CATEGORY_MAP: Record<IssueCategory, string> = {
@@ -174,11 +169,11 @@ class SupportChatApi {
 
         return { ticket } as CreateTicketResponse;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to create ticket:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to create ticket:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error creating ticket:', error);
+      logger.error('❌ [SUPPORT API] Error creating ticket:', error);
       return null;
     }
   }
@@ -197,11 +192,11 @@ class SupportChatApi {
         const raw = response.data.ticket || response.data;
         return this.mapTicketToFrontend(raw);
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch ticket:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch ticket:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching ticket:', error);
+      logger.error('❌ [SUPPORT API] Error fetching ticket:', error);
       return null;
     }
   }
@@ -256,11 +251,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch history:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch history:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching history:', error);
+      logger.error('❌ [SUPPORT API] Error fetching history:', error);
       return null;
     }
   }
@@ -283,11 +278,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to close ticket:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to close ticket:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error closing ticket:', error);
+      logger.error('❌ [SUPPORT API] Error closing ticket:', error);
       return false;
     }
   }
@@ -304,11 +299,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to reopen ticket:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to reopen ticket:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error reopening ticket:', error);
+      logger.error('❌ [SUPPORT API] Error reopening ticket:', error);
       return false;
     }
   }
@@ -337,11 +332,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch messages:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch messages:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching messages:', error);
+      logger.error('❌ [SUPPORT API] Error fetching messages:', error);
       return null;
     }
   }
@@ -394,11 +389,11 @@ class SupportChatApi {
         };
         return { message: fallbackMessage, deliveryStatus: { messageId: fallbackMessage.id, status: 'delivered', timestamp: fallbackMessage.timestamp } } as unknown as SendMessageResponse;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to send message:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to send message:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error sending message:', error);
+      logger.error('❌ [SUPPORT API] Error sending message:', error);
       return null;
     }
   }
@@ -417,11 +412,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to delete message:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to delete message:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error deleting message:', error);
+      logger.error('❌ [SUPPORT API] Error deleting message:', error);
       return false;
     }
   }
@@ -440,11 +435,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to mark as read:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to mark as read:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error marking as read:', error);
+      logger.error('❌ [SUPPORT API] Error marking as read:', error);
       return false;
     }
   }
@@ -475,11 +470,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to upload attachment:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to upload attachment:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error uploading attachment:', error);
+      logger.error('❌ [SUPPORT API] Error uploading attachment:', error);
       return null;
     }
   }
@@ -498,11 +493,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch agents:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch agents:', response.error);
         return [];
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching agents:', error);
+      logger.error('❌ [SUPPORT API] Error fetching agents:', error);
       return [];
     }
   }
@@ -521,11 +516,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch availability:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch availability:', response.error);
         return [];
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching availability:', error);
+      logger.error('❌ [SUPPORT API] Error fetching availability:', error);
       return [];
     }
   }
@@ -545,11 +540,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to request agent:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to request agent:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error requesting agent:', error);
+      logger.error('❌ [SUPPORT API] Error requesting agent:', error);
       return null;
     }
   }
@@ -573,11 +568,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to transfer ticket:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to transfer ticket:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error transferring ticket:', error);
+      logger.error('❌ [SUPPORT API] Error transferring ticket:', error);
       return null;
     }
   }
@@ -603,11 +598,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to rate conversation:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to rate conversation:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error rating conversation:', error);
+      logger.error('❌ [SUPPORT API] Error rating conversation:', error);
       return false;
     }
   }
@@ -635,11 +630,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to search FAQ:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to search FAQ:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error searching FAQ:', error);
+      logger.error('❌ [SUPPORT API] Error searching FAQ:', error);
       return null;
     }
   }
@@ -659,11 +654,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to get suggestions:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to get suggestions:', response.error);
         return [];
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error getting suggestions:', error);
+      logger.error('❌ [SUPPORT API] Error getting suggestions:', error);
       return [];
     }
   }
@@ -682,11 +677,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to record feedback:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to record feedback:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error recording feedback:', error);
+      logger.error('❌ [SUPPORT API] Error recording feedback:', error);
       return false;
     }
   }
@@ -705,11 +700,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch queue info:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch queue info:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching queue info:', error);
+      logger.error('❌ [SUPPORT API] Error fetching queue info:', error);
       return null;
     }
   }
@@ -728,11 +723,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch position:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch position:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching position:', error);
+      logger.error('❌ [SUPPORT API] Error fetching position:', error);
       return null;
     }
   }
@@ -757,11 +752,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to request call:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to request call:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error requesting call:', error);
+      logger.error('❌ [SUPPORT API] Error requesting call:', error);
       return null;
     }
   }
@@ -778,11 +773,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to accept call:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to accept call:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error accepting call:', error);
+      logger.error('❌ [SUPPORT API] Error accepting call:', error);
       return false;
     }
   }
@@ -799,11 +794,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to reject call:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to reject call:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error rejecting call:', error);
+      logger.error('❌ [SUPPORT API] Error rejecting call:', error);
       return false;
     }
   }
@@ -822,11 +817,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch business hours:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch business hours:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching business hours:', error);
+      logger.error('❌ [SUPPORT API] Error fetching business hours:', error);
       return null;
     }
   }
@@ -845,11 +840,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch statistics:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch statistics:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching statistics:', error);
+      logger.error('❌ [SUPPORT API] Error fetching statistics:', error);
       return null;
     }
   }
@@ -866,11 +861,11 @@ class SupportChatApi {
 
         return response.data;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to fetch user history:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to fetch user history:', response.error);
         return null;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error fetching user history:', error);
+      logger.error('❌ [SUPPORT API] Error fetching user history:', error);
       return null;
     }
   }
@@ -892,11 +887,11 @@ class SupportChatApi {
 
         return true;
       } else {
-        devLog.error('❌ [SUPPORT API] Failed to request transcript:', response.error);
+        logger.error('❌ [SUPPORT API] Failed to request transcript:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.error('❌ [SUPPORT API] Error requesting transcript:', error);
+      logger.error('❌ [SUPPORT API] Error requesting transcript:', error);
       return false;
     }
   }

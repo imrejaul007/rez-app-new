@@ -4,12 +4,7 @@
  */
 
 import apiClient, { ApiResponse } from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Campaign Deal interface
 export interface CampaignDeal {
@@ -141,7 +136,7 @@ class CampaignsService {
     total: number;
   }>> {
     try {
-      devLog.log('📢 [CAMPAIGNS API] Fetching active campaigns...');
+      logger.debug('📢 [CAMPAIGNS API] Fetching active campaigns...');
 
       const response = await apiClient.get<{
         campaigns: Campaign[];
@@ -152,12 +147,12 @@ class CampaignsService {
       });
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.campaigns?.length || 0} active campaigns`);
+        logger.debug(`✅ [CAMPAIGNS API] Got ${response.data.campaigns?.length || 0} active campaigns`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error fetching active campaigns:', error);
+      logger.error('❌ [CAMPAIGNS API] Error fetching active campaigns:', error);
       return {
         success: false,
         error: error?.message || 'Failed to fetch campaigns',
@@ -174,7 +169,7 @@ class CampaignsService {
     total: number;
   }>> {
     try {
-      devLog.log('📢 [CAMPAIGNS API] Fetching exciting deals...');
+      logger.debug('📢 [CAMPAIGNS API] Fetching exciting deals...');
 
       const response = await apiClient.get<{
         dealCategories: DealCategory[];
@@ -182,12 +177,12 @@ class CampaignsService {
       }>('/campaigns/exciting-deals', { limit });
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.dealCategories?.length || 0} deal categories`);
+        logger.debug(`✅ [CAMPAIGNS API] Got ${response.data.dealCategories?.length || 0} deal categories`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error fetching exciting deals:', error);
+      logger.error('❌ [CAMPAIGNS API] Error fetching exciting deals:', error);
       return {
         success: false,
         error: error?.message || 'Failed to fetch exciting deals',
@@ -204,7 +199,7 @@ class CampaignsService {
     total: number;
   }>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Fetching ${type} campaigns...`);
+      logger.debug(`📢 [CAMPAIGNS API] Fetching ${type} campaigns...`);
 
       const response = await apiClient.get<{
         campaigns: Campaign[];
@@ -212,12 +207,12 @@ class CampaignsService {
       }>(`/campaigns/type/${type}`, { limit });
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.campaigns?.length || 0} ${type} campaigns`);
+        logger.debug(`✅ [CAMPAIGNS API] Got ${response.data.campaigns?.length || 0} ${type} campaigns`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error(`❌ [CAMPAIGNS API] Error fetching ${type} campaigns:`, error);
+      logger.error(`❌ [CAMPAIGNS API] Error fetching ${type} campaigns:`, error);
       return {
         success: false,
         error: error?.message || 'Failed to fetch campaigns',
@@ -231,17 +226,17 @@ class CampaignsService {
    */
   async getCampaignById(campaignId: string): Promise<ApiResponse<Campaign>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Fetching campaign: ${campaignId}...`);
+      logger.debug(`📢 [CAMPAIGNS API] Fetching campaign: ${campaignId}...`);
 
       const response = await apiClient.get<Campaign>(`/campaigns/${campaignId}`);
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Got campaign: ${response.data.title}`);
+        logger.debug(`✅ [CAMPAIGNS API] Got campaign: ${response.data.title}`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error fetching campaign:', error);
+      logger.error('❌ [CAMPAIGNS API] Error fetching campaign:', error);
       return {
         success: false,
         error: error?.message || 'Failed to fetch campaign',
@@ -268,7 +263,7 @@ class CampaignsService {
     };
   }>> {
     try {
-      devLog.log('📢 [CAMPAIGNS API] Fetching my deals...');
+      logger.debug('📢 [CAMPAIGNS API] Fetching my deals...');
 
       const response = await apiClient.get<{
         redemptions: DealRedemption[];
@@ -285,12 +280,12 @@ class CampaignsService {
       });
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Got ${response.data.redemptions?.length || 0} redeemed deals`);
+        logger.debug(`✅ [CAMPAIGNS API] Got ${response.data.redemptions?.length || 0} redeemed deals`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error fetching my deals:', error);
+      logger.error('❌ [CAMPAIGNS API] Error fetching my deals:', error);
       return {
         success: false,
         error: error?.message || 'Failed to fetch my deals',
@@ -305,17 +300,17 @@ class CampaignsService {
    */
   async getRedemptionByCode(code: string): Promise<ApiResponse<DealRedemption>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Fetching redemption: ${code}...`);
+      logger.debug(`📢 [CAMPAIGNS API] Fetching redemption: ${code}...`);
 
       const response = await apiClient.get<DealRedemption>(`/campaigns/redemptions/${code}`);
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Got redemption: ${response.data.redemptionCode}`);
+        logger.debug(`✅ [CAMPAIGNS API] Got redemption: ${response.data.redemptionCode}`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error fetching redemption:', error);
+      logger.error('❌ [CAMPAIGNS API] Error fetching redemption:', error);
       return {
         success: false,
         error: error?.message || 'Failed to fetch redemption',
@@ -339,7 +334,7 @@ class CampaignsService {
     benefitApplied?: number;
   }>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Marking redemption as used: ${code}...`);
+      logger.debug(`📢 [CAMPAIGNS API] Marking redemption as used: ${code}...`);
 
       const response = await apiClient.post<{
         id: string;
@@ -351,12 +346,12 @@ class CampaignsService {
       }>(`/campaigns/redemptions/${code}/use`, params || {});
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Redemption marked as used: ${response.data.redemptionCode}`);
+        logger.debug(`✅ [CAMPAIGNS API] Redemption marked as used: ${response.data.redemptionCode}`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error marking redemption as used:', error);
+      logger.error('❌ [CAMPAIGNS API] Error marking redemption as used:', error);
       return {
         success: false,
         error: error?.message || 'Failed to mark deal as used',
@@ -373,19 +368,19 @@ class CampaignsService {
     message: string;
   }>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Cancelling redemption: ${redemptionId}...`);
+      logger.debug(`📢 [CAMPAIGNS API] Cancelling redemption: ${redemptionId}...`);
 
       const response = await apiClient.delete<{
         message: string;
       }>(`/campaigns/redemptions/${redemptionId}`);
 
       if (response.success) {
-        devLog.log(`✅ [CAMPAIGNS API] Redemption cancelled`);
+        logger.debug(`✅ [CAMPAIGNS API] Redemption cancelled`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error cancelling redemption:', error);
+      logger.error('❌ [CAMPAIGNS API] Error cancelling redemption:', error);
       return {
         success: false,
         error: error?.message || 'Failed to cancel deal',
@@ -422,7 +417,7 @@ class CampaignsService {
     currency?: string;
   }>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Redeeming deal: campaign=${params.campaignId}, index=${params.dealIndex}...`);
+      logger.debug(`📢 [CAMPAIGNS API] Redeeming deal: campaign=${params.campaignId}, index=${params.dealIndex}...`);
 
       const response = await apiClient.post<{
         type: 'free' | 'paid';
@@ -446,15 +441,15 @@ class CampaignsService {
 
       if (response.success && response.data) {
         if (response.data.type === 'free') {
-          devLog.log(`✅ [CAMPAIGNS API] Free deal redeemed: ${response.data.redemption?.code}`);
+          logger.debug(`✅ [CAMPAIGNS API] Free deal redeemed: ${response.data.redemption?.code}`);
         } else {
-          devLog.log(`✅ [CAMPAIGNS API] Paid deal - checkout URL created`);
+          logger.debug(`✅ [CAMPAIGNS API] Paid deal - checkout URL created`);
         }
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error redeeming deal:', error);
+      logger.error('❌ [CAMPAIGNS API] Error redeeming deal:', error);
       return {
         success: false,
         error: error?.message || 'Failed to redeem deal',
@@ -482,7 +477,7 @@ class CampaignsService {
     };
   }>> {
     try {
-      devLog.log(`📢 [CAMPAIGNS API] Verifying payment: session=${params.sessionId}...`);
+      logger.debug(`📢 [CAMPAIGNS API] Verifying payment: session=${params.sessionId}...`);
 
       const response = await apiClient.post<{
         redemption: {
@@ -498,12 +493,12 @@ class CampaignsService {
       }>('/campaigns/deals/verify-payment', params);
 
       if (response.success && response.data) {
-        devLog.log(`✅ [CAMPAIGNS API] Payment verified: ${response.data.redemption?.code}`);
+        logger.debug(`✅ [CAMPAIGNS API] Payment verified: ${response.data.redemption?.code}`);
       }
 
       return response as any;
     } catch (error: any) {
-      devLog.error('❌ [CAMPAIGNS API] Error verifying payment:', error);
+      logger.error('❌ [CAMPAIGNS API] Error verifying payment:', error);
       return {
         success: false,
         error: error?.message || 'Failed to verify payment',

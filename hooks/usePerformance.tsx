@@ -12,12 +12,7 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 /**
  * Cross-platform high-resolution time function
@@ -110,7 +105,7 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
 
       if (enableLogging && renderTime > 16) {
         // Log slow renders (> 16ms = < 60fps)
-        devLog.warn(
+        logger.warn(
           `⚠️ [Performance] Slow render in ${componentName}:`,
           `${renderTime.toFixed(2)}ms`
         );
@@ -127,7 +122,7 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
       measuresRef.current.set(label, timestamp);
 
       if (enableLogging) {
-        devLog.log(`⏱️ [Performance] Started: ${componentName} - ${label}`);
+        logger.debug(`⏱️ [Performance] Started: ${componentName} - ${label}`);
       }
     },
     [componentName, enableLogging]
@@ -141,7 +136,7 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
       const startTime = measuresRef.current.get(label);
 
       if (!startTime) {
-        devLog.warn(`⚠️ [Performance] No start time found for: ${label}`);
+        logger.warn(`⚠️ [Performance] No start time found for: ${label}`);
         return 0;
       }
 
@@ -151,7 +146,7 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
       measuresRef.current.delete(label);
 
       if (enableLogging) {
-        devLog.log(
+        logger.debug(
           `✅ [Performance] Completed: ${componentName} - ${label}:`,
           `${duration.toFixed(2)}ms`
         );
@@ -194,19 +189,19 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
    * Log current metrics
    */
   const logMetrics = useCallback(() => {
-    devLog.log(`📊 [Performance] ${componentName} Metrics`);
-    devLog.log('Render count:', metrics.renderCount);
-    devLog.log('Average render time:', `${metrics.averageRenderTime.toFixed(2)}ms`);
-    devLog.log('Last render time:', `${metrics.lastRenderTime.toFixed(2)}ms`);
-    devLog.log('Total render time:', `${metrics.totalRenderTime.toFixed(2)}ms`);
-    devLog.log('Mount time:', `${metrics.mountTime}ms`);
+    logger.debug(`📊 [Performance] ${componentName} Metrics`);
+    logger.debug('Render count:', metrics.renderCount);
+    logger.debug('Average render time:', `${metrics.averageRenderTime.toFixed(2)}ms`);
+    logger.debug('Last render time:', `${metrics.lastRenderTime.toFixed(2)}ms`);
+    logger.debug('Total render time:', `${metrics.totalRenderTime.toFixed(2)}ms`);
+    logger.debug('Mount time:', `${metrics.mountTime}ms`);
 
     if (trackMemory && (performance as any).memory) {
-      devLog.log(
+      logger.debug(
         'Memory used:',
         `${((performance as any).memory.usedJSHeapSize / 1048576).toFixed(2)}MB`
       );
-      devLog.log(
+      logger.debug(
         'Memory limit:',
         `${((performance as any).memory.jsHeapSizeLimit / 1048576).toFixed(2)}MB`
       );
@@ -233,7 +228,7 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
       totalRenderTime: 0,
     });
 
-    devLog.log(`🔄 [Performance] ${componentName} metrics reset`);
+    logger.debug(`🔄 [Performance] ${componentName} metrics reset`);
   }, [componentName]);
 
   /**
@@ -242,13 +237,13 @@ export const usePerformance = (options: UsePerformanceOptions = {}): UsePerforma
   useEffect(() => {
     return () => {
       if (enableLogging && renderCountRef.current > 0) {
-        devLog.log(`📊 [Performance] ${componentName} Final Metrics`);
-        devLog.log('Total renders:', renderCountRef.current);
-        devLog.log(
+        logger.debug(`📊 [Performance] ${componentName} Final Metrics`);
+        logger.debug('Total renders:', renderCountRef.current);
+        logger.debug(
           'Average render time:',
           `${(renderTimesRef.current.reduce((sum, time) => sum + time, 0) / renderTimesRef.current.length).toFixed(2)}ms`
         );
-        devLog.log('Total lifetime:', `${Date.now() - mountTimeRef.current}ms`);
+        logger.debug('Total lifetime:', `${Date.now() - mountTimeRef.current}ms`);
         // group end
       }
     };

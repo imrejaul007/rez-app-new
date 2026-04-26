@@ -9,12 +9,7 @@ import storesApi from '@/services/storesApi';
 import productsApi from '@/services/productsApi';
 import categoriesApi from '@/services/categoriesApi';
 import { getCategoryConfig, CategoryConfig } from '@/config/categoryConfig';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Store interface (same as FashionStore)
 export interface CategoryStore {
@@ -203,18 +198,18 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
               const matches = matchesCategory(categoryName, storeTags);
 
               if (matches) {
-                devLog.log(`[${slug.toUpperCase()}] Featured Store:`, store.name);
+                logger.debug(`[${slug.toUpperCase()}] Featured Store:`, store.name);
               }
 
               return matches;
             })
           : [];
 
-        devLog.log(`[${slug.toUpperCase()}] Found ${filteredStores.length} featured stores`);
+        logger.debug(`[${slug.toUpperCase()}] Found ${filteredStores.length} featured stores`);
         setFeaturedStores(filteredStores);
       }
     } catch (error: any) {
-      devLog.error(`[${slug.toUpperCase()}] Error fetching featured stores:`, error);
+      logger.error(`[${slug.toUpperCase()}] Error fetching featured stores:`, error);
       setStoresError(error as Error);
     } finally {
       setIsLoadingStores(false);
@@ -246,11 +241,11 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
           return matchesCategory(categoryName, tags);
         });
 
-        devLog.log(`[${slug.toUpperCase()}] Found ${filteredStores.length} category stores`);
+        logger.debug(`[${slug.toUpperCase()}] Found ${filteredStores.length} category stores`);
         setCategoryStores(filteredStores);
       }
     } catch (error: any) {
-      devLog.error(`[${slug.toUpperCase()}] Error fetching category stores:`, error);
+      logger.error(`[${slug.toUpperCase()}] Error fetching category stores:`, error);
       setStoresError(error as Error);
     } finally {
       setIsLoadingStores(false);
@@ -267,11 +262,11 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       setIsLoadingProducts(true);
       setProductsError(null);
 
-      devLog.log(`[${slug.toUpperCase()}] Fetching featured products...`);
+      logger.debug(`[${slug.toUpperCase()}] Fetching featured products...`);
       const response: any = await productsApi.getFeaturedProducts(20);
 
       if (response.success && response.data) {
-        devLog.log(`[${slug.toUpperCase()}] Total products received: ${response.data.length}`);
+        logger.debug(`[${slug.toUpperCase()}] Total products received: ${response.data.length}`);
 
         const filteredProducts = Array.isArray(response.data)
           ? response.data.filter((product: any) => {
@@ -290,7 +285,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
 
               // Check if product matches by category ID (if known)
               if (categoryConfig.categoryId && categoryId === categoryConfig.categoryId) {
-                devLog.log(`[${slug.toUpperCase()}] Product (ID match):`, product.name);
+                logger.debug(`[${slug.toUpperCase()}] Product (ID match):`, product.name);
                 return true;
               }
 
@@ -301,20 +296,20 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
               );
 
               if (matches) {
-                devLog.log(`[${slug.toUpperCase()}] Product (keyword match):`, product.name);
+                logger.debug(`[${slug.toUpperCase()}] Product (keyword match):`, product.name);
               }
 
               return matches;
             })
           : [];
 
-        devLog.log(`[${slug.toUpperCase()}] Found ${filteredProducts.length} products`);
+        logger.debug(`[${slug.toUpperCase()}] Found ${filteredProducts.length} products`);
         setFeaturedProducts(filteredProducts.slice(0, 10));
       } else {
-        devLog.log(`[${slug.toUpperCase()}] No products data in response`);
+        logger.debug(`[${slug.toUpperCase()}] No products data in response`);
       }
     } catch (error: any) {
-      devLog.error(`[${slug.toUpperCase()}] Error fetching featured products:`, error);
+      logger.error(`[${slug.toUpperCase()}] Error fetching featured products:`, error);
       setProductsError(error as Error);
     } finally {
       setIsLoadingProducts(false);
@@ -331,11 +326,11 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
       setIsLoadingCategories(true);
       setCategoriesError(null);
 
-      devLog.log(`[${slug.toUpperCase()}] Fetching categories...`);
+      logger.debug(`[${slug.toUpperCase()}] Fetching categories...`);
       const response: any = await categoriesApi.getCategories();
 
       if (response.success && response.data) {
-        devLog.log(`[${slug.toUpperCase()}] Received ${response.data.length} total categories`);
+        logger.debug(`[${slug.toUpperCase()}] Received ${response.data.length} total categories`);
 
         // Filter for subcategories that match our category
         const filteredCategories = Array.isArray(response.data)
@@ -357,7 +352,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
               const isMainCategory = catSlug === categoryConfig.slug || catName === categoryConfig.name.toLowerCase();
 
               if (!isMainCategory && (isDirectSubcategory || matchesByKeyword)) {
-                devLog.log(`[${slug.toUpperCase()}] Subcategory:`, category.name);
+                logger.debug(`[${slug.toUpperCase()}] Subcategory:`, category.name);
                 return true;
               }
 
@@ -365,14 +360,14 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
             })
           : [];
 
-        devLog.log(`[${slug.toUpperCase()}] Found ${filteredCategories.length} subcategories`);
+        logger.debug(`[${slug.toUpperCase()}] Found ${filteredCategories.length} subcategories`);
         setSubcategories(filteredCategories.slice(0, 8));
       } else {
-        devLog.log(`[${slug.toUpperCase()}] No categories data in response`);
+        logger.debug(`[${slug.toUpperCase()}] No categories data in response`);
         setSubcategories([]);
       }
     } catch (error: any) {
-      devLog.error(`[${slug.toUpperCase()}] Error fetching categories:`, error);
+      logger.error(`[${slug.toUpperCase()}] Error fetching categories:`, error);
       setCategoriesError(error as Error);
       setSubcategories([]);
     } finally {
@@ -407,7 +402,7 @@ export const useCategoryData = (slug: string): UseCategoryDataResult => {
   // Initial data fetch when slug changes
   useEffect(() => {
     if (categoryConfig) {
-      devLog.log(`[CATEGORY DATA] Loading data for: ${categoryConfig.name}`);
+      logger.debug(`[CATEGORY DATA] Loading data for: ${categoryConfig.name}`);
       fetchFeaturedStores();
       fetchCategoryStores();
       fetchFeaturedProducts();

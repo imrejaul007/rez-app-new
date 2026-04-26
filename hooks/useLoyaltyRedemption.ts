@@ -22,12 +22,7 @@ import {
   RedemptionRequest,
 } from '@/types/loyaltyRedemption.types';
 import { useSocket } from '@/contexts/SocketContext';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 interface UseLoyaltyRedemptionOptions {
   autoLoad?: boolean;
@@ -114,7 +109,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
 
       setState(prev => ({ ...prev, ...newState, loading: false }));
     } catch (error: any) {
-      devLog.error('Error loading loyalty data:', error);
+      logger.error('Error loading loyalty data:', error);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -144,7 +139,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         setPointHistory(response.data.transactions);
       }
     } catch (error: any) {
-      devLog.error('Error loading point history:', error);
+      logger.error('Error loading point history:', error);
     }
   }, []);
 
@@ -158,7 +153,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         setExpiryNotification(response.data);
       }
     } catch (error: any) {
-      devLog.error('Error loading expiring points:', error);
+      logger.error('Error loading expiring points:', error);
     }
   }, []);
 
@@ -172,7 +167,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         setChallenges(response.data.challenges);
       }
     } catch (error: any) {
-      devLog.error('Error loading challenges:', error);
+      logger.error('Error loading challenges:', error);
     }
   }, []);
 
@@ -189,7 +184,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         });
       }
     } catch (error: any) {
-      devLog.error('Error loading check-in status:', error);
+      logger.error('Error loading check-in status:', error);
     }
   }, []);
 
@@ -223,7 +218,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to redeem reward');
       }
     } catch (error: any) {
-      devLog.error('Error redeeming reward:', error);
+      logger.error('Error redeeming reward:', error);
       throw error;
     }
   }, []);
@@ -241,7 +236,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to reserve reward');
       }
     } catch (error: any) {
-      devLog.error('Error reserving reward:', error);
+      logger.error('Error reserving reward:', error);
       throw error;
     }
   }, []);
@@ -260,7 +255,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to cancel reservation');
       }
     } catch (error: any) {
-      devLog.error('Error cancelling reservation:', error);
+      logger.error('Error cancelling reservation:', error);
       throw error;
     }
   }, [refresh]);
@@ -279,7 +274,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         setState(prev => ({ ...prev, rewards: response.data!.rewards }));
       }
     } catch (error: any) {
-      devLog.error('Error filtering rewards:', error);
+      logger.error('Error filtering rewards:', error);
     }
   }, []);
 
@@ -294,7 +289,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         setState(prev => ({ ...prev, rewards: response.data!.rewards }));
       }
     } catch (error: any) {
-      devLog.error('Error searching rewards:', error);
+      logger.error('Error searching rewards:', error);
     }
   }, []);
 
@@ -325,7 +320,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to check in');
       }
     } catch (error: any) {
-      devLog.error('Error during check-in:', error);
+      logger.error('Error during check-in:', error);
       throw error;
     }
   }, [loadCheckInStatus]);
@@ -352,7 +347,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to spin wheel');
       }
     } catch (error: any) {
-      devLog.error('Error spinning wheel:', error);
+      logger.error('Error spinning wheel:', error);
       throw error;
     }
   }, []);
@@ -379,7 +374,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to reveal scratch card');
       }
     } catch (error: any) {
-      devLog.error('Error revealing scratch card:', error);
+      logger.error('Error revealing scratch card:', error);
       throw error;
     }
   }, []);
@@ -409,7 +404,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
         throw new Error(response.error || 'Failed to claim challenge');
       }
     } catch (error: any) {
-      devLog.error('Error claiming challenge:', error);
+      logger.error('Error claiming challenge:', error);
       throw error;
     }
   }, [loadChallenges]);

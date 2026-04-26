@@ -13,12 +13,7 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Types
@@ -87,12 +82,12 @@ class WebVitalsService {
    */
   async init(analyticsCallback?: (metric: WebVitalsMetric) => void): Promise<void> {
     if (Platform.OS !== 'web') {
-      devLog.log('[WebVitals] Skipping - not running on web platform');
+      logger.debug('[WebVitals] Skipping - not running on web platform');
       return;
     }
 
     if (this.isInitialized) {
-      devLog.warn('[WebVitals] Already initialized');
+      logger.warn('[WebVitals] Already initialized');
       return;
     }
 
@@ -109,9 +104,9 @@ class WebVitalsService {
       }
 
       this.isInitialized = true;
-      devLog.log('[WebVitals] Service initialized');
+      logger.debug('[WebVitals] Service initialized');
     } catch (error) {
-      devLog.error('[WebVitals] Initialization failed:', error);
+      logger.error('[WebVitals] Initialization failed:', error);
     }
   }
 
@@ -154,7 +149,7 @@ class WebVitalsService {
 
       observer.observe({ type: 'largest-contentful-paint', buffered: true });
     } catch (error) {
-      devLog.warn('[WebVitals] LCP observation failed:', error);
+      logger.warn('[WebVitals] LCP observation failed:', error);
     }
   }
 
@@ -184,7 +179,7 @@ class WebVitalsService {
 
       observer.observe({ type: 'first-input', buffered: true });
     } catch (error) {
-      devLog.warn('[WebVitals] FID observation failed:', error);
+      logger.warn('[WebVitals] FID observation failed:', error);
     }
   }
 
@@ -220,7 +215,7 @@ class WebVitalsService {
 
       observer.observe({ type: 'layout-shift', buffered: true });
     } catch (error) {
-      devLog.warn('[WebVitals] CLS observation failed:', error);
+      logger.warn('[WebVitals] CLS observation failed:', error);
     }
   }
 
@@ -249,7 +244,7 @@ class WebVitalsService {
 
       observer.observe({ type: 'paint', buffered: true });
     } catch (error) {
-      devLog.warn('[WebVitals] FCP observation failed:', error);
+      logger.warn('[WebVitals] FCP observation failed:', error);
     }
   }
 
@@ -273,7 +268,7 @@ class WebVitalsService {
         });
       }
     } catch (error) {
-      devLog.warn('[WebVitals] TTFB observation failed:', error);
+      logger.warn('[WebVitals] TTFB observation failed:', error);
     }
   }
 
@@ -306,7 +301,7 @@ class WebVitalsService {
    */
   private logMetric(metric: WebVitalsMetric): void {
     const emoji = metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
-    devLog.log(
+    logger.debug(
       `${emoji} [WebVitals] ${metric.name}: ${metric.value.toFixed(2)}${this.getUnit(metric.name)} (${metric.rating})`
     );
   }
@@ -420,7 +415,7 @@ class WebVitalsService {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.metrics));
     } catch (error) {
-      devLog.error('[WebVitals] Failed to save metrics:', error);
+      logger.error('[WebVitals] Failed to save metrics:', error);
     }
   }
 
@@ -432,10 +427,10 @@ class WebVitalsService {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) {
         this.metrics = JSON.parse(stored);
-        devLog.log(`[WebVitals] Loaded ${this.metrics.length} stored metrics`);
+        logger.debug(`[WebVitals] Loaded ${this.metrics.length} stored metrics`);
       }
     } catch (error) {
-      devLog.error('[WebVitals] Failed to load metrics:', error);
+      logger.error('[WebVitals] Failed to load metrics:', error);
     }
   }
 
@@ -445,7 +440,7 @@ class WebVitalsService {
   async clearMetrics(): Promise<void> {
     this.metrics = [];
     await AsyncStorage.removeItem(STORAGE_KEY);
-    devLog.log('[WebVitals] Metrics cleared');
+    logger.debug('[WebVitals] Metrics cleared');
   }
 
   /**
@@ -455,16 +450,16 @@ class WebVitalsService {
     const summary = this.getSummary();
     const score = this.getPerformanceScore();
 
-    devLog.log('\n========================================');
-    devLog.log('       WEB VITALS SUMMARY');
-    devLog.log('========================================\n');
-    devLog.log(`Overall Score: ${score}/100 (${summary.rating})\n`);
-    devLog.log(`LCP: ${summary.lcp.toFixed(2)}ms (${this.getRating('LCP', summary.lcp)})`);
-    devLog.log(`FID: ${summary.fid.toFixed(2)}ms (${this.getRating('FID', summary.fid)})`);
-    devLog.log(`CLS: ${summary.cls.toFixed(3)} (${this.getRating('CLS', summary.cls)})`);
-    devLog.log(`FCP: ${summary.fcp.toFixed(2)}ms (${this.getRating('FCP', summary.fcp)})`);
-    devLog.log(`TTFB: ${summary.ttfb.toFixed(2)}ms (${this.getRating('TTFB', summary.ttfb)})\n`);
-    devLog.log('========================================\n');
+    logger.debug('\n========================================');
+    logger.debug('       WEB VITALS SUMMARY');
+    logger.debug('========================================\n');
+    logger.debug(`Overall Score: ${score}/100 (${summary.rating})\n`);
+    logger.debug(`LCP: ${summary.lcp.toFixed(2)}ms (${this.getRating('LCP', summary.lcp)})`);
+    logger.debug(`FID: ${summary.fid.toFixed(2)}ms (${this.getRating('FID', summary.fid)})`);
+    logger.debug(`CLS: ${summary.cls.toFixed(3)} (${this.getRating('CLS', summary.cls)})`);
+    logger.debug(`FCP: ${summary.fcp.toFixed(2)}ms (${this.getRating('FCP', summary.fcp)})`);
+    logger.debug(`TTFB: ${summary.ttfb.toFixed(2)}ms (${this.getRating('TTFB', summary.ttfb)})\n`);
+    logger.debug('========================================\n');
   }
 }
 

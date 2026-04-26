@@ -15,9 +15,7 @@ import { categoryTabs as defaultCategoryTabs } from '@/data/playPageData';
 import realVideosApi from '@/services/realVideosApi';
 import { transformVideosToUGC, getFeaturedVideo } from '@/utils/videoTransformers';
 import { useAuthUser, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
+import { logger } from '@/utils/logger';
   warn: __DEV__ ? console.warn.bind(console) : () => {},
   error: __DEV__ ? console.error.bind(console) : () => {},
 };
@@ -85,7 +83,7 @@ export function usePlayPageData(): UsePlayPageData {
 
       setState(prev => ({ ...prev, loading: true, error: undefined }));
 
-      devLog.log(`📹 [PlayPage] Fetching videos for category: ${category || 'all'}, page: ${page}`);
+      logger.debug(`📹 [PlayPage] Fetching videos for category: ${category || 'all'}, page: ${page}`);
 
       // Fetch videos from real backend API with abort signal
       const response: any = await realVideosApi.getVideosByCategory(
@@ -109,7 +107,7 @@ export function usePlayPageData(): UsePlayPageData {
 
           // Limit total videos in memory to prevent memory leaks
           if (allVideos.length > MAX_VIDEOS_IN_MEMORY) {
-            devLog.log(`⚠️ [PlayPage] Limiting videos from ${allVideos.length} to ${MAX_VIDEOS_IN_MEMORY}`);
+            logger.debug(`⚠️ [PlayPage] Limiting videos from ${allVideos.length} to ${MAX_VIDEOS_IN_MEMORY}`);
             allVideos = allVideos.slice(-MAX_VIDEOS_IN_MEMORY);
           }
 
@@ -118,8 +116,8 @@ export function usePlayPageData(): UsePlayPageData {
           const articleVideos = allVideos.filter(v => v.contentType === 'article');
           const ugcVideos = allVideos.filter(v => v.contentType === 'ugc');
 
-          devLog.log(`✅ [PlayPage] Loaded ${videos.length} videos successfully`);
-          devLog.log(`📊 [PlayPage] Merchant: ${merchantVideos.length}, Article: ${articleVideos.length}, UGC: ${ugcVideos.length}`);
+          logger.debug(`✅ [PlayPage] Loaded ${videos.length} videos successfully`);
+          logger.debug(`📊 [PlayPage] Merchant: ${merchantVideos.length}, Article: ${articleVideos.length}, UGC: ${ugcVideos.length}`);
 
           return {
             ...prev,
@@ -141,7 +139,7 @@ export function usePlayPageData(): UsePlayPageData {
     } catch (error: any) {
       // Ignore abort errors
       if (error.name === 'AbortError') {
-        devLog.log('⚠️ [PlayPage] Fetch request aborted');
+        logger.debug('⚠️ [PlayPage] Fetch request aborted');
         return;
       }
 
@@ -150,11 +148,11 @@ export function usePlayPageData(): UsePlayPageData {
         loading: false,
         error: 'Failed to load videos. Please try again.'
       }));
-      devLog.error('❌ [PlayPage] Failed to fetch videos:', error);
+      logger.error('❌ [PlayPage] Failed to fetch videos:', error);
 
       // Retry logic - attempt once more after 2 seconds
       if (page === 1 && isMountedRef.current) {
-        devLog.log('🔄 [PlayPage] Retrying video fetch...');
+        logger.debug('🔄 [PlayPage] Retrying video fetch...');
         // Clear any existing retry timeout
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);
@@ -179,7 +177,7 @@ export function usePlayPageData(): UsePlayPageData {
 
       setState(prev => ({ ...prev, refreshing: true, error: undefined }));
 
-      devLog.log('🔄 [PlayPage] Refreshing videos...');
+      logger.debug('🔄 [PlayPage] Refreshing videos...');
 
       // Fetch fresh data from backend API with abort signal
       const response: any = await realVideosApi.getVideosByCategory(
@@ -191,37 +189,37 @@ export function usePlayPageData(): UsePlayPageData {
         }
       );
 
-      devLog.log('🔍 [PlayPage] Response success:', response.success);
-      devLog.log('🔍 [PlayPage] Response data videos count:', response.data?.videos?.length);
+      logger.debug('🔍 [PlayPage] Response success:', response.success);
+      logger.debug('🔍 [PlayPage] Response data videos count:', response.data?.videos?.length);
 
       if (response.success) {
-        devLog.log('✅ [PlayPage] Response successful, starting transformation...');
-        devLog.log('🔍 [PlayPage] Videos to transform:', response.data.videos.length);
-        devLog.log('🔍 [PlayPage] User ID:', user?.id);
+        logger.debug('✅ [PlayPage] Response successful, starting transformation...');
+        logger.debug('🔍 [PlayPage] Videos to transform:', response.data.videos.length);
+        logger.debug('🔍 [PlayPage] User ID:', user?.id);
 
         let videos: UGCVideoItem[] = [];
         let featured: UGCVideoItem | undefined = undefined;
 
         try {
-          devLog.log('🔄 [PlayPage] Calling transformVideosToUGC...');
+          logger.debug('🔄 [PlayPage] Calling transformVideosToUGC...');
           videos = transformVideosToUGC(response.data.videos, user?.id);
-          devLog.log('✅ [PlayPage] transformVideosToUGC completed, count:', videos.length);
+          logger.debug('✅ [PlayPage] transformVideosToUGC completed, count:', videos.length);
         } catch (transformError) {
-          devLog.error('❌ [PlayPage] transformVideosToUGC FAILED:', transformError);
-          devLog.error('❌ [PlayPage] Error stack:', transformError instanceof Error ? transformError.stack : 'No stack');
+          logger.error('❌ [PlayPage] transformVideosToUGC FAILED:', transformError);
+          logger.error('❌ [PlayPage] Error stack:', transformError instanceof Error ? transformError.stack : 'No stack');
           throw transformError;
         }
 
         try {
-          devLog.log('🔄 [PlayPage] Calling getFeaturedVideo...');
+          logger.debug('🔄 [PlayPage] Calling getFeaturedVideo...');
           featured = getFeaturedVideo(response.data.videos, user?.id);
-          devLog.log('✅ [PlayPage] getFeaturedVideo completed');
+          logger.debug('✅ [PlayPage] getFeaturedVideo completed');
         } catch (featuredError) {
-          devLog.error('❌ [PlayPage] getFeaturedVideo FAILED:', featuredError);
+          logger.error('❌ [PlayPage] getFeaturedVideo FAILED:', featuredError);
           // Don't throw, featured is optional
         }
 
-        devLog.log('🔄 [PlayPage] Updating state with transformed videos...');
+        logger.debug('🔄 [PlayPage] Updating state with transformed videos...');
 
         // Filter videos by contentType for the 3 main sections
         const merchantVideos = videos.filter(v => v.contentType === 'merchant');
@@ -241,24 +239,24 @@ export function usePlayPageData(): UsePlayPageData {
           currentPage: 1
         }));
 
-        devLog.log('✅ [PlayPage] Videos refreshed successfully');
-        devLog.log(`📊 [PlayPage] Merchant: ${merchantVideos.length}, Article: ${articleVideos.length}, UGC: ${ugcVideos.length}`);
+        logger.debug('✅ [PlayPage] Videos refreshed successfully');
+        logger.debug(`📊 [PlayPage] Merchant: ${merchantVideos.length}, Article: ${articleVideos.length}, UGC: ${ugcVideos.length}`);
       } else {
-        devLog.log('❌ [PlayPage] Response not successful');
+        logger.debug('❌ [PlayPage] Response not successful');
         throw new Error(response.message || 'Failed to refresh videos');
       }
 
     } catch (error: any) {
       // Ignore abort errors
       if (error.name === 'AbortError') {
-        devLog.log('⚠️ [PlayPage] Refresh request aborted');
+        logger.debug('⚠️ [PlayPage] Refresh request aborted');
         return;
       }
 
-      devLog.error('❌ [PlayPage] CAUGHT ERROR in refreshVideos:', error);
-      devLog.error('❌ [PlayPage] Error type:', typeof error);
-      devLog.error('❌ [PlayPage] Error message:', error instanceof Error ? error.message : String(error));
-      devLog.error('❌ [PlayPage] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      logger.error('❌ [PlayPage] CAUGHT ERROR in refreshVideos:', error);
+      logger.error('❌ [PlayPage] Error type:', typeof error);
+      logger.error('❌ [PlayPage] Error message:', error instanceof Error ? error.message : String(error));
+      logger.error('❌ [PlayPage] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
 
       setState(prev => ({
         ...prev,
@@ -273,12 +271,12 @@ export function usePlayPageData(): UsePlayPageData {
 
     try {
       const nextPage = state.currentPage + 1;
-      devLog.log(`📄 [PlayPage] Loading more videos, page: ${nextPage}`);
+      logger.debug(`📄 [PlayPage] Loading more videos, page: ${nextPage}`);
 
       await fetchVideos(state.activeCategory, nextPage);
 
     } catch (error: any) {
-      devLog.error('❌ [PlayPage] Failed to load more videos:', error);
+      logger.error('❌ [PlayPage] Failed to load more videos:', error);
     }
   }, [state.hasMoreVideos, state.loading, state.activeCategory, state.currentPage, fetchVideos]);
 
@@ -334,7 +332,7 @@ export function usePlayPageData(): UsePlayPageData {
   // User interactions
   const likeVideoAction = useCallback(async (videoId: string): Promise<boolean> => {
     try {
-      devLog.log(`❤️ [PlayPage] Toggling like for video: ${videoId}`);
+      logger.debug(`❤️ [PlayPage] Toggling like for video: ${videoId}`);
 
       const response: any = await realVideosApi.toggleVideoLike(videoId);
 
@@ -362,19 +360,19 @@ export function usePlayPageData(): UsePlayPageData {
           };
         });
 
-        devLog.log(`✅ [PlayPage] Video ${isLiked ? 'liked' : 'unliked'} successfully`);
+        logger.debug(`✅ [PlayPage] Video ${isLiked ? 'liked' : 'unliked'} successfully`);
       }
 
       return response.success;
     } catch (error: any) {
-      devLog.error('❌ [PlayPage] Failed to like video:', error);
+      logger.error('❌ [PlayPage] Failed to like video:', error);
       return false;
     }
   }, []);
 
   const shareVideoAction = useCallback(async (video: UGCVideoItem) => {
     try {
-      devLog.log(`🔗 [PlayPage] Sharing video: ${video.id}`);
+      logger.debug(`🔗 [PlayPage] Sharing video: ${video.id}`);
 
       const shareMessage = `Check out this amazing video: ${video.description}\n\n#${video.hashtags?.join(' #') || ''}`;
 
@@ -401,10 +399,10 @@ export function usePlayPageData(): UsePlayPageData {
           };
         });
 
-        devLog.log('✅ [PlayPage] Video shared successfully');
+        logger.debug('✅ [PlayPage] Video shared successfully');
       }
     } catch (error: any) {
-      devLog.error('❌ [PlayPage] Failed to share video:', error);
+      logger.error('❌ [PlayPage] Failed to share video:', error);
       platformAlertSimple('Share Failed', 'Unable to share video. Please try again.');
     }
   }, []);

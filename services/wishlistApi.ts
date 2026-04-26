@@ -4,12 +4,7 @@
 
 import apiClient, { ApiResponse } from './apiClient';
 import { withRetry, createErrorResponse, getUserFriendlyErrorMessage, logApiRequest, logApiResponse } from '@/utils/apiUtils';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Discount snapshot interface - stores deal info at save time
 export interface DiscountSnapshot {
@@ -171,25 +166,25 @@ export interface WishlistAnalytics {
  */
 function validateWishlist(data: any): boolean {
   if (!data || typeof data !== 'object') {
-    devLog.warn('[WISHLIST API] Invalid wishlist data: not an object');
+    logger.warn('[WISHLIST API] Invalid wishlist data: not an object');
     return false;
   }
 
   // Accept both _id and id for MongoDB compatibility
   if (!data.id && !data._id) {
-    devLog.warn('[WISHLIST API] Wishlist missing id field');
+    logger.warn('[WISHLIST API] Wishlist missing id field');
     return false;
   }
 
   // Accept both user (populated) and userId fields - backend returns 'user'
   if (!data.userId && !data.user) {
-    devLog.warn('[WISHLIST API] Wishlist missing user/userId field');
+    logger.warn('[WISHLIST API] Wishlist missing user/userId field');
     return false;
   }
 
   // items can be an array or undefined (empty wishlist)
   if (data.items && !Array.isArray(data.items)) {
-    devLog.warn('[WISHLIST API] Wishlist items is not an array');
+    logger.warn('[WISHLIST API] Wishlist items is not an array');
     return false;
   }
 
@@ -203,13 +198,13 @@ function validateWishlist(data: any): boolean {
  */
 function validateWishlistItem(item: any): boolean {
   if (!item || typeof item !== 'object') {
-    devLog.warn('[WISHLIST API] Invalid wishlist item: not an object');
+    logger.warn('[WISHLIST API] Invalid wishlist item: not an object');
     return false;
   }
 
   // Accept both _id and id for MongoDB compatibility
   if (!item.id && !item._id) {
-    devLog.warn('[WISHLIST API] Wishlist item missing id field');
+    logger.warn('[WISHLIST API] Wishlist item missing id field');
     return false;
   }
 
@@ -217,12 +212,12 @@ function validateWishlistItem(item: any): boolean {
   // Frontend uses lowercase: 'product', 'store', 'video', 'project', 'discount'
   const validItemTypes = ['product', 'video', 'store', 'project', 'discount', 'Product', 'Store', 'Video', 'Project', 'Discount'];
   if (!item.itemType || !validItemTypes.includes(item.itemType)) {
-    devLog.warn('[WISHLIST API] Wishlist item has invalid itemType:', item.itemType);
+    logger.warn('[WISHLIST API] Wishlist item has invalid itemType:', item.itemType);
     return false;
   }
 
   if (!item.itemId) {
-    devLog.warn('[WISHLIST API] Wishlist item missing itemId field');
+    logger.warn('[WISHLIST API] Wishlist item missing itemId field');
     return false;
   }
 
@@ -231,7 +226,7 @@ function validateWishlistItem(item: any): boolean {
 
   // Priority defaults to 'medium' if not provided
   if (item.priority && !['low', 'medium', 'high'].includes(item.priority)) {
-    devLog.warn('[WISHLIST API] Wishlist item has invalid priority');
+    logger.warn('[WISHLIST API] Wishlist item has invalid priority');
     return false;
   }
 
@@ -243,17 +238,17 @@ function validateWishlistItem(item: any): boolean {
  */
 function validateWishlistsResponse(data: any): boolean {
   if (!data || typeof data !== 'object') {
-    devLog.warn('[WISHLIST API] Invalid wishlists response: not an object');
+    logger.warn('[WISHLIST API] Invalid wishlists response: not an object');
     return false;
   }
 
   if (!Array.isArray(data.items)) {
-    devLog.warn('[WISHLIST API] Wishlists response items is not an array');
+    logger.warn('[WISHLIST API] Wishlists response items is not an array');
     return false;
   }
 
   if (!data.pagination || typeof data.pagination !== 'object') {
-    devLog.warn('[WISHLIST API] Wishlists response missing pagination');
+    logger.warn('[WISHLIST API] Wishlists response missing pagination');
     return false;
   }
 
@@ -318,7 +313,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!Array.isArray(response.data.wishlists)) {
-          devLog.error('[WISHLIST API] Invalid wishlists response');
+          logger.error('[WISHLIST API] Invalid wishlists response');
           return {
             success: false,
             error: 'Invalid wishlists data received from server',
@@ -329,7 +324,7 @@ class WishlistService {
         // Validate each wishlist
         response.data.wishlists = response.data.wishlists.filter((wishlist: any) => {
           if (!validateWishlist(wishlist)) {
-            devLog.warn('[WISHLIST API] Filtered out invalid wishlist:', wishlist?.id);
+            logger.warn('[WISHLIST API] Filtered out invalid wishlist:', wishlist?.id);
             return false;
           }
           return true;
@@ -338,7 +333,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching wishlists:', error);
+      logger.error('[WISHLIST API] Error fetching wishlists:', error);
       return createErrorResponse(error, 'Failed to load wishlists. Please try again.') as ApiResponse<{
         wishlists: Wishlist[];
         pagination: { current: number; pages: number; total: number; limit: number };
@@ -417,7 +412,7 @@ class WishlistService {
             wishlistId = (createResponse.data as { id?: string; _id?: string }).id
             || (createResponse.data as { id?: string; _id?: string })._id;
           } else {
-            devLog.error('[WISHLIST API] Failed to create default wishlist');
+            logger.error('[WISHLIST API] Failed to create default wishlist');
             return {
               success: false,
               error: 'Failed to create default wishlist',
@@ -454,14 +449,14 @@ class WishlistService {
       if (response.success && response.data) {
         // The response is the full wishlist, validate it as such
         if (!validateWishlist(response.data)) {
-          devLog.warn('[WISHLIST API] Wishlist validation warning in add response, but item was added');
+          logger.warn('[WISHLIST API] Wishlist validation warning in add response, but item was added');
           // Don't fail - the item was successfully added, just the response structure is different
         }
       }
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error adding to wishlist:', error);
+      logger.error('[WISHLIST API] Error adding to wishlist:', error);
       return createErrorResponse(error, 'Failed to add item to wishlist. Please try again.') as ApiResponse<WishlistItem>;
     }
   }
@@ -541,7 +536,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error removing from wishlist:', error);
+      logger.error('[WISHLIST API] Error removing from wishlist:', error);
       return createErrorResponse(error, 'Failed to remove item from wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -573,7 +568,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error clearing wishlist:', error);
+      logger.error('[WISHLIST API] Error clearing wishlist:', error);
       return createErrorResponse(error, 'Failed to clear wishlist. Please try again.') as ApiResponse<{ message: string; count: number }>;
     }
   }
@@ -636,7 +631,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error checking wishlist status:', error);
+      logger.error('[WISHLIST API] Error checking wishlist status:', error);
       return createErrorResponse(error, 'Failed to check wishlist status. Please try again.') as ApiResponse<{
     inWishlist: boolean;
     wishlistItemId?: string;
@@ -666,7 +661,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching wishlist count:', error);
+      logger.error('[WISHLIST API] Error fetching wishlist count:', error);
       return createErrorResponse(error, 'Failed to load wishlist count. Please try again.') as ApiResponse<{ count: number }>;
     }
   }
@@ -701,7 +696,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlist(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist data in response');
+          logger.error('[WISHLIST API] Invalid wishlist data in response');
           return {
             success: false,
             error: 'Invalid wishlist data received from server',
@@ -712,7 +707,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching wishlist:', error);
+      logger.error('[WISHLIST API] Error fetching wishlist:', error);
       return createErrorResponse(error, 'Failed to load wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
@@ -736,7 +731,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlist(response.data)) {
-          devLog.error('[WISHLIST API] Invalid default wishlist data');
+          logger.error('[WISHLIST API] Invalid default wishlist data');
           return {
             success: false,
             error: 'Invalid wishlist data received from server',
@@ -747,7 +742,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching default wishlist:', error);
+      logger.error('[WISHLIST API] Error fetching default wishlist:', error);
       return createErrorResponse(error, 'Failed to load default wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
@@ -788,7 +783,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlist(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist data in create response');
+          logger.error('[WISHLIST API] Invalid wishlist data in create response');
           return {
             success: false,
             error: 'Invalid wishlist data received from server',
@@ -799,7 +794,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error creating wishlist:', error);
+      logger.error('[WISHLIST API] Error creating wishlist:', error);
       return createErrorResponse(error, 'Failed to create wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
@@ -859,7 +854,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlist(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist data in update response');
+          logger.error('[WISHLIST API] Invalid wishlist data in update response');
           return {
             success: false,
             error: 'Invalid wishlist data received from server',
@@ -870,7 +865,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error updating wishlist:', error);
+      logger.error('[WISHLIST API] Error updating wishlist:', error);
       return createErrorResponse(error, 'Failed to update wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
@@ -902,7 +897,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error deleting wishlist:', error);
+      logger.error('[WISHLIST API] Error deleting wishlist:', error);
       return createErrorResponse(error, 'Failed to delete wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -948,7 +943,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlistsResponse(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist items response');
+          logger.error('[WISHLIST API] Invalid wishlist items response');
           return {
             success: false,
             error: 'Invalid wishlist items data received from server',
@@ -959,7 +954,7 @@ class WishlistService {
         // Filter out invalid items
         response.data.items = response.data.items.filter((item: any) => {
           if (!validateWishlistItem(item)) {
-            devLog.warn('[WISHLIST API] Filtered out invalid wishlist item:', item?.id);
+            logger.warn('[WISHLIST API] Filtered out invalid wishlist item:', item?.id);
             return false;
           }
           return true;
@@ -968,7 +963,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching wishlist items:', error);
+      logger.error('[WISHLIST API] Error fetching wishlist items:', error);
       return createErrorResponse(error, 'Failed to load wishlist items. Please try again.') as ApiResponse<WishlistsResponse>;
     }
   }
@@ -1025,7 +1020,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlistItem(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist item in update response');
+          logger.error('[WISHLIST API] Invalid wishlist item in update response');
           return {
             success: false,
             error: 'Invalid item data received from server',
@@ -1036,7 +1031,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error updating wishlist item:', error);
+      logger.error('[WISHLIST API] Error updating wishlist item:', error);
       return createErrorResponse(error, 'Failed to update wishlist item. Please try again.') as ApiResponse<WishlistItem>;
     }
   }
@@ -1068,7 +1063,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error moving item to cart:', error);
+      logger.error('[WISHLIST API] Error moving item to cart:', error);
       return createErrorResponse(error, 'Failed to move item to cart. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -1133,7 +1128,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error sharing wishlist:', error);
+      logger.error('[WISHLIST API] Error sharing wishlist:', error);
       return createErrorResponse(error, 'Failed to share wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -1181,7 +1176,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlist(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist data in sync response');
+          logger.error('[WISHLIST API] Invalid wishlist data in sync response');
           return {
             success: false,
             error: 'Invalid wishlist data received from server',
@@ -1192,7 +1187,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error syncing wishlist:', error);
+      logger.error('[WISHLIST API] Error syncing wishlist:', error);
       return createErrorResponse(error, 'Failed to sync wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
@@ -1235,7 +1230,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error moving item:', error);
+      logger.error('[WISHLIST API] Error moving item:', error);
       return createErrorResponse(error, 'Failed to move item. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -1292,7 +1287,7 @@ class WishlistService {
       if (response.success && response.data?.items) {
         response.data.items = response.data.items.filter((item: any) => {
           if (!validateWishlistItem(item)) {
-            devLog.warn('[WISHLIST API] Filtered out invalid item in bulk response');
+            logger.warn('[WISHLIST API] Filtered out invalid item in bulk response');
             return false;
           }
           return true;
@@ -1301,7 +1296,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error bulk adding to wishlist:', error);
+      logger.error('[WISHLIST API] Error bulk adding to wishlist:', error);
       return createErrorResponse(error, 'Failed to add items to wishlist. Please try again.') as ApiResponse<{
     added: number;
     failed: number;
@@ -1345,7 +1340,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error bulk removing from wishlist:', error);
+      logger.error('[WISHLIST API] Error bulk removing from wishlist:', error);
       return createErrorResponse(error, 'Failed to remove items from wishlist. Please try again.') as ApiResponse<{
     removed: number;
     failed: number;
@@ -1397,7 +1392,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error bulk moving items:', error);
+      logger.error('[WISHLIST API] Error bulk moving items:', error);
       return createErrorResponse(error, 'Failed to move items. Please try again.') as ApiResponse<{
     moved: number;
     failed: number;
@@ -1472,7 +1467,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching recommendations:', error);
+      logger.error('[WISHLIST API] Error fetching recommendations:', error);
       return createErrorResponse(error, 'Failed to load recommendations. Please try again.') as ApiResponse<Array<{
     id: string;
     name: string;
@@ -1548,7 +1543,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching shared wishlists:', error);
+      logger.error('[WISHLIST API] Error fetching shared wishlists:', error);
       return createErrorResponse(error, 'Failed to load shared wishlists. Please try again.') as ApiResponse<{
     wishlists: Array<Wishlist & {
       owner: { id: string; name: string; avatar?: string };
@@ -1592,7 +1587,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error unsharing wishlist:', error);
+      logger.error('[WISHLIST API] Error unsharing wishlist:', error);
       return createErrorResponse(error, 'Failed to unshare wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -1658,7 +1653,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching public wishlists:', error);
+      logger.error('[WISHLIST API] Error fetching public wishlists:', error);
       return createErrorResponse(error, 'Failed to load public wishlists. Please try again.') as ApiResponse<{
     wishlists: Array<Wishlist & { owner: { id: string; name: string; avatar?: string } }>;
     pagination: { current: number; pages: number; total: number; limit: number };
@@ -1693,7 +1688,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error following wishlist:', error);
+      logger.error('[WISHLIST API] Error following wishlist:', error);
       return createErrorResponse(error, 'Failed to follow wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -1725,7 +1720,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error unfollowing wishlist:', error);
+      logger.error('[WISHLIST API] Error unfollowing wishlist:', error);
       return createErrorResponse(error, 'Failed to unfollow wishlist. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -1789,7 +1784,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching followed wishlists:', error);
+      logger.error('[WISHLIST API] Error fetching followed wishlists:', error);
       return createErrorResponse(error, 'Failed to load followed wishlists. Please try again.') as ApiResponse<{
     wishlists: Array<Wishlist & {
       owner: { id: string; name: string; avatar?: string };
@@ -1848,7 +1843,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error exporting wishlist:', error);
+      logger.error('[WISHLIST API] Error exporting wishlist:', error);
       return createErrorResponse(error, 'Failed to export wishlist. Please try again.') as ApiResponse<{
     downloadUrl: string;
     filename: string;
@@ -1909,7 +1904,7 @@ class WishlistService {
     }>;
   }>;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error importing wishlist:', error);
+      logger.error('[WISHLIST API] Error importing wishlist:', error);
       return createErrorResponse(error, 'Failed to import wishlist. Please try again.') as ApiResponse<{
     imported: number;
     failed: number;
@@ -1959,7 +1954,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching price alerts:', error);
+      logger.error('[WISHLIST API] Error fetching price alerts:', error);
       return createErrorResponse(error, 'Failed to load price alerts. Please try again.') as ApiResponse<Array<{
     itemId: string;
     item: WishlistItem['item'];
@@ -2010,7 +2005,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error setting price alert:', error);
+      logger.error('[WISHLIST API] Error setting price alert:', error);
       return createErrorResponse(error, 'Failed to set price alert. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -2042,7 +2037,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error removing price alert:', error);
+      logger.error('[WISHLIST API] Error removing price alert:', error);
       return createErrorResponse(error, 'Failed to remove price alert. Please try again.') as ApiResponse<{ message: string }>;
     }
   }
@@ -2075,7 +2070,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching analytics:', error);
+      logger.error('[WISHLIST API] Error fetching analytics:', error);
       return createErrorResponse(error, 'Failed to load analytics. Please try again.') as ApiResponse<WishlistAnalytics>;
     }
   }
@@ -2136,7 +2131,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error fetching similar items:', error);
+      logger.error('[WISHLIST API] Error fetching similar items:', error);
       return createErrorResponse(error, 'Failed to load similar items. Please try again.') as ApiResponse<Array<{
     id: string;
     name: string;
@@ -2199,7 +2194,7 @@ class WishlistService {
       // Validate response
       if (response.success && response.data) {
         if (!validateWishlist(response.data)) {
-          devLog.error('[WISHLIST API] Invalid wishlist data in duplicate response');
+          logger.error('[WISHLIST API] Invalid wishlist data in duplicate response');
           return {
             success: false,
             error: 'Invalid wishlist data received from server',
@@ -2210,7 +2205,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error duplicating wishlist:', error);
+      logger.error('[WISHLIST API] Error duplicating wishlist:', error);
       return createErrorResponse(error, 'Failed to duplicate wishlist. Please try again.') as ApiResponse<Wishlist>;
     }
   }
@@ -2274,7 +2269,7 @@ class WishlistService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[WISHLIST API] Error merging wishlists:', error);
+      logger.error('[WISHLIST API] Error merging wishlists:', error);
       return createErrorResponse(error, 'Failed to merge wishlists. Please try again.') as ApiResponse<{
     message: string;
     merged: number;

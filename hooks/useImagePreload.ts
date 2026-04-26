@@ -8,12 +8,7 @@ import { Platform } from 'react-native';
 import { Image } from 'expo-image';
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Types
@@ -85,9 +80,9 @@ async function initializeCache(): Promise<void> {
     }
 
     cacheInitialized = true;
-    devLog.log('[ImagePreload] Cache initialized');
+    logger.debug('[ImagePreload] Cache initialized');
   } catch (error: any) {
-    devLog.error('[ImagePreload] Failed to initialize cache:', error);
+    logger.error('[ImagePreload] Failed to initialize cache:', error);
   }
 }
 
@@ -98,7 +93,7 @@ async function saveCacheIndex(): Promise<void> {
   try {
     await AsyncStorage.setItem(CACHE_INDEX_KEY, JSON.stringify(cacheIndex));
   } catch (error: any) {
-    devLog.error('[ImagePreload] Failed to save cache index:', error);
+    logger.error('[ImagePreload] Failed to save cache index:', error);
   }
 }
 
@@ -143,7 +138,7 @@ async function evictOldEntries(): Promise<void> {
 
   if (totalSize < MAX_CACHE_SIZE) return;
 
-  devLog.log('[ImagePreload] Cache size exceeded, evicting old entries...');
+  logger.debug('[ImagePreload] Cache size exceeded, evicting old entries...');
 
   // Sort by timestamp (oldest first)
   const entries = Object.entries(cacheIndex).sort(
@@ -161,12 +156,12 @@ async function evictOldEntries(): Promise<void> {
       delete cacheIndex[url];
       currentSize -= entry.size;
     } catch (error: any) {
-      devLog.error('[ImagePreload] Failed to delete cached file:', error);
+      logger.error('[ImagePreload] Failed to delete cached file:', error);
     }
   }
 
   await saveCacheIndex();
-  devLog.log('[ImagePreload] Eviction complete');
+  logger.debug('[ImagePreload] Eviction complete');
 }
 
 // ============================================================================
@@ -216,7 +211,7 @@ async function downloadAndCache(
     if (cachedUri) {
       const fileInfo = await FileSystem.getInfoAsync(cachedUri);
       if (fileInfo.exists) {
-        devLog.log('[ImagePreload] Image already cached:', uri);
+        logger.debug('[ImagePreload] Image already cached:', uri);
         return { success: true, uri, cachedUri };
       }
     }
@@ -225,7 +220,7 @@ async function downloadAndCache(
     const fileName = getCacheFileName(uri);
     const localUri = `${IMAGE_CACHE_DIR}${fileName}`;
 
-    devLog.log('[ImagePreload] Downloading image:', uri);
+    logger.debug('[ImagePreload] Downloading image:', uri);
 
     const downloadResult = await FileSystem.downloadAsync(uri, localUri, {
       headers: options.headers,
@@ -249,11 +244,11 @@ async function downloadAndCache(
     await saveCacheIndex();
     await evictOldEntries();
 
-    devLog.log('[ImagePreload] Image cached:', uri);
+    logger.debug('[ImagePreload] Image cached:', uri);
 
     return { success: true, uri, cachedUri: localUri };
   } catch (error: any) {
-    devLog.error('[ImagePreload] Failed to download image:', error);
+    logger.error('[ImagePreload] Failed to download image:', error);
     return {
       success: false,
       uri,
@@ -356,7 +351,7 @@ export function useImagePreload(): UseImagePreloadResult {
           setErrors(newErrors);
         }
       } catch (error: any) {
-        devLog.error('[ImagePreload] Preload failed:', error);
+        logger.error('[ImagePreload] Preload failed:', error);
       } finally {
         if (isMounted.current) {
           setIsPreloading(false);
@@ -380,9 +375,9 @@ export function useImagePreload(): UseImagePreloadResult {
       cacheIndex = {};
       await AsyncStorage.removeItem(CACHE_INDEX_KEY);
 
-      devLog.log('[ImagePreload] Cache cleared');
+      logger.debug('[ImagePreload] Cache cleared');
     } catch (error: any) {
-      devLog.error('[ImagePreload] Failed to clear cache:', error);
+      logger.error('[ImagePreload] Failed to clear cache:', error);
     }
   }, []);
 
@@ -412,14 +407,14 @@ export async function getCachedImageUri(url: string): Promise<string> {
  * Preload critical images on app start
  */
 export async function preloadCriticalImages(urls: string[]): Promise<void> {
-  devLog.log('[ImagePreload] Preloading critical images...');
+  logger.debug('[ImagePreload] Preloading critical images...');
 
   const results = await Promise.all(
     urls.map((url) => preloadToMemory(url))
   );
 
   const successful = results.filter((r) => r.success).length;
-  devLog.log(`[ImagePreload] Preloaded ${successful}/${urls.length} critical images`);
+  logger.debug(`[ImagePreload] Preloaded ${successful}/${urls.length} critical images`);
 }
 
 export default useImagePreload;

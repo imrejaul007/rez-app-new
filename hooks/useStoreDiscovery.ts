@@ -3,12 +3,7 @@ import { useCurrentLocation } from './useLocation';
 import storesService from '@/services/storesApi';
 import apiClient from '@/services/apiClient';
 import { useCurrentRegionId } from '@/stores/selectors';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 export interface DiscoveryStore {
   id: string;
@@ -218,7 +213,7 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
     try {
       // Priority 1: If user location is available, fetch nearby stores sorted by rating
       if (userCoordinates) {
-        devLog.log('📍 [StoreDiscovery] Fetching nearby top-rated stores...', userCoordinates);
+        logger.debug('📍 [StoreDiscovery] Fetching nearby top-rated stores...', userCoordinates);
         try {
           const nearbyResponse = await storesService.getNearbyStores(
             userCoordinates.latitude,
@@ -247,29 +242,29 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
               .slice(0, limit); // Take top N stores
 
             if (stores.length > 0) {
-              devLog.log(`✅ [StoreDiscovery] Got ${stores.length} location-based top stores`);
+              logger.debug(`✅ [StoreDiscovery] Got ${stores.length} location-based top stores`);
               return stores;
             }
           }
         } catch (nearbyError) {
-          devLog.warn('⚠️ [StoreDiscovery] Nearby stores fetch failed, falling back...', nearbyError);
+          logger.warn('⚠️ [StoreDiscovery] Nearby stores fetch failed, falling back...', nearbyError);
           // Continue to fallback options
         }
       }
 
       // Priority 2: Try trending stores
-      devLog.log('📊 [StoreDiscovery] Fetching trending stores...');
+      logger.debug('📊 [StoreDiscovery] Fetching trending stores...');
       const trendingResponse = await apiClient.get<any>('/stores/trending', { limit });
 
       if (trendingResponse.success && trendingResponse.data?.stores?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${trendingResponse.data.stores.length} trending stores`);
+        logger.debug(`✅ [StoreDiscovery] Got ${trendingResponse.data.stores.length} trending stores`);
         return trendingResponse.data.stores.map((store: any) =>
           transformStore(store, userCoordinates)
         );
       }
 
       // Priority 3: High-rated stores (4.5+)
-      devLog.log('📊 [StoreDiscovery] Trying high-rated stores fallback...');
+      logger.debug('📊 [StoreDiscovery] Trying high-rated stores fallback...');
       const highRatedResponse = await storesService.getStores({
         rating: 4.5,
         limit,
@@ -285,18 +280,18 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
       });
 
       if (highRatedResponse.success && (highRatedResponse.data as StoreListResponse)?.stores?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${(highRatedResponse.data as StoreListResponse).stores.length} high-rated stores`);
+        logger.debug(`✅ [StoreDiscovery] Got ${(highRatedResponse.data as StoreListResponse).stores.length} high-rated stores`);
         return (highRatedResponse.data as StoreListResponse).stores.map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
       }
 
       // Priority 4: Featured stores
-      devLog.log('📊 [StoreDiscovery] Trying featured stores fallback...');
+      logger.debug('📊 [StoreDiscovery] Trying featured stores fallback...');
       const featuredResponse = await storesService.getFeaturedStores(limit);
 
       if (featuredResponse.success && (featuredResponse.data as FeaturedStoresResponse)?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${(featuredResponse.data as FeaturedStoresResponse).length} featured stores`);
+        logger.debug(`✅ [StoreDiscovery] Got ${(featuredResponse.data as FeaturedStoresResponse).length} featured stores`);
         return (featuredResponse.data as FeaturedStoresResponse).map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
@@ -304,7 +299,7 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
 
       return [];
     } catch (error: any) {
-      devLog.error('❌ [StoreDiscovery] Error fetching top stores:', error);
+      logger.error('❌ [StoreDiscovery] Error fetching top stores:', error);
       throw error;
     }
   }, [limit, userCoordinates]);
@@ -315,7 +310,7 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
   const fetchPopularStores = useCallback(async (): Promise<DiscoveryStore[]> => {
     try {
       if (!userCoordinates) {
-        devLog.log('⚠️ [StoreDiscovery] No user location available for nearby stores');
+        logger.debug('⚠️ [StoreDiscovery] No user location available for nearby stores');
         // Fall back to featured stores if no location
         const featuredResponse = await storesService.getFeaturedStores(limit);
         if (featuredResponse.success && (featuredResponse.data as FeaturedStoresResponse)?.length > 0) {
@@ -326,7 +321,7 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
         return [];
       }
 
-      devLog.log('📍 [StoreDiscovery] Fetching nearby stores...', userCoordinates);
+      logger.debug('📍 [StoreDiscovery] Fetching nearby stores...', userCoordinates);
       const nearbyResponse = await storesService.getNearbyStores(
         userCoordinates.latitude,
         userCoordinates.longitude,
@@ -335,14 +330,14 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
       );
 
       if (nearbyResponse.success && (nearbyResponse.data as NearbyStoresResponse)?.length > 0) {
-        devLog.log(`✅ [StoreDiscovery] Got ${(nearbyResponse.data as NearbyStoresResponse).length} nearby stores`);
+        logger.debug(`✅ [StoreDiscovery] Got ${(nearbyResponse.data as NearbyStoresResponse).length} nearby stores`);
         return (nearbyResponse.data as NearbyStoresResponse).map((store: unknown) =>
           transformStore(store, userCoordinates)
         );
       }
 
       // Fallback to featured if no nearby stores
-      devLog.log('📊 [StoreDiscovery] No nearby stores, falling back to featured...');
+      logger.debug('📊 [StoreDiscovery] No nearby stores, falling back to featured...');
       const featuredResponse = await storesService.getFeaturedStores(limit);
       if (featuredResponse.success && (featuredResponse.data as FeaturedStoresResponse)?.length > 0) {
         return (featuredResponse.data as FeaturedStoresResponse).map((store: unknown) =>
@@ -352,7 +347,7 @@ export function useStoreDiscovery(limit: number = 10): UseStoreDiscoveryReturn {
 
       return [];
     } catch (error: any) {
-      devLog.error('❌ [StoreDiscovery] Error fetching popular stores:', error);
+      logger.error('❌ [StoreDiscovery] Error fetching popular stores:', error);
       throw error;
     }
   }, [limit, userCoordinates]);

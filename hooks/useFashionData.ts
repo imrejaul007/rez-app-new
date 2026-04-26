@@ -7,12 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import storesApi from '@/services/storesApi';
 import productsApi from '@/services/productsApi';
 import categoriesApi from '@/services/categoriesApi';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // PERF-N7: Pre-compile the "is this a fashion product" detection.
 // Original implementation ran 4 categoryName.includes() + 13 per-tag
@@ -237,18 +232,18 @@ export const useFashionData = (): UseFashionDataResult => {
                      });
               
               if (isFashion) {
-                devLog.log('✅ Fashion Store:', store.name);
+                logger.debug('✅ Fashion Store:', store.name);
               }
               
               return isFashion;
             })
           : [];
         
-        devLog.log(`📦 Found ${fashionStoresData.length} fashion stores`);
+        logger.debug(`📦 Found ${fashionStoresData.length} fashion stores`);
         setFeaturedStores(fashionStoresData);
       }
     } catch (error: any) {
-      devLog.error('[FASHION DATA] Error fetching featured stores:', error);
+      logger.error('[FASHION DATA] Error fetching featured stores:', error);
       setStoresError(error as Error);
     } finally {
       setIsLoadingFeaturedStores(false);
@@ -288,11 +283,11 @@ export const useFashionData = (): UseFashionDataResult => {
           return isFashion;
         });
         
-        devLog.log(`📦 Found ${fashionStoresData.length} fashion brands`);
+        logger.debug(`📦 Found ${fashionStoresData.length} fashion brands`);
         setFashionStores(fashionStoresData);
       }
     } catch (error: any) {
-      devLog.error('[FASHION DATA] Error fetching fashion stores:', error);
+      logger.error('[FASHION DATA] Error fetching fashion stores:', error);
       setStoresError(error as Error);
     } finally {
       setIsLoadingFashionStores(false);
@@ -305,17 +300,17 @@ export const useFashionData = (): UseFashionDataResult => {
       setIsLoadingProducts(true);
       setProductsError(null);
 
-      devLog.log('🔍 [FASHION DATA] Fetching featured products...');
+      logger.debug('🔍 [FASHION DATA] Fetching featured products...');
       const response: any = await productsApi.getFeaturedProducts(20);
       
-      devLog.log('📡 [FASHION DATA] API Response:', response);
+      logger.debug('📡 [FASHION DATA] API Response:', response);
       
       if (response.success && response.data) {
-        devLog.log(`📦 [FASHION DATA] Total products received: ${response.data.length}`);
+        logger.debug(`📦 [FASHION DATA] Total products received: ${response.data.length}`);
         
         // Log first product to see structure
         if (response.data.length > 0) {
-          devLog.log('🔍 [FASHION DATA] Sample product:', {
+          logger.debug('🔍 [FASHION DATA] Sample product:', {
             name: response.data[0].name,
             category: response.data[0].category,
             tags: response.data[0].tags,
@@ -354,13 +349,13 @@ export const useFashionData = (): UseFashionDataResult => {
             })
           : [];
         
-        devLog.log(`📦 [FASHION DATA] Found ${fashionProductsData.length} fashion products out of ${response.data.length} total`);
+        logger.debug(`📦 [FASHION DATA] Found ${fashionProductsData.length} fashion products out of ${response.data.length} total`);
         setFeaturedProducts(fashionProductsData.slice(0, 10));
       } else {
-        devLog.log('⚠️ [FASHION DATA] No products data in response');
+        logger.debug('⚠️ [FASHION DATA] No products data in response');
       }
     } catch (error: any) {
-      devLog.error('❌ [FASHION DATA] Error fetching featured products:', error);
+      logger.error('❌ [FASHION DATA] Error fetching featured products:', error);
       setProductsError(error as Error);
     } finally {
       setIsLoadingProducts(false);
@@ -373,21 +368,21 @@ export const useFashionData = (): UseFashionDataResult => {
       setIsLoadingCategories(true);
       setCategoriesError(null);
 
-      devLog.log('🔍 [FASHION DATA] Fetching all categories...');
+      logger.debug('🔍 [FASHION DATA] Fetching all categories...');
       const response: any = await categoriesApi.getCategories();
       
       if (response.success && response.data) {
-        devLog.log(`📦 [FASHION DATA] Received ${response.data.length} total categories`);
+        logger.debug(`📦 [FASHION DATA] Received ${response.data.length} total categories`);
         
         // First, find the main Fashion & Beauty category
         const mainFashionCategory = Array.isArray(response.data)
           ? response.data.find((cat: any) => cat.slug === 'fashion-beauty')
           : null;
         
-        devLog.log('🎨 [FASHION DATA] Main fashion category:', mainFashionCategory?.name, mainFashionCategory?._id);
+        logger.debug('🎨 [FASHION DATA] Main fashion category:', mainFashionCategory?.name, mainFashionCategory?._id);
         
         if (!mainFashionCategory) {
-          devLog.log('⚠️ [FASHION DATA] Fashion & Beauty category not found!');
+          logger.debug('⚠️ [FASHION DATA] Fashion & Beauty category not found!');
           setCategories([]);
           return;
         }
@@ -454,28 +449,28 @@ export const useFashionData = (): UseFashionDataResult => {
               );
               
               if (isNonFashion) {
-                devLog.log(`   ❌ Excluding non-fashion category: ${category.name} (${slug})`);
+                logger.debug(`   ❌ Excluding non-fashion category: ${category.name} (${slug})`);
                 return false;
               }
               
               if (isFashion) {
-                devLog.log(`   ✅ Fashion Subcategory: ${category.name} (${slug})`);
+                logger.debug(`   ✅ Fashion Subcategory: ${category.name} (${slug})`);
               }
               
               return isFashion; // Only show fashion subcategories
             })
           : [];
         
-        devLog.log(`📦 [FASHION DATA] Found ${fashionCategories.length} fashion subcategories`);
+        logger.debug(`📦 [FASHION DATA] Found ${fashionCategories.length} fashion subcategories`);
         
         // Show up to 8 subcategories
         setCategories(fashionCategories.slice(0, 8));
       } else {
-        devLog.log('⚠️ [FASHION DATA] No categories data in response');
+        logger.debug('⚠️ [FASHION DATA] No categories data in response');
         setCategories([]);
       }
     } catch (error: any) {
-      devLog.error('❌ [FASHION DATA] Error fetching categories:', error);
+      logger.error('❌ [FASHION DATA] Error fetching categories:', error);
       setCategoriesError(error as Error);
       setCategories([]);
     } finally {

@@ -14,12 +14,7 @@ import {
   MallHomepageData,
   MallBrandFilters
 } from '../types/mall.types';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 /** Raw store data returned by the batch endpoint (before transform to MallBrand) */
 interface MallStoreData {
@@ -119,7 +114,7 @@ class MallApiService {
         luxuryBrands: []
       };
     } catch (error) {
-      devLog.error('Error fetching mall homepage:', error);
+      logger.error('Error fetching mall homepage:', error);
       throw error;
     }
   }
@@ -153,7 +148,7 @@ class MallApiService {
         pages: response.data?.pagination?.pages || response.meta?.pagination?.pages || 0
       };
     } catch (error) {
-      devLog.error('Error fetching brands:', error);
+      logger.error('Error fetching brands:', error);
       throw error;
     }
   }
@@ -168,7 +163,7 @@ class MallApiService {
       );
       return response.data ?? null;
     } catch (error) {
-      devLog.error('Error fetching brand:', error);
+      logger.error('Error fetching brand:', error);
       throw error;
     }
   }
@@ -183,7 +178,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching featured brands:', error);
+      logger.error('Error fetching featured brands:', error);
       throw error;
     }
   }
@@ -198,7 +193,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching new arrivals:', error);
+      logger.error('Error fetching new arrivals:', error);
       throw error;
     }
   }
@@ -213,7 +208,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching top rated brands:', error);
+      logger.error('Error fetching top rated brands:', error);
       throw error;
     }
   }
@@ -228,7 +223,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching luxury brands:', error);
+      logger.error('Error fetching luxury brands:', error);
       throw error;
     }
   }
@@ -245,7 +240,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error searching brands:', error);
+      logger.error('Error searching brands:', error);
       throw error;
     }
   }
@@ -260,7 +255,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching categories:', error);
+      logger.error('Error fetching categories:', error);
       throw error;
     }
   }
@@ -288,7 +283,7 @@ class MallApiService {
         total: response.meta?.pagination?.total || 0
       };
     } catch (error) {
-      devLog.error('Error fetching brands by category:', error);
+      logger.error('Error fetching brands by category:', error);
       throw error;
     }
   }
@@ -303,7 +298,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching collections:', error);
+      logger.error('Error fetching collections:', error);
       throw error;
     }
   }
@@ -335,7 +330,7 @@ class MallApiService {
         total: response.data?.pagination?.total || response.meta?.pagination?.total || 0
       };
     } catch (error) {
-      devLog.error('Error fetching brands by collection:', error);
+      logger.error('Error fetching brands by collection:', error);
       throw error;
     }
   }
@@ -350,7 +345,7 @@ class MallApiService {
       );
       return (response.data as { offers?: MallOffer[] })?.offers || (response.data as MallOffer[]) || [];
     } catch (error) {
-      devLog.error('Error fetching exclusive offers:', error);
+      logger.error('Error fetching exclusive offers:', error);
       throw error;
     }
   }
@@ -375,7 +370,7 @@ class MallApiService {
         total: response.data?.pagination?.total || response.meta?.pagination?.total || 0
       };
     } catch (error) {
-      devLog.error('Error fetching offers:', error);
+      logger.error('Error fetching offers:', error);
       throw error;
     }
   }
@@ -390,7 +385,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching hero banners:', error);
+      logger.error('Error fetching hero banners:', error);
       throw error;
     }
   }
@@ -405,7 +400,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching banners:', error);
+      logger.error('Error fetching banners:', error);
       throw error;
     }
   }
@@ -429,7 +424,7 @@ class MallApiService {
       const response = await apiClient.post<{ clickId: string; trackingUrl: string; brand: { name: string; cashback: number } }>(MALL_ENDPOINTS.AFFILIATE_CLICK, { brandId });
       return response.data ?? null;
     } catch (error) {
-      devLog.warn('Failed to track affiliate click:', error);
+      logger.warn('Failed to track affiliate click:', error);
       return null;
     }
   }
@@ -442,7 +437,7 @@ class MallApiService {
       await apiClient.post<any>(`${MALL_ENDPOINTS.BRANDS}/${brandId}/click`);
     } catch (error) {
       // Silently fail for analytics tracking
-      devLog.warn('Failed to track brand click:', error);
+      logger.warn('Failed to track brand click:', error);
     }
   }
 
@@ -455,7 +450,7 @@ class MallApiService {
         cashbackAmount
       });
     } catch (error) {
-      devLog.warn('Failed to track brand purchase:', error);
+      logger.warn('Failed to track brand purchase:', error);
     }
   }
 
@@ -478,7 +473,7 @@ class MallApiService {
         pages: response.meta?.pagination?.pages || 0
       };
     } catch (error) {
-      devLog.error('Error fetching user clicks:', error);
+      logger.error('Error fetching user clicks:', error);
       throw error;
     }
   }
@@ -502,7 +497,7 @@ class MallApiService {
         pages: response.meta?.pagination?.pages || 0
       };
     } catch (error) {
-      devLog.error('Error fetching user purchases:', error);
+      logger.error('Error fetching user purchases:', error);
       throw error;
     }
   }
@@ -532,7 +527,7 @@ class MallApiService {
   }>(MALL_ENDPOINTS.AFFILIATE_SUMMARY);
       return response.data ?? null;
     } catch (error) {
-      devLog.error('Error fetching cashback summary:', error);
+      logger.error('Error fetching cashback summary:', error);
       return null;
     }
   }
@@ -581,7 +576,7 @@ class MallApiService {
         exclusiveOffers: [],
       };
     } catch (error) {
-      devLog.error('Error fetching mall homepage batch:', error);
+      logger.error('Error fetching mall homepage batch:', error);
       throw error;
     }
   }
@@ -601,7 +596,7 @@ class MallApiService {
         categories: [],
       };
     } catch (error) {
-      devLog.error('Error fetching mall stores homepage:', error);
+      logger.error('Error fetching mall stores homepage:', error);
       throw error;
     }
   }
@@ -640,7 +635,7 @@ class MallApiService {
         pages: response.meta?.pagination?.pages || 0,
       };
     } catch (error) {
-      devLog.error('Error fetching mall stores:', error);
+      logger.error('Error fetching mall stores:', error);
       throw error;
     }
   }
@@ -655,7 +650,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching featured mall stores:', error);
+      logger.error('Error fetching featured mall stores:', error);
       throw error;
     }
   }
@@ -670,7 +665,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching new mall stores:', error);
+      logger.error('Error fetching new mall stores:', error);
       throw error;
     }
   }
@@ -685,7 +680,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching top rated mall stores:', error);
+      logger.error('Error fetching top rated mall stores:', error);
       throw error;
     }
   }
@@ -700,7 +695,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching premium mall stores:', error);
+      logger.error('Error fetching premium mall stores:', error);
       throw error;
     }
   }
@@ -717,7 +712,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error searching mall stores:', error);
+      logger.error('Error searching mall stores:', error);
       throw error;
     }
   }
@@ -732,7 +727,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching mall store categories:', error);
+      logger.error('Error fetching mall store categories:', error);
       throw error;
     }
   }
@@ -747,7 +742,7 @@ class MallApiService {
       );
       return response.data ?? null;
     } catch (error) {
-      devLog.error('Error fetching mall store:', error);
+      logger.error('Error fetching mall store:', error);
       throw error;
     }
   }
@@ -773,7 +768,7 @@ class MallApiService {
         total: (response.data as { pagination?: { total?: number } })?.pagination?.total || 0,
       };
     } catch (error) {
-      devLog.error('Error fetching mall stores by category:', error);
+      logger.error('Error fetching mall stores by category:', error);
       throw error;
     }
   }
@@ -807,7 +802,7 @@ class MallApiService {
         pages: data?.pagination?.pages || 0,
       };
     } catch (error) {
-      devLog.error('Error fetching mall stores by category slug:', error);
+      logger.error('Error fetching mall stores by category slug:', error);
       throw error;
     }
   }
@@ -821,7 +816,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching alliance stores:', error);
+      logger.error('Error fetching alliance stores:', error);
       throw error;
     }
   }
@@ -836,7 +831,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching trending stores:', error);
+      logger.error('Error fetching trending stores:', error);
       throw error;
     }
   }
@@ -851,7 +846,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching reward booster stores:', error);
+      logger.error('Error fetching reward booster stores:', error);
       throw error;
     }
   }
@@ -866,7 +861,7 @@ class MallApiService {
       );
       return response.data || [];
     } catch (error) {
-      devLog.error('Error fetching deals of the day:', error);
+      logger.error('Error fetching deals of the day:', error);
       throw error;
     }
   }

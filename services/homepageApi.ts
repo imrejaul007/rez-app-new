@@ -20,12 +20,7 @@ import { validateProductArray, validateStoreArray } from '@/utils/responseValida
 import apiClient, { ApiResponse } from './apiClient';
 import cacheService from './cacheService';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Cache configuration
 const HOMEPAGE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -83,7 +78,7 @@ function validateUserId(userId?: string): boolean {
  */
 function validateSectionId(sectionId: string): boolean {
   if (!sectionId || typeof sectionId !== 'string') {
-    devLog.warn('[HOMEPAGE API] Invalid section ID');
+    logger.warn('[HOMEPAGE API] Invalid section ID');
     return false;
   }
   return sectionId.trim().length > 0;
@@ -94,11 +89,11 @@ function validateSectionId(sectionId: string): boolean {
  */
 function validatePaginationParams(page?: number, limit?: number): boolean {
   if (page !== undefined && (typeof page !== 'number' || page < 1)) {
-    devLog.warn('[HOMEPAGE API] Invalid page parameter');
+    logger.warn('[HOMEPAGE API] Invalid page parameter');
     return false;
   }
   if (limit !== undefined && (typeof limit !== 'number' || limit < 1 || limit > 100)) {
-    devLog.warn('[HOMEPAGE API] Invalid limit parameter (must be 1-100)');
+    logger.warn('[HOMEPAGE API] Invalid limit parameter (must be 1-100)');
     return false;
   }
   return true;
@@ -111,7 +106,7 @@ function validateFilters(filters?: SectionFilters): boolean {
   if (!filters) return true; // Optional parameter
 
   if (typeof filters !== 'object') {
-    devLog.warn('[HOMEPAGE API] Filters must be an object');
+    logger.warn('[HOMEPAGE API] Filters must be an object');
     return false;
   }
 
@@ -119,7 +114,7 @@ function validateFilters(filters?: SectionFilters): boolean {
   if (filters.priceRange) {
     const { min, max } = filters.priceRange;
     if (typeof min !== 'number' || typeof max !== 'number' || min < 0 || max < min) {
-      devLog.warn('[HOMEPAGE API] Invalid price range');
+      logger.warn('[HOMEPAGE API] Invalid price range');
       return false;
     }
   }
@@ -127,7 +122,7 @@ function validateFilters(filters?: SectionFilters): boolean {
   // Validate rating if provided
   if (filters.rating !== undefined) {
     if (typeof filters.rating !== 'number' || filters.rating < 0 || filters.rating > 5) {
-      devLog.warn('[HOMEPAGE API] Invalid rating (must be 0-5)');
+      logger.warn('[HOMEPAGE API] Invalid rating (must be 0-5)');
       return false;
     }
   }
@@ -140,12 +135,12 @@ function validateFilters(filters?: SectionFilters): boolean {
  */
 function validateHomepageResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
-    devLog.warn('[HOMEPAGE API] Invalid response: not an object');
+    logger.warn('[HOMEPAGE API] Invalid response: not an object');
     return false;
   }
 
   if (!Array.isArray(response.sections)) {
-    devLog.warn('[HOMEPAGE API] Response missing sections array');
+    logger.warn('[HOMEPAGE API] Response missing sections array');
     return false;
   }
 
@@ -157,12 +152,12 @@ function validateHomepageResponse(response: any): boolean {
  */
 function validateSectionResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
-    devLog.warn('[HOMEPAGE API] Invalid section response: not an object');
+    logger.warn('[HOMEPAGE API] Invalid section response: not an object');
     return false;
   }
 
   if (!response.section || typeof response.section !== 'object') {
-    devLog.warn('[HOMEPAGE API] Section response missing section object');
+    logger.warn('[HOMEPAGE API] Section response missing section object');
     return false;
   }
 
@@ -177,7 +172,7 @@ function validateSectionResponse(response: any): boolean {
  */
 function validateBatchResponse(response: any): boolean {
   if (!response || typeof response !== 'object') {
-    devLog.warn('[HOMEPAGE API] Invalid batch response: not an object');
+    logger.warn('[HOMEPAGE API] Invalid batch response: not an object');
     return false;
   }
 
@@ -192,7 +187,7 @@ function validateBatchResponse(response: any): boolean {
                            Array.isArray((data as Record<string, unknown>).trendingStores);
 
   if (!hasLegacyFormat && !hasCurrentFormat) {
-    devLog.warn('[HOMEPAGE API] Batch response missing valid data structure');
+    logger.warn('[HOMEPAGE API] Batch response missing valid data structure');
     return false;
   }
 
@@ -242,7 +237,7 @@ export class HomepageApiService {
 
       // Validate response structure
       if (response && !validateHomepageResponse(response)) {
-        devLog.error('[HOMEPAGE API] Homepage data validation failed');
+        logger.error('[HOMEPAGE API] Homepage data validation failed');
         return {
           success: false,
           error: 'Invalid homepage data structure',
@@ -258,14 +253,14 @@ export class HomepageApiService {
             section.items = validItems;
 
             if (validItems.length < section.items.length) {
-              devLog.warn(`[HOMEPAGE API] Filtered invalid products in section ${section.id}`);
+              logger.warn(`[HOMEPAGE API] Filtered invalid products in section ${section.id}`);
             }
           } else if (section.type === 'stores' && Array.isArray(section.items)) {
             const validItems = validateStoreArray(section.items as StoreItem[]);
             section.items = validItems;
 
             if (validItems.length < section.items.length) {
-              devLog.warn(`[HOMEPAGE API] Filtered invalid stores in section ${section.id}`);
+              logger.warn(`[HOMEPAGE API] Filtered invalid stores in section ${section.id}`);
             }
           }
         });
@@ -276,7 +271,7 @@ export class HomepageApiService {
         data: response,
       };
     } catch (error: any) {
-      devLog.error('[HOMEPAGE API] Error fetching homepage data:', error);
+      logger.error('[HOMEPAGE API] Error fetching homepage data:', error);
       return createErrorResponse(error, 'Failed to load homepage. Please try again.');
     }
   }
@@ -353,7 +348,7 @@ export class HomepageApiService {
 
       // Validate response structure
       if (!validateBatchResponse(response)) {
-        devLog.error('[HOMEPAGE API] Batch response validation failed');
+        logger.error('[HOMEPAGE API] Batch response validation failed');
         return createErrorResponse('Invalid batch response structure', 'Failed to load homepage data. Please try again.');
       }
 
@@ -376,14 +371,14 @@ export class HomepageApiService {
       if (sections.justForYou) {
         validatedSections.justForYou = validateProductArray(sections.justForYou);
         if (validatedSections.justForYou.length < sections.justForYou.length) {
-          devLog.warn(`[HOMEPAGE API] Filtered ${sections.justForYou.length - validatedSections.justForYou.length} invalid products from justForYou`);
+          logger.warn(`[HOMEPAGE API] Filtered ${sections.justForYou.length - validatedSections.justForYou.length} invalid products from justForYou`);
         }
       }
 
       if (sections.newArrivals) {
         validatedSections.newArrivals = validateProductArray(sections.newArrivals);
         if (validatedSections.newArrivals.length < sections.newArrivals.length) {
-          devLog.warn(`[HOMEPAGE API] Filtered ${sections.newArrivals.length - validatedSections.newArrivals.length} invalid products from newArrivals`);
+          logger.warn(`[HOMEPAGE API] Filtered ${sections.newArrivals.length - validatedSections.newArrivals.length} invalid products from newArrivals`);
         }
       }
 
@@ -401,7 +396,7 @@ export class HomepageApiService {
       if (sections.trendingStores) {
         validatedSections.trendingStores = validateStoreArray(sections.trendingStores);
         if (validatedSections.trendingStores.length < sections.trendingStores.length) {
-          devLog.warn(`[HOMEPAGE API] Filtered ${sections.trendingStores.length - validatedSections.trendingStores.length} invalid stores from trendingStores`);
+          logger.warn(`[HOMEPAGE API] Filtered ${sections.trendingStores.length - validatedSections.trendingStores.length} invalid stores from trendingStores`);
         }
       }
 
@@ -424,7 +419,7 @@ export class HomepageApiService {
         },
       };
     } catch (error: any) {
-      devLog.error('❌ [HOMEPAGE API] Batch endpoint failed:', error);
+      logger.error('❌ [HOMEPAGE API] Batch endpoint failed:', error);
       return createErrorResponse(error, 'Failed to load homepage data. Please try again.');
     }
   }
@@ -560,7 +555,7 @@ export class HomepageApiService {
 
       // Validate response structure
       if (!validateSectionResponse(response)) {
-        devLog.error(`[HOMEPAGE API] Section ${sectionId} response validation failed`);
+        logger.error(`[HOMEPAGE API] Section ${sectionId} response validation failed`);
         return {
           success: false,
           error: 'Invalid section data structure',
@@ -577,14 +572,14 @@ export class HomepageApiService {
           section.items = validItems;
 
           if (validItems.length < section.items.length) {
-            devLog.warn(`[HOMEPAGE API] Filtered ${section.items.length - validItems.length} invalid products from section ${sectionId}`);
+            logger.warn(`[HOMEPAGE API] Filtered ${section.items.length - validItems.length} invalid products from section ${sectionId}`);
           }
         } else if (section.type === 'stores' && Array.isArray(section.items)) {
           const validItems = validateStoreArray(section.items as StoreItem[]);
           section.items = validItems;
 
           if (validItems.length < section.items.length) {
-            devLog.warn(`[HOMEPAGE API] Filtered ${section.items.length - validItems.length} invalid stores from section ${sectionId}`);
+            logger.warn(`[HOMEPAGE API] Filtered ${section.items.length - validItems.length} invalid stores from section ${sectionId}`);
           }
         }
       }
@@ -594,7 +589,7 @@ export class HomepageApiService {
         data: response,
       };
     } catch (error: any) {
-      devLog.error(`[HOMEPAGE API] Error fetching section ${sectionId}:`, error);
+      logger.error(`[HOMEPAGE API] Error fetching section ${sectionId}:`, error);
       return createErrorResponse(error, `Failed to load section. Please try again.`);
     }
   }
@@ -667,7 +662,7 @@ export class HomepageApiService {
       return apiResponse;
     } catch (error: any) {
       // Analytics failures shouldn't block the app
-      devLog.warn('[HOMEPAGE API] Failed to send analytics:', error);
+      logger.warn('[HOMEPAGE API] Failed to send analytics:', error);
       return {
         success: false,
         error: error?.message || 'Analytics tracking failed',
@@ -695,7 +690,7 @@ export class HomepageApiService {
         sectionViews: { [sectionId]: 1 }
       });
     } catch (error: any) {
-      devLog.warn('[HOMEPAGE API] Failed to track section view:', error);
+      logger.warn('[HOMEPAGE API] Failed to track section view:', error);
       return {
         success: false,
         error: error?.message || 'Section view tracking failed',
@@ -735,7 +730,7 @@ export class HomepageApiService {
         itemClicks: { [`${sectionId}:${itemId}`]: 1 }
       });
     } catch (error: any) {
-      devLog.warn('[HOMEPAGE API] Failed to track item click:', error);
+      logger.warn('[HOMEPAGE API] Failed to track item click:', error);
       return {
         success: false,
         error: error?.message || 'Item click tracking failed',
@@ -807,7 +802,7 @@ export class HomepageApiService {
 
       return apiResponse;
     } catch (error: any) {
-      devLog.error('[HOMEPAGE API] Failed to update user preferences:', error);
+      logger.error('[HOMEPAGE API] Failed to update user preferences:', error);
       return createErrorResponse(error, 'Failed to update preferences. Please try again.');
     }
   }
@@ -847,7 +842,7 @@ export class HomepageApiService {
         };
       }
 
-      devLog.log(`[HOMEPAGE API] Refreshing section ${sectionId} with ${maxRetries} retries`);
+      logger.debug(`[HOMEPAGE API] Refreshing section ${sectionId} with ${maxRetries} retries`);
 
       let lastError: Error | null = null;
 
@@ -856,7 +851,7 @@ export class HomepageApiService {
           const result = await this.fetchSectionData(sectionId);
 
           if (result.success) {
-            devLog.log(`[HOMEPAGE API] Section ${sectionId} refreshed successfully on attempt ${attempt}`);
+            logger.debug(`[HOMEPAGE API] Section ${sectionId} refreshed successfully on attempt ${attempt}`);
             return result;
           }
 
@@ -869,7 +864,7 @@ export class HomepageApiService {
 
           if (attempt < maxRetries) {
             const delay = retryDelay * attempt;
-            devLog.log(`[HOMEPAGE API] Retry ${attempt}/${maxRetries} for section ${sectionId} in ${delay}ms`);
+            logger.debug(`[HOMEPAGE API] Retry ${attempt}/${maxRetries} for section ${sectionId} in ${delay}ms`);
             await new Promise(resolve => setTimeout(resolve, delay));
           }
         } catch (error) {
@@ -877,22 +872,22 @@ export class HomepageApiService {
 
           if (error instanceof ApiError && error.isClientError) {
             // Don't retry client errors (4xx)
-            devLog.error(`[HOMEPAGE API] Client error for section ${sectionId}, not retrying`);
+            logger.error(`[HOMEPAGE API] Client error for section ${sectionId}, not retrying`);
             return createErrorResponse(error, 'Failed to refresh section');
           }
 
           if (attempt < maxRetries) {
             const delay = retryDelay * attempt;
-            devLog.log(`[HOMEPAGE API] Retry ${attempt}/${maxRetries} for section ${sectionId} in ${delay}ms`);
+            logger.debug(`[HOMEPAGE API] Retry ${attempt}/${maxRetries} for section ${sectionId} in ${delay}ms`);
             await new Promise(resolve => setTimeout(resolve, delay));
           }
         }
       }
 
-      devLog.error(`[HOMEPAGE API] All ${maxRetries} retry attempts failed for section ${sectionId}`);
+      logger.error(`[HOMEPAGE API] All ${maxRetries} retry attempts failed for section ${sectionId}`);
       return createErrorResponse(lastError, 'Failed to refresh section after multiple attempts');
     } catch (error: any) {
-      devLog.error('[HOMEPAGE API] Error in refreshSectionWithRetry:', error);
+      logger.error('[HOMEPAGE API] Error in refreshSectionWithRetry:', error);
       return createErrorResponse(error, 'Failed to refresh section');
     }
   }
@@ -950,7 +945,7 @@ export class HomepageApiService {
         };
       }
 
-      devLog.log(`[HOMEPAGE API] Refreshing ${sectionIds.length} sections in parallel`);
+      logger.debug(`[HOMEPAGE API] Refreshing ${sectionIds.length} sections in parallel`);
 
       const results: Record<string, SectionApiResponse | { error: string }> = {};
 
@@ -973,7 +968,7 @@ export class HomepageApiService {
       const successCount = Object.values(results).filter(r => !('error' in r)).length;
       const failureCount = sectionIds.length - successCount;
 
-      devLog.log(`[HOMEPAGE API] Batch refresh completed: ${successCount} succeeded, ${failureCount} failed`);
+      logger.debug(`[HOMEPAGE API] Batch refresh completed: ${successCount} succeeded, ${failureCount} failed`);
 
       return {
         success: true,
@@ -981,7 +976,7 @@ export class HomepageApiService {
         message: `Refreshed ${successCount} of ${sectionIds.length} sections successfully`,
       };
     } catch (error: any) {
-      devLog.error('[HOMEPAGE API] Error in refreshMultipleSections:', error);
+      logger.error('[HOMEPAGE API] Error in refreshMultipleSections:', error);
       return createErrorResponse(error, 'Failed to refresh sections');
     }
   }
@@ -1098,14 +1093,14 @@ export class HomepageCacheWarmer {
    */
   static async warmHomepageCache(userId?: string): Promise<void> {
     try {
-      devLog.log('🔥 [HOMEPAGE] Warming homepage cache...');
+      logger.debug('🔥 [HOMEPAGE] Warming homepage cache...');
 
       // Warm homepage data
       await HomepageApiService.fetchHomepageDataCached(userId);
 
-      devLog.log('✅ [HOMEPAGE] Homepage cache warmed successfully');
+      logger.debug('✅ [HOMEPAGE] Homepage cache warmed successfully');
     } catch (error) {
-      devLog.error('❌ [HOMEPAGE] Failed to warm homepage cache:', error);
+      logger.error('❌ [HOMEPAGE] Failed to warm homepage cache:', error);
       // Don't throw - cache warming failures shouldn't block app
     }
   }
@@ -1115,7 +1110,7 @@ export class HomepageCacheWarmer {
    */
   static async warmSectionsCache(sectionIds: string[], userId?: string): Promise<void> {
     try {
-      devLog.log(`🔥 [HOMEPAGE] Warming ${sectionIds.length} section caches...`);
+      logger.debug(`🔥 [HOMEPAGE] Warming ${sectionIds.length} section caches...`);
 
       await Promise.all(
         sectionIds.map(sectionId =>
@@ -1123,9 +1118,9 @@ export class HomepageCacheWarmer {
         )
       );
 
-      devLog.log('✅ [HOMEPAGE] Section caches warmed successfully');
+      logger.debug('✅ [HOMEPAGE] Section caches warmed successfully');
     } catch (error) {
-      devLog.error('❌ [HOMEPAGE] Failed to warm section caches:', error);
+      logger.error('❌ [HOMEPAGE] Failed to warm section caches:', error);
       // Don't throw - cache warming failures shouldn't block app
     }
   }
@@ -1135,7 +1130,7 @@ export class HomepageCacheWarmer {
    */
   static async invalidateHomepageCache(): Promise<void> {
     try {
-      devLog.log('🗑️ [HOMEPAGE] Invalidating homepage cache...');
+      logger.debug('🗑️ [HOMEPAGE] Invalidating homepage cache...');
 
       // Invalidate all homepage-related caches
       await cacheService.invalidatePattern('^homepage:');
@@ -1143,9 +1138,9 @@ export class HomepageCacheWarmer {
       // Also clear old in-memory cache
       HomepageCacheManager.clearAll();
 
-      devLog.log('✅ [HOMEPAGE] Homepage cache invalidated');
+      logger.debug('✅ [HOMEPAGE] Homepage cache invalidated');
     } catch (error) {
-      devLog.error('❌ [HOMEPAGE] Failed to invalidate homepage cache:', error);
+      logger.error('❌ [HOMEPAGE] Failed to invalidate homepage cache:', error);
     }
   }
 
@@ -1157,9 +1152,9 @@ export class HomepageCacheWarmer {
       const cacheKey = HomepageCacheManager.getSectionKey(sectionId, userId, filters);
       await cacheService.remove(cacheKey);
       HomepageCacheManager.clear(cacheKey);
-      devLog.log(`🗑️ [HOMEPAGE] Invalidated section cache: ${sectionId}`);
+      logger.debug(`🗑️ [HOMEPAGE] Invalidated section cache: ${sectionId}`);
     } catch (error) {
-      devLog.error(`❌ [HOMEPAGE] Failed to invalidate section cache: ${sectionId}`, error);
+      logger.error(`❌ [HOMEPAGE] Failed to invalidate section cache: ${sectionId}`, error);
     }
   }
 
@@ -1196,7 +1191,7 @@ export class HomepageCacheWarmer {
       }>('/homepage/user-context');
       return response;
     } catch (error) {
-      devLog.error('❌ [HOMEPAGE] Error fetching user context:', error);
+      logger.error('❌ [HOMEPAGE] Error fetching user context:', error);
       return { success: false };
     }
   }

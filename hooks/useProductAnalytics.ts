@@ -1,12 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { Platform } from 'react-native';
 import analyticsService from '@/services/analyticsService';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 /**
  * Hook for tracking product page analytics
@@ -59,7 +54,7 @@ export const useProductAnalytics = ({
    */
   useEffect(() => {
     if (!isTrackedRef.current) {
-      devLog.log('📊 [ProductAnalytics] Tracking product view:', productId);
+      logger.debug('📊 [ProductAnalytics] Tracking product view:', productId);
 
       analyticsService.trackProductView({
         productId,
@@ -82,7 +77,7 @@ export const useProductAnalytics = ({
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       const timeSpent = Date.now() - startTimeRef.current.getTime();
-      devLog.log(`⏱️ [ProductAnalytics] Time spent on product page: ${timeSpent}ms`);
+      logger.debug(`⏱️ [ProductAnalytics] Time spent on product page: ${timeSpent}ms`);
 
       analyticsService.trackPerformance('product_page_time', timeSpent);
 
@@ -104,7 +99,7 @@ export const useProductAnalytics = ({
    */
   const trackAddToCart = useCallback(
     (quantity: number, variantDetails?: string) => {
-      devLog.log('🛒 [ProductAnalytics] Tracking add to cart');
+      logger.debug('🛒 [ProductAnalytics] Tracking add to cart');
 
       analyticsService.trackAddToCart({
         productId,
@@ -123,7 +118,7 @@ export const useProductAnalytics = ({
    * Track wishlist add
    */
   const trackWishlistAdd = useCallback(() => {
-    devLog.log('❤️ [ProductAnalytics] Tracking wishlist add');
+    logger.debug('❤️ [ProductAnalytics] Tracking wishlist add');
     analyticsService.trackWishlist('add', productId, productName);
   }, [productId, productName]);
 
@@ -131,7 +126,7 @@ export const useProductAnalytics = ({
    * Track wishlist remove
    */
   const trackWishlistRemove = useCallback(() => {
-    devLog.log('💔 [ProductAnalytics] Tracking wishlist remove');
+    logger.debug('💔 [ProductAnalytics] Tracking wishlist remove');
     analyticsService.trackWishlist('remove', productId, productName);
   }, [productId, productName]);
 
@@ -140,7 +135,7 @@ export const useProductAnalytics = ({
    */
   const trackShare = useCallback(
     (platform: string, referralCode?: string) => {
-      devLog.log('📤 [ProductAnalytics] Tracking share:', platform);
+      logger.debug('📤 [ProductAnalytics] Tracking share:', platform);
       analyticsService.trackShare({ productId, platform, referralCode });
     },
     [productId]
@@ -151,7 +146,7 @@ export const useProductAnalytics = ({
    */
   const trackVariantSelect = useCallback(
     (variantId: string, attributes: Record<string, string>) => {
-      devLog.log('🎨 [ProductAnalytics] Tracking variant selection');
+      logger.debug('🎨 [ProductAnalytics] Tracking variant selection');
       analyticsService.trackVariantSelection(productId, variantId, attributes);
     },
     [productId]
@@ -162,7 +157,7 @@ export const useProductAnalytics = ({
    */
   const trackSizeGuide = useCallback(
     (tab?: string) => {
-      devLog.log('📏 [ProductAnalytics] Tracking size guide view');
+      logger.debug('📏 [ProductAnalytics] Tracking size guide view');
       analyticsService.trackSizeGuideView(productId, tab);
     },
     [productId]
@@ -173,7 +168,7 @@ export const useProductAnalytics = ({
    */
   const trackQA = useCallback(
     (action: 'view' | 'ask' | 'answer' | 'vote', questionId?: string) => {
-      devLog.log('💬 [ProductAnalytics] Tracking Q&A interaction:', action);
+      logger.debug('💬 [ProductAnalytics] Tracking Q&A interaction:', action);
       analyticsService.trackQAInteraction(action, productId, questionId);
     },
     [productId]
@@ -184,7 +179,7 @@ export const useProductAnalytics = ({
    */
   const trackReview = useCallback(
     (action: 'view' | 'write' | 'helpful' | 'filter' | 'sort', reviewId?: string, rating?: number) => {
-      devLog.log('⭐ [ProductAnalytics] Tracking review interaction:', action);
+      logger.debug('⭐ [ProductAnalytics] Tracking review interaction:', action);
       analyticsService.trackReviewInteraction(action, productId, reviewId, rating);
     },
     [productId]
@@ -195,7 +190,7 @@ export const useProductAnalytics = ({
    */
   const trackImage = useCallback(
     (action: 'view' | 'zoom' | 'swipe', imageIndex: number) => {
-      devLog.log('🖼️ [ProductAnalytics] Tracking image interaction:', action);
+      logger.debug('🖼️ [ProductAnalytics] Tracking image interaction:', action);
       analyticsService.trackImageInteraction(action, productId, imageIndex);
     },
     [productId]
@@ -206,7 +201,7 @@ export const useProductAnalytics = ({
    */
   const trackVideo = useCallback(
     (action: 'play' | 'pause' | 'complete' | 'skip', videoId?: string, duration?: number) => {
-      devLog.log('🎥 [ProductAnalytics] Tracking video interaction:', action);
+      logger.debug('🎥 [ProductAnalytics] Tracking video interaction:', action);
       analyticsService.trackVideoInteraction(action, productId, videoId, duration);
     },
     [productId]
@@ -217,7 +212,7 @@ export const useProductAnalytics = ({
    */
   const trackDelivery = useCallback(
     (pinCode: string, isAvailable: boolean) => {
-      devLog.log('🚚 [ProductAnalytics] Tracking delivery check');
+      logger.debug('🚚 [ProductAnalytics] Tracking delivery check');
       analyticsService.trackDeliveryCheck(productId, pinCode, isAvailable);
     },
     [productId]
@@ -228,7 +223,7 @@ export const useProductAnalytics = ({
    */
   const trackStockNotify = useCallback(
     (variantId?: string, method?: string) => {
-      devLog.log('🔔 [ProductAnalytics] Tracking stock notification request');
+      logger.debug('🔔 [ProductAnalytics] Tracking stock notification request');
       analyticsService.trackStockNotification(productId, variantId, method);
     },
     [productId]

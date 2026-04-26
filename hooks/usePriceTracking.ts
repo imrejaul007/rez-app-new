@@ -18,12 +18,7 @@ import priceTrackingApi, {
   PriceAlert,
   CreatePriceAlertRequest,
 } from '@/services/priceTrackingApi';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 interface UsePriceTrackingProps {
   productId?: string;
@@ -82,7 +77,7 @@ export const usePriceTracking = ({
         setIsLoadingHistory(true);
         setError(null);
 
-        devLog.log('📊 [usePriceTracking] Loading price history');
+        logger.debug('📊 [usePriceTracking] Loading price history');
 
         const startDate = options?.days
           ? new Date(Date.now() - options.days * 24 * 60 * 60 * 1000).toISOString()
@@ -96,10 +91,10 @@ export const usePriceTracking = ({
 
         if (response.success) {
           setPriceHistory(response.data.history);
-          devLog.log('✅ [usePriceTracking] History loaded:', response.data.count);
+          logger.debug('✅ [usePriceTracking] History loaded:', response.data.count);
         }
       } catch (err: any) {
-        devLog.error('❌ [usePriceTracking] Load history error:', err);
+        logger.error('❌ [usePriceTracking] Load history error:', err);
         setError(err.message || 'Failed to load price history');
       } finally {
         setIsLoadingHistory(false);
@@ -119,7 +114,7 @@ export const usePriceTracking = ({
         setIsLoadingStats(true);
         setError(null);
 
-        devLog.log('📈 [usePriceTracking] Loading price stats');
+        logger.debug('📈 [usePriceTracking] Loading price stats');
 
         const response: any = await priceTrackingApi.getPriceStats(productId, {
           variantId,
@@ -128,10 +123,10 @@ export const usePriceTracking = ({
 
         if (response.success) {
           setPriceStats(response.data);
-          devLog.log('✅ [usePriceTracking] Stats loaded');
+          logger.debug('✅ [usePriceTracking] Stats loaded');
         }
       } catch (err: any) {
-        devLog.error('❌ [usePriceTracking] Load stats error:', err);
+        logger.error('❌ [usePriceTracking] Load stats error:', err);
         setError(err.message || 'Failed to load price stats');
       } finally {
         setIsLoadingStats(false);
@@ -147,16 +142,16 @@ export const usePriceTracking = ({
     if (!productId) return;
 
     try {
-      devLog.log('🔍 [usePriceTracking] Checking alert status');
+      logger.debug('🔍 [usePriceTracking] Checking alert status');
 
       const response: any = await priceTrackingApi.checkAlert(productId, variantId);
 
       if (response.success) {
         setHasActiveAlert(response.data.hasActiveAlert);
-        devLog.log('✅ [usePriceTracking] Has active alert:', response.data.hasActiveAlert);
+        logger.debug('✅ [usePriceTracking] Has active alert:', response.data.hasActiveAlert);
       }
     } catch (err: any) {
-      devLog.error('❌ [usePriceTracking] Check alert error:', err);
+      logger.error('❌ [usePriceTracking] Check alert error:', err);
     }
   }, [productId, variantId]);
 
@@ -173,7 +168,7 @@ export const usePriceTracking = ({
         setIsCreatingAlert(true);
         setError(null);
 
-        devLog.log('🔔 [usePriceTracking] Creating price alert');
+        logger.debug('🔔 [usePriceTracking] Creating price alert');
 
         const response: any = await priceTrackingApi.createPriceAlert({
           productId,
@@ -183,12 +178,12 @@ export const usePriceTracking = ({
 
         if (response.success) {
           setHasActiveAlert(true);
-          devLog.log('✅ [usePriceTracking] Alert created successfully');
+          logger.debug('✅ [usePriceTracking] Alert created successfully');
 
           // Track analytics (no-op placeholder — wire up analyticsService if needed)
         }
       } catch (err: any) {
-        devLog.error('❌ [usePriceTracking] Create alert error:', err);
+        logger.error('❌ [usePriceTracking] Create alert error:', err);
         setError(err.response?.data?.message || err.message || 'Failed to create alert');
         throw err;
       } finally {
@@ -206,7 +201,7 @@ export const usePriceTracking = ({
       setIsLoadingAlerts(true);
       setError(null);
 
-      devLog.log('🔕 [usePriceTracking] Cancelling alert');
+      logger.debug('🔕 [usePriceTracking] Cancelling alert');
 
       const response: any = await priceTrackingApi.cancelAlert(alertId);
 
@@ -216,10 +211,10 @@ export const usePriceTracking = ({
         // Remove from alerts list
         setAlerts((prev) => prev.filter((a) => a._id !== alertId));
 
-        devLog.log('✅ [usePriceTracking] Alert cancelled');
+        logger.debug('✅ [usePriceTracking] Alert cancelled');
       }
     } catch (err: any) {
-      devLog.error('❌ [usePriceTracking] Cancel alert error:', err);
+      logger.error('❌ [usePriceTracking] Cancel alert error:', err);
       setError(err.response?.data?.message || err.message || 'Failed to cancel alert');
       throw err;
     } finally {
@@ -235,16 +230,16 @@ export const usePriceTracking = ({
       setIsLoadingAlerts(true);
       setError(null);
 
-      devLog.log('📋 [usePriceTracking] Loading alerts');
+      logger.debug('📋 [usePriceTracking] Loading alerts');
 
       const response: any = await priceTrackingApi.getMyAlerts(params);
 
       if (response.success) {
         setAlerts(response.data.alerts);
-        devLog.log('✅ [usePriceTracking] Alerts loaded:', response.data.alerts.length);
+        logger.debug('✅ [usePriceTracking] Alerts loaded:', response.data.alerts.length);
       }
     } catch (err: any) {
-      devLog.error('❌ [usePriceTracking] Load alerts error:', err);
+      logger.error('❌ [usePriceTracking] Load alerts error:', err);
       setError(err.message || 'Failed to load alerts');
     } finally {
       setIsLoadingAlerts(false);

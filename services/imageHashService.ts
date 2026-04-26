@@ -19,12 +19,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 import { BILL_UPLOAD_CONFIG } from '@/config/uploadConfig';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ============================================================================
 // Types & Interfaces
@@ -88,9 +83,9 @@ class ImageHashService {
       await this.loadStoredHashes();
       await this.cleanupOldHashes();
       this.isInitialized = true;
-      devLog.log('[ImageHash] Service initialized with', this.hashCache.size, 'stored hashes');
+      logger.debug('[ImageHash] Service initialized with', this.hashCache.size, 'stored hashes');
     } catch (error) {
-      devLog.error('[ImageHash] Initialization failed:', error);
+      logger.error('[ImageHash] Initialization failed:', error);
       this.hashCache.clear();
     }
   }
@@ -103,7 +98,7 @@ class ImageHashService {
    */
   async generateImageHash(imageUri: string): Promise<string> {
     try {
-      devLog.log('[ImageHash] Generating hash for:', imageUri);
+      logger.debug('[ImageHash] Generating hash for:', imageUri);
 
       if (Platform.OS === 'web') {
         return await this.generateHashWeb(imageUri);
@@ -111,7 +106,7 @@ class ImageHashService {
         return await this.generateHashNative(imageUri);
       }
     } catch (error) {
-      devLog.error('[ImageHash] Hash generation failed:', error);
+      logger.error('[ImageHash] Hash generation failed:', error);
       throw new Error('Failed to generate image hash');
     }
   }
@@ -155,7 +150,7 @@ class ImageHashService {
 
         // Exact hash match = definite duplicate
         if (similarity === 100) {
-          devLog.log('[ImageHash] Exact duplicate found:', record.uploadId);
+          logger.debug('[ImageHash] Exact duplicate found:', record.uploadId);
           return {
             isDuplicate: true,
             matchedRecord: record,
@@ -190,7 +185,7 @@ class ImageHashService {
           }
 
           if (additionalChecksPassed) {
-            devLog.log('[ImageHash] Likely duplicate found:', record.uploadId, 'Similarity:', similarity);
+            logger.debug('[ImageHash] Likely duplicate found:', record.uploadId, 'Similarity:', similarity);
             return {
               isDuplicate: true,
               matchedRecord: record,
@@ -202,13 +197,13 @@ class ImageHashService {
       }
 
       // No duplicate found
-      devLog.log('[ImageHash] No duplicate found');
+      logger.debug('[ImageHash] No duplicate found');
       return {
         isDuplicate: false,
         similarity: 0,
       };
     } catch (error) {
-      devLog.error('[ImageHash] Duplicate check failed:', error);
+      logger.error('[ImageHash] Duplicate check failed:', error);
       // On error, allow upload (fail open)
       return {
         isDuplicate: false,
@@ -237,9 +232,9 @@ class ImageHashService {
       // Persist to storage
       await this.persistHashes();
 
-      devLog.log('[ImageHash] Hash stored:', record.uploadId);
+      logger.debug('[ImageHash] Hash stored:', record.uploadId);
     } catch (error) {
-      devLog.error('[ImageHash] Failed to store hash:', error);
+      logger.error('[ImageHash] Failed to store hash:', error);
     }
   }
 
@@ -254,9 +249,9 @@ class ImageHashService {
     try {
       this.hashCache.delete(hash);
       await this.persistHashes();
-      devLog.log('[ImageHash] Hash removed');
+      logger.debug('[ImageHash] Hash removed');
     } catch (error) {
-      devLog.error('[ImageHash] Failed to remove hash:', error);
+      logger.error('[ImageHash] Failed to remove hash:', error);
     }
   }
 
@@ -267,9 +262,9 @@ class ImageHashService {
     try {
       this.hashCache.clear();
       await AsyncStorage.removeItem(STORAGE_KEY);
-      devLog.log('[ImageHash] All hashes cleared');
+      logger.debug('[ImageHash] All hashes cleared');
     } catch (error) {
-      devLog.error('[ImageHash] Failed to clear hashes:', error);
+      logger.error('[ImageHash] Failed to clear hashes:', error);
     }
   }
 
@@ -328,7 +323,7 @@ class ImageHashService {
 
       return hashHex;
     } catch (error) {
-      devLog.error('[ImageHash] Web hash generation failed:', error);
+      logger.error('[ImageHash] Web hash generation failed:', error);
       throw error;
     }
   }
@@ -357,7 +352,7 @@ class ImageHashService {
 
       return hashBase64;
     } catch (error) {
-      devLog.error('[ImageHash] Native hash generation failed:', error);
+      logger.error('[ImageHash] Native hash generation failed:', error);
       throw error;
     }
   }
@@ -391,10 +386,10 @@ class ImageHashService {
           this.hashCache.set(record.hash, record);
         });
 
-        devLog.log('[ImageHash] Loaded', records.length, 'hashes from storage');
+        logger.debug('[ImageHash] Loaded', records.length, 'hashes from storage');
       }
     } catch (error) {
-      devLog.error('[ImageHash] Failed to load stored hashes:', error);
+      logger.error('[ImageHash] Failed to load stored hashes:', error);
       this.hashCache.clear();
     }
   }
@@ -407,7 +402,7 @@ class ImageHashService {
       const records = Array.from(this.hashCache.values());
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(records));
     } catch (error) {
-      devLog.error('[ImageHash] Failed to persist hashes:', error);
+      logger.error('[ImageHash] Failed to persist hashes:', error);
     }
   }
 
@@ -429,7 +424,7 @@ class ImageHashService {
 
     if (removedCount > 0) {
       await this.persistHashes();
-      devLog.log('[ImageHash] Cleaned up', removedCount, 'old hashes');
+      logger.debug('[ImageHash] Cleaned up', removedCount, 'old hashes');
     }
   }
 
@@ -445,7 +440,7 @@ class ImageHashService {
       this.hashCache.delete(record.hash);
     });
 
-    devLog.log('[ImageHash] Pruned', toRemove.length, 'oldest hashes');
+    logger.debug('[ImageHash] Pruned', toRemove.length, 'oldest hashes');
   }
 
   /**
@@ -473,7 +468,7 @@ function getImageHashService(): ImageHashService {
       // Auto-initialize on first access (only in browser environment)
       if (isBrowser) {
         instance.initialize().catch(error => {
-          devLog.error('[ImageHash] Auto-initialization failed:', error);
+          logger.error('[ImageHash] Auto-initialization failed:', error);
         });
       }
     }

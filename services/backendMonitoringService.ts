@@ -12,11 +12,7 @@
  */
 
 // Dev-only logger to prevent string accumulation in production
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '@/services/apiClient';
@@ -129,7 +125,7 @@ class BackendMonitoringService {
       this.stopHealthChecks();
     }
 
-    devLog.log(`[BackendMonitoring] ${enabled ? 'Enabled' : 'Disabled'}`);
+    logger.debug(`[BackendMonitoring] ${enabled ? 'Enabled' : 'Disabled'}`);
   }
 
   // ============================================================================
@@ -407,14 +403,14 @@ class BackendMonitoringService {
     try {
       const health = await this.getBackendHealth();
 
-      devLog.log(`[BackendMonitoring] Health check: ${health.status}`);
+      logger.debug(`[BackendMonitoring] Health check: ${health.status}`);
 
       // Log degraded or down status
       if (health.status !== 'healthy') {
-        devLog.warn('[BackendMonitoring] Backend health is degraded:', health);
+        logger.warn('[BackendMonitoring] Backend health is degraded:', health);
       }
     } catch (error) {
-      devLog.error('[BackendMonitoring] Health check failed:', error);
+      logger.error('[BackendMonitoring] Health check failed:', error);
     }
   }
 
@@ -514,7 +510,7 @@ class BackendMonitoringService {
 
     // Log alert
     const emoji = alert.severity === 'critical' ? '🔥' : '⚠️';
-    devLog.warn(`${emoji} [BackendMonitoring] ${alert.message}`);
+    logger.warn(`${emoji} [BackendMonitoring] ${alert.message}`);
 
     this.saveMetrics();
   }
@@ -564,7 +560,7 @@ class BackendMonitoringService {
 
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (error) {
-        devLog.error('[BackendMonitoring] Failed to save metrics:', error);
+        logger.error('[BackendMonitoring] Failed to save metrics:', error);
       }
     }, 5000);
   }
@@ -598,10 +594,10 @@ class BackendMonitoringService {
           timestamp: new Date(a.timestamp),
         }));
 
-        devLog.log('[BackendMonitoring] Loaded stored metrics');
+        logger.debug('[BackendMonitoring] Loaded stored metrics');
       }
     } catch (error) {
-      devLog.error('[BackendMonitoring] Failed to load metrics:', error);
+      logger.error('[BackendMonitoring] Failed to load metrics:', error);
     }
   }
 
@@ -615,7 +611,7 @@ class BackendMonitoringService {
     this.alerts = [];
 
     await AsyncStorage.removeItem(STORAGE_KEY);
-    devLog.log('[BackendMonitoring] All metrics cleared');
+    logger.debug('[BackendMonitoring] All metrics cleared');
   }
 
   /**
@@ -639,37 +635,37 @@ class BackendMonitoringService {
     const dbStats = this.getDatabaseQueryStats();
     const alerts = this.getRecentAlerts(5);
 
-    devLog.log('\n========================================');
-    devLog.log('    BACKEND MONITORING REPORT');
-    devLog.log('========================================\n');
+    logger.debug('\n========================================');
+    logger.debug('    BACKEND MONITORING REPORT');
+    logger.debug('========================================\n');
 
-    devLog.log(`Status: ${health.status.toUpperCase()}\n`);
+    logger.debug(`Status: ${health.status.toUpperCase()}\n`);
 
-    devLog.log('Performance Metrics:');
-    devLog.log(`  API Latency: ${health.apiLatency.toFixed(0)}ms (avg)`);
-    devLog.log(`  API P95: ${apiStats.p95Latency.toFixed(0)}ms`);
-    devLog.log(`  DB Latency: ${health.dbLatency.toFixed(0)}ms (avg)`);
-    devLog.log(`  Cache Hit Rate: ${health.cacheHitRate.toFixed(1)}%`);
-    devLog.log(`  Error Rate: ${health.errorRate.toFixed(1)}%\n`);
+    logger.debug('Performance Metrics:');
+    logger.debug(`  API Latency: ${health.apiLatency.toFixed(0)}ms (avg)`);
+    logger.debug(`  API P95: ${apiStats.p95Latency.toFixed(0)}ms`);
+    logger.debug(`  DB Latency: ${health.dbLatency.toFixed(0)}ms (avg)`);
+    logger.debug(`  Cache Hit Rate: ${health.cacheHitRate.toFixed(1)}%`);
+    logger.debug(`  Error Rate: ${health.errorRate.toFixed(1)}%\n`);
 
-    devLog.log('API Stats:');
-    devLog.log(`  Total Requests: ${apiStats.totalRequests}`);
-    devLog.log(`  Success Rate: ${apiStats.successRate.toFixed(1)}%\n`);
+    logger.debug('API Stats:');
+    logger.debug(`  Total Requests: ${apiStats.totalRequests}`);
+    logger.debug(`  Success Rate: ${apiStats.successRate.toFixed(1)}%\n`);
 
-    devLog.log('Database Stats:');
-    devLog.log(`  Total Queries: ${dbStats.totalQueries}`);
-    devLog.log(`  Slow Queries: ${dbStats.slowQueries}\n`);
+    logger.debug('Database Stats:');
+    logger.debug(`  Total Queries: ${dbStats.totalQueries}`);
+    logger.debug(`  Slow Queries: ${dbStats.slowQueries}\n`);
 
     if (alerts.length > 0) {
-      devLog.log('Recent Alerts:');
+      logger.debug('Recent Alerts:');
       alerts.forEach((alert, index) => {
         const emoji = alert.severity === 'critical' ? '🔥' : '⚠️';
-        devLog.log(`  ${index + 1}. ${emoji} ${alert.message}`);
+        logger.debug(`  ${index + 1}. ${emoji} ${alert.message}`);
       });
-      devLog.log('');
+      logger.debug('');
     }
 
-    devLog.log('========================================\n');
+    logger.debug('========================================\n');
   }
 
   /**
@@ -678,7 +674,7 @@ class BackendMonitoringService {
   destroy(): void {
     this.stopHealthChecks();
     this.isEnabled = false;
-    devLog.log('[BackendMonitoring] Service destroyed');
+    logger.debug('[BackendMonitoring] Service destroyed');
   }
 }
 

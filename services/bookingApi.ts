@@ -2,12 +2,7 @@
 // Handles bookings and reservations management
 
 import apiClient, { ApiResponse } from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // ===== TYPE DEFINITIONS =====
 
@@ -88,9 +83,9 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to create booking:', response.error);
+        logger.error('❌ [BOOKING API] Failed to create booking:', response.error);
       } else {
-        devLog.log('✅ [BOOKING API] Booking created successfully:', response.data);
+        logger.debug('✅ [BOOKING API] Booking created successfully:', response.data);
       }
 
       return response as any;
@@ -99,7 +94,7 @@ class BookingService {
       const errorDetails = error instanceof Error
         ? { message: error.message, stack: error.stack }
         : { error: String(error) };
-      devLog.error('❌ [BOOKING API] Error creating booking:', errorDetails);
+      logger.error('❌ [BOOKING API] Error creating booking:', errorDetails);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to create booking',
@@ -132,12 +127,12 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch user bookings:', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch user bookings:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching user bookings:', error);
+      logger.error('❌ [BOOKING API] Error fetching user bookings:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch user bookings'
@@ -169,12 +164,12 @@ class BookingService {
       const response = await apiClient.get<Booking>(`/service-bookings/${bookingId}`);
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch booking details: null as any,', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch booking details: null as any,', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching booking details: null as any,', error);
+      logger.error('❌ [BOOKING API] Error fetching booking details: null as any,', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch booking details'
@@ -202,14 +197,14 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to cancel booking:', response.error);
+        logger.error('❌ [BOOKING API] Failed to cancel booking:', response.error);
       } else {
-        devLog.log('✅ [BOOKING API] Booking cancelled successfully');
+        logger.debug('✅ [BOOKING API] Booking cancelled successfully');
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error cancelling booking:', error);
+      logger.error('❌ [BOOKING API] Error cancelling booking:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to cancel booking'
@@ -238,14 +233,14 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to reschedule booking:', response.error);
+        logger.error('❌ [BOOKING API] Failed to reschedule booking:', response.error);
       } else {
-        devLog.log('✅ [BOOKING API] Booking rescheduled successfully');
+        logger.debug('✅ [BOOKING API] Booking rescheduled successfully');
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error rescheduling booking:', error);
+      logger.error('❌ [BOOKING API] Error rescheduling booking:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to reschedule booking'
@@ -280,11 +275,11 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch available slots:', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch available slots:', response.error);
       } else if (response.data) {
         // CA-TRV-074: Validate response is an array
         if (!Array.isArray(response.data)) {
-          devLog.error('❌ [BOOKING API] Invalid available slots response structure - not an array');
+          logger.error('❌ [BOOKING API] Invalid available slots response structure - not an array');
           return {
             success: false,
             error: 'Invalid response structure from server'
@@ -294,7 +289,7 @@ class BookingService {
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching available slots:', error);
+      logger.error('❌ [BOOKING API] Error fetching available slots:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch available slots'
@@ -313,12 +308,12 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch upcoming bookings:', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch upcoming bookings:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching upcoming bookings:', error);
+      logger.error('❌ [BOOKING API] Error fetching upcoming bookings:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch upcoming bookings'
@@ -351,12 +346,12 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch past bookings:', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch past bookings:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching past bookings:', error);
+      logger.error('❌ [BOOKING API] Error fetching past bookings:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch past bookings'
@@ -396,12 +391,12 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch store booking history:', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch store booking history:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching store booking history:', error);
+      logger.error('❌ [BOOKING API] Error fetching store booking history:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch store booking history'
@@ -422,13 +417,13 @@ class BookingService {
       const response = await apiClient.get<any>('/service-bookings/stats');
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to fetch booking statistics:', response.error);
+        logger.error('❌ [BOOKING API] Failed to fetch booking statistics:', response.error);
       } else if (response.data) {
         // CA-TRV-075: Validate required fields in stats response
         const requiredFields = ['totalBookings', 'upcomingCount', 'completedCount', 'cancelledCount'];
         const missingFields = requiredFields.filter(field => !(field in response.data));
         if (missingFields.length > 0) {
-          devLog.error('❌ [BOOKING API] Missing required fields in stats:', missingFields);
+          logger.error('❌ [BOOKING API] Missing required fields in stats:', missingFields);
           return {
             success: false,
             error: `Invalid stats response - missing fields: ${missingFields.join(', ')}`
@@ -438,7 +433,7 @@ class BookingService {
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error fetching booking statistics:', error);
+      logger.error('❌ [BOOKING API] Error fetching booking statistics:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch booking statistics'
@@ -464,14 +459,14 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to complete booking:', response.error);
+        logger.error('❌ [BOOKING API] Failed to complete booking:', response.error);
       } else {
-        devLog.log('✅ [BOOKING API] Booking marked as completed');
+        logger.debug('✅ [BOOKING API] Booking marked as completed');
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error completing booking:', error);
+      logger.error('❌ [BOOKING API] Error completing booking:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to complete booking'
@@ -500,12 +495,12 @@ class BookingService {
       );
 
       if (!response.success) {
-        devLog.error('❌ [BOOKING API] Failed to check availability:', response.error);
+        logger.error('❌ [BOOKING API] Failed to check availability:', response.error);
       }
 
       return response as any;
     } catch (error) {
-      devLog.error('❌ [BOOKING API] Error checking availability:', error);
+      logger.error('❌ [BOOKING API] Error checking availability:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to check availability'
@@ -523,11 +518,11 @@ class BookingService {
       if (response.success) {
         return true;
       } else {
-        devLog.warn('⚠️ [BOOKING API] Backend responded but with error:', response.error);
+        logger.warn('⚠️ [BOOKING API] Backend responded but with error:', response.error);
         return false;
       }
     } catch (error) {
-      devLog.warn('⚠️ [BOOKING API] Backend not available:', error);
+      logger.warn('⚠️ [BOOKING API] Backend not available:', error);
       return false;
     }
   }

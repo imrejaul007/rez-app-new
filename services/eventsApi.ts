@@ -1,11 +1,6 @@
 import { EventItem } from '@/types/homepage.types';
 import apiClient, { ApiResponse } from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 // Region getter - will be set by RegionContext
 let getRegionFn: (() => string) | null = null;
@@ -254,10 +249,10 @@ class EventsApiService {
       if (isAvailable) {
         this.backendAvailable = true;
         this.lastBackendCheck = now;
-        devLog.log('✅ Events API is available');
+        logger.debug('✅ Events API is available');
       } else {
         // Don't cache failures - allow retry on next request
-        devLog.log('⚠️ Events API returned non-OK status:', response.status);
+        logger.debug('⚠️ Events API returned non-OK status:', response.status);
       }
 
       return isAvailable;
@@ -268,7 +263,7 @@ class EventsApiService {
       }
       
       // Don't cache failures - allow retry on next request
-      devLog.warn('❌ Events API availability check failed:', error);
+      logger.warn('❌ Events API availability check failed:', error);
       this.backendAvailable = null; // Reset to null so we retry
       return false;
     }
@@ -304,7 +299,7 @@ class EventsApiService {
         suggestions: response.data?.suggestions ?? [],
       };
     } catch (error) {
-      devLog.error('❌ Error fetching events:', error);
+      logger.error('❌ Error fetching events:', error);
       throw error;
     }
   }
@@ -328,7 +323,7 @@ class EventsApiService {
 
       return this.transformEventToFrontend((response.data?.event ?? response.data ?? {}) as Record<string, unknown>);
     } catch (error) {
-      devLog.error('❌ Error fetching event:', error);
+      logger.error('❌ Error fetching event:', error);
       throw error;
     }
   }
@@ -345,7 +340,7 @@ class EventsApiService {
       // Map frontend category to backend category
       const backendCategory = mapCategoryToBackend(category);
       const originalCategory = category.toLowerCase();
-      devLog.log(`[eventsApi] Mapping category: ${category} -> ${backendCategory}, filtering by tag: ${originalCategory}`);
+      logger.debug(`[eventsApi] Mapping category: ${category} -> ${backendCategory}, filtering by tag: ${originalCategory}`);
 
       const params: Record<string, string | number | boolean | undefined | null> = { limit, offset };
 
@@ -377,7 +372,7 @@ class EventsApiService {
         hasMore: response.data?.hasMore ?? false,
       };
     } catch (error) {
-      devLog.error('❌ Error fetching events by category:', error);
+      logger.error('❌ Error fetching events by category:', error);
       throw error;
     }
   }
@@ -413,7 +408,7 @@ class EventsApiService {
         suggestions: response.data?.suggestions ?? [],
       };
     } catch (error) {
-      devLog.error('❌ Error searching events:', error);
+      logger.error('❌ Error searching events:', error);
       throw error;
     }
   }
@@ -438,7 +433,7 @@ class EventsApiService {
 
       return rawEvents.map(this.transformEventToFrontend);
     } catch (error) {
-      devLog.error('❌ Error fetching featured events:', error);
+      logger.error('❌ Error fetching featured events:', error);
       throw error;
     }
   }
@@ -467,7 +462,7 @@ class EventsApiService {
         message: response.message ?? 'Booking successful',
       };
     } catch (error) {
-      devLog.error('❌ [eventsApi] Error booking event:', error);
+      logger.error('❌ [eventsApi] Error booking event:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Failed to book event',
@@ -492,7 +487,7 @@ class EventsApiService {
         // If the endpoint is not yet deployed (backend 404), fall back to category.
         const errStr = (response.error || '').toLowerCase();
         if (errStr.includes('404') || errStr.includes('not found')) {
-          devLog.warn('⚠️ [RELATED EVENTS] Related events endpoint not found, using category fallback');
+          logger.warn('⚠️ [RELATED EVENTS] Related events endpoint not found, using category fallback');
           const event = await this.getEventById(eventId);
           if (event) {
             return this.getEventsByCategory(event.category, limit, 0).then(result =>
@@ -520,7 +515,7 @@ class EventsApiService {
       }
       return [];
     } catch (error) {
-      devLog.error('❌ Error fetching related events:', error);
+      logger.error('❌ Error fetching related events:', error);
       // Fallback to category-based events
       try {
         const event = await this.getEventById(eventId);
@@ -530,7 +525,7 @@ class EventsApiService {
           );
         }
       } catch (fallbackError) {
-        devLog.error('❌ Error in related events fallback:', fallbackError);
+        logger.error('❌ Error in related events fallback:', fallbackError);
       }
       return [];
     }
@@ -558,7 +553,7 @@ class EventsApiService {
         hasMore: response.data?.hasMore ?? false,
       };
     } catch (error) {
-      devLog.error('❌ Error fetching user bookings:', error);
+      logger.error('❌ Error fetching user bookings:', error);
       throw error;
     }
   }
@@ -584,7 +579,7 @@ class EventsApiService {
         message: response.message || 'Booking confirmed successfully',
       };
     } catch (error) {
-      devLog.error('❌ Error confirming booking:', error);
+      logger.error('❌ Error confirming booking:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Failed to confirm booking',
@@ -610,7 +605,7 @@ class EventsApiService {
         message: response.message || 'Booking cancelled successfully',
       };
     } catch (error) {
-      devLog.error('❌ Error cancelling booking:', error);
+      logger.error('❌ Error cancelling booking:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Failed to cancel booking',
@@ -637,7 +632,7 @@ class EventsApiService {
         isFavorited: response.data?.isFavorited,
       };
     } catch (error) {
-      devLog.error('Error toggling favorite:', error);
+      logger.error('Error toggling favorite:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Failed to toggle favorite',
@@ -664,7 +659,7 @@ class EventsApiService {
         reward: response.data?.reward || undefined,
       };
     } catch (error) {
-      devLog.error('❌ Error sharing event:', error);
+      logger.error('❌ Error sharing event:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Failed to share event',
@@ -804,7 +799,7 @@ class EventsApiService {
       }
       return [];
     } catch (error) {
-      devLog.error('[EventsApi] Error fetching categories:', error);
+      logger.error('[EventsApi] Error fetching categories:', error);
       return [];
     }
   }
@@ -822,7 +817,7 @@ class EventsApiService {
       const response = await apiClient.get<BackendRewardConfigData>('/events/reward-config');
       return response.success ? (response.data ?? null) : null;
     } catch (error) {
-      devLog.error('[EventsApi] Error fetching reward config:', error);
+      logger.error('[EventsApi] Error fetching reward config:', error);
       return null;
     }
   }
@@ -840,7 +835,7 @@ class EventsApiService {
       const response = await apiClient.get<BackendRewardConfigData>(`/events/${eventId}/rewards`);
       return response.success ? (response.data ?? null) : null;
     } catch (error) {
-      devLog.error('[EventsApi] Error fetching event reward info:', error);
+      logger.error('[EventsApi] Error fetching event reward info:', error);
       return null;
     }
   }
@@ -856,7 +851,7 @@ class EventsApiService {
       });
       return response;
     } catch (error) {
-      devLog.error('[EventsApi] Error checking in:', error);
+      logger.error('[EventsApi] Error checking in:', error);
       throw error;
     }
   }
@@ -870,7 +865,7 @@ class EventsApiService {
       const raw = response.data as { events?: EventItem[]; total?: number } | undefined;
       return { events: raw?.events ?? [], total: raw?.total ?? 0 };
     } catch (error) {
-      devLog.error('[EventsApi] Error fetching favorites:', error);
+      logger.error('[EventsApi] Error fetching favorites:', error);
       return { events: [], total: 0 };
     }
   }
@@ -883,7 +878,7 @@ class EventsApiService {
       const response = await this.authenticatedFetch(`/events/my-events?tab=${tab}`);
       return (response.data as Record<string, unknown>) ?? { bookings: [], tab };
     } catch (error) {
-      devLog.error('[EventsApi] Error fetching my events:', error);
+      logger.error('[EventsApi] Error fetching my events:', error);
       return { bookings: [], tab };
     }
   }

@@ -1,11 +1,6 @@
 // Menu API Service
 import apiClient from './apiClient';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
-  warn: __DEV__ ? console.warn.bind(console) : () => {},
-  error: __DEV__ ? console.error.bind(console) : () => {},
-};
+import { logger } from '@/utils/logger';
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -110,23 +105,23 @@ class MenuApi {
    */
   async getStoreMenu(storeId: string): Promise<ApiResponse<StoreMenu>> {
     try {
-      devLog.log('🍽️ [MENU API] Fetching menu for store:', storeId);
+      logger.debug('🍽️ [MENU API] Fetching menu for store:', storeId);
 
       const response = await apiClient.get<any>(`${this.baseUrl}/store/${storeId}`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Menu loaded:', response.data.categories?.length, 'categories');
+        logger.debug('✅ [MENU API] Menu loaded:', response.data.categories?.length, 'categories');
         return response as any;
       }
 
-      devLog.warn('⚠️ [MENU API] No menu data received');
+      logger.warn('⚠️ [MENU API] No menu data received');
       return {
         success: false,
         error: 'No menu data available',
         data: null,
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error fetching menu:', error);
+      logger.error('❌ [MENU API] Error fetching menu:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch menu',
@@ -140,12 +135,12 @@ class MenuApi {
    */
   async getMenuItem(menuItemId: string): Promise<ApiResponse<MenuItem>> {
     try {
-      devLog.log('🍔 [MENU API] Fetching menu item:', menuItemId);
+      logger.debug('🍔 [MENU API] Fetching menu item:', menuItemId);
 
       const response = await apiClient.get<any>(`${this.baseUrl}/items/${menuItemId}`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Menu item loaded:', response.data.name);
+        logger.debug('✅ [MENU API] Menu item loaded:', response.data.name);
         return response as any;
       }
 
@@ -155,7 +150,7 @@ class MenuApi {
         data: null,
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error fetching menu item:', error);
+      logger.error('❌ [MENU API] Error fetching menu item:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch menu item',
@@ -169,12 +164,12 @@ class MenuApi {
    */
   async createPreOrder(preOrderData: PreOrderRequest): Promise<ApiResponse<PreOrder>> {
     try {
-      devLog.log('🛒 [MENU API] Creating pre-order for store:', preOrderData.storeId);
+      logger.debug('🛒 [MENU API] Creating pre-order for store:', preOrderData.storeId);
 
       const response = await apiClient.post<any>(`${this.baseUrl}/pre-orders`, preOrderData as any);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Pre-order created:', response.data.orderNumber);
+        logger.debug('✅ [MENU API] Pre-order created:', response.data.orderNumber);
         return response as any;
       }
 
@@ -184,7 +179,7 @@ class MenuApi {
         data: null,
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error creating pre-order:', error);
+      logger.error('❌ [MENU API] Error creating pre-order:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to create pre-order',
@@ -198,12 +193,12 @@ class MenuApi {
    */
   async getUserPreOrders(): Promise<ApiResponse<PreOrder[]>> {
     try {
-      devLog.log('📋 [MENU API] Fetching user pre-orders');
+      logger.debug('📋 [MENU API] Fetching user pre-orders');
 
       const response = await apiClient.get<any>(`${this.baseUrl}/pre-orders/user`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Loaded', response.data.length, 'pre-orders');
+        logger.debug('✅ [MENU API] Loaded', response.data.length, 'pre-orders');
         return response as any;
       }
 
@@ -212,7 +207,7 @@ class MenuApi {
         data: [],
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error fetching pre-orders:', error);
+      logger.error('❌ [MENU API] Error fetching pre-orders:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch pre-orders',
@@ -226,12 +221,12 @@ class MenuApi {
    */
   async getPreOrder(preOrderId: string): Promise<ApiResponse<PreOrder>> {
     try {
-      devLog.log('🔍 [MENU API] Fetching pre-order:', preOrderId);
+      logger.debug('🔍 [MENU API] Fetching pre-order:', preOrderId);
 
       const response = await apiClient.get<any>(`${this.baseUrl}/pre-orders/${preOrderId}`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Pre-order loaded:', response.data.orderNumber);
+        logger.debug('✅ [MENU API] Pre-order loaded:', response.data.orderNumber);
         return response as any;
       }
 
@@ -241,7 +236,7 @@ class MenuApi {
         data: null,
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error fetching pre-order:', error);
+      logger.error('❌ [MENU API] Error fetching pre-order:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch pre-order',
@@ -255,12 +250,12 @@ class MenuApi {
    */
   async cancelPreOrder(preOrderId: string): Promise<ApiResponse<PreOrder>> {
     try {
-      devLog.log('❌ [MENU API] Cancelling pre-order:', preOrderId);
+      logger.debug('❌ [MENU API] Cancelling pre-order:', preOrderId);
 
       const response = await apiClient.put<any>(`${this.baseUrl}/pre-orders/${preOrderId}/cancel`);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Pre-order cancelled successfully');
+        logger.debug('✅ [MENU API] Pre-order cancelled successfully');
         return response as any;
       }
 
@@ -270,7 +265,7 @@ class MenuApi {
         data: null,
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error cancelling pre-order:', error);
+      logger.error('❌ [MENU API] Error cancelling pre-order:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to cancel pre-order',
@@ -284,7 +279,7 @@ class MenuApi {
    */
   async searchMenuItems(query: string, storeId?: string): Promise<ApiResponse<MenuItem[]>> {
     try {
-      devLog.log('🔍 [MENU API] Searching menu items:', query);
+      logger.debug('🔍 [MENU API] Searching menu items:', query);
 
       const params: any = { query };
       if (storeId) params.storeId = storeId;
@@ -292,7 +287,7 @@ class MenuApi {
       const response = await apiClient.get<any>(`${this.baseUrl}/search`, params);
 
       if (response.success && response.data) {
-        devLog.log('✅ [MENU API] Found', response.data.length, 'menu items');
+        logger.debug('✅ [MENU API] Found', response.data.length, 'menu items');
         return response as any;
       }
 
@@ -301,7 +296,7 @@ class MenuApi {
         data: [],
       };
     } catch (error) {
-      devLog.error('❌ [MENU API] Error searching menu items:', error);
+      logger.error('❌ [MENU API] Error searching menu items:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to search menu items',

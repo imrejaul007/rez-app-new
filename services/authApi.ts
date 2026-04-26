@@ -10,9 +10,6 @@ import {
   validateUser,
   isUserVerified
 } from '@/types/unified';
-
-const devLog = {
-  log: __DEV__ ? console.log.bind(console) : () => {},
   warn: __DEV__ ? console.warn.bind(console) : () => {},
   error: __DEV__ ? console.error.bind(console) : () => {},
 };
@@ -185,28 +182,28 @@ interface RawAuthResponsePayload {
  */
 function validateAuthResponse(response: RawAuthResponsePayload): boolean {
   if (!response || typeof response !== 'object') {
-    devLog.warn('[AUTH API] Invalid auth response: not an object');
+    logger.warn('[AUTH API] Invalid auth response: not an object');
     return false;
   }
 
   if (!response.user || (!response.user.id && !response.user._id)) {
-    devLog.warn('[AUTH API] Auth response missing valid user');
+    logger.warn('[AUTH API] Auth response missing valid user');
     return false;
   }
 
   if (!response.tokens || typeof response.tokens !== 'object') {
-    devLog.warn('[AUTH API] Auth response missing tokens');
+    logger.warn('[AUTH API] Auth response missing tokens');
     return false;
   }
 
   if (!response.tokens.accessToken || !response.tokens.refreshToken) {
-    devLog.warn('[AUTH API] Auth response missing required tokens');
+    logger.warn('[AUTH API] Auth response missing required tokens');
     return false;
   }
 
   // CA-AUT-005: Validate expiresIn is present and valid
   if (typeof response.tokens.expiresIn !== 'number' || response.tokens.expiresIn <= 0) {
-    devLog.warn('[AUTH API] Invalid or missing token expiresIn', response.tokens.expiresIn);
+    logger.warn('[AUTH API] Invalid or missing token expiresIn', response.tokens.expiresIn);
     return false;
   }
 
@@ -302,7 +299,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error sending OTP:', error);
+      logger.error('[AUTH API] Error sending OTP:', error);
       return createErrorResponse(error, 'Failed to send OTP. Please try again.');
     }
   }
@@ -373,7 +370,7 @@ class AuthService {
       // Validate response
       if (response.success && response.data) {
         if (!validateAuthResponse(response.data as unknown as RawAuthResponsePayload)) {
-          devLog.error('[AUTH API] Invalid auth response structure');
+          logger.error('[AUTH API] Invalid auth response structure');
           return {
             success: false,
             error: 'Invalid authentication response',
@@ -389,7 +386,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error verifying OTP:', error);
+      logger.error('[AUTH API] Error verifying OTP:', error);
       return createErrorResponse(error, 'Failed to verify OTP. Please check the code and try again.');
     }
   }
@@ -427,7 +424,7 @@ class AuthService {
         const tokens = response.data.tokens;
 
         if (!tokens.accessToken || !tokens.refreshToken) {
-          devLog.error('[AUTH API] Invalid token refresh response');
+          logger.error('[AUTH API] Invalid token refresh response');
           return {
             success: false,
             error: 'Invalid token response',
@@ -441,7 +438,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error refreshing token:', error);
+      logger.error('[AUTH API] Error refreshing token:', error);
       return createErrorResponse(error, 'Session expired. Please log in again.');
     }
   }
@@ -467,7 +464,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error during logout:', error);
+      logger.error('[AUTH API] Error during logout:', error);
 
       // Clear token even if logout API fails
       this.setAuthToken(null);
@@ -495,7 +492,7 @@ class AuthService {
       // Validate response
       if (response.success && response.data) {
         if (!response.data.id && !response.data._id) {
-          devLog.error('[AUTH API] Invalid user data in profile response');
+          logger.error('[AUTH API] Invalid user data in profile response');
           return {
             success: false,
             error: 'Invalid profile data',
@@ -506,7 +503,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error fetching profile:', error);
+      logger.error('[AUTH API] Error fetching profile:', error);
 
       // Handle 401 Unauthorized - token expired
       if ((error as { status?: number })?.status === 401) {
@@ -560,7 +557,7 @@ class AuthService {
       // Validate response
       if (response.success && response.data) {
         if (!response.data.id && !response.data._id) {
-          devLog.error('[AUTH API] Invalid user data in update response');
+          logger.error('[AUTH API] Invalid user data in update response');
           return {
             success: false,
             error: 'Invalid profile data',
@@ -571,7 +568,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error updating profile:', error);
+      logger.error('[AUTH API] Error updating profile:', error);
       return createErrorResponse(error, 'Failed to update profile. Please try again.');
     }
   }
@@ -604,7 +601,7 @@ class AuthService {
       // Validate response
       if (response.success && response.data) {
         if (!response.data.id && !response.data._id) {
-          devLog.error('[AUTH API] Invalid user data in onboarding response');
+          logger.error('[AUTH API] Invalid user data in onboarding response');
           return {
             success: false,
             error: 'Invalid profile data',
@@ -615,7 +612,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error completing onboarding:', error);
+      logger.error('[AUTH API] Error completing onboarding:', error);
       return createErrorResponse(error, 'Failed to complete onboarding. Please try again.');
     }
   }
@@ -643,7 +640,7 @@ class AuthService {
 
       return response;
     } catch (error: unknown) {
-      devLog.error('[AUTH API] Error deleting account:', error);
+      logger.error('[AUTH API] Error deleting account:', error);
       return createErrorResponse(error, 'Failed to delete account. Please try again or contact support.');
     }
   }
@@ -719,7 +716,7 @@ class AuthService {
 
       return response;
     } catch (error: any) {
-      devLog.error('[AUTH API] Error fetching user statistics:', error);
+      logger.error('[AUTH API] Error fetching user statistics:', error);
       return createErrorResponse(error, 'Failed to load statistics. Please try again.');
     }
   }
@@ -732,7 +729,7 @@ class AuthService {
       apiClient.setAuthToken(token);
 
     } catch (error) {
-      devLog.error('[AUTH API] Error setting auth token:', error);
+      logger.error('[AUTH API] Error setting auth token:', error);
     }
   }
 
@@ -743,7 +740,7 @@ class AuthService {
     try {
       return apiClient.getAuthToken();
     } catch (error) {
-      devLog.error('[AUTH API] Error getting auth token:', error);
+      logger.error('[AUTH API] Error getting auth token:', error);
       return null;
     }
   }
