@@ -95,7 +95,7 @@ class PushNotificationService {
       this.expoPushToken = token.data;
 
       // Register token with backend
-      if (userId) {
+      if (userId && this.expoPushToken) {
         await this.registerTokenWithBackend(this.expoPushToken, userId);
       }
 
@@ -215,7 +215,7 @@ class PushNotificationService {
     this.cleanup();
 
     // Listener for when a notification is received while app is foregrounded
-    this.notificationListener = Notifications.addNotificationReceivedListener((notification) => {
+    this.notificationListener = Notifications.addNotificationReceivedListener((notification: Notifications.Notification) => {
       // SS-004 FIX: Invoke registered data-refresh callbacks so screens can
       // update their state when a relevant foreground notification arrives.
       const data = notification.request.content.data;
@@ -227,7 +227,7 @@ class PushNotificationService {
     });
 
     // Listener for when user taps on a notification
-    this.responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+    this.responseListener = Notifications.addNotificationResponseReceivedListener((response: Notifications.NotificationResponse) => {
 
       const data = response.notification.request.content.data;
 

@@ -64,7 +64,7 @@ function BuyCouponsPage() {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const isFirstSearch = useRef(true);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [searchFocused, setSearchFocused] = useState(false);
 
   // Tab state

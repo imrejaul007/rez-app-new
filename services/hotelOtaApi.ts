@@ -499,3 +499,180 @@ export async function submitHotelReview(params: {
     body: params.body.trim(),
   });
 }
+
+// ─── Room Service (Hotel QR) ─────────────────────────────────────────────────
+
+export type RoomServiceType =
+  | 'housekeeping'
+  | 'room_service'
+  | 'laundry'
+  | 'maintenance'
+  | 'concierge'
+  | 'spa'
+  | 'transport'
+  | 'fitness';
+
+export interface RoomServiceRequest {
+  id: string;
+  bookingId: string;
+  roomId: string;
+  roomNumber: string;
+  serviceType: RoomServiceType;
+  description?: string;
+  items?: RoomServiceItem[];
+  totalAmountPaise: number;
+  status: 'pending' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
+  priority: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+}
+
+export interface RoomServiceItem {
+  id: string;
+  name: string;
+  price: number; // in paise
+  quantity: number;
+  category: string;
+}
+
+export interface RoomServiceMenu {
+  beverages: RoomServiceItem[];
+  snacks: RoomServiceItem[];
+  meals: RoomServiceItem[];
+  housekeeping: RoomServiceItem[];
+  laundry: RoomServiceItem[];
+}
+
+/**
+ * Get room service menu for a hotel
+ */
+export async function getRoomServiceMenu(hotelId: string): Promise<RoomServiceMenu> {
+  const res = await otaFetch<any>('GET', `/v1/room-service/menu/${hotelId}`, undefined, false);
+  return res.data ?? res;
+}
+
+/**
+ * Get guest's room service requests
+ */
+export async function getMyRoomServiceRequests(params?: {
+  status?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{ requests: RoomServiceRequest[]; total: number }> {
+  const q = new URLSearchParams();
+  if (params?.status) q.set('status', params.status);
+  if (params?.page) q.set('page', String(params.page));
+  if (params?.limit) q.set('limit', String(params.limit));
+  const query = q.toString();
+  const res = await otaFetch<any>('GET', `/v1/room-service/guest/my-requests${query ? `?${query}` : ''}`);
+  return {
+    requests: res.data?.requests ?? [],
+    total: res.data?.totalCount ?? 0,
+  };
+}
+
+/**
+ * Create a room service request
+ */
+export async function createRoomServiceRequest(params: {
+  bookingId: string;
+  roomId: string;
+  serviceType: RoomServiceType;
+  description?: string;
+  items?: RoomServiceItem[];
+  priority?: 'low' | 'medium' | 'high' | 'now';
+}): Promise<RoomServiceRequest> {
+  const res = await otaFetch<any>('POST', '/v1/room-service', {
+    bookingId: params.bookingId,
+    roomId: params.roomId,
+    serviceType: params.serviceType,
+    description: params.description,
+    items: params.items?.map(i => ({
+      name: i.name,
+      quantity: i.quantity,
+      pricePaise: i.price,
+    })),
+    priority: params.priority ?? 'now',
+  });
+  return res.data ?? res;
+}
+
+// ─── Room Chat ──────────────────────────────────────────────────────────────
+
+export interface ChatThread {
+  id: string;
+  bookingId: string;
+  roomId: string;
+  status: 'active' | 'closed';
+  createdAt: string;
+  messages?: ChatMessage[];
+}
+
+export interface ChatMessage {
+  id: string;
+  threadId: string;
+  senderId: string;
+  senderType: 'guest' | 'staff' | 'system';
+  senderName: string;
+  messageType: string;
+  content: string;
+  readAt?: string;
+  createdAt: string;
+}
+
+/**
+ * Get or create a chat thread for a booking
+ */
+export async function getOrCreateChatThread(params: {
+  bookingId: string;
+  roomId: string;
+}): Promise<{ threadId: string }> {
+  const res = await otaFetch<any>('POST', '/v1/room-chat/threads', params);
+  return res.data ?? res;
+}
+
+/**
+ * Get chat thread with messages
+ */
+export async function getChatThread(
+  threadId: string,
+  page = 1,
+  limit = 50,
+): Promise<{ thread: ChatThread; messages: ChatMessage[]; total: number }> {
+  const res = await otaFetch<any>(
+    'GET',
+    `/v1/room-chat/threads/${threadId}?page=${page}&limit=${limit}`,
+  );
+  return res.data ?? res;
+}
+
+/**
+ * Get user's chat threads
+ */
+export async function getMyChatThreads(): Promise<ChatThread[]> {
+  const res = await otaFetch<any>('GET', '/v1/room-chat/threads');
+  return res.data?.threads ?? [];
+}
+
+/**
+ * Send a chat message
+ */
+export async function sendChatMessage(params: {
+  threadId: string;
+  content: string;
+  messageType?: string;
+}): Promise<ChatMessage> {
+  const res = await otaFetch<any>('POST', `/v1/room-chat/threads/${params.threadId}/messages`, {
+    content: params.content,
+    messageType: params.messageType ?? 'text',
+  });
+  return res.data ?? res;
+}
+
+/**
+ * Mark thread messages as read
+ */
+export async function markChatRead(threadId: string): Promise<void> {
+  await otaFetch<any>('PATCH', `/v1/room-chat/threads/${threadId}/read`);
+}

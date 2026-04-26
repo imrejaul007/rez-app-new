@@ -89,9 +89,14 @@ export class DeepLinkHandler {
       }
 
       // Handle transaction deep links: rezapp://transaction/<orderNumber>
+      // CA-SEC-FIX: Validate order number format to prevent injection attacks.
+      // Order numbers follow pattern: ORD-XXXXXXXX (alphanumeric, 4-32 chars)
       if (hostname === 'transaction' || path?.startsWith('transaction/')) {
         const raw = path?.replace(/^transaction\//, '') || hostname || undefined;
-        const orderNumber = raw?.split('?')[0].split('#')[0].trim() || null;
+        const cleaned = raw?.split('?')[0].split('#')[0].trim() || null;
+        // Order number pattern: alphanumeric, dashes, 4-32 characters
+        const ORDER_NUMBER_RE = /^[A-Za-z0-9_-]{4,32}$/;
+        const orderNumber = cleaned && ORDER_NUMBER_RE.test(cleaned) ? cleaned : null;
         return { type: 'transaction', data: { orderNumber, url } };
       }
 

@@ -51,13 +51,13 @@ module.exports = {
     // which requires a root App.tsx. Expo Router apps use expo-router/entry instead.
     entryPoint: 'expo-router/entry',
     userInterfaceStyle: 'light',
-    newArchEnabled: true,
+    newArchEnabled: false,
     ios: {
       supportsTablet: true,
       userInterfaceStyle: 'light',
       bundleIdentifier: 'money.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
-      associatedDomains: ['applinks:rezapp.in', 'applinks:menu.rez.money', 'applinks:now.rez.money'],
+      googleServicesFile: './GoogleService-Info.plist',
       infoPlist: {
         NSCameraUsageDescription: `${BRAND_NAME} needs camera access to scan QR codes for store payments`,
         NSLocationWhenInUseUsageDescription: `${BRAND_NAME} needs your location to show nearby stores and offers`,

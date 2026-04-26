@@ -14,6 +14,7 @@ import {
   RefreshControl,
   StyleProp,
   ViewStyle,
+  TextStyle,
 } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -393,7 +394,9 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      const postId: string = String(response?.post?.id ?? (response as any as Record<string, unknown>)?.id ?? 'unknown');
+      const postId: string = String(
+        response?.post?.id ?? (response as any as Record<string, unknown>)?.id ?? 'unknown',
+      );
       setOrderSubmissions((prev) => ({
         ...prev,
         [selectedOrder.orderId]: { status: 'pending', postId },
@@ -462,7 +465,9 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      const postId: string = String(response?.post?.id ?? (response as any as Record<string, unknown>)?.id ?? 'unknown');
+      const postId: string = String(
+        response?.post?.id ?? (response as any as Record<string, unknown>)?.id ?? 'unknown',
+      );
       setOrderSubmissions((prev) => ({
         ...prev,
         [selectedOrder.orderId]: { status: 'pending', postId },
@@ -746,11 +751,7 @@ function EarnFromSocialMediaPage() {
         ].map((tip, index) => (
           <View key={index} style={styles.tipRow}>
             <View style={styles.tipIconCircle}>
-              <Ionicons
-                name={tip.icon as any as keyof typeof Ionicons.glyphMap}
-                size={16}
-                color={colors.nileBlue}
-              />
+              <Ionicons name={tip.icon as any as keyof typeof Ionicons.glyphMap} size={16} color={colors.nileBlue} />
             </View>
             <ThemedText style={styles.tipText}>{tip.text}</ThemedText>
           </View>
@@ -918,11 +919,7 @@ function EarnFromSocialMediaPage() {
             {submitting ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
-              <ThemedText
-                style={[styles.uploadButtonText, { pointerEvents: 'none' } as any as StyleProp<ViewStyle>]}
-              >
-                Submit
-              </ThemedText>
+              <ThemedText style={styles.uploadButtonText as StyleProp<TextStyle>}>Submit</ThemedText>
             )}
           </LinearGradient>
         </Pressable>
@@ -1022,11 +1019,7 @@ function EarnFromSocialMediaPage() {
             {submitting ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
-              <ThemedText
-                style={[styles.uploadButtonText, { pointerEvents: 'none' } as any as StyleProp<ViewStyle>]}
-              >
-                Submit
-              </ThemedText>
+              <ThemedText style={styles.uploadButtonText as StyleProp<TextStyle>}>Submit</ThemedText>
             )}
           </LinearGradient>
         </Pressable>

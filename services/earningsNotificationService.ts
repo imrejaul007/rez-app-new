@@ -249,14 +249,14 @@ class EarningsNotificationService {
     this.removeListeners();
 
     // Listen for notifications received while app is in foreground
-    this.notificationListener = Notifications.addNotificationReceivedListener((notification) => {
+    this.notificationListener = Notifications.addNotificationReceivedListener((notification: Notifications.Notification) => {
       if (onNotificationReceived) {
         onNotificationReceived(notification);
       }
     });
 
     // Listen for notification taps
-    this.responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+    this.responseListener = Notifications.addNotificationResponseReceivedListener((response: Notifications.NotificationResponse) => {
       if (onNotificationTapped) {
         onNotificationTapped(response);
       }

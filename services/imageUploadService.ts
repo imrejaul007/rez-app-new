@@ -54,11 +54,12 @@ export const uploadProfileImage = async (imageUri: string, token?: string): Prom
       formData.append('avatar', blob, filename);
     } else {
       // On mobile (React Native)
+      // CA-SEC-FIX: Proper typing for React Native file object instead of `as any`
       formData.append('avatar', {
         uri: Platform.OS === 'android' ? imageUri : imageUri.replace('file://', ''),
         name: filename,
         type,
-      } as any);
+      } as unknown as Blob);
     }
 
 
@@ -71,9 +72,11 @@ export const uploadProfileImage = async (imageUri: string, token?: string): Prom
     const uploadTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
     if (!data.success) {
+      // API returns { success: false, message: string }
+      const msg = (data as { message?: string }).message;
       return {
         success: false,
-        error: (data as any).message || 'Upload failed'
+        error: msg || 'Upload failed'
       };
     }
 

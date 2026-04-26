@@ -8,6 +8,7 @@ import { initSentry, Sentry } from '@/config/sentry';
 import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
+import * as Notifications from 'expo-notifications';
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus, Linking, StyleSheet, View, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -289,27 +290,29 @@ function RootLayout() {
       .then((Notifications) => {
         if (!mounted) return;
 
-        const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-          const data = response.notification.request.content.data as Record<string, any>;
+        const subscription = Notifications.addNotificationResponseReceivedListener(
+          (response: Notifications.NotificationResponse) => {
+            const data = response.notification.request.content.data as Record<string, any>;
 
-          // REZ Now order status notifications carry type='order_status' and a url
-          // pointing to https://now.rez.money/<storeSlug>/order/<orderNumber>.
-          // Route through handleDeepLink which opens the order in an in-app browser.
-          if (data?.type === 'order_status' && typeof data.url === 'string') {
-            handleDeepLink(data.url);
-            return;
-          }
-
-          if (data?.route && typeof data.route === 'string') {
-            try {
-              router.push(data.route as any as string);
-            } catch {
-              // Ignore if route is invalid
+            // REZ Now order status notifications carry type='order_status' and a url
+            // pointing to https://now.rez.money/<storeSlug>/order/<orderNumber>.
+            // Route through handleDeepLink which opens the order in an in-app browser.
+            if (data?.type === 'order_status' && typeof data.url === 'string') {
+              handleDeepLink(data.url);
+              return;
             }
-          } else if (data?.url && typeof data.url === 'string') {
-            handleDeepLink(data.url);
-          }
-        });
+
+            if (data?.route && typeof data.route === 'string') {
+              try {
+                router.push(data.route as any as string);
+              } catch {
+                // Ignore if route is invalid
+              }
+            } else if (data?.url && typeof data.url === 'string') {
+              handleDeepLink(data.url);
+            }
+          },
+        );
 
         return () => subscription.remove();
       })
