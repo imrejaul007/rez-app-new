@@ -264,7 +264,7 @@ export default function NotificationsScreen() {
   }, [loadingMore, hasMore, data]);
 
   // Merge new notifications with existing
-  useMemo(() => {
+  React.useEffect(() => {
     if (data?.notifications) {
       if (page === 1) {
         setAllNotifications(data.notifications);

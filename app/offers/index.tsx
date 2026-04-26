@@ -105,8 +105,7 @@ function OffersScreen() {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message:
-          'Check out amazing offers on ${BRAND.APP_NAME}! Get up to 50% off + extra cashback on your favorite stores. Download now!',
+        message: `Check out amazing offers on ${BRAND.APP_NAME}! Get up to 50% off + extra cashback on your favorite stores. Download now!`,
         url: 'https://rezapp.com/offers',
         title: `${BRAND.APP_NAME} Offers`,
       });
