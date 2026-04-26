@@ -47,24 +47,31 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
         {/* Google Analytics */}
-        {process.env.EXPO_PUBLIC_GA_TRACKING_ID && (
-          <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.EXPO_PUBLIC_GA_TRACKING_ID}`}
-            />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${process.env.EXPO_PUBLIC_GA_TRACKING_ID}');
-            `,
-              }}
-            />
-          </>
-        )}
+        {/* MEDIUM FIX: Validate GA tracking ID format before using in dangerouslySetInnerHTML */}
+        {(() => {
+          const gaId = process.env.EXPO_PUBLIC_GA_TRACKING_ID;
+          // Validate GA ID format (e.g., G-XXXXXXXXXX or UA-XXXXXXXXX-X)
+          const isValidGaId = gaId && /^(G-|UA-)[A-Z0-9]+(-[A-Z0-9]+)?$/.test(gaId);
+          if (!isValidGaId) return null;
+          return (
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `,
+                }}
+              />
+            </>
+          );
+        })()}
 
         {/* Responsive desktop layout + body reset */}
         <style
