@@ -44,17 +44,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.primary,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.text.primary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: colors.secondary,
+    color: colors.text.secondary,
   },
 });
 
