@@ -71,10 +71,7 @@ function ViewAllOffersScreen() {
       const response = await realOffersApi.getOffersPageData();
       if (response.success && response.data) {
         const points =
-          response.data.userEngagement?.userPoints ||
-          (response.data as any).userPoints ||
-          user?.wallet?.balance ||
-          0;
+          response.data.userEngagement?.userPoints || (response.data as any).userPoints || user?.wallet?.balance || 0;
         if (!isMounted()) return;
         setUserPoints(points);
       }
@@ -425,6 +422,12 @@ function ViewAllOffersScreen() {
         getItemLayout={getItemLayout}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         style={styles.content}
+        // PERFORMANCE: FlatList optimization props for grid layout
+        initialNumToRender={8}
+        maxToRenderPerBatch={6}
+        windowSize={5}
+        removeClippedSubviews={true}
+        updateCellsBatchingPeriod={50}
       />
     </SafeAreaView>
   );

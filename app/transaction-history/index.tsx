@@ -353,6 +353,12 @@ function TransactionHistoryScreen() {
           contentContainerStyle={filteredTransactions.length === 0 ? styles.emptyListContent : styles.listContent}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
+          // PERFORMANCE: FlatList optimization props
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+          updateCellsBatchingPeriod={50}
         />
       )}
     </View>

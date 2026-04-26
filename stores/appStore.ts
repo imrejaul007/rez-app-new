@@ -95,8 +95,15 @@ const initialAppState: AppState = {
   error: null,
 };
 
-// Debounce timer for saving settings
+// Debounce timer for saving settings - stored on module for cleanup
 let _saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+export function clearAppStoreTimeout(): void {
+  if (_saveTimeout) {
+    clearTimeout(_saveTimeout);
+    _saveTimeout = null;
+  }
+}
 
 function saveSettingsDebounced(settings: AppSettings) {
   if (_saveTimeout) clearTimeout(_saveTimeout);
@@ -109,6 +116,8 @@ function saveSettingsDebounced(settings: AppSettings) {
       AsyncStorage.setItem(STORAGE_KEYS.APP_SETTINGS, serialized).catch(() => {});
     } catch (_e) {
       // silently handle
+    } finally {
+      _saveTimeout = null;
     }
   }, 500);
 }

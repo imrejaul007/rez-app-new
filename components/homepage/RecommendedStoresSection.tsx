@@ -122,7 +122,7 @@ export const RecommendedStoresSection: React.FC = () => {
         </View>
       </Pressable>
     ),
-    [handleStorePress]
+    [handleStorePress, styles] // Include styles to avoid recreation
   );
 
   if (loading) {

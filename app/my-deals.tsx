@@ -512,6 +512,12 @@ const MyDealsPage: React.FC = () => {
               </View>
             ) : null
           }
+          // PERFORMANCE: FlatList optimization props for web
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+          updateCellsBatchingPeriod={50}
         />
       ) : (
         <FlashList

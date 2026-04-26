@@ -83,6 +83,8 @@ class CacheService {
   private misses = 0;
   private initialized = false;
   private initializing = false; // Prevent multiple initialization attempts
+  private saveIndexTimer: ReturnType<typeof setTimeout> | null = null;
+  private pendingSaveIndex = false;
 
   constructor() {
     // Initialization deferred to first use (ensureInitialized) to avoid
@@ -142,15 +144,31 @@ class CacheService {
   }
 
   /**
-   * Save cache index to storage
+   * Save cache index to storage (debounced to prevent excessive writes)
+   * CA-API-002 FIX: Debounce index saves to avoid excessive AsyncStorage writes
+   * during high-frequency cache operations
    */
   private async saveCacheIndex(): Promise<void> {
-    try {
-      const indexObject = Object.fromEntries(this.cacheIndex.entries());
-      await asyncStorageService.save(CACHE_INDEX_KEY, indexObject);
-    } catch (_error) {
-      // silently handle
+    // Mark that we need to save
+    this.pendingSaveIndex = true;
+
+    // Clear any existing timer
+    if (this.saveIndexTimer) {
+      clearTimeout(this.saveIndexTimer);
     }
+
+    // Debounce for 100ms to batch rapid operations
+    this.saveIndexTimer = setTimeout(async () => {
+      if (!this.pendingSaveIndex) return;
+
+      try {
+        const indexObject = Object.fromEntries(this.cacheIndex.entries());
+        await asyncStorageService.save(CACHE_INDEX_KEY, indexObject);
+        this.pendingSaveIndex = false;
+      } catch (_error) {
+        // silently handle
+      }
+    }, 100);
   }
 
   /**

@@ -432,6 +432,57 @@ class ApiClient {
 
       if (!response.ok) {
 
+        // CA-API-001 FIX: Handle 429 Rate Limiting with Retry-After support
+        // Rate limiting prevents cascading failures and improves system stability
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          const retryAfterSeconds = retryAfter ? parseInt(retryAfter, 10) : null;
+
+          if (retryAfterSeconds && !isNaN(retryAfterSeconds) && retryAfterSeconds > 0) {
+            // Respect server's Retry-After header (in seconds)
+            const delayMs = retryAfterSeconds * 1000;
+            devLog.warn(`[ApiClient] Rate limited (429). Waiting ${retryAfterSeconds}s before retry...`);
+
+            // Wait for the specified time then retry once
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            return this.makeRequest<T>(endpoint, options);
+          } else {
+            // No Retry-After header: apply exponential backoff starting at 1s
+            const maxRetries = 3;
+            let retryCount = 0;
+
+            while (retryCount < maxRetries) {
+              retryCount++;
+              const backoffMs = Math.min(1000 * Math.pow(2, retryCount - 1), 30000);
+              devLog.warn(`[ApiClient] Rate limited (429). Retry ${retryCount}/${maxRetries} in ${backoffMs}ms...`);
+
+              await new Promise(resolve => setTimeout(resolve, backoffMs));
+
+              try {
+                // Make a health check to see if the service is back
+                const healthResponse = await fetch(`${this.baseURL.replace('/api', '')}/health`, {
+                  method: 'GET',
+                  signal: controller.signal,
+                });
+
+                if (healthResponse.ok) {
+                  devLog.log(`[ApiClient] Service recovered after ${retryCount} retries`);
+                  // Retry the original request
+                  return this.makeRequest<T>(endpoint, options);
+                }
+              } catch {
+                // Continue retrying
+              }
+            }
+
+            return {
+              success: false,
+              error: 'Rate limit exceeded. Please try again later.',
+              statusCode: 429,
+            };
+          }
+        }
+
         // Handle 503 Service Unavailable - Maintenance mode
         if (response.status === 503 && this.maintenanceCallback) {
           this.maintenanceCallback();
