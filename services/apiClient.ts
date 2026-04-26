@@ -441,7 +441,7 @@ class ApiClient {
           if (retryAfterSeconds && !isNaN(retryAfterSeconds) && retryAfterSeconds > 0) {
             // Respect server's Retry-After header (in seconds)
             const delayMs = retryAfterSeconds * 1000;
-            devLog.warn(`[ApiClient] Rate limited (429). Waiting ${retryAfterSeconds}s before retry...`);
+            logger.warn(`[ApiClient] Rate limited (429). Waiting ${retryAfterSeconds}s before retry...`);
 
             // Wait for the specified time then retry once
             await new Promise(resolve => setTimeout(resolve, delayMs));
@@ -454,7 +454,7 @@ class ApiClient {
             while (retryCount < maxRetries) {
               retryCount++;
               const backoffMs = Math.min(1000 * Math.pow(2, retryCount - 1), 30000);
-              devLog.warn(`[ApiClient] Rate limited (429). Retry ${retryCount}/${maxRetries} in ${backoffMs}ms...`);
+              logger.warn(`[ApiClient] Rate limited (429). Retry ${retryCount}/${maxRetries} in ${backoffMs}ms...`);
 
               await new Promise(resolve => setTimeout(resolve, backoffMs));
 
@@ -466,7 +466,7 @@ class ApiClient {
                 });
 
                 if (healthResponse.ok) {
-                  devLog.log(`[ApiClient] Service recovered after ${retryCount} retries`);
+                  logger.log(`[ApiClient] Service recovered after ${retryCount} retries`);
                   // Retry the original request
                   return this.makeRequest<T>(endpoint, options);
                 }

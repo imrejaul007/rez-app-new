@@ -362,10 +362,10 @@ function BookingsPage() {
             .getUserBookings(undefined, PAGE_SIZE, eOffset)
             .then((res) => ({
               type: 'event' as const,
-              bookings: (res.bookings || []) as RawBookingData[],
+              bookings: (res.bookings || []) as unknown as RawBookingData[],
               hasMore: res.hasMore ?? (res.bookings || []).length >= PAGE_SIZE,
             }))
-            .catch(() => ({ type: 'event' as const, bookings: [] as RawBookingData[], hasMore: false })),
+            .catch(() => ({ type: 'event' as const, bookings: [] as unknown as RawBookingData[], hasMore: false })),
         );
       }
 
@@ -374,19 +374,19 @@ function BookingsPage() {
           serviceBookingService
             .getUserBookings({ page: sPage, limit: PAGE_SIZE })
             .then((res) => {
-              const response = res.data as ApiResponse<ServiceBookingData[]> | ServiceBookingData[];
+              const response = res.data as unknown as ApiResponse<ServiceBookingData[]> | ServiceBookingData[];
               const bookings = Array.isArray(response)
                 ? response
                 : (response as ApiResponse<ServiceBookingData[]>)?.data || [];
-              const meta = (res as unknown as MetaResponse)?.meta;
+              const meta = (res as unknown as { meta?: MetaResponse })?.meta;
               const totalPages = meta?.pagination?.pages || 1;
               return {
                 type: 'service' as const,
-                bookings,
+                bookings: bookings as unknown as RawBookingData[],
                 hasMore: sPage < totalPages && bookings.length >= PAGE_SIZE,
               };
             })
-            .catch(() => ({ type: 'service' as const, bookings: [] as ServiceBookingData[], hasMore: false })),
+            .catch(() => ({ type: 'service' as const, bookings: [] as unknown as RawBookingData[], hasMore: false })),
         );
       }
 
@@ -639,23 +639,29 @@ function BookingsPage() {
       const storeContact = rawStoreObj?.contact;
 
       const handleExpand = () => setExpandedBookingId(isExpanded ? null : booking.id);
+      const getStoreId = (rawStoreId: string | RawBookingStoreObject | undefined): string => {
+        if (!rawStoreId) return '';
+        if (typeof rawStoreId === 'object' && '_id' in rawStoreId) return rawStoreId._id as string;
+        return rawStoreId as string;
+      };
       const handleMenuPress = () => {
-        const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
+        const storeId = getStoreId(booking.raw?.storeId as string | RawBookingStoreObject | undefined);
         router.push({
           pathname: '/menu/[storeId]',
           params: {
-            storeId: store?._id || booking.raw?.storeId || '',
+            storeId: storeId || '',
             dineIn: 'true',
             table: booking.raw?.bookingNumber || '',
           },
         });
       };
       const handlePayPress = () => {
-        const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
+        const storeId = getStoreId(booking.raw?.storeId as string | RawBookingStoreObject | undefined);
+        const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId as RawBookingStoreObject : null;
         router.push({
           pathname: '/pay-in-store/enter-amount',
           params: {
-            storeId: store?._id || booking.raw?.storeId || '',
+            storeId: storeId || '',
             storeName: store?.name || booking.title || '',
             storeLogo: store?.logo || '',
           },

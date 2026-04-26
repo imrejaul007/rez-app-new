@@ -64,7 +64,7 @@ const ExperienceDetailPage: React.FC = () => {
   const [categories, setCategories] = useState<string[]>(['all']);
 
   // Get Theme based on type (handles aliases like "fast-delivery")
-  const currentTheme = getTheme(type);
+  const currentTheme = getTheme(type || '');
 
   useEffect(() => {
     const fetchExperienceData = async () => {
@@ -146,7 +146,7 @@ const ExperienceDetailPage: React.FC = () => {
   const capitalizeLine = (str: string) => str.replace(/\b\w/g, (l) => l.toUpperCase());
 
   // Display Vars (Backend > Theme > Defaults) — computed before early returns so hooks stay at top
-  const displayTitle = experience?.title || capitalizeLine(type);
+  const displayTitle = experience?.title || capitalizeLine(type || '');
   const displaySubtitle = experience?.subtitle || 'Curated for you';
   const displayDesc = experience?.description || currentTheme.description;
   const displayGradient = currentTheme.gradientColors;

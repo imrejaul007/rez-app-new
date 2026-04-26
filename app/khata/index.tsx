@@ -41,7 +41,7 @@ function ConsumerKhataScreen() {
 
   const loadCredits = async () => {
     try {
-      const resp = (await apiClient.get('/consumer/khata')) as KhataApiResponse;
+      const resp = (await apiClient.get('/consumer/khata')) as unknown as KhataApiResponse;
       setCredits(resp.data?.data || resp.data?.credits || []);
     } catch (e: unknown) {
       if (__DEV__) logger.error('Khata load error: ' + (e instanceof Error ? e.message : String(e)));

@@ -269,7 +269,7 @@ export default function ConfirmationScreen() {
         <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.card}>
           <Text style={styles.sectionTitle}>Your Order</Text>
           {order.items.map((item, idx) => (
-            <View key={item.id || item._id || `${item.name}-${idx}`} style={styles.itemRow}>
+            <View key={`${item.name}-${idx}`} style={styles.itemRow}>
               <View style={styles.itemQty}>
                 <Text style={styles.itemQtyText}>{item.quantity}×</Text>
               </View>

@@ -1,7 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { View, StyleSheet, StatusBar, Platform, Pressable, FlatList, StyleProp, ViewStyle } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, ContentStyle } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'; // ✅ supports 'edges'
@@ -32,6 +32,7 @@ import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { isSmallDevice } from '@/utils/responsive';
+import { Discount } from '@/services/discountsApi';
 import { logger } from '@/utils/logger';
 
 // Helper function to format time slot for display
@@ -280,14 +281,15 @@ function CartPage() {
       // even when a translucent nav bar is present. Clamp to a minimum of 16 so the last
       // cart item is never hidden behind the navigation gesture zone.
       const safeBottom = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : insets.bottom;
-      return [
-        {
-          paddingHorizontal: isSmallDevice ? 12 : 16,
-          paddingTop: 16,
-          paddingBottom: safeBottom + (currentItems.length < 3 ? 80 : 120),
-        },
-        currentItems.length === 0 && styles.emptyListContent,
-      ];
+      const baseStyle = {
+        paddingHorizontal: isSmallDevice ? 12 : 16,
+        paddingTop: 16,
+        paddingBottom: safeBottom + (currentItems.length < 3 ? 80 : 120),
+      };
+      if (currentItems.length === 0) {
+        return [baseStyle, styles.emptyListContent];
+      }
+      return baseStyle;
     },
     // BUG-047 FIX: Added isSmallDevice to dependency array — it affects paddingHorizontal
     // but was missing, so the style would not update if device size classification changed.
@@ -352,7 +354,7 @@ function CartPage() {
               price: item.lockedPrice,
               originalPrice: item.originalPrice,
               quantity: item.quantity,
-              image: item.product?.images?.[0]?.url || item.product?.images?.[0],
+              image: (typeof item.product?.images?.[0] === 'object' ? item.product?.images?.[0]?.url : item.product?.images?.[0]) || '',
               store: item.store?.name || 'Store',
               variant: item.variant,
               cashback: `Upto 12% cash back`,
@@ -483,7 +485,7 @@ function CartPage() {
 
   // ROHAN: Move onOfferApplied callback outside of JSX to prevent re-rendering CardOffersSection on every parent render
   const handleCardOfferApplied = useCallback(
-    (offer: CardOffer) => {
+    (offer: Discount) => {
       cartActions.setCardOffer(offer);
     },
     [cartActions],
@@ -602,7 +604,7 @@ function CartPage() {
         return (
           <View style={styles.cardWrapper}>
             <LockedItem
-              item={item as LockedProduct}
+              item={item as unknown as Parameters<typeof LockedItem>[0]['item']}
               onMoveToCart={handleMoveToCart}
               onUnlock={handleUnlockItem}
               showAnimation={true}
@@ -742,7 +744,7 @@ function CartPage() {
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
+                  storeId={(productItems[0] as unknown as { store?: { id?: string } })?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />
@@ -754,14 +756,14 @@ function CartPage() {
             data={currentItems}
             renderItem={renderCartItem}
             keyExtractor={(item) => `${item.id}`}
-            contentContainerStyle={listContentContainerStyle}
+            contentContainerStyle={listContentContainerStyle as ContentStyle}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
+                  storeId={(productItems[0] as unknown as { store?: { id?: string } })?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />
