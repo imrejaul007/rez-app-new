@@ -6,6 +6,7 @@ import walletApi from '@/services/walletApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { errorReporter } from '@/utils/errorReporter';
+import { logger } from '@/utils/logger';
 // SS-007 FIX: Subscribe to backend socket events so wallet auto-refreshes on coins earned / wallet updated
 import { useSocket } from '@/contexts/SocketContext';
 
@@ -361,10 +362,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     if (!socket || !isAuthenticated) return;
 
     const handleCoinsAwarded = () => {
-      refreshWalletRef.current().catch(() => {});
+      refreshWalletRef.current().catch(err => logger.error('[WalletContext] coins:awarded refresh failed', err));
     };
     const handleWalletUpdated = () => {
-      refreshWalletRef.current().catch(() => {});
+      refreshWalletRef.current().catch(err => logger.error('[WalletContext] wallet:updated refresh failed', err));
     };
 
     socket.on('coins:awarded', handleCoinsAwarded);

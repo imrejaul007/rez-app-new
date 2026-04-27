@@ -1216,7 +1216,7 @@ export function CartProvider({ children }: CartProviderProps) {
           dispatch({ type: 'SET_ONLINE_STATUS', payload: netState.isConnected ?? false });
         }
       });
-    }).catch(() => {});
+    }).catch(err => logger.error('[CartContext] NetInfo listener error', err));
 
     return () => {
       isMounted = false;

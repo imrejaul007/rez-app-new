@@ -347,7 +347,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
       // Fire-and-forget: set onboarding flag (non-blocking)
       if (response.data.user.isOnboarded) {
-        AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
+        AsyncStorage.setItem('onboarding_completed', 'true').catch(err => logger.error('[AuthContext] Failed to persist onboarding flag', err));
       }
 
       // Set auth token in API client
@@ -546,7 +546,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       if (response.data) {
         await authStorage.saveUser(response.data);
         // Also stamp lastProfileSync so checkAuthStatus skips a redundant background fetch
-        AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(() => {});
+        AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(err => logger.error('[AuthContext] Failed to persist lastProfileSync', err));
         dispatch({ type: 'UPDATE_USER', payload: response.data });
       } else {
         throw new Error('No user data received from server');
@@ -608,7 +608,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       await authStorage.saveAuthData(tokens.accessToken, tokens.refreshToken, user);
 
       if (user.isOnboarded) {
-        AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
+        AsyncStorage.setItem('onboarding_completed', 'true').catch(err => logger.error('[AuthContext] Failed to persist onboarding flag', err));
       }
 
       authService.setAuthToken(tokens.accessToken);
@@ -714,7 +714,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
         // Fire-and-forget: set onboarding flag (non-blocking)
         if (storedUser.isOnboarded) {
-          AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
+          AsyncStorage.setItem('onboarding_completed', 'true').catch(err => logger.error('[AuthContext] Failed to persist onboarding flag', err));
         }
 
         // Reset explicit logout flag since auth is restored
@@ -755,14 +755,14 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
               // 4. Timing attacks on profile data provide no security benefit to attackers
               // Note: crypto.timingSafeEqual requires equal-length buffers, unsuitable for JSON comparison
               if (JSON.stringify(response.data) !== JSON.stringify(storedUser)) {
-                authStorage.saveUser(response.data).catch(() => {});
+                authStorage.saveUser(response.data).catch(err => logger.error('[AuthContext] Failed to persist user data on profile sync', err));
                 dispatch({ type: 'UPDATE_USER', payload: response.data });
               }
               // Fire-and-forget: non-critical flag writes
               if (response.data.isOnboarded) {
-                AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
+                AsyncStorage.setItem('onboarding_completed', 'true').catch(err => logger.error('[AuthContext] Failed to persist onboarding flag', err));
               }
-              AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(() => {});
+              AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(err => logger.error('[AuthContext] Failed to persist lastProfileSync', err));
             }
             // response.data === undefined/null but success === true: profile endpoint returned
             // an empty body (shouldn't happen, but don't logout — just skip the sync update)

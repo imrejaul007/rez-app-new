@@ -14,6 +14,7 @@ import { useAuthUser, useIsAuthenticated, useAuthLoading, useAuthActions } from 
 import authService, { User as BackendUser, ProfileUpdate } from '@/services/authApi';
 import profileApi from '@/services/profileApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '@/utils/logger';
 import walletApi from '@/services/walletApi';
 
 interface ProfileProviderProps {
@@ -285,7 +286,7 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
       if (response.data) {
         const { saveUser } = await import('@/utils/authStorage');
         await saveUser(response.data);
-        AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(() => {});
+        AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(err => logger.error('[ProfileContext] Failed to persist lastProfileSync', err));
         // Now call checkAuthStatus so Zustand/AuthContext dispatch UPDATE_USER from
         // the freshly-persisted SecureStore data (not from a stale cached copy).
         await authActions.checkAuthStatus();

@@ -17,6 +17,7 @@ import React, {
 } from 'react';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { useWalletContext } from './WalletContext';
+import { logger } from '@/utils/logger';
 import { usePriveStore, type PriveStoreState } from '@/stores/priveStore';
 import priveApi, {
   PriveDashboard,
@@ -262,7 +263,7 @@ export function PriveProvider({ children }: { children: ReactNode }) {
         // Refresh dashboard to reflect updated streak/coins
         await fetchDashboard();
         // Sync wallet after earning coins
-        refreshWallet().catch(() => {});
+        refreshWallet().catch(err => logger.error('[PriveContext] refreshWallet after check-in failed', err));
       }
     } catch (err) {
       dispatch({ type: 'SET_ERROR', payload: 'Check-in failed. Please try again.' });

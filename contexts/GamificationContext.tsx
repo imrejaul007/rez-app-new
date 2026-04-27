@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useRef, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '@/utils/logger';
 import achievementApi, { Achievement, AchievementProgress } from '@/services/achievementApi';
 import pointsApi, { PointsBalance, PointTransaction } from '@/services/pointsApi';
 
@@ -378,7 +379,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
             const timeDiff = Date.now() - parseInt(cacheTime, 10);
             if (timeDiff < CACHE_DURATION) {
               // Sync coins from wallet in background (non-blocking)
-              syncCoinsFromWallet().catch(() => {});
+              syncCoinsFromWallet().catch(err => logger.error('[GamificationContext] syncCoinsFromWallet failed', err));
               dispatch({ type: 'GAMIFICATION_LOADING', payload: false });
               return;
             }
@@ -650,7 +651,7 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
       Promise.all([
         loadGamificationData(),
         updateDailyStreak()
-      ]).catch(() => {}).finally(() => {
+      ]).catch(err => logger.error('[GamificationContext] loadGamificationData or updateDailyStreak failed', err)).finally(() => {
         isLoadingDataRef.current = false;
       });
     } else if (!isAuthenticated) {
